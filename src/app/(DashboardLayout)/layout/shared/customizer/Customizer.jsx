@@ -58,41 +58,41 @@ const Customizer = () => {
     {
       id: 1,
       bgColor: '#5D87FF',
-      disp: 'BLUE_THEME',
+      disp: 'AZUL',
     },
     {
       id: 2,
       bgColor: '#0074BA',
-      disp: 'AQUA_THEME',
+      disp: 'AQUA',
     },
     {
       id: 3,
       bgColor: '#763EBD',
-      disp: 'PURPLE_THEME',
+      disp: 'ROXO',
     },
     {
       id: 4,
       bgColor: '#0A7EA4',
-      disp: 'GREEN_THEME',
+      disp: 'VERDE',
     },
     {
       id: 5,
       bgColor: '#01C0C8',
-      disp: 'CYAN_THEME',
+      disp: 'CIANO',
     },
     {
       id: 6,
       bgColor: '#FA896B',
-      disp: 'ORANGE_THEME',
+      disp: 'LARANJA',
     },
   ];
 
   return (
     <div>
       {/* ------------------------------------------- */}
-      {/* --Floating Button to open customizer ------ */}
+      {/* --Botão flutuante para abrir customizador -- */}
       {/* ------------------------------------------- */}
-      <Tooltip title="Settings">
+      <Tooltip title="Configurações">
         <Fab
           color="primary"
           aria-label="settings"
@@ -113,11 +113,11 @@ const Customizer = () => {
         }}
       >
         {/* ------------------------------------------- */}
-        {/* ------------ Customizer Sidebar ------------- */}
+        {/* ------------ Sidebar do Customizador ------ */}
         {/* ------------------------------------------- */}
         <Scrollbar sx={{ height: 'calc(100vh - 5px)' }}>
           <Box p={2} display="flex" justifyContent={'space-between'} alignItems="center">
-            <Typography variant="h4">Settings</Typography>
+            <Typography variant="h4">Configurações</Typography>
 
             <IconButton color="inherit" onClick={() => setShowDrawer(false)}>
               <IconX size="1rem" />
@@ -126,32 +126,32 @@ const Customizer = () => {
           <Divider />
           <Box p={3}>
             {/* ------------------------------------------- */}
-            {/* ------------ Dark light theme setting ------------- */}
+            {/* ------------ Configuração de Tema (Claro / Escuro) -------- */}
             {/* ------------------------------------------- */}
             <Typography variant="h6" gutterBottom>
-              Theme Option
+              Opção de Tema
             </Typography>
             <Stack direction={'row'} gap={2} my={2}>
               <StyledBox onClick={() => dispatch(setDarkMode('light'))} display="flex" gap={1}>
                 <WbSunnyTwoToneIcon
                   color={customizer.activeMode === 'light' ? 'primary' : 'inherit'}
                 />
-                Light
+                Claro
               </StyledBox>
               <StyledBox onClick={() => dispatch(setDarkMode('dark'))} display="flex" gap={1}>
                 <DarkModeTwoToneIcon
                   color={customizer.activeMode === 'dark' ? 'primary' : 'inherit'}
                 />
-                Dark
+                Escuro
               </StyledBox>
             </Stack>
 
             <Box pt={3} />
             {/* ------------------------------------------- */}
-            {/* ------------ RTL theme setting -------------*/}
+            {/* ------------ Configuração de Direção (RTL/LTR) ------------- */}
             {/* ------------------------------------------- */}
             <Typography variant="h6" gutterBottom>
-              Theme Direction
+              Direção do Tema
             </Typography>
             <Stack direction={'row'} gap={2} my={2}>
               <StyledBox onClick={() => dispatch(setDir('ltr'))} display="flex" gap={1}>
@@ -170,10 +170,10 @@ const Customizer = () => {
 
             <Box pt={3} />
             {/* ------------------------------------------- */}
-            {/* ------------ Theme Color setting ------------- */}
+            {/* ------------ Configuração de Cor do Tema ------------- */}
             {/* ------------------------------------------- */}
             <Typography variant="h6" gutterBottom>
-              Theme Colors
+              Cores do Tema
             </Typography>
             <Grid container spacing={2}>
               {thColors.map((thcolor) => (
@@ -205,7 +205,7 @@ const Customizer = () => {
             {/* ------------ Layout Horizontal / Vertical ------------- */}
             {/* ------------------------------------------- */}
             <Typography variant="h6" gutterBottom>
-              Layout Type
+              Tipo de Layout
             </Typography>
             <Stack direction={'row'} gap={2} my={2}>
               <StyledBox onClick={() => dispatch(toggleHorizontal(false))} display="flex" gap={1}>
@@ -221,72 +221,45 @@ const Customizer = () => {
             </Stack>
             <Box pt={4} />
             {/* ------------------------------------------- */}
-            {/* ------------ Layout Boxed / Full ------------- */}
+            {/* ------------ Layout Caixa / Completo ------------- */}
             {/* ------------------------------------------- */}
             <Typography variant="h6" gutterBottom>
-              Container Option
+              Opção de Container
             </Typography>
             <Stack direction={'row'} gap={2} my={2}>
               <StyledBox onClick={() => dispatch(toggleLayout('boxed'))} display="flex" gap={1}>
                 <CallToActionTwoToneIcon
                   color={customizer.isLayout === 'boxed' ? 'primary' : 'inherit'}
                 />
-                Boxed
+                Caixa
               </StyledBox>
               <StyledBox onClick={() => dispatch(toggleLayout('full'))} display="flex" gap={1}>
                 <AspectRatioTwoToneIcon
                   color={customizer.isLayout === 'full' ? 'primary' : 'inherit'}
                 />
-                Full
+                Completo
               </StyledBox>
             </Stack>
             <Box pt={4} />
-            {/* ------------------------------------------- */}
-            {/* ------------ Sidebar Color setting ------------- */}
-            {/* ------------------------------------------- */}
-
-            {/* ------------------------------------------- */}
-            {/* ------------ Theme Color setting ------------- */}
-            {/* ------------------------------------------- */}
-            {customizer.isHorizontal ? (
-              ''
-            ) : (
-              <>
-                <Typography variant="h6" gutterBottom>
-                  Sidebar Type
-                </Typography>
-                <Stack direction={'row'} gap={2} my={2}>
-                  <StyledBox onClick={() => dispatch(toggleSidebar())} display="flex" gap={1}>
-                    <WebAssetTwoToneIcon color={!customizer.isCollapse ? 'primary' : 'inherit'} />
-                    Full
-                  </StyledBox>
-                  <StyledBox onClick={() => dispatch(toggleSidebar())} display="flex" gap={1}>
-                    <ViewSidebarTwoToneIcon color={customizer.isCollapse ? 'primary' : 'inherit'} />
-                    mini
-                  </StyledBox>
-                </Stack>
-              </>
-            )}
-            <Box pt={4} />
             <Typography variant="h6" gutterBottom>
-              Card With
+              Largura do Cartão
             </Typography>
             <Stack direction={'row'} gap={2} my={2}>
               <StyledBox onClick={() => dispatch(setCardShadow(false))} display="flex" gap={1}>
                 <BorderOuter color={!customizer.isCardShadow ? 'primary' : 'inherit'} />
-                Border
+                Borda
               </StyledBox>
               <StyledBox onClick={() => dispatch(setCardShadow(true))} display="flex" gap={1}>
                 <CallToActionTwoToneIcon color={customizer.isCardShadow ? 'primary' : 'inherit'} />
-                Shadow
+                Sombra
               </StyledBox>
             </Stack>
             <Box pt={4} />
             {/* ------------------------------------------- */}
-            {/* ------------ Theme Color setting ------------- */}
+            {/* ------------ Configuração de Raio de Borda ------------- */}
             {/* ------------------------------------------- */}
             <Typography variant="h6" gutterBottom>
-              Theme Border Radius
+              Raio da Borda do Tema
             </Typography>
 
             <Slider
