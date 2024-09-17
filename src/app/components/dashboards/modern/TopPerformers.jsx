@@ -18,31 +18,30 @@ import {
 } from '@mui/material';
 import TopPerformerData from './TopPerformerData';
 
-const performers = TopPerformerData;
+const vendedores = TopPerformerData;
 
-const TopPerformers = () => {
-  // for select
-  const [month, setMonth] = React.useState('1');
+const TopVendas = () => {
+  const [mes, setMes] = React.useState('1');
 
   const handleChange = (event) => {
-    setMonth(event.target.value);
+    setMes(event.target.value);
   };
 
   return (
     <DashboardCard
-      title="Top Projects"
-      subtitle="Best Products"
+      title="Top Vendas"
+      subtitle="Melhores Clientes"
       action={
         <CustomSelect
-          labelId="month-dd"
-          id="month-dd"
+          labelId="mes-dd"
+          id="mes-dd"
           size="small"
-          value={month}
+          value={mes}
           onChange={handleChange}
         >
-          <MenuItem value={1}>March 2023</MenuItem>
-          <MenuItem value={2}>April 2023</MenuItem>
-          <MenuItem value={3}>May 2023</MenuItem>
+          <MenuItem value={1}>Março 2024</MenuItem>
+          <MenuItem value={2}>Abril 2024</MenuItem>
+          <MenuItem value={3}>Maio 2024</MenuItem>
         </CustomSelect>
       }
     >
@@ -56,67 +55,67 @@ const TopPerformers = () => {
           <TableHead>
             <TableRow>
               <TableCell>
-                <Typography variant="subtitle2" fontWeight={600}>Assigned</Typography>
+                <Typography variant="subtitle2" fontWeight={600}>Vendedor</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="subtitle2" fontWeight={600}>Project</Typography>
+                <Typography variant="subtitle2" fontWeight={600}>Cliente</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="subtitle2" fontWeight={600}>Priority</Typography>
+                <Typography variant="subtitle2" fontWeight={600}>Prioridade</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="subtitle2" fontWeight={600}>Budget</Typography>
+                <Typography variant="subtitle2" fontWeight={600}>Orçamento</Typography>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {performers.map((basic) => (
-              <TableRow key={basic.id}>
+            {vendedores.map((vendedor) => (
+              <TableRow key={vendedor.id}>
                 <TableCell>
                   <Stack direction="row" spacing={2}>
-                    <Avatar src={basic.imgsrc} alt={basic.imgsrc} sx={{ width: 40, height: 40 }} />
+                    <Avatar src={vendedor.imgsrc} alt={vendedor.imgsrc} sx={{ width: 40, height: 40 }} />
                     <Box>
                       <Typography variant="subtitle2" fontWeight={600}>
-                        {basic.name}
+                        {vendedor.name}
                       </Typography>
                       <Typography color="textSecondary" fontSize="12px" variant="subtitle2">
-                        {basic.post}
+                        {vendedor.post}
                       </Typography>
                     </Box>
                   </Stack>
                 </TableCell>
                 <TableCell>
                   <Typography color="textSecondary" variant="subtitle2" fontWeight={400}>
-                    {basic.pname}
+                    {vendedor.pname}
                   </Typography>
                 </TableCell>
                 <TableCell>
                   <Chip
                     sx={{
                       bgcolor:
-                        basic.status === 'High'
+                        vendedor.status === 'Alta'
                           ? (theme) => theme.palette.error.light
-                          : basic.status === 'Medium'
+                          : vendedor.status === 'Média'
                             ? (theme) => theme.palette.warning.light
-                            : basic.status === 'Low'
+                            : vendedor.status === 'Baixa'
                               ? (theme) => theme.palette.success.light
                               : (theme) => theme.palette.secondary.light,
                       color:
-                        basic.status === 'High'
+                        vendedor.status === 'Alta'
                           ? (theme) => theme.palette.error.main
-                          : basic.status === 'Medium'
+                          : vendedor.status === 'Média'
                             ? (theme) => theme.palette.warning.main
-                            : basic.status === 'Low'
+                            : vendedor.status === 'Baixa'
                               ? (theme) => theme.palette.success.main
                               : (theme) => theme.palette.secondary.main,
                       borderRadius: '8px',
                     }}
                     size="small"
-                    label={basic.status}
+                    label={vendedor.status}
                   />
                 </TableCell>
                 <TableCell>
-                  <Typography variant="subtitle2">${basic.budget}k</Typography>
+                  <Typography variant="subtitle2">R${vendedor.budget}k</Typography>
                 </TableCell>
               </TableRow>
             ))}
@@ -127,4 +126,4 @@ const TopPerformers = () => {
   );
 };
 
-export default TopPerformers;
+export default TopVendas;

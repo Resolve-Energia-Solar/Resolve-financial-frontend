@@ -18,13 +18,11 @@ import Search from "./Search";
 import Language from "./Language";
 import Navigation from "./Navigation";
 import MobileRightSidebar from "./MobileRightSidebar";
-import Cart from './Cart';
 
 const Header = () => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up("lg"));
   const lgDown = useMediaQuery((theme) => theme.breakpoints.down("lg"));
 
-  // drawer
   const customizer = useSelector((state) => state.customizer);
   const dispatch = useDispatch();
 
@@ -74,9 +72,6 @@ const Header = () => {
         <Stack spacing={1} direction="row" alignItems="center">
           <Language />
           {/* ------------------------------------------- */}
-          {/* Ecommerce Dropdown */}
-          {/* ------------------------------------------- */}
-          <Cart />
           {/* ------------------------------------------- */}
           {/* End Ecommerce Dropdown */}
           {/* ------------------------------------------- */}

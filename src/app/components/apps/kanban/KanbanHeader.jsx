@@ -41,7 +41,7 @@ function KanbanHeader() {
   return (
     <>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-        <Typography variant="h5">LEADS</Typography>
+        <Typography variant="h5">Prospecção de leads</Typography>
         <Button variant="contained" onClick={handleShow}>
           Adicionar coluna
         </Button>

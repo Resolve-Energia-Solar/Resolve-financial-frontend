@@ -9,13 +9,13 @@ import DashboardCard from '../../shared/DashboardCard';
 import SkeletonProjectCard from "../skeleton/ProjectCard";
 
 
-const Projects = ({ isLoading }) => {
-  // chart color
+const Projetos = ({ isLoading }) => {
+  // cor do gráfico
   const theme = useTheme();
   const primary = theme.palette.primary.main;
   const successlight = theme.palette.success.light;
 
-  // chart
+  // gráfico
   const optionscolumnchart = {
     chart: {
       type: 'bar',
@@ -98,9 +98,9 @@ const Projects = ({ isLoading }) => {
           <DashboardCard>
             <>
               <Typography variant="subtitle2" color="textSecondary">
-                Projects
+                Projetos
               </Typography>
-              <Typography variant="h4">78,298</Typography>
+              <Typography variant="h4">78.298</Typography>
               <Stack direction="row" spacing={1} my={1} alignItems="center">
                 <Avatar sx={{ bgcolor: successlight, width: 24, height: 24 }}>
                   <IconArrowUpLeft width={18} color="#39B69A" />
@@ -120,4 +120,4 @@ const Projects = ({ isLoading }) => {
   );
 };
 
-export default Projects;
+export default Projetos;

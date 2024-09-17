@@ -1,6 +1,8 @@
-"use client"
+"use client";
 
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setUser } from '@/store/user/userSlice';
 import { useRouter } from 'next/navigation';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -23,6 +25,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -31,7 +34,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
 
     try {
       const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/login/`;
-      
+
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -47,11 +50,29 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
       }
 
       const data = await response.json();
-      console.log('Response Data:', data); 
+      console.log('Response Data:', data);
 
       Cookies.set('access_token', data.access, { expires: 1, sameSite: 'Strict' });
-      Cookies.set('user_id', data.id, { expires: 1, sameSite: 'Strict' });
-      Cookies.set('username', data.username, { expires: 1, sameSite: 'Strict' });
+
+      const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/${data.id}/`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${data.access}`,
+        },
+      });
+
+      if (!userResponse.ok) {
+        throw new Error('Falha ao obter os dados do usuário');
+      }
+
+      const userData = await userResponse.json();
+
+      dispatch(setUser({
+        user: userData,
+        user_permissions: userData.user_permissions,
+        last_login: userData.last_login,
+        access_token: data.access,
+      }));
 
       router.push('/');
     } catch (error) {

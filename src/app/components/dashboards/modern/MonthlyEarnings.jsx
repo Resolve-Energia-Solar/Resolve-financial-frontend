@@ -8,15 +8,14 @@ import { IconArrowDownRight, IconCurrencyDollar } from '@tabler/icons-react';
 import DashboardCard from '../../shared/DashboardCard';
 import SkeletonMonthlyEarningsTwoCard from "../skeleton/MonthlyEarningsTwoCard";
 
-
 const MonthlyEarnings = ({ isLoading }) => {
-  // chart color
+  // cor do gráfico
   const theme = useTheme();
   const secondary = theme.palette.secondary.main;
   const secondarylight = theme.palette.secondary.light;
   const errorlight = theme.palette.error.light;
 
-  // chart
+  // gráfico
   const optionscolumnchart = {
     chart: {
       type: 'area',
@@ -62,7 +61,7 @@ const MonthlyEarnings = ({ isLoading }) => {
           <SkeletonMonthlyEarningsTwoCard />
         ) : (
           <DashboardCard
-            title="Monthly Earnings"
+            title="Ganhos Mensais"
             action={
               <Fab color="secondary" size="medium">
                 <IconCurrencyDollar width={24} />
@@ -74,7 +73,7 @@ const MonthlyEarnings = ({ isLoading }) => {
           >
             <>
               <Typography variant="h3" fontWeight="700" mt="-20px">
-                $6,820
+                R$6.820
               </Typography>
               <Stack direction="row" spacing={1} my={1} alignItems="center">
                 <Avatar sx={{ bgcolor: errorlight, width: 27, height: 27 }}>
@@ -84,7 +83,7 @@ const MonthlyEarnings = ({ isLoading }) => {
                   +9%
                 </Typography>
                 <Typography variant="subtitle2" color="textSecondary">
-                  last year
+                  em relação ao ano passado
                 </Typography>
               </Stack>
             </>

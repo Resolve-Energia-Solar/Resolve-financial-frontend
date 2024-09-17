@@ -60,7 +60,7 @@ const profile = [
     icon: '/images/svgs/icon-inbox.svg',
   },
   {
-    href: '/apps/kanban',
+    href: '/apps/tickets',
     title: 'Minhas Tarefas',
     subtitle: 'Tarefas do Dia e a Fazer',
     icon: '/images/svgs/icon-tasks.svg',

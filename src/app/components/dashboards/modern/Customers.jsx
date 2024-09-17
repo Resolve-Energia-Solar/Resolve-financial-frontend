@@ -7,14 +7,14 @@ import { IconArrowDownRight } from '@tabler/icons-react';
 import DashboardCard from '../../shared/DashboardCard';
 import SkeletonCustomersCard from '../skeleton/CustomersCard';
 
-const Customers = ({ isLoading }) => {
-  // chart color
+const Clientes = ({ isLoading }) => {
+  // cor do gráfico
   const theme = useTheme();
   const secondary = theme.palette.secondary.main;
   const secondarylight = theme.palette.secondary.light;
   const errorlight = theme.palette.error.light;
 
-  // chart
+  // gráfico
   const optionscolumnchart = {
     chart: {
       type: 'area',
@@ -52,7 +52,7 @@ const Customers = ({ isLoading }) => {
     {
       name: '',
       color: secondary,
-      data: [30, 25, 35, 20, 30, 40],
+      data: [30, 25, 35, 20, 30, 40], // Dados para o gráfico
     },
   ];
 
@@ -78,9 +78,9 @@ const Customers = ({ isLoading }) => {
         >
           <>
             <Typography variant="subtitle2" color="textSecondary">
-              Customers
+              Clientes
             </Typography>
-            <Typography variant="h4">36,358</Typography>
+            <Typography variant="h4">36.358</Typography>
             <Stack direction="row" spacing={1} mt={1} alignItems="center">
               <Avatar sx={{ bgcolor: errorlight, width: 24, height: 24 }}>
                 <IconArrowDownRight width={18} color="#FA896B" />
@@ -96,4 +96,4 @@ const Customers = ({ isLoading }) => {
   );
 };
 
-export default Customers;
+export default Clientes;

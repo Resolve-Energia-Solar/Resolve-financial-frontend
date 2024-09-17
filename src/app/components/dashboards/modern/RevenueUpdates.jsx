@@ -9,7 +9,6 @@ import DashboardCard from '../../shared/DashboardCard';
 import CustomSelect from '../../forms/theme-elements/CustomSelect';
 import SkeletonRevenueUpdatesTwoCard from '../skeleton/RevenueUpdatesTwoCard';
 
-
 const RevenueUpdates = ({ isLoading }) => {
   const [month, setMonth] = React.useState('1');
 
@@ -17,12 +16,10 @@ const RevenueUpdates = ({ isLoading }) => {
     setMonth(event.target.value);
   };
 
-  // chart color
   const theme = useTheme();
   const primary = theme.palette.primary.main;
   const secondary = theme.palette.secondary.main;
 
-  // chart
   const optionscolumnchart = {
     chart: {
       type: 'bar',
@@ -80,13 +77,14 @@ const RevenueUpdates = ({ isLoading }) => {
       fillSeriesColor: false,
     },
   };
+
   const seriescolumnchart = [
     {
-      name: 'Eanings this month',
+      name: 'Ganhos neste mês',
       data: [1.5, 2.7, 2.2, 3.6, 1.5, 1.0],
     },
     {
-      name: 'Expense this month',
+      name: 'Despesas neste mês',
       data: [-1.8, -1.1, -2.5, -1.5, -0.6, -1.8],
     },
   ];
@@ -98,24 +96,24 @@ const RevenueUpdates = ({ isLoading }) => {
           <SkeletonRevenueUpdatesTwoCard />
         ) : (
           <DashboardCard
-            title="Revenue Updates"
-            subtitle="Overview of Profit"
+            title="Atualizações de Receita"
+            subtitle="Visão Geral do Lucro"
             action={
               <CustomSelect
-                labelId="month-dd"
-                id="month-dd"
+                labelId="mes-dd"
+                id="mes-dd"
                 size="small"
                 value={month}
                 onChange={handleChange}
               >
-                <MenuItem value={1}>March 2023</MenuItem>
-                <MenuItem value={2}>April 2023</MenuItem>
-                <MenuItem value={3}>May 2023</MenuItem>
+                <MenuItem value={1}>Março 2023</MenuItem>
+                <MenuItem value={2}>Abril 2023</MenuItem>
+                <MenuItem value={3}>Maio 2023</MenuItem>
               </CustomSelect>
             }
           >
             <Grid container spacing={3}>
-              {/* column */}
+              {/* coluna */}
               <Grid item xs={12} sm={8}>
                 <Box className="rounded-bars">
                   <Chart
@@ -127,7 +125,7 @@ const RevenueUpdates = ({ isLoading }) => {
                   />
                 </Box>
               </Grid>
-              {/* column */}
+              {/* coluna */}
               <Grid item xs={12} sm={4}>
                 <Stack spacing={3} mt={3}>
                   <Stack direction="row" spacing={2} alignItems="center">
@@ -145,10 +143,10 @@ const RevenueUpdates = ({ isLoading }) => {
                     </Box>
                     <Box>
                       <Typography variant="h3" fontWeight="700">
-                        $63,489.50
+                        R$ 63.489,50
                       </Typography>
                       <Typography variant="subtitle2" color="textSecondary">
-                        Total Earnings
+                        Ganhos Totais
                       </Typography>
                     </Box>
                   </Stack>
@@ -160,9 +158,9 @@ const RevenueUpdates = ({ isLoading }) => {
                     ></Avatar>
                     <Box>
                       <Typography variant="subtitle1" color="textSecondary">
-                        Earnings this month
+                        Ganhos neste mês
                       </Typography>
-                      <Typography variant="h5">$48,820</Typography>
+                      <Typography variant="h5">R$ 48.820</Typography>
                     </Box>
                   </Stack>
                   <Stack direction="row" spacing={2}>
@@ -171,14 +169,14 @@ const RevenueUpdates = ({ isLoading }) => {
                     ></Avatar>
                     <Box>
                       <Typography variant="subtitle1" color="textSecondary">
-                        Expense this month
+                        Despesas neste mês
                       </Typography>
-                      <Typography variant="h5">$26,498</Typography>
+                      <Typography variant="h5">R$ 26.498</Typography>
                     </Box>
                   </Stack>
                 </Stack>
                 <Button color="primary" variant="contained" fullWidth>
-                  View Full Report
+                  Ver Relatório Completo
                 </Button>
               </Grid>
             </Grid>

@@ -11,6 +11,7 @@ import ContactsReducer from './apps/contacts/ContactSlice';
 import EcommerceReducer from './apps/eCommerce/EcommerceSlice';
 import UserProfileReducer from './apps/userProfile/UserProfileSlice';
 import BlogReducer from './apps/blog/BlogSlice';
+import userReducer from './user/userSlice';
 
 const persistConfig = {
   key: 'root',
@@ -18,6 +19,7 @@ const persistConfig = {
 };
 export const store = configureStore({
   reducer: {
+    user: persistReducer(persistConfig, userReducer),
     counter: counterReducer,
     customizer: persistReducer(persistConfig, CustomizerReducer),
     ecommerceReducer: EcommerceReducer,

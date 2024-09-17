@@ -17,11 +17,6 @@ const Languages = [
     value: "en",
   },
   {
-    flagname: "français (French)",
-    icon: "/images/flag/icon-flag-fr.svg",
-    value: "fr",
-  },
-  {
     flagname: "Português",
     icon: "/images/flag/brazil-.png",
     value: "pt",

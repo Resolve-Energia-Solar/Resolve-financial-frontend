@@ -9,12 +9,12 @@ import { Box } from "@mui/material";
 
 
 const EmployeeSalary = ({ isLoading }) => {
-  // chart color
+  // cor do gráfico
   const theme = useTheme();
   const primary = theme.palette.primary.main;
   const primarylight = theme.palette.grey[100];
 
-  // chart
+  // gráfico
   const optionscolumnchart = {
     chart: {
       type: 'bar',
@@ -48,7 +48,7 @@ const EmployeeSalary = ({ isLoading }) => {
       },
     },
     xaxis: {
-      categories: [['Apr'], ['May'], ['June'], ['July'], ['Aug'], ['Sept']],
+      categories: [['Abr'], ['Mai'], ['Jun'], ['Jul'], ['Ago'], ['Set']], // Meses traduzidos
       axisBorder: {
         show: false,
       },
@@ -65,7 +65,7 @@ const EmployeeSalary = ({ isLoading }) => {
   const seriescolumnchart = [
     {
       name: '',
-      data: [20, 15, 30, 25, 10, 15],
+      data: [20, 15, 30, 25, 10, 15], // Esses valores podem representar as comissões
     },
   ];
 
@@ -76,12 +76,12 @@ const EmployeeSalary = ({ isLoading }) => {
           <SkeletonEmployeeSalaryCard />
         ) : (
           <DashboardWidgetCard
-            title="Employee Salary"
-            subtitle="Every month"
-            dataLabel1="Salary"
-            dataItem1="$36,358"
-            dataLabel2="Profit"
-            dataItem2="$5,296"
+            title="Salário do Funcionário"
+            subtitle="Comissões mensais"  
+            dataLabel1="Comissão"
+            dataItem1="R$36.358"  
+            dataLabel2="Lucro"
+            dataItem2="R$5.296"
           >
             <>
               <Box height="295px">

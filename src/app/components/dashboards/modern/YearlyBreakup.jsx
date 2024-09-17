@@ -9,13 +9,13 @@ import DashboardCard from '../../shared/DashboardCard';
 import SkeletonYearlyBreakupCard from '../skeleton/YearlyBreakupCard';
 
 const YearlyBreakup = ({ isLoading }) => {
-  // chart color
+  // cor do gráfico
   const theme = useTheme();
   const primary = theme.palette.primary.main;
   const primarylight = theme.palette.primary.light;
   const successlight = theme.palette.success.light;
 
-  // chart
+  // gráfico
   const optionscolumnchart = {
     chart: {
       type: 'donut',
@@ -68,12 +68,12 @@ const YearlyBreakup = ({ isLoading }) => {
       {isLoading ? (
         <SkeletonYearlyBreakupCard />
       ) : (
-        <DashboardCard title="Yearly Breakup">
+        <DashboardCard title="Divisão Anual">
           <Grid container spacing={3}>
-            {/* column */}
+            {/* coluna */}
             <Grid item xs={7} sm={7}>
               <Typography variant="h3" fontWeight="700">
-                $36,358
+                R$36.358
               </Typography>
               <Stack direction="row" spacing={1} mt={1} alignItems="center">
                 <Avatar sx={{ bgcolor: successlight, width: 27, height: 27 }}>
@@ -83,7 +83,7 @@ const YearlyBreakup = ({ isLoading }) => {
                   +9%
                 </Typography>
                 <Typography variant="subtitle2" color="textSecondary">
-                  last year
+                  em relação ao ano passado
                 </Typography>
               </Stack>
               <Stack spacing={3} mt={5} direction="row">
@@ -105,7 +105,7 @@ const YearlyBreakup = ({ isLoading }) => {
                 </Stack>
               </Stack>
             </Grid>
-            {/* column */}
+            {/* coluna */}
             <Grid item xs={5} sm={5}>
               <Chart
                 options={optionscolumnchart}

@@ -7,10 +7,17 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import Typography from '@mui/material/Typography';
+import Dialog from '@mui/material/Dialog'; 
+import DialogActions from '@mui/material/DialogActions'; 
+import DialogContent from '@mui/material/DialogContent'; 
+import DialogContentText from '@mui/material/DialogContentText'; 
+import DialogTitle from '@mui/material/DialogTitle'; 
+import CircularProgress from '@mui/material/CircularProgress';
 import * as dropdownData from './data';
-
 import { IconMail } from '@tabler/icons-react';
 import { Stack } from '@mui/system';
+import { useSelector } from 'react-redux';
+import { useLogout } from '@/utils/logout';
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -20,6 +27,9 @@ const Profile = () => {
   const handleClose2 = () => {
     setAnchorEl2(null);
   };
+
+  const user = useSelector((state) => state.user?.user); 
+  const { handleLogout, requestLogout, cancelLogout, loading, confirmLogout } = useLogout();
 
   return (
     <Box>
@@ -36,7 +46,7 @@ const Profile = () => {
         onClick={handleClick2}
       >
         <Avatar
-          src={"/images/profile/user-1.jpg"}
+          src={user?.profile_picture || "/images/profile/user-1.jpg"}
           alt={'ProfileImg'}
           sx={{
             width: 35,
@@ -44,9 +54,7 @@ const Profile = () => {
           }}
         />
       </IconButton>
-      {/* ------------------------------------------- */}
-      {/* Message Dropdown */}
-      {/* ------------------------------------------- */}
+
       <Menu
         id="msgs-menu"
         anchorEl={anchorEl2}
@@ -57,20 +65,20 @@ const Profile = () => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         sx={{
           '& .MuiMenu-paper': {
-            width: '360px',
+            width: '500px',
             p: 4,
           },
         }}
       >
         <Typography variant="h5">Perfil</Typography>
         <Stack direction="row" py={3} spacing={2} alignItems="center">
-          <Avatar src={"/images/profile/user-1.jpg"} alt={"ProfileImg"} sx={{ width: 95, height: 95 }} />
+          <Avatar src={user?.profile_picture || "/images/profile/user-1.jpg"} alt={"ProfileImg"} sx={{ width: 95, height: 95 }} />
           <Box>
             <Typography variant="subtitle2" color="textPrimary" fontWeight={600}>
-              Mathew Anderson
+              {user?.first_name || ''} {user?.last_name || ''} 
             </Typography>
             <Typography variant="subtitle2" color="textSecondary">
-              Designer
+              {user?.role || ''}
             </Typography>
             <Typography
               variant="subtitle2"
@@ -80,7 +88,7 @@ const Profile = () => {
               gap={1}
             >
               <IconMail width={15} height={15} />
-              info@modernize.com
+              {user?.email || ''}
             </Typography>
           </Box>
         </Stack>
@@ -138,11 +146,33 @@ const Profile = () => {
           </Box>
         ))}
         <Box mt={2}>
-          <Button href="/auth/auth1/login" variant="outlined" color="primary" component={Link} fullWidth>
-            Sair
+          <Button onClick={requestLogout} variant="outlined" color="primary" fullWidth>
+            {loading ? <CircularProgress size={20} /> : 'Sair'}
           </Button>
         </Box>
       </Menu>
+
+      <Dialog
+        open={confirmLogout}
+        onClose={cancelLogout}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Confirmar Logout</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Tem certeza de que deseja sair?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelLogout} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleLogout} color="primary" autoFocus>
+            Sair
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
