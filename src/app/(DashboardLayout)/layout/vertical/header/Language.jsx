@@ -17,20 +17,9 @@ const Languages = [
     value: "en",
   },
   {
-    flagname: "中国人 (Chinese)",
-    icon: "/images/flag/icon-flag-cn.svg",
-    value: "ch",
-  },
-  {
     flagname: "français (French)",
     icon: "/images/flag/icon-flag-fr.svg",
     value: "fr",
-  },
-
-  {
-    flagname: "عربي (Arabic)",
-    icon: "/images/flag/icon-flag-sa.svg",
-    value: "ar",
   },
   {
     flagname: "Português",

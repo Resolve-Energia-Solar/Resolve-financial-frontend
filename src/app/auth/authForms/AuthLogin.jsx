@@ -10,24 +10,29 @@ import FormGroup from '@mui/material/FormGroup';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
+import CircularProgress from '@mui/material/CircularProgress';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AuthSocialButtons from './AuthSocialButtons';
-import Cookies from 'js-cookie'; // Para gerenciar cookies
+import Cookies from 'js-cookie';
 
 const AuthLogin = ({ title, subtitle, subtext }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');
+    setIsLoading(true);
 
     try {
-      const response = await fetch('https://crm.resolvenergiasolar.com/api/login/', {
+      const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/login/`;
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,12 +47,18 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
       }
 
       const data = await response.json();
-      Cookies.set('currentUser', data.token, { expires: 1 });
+      console.log('Response Data:', data); 
+
+      Cookies.set('access_token', data.access, { expires: 1, sameSite: 'Strict' });
+      Cookies.set('user_id', data.id, { expires: 1, sameSite: 'Strict' });
+      Cookies.set('username', data.username, { expires: 1, sameSite: 'Strict' });
 
       router.push('/');
     } catch (error) {
       console.error('Login error:', error);
       setError('Falha no login. Verifique suas credenciais e tente novamente.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -127,8 +138,9 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           fullWidth
           onClick={handleSubmit}
           type="submit"
+          disabled={isLoading}
         >
-          Entrar
+          {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Entrar'}
         </Button>
       </Box>
       {subtitle}
