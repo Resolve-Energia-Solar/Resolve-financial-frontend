@@ -4,6 +4,7 @@ import english from '../utils/languages/en.json';
 import french from '../utils/languages/fr.json';
 import arabic from '../utils/languages/ar.json';
 import chinese from '../utils/languages/ch.json';
+import portugues from '../utils/languages/pt.json';
 
 const resources = {
   en: {
@@ -18,15 +19,18 @@ const resources = {
   ch: {
     translation: chinese,
   },
+  pt: {
+    translation: portugues,
+  },
 };
 
 i18n
-  .use(initReactI18next) // passes i18n down to react-i18next
+  .use(initReactI18next) 
   .init({
     resources,
-    lng: 'en',
+    lng: 'pt',
     interpolation: {
-      escapeValue: false, // react already safes from xss
+      escapeValue: false, 
     },
   });
 

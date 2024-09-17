@@ -3,43 +3,43 @@
 const notifications = [
   {
     avatar: '/images/profile/user-1.jpg',
-    title: 'Roman Joined the Team!',
-    subtitle: 'Congratulate him',
+    title: 'Roman entrou para a equipe!',
+    subtitle: 'Parabenize-o',
   },
   {
     avatar: '/images/profile/user-2.jpg',
-    title: 'New message received',
-    subtitle: 'Salma sent you new message',
+    title: 'Nova mensagem recebida',
+    subtitle: 'Salma enviou uma nova mensagem para você',
   },
   {
     avatar: '/images/profile/user-3.jpg',
-    title: 'New Payment received',
-    subtitle: 'Check your earnings',
+    title: 'Novo pagamento recebido',
+    subtitle: 'Verifique seus ganhos',
   },
   {
     avatar: '/images/profile/user-4.jpg',
-    title: 'Jolly completed tasks',
-    subtitle: 'Assign her new tasks',
+    title: 'Jolly concluiu tarefas',
+    subtitle: 'Atribua novas tarefas para ela',
   },
   {
     avatar: '/images/profile/user-1.jpg',
-    title: 'Roman Joined the Team!',
-    subtitle: 'Congratulate him',
+    title: 'Roman entrou para a equipe!',
+    subtitle: 'Parabenize-o',
   },
   {
     avatar: '/images/profile/user-2.jpg',
-    title: 'New message received',
-    subtitle: 'Salma sent you new message',
+    title: 'Nova mensagem recebida',
+    subtitle: 'Salma enviou uma nova mensagem para você',
   },
   {
     avatar: '/images/profile/user-3.jpg',
-    title: 'New Payment received',
-    subtitle: 'Check your earnings',
+    title: 'Novo pagamento recebido',
+    subtitle: 'Verifique seus ganhos',
   },
   {
     avatar: '/images/profile/user-4.jpg',
-    title: 'Jolly completed tasks',
-    subtitle: 'Assign her new tasks',
+    title: 'Jolly concluiu tarefas',
+    subtitle: 'Atribua novas tarefas para ela',
   },
 ];
 
@@ -49,20 +49,20 @@ const notifications = [
 const profile = [
   {
     href: '/apps/user-profile/profile',
-    title: 'My Profile',
-    subtitle: 'Account Settings',
+    title: 'Meu Perfil',
+    subtitle: 'Configurações da Conta',
     icon: '/images/svgs/icon-account.svg',
   },
   {
     href: '/apps/email',
-    title: 'My Inbox',
-    subtitle: 'Messages & Emails',
+    title: 'Minha Caixa de Entrada',
+    subtitle: 'Mensagens e E-mails',
     icon: '/images/svgs/icon-inbox.svg',
   },
   {
     href: '/apps/kanban',
-    title: 'My Tasks',
-    subtitle: 'To-do and Daily Tasks',
+    title: 'Minhas Tarefas',
+    subtitle: 'Tarefas do Dia e a Fazer',
     icon: '/images/svgs/icon-tasks.svg',
   },
 ];
@@ -72,50 +72,50 @@ const profile = [
 const appsLink = [
   {
     href: '/apps/chats',
-    title: 'Chat Application',
-    subtext: 'New messages arrived',
+    title: 'Aplicativo de Chat',
+    subtext: 'Novas mensagens recebidas',
     avatar: '/images/svgs/icon-dd-chat.svg',
   },
   {
     href: '/apps/ecommerce/shop',
-    title: 'eCommerce App',
-    subtext: 'New stock available',
+    title: 'Aplicativo ecommerce',
+    subtext: 'Novo estoque disponível',
     avatar: '/images/svgs/icon-dd-cart.svg',
   },
   {
     href: '/apps/notes',
-    title: 'Notes App',
-    subtext: 'To-do and Daily tasks',
+    title: 'Aplicativo de Notas',
+    subtext: 'Tarefas do Dia e a Fazer',
     avatar: '/images/svgs/icon-dd-invoice.svg',
   },
   {
     href: '/apps/calendar',
-    title: 'Calendar App',
-    subtext: 'Get dates',
+    title: 'Aplicativo de Calendário',
+    subtext: 'Obtenha datas',
     avatar: '/images/svgs/icon-dd-date.svg',
   },
   {
     href: '/apps/contacts',
-    title: 'Contact Application',
-    subtext: '2 Unsaved Contacts',
+    title: 'Aplicativo de Contatos',
+    subtext: '2 Contatos não salvos',
     avatar: '/images/svgs/icon-dd-mobile.svg',
   },
   {
     href: '/apps/tickets',
-    title: 'Tickets App',
-    subtext: 'Submit tickets',
+    title: 'Aplicativo de Tickets',
+    subtext: 'Envie tickets',
     avatar: '/images/svgs/icon-dd-lifebuoy.svg',
   },
   {
     href: '/apps/email',
-    title: 'Email App',
-    subtext: 'Get new emails',
+    title: 'Aplicativo de E-mail',
+    subtext: 'Receba novos e-mails',
     avatar: '/images/svgs/icon-dd-message-box.svg',
   },
   {
     href: '/apps/blog/post',
-    title: 'Blog App',
-    subtext: 'added new blog',
+    title: 'Aplicativo de Blog',
+    subtext: 'novo blog adicionado',
     avatar: '/images/svgs/icon-dd-application.svg',
   },
 ];
@@ -123,36 +123,37 @@ const appsLink = [
 const pageLinks = [
   {
     href: '/theme-pages/pricing',
-    title: 'Pricing Page',
+    title: 'Página de Preços',
   },
   {
     href: '/auth/auth1/login',
-    title: 'Authentication Design',
+    title: 'Design de Autenticação',
   },
   {
     href: '/auth/auth1/register',
-    title: 'Register Now',
+    title: 'Registre-se Agora',
   },
   {
     href: '/404',
-    title: '404 Error Page',
+    title: 'Página de Erro 404',
   },
   {
     href: '/apps/notes',
-    title: 'Notes App',
+    title: 'Aplicativo de Notas',
   },
   {
     href: '/apps/user-profile/profile',
-    title: 'User Application',
+    title: 'Aplicativo de Usuário',
   },
   {
     href: '/apps/blog/post',
-    title: 'Blog Design',
+    title: 'Design de Blog',
   },
   {
     href: '/apps/ecommerce/checkout',
-    title: 'Shopping Cart',
+    title: 'Carrinho de Compras',
   },
 ];
+
 
 export { notifications, profile, pageLinks, appsLink };

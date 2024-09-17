@@ -48,7 +48,7 @@ const AuthSocialButtons = ({ title }) => (
         >
           {title}{" "}
         </Box>{" "}
-        FB
+        Facebook
       </CustomSocialButton>
     </Stack>
   </>

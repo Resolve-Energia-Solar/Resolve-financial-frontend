@@ -1,14 +1,14 @@
-import { useState } from "react";
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Menu from '@mui/material/Menu';
 import Typography from '@mui/material/Typography';
-import Link from "next/link";
-import { IconChevronDown, IconHelp } from "@tabler/icons-react";
-import AppLinks from "./AppLinks";
-import QuickLinks from "./QuickLinks";
+import Link from 'next/link';
+import { IconChevronDown, IconHelp } from '@tabler/icons-react';
+import AppLinks from './AppLinks';
+import QuickLinks from './QuickLinks';
 
 const AppDD = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -31,18 +31,11 @@ const AppDD = () => {
           aria-controls="msgs-menu"
           aria-haspopup="true"
           sx={{
-            bgcolor: anchorEl2 ? "primary.light" : "",
-            color: anchorEl2
-              ? "primary.main"
-              : (theme) => theme.palette.text.secondary,
+            bgcolor: anchorEl2 ? 'primary.light' : '',
+            color: anchorEl2 ? 'primary.main' : (theme) => theme.palette.text.secondary,
           }}
           onClick={handleClick2}
-          endIcon={
-            <IconChevronDown
-              size="15"
-              style={{ marginLeft: "-5px", marginTop: "2px" }}
-            />
-          }
+          endIcon={<IconChevronDown size="15" style={{ marginLeft: '-5px', marginTop: '2px' }} />}
         >
           Apps
         </Button>
@@ -55,13 +48,13 @@ const AppDD = () => {
           keepMounted
           open={Boolean(anchorEl2)}
           onClose={handleClose2}
-          anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
-          transformOrigin={{ horizontal: "left", vertical: "top" }}
+          anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+          transformOrigin={{ horizontal: 'left', vertical: 'top' }}
           sx={{
-            "& .MuiMenu-paper": {
-              width: "850px",
+            '& .MuiMenu-paper': {
+              width: '850px',
             },
-            "& .MuiMenu-paper ul": {
+            '& .MuiMenu-paper ul': {
               p: 0,
             },
           }}
@@ -74,8 +67,8 @@ const AppDD = () => {
                 <Box
                   sx={{
                     display: {
-                      xs: "none",
-                      sm: "flex",
+                      xs: 'none',
+                      sm: 'flex',
                     },
                   }}
                   alignItems="center"
@@ -93,12 +86,9 @@ const AppDD = () => {
                       gap="4px"
                     >
                       <IconHelp width={24} />
-                      Frequently Asked Questions
+                      Perguntas frequentes
                     </Typography>
                   </Link>
-                  <Button variant="contained" color="primary">
-                    Check
-                  </Button>
                 </Box>
               </Box>
               <Divider orientation="vertical" />
@@ -127,7 +117,7 @@ const AppDD = () => {
         href="/apps/calendar"
         component={Link}
       >
-        Calendar
+        Calendário
       </Button>
       <Button
         color="inherit"

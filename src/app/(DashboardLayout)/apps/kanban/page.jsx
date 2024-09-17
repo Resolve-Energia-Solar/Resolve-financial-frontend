@@ -19,8 +19,8 @@ const BCrumb = [
 function page() {
   return (
     <KanbanDataContextProvider>
-      <PageContainer title="Kanban App" description="this is Kanban App">
-        <Breadcrumb title="Kanban app" items={BCrumb} />
+      <PageContainer title="Resolve Kanban" description="Kanban">
+        <Breadcrumb title="Resolve Kanban" items={BCrumb} />
         <BlankCard>
           <CardContent>
             <TaskManager />

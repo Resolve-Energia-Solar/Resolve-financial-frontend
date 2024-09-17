@@ -1,21 +1,22 @@
+"use client"
+
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import Logo from '@/app/(DashboardLayout)/layout/shared/logo/Logo';
 import PageContainer from '@/app/components/container/PageContainer';
-import AuthForgotPassword from '../../authForms/AuthForgotPassword';
+import Logo from '@/app/(DashboardLayout)/layout/shared/logo/Logo';
+import AuthLogin from '../authForms/AuthLogin';
 import Image from 'next/image';
 
-export default function ForgotPassword() {
+export default function Login() {
   return (
-    <PageContainer title="Forgot Password Page" description="this is Sample page">
-      <Grid container justifyContent="center" spacing={0} sx={{ overflowX: 'hidden' }}>
+    <PageContainer title="Login Page" description="this is Sample page">
+      <Grid container spacing={0} justifyContent="center" sx={{ height: '100vh' }}>
         <Grid
           item
           xs={12}
           sm={12}
-          lg={8}
-          xl={9}
+          lg={7}
+          xl={8}
           sx={{
             position: 'relative',
             '&:before': {
@@ -31,7 +32,7 @@ export default function ForgotPassword() {
           }}
         >
           <Box position="relative">
-            <Box px={3}>
+            <Box px={4}>
               <Logo />
             </Box>
             <Box
@@ -50,7 +51,8 @@ export default function ForgotPassword() {
                 alt="bg" width={500} height={500}
                 style={{
                   width: '100%',
-                  maxWidth: '500px', maxHeight: '500px',
+                  maxWidth: '500px',
+                  maxHeight: '500px',
                 }}
               />
             </Box>
@@ -60,22 +62,16 @@ export default function ForgotPassword() {
           item
           xs={12}
           sm={12}
-          lg={4}
-          xl={3}
+          lg={5}
+          xl={4}
           display="flex"
           justifyContent="center"
           alignItems="center"
         >
           <Box p={4}>
-            <Typography variant="h4" fontWeight="700">
-              Forgot your password?
-            </Typography>
-
-            <Typography color="textSecondary" variant="subtitle2" fontWeight="400" mt={2}>
-              Please enter the email address associated with your account and We will email you a link
-              to reset your password.
-            </Typography>
-            <AuthForgotPassword />
+            <AuthLogin
+              title="Bem vindo ao Resolve CRM"
+            />
           </Box>
         </Grid>
       </Grid>

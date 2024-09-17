@@ -6,13 +6,13 @@ import "./global.css";
 
 
 export const metadata = {
-  title: 'Modernize Nextjs',
-  description: 'Modernize Nextjs',
+  title: 'Resolve ERP',
+  description: 'Resolve ERP',
 }
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="pt-br" suppressHydrationWarning>
       <body>
         <Providers>
           <MyApp>{children}</MyApp>

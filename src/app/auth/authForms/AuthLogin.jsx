@@ -1,3 +1,7 @@
+"use client"
+
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -10,77 +14,127 @@ import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AuthSocialButtons from './AuthSocialButtons';
+import Cookies from 'js-cookie'; // Para gerenciar cookies
 
-const AuthLogin = ({ title, subtitle, subtext }) => (
-  <>
-    {title ? (
-      <Typography fontWeight="700" variant="h3" mb={1}>
-        {title}
-      </Typography>
-    ) : null}
+const AuthLogin = ({ title, subtitle, subtext }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
 
-    {subtext}
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError('');
 
-    <AuthSocialButtons title="Sign in with" />
-    <Box mt={3}>
-      <Divider>
-        <Typography
-          component="span"
-          color="textSecondary"
-          variant="h6"
-          fontWeight="400"
-          position="relative"
-          px={2}
-        >
-          or sign in with
+    try {
+      const response = await fetch('https://crm.resolvenergiasolar.com/api/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('API Error:', errorData);
+        throw new Error('Login failed');
+      }
+
+      const data = await response.json();
+      Cookies.set('currentUser', data.token, { expires: 1 });
+
+      router.push('/');
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('Falha no login. Verifique suas credenciais e tente novamente.');
+    }
+  };
+
+  return (
+    <>
+      {title ? (
+        <Typography fontWeight="700" variant="h3" mb={1}>
+          {title}
         </Typography>
-      </Divider>
-    </Box>
+      ) : null}
 
-    <Stack>
-      <Box>
-        <CustomFormLabel htmlFor="username">Username</CustomFormLabel>
-        <CustomTextField id="username" variant="outlined" fullWidth />
+      {subtext}
+
+      <AuthSocialButtons title="Logar com" />
+      <Box mt={3}>
+        <Divider>
+          <Typography
+            component="span"
+            color="textSecondary"
+            variant="h6"
+            fontWeight="400"
+            position="relative"
+            px={2}
+          >
+            ou logar com
+          </Typography>
+        </Divider>
       </Box>
-      <Box>
-        <CustomFormLabel htmlFor="password">Password</CustomFormLabel>
-        <CustomTextField id="password" type="password" variant="outlined" fullWidth />
-      </Box>
-      <Stack justifyContent="space-between" direction="row" alignItems="center" my={2}>
-        <FormGroup>
-          <FormControlLabel
-            control={<CustomCheckbox defaultChecked />}
-            label="Remeber this Device"
+
+      <Stack>
+        <Box>
+          <CustomFormLabel htmlFor="email">Usuário</CustomFormLabel>
+          <CustomTextField
+            id="email"
+            variant="outlined"
+            fullWidth
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
-        </FormGroup>
-        <Typography
-          component={Link}
-          href="/auth/auth1/forgot-password"
-          fontWeight="500"
-          sx={{
-            textDecoration: 'none',
-            color: 'primary.main',
-          }}
-        >
-          Forgot Password ?
-        </Typography>
+        </Box>
+        <Box>
+          <CustomFormLabel htmlFor="password">Senha</CustomFormLabel>
+          <CustomTextField
+            id="password"
+            type="password"
+            variant="outlined"
+            fullWidth
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </Box>
+        <Stack justifyContent="space-between" direction="row" alignItems="center" my={2}>
+          <FormGroup>
+            <FormControlLabel
+              control={<CustomCheckbox defaultChecked />}
+              label="Lembrar deste dispositivo"
+            />
+          </FormGroup>
+          <Typography
+            component={Link}
+            href="/auth/auth1/forgot-password"
+            fontWeight="500"
+            sx={{
+              textDecoration: 'none',
+              color: 'primary.main',
+            }}
+          >
+            Mudar senha ?
+          </Typography>
+        </Stack>
       </Stack>
-    </Stack>
-    <Box>
-      <Button
-        color="primary"
-        variant="contained"
-        size="large"
-        fullWidth
-        component={Link}
-        href="/"
-        type="submit"
-      >
-        Sign In
-      </Button>
-    </Box>
-    {subtitle}
-  </>
-);
+      <Box>
+        <Button
+          color="primary"
+          variant="contained"
+          size="large"
+          fullWidth
+          onClick={handleSubmit}
+          type="submit"
+        >
+          Entrar
+        </Button>
+      </Box>
+      {subtitle}
+      {error && <Typography color="error">{error}</Typography>}
+    </>
+  );
+};
 
 export default AuthLogin;

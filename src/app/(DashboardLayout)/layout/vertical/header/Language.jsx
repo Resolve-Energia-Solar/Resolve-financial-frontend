@@ -32,6 +32,11 @@ const Languages = [
     icon: "/images/flag/icon-flag-sa.svg",
     value: "ar",
   },
+  {
+    flagname: "Português",
+    icon: "/images/flag/brazil-.png",
+    value: "pt",
+  },
 ];
 
 const Language = () => {

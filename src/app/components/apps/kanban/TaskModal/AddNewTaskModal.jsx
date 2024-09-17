@@ -60,7 +60,7 @@ function AddNewList({
         component: "form",
       }}
     >
-      <DialogTitle>Add Task</DialogTitle>
+      <DialogTitle>Adicionar tarefa</DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
@@ -71,7 +71,7 @@ function AddNewList({
               }}
               htmlFor="task"
             >
-              Task Title *
+              Título da tarefa *
             </CustomFormLabel>
             <CustomTextField
               id="task"
@@ -91,7 +91,7 @@ function AddNewList({
                 mt: 0,
               }}
             >
-              Text*
+              Texto*
             </CustomFormLabel>
             <CustomTextField
               id="taskText"
@@ -111,7 +111,7 @@ function AddNewList({
                 mt: 0,
               }}
             >
-              Image URL*
+              Imagem URL*
             </CustomFormLabel>
             <CustomTextField
               id="taskImage"
