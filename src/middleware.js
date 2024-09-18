@@ -6,12 +6,11 @@ export function middleware(request) {
   console.log('Request URL:', request.nextUrl.pathname);
   console.log('Current User:', acesstoken);
 
-  if (request.nextUrl.pathname.startsWith('/auth')) {
+  if (request.nextUrl.pathname.startsWith('/auth') && acesstoken) {
+    if (request.nextUrl.pathname === '/auth/login') {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
     return NextResponse.next();
-  }
-
-  if (acesstoken && request.nextUrl.pathname === '/auth/login') {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
   if (!acesstoken) {
@@ -23,8 +22,9 @@ export function middleware(request) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.svg$|.*\\.gif$).*)'
+    '/((?!api|_next/static|_next/image|.*\\.(?:png|jpg|jpeg|svg|gif)$).*)'
   ],
 };
+
 
 
