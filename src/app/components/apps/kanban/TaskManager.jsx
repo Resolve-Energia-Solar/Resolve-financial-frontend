@@ -1,23 +1,52 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { supabase } from "@/utils/supabaseClient";
-import { Box, Typography, Paper, Stack, Chip, IconButton, Menu, MenuItem, Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Alert } from "@mui/material";
-import { IconDotsVertical, IconPlus } from "@tabler/icons-react";
-import KanbanHeader from './KanbanHeader'; 
-import SimpleBar from "simplebar-react";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { supabase } from '@/utils/supabaseClient';
+import {
+  Box,
+  Typography,
+  Paper,
+  Stack,
+  Chip,
+  IconButton,
+  Menu,
+  MenuItem,
+  Button,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Alert,
+} from '@mui/material';
+import { IconDotsVertical, IconPlus } from '@tabler/icons-react';
+import { Star, StarBorder, Email, Phone, AccessTime } from '@mui/icons-material'; // Ícones adicionais para Email, Telefone e Data de Criação
+import KanbanHeader from './KanbanHeader';
+import SimpleBar from 'simplebar-react';
 
 const moveLead = async (leadId, newCategoryId) => {
-  await supabase
-    .from("leads")
-    .update({ kanban_category_id: newCategoryId })
-    .eq("id", leadId);
+  await supabase.from('leads').update({ kanban_category_id: newCategoryId }).eq('id', leadId);
+};
+
+const getCategoryColor = (categoryName) => {
+  switch (categoryName) {
+    case 'Novo Lead':
+      return 'primary.light';
+    case 'Primeiro Contato':
+      return 'secondary.light';
+    case 'Segundo Contato':
+      return 'warning.light';
+    case 'Concluído':
+      return 'success.light';
+    default:
+      return 'grey.300';
+  }
 };
 
 const TaskManager = () => {
   const [categories, setCategories] = useState([]);
   const [leads, setLeads] = useState([]);
-  const [anchorEl, setAnchorEl] = useState(null); 
+  const [anchorEl, setAnchorEl] = useState(null);
   const [categoryAnchorEl, setCategoryAnchorEl] = useState(null);
   const [selectedLead, setSelectedLead] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -27,15 +56,12 @@ const TaskManager = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [editedCategoryName, setEditedCategoryName] = useState('');
   const [message, setMessage] = useState('');
-  const [showMessage, setShowMessage] = useState(false); 
+  const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data: categoriesData } = await supabase
-        .from("kanban_categories")
-        .select("*");
-
-      const { data: leadsData } = await supabase.from("leads").select("*");
+      const { data: categoriesData } = await supabase.from('kanban_categories').select('*');
+      const { data: leadsData } = await supabase.from('leads').select('*');
 
       setCategories(categoriesData);
       setLeads(leadsData);
@@ -60,14 +86,14 @@ const TaskManager = () => {
       prevLeads.map((lead) =>
         lead.id.toString() === draggableId
           ? { ...lead, kanban_category_id: destinationCategoryId }
-          : lead
-      )
+          : lead,
+      ),
     );
   };
 
   const addCategory = async (categoryName) => {
     const { data, error } = await supabase
-      .from("kanban_categories")
+      .from('kanban_categories')
       .insert([{ name: categoryName }]);
 
     if (data) {
@@ -77,7 +103,7 @@ const TaskManager = () => {
 
   const addLead = async (categoryId, leadName) => {
     const { data, error } = await supabase
-      .from("leads")
+      .from('leads')
       .insert([{ name: leadName, kanban_category_id: categoryId }]);
 
     if (data) {
@@ -127,14 +153,14 @@ const TaskManager = () => {
   const handleEditCategory = async () => {
     if (selectedCategory) {
       await supabase
-        .from("kanban_categories")
+        .from('kanban_categories')
         .update({ name: editedCategoryName })
-        .eq("id", selectedCategory.id);
+        .eq('id', selectedCategory.id);
 
       setCategories((prevCategories) =>
         prevCategories.map((cat) =>
-          cat.id === selectedCategory.id ? { ...cat, name: editedCategoryName } : cat
-        )
+          cat.id === selectedCategory.id ? { ...cat, name: editedCategoryName } : cat,
+        ),
       );
       setMessage(`Coluna "${editedCategoryName}" editada com sucesso!`);
       setShowMessage(true);
@@ -144,12 +170,11 @@ const TaskManager = () => {
 
   const handleDeleteCategory = async () => {
     if (selectedCategory) {
-      await supabase
-        .from("kanban_categories")
-        .delete()
-        .eq("id", selectedCategory.id);
+      await supabase.from('kanban_categories').delete().eq('id', selectedCategory.id);
 
-      setCategories((prevCategories) => prevCategories.filter((cat) => cat.id !== selectedCategory.id));
+      setCategories((prevCategories) =>
+        prevCategories.filter((cat) => cat.id !== selectedCategory.id),
+      );
       setMessage(`Coluna "${selectedCategory.name}" apagada com sucesso!`);
       setShowMessage(true);
       handleCloseModal();
@@ -158,14 +183,19 @@ const TaskManager = () => {
 
   const handleDeleteLead = async () => {
     if (selectedLead) {
-      await supabase
-        .from("leads")
-        .delete()
-        .eq("id", selectedLead.id);
+      await supabase.from('leads').delete().eq('id', selectedLead.id);
 
       setLeads((prevLeads) => prevLeads.filter((lead) => lead.id !== selectedLead.id));
       handleClose();
     }
+  };
+
+  const handleStarClick = async (leadId, stars) => {
+    await supabase.from('leads').update({ stars }).eq('id', leadId);
+
+    setLeads((prevLeads) =>
+      prevLeads.map((lead) => (lead.id === leadId ? { ...lead, stars } : lead)),
+    );
   };
 
   return (
@@ -180,14 +210,26 @@ const TaskManager = () => {
                   <Box
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    sx={{ minWidth: "300px", backgroundColor: "#f4f4f4", p: 2, maxHeight: "80vh", overflowY: "auto" }}
+                    sx={{
+                      minWidth: '300px',
+                      backgroundColor: getCategoryColor(category.name),
+                      p: 2,
+                      maxHeight: '80vh',
+                      overflowY: 'auto',
+                    }}
                   >
                     <Box display="flex" justifyContent="space-between" alignItems="center">
-                      <Typography variant="h6" gutterBottom>{category.name}</Typography>
+                      <Typography variant="h6" gutterBottom>
+                        {category.name}
+                      </Typography>
                       <IconButton onClick={(event) => handleCategoryClick(event, category)}>
                         <IconDotsVertical size="1rem" />
                       </IconButton>
-                      <Menu anchorEl={categoryAnchorEl} open={Boolean(categoryAnchorEl)} onClose={handleClose}>
+                      <Menu
+                        anchorEl={categoryAnchorEl}
+                        open={Boolean(categoryAnchorEl)}
+                        onClose={handleClose}
+                      >
                         <MenuItem onClick={handleOpenEditModal}>Editar Coluna</MenuItem>
                         <MenuItem onClick={handleOpenDeleteModal}>Deletar Coluna</MenuItem>
                       </Menu>
@@ -205,61 +247,52 @@ const TaskManager = () => {
                               sx={{
                                 p: 2,
                                 mb: 2,
-                                backgroundColor: snapshot.isDragging ? "#e0f7fa" : "white",
-                                transition: "background-color 0.2s ease",
+                                backgroundColor: snapshot.isDragging ? '#e0f7fa' : 'white',
+                                transition: 'background-color 0.2s ease',
                               }}
                             >
-                              <Box display="flex" justifyContent="space-between" alignItems="center">
+                              <Box
+                                display="flex"
+                                justifyContent="space-between"
+                                alignItems="center"
+                                gap={2}
+                              >
                                 <Typography variant="h6">{lead.name}</Typography>
-                                <IconButton onClick={(event) => handleLeadClick(event, lead)}>
-                                  <IconDotsVertical size="1rem" />
-                                </IconButton>
-                                <Menu
-                                  anchorEl={anchorEl}
-                                  open={Boolean(anchorEl)}
-                                  onClose={handleClose}
-                                >
-                                  <MenuItem onClick={() => console.log("Editar Lead")}>Editar</MenuItem>
-                                  <MenuItem onClick={handleDeleteLead}>Deletar</MenuItem>
-                                </Menu>
+                                <Box display="flex" alignItems="center">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <IconButton
+                                      key={star}
+                                      size="small"
+                                      onClick={() => handleStarClick(lead.id, star)}
+                                    >
+                                      {lead.stars >= star ? (
+                                        <Star sx={{ color: 'gold', fontSize: '1rem' }} />
+                                      ) : (
+                                        <StarBorder sx={{ color: 'grey', fontSize: '1rem' }} />
+                                      )}
+                                    </IconButton>
+                                  ))}
+                                </Box>
                               </Box>
-                              <Typography variant="body2">{lead.email}</Typography>
-                              <Stack direction="row" spacing={1} mt={1}>
-                                <Chip label={`Phone: ${lead.phone}`} />
-                              </Stack>
+                              <Box display="flex" alignItems="center" mt={1}>
+                                <Email sx={{ fontSize: '1rem', color: 'grey', mr: 1 }} />
+                                <Typography variant="body2">{lead.email}</Typography>
+                              </Box>
+                              <Box display="flex" alignItems="center" mt={1}>
+                                <Phone sx={{ fontSize: '1rem', color: 'grey', mr: 1 }} />
+                                <Typography variant="body2">{lead.phone}</Typography>
+                              </Box>
+                              <Box display="flex" alignItems="center" mt={1}>
+                                <AccessTime sx={{ fontSize: '1rem', color: 'grey', mr: 1 }} />
+                                <Typography variant="caption" color="textSecondary">
+                                  Criado em: {new Date(lead.created_at).toLocaleDateString('pt-BR')}
+                                </Typography>
+                              </Box>
                             </Paper>
                           )}
                         </Draggable>
                       ))}
                     {provided.placeholder}
-
-                    {showTaskInput === category.id ? (
-                      <Box mt={2}>
-                        <TextField
-                          value={newTaskName}
-                          onChange={(e) => setNewTaskName(e.target.value)}
-                          placeholder="Novo Lead"
-                          fullWidth
-                          size="small"
-                        />
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => addLead(category.id, newTaskName)}
-                          sx={{ mt: 1 }}
-                        >
-                          Adicionar Lead
-                        </Button>
-                      </Box>
-                    ) : (
-                      <Button
-                        startIcon={<IconPlus />}
-                        onClick={() => setShowTaskInput(category.id)}
-                        sx={{ mt: 2 }}
-                      >
-                        Adicionar Lead
-                      </Button>
-                    )}
                   </Box>
                 )}
               </Droppable>
@@ -284,7 +317,9 @@ const TaskManager = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModal}>Cancelar</Button>
-          <Button onClick={handleEditCategory} variant="contained" color="primary">Salvar</Button>
+          <Button onClick={handleEditCategory} variant="contained" color="primary">
+            Salvar
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -300,7 +335,9 @@ const TaskManager = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModal}>Cancelar</Button>
-          <Button onClick={handleDeleteCategory} color="error">Deletar</Button>
+          <Button onClick={handleDeleteCategory} color="error">
+            Deletar
+          </Button>
         </DialogActions>
       </Dialog>
     </>

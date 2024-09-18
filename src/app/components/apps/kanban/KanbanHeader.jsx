@@ -11,24 +11,30 @@ import {
   Typography,
   Box,
   Grid,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import CustomFormLabel from '../../forms/theme-elements/CustomFormLabel';
 import CustomTextField from '../../forms/theme-elements/CustomTextField';
 
 function KanbanHeader() {
-  const { addCategory, addLead, setError } = useContext(KanbanDataContext);
+  const { addCategory, addLead } = useContext(KanbanDataContext);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showLeadModal, setShowLeadModal] = useState(false);
   const [categoryName, setCategoryName] = useState('');
   const [leadName, setLeadName] = useState('');
   const [leadEmail, setLeadEmail] = useState('');
   const [leadPhone, setLeadPhone] = useState('');
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleCloseCategoryModal = () => setShowCategoryModal(false);
   const handleCloseLeadModal = () => setShowLeadModal(false);
   
   const handleShowCategoryModal = () => setShowCategoryModal(true);
   const handleShowLeadModal = () => setShowLeadModal(true);
+
+  const handleSnackbarClose = () => setSnackbarOpen(false);
 
   const handleSaveCategory = async () => {
     try {
@@ -37,8 +43,11 @@ function KanbanHeader() {
       addCategory(data[0]);
       setCategoryName('');
       setShowCategoryModal(false);
+      setSnackbarMessage('Categoria adicionada com sucesso!');
+      setSnackbarOpen(true);
     } catch (error) {
-      setError(error.message);
+      setSnackbarMessage(`Erro: ${error.message}`);
+      setSnackbarOpen(true);
     }
   };
 
@@ -50,6 +59,7 @@ function KanbanHeader() {
           email: leadEmail,
           phone: leadPhone,
           kanban_category_id: 1,
+          status: 'Novo Lead'
         }
       ]);
       if (error) throw error;
@@ -58,8 +68,11 @@ function KanbanHeader() {
       setLeadEmail('');
       setLeadPhone('');
       setShowLeadModal(false);
+      setSnackbarMessage('Lead adicionado com sucesso!');
+      setSnackbarOpen(true);
     } catch (error) {
-      setError(error.message);
+      setSnackbarMessage(`Erro: ${error.message}`);
+      setSnackbarOpen(true);
     }
   };
 
@@ -173,6 +186,17 @@ function KanbanHeader() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarMessage.includes('Erro') ? 'error' : 'success'}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

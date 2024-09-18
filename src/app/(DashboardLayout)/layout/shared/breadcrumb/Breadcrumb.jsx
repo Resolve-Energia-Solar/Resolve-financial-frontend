@@ -69,11 +69,11 @@ const Breadcrumb = ({ subtitle, items, title, children }) => (
           <>
             <Box sx={{ top: '0px', position: 'absolute' }}>
               <Image
-                src="/images/breadcrumb/ChatBc.png"
+                src="/images/breadcrumb/405.png"
                 alt={'breadcrumbImg'}
-                width="165"
-                height="165"
-                style={{ width: '165px', height: '165px' }}
+                width="150"
+                height="100"
+                style={{ width: '160px', height: '120px' }}
                 priority
               />
             </Box>
