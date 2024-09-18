@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useContext, useState } from 'react';
 import { IconPencil, IconDotsVertical, IconTrash, IconCalendar } from '@tabler/icons-react';
 import EditTaskModal from './TaskModal/EditTaskModal';
@@ -36,7 +36,6 @@ const TaskData = ({ task, onDeleteTask, index }) => {
     setAnchorEl(null);
   };
 
-
   const handleDeleteClick = () => onDeleteTask(task.id);
 
   const handleSaveEditedTask = async (editedTaskData) => {
@@ -55,7 +54,6 @@ const TaskData = ({ task, onDeleteTask, index }) => {
     }
   };
 
-
   const formatDate = (selectedDate) => {
     if (!selectedDate) return '';
     const dateObj = new Date(selectedDate);
@@ -65,25 +63,27 @@ const TaskData = ({ task, onDeleteTask, index }) => {
     return `${day} ${month} ${year}`;
   };
 
-  const backgroundColor =
-    editedTask.taskProperty === "Design"
-      ? "success.main"
-      : editedTask.taskProperty === "Development"
-        ? "warning.main"
-        : editedTask.taskProperty === "Mobile"
-          ? "primary.main"
-          : editedTask.taskProperty === "UX Stage"
-            ? "warning.main"
-            : editedTask.taskProperty === "Research"
-              ? "secondary.main"
-              : editedTask.taskProperty === "Data Science"
-                ? "error.main"
-                : editedTask.taskProperty === "Branding"
-                  ? "success.main"
-                  : "primary.contrastText";
+  const getCategoryColor = (category) => {
+    switch (category) {
+      case "Novo Lead":
+        return "primary.main";
+      case "Primeiro Contato":
+        return "warning.main";
+      case "Segundo Contato":
+        return "secondary.main";
+      case "Terceiro Contato":
+        return "error.main";
+      case "Concluído":
+        return "success.main";
+      default:
+        return "primary.contrastText";
+    }
+  };
+
+  const backgroundColor = getCategoryColor(editedTask.category); 
 
   return (
-    <Draggable draggableId={task.id} index={index}>
+    <Draggable draggableId={task.id.toString()} index={index}>
       {(provided) => (
         <Box
           mb={3}
@@ -98,6 +98,7 @@ const TaskData = ({ task, onDeleteTask, index }) => {
               display="flex"
               alignItems="center"
               justifyContent="space-between"
+              sx={{ backgroundColor }}
             >
               <Typography fontSize="14px" variant="h6">
                 {editedTask.task}
@@ -108,7 +109,6 @@ const TaskData = ({ task, onDeleteTask, index }) => {
                   aria-controls="long-menu"
                   aria-haspopup="true"
                   onClick={handleClick}
-
                 >
                   <IconDotsVertical size="1rem" />
                 </IconButton>
@@ -123,13 +123,13 @@ const TaskData = ({ task, onDeleteTask, index }) => {
                     <ListItemIcon>
                       <IconPencil size="1.2rem" />
                     </ListItemIcon>
-                    <ListItemText> Edit</ListItemText>
+                    <ListItemText> Editar</ListItemText>
                   </MenuItem>
                   <MenuItem onClick={handleDeleteClick}>
                     <ListItemIcon>
                       <IconTrash size="1.2rem" />{" "}
                     </ListItemIcon>
-                    <ListItemText> Delete</ListItemText>
+                    <ListItemText> Deletar</ListItemText>
                   </MenuItem>
                 </Menu>
                 <EditTaskModal
@@ -191,4 +191,3 @@ const TaskData = ({ task, onDeleteTask, index }) => {
 };
 
 export default TaskData;
-

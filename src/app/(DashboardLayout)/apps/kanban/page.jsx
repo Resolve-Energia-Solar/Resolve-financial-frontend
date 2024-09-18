@@ -1,8 +1,9 @@
-import React from "react";
+"use client";
+
+import {KanbanDataContextProvider} from '@/app/context/kanbancontext/index';
 import Breadcrumb from "@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb";
 import PageContainer from "@/app/components/container/PageContainer";
 import TaskManager from "@/app/components/apps/kanban/TaskManager";
-import { KanbanDataContextProvider } from "@/app/context/kanbancontext/index";
 import BlankCard from "@/app/components/shared/BlankCard";
 import { CardContent } from "@mui/material";
 

@@ -4,7 +4,7 @@ import mock from '../mock';
 const KanbanData = [
   {
     id: '1',
-    name: 'Todo',
+    name: 'Novo lead',
     child: [
       {
         id: '101',

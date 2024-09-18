@@ -1,111 +1,91 @@
 "use client";
-import { createContext, useState, useEffect } from "react"
-import axios from '@/utils/axios';
-
+import { createContext, useState, useEffect } from "react";
+import { supabase } from "@/utils/supabaseClient";
+import Cookies from "js-cookie";
 
 export const KanbanDataContext = createContext();
-const config = {
-    todoCategories: [],
-    error: null,
-}
 
 export const KanbanDataContextProvider = ({ children }) => {
-    const [todoCategories, setTodoCategories] = useState(config.todoCategories);
-    const [error, setError] = useState(config.error);
-    // Fetch todo data from the API 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('/api/TodoData');
-                setTodoCategories(response.data);
-                setError(null);
-            } catch (error) {
-                handleError(error.message);
-            }
-        };
-        fetchData();
-    }, []);
+  const [todoCategories, setTodoCategories] = useState([]);
+  const [error, setError] = useState(null);
 
+  useEffect(() => {
+    const fetchCategoriesAndLeads = async () => {
+      try {
+        const { data: categories, error: categoriesError } = await supabase
+          .from("kanban_categories")
+          .select("*");
 
-    const moveTask = (taskId, sourceCategoryId, destinationCategoryId, sourceIndex, destinationIndex) => {
-        setTodoCategories((prevCategories) => {
-            // Find the source and destination categories
-            const sourceCategoryIndex = prevCategories.findIndex(cat => cat.id.toString() === sourceCategoryId);
-            const destinationCategoryIndex = prevCategories.findIndex(cat => cat.id.toString() === destinationCategoryId);
-
-            if (sourceCategoryIndex === -1 || destinationCategoryIndex === -1) {
-                return prevCategories; // Return previous state if categories are not found
-            }
-            // Clone the source and destination categories
-            const updatedCategories = [...prevCategories];
-            const sourceCategory = { ...updatedCategories[sourceCategoryIndex] };
-            const destinationCategory = { ...updatedCategories[destinationCategoryIndex] };
-
-            // Remove the task from the source category
-            const taskToMove = sourceCategory.child.splice(sourceIndex, 1)[0];
-
-            // Insert the task into the destination category at the specified index
-            destinationCategory.child.splice(destinationIndex, 0, taskToMove);
-
-            // Update the categories in the state
-            updatedCategories[sourceCategoryIndex] = sourceCategory;
-            updatedCategories[destinationCategoryIndex] = destinationCategory;
-
-            return updatedCategories;
-        });
-    };
-
-    // Function to handle errors
-    const handleError = (errorMessage) => {
-        setError(errorMessage);
-    };
-    // Function to delete a category
-    const deleteCategory = async (categoryId, setTodoCategories) => {
-        try {
-            const response = await axios.delete('/api/TodoData', { data: { id: categoryId } });
-            setTodoCategories(response.data);
-            setError(null);
-        } catch (error) {
-            handleError(error.message);
+        if (categoriesError) {
+          throw new Error(categoriesError.message);
         }
-    };
-    // Function to clear all tasks in a category
-    const clearAllTasks = async (categoryId) => {
-        try {
-            const response = await axios.delete('/api/TodoData/clearTasks', { data: { categoryId } });
-            const updatedTodoData = response.data;
-            setTodoCategories(updatedTodoData);
-            setError(null);
-        } catch (error) {
-            handleError(error.message);
+
+        const { data: tasks, error: tasksError } = await supabase
+          .from("leads")
+          .select("*");
+
+        if (tasksError) {
+          throw new Error(tasksError.message);
         }
+
+        const categoriesWithTasks = categories.map((category) => ({
+          ...category,
+          child: tasks.filter((task) => task.category_id === category.id),
+        }));
+
+        setTodoCategories(categoriesWithTasks);
+      } catch (error) {
+        setError(error.message);
+      }
     };
-    // Function to add a new category
-    const addCategory = async (categoryName) => {
-        try {
-            const response = await axios.post('/api/TodoData/addCategory', { categoryName });
-            setTodoCategories(prevCategories => [...prevCategories, response.data]);
-            setError(null);
-        } catch (error) {
-            handleError(error.message);
-        }
-    };
-    // Function to delete a todo task
-    const deleteTodo = async (taskId, setTodoCategories) => {
-        try {
-            const response = await axios.delete('/api/TodoData/deleteTask', { data: { taskId } });
-            setTodoCategories(response.data);
 
-        } catch (error) {
-            handleError(error.message);
-        }
-    };
-    return (
-        <KanbanDataContext.Provider value={{ todoCategories, addCategory, deleteCategory, clearAllTasks, deleteTodo, setError, moveTask }}>
-            {children}
-        </KanbanDataContext.Provider>
-    );
-}
+    fetchCategoriesAndLeads();
+  }, []);
 
+  const addCategory = async (categoryName) => {
+    try {
+      const { data, error } = await supabase
+        .from("kanban_categories")
+        .insert([{ name: categoryName }])
+        .single();
 
+      if (error) throw error;
 
+      setTodoCategories((prevCategories) => [
+        ...prevCategories,
+        { ...data, child: [] },
+      ]);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const addTask = async (categoryId, newTaskData) => {
+    try {
+      const { data, error } = await supabase
+        .from("leads")
+        .insert([{ ...newTaskData, category_id: categoryId }])
+        .single();
+
+      if (error) throw error;
+
+      setTodoCategories((prevCategories) =>
+        prevCategories.map((category) =>
+          category.id === categoryId
+            ? { ...category, child: [...category.child, data] }
+            : category
+        )
+      );
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  return (
+    <KanbanDataContext.Provider
+      value={{ todoCategories, addCategory, addTask, error }}
+    >
+      {children}
+    </KanbanDataContext.Provider>
+  );
+};

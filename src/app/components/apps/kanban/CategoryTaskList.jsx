@@ -47,25 +47,18 @@ function CategoryTaskList({ id }) {
     imageURL: null,
   });
 
-
-
-  //Shows the modal for adding a new task.
   const handleShowModal = () => {
     setShowModal(true);
   };
-  // Closes the modal
   const handleCloseModal = () => {
     setShowModal(false);
   };
-  //  Shows the modal for editing a category.
   const handleShowEditCategoryModal = () => {
     setShowEditCategoryModal(true);
     handleClose();
   }
-  //Closes the modal for editing a category.
   const handleCloseEditCategoryModal = () => setShowEditCategoryModal(false);
 
-  //Updates the category name
   const handleUpdateCategory = async (updatedName) => {
     try {
       const response = await axios.post("/api/TodoData/updateCategory", {
@@ -81,7 +74,6 @@ function CategoryTaskList({ id }) {
       console.error("Error updating category:", error);
     }
   };
-  //Adds a new task to the category.
   const handleAddTask = async () => {
     try {
       const response = await axios.post("/api/TodoData/addTask", {
@@ -110,19 +102,16 @@ function CategoryTaskList({ id }) {
     }
   };
 
-  // Clears all tasks from the current category.
   const handleClearAll = () => {
     clearAllTasks(id);
     setAllTasks([]);
   };
-  // Deletes a specific task.
   const handleDeleteTask = (taskId) => {
     deleteTodo(taskId);
     setAllTasks((prevTasks) =>
       prevTasks.filter((task) => task.id !== taskId)
     );
   };
-  //Handles the deletion of the current category.
   const handleDeleteClick = () => {
     setShowContainer(false);
     deleteCategory(id);
