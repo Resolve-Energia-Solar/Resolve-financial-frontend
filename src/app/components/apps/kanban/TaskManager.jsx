@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import {
   Box,
@@ -15,7 +15,6 @@ import {
   Menu,
   MenuItem,
   Tooltip,
-  CircularProgress,
 } from '@mui/material';
 import {
   Star,
@@ -31,9 +30,8 @@ import {
   MoreVert,
 } from '@mui/icons-material';
 import SimpleBar from 'simplebar-react';
-import Cookies from 'js-cookie';
 
-const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn, onDeleteLead, onUpdateLead }) => {
+const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn }) => {
   const [leadStars, setLeadStars] = useState(() => {
     const initialStars = {};
     leads.forEach((lead) => {
@@ -42,9 +40,9 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn, onDeleteLe
     return initialStars;
   });
 
-  const [selectedLead, setSelectedLead] = useState(null); 
-  const [openModal, setOpenModal] = useState(false); 
-  const [anchorEl, setAnchorEl] = useState(null); 
+  const [selectedLead, setSelectedLead] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleStarClick = (leadId, stars) => {
     setLeadStars((prevStars) => ({
@@ -63,22 +61,12 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn, onDeleteLe
     setSelectedLead(null);
   };
 
-  const handleDeleteLead = () => {
-    onDeleteLead(selectedLead.id);
-    handleCloseModal();
-  };
-
-  const handleUpdateLead = () => {
-    onUpdateLead(selectedLead.id);
-    handleCloseModal(); 
-  };
-
   const handleOpenMenu = (event) => {
-    setAnchorEl(event.currentTarget); 
+    setAnchorEl(event.currentTarget);
   };
 
   const handleCloseMenu = () => {
-    setAnchorEl(null); 
+    setAnchorEl(null);
   };
 
   const getLeadsByStatus = (statusId) => {
@@ -153,7 +141,10 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn, onDeleteLe
                                   <IconButton
                                     key={star}
                                     size="small"
-                                    onClick={() => handleStarClick(lead.id, star)}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleStarClick(lead.id, star);
+                                    }}
                                   >
                                     {leadStars[lead.id] >= star ? (
                                       <Star sx={{ color: 'gold', fontSize: '1rem' }} />
@@ -217,12 +208,12 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn, onDeleteLe
 
               <Grid item xs={12} display="flex" justifyContent="space-between">
                 <Tooltip title="Atualizar Lead">
-                  <IconButton onClick={handleUpdateLead}>
+                  <IconButton>
                     <Edit color="primary" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Apagar Lead">
-                  <IconButton onClick={handleDeleteLead}>
+                  <IconButton>
                     <Delete color="error" />
                   </IconButton>
                 </Tooltip>
