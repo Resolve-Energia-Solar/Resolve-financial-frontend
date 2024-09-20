@@ -191,7 +191,7 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn, onDeleteLe
       </SimpleBar>
 
       {selectedLead && (
-        <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="sm">
+        <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="">
           <DialogTitle>Detalhes do Lead</DialogTitle>
           <DialogContent>
             <Grid container spacing={2}>

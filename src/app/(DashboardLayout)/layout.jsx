@@ -60,7 +60,7 @@ export default function RootLayout({ children }) {
         <Container
           sx={{
             pt: '1px',
-            maxWidth: "100%!important",
+            maxWidth: customizer.isLayout === "boxed" ? "lg" : "100%!important",
           }}
         >
           {/* ------------------------------------------- */}
