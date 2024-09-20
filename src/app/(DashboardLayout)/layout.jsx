@@ -59,17 +59,16 @@ export default function RootLayout({ children }) {
         {customizer.isHorizontal ? <Navigation /> : ""}
         <Container
           sx={{
-            pt: '30px',
-            maxWidth: customizer.isLayout === "boxed" ? "lg" : "100%!important",
+            pt: '1px',
+            maxWidth: "100%!important",
           }}
         >
           {/* ------------------------------------------- */}
           {/* PageContent */}
           {/* ------------------------------------------- */}
 
-          <Box sx={{ minHeight: "calc(100vh - 170px)" }}>
             {children}
-          </Box>
+         
 
           {/* ------------------------------------------- */}
           {/* End Page */}
