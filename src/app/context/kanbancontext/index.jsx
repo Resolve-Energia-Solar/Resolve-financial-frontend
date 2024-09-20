@@ -1,9 +1,10 @@
+'use client';
+
+
 import { createContext, useState } from 'react';
 
-// Criação do contexto
 export const KanbanDataContext = createContext();
 
-// Criação do provider
 export const KanbanDataContextProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [leads, setLeads] = useState([]);

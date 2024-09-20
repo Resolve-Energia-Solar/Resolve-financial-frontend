@@ -37,7 +37,7 @@ function KanbanPage() {
         throw new Error('Token de autenticação não encontrado.');
       }
 
-      const response = await fetch('https://crm.resolvenergiasolar.com/api/boards/', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -64,7 +64,7 @@ function KanbanPage() {
     setLoading(true);
     try {
       const token = Cookies.get('access_token');
-      const response = await fetch(`https://crm.resolvenergiasolar.com/api/boards/${boardId}/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${boardId}/`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -89,7 +89,7 @@ function KanbanPage() {
 
     try {
       const token = Cookies.get('access_token');
-      const response = await fetch(`https://crm.resolvenergiasolar.com/api/leads/${leadId}/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/leads/${leadId}/`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import {
   Box,
@@ -15,6 +15,7 @@ import {
   Menu,
   MenuItem,
   Tooltip,
+  CircularProgress,
 } from '@mui/material';
 import {
   Star,
@@ -30,6 +31,7 @@ import {
   MoreVert,
 } from '@mui/icons-material';
 import SimpleBar from 'simplebar-react';
+import Cookies from 'js-cookie';
 
 const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn, onDeleteLead, onUpdateLead }) => {
   const [leadStars, setLeadStars] = useState(() => {
@@ -191,7 +193,7 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn, onDeleteLe
       </SimpleBar>
 
       {selectedLead && (
-        <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="">
+        <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="sm">
           <DialogTitle>Detalhes do Lead</DialogTitle>
           <DialogContent>
             <Grid container spacing={2}>
