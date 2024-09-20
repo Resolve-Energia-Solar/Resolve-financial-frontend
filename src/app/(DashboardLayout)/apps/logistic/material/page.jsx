@@ -1,11 +1,11 @@
 "use client";
 
-// import {KanbanDataContextProvider} from '@/app/context/kanbancontext/index';
-// import Breadcrumb from "@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb";
-// import PageContainer from "@/app/components/container/PageContainer";
-// import TaskManager from "@/app/components/apps/kanban/TaskManager";
-// import BlankCard from "@/app/components/shared/BlankCard";
-// import { CardContent } from "@mui/material";
+import { KanbanDataContextProvider } from '@/app/context/kanbancontext/index';
+import Breadcrumb from "@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb";
+import PageContainer from "@/app/components/container/PageContainer";
+import ChildCard from '@/app/components/shared/ChildCard';
+import ListItem from '@/app/components/apps/logistic/ListItem';
+
 
 const BCrumb = [
   {
@@ -13,13 +13,20 @@ const BCrumb = [
     title: "Home",
   },
   {
-    title: "Kanban",
+    title: "Tipo de Material",
   },
 ];
 
 function page() {
   return (
-    <div>oi</div>
+    <KanbanDataContextProvider>
+      <PageContainer title="Material" description="Material">
+        <Breadcrumb title="Material" items={BCrumb} />
+        <ChildCard>
+          <ListItem />
+        </ChildCard>
+      </PageContainer>
+    </KanbanDataContextProvider>
   );
 }
 
