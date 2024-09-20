@@ -1,188 +1,174 @@
 'use client';
-import React, { useState, useContext } from 'react';
-import { KanbanDataContext } from '@/app/context/kanbancontext/index';
-import { supabase } from '@/utils/supabaseClient';
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Button,
-  Typography,
-  Box,
-  Grid,
-  Snackbar,
-  Alert
-} from '@mui/material';
-import CustomFormLabel from '../../forms/theme-elements/CustomFormLabel';
-import CustomTextField from '../../forms/theme-elements/CustomTextField';
+import React, { useState } from 'react';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Box, FormControl, InputLabel, Select, MenuItem, Snackbar, Alert } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
-function KanbanHeader() {
-  const { addCategory, addLead } = useContext(KanbanDataContext);
+function KanbanHeader({ boards, selectedBoard, columns, onBoardChange, onAddCategory, onAddLead }) {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showLeadModal, setShowLeadModal] = useState(false);
   const [categoryName, setCategoryName] = useState('');
   const [leadName, setLeadName] = useState('');
   const [leadEmail, setLeadEmail] = useState('');
   const [leadPhone, setLeadPhone] = useState('');
-  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [selectedColumn, setSelectedColumn] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // 'success' or 'error'
 
-  const handleCloseCategoryModal = () => setShowCategoryModal(false);
-  const handleCloseLeadModal = () => setShowLeadModal(false);
-  
   const handleShowCategoryModal = () => setShowCategoryModal(true);
+  const handleCloseCategoryModal = () => setShowCategoryModal(false);
+
   const handleShowLeadModal = () => setShowLeadModal(true);
+  const handleCloseLeadModal = () => setShowLeadModal(false);
 
-  const handleSnackbarClose = () => setSnackbarOpen(false);
+  const handleCloseSnackbar = () => setSnackbarOpen(false);
 
-  const handleSaveCategory = async () => {
-    try {
-      const { data, error } = await supabase.from('kanban_categories').insert([{ name: categoryName }]);
-      if (error) throw error;
-      addCategory(data[0]);
-      setCategoryName('');
-      setShowCategoryModal(false);
-      setSnackbarMessage('Categoria adicionada com sucesso!');
-      setSnackbarOpen(true);
-    } catch (error) {
-      setSnackbarMessage(`Erro: ${error.message}`);
-      setSnackbarOpen(true);
-    }
+  const handleSaveCategory = () => {
+    onAddCategory(categoryName);
+    setCategoryName('');
+    setShowCategoryModal(false);
+
+    // Exibir feedback de sucesso ao adicionar uma coluna
+    setSnackbarMessage('Coluna adicionada com sucesso!');
+    setSnackbarSeverity('success');
+    setSnackbarOpen(true);
   };
 
-  const handleSaveLead = async () => {
-    try {
-      const { data, error } = await supabase.from('leads').insert([
-        {
-          name: leadName,
-          email: leadEmail,
-          phone: leadPhone,
-          kanban_category_id: 1,
-          status: 'Novo Lead'
-        }
-      ]);
-      if (error) throw error;
-      addLead(data[0]);
-      setLeadName('');
-      setLeadEmail('');
-      setLeadPhone('');
-      setShowLeadModal(false);
-      setSnackbarMessage('Lead adicionado com sucesso!');
-      setSnackbarOpen(true);
-    } catch (error) {
-      setSnackbarMessage(`Erro: ${error.message}`);
-      setSnackbarOpen(true);
-    }
-  };
+  const handleSaveLead = () => {
+    onAddLead({
+      name: leadName,
+      email: leadEmail,
+      phone: leadPhone,
+      column: selectedColumn, // Passa a coluna selecionada ao criar o lead
+    });
+    setLeadName('');
+    setLeadEmail('');
+    setLeadPhone('');
+    setSelectedColumn('');
+    setShowLeadModal(false);
 
-  const isCategoryButtonDisabled = categoryName.trim().length === 0;
-  const isLeadButtonDisabled = leadName.trim().length === 0 || leadEmail.trim().length === 0 || leadPhone.trim().length === 0;
+    // Exibir feedback de sucesso ao adicionar um lead
+    setSnackbarMessage('Lead adicionado com sucesso!');
+    setSnackbarSeverity('success');
+    setSnackbarOpen(true);
+  };
 
   return (
-    <>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-        <Typography variant="h5">Gerenciamento de Leads</Typography>
-        <Box>
-          <Button variant="contained" onClick={handleShowLeadModal} sx={{ mr: 2 }}>
-            Adicionar Lead
-          </Button>
-          <Button variant="contained" onClick={handleShowCategoryModal}>
-            Adicionar Categoria
-          </Button>
-        </Box>
+    <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+      <Box display="flex" alignItems="center" gap={2}>
+        {/* Select de Quadros */}
+        <FormControl variant="outlined">
+          <InputLabel id="select-board-label">Selecionar Quadro</InputLabel>
+          <Select
+            labelId="select-board-label"
+            value={selectedBoard}
+            onChange={onBoardChange}
+            label="Selecionar Quadro"
+            sx={{
+              minWidth: '200px',
+              bgcolor: '#f0f0f0',
+              borderRadius: '10px',
+              '&:hover': {
+                bgcolor: '#e0e0e0',
+              },
+            }}
+          >
+            {boards.map((board) => (
+              <MenuItem key={board.id} value={board.id}>
+                {board.title}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Box>
 
-      <Dialog
-        open={showCategoryModal}
-        onClose={handleCloseCategoryModal}
-        maxWidth="lg"
-        sx={{ '.MuiDialog-paper': { width: '600px' } }}
-      >
-        <DialogTitle>Adicionar Categoria</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={3}>
-            <Grid item xs={12} lg={12}>
-              <CustomFormLabel htmlFor="category-name">Título da Categoria</CustomFormLabel>
-              <CustomTextField
-                autoFocus
-                id="category-name"
-                variant="outlined"
-                value={categoryName}
-                fullWidth
-                onChange={(e) => setCategoryName(e.target.value)}
-              />
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" onClick={handleCloseCategoryModal} color="error">
-            Cancelar
+      {/* Ocultar botões se nenhum quadro for selecionado */}
+      {selectedBoard && (
+        <Box display="flex" gap={2}>
+          <Button
+            variant="contained"
+            onClick={handleShowLeadModal}
+            startIcon={<AddIcon />}
+          >
+            Adicionar Lead
           </Button>
           <Button
             variant="contained"
-            onClick={handleSaveCategory}
-            color="primary"
-            disabled={isCategoryButtonDisabled}
+            onClick={handleShowCategoryModal}
+            startIcon={<AddIcon />}
           >
-            Adicionar Categoria
+            Adicionar Coluna
           </Button>
+        </Box>
+      )}
+
+      {/* Modal para adicionar coluna */}
+      <Dialog open={showCategoryModal} onClose={handleCloseCategoryModal}>
+        <DialogTitle>Adicionar Coluna</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Nome da Coluna"
+            fullWidth
+            value={categoryName}
+            onChange={(e) => setCategoryName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseCategoryModal}>Cancelar</Button>
+          <Button onClick={handleSaveCategory} disabled={!categoryName}>Adicionar</Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog
-        open={showLeadModal}
-        onClose={handleCloseLeadModal}
-        maxWidth="lg"
-        sx={{ '.MuiDialog-paper': { width: '600px' } }}
-      >
+      {/* Modal para adicionar lead */}
+      <Dialog open={showLeadModal} onClose={handleCloseLeadModal}>
         <DialogTitle>Adicionar Lead</DialogTitle>
         <DialogContent>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <CustomFormLabel htmlFor="lead-name">Nome do Lead</CustomFormLabel>
-              <CustomTextField
-                autoFocus
-                id="lead-name"
-                variant="outlined"
-                value={leadName}
-                fullWidth
-                onChange={(e) => setLeadName(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <CustomFormLabel htmlFor="lead-email">Email do Lead</CustomFormLabel>
-              <CustomTextField
-                id="lead-email"
-                variant="outlined"
-                value={leadEmail}
-                fullWidth
-                onChange={(e) => setLeadEmail(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <CustomFormLabel htmlFor="lead-phone">Telefone do Lead</CustomFormLabel>
-              <CustomTextField
-                id="lead-phone"
-                variant="outlined"
-                value={leadPhone}
-                fullWidth
-                onChange={(e) => setLeadPhone(e.target.value)}
-              />
-            </Grid>
-          </Grid>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Nome do Lead"
+            fullWidth
+            value={leadName}
+            onChange={(e) => setLeadName(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Email do Lead"
+            fullWidth
+            value={leadEmail}
+            onChange={(e) => setLeadEmail(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Telefone do Lead"
+            fullWidth
+            value={leadPhone}
+            onChange={(e) => setLeadPhone(e.target.value)}
+          />
+
+          {/* Select para selecionar a coluna do Lead */}
+          <FormControl fullWidth margin="dense">
+            <InputLabel id="select-column-label">Selecionar Coluna</InputLabel>
+            <Select
+              labelId="select-column-label"
+              value={selectedColumn}
+              onChange={(e) => setSelectedColumn(e.target.value)}
+              label="Selecionar Coluna"
+            >
+              {columns.map((column) => (
+                <MenuItem key={column.id} value={column.id}>
+                  {column.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" onClick={handleCloseLeadModal} color="error">
-            Cancelar
-          </Button>
-          <Button
-            variant="contained"
-            onClick={handleSaveLead}
-            color="primary"
-            disabled={isLeadButtonDisabled}
-          >
-            Adicionar Lead
+          <Button onClick={handleCloseLeadModal}>Cancelar</Button>
+          <Button onClick={handleSaveLead} disabled={!leadName || !leadEmail || !leadPhone || !selectedColumn}>
+            Adicionar
           </Button>
         </DialogActions>
       </Dialog>
@@ -190,14 +176,14 @@ function KanbanHeader() {
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert onClose={handleSnackbarClose} severity={snackbarMessage.includes('Erro') ? 'error' : 'success'}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
           {snackbarMessage}
         </Alert>
       </Snackbar>
-    </>
+    </Box>
   );
 }
 

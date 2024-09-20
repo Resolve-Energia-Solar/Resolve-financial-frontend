@@ -1,5 +1,3 @@
-// src/services/api/apiClient.js
-
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -9,7 +7,6 @@ const apiClient = axios.create({
   baseURL: API_BASE_URL,
 });
 
-// Interceptor de requisição para adicionar o token de autenticação
 apiClient.interceptors.request.use(
   (config) => {
     const token = Cookies.get('access_token');
@@ -21,11 +18,9 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Interceptor de resposta para lidar com erros globalmente
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Aqui você pode lidar com erros específicos, como redirecionar em caso de 401
     return Promise.reject(error);
   }
 );

@@ -15,6 +15,9 @@ import {
   Menu,
   MenuItem,
   Tooltip,
+  Snackbar,
+  TextField,
+  Alert,
 } from '@mui/material';
 import {
   Star,
@@ -31,7 +34,13 @@ import {
 } from '@mui/icons-material';
 import SimpleBar from 'simplebar-react';
 
-const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn }) => {
+const TaskManager = ({
+  leads = [],
+  statuses = [],
+  onUpdateLeadColumn,
+  onUpdateLead,
+  onDeleteLead,
+}) => {
   const [leadStars, setLeadStars] = useState(() => {
     const initialStars = {};
     leads.forEach((lead) => {
@@ -39,9 +48,14 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn }) => {
     });
     return initialStars;
   });
-
   const [selectedLead, setSelectedLead] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [leadName, setLeadName] = useState('');
+  const [leadEmail, setLeadEmail] = useState('');
+  const [leadPhone, setLeadPhone] = useState('');
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleStarClick = (leadId, stars) => {
@@ -53,12 +67,16 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn }) => {
 
   const handleLeadClick = (lead) => {
     setSelectedLead(lead);
+    setLeadName(lead.name);
+    setLeadEmail(lead.contact_email);
+    setLeadPhone(lead.phone);
     setOpenModal(true);
   };
 
   const handleCloseModal = () => {
     setOpenModal(false);
     setSelectedLead(null);
+    setEditMode(false);
   };
 
   const handleOpenMenu = (event) => {
@@ -94,6 +112,51 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn }) => {
       default:
         return '#f5f5f5';
     }
+  };
+
+  const handleUpdateLead = async () => {
+    if (selectedLead) {
+      const updatedLead = {
+        ...selectedLead, 
+        name: leadName.trim(),
+        contact_email: leadEmail.trim(),
+        phone: leadPhone.trim(),
+        column: selectedLead.column.id, // Garante que estamos enviando apenas o ID da coluna
+      };
+  
+      console.log('selectedLead:', selectedLead);
+      console.log('Dados enviados para a API de atualização:', updatedLead);
+  
+      try {
+        await onUpdateLead(updatedLead); // Função que faz a atualização do lead
+        setSnackbarMessage('Lead atualizado com sucesso!');
+        setSnackbarOpen(true);
+        handleCloseModal(); // Fecha o modal após a atualização
+      } catch (error) {
+        setSnackbarMessage('Erro ao atualizar lead.');
+        setSnackbarOpen(true);
+        console.error('Erro ao atualizar lead:', error);
+      }
+    }
+  };
+  
+
+  const handleDeleteLead = async () => {
+    if (selectedLead) {
+      try {
+        await onDeleteLead(selectedLead.id);
+        setSnackbarMessage('Lead excluído com sucesso!');
+        setSnackbarOpen(true);
+        handleCloseModal();
+      } catch (error) {
+        setSnackbarMessage('Erro ao excluir lead.');
+        setSnackbarOpen(true);
+      }
+    }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -184,18 +247,45 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn }) => {
       </SimpleBar>
 
       {selectedLead && (
-        <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="sm">
-          <DialogTitle>Detalhes do Lead</DialogTitle>
+        <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="xl">
+          <DialogTitle>{editMode ? 'Editar Lead' : 'Detalhes do Lead'}</DialogTitle>
           <DialogContent>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <Typography variant="h6">Nome: {selectedLead.name}</Typography>
+                {editMode ? (
+                  <TextField
+                    fullWidth
+                    label="Nome"
+                    value={leadName}
+                    onChange={(e) => setLeadName(e.target.value)}
+                  />
+                ) : (
+                  <Typography variant="h6">Nome: {selectedLead.name}</Typography>
+                )}
               </Grid>
               <Grid item xs={12}>
-                <Typography variant="body1">Email: {selectedLead.contact_email}</Typography>
+                {editMode ? (
+                  <TextField
+                    fullWidth
+                    label="Email"
+                    value={leadEmail}
+                    onChange={(e) => setLeadEmail(e.target.value)}
+                  />
+                ) : (
+                  <Typography variant="body1">Email: {selectedLead.contact_email}</Typography>
+                )}
               </Grid>
               <Grid item xs={12}>
-                <Typography variant="body1">Telefone: {selectedLead.phone}</Typography>
+                {editMode ? (
+                  <TextField
+                    fullWidth
+                    label="Telefone"
+                    value={leadPhone}
+                    onChange={(e) => setLeadPhone(e.target.value)}
+                  />
+                ) : (
+                  <Typography variant="body1">Telefone: {selectedLead.phone}</Typography>
+                )}
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="body1">
@@ -207,14 +297,9 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn }) => {
               </Grid>
 
               <Grid item xs={12} display="flex" justifyContent="space-between">
-                <Tooltip title="Atualizar Lead">
-                  <IconButton>
+                <Tooltip title="Editar Lead">
+                  <IconButton onClick={() => setEditMode(true)}>
                     <Edit color="primary" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Apagar Lead">
-                  <IconButton>
-                    <Delete color="error" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Fluxo Atual">
@@ -241,9 +326,20 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn }) => {
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseModal} color="primary">
-              Fechar
-            </Button>
+            {editMode ? (
+              <>
+                <Button onClick={handleUpdateLead} color="primary">
+                  Salvar
+                </Button>
+                <Button onClick={() => setEditMode(false)} color="secondary">
+                  Cancelar
+                </Button>
+              </>
+            ) : (
+              <Button onClick={handleCloseModal} color="primary">
+                Fechar
+              </Button>
+            )}
           </DialogActions>
 
           <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
@@ -252,6 +348,20 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn }) => {
           </Menu>
         </Dialog>
       )}
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarMessage.includes('Erro') ? 'error' : 'success'}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };
