@@ -1,11 +1,12 @@
-"use client";
+'use client';
 
+import React, { useState, useEffect } from 'react';
 import { KanbanDataContextProvider } from '@/app/context/kanbancontext/index';
 import Breadcrumb from "@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb";
 import PageContainer from "@/app/components/container/PageContainer";
 import ChildCard from '@/app/components/shared/ChildCard';
-import ListItem from '@/app/components/apps/logistic/ListItem';
-
+import branchService from '@/services/branchService';
+import ListItem from '@/app/components/apps/branch/ListItem';
 
 const BCrumb = [
   {
@@ -13,21 +14,52 @@ const BCrumb = [
     title: "Home",
   },
   {
-    title: "Tipo de Material",
+    title: "Filiais",
   },
 ];
 
-function page() {
+function Page() {
+  const [branches, setBranches] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const data = await branchService.getBranch();
+        setBranches(data.results);
+      } catch (err) {
+        setError('Erro ao carregar branches');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBranches(); 
+  }, []);
+
+  if (loading) {
+    return <div>Carregando...</div>; 
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <KanbanDataContextProvider>
-      <PageContainer title="Material" description="Material">
-        <Breadcrumb title="Material" items={BCrumb} />
+      <PageContainer title="Filiais" description="Lista de filiais">
+        <Breadcrumb title="Filiais" items={BCrumb} />
         <ChildCard>
-          <ListItem />
+          {branches.length > 0 ? (
+            <ListItem branches={branches} onDelete={(id) => console.log(`Deletar filial ${id}`)} />
+          ) : (
+            <div>Nenhuma filial encontrada</div>
+          )}
         </ChildCard>
       </PageContainer>
     </KanbanDataContextProvider>
   );
 }
 
-export default page;
+export default Page;
