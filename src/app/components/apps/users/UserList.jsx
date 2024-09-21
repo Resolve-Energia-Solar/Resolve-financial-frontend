@@ -1,18 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { List, Box, InputAdornment, TextField, CircularProgress, Typography } from '@mui/material';
-import { IconSearch, IconUser } from '@tabler/icons-react';
-import Scrollbar from '../../custom-scroll/Scrollbar';
-import ContactListItem from './UserListItem';
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, IconButton, Typography, CircularProgress, Avatar, Switch } from '@mui/material';
+import { IconTrash, IconUser, IconBriefcase, IconCalendar, IconHash, IconMail } from '@tabler/icons-react';
 import userService from '@/services/userService';
+import { Slide, Zoom } from '@mui/material';
 
 function UserList({ showrightSidebar }) {
   const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -20,7 +17,6 @@ function UserList({ showrightSidebar }) {
         const data = await userService.getUser();
         if (data && data.results) {
           setUsers(data.results);
-          setFilteredUsers(data.results);
         } else {
           throw new Error('Estrutura de dados inesperada');
         }
@@ -34,81 +30,163 @@ function UserList({ showrightSidebar }) {
     fetchUsers();
   }, []);
 
-  const handleSearch = (e) => {
-    const value = e.target.value.toLowerCase();
-    setSearchTerm(value);
-    const filtered = users.filter((user) =>
-      user.first_name.toLowerCase().includes(value) || user.last_name.toLowerCase().includes(value)
-    );
-    setFilteredUsers(filtered);
-  };
-
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-        <CircularProgress />
-        <Typography sx={{ ml: 2 }}>Carregando usuários...</Typography>
+        <CircularProgress color="primary" />
       </Box>
     );
   }
 
   if (error) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-        <Typography color="error">{error}</Typography>
-      </Box>
-    );
+    return <div>{error}</div>;
   }
 
   return (
-    <>
-      <Box display="flex" sx={{ p: 2 }}>
-        <TextField
-          id="outlined-basic"
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconSearch size="16" />
-              </InputAdornment>
-            ),
+    <Box mt={2}>
+      <Slide direction="up" in={true} mountOnEnter unmountOnExit>
+        <TableContainer
+          sx={{
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '8px',
+            overflow: 'auto',
+            backgroundColor: '#f9f9f9',
           }}
-          fullWidth
-          size="small"
-          value={searchTerm}
-          placeholder="Pesquisar Usuário"
-          variant="outlined"
-          onChange={handleSearch}
-        />
-      </Box>
+        >
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '150px' }}>
+                    <IconUser size={20} style={{ marginRight: '8px' }} />
+                    Foto
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '200px' }}>
+                    <IconHash size={20} style={{ marginRight: '8px' }} />
+                    Nome de Usuário
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '200px' }}>
+                    <IconUser size={20} style={{ marginRight: '8px' }} />
+                    Nome Completo
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '250px' }}>
+                    <IconMail size={20} style={{ marginRight: '8px' }} />
+                    Email
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '150px' }}>
+                    <IconBriefcase size={20} style={{ marginRight: '8px' }} />
+                    Setor
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '150px' }}>
+                    <IconBriefcase size={20} style={{ marginRight: '8px' }} />
+                    Cargo
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '150px' }}>
+                    <IconCalendar size={20} style={{ marginRight: '8px' }} />
+                    Admissão
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '100px' }}>
+                    Ativo
+                  </Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <Typography variant="h6" sx={{ minWidth: '100px' }}>Ação</Typography>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {users.map((user, index) => (
+                <Zoom
+                  key={user.id}
+                  in={true}
+                  style={{ transitionDelay: `${index * 100}ms` }}
+                >
+                  <TableRow hover>
+                    <TableCell>
+                      <Avatar
+                        src={user.profile_picture}
+                        alt={`${user.first_name} ${user.last_name}`}
+                        sx={{ width: 40, height: 40 }}
+                      />
+                    </TableCell>
 
-      <Scrollbar
-        sx={{
-          height: { lg: 'calc(100vh - 100px)', md: '100vh' },
-          maxHeight: '800px',
-          p: 2,
-        }}
-      >
-        <List>
-          {filteredUsers.length > 0 ? (
-            filteredUsers.map((user) => (
-              <ContactListItem
-                key={user.id}
-                first_name={user.first_name}
-                last_name={user.last_name}
-                profile_picture={user.profile_picture || '/images/default-profile.png'}
-                department={user.department}
-                onContactClick={() => showrightSidebar()}
-              />
-            ))
-          ) : (
-            <Box display="flex" justifyContent="center" mt={4}>
-              <Typography>Nenhum usuário encontrado</Typography>
-            </Box>
-          )}
-        </List>
-      </Scrollbar>
-    </>
+                    <TableCell>
+                      <Typography variant="body1" color="textSecondary">
+                        {user.username || '—'}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="h6" fontWeight={600} noWrap>
+                        {user.first_name} {user.last_name}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body1" noWrap>
+                        {user.email || '—'}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body1" noWrap>
+                        {user.department || '—'}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body1" noWrap>
+                        {user.cargo || '—'}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body1" noWrap>
+                        {user.date_joined ? new Date(user.date_joined).toLocaleDateString() : '—'}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Switch
+                        checked={user.is_active}
+                        inputProps={{ 'aria-label': 'Ativo/Inativo' }}
+                        disabled
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <Tooltip title="Deletar Usuário">
+                        <IconButton
+                          onClick={() => console.log(`Deletar usuário ${user.id}`)}
+                          sx={{
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                              backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                              transform: 'scale(1.1)',
+                            },
+                          }}
+                        >
+                          <IconTrash size="24" />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                </Zoom>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Slide>
+    </Box>
   );
 }
 
 export default UserList;
+

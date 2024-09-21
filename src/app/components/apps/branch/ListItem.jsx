@@ -64,11 +64,7 @@ const ListItem = ({ branches = [], onDelete }) => {
             </TableHead>
             <TableBody>
               {branches.map((branch, index) => (
-                <Zoom
-                  key={branch.id}
-                  in={true}
-                  style={{ transitionDelay: `${index * 100}ms` }}
-                >
+                <Zoom key={branch.id} in={true} style={{ transitionDelay: `${index * 100}ms` }}>
                   <TableRow hover>
                     <TableCell>
                       <Typography variant="body1" color="textSecondary">
