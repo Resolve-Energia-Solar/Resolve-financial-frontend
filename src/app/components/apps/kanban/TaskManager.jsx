@@ -247,7 +247,7 @@ const TaskManager = ({
       </SimpleBar>
 
       {selectedLead && (
-        <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="xl">
+        <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="sm">
           <DialogTitle>{editMode ? 'Editar Lead' : 'Detalhes do Lead'}</DialogTitle>
           <DialogContent>
             <Grid container spacing={2}>
