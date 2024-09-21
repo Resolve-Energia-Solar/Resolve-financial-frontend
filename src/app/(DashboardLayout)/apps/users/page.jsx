@@ -1,4 +1,3 @@
-import { KanbanDataContextProvider } from '@/app/context/kanbancontext/index';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
 import ChildCard from '@/app/components/shared/ChildCard';

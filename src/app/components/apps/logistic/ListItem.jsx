@@ -18,7 +18,6 @@ import { useTheme } from '@mui/material/styles';
 import { fetchTickets, DeleteTicket, SearchTicket } from '@/store/apps/tickets/TicketSlice';
 import { IconTrash } from '@tabler/icons-react';
 import { Switch } from '@mui/material';
-import Cookies from 'js-cookie';
 
 const ListItem = async () => {
   const dispatch = useDispatch();

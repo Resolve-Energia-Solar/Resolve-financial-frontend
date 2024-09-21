@@ -4,7 +4,7 @@ import { KanbanDataContextProvider } from '@/app/context/kanbancontext/index';
 import Breadcrumb from "@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb";
 import PageContainer from "@/app/components/container/PageContainer";
 import ChildCard from '@/app/components/shared/ChildCard';
-import ListItem from '@/app/components/apps/logistic/ListItem';
+import ListItem from '@/app/components/apps/squads/ListItem';
 
 
 const BCrumb = [
@@ -13,15 +13,15 @@ const BCrumb = [
     title: "Home",
   },
   {
-    title: "Tipo de Material",
+    title: "Times",
   },
 ];
 
 function page() {
   return (
     <KanbanDataContextProvider>
-      <PageContainer title="Material" description="Material">
-        <Breadcrumb title="Material" items={BCrumb} />
+      <PageContainer title="Times" description="Times">
+        <Breadcrumb title="Times" items={BCrumb} />
         <ChildCard>
           <ListItem />
         </ChildCard>

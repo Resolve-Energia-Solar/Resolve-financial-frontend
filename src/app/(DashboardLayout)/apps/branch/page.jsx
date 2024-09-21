@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { KanbanDataContextProvider } from '@/app/context/kanbancontext/index';
 import Breadcrumb from "@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb";
 import PageContainer from "@/app/components/container/PageContainer";
 import ChildCard from '@/app/components/shared/ChildCard';
@@ -47,7 +46,6 @@ function Page() {
   }
 
   return (
-    <KanbanDataContextProvider>
       <PageContainer title="Filiais" description="Lista de filiais">
         <Breadcrumb title="Filiais" items={BCrumb} />
         <ChildCard>
@@ -58,7 +56,6 @@ function Page() {
           )}
         </ChildCard>
       </PageContainer>
-    </KanbanDataContextProvider>
   );
 }
 
