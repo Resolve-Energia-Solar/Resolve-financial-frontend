@@ -1,19 +1,18 @@
-// UserList.js
 'use client';
-import { useState, useEffect } from 'react';
-import List from '@mui/material/List';
+
+import React, { useState, useEffect } from 'react';
+import { List, Box, InputAdornment, TextField, CircularProgress, Typography } from '@mui/material';
+import { IconSearch, IconUser } from '@tabler/icons-react';
 import Scrollbar from '../../custom-scroll/Scrollbar';
 import ContactListItem from './UserListItem';
 import userService from '@/services/userService';
-import { Box, InputAdornment, TextField } from '@mui/material';
-import { IconSearch } from '@tabler/icons-react';
 
 function UserList({ showrightSidebar }) {
-  const [users, setUsers] = useState([]); 
-  const [filteredUsers, setFilteredUsers] = useState([]); 
-  const [loading, setLoading] = useState(true); 
+  const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(''); 
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -45,11 +44,20 @@ function UserList({ showrightSidebar }) {
   };
 
   if (loading) {
-    return <div>Carregando...</div>;
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <CircularProgress />
+        <Typography sx={{ ml: 2 }}>Carregando usuários...</Typography>
+      </Box>
+    );
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <Typography color="error">{error}</Typography>
+      </Box>
+    );
   }
 
   return (
@@ -77,6 +85,7 @@ function UserList({ showrightSidebar }) {
         sx={{
           height: { lg: 'calc(100vh - 100px)', md: '100vh' },
           maxHeight: '800px',
+          p: 2,
         }}
       >
         <List>
@@ -86,13 +95,15 @@ function UserList({ showrightSidebar }) {
                 key={user.id}
                 first_name={user.first_name}
                 last_name={user.last_name}
-                profile_picture={user.profile_picture}
+                profile_picture={user.profile_picture || '/images/default-profile.png'}
                 department={user.department}
                 onContactClick={() => showrightSidebar()}
               />
             ))
           ) : (
-            <div>Nenhum usuário encontrado</div>
+            <Box display="flex" justifyContent="center" mt={4}>
+              <Typography>Nenhum usuário encontrado</Typography>
+            </Box>
           )}
         </List>
       </Scrollbar>

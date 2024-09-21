@@ -1,62 +1,41 @@
+'use client';
+
 import React from 'react';
-import { useSelector } from 'react-redux';
-import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { useTheme } from '@mui/material/styles';
-import { IconStar, IconTrash } from '@tabler/icons-react';
-import { Switch } from '@mui/material';
+import { ListItem, ListItemAvatar, ListItemText, Avatar, Box, IconButton } from '@mui/material';
+import { IconUser, IconStar, IconTrash } from '@tabler/icons-react';
 
-const UserListItem = ({
-  onContactClick,
-  onStarredClick,
-  onDeleteClick,
-  id,
-  first_name,
-  last_name,
-  profile_picture,
-  department,
-  starred,
-  active,
-}) => {
-  const customizer = useSelector((state) => state.customizer);
-  const br = `${customizer.borderRadius}px`;
-
-  const theme = useTheme();
-
-  const warningColor = theme.palette.warning.main;
-
+const ContactListItem = ({ first_name, last_name, profile_picture, department, onContactClick }) => {
   return (
-    <ListItemButton sx={{ mb: 1 }} selected={active}>
+    <ListItem
+      button
+      onClick={onContactClick}
+      sx={{
+        mb: 1,
+        p: 2,
+        borderRadius: '8px',
+        backgroundColor: '#f0f0f0',
+        '&:hover': { backgroundColor: '#e0e0e0' },
+        transition: 'all 0.3s ease',
+      }}
+    >
       <ListItemAvatar>
-        <Avatar alt={profile_picture} src={profile_picture} />
+        <Avatar alt={first_name} src={profile_picture}>
+          <IconUser />
+        </Avatar>
       </ListItemAvatar>
-      <ListItemText>
-        <Stack direction="row" gap="10px" alignItems="center">
-          <Box mr="auto" onClick={onContactClick}>
-            <Typography variant="subtitle1" noWrap fontWeight={600} sx={{ maxWidth: '150px' }}>
-              {first_name} {last_name}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" noWrap>
-              {department}
-            </Typography>
-          </Box>
-          <Switch
-            onClick={onStarredClick}
-            size="16"
-            stroke={1.5}
-            style={{ fill: starred ? warningColor : '', stroke: starred ? warningColor : '' }}
-          />
-          <IconTrash onClick={onDeleteClick} size="16" stroke={1.5} />
-        </Stack>
-      </ListItemText>
-    </ListItemButton>
+      <ListItemText
+        primary={`${first_name} ${last_name}`}
+        secondary={department}
+        primaryTypographyProps={{ fontWeight: 'bold', fontSize: '1rem' }}
+      />
+      <Box>
+        <IconButton>
+          <IconTrash size="20" color="red" />
+        </IconButton>
+      </Box>
+    </ListItem>
   );
 };
 
+export default ContactListItem;
 
-export default UserListItem;

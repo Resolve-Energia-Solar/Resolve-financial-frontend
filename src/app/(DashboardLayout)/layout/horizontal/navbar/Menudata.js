@@ -145,7 +145,7 @@ const Menuitems = [
       },
       {
         id: uniqueId(),
-        title: 'Kanban',
+        title: 'Quadros',
         icon: IconPoint,
         href: '/apps/boards',
       },

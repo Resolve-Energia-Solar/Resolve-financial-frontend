@@ -83,7 +83,7 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Kanban',
+    title: 'Quadros',
     icon: IconLayoutKanban,
     href: '/apps/boards',
   },
@@ -104,12 +104,6 @@ const Menuitems = [
     title: 'Unidades',
     icon: IconBuilding,
     href: '/apps/branch',
-  },
-  {
-    id: uniqueId(),
-    title: 'Endereços',
-    icon: IconMapPin,
-    href: '/apps/address',
   },
   {
     id: uniqueId(),
