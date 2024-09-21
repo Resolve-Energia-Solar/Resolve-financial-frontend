@@ -4,25 +4,24 @@ import { useState, useEffect } from 'react';
 import List from '@mui/material/List';
 import Scrollbar from '../../custom-scroll/Scrollbar';
 import ContactListItem from './UserListItem';
-import userService from '@/services/userService'; // Serviço para pegar os usuários da API
+import userService from '@/services/userService';
 import { Box, InputAdornment, TextField } from '@mui/material';
 import { IconSearch } from '@tabler/icons-react';
 
 function UserList({ showrightSidebar }) {
-  const [users, setUsers] = useState([]); // Estado para armazenar os usuários
-  const [filteredUsers, setFilteredUsers] = useState([]); // Estado para armazenar usuários filtrados
-  const [loading, setLoading] = useState(true); // Estado de carregamento
-  const [error, setError] = useState(null); // Estado para lidar com erros
-  const [searchTerm, setSearchTerm] = useState(''); // Estado para o termo de busca
+  const [users, setUsers] = useState([]); 
+  const [filteredUsers, setFilteredUsers] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(''); 
 
   useEffect(() => {
-    // Função para buscar os usuários
     const fetchUsers = async () => {
       try {
         const data = await userService.getUser();
         if (data && data.results) {
           setUsers(data.results);
-          setFilteredUsers(data.results); // Inicializa com todos os usuários
+          setFilteredUsers(data.results);
         } else {
           throw new Error('Estrutura de dados inesperada');
         }
@@ -36,7 +35,6 @@ function UserList({ showrightSidebar }) {
     fetchUsers();
   }, []);
 
-  // Função de busca para filtrar usuários
   const handleSearch = (e) => {
     const value = e.target.value.toLowerCase();
     setSearchTerm(value);
