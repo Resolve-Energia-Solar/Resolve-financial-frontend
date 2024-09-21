@@ -1,9 +1,9 @@
-import apiClient from './apiClient';
+import apiDocumentSign from './apiDocumentSign';
 
 const ClickSignService = {
     v1: {
         createDocumentModel: async (templateKey, access_token, data, path) => {
-            apiClient.post(`/api/v1/templates/${templateKey}/documents?access_token=${access_token}`),
+            apiDocumentSign.post(`/api/v1/templates/${templateKey}/documents?access_token=${access_token}`),
             {
                 body: {
                     "document": {
@@ -17,7 +17,7 @@ const ClickSignService = {
 
         },
         createSigner: async (access_token, documentation = null, birthday = null, phone_number, email, name, auth, methods) => {
-            apiClient.post(`/api/v1/signers?access_token=${access_token}`), {
+            apiDocumentSign.post(`/api/v1/signers?access_token=${access_token}`), {
                 body: {
                     "signer": {
                         "email": email,
@@ -34,7 +34,7 @@ const ClickSignService = {
             }
         },
         AddSignerDocument: async (access_token, signer_key, document_key, message = '', sign_as, refusable = true) => {
-            apiClient.post(`/api/v1/signers?access_token=${access_token}`), {
+            apiDocumentSign.post(`/api/v1/signers?access_token=${access_token}`), {
                 list: {
                     "document_key": document_key,
                     "signer_key": signer_key,
@@ -46,24 +46,24 @@ const ClickSignService = {
             }
         },
         notification: {
-            email: (request_signature_key, access_token, message = '') => {
-                apiClient.post(`/api/v1/notifications?access_token=${access_token}`,
+            email: async (request_signature_key, access_token, message = '') => {
+                apiDocumentSign.post(`/api/v1/notifications?access_token=${access_token}`,
                     {
                         "request_signature_key": request_signature_key,
                         "message": message,
                     }
                 )
             },
-            whatsapp: (request_signature_key, access_token) => {
-                apiClient.post(`/api/v1/notify_by_whatsapp?access_token=${access_token}`,
+            whatsapp: async (request_signature_key, access_token) => {
+                apiDocumentSign.post(`/api/v1/notify_by_whatsapp?access_token=${access_token}`,
                     {
                         "request_signature_key": request_signature_key,
 
                     }
                 )
             },
-            sms: (request_signature_key, access_token, message = '') => {
-                apiClient.post(`/api/v1/notify_by_sms?access_token=${access_token}`,
+            sms: async (request_signature_key, access_token, message = '') => {
+                apiDocumentSign.post(`/api/v1/notify_by_sms?access_token=${access_token}`,
                     {
                         "request_signature_key": request_signature_key,
                         "message": message,
