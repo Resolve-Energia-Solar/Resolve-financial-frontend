@@ -1,10 +1,10 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const API_DOCUMENT_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_DOCUMENT_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL_SIGN;
 
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_DOCUMENT_BASE_URL,
 });
 
 apiClient.interceptors.request.use(
