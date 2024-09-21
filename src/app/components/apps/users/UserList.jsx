@@ -1,118 +1,103 @@
-import { useEffect } from 'react';
+// UserList.js
+'use client';
+import { useState, useEffect } from 'react';
 import List from '@mui/material/List';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  SelectContact,
-  fetchContacts,
-  DeleteContact,
-  toggleStarredContact,
-} from '@/store/apps/contacts/ContactSlice';
-
 import Scrollbar from '../../custom-scroll/Scrollbar';
 import ContactListItem from './UserListItem';
+import userService from '@/services/userService';
+import { Box, InputAdornment, TextField } from '@mui/material';
+import { IconSearch } from '@tabler/icons-react';
 
+function UserList({ showrightSidebar }) {
+  const [users, setUsers] = useState([]); 
+  const [filteredUsers, setFilteredUsers] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(''); 
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const data = await userService.getUser();
+        if (data && data.results) {
+          setUsers(data.results);
+          setFilteredUsers(data.results);
+        } else {
+          throw new Error('Estrutura de dados inesperada');
+        }
+      } catch (err) {
+        setError('Erro ao carregar os usuários');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-async function UserList ({ showrightSidebar }) {
-  
-  let data = await fetch('https://crm.resolvenergiasolar.com/api/users',{
-    headers: {
-      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2ODAxMDE4LCJpYXQiOjE3MjY3MTQ2MTgsImp0aSI6ImM1ZTBmYTI2MmE1NzQwYjRhMzMxMWQyYWZjY2E3NWY0IiwidXNlcl9pZCI6MX0.3E2C9vWZg7pN33jSNsbbhyd3dcAOaEbbJvB_lZ3vcOU'
+    fetchUsers();
+  }, []);
+
+  const handleSearch = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchTerm(value);
+    const filtered = users.filter((user) =>
+      user.first_name.toLowerCase().includes(value) || user.last_name.toLowerCase().includes(value)
+    );
+    setFilteredUsers(filtered);
+  };
+
+  if (loading) {
+    return <div>Carregando...</div>;
   }
-  })
-  let users = await data.json()
-  
-  console.log(users)
 
-  // const dispatch = useDispatch();
-  // useEffect(() => {
-  //   dispatch(fetchContacts());
-  // }, [dispatch]);
-
-  // const getVisibleContacts = (contacts, filter, contactSearch) => {
-  //   switch (filter) {
-  //     case 'show_all':
-  //       return contacts.filter(
-  //         (c) => !c.deleted && c.firstname.toLocaleLowerCase().includes(contactSearch),
-  //       );
-
-  //     case 'frequent_contact':
-  //       return contacts.filter(
-  //         (c) =>
-  //           !c.deleted &&
-  //           c.frequentlycontacted &&
-  //           c.firstname.toLocaleLowerCase().includes(contactSearch),
-  //       );
-
-  //     case 'starred_contact':
-  //       return contacts.filter(
-  //         (c) => !c.deleted && c.starred && c.firstname.toLocaleLowerCase().includes(contactSearch),
-  //       );
-
-  //     case 'engineering_department':
-  //       return contacts.filter(
-  //         (c) =>
-  //           !c.deleted &&
-  //           c.department === 'Engineering' &&
-  //           c.firstname.toLocaleLowerCase().includes(contactSearch),
-  //       );
-
-  //     case 'support_department':
-  //       return contacts.filter(
-  //         (c) =>
-  //           !c.deleted &&
-  //           c.department === 'Support' &&
-  //           c.firstname.toLocaleLowerCase().includes(contactSearch),
-  //       );
-
-  //     case 'sales_department':
-  //       return contacts.filter(
-  //         (c) =>
-  //           !c.deleted &&
-  //           c.department === 'Sales' &&
-  //           c.firstname.toLocaleLowerCase().includes(contactSearch),
-  //       );
-
-  //     default:
-  //       throw new Error(`Unknown filter: ${filter}`);
-  //   }
-  // };
-  // const contacts = useSelector((state) =>
-  //   getVisibleContacts(
-  //     state.contactsReducer.contacts,
-  //     state.contactsReducer.currentFilter,
-  //     state.contactsReducer.contactSearch,
-  //   ),
-  // );
-
-  // const active = useSelector((state) => state.contactsReducer.contactContent);
-
-
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
-    <Scrollbar
-      sx={{
-        height: { lg: 'calc(100vh - 100px)', md: '100vh' },
-        maxHeight: '800px',
-      }}
-    >
-      <List>
-        {users.results.map((contact) => (
-          <ContactListItem
-            key={contact.id}
-            active={contact.id}
-            {...contact}
-            onContactClick={() => {
-              dispatch(SelectContact(contact.id));
-              showrightSidebar();
-            }}
-            onDeleteClick={() => dispatch(DeleteContact(contact.id))}
-            onStarredClick={() => dispatch(toggleStarredContact(contact.id))}
-          />
-        ))} 
-      </List>
-    </Scrollbar>
+    <>
+      <Box display="flex" sx={{ p: 2 }}>
+        <TextField
+          id="outlined-basic"
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconSearch size="16" />
+              </InputAdornment>
+            ),
+          }}
+          fullWidth
+          size="small"
+          value={searchTerm}
+          placeholder="Pesquisar Usuário"
+          variant="outlined"
+          onChange={handleSearch}
+        />
+      </Box>
+
+      <Scrollbar
+        sx={{
+          height: { lg: 'calc(100vh - 100px)', md: '100vh' },
+          maxHeight: '800px',
+        }}
+      >
+        <List>
+          {filteredUsers.length > 0 ? (
+            filteredUsers.map((user) => (
+              <ContactListItem
+                key={user.id}
+                first_name={user.first_name}
+                last_name={user.last_name}
+                profile_picture={user.profile_picture}
+                department={user.department}
+                onContactClick={() => showrightSidebar()}
+              />
+            ))
+          ) : (
+            <div>Nenhum usuário encontrado</div>
+          )}
+        </List>
+      </Scrollbar>
+    </>
   );
-};
+}
 
 export default UserList;

@@ -274,7 +274,7 @@ const UserDetails = async ({id}) => {
           {/* If no Contact  */}
           {/* ------------------------------------------- */}
           <Box>
-            <Typography variant="h4">Please Select a Contact</Typography>
+            <Typography variant="h4">Selecione um contato</Typography>
             <br />
             <Image src='/images/breadcrumb/emailSv.png' alt={'emailIcon'} width="200" height="200" />
           </Box>
