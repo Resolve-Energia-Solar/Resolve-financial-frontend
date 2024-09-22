@@ -109,7 +109,7 @@ const Menuitems = [
     id: uniqueId(),
     title: 'Setores',
     icon: IconVector,
-    href: '/apps/sectors',
+    href: '/apps/sector',
   },
   {
     id: uniqueId(),
