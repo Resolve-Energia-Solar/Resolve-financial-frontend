@@ -1,6 +1,15 @@
 import apiClient from './apiClient';
 
 const leadService = {
+  getLeads: async () => {
+    try {
+      const response = await apiClient.get('/api/leads/');
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar leads:', error);
+      throw error;
+    }
+  },
   createLead: async (data) => {
     const response = await apiClient.post('/api/leads/', data);
     return response.data;

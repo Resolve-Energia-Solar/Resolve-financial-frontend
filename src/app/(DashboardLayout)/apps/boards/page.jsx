@@ -64,6 +64,7 @@ function KanbanPage() {
         column: newColumnId,
       };
       await leadService.updateLead(leadId, leadData);
+      
       setLeads((prevLeads) =>
         prevLeads.map((lead) =>
           lead.id === parseInt(leadId) ? { ...lead, column: { id: parseInt(newColumnId) } } : lead
@@ -90,11 +91,13 @@ function KanbanPage() {
   const handleUpdateLead = async (updatedLead) => {
     try {
       await leadService.updateLead(updatedLead.id, updatedLead);
+      
       setLeads((prevLeads) =>
         prevLeads.map((lead) =>
-          lead.id === updatedLead.id ? updatedLead : lead
+          lead.id === updatedLead.id ? { ...updatedLead, column: { id: updatedLead.column } } : lead
         )
       );
+
       setSnackbarMessage('Lead atualizado com sucesso!');
       setSnackbarOpen(true);
     } catch (error) {

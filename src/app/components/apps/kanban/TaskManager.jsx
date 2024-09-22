@@ -18,6 +18,7 @@ import {
   Snackbar,
   TextField,
   Alert,
+  Divider,
 } from '@mui/material';
 import {
   Star,
@@ -31,8 +32,24 @@ import {
   Timeline,
   AddCircle,
   MoreVert,
+  Home,
+  Badge,
+  CalendarToday,
+  AccountBox,
+  AccountBalance,
+  Work,
+  Business,
+  Tag,
+  Description,
+  Wc,
+  Place,
 } from '@mui/icons-material';
 import SimpleBar from 'simplebar-react';
+import AddressService from '@/services/addressService';
+
+const removeEmptyFields = (data) => {
+  return Object.fromEntries(Object.entries(data).filter(([key, value]) => value !== ''));
+};
 
 const TaskManager = ({
   leads = [],
@@ -48,15 +65,39 @@ const TaskManager = ({
     });
     return initialStars;
   });
+
   const [selectedLead, setSelectedLead] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [leadName, setLeadName] = useState('');
-  const [leadEmail, setLeadEmail] = useState('');
-  const [leadPhone, setLeadPhone] = useState('');
+  const [leadData, setLeadData] = useState({
+    name: '',
+    contact_email: '',
+    phone: '',
+    byname: '',
+    first_document: '',
+    second_document: '',
+    birth_date: '',
+    gender: '',
+    origin: '',
+    type: '',
+    seller: '',
+    sdr: '',
+  });
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const [openAddressModal, setOpenAddressModal] = useState(false);
+  const [addressData, setAddressData] = useState({
+    zip_code: '',
+    country: '',
+    state: '',
+    city: '',
+    neighborhood: '',
+    street: '',
+    number: '',
+    complement: '',
+  });
 
   const handleStarClick = (leadId, stars) => {
     setLeadStars((prevStars) => ({
@@ -67,9 +108,20 @@ const TaskManager = ({
 
   const handleLeadClick = (lead) => {
     setSelectedLead(lead);
-    setLeadName(lead.name);
-    setLeadEmail(lead.contact_email);
-    setLeadPhone(lead.phone);
+    setLeadData({
+      name: lead.name,
+      contact_email: lead.contact_email,
+      phone: lead.phone,
+      byname: lead.byname || '',
+      first_document: lead.first_document || '',
+      second_document: lead.second_document || '',
+      birth_date: lead.birth_date || '',
+      gender: lead.gender || '',
+      origin: lead.origin || '',
+      type: lead.type || '',
+      seller: lead.seller?.id || '',
+      sdr: lead.sdr?.id || '',
+    });
     setOpenModal(true);
   };
 
@@ -114,24 +166,34 @@ const TaskManager = ({
     }
   };
 
+  const validateLeadData = (data) => {
+    if (!data.name || !data.contact_email || !data.phone) {
+      return false;
+    }
+    return true;
+  };
+
   const handleUpdateLead = async () => {
     if (selectedLead) {
       const updatedLead = {
-        ...selectedLead, 
-        name: leadName.trim(),
-        contact_email: leadEmail.trim(),
-        phone: leadPhone.trim(),
-        column: selectedLead.column.id, // Garante que estamos enviando apenas o ID da coluna
+        ...selectedLead,
+        ...leadData,
+        column: selectedLead.column.id,
       };
-  
-      console.log('selectedLead:', selectedLead);
-      console.log('Dados enviados para a API de atualização:', updatedLead);
-  
+
+      const cleanedLeadData = removeEmptyFields(updatedLead);
+
+      if (!validateLeadData(cleanedLeadData)) {
+        setSnackbarMessage('Preencha todos os campos obrigatórios.');
+        setSnackbarOpen(true);
+        return;
+      }
+
       try {
-        await onUpdateLead(updatedLead); // Função que faz a atualização do lead
+        await onUpdateLead(cleanedLeadData);
         setSnackbarMessage('Lead atualizado com sucesso!');
         setSnackbarOpen(true);
-        handleCloseModal(); // Fecha o modal após a atualização
+        handleCloseModal();
       } catch (error) {
         setSnackbarMessage('Erro ao atualizar lead.');
         setSnackbarOpen(true);
@@ -139,7 +201,6 @@ const TaskManager = ({
       }
     }
   };
-  
 
   const handleDeleteLead = async () => {
     if (selectedLead) {
@@ -157,6 +218,44 @@ const TaskManager = ({
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
+  };
+
+  const handleOpenAddressModal = (e) => {
+    e.stopPropagation();
+    setOpenAddressModal(true);
+  };
+
+  const handleCloseAddressModal = () => {
+    setOpenAddressModal(false);
+    setAddressData({
+      zip_code: '',
+      country: '',
+      state: '',
+      city: '',
+      neighborhood: '',
+      street: '',
+      number: '',
+      complement: '',
+    });
+  };
+
+  const handleAddAddress = async () => {
+    if (selectedLead) {
+      try {
+        const addressPayload = {
+          ...addressData,
+          lead: selectedLead.id,
+        };
+        await AddressService.createAddress(addressPayload);
+        setSnackbarMessage('Endereço adicionado com sucesso!');
+        setSnackbarOpen(true);
+        handleCloseAddressModal();
+      } catch (error) {
+        setSnackbarMessage('Erro ao adicionar endereço.');
+        setSnackbarOpen(true);
+        console.error('Erro ao adicionar endereço:', error);
+      }
+    }
   };
 
   return (
@@ -249,51 +348,205 @@ const TaskManager = ({
       {selectedLead && (
         <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="sm">
           <DialogTitle>{editMode ? 'Editar Lead' : 'Detalhes do Lead'}</DialogTitle>
+          <Divider />
           <DialogContent>
-            <Grid container spacing={2}>
+            <Grid container spacing={3}>
               <Grid item xs={12}>
                 {editMode ? (
                   <TextField
                     fullWidth
                     label="Nome"
-                    value={leadName}
-                    onChange={(e) => setLeadName(e.target.value)}
+                    value={leadData.name}
+                    onChange={(e) => setLeadData({ ...leadData, name: e.target.value })}
                   />
                 ) : (
-                  <Typography variant="h6">Nome: {selectedLead.name}</Typography>
+                  <Box display="flex" alignItems="center">
+                    <AccountBox fontSize="small" style={{ marginRight: 8 }} />
+                    <Typography variant="h6">{selectedLead.name}</Typography>
+                  </Box>
                 )}
               </Grid>
+
+              <Grid item xs={6}>
+                {editMode ? (
+                  <TextField
+                    fullWidth
+                    label="Tipo de Pessoa"
+                    select
+                    value={leadData.type}
+                    onChange={(e) => setLeadData({ ...leadData, type: e.target.value })}
+                  >
+                    <MenuItem value="PF">Pessoa Física</MenuItem>
+                    <MenuItem value="PJ">Pessoa Jurídica</MenuItem>
+                  </TextField>
+                ) : (
+                  <Box display="flex" alignItems="center">
+                    <Business fontSize="small" style={{ marginRight: 8 }} />
+                    <Typography variant="body1">
+                      Tipo: {selectedLead.type === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica'}
+                    </Typography>
+                  </Box>
+                )}
+              </Grid>
+
+              <Grid item xs={6}>
+                {editMode ? (
+                  <TextField
+                    fullWidth
+                    label="Apelido"
+                    value={leadData.byname}
+                    onChange={(e) => setLeadData({ ...leadData, byname: e.target.value })}
+                  />
+                ) : (
+                  <Box display="flex" alignItems="center">
+                    <Tag fontSize="small" style={{ marginRight: 8 }} />
+                    <Typography variant="body1">Apelido: {selectedLead.byname}</Typography>
+                  </Box>
+                )}
+              </Grid>
+
+              <Grid item xs={6}>
+                {editMode ? (
+                  <TextField
+                    fullWidth
+                    label="Documento Principal (CPF/CNPJ)"
+                    value={leadData.first_document}
+                    onChange={(e) => setLeadData({ ...leadData, first_document: e.target.value })}
+                  />
+                ) : (
+                  <Box display="flex" alignItems="center">
+                    <Description fontSize="small" style={{ marginRight: 8 }} />
+                    <Typography variant="body1">
+                      Documento Principal: {selectedLead.first_document || 'N/A'}
+                    </Typography>
+                  </Box>
+                )}
+              </Grid>
+
+              <Grid item xs={6}>
+                {editMode ? (
+                  <TextField
+                    fullWidth
+                    label="Documento Secundário (RG/IE)"
+                    value={leadData.second_document}
+                    onChange={(e) => setLeadData({ ...leadData, second_document: e.target.value })}
+                  />
+                ) : (
+                  <Box display="flex" alignItems="center">
+                    <Badge fontSize="small" style={{ marginRight: 8 }} />
+                    <Typography variant="body1">
+                      Documento Secundário: {selectedLead.second_document || 'N/A'}
+                    </Typography>
+                  </Box>
+                )}
+              </Grid>
+
+              <Grid item xs={6}>
+                {editMode ? (
+                  <TextField
+                    fullWidth
+                    label="Data de Nascimento"
+                    type="date"
+                    value={leadData.birth_date}
+                    onChange={(e) => setLeadData({ ...leadData, birth_date: e.target.value })}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                ) : (
+                  <Box display="flex" alignItems="center">
+                    <CalendarToday fontSize="small" style={{ marginRight: 8 }} />
+                    <Typography variant="body1">
+                      Data de Nascimento: {selectedLead.birth_date || 'N/A'}
+                    </Typography>
+                  </Box>
+                )}
+              </Grid>
+
+              <Grid item xs={6}>
+                {editMode ? (
+                  <TextField
+                    fullWidth
+                    label="Gênero"
+                    select
+                    value={leadData.gender}
+                    onChange={(e) => setLeadData({ ...leadData, gender: e.target.value })}
+                  >
+                    <MenuItem value="M">Masculino</MenuItem>
+                    <MenuItem value="F">Feminino</MenuItem>
+                  </TextField>
+                ) : (
+                  <Box display="flex" alignItems="center">
+                    <Wc fontSize="small" style={{ marginRight: 8 }} />
+                    <Typography variant="body1">
+                      Gênero: {selectedLead.gender === 'M' ? 'Masculino' : 'Feminino'}
+                    </Typography>
+                  </Box>
+                )}
+              </Grid>
+
               <Grid item xs={12}>
                 {editMode ? (
                   <TextField
                     fullWidth
-                    label="Email"
-                    value={leadEmail}
-                    onChange={(e) => setLeadEmail(e.target.value)}
+                    label="E-mail"
+                    value={leadData.contact_email}
+                    onChange={(e) => setLeadData({ ...leadData, contact_email: e.target.value })}
                   />
                 ) : (
-                  <Typography variant="body1">Email: {selectedLead.contact_email}</Typography>
+                  <Box display="flex" alignItems="center">
+                    <Email fontSize="small" style={{ marginRight: 8 }} />
+                    <Typography variant="body1">E-mail: {selectedLead.contact_email}</Typography>
+                  </Box>
                 )}
               </Grid>
+
               <Grid item xs={12}>
                 {editMode ? (
                   <TextField
                     fullWidth
                     label="Telefone"
-                    value={leadPhone}
-                    onChange={(e) => setLeadPhone(e.target.value)}
+                    value={leadData.phone}
+                    onChange={(e) => setLeadData({ ...leadData, phone: e.target.value })}
                   />
                 ) : (
-                  <Typography variant="body1">Telefone: {selectedLead.phone}</Typography>
+                  <Box display="flex" alignItems="center">
+                    <Phone fontSize="small" style={{ marginRight: 8 }} />
+                    <Typography variant="body1">Telefone: {selectedLead.phone}</Typography>
+                  </Box>
                 )}
               </Grid>
+
               <Grid item xs={12}>
-                <Typography variant="body1">
-                  Criado em: {new Date(selectedLead.created_at).toLocaleDateString('pt-BR')}
-                </Typography>
+                {editMode ? (
+                  <TextField
+                    fullWidth
+                    label="Origem"
+                    value={leadData.origin}
+                    onChange={(e) => setLeadData({ ...leadData, origin: e.target.value })}
+                  />
+                ) : (
+                  <Box display="flex" alignItems="center">
+                    <Place fontSize="small" style={{ marginRight: 8 }} />
+                    <Typography variant="body1">Origem: {selectedLead.origin || 'N/A'}</Typography>
+                  </Box>
+                )}
               </Grid>
+
               <Grid item xs={12}>
-                <Typography variant="body1">Status: {selectedLead.column.name}</Typography>
+                <Box display="flex" alignItems="center">
+                  <CalendarToday fontSize="small" style={{ marginRight: 8 }} />
+                  <Typography variant="body1">
+                    Criado em: {new Date(selectedLead.created_at).toLocaleDateString('pt-BR')}
+                  </Typography>
+                </Box>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Box display="flex" alignItems="center">
+                  <Badge fontSize="small" style={{ marginRight: 8 }} />
+                  <Typography variant="body1">Status: {selectedLead.column.name}</Typography>
+                </Box>
               </Grid>
 
               <Grid item xs={12} display="flex" justifyContent="space-between">
@@ -315,6 +568,11 @@ const TaskManager = ({
                 <Tooltip title="Loja">
                   <IconButton>
                     <Store color="success" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Adicionar Endereço">
+                  <IconButton onClick={handleOpenAddressModal}>
+                    <Home color="primary" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Ações Rápidas">
@@ -345,9 +603,90 @@ const TaskManager = ({
           <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
             <MenuItem onClick={() => console.log('Enviar Email')}>Enviar Email</MenuItem>
             <MenuItem onClick={() => console.log('Adicionar Nota')}>Adicionar Nota</MenuItem>
+            <MenuItem onClick={handleDeleteLead}>Excluir Lead</MenuItem>
           </Menu>
         </Dialog>
       )}
+
+      <Dialog open={openAddressModal} onClose={handleCloseAddressModal} fullWidth maxWidth="sm">
+        <DialogTitle>Adicionar Endereço</DialogTitle>
+        <DialogContent>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                label="CEP"
+                fullWidth
+                value={addressData.zip_code}
+                onChange={(e) => setAddressData({ ...addressData, zip_code: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="País"
+                fullWidth
+                value={addressData.country}
+                onChange={(e) => setAddressData({ ...addressData, country: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="Estado"
+                fullWidth
+                value={addressData.state}
+                onChange={(e) => setAddressData({ ...addressData, state: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="Cidade"
+                fullWidth
+                value={addressData.city}
+                onChange={(e) => setAddressData({ ...addressData, city: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Bairro"
+                fullWidth
+                value={addressData.neighborhood}
+                onChange={(e) => setAddressData({ ...addressData, neighborhood: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="Rua"
+                fullWidth
+                value={addressData.street}
+                onChange={(e) => setAddressData({ ...addressData, street: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="Número"
+                fullWidth
+                value={addressData.number}
+                onChange={(e) => setAddressData({ ...addressData, number: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Complemento"
+                fullWidth
+                value={addressData.complement}
+                onChange={(e) => setAddressData({ ...addressData, complement: e.target.value })}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleAddAddress} color="primary">
+            Adicionar
+          </Button>
+          <Button onClick={handleCloseAddressModal} color="secondary">
+            Cancelar
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         open={snackbarOpen}
