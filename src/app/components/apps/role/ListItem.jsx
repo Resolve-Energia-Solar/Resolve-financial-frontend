@@ -45,24 +45,6 @@ const ListItem = ({ roles = [], onDelete }) => {
                     Nome
                   </Typography>
                 </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle1" sx={{ display: 'flex', alignItems: 'center' }}>
-                    <IconMapPin size={20} style={{ marginRight: '8px' }} />
-                    Descrição
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle1" sx={{ display: 'flex', alignItems: 'center' }}>
-                    <IconUsers size={20} style={{ marginRight: '8px' }} />
-                    Data inicial
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle1" sx={{ display: 'flex', alignItems: 'center' }}>
-                    <IconUsers size={20} style={{ marginRight: '8px' }} />
-                    Data final
-                  </Typography>
-                </TableCell>
                 <TableCell align="right">
                   <Typography variant="subtitle1">Ação</Typography>
                 </TableCell>
@@ -83,28 +65,13 @@ const ListItem = ({ roles = [], onDelete }) => {
                         {role.name}
                       </Typography>
                     </TableCell>
-                    <TableCell>
-                      <Typography variant="subtitle1" fontWeight={600} noWrap>
-                        {role.description}
-                      </Typography>
-                    </TableCell>
+            
 
-                    <TableCell>
-                      <Typography variant="subtitle1" fontWeight={600} noWrap>
-         
-                        {new Date(campaign.start_datetime).toLocaleDateString()}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="subtitle1" fontWeight={600} noWrap>
-                      {new Date(campaign.end_datetime).toLocaleDateString()}
-                      </Typography>
-                    </TableCell>
-
+             
                     <TableCell align="right">
                       <Tooltip title="Deletar Filial">
                         <Switch
-                          onClick={() => onDelete(campaign.id)}
+                          onClick={() => onDelete(role.id)}
                           sx={{
                             transition: 'all 0.3s ease',
                             '&:hover': {

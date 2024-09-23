@@ -13,7 +13,7 @@ const BCrumb = [
     title: "Home",
   },
   {
-    title: "Filiais",
+    title: "Setor",
   },
 ];
 
@@ -27,10 +27,9 @@ function Page() {
       try {
         const data = await roleService.getRole();
         setLoading(false);
-        console.log(data)
         setRole(data.results);
       } catch (err) {
-        setError('Erro ao carregar Role');
+        setError('Erro ao carregar setor',err);
       } finally {
         setLoading(false);
       }
@@ -48,13 +47,13 @@ function Page() {
   }
 
   return (
-    <PageContainer title="Filiais" description="Lista de filiais">
-      <Breadcrumb title="Filiais" items={BCrumb} />
+    <PageContainer title="Setores" description="Lista de filiais">
+      <Breadcrumb title="Setores" items={BCrumb} />
       <ChildCard>
         {role.length > 0 ? (
           <ListItem roles={role} onDelete={(id) => console.log(`Deletar filial ${id}`)} />
         ) : (
-          <div>Nenhuma filial encontrada</div>
+          <div>Nenhum setor encontrada</div>
         )}
       </ChildCard>
     </PageContainer>

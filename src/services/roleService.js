@@ -1,7 +1,7 @@
 import apiClient from "./apiClient";
 
 const roleService = {
-  getCampaign: async () => {
+  getRole: async () => {
     try {
       const response = await apiClient.get('/api/roles/');
       return response.data;
@@ -11,7 +11,7 @@ const roleService = {
     }
   },
 
-  getCampaignById: async (id) => {
+  getRoleById: async (id) => {
     try {
       const response = await apiClient.get(`/api/roles/${id}/`);
       return response.data;
@@ -21,7 +21,7 @@ const roleService = {
     }
   },
 
-  updateCampaign: async (id, data) => {
+  updateRole: async (id, data) => {
     try {
       const response = await apiClient.patch(`/api/roles/${id}/`, data);
       return response.data;
@@ -31,12 +31,12 @@ const roleService = {
     }
   },
 
-  createCampaign: async (data) => {
+  createRole: async (data) => {
     try {
       const response = await apiClient.post('/api/roles/', data);
       return response.data;
     } catch (error) {
-      console.error('Erro ao criar campanha:', error);
+      console.error('Erro ao criar setor:', error);
       throw error;
     }
   },
