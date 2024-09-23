@@ -1,122 +1,116 @@
-import { Grid, Box, Typography } from '@mui/material';
-import { Email, Phone, CalendarToday, AccountBox, Business, Tag, Description, Badge, Wc, Place, HomeWork, Person } from '@mui/icons-material';
+// LeadDetails.jsx
+import { Grid, Box, Typography, useTheme } from '@mui/material';
+import {
+  Email,
+  Phone,
+  CalendarToday,
+  AccountBox,
+  Business,
+  Tag,
+  Description,
+  Badge,
+  Wc,
+  Place,
+} from '@mui/icons-material';
 
-const LeadDetails = ({ selectedLead }) => (
-  <Grid container spacing={3}>
-    <Grid item xs={12}>
-      <Box display="flex" alignItems="center">
-        <AccountBox fontSize="small" style={{ marginRight: 8 }} />
-        <Typography variant="h6">{selectedLead.name || 'N/A'}</Typography>
-      </Box>
-    </Grid>
+const LeadDetails = ({ selectedLead }) => {
+  const theme = useTheme();
 
-    <Grid item xs={6}>
-      <Box display="flex" alignItems="center">
-        <Business fontSize="small" style={{ marginRight: 8 }} />
-        <Typography variant="body1">Tipo: {selectedLead.type === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica'}</Typography>
-      </Box>
-    </Grid>
+  const details = [
+    {
+      icon: <AccountBox fontSize="small" />,
+      label: 'Nome',
+      value: selectedLead.name || 'N/A',
+    },
+    {
+      icon: <Business fontSize="small" />,
+      label: 'Tipo',
+      value:
+        selectedLead.type === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica',
+    },
+    {
+      icon: <Tag fontSize="small" />,
+      label: 'Apelido',
+      value: selectedLead.byname || 'N/A',
+    },
+    {
+      icon: <Description fontSize="small" />,
+      label: 'Documento Principal',
+      value: selectedLead.first_document || 'N/A',
+    },
+    {
+      icon: <Badge fontSize="small" />,
+      label: 'Documento Secundário',
+      value: selectedLead.second_document || 'N/A',
+    },
+    {
+      icon: <CalendarToday fontSize="small" />,
+      label: 'Data de Nascimento',
+      value: selectedLead.birth_date
+        ? new Date(selectedLead.birth_date).toLocaleDateString('pt-BR')
+        : 'N/A',
+    },
+    {
+      icon: <Wc fontSize="small" />,
+      label: 'Gênero',
+      value: selectedLead.gender === 'M' ? 'Masculino' : 'Feminino',
+    },
+    {
+      icon: <Email fontSize="small" />,
+      label: 'E-mail',
+      value: selectedLead.contact_email || 'N/A',
+    },
+    {
+      icon: <Phone fontSize="small" />,
+      label: 'Telefone',
+      value: selectedLead.phone || 'N/A',
+    },
+    {
+      icon: <Place fontSize="small" />,
+      label: 'Origem',
+      value: selectedLead.origin || 'N/A',
+    },
+    {
+      icon: <CalendarToday fontSize="small" />,
+      label: 'Criado em',
+      value: new Date(selectedLead.created_at).toLocaleDateString('pt-BR'),
+    },
+    {
+      icon: <Badge fontSize="small" />,
+      label: 'Status',
+      value: selectedLead.column.name,
+    },
+  ];
 
-    <Grid item xs={6}>
-      <Box display="flex" alignItems="center">
-        <Tag fontSize="small" style={{ marginRight: 8 }} />
-        <Typography variant="body1">Apelido: {selectedLead.byname || 'N/A'}</Typography>
-      </Box>
+  return (
+    <Grid container spacing={3}>
+      {details.map((detail, index) => (
+        <Grid item xs={12} sm={6} md={4} key={index}>
+          <Box display="flex" alignItems="center">
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              sx={{
+                width: 24,
+                height: 24,
+                marginRight: 1,
+                color: theme.palette.text.secondary,
+              }}
+            >
+              {detail.icon}
+            </Box>
+            <Box>
+              <Typography variant="subtitle2" color="textSecondary">
+                {detail.label}
+              </Typography>
+              <Typography variant="body1">{detail.value}</Typography>
+            </Box>
+          </Box>
+        </Grid>
+      ))}
     </Grid>
-
-    <Grid item xs={6}>
-      <Box display="flex" alignItems="center">
-        <Description fontSize="small" style={{ marginRight: 8 }} />
-        <Typography variant="body1">Documento Principal: {selectedLead.first_document || 'N/A'}</Typography>
-      </Box>
-    </Grid>
-
-    <Grid item xs={6}>
-      <Box display="flex" alignItems="center">
-        <Badge fontSize="small" style={{ marginRight: 8 }} />
-        <Typography variant="body1">Documento Secundário: {selectedLead.second_document || 'N/A'}</Typography>
-      </Box>
-    </Grid>
-
-    <Grid item xs={6}>
-      <Box display="flex" alignItems="center">
-        <CalendarToday fontSize="small" style={{ marginRight: 8 }} />
-        <Typography variant="body1">Data de Nascimento: {selectedLead.birth_date ? new Date(selectedLead.birth_date).toLocaleDateString('pt-BR') : 'N/A'}</Typography>
-      </Box>
-    </Grid>
-
-    <Grid item xs={6}>
-      <Box display="flex" alignItems="center">
-        <Wc fontSize="small" style={{ marginRight: 8 }} />
-        <Typography variant="body1">Gênero: {selectedLead.gender === 'M' ? 'Masculino' : 'Feminino'}</Typography>
-      </Box>
-    </Grid>
-
-    <Grid item xs={12}>
-      <Box display="flex" alignItems="center">
-        <Email fontSize="small" style={{ marginRight: 8 }} />
-        <Typography variant="body1">E-mail: {selectedLead.contact_email || 'N/A'}</Typography>
-      </Box>
-    </Grid>
-
-    <Grid item xs={12}>
-      <Box display="flex" alignItems="center">
-        <Phone fontSize="small" style={{ marginRight: 8 }} />
-        <Typography variant="body1">Telefone: {selectedLead.phone || 'N/A'}</Typography>
-      </Box>
-    </Grid>
-
-    <Grid item xs={12}>
-      <Box display="flex" alignItems="center">
-        <Place fontSize="small" style={{ marginRight: 8 }} />
-        <Typography variant="body1">Origem: {selectedLead.origin || 'N/A'}</Typography>
-      </Box>
-    </Grid>
-
-    <Grid item xs={12}>
-      <Box display="flex" alignItems="center">
-        <CalendarToday fontSize="small" style={{ marginRight: 8 }} />
-        <Typography variant="body1">Criado em: {new Date(selectedLead.created_at).toLocaleDateString('pt-BR')}</Typography>
-      </Box>
-    </Grid>
-
-    <Grid item xs={12}>
-      <Box display="flex" alignItems="center">
-        <Badge fontSize="small" style={{ marginRight: 8 }} />
-        <Typography variant="body1">Status: {selectedLead.column.name}</Typography>
-      </Box>
-    </Grid>
-
-    <Grid item xs={12}>
-      <Box display="flex" alignItems="center">
-        <Person fontSize="small" style={{ marginRight: 8 }} />
-        <Typography variant="body1">
-          Vendedor: {selectedLead.seller ? `${selectedLead.seller.complete_name} - ${selectedLead.seller.email}` : 'N/A'}
-        </Typography>
-      </Box>
-    </Grid>
-
-    <Grid item xs={12}>
-      <Box display="flex" alignItems="center">
-        <Person fontSize="small" style={{ marginRight: 8 }} />
-        <Typography variant="body1">
-          SDR: {selectedLead.sdr ? `${selectedLead.sdr.complete_name} - ${selectedLead.sdr.email}` : 'N/A'}
-        </Typography>
-      </Box>
-    </Grid>
-
-    <Grid item xs={12}>
-      <Box display="flex" alignItems="center">
-        <HomeWork fontSize="small" style={{ marginRight: 8 }} />
-        <Typography variant="body1">
-          Endereço:{' '}
-          {selectedLead.addresses && selectedLead.addresses.length > 0
-            ? `${selectedLead.addresses[0].street}, ${selectedLead.addresses[0].number} - ${selectedLead.addresses[0].city}, ${selectedLead.addresses[0].state}`
-            : 'N/A'}
-        </Typography>
-      </Box>
-    </Grid>
-  </Grid>
-);
+  );
+};
 
 export default LeadDetails;

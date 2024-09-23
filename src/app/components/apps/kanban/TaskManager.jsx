@@ -1,3 +1,4 @@
+// TaskManager.jsx
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import {
@@ -14,6 +15,10 @@ import {
   Menu,
   MenuItem,
   Alert,
+  Grid,
+  Typography,
+  Tabs,
+  Tab,
 } from '@mui/material';
 import {
   Edit,
@@ -24,6 +29,12 @@ import {
   MoreVert,
   Business,
   Description,
+  Assignment,
+  AssignmentTurnedIn,
+  Work,
+  Email as EmailIcon,
+  NoteAdd,
+  Delete,
 } from '@mui/icons-material';
 import LeadDetails from './LeadDetails';
 import LeadForm from './LeadForm';
@@ -76,6 +87,7 @@ const TaskManager = ({
   const [addresses, setAddresses] = useState([]);
   const [openProposalModal, setOpenProposalModal] = useState(false);
   const [openProjectModal, setOpenProjectModal] = useState(false);
+  const [tabIndex, setTabIndex] = useState(0); // Estado para gerenciar abas
 
   useEffect(() => {
     setLeadsList(leads);
@@ -133,8 +145,8 @@ const TaskManager = ({
         const { results: users } = await userService.getUser();
         const { results: addressData } = await AddressService.getAddress();
 
-        const sellersData = users; /* .filter((user) => user.role === 'seller'); */
-        const sdrsData = users; /* .filter((user) => user.role === 'sdr'); */
+        const sellersData = users; // .filter((user) => user.role === 'seller');
+        const sdrsData = users; // .filter((user) => user.role === 'sdr');
 
         setSellers(sellersData);
         setSdrs(sdrsData);
@@ -201,6 +213,7 @@ const TaskManager = ({
       },
     });
 
+    setTabIndex(0); // Resetar para a primeira aba ao abrir o modal
     setOpenModal(true);
   };
 
@@ -317,6 +330,26 @@ const TaskManager = ({
     setOpenProjectModal(false);
   };
 
+  // Função para mudar a aba selecionada
+  const handleTabChange = (event, newValue) => {
+    setTabIndex(newValue);
+  };
+
+  // Função para mover o lead para uma nova coluna diretamente pelo menu
+  const moveLeadToStatus = (leadId, statusId) => {
+    setLeadsList((prevLeads) =>
+      prevLeads.map((lead) =>
+        lead.id === leadId
+          ? { ...lead, column: { id: statusId } }
+          : lead,
+      ),
+    );
+
+    onUpdateLeadColumn(leadId, statusId.toString());
+    setSnackbarMessage('Lead movido com sucesso!');
+    setSnackbarOpen(true);
+  };
+
   return (
     <>
       <SimpleBar>
@@ -334,6 +367,7 @@ const TaskManager = ({
                       p: 2,
                       maxHeight: '80vh',
                       overflowY: 'auto',
+                      borderRadius: 2,
                     }}
                   >
                     <ColumnWithActions
@@ -353,6 +387,7 @@ const TaskManager = ({
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
+                            mb={2}
                           >
                             <LeadCard
                               lead={lead}
@@ -375,7 +410,7 @@ const TaskManager = ({
       </SimpleBar>
 
       {selectedLead && (
-        <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="md">
+        <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="lg">
           <DialogTitle>{editMode ? 'Editar Lead' : 'Detalhes do Lead'}</DialogTitle>
           <Divider />
           <DialogContent>
@@ -388,81 +423,138 @@ const TaskManager = ({
                 addresses={addresses}
               />
             ) : (
-              <LeadDetails selectedLead={selectedLead} />
-            )}
-            {!editMode && (
-              <Box mt={2} display="flex" justifyContent="space-between">
-                <Tooltip title="Editar Lead">
-                  <IconButton onClick={() => setEditMode(true)}>
-                    <Edit color="primary" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Fluxo Atual">
-                  <IconButton>
-                    <Timeline color="action" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Atividades">
-                  <IconButton>
-                    <AddCircle color="secondary" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Loja">
-                  <IconButton>
-                    <Store color="success" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Adicionar Endereço">
-                  <IconButton>
-                    <Home color="primary" />
-                  </IconButton>
-                </Tooltip>
+              <Grid container spacing={3}>
+                {/* Coluna Esquerda: Abas */}
+                <Grid item xs={12} md={8}>
+                  <Box>
+                    <Tabs
+                      value={tabIndex}
+                      onChange={handleTabChange}
+                      aria-label="Aba de Detalhes do Lead"
+                      indicatorColor="primary"
+                      textColor="primary"
+                      variant="scrollable"
+                      scrollButtons="auto"
+                    >
+                      <Tab label="Lead" />
+                      <Tab label="Proposta" />
+                      <Tab label="Tarefas" />
+                      <Tab label="Atividades" />
+                    </Tabs>
+                    <Divider />
+                    <Box mt={2}>
+                      {tabIndex === 0 && <LeadDetails selectedLead={selectedLead} />}
+                      {tabIndex === 1 && (
+                        <Typography variant="body1">Conteúdo das Proposta...</Typography>
+                        // Substitua por um componente ou conteúdo real de Tarefas
+                      )}
+                      {tabIndex === 2 && (
+                        <Typography variant="body1">Conteúdo das Tarefas...</Typography>
+                        // Substitua por um componente ou conteúdo real de Tarefas
+                      )}
+                      {tabIndex === 3 && (
+                        <Typography variant="body1">Conteúdo das Atividades...</Typography>
+                        // Substitua por um componente ou conteúdo real de Atividades
+                      )}
+                    </Box>
+                  </Box>
+                </Grid>
 
-                <Tooltip title="Gerar Projeto">
-                  <IconButton onClick={handleOpenProjectModal}>
-                    <Business color="primary" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Gerar Proposta">
-                  <IconButton onClick={handleOpenProposalModal}>
-                    <Description color="primary" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Ações Rápidas">
-                  <IconButton onClick={handleOpenMenu}>
-                    <MoreVert />
-                  </IconButton>
-                </Tooltip>
-                <GenerateProposalModal
-                  open={openProposalModal}
-                  onClose={handleCloseProposalModal}
-                  sellers={sellers}
-                  supervisors={supervisors}
-                  managers={managers}
-                  branches={branches}
-                  campaigns={campaigns}
-                />
-                <GenerateProjectModal
-                  open={openProjectModal}
-                  onClose={handleCloseProjectModal}
-                  branches={branches}
-                  managers={managers}
-                />
-              </Box>
+                {/* Coluna Direita: Menu Lateral Fixado com "Ações Rápidas" */}
+                <Grid item xs={12} md={4}>
+                  <Box
+                    sx={{
+                      position: 'sticky',
+                      top: 20,
+                    }}
+                  >
+                    <Typography variant="h6" gutterBottom>
+                      Ações Rápidas
+                    </Typography>
+                    <Box display="flex" flexDirection="column" gap={2}>
+                      <Button
+                        variant="outlined"
+                        startIcon={<Edit />}
+                        onClick={() => setEditMode(true)}
+                      >
+                        Editar Lead
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        startIcon={<Business />}
+                        onClick={handleOpenProjectModal}
+                      >
+                        Gerar Projeto
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        startIcon={<Description />}
+                        onClick={handleOpenProposalModal}
+                      >
+                        Gerar Venda
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        startIcon={<Assignment />}
+                        onClick={() => handleTabChange(null, 1)} // Navegar para a aba "Proposta"
+                      >
+                        Proposta
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        startIcon={<Work />}
+                        onClick={() => handleTabChange(null, 2)} // Navegar para a aba "Tarefas"
+                      >
+                        Tarefas
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        startIcon={<AddCircle />}
+                        onClick={() => handleTabChange(null, 3)} // Navegar para a aba "Atividades"
+                      >
+                        Atividades
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        startIcon={<EmailIcon />}
+                        onClick={() => console.log('Enviar Email')}
+                      >
+                        Enviar Email
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        startIcon={<NoteAdd />}
+                        onClick={() => console.log('Adicionar Nota')}
+                      >
+                        Adicionar Nota
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        startIcon={<Delete />}
+                        onClick={handleDeleteLead}
+                        color="error"
+                      >
+                        Excluir Lead
+                      </Button>
+                    </Box>
+                  </Box>
+                </Grid>
+              </Grid>
             )}
           </DialogContent>
+          <Divider />
           <DialogActions>
             {editMode ? (
               <>
-                <Button onClick={handleUpdateLead} color="primary">
+                <Button onClick={handleUpdateLead} color="primary" variant="contained">
                   Salvar
                 </Button>
-                <Button onClick={() => setEditMode(false)} color="secondary">
+                <Button onClick={() => setEditMode(false)} color="secondary" variant="outlined">
                   Cancelar
                 </Button>
               </>
             ) : (
-              <Button onClick={handleCloseModal} color="primary">
+              <Button onClick={handleCloseModal} color="primary" variant="contained">
                 Fechar
               </Button>
             )}
@@ -476,6 +568,24 @@ const TaskManager = ({
         </Dialog>
       )}
 
+      <GenerateProposalModal
+        open={openProposalModal}
+        onClose={handleCloseProposalModal}
+        sellers={sellers}
+        supervisors={supervisors}
+        managers={managers}
+        branches={branches}
+        campaigns={campaigns}
+        lead={selectedLead}
+      />
+      <GenerateProjectModal
+        open={openProjectModal}
+        onClose={handleCloseProjectModal}
+        branches={branches}
+        managers={managers}
+        lead={selectedLead}
+      />
+
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
@@ -485,6 +595,7 @@ const TaskManager = ({
         <Alert
           onClose={handleSnackbarClose}
           severity={snackbarMessage.includes('Erro') ? 'error' : 'success'}
+          sx={{ width: '100%' }}
         >
           {snackbarMessage}
         </Alert>
