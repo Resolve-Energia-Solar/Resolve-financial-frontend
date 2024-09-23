@@ -15,8 +15,8 @@ function KanbanPage() {
   const [leads, setLeads] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [columns, setColumns] = useState([]);
-  const [snackbarMessage, setSnackbarMessage] = useState(''); 
-  const [snackbarOpen, setSnackbarOpen] = useState(false); 
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -45,7 +45,7 @@ function KanbanPage() {
     try {
       const data = await boardService.getBoardDetails(boardId);
       setLeads(data.columns.flatMap((column) => column.leads));
-      setStatuses(data.columns.map((column) => ({ id: column.id, name: column.name })));
+      setStatuses(data.columns.map((column) => ({ id: column.id, name: column.name, position: column.position, })));
       setColumns(data.columns);
     } catch (err) {
       setError(err.message || 'Erro ao buscar os leads do board');
@@ -64,11 +64,11 @@ function KanbanPage() {
         column: newColumnId,
       };
       await leadService.updateLead(leadId, leadData);
-      
+
       setLeads((prevLeads) =>
         prevLeads.map((lead) =>
-          lead.id === parseInt(leadId) ? { ...lead, column: { id: parseInt(newColumnId) } } : lead
-        )
+          lead.id === parseInt(leadId) ? { ...lead, column: { id: parseInt(newColumnId) } } : lead,
+        ),
       );
     } catch (err) {
       console.error('Erro ao atualizar o status do lead:', err.message || err);
@@ -91,11 +91,13 @@ function KanbanPage() {
   const handleUpdateLead = async (updatedLead) => {
     try {
       await leadService.updateLead(updatedLead.id, updatedLead);
-      
+
       setLeads((prevLeads) =>
         prevLeads.map((lead) =>
-          lead.id === updatedLead.id ? { ...updatedLead, column: { id: updatedLead.column } } : lead
-        )
+          lead.id === updatedLead.id
+            ? { ...updatedLead, column: { id: updatedLead.column } }
+            : lead,
+        ),
       );
 
       setSnackbarMessage('Lead atualizado com sucesso!');
@@ -124,11 +126,44 @@ function KanbanPage() {
 
   const handleAddLead = async (leadData) => {
     try {
+      const tempId = Date.now();
+      const newLead = {
+        ...leadData,
+        id: tempId,
+        column: leadData.column,
+      };
+
+      setLeads((prevLeads) => [...prevLeads, newLead]);
+
+      setColumns((prevColumns) =>
+        prevColumns.map((column) =>
+          column.id === newLead.column ? { ...column, leads: [...column.leads, newLead] } : column,
+        ),
+      );
+
       const createdLead = await leadService.createLead(leadData);
-      setLeads((prevLeads) => [...prevLeads, createdLead]);
-      fetchLeadsAndStatuses(selectedBoard);
+
+      setLeads((prevLeads) =>
+        prevLeads.map((lead) => (lead.id === tempId ? { ...createdLead } : lead)),
+      );
+
+      setColumns((prevColumns) =>
+        prevColumns.map((column) =>
+          column.id === createdLead.column
+            ? {
+                ...column,
+                leads: [...column.leads.filter((lead) => lead.id !== tempId), createdLead],
+              }
+            : column,
+        ),
+      );
+
+      setSnackbarMessage('Lead adicionado com sucesso!');
+      setSnackbarOpen(true);
     } catch (error) {
       console.error('Erro ao criar lead:', error);
+      setSnackbarMessage('Erro ao criar lead.');
+      setSnackbarOpen(true);
     }
   };
 
@@ -163,7 +198,7 @@ function KanbanPage() {
               <TaskManager
                 leads={leads}
                 statuses={statuses}
-                onUpdateLeadColumn={updateLeadColumn}
+                board={selectedBoard}                onUpdateLeadColumn={updateLeadColumn}
                 onUpdateLead={handleUpdateLead}
                 onDeleteLead={handleDeleteLead}
               />
@@ -181,7 +216,10 @@ function KanbanPage() {
           onClose={handleSnackbarClose}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >
-          <Alert onClose={handleSnackbarClose} severity={snackbarMessage.includes('Erro') ? 'error' : 'success'}>
+          <Alert
+            onClose={handleSnackbarClose}
+            severity={snackbarMessage.includes('Erro') ? 'error' : 'success'}
+          >
             {snackbarMessage}
           </Alert>
         </Snackbar>

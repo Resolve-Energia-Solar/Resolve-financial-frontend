@@ -1,55 +1,40 @@
-'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import {
   Box,
-  Typography,
-  Paper,
-  IconButton,
+  Snackbar,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Button,
-  Grid,
+  Divider,
+  IconButton,
+  Tooltip,
   Menu,
   MenuItem,
-  Tooltip,
-  Snackbar,
-  TextField,
   Alert,
-  Divider,
 } from '@mui/material';
 import {
-  Star,
-  StarBorder,
-  Email,
-  Phone,
-  AccessTime,
   Edit,
-  Delete,
-  Store,
   Timeline,
   AddCircle,
-  MoreVert,
+  Store,
   Home,
-  Badge,
-  CalendarToday,
-  AccountBox,
-  AccountBalance,
-  Work,
+  MoreVert,
   Business,
-  Tag,
   Description,
-  Wc,
-  Place,
 } from '@mui/icons-material';
+import LeadDetails from './LeadDetails';
+import LeadForm from './LeadForm';
+import LeadCard from './LeadCard';
 import SimpleBar from 'simplebar-react';
+import ColumnWithActions from './leadHeader';
+import leadService from '@/services/leadService';
+import userService from '@/services/userService';
 import AddressService from '@/services/addressService';
-
-const removeEmptyFields = (data) => {
-  return Object.fromEntries(Object.entries(data).filter(([key, value]) => value !== ''));
-};
+import GenerateProposalModal from './GenerateProposal';
+import GenerateProjectModal from './GenerateProject';
 
 const TaskManager = ({
   leads = [],
@@ -57,15 +42,9 @@ const TaskManager = ({
   onUpdateLeadColumn,
   onUpdateLead,
   onDeleteLead,
+  board,
 }) => {
-  const [leadStars, setLeadStars] = useState(() => {
-    const initialStars = {};
-    leads.forEach((lead) => {
-      initialStars[lead.id] = lead.stars || 0;
-    });
-    return initialStars;
-  });
-
+  const [leadStars, setLeadStars] = useState({});
   const [selectedLead, setSelectedLead] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -82,22 +61,111 @@ const TaskManager = ({
     type: '',
     seller: '',
     sdr: '',
+    addresses: [],
+    column: {
+      name: '',
+    },
   });
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [leadsList, setLeadsList] = useState(leads);
+  const [statusesList, setStatusesList] = useState(statuses);
+  const [sellers, setSellers] = useState([]);
+  const [sdrs, setSdrs] = useState([]);
+  const [addresses, setAddresses] = useState([]);
+  const [openProposalModal, setOpenProposalModal] = useState(false);
+  const [openProjectModal, setOpenProjectModal] = useState(false);
 
-  const [openAddressModal, setOpenAddressModal] = useState(false);
-  const [addressData, setAddressData] = useState({
-    zip_code: '',
-    country: '',
-    state: '',
-    city: '',
-    neighborhood: '',
-    street: '',
-    number: '',
-    complement: '',
-  });
+  useEffect(() => {
+    setLeadsList(leads);
+    setStatusesList(statuses);
+    const initialStars = {};
+    leads.forEach((lead) => {
+      initialStars[lead.id] = lead.stars || 0;
+    });
+    setLeadStars(initialStars);
+  }, [leads, statuses]);
+
+  const supervisors = [
+    { id: 1, complete_name: 'Supervisor 1', email: 'supervisor1@example.com' },
+    { id: 2, complete_name: 'Supervisor 2', email: 'supervisor2@example.com' },
+  ];
+
+  const managers = [
+    { id: 1, complete_name: 'Gerente 1', email: 'gerente1@example.com' },
+    { id: 2, complete_name: 'Gerente 2', email: 'gerente2@example.com' },
+  ];
+
+  const branches = [
+    {
+      id: 1,
+      name: 'Filial A',
+      address: { city: 'São Paulo', state: 'SP', street: 'Rua A', number: 123 },
+    },
+    {
+      id: 2,
+      name: 'Filial B',
+      address: { city: 'Rio de Janeiro', state: 'RJ', street: 'Rua B', number: 456 },
+    },
+  ];
+
+  const campaigns = [
+    {
+      id: 1,
+      name: 'Campanha de Verão',
+      start_datetime: '2023-06-01',
+      end_datetime: '2023-08-31',
+      description: 'Desconto especial de verão',
+    },
+    {
+      id: 2,
+      name: 'Campanha de Inverno',
+      start_datetime: '2023-12-01',
+      end_datetime: '2023-12-31',
+      description: 'Desconto especial de inverno',
+    },
+  ];
+
+  useEffect(() => {
+    const fetchUsersAndAddresses = async () => {
+      try {
+        const { results: users } = await userService.getUser();
+        const { results: addressData } = await AddressService.getAddress();
+
+        const sellersData = users; /* .filter((user) => user.role === 'seller'); */
+        const sdrsData = users; /* .filter((user) => user.role === 'sdr'); */
+
+        setSellers(sellersData);
+        setSdrs(sdrsData);
+        setAddresses(addressData);
+      } catch (error) {
+        console.error('Erro ao buscar vendedores, SDRs e endereços:', error);
+      }
+    };
+    fetchUsersAndAddresses();
+  }, []);
+
+  const onEditStatus = (statusId, columnName) => {
+    setStatusesList((prevStatuses) =>
+      prevStatuses.map((status) =>
+        status.id === statusId ? { ...status, name: columnName } : status,
+      ),
+    );
+  };
+
+  const onAddLead = async (newLeadData) => {
+    try {
+      const newLead = await leadService.createLead(newLeadData);
+      setLeadsList((prevLeads) => [...prevLeads, newLead]);
+      setSnackbarMessage('Lead adicionado com sucesso!');
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error('Erro ao adicionar lead:', error);
+      setSnackbarMessage('Erro ao adicionar lead.');
+      setSnackbarOpen(true);
+    }
+  };
 
   const handleStarClick = (leadId, stars) => {
     setLeadStars((prevStars) => ({
@@ -107,7 +175,13 @@ const TaskManager = ({
   };
 
   const handleLeadClick = (lead) => {
-    setSelectedLead(lead);
+    setSelectedLead({
+      ...lead,
+      column: {
+        name: lead.column?.name || 'N/A',
+      },
+    });
+
     setLeadData({
       name: lead.name,
       contact_email: lead.contact_email,
@@ -121,7 +195,12 @@ const TaskManager = ({
       type: lead.type || '',
       seller: lead.seller?.id || '',
       sdr: lead.sdr?.id || '',
+      addresses: lead.addresses || [],
+      column: {
+        name: lead.column?.name || 'N/A',
+      },
     });
+
     setOpenModal(true);
   };
 
@@ -129,6 +208,39 @@ const TaskManager = ({
     setOpenModal(false);
     setSelectedLead(null);
     setEditMode(false);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const handleUpdateLead = async () => {
+    if (selectedLead) {
+      const updatedLead = {
+        ...selectedLead,
+        ...leadData,
+        column: selectedLead.column.id,
+        seller: leadData.seller || null,
+        sdr: leadData.sdr || null,
+        addresses: leadData.addresses || [],
+      };
+
+      console.log('Dados limpos enviados para a API:', updatedLead);
+
+      try {
+        await onUpdateLead(updatedLead);
+        setLeadsList((prevLeads) =>
+          prevLeads.map((lead) => (lead.id === updatedLead.id ? updatedLead : lead)),
+        );
+        setSnackbarMessage('Lead atualizado com sucesso!');
+        setSnackbarOpen(true);
+        handleCloseModal();
+      } catch (error) {
+        setSnackbarMessage('Erro ao atualizar lead.');
+        setSnackbarOpen(true);
+        console.error('Erro ao atualizar lead:', error);
+      }
+    }
   };
 
   const handleOpenMenu = (event) => {
@@ -139,8 +251,19 @@ const TaskManager = ({
     setAnchorEl(null);
   };
 
-  const getLeadsByStatus = (statusId) => {
-    return leads.filter((lead) => lead.column.id === statusId);
+  const handleDeleteLead = async () => {
+    if (selectedLead) {
+      try {
+        await onDeleteLead(selectedLead.id);
+        setLeadsList((prevLeads) => prevLeads.filter((lead) => lead.id !== selectedLead.id));
+        setSnackbarMessage('Lead excluído com sucesso!');
+        setSnackbarOpen(true);
+        handleCloseModal();
+      } catch (error) {
+        setSnackbarMessage('Erro ao excluir lead.');
+        setSnackbarOpen(true);
+      }
+    }
   };
 
   const onDragEnd = (result) => {
@@ -149,8 +272,20 @@ const TaskManager = ({
     const { source, destination, draggableId } = result;
 
     if (source.droppableId !== destination.droppableId) {
+      setLeadsList((prevLeads) =>
+        prevLeads.map((lead) =>
+          lead.id === parseInt(draggableId)
+            ? { ...lead, column: { id: parseInt(destination.droppableId) } }
+            : lead,
+        ),
+      );
+
       onUpdateLeadColumn(draggableId, destination.droppableId);
     }
+  };
+
+  const getLeadsByStatus = (statusId) => {
+    return leadsList.filter((lead) => lead.column.id === statusId);
   };
 
   const getColumnBackgroundColor = (statusName) => {
@@ -166,96 +301,20 @@ const TaskManager = ({
     }
   };
 
-  const validateLeadData = (data) => {
-    if (!data.name || !data.contact_email || !data.phone) {
-      return false;
-    }
-    return true;
+  const handleOpenProposalModal = () => {
+    setOpenProposalModal(true);
   };
 
-  const handleUpdateLead = async () => {
-    if (selectedLead) {
-      const updatedLead = {
-        ...selectedLead,
-        ...leadData,
-        column: selectedLead.column.id,
-      };
-
-      const cleanedLeadData = removeEmptyFields(updatedLead);
-
-      if (!validateLeadData(cleanedLeadData)) {
-        setSnackbarMessage('Preencha todos os campos obrigatórios.');
-        setSnackbarOpen(true);
-        return;
-      }
-
-      try {
-        await onUpdateLead(cleanedLeadData);
-        setSnackbarMessage('Lead atualizado com sucesso!');
-        setSnackbarOpen(true);
-        handleCloseModal();
-      } catch (error) {
-        setSnackbarMessage('Erro ao atualizar lead.');
-        setSnackbarOpen(true);
-        console.error('Erro ao atualizar lead:', error);
-      }
-    }
+  const handleOpenProjectModal = () => {
+    setOpenProjectModal(true);
   };
 
-  const handleDeleteLead = async () => {
-    if (selectedLead) {
-      try {
-        await onDeleteLead(selectedLead.id);
-        setSnackbarMessage('Lead excluído com sucesso!');
-        setSnackbarOpen(true);
-        handleCloseModal();
-      } catch (error) {
-        setSnackbarMessage('Erro ao excluir lead.');
-        setSnackbarOpen(true);
-      }
-    }
+  const handleCloseProposalModal = () => {
+    setOpenProposalModal(false);
   };
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
-
-  const handleOpenAddressModal = (e) => {
-    e.stopPropagation();
-    setOpenAddressModal(true);
-  };
-
-  const handleCloseAddressModal = () => {
-    setOpenAddressModal(false);
-    setAddressData({
-      zip_code: '',
-      country: '',
-      state: '',
-      city: '',
-      neighborhood: '',
-      street: '',
-      number: '',
-      complement: '',
-    });
-  };
-
-  const handleAddAddress = async () => {
-    if (selectedLead) {
-      try {
-        const addressPayload = {
-          ...addressData,
-          lead: selectedLead.id,
-        };
-        await AddressService.createAddress(addressPayload);
-        setSnackbarMessage('Endereço adicionado com sucesso!');
-        setSnackbarOpen(true);
-        handleCloseAddressModal();
-      } catch (error) {
-        setSnackbarMessage('Erro ao adicionar endereço.');
-        setSnackbarOpen(true);
-        console.error('Erro ao adicionar endereço:', error);
-      }
-    }
+  const handleCloseProjectModal = () => {
+    setOpenProjectModal(false);
   };
 
   return (
@@ -277,65 +336,35 @@ const TaskManager = ({
                       overflowY: 'auto',
                     }}
                   >
-                    <Typography variant="h6" gutterBottom>
-                      {status.name}
-                    </Typography>
-
+                    <ColumnWithActions
+                      key={status.id}
+                      columnTitle={status.name}
+                      statusId={status.id}
+                      boardId={board}
+                      onEditStatus={onEditStatus}
+                      leads={leadsList}
+                      onAddLead={onAddLead}
+                      position={status.position}
+                    />
                     {getLeadsByStatus(status.id).map((lead, index) => (
                       <Draggable draggableId={lead.id.toString()} index={index} key={lead.id}>
-                        {(provided, snapshot) => (
-                          <Paper
+                        {(provided) => (
+                          <Box
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            sx={{
-                              p: 2,
-                              mb: 2,
-                              backgroundColor: snapshot.isDragging ? '#e0f7fa' : 'white',
-                              transition: 'background-color 0.2s ease',
-                            }}
-                            onClick={() => handleLeadClick(lead)}
                           >
-                            <Box display="flex" justifyContent="space-between" alignItems="center">
-                              <Typography variant="h6">{lead.name}</Typography>
-                              <Box display="flex" alignItems="center">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <IconButton
-                                    key={star}
-                                    size="small"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleStarClick(lead.id, star);
-                                    }}
-                                  >
-                                    {leadStars[lead.id] >= star ? (
-                                      <Star sx={{ color: 'gold', fontSize: '1rem' }} />
-                                    ) : (
-                                      <StarBorder sx={{ color: 'grey', fontSize: '1rem' }} />
-                                    )}
-                                  </IconButton>
-                                ))}
-                              </Box>
-                            </Box>
-
-                            <Box display="flex" alignItems="center" mt={1}>
-                              <Email sx={{ fontSize: '1rem', color: 'grey', mr: 1 }} />
-                              <Typography variant="body2">{lead.contact_email}</Typography>
-                            </Box>
-                            <Box display="flex" alignItems="center" mt={1}>
-                              <Phone sx={{ fontSize: '1rem', color: 'grey', mr: 1 }} />
-                              <Typography variant="body2">{lead.phone}</Typography>
-                            </Box>
-                            <Box display="flex" alignItems="center" mt={1}>
-                              <AccessTime sx={{ fontSize: '1rem', color: 'grey', mr: 1 }} />
-                              <Typography variant="caption" color="textSecondary">
-                                Criado em: {new Date(lead.created_at).toLocaleDateString('pt-BR')}
-                              </Typography>
-                            </Box>
-                          </Paper>
+                            <LeadCard
+                              lead={lead}
+                              leadStars={leadStars}
+                              handleLeadClick={handleLeadClick}
+                              handleStarClick={handleStarClick}
+                            />
+                          </Box>
                         )}
                       </Draggable>
                     ))}
+
                     {provided.placeholder}
                   </Box>
                 )}
@@ -346,210 +375,23 @@ const TaskManager = ({
       </SimpleBar>
 
       {selectedLead && (
-        <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="sm">
+        <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="md">
           <DialogTitle>{editMode ? 'Editar Lead' : 'Detalhes do Lead'}</DialogTitle>
           <Divider />
           <DialogContent>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                {editMode ? (
-                  <TextField
-                    fullWidth
-                    label="Nome"
-                    value={leadData.name}
-                    onChange={(e) => setLeadData({ ...leadData, name: e.target.value })}
-                  />
-                ) : (
-                  <Box display="flex" alignItems="center">
-                    <AccountBox fontSize="small" style={{ marginRight: 8 }} />
-                    <Typography variant="h6">{selectedLead.name}</Typography>
-                  </Box>
-                )}
-              </Grid>
-
-              <Grid item xs={6}>
-                {editMode ? (
-                  <TextField
-                    fullWidth
-                    label="Tipo de Pessoa"
-                    select
-                    value={leadData.type}
-                    onChange={(e) => setLeadData({ ...leadData, type: e.target.value })}
-                  >
-                    <MenuItem value="PF">Pessoa Física</MenuItem>
-                    <MenuItem value="PJ">Pessoa Jurídica</MenuItem>
-                  </TextField>
-                ) : (
-                  <Box display="flex" alignItems="center">
-                    <Business fontSize="small" style={{ marginRight: 8 }} />
-                    <Typography variant="body1">
-                      Tipo: {selectedLead.type === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica'}
-                    </Typography>
-                  </Box>
-                )}
-              </Grid>
-
-              <Grid item xs={6}>
-                {editMode ? (
-                  <TextField
-                    fullWidth
-                    label="Apelido"
-                    value={leadData.byname}
-                    onChange={(e) => setLeadData({ ...leadData, byname: e.target.value })}
-                  />
-                ) : (
-                  <Box display="flex" alignItems="center">
-                    <Tag fontSize="small" style={{ marginRight: 8 }} />
-                    <Typography variant="body1">Apelido: {selectedLead.byname}</Typography>
-                  </Box>
-                )}
-              </Grid>
-
-              <Grid item xs={6}>
-                {editMode ? (
-                  <TextField
-                    fullWidth
-                    label="Documento Principal (CPF/CNPJ)"
-                    value={leadData.first_document}
-                    onChange={(e) => setLeadData({ ...leadData, first_document: e.target.value })}
-                  />
-                ) : (
-                  <Box display="flex" alignItems="center">
-                    <Description fontSize="small" style={{ marginRight: 8 }} />
-                    <Typography variant="body1">
-                      Documento Principal: {selectedLead.first_document || 'N/A'}
-                    </Typography>
-                  </Box>
-                )}
-              </Grid>
-
-              <Grid item xs={6}>
-                {editMode ? (
-                  <TextField
-                    fullWidth
-                    label="Documento Secundário (RG/IE)"
-                    value={leadData.second_document}
-                    onChange={(e) => setLeadData({ ...leadData, second_document: e.target.value })}
-                  />
-                ) : (
-                  <Box display="flex" alignItems="center">
-                    <Badge fontSize="small" style={{ marginRight: 8 }} />
-                    <Typography variant="body1">
-                      Documento Secundário: {selectedLead.second_document || 'N/A'}
-                    </Typography>
-                  </Box>
-                )}
-              </Grid>
-
-              <Grid item xs={6}>
-                {editMode ? (
-                  <TextField
-                    fullWidth
-                    label="Data de Nascimento"
-                    type="date"
-                    value={leadData.birth_date}
-                    onChange={(e) => setLeadData({ ...leadData, birth_date: e.target.value })}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                ) : (
-                  <Box display="flex" alignItems="center">
-                    <CalendarToday fontSize="small" style={{ marginRight: 8 }} />
-                    <Typography variant="body1">
-                      Data de Nascimento: {selectedLead.birth_date || 'N/A'}
-                    </Typography>
-                  </Box>
-                )}
-              </Grid>
-
-              <Grid item xs={6}>
-                {editMode ? (
-                  <TextField
-                    fullWidth
-                    label="Gênero"
-                    select
-                    value={leadData.gender}
-                    onChange={(e) => setLeadData({ ...leadData, gender: e.target.value })}
-                  >
-                    <MenuItem value="M">Masculino</MenuItem>
-                    <MenuItem value="F">Feminino</MenuItem>
-                  </TextField>
-                ) : (
-                  <Box display="flex" alignItems="center">
-                    <Wc fontSize="small" style={{ marginRight: 8 }} />
-                    <Typography variant="body1">
-                      Gênero: {selectedLead.gender === 'M' ? 'Masculino' : 'Feminino'}
-                    </Typography>
-                  </Box>
-                )}
-              </Grid>
-
-              <Grid item xs={12}>
-                {editMode ? (
-                  <TextField
-                    fullWidth
-                    label="E-mail"
-                    value={leadData.contact_email}
-                    onChange={(e) => setLeadData({ ...leadData, contact_email: e.target.value })}
-                  />
-                ) : (
-                  <Box display="flex" alignItems="center">
-                    <Email fontSize="small" style={{ marginRight: 8 }} />
-                    <Typography variant="body1">E-mail: {selectedLead.contact_email}</Typography>
-                  </Box>
-                )}
-              </Grid>
-
-              <Grid item xs={12}>
-                {editMode ? (
-                  <TextField
-                    fullWidth
-                    label="Telefone"
-                    value={leadData.phone}
-                    onChange={(e) => setLeadData({ ...leadData, phone: e.target.value })}
-                  />
-                ) : (
-                  <Box display="flex" alignItems="center">
-                    <Phone fontSize="small" style={{ marginRight: 8 }} />
-                    <Typography variant="body1">Telefone: {selectedLead.phone}</Typography>
-                  </Box>
-                )}
-              </Grid>
-
-              <Grid item xs={12}>
-                {editMode ? (
-                  <TextField
-                    fullWidth
-                    label="Origem"
-                    value={leadData.origin}
-                    onChange={(e) => setLeadData({ ...leadData, origin: e.target.value })}
-                  />
-                ) : (
-                  <Box display="flex" alignItems="center">
-                    <Place fontSize="small" style={{ marginRight: 8 }} />
-                    <Typography variant="body1">Origem: {selectedLead.origin || 'N/A'}</Typography>
-                  </Box>
-                )}
-              </Grid>
-
-              <Grid item xs={12}>
-                <Box display="flex" alignItems="center">
-                  <CalendarToday fontSize="small" style={{ marginRight: 8 }} />
-                  <Typography variant="body1">
-                    Criado em: {new Date(selectedLead.created_at).toLocaleDateString('pt-BR')}
-                  </Typography>
-                </Box>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Box display="flex" alignItems="center">
-                  <Badge fontSize="small" style={{ marginRight: 8 }} />
-                  <Typography variant="body1">Status: {selectedLead.column.name}</Typography>
-                </Box>
-              </Grid>
-
-              <Grid item xs={12} display="flex" justifyContent="space-between">
+            {editMode ? (
+              <LeadForm
+                leadData={leadData}
+                setLeadData={setLeadData}
+                sellers={sellers}
+                sdrs={sdrs}
+                addresses={addresses}
+              />
+            ) : (
+              <LeadDetails selectedLead={selectedLead} />
+            )}
+            {!editMode && (
+              <Box mt={2} display="flex" justifyContent="space-between">
                 <Tooltip title="Editar Lead">
                   <IconButton onClick={() => setEditMode(true)}>
                     <Edit color="primary" />
@@ -571,8 +413,19 @@ const TaskManager = ({
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Adicionar Endereço">
-                  <IconButton onClick={handleOpenAddressModal}>
+                  <IconButton>
                     <Home color="primary" />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Gerar Projeto">
+                  <IconButton onClick={handleOpenProjectModal}>
+                    <Business color="primary" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Gerar Proposta">
+                  <IconButton onClick={handleOpenProposalModal}>
+                    <Description color="primary" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Ações Rápidas">
@@ -580,8 +433,23 @@ const TaskManager = ({
                     <MoreVert />
                   </IconButton>
                 </Tooltip>
-              </Grid>
-            </Grid>
+                <GenerateProposalModal
+                  open={openProposalModal}
+                  onClose={handleCloseProposalModal}
+                  sellers={sellers}
+                  supervisors={supervisors}
+                  managers={managers}
+                  branches={branches}
+                  campaigns={campaigns}
+                />
+                <GenerateProjectModal
+                  open={openProjectModal}
+                  onClose={handleCloseProjectModal}
+                  branches={branches}
+                  managers={managers}
+                />
+              </Box>
+            )}
           </DialogContent>
           <DialogActions>
             {editMode ? (
@@ -607,86 +475,6 @@ const TaskManager = ({
           </Menu>
         </Dialog>
       )}
-
-      <Dialog open={openAddressModal} onClose={handleCloseAddressModal} fullWidth maxWidth="sm">
-        <DialogTitle>Adicionar Endereço</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                label="CEP"
-                fullWidth
-                value={addressData.zip_code}
-                onChange={(e) => setAddressData({ ...addressData, zip_code: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="País"
-                fullWidth
-                value={addressData.country}
-                onChange={(e) => setAddressData({ ...addressData, country: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label="Estado"
-                fullWidth
-                value={addressData.state}
-                onChange={(e) => setAddressData({ ...addressData, state: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label="Cidade"
-                fullWidth
-                value={addressData.city}
-                onChange={(e) => setAddressData({ ...addressData, city: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Bairro"
-                fullWidth
-                value={addressData.neighborhood}
-                onChange={(e) => setAddressData({ ...addressData, neighborhood: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label="Rua"
-                fullWidth
-                value={addressData.street}
-                onChange={(e) => setAddressData({ ...addressData, street: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label="Número"
-                fullWidth
-                value={addressData.number}
-                onChange={(e) => setAddressData({ ...addressData, number: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Complemento"
-                fullWidth
-                value={addressData.complement}
-                onChange={(e) => setAddressData({ ...addressData, complement: e.target.value })}
-              />
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleAddAddress} color="primary">
-            Adicionar
-          </Button>
-          <Button onClick={handleCloseAddressModal} color="secondary">
-            Cancelar
-          </Button>
-        </DialogActions>
-      </Dialog>
 
       <Snackbar
         open={snackbarOpen}
