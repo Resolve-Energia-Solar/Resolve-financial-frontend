@@ -496,31 +496,19 @@ const TaskManager = ({
                       <Button
                         variant="outlined"
                         startIcon={<Assignment />}
-                        onClick={() => handleTabChange(null, 1)} // Navegar para a aba "Proposta"
+                        onClick={() => handleTabChange(null, 1)}
                       >
                         Proposta
                       </Button>
                       <Button
                         variant="outlined"
                         startIcon={<Work />}
-                        onClick={() => handleTabChange(null, 2)} // Navegar para a aba "Tarefas"
+                        onClick={() => handleTabChange(null, 2)} 
                       >
                         Tarefas
                       </Button>
-                      <Button
-                        variant="outlined"
-                        startIcon={<AddCircle />}
-                        onClick={() => handleTabChange(null, 3)} // Navegar para a aba "Atividades"
-                      >
-                        Atividades
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        startIcon={<EmailIcon />}
-                        onClick={() => console.log('Enviar Email')}
-                      >
-                        Enviar Email
-                      </Button>
+                    
+                      
                       <Button
                         variant="outlined"
                         startIcon={<NoteAdd />}

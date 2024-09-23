@@ -24,7 +24,7 @@ const AppDD = () => {
   return (
     <>
       <Box>
-        <Button
+       {/*  <Button
           aria-label="show 11 new notifications"
           color="inherit"
           variant="text"
@@ -38,7 +38,7 @@ const AppDD = () => {
           endIcon={<IconChevronDown size="15" style={{ marginLeft: '-5px', marginTop: '2px' }} />}
         >
           Apps
-        </Button>
+        </Button> */}
         {/* ------------------------------------------- */}
         {/* Message Dropdown */}
         {/* ------------------------------------------- */}
