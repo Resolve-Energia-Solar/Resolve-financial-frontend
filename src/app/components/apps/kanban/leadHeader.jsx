@@ -79,10 +79,10 @@ const ColumnWithActions = ({
     try {
       const updatedColumnData = {
         name: columnName,
-        board: boardId,  
+        board: boardId,
         position: position,
       };
-  
+
       console.log('Dados enviados para API:', updatedColumnData);
       await columnService.updateColumn(statusId, updatedColumnData);
       onEditStatus(statusId, columnName);
@@ -91,7 +91,7 @@ const ColumnWithActions = ({
       console.error('Erro ao editar status:', error);
     }
   };
-  
+
 
   const handleDeleteStatus = async () => {
     try {
@@ -115,19 +115,13 @@ const ColumnWithActions = ({
 
   return (
     <>
-      <Box sx={{ padding: '10px', borderRadius: '8px' }}>
+      <Box sx={{ padding: '6px', borderRadius: '8px' }}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6">
-            {columnTitle} (
-            <Box
-              component="span"
-              sx={{
-                display: 'inline-block',
-              }}
-            >
-              {leadsCount}
-            </Box>
-            )
+          <Typography variant="subtitle1" fontWeight={600}>
+            {columnTitle}{" "}
+
+            <Typography variant="caption" fontWeight={500}> ({leadsCount})</Typography>
+
           </Typography>
 
           <Box display="flex" alignItems="center">

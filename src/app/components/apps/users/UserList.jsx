@@ -57,49 +57,49 @@ function UserList({ showrightSidebar }) {
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '150px' }}>
+                  <Typography variant="subtitle1" fontWeight={600} sx={{ display: 'flex', alignItems: 'center', minWidth: '150px' }}>
                     <IconUser size={20} style={{ marginRight: '8px' }} />
                     Foto
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '200px' }}>
+                  <Typography variant="subtitle1" fontWeight={600} sx={{ display: 'flex', alignItems: 'center', minWidth: '200px' }}>
                     <IconHash size={20} style={{ marginRight: '8px' }} />
                     Nome de Usuário
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '200px' }}>
+                  <Typography variant="subtitle1" fontWeight={600} sx={{ display: 'flex', alignItems: 'center', minWidth: '200px' }}>
                     <IconUser size={20} style={{ marginRight: '8px' }} />
                     Nome Completo
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '250px' }}>
+                  <Typography variant="subtitle1" fontWeight={600} sx={{ display: 'flex', alignItems: 'center', minWidth: '250px' }}>
                     <IconMail size={20} style={{ marginRight: '8px' }} />
                     Email
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '150px' }}>
+                  <Typography variant="subtitle1" fontWeight={600} sx={{ display: 'flex', alignItems: 'center', minWidth: '150px' }}>
                     <IconBriefcase size={20} style={{ marginRight: '8px' }} />
                     Setor
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '150px' }}>
+                  <Typography variant="subtitle1" fontWeight={600} sx={{ display: 'flex', alignItems: 'center', minWidth: '150px' }}>
                     <IconBriefcase size={20} style={{ marginRight: '8px' }} />
                     Cargo
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '150px' }}>
+                  <Typography variant="subtitle1" fontWeight={600} sx={{ display: 'flex', alignItems: 'center', minWidth: '150px' }}>
                     <IconCalendar size={20} style={{ marginRight: '8px' }} />
                     Admissão
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '100px' }}>
+                  <Typography variant="subtitle1" fontWeight={600} sx={{ display: 'flex', alignItems: 'center', minWidth: '100px' }}>
                     Ativo
                   </Typography>
                 </TableCell>
@@ -115,7 +115,7 @@ function UserList({ showrightSidebar }) {
                   in={true}
                   style={{ transitionDelay: `${index * 100}ms` }}
                 >
-                  <TableRow hover>
+                  <TableRow hover >
                     <TableCell>
                       <Avatar
                         src={user.profile_picture}
@@ -125,32 +125,32 @@ function UserList({ showrightSidebar }) {
                     </TableCell>
 
                     <TableCell>
-                      <Typography variant="body1" color="textSecondary">
+                      <Typography variant="body2" color="textSecondary">
                         {user.username || '—'}
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography variant="h6" fontWeight={600} noWrap>
+                      <Typography variant="body2" fontWeight={600} noWrap>
                         {user.first_name} {user.last_name}
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography variant="body1" noWrap>
+                      <Typography variant="body2" noWrap>
                         {user.email || '—'}
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography variant="body1" noWrap>
+                      <Typography variant="body2" noWrap>
                         {user.department || '—'}
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography variant="body1" noWrap>
+                      <Typography variant="body2" noWrap>
                         {user.cargo || '—'}
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography variant="body1" noWrap>
+                      <Typography variant="body2" noWrap>
                         {user.date_joined ? new Date(user.date_joined).toLocaleDateString() : '—'}
                       </Typography>
                     </TableCell>
