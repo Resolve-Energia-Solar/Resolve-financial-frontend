@@ -78,7 +78,7 @@ const Menuitems = [
     title: 'Modern',
     icon: IconAperture,
     href: '/',
-    chip: 'New',
+    chip: 'Novo',
     chipColor: 'secondary',
   },
   {
@@ -86,6 +86,24 @@ const Menuitems = [
     title: 'Quadros',
     icon: IconLayoutKanban,
     href: '/apps/boards',
+  },
+  {
+    id: uniqueId(),
+    title: 'Vendas',
+    icon: IconShoppingCart,
+    href: '/apps/commercial/sale',
+  },
+  {
+    id: uniqueId(),
+    title: 'Campanhas',
+    icon: IconStar,
+    href: '/apps/campaign',
+  },
+  {
+    id: uniqueId(),
+    title: 'Projetos',
+    icon: IconTools,
+    href: '/apps/project/project',
   },
   {
     id: uniqueId(),
@@ -119,12 +137,6 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Campanhas',
-    icon: IconStar,
-    href: '/apps/campaign',
-  },
-  {
-    id: uniqueId(),
     title: 'Perfils',
     icon: IconUserCircle,
     href: '/apps/profile',
@@ -146,18 +158,6 @@ const Menuitems = [
     title: 'Tipo de Material',
     icon: IconTag,
     href: '/apps/logistic/material-type',
-  },
-  {
-    id: uniqueId(),
-    title: 'Vendas',
-    icon: IconShoppingCart,
-    href: '/apps/commercial/sale',
-  },
-  {
-    id: uniqueId(),
-    title: 'Projetos',
-    icon: IconTools,
-    href: '/apps/project/project',
   },
   {
     id: uniqueId(),
