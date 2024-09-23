@@ -437,7 +437,7 @@ const TaskManager = ({
                       scrollButtons="auto"
                     >
                       <Tab label="Lead" />
-                      <Tab label="Proposta" />
+                      <Tab label="Vendas" />
                       <Tab label="Tarefas" />
                       <Tab label="Atividades" />
                     </Tabs>
@@ -493,22 +493,16 @@ const TaskManager = ({
                       >
                         Gerar Venda
                       </Button>
-                      <Button
-                        variant="outlined"
-                        startIcon={<Assignment />}
-                        onClick={() => handleTabChange(null, 1)}
-                      >
-                        Proposta
-                      </Button>
+
                       <Button
                         variant="outlined"
                         startIcon={<Work />}
-                        onClick={() => handleTabChange(null, 2)} 
+                        onClick={() => handleTabChange(null, 2)}
                       >
                         Tarefas
                       </Button>
-                    
-                      
+
+
                       <Button
                         variant="outlined"
                         startIcon={<NoteAdd />}
@@ -516,14 +510,7 @@ const TaskManager = ({
                       >
                         Adicionar Nota
                       </Button>
-                      <Button
-                        variant="outlined"
-                        startIcon={<Delete />}
-                        onClick={handleDeleteLead}
-                        color="error"
-                      >
-                        Excluir Lead
-                      </Button>
+
                     </Box>
                   </Box>
                 </Grid>
