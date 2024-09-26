@@ -13,17 +13,22 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import CircularProgress from '@mui/material/CircularProgress';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AuthSocialButtons from './AuthSocialButtons';
 import Cookies from 'js-cookie';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const AuthLogin = ({ title, subtitle, subtext }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false); // Para controlar o Snackbar
+  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false); // Para o erro
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -74,13 +79,28 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
         access_token: data.access,
       }));
 
-      router.push('/');
+      // Abrir Snackbar de sucesso
+      setOpenSnackbar(true);
+
+      // Redirecionar após 3 segundos
+      setTimeout(() => {
+        router.push('/');
+      }, 3000);
     } catch (error) {
       console.error('Login error:', error);
       setError('Falha no login. Verifique suas credenciais e tente novamente.');
+      setOpenErrorSnackbar(true);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setOpenSnackbar(false);
+  };
+
+  const handleErrorSnackbarClose = () => {
+    setOpenErrorSnackbar(false);
   };
 
   return (
@@ -166,6 +186,39 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
       </Box>
       {subtitle}
       {error && <Typography color="error">{error}</Typography>}
+
+      {/* Snackbar de sucesso */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="success"
+          sx={{ width: '100%' }}
+          icon={<CheckCircleIcon fontSize="inherit" />}
+        >
+          Login efetuado com sucesso! Você será redirecionado em instantes...
+        </Alert>
+      </Snackbar>
+
+      {/* Snackbar de erro */}
+      <Snackbar
+        open={openErrorSnackbar}
+        autoHideDuration={3000}
+        onClose={handleErrorSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleErrorSnackbarClose}
+          severity="error"
+          sx={{ width: '100%' }}
+        >
+          Falha no login. Verifique suas credenciais e tente novamente.
+        </Alert>
+      </Snackbar>
     </>
   );
 };
