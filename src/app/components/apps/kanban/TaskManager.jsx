@@ -321,8 +321,6 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn, board }) =
                             ) : (
                               <TaskCard
                                 task={lead}
-                                customer={lead.customers}
-                                project={lead.projects}
                               />
                             )}
                           </Box>
