@@ -104,11 +104,11 @@ const SaleList = () => {
         const fetchLeadsAndStatuses = async () => {
             try {
                 const { data: salesData, error: salesError } = await supabase
-                    .from('sales')
-                    .select('*, branches(name),customers(name)')
-      
+                    .from('projects')
+                    .select('* ,sales(*,customers(*)),homologator(*)')
+
                 if (salesError) throw salesError;
-             
+
                 setSalesList(salesData);
             } catch (error) {
                 console.error('Erro ao buscar leads e colunas:', error);
@@ -136,33 +136,47 @@ const SaleList = () => {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>ID</TableCell>
-                                        <TableCell>Nome contratante</TableCell>
+                                        <TableCell>Número do Projeto</TableCell>
+                                        <TableCell>Nome do Contratante</TableCell>
+                                        <TableCell>Nome do Homologador</TableCell>
                                         <TableCell>Número do Contrato</TableCell>
                                         <TableCell>Data do Contrato</TableCell>
                                         <TableCell>Valor Total (R$)</TableCell>
-                                        <TableCell>Venda</TableCell>
-                                        <TableCell>Data de Assinatura</TableCell>
                                         <TableCell>Status</TableCell>
-                                        <TableCell>Data de Conclusão</TableCell>
-                                        <TableCell>Unidade</TableCell>
-                                        <TableCell>Ações</TableCell>
+                                        <TableCell>kWp</TableCell>
+                                        <TableCell>Tipo do Fornecimento</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {salesList.map((item) => (
                                         <TableRow key={item.id} hover>
                                             <TableCell>{item.id}</TableCell>
-                                            <TableCell>{item.customers.name}</TableCell>
-                                            <TableCell>{item.contract_number}</TableCell>
-                                            <TableCell>{item.contract_date}</TableCell>
+                                            <TableCell>{item.project_number}</TableCell>
+                                            <TableCell>{item.sales.customers.name}</TableCell>
+                                            <TableCell>{item.homologator.complete_name}</TableCell>
+                                            <TableCell>{item.sales.contract_number}</TableCell>
+                                            <TableCell>
+                                                {new Date(item.sales.contract_date).toLocaleDateString()}
+                                            </TableCell>
+                                            <TableCell>
+                                                {Number(item.project_value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                            </TableCell>
+                                            <TableCell>
+                                                {getStatusChip(item.status)}
+                                            </TableCell>
+                                            <TableCell>
+                                                {item.kwp}
+                                            </TableCell>
+                                            <TableCell>
+                                                {item.supply_type}
+                                            </TableCell>
+                                            {/* <TableCell>{item.contract_date}</TableCell>
                                             <TableCell>{Number(item.total_value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
                                             <TableCell>
                                                 {item.is_sale ? 'Sim' : 'Não'}
                                             </TableCell>
                                             <TableCell>{item.signature_date}</TableCell>
-                                            <TableCell>
-                                                {getStatusChip(item.status)}
-                                            </TableCell>
+                                           
                                             <TableCell>{item.document_completion_date}</TableCell>
                                             <TableCell>{item.branches.name}</TableCell>
                                             <TableCell>
@@ -176,7 +190,7 @@ const SaleList = () => {
                                                         <DeleteIcon />
                                                     </IconButton>
                                                 </Tooltip>
-                                            </TableCell>
+                                            </TableCell> */}
                                         </TableRow>
                                     ))}
                                 </TableBody>
