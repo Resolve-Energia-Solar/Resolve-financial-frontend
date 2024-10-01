@@ -6,31 +6,27 @@ const TaskCard = ({ task, handleTaskClick }) => {
     <Card onClick={() => handleTaskClick(task)} sx={{ mb: 2 }}>
       <CardContent>
         <Typography variant="h6" gutterBottom>
-          {task.name || 'Tarefa'}
+          {task.title || 'Tarefa'}
         </Typography>
 
-        {/* Exibe a descrição da tarefa, se houver */}
         {task.description && (
           <Typography variant="body2" color="textSecondary">
             Descrição: {task.description}
           </Typography>
         )}
 
-        {/* Exibe a data de início da tarefa, se houver */}
         {task.start_date && (
           <Typography variant="body2" color="textSecondary">
             Início: {new Date(task.start_date).toLocaleDateString('pt-BR')}
           </Typography>
         )}
 
-        {/* Exibe a data de vencimento da tarefa, se houver */}
         {task.due_date && (
           <Typography variant="body2" color="textSecondary">
             Prazo: {new Date(task.due_date).toLocaleDateString('pt-BR')}
           </Typography>
         )}
 
-        {/* Exibe a data de conclusão da tarefa, se houver */}
         {task.end_date && (
           <Typography variant="body2" color="textSecondary">
             Concluído em: {new Date(task.end_date).toLocaleDateString('pt-BR')}

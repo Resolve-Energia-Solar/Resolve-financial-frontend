@@ -67,41 +67,37 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn, board }) =
     const fetchLeadsAndStatuses = async () => {
       try {
         let leadsData;
-  
+
         // Define a tabela com base no tipo de board
         const table = board === 1 ? 'leads' : 'project_tasks';
-  
+
         // Busca os dados dos leads ou project_tasks
         const { data: leadsTableData, error: leadsTableError } = await supabase
           .from(table)
           .select('*')
           .eq('board_id', board);
         if (leadsTableError) throw leadsTableError;
-  
+
         leadsData = leadsTableData;
-  
+
         // Busca os dados das colunas
         const { data: columnsData, error: columnsError } = await supabase
           .from('columns')
           .select('*')
           .eq('board_id', board);
         if (columnsError) throw columnsError;
-  
-        // Ordena as colunas pela posição
+
         const sortedColumns = columnsData.sort((a, b) => a.position - b.position);
-  
-        // Atualiza os estados com os leads e as colunas ordenadas
+
         setLeadsList(leadsData);
         setStatusesList(sortedColumns);
       } catch (error) {
         console.error('Erro ao buscar leads e colunas:', error);
       }
     };
-  
-    // Chama a função ao carregar o componente ou quando 'board' mudar
+
     fetchLeadsAndStatuses();
   }, [board]);
-  
 
   useEffect(() => {
     const fetchUsersAndAddresses = async () => {

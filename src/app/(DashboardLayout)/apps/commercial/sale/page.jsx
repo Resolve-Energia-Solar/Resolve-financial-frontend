@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import {
     CardContent,
-    ListItem,
     Table,
     TableBody,
     TableCell,
@@ -11,15 +10,13 @@ import {
     TableRow,
     Paper,
     Typography,
-    Box,
-    Chip,
     IconButton,
     Tooltip,
+    Chip,
 } from '@mui/material';
 import {
-    Add as AddIcon,
-    Delete as DeleteIcon,
     Edit as EditIcon,
+    Delete as DeleteIcon,
     CheckCircle as CheckCircleIcon,
     HourglassEmpty as HourglassEmptyIcon,
     Cancel as CancelIcon,
@@ -29,95 +26,44 @@ import BlankCard from '@/app/components/shared/BlankCard';
 import PageContainer from "@/app/components/container/PageContainer";
 import { supabase } from "@/utils/supabaseClient";
 
-// Função para gerar vendas mockadas
-const generateMockSales = (num) => {
-    const statuses = ['Finalizar', 'Em Andamento', 'Cancelada'];
-    const branches = ['Castanhal', 'São Paulo', 'Rio de Janeiro', 'Belo Horizonte', 'Curitiba'];
-    const sales = [];
-
-    for (let i = 1; i <= num; i++) {
-        const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-        const randomBranch = branches[Math.floor(Math.random() * branches.length)];
-        const randomValue = (Math.random() * 50000 + 10000).toFixed(2);
-        const randomDate = new Date(+(new Date()) - Math.floor(Math.random() * 10000000000)).toISOString().split('T')[0];
-        const randomCompletionDate = new Date(+(new Date()) + Math.floor(Math.random() * 10000000000)).toISOString().split('T')[0] + ' ' + new Date().toTimeString().split(' ')[0];
-
-        sales.push({
-            id: i,
-            total_value: randomValue,
-            contract_number: `RES${String(i).padStart(6, '0')}`,
-            contract_date: randomDate,
-            signature_date: randomDate,
-            is_sale: true,
-            status: randomStatus,
-            branch_id: {
-                id: Math.floor(Math.random() * branches.length) + 1,
-                name: randomBranch,
-                is_deleted: 0,
-                address_id: {
-                    zipcode: '66690720'
-                }
-            },
-            document_completion_date: randomCompletionDate
-        });
+const getStatusChip = (status) => {
+    switch (status) {
+        case 'Finalizar':
+            return <Chip label={status} color="success" icon={<CheckCircleIcon />} />;
+        case 'Em Andamento':
+            return <Chip label={status} color="primary" icon={<HourglassEmptyIcon />} />;
+        case 'Cancelada':
+            return <Chip label={status} color="error" icon={<CancelIcon />} />;
+        default:
+            return <Chip label={status} />;
     }
-
-    return sales;
 };
 
 const SaleList = () => {
-    const [sales, setSales] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [salesList, setSalesList] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Simular a obtenção de dados (pode ser substituído por uma chamada real)
     useEffect(() => {
-        setLoading(true);
-        try {
-            const mockSales = generateMockSales(50);
-            setSales(mockSales);
-            setLoading(false);
-        } catch (err) {
-            setError('Erro ao carregar vendas.');
-            setLoading(false);
-        }
-    }, []);
-
-    // Função para mapear status para cores e ícones
-    const getStatusChip = (status) => {
-        switch (status) {
-            case 'Finalizar':
-                return <Chip label={status} color="success" icon={<CheckCircleIcon />} />;
-            case 'Em Andamento':
-                return <Chip label={status} color="primary" icon={<HourglassEmptyIcon />} />;
-            case 'Cancelada':
-                return <Chip label={status} color="error" icon={<CancelIcon />} />;
-            default:
-                return <Chip label={status} />;
-        }
-    };
-
-
-    const [salesList, setSalesList] = useState([])
-    const [branchList, setBranchList] = useState([])
-    useEffect(() => {
-        const fetchLeadsAndStatuses = async () => {
+        const fetchSales = async () => {
             try {
                 const { data: salesData, error: salesError } = await supabase
                     .from('sales')
-                    .select('*, branches(name),customers(name)')
+                    .select('*, branches(name), customers(name)');
       
                 if (salesError) throw salesError;
-             
+
                 setSalesList(salesData);
             } catch (error) {
-                console.error('Erro ao buscar leads e colunas:', error);
+                setError('Erro ao buscar vendas.');
+                console.error('Erro ao buscar vendas:', error);
+            } finally {
+                setLoading(false);
             }
         };
-        fetchLeadsAndStatuses();
-    }, []);
 
-    console.log(salesList)
+        fetchSales();
+    }, []);
 
     return (
         <PageContainer title="Vendas" description="Lista de Vendas">
@@ -152,10 +98,15 @@ const SaleList = () => {
                                     {salesList.map((item) => (
                                         <TableRow key={item.id} hover>
                                             <TableCell>{item.id}</TableCell>
-                                            <TableCell>{item.customers.name}</TableCell>
+                                            <TableCell>{item.customers?.name}</TableCell>
                                             <TableCell>{item.contract_number}</TableCell>
                                             <TableCell>{item.contract_date}</TableCell>
-                                            <TableCell>{Number(item.total_value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
+                                            <TableCell>
+                                                {Number(item.total_value).toLocaleString('pt-BR', {
+                                                    style: 'currency',
+                                                    currency: 'BRL',
+                                                })}
+                                            </TableCell>
                                             <TableCell>
                                                 {item.is_sale ? 'Sim' : 'Não'}
                                             </TableCell>
@@ -164,7 +115,7 @@ const SaleList = () => {
                                                 {getStatusChip(item.status)}
                                             </TableCell>
                                             <TableCell>{item.document_completion_date}</TableCell>
-                                            <TableCell>{item.branches.name}</TableCell>
+                                            <TableCell>{item.branches?.name}</TableCell>
                                             <TableCell>
                                                 <Tooltip title="Editar">
                                                     <IconButton color="primary" size="small">
