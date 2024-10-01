@@ -23,12 +23,10 @@ const AnimatedCard = styled(Card)({
 const TaskCard = ({ task }) => {
   const [open, setOpen] = useState(false);
 
-  // Função para abrir o modal
   const handleTaskClick = () => {
     setOpen(true);
   };
 
-  // Função para fechar o modal
   const handleClose = () => {
     setOpen(false);
   };
@@ -103,7 +101,6 @@ const TaskCard = ({ task }) => {
         </CardContent>
       </AnimatedCard>
 
-      {/* Modal com detalhes */}
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle>
           Detalhes da Tarefa
@@ -180,17 +177,45 @@ const TaskCard = ({ task }) => {
             )}
           </Box>
 
-          {task.client && (
-            <Box display="flex" alignItems="center" mt={1}>
-              <Person sx={{ fontSize: '1rem', color: 'grey', mr: 1 }} />
-              <Typography variant="body2">Cliente: {task.client.name}</Typography>
-            </Box>
-          )}
+          {task.projects && (
+            <Box mt={2}>
+              <Typography variant="h6" gutterBottom>
+                Detalhes do Projeto
+              </Typography>
 
-          {task.project && (
-            <Box display="flex" alignItems="center" mt={1}>
-              <Assignment sx={{ fontSize: '1rem', color: 'grey', mr: 1 }} />
-              <Typography variant="body2">Projeto: {task.project.title}</Typography>
+              <Box display="flex" alignItems="center" mt={1}>
+                <Typography variant="body2">
+                  Número do Projeto: {task.projects.project_number}
+                </Typography>
+              </Box>
+
+              <Box display="flex" alignItems="center" mt={1}>
+                <Typography variant="body2">
+                  Valor do Projeto:{' '}
+                  {Number(task.projects.project_value).toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                  })}
+                </Typography>
+              </Box>
+
+              <Box display="flex" alignItems="center" mt={1}>
+                <Typography variant="body2">KWP: {task.projects.kwp} kW</Typography>
+              </Box>
+
+              <Box display="flex" alignItems="center" mt={1}>
+                <Typography variant="body2">Designer: {task.projects.designer}</Typography>
+              </Box>
+
+              <Box display="flex" alignItems="center" mt={1}>
+                <Typography variant="body2">Homologador: {task.projects.homologator}</Typography>
+              </Box>
+
+              <Box display="flex" alignItems="center" mt={1}>
+                <Typography variant="body2" color="textSecondary">
+                  Criado em: {new Date(task.projects.created_at).toLocaleDateString('pt-BR')}
+                </Typography>
+              </Box>
             </Box>
           )}
         </DialogContent>
