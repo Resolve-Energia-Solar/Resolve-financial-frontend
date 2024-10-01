@@ -26,6 +26,7 @@ import ColumnWithActions from './leadHeader';
 import { supabase } from '@/utils/supabaseClient';
 import GenerateProposalModal from './GenerateProposal';
 import GenerateProjectModal from './GenerateProject';
+import TaskCard from './TaskCard';
 
 const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn, board }) => {
   const [leadStars, setLeadStars] = useState({});
@@ -65,17 +66,23 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn, board }) =
   useEffect(() => {
     const fetchLeadsAndStatuses = async () => {
       try {
+        let leadsData;
+
+        const table = board === 1 ? 'leads' : 'project_tasks';
+
+        const { data: leadsTableData, error: leadsTableError } = await supabase
+          .from(table)
+          .select('*')
+          .eq('board_id', board);
+        if (leadsTableError) throw leadsTableError;
+
+        leadsData = leadsTableData;
+
         const { data: columnsData, error: columnsError } = await supabase
           .from('columns')
           .select('*')
           .eq('board_id', board);
         if (columnsError) throw columnsError;
-
-        const { data: leadsData, error: leadsError } = await supabase
-          .from('leads')
-          .select('*')
-          .eq('board_id', board);
-        if (leadsError) throw leadsError;
 
         setLeadsList(leadsData);
         setStatusesList(columnsData);
@@ -83,6 +90,7 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn, board }) =
         console.error('Erro ao buscar leads e colunas:', error);
       }
     };
+
     fetchLeadsAndStatuses();
   }, [board]);
 
@@ -299,15 +307,21 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn, board }) =
                             {...provided.dragHandleProps}
                             mb={2}
                           >
-                            <LeadCard
-                              lead={lead}
-                              leadStars={leadStars}
-                              handleLeadClick={handleLeadClick}
-                            />
+                            {board === 1 ? (
+                              <LeadCard
+                                lead={lead}
+                                leadStars={leadStars}
+                                handleLeadClick={handleLeadClick}
+                              />
+                            ) : (
+                              <TaskCard task={lead} />
+                            )}
                           </Box>
                         )}
                       </Draggable>
                     ))}
+                    {provided.placeholder}
+
                     {provided.placeholder}
                   </Box>
                 )}

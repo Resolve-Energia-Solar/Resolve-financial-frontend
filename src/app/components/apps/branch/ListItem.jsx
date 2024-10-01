@@ -90,7 +90,7 @@ const ListItem = ({ branches = [], onDelete }) => {
                     </TableCell>
 
                     <TableCell>
-                      {branch.owners.length > 0 ? (
+                      {Array.isArray(branch.owners) && branch.owners.length > 0 ? (
                         branch.owners.map((owner) => (
                           <Typography key={owner.id} variant="body1">
                             {owner.complete_name} ({owner.email})

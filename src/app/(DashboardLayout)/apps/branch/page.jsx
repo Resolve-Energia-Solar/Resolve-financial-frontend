@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Breadcrumb from "@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb";
 import PageContainer from "@/app/components/container/PageContainer";
 import ChildCard from '@/app/components/shared/ChildCard';
-import branchService from '@/services/branchService';
 import ListItem from '@/app/components/apps/branch/ListItem';
+import { supabase } from '@/utils/supabaseClient';
 
 const BCrumb = [
   {
@@ -25,15 +25,25 @@ function Page() {
   useEffect(() => {
     const fetchBranches = async () => {
       try {
-        const data = await branchService.getBranch();
-        setBranches(data.results);
+        const { data, error } = await supabase
+          .from('branches')
+          .select(`
+            id, name,
+            address:address_id (
+              id, country, state, city, neighborhood, street, number, complement, zip_code
+            )
+          `);
+    
+        if (error) throw error;
+    
+        setBranches(data);
       } catch (err) {
         setError('Erro ao carregar branches');
       } finally {
         setLoading(false);
       }
     };
-
+    
     fetchBranches(); 
   }, []);
 
@@ -46,16 +56,16 @@ function Page() {
   }
 
   return (
-      <PageContainer title="Filiais" description="Lista de filiais">
-        <Breadcrumb title="Filiais" items={BCrumb} />
-        <ChildCard>
-          {branches.length > 0 ? (
-            <ListItem branches={branches} onDelete={(id) => console.log(`Deletar filial ${id}`)} />
-          ) : (
-            <div>Nenhuma filial encontrada</div>
-          )}
-        </ChildCard>
-      </PageContainer>
+    <PageContainer title="Filiais" description="Lista de filiais">
+      <Breadcrumb title="Filiais" items={BCrumb} />
+      <ChildCard>
+        {branches.length > 0 ? (
+          <ListItem branches={branches} onDelete={(id) => console.log(`Deletar filial ${id}`)} />
+        ) : (
+          <div>Nenhuma filial encontrada</div>
+        )}
+      </ChildCard>
+    </PageContainer>
   );
 }
 

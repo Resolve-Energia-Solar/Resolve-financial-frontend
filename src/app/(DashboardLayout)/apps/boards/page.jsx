@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import { useState, useEffect } from 'react';
 import BlankCard from '@/app/components/shared/BlankCard';
@@ -46,12 +46,18 @@ function KanbanPage() {
     try {
       const { data: columnsData, error: columnsError } = await supabase
         .from('columns')
-        .select('*, leads(*)') 
+        .select('*, leads(*)')
         .eq('board_id', boardId);
       if (columnsError) throw columnsError;
 
       setLeads(columnsData.flatMap((column) => column.leads));
-      setStatuses(columnsData.map((column) => ({ id: column.id, name: column.name, position: column.position })));
+      setStatuses(
+        columnsData.map((column) => ({
+          id: column.id,
+          name: column.name,
+          position: column.position,
+        })),
+      );
       setColumns(columnsData);
     } catch (err) {
       setError(err.message || 'Erro ao buscar os leads do board');
@@ -78,13 +84,9 @@ function KanbanPage() {
     }
   };
 
-  // Função para deletar um lead
   const handleDeleteLead = async (leadId) => {
     try {
-      const { error } = await supabase
-        .from('leads')
-        .delete()
-        .eq('id', leadId);
+      const { error } = await supabase.from('leads').delete().eq('id', leadId);
       if (error) throw error;
 
       setLeads((prevLeads) => prevLeads.filter((lead) => lead.id !== leadId));
@@ -97,19 +99,13 @@ function KanbanPage() {
     }
   };
 
-  // Função para atualizar um lead
   const handleUpdateLead = async (updatedLead) => {
     try {
-      const { error } = await supabase
-        .from('leads')
-        .update(updatedLead)
-        .eq('id', updatedLead.id);
+      const { error } = await supabase.from('leads').update(updatedLead).eq('id', updatedLead.id);
       if (error) throw error;
 
       setLeads((prevLeads) =>
-        prevLeads.map((lead) =>
-          lead.id === updatedLead.id ? updatedLead : lead,
-        ),
+        prevLeads.map((lead) => (lead.id === updatedLead.id ? updatedLead : lead)),
       );
       setSnackbarMessage('Lead atualizado com sucesso!');
       setSnackbarOpen(true);
@@ -120,7 +116,6 @@ function KanbanPage() {
     }
   };
 
-  // Carrega os boards na inicialização
   useEffect(() => {
     fetchBoards();
   }, []);
