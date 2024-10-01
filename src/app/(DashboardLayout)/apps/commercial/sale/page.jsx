@@ -49,8 +49,8 @@ const SaleList = () => {
             try {
                 const { data: salesData, error: salesError } = await supabase
                     .from('sales')
-                    .select('*, branches(name), customers(name)');
-      
+                    .select('*, branches(name),customers(name)')
+
                 if (salesError) throw salesError;
 
                 setSalesList(salesData);
@@ -100,22 +100,20 @@ const SaleList = () => {
                                             <TableCell>{item.id}</TableCell>
                                             <TableCell>{item.customers?.name}</TableCell>
                                             <TableCell>{item.contract_number}</TableCell>
-                                            <TableCell>{item.contract_date}</TableCell>
-                                            <TableCell>
-                                                {Number(item.total_value).toLocaleString('pt-BR', {
-                                                    style: 'currency',
-                                                    currency: 'BRL',
-                                                })}
-                                            </TableCell>
+
+                                            <TableCell>{new Date(item.contract_date).toLocaleDateString()}</TableCell>
+                                            <TableCell>{Number(item.total_value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
                                             <TableCell>
                                                 {item.is_sale ? 'Sim' : 'Não'}
                                             </TableCell>
-                                            <TableCell>{item.signature_date}</TableCell>
+                                            <TableCell>
+                                                {new Date(item.signature_date).toLocaleDateString()}
+                                            </TableCell>
                                             <TableCell>
                                                 {getStatusChip(item.status)}
                                             </TableCell>
-                                            <TableCell>{item.document_completion_date}</TableCell>
-                                            <TableCell>{item.branches?.name}</TableCell>
+                                            <TableCell>{new Date(item.document_completion_date).toLocaleDateString()}</TableCell>
+                                            <TableCell>{item.branches.name}</TableCell>
                                             <TableCell>
                                                 <Tooltip title="Editar">
                                                     <IconButton color="primary" size="small">
