@@ -66,25 +66,25 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn, board }) =
   useEffect(() => {
     const fetchLeadsAndStatuses = async () => {
       try {
-        let leadsData;
-
-        // Define a tabela com base no tipo de board
         const table = board === 1 ? 'leads' : 'project_tasks';
+        const selectFields = board === 1 ? '*' : '*, projects(*, sales(*, customers(*)))';
 
-        // Busca os dados dos leads ou project_tasks
         const { data: leadsTableData, error: leadsTableError } = await supabase
           .from(table)
-          .select('*')
+          .select(selectFields)
           .eq('board_id', board);
+
         if (leadsTableError) throw leadsTableError;
 
-        leadsData = leadsTableData;
+        const leadsData = leadsTableData;
 
-        // Busca os dados das colunas
+        console.log('Leads e tarefas:', leadsData);
+
         const { data: columnsData, error: columnsError } = await supabase
           .from('columns')
           .select('*')
           .eq('board_id', board);
+
         if (columnsError) throw columnsError;
 
         const sortedColumns = columnsData.sort((a, b) => a.position - b.position);
@@ -319,13 +319,16 @@ const TaskManager = ({ leads = [], statuses = [], onUpdateLeadColumn, board }) =
                                 handleLeadClick={handleLeadClick}
                               />
                             ) : (
-                              <TaskCard task={lead} />
+                              <TaskCard
+                                task={lead}
+                                customer={lead.customers} 
+                                project={lead.projects}
+                              />
                             )}
                           </Box>
                         )}
                       </Draggable>
                     ))}
-                    {provided.placeholder}
 
                     {provided.placeholder}
                   </Box>

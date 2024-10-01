@@ -6,7 +6,10 @@ const TaskCard = ({ task, handleTaskClick }) => {
     <Card onClick={() => handleTaskClick(task)} sx={{ mb: 2 }}>
       <CardContent>
         <Typography variant="h6" gutterBottom>
-          {task.title || 'Tarefa'}
+          {task.projects.sales.customers.name || 'Tarefa'}
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Contrato: {task.projects.sales.contract_number || 'Tarefa'}
         </Typography>
 
         {task.description && (
@@ -20,34 +23,40 @@ const TaskCard = ({ task, handleTaskClick }) => {
             Início: {new Date(task.start_date).toLocaleDateString('pt-BR')}
           </Typography>
         )}
-
         {task.due_date && (
           <Typography variant="body2" color="textSecondary">
             Prazo: {new Date(task.due_date).toLocaleDateString('pt-BR')}
           </Typography>
         )}
-
         {task.end_date && (
           <Typography variant="body2" color="textSecondary">
             Concluído em: {new Date(task.end_date).toLocaleDateString('pt-BR')}
           </Typography>
         )}
 
-        {/* Renderize outros campos importantes, se necessário */}
         <Box mt={1}>
-          <Typography variant="body2">
-            Status: {task.status || 'Pendente'}
-          </Typography>
+          <Typography variant="body2">Status: {task.status || 'Pendente'}</Typography>
           {task.assigned_to && (
             <Typography variant="body2">
-              Responsável: {task.assigned_to}
+              Responsável: {task.assigned_to.name || task.assigned_to}
             </Typography>
           )}
         </Box>
+
+        {task.client && (
+          <Box mt={1}>
+            <Typography variant="body2">Cliente: {task.client.name}</Typography>
+          </Box>
+        )}
+
+        {task.project && (
+          <Box mt={1}>
+            <Typography variant="body2">Projeto: {task.project.title}</Typography>
+          </Box>
+        )}
       </CardContent>
     </Card>
   );
 };
 
 export default TaskCard;
-

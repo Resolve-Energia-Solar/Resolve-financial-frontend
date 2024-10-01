@@ -44,17 +44,14 @@ function KanbanPage() {
   const fetchLeadsAndStatuses = async (boardId) => {
     setLoading(true);
     try {
-      // Busca os dados das colunas e seus leads
       const { data: columnsData, error: columnsError } = await supabase
         .from('columns')
         .select('*, leads(*)')
         .eq('board_id', boardId);
       if (columnsError) throw columnsError;
 
-      // Ordena as colunas pela posição
       const sortedColumns = columnsData.sort((a, b) => a.position - b.position);
 
-      // Define os leads e as colunas, garantindo a ordenação
       setLeads(sortedColumns.flatMap((column) => column.leads));
       setStatuses(
         sortedColumns.map((column) => ({
