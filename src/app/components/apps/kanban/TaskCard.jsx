@@ -6,10 +6,10 @@ const TaskCard = ({ task, handleTaskClick }) => {
     <Card onClick={() => handleTaskClick(task)} sx={{ mb: 2 }}>
       <CardContent>
         <Typography variant="h6" gutterBottom>
-          {task.projects.sales.customers.name || 'Tarefa'}
+          {task.projects?.sales?.customers.name || 'Tarefa'}
         </Typography>
         <Typography variant="body1" gutterBottom>
-          Contrato: {task.projects.sales.contract_number || 'Tarefa'}
+          Contrato: {task.projects?.sales?.contract_number || 'Tarefa'}
         </Typography>
 
         {task.description && (
