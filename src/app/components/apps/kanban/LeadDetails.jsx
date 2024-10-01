@@ -1,4 +1,3 @@
-// LeadDetails.jsx
 import { Grid, Box, Typography, useTheme } from '@mui/material';
 import {
   Email,
@@ -25,8 +24,7 @@ const LeadDetails = ({ selectedLead }) => {
     {
       icon: <Business fontSize="small" />,
       label: 'Tipo',
-      value:
-        selectedLead.type === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica',
+      value: selectedLead.type === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica',
     },
     {
       icon: <Tag fontSize="small" />,
@@ -78,7 +76,7 @@ const LeadDetails = ({ selectedLead }) => {
     {
       icon: <Badge fontSize="small" />,
       label: 'Status',
-      value: selectedLead.column.name,
+      value: selectedLead.column ? selectedLead.column.name : 'N/A', // Verificação adicionada
     },
   ];
 

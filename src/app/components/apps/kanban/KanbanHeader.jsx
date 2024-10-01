@@ -24,7 +24,7 @@ function KanbanHeader({ boards, selectedBoard, onBoardChange }) {
           >
             {boards.map((board) => (
               <MenuItem key={board.id} value={board.id}>
-                {board.title}
+                {board.name}
               </MenuItem>
             ))}
           </Select>
