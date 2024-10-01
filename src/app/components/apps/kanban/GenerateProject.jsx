@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem, Grid } from '@mui/material';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  MenuItem,
+  Grid,
+} from '@mui/material';
 
 const GenerateProjectModal = ({ open, onClose, branches, managers }) => {
   const [formData, setFormData] = useState({
@@ -50,7 +59,7 @@ const GenerateProjectModal = ({ open, onClose, branches, managers }) => {
               value={formData.branch}
               onChange={handleChange}
             >
-              {branches.map((branch) => (
+              {(branches || []).map((branch) => (
                 <MenuItem key={branch.id} value={branch.id}>
                   {branch.name} - {branch.address.city}, {branch.address.state}
                 </MenuItem>
@@ -67,7 +76,7 @@ const GenerateProjectModal = ({ open, onClose, branches, managers }) => {
               value={formData.owner}
               onChange={handleChange}
             >
-              {managers.map((manager) => (
+              {(managers || []).map((manager) => (
                 <MenuItem key={manager.id} value={manager.id}>
                   {manager.complete_name} - {manager.email}
                 </MenuItem>
@@ -127,8 +136,12 @@ const GenerateProjectModal = ({ open, onClose, branches, managers }) => {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose} color="secondary">Cancelar</Button>
-        <Button onClick={handleSave} color="primary">Salvar</Button>
+        <Button onClick={onClose} color="secondary">
+          Cancelar
+        </Button>
+        <Button onClick={handleSave} color="primary">
+          Salvar
+        </Button>
       </DialogActions>
     </Dialog>
   );

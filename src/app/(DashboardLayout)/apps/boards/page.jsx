@@ -1,11 +1,11 @@
-'use client';
+"use client"
+
 import { useState, useEffect } from 'react';
 import BlankCard from '@/app/components/shared/BlankCard';
 import { CardContent, Typography, CircularProgress, Box, Snackbar, Alert } from '@mui/material';
 import TaskManager from '@/app/components/apps/kanban/TaskManager';
-import boardService from '@/services/boardService';
-import leadService from '@/services/leadService';
 import KanbanHeader from '@/app/components/apps/kanban/KanbanHeader';
+import { supabase } from '@/utils/supabaseClient';
 
 function KanbanPage() {
   const [boards, setBoards] = useState([]);
@@ -25,11 +25,12 @@ function KanbanPage() {
   const fetchBoards = async () => {
     setLoading(true);
     try {
-      const data = await boardService.getBoards();
-      setBoards(data.results);
+      const { data, error } = await supabase.from('boards').select('*');
+      if (error) throw error;
+      setBoards(data);
 
-      if (data.results.length > 0) {
-        const firstBoardId = data.results[0].id;
+      if (data.length > 0) {
+        const firstBoardId = data[0].id;
         setSelectedBoard(firstBoardId);
         fetchLeadsAndStatuses(firstBoardId);
       }
@@ -43,10 +44,15 @@ function KanbanPage() {
   const fetchLeadsAndStatuses = async (boardId) => {
     setLoading(true);
     try {
-      const data = await boardService.getBoardDetails(boardId);
-      setLeads(data.columns.flatMap((column) => column.leads));
-      setStatuses(data.columns.map((column) => ({ id: column.id, name: column.name, position: column.position, })));
-      setColumns(data.columns);
+      const { data: columnsData, error: columnsError } = await supabase
+        .from('columns')
+        .select('*, leads(*)') 
+        .eq('board_id', boardId);
+      if (columnsError) throw columnsError;
+
+      setLeads(columnsData.flatMap((column) => column.leads));
+      setStatuses(columnsData.map((column) => ({ id: column.id, name: column.name, position: column.position })));
+      setColumns(columnsData);
     } catch (err) {
       setError(err.message || 'Erro ao buscar os leads do board');
     } finally {
@@ -56,18 +62,15 @@ function KanbanPage() {
 
   const updateLeadColumn = async (leadId, newColumnId) => {
     try {
-      const leadToUpdate = leads.find((lead) => lead.id === parseInt(leadId));
-      const leadData = {
-        name: leadToUpdate.name,
-        contact_email: leadToUpdate.contact_email,
-        phone: leadToUpdate.phone,
-        column: newColumnId,
-      };
-      await leadService.updateLead(leadId, leadData);
+      const { error } = await supabase
+        .from('leads')
+        .update({ column_id: newColumnId })
+        .eq('id', leadId);
+      if (error) throw error;
 
       setLeads((prevLeads) =>
         prevLeads.map((lead) =>
-          lead.id === parseInt(leadId) ? { ...lead, column: { id: parseInt(newColumnId) } } : lead,
+          lead.id === parseInt(leadId) ? { ...lead, column_id: newColumnId } : lead,
         ),
       );
     } catch (err) {
@@ -75,9 +78,15 @@ function KanbanPage() {
     }
   };
 
+  // Função para deletar um lead
   const handleDeleteLead = async (leadId) => {
     try {
-      await leadService.deleteLead(leadId);
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', leadId);
+      if (error) throw error;
+
       setLeads((prevLeads) => prevLeads.filter((lead) => lead.id !== leadId));
       setSnackbarMessage('Lead excluído com sucesso!');
       setSnackbarOpen(true);
@@ -88,18 +97,20 @@ function KanbanPage() {
     }
   };
 
+  // Função para atualizar um lead
   const handleUpdateLead = async (updatedLead) => {
     try {
-      await leadService.updateLead(updatedLead.id, updatedLead);
+      const { error } = await supabase
+        .from('leads')
+        .update(updatedLead)
+        .eq('id', updatedLead.id);
+      if (error) throw error;
 
       setLeads((prevLeads) =>
         prevLeads.map((lead) =>
-          lead.id === updatedLead.id
-            ? { ...updatedLead, column: { id: updatedLead.column } }
-            : lead,
+          lead.id === updatedLead.id ? updatedLead : lead,
         ),
       );
-
       setSnackbarMessage('Lead atualizado com sucesso!');
       setSnackbarOpen(true);
     } catch (error) {
@@ -109,64 +120,7 @@ function KanbanPage() {
     }
   };
 
-  const handleBoardChange = (event) => {
-    const boardId = event.target.value;
-    setSelectedBoard(boardId);
-    fetchLeadsAndStatuses(boardId);
-  };
-
-  const handleAddCategory = async (categoryName) => {
-    try {
-      const newCategory = await boardService.createCategory(categoryName, selectedBoard);
-      setColumns((prevColumns) => [...prevColumns, newCategory]);
-    } catch (error) {
-      console.error('Erro ao criar categoria:', error);
-    }
-  };
-
-  const handleAddLead = async (leadData) => {
-    try {
-      const tempId = Date.now();
-      const newLead = {
-        ...leadData,
-        id: tempId,
-        column: leadData.column,
-      };
-
-      setLeads((prevLeads) => [...prevLeads, newLead]);
-
-      setColumns((prevColumns) =>
-        prevColumns.map((column) =>
-          column.id === newLead.column ? { ...column, leads: [...column.leads, newLead] } : column,
-        ),
-      );
-
-      const createdLead = await leadService.createLead(leadData);
-
-      setLeads((prevLeads) =>
-        prevLeads.map((lead) => (lead.id === tempId ? { ...createdLead } : lead)),
-      );
-
-      setColumns((prevColumns) =>
-        prevColumns.map((column) =>
-          column.id === createdLead.column
-            ? {
-                ...column,
-                leads: [...column.leads.filter((lead) => lead.id !== tempId), createdLead],
-              }
-            : column,
-        ),
-      );
-
-      setSnackbarMessage('Lead adicionado com sucesso!');
-      setSnackbarOpen(true);
-    } catch (error) {
-      console.error('Erro ao criar lead:', error);
-      setSnackbarMessage('Erro ao criar lead.');
-      setSnackbarOpen(true);
-    }
-  };
-
+  // Carrega os boards na inicialização
   useEffect(() => {
     fetchBoards();
   }, []);
@@ -177,13 +131,11 @@ function KanbanPage() {
         <KanbanHeader
           boards={boards}
           selectedBoard={selectedBoard}
-          onBoardChange={handleBoardChange}
+          onBoardChange={(e) => setSelectedBoard(e.target.value)}
           leads={leads}
           columns={columns}
           setColumns={setColumns}
           setLeads={setLeads}
-          onAddCategory={handleAddCategory}
-          onAddLead={handleAddLead}
         />
 
         {loading ? (
@@ -198,7 +150,8 @@ function KanbanPage() {
               <TaskManager
                 leads={leads}
                 statuses={statuses}
-                board={selectedBoard}                onUpdateLeadColumn={updateLeadColumn}
+                board={selectedBoard}
+                onUpdateLeadColumn={updateLeadColumn}
                 onUpdateLead={handleUpdateLead}
                 onDeleteLead={handleDeleteLead}
               />

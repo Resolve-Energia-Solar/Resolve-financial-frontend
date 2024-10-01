@@ -14,19 +14,8 @@ import {
   Button,
 } from '@mui/material';
 import { MoreVert, Add } from '@mui/icons-material';
-import columnService from '@/services/boardCollunService';
 
-const ColumnWithActions = ({
-  columnTitle,
-  leads,
-  statusId,
-  position,
-  boardId,
-  onAddLead,
-  onClearLeads,
-  onDeleteStatus,
-  onEditStatus
-}) => {
+const ColumnWithActions = ({ columnTitle, leads, statusId, boardId, onAddLead, onEditStatus }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openLeadModal, setOpenLeadModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -35,7 +24,7 @@ const ColumnWithActions = ({
   const [leadPhone, setLeadPhone] = useState('');
   const [columnName, setColumnName] = useState(columnTitle);
 
-  const leadsCount = leads.filter((lead) => lead.column.id === statusId).length;
+  const leadsCount = leads ? leads.filter((lead) => lead.columns === statusId).length : 0;
 
   const handleOpenMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -56,14 +45,21 @@ const ColumnWithActions = ({
     setLeadPhone('');
   };
 
-  const handleSaveLead = () => {
-    onAddLead({
-      name: leadName,
-      contact_email: leadEmail,
-      phone: leadPhone,
-      column: statusId,
-    });
-    handleCloseLeadModal();
+  const handleSaveLead = async () => {
+    try {
+      const newLeadData = {
+        name: leadName,
+        contact_email: leadEmail,
+        phone: leadPhone,
+        columns: statusId,
+        board_id: boardId,
+      };
+
+      await onAddLead(newLeadData);
+      handleCloseLeadModal();
+    } catch (error) {
+      console.error('Erro ao adicionar lead:', error);
+    }
   };
 
   const handleOpenEditModal = () => {
@@ -75,42 +71,9 @@ const ColumnWithActions = ({
     setColumnName(columnTitle);
   };
 
-  const handleSaveEdit = async () => {
-    try {
-      const updatedColumnData = {
-        name: columnName,
-        board: boardId,
-        position: position,
-      };
-
-      console.log('Dados enviados para API:', updatedColumnData);
-      await columnService.updateColumn(statusId, updatedColumnData);
-      onEditStatus(statusId, columnName);
-      handleCloseEditModal();
-    } catch (error) {
-      console.error('Erro ao editar status:', error);
-    }
-  };
-
-
-  const handleDeleteStatus = async () => {
-    try {
-      await columnService.deleteColumn(statusId);
-      onDeleteStatus(statusId);
-    } catch (error) {
-      console.error('Erro ao excluir status:', error);
-    }
-  };
-
-  const handleActionClick = (action) => {
-    if (action === 'Editar Status') {
-      handleOpenEditModal();
-    } else if (action === 'Limpar todos os cartões') {
-      onClearLeads(statusId);
-    } else if (action === 'Excluir Status') {
-      handleDeleteStatus();
-    }
-    handleCloseMenu();
+  const handleSaveEditColumn = async () => {
+    await onEditStatus(statusId, columnName);
+    setOpenEditModal(false);
   };
 
   return (
@@ -118,10 +81,10 @@ const ColumnWithActions = ({
       <Box sx={{ padding: '6px', borderRadius: '8px' }}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography variant="subtitle1" fontWeight={600}>
-            {columnTitle}{" "}
-
-            <Typography variant="caption" fontWeight={500}> ({leadsCount})</Typography>
-
+            {columnTitle}{' '}
+            <Typography variant="caption" fontWeight={500}>
+              ({leadsCount})
+            </Typography>
           </Typography>
 
           <Box display="flex" alignItems="center">
@@ -135,7 +98,7 @@ const ColumnWithActions = ({
               <MoreVert />
             </IconButton>
             <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
-              <MenuItem onClick={() => handleActionClick('Editar Status')}>Editar status</MenuItem>
+              <MenuItem onClick={() => handleOpenEditModal()}>Editar status</MenuItem>
             </Menu>
           </Box>
         </Box>
@@ -175,13 +138,14 @@ const ColumnWithActions = ({
         </DialogActions>
       </Dialog>
 
+      {/* Modal para editar coluna */}
       <Dialog open={openEditModal} onClose={handleCloseEditModal}>
-        <DialogTitle>Editar Status</DialogTitle>
+        <DialogTitle>Editar Nome da Coluna</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
-            label="Nome do Status"
+            label="Nome da Coluna"
             fullWidth
             value={columnName}
             onChange={(e) => setColumnName(e.target.value)}
@@ -189,7 +153,7 @@ const ColumnWithActions = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEditModal}>Cancelar</Button>
-          <Button onClick={handleSaveEdit} disabled={!columnName}>
+          <Button onClick={handleSaveEditColumn} disabled={!columnName}>
             Salvar
           </Button>
         </DialogActions>

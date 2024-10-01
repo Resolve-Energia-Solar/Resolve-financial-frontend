@@ -1,7 +1,15 @@
 import { Paper, Box, Typography, IconButton } from '@mui/material';
-import { Star, StarBorder, Email, Phone, AccessTime , TagFaces, TagSharp} from '@mui/icons-material';
+import {
+  Star,
+  StarBorder,
+  Email,
+  Phone,
+  AccessTime,
+  TagFaces,
+  TagSharp,
+} from '@mui/icons-material';
 
-const LeadCard = ({ lead, leadStars, handleStarClick, handleLeadClick }) => (
+const LeadCard = ({ lead, leadStars, handleLeadClick }) => (
   <Paper
     sx={{
       p: 2,
@@ -12,18 +20,22 @@ const LeadCard = ({ lead, leadStars, handleStarClick, handleLeadClick }) => (
     onClick={() => handleLeadClick(lead)}
   >
     <Box display="flex" justifyContent="space-between" flexDirection={'column'}>
-      <Typography variant="body2" fontWeight={600}>{lead.name}</Typography>
-      <Box display="flex" alignItems="center">
+      <Typography variant="body2" fontWeight={600}>
+        {lead.name}
+      </Typography>
+      {/*   <Box display="flex" alignItems="center">
         {[1, 2, 3, 4, 5].map((star) => (
           <IconButton key={star} size="small" onClick={(e) => handleStarClick(lead.id, star)}>
             {leadStars[lead.id] >= star ? <Star sx={{ color: 'gold', fontSize: '1rem' }} /> : <StarBorder sx={{ color: 'grey', fontSize: '1rem' }} />}
           </IconButton>
         ))}
-      </Box>
+      </Box> */}
     </Box>
     <Box display="flex" alignItems="center" mt={1}>
       <TagSharp sx={{ fontSize: '1rem', color: 'grey', mr: 1 }} />
-      <Typography variant="body2" color="textSecondary">Origem: {lead.origem}</Typography>
+      <Typography variant="body2" color="textSecondary">
+        Origem: {lead.origem}
+      </Typography>
     </Box>
     <Box display="flex" alignItems="center" mt={1}>
       <Email sx={{ fontSize: '1rem', color: 'grey', mr: 1 }} />
@@ -35,7 +47,9 @@ const LeadCard = ({ lead, leadStars, handleStarClick, handleLeadClick }) => (
     </Box>
     <Box display="flex" alignItems="center" mt={1}>
       <AccessTime sx={{ fontSize: '1rem', color: 'grey', mr: 1 }} />
-      <Typography variant="body2" color="textSecondary">Criado em: {new Date(lead.created_at).toLocaleDateString('pt-BR')}</Typography>
+      <Typography variant="body2" color="textSecondary">
+        Criado em: {new Date(lead.created_at).toLocaleDateString('pt-BR')}
+      </Typography>
     </Box>
   </Paper>
 );
