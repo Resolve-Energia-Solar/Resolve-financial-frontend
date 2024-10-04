@@ -78,7 +78,7 @@ const SaleList = () => {
 
     const handleEditClick = (id) => {
         // Redireciona para a URL de edição com o id dinâmico
-        router.push(`/apps/commercial/sale/${id}/update`);
+        router.push(`/apps/commercial/sale/${id}/editar`);
     };
 
     const handleDeleteClick = (id) => {

@@ -21,6 +21,16 @@ const userService = {
     }
   },
 
+  getUserByName: async (name) => {
+    try {
+      const response = await apiClient.get(`/api/users/?name=${name}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar usuário com id ${name}:`, error);
+      throw error;
+    }
+  },
+
   updateUser: async (id, data) => {
     try {
       const response = await apiClient.patch(`/api/users/${id}/`, data);

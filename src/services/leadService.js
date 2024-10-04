@@ -24,6 +24,16 @@ const leadService = {
       throw error;
     }
   },
+
+  getLeadByName: async (name) => {
+    try {
+      const response = await apiClient.get(`/api/leads/?name=${name}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar lead com nome ${name}:`, error);
+      throw error;
+    }
+  },
   
   deleteLead: async (leadId) => {
     const response = await apiClient.delete(`/api/leads/${leadId}/`);

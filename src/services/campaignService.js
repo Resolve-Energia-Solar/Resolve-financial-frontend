@@ -1,7 +1,7 @@
 import apiClient from "./apiClient";
 
 const campaignService = {
-  getCampaign: async () => {
+  getCampaigns: async () => {
     try {
       const response = await apiClient.get('/api/marketing-campaigns/');
       return response.data;
