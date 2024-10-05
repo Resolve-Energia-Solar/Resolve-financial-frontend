@@ -35,7 +35,6 @@ import {
 import { useRouter } from 'next/navigation';
 import BlankCard from '@/app/components/shared/BlankCard';
 import PageContainer from "@/app/components/container/PageContainer";
-import { supabase } from "@/utils/supabaseClient";
 import saleService from "@/services/saleService";
 
 const getStatusChip = (status) => {
@@ -76,8 +75,13 @@ const SaleList = () => {
         fetchSales();
     }, []);
 
+
+    const handleCreateClick = () => {
+        router.push('/apps/commercial/sale/create');
+    };
+
+
     const handleEditClick = (id) => {
-        // Redireciona para a URL de edição com o id dinâmico
         router.push(`/apps/commercial/sale/${id}/update`);
     };
 
@@ -111,7 +115,7 @@ const SaleList = () => {
                     <Typography variant="h6" gutterBottom>
                         Lista de Vendas
                     </Typography>
-                    <Button variant="outlined" startIcon={<AddBoxRounded />} sx={{marginTop:1,marginBottom:2}}>
+                    <Button variant="outlined" startIcon={<AddBoxRounded />} sx={{marginTop:1,marginBottom:2}} onClick={handleCreateClick}>
                     Adicionar Venda
                     </Button>
                     {loading ? (

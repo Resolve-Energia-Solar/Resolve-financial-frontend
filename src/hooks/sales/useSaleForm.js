@@ -47,7 +47,6 @@ const useSaleForm = (initialData, id) => {
   };
 
   const handleSave = async () => {
-
     const dataToSend = {
       customer_id: formData.customerId,
       seller_id: formData.sellerId,
@@ -64,15 +63,19 @@ const useSaleForm = (initialData, id) => {
         ? formatDate(formData.documentCompletionDate)
         : null,
     };
-    
+
     try {
-      await saleService.updateSale(id, dataToSend);
+      if (id) {
+        await saleService.updateSale(id, dataToSend);
+      } else {
+        await saleService.createSale(dataToSend);
+      }
       setFormErrors({});
       setSuccess(true);
     } catch (err) {
       setSuccess(false);
-      setFormErrors(err.response.data);
-      console.log(err.response.data);
+      setFormErrors(err.response?.data || {});
+      console.log(err.response?.data || err);
     }
   };
 

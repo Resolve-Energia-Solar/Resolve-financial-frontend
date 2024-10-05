@@ -5,12 +5,13 @@ import {
     Select,
     MenuItem,
     InputLabel,
+    FormHelperText, // Importar FormHelperText
 } from '@mui/material';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 
-const FormSelect = ({ label, options, value, onChange }) => {
+const FormSelect = ({ label, options, value, onChange, error, helperText }) => {
     return (
-        <FormControl fullWidth variant="outlined">
+        <FormControl fullWidth variant="outlined" error={error} >
             <CustomFormLabel>{label}</CustomFormLabel>
             <Select
                 value={value}
@@ -23,6 +24,7 @@ const FormSelect = ({ label, options, value, onChange }) => {
                     </MenuItem>
                 ))}
             </Select>
+            {helperText && <FormHelperText>{helperText}</FormHelperText>} {/* Exibe o helperText */}
         </FormControl>
     );
 };

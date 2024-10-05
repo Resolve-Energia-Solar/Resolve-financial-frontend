@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 import { Grid, Button, Stack, FormControlLabel } from '@mui/material';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
@@ -6,8 +7,10 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import ParentCard from '@/app/components/shared/ParentCard';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
-import { useParams } from 'next/navigation';
 import Alert from '@mui/material/Alert';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useState } from 'react';
 
 import AutoCompleteUser from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-User';
 import AutoCompleteBranch from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-Branch';
@@ -17,27 +20,21 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 
-import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
 
 export default function FormCustom() {
-  const params = useParams();
-  const { id } = params;
-  
-  const { loading, error, saleData } = useSale(id);
-
   const {
     formData,
     handleChange,
     handleSave,
     formErrors,
     success
-  } = useSaleForm(saleData, id);
+  } = useSaleForm();
 
   const {
     formattedValue,
     handleValueChange,
-  } = useCurrencyFormatter(formData.totalValue);
+  } = useCurrencyFormatter();
 
   const statusOptions = [
     { value: 'F', label: 'Finalizado' },
@@ -46,13 +43,18 @@ export default function FormCustom() {
     { value: 'D', label: 'Distrato' },
   ];
 
-  if (loading) return <div>Carregando...</div>;
-  if (error) return <div>{error}</div>;
+  const router = useRouter();
+  useEffect(() => {
+    if (success) {
+      router.push('/apps/commercial/sale');
+    }
+  }
+  , [success]);
 
   return (
-    <PageContainer title="Edição de venda" description="Editor de Vendas">
-      <Breadcrumb title="Editar venda" />
-      {success && <Alert severity="success" sx={{ marginBottom: 3 }}>A venda foi atualizada com sucesso!</Alert>}
+    <PageContainer title="Criação de venda" description="Criador de Vendas">
+      <Breadcrumb title="Criar venda" />
+      {success && <Alert severity="success" sx={{ marginBottom: 3 }}>A venda foi criada com sucesso!</Alert>}
       <ParentCard title="Venda">
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12} lg={4}>
@@ -127,8 +129,8 @@ export default function FormCustom() {
             <FormSelect
               label="Status da Venda"
               options={statusOptions}
-              value={formData.status}
               onChange={(e) => handleChange('status', e.target.value)}
+              {...(formErrors.status && { error: true, helperText: formErrors.status })}
             />
           </Grid>
           <Grid item xs={12} sm={12} lg={4}>
@@ -153,7 +155,7 @@ export default function FormCustom() {
             />
             <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
               <Button variant="contained" color="primary" onClick={handleSave}>
-                Editar
+                Criar
               </Button>
             </Stack>
           </Grid>
