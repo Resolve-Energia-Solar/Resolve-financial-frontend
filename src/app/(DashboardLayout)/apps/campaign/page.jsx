@@ -32,22 +32,7 @@ import {
 import { useRouter } from 'next/navigation';
 import BlankCard from '@/app/components/shared/BlankCard';
 import PageContainer from "@/app/components/container/PageContainer";
-import campaignService from "@/services/campaignService"; // Altere para o serviço de campanha
-
-const getStatusChip = (status) => {
-    switch (status) {
-        case 'F':
-            return <Chip label="Finalizado" color="success" icon={<CheckCircleIcon />} />;
-        case 'EA':
-            return <Chip label="Em Andamento" color="primary" icon={<HourglassEmptyIcon />} />;
-        case 'C':
-            return <Chip label="Cancelado" color="error" icon={<CancelIcon />} />;
-        case 'D':
-            return <Chip label="Distrato" color="error" icon={<CancelIcon />} />;
-        default:
-            return <Chip label={status} />;
-    }
-};
+import campaignService from "@/services/campaignService"; 
 
 const CampaignList = () => {
     const [campaignsList, setCampaignsList] = useState([]);
@@ -92,7 +77,7 @@ const CampaignList = () => {
 
     const handleConfirmDelete = async () => {
         try {
-            await campaignService.deleteCampaign(campaignToDelete); // Chamada ao serviço de exclusão de campanha
+            // await campaignService.deleteCampaign(campaignToDelete);
             setCampaignsList(campaignsList.filter((item) => item.id !== campaignToDelete));
             console.log('Campanha excluída com sucesso');
         } catch (err) {
