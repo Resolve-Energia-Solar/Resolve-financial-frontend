@@ -12,26 +12,23 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import AutoCompleteUser from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-User';
 import AutoCompleteSale from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-Sales';
 import AutoCompleteAddress from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-Addresses';
-import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
+import { useRouter } from 'next/navigation';
 
-import useProject from '@/hooks/projects/useProject';
 import useProjectForm from '@/hooks/projects/useProjectForm';
 
 export default function FormCustom() {
-  const params = useParams();
-  const { id } = params;
 
-  const { loading, error, projectData } = useProject(id);
+  const {
+    formData,
+    handleChange,
+    handleSave,
+    formErrors,
+    success
+  } = useProjectForm();
 
-  console.log('projectData', projectData);
+  const router = useRouter();
 
-  const { formData, handleChange, handleSave, formErrors, success } = useProjectForm(
-    projectData,
-    id,
-  );
-
-  console.log('formData', formData);
 
   const supply_type_options = [
     { value: 'M', label: 'Monofásico' },
@@ -47,8 +44,9 @@ export default function FormCustom() {
     { value: 'D', label: 'Distrato' },
   ];
 
-  if (loading) return <div>Carregando...</div>;
-  if (error) return <div>{error}</div>;
+  if (success) {
+    router.push('/apps/project');
+  }
 
   return (
     <PageContainer title="Edição de projeto" description="Editor de Projetos">
@@ -103,7 +101,7 @@ export default function FormCustom() {
               label="Status"
               options={status_options}
               value={formData.status}
-              onChange={(e) => handleChange('status', e.target.value)}
+              onChange={(e) => handleChange('supply_type', e.target.value)}
             />
           </Grid>
           <Grid item xs={12} sm={12} lg={4}>

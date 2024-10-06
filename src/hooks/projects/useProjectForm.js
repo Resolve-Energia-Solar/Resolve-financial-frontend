@@ -72,6 +72,7 @@ const useProjectForm = (initialData, id) => {
       } else {
         await projectService.createProject(dataToSend);
       }
+      setFormErrors({});
       setSuccess(true);
     } catch (err) {
       setSuccess(false);

@@ -91,7 +91,7 @@ const ProjectList = () => {
 
 
     const handleCreateClick = () => {
-        // router.push('/apps/commercial/sale/create');
+        router.push('/apps/project/create');
     };
 
 
@@ -111,12 +111,12 @@ const ProjectList = () => {
 
     const handleConfirmDelete = async () => {
         try {
-            // await saleService.deleteSale(projectToDelete);
+            // await saleService.deleteProject(projectToDelete);
             setProjectsList(projectsList.filter((item) => item.id !== projectToDelete));
             console.log('Venda excluída com sucesso');
         } catch (err) {
-            setError('Erro ao excluir a venda');
-            console.error('Erro ao excluir a venda:', err);
+            setError('Erro ao excluir o projeto');
+            console.error('Erro ao excluir o projeto', err);
         } finally {
             handleCloseModal();
         }
