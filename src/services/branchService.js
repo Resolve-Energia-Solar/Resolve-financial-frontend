@@ -1,7 +1,7 @@
 import apiClient from "./apiClient";
 
 const branchService = {
-  getBranch: async () => {
+  getBranches: async () => {
     try {
       const response = await apiClient.get('/api/branches/');
       return response.data;
