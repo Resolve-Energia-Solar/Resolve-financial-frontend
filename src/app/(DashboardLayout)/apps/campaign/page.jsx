@@ -12,13 +12,12 @@ import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { IconTrash, IconHash, IconMapPin, IconUsers, IconEdit } from '@tabler/icons-react';
-import { Slide, Zoom } from '@mui/material';
+import { Slide, Zoom, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 import Breadcrumb from "@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb";
 import PageContainer from "@/app/components/container/PageContainer";
 import ChildCard from '@/app/components/shared/ChildCard';
 import campaignService from '@/services/campaignService';
 import { useRouter } from 'next/navigation';
-
 
 const BCrumb = [
   {
@@ -26,7 +25,7 @@ const BCrumb = [
     title: "Home",
   },
   {
-    title: "Filiais",
+    title: "Campanhas",
   },
 ];
 
@@ -34,6 +33,8 @@ function Page() {
   const [campaign, setCampaign] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [campaignToDelete, setCampaignToDelete] = useState(null);
 
   const router = useRouter();
 
@@ -41,11 +42,9 @@ function Page() {
     const fetchCampaign = async () => {
       try {
         const data = await campaignService.getCampaigns();
-        setLoading(false);
-        console.log(data);
         setCampaign(data.results);
       } catch (err) {
-        setError('Erro ao carregar campaign');
+        setError('Erro ao carregar campanhas');
       } finally {
         setLoading(false);
       }
@@ -64,6 +63,30 @@ function Page() {
 
   const handleEditClick = (id) => {
       router.push(`/apps/campaign/${id}/update`);
+  };
+
+  const handleDeleteClick = (id) => {
+    setCampaignToDelete(id);
+    setOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpen(false);
+    setCampaignToDelete(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      // Uncomment the following line when you have the delete function ready
+      // await campaignService.deleteCampaign(campaignToDelete);
+      setCampaign(campaign.filter((item) => item.id !== campaignToDelete));
+      console.log('Campanha excluída com sucesso');
+    } catch (err) {
+      setError('Erro ao excluir a campanha');
+      console.error('Erro ao excluir a campanha:', err);
+    } finally {
+      handleCloseModal();
+    }
   };
 
   return (
@@ -169,7 +192,7 @@ function Page() {
 
                             <Tooltip title="Deletar Filial">
                               <IconButton
-                                onClick={() => console.log(`Deletar filial ${campaignItem.id}`)}
+                                onClick={() => handleDeleteClick(campaignItem.id)}
                                 sx={{
                                   transition: 'all 0.3s ease',
                                   '&:hover': {
@@ -191,9 +214,27 @@ function Page() {
             </Slide>
           </Box>
         ) : (
-          <div>Nenhuma filial encontrada</div>
+          <Typography variant="body1" color="textSecondary" align="center">Nenhuma campanha encontrada.</Typography>
         )}
       </ChildCard>
+
+      {/* Modal de confirmação de exclusão */}
+      <Dialog open={open} onClose={handleCloseModal}>
+        <DialogTitle>Confirmar Exclusão</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Tem certeza de que deseja excluir esta campanha? Esta ação não pode ser desfeita.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseModal} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleConfirmDelete} color="error">
+            Excluir
+          </Button>
+        </DialogActions>
+      </Dialog>
     </PageContainer>
   );
 }
