@@ -23,6 +23,15 @@ const campaignService = {
 
   updateCampaign: async (id, data) => {
     try {
+      const response = await apiClient.put(`/api/marketing-campaigns/${id}/`, data);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao atualizar Campaign com id ${id}:`, error);
+      throw error;
+    }
+  },
+  patchCampaign: async (id, data) => {
+    try {
       const response = await apiClient.patch(`/api/marketing-campaigns/${id}/`, data);
       return response.data;
     } catch (error) {
@@ -30,7 +39,6 @@ const campaignService = {
       throw error;
     }
   },
-
   createCampaign: async (data) => {
     try {
       const response = await apiClient.post('/api/marketing-campaigns/', data);
