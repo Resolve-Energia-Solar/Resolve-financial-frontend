@@ -26,9 +26,6 @@ import {
     CheckCircle as CheckCircleIcon,
     HourglassEmpty as HourglassEmptyIcon,
     Cancel as CancelIcon,
-    Add,
-    AddBox,
-    AddBoxTwoTone,
     AddBoxRounded,
     Settings,
 } from '@mui/icons-material';
@@ -68,20 +65,20 @@ const getSupplyTypeChip = (type) => {
     }
 };
 
-const SaleList = () => {
-    const [salesList, setSalesList] = useState([]);
+const ProjectList = () => {
+    const [projectsList, setProjectsList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [open, setOpen] = useState(false);
-    const [saleToDelete, setSaleToDelete] = useState(null);
-    const router = useRouter(); // Inicializa o roteador
+    const [projectToDelete, setProjectToDelete] = useState(null);
+    const router = useRouter();
 
     useEffect(() => {
-        const fetchSales = async () => {
+        const fetchProjects = async () => {
             try {
                 const data = await projectService.getProjects();
                 console.log(data);
-                setSalesList(data.results);
+                setProjectsList(data.results);
             } catch (err) {
                 setError('Erro ao carregar Projetos');
             } finally {
@@ -89,7 +86,7 @@ const SaleList = () => {
             }
         };
 
-        fetchSales();
+        fetchProjects();
     }, []);
 
 
@@ -99,23 +96,23 @@ const SaleList = () => {
 
 
     const handleEditClick = (id) => {
-        // router.push(`/apps/commercial/sale/${id}/update`);
+        router.push(`/apps/project/${id}/update`);
     };
 
     const handleDeleteClick = (id) => {
-        setSaleToDelete(id);
+        setProjectToDelete(id);
         setOpen(true);
     };
 
     const handleCloseModal = () => {
         setOpen(false);
-        setSaleToDelete(null);
+        setProjectToDelete(null);
     };
 
     const handleConfirmDelete = async () => {
         try {
-            // await saleService.deleteSale(saleToDelete);
-            setSalesList(salesList.filter((item) => item.id !== saleToDelete));
+            // await saleService.deleteSale(projectToDelete);
+            setProjectsList(projectsList.filter((item) => item.id !== projectToDelete));
             console.log('Venda excluída com sucesso');
         } catch (err) {
             setError('Erro ao excluir a venda');
@@ -141,7 +138,7 @@ const SaleList = () => {
                         <Typography color="error">{error}</Typography>
                     ) : (
                         <TableContainer component={Paper} elevation={3}>
-                            <Table aria-label="sales table">
+                            <Table aria-label="table">
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>ID</TableCell>
@@ -154,7 +151,7 @@ const SaleList = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {salesList.map((item) => (
+                                    {projectsList.map((item) => (
                                         <TableRow key={item.id} hover>
                                             <TableCell>{item.id}</TableCell>
                                             <TableCell>{item.sale?.customer?.complete_name}</TableCell>
@@ -212,4 +209,4 @@ const SaleList = () => {
     );
 };
 
-export default SaleList;
+export default ProjectList;

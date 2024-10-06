@@ -1,7 +1,7 @@
 import apiClient from "./apiClient";
 
-const AddressService = {
-  getAddress: async () => {
+const addressService = {
+  getAddresses: async () => {
     try {
       const response = await apiClient.get('/api/addresses/');
       return response.data;
@@ -42,4 +42,4 @@ const AddressService = {
   },
 };
 
-export default AddressService;
+export default addressService;

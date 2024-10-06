@@ -28,7 +28,7 @@ import { IconVolume, IconVolume2 } from '@tabler/icons-react';
 import { Stack } from '@mui/material';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
-import FormDate from '@/app/components/forms/form-custom/FormDate';
+import FormDate from '@/app/components/forms/form-custom/FormDateTime';
 import FormSelectGroup from '@/app/components/forms/form-custom/FormSelectGroup';
 
 function CustomThumbComponent(props) {
