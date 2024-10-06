@@ -103,7 +103,7 @@ const Menuitems = [
     id: uniqueId(),
     title: 'Projetos',
     icon: IconTools,
-    href: '/apps/project/project',
+    href: '/apps/project',
   },
   {
     id: uniqueId(),
