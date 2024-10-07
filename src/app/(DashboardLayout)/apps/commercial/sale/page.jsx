@@ -97,7 +97,7 @@ const SaleList = () => {
 
     const handleConfirmDelete = async () => {
         try {
-            // await saleService.deleteSale(saleToDelete);
+            await saleService.deleteSale(saleToDelete);
             setSalesList(salesList.filter((item) => item.id !== saleToDelete));
             console.log('Venda excluída com sucesso');
         } catch (err) {

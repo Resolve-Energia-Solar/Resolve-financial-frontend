@@ -111,7 +111,7 @@ const ProjectList = () => {
 
     const handleConfirmDelete = async () => {
         try {
-            // await saleService.deleteProject(projectToDelete);
+            await projectService.deleteProject(projectToDelete);
             setProjectsList(projectsList.filter((item) => item.id !== projectToDelete));
             console.log('Venda excluída com sucesso');
         } catch (err) {

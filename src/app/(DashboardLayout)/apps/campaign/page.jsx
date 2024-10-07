@@ -33,6 +33,7 @@ import { useRouter } from 'next/navigation';
 import BlankCard from '@/app/components/shared/BlankCard';
 import PageContainer from "@/app/components/container/PageContainer";
 import campaignService from "@/services/campaignService"; 
+import { ca } from "date-fns/locale";
 
 const CampaignList = () => {
     const [campaignsList, setCampaignsList] = useState([]);
@@ -58,11 +59,11 @@ const CampaignList = () => {
     }, []);
 
     const handleCreateClick = () => {
-        router.push('/apps/campaign/create'); // Alterado para a rota de criação de campanha
+        router.push('/apps/campaign/create');
     };
 
     const handleEditClick = (id) => {
-        router.push(`/apps/campaign/${id}/update`); // Alterado para a rota de edição de campanha
+        router.push(`/apps/campaign/${id}/update`);
     };
 
     const handleDeleteClick = (id) => {
@@ -77,7 +78,7 @@ const CampaignList = () => {
 
     const handleConfirmDelete = async () => {
         try {
-            // await campaignService.deleteCampaign(campaignToDelete);
+            await campaignService.deleteCampaign(campaignToDelete);
             setCampaignsList(campaignsList.filter((item) => item.id !== campaignToDelete));
             console.log('Campanha excluída com sucesso');
         } catch (err) {

@@ -101,7 +101,7 @@ export default function FormCustom() {
               label="Status"
               options={status_options}
               value={formData.status}
-              onChange={(e) => handleChange('supply_type', e.target.value)}
+              onChange={(e) => handleChange('status', e.target.value)}
             />
           </Grid>
           <Grid item xs={12} sm={12} lg={4}>
