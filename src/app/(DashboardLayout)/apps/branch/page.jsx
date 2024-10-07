@@ -73,7 +73,7 @@ const BranchList = () => {
 
     const handleConfirmDelete = async () => {
         try {
-            // await branchService.deleteBranch(branchToDelete); // Descomente para excluir a filial
+            await branchService.deleteBranch(branchToDelete);
             setBranchesList(branchesList.filter((item) => item.id !== branchToDelete));
             console.log('Filial excluída com sucesso');
         } catch (err) {

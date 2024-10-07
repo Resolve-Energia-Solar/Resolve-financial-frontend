@@ -12,7 +12,6 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import AutoCompleteUsers from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-Users';
 
 export default function BranchForm() {
-
   const router = useRouter();
 
   const {
@@ -27,16 +26,16 @@ export default function BranchForm() {
   }
 
   return (
-    <PageContainer title="Edição de Franquias" description="Editor de Franquias">
-      <Breadcrumb title="Editar Franquias" />
-      {success && <Alert severity="success" sx={{ marginBottom: 3 }}>A franquias foi atualizada com sucesso!</Alert>}
+    <PageContainer title="Criação de Franquias" description="Criador de Franquias">
+      <Breadcrumb title="Criar Franquias" />
+      {success && <Alert severity="success" sx={{ marginBottom: 3 }}>A franquia foi criada com sucesso!</Alert>}
       <ParentCard title="Franquias">
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12} lg={6}>
-          <CustomFormLabel htmlFor="name">Franquia</CustomFormLabel>
+            <CustomFormLabel htmlFor="name">Franquia</CustomFormLabel>
             <CustomTextField
               name="name"
-              placeholder="Nome da Franquias"
+              placeholder="Nome da Franquia"
               fullWidth
               onChange={(e) => handleChange('name', e.target.value)}
               {...(formErrors.name && { error: true, helperText: formErrors.name })}
@@ -44,17 +43,16 @@ export default function BranchForm() {
           </Grid>
 
           <Grid item xs={12} sm={12} lg={6}>
-            <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
+            <CustomFormLabel htmlFor="address">Endereço</CustomFormLabel>
             <AutoCompleteAddress 
               fullWidth
               onChange={(id) => handleChange('address_id', id)}
               {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
             />
-
           </Grid>
 
           <Grid item xs={12} sm={12} lg={12}>
-            <CustomFormLabel htmlFor="name">Proprietários</CustomFormLabel>
+            <CustomFormLabel htmlFor="owners">Proprietários</CustomFormLabel>
             <AutoCompleteUsers 
               fullWidth
               onChange={(ids) => handleChange('owners_ids', ids)}
