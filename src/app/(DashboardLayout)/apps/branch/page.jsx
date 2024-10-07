@@ -54,11 +54,11 @@ const BranchList = () => {
     }, []);
 
     const handleCreateClick = () => {
-        router.push('/apps/commercial/branch/create'); // Rota para criar nova filial
+        router.push('/apps/branch/create'); // Rota para criar nova filial
     };
 
     const handleEditClick = (id) => {
-        router.push(`/apps/commercial/branch/${id}/update`); // Rota para editar filial
+        router.push(`/apps/branch/${id}/update`); // Rota para editar filial
     };
 
     const handleDeleteClick = (id) => {

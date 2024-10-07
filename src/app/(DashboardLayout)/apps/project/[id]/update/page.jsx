@@ -11,8 +11,7 @@ import Alert from '@mui/material/Alert';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AutoCompleteUser from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-User';
 import AutoCompleteSale from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-Sales';
-import AutoCompleteAddress from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-Addresses';
-import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
+import AutoCompleteAddresses from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-Addresses';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 
 import useProject from '@/hooks/projects/useProject';
@@ -134,7 +133,7 @@ export default function FormCustom() {
           </Grid>
           <Grid item xs={12} sm={12} lg={4}>
             <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
-            <AutoCompleteAddress
+            <AutoCompleteAddresses
               onChange={(id) => handleChange('addresses_ids', id)}
               value={formData.addresses_ids}
               {...(formErrors.addresses_ids && { error: true, helperText: formErrors.addresses_ids })}

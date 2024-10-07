@@ -6,7 +6,7 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import addressService from '@/services/addressService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteAddress({ onChange, value = [], error, helperText }) {
+export default function AutoCompleteAddresses({ onChange, value = [], error, helperText }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
