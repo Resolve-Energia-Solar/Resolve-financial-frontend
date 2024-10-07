@@ -1,71 +1,64 @@
-'use client'
+'use client';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import branchService from '@/services/branchService';
+import userService from '@/services/userService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteBranch({ onChange, value, error, helperText }) {
+export default function AutoCompleteUsers({ onChange, value = [], error, helperText }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedBranch, setSelectedBranch] = useState(null);
+  const [selectedUsers, setSelectedUsers] = useState([]);
 
-useEffect(() => {
-    const fetchDefaultBranch = async () => {
-      if (value) {
+  useEffect(() => {
+    const fetchDefaultUsers = async () => {
+      if (value.length > 0) {
         try {
-          const branch = await branchService.getBranchById(value);
-          if (branch) {
-            setSelectedBranch({ id: branch.id, name: branch.name });
-          }
+          const users = await Promise.all(value.map(id => userService.getUserById(id)));
+          const formattedUsers = users.map(user => ({
+            id: user.id,
+            name: user.complete_name // Ajuste conforme o campo do nome do usuário
+          }));
+          setSelectedUsers(formattedUsers);
         } catch (error) {
-          console.error('Erro ao buscar branch:', error);
+          console.error('Erro ao buscar usuários:', error);
         }
       }
     };
 
-    fetchDefaultBranch();
+    fetchDefaultUsers();
   }, [value]);
 
   const handleChange = (event, newValue) => {
-    setSelectedBranch(newValue);
-    if (newValue) {
-      onChange(newValue.id);
-    } else {
-      onChange(null);
-    }
+    setSelectedUsers(newValue);
+    onChange(newValue.map(user => user.id)); // Envia uma lista de IDs
   };
 
-  const fetchBranchesByName = useCallback(
+  const fetchUsersByName = useCallback(
     debounce(async (name) => {
       if (!name) return;
       setLoading(true);
       try {
-        const branches = await branchService.getBranches();
-        const filteredBranches = branches.results.filter(branch =>
-          branch.name.toLowerCase().includes(name.toLowerCase())
-        );
-        const formattedBranches = filteredBranches.map(branch => ({
-          id: branch.id,
-          name: branch.name,
+        const users = await userService.getUserByName(name); // Chama o endpoint diretamente
+        const formattedUsers = users.results.map(user => ({
+          id: user.id,
+          name: user.complete_name, // Formata conforme necessário
         }));
-        setOptions(formattedBranches);
+        setOptions(formattedUsers);
       } catch (error) {
-        console.error('Erro ao buscar branches:', error);
+        console.error('Erro ao buscar usuários:', error);
       }
       setLoading(false);
-    }, 300), 
+    }, 300),
     []
   );
 
-  // Função para abrir o autocomplete
   const handleOpen = () => {
     setOpen(true);
   };
 
-  // Função para fechar o autocomplete
   const handleClose = () => {
     setOpen(false);
     setOptions([]);
@@ -74,17 +67,18 @@ useEffect(() => {
   return (
     <div>
       <Autocomplete
+        multiple
         sx={{ width: '100%' }}
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.name === value.name}
+        isOptionEqualToValue={(option, value) => option.id === value.id} // Compara pelos IDs
         getOptionLabel={(option) => option.name}
         options={options}
         loading={loading}
-        value={selectedBranch}
+        value={selectedUsers}
         onInputChange={(event, newInputValue) => {
-          fetchBranchesByName(newInputValue);
+          fetchUsersByName(newInputValue);
         }}
         onChange={handleChange}
         renderInput={(params) => (

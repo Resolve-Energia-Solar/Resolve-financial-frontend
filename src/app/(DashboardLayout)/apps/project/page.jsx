@@ -27,77 +27,110 @@ import {
     HourglassEmpty as HourglassEmptyIcon,
     Cancel as CancelIcon,
     AddBoxRounded,
+    Settings,
 } from '@mui/icons-material';
 
 import { useRouter } from 'next/navigation';
 import BlankCard from '@/app/components/shared/BlankCard';
 import PageContainer from "@/app/components/container/PageContainer";
-import campaignService from "@/services/campaignService"; 
-import { ca } from "date-fns/locale";
+import projectService from "@/services/projectService";
 
-const CampaignList = () => {
-    const [campaignsList, setCampaignsList] = useState([]);
+const getStatusChip = (status) => {
+    switch (status) {
+        case 'P':
+            return <Chip label="Pendente" color="warning" icon={<HourglassEmptyIcon />} />;
+        case 'F':
+            return <Chip label="Finalizado" color="success" icon={<CheckCircleIcon />} />;
+        case 'EA':
+            return <Chip label="Em Andamento" color="primary" icon={<HourglassEmptyIcon />} />;
+        case 'C':
+            return <Chip label="Cancelado" color="error" icon={<CancelIcon />} />;
+        case 'D':
+            return <Chip label="Distrato" color="error" icon={<CancelIcon />} />;
+        default:
+            return <Chip label={status} />;
+    }
+};
+
+const getSupplyTypeChip = (type) => {
+    switch (type) {
+        case 'M':
+            return <Chip label="Monofásico" color="info" icon={<Settings />} />;
+        case 'B':
+            return <Chip label="Bifásico" color="info" icon={<Settings />} />;
+        case 'T':
+            return <Chip label="Trifásico" color="info" icon={<Settings />} />;
+        default:
+            return <Chip label={type} />;
+    }
+};
+
+const ProjectList = () => {
+    const [projectsList, setProjectsList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [open, setOpen] = useState(false);
-    const [campaignToDelete, setCampaignToDelete] = useState(null);
+    const [projectToDelete, setProjectToDelete] = useState(null);
     const router = useRouter();
 
     useEffect(() => {
-        const fetchCampaigns = async () => {
+        const fetchProjects = async () => {
             try {
-                const data = await campaignService.getCampaigns();
-                setCampaignsList(data.results);
+                const data = await projectService.getProjects();
+                console.log(data);
+                setProjectsList(data.results);
             } catch (err) {
-                setError('Erro ao carregar campanhas');
+                setError('Erro ao carregar Projetos');
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchCampaigns();
+        fetchProjects();
     }, []);
 
+
     const handleCreateClick = () => {
-        router.push('/apps/campaign/create');
+        router.push('/apps/project/create');
     };
 
+
     const handleEditClick = (id) => {
-        router.push(`/apps/campaign/${id}/update`);
+        router.push(`/apps/project/${id}/update`);
     };
 
     const handleDeleteClick = (id) => {
-        setCampaignToDelete(id);
+        setProjectToDelete(id);
         setOpen(true);
     };
 
     const handleCloseModal = () => {
         setOpen(false);
-        setCampaignToDelete(null);
+        setProjectToDelete(null);
     };
 
     const handleConfirmDelete = async () => {
         try {
-            await campaignService.deleteCampaign(campaignToDelete);
-            setCampaignsList(campaignsList.filter((item) => item.id !== campaignToDelete));
-            console.log('Campanha excluída com sucesso');
+            await projectService.deleteProject(projectToDelete);
+            setProjectsList(projectsList.filter((item) => item.id !== projectToDelete));
+            console.log('Venda excluída com sucesso');
         } catch (err) {
-            setError('Erro ao excluir a campanha');
-            console.error('Erro ao excluir a campanha:', err);
+            setError('Erro ao excluir o projeto');
+            console.error('Erro ao excluir o projeto', err);
         } finally {
             handleCloseModal();
         }
     };
 
     return (
-        <PageContainer title="Campanhas" description="Lista de Campanhas">
+        <PageContainer title="Projetos" description="Lista de Projetos">
             <BlankCard>
                 <CardContent>
                     <Typography variant="h6" gutterBottom>
-                        Lista de Campanhas
+                        Lista de Projetos
                     </Typography>
-                    <Button variant="outlined" startIcon={<AddBoxRounded />} sx={{ marginTop: 1, marginBottom: 2 }} onClick={handleCreateClick}>
-                        Adicionar Campanha
+                    <Button variant="outlined" startIcon={<AddBoxRounded />} sx={{marginTop:1,marginBottom:2}} onClick={handleCreateClick}>
+                        Criar Projeto
                     </Button>
                     {loading ? (
                         <Typography>Carregando...</Typography>
@@ -105,23 +138,27 @@ const CampaignList = () => {
                         <Typography color="error">{error}</Typography>
                     ) : (
                         <TableContainer component={Paper} elevation={3}>
-                            <Table aria-label="campaigns table">
+                            <Table aria-label="table">
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>ID</TableCell>
-                                        <TableCell>Nome da Campanha</TableCell>
-                                        <TableCell>Data de Início</TableCell>
-                                        <TableCell>Data de Término</TableCell>
+                                        <TableCell>Nome contratante</TableCell>
+                                        <TableCell>Número do Contrato</TableCell>
+                                        <TableCell>Status do Projeto</TableCell>
+                                        <TableCell>Tipo de Forneciemento</TableCell>
+                                        <TableCell>KWp</TableCell>
                                         <TableCell>Ações</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {campaignsList.map((item) => (
+                                    {projectsList.map((item) => (
                                         <TableRow key={item.id} hover>
                                             <TableCell>{item.id}</TableCell>
-                                            <TableCell>{item.name}</TableCell>
-                                            <TableCell>{new Date(item.start_datetime).toLocaleDateString()}</TableCell>
-                                            <TableCell>{new Date(item.end_datetime).toLocaleDateString()}</TableCell>
+                                            <TableCell>{item.sale?.customer?.complete_name}</TableCell>
+                                            <TableCell>{item.sale?.contract_number}</TableCell>
+                                            <TableCell>{getStatusChip(item.status)}</TableCell>
+                                            <TableCell>{getSupplyTypeChip(item.supply_type)}</TableCell>
+                                            <TableCell>{item.kwp}</TableCell>
                                             <TableCell>
                                                 <Tooltip title="Editar">
                                                     <IconButton 
@@ -156,7 +193,7 @@ const CampaignList = () => {
                 <DialogTitle>Confirmar Exclusão</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Tem certeza de que deseja excluir esta campanha? Esta ação não pode ser desfeita.
+                        Tem certeza de que deseja excluir esta venda? Esta ação não pode ser desfeita.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -172,4 +209,4 @@ const CampaignList = () => {
     );
 };
 
-export default CampaignList;
+export default ProjectList;

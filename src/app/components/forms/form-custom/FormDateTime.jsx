@@ -4,17 +4,14 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { ptBR } from 'date-fns/locale';
-import { format, parseISO } from 'date-fns';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
-const FormDate = ({ label, value, onChange, error, helperText }) => {
-
+const FormDateTime = ({ label, value, onChange, error, helperText }) => {
   return (
     <div>
       <CustomFormLabel htmlFor="date">{label}</CustomFormLabel>
-      <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
-        <DatePicker
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <DateTimePicker
           renderInput={(props) => (
             <CustomTextField
               {...props}
@@ -23,16 +20,15 @@ const FormDate = ({ label, value, onChange, error, helperText }) => {
               helperText={helperText}
             />
           )}
-          value={value ? parseISO(value) : null}
+          value={value}
           onChange={(newValue) => {
-            onChange(newValue ? format(newValue, 'yyyy-MM-dd') : ''); 
+            onChange(newValue);
           }}
-          inputFormat="dd/MM/yyyy"
+          inputFormat="dd/MM/yyyy HH:mm"
         />
-
       </LocalizationProvider>
     </div>
   );
 };
 
-export default FormDate;
+export default FormDateTime;

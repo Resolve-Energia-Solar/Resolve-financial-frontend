@@ -1,36 +1,36 @@
-'use client'
+'use client';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import branchService from '@/services/branchService';
+import saleService from '@/services/saleService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteBranch({ onChange, value, error, helperText }) {
+export default function AutoCompleteSale({ onChange, value, error, helperText }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedBranch, setSelectedBranch] = useState(null);
+  const [selectedSale, setSelectedSale] = useState(null);
 
-useEffect(() => {
-    const fetchDefaultBranch = async () => {
+  useEffect(() => {
+    const fetchDefaultSale = async () => {
       if (value) {
         try {
-          const branch = await branchService.getBranchById(value);
-          if (branch) {
-            setSelectedBranch({ id: branch.id, name: branch.name });
+          const sale = await saleService.getSaleById(value);
+          if (sale) {
+            setSelectedSale({ id: sale.id, name: sale.contract_number + ' - ' + sale.customer.complete_name });
           }
         } catch (error) {
-          console.error('Erro ao buscar branch:', error);
+          console.error('Erro ao buscar venda:', error);
         }
       }
     };
 
-    fetchDefaultBranch();
+    fetchDefaultSale();
   }, [value]);
 
   const handleChange = (event, newValue) => {
-    setSelectedBranch(newValue);
+    setSelectedSale(newValue);
     if (newValue) {
       onChange(newValue.id);
     } else {
@@ -38,34 +38,38 @@ useEffect(() => {
     }
   };
 
-  const fetchBranchesByName = useCallback(
+  const fetchSalesByName = useCallback(
     debounce(async (name) => {
-      if (!name) return;
+      if (!name) {
+        setOptions([]); // Limpa opções se não houver nome
+        return;
+      }
       setLoading(true);
       try {
-        const branches = await branchService.getBranches();
-        const filteredBranches = branches.results.filter(branch =>
-          branch.name.toLowerCase().includes(name.toLowerCase())
-        );
-        const formattedBranches = filteredBranches.map(branch => ({
-          id: branch.id,
-          name: branch.name,
-        }));
-        setOptions(formattedBranches);
+        const sales = await saleService.getSales();
+        // Verifique se 'sales.results' está presente
+        if (sales && sales.results) {
+          const filteredSales = sales.results.filter(sale =>
+            `${sale.contract_number} - ${sale.customer.complete_name}`.toLowerCase().includes(name.toLowerCase())
+          );
+          const formattedSales = filteredSales.map(sale => ({
+            id: sale.id,
+            name: `${sale.contract_number} - ${sale.customer.complete_name}`,
+          }));
+          setOptions(formattedSales);
+        }
       } catch (error) {
-        console.error('Erro ao buscar branches:', error);
+        console.error('Erro ao buscar vendas:', error);
       }
       setLoading(false);
-    }, 300), 
+    }, 300),
     []
   );
 
-  // Função para abrir o autocomplete
   const handleOpen = () => {
     setOpen(true);
   };
 
-  // Função para fechar o autocomplete
   const handleClose = () => {
     setOpen(false);
     setOptions([]);
@@ -78,13 +82,13 @@ useEffect(() => {
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.name === value.name}
+        isOptionEqualToValue={(option, value) => option.id === value.id} // Compara pelos IDs
         getOptionLabel={(option) => option.name}
         options={options}
         loading={loading}
-        value={selectedBranch}
+        value={selectedSale}
         onInputChange={(event, newInputValue) => {
-          fetchBranchesByName(newInputValue);
+          fetchSalesByName(newInputValue);
         }}
         onChange={handleChange}
         renderInput={(params) => (

@@ -2,7 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 import PropTypes from 'prop-types';
 
-
 // mui imports
 import Chip from '@mui/material/Chip';
 import List from '@mui/material/List';
@@ -33,7 +32,7 @@ export default function NavItem({ item, level, pathDirect, hideMenu, onClick }) 
     borderRadius: `${customizer.borderRadius}px`,
     backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
     color:
-      level > 1 && pathDirect === item?.href
+      level > 1 && (pathDirect.includes(item?.href) && item?.href !== '/') 
         ? `${theme.palette.primary.main}!important`
         : theme.palette.text.secondary,
     paddingLeft: hideMenu ? '10px' : level > 2 ? `${level * 15}px` : '10px',
@@ -63,7 +62,7 @@ export default function NavItem({ item, level, pathDirect, hideMenu, onClick }) 
       <Link href={item.href}>
         <ListItemStyled
           disabled={item?.disabled}
-          selected={pathDirect === item?.href}
+          selected={(pathDirect.includes(item?.href) && item?.href !== '/') || pathDirect === item?.href}
           onClick={lgDown ? onClick : undefined}
         >
           <ListItemIcon
@@ -71,7 +70,7 @@ export default function NavItem({ item, level, pathDirect, hideMenu, onClick }) 
               minWidth: '36px',
               p: '3px 0',
               color:
-                level > 1 && pathDirect === item?.href
+                level > 1 && pathDirect.includes(item?.href) 
                   ? `${theme.palette.primary.main}!important`
                   : 'inherit',
             }}
