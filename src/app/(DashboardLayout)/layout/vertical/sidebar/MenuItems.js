@@ -119,7 +119,7 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Unidades',
+    title: 'Franquias',
     icon: IconBuilding,
     href: '/apps/branch',
   },

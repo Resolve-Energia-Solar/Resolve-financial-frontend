@@ -11,7 +11,7 @@ import Alert from '@mui/material/Alert';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AutoCompleteUser from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-User';
 import AutoCompleteSale from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-Sales';
-import AutoCompleteAddress from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-Addresses';
+import AutoCompleteAddresses from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-Addresses';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import { useRouter } from 'next/navigation';
 
@@ -101,7 +101,7 @@ export default function FormCustom() {
               label="Status"
               options={status_options}
               value={formData.status}
-              onChange={(e) => handleChange('supply_type', e.target.value)}
+              onChange={(e) => handleChange('status', e.target.value)}
             />
           </Grid>
           <Grid item xs={12} sm={12} lg={4}>
@@ -132,7 +132,7 @@ export default function FormCustom() {
           </Grid>
           <Grid item xs={12} sm={12} lg={4}>
             <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
-            <AutoCompleteAddress
+            <AutoCompleteAddresses
               onChange={(id) => handleChange('addresses_ids', id)}
               value={formData.addresses_ids}
               {...(formErrors.addresses_ids && { error: true, helperText: formErrors.addresses_ids })}
@@ -141,7 +141,7 @@ export default function FormCustom() {
           <Grid item xs={12} sm={12} lg={12}>
             <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
               <Button variant="contained" color="primary" onClick={handleSave}>
-                Editar
+                Criar
               </Button>
             </Stack>
           </Grid>

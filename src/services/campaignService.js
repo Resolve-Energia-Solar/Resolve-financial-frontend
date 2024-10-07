@@ -48,6 +48,15 @@ const campaignService = {
       throw error;
     }
   },
+  deleteCampaign: async (id) => {
+    try {
+      const response = await apiClient.delete(`/api/marketing-campaigns/${id}/`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao deletar campanha com id ${id}:`, error);
+      throw error;
+    }
+  },
 };
 
 export default campaignService;
