@@ -1,138 +1,71 @@
 'use client';
-import React, { useState } from 'react';
-import { Grid, Button, Stack, FormControlLabel, Alert } from '@mui/material';
+import { Grid, Button, Stack, FormControlLabel } from '@mui/material';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import ParentCard from '@/app/components/shared/ParentCard';
-import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
-import FormDateTime from '@/app/components/forms/form-custom/FormDateTime';
-import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import useCampaignForm from '@/hooks/campaign/useCampaignForm';
+import AutoCompleteAddress from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-Address';
+import useBranchForm from '@/hooks/branch/useBranchForm';
 import { useRouter } from 'next/navigation';
+import ParentCard from '@/app/components/shared/ParentCard';
+import Alert from '@mui/material/Alert';
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import AutoCompleteUsers from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-Users';
 
-export default function CampaignForm() {
+export default function BranchForm() {
+
   const router = useRouter();
+
   const {
-    formData,
     handleChange,
     handleSave,
     formErrors,
     success
-  } = useCampaignForm();
-  const [bannerFile, setBannerFile] = useState(null);
+  } = useBranchForm();
 
-  const handleBannerChange = (event) => {
-    const file = event.target.files[0];
-    setBannerFile(file);
-    handleChange('banner', file);
-  };
-
-  const handleSaveForm = () => {
-    handleSave();
-  };
-
-  // Redireciona após o sucesso
-  React.useEffect(() => {
-    if (success) {
-      router.push('/apps/campaigns'); // Redireciona após a criação
-    }
-  }, [success, router]);
+  if (success) {
+    router.push('/apps/branch');
+  }
 
   return (
-    <PageContainer title="Criação de Campanha de Marketing" description="Criador de Campanhas de Marketing">
-      <Breadcrumb title="Criar Campanha" />
-      {success && <Alert severity="success" sx={{ marginBottom: 3 }}>A campanha foi criada com sucesso!</Alert>}
-      <ParentCard title="Campanha de Marketing">
-        <Grid container spacing={2}>
-
-          {/* Nome da Campanha */}
-          <Grid item xs={12} sm={12} lg={4}>
-            <CustomFormLabel htmlFor="campaign">Nome da Campanha</CustomFormLabel>
+    <PageContainer title="Edição de Franquias" description="Editor de Franquias">
+      <Breadcrumb title="Editar Franquias" />
+      {success && <Alert severity="success" sx={{ marginBottom: 3 }}>A franquias foi atualizada com sucesso!</Alert>}
+      <ParentCard title="Franquias">
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={12} lg={6}>
+          <CustomFormLabel htmlFor="name">Franquia</CustomFormLabel>
             <CustomTextField
-              name="campaign"
-              placeholder="Digite o nome da campanha"
+              name="name"
+              placeholder="Nome da Franquias"
               fullWidth
-              value={formData.name}
               onChange={(e) => handleChange('name', e.target.value)}
               {...(formErrors.name && { error: true, helperText: formErrors.name })}
             />
           </Grid>
 
-          {/* Data de Início */}
-          <Grid item xs={12} sm={12} lg={4}>
-            <FormDateTime
-              label="Data de Início"
-              name="start_datetime"
-              value={formData.start_datetime}
-              onChange={(newValue) => handleChange('start_datetime', newValue)}
-              {...(formErrors.start_datetime && { error: true, helperText: formErrors.start_datetime })}
-            />
-          </Grid>
-
-          {/* Data de Término */}
-          <Grid item xs={12} sm={12} lg={4}>
-            <FormDateTime
-              label="Data de Término"
-              name="end_datetime"
-              value={formData.end_datetime}
-              onChange={(newValue) => handleChange('end_datetime', newValue)}
-              {...(formErrors.end_datetime && { error: true, helperText: formErrors.end_datetime })}
-            />
-          </Grid>
-
-          {/* Descrição */}
-          <Grid item xs={12}>
-            <CustomTextField
-              label="Descrição"
-              name="description"
-              placeholder="Descrição da campanha"
-              variant="outlined"
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
+            <AutoCompleteAddress 
               fullWidth
-              multiline
-              rows={4}
-              value={formData.description}
-              onChange={(e) => handleChange('description', e.target.value)}
-              {...(formErrors.description && { error: true, helperText: formErrors.description })}
+              onChange={(id) => handleChange('address_id', id)}
+              {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
+            />
+
+          </Grid>
+
+          <Grid item xs={12} sm={12} lg={12}>
+            <CustomFormLabel htmlFor="name">Proprietários</CustomFormLabel>
+            <AutoCompleteUsers 
+              fullWidth
+              onChange={(ids) => handleChange('owners_ids', ids)}
+              {...(formErrors.owners_ids && { error: true, helperText: formErrors.owners_ids })}
             />
           </Grid>
 
-          {/* Campo: Upload do Banner */}
           <Grid item xs={12}>
-            <CustomFormLabel htmlFor="banner">Banner</CustomFormLabel>
-            <Stack direction="row" spacing={2} alignItems="center" sx={{ border: '1px solid #ccc', borderRadius: '4px', padding: '10px' }}>
-              <Button
-                variant="contained"
-                component="label"
-                color="primary"
-                sx={{ flexShrink: 0 }} // Garante que o botão não encolha
-              >
-                {bannerFile ? 'Alterar Banner' : 'Selecionar Banner'}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleBannerChange}
-                  hidden
-                />
-              </Button>
-              <div style={{ flexGrow: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                {bannerFile ? (
-                  <strong>{bannerFile.name}</strong>
-                ) : formData.banner ? (
-                  <strong>{formData.banner.name || formData.banner}</strong>
-                ) : (
-                  <span>Nenhum banner selecionado</span>
-                )}
-              </div>
-            </Stack>
-            {formErrors.banner && <Alert severity="error">{formErrors.banner}</Alert>}
-          </Grid>
-
-          {/* Botão de Ação */}
-          <Grid item xs={12} md={12}>
             <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-              <Button variant="contained" color="primary" onClick={handleSaveForm}>
-                Criar Campanha
+              <Button variant="contained" color="primary" onClick={handleSave}>
+                Criar
               </Button>
             </Stack>
           </Grid>

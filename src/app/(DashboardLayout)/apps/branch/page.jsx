@@ -54,7 +54,7 @@ const BranchList = () => {
     }, []);
 
     const handleCreateClick = () => {
-        router.push('/apps/branch/create'); // Rota para criar nova filial
+        router.push('/apps/branch/create');
     };
 
     const handleEditClick = (id) => {

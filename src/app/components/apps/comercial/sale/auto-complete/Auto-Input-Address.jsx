@@ -3,7 +3,7 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import addressService from '@/services/addressService';
+import addressService from '@/services/addressService'; // Serviço para buscar endereços
 import { debounce } from 'lodash';
 
 export default function AutoCompleteAddress({ onChange, value, error, helperText }) {
@@ -12,14 +12,16 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
   const [loading, setLoading] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
 
-
   useEffect(() => {
     const fetchDefaultAddress = async () => {
       if (value) {
         try {
-          const address = await addressService.getAddressById(value);
-          if (address) {
-            setSelectedAddress({ id: address.id, name: address.street });
+          const addressValue = await addressService.getAddressById(value);
+          if (addressValue) {
+            setSelectedAddress({
+              id: addressValue.id, 
+              name: `${addressValue.street}, ${addressValue.number}, ${addressValue.city}, ${addressValue.state}` 
+            });
           }
         } catch (error) {
           console.error('Erro ao buscar address:', error);
@@ -30,6 +32,7 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
     fetchDefaultAddress();
   }, [value]);
 
+  // Função de manipulação de mudança
   const handleChange = (event, newValue) => {
     setSelectedAddress(newValue);
     if (newValue) {
@@ -39,6 +42,7 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
     }
   };
 
+  // Função para buscar endereços com base no nome (ou rua)
   const fetchAddressesByName = useCallback(
     debounce(async (name) => {
       if (!name) return;
@@ -50,7 +54,7 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
         );
         const formattedAddresses = filteredAddresses.map(address => ({
           id: address.id,
-          name: address.street,
+          name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`, 
         }));
         setOptions(formattedAddresses);
       } catch (error) {
@@ -78,7 +82,7 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
         onOpen={handleOpen}
         onClose={handleClose}
         isOptionEqualToValue={(option, value) => option.name === value.name}
-        getOptionLabel={(option) => option.name}
+        getOptionLabel={(option) => option.name || ''}
         options={options}
         loading={loading}
         value={selectedAddress}

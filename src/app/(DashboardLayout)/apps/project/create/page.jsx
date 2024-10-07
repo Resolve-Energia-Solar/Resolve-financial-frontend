@@ -141,7 +141,7 @@ export default function FormCustom() {
           <Grid item xs={12} sm={12} lg={12}>
             <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
               <Button variant="contained" color="primary" onClick={handleSave}>
-                Editar
+                Criar
               </Button>
             </Stack>
           </Grid>

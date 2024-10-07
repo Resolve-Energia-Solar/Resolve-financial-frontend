@@ -180,7 +180,6 @@ const SaleList = () => {
                 </CardContent>
             </BlankCard>
 
-            {/* Modal de confirmação de exclusão */}
             <Dialog open={open} onClose={handleCloseModal}>
                 <DialogTitle>Confirmar Exclusão</DialogTitle>
                 <DialogContent>

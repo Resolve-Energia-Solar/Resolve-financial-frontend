@@ -17,6 +17,7 @@ export default function AutoCompleteAddresses({ onChange, value = [], error, hel
       if (value.length > 0) {
         try {
           const addresses = await Promise.all(value.map(id => addressService.getAddressById(id))); 
+          console.log('Addresses:', addresses);
           const formattedAddresses = addresses.map(address => ({
             id: address.id,
             name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`
@@ -33,7 +34,7 @@ export default function AutoCompleteAddresses({ onChange, value = [], error, hel
 
   const handleChange = (event, newValue) => {
     setSelectedAddresses(newValue);
-    onChange(newValue.map(address => address.id)); // Envia uma lista de IDs
+    onChange(newValue.map(address => address.id)); 
   };
 
   const fetchAddressesByName = useCallback(
@@ -44,14 +45,14 @@ export default function AutoCompleteAddresses({ onChange, value = [], error, hel
       }
       setLoading(true);
       try {
-        const addresses = await addressService.getAddresses(); // Obtém todos os endereços
+        const addresses = await addressService.getAddresses();
         if (addresses && addresses.results) {
           const filteredAddresses = addresses.results.filter(address =>
             `${address.street}, ${address.number}, ${address.city}, ${address.state}`.toLowerCase().includes(name.toLowerCase())
           );
           const formattedAddresses = filteredAddresses.map(address => ({
             id: address.id,
-            name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`, // Formate conforme necessário
+            name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
           }));
           setOptions(formattedAddresses);
         }
