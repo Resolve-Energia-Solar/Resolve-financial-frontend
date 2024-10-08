@@ -113,7 +113,7 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Time',
+    title: 'Squads',
     icon: IconUsers,
     href: '/apps/squad',
   },
