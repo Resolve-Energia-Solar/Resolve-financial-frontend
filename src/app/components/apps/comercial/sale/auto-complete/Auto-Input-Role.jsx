@@ -1,37 +1,36 @@
-'use client'
+'use client';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import branchService from '@/services/branchService';
-import departamentService from '@/services/departamentService';
+import roleService from '@/services/roleService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteBranch({ onChange, value, error, helperText }) {
+export default function AutoCompleteRole({ onChange, value, error, helperText }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedBranch, setSelectedBranch] = useState(null);
+  const [selectedRole, setSelectedRole] = useState(null);
 
-useEffect(() => {
-    const fetchDefaultBranch = async () => {
+  useEffect(() => {
+    const fetchDefaultRole = async () => {
       if (value) {
         try {
-          const branch = await branchService.getBranchById(value);
-          if (branch) {
-            setSelectedBranch({ id: branch.id, name: branch.name });
+          const role = await roleService.getRoleById(value);
+          if (role) {
+            setSelectedRole({ id: role.id, name: role.name });
           }
         } catch (error) {
-          console.error('Erro ao buscar branch:', error);
+          console.error('Erro ao buscar função:', error);
         }
       }
     };
 
-    fetchDefaultBranch();
+    fetchDefaultRole();
   }, [value]);
 
   const handleChange = (event, newValue) => {
-    setSelectedBranch(newValue);
+    setSelectedRole(newValue);
     if (newValue) {
       onChange(newValue.id);
     } else {
@@ -39,22 +38,22 @@ useEffect(() => {
     }
   };
 
-  const fetchBranchesByName = useCallback(
+  const fetchRolesByName = useCallback(
     debounce(async (name) => {
       if (!name) return;
       setLoading(true);
       try {
-        const branches = await branchService.getBranches();
-        const filteredBranches = branches.results.filter(branch =>
-          branch.name.toLowerCase().includes(name.toLowerCase())
+        const roles = await roleService.getRole();
+        const filteredRoles = roles.results.filter(role =>
+          role.name.toLowerCase().includes(name.toLowerCase())
         );
-        const formattedBranches = filteredBranches.map(branch => ({
-          id: branch.id,
-          name: branch.name,
+        const formattedRoles = filteredRoles.map(role => ({
+          id: role.id,
+          name: role.name,
         }));
-        setOptions(formattedBranches);
+        setOptions(formattedRoles);
       } catch (error) {
-        console.error('Erro ao buscar branches:', error);
+        console.error('Erro ao buscar funções:', error);
       }
       setLoading(false);
     }, 300), 
@@ -83,9 +82,9 @@ useEffect(() => {
         getOptionLabel={(option) => option.name}
         options={options}
         loading={loading}
-        value={selectedBranch}
+        value={selectedRole}
         onInputChange={(event, newInputValue) => {
-          fetchBranchesByName(newInputValue);
+          fetchRolesByName(newInputValue);
         }}
         onChange={handleChange}
         renderInput={(params) => (

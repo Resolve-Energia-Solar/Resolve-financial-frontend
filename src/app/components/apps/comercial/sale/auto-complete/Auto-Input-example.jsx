@@ -12,7 +12,7 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import userService from '@/services/userService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteUser({ onChange, value }) {
+export default function AutoCompleteUserTest({ onChange, value }) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
