@@ -50,6 +50,15 @@ const userService = {
       throw error;
     }
   },
+  deleteUser: async (id) => {
+    try {
+      const response = await apiClient.delete(`/api/users/${id}/`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao deletar usuário com id ${id}:`, error);
+      throw error;
+    }
+  }
 };
 
 export default userService;

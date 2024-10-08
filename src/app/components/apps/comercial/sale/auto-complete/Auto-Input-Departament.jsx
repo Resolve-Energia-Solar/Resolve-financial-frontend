@@ -1,37 +1,36 @@
-'use client'
+'use client';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import branchService from '@/services/branchService';
 import departamentService from '@/services/departamentService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteBranch({ onChange, value, error, helperText }) {
+export default function AutoCompleteDepartament({ onChange, value, error, helperText }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedBranch, setSelectedBranch] = useState(null);
+  const [selectedDepartament, setSelectedDepartament] = useState(null);
 
-useEffect(() => {
-    const fetchDefaultBranch = async () => {
+  useEffect(() => {
+    const fetchDefaultDepartament = async () => {
       if (value) {
         try {
-          const branch = await branchService.getBranchById(value);
-          if (branch) {
-            setSelectedBranch({ id: branch.id, name: branch.name });
+          const departament = await departamentService.getDepartamentById(value);
+          if (departament) {
+            setSelectedDepartament({ id: departament.id, name: departament.name });
           }
         } catch (error) {
-          console.error('Erro ao buscar branch:', error);
+          console.error('Erro ao buscar departamento:', error);
         }
       }
     };
 
-    fetchDefaultBranch();
+    fetchDefaultDepartament();
   }, [value]);
 
   const handleChange = (event, newValue) => {
-    setSelectedBranch(newValue);
+    setSelectedDepartament(newValue);
     if (newValue) {
       onChange(newValue.id);
     } else {
@@ -39,22 +38,22 @@ useEffect(() => {
     }
   };
 
-  const fetchBranchesByName = useCallback(
+  const fetchDepartamentsByName = useCallback(
     debounce(async (name) => {
       if (!name) return;
       setLoading(true);
       try {
-        const branches = await branchService.getBranches();
-        const filteredBranches = branches.results.filter(branch =>
-          branch.name.toLowerCase().includes(name.toLowerCase())
+        const departaments = await departamentService.getDepartament();
+        const filteredDepartaments = departaments.results.filter(departament =>
+          departament.name.toLowerCase().includes(name.toLowerCase())
         );
-        const formattedBranches = filteredBranches.map(branch => ({
-          id: branch.id,
-          name: branch.name,
+        const formattedDepartaments = filteredDepartaments.map(departament => ({
+          id: departament.id,
+          name: departament.name,
         }));
-        setOptions(formattedBranches);
+        setOptions(formattedDepartaments);
       } catch (error) {
-        console.error('Erro ao buscar branches:', error);
+        console.error('Erro ao buscar departamentos:', error);
       }
       setLoading(false);
     }, 300), 
@@ -83,9 +82,9 @@ useEffect(() => {
         getOptionLabel={(option) => option.name}
         options={options}
         loading={loading}
-        value={selectedBranch}
+        value={selectedDepartament}
         onInputChange={(event, newInputValue) => {
-          fetchBranchesByName(newInputValue);
+          fetchDepartamentsByName(newInputValue);
         }}
         onChange={handleChange}
         renderInput={(params) => (
