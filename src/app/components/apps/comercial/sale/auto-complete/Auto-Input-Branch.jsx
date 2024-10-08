@@ -4,7 +4,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import branchService from '@/services/branchService';
-import departamentService from '@/services/departamentService';
+import departamentService from '@/services/departmentService';
 import { debounce } from 'lodash';
 
 export default function AutoCompleteBranch({ onChange, value, error, helperText }) {

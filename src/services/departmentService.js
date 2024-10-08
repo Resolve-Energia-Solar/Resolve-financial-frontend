@@ -1,7 +1,7 @@
 import apiClient from "./apiClient";
 
-const departamentService = {
-  getDepartament: async () => {
+const departmentService = {
+  getDepartment: async () => {
     try {
       const response = await apiClient.get('/api/departments/');
       return response.data;
@@ -11,7 +11,7 @@ const departamentService = {
     }
   },
 
-  getDepartamentById: async (id) => {
+  getDepartmentById: async (id) => {
     try {
       const response = await apiClient.get(`/api/departments/${id}/`);
       return response.data;
@@ -21,7 +21,7 @@ const departamentService = {
     }
   },
 
-  updateDepartament: async (id, data) => {
+  updateDepartment: async (id, data) => {
     try {
       const response = await apiClient.patch(`/api/departments/${id}/`, data);
       return response.data;
@@ -31,7 +31,7 @@ const departamentService = {
     }
   },
 
-  createDepartament: async (data) => {
+  createDepartment: async (data) => {
     try {
       const response = await apiClient.post('/api/departments/', data);
       return response.data;
@@ -41,7 +41,7 @@ const departamentService = {
     }
   },
 
-  deleteDepartament: async (id) => {
+  deleteDepartment: async (id) => {
     try {
       const response = await apiClient.delete(`/api/departments/${id}/`);
       return response.data;
@@ -52,4 +52,4 @@ const departamentService = {
   }
 };
 
-export default departamentService;
+export default departmentService;
