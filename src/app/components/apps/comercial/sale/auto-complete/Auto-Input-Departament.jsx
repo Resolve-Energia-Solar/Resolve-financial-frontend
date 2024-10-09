@@ -3,8 +3,8 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import departamentService from '@/services/departamentService';
 import { debounce } from 'lodash';
+import departmentService from '@/services/departmentService';
 
 export default function AutoCompleteDepartament({ onChange, value, error, helperText }) {
   const [open, setOpen] = useState(false);
@@ -16,7 +16,7 @@ export default function AutoCompleteDepartament({ onChange, value, error, helper
     const fetchDefaultDepartament = async () => {
       if (value) {
         try {
-          const departament = await departamentService.getDepartamentById(value);
+          const departament = await departmentService.getDepartmentById(value);
           if (departament) {
             setSelectedDepartament({ id: departament.id, name: departament.name });
           }
@@ -43,7 +43,7 @@ export default function AutoCompleteDepartament({ onChange, value, error, helper
       if (!name) return;
       setLoading(true);
       try {
-        const departaments = await departamentService.getDepartament();
+        const departaments = await departmentService.getDepartment();
         const filteredDepartaments = departaments.results.filter(departament =>
           departament.name.toLowerCase().includes(name.toLowerCase())
         );

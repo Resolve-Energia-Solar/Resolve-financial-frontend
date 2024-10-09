@@ -40,6 +40,15 @@ const roleService = {
       throw error;
     }
   },
+  deleteRole: async (id) => {
+    try {
+      const response = await apiClient.delete(`/api/roles/${id}/`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao deletar setor com id ${id}:`, error);
+      throw error;
+    }
+  }
 };
 
 export default roleService;

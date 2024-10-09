@@ -12,13 +12,12 @@ import {
     Typography,
     IconButton,
     Tooltip,
-    Chip,
+    Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Button,
 } from '@mui/material';
 import {
     Edit as EditIcon,
@@ -29,72 +28,72 @@ import {
 import { useRouter } from 'next/navigation';
 import BlankCard from '@/app/components/shared/BlankCard';
 import PageContainer from "@/app/components/container/PageContainer";
-import squadService from "@/services/squadService";
+import departmentService from "@/services/departmentService";
 
-const SquadList = () => {
-    const [squadList, setSquadList] = useState([]);
+const DepartmentList = () => {
+    const [departmentList, setDepartmentList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [open, setOpen] = useState(false);
-    const [squadToDelete, setSquadToDelete] = useState(null);
+    const [departmentToDelete, setDepartmentToDelete] = useState(null);
     const router = useRouter();
 
     useEffect(() => {
-        const fetchSquads = async () => {
+        const fetchDepartments = async () => {
             try {
-                const data = await squadService.getSquads();
+                const data = await departmentService.getDepartment();
                 console.log(data);
-                setSquadList(data.results);
+                setDepartmentList(data.results);
             } catch (err) {
-                setError('Erro ao carregar Squads');
+                setError('Erro ao carregar departamentos');
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchSquads();
+        fetchDepartments();
     }, []);
 
     const handleCreateClick = () => {
-        router.push('/apps/squad/create');
+        router.push('/apps/department/create');
     };
 
     const handleEditClick = (id) => {
-        router.push(`/apps/squad/${id}/update`);
+        router.push(`/apps/department/${id}/update`);
     };
 
     const handleDeleteClick = (id) => {
-        setSquadToDelete(id);
+        setDepartmentToDelete(id);
         setOpen(true);
     };
 
     const handleCloseModal = () => {
         setOpen(false);
-        setSquadToDelete(null);
+        setDepartmentToDelete(null);
     };
 
     const handleConfirmDelete = async () => {
         try {
-            await squadService.deleteSquad(squadToDelete);
-            setSquadList(squadList.filter((item) => item.id !== squadToDelete));
-            console.log('Squad excluído com sucesso');
+            await departmentService.deleteDepartment(departmentToDelete);
+            setDepartmentList(departmentList.filter((item) => item.id !== departmentToDelete));
+            console.log('Departamento excluído com sucesso');
         } catch (err) {
-            setError('Erro ao excluir o Squad');
-            console.error('Erro ao excluir o Squad', err);
+            setError('Erro ao excluir o departamento');
+            console.error('Erro ao excluir o departamento', err);
         } finally {
             handleCloseModal();
         }
     };
 
     return (
-        <PageContainer title="Squads" description="Lista de Squads">
+        <PageContainer title="Departamentos" description="Lista de Departamentos">
             <BlankCard>
                 <CardContent>
                     <Typography variant="h6" gutterBottom>
-                        Lista de Squads
+                        Lista de Departamentos
                     </Typography>
-                    <Button variant="outlined" startIcon={<AddBoxRounded />} sx={{ marginTop: 1, marginBottom: 2 }} onClick={handleCreateClick}>
-                        Criar Squad
+                    <Button variant="outlined" startIcon={<AddBoxRounded />} sx={{marginTop:1,marginBottom:2}} onClick={handleCreateClick}>
+                        Criar Departamento
                     </Button>
                     {loading ? (
                         <Typography>Carregando...</Typography>
@@ -107,36 +106,30 @@ const SquadList = () => {
                                     <TableRow>
                                         <TableCell>ID</TableCell>
                                         <TableCell>Nome</TableCell>
-                                        <TableCell>Filial</TableCell>
-                                        <TableCell>Gerente</TableCell>
-                                        <TableCell>Endereço</TableCell>
+                                        <TableCell>Email</TableCell>
                                         <TableCell>Ações</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {squadList.map((item) => (
+                                    {departmentList.map((item) => (
                                         <TableRow key={item.id} hover>
                                             <TableCell>{item.id}</TableCell>
                                             <TableCell>{item.name}</TableCell>
-                                            <TableCell>{item.branch?.name || 'N/A'}</TableCell>
-                                            <TableCell>{item.manager?.complete_name || 'N/A'}</TableCell>
-                                            <TableCell>
-                                                {`${item.branch?.address?.city || 'N/A'}, ${item.branch?.address?.state || 'N/A'}`}
-                                            </TableCell>
+                                            <TableCell>{item.email}</TableCell>
                                             <TableCell>
                                                 <Tooltip title="Editar">
-                                                    <IconButton
-                                                        color="primary"
-                                                        size="small"
+                                                    <IconButton 
+                                                        color="primary" 
+                                                        size="small" 
                                                         onClick={() => handleEditClick(item.id)}
                                                     >
                                                         <EditIcon />
                                                     </IconButton>
                                                 </Tooltip>
                                                 <Tooltip title="Excluir">
-                                                    <IconButton
-                                                        color="error"
-                                                        size="small"
+                                                    <IconButton 
+                                                        color="error" 
+                                                        size="small" 
                                                         onClick={() => handleDeleteClick(item.id)}
                                                     >
                                                         <DeleteIcon />
@@ -152,12 +145,12 @@ const SquadList = () => {
                 </CardContent>
             </BlankCard>
 
-            {/* Modal de confirmação de exclusão */}
+
             <Dialog open={open} onClose={handleCloseModal}>
                 <DialogTitle>Confirmar Exclusão</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Tem certeza de que deseja excluir este Squad? Esta ação não pode ser desfeita.
+                        Tem certeza de que deseja excluir este departamento? Esta ação não pode ser desfeita.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -173,4 +166,4 @@ const SquadList = () => {
     );
 };
 
-export default SquadList;
+export default DepartmentList;
