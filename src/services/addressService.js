@@ -20,7 +20,15 @@ const addressService = {
       throw error;
     }
   },
-
+  getAddressByFullAddress: async (fullAddress) => {
+    try {
+      const response = await apiClient.get(`/api/addresses/?q=${fullAddress}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar ${fullAddress}:`, error);
+      throw error;
+    }
+  },
   updateAddress: async (id, data) => {
     try {
       const response = await apiClient.patch(`/api/addresses/${id}/`, data);

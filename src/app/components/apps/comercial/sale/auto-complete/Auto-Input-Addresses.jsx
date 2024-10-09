@@ -45,12 +45,9 @@ export default function AutoCompleteAddresses({ onChange, value = [], error, hel
       }
       setLoading(true);
       try {
-        const addresses = await addressService.getAddresses();
+        const addresses = await addressService.getAddressByFullAddress(name);
         if (addresses && addresses.results) {
-          const filteredAddresses = addresses.results.filter(address =>
-            `${address.street}, ${address.number}, ${address.city}, ${address.state}`.toLowerCase().includes(name.toLowerCase())
-          );
-          const formattedAddresses = filteredAddresses.map(address => ({
+          const formattedAddresses = addresses.results.map(address => ({
             id: address.id,
             name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
           }));
@@ -63,6 +60,7 @@ export default function AutoCompleteAddresses({ onChange, value = [], error, hel
     }, 300),
     []
   );
+  
 
   const handleOpen = () => {
     setOpen(true);

@@ -10,7 +10,15 @@ const roleService = {
       throw error;
     }
   },
-
+  getRoleByName: async (name) => {
+    try {
+      const response = await apiClient.get(`/api/roles/?name=${name}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar role com id ${name}:`, error);
+      throw error;
+    }
+  },
   getRoleById: async (id) => {
     try {
       const response = await apiClient.get(`/api/roles/${id}/`);

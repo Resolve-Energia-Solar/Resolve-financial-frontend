@@ -10,7 +10,15 @@ const departmentService = {
       throw error;
     }
   },
-
+  getDepartmentByName: async (name) => {
+    try {
+      const response = await apiClient.get(`/api/departments/?name=${name}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar departamento com id ${name}:`, error);
+      throw error;
+    }
+  },
   getDepartmentById: async (id) => {
     try {
       const response = await apiClient.get(`/api/departments/${id}/`);

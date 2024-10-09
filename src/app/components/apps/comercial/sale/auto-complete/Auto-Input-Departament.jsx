@@ -43,24 +43,22 @@ export default function AutoCompleteDepartament({ onChange, value, error, helper
       if (!name) return;
       setLoading(true);
       try {
-        const departaments = await departmentService.getDepartment();
-        const filteredDepartaments = departaments.results.filter(departament =>
-          departament.name.toLowerCase().includes(name.toLowerCase())
-        );
-        const formattedDepartaments = filteredDepartaments.map(departament => ({
-          id: departament.id,
-          name: departament.name,
-        }));
-        setOptions(formattedDepartaments);
+        const departaments = await departmentService.getDepartmentByName(name);
+        if (departaments && departaments.results) {
+          const formattedDepartaments = departaments.results.map(departament => ({
+            id: departament.id,
+            name: departament.name,
+          }));
+          setOptions(formattedDepartaments);
+        }
       } catch (error) {
         console.error('Erro ao buscar departamentos:', error);
       }
       setLoading(false);
-    }, 300), 
+    }, 300),
     []
   );
-
-  // Função para abrir o autocomplete
+  
   const handleOpen = () => {
     setOpen(true);
   };

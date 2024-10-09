@@ -43,29 +43,27 @@ export default function AutoCompleteRole({ onChange, value, error, helperText })
       if (!name) return;
       setLoading(true);
       try {
-        const roles = await roleService.getRole();
-        const filteredRoles = roles.results.filter(role =>
-          role.name.toLowerCase().includes(name.toLowerCase())
-        );
-        const formattedRoles = filteredRoles.map(role => ({
-          id: role.id,
-          name: role.name,
-        }));
-        setOptions(formattedRoles);
+        const roles = await roleService.getRoleByName(name);
+        if (roles && roles.results) {
+          const formattedRoles = roles.results.map(role => ({
+            id: role.id,
+            name: role.name,
+          }));
+          setOptions(formattedRoles);
+        }
       } catch (error) {
         console.error('Erro ao buscar funções:', error);
       }
       setLoading(false);
-    }, 300), 
+    }, 300),
     []
   );
+  
 
-  // Função para abrir o autocomplete
   const handleOpen = () => {
     setOpen(true);
   };
 
-  // Função para fechar o autocomplete
   const handleClose = () => {
     setOpen(false);
     setOptions([]);
