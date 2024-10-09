@@ -56,7 +56,7 @@ const SaleList = () => {
     const [error, setError] = useState(null);
     const [open, setOpen] = useState(false);
     const [saleToDelete, setSaleToDelete] = useState(null);
-    const router = useRouter(); // Inicializa o roteador
+    const router = useRouter();
 
     useEffect(() => {
         const fetchSales = async () => {
@@ -105,10 +105,6 @@ const SaleList = () => {
             handleCloseModal();
         }
     };
-    const user = useSelector((state) => state.user);
-
-    console.log('User:', user);
-
 
     return (
         <PageContainer title="Vendas" description="Lista de Vendas">
