@@ -20,7 +20,15 @@ const branchService = {
       throw error;
     }
   },
-
+  getBranchByName: async (name) => {
+    try {
+      const response = await apiClient.get(`/api/branches/?name=${name}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar branch com id ${name}:`, error);
+      throw error;
+    }
+  },
   updateBranch: async (id, data) => {
     try {
       const response = await apiClient.patch(`/api/branches/${id}/`, data);

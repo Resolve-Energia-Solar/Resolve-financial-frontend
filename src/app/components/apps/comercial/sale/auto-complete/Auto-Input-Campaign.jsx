@@ -43,22 +43,22 @@ export default function AutoCompleteCampaign({ onChange, value, error, helperTex
       if (!name) return;
       setLoading(true);
       try {
-        const campaigns = await campaignService.getCampaigns();
-        const filteredCampaigns = campaigns.results.filter(campaign =>
-          campaign.name.toLowerCase().includes(name.toLowerCase())
-        );
-        const formattedCampaigns = filteredCampaigns.map(campaign => ({
-          id: campaign.id,
-          name: campaign.name,
-        }));
-        setOptions(formattedCampaigns);
+        const campaigns = await campaignService.getCampaignByName(name);
+        if (campaigns && campaigns.results) {
+          const formattedCampaigns = campaigns.results.map(campaign => ({
+            id: campaign.id,
+            name: campaign.name,
+          }));
+          setOptions(formattedCampaigns);
+        }
       } catch (error) {
         console.error('Erro ao buscar campanhas:', error);
       }
       setLoading(false);
-    }, 300), 
+    }, 300),
     []
   );
+  
 
   const handleOpen = () => {
     setOpen(true);

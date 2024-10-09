@@ -44,29 +44,26 @@ useEffect(() => {
       if (!name) return;
       setLoading(true);
       try {
-        const branches = await branchService.getBranches();
-        const filteredBranches = branches.results.filter(branch =>
-          branch.name.toLowerCase().includes(name.toLowerCase())
-        );
-        const formattedBranches = filteredBranches.map(branch => ({
-          id: branch.id,
-          name: branch.name,
-        }));
-        setOptions(formattedBranches);
+        const branches = await branchService.getBranchByName(name);
+        if (branches && branches.results) {
+          const formattedBranches = branches.results.map(branch => ({
+            id: branch.id,
+            name: branch.name,
+          }));
+          setOptions(formattedBranches);
+        }
       } catch (error) {
         console.error('Erro ao buscar branches:', error);
       }
       setLoading(false);
-    }, 300), 
+    }, 300),
     []
   );
 
-  // Função para abrir o autocomplete
   const handleOpen = () => {
     setOpen(true);
   };
 
-  // Função para fechar o autocomplete
   const handleClose = () => {
     setOpen(false);
     setOptions([]);

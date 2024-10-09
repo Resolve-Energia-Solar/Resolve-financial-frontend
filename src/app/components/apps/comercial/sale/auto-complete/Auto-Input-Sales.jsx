@@ -41,18 +41,14 @@ export default function AutoCompleteSale({ onChange, value, error, helperText })
   const fetchSalesByName = useCallback(
     debounce(async (name) => {
       if (!name) {
-        setOptions([]); // Limpa opções se não houver nome
+        setOptions([]);
         return;
       }
       setLoading(true);
       try {
-        const sales = await saleService.getSales();
-        // Verifique se 'sales.results' está presente
+        const sales = await saleService.getSaleByFullName(name);
         if (sales && sales.results) {
-          const filteredSales = sales.results.filter(sale =>
-            `${sale.contract_number} - ${sale.customer.complete_name}`.toLowerCase().includes(name.toLowerCase())
-          );
-          const formattedSales = filteredSales.map(sale => ({
+          const formattedSales = sales.results.map(sale => ({
             id: sale.id,
             name: `${sale.contract_number} - ${sale.customer.complete_name}`,
           }));
@@ -65,7 +61,7 @@ export default function AutoCompleteSale({ onChange, value, error, helperText })
     }, 300),
     []
   );
-
+  
   const handleOpen = () => {
     setOpen(true);
   };

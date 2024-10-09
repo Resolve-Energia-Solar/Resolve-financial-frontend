@@ -32,7 +32,6 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
     fetchDefaultAddress();
   }, [value]);
 
-  // Função de manipulação de mudança
   const handleChange = (event, newValue) => {
     setSelectedAddress(newValue);
     if (newValue) {
@@ -42,19 +41,15 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
     }
   };
 
-  // Função para buscar endereços com base no nome (ou rua)
   const fetchAddressesByName = useCallback(
     debounce(async (name) => {
       if (!name) return;
       setLoading(true);
       try {
-        const addresses = await addressService.getAddresses();
-        const filteredAddresses = addresses.results.filter(address =>
-          address.street.toLowerCase().includes(name.toLowerCase())
-        );
-        const formattedAddresses = filteredAddresses.map(address => ({
+        const response = await addressService.getAddressByFullAddress(name);
+        const formattedAddresses = response.results.map(address => ({
           id: address.id,
-          name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`, 
+          name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
         }));
         setOptions(formattedAddresses);
       } catch (error) {

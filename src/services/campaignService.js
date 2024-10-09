@@ -10,7 +10,15 @@ const campaignService = {
       throw error;
     }
   },
-
+  getCampaignByName: async (name) => {
+    try {
+      const response = await apiClient.get(`/api/marketing-campaigns/?name=${name}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar Campaign com id ${name}:`, error);
+      throw error;
+    }
+  },
   getCampaignById: async (id) => {
     try {
       const response = await apiClient.get(`/api/marketing-campaigns/${id}/`);

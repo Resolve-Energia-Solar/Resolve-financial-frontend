@@ -7,6 +7,11 @@ const saleService = {
         return response.data;
     },
 
+    getSaleByFullName: async (fullName) => {
+        const response = await apiClient.get(`/api/sales/?q=${fullName}`);
+        return response.data;
+    },
+
     getSaleById: async (id) => { 
         const response = await apiClient.get(`/api/sales/${id}/`);
         return response.data;
