@@ -26,9 +26,6 @@ import {
     CheckCircle as CheckCircleIcon,
     HourglassEmpty as HourglassEmptyIcon,
     Cancel as CancelIcon,
-    Add,
-    AddBox,
-    AddBoxTwoTone,
     AddBoxRounded,
 } from '@mui/icons-material';
 
@@ -36,6 +33,7 @@ import { useRouter } from 'next/navigation';
 import BlankCard from '@/app/components/shared/BlankCard';
 import PageContainer from "@/app/components/container/PageContainer";
 import saleService from "@/services/saleService";
+import { useSelector } from 'react-redux';
 
 const getStatusChip = (status) => {
     switch (status) {
@@ -107,6 +105,10 @@ const SaleList = () => {
             handleCloseModal();
         }
     };
+    const user = useSelector((state) => state.user);
+
+    console.log('User:', user);
+
 
     return (
         <PageContainer title="Vendas" description="Lista de Vendas">

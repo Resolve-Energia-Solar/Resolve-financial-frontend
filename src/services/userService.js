@@ -58,7 +58,16 @@ const userService = {
       console.error(`Erro ao deletar usuário com id ${id}:`, error);
       throw error;
     }
-  }
+  },
+  login: async (data) => {
+    try {
+      const response = await apiClient.post('/api/login/', data);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+      throw error;
+    }
+  },
 };
 
 export default userService;
