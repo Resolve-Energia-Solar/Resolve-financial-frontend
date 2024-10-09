@@ -24,7 +24,7 @@ const ColumnWithActions = ({ columnTitle, leads, statusId, boardId, onAddLead, o
   const [leadPhone, setLeadPhone] = useState('');
   const [columnName, setColumnName] = useState(columnTitle);
 
-  const leadsCount = leads ? leads.filter((lead) => lead.columns === statusId).length : 0;
+  const leadsCount = leads ? leads.filter((lead) => lead.column.id === statusId).length : 0;
 
   const handleOpenMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -51,7 +51,7 @@ const ColumnWithActions = ({ columnTitle, leads, statusId, boardId, onAddLead, o
         name: leadName,
         contact_email: leadEmail,
         phone: leadPhone,
-        columns: statusId,
+        column: statusId,
         board_id: boardId,
       };
 
@@ -138,7 +138,6 @@ const ColumnWithActions = ({ columnTitle, leads, statusId, boardId, onAddLead, o
         </DialogActions>
       </Dialog>
 
-      {/* Modal para editar coluna */}
       <Dialog open={openEditModal} onClose={handleCloseEditModal}>
         <DialogTitle>Editar Nome da Coluna</DialogTitle>
         <DialogContent>
