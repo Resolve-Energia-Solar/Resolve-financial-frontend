@@ -22,11 +22,17 @@ function KanbanHeader({ boards, selectedBoard, onBoardChange }) {
               },
             }}
           >
-            {boards.map((board) => (
-              <MenuItem key={board.id} value={board.id}>
-                {board.name}
+            {boards?.results && boards.results.length > 0 ? (
+              boards.results.map((board) => (
+                <MenuItem key={board.id} value={board.id}>
+                  {board.title}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem value="" disabled>
+                Nenhum quadro disponível
               </MenuItem>
-            ))}
+            )}
           </Select>
         </FormControl>
       </Box>

@@ -4,7 +4,7 @@ const columnService = {
   getCollumn: async () => {
     try {
       const response = await apiClient.get('/api/columns/')
-      return response.data
+      return response.data.results
     } catch (error) {
       console.error('Erro ao buscar colunas:', error)
       throw error

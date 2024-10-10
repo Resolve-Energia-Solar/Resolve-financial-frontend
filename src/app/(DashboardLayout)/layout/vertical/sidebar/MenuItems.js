@@ -85,7 +85,7 @@ const Menuitems = [
     id: uniqueId(),
     title: 'Quadros',
     icon: IconLayoutKanban,
-    href: '/apps/boards',
+    href: '/apps/boards/crm',
   },
   {
     id: uniqueId(),
