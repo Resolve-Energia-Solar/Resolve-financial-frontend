@@ -1,15 +1,12 @@
-import { Paper, Box, Typography, IconButton } from '@mui/material';
+import { Paper, Box, Typography } from '@mui/material';
 import {
-  Star,
-  StarBorder,
   Email,
   Phone,
   AccessTime,
-  TagFaces,
   TagSharp,
 } from '@mui/icons-material';
 
-const LeadCard = ({ lead, leadStars, handleLeadClick }) => (
+const LeadCard = ({ lead, handleLeadClick }) => (
   <Paper
     sx={{
       p: 2,
@@ -23,13 +20,6 @@ const LeadCard = ({ lead, leadStars, handleLeadClick }) => (
       <Typography variant="body2" fontWeight={600}>
         {lead.name}
       </Typography>
-      {/*   <Box display="flex" alignItems="center">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <IconButton key={star} size="small" onClick={(e) => handleStarClick(lead.id, star)}>
-            {leadStars[lead.id] >= star ? <Star sx={{ color: 'gold', fontSize: '1rem' }} /> : <StarBorder sx={{ color: 'grey', fontSize: '1rem' }} />}
-          </IconButton>
-        ))}
-      </Box> */}
     </Box>
     <Box display="flex" alignItems="center" mt={1}>
       <TagSharp sx={{ fontSize: '1rem', color: 'grey', mr: 1 }} />
