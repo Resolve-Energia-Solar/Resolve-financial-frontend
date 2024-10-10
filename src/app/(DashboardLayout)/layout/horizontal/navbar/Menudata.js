@@ -147,7 +147,7 @@ const Menuitems = [
         id: uniqueId(),
         title: 'Quadros',
         icon: IconPoint,
-        href: '/apps/boards',
+        href: '/apps/boards/crm',
       },
       {
         id: uniqueId(),

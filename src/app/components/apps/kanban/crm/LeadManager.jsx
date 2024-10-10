@@ -20,7 +20,7 @@ import LeadDetails from './LeadDetails';
 import LeadForm from './LeadForm';
 import LeadCard from './LeadCard';
 import SimpleBar from 'simplebar-react';
-import ColumnWithActions from './leadHeader';
+import ColumnWithActions from './LeadHeader';
 import GenerateProposalModal from './GenerateProposal';
 import GenerateProjectModal from './GenerateProject';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
