@@ -63,10 +63,17 @@
     "uuid": "^10.0.0",
     "yup": "^0.32.11"
   },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx}": "next lint --fix"
+  },
   "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
     "@types/node": "20.10.5",
     "eslint": "latest",
     "eslint-config-next": "latest",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
     "typescript": "5.5.4"
   }
 }
