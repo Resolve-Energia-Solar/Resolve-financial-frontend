@@ -73,6 +73,7 @@
     "@types/node": "20.10.5",
     "eslint": "latest",
     "eslint-config-next": "latest",
+    "git-commit-msg-linter": "^5.0.8",
     "husky": "^9.1.6",
     "lint-staged": "^15.2.10",
     "typescript": "5.5.4"
