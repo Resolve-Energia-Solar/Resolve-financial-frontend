@@ -15,9 +15,6 @@ function KanbanPage() {
     error,
     leads,
     statuses,
-    columns,
-    setColumns,
-    setLeads,
     snackbarMessage,
     snackbarOpen,
     handleSnackbarClose,
@@ -26,6 +23,7 @@ function KanbanPage() {
     handleUpdateLead,
   } = useKanban();
 
+  console.log('boards:', boards);
   return (
     <BlankCard>
       <CardContent>
@@ -33,10 +31,6 @@ function KanbanPage() {
           boards={boards}
           selectedBoard={selectedBoard}
           onBoardChange={(e) => setSelectedBoard(e.target.value)}
-          leads={leads}
-          columns={columns}
-          setColumns={setColumns}
-          setLeads={setLeads}
         />
 
         {loading ? (

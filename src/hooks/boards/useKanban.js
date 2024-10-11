@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import boardService from '@/services/boardService';
-import columnService from '@/services/boardCollunService';
 
 const useKanban = () => {
   const [boards, setBoards] = useState([]);
@@ -17,16 +16,16 @@ const useKanban = () => {
     setSnackbarOpen(false);
   };
 
+  // Fetch all boards when the component mounts
   const fetchBoards = async () => {
     setLoading(true);
     try {
       const data = await boardService.getBoards();
       setBoards(data);
 
-      if (data.results && data.results.length > 0) {
-        const firstBoardId = data.results[0].id;
-        setSelectedBoard(firstBoardId);
-        fetchLeadsAndStatuses(firstBoardId);
+      // Automatically select the first board if no board is selected
+      if (data.results && data.results.length > 0 && !selectedBoard) {
+        setSelectedBoard(data.results[0].id);
       }
     } catch (err) {
       setError(err.message || 'Erro ao buscar os boards');
@@ -35,35 +34,47 @@ const useKanban = () => {
     }
   };
 
-  const fetchLeadsAndStatuses = async (boardId) => {
+  // Fetch leads, statuses, and columns when a board is selected
+  const fetchBoardDetails = async (boardId) => {
+    if (!boardId) return;
+
     setLoading(true);
     try {
-      let columnsData = await columnService.getCollumn(boardId);
-  
-      columnsData = Array.isArray(columnsData) ? columnsData : [];
-  
-      const sortedColumns = columnsData.sort((a, b) => a.position - b.position);
-  
-      setLeads(sortedColumns.flatMap((column) => column.leads));
-      setStatuses(
-        sortedColumns.map((column) => ({
-          id: column.id,
-          name: column.name,
-          position: column.position,
-        })),
-      );
-      setColumns(sortedColumns);
+      const board = boards.results.find((b) => b.id === boardId);
+
+      if (board) {
+        setColumns(board.columns || []);
+        
+        const sortedColumns = board.columns.sort((a, b) => a.position - b.position);
+        setLeads(sortedColumns.flatMap((column) => column.leads || []));
+        setStatuses(
+          sortedColumns.map((column) => ({
+            id: column.id,
+            name: column.name,
+            position: column.position,
+          })),
+        );
+      }
     } catch (err) {
-      setError(err.message || 'Erro ao buscar os leads do board');
+      setError('Erro ao buscar detalhes do board selecionado');
     } finally {
       setLoading(false);
     }
   };
-  
+
+  // Trigger fetching of board details whenever a new board is selected
+  useEffect(() => {
+    fetchBoardDetails(selectedBoard);
+  }, [selectedBoard, boards]);
+
+  // Fetch all boards when the component mounts
+  useEffect(() => {
+    fetchBoards();
+  }, []);
 
   const updateLeadColumn = async (leadId, newColumnId) => {
     try {
-      await columnService.updateColumn(leadId, { column_id: newColumnId });
+      await boardService.updateLead(leadId, { column_id: newColumnId });
       setLeads((prevLeads) =>
         prevLeads.map((lead) =>
           lead.id === parseInt(leadId) ? { ...lead, column_id: newColumnId } : lead,
@@ -76,7 +87,7 @@ const useKanban = () => {
 
   const handleDeleteLead = async (leadId) => {
     try {
-      await columnService.deleteColumn(leadId);
+      await boardService.deleteLead(leadId);
       setLeads((prevLeads) => prevLeads.filter((lead) => lead.id !== leadId));
       setSnackbarMessage('Lead excluído com sucesso!');
       setSnackbarOpen(true);
@@ -89,7 +100,7 @@ const useKanban = () => {
 
   const handleUpdateLead = async (updatedLead) => {
     try {
-      await columnService.updateColumn(updatedLead.id, updatedLead);
+      await boardService.updateLead(updatedLead.id, updatedLead);
       setLeads((prevLeads) =>
         prevLeads.map((lead) => (lead.id === updatedLead.id ? updatedLead : lead)),
       );
@@ -101,10 +112,6 @@ const useKanban = () => {
       setSnackbarOpen(true);
     }
   };
-
-  useEffect(() => {
-    fetchBoards();
-  }, []);
 
   return {
     boards,
