@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky install"
+    "lint-staged": "lint-staged",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write --list-different .",
+    "prepare": "husky"
   },
   "dependencies": {
     "@casl/ability": "^6.3.3",
@@ -70,7 +73,9 @@
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
+    "@commitlint/types": "^19.5.0",
     "@types/node": "20.10.5",
+    "conventional-changelog-atom": "^5.0.0",
     "eslint": "latest",
     "eslint-config-next": "latest",
     "git-commit-msg-linter": "^5.0.8",
