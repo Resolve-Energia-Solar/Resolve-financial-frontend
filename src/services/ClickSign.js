@@ -98,7 +98,6 @@ const ClickSignService = {
             throw error;
         }
     },
-    
 
     notification: {
         email: async (request_signature_key, message = '') => {

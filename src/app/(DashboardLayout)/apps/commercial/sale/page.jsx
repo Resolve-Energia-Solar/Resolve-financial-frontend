@@ -21,6 +21,10 @@ import {
   Button,
   Menu,
   MenuItem,
+  Snackbar,
+  Alert,
+  CircularProgress,
+  Backdrop,
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -60,9 +64,14 @@ const SaleList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Estado para controlar o menu de ações
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [menuOpenRowId, setMenuOpenRowId] = useState(null);
+
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState('success');
+  const [alertOpen, setAlertOpen] = useState(false);
+
+  const [isSendingContract, setIsSendingContract] = useState(false);
 
   const [open, setOpen] = useState(false);
   const [saleToDelete, setSaleToDelete] = useState(null);
@@ -75,6 +84,7 @@ const SaleList = () => {
         setSalesList(data.results);
       } catch (err) {
         setError('Erro ao carregar Vendas');
+        showAlert('Erro ao carregar Vendas', 'error');
       } finally {
         setLoading(false);
       }
@@ -82,6 +92,16 @@ const SaleList = () => {
 
     fetchSales();
   }, []);
+
+  const showAlert = (message, type) => {
+    setAlertMessage(message);
+    setAlertType(type);
+    setAlertOpen(true);
+  };
+
+  const handleAlertClose = () => {
+    setAlertOpen(false);
+  };
 
   const handleCreateClick = () => {
     router.push('/apps/commercial/sale/create');
@@ -105,9 +125,10 @@ const SaleList = () => {
     try {
       await saleService.deleteSale(saleToDelete);
       setSalesList(salesList.filter((item) => item.id !== saleToDelete));
-      console.log('Venda excluída com sucesso');
+      showAlert('Venda excluída com sucesso', 'success');
     } catch (err) {
       setError('Erro ao excluir a venda');
+      showAlert('Erro ao excluir a venda', 'error');
       console.error('Erro ao excluir a venda:', err);
     } finally {
       handleCloseModal();
@@ -116,15 +137,16 @@ const SaleList = () => {
 
   const handleGenerateProposal = async (id) => {
     try {
-      await clickSignService.v1.generateProposal(id); // Certifique-se de que este método existe
-      console.log('Proposta gerada com sucesso');
+      await clickSignService.v1.generateProposal(id);
+      showAlert('Proposta gerada com sucesso', 'success');
     } catch (err) {
-      setError('Erro ao gerar a proposta');
+      showAlert('Erro ao gerar a proposta', 'error');
       console.error('Erro ao gerar a proposta:', err);
     }
   };
 
   const handleSendContract = async (sale) => {
+    setIsSendingContract(true);
     try {
       const documentData = {
         'Company Name': 'Henrique Marques',
@@ -133,7 +155,6 @@ const SaleList = () => {
       };
       const path = `/Contratos/Contrato-${sale.contract_number}.pdf`;
 
-      // Criação do modelo de documento
       const documentoCriado = await clickSignService.v1.createDocumentModel(documentData, path);
 
       if (!documentoCriado || !documentoCriado.document || !documentoCriado.document.key) {
@@ -143,7 +164,6 @@ const SaleList = () => {
       const documentKey = documentoCriado.document.key;
       console.log('Documento criado com sucesso:', documentKey);
 
-      // Criação do signatário
       const signer = await clickSignService.v1.createSigner(
         '70007103220',
         '30/01/1995',
@@ -157,34 +177,26 @@ const SaleList = () => {
 
       const signerKey = signer.signer.key;
 
-      // Adicionar o signatário ao documento
       const listaAdicionada = await clickSignService.AddSignerDocument(
         signerKey,
         documentKey,
-        'contractor', // sign_as (ajuste conforme a sua necessidade)
+        'contractor',
         'Por favor, assine o contrato.',
       );
       console.log('Signatário adicionado ao documento:', listaAdicionada);
 
-      // Enviar notificação por e-mail
       const emailNotificacao = await clickSignService.notification.email(
         listaAdicionada.list.request_signature_key,
         'Por favor, assine o contrato.',
       );
       console.log('Notificação por e-mail enviada:', emailNotificacao);
 
-      // Enviar notificação por WhatsApp
       const whatsappNotificacao = await clickSignService.notification.whatsapp(
         listaAdicionada.list.request_signature_key,
       );
       console.log('Notificação por WhatsApp enviada:', whatsappNotificacao);
 
-      // Enviar notificação por SMS (opcional)
-      const smsNotificacao = await clickSignService.notification.sms(
-        listaAdicionada.list.request_signature_key,
-        'Por favor, assine o contrato.',
-      );
-      console.log('Notificação por SMS enviada:', smsNotificacao);
+      showAlert('Contrato enviado com sucesso', 'success');
     } catch (error) {
       if (error.response && error.response.data) {
         console.error(
@@ -194,10 +206,12 @@ const SaleList = () => {
       } else {
         console.error('Erro ao processar o contrato:', error.message);
       }
+      showAlert('Erro ao processar o contrato', 'error');
+    } finally {
+      setIsSendingContract(false);
     }
   };
 
-  // Funções para controlar o menu
   const handleMenuClick = (event, id) => {
     setMenuAnchorEl(event.currentTarget);
     setMenuOpenRowId(id);
@@ -257,9 +271,7 @@ const SaleList = () => {
                         })}
                       </TableCell>
                       <TableCell>{item.is_sale ? 'Sim' : 'Não'}</TableCell>
-                      <TableCell>
-                        {new Date(item.signature_date).toLocaleDateString()}
-                      </TableCell>
+                      <TableCell>{new Date(item.signature_date).toLocaleDateString()}</TableCell>
                       <TableCell>{getStatusChip(item.status)}</TableCell>
                       <TableCell>
                         {new Date(item.document_completion_date).toLocaleDateString()}
@@ -350,9 +362,29 @@ const SaleList = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar
+        open={alertOpen}
+        autoHideDuration={6000}
+        onClose={handleAlertClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleAlertClose} severity={alertType} sx={{ width: '100%' }}>
+          {alertMessage}
+        </Alert>
+      </Snackbar>
+
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={isSendingContract}
+      >
+        <CircularProgress color="inherit" />
+        <Typography variant="h6" sx={{ ml: 2 }}>
+          Enviando Contrato...
+        </Typography>
+      </Backdrop>
     </PageContainer>
   );
 };
 
 export default SaleList;
-
