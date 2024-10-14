@@ -10,9 +10,9 @@ const ClickSignService = {
         createDocumentModel: async (data, path, usePreTemplate = false) => {
             try {
                 const templateKey = usePreTemplate ? TEMPLATE_PRE_ID : TEMPLATE_ID;
-                
+
                 const response = await axios.post(
-                    `${API_DOCUMENT_BASE_URL}/api/v1/templates/${templateKey}/documents`,
+                    `${API_DOCUMENT_BASE_URL}/api/v1/templates/${templateKey}/documents?access_token=${API_TOKEN}`,
                     {
                         document: {
                             path: path,
@@ -23,7 +23,6 @@ const ClickSignService = {
                     },
                     {
                         headers: {
-                            Authorization: `Bearer ${API_TOKEN}`,
                             'Content-Type': 'application/json',
                             Accept: 'application/json',
                         },
@@ -40,7 +39,7 @@ const ClickSignService = {
         createSigner: async (documentation = null, birthday = null, phone_number, email, name, auth, methods) => {
             try {
                 const response = await axios.post(
-                    `${API_DOCUMENT_BASE_URL}/api/v1/signers`,
+                    `${API_DOCUMENT_BASE_URL}/api/v1/signers?access_token=${API_TOKEN}`,
                     {
                         signer: {
                             email: email,
@@ -54,7 +53,6 @@ const ClickSignService = {
                     },
                     {
                         headers: {
-                            Authorization: `Bearer ${API_TOKEN}`,
                             'Content-Type': 'application/json',
                             Accept: 'application/json',
                         },
@@ -69,23 +67,19 @@ const ClickSignService = {
         },
     },
 
-    AddSignerDocument: async (signer_key, document_key, message = '', sign_as, refusable = true) => {
+    AddSignerDocument: async (signerKey, documentKey, signAs = 'sign') => {
         try {
             const response = await axios.post(
-                `${API_DOCUMENT_BASE_URL}/api/v1/signers`,
+                `${API_DOCUMENT_BASE_URL}/api/v1/lists?access_token=${API_TOKEN}`,
                 {
                     list: {
-                        document_key: document_key,
-                        signer_key: signer_key,
-                        sign_as: sign_as,
-                        refusable: refusable,
-                        group: 1,
-                        message: message,
-                    },
+                        document_key: documentKey,
+                        signer_key: signerKey,
+                        sign_as: signAs
+                    }
                 },
                 {
                     headers: {
-                        Authorization: `Bearer ${API_TOKEN}`,
                         'Content-Type': 'application/json',
                         Accept: 'application/json',
                     },
@@ -94,23 +88,29 @@ const ClickSignService = {
 
             return response.data;
         } catch (error) {
-            console.error(`Erro ao adicionar signatário ${signer_key} ao documento: ${error.response?.data?.message || error.message}`);
+            if (error.response && error.response.data) {
+                console.error("Erro ao adicionar signatário ao documento:", JSON.stringify(error.response.data, null, 2));
+            } else if (error.request) {
+                console.error("Erro na requisição:", error.request);
+            } else {
+                console.error("Erro:", error.message);
+            }
             throw error;
         }
     },
+    
 
     notification: {
         email: async (request_signature_key, message = '') => {
             try {
                 const response = await axios.post(
-                    `${API_DOCUMENT_BASE_URL}/api/v1/notifications`,
+                    `${API_DOCUMENT_BASE_URL}/api/v1/notifications?access_token=${API_TOKEN}`,
                     {
                         request_signature_key: request_signature_key,
                         message: message,
                     },
                     {
                         headers: {
-                            Authorization: `Bearer ${API_TOKEN}`,
                             'Content-Type': 'application/json',
                             Accept: 'application/json',
                         },
@@ -127,13 +127,12 @@ const ClickSignService = {
         whatsapp: async (request_signature_key) => {
             try {
                 const response = await axios.post(
-                    `${API_DOCUMENT_BASE_URL}/api/v1/notify_by_whatsapp`,
+                    `${API_DOCUMENT_BASE_URL}/api/v1/notify_by_whatsapp?access_token=${API_TOKEN}`,
                     {
                         request_signature_key: request_signature_key,
                     },
                     {
                         headers: {
-                            Authorization: `Bearer ${API_TOKEN}`,
                             'Content-Type': 'application/json',
                             Accept: 'application/json',
                         },
@@ -150,14 +149,13 @@ const ClickSignService = {
         sms: async (request_signature_key, message = '') => {
             try {
                 const response = await axios.post(
-                    `${API_DOCUMENT_BASE_URL}/api/v1/notify_by_sms`,
+                    `${API_DOCUMENT_BASE_URL}/api/v1/notify_by_sms?access_token=${API_TOKEN}`,
                     {
                         request_signature_key: request_signature_key,
                         message: message,
                     },
                     {
                         headers: {
-                            Authorization: `Bearer ${API_TOKEN}`,
                             'Content-Type': 'application/json',
                             Accept: 'application/json',
                         },
