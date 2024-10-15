@@ -64,7 +64,7 @@ import {
   IconTag,
   IconTools,
   IconCircuitSwitchOpen,
-  IconMailForward
+  IconMailForward,
 } from '@tabler/icons-react';
 
 const Menuitems = [
@@ -107,6 +107,12 @@ const Menuitems = [
     icon: IconTools,
     href: '/apps/project',
     permissions: ['resolve_crm.view_project'],
+  },
+  {
+    id: uniqueId(),
+    title: 'Categorias',
+    icon: IconBox,
+    href: '/apps/inspections/category',
   },
   {
     id: uniqueId(),
