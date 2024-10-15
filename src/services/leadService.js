@@ -1,3 +1,4 @@
+import { patch } from '@mui/material';
 import apiClient from './apiClient';
 
 const leadService = {
@@ -24,7 +25,17 @@ const leadService = {
       throw error;
     }
   },
-
+  patchLead: async (id, data) => {
+    try {
+      const response = await apiClient.patch(`/api/leads/${id}/`, data);
+      console.log('patchLead response:', response);
+      return response.data;
+    } catch (error) {
+      console.error('Erro na requisição de atualização do lead:', error);
+      console.error('Dados enviados:', data);
+      throw error;
+    }
+  },
   getLeadByName: async (name) => {
     try {
       const response = await apiClient.get(`/api/leads/?name=${name}`);

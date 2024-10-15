@@ -1,4 +1,3 @@
-import { solarizedDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import apiClient from './apiClient';
 
 const saleService = {

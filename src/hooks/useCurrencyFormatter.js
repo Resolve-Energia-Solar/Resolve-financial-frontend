@@ -16,7 +16,6 @@ export default function useCurrencyFormatter(initialValue) {
     handleChange('totalValue', rawValue / 100);
   };
 
-  // Efeito para definir os valores iniciais
   useEffect(() => {
     if (initialValue !== undefined) {
       const rawValue = Number(initialValue).toFixed(2).replace('.', '');

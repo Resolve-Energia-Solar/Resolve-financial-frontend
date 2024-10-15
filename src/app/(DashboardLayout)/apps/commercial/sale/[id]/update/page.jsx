@@ -23,6 +23,7 @@ import AutoCompleteCampaign from '@/app/components/apps/comercial/sale/auto-comp
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import FormDateTime from '@/app/components/forms/form-custom/FormDateTime';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
+import DocumentAttachments from './attachments';
 
 import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
@@ -31,7 +32,10 @@ import { useState } from 'react';
 export default function FormCustom() {
   const params = useParams();
   const { id } = params;
-  
+
+  const id_sale = id;
+  const context_type_sale = 44;
+
   const { loading, error, saleData } = useSale(id);
   const {
     formData,
@@ -181,9 +185,7 @@ export default function FormCustom() {
         )}
 
         {value === 1 && (
-          <div>
-            <p>Sem conteúdo.</p>
-          </div>
+          <DocumentAttachments objectId={id_sale} contentType={context_type_sale} />
         )}
       </ParentCard>
     </PageContainer>
