@@ -21,6 +21,16 @@ const squadService = {
     }
   },
 
+  getSquadByName: async (name) => {
+    try {
+      const response = await apiClient.get(`/api/squads/?name=${name}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar squad com nome ${name}:`, error);
+      throw error;
+    }
+  },
+
   createSquad: async (data) => {
     try {
       const response = await apiClient.post('/api/squads/', data);
