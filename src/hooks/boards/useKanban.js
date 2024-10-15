@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import boardService from '@/services/boardService';
+import leadService from '@/services/leadService';
 
 const useKanban = () => {
   const [boards, setBoards] = useState([]);
@@ -16,14 +17,12 @@ const useKanban = () => {
     setSnackbarOpen(false);
   };
 
-  // Fetch all boards when the component mounts
   const fetchBoards = async () => {
     setLoading(true);
     try {
       const data = await boardService.getBoards();
       setBoards(data);
 
-      // Automatically select the first board if no board is selected
       if (data.results && data.results.length > 0 && !selectedBoard) {
         setSelectedBoard(data.results[0].id);
       }
@@ -34,7 +33,6 @@ const useKanban = () => {
     }
   };
 
-  // Fetch leads, statuses, and columns when a board is selected
   const fetchBoardDetails = async (boardId) => {
     if (!boardId) return;
 
@@ -62,24 +60,28 @@ const useKanban = () => {
     }
   };
 
-  // Trigger fetching of board details whenever a new board is selected
   useEffect(() => {
     fetchBoardDetails(selectedBoard);
   }, [selectedBoard, boards]);
 
-  // Fetch all boards when the component mounts
   useEffect(() => {
     fetchBoards();
   }, []);
 
   const updateLeadColumn = async (leadId, newColumnId) => {
     try {
-      await boardService.updateLead(leadId, { column_id: newColumnId });
-      setLeads((prevLeads) =>
-        prevLeads.map((lead) =>
-          lead.id === parseInt(leadId) ? { ...lead, column_id: newColumnId } : lead,
-        ),
-      );
+      await leadService.patchLead(leadId, { column_id: newColumnId });
+      
+      setLeads((prevLeads) => {
+        const updatedLeads = prevLeads.map((lead) => {
+          if (lead.id === leadId) {
+            return { ...lead, column_id: newColumnId };
+          }
+          return lead;
+        });
+        return updatedLeads;
+      });
+
     } catch (err) {
       console.error('Erro ao atualizar o status do lead:', err.message || err);
     }
