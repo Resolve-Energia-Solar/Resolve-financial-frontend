@@ -112,6 +112,7 @@ const ServiceCatalogList = () => {
                     <TableCell>Nome</TableCell>
                     <TableCell>Descrição</TableCell>
                     <TableCell>Categoria</TableCell>
+                    <TableCell>Prazo</TableCell>
                     <TableCell>Ações</TableCell>
                   </TableRow>
                 </TableHead>
@@ -122,6 +123,7 @@ const ServiceCatalogList = () => {
                       <TableCell>{item.name}</TableCell>
                       <TableCell>{item.description}</TableCell>
                       <TableCell>{item.category.name}</TableCell>
+                      <TableCell>{item.deadline.name}</TableCell>
                       <TableCell>
                         <Tooltip title="Editar">
                           <IconButton 
