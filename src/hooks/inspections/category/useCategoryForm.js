@@ -16,7 +16,7 @@ const useCategoryForm = (initialData, id) => {
       setFormData({
         main_category: initialData.main_category || null,
         name: initialData.name || '',
-        squads: initialData.squads?.map((item) => item) || [],
+        squads: initialData.squads?.map((item) => item.id) || [],
       });
     }
   }, [initialData]);
@@ -29,7 +29,7 @@ const useCategoryForm = (initialData, id) => {
     const dataToSend = {
       main_category: formData.main_category,
       name: formData.name,
-      squads: formData.squads,
+      squads_id: formData.squads,
     };
 
     console.log('dataToSend', dataToSend);
