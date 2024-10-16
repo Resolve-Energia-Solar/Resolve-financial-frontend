@@ -21,7 +21,7 @@ export default function AutoCompleteCategory({ onChange, value, error, helperTex
           if (categoryValue) {
             setSelectedCategory({
               id: categoryValue.id,
-              name: category.name
+              name: categoryValue.name
             });
           }
         } catch (error) {

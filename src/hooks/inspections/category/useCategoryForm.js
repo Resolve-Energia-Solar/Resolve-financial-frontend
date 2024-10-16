@@ -14,9 +14,9 @@ const useCategoryForm = (initialData, id) => {
   useEffect(() => {
     if (initialData) {
       setFormData({
-        main_category: initialData.main_category?.id || null,
+        main_category: initialData.main_category || null,
         name: initialData.name || '',
-        squads: initialData.squads?.map((item) => item.id) || [],
+        squads: initialData.squads?.map((item) => item) || [],
       });
     }
   }, [initialData]);
