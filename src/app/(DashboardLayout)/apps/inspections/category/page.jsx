@@ -28,11 +28,12 @@ import {
 
 import { useRouter } from 'next/navigation';
 import categoryService from '@/services/categoryService';
+import capitalizeFirstWord from "@/utils/capitalizeFirstWord";
 
 const CategoryList = () => {
   const pageName = 'categoria';
   const pageNamePlural = 'categorias';
-  const pageDescription = `Lista de ${capitalizeFirstLetter(pageNamePlural)}`;
+  const pageDescription = `Lista de ${capitalizeFirstWord(pageNamePlural)}`;
 
   const [categoriesList, setCategoriesList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -75,22 +76,25 @@ const CategoryList = () => {
   };
 
   const handleConfirmDelete = async () => {
-    handleCloseModal();
+    try {
+      await categoryService.deleteCategory(categoryToDelete);
+      setCategoriesList(categoriesList.filter((item) => item.id !== categoryToDelete));
+    } catch (err) {
+      setError(`Erro ao excluir ${pageName}`);
+    } finally {
+      handleCloseModal();
+    }
   };
 
-  function capitalizeFirstLetter(word) {
-    return word.replace(/^\w/, (c) => c.toUpperCase());
-  }
-
   return (
-    <PageContainer title={capitalizeFirstLetter(pageName)} description={pageDescription}>
+    <PageContainer title={capitalizeFirstWord(pageName)} description={pageDescription}>
       <BlankCard>
         <CardContent>
           <Typography variant="h6" gutterBottom>
-            Lista de {pageNamePlural}
+            Lista de {capitalizeFirstWord(pageNamePlural)}
           </Typography>
           <Button variant="outlined" startIcon={<AddBoxRounded />} sx={{ marginTop: 1, marginBottom: 2 }} onClick={handleCreateClick}>
-            Adicionar {pageName}
+            Adicionar {capitalizeFirstWord(pageName)}
           </Button>
           {loading ? (
             <Typography>
