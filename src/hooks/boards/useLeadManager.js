@@ -1,10 +1,9 @@
 import addressService from '@/services/addressService';
-import columnService from '@/services/boardCollunService';
 import leadService from '@/services/leadService';
 import userService from '@/services/userService';
 import { useState, useEffect } from 'react';
 
-const useLeadManager = (initialLeads = [], initialStatuses = [], { onUpdateLead, onDeleteLead, onUpdateLeadColumn }) => {
+const useLeadManager = (initialLeads = [], initialStatuses = [], {  onDeleteLead, onUpdateLeadColumn }) => {
   const [leadStars, setLeadStars] = useState({});
   const [selectedLead, setSelectedLead] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -60,7 +59,6 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], { onUpdateLead,
     
         const filteredSellers = users.filter(user => user.role?.name === 'SELLER');
         const filteredSdrs = users.filter(user => user.role?.name === 'SDR');
-        console.log('SDR:', filteredSdrs);
         setSellers(filteredSellers);
         setSdrs(filteredSdrs);
       } catch (error) {
@@ -82,17 +80,17 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], { onUpdateLead,
         name: leadData.name,
         contact_email: leadData.contact_email,
         phone: leadData.phone,
-        byname: leadData.byname || null,          
-        first_document: leadData.first_document || null,  
-        second_document: leadData.second_document || null, 
-        birth_date: leadData.birth_date || null, 
-        gender: leadData.gender || null,          
-        origin: leadData.origin || null,          
-        type: leadData.type || null,              
-        seller_id: typeof leadData.seller === 'number' ? leadData.seller : null,  
-        sdr_id: typeof leadData.sdr === 'number' ? leadData.sdr : null,          
-        addresses_ids: leadData.addresses.map(addr => addr.id) || [], 
-        column_id: selectedLead.column?.id || null, 
+        byname: leadData.byname || null,
+        first_document: leadData.first_document || null,
+        second_document: leadData.second_document || null,
+        birth_date: leadData.birth_date || null,
+        gender: leadData.gender || null,
+        origin: leadData.origin || null,
+        type: leadData.type || null,
+        seller_id: typeof leadData.seller === 'number' ? leadData.seller : null,
+        sdr_id: typeof leadData.sdr === 'number' ? leadData.sdr : null,
+        addresses_ids: Array.isArray(leadData.addresses_ids) ? leadData.addresses_ids : [leadData.addresses_ids], 
+        column_id: selectedLead.column?.id || null,
       };
   
       try {
@@ -149,10 +147,6 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], { onUpdateLead,
   
     const { source, destination, draggableId } = result;
   
-    console.log("source.droppableId:", source.droppableId);
-    console.log("destination.droppableId:", destination.droppableId);
-    console.log("draggableId:", draggableId);
-  
     if (source.droppableId !== destination.droppableId) {
       const leadId = parseInt(draggableId); 
       const destinationColumnId = parseInt(destination.droppableId); 
@@ -193,8 +187,11 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], { onUpdateLead,
       const leadBody = await leadService.getLeadById(lead.id);
       console.log("Objeto lead completo:", leadBody);
   
-      const selectedSeller = lead.seller ? sellers.find((seller) => seller.id === lead.seller.id) : null;
-      const selectedSdr = lead.sdr ? sdrs.find((sdr) => sdr.id === lead.sdr.id) : null;
+      const selectedSeller = leadBody.seller ? sellers.find((seller) => seller.id === leadBody.seller.id) : null;
+      const selectedSdr = leadBody.sdr ? sdrs.find((sdr) => sdr.id === leadBody.sdr.id) : null;
+  
+      console.log("Vendedor selecionado:", selectedSeller);
+      console.log("SDR selecionado:", selectedSdr);
   
       setSelectedLead({
         ...leadBody,
@@ -216,13 +213,12 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], { onUpdateLead,
         origin: leadBody.origin || '',
         funnel: leadBody.funnel || '',
         created_at: leadBody.created_at || '',
-        seller: selectedSeller?.complete_name || 'N/A',
-        sdr: selectedSdr?.complete_name || 'N/A',
-        addresses: leadBody.addresses || [],
+        seller: selectedSeller?.id || 'N/A',
+        sdr: selectedSdr?.id || 'N/A',
+        addresses_ids: leadBody.addresses.map(addr => addr.id) || [],  
         column: leadBody.column?.name || 'N/A',
         seller_id: leadBody.seller_id || null,
         sdr_id: leadBody.sdr_id || null,
-        addresses_ids: leadBody.addresses_ids || [],
         column_id: leadBody.column_id || null,
       });
   
@@ -232,6 +228,7 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], { onUpdateLead,
       console.error("Erro ao buscar os dados do lead:", error);
     }
   };
+  
   
   
   return {

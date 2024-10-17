@@ -127,7 +127,7 @@ const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = 
         fullWidth
         label="SDR"
         select
-        value={leadData.sdr.complete_name || ''}
+        value={leadData.sdr || ''}
         onChange={(e) => setLeadData({ ...leadData, sdr: e.target.value })}
       >
         {sdrs.length > 0 ? (
@@ -145,10 +145,11 @@ const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = 
     <Grid item xs={12}>
       <TextField
         fullWidth
-        label="Endereço"
+        label="Endereços"
         select
-        value={leadData.address || ''}
-        onChange={(e) => setLeadData({ ...leadData, address: e.target.value })}
+        multiple
+        value={leadData.addresses_ids || []}
+        onChange={(e) => setLeadData({ ...leadData, addresses_ids: e.target.value })}
       >
         {addresses.length > 0 ? (
           addresses.map((address) => (
