@@ -217,8 +217,8 @@ const TablePaginationEx = () => {
                             {(rowsPerPage > 0
                                 ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 : rows
-                            ).map((row) => (
-                                <TableRow key={row.orderno}>
+                            ).map((row, index) => (
+                                <TableRow key={index}>
                                     <TableCell>
                                         <Typography variant="subtitle2">{row.orderno}</Typography>
                                     </TableCell>

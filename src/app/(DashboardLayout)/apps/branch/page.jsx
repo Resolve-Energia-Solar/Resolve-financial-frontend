@@ -111,8 +111,8 @@ const BranchList = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {branchesList.map((item) => (
-                                        <TableRow key={item.id} hover>
+                                    {branchesList.map((item, index) => (
+                                        <TableRow key={index} hover>
                                             <TableCell>{item.id}</TableCell>
                                             <TableCell>{item.name}</TableCell>
                                             <TableCell>

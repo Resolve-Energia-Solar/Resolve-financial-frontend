@@ -33,14 +33,14 @@ const TabText = () => {
                 <Box>
                     <TabList onChange={handleChange} aria-label="lab API tabs example">
                         {COMMON_TAB.map((tab, index) => (
-                            <Tab key={tab.value} label={tab.label} value={String(index + 1)} />
+                            <Tab key={index} label={tab.label} value={String(index + 1)} />
                         ))}
                     </TabList>
                 </Box>
                 <Divider />
                 <Box bgcolor="grey.200" mt={2}>
                     {COMMON_TAB.map((panel, index) => (
-                        <TabPanel key={panel.value} value={String(index + 1)}>
+                        <TabPanel key={index} value={String(index + 1)}>
                             {panel.label}
                         </TabPanel>
                     ))}
