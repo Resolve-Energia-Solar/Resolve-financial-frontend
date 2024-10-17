@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import boardService from '@/services/boardService';
 import leadService from '@/services/leadService';
+import columnService from '@/services/boardCollunService';
 
 const useKanban = () => {
   const [boards, setBoards] = useState([]);
@@ -68,6 +69,10 @@ const useKanban = () => {
     fetchBoards();
   }, []);
 
+  const reloadBoardDetails = async () => {
+    await fetchBoardDetails(selectedBoard);
+  };
+
   const updateLeadColumn = async (leadId, newColumnId) => {
     try {
       await leadService.patchLead(leadId, { column_id: newColumnId });
@@ -82,6 +87,8 @@ const useKanban = () => {
         return updatedLeads;
       });
 
+      await reloadBoardDetails(); 
+
     } catch (err) {
       console.error('Erro ao atualizar o status do lead:', err.message || err);
     }
@@ -93,6 +100,9 @@ const useKanban = () => {
       setLeads((prevLeads) => prevLeads.filter((lead) => lead.id !== leadId));
       setSnackbarMessage('Lead excluído com sucesso!');
       setSnackbarOpen(true);
+
+      await reloadBoardDetails(); 
+
     } catch (error) {
       console.error('Erro ao excluir lead:', error);
       setSnackbarMessage('Erro ao excluir lead.');
@@ -102,15 +112,40 @@ const useKanban = () => {
 
   const handleUpdateLead = async (updatedLead) => {
     try {
-      await boardService.updateLead(updatedLead.id, updatedLead);
+      await leadService.patchLead(updatedLead.id, updatedLead);
       setLeads((prevLeads) =>
         prevLeads.map((lead) => (lead.id === updatedLead.id ? updatedLead : lead)),
       );
       setSnackbarMessage('Lead atualizado com sucesso!');
       setSnackbarOpen(true);
+
+      await reloadBoardDetails(); 
+
     } catch (error) {
       console.error('Erro ao atualizar lead:', error);
       setSnackbarMessage('Erro ao atualizar lead.');
+      setSnackbarOpen(true);
+    }
+  };
+
+  const updateColumnName = async (columnId, newName) => {
+    try {
+      await columnService.updateColumnPatch(columnId, { name: newName });
+
+      setStatuses((prevStatuses) =>
+        prevStatuses.map((status) =>
+          status.id === columnId ? { ...status, name: newName } : status,
+        ),
+      );
+
+      setSnackbarMessage('Nome da coluna atualizado com sucesso!');
+      setSnackbarOpen(true);
+
+      await reloadBoardDetails(); 
+
+    } catch (error) {
+      console.error('Erro ao atualizar o nome da coluna:', error);
+      setSnackbarMessage('Erro ao atualizar o nome da coluna.');
       setSnackbarOpen(true);
     }
   };
@@ -132,6 +167,7 @@ const useKanban = () => {
     updateLeadColumn,
     handleDeleteLead,
     handleUpdateLead,
+    updateColumnName,
   };
 };
 

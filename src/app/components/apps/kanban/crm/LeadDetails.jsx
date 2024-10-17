@@ -76,7 +76,7 @@ const LeadDetails = ({ selectedLead }) => {
     {
       icon: <Badge fontSize="small" />,
       label: 'Status',
-      value: selectedLead.column ? selectedLead.column.name : 'N/A', // Verificação adicionada
+      value: selectedLead.column ? selectedLead.column.name : 'N/A',
     },
   ];
 

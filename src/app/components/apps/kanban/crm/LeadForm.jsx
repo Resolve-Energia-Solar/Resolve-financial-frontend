@@ -6,7 +6,7 @@ const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = 
       <TextField
         fullWidth
         label="Nome"
-        value={leadData.name}
+        value={leadData.name || ''}
         onChange={(e) => setLeadData({ ...leadData, name: e.target.value })}
       />
     </Grid>
@@ -16,7 +16,7 @@ const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = 
         fullWidth
         label="Tipo de Pessoa"
         select
-        value={leadData.type}
+        value={leadData.type || ''}
         onChange={(e) => setLeadData({ ...leadData, type: e.target.value })}
       >
         <MenuItem value="PF">Pessoa Física</MenuItem>
@@ -28,7 +28,7 @@ const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = 
       <TextField
         fullWidth
         label="Apelido"
-        value={leadData.byname}
+        value={leadData.byname || ''}
         onChange={(e) => setLeadData({ ...leadData, byname: e.target.value })}
       />
     </Grid>
@@ -37,7 +37,7 @@ const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = 
       <TextField
         fullWidth
         label="Documento Principal (CPF/CNPJ)"
-        value={leadData.first_document}
+        value={leadData.first_document || ''}
         onChange={(e) => setLeadData({ ...leadData, first_document: e.target.value })}
       />
     </Grid>
@@ -46,7 +46,7 @@ const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = 
       <TextField
         fullWidth
         label="Documento Secundário (RG/IE)"
-        value={leadData.second_document}
+        value={leadData.second_document || ''}
         onChange={(e) => setLeadData({ ...leadData, second_document: e.target.value })}
       />
     </Grid>
@@ -56,7 +56,7 @@ const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = 
         fullWidth
         label="Data de Nascimento"
         type="date"
-        value={leadData.birth_date}
+        value={leadData.birth_date || ''}
         onChange={(e) => setLeadData({ ...leadData, birth_date: e.target.value })}
         InputLabelProps={{ shrink: true }}
       />
@@ -67,7 +67,7 @@ const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = 
         fullWidth
         label="Gênero"
         select
-        value={leadData.gender}
+        value={leadData.gender || ''}
         onChange={(e) => setLeadData({ ...leadData, gender: e.target.value })}
       >
         <MenuItem value="M">Masculino</MenuItem>
@@ -79,7 +79,7 @@ const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = 
       <TextField
         fullWidth
         label="E-mail"
-        value={leadData.contact_email}
+        value={leadData.contact_email || ''}
         onChange={(e) => setLeadData({ ...leadData, contact_email: e.target.value })}
       />
     </Grid>
@@ -88,7 +88,7 @@ const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = 
       <TextField
         fullWidth
         label="Telefone"
-        value={leadData.phone}
+        value={leadData.phone || ''}
         onChange={(e) => setLeadData({ ...leadData, phone: e.target.value })}
       />
     </Grid>
@@ -97,7 +97,7 @@ const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = 
       <TextField
         fullWidth
         label="Origem"
-        value={leadData.origin}
+        value={leadData.origin || ''}
         onChange={(e) => setLeadData({ ...leadData, origin: e.target.value })}
       />
     </Grid>
@@ -107,10 +107,10 @@ const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = 
         fullWidth
         label="Vendedor"
         select
-        value={leadData.seller}
+        value={leadData.seller || ''}
         onChange={(e) => setLeadData({ ...leadData, seller: e.target.value })}
       >
-        {Array.isArray(sellers) && sellers.length > 0 ? (
+        {sellers.length > 0 ? (
           sellers.map((seller) => (
             <MenuItem key={seller.id} value={seller.id}>
               {seller.complete_name} - {seller.email}
@@ -127,13 +127,13 @@ const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = 
         fullWidth
         label="SDR"
         select
-        value={leadData.sdr}
+        value={leadData.sdr.complete_name || ''}
         onChange={(e) => setLeadData({ ...leadData, sdr: e.target.value })}
       >
-        {Array.isArray(sdrs) && sdrs.length > 0 ? (
+        {sdrs.length > 0 ? (
           sdrs.map((sdr) => (
             <MenuItem key={sdr.id} value={sdr.id}>
-              {sdr.complete_name} - {sdr.email}
+              {sdr.complete_name}
             </MenuItem>
           ))
         ) : (
@@ -147,10 +147,10 @@ const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = 
         fullWidth
         label="Endereço"
         select
-        value={leadData.address}
+        value={leadData.address || ''}
         onChange={(e) => setLeadData({ ...leadData, address: e.target.value })}
       >
-        {Array.isArray(addresses) && addresses.length > 0 ? (
+        {addresses.length > 0 ? (
           addresses.map((address) => (
             <MenuItem key={address.id} value={address.id}>
               {address.street}, {address.number} - {address.city}, {address.state}

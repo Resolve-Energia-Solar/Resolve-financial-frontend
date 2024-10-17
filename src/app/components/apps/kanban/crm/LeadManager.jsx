@@ -41,7 +41,6 @@ const LeadManager = ({
     leadData,
     setLeadData,
     selectedLead,
-    setSelectedLead,
     openModal,
     setOpenModal,
     editMode,
@@ -50,7 +49,6 @@ const LeadManager = ({
     snackbarOpen,
     setSnackbarOpen,
     handleUpdateLead,
-    handleUpdateColumnName,
     handleDeleteLead,
     onDragEnd,
     handleLeadClick,
@@ -62,11 +60,13 @@ const LeadManager = ({
     setOpenProjectModal,
     anchorEl,
     setAnchorEl,
+    sellers,
+    sdrs,
+    addresses,
   } = useLeadManager(leads, statuses, {
     onUpdateLead,
     onAddLead,
     onDeleteLead,
-    onUpdateLeadColumn,
   });
 
   const activateEditMode = () => {
@@ -98,10 +98,9 @@ const LeadManager = ({
                       columnTitle={status.name}
                       statusId={status.id}
                       boardId={board}
-                      onEditStatus={handleUpdateColumnName}
+                      onUpdateLeadColumn={onUpdateLeadColumn}
                       leads={leadsList}
                       onAddLead={onAddLead}
-                      position={status.position}
                     />
                     {leadsList
                       .filter((lead) => lead.column.id === status.id)
@@ -134,7 +133,13 @@ const LeadManager = ({
           <Divider />
           <DialogContent>
             {editMode ? (
-              <LeadForm leadData={leadData} setLeadData={setLeadData} />
+              <LeadForm
+                leadData={leadData}
+                setLeadData={setLeadData}
+                sellers={sellers}
+                sdrs={sdrs}
+                addresses={addresses.results}
+              />
             ) : (
               <Grid container spacing={3}>
                 <Grid item xs={12} md={8}>

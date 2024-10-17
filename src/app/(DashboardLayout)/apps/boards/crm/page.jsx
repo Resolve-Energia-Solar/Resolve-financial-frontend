@@ -18,12 +18,11 @@ function KanbanPage() {
     snackbarMessage,
     snackbarOpen,
     handleSnackbarClose,
-    updateLeadColumn,
     handleDeleteLead,
     handleUpdateLead,
+    updateColumnName,
   } = useKanban();
 
-  console.log('boards:', boards);
   return (
     <BlankCard>
       <CardContent>
@@ -46,7 +45,7 @@ function KanbanPage() {
                 leads={leads}
                 statuses={statuses}
                 board={selectedBoard}
-                onUpdateLeadColumn={updateLeadColumn}
+                onUpdateLeadColumn={updateColumnName}
                 onUpdateLead={handleUpdateLead}
                 onDeleteLead={handleDeleteLead}
               />
@@ -62,7 +61,7 @@ function KanbanPage() {
           open={snackbarOpen}
           autoHideDuration={4000}
           onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
           <Alert
             onClose={handleSnackbarClose}

@@ -1,49 +1,63 @@
-import apiClient from './apiClient'
+import apiClient from './apiClient';
 
 const columnService = {
-  getCollumn: async () => {
+  getColumns: async () => {
     try {
-      const response = await apiClient.get('/api/columns/')
-      return response.data.results
+      const response = await apiClient.get('/api/columns/');
+      return response.data.results;
     } catch (error) {
-      console.error('Erro ao buscar colunas:', error)
-      throw error
+      console.error('Erro ao buscar colunas:', error);
+      throw error;
     }
   },
 
-  getColumnById: async id => {
+  getColumnById: async (id) => {
     try {
-      const response = await apiClient.get(`/api/columns/${id}/`)
-      return response.data
+      const response = await apiClient.get(`/api/columns/${id}/`);
+      return response.data;
     } catch (error) {
-      console.error(`Erro ao buscar coluna com id ${id}:`, error)
-      throw error
+      console.error(`Erro ao buscar coluna com id ${id}:`, error);
+      throw error;
     }
   },
 
-  updateColumn: async (id, data) => {
+  updateColumnPut: async (id, data) => {
     try {
-      const response = await apiClient.put(`/api/columns/${id}/`, data)
-      return response.data
+      const response = await apiClient.put(`/api/columns/${id}/`, data);
+      return response.data;
     } catch (error) {
       if (error.response) {
-        console.error('Erro ao editar status:', error.response.data);
+        console.error('Erro ao editar coluna (PUT):', error.response.data);
       } else {
-        console.error('Erro ao editar status:', error);
+        console.error('Erro ao editar coluna (PUT):', error);
       }
+      throw error;
     }
-    
   },
 
-  createColumn: async data => {
+  updateColumnPatch: async (id, data) => {
     try {
-      const response = await apiClient.post('/api/columns/', data)
-      return response.data
+      const response = await apiClient.patch(`/api/columns/${id}/`, data);
+      return response.data;
     } catch (error) {
-      console.error('Erro ao criar uma coluna:', error)
-      throw error
+      if (error.response) {
+        console.error('Erro ao editar coluna (PATCH):', error.response.data);
+      } else {
+        console.error('Erro ao editar coluna (PATCH):', error);
+      }
+      throw error;
     }
   },
-}
 
-export default columnService
+  createColumn: async (data) => {
+    try {
+      const response = await apiClient.post('/api/columns/', data);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao criar uma coluna:', error);
+      throw error;
+    }
+  },
+};
+
+export default columnService;
