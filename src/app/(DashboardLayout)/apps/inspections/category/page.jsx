@@ -18,7 +18,8 @@ import {
   TableBody,
   Typography,
   Tooltip,
-  IconButton
+  IconButton,
+  Paper,
 } from "@mui/material";
 import {
   AddBoxRounded,
@@ -103,8 +104,8 @@ const CategoryList = () => {
           ) : error ? (
             <Typography color="error">{error}</Typography>
           ) : (
-            <TableContainer>
-              <Table>
+            <TableContainer component={Paper} elevation={3}>
+              <Table aria-label="table">
                 <TableHead>
                   <TableRow>
                     <TableCell>ID</TableCell>
