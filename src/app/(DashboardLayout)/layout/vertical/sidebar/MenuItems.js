@@ -116,6 +116,12 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Serviços',
+    icon: IconBoxMultiple,
+    href: '/apps/inspections/service-catalog',
+  },
+  {
+    id: uniqueId(),
     title: 'Usuários',
     icon: IconUser,
     href: '/apps/users',

@@ -58,7 +58,7 @@ const ServiceCatalogList = () => {
   }, []);
 
   const handleCreateClick = () => {
-    //router.push(`/apps/inspections/service-catalog/create`);
+    router.push(`/apps/inspections/service-catalog/create`);
   };
 
   const handleEditClick = (id) => {
