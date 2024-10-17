@@ -1,4 +1,3 @@
-'use client';
 import React from 'react';
 import { Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 

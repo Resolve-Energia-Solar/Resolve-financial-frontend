@@ -146,6 +146,7 @@ const SaleList = () => {
   };
 
   const handleSendContract = async (sale) => {
+    console.log(`Enviando contrato para a venda ${sale.id}`);
     setIsSendingContract(true);
     try {
       const documentData = {

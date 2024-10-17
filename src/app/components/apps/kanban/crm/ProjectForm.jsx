@@ -1,6 +1,18 @@
 import { Grid, TextField, MenuItem, Typography } from '@mui/material';
 
-export const ProjectForm = ({ projectData, setProjectData, designers = [], homologators = [], branches = [] }) => {
+export const ProjectForm = ({
+  projectData,
+  setProjectData,
+  designers = [],
+  homologators = [],
+  branches = [],
+  managers = [],
+  sellers = [],
+  supervisors = [],
+  addresses = [],
+  marketingCampaigns = [],
+  leads = [],
+}) => {
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -64,15 +76,11 @@ export const ProjectForm = ({ projectData, setProjectData, designers = [], homol
           value={projectData.designer_id || ''}
           onChange={(e) => setProjectData({ ...projectData, designer_id: e.target.value })}
         >
-          {designers.length > 0 ? (
-            designers.map((designer) => (
-              <MenuItem key={designer.id} value={designer.id}>
-                {designer.complete_name} - {designer.email}
-              </MenuItem>
-            ))
-          ) : (
-            <MenuItem disabled>Nenhum designer disponível</MenuItem>
-          )}
+          {designers.map((designer) => (
+            <MenuItem key={designer.id} value={designer.id}>
+              {designer.complete_name} - {designer.email}
+            </MenuItem>
+          ))}
         </TextField>
       </Grid>
 
@@ -84,16 +92,171 @@ export const ProjectForm = ({ projectData, setProjectData, designers = [], homol
           value={projectData.homologator_id || ''}
           onChange={(e) => setProjectData({ ...projectData, homologator_id: e.target.value })}
         >
-          {homologators.length > 0 ? (
-            homologators.map((homologator) => (
-              <MenuItem key={homologator.id} value={homologator.id}>
-                {homologator.complete_name} - {homologator.email}
-              </MenuItem>
-            ))
-          ) : (
-            <MenuItem disabled>Nenhum homologador disponível</MenuItem>
-          )}
+          {homologators.map((homologator) => (
+            <MenuItem key={homologator.id} value={homologator.id}>
+              {homologator.complete_name} - {homologator.email}
+            </MenuItem>
+          ))}
         </TextField>
+      </Grid>
+
+      <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="Filial"
+          select
+          value={projectData.branch_id || ''}
+          onChange={(e) => setProjectData({ ...projectData, branch_id: e.target.value })}
+        >
+          {branches.map((branch) => (
+            <MenuItem key={branch.id} value={branch.id}>
+              {branch.name}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Grid>
+
+      <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="Endereço"
+          select
+          value={projectData.address_id || ''}
+          onChange={(e) => setProjectData({ ...projectData, address_id: e.target.value })}
+        >
+          {addresses.map((address) => (
+            <MenuItem key={address.id} value={address.id}>
+              {address.street}, {address.city}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Grid>
+
+      <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="Campanha de Marketing"
+          select
+          value={projectData.marketing_campaign_id || ''}
+          onChange={(e) => setProjectData({ ...projectData, marketing_campaign_id: e.target.value })}
+        >
+          {marketingCampaigns.map((campaign) => (
+            <MenuItem key={campaign.id} value={campaign.id}>
+              {campaign.name}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Grid>
+
+      <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="Lead"
+          select
+          value={projectData.lead_id || ''}
+          onChange={(e) => setProjectData({ ...projectData, lead_id: e.target.value })}
+        >
+          {leads.map((lead) => (
+            <MenuItem key={lead.id} value={lead.id}>
+              {lead.name} - {lead.contact_email}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Grid>
+
+      <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="Supervisor de Vendas"
+          select
+          value={projectData.sales_supervisor_id || ''}
+          onChange={(e) => setProjectData({ ...projectData, sales_supervisor_id: e.target.value })}
+        >
+          {supervisors.map((supervisor) => (
+            <MenuItem key={supervisor.id} value={supervisor.id}>
+              {supervisor.complete_name} - {supervisor.email}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Grid>
+
+      <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="Gerente de Vendas"
+          select
+          value={projectData.sales_manager_id || ''}
+          onChange={(e) => setProjectData({ ...projectData, sales_manager_id: e.target.value })}
+        >
+          {managers.map((manager) => (
+            <MenuItem key={manager.id} value={manager.id}>
+              {manager.complete_name} - {manager.email}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Grid>
+
+      <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="Vendedor"
+          select
+          value={projectData.seller_id || ''}
+          onChange={(e) => setProjectData({ ...projectData, seller_id: e.target.value })}
+        >
+          {sellers.map((seller) => (
+            <MenuItem key={seller.id} value={seller.id}>
+              {seller.complete_name} - {seller.email}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Grid>
+
+      <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="Valor Total"
+          type="number"
+          value={projectData.total_value || ''}
+          onChange={(e) => setProjectData({ ...projectData, total_value: e.target.value })}
+        />
+      </Grid>
+
+      <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="Pré-venda"
+          select
+          value={projectData.is_sale || false}
+          onChange={(e) => setProjectData({ ...projectData, is_sale: e.target.value === 'true' })}
+        >
+          <MenuItem value={true}>Sim</MenuItem>
+          <MenuItem value={false}>Não</MenuItem>
+        </TextField>
+      </Grid>
+
+      <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="Documento Completo"
+          select
+          value={projectData.is_completed_document || false}
+          onChange={(e) => setProjectData({ ...projectData, is_completed_document: e.target.value === 'true' })}
+        >
+          <MenuItem value={true}>Sim</MenuItem>
+          <MenuItem value={false}>Não</MenuItem>
+        </TextField>
+      </Grid>
+
+      <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="Data de Conclusão do Documento"
+          type="date"
+          value={projectData.document_completion_date || ''}
+          onChange={(e) => setProjectData({ ...projectData, document_completion_date: e.target.value })}
+          InputLabelProps={{ shrink: true }}
+        />
       </Grid>
 
       <Grid item xs={6}>
@@ -148,6 +311,7 @@ export const ProjectForm = ({ projectData, setProjectData, designers = [], homol
           onChange={(e) => setProjectData({ ...projectData, project_circuit_breaker: e.target.value })}
         />
       </Grid>
+
     </Grid>
   );
 };

@@ -33,6 +33,9 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], {  onDeleteLead
   const [sellers, setSellers] = useState([]);
   const [sdrs, setSdrs] = useState([]);
   const [addresses, setAddresses] = useState([]);
+  const [designers, setDesigners] = useState([]);
+  const [managers, setManagers] = useState([]);
+  const [supervisors, setSupervisors] = useState([]);
   const [tabIndex, setTabIndex] = useState(0);
   
   useEffect(() => {
@@ -52,15 +55,22 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], {  onDeleteLead
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await userService.getUser(); 
+        const response = await userService.getUser();
         const users = response.results || [];
-    
-        console.log('Usuários recebidos:', users); 
-    
+
+        console.log('Usuários recebidos:', users);
+
         const filteredSellers = users.filter(user => user.role?.name === 'SELLER');
         const filteredSdrs = users.filter(user => user.role?.name === 'SDR');
+        const filteredDesigners = users.filter(user => user.role?.name === 'DESIGNER');
+        const filteredManagers = users.filter(user => user.role?.name === 'MANAGER');
+        const filteredSupervisors = users.filter(user => user.role?.name === 'SUPERVISOR');
+
         setSellers(filteredSellers);
         setSdrs(filteredSdrs);
+        setDesigners(filteredDesigners);
+        setManagers(filteredManagers);
+        setSupervisors(filteredSupervisors);
       } catch (error) {
         console.error('Erro ao buscar usuários:', error);
       }
@@ -68,6 +78,12 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], {  onDeleteLead
 
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    setLeadsList(initialLeads);
+    setStatusesList(initialStatuses);
+  }, [initialLeads, initialStatuses]);
+  
 
   useEffect(() => {
     setLeadsList(initialLeads);
@@ -238,6 +254,9 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], {  onDeleteLead
     setLeadData,
     sellers,
     sdrs,
+    designers,
+    managers,
+    supervisors,
     addresses,
     selectedLead,
     setSelectedLead,

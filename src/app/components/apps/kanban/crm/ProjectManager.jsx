@@ -2,8 +2,20 @@ import { Grid, Typography, Box, Card, CardContent, Button } from '@mui/material'
 import { useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import { ProjectForm } from './ProjectForm';
+import projectService from '@/services/projectService';
 
-const ProjectManager = ({ projects = [], designers = [], homologators = [], branches = [] }) => {
+const ProjectManager = ({
+  projects = [],
+  designers = [],
+  homologators = [],
+  branches = [],
+  managers = [],
+  sellers = [],
+  supervisors = [],
+  addresses = [],
+  marketingCampaigns = [],
+  leads = [],
+}) => {
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [projectData, setProjectData] = useState(null);
 
@@ -20,6 +32,17 @@ const ProjectManager = ({ projects = [], designers = [], homologators = [], bran
       registered_circuit_breaker: '',
       instaled_circuit_breaker: '',
       project_circuit_breaker: '',
+      customer_id: '',
+      seller_id: '',
+      sales_supervisor_id: '',
+      sales_manager_id: '',
+      branch_id: '',
+      marketing_campaign_id: '',
+      lead_id: '',
+      total_value: '',
+      is_sale: false,
+      is_completed_document: false,
+      document_completion_date: '',
     });
     setShowProjectForm(true);
   };
@@ -32,6 +55,18 @@ const ProjectManager = ({ projects = [], designers = [], homologators = [], bran
   const handleCloseProjectForm = () => {
     setShowProjectForm(false);
     setProjectData(null);
+  };
+
+  const handleSaveProject = async () => {
+    try {
+      if (projectData) {
+        const response = await projectService.createProject(projectData);
+        console.log('Projeto criado com sucesso:', response);
+        handleCloseProjectForm();
+      }
+    } catch (error) {
+      console.error('Erro ao criar projeto:', error);
+    }
   };
 
   return (
@@ -92,6 +127,12 @@ const ProjectManager = ({ projects = [], designers = [], homologators = [], bran
                 designers={designers}
                 homologators={homologators}
                 branches={branches}
+                managers={managers}
+                sellers={sellers}
+                supervisors={supervisors}
+                addresses={addresses}
+                marketingCampaigns={marketingCampaigns}
+                leads={leads}
               />
               <Box display="flex" justifyContent="flex-end" mt={3}>
                 <Button
@@ -102,11 +143,7 @@ const ProjectManager = ({ projects = [], designers = [], homologators = [], bran
                 >
                   Cancelar
                 </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => console.log('Salvar projeto')}
-                >
+                <Button variant="contained" color="primary" onClick={handleSaveProject}>
                   Salvar
                 </Button>
               </Box>
