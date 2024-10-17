@@ -17,8 +17,8 @@ const useServiceCatalogForm = (initialData, id) => {
       setFormData({
         name: initialData.name || '',
         description: initialData.description || '',
-        category_id: initialData.category_id || null,
-        deadline_id: initialData.deadline_id || null,
+        category_id: initialData.category.id || null,
+        deadline_id: initialData.deadline.id || null,
       });
     }
   }, [initialData]);

@@ -62,7 +62,7 @@ const ServiceCatalogList = () => {
   };
 
   const handleEditClick = (id) => {
-    //router.push(`/apps/inspections/service-catalog/${id}/edit`);
+    router.push(`/apps/inspections/service-catalog/${id}/update`);
   };
 
   const handleDeleteClick = (id) => {
