@@ -1,6 +1,15 @@
-import { Grid, TextField, MenuItem } from '@mui/material';
+import { Grid, TextField, MenuItem, Snackbar, Alert } from '@mui/material';
 
-const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = [] }) => (
+const LeadForm = ({
+  leadData,
+  setLeadData,
+  sellers = [],
+  sdrs = [],
+  addresses = [],
+  snackbarMessage,
+  snackbarOpen,
+  setSnackbarOpen,
+}) => (
   <Grid container spacing={3}>
     <Grid item xs={12}>
       <TextField
@@ -162,6 +171,16 @@ const LeadForm = ({ leadData, setLeadData, sellers = [], sdrs = [], addresses = 
         )}
       </TextField>
     </Grid>
+    <Snackbar
+      open={snackbarOpen}
+      autoHideDuration={4000}
+      onClose={() => setSnackbarOpen(false)}
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+    >
+      <Alert severity={snackbarMessage.includes('Erro') ? 'error' : 'success'}>
+        {snackbarMessage}
+      </Alert>
+    </Snackbar>
   </Grid>
 );
 

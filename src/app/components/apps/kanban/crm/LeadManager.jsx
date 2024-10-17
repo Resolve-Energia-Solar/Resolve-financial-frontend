@@ -54,10 +54,6 @@ const LeadManager = ({
     handleLeadClick,
     setTabIndex,
     tabIndex,
-    openProposalModal,
-    setOpenProposalModal,
-    openProjectModal,
-    setOpenProjectModal,
     anchorEl,
     setAnchorEl,
     sellers,
@@ -139,6 +135,9 @@ const LeadManager = ({
                 sellers={sellers}
                 sdrs={sdrs}
                 addresses={addresses.results}
+                snackbarMessage={snackbarMessage}
+                snackbarOpen={snackbarOpen}
+                setSnackbarOpen={setSnackbarOpen}
               />
             ) : (
               <Grid container spacing={3}>
