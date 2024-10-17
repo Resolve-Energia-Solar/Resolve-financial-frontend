@@ -90,7 +90,6 @@ const LeadManager = ({
                     }}
                   >
                     <ColumnWithActions
-                      key={status.id}
                       columnTitle={status.name}
                       statusId={status.id}
                       boardId={board}
@@ -152,9 +151,7 @@ const LeadManager = ({
                   <Box mt={2}>
                     {tabIndex === 0 && <LeadDetails selectedLead={selectedLead} />}
                     {tabIndex === 1 && <SaleManager />}
-                    {tabIndex === 2 && (
-                      <ProjectManager/>
-                    )}
+                    {tabIndex === 2 && <ProjectManager />}
                     {tabIndex === 3 && (
                       <Typography variant="body1">Conteúdo das Atividades...</Typography>
                     )}
