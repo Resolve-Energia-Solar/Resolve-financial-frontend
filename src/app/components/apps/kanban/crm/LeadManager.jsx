@@ -21,10 +21,10 @@ import LeadForm from './LeadForm';
 import LeadCard from './LeadCard';
 import SimpleBar from 'simplebar-react';
 import ColumnWithActions from './LeadHeader';
-import GenerateProposalModal from './GenerateProposal';
-import GenerateProjectModal from './GenerateProject';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import useLeadManager from '@/hooks/boards/useLeadManager';
+import SaleManager from './SaleManager';
+import ProjectManager from './ProjectManager';
 
 const LeadManager = ({
   leads,
@@ -41,7 +41,6 @@ const LeadManager = ({
     leadData,
     setLeadData,
     selectedLead,
-    setSelectedLead,
     openModal,
     setOpenModal,
     editMode,
@@ -50,23 +49,20 @@ const LeadManager = ({
     snackbarOpen,
     setSnackbarOpen,
     handleUpdateLead,
-    handleUpdateColumnName,
     handleDeleteLead,
     onDragEnd,
     handleLeadClick,
     setTabIndex,
     tabIndex,
-    openProposalModal,
-    setOpenProposalModal,
-    openProjectModal,
-    setOpenProjectModal,
     anchorEl,
     setAnchorEl,
+    sellers,
+    sdrs,
+    addresses,
   } = useLeadManager(leads, statuses, {
     onUpdateLead,
     onAddLead,
     onDeleteLead,
-    onUpdateLeadColumn,
   });
 
   const activateEditMode = () => {
@@ -98,10 +94,9 @@ const LeadManager = ({
                       columnTitle={status.name}
                       statusId={status.id}
                       boardId={board}
-                      onEditStatus={handleUpdateColumnName}
+                      onUpdateLeadColumn={onUpdateLeadColumn}
                       leads={leadsList}
                       onAddLead={onAddLead}
-                      position={status.position}
                     />
                     {leadsList
                       .filter((lead) => lead.column.id === status.id)
@@ -134,24 +129,31 @@ const LeadManager = ({
           <Divider />
           <DialogContent>
             {editMode ? (
-              <LeadForm leadData={leadData} setLeadData={setLeadData} />
+              <LeadForm
+                leadData={leadData}
+                setLeadData={setLeadData}
+                sellers={sellers}
+                sdrs={sdrs}
+                addresses={addresses.results}
+                snackbarMessage={snackbarMessage}
+                snackbarOpen={snackbarOpen}
+                setSnackbarOpen={setSnackbarOpen}
+              />
             ) : (
               <Grid container spacing={3}>
                 <Grid item xs={12} md={8}>
                   <Tabs value={tabIndex} onChange={(_e, newValue) => setTabIndex(newValue)}>
                     <Tab label="Lead" />
                     <Tab label="Vendas" />
-                    <Tab label="Tarefas" />
+                    <Tab label="Projetos" />
                     <Tab label="Atividades" />
                   </Tabs>
 
                   <Box mt={2}>
                     {tabIndex === 0 && <LeadDetails selectedLead={selectedLead} />}
-                    {tabIndex === 1 && (
-                      <Typography variant="body1">Conteúdo das Propostas...</Typography>
-                    )}
+                    {tabIndex === 1 && <SaleManager />}
                     {tabIndex === 2 && (
-                      <Typography variant="body1">Conteúdo das Tarefas...</Typography>
+                      <ProjectManager/>
                     )}
                     {tabIndex === 3 && (
                       <Typography variant="body1">Conteúdo das Atividades...</Typography>
@@ -164,24 +166,49 @@ const LeadManager = ({
           <DialogActions>
             {editMode ? (
               <>
-                <Button onClick={handleUpdateLead} color="primary" variant="contained">
-                  Salvar
-                </Button>
-                <Button onClick={() => setEditMode(false)} color="secondary" variant="outlined">
-                  Cancelar
-                </Button>
+                {tabIndex === 0 && (
+                  <>
+                    <Button onClick={handleUpdateLead} color="primary" variant="contained">
+                      Salvar
+                    </Button>
+                    <Button onClick={() => setEditMode(false)} color="secondary" variant="outlined">
+                      Cancelar
+                    </Button>
+                  </>
+                )}
+                {tabIndex === 1 && (
+                  <>
+                    <Button onClick={handleUpdateSale} color="primary" variant="contained">
+                      Salvar Venda
+                    </Button>
+                    <Button onClick={() => setEditMode(false)} color="secondary" variant="outlined">
+                      Cancelar
+                    </Button>
+                  </>
+                )}
               </>
             ) : (
               <>
-                <Button onClick={() => setOpenModal(false)} color="primary" variant="contained">
-                  Fechar
-                </Button>
-                <Button onClick={activateEditMode} color="primary" variant="outlined">
-                  Editar
-                </Button>
+                {tabIndex === 0 ? (
+                  <>
+                    <Button onClick={activateEditMode} color="primary" variant="outlined">
+                      Editar
+                    </Button>
+                    <Button onClick={() => setOpenModal(false)} color="primary" variant="contained">
+                      Fechar
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button onClick={() => setOpenModal(false)} color="primary" variant="contained">
+                      Fechar
+                    </Button>
+                  </>
+                )}
               </>
             )}
           </DialogActions>
+
           <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
             <MenuItem onClick={() => console.log('Enviar Email')}>Enviar Email</MenuItem>
             <MenuItem onClick={() => console.log('Adicionar Nota')}>Adicionar Nota</MenuItem>
@@ -189,18 +216,6 @@ const LeadManager = ({
           </Menu>
         </Dialog>
       )}
-
-      <GenerateProposalModal
-        open={openProposalModal}
-        onClose={() => setOpenProposalModal(false)}
-        lead={selectedLead}
-      />
-      <GenerateProjectModal
-        open={openProjectModal}
-        onClose={() => setOpenProjectModal(false)}
-        lead={selectedLead}
-      />
-
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
