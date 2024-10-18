@@ -36,6 +36,7 @@ import {
   Description as DescriptionIcon,
   Send as SendIcon,
   MoreVert as MoreVertIcon,
+  ArrowDropDown,
 } from '@mui/icons-material';
 
 import { useRouter } from 'next/navigation';
@@ -43,6 +44,16 @@ import BlankCard from '@/app/components/shared/BlankCard';
 import PageContainer from '@/app/components/container/PageContainer';
 import saleService from '@/services/saleService';
 import clickSignService from '@/services/ClickSign';
+import { Box } from '@mui/material';
+import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
+import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
+import useUser from '@/hooks/users/useUser';
+
+import useSendContract from '@/hooks/clicksign/useClickSign';
+
+import DashboardCards from '@/app/components/apps/comercial/sale/kpis/DashboardCards';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import userService from '@/services/userService';
 
 const getStatusChip = (status) => {
   switch (status) {
@@ -64,6 +75,16 @@ const SaleList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const {
+    isSendingContract,
+    loading: loadingContract,
+    error: errorContract,
+    setError: setErrorContract,
+    success: successContract,
+    setSuccess: setSuccessContract,
+    sendContract,
+  } = useSendContract();
+
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [menuOpenRowId, setMenuOpenRowId] = useState(null);
 
@@ -71,7 +92,21 @@ const SaleList = () => {
   const [alertType, setAlertType] = useState('success');
   const [alertOpen, setAlertOpen] = useState(false);
 
-  const [isSendingContract, setIsSendingContract] = useState(false);
+  const [order, setOrder] = useState('asc');
+
+  console.log('order:', order);
+
+  const [selectedSales, setSelectedSales] = useState([]);
+
+  const BCrumb = [
+    {
+      to: '/',
+      title: 'Home',
+    },
+    {
+      title: 'Vendas',
+    },
+  ];
 
   const [open, setOpen] = useState(false);
   const [saleToDelete, setSaleToDelete] = useState(null);
@@ -80,7 +115,7 @@ const SaleList = () => {
   useEffect(() => {
     const fetchSales = async () => {
       try {
-        const data = await saleService.getSales();
+        const data = await saleService.getSales(order);
         setSalesList(data.results);
       } catch (err) {
         setError('Erro ao carregar Vendas');
@@ -91,7 +126,7 @@ const SaleList = () => {
     };
 
     fetchSales();
-  }, []);
+  }, [order]);
 
   const showAlert = (message, type) => {
     setAlertMessage(message);
@@ -109,6 +144,10 @@ const SaleList = () => {
 
   const handleEditClick = (id) => {
     router.push(`/apps/commercial/sale/${id}/update`);
+  };
+
+  const handleViewClick = (id) => {
+    router.push(`/apps/commercial/sale/${id}/view`);
   };
 
   const handleDeleteClick = (id) => {
@@ -146,70 +185,7 @@ const SaleList = () => {
   };
 
   const handleSendContract = async (sale) => {
-    setIsSendingContract(true);
-    try {
-      const documentData = {
-        'Company Name': 'Henrique Marques',
-        Address: 'Endereço Fictício',
-        Phone: '91984751123',
-      };
-      const path = `/Contratos/Contrato-${sale.contract_number}.pdf`;
-
-      const documentoCriado = await clickSignService.v1.createDocumentModel(documentData, path);
-
-      if (!documentoCriado || !documentoCriado.document || !documentoCriado.document.key) {
-        throw new Error('Falha na criação do documento');
-      }
-
-      const documentKey = documentoCriado.document.key;
-      console.log('Documento criado com sucesso:', documentKey);
-
-      const signer = await clickSignService.v1.createSigner(
-        '70007103220',
-        '30/01/1995',
-        '91984751123',
-        'hmdev132@gmail.com',
-        'Henrique Marques',
-        'whatsapp',
-        { selfie_enabled: false, handwritten_enabled: false },
-      );
-      console.log('Signatário criado:', signer);
-
-      const signerKey = signer.signer.key;
-
-      const listaAdicionada = await clickSignService.AddSignerDocument(
-        signerKey,
-        documentKey,
-        'contractor',
-        'Por favor, assine o contrato.',
-      );
-      console.log('Signatário adicionado ao documento:', listaAdicionada);
-
-      const emailNotificacao = await clickSignService.notification.email(
-        listaAdicionada.list.request_signature_key,
-        'Por favor, assine o contrato.',
-      );
-      console.log('Notificação por e-mail enviada:', emailNotificacao);
-
-      const whatsappNotificacao = await clickSignService.notification.whatsapp(
-        listaAdicionada.list.request_signature_key,
-      );
-      console.log('Notificação por WhatsApp enviada:', whatsappNotificacao);
-
-      showAlert('Contrato enviado com sucesso', 'success');
-    } catch (error) {
-      if (error.response && error.response.data) {
-        console.error(
-          'Erro ao processar o contrato:',
-          JSON.stringify(error.response.data, null, 2),
-        );
-      } else {
-        console.error('Erro ao processar o contrato:', error.message);
-      }
-      showAlert('Erro ao processar o contrato', 'error');
-    } finally {
-      setIsSendingContract(false);
-    }
+    sendContract(sale);
   };
 
   const handleMenuClick = (event, id) => {
@@ -224,8 +200,10 @@ const SaleList = () => {
 
   return (
     <PageContainer title="Vendas" description="Lista de Vendas">
+      <Breadcrumb title="Vendas" items={BCrumb} />
       <BlankCard>
         <CardContent>
+          <DashboardCards />
           <Typography variant="h6" gutterBottom>
             Lista de Vendas
           </Typography>
@@ -242,26 +220,113 @@ const SaleList = () => {
           ) : error ? (
             <Typography color="error">{error}</Typography>
           ) : (
-            <TableContainer component={Paper} elevation={3}>
-              <Table aria-label="sales table">
+            <TableContainer component={Paper} elevation={10} sx={{ overflowX: 'auto' }}>
+              <Table stickyHeader aria-label="sales table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell>Nome contratante</TableCell>
-                    <TableCell>Número do Contrato</TableCell>
-                    <TableCell>Valor Total (R$)</TableCell>
-                    <TableCell>Venda</TableCell>
-                    <TableCell>Data de Assinatura</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Data de Conclusão</TableCell>
-                    <TableCell>Unidade</TableCell>
-                    <TableCell>Ações</TableCell>
+                    <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                      <CustomCheckbox
+                        checked={selectedSales.length === salesList.length}
+                        onChange={(event) => {
+                          if (event.target.checked) {
+                            setSelectedSales(salesList.map((item) => item.id));
+                          } else {
+                            setSelectedSales([]);
+                          }
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell sx={{ whiteSpace: 'nowrap' }}>Nome contratante</TableCell>
+                    <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        Número do Contrato
+                        <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                          <ArrowDropUpIcon
+                            sx={{ width: 20, height: 20, cursor: 'pointer' }}
+                            onClick={() => setOrder('contract_number')}
+                          />
+                          <ArrowDropDown
+                            sx={{ width: 20, height: 20, cursor: 'pointer' }}
+                            onClick={() => setOrder('-contract_number')}
+                          />
+                        </Box>
+                      </Box>
+                    </TableCell>
+                    <TableCell sx={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
+                      <Box>Valor Total (R$)</Box>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                        <ArrowDropUpIcon
+                          sx={{ width: 20, height: 20, cursor: 'pointer' }}
+                          onClick={() => setOrder('total_value')}
+                        />
+                        <ArrowDropDown
+                          sx={{ width: 20, height: 20, cursor: 'pointer' }}
+                          onClick={() => setOrder('-total_value')}
+                        />
+                      </Box>
+                    </TableCell>
+                    <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        Venda
+                        <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                          <ArrowDropUpIcon
+                            sx={{ width: 20, height: 20, cursor: 'pointer' }}
+                            onClick={() => setOrder('is_sale')}
+                          />
+                          <ArrowDropDown
+                            sx={{ width: 20, height: 20, cursor: 'pointer' }}
+                            onClick={() => setOrder('-is_sale')}
+                          />
+                        </Box>
+                      </Box>
+                    </TableCell>
+                    <TableCell sx={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>Status</Box>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                        <ArrowDropUpIcon
+                          sx={{ width: 20, height: 20, cursor: 'pointer' }}
+                          onClick={() => setOrder('status')}
+                        />
+                        <ArrowDropDown
+                          sx={{ width: 20, height: 20, cursor: 'pointer' }}
+                          onClick={() => setOrder('-status')}
+                        />
+                      </Box>
+                    </TableCell>
+                    <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        Data de Conclusão
+                        <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                          <ArrowDropUpIcon
+                            sx={{ width: 20, height: 20, cursor: 'pointer' }}
+                            onClick={() => setOrder('document_completion_date')}
+                          />
+                          <ArrowDropDown
+                            sx={{ width: 20, height: 20, cursor: 'pointer' }}
+                            onClick={() => setOrder('-document_completion_date')}
+                          />
+                        </Box>
+                      </Box>
+                    </TableCell>
+                    <TableCell sx={{ whiteSpace: 'nowrap' }}>Unidade</TableCell>
+                    <TableCell sx={{ whiteSpace: 'nowrap' }}>Ações</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {salesList.map((item) => (
                     <TableRow key={item.id} hover>
-                      <TableCell>{item.id}</TableCell>
+                      <TableCell>
+                        <CustomCheckbox
+                          checked={selectedSales.includes(item.id)}
+                          onChange={(event) => {
+                            if (event.target.checked) {
+                              setSelectedSales([...selectedSales, item.id]);
+                            } else {
+                              setSelectedSales(selectedSales.filter((id) => id !== item.id));
+                            }
+                          }}
+                        />
+                      </TableCell>
                       <TableCell>{item.customer.complete_name}</TableCell>
                       <TableCell>{item.contract_number}</TableCell>
                       <TableCell>
@@ -271,7 +336,6 @@ const SaleList = () => {
                         })}
                       </TableCell>
                       <TableCell>{item.is_sale ? 'Sim' : 'Não'}</TableCell>
-                      <TableCell>{new Date(item.signature_date).toLocaleDateString()}</TableCell>
                       <TableCell>{getStatusChip(item.status)}</TableCell>
                       <TableCell>
                         {new Date(item.document_completion_date).toLocaleDateString()}
@@ -359,6 +423,40 @@ const SaleList = () => {
           </Button>
           <Button onClick={handleConfirmDelete} color="error">
             Excluir
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={errorContract !== null}
+        onClose={() => setErrorContract(null)}
+      >
+        <DialogTitle>Error ao enviar contrato</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {errorContract}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setErrorContract(null)} color="success">
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={successContract !== null}
+        onClose={() => setSuccessContract(null)}
+      >
+        <DialogTitle>Contrato</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            O contrato foi enviado com sucesso.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSuccessContract(null)} color="success">
+            Ok
           </Button>
         </DialogActions>
       </Dialog>

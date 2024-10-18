@@ -1,12 +1,5 @@
 'use client';
-import { 
-  Grid, 
-  Button, 
-  Stack, 
-  FormControlLabel,
-  Tabs,
-  Tab 
-} from '@mui/material';
+import { Grid, Button, Stack, FormControlLabel, Tabs, Tab } from '@mui/material';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
@@ -24,12 +17,20 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import FormDateTime from '@/app/components/forms/form-custom/FormDateTime';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import DocumentAttachments from './attachments';
+import { useSelector } from 'react-redux';
 
 import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
 import { useState } from 'react';
 
 export default function FormCustom() {
+  const userPermissions = useSelector((state) => state.user.permissions);
+
+  const hasPermission = (permissions) => {
+    if (!permissions) return true;
+    return permissions.some((permission) => userPermissions.includes(permission));
+  };
+
   const params = useParams();
   const { id } = params;
 
@@ -37,18 +38,9 @@ export default function FormCustom() {
   const context_type_sale = 44;
 
   const { loading, error, saleData } = useSale(id);
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success
-  } = useSaleForm(saleData, id);
+  const { formData, handleChange, handleSave, formErrors, success } = useSaleForm(saleData, id);
 
-  const {
-    formattedValue,
-    handleValueChange,
-  } = useCurrencyFormatter(formData.totalValue);
+  const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.totalValue);
 
   const statusOptions = [
     { value: 'F', label: 'Finalizado' },
@@ -69,8 +61,12 @@ export default function FormCustom() {
   return (
     <PageContainer title="Edição de venda" description="Editor de Vendas">
       <Breadcrumb title="Editar venda" />
-      {success && <Alert severity="success" sx={{ marginBottom: 3 }}>A venda foi atualizada com sucesso!</Alert>}
-      
+      {success && (
+        <Alert severity="success" sx={{ marginBottom: 3 }}>
+          A venda foi atualizada com sucesso!
+        </Alert>
+      )}
+
       <ParentCard title="Venda">
         <Tabs value={value} onChange={handleChangeTab}>
           <Tab label="Venda" />
@@ -81,58 +77,71 @@ export default function FormCustom() {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={12} lg={4}>
               <CustomFormLabel htmlFor="leads">Leads</CustomFormLabel>
-              <AutoCompleteLead 
-                onChange={(id) => handleChange('leadId', id)} 
-                value={formData.leadId} 
+              <AutoCompleteLead
+                onChange={(id) => handleChange('leadId', id)}
+                value={formData.leadId}
                 {...(formErrors.lead_id && { error: true, helperText: formErrors.lead_id })}
               />
             </Grid>
             <Grid item xs={12} sm={12} lg={4}>
               <CustomFormLabel htmlFor="name">Cliente</CustomFormLabel>
-              <AutoCompleteUser 
-                onChange={(id) => handleChange('customerId', id)} 
-                value={formData.customerId} 
+              <AutoCompleteUser
+                onChange={(id) => handleChange('customerId', id)}
+                value={formData.customerId}
                 {...(formErrors.customer_id && { error: true, helperText: formErrors.customer_id })}
               />
             </Grid>
-            <Grid item xs={12} sm={12} lg={4}>
-              <CustomFormLabel htmlFor="branch">Franquia</CustomFormLabel>
-              <AutoCompleteBranch 
-                onChange={(id) => handleChange('branchId', id)}
-                value={formData.branchId} 
-                {...(formErrors.branch_id && { error: true, helperText: formErrors.branch_id })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} lg={4}>
-              <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
-              <AutoCompleteUser 
-                onChange={(id) => handleChange('sellerId', id)} 
-                value={formData.sellerId} 
-                {...(formErrors.seller_id && { error: true, helperText: formErrors.seller_id })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} lg={4}>
-              <CustomFormLabel htmlFor="name">Supervisor de Vendas</CustomFormLabel>
-              <AutoCompleteUser 
-                onChange={(id) => handleChange('salesSupervisorId', id)} 
-                value={formData.salesSupervisorId} 
-                {...(formErrors.sales_supervisor_id && { error: true, helperText: formErrors.sales_supervisor_id })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} lg={4}>
-              <CustomFormLabel htmlFor="name">Gerente de Vendas</CustomFormLabel>
-              <AutoCompleteUser 
-                onChange={(id) => handleChange('salesManagerId', id)} 
-                value={formData.salesManagerId} 
-                {...(formErrors.sales_manager_id && { error: true, helperText: formErrors.sales_manager_id })}
-              />
-            </Grid>
+              <Grid item xs={12} sm={12} lg={4}>
+                <CustomFormLabel htmlFor="branch">Franquia</CustomFormLabel>
+                <AutoCompleteBranch
+                  onChange={(id) => handleChange('branchId', id)}
+                  disabled={!hasPermission(['accounts.can_change_branch_field'])}
+                  value={formData.branchId}
+                  {...(formErrors.branch_id && { error: true, helperText: formErrors.branch_id })}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} lg={4}>
+                <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
+                <AutoCompleteUser
+                  onChange={(id) => handleChange('sellerId', id)}
+                  value={formData.sellerId}
+                  disabled={!hasPermission(['accounts.can_change_seller_field'])}
+                  {...(formErrors.seller_id && { error: true, helperText: formErrors.seller_id })}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} lg={4}>
+                <CustomFormLabel htmlFor="name">Supervisor de Vendas</CustomFormLabel>
+                <AutoCompleteUser
+                  onChange={(id) => handleChange('salesSupervisorId', id)}
+                  value={formData.salesSupervisorId}
+                  disabled={!hasPermission(['accounts.can_change_supervisor_field'])}
+                  {...(formErrors.sales_supervisor_id && {
+                    error: true,
+                    helperText: formErrors.sales_supervisor_id,
+                  })}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} lg={4}>
+                <CustomFormLabel htmlFor="name">Gerente de Vendas</CustomFormLabel>
+                <AutoCompleteUser
+                  onChange={(id) => handleChange('salesManagerId', id)}
+                  value={formData.salesManagerId}
+                  disabled={!hasPermission(['accounts.can_change_usermanger_field'])}
+                  {...(formErrors.sales_manager_id && {
+                    error: true,
+                    helperText: formErrors.sales_manager_id,
+                  })}
+                />
+              </Grid>
             <Grid item xs={12} sm={12} lg={4}>
               <CustomFormLabel htmlFor="branch">Campanha de Marketing</CustomFormLabel>
-              <AutoCompleteCampaign 
+              <AutoCompleteCampaign
                 onChange={(id) => handleChange('marketingCampaignId', id)}
-                value={formData.marketingCampaignId} 
-                {...(formErrors.marketing_campaign_id && { error: true, helperText: formErrors.marketing_campaign_id })}
+                value={formData.marketingCampaignId}
+                {...(formErrors.marketing_campaign_id && {
+                  error: true,
+                  helperText: formErrors.marketing_campaign_id,
+                })}
               />
             </Grid>
             <Grid item xs={12} sm={12} lg={4}>
@@ -161,16 +170,19 @@ export default function FormCustom() {
                 name="document_completion_date"
                 value={formData.documentCompletionDate}
                 onChange={(newValue) => handleChange('documentCompletionDate', newValue)}
-                {...(formErrors.document_completion_date && { error: true, helperText: formErrors.document_completion_date })}
+                {...(formErrors.document_completion_date && {
+                  error: true,
+                  helperText: formErrors.document_completion_date,
+                })}
               />
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
               <CustomFormLabel>Venda</CustomFormLabel>
               <FormControlLabel
                 control={
-                  <CustomSwitch 
-                    checked={formData.isSale} 
-                    onChange={(e) => handleChange('isSale', e.target.checked)} 
+                  <CustomSwitch
+                    checked={formData.isSale}
+                    onChange={(e) => handleChange('isSale', e.target.checked)}
                   />
                 }
                 label={formData.isSale ? 'Pré-Venda' : 'Venda'}
@@ -184,9 +196,7 @@ export default function FormCustom() {
           </Grid>
         )}
 
-        {value === 1 && (
-          <DocumentAttachments objectId={id_sale} contentType={context_type_sale} />
-        )}
+        {value === 1 && <DocumentAttachments objectId={id_sale} contentType={context_type_sale} />}
       </ParentCard>
     </PageContainer>
   );

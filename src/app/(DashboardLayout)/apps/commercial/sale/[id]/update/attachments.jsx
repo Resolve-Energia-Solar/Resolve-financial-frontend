@@ -27,7 +27,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import useAttachmentForm from '@/hooks/attachments/useAttachmentsForm';
 import attachmentService from '@/services/attachmentService';
-import { Link } from '@mui/material'; 
+import { Link } from '@mui/material';
 
 export default function FileUpload({ objectId, contentType }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -35,7 +35,7 @@ export default function FileUpload({ objectId, contentType }) {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [fileToDelete, setFileToDelete] = useState(null);
   const [attachments, setAttachments] = useState([]);
-  const [loading, setLoading] = useState(false); // Adicionado estado de loading
+  const [loading, setLoading] = useState(false);
 
   const { formData, handleChange, handleSave, formErrors, success } = useAttachmentForm(
     null,
@@ -223,7 +223,12 @@ export default function FileUpload({ objectId, contentType }) {
               </List>
             )}
 
-            <Button onClick={handleSendFile} sx={{ marginTop: 2 }} variant="contained" disabled={loading}>
+            <Button
+              onClick={handleSendFile}
+              sx={{ marginTop: 2 }}
+              variant="contained"
+              disabled={loading}
+            >
               {loading ? <CircularProgress size={24} /> : 'Enviar'}
             </Button>
             <Button
@@ -238,10 +243,7 @@ export default function FileUpload({ objectId, contentType }) {
         </Modal>
 
         {/* Dialog de confirmação para exclusão */}
-        <Dialog
-          open={openDeleteDialog}
-          onClose={() => setOpenDeleteDialog(false)}
-        >
+        <Dialog open={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)}>
           <DialogTitle>Confirmar Exclusão</DialogTitle>
           <DialogContent>
             <DialogContentText>
@@ -250,47 +252,54 @@ export default function FileUpload({ objectId, contentType }) {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setOpenDeleteDialog(false)}>Cancelar</Button>
-            <Button onClick={handleConfirmDelete} color="primary">Excluir</Button>
+            <Button onClick={handleConfirmDelete} color="primary">
+              Excluir
+            </Button>
           </DialogActions>
         </Dialog>
 
         <Grid item sm={12} lg={6}>
-  <Typography variant="h6">Anexos</Typography>
-  <List>
-    {Array.isArray(attachments) && attachments.length > 0 ? (
-      attachments.map((file, index) => (
-        <ListItem key={index} sx={{ borderBottom: '1px dashed #ccc' }}>
-          <Box sx={{ width: '100%' }}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-              <Stack direction="row" alignItems="center">
-                {getFileIcon(file.file)}
-                <Link
-                  href={file.file}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{ marginLeft: 2 }}
-                >
-                  {file.description}
-                </Link>
-              </Stack>
-              <ListItemSecondaryAction>
-                <IconButton edge="end" aria-label="delete" onClick={() => {
-                  setFileToDelete(file);
-                  setOpenDeleteDialog(true);
-                }}>
-                  <DeleteIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </Stack>
-          </Box>
-        </ListItem>
-      ))
-    ) : (
-      <Typography variant="body2" color="textSecondary">Nenhum arquivo anexado.</Typography>
-    )}
-  </List>
-</Grid>
-
+          <Typography variant="h6">Anexos</Typography>
+          <List>
+            {Array.isArray(attachments) && attachments.length > 0 ? (
+              attachments.map((file, index) => (
+                <ListItem key={index} sx={{ borderBottom: '1px dashed #ccc' }}>
+                  <Box sx={{ width: '100%' }}>
+                    <Stack direction="row" alignItems="center" justifyContent="space-between">
+                      <Stack direction="row" alignItems="center">
+                        {getFileIcon(file.file)}
+                        <Link
+                          href={file.file}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{ marginLeft: 2 }}
+                        >
+                          {file.description}
+                        </Link>
+                      </Stack>
+                      <ListItemSecondaryAction>
+                        <IconButton
+                          edge="end"
+                          aria-label="delete"
+                          onClick={() => {
+                            setFileToDelete(file);
+                            setOpenDeleteDialog(true);
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </Stack>
+                  </Box>
+                </ListItem>
+              ))
+            ) : (
+              <Typography variant="body2" color="textSecondary">
+                Nenhum arquivo anexado.
+              </Typography>
+            )}
+          </List>
+        </Grid>
       </Grid>
     </Box>
   );
