@@ -54,6 +54,7 @@ import useSendContract from '@/hooks/clicksign/useClickSign';
 import DashboardCards from '@/app/components/apps/comercial/sale/kpis/DashboardCards';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import userService from '@/services/userService';
+import { IconEyeFilled, IconEyeglass } from '@tabler/icons-react';
 
 const getStatusChip = (status) => {
   switch (status) {
@@ -338,7 +339,7 @@ const SaleList = () => {
                       <TableCell>{item.is_sale ? 'Sim' : 'Não'}</TableCell>
                       <TableCell>{getStatusChip(item.status)}</TableCell>
                       <TableCell>
-                        {new Date(item.document_completion_date).toLocaleDateString()}
+                        { item.document_completion_date && new Date(item.document_completion_date).toLocaleDateString()}
                       </TableCell>
                       <TableCell>{item.branch.name}</TableCell>
                       <TableCell>
@@ -371,6 +372,15 @@ const SaleList = () => {
                           >
                             <EditIcon fontSize="small" sx={{ mr: 1 }} />
                             Editar
+                          </MenuItem>
+                          <MenuItem
+                            onClick={() => {
+                              handleViewClick(item.id);
+                              handleMenuClose();
+                            }}
+                          >
+                            <IconEyeglass fontSize="small" sx={{ mr: 1 }} />
+                            Visualizar
                           </MenuItem>
                           <MenuItem
                             onClick={() => {

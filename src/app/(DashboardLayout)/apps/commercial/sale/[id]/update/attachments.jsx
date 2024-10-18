@@ -100,8 +100,8 @@ export default function FileUpload({ objectId, contentType }) {
 
   const resetForm = () => {
     setSelectedFile(null);
-    handleChange('file', null); // Limpar o campo de arquivo
-    handleChange('description', ''); // Limpar o campo de descrição
+    handleChange('file', null);
+    handleChange('description', '');
   };
 
   useEffect(() => {
@@ -110,7 +110,7 @@ export default function FileUpload({ objectId, contentType }) {
 
       handleCloseModal();
       const fetchAttachments = async () => {
-        const updatedAttachments = await attachmentService.getAttachments(objectId);
+        const updatedAttachments = await attachmentService.getAttachmentByIdSale(objectId);
         setAttachments(updatedAttachments.results);
       };
       fetchAttachments();
@@ -119,7 +119,7 @@ export default function FileUpload({ objectId, contentType }) {
 
   useEffect(() => {
     const fetchAttachments = async () => {
-      const updatedAttachments = await attachmentService.getAttachments(objectId);
+      const updatedAttachments = await attachmentService.getAttachmentByIdSale(objectId);
       setAttachments(updatedAttachments.results);
     };
     fetchAttachments();
