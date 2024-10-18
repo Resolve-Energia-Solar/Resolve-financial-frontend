@@ -65,6 +65,7 @@ import {
   IconTools,
   IconCircuitSwitchOpen,
   IconMailForward,
+  IconHomeQuestion,
 } from '@tabler/icons-react';
 
 const Menuitems = [
@@ -119,6 +120,12 @@ const Menuitems = [
     title: 'Serviços',
     icon: IconBoxMultiple,
     href: '/apps/inspections/service-catalog',
+  },
+  {
+    id: uniqueId(),
+    title: 'Tipos de Telhado',
+    icon: IconHomeQuestion,
+    href: '/apps/inspections/roof-type',
   },
   {
     id: uniqueId(),

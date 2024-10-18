@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
-import categoryService from '@/services/categoryService';
+import roofTypeService from '@/services/roofTypeService';
 
-const useCategoryForm = (initialData, id) => {
+const useRoofTypeForm = (initialData, id) => {
   const [formData, setFormData] = useState({
-    main_category: null,
     name: '',
-    squads: [],
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -14,9 +12,7 @@ const useCategoryForm = (initialData, id) => {
   useEffect(() => {
     if (initialData) {
       setFormData({
-        main_category: initialData.main_category || null,
         name: initialData.name || '',
-        squads: initialData.squads?.map((item) => item.id) || [],
       });
     }
   }, [initialData]);
@@ -27,23 +23,21 @@ const useCategoryForm = (initialData, id) => {
 
   const handleSave = async () => {
     const dataToSend = {
-      main_category: formData.main_category,
       name: formData.name,
-      squads_id: formData.squads,
     };
 
     try {
       if (id) {
-        await categoryService.updateCategory(id, dataToSend);
+        await roofTypeService.patchRoofType(id, dataToSend);
       } else {
-        await categoryService.createCategory(dataToSend);
+        await roofTypeService.createRoofType(dataToSend);
       }
+
       setFormErrors({});
       setSuccess(true);
     } catch (err) {
       setSuccess(false);
-      setFormErrors(err.response?.data || {});
-      console.error(err.response?.data || err);
+      setFormErrors(err.response.data || {});
     }
   };
 
@@ -56,4 +50,4 @@ const useCategoryForm = (initialData, id) => {
   };
 };
 
-export default useCategoryForm;
+export default useRoofTypeForm;

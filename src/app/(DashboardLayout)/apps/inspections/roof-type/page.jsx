@@ -62,11 +62,11 @@ const RoofTypeList = () => {
   }, []);
 
   const handleCreateClick = () => {
-    //router.push('/dashboard/inspections/roof-type/create');
+    router.push('/apps/inspections/roof-type/create');
   };
 
   const handleEditClick = (id) => {
-    //router.push(`/dashboard/inspections/roof-type/${id}/update`);
+    router.push(`/apps/inspections/roof-type/${id}/update`);
   };
 
   const handleDeleteClick = (id) => {
