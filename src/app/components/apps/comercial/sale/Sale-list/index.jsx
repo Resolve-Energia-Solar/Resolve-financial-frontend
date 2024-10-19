@@ -11,7 +11,6 @@ import {
   Typography,
   IconButton,
   Tooltip,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -23,7 +22,6 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
-  Skeleton,
   Backdrop,
 } from '@mui/material';
 import {
@@ -36,7 +34,8 @@ import {
   Description as DescriptionIcon,
   Send as SendIcon,
   MoreVert as MoreVertIcon,
-  ArrowDropDown,
+  ArrowDropDown as ArrowDropDownIcon,
+  ArrowDropUp,
 } from '@mui/icons-material';
 
 import { useRouter } from 'next/navigation';
@@ -76,6 +75,7 @@ const SaleList = () => {
   const [alertOpen, setAlertOpen] = useState(false);
 
   const [order, setOrder] = useState('asc');
+  const [orderDirection, setOrderDirection] = useState('asc'); // Estado para direção da ordenação
 
   console.log('order:', order);
 
@@ -88,7 +88,10 @@ const SaleList = () => {
   useEffect(() => {
     const fetchSales = async () => {
       try {
-        const data = await saleService.getSales(order);
+        setLoading(true);
+        const data = await saleService.getSales(
+          order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : null,
+        );
         setSalesList(data.results);
       } catch (err) {
         setError('Erro ao carregar Vendas');
@@ -99,7 +102,7 @@ const SaleList = () => {
     };
 
     fetchSales();
-  }, [order]);
+  }, [order, orderDirection]);
 
   const showAlert = (message, type) => {
     setAlertMessage(message);
@@ -171,6 +174,15 @@ const SaleList = () => {
     setMenuOpenRowId(null);
   };
 
+  const handleSort = (field) => {
+    if (order === field) {
+      setOrderDirection(orderDirection === 'asc' ? 'desc' : 'asc'); 
+    } else {
+      setOrder(field);
+      setOrderDirection('asc');
+    }
+  };
+
   return (
     <Box>
       <DashboardCards />
@@ -190,7 +202,7 @@ const SaleList = () => {
         <Table stickyHeader aria-label="sales table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ whiteSpace: 'nowrap' }}>
+              <TableCell>
                 <CustomCheckbox
                   checked={selectedSales.length === salesList.length}
                   onChange={(event) => {
@@ -202,80 +214,74 @@ const SaleList = () => {
                   }}
                 />
               </TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap' }}>Nome contratante</TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap' }}>
+              <TableCell>Nome contratante</TableCell>
+              <TableCell
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap'  }}
+                onClick={() => handleSort('contract_number')}
+              >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   Número do Contrato
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    <ArrowDropUpIcon
-                      sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                      onClick={() => setOrder('contract_number')}
-                    />
-                    <ArrowDropDown
-                      sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                      onClick={() => setOrder('-contract_number')}
-                    />
+                    {order === 'contract_number' &&
+                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                   </Box>
                 </Box>
               </TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
-                <Box>Valor Total (R$)</Box>
-                <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                  <ArrowDropUpIcon
-                    sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                    onClick={() => setOrder('total_value')}
-                  />
-                  <ArrowDropDown
-                    sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                    onClick={() => setOrder('-total_value')}
-                  />
-                </Box>
-              </TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                
+              <TableCell
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap'  }}
+                onClick={() => handleSort('total_value')}
+              >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  Venda
+                Valor Total (R$)
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    <ArrowDropUpIcon
-                      sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                      onClick={() => setOrder('is_sale')}
-                    />
-                    <ArrowDropDown
-                      sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                      onClick={() => setOrder('-is_sale')}
-                    />
+                    {order === 'total_value' &&
+                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                   </Box>
                 </Box>
               </TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>Status</Box>
-                <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                  <ArrowDropUpIcon
-                    sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                    onClick={() => setOrder('status')}
-                  />
-                  <ArrowDropDown
-                    sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                    onClick={() => setOrder('-status')}
-                  />
-                </Box>
-              </TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap' }}>
+
+              <TableCell
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap'  }}
+                onClick={() => handleSort('is_sale')}
+              >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  Data de Conclusão
+                Venda
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    <ArrowDropUpIcon
-                      sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                      onClick={() => setOrder('document_completion_date')}
-                    />
-                    <ArrowDropDown
-                      sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                      onClick={() => setOrder('-document_completion_date')}
-                    />
+                    {order === 'is_sale' &&
+                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                   </Box>
                 </Box>
               </TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap' }}>Unidade</TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap' }}>Ações</TableCell>
+
+              <TableCell
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap'  }}
+                onClick={() => handleSort('status')}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                Status
+                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                    {order === 'status' &&
+                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                  </Box>
+                </Box>
+              </TableCell>
+
+              <TableCell
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap'  }}
+                onClick={() => handleSort('document_completion_date')}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                Data de Conclusão
+                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                    {order === 'document_completion_date' &&
+                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                  </Box>
+                </Box>
+              </TableCell>
+
+              <TableCell>Unidade</TableCell>
+              <TableCell>Ações</TableCell>
             </TableRow>
           </TableHead>
           {loading ? (
