@@ -23,6 +23,7 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
+  Skeleton,
   Backdrop,
 } from '@mui/material';
 import {
@@ -50,21 +51,7 @@ import useSendContract from '@/hooks/clicksign/useClickSign';
 import DashboardCards from '@/app/components/apps/comercial/sale/components/kpis/DashboardCards';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import { IconEyeglass } from '@tabler/icons-react';
-
-const getStatusChip = (status) => {
-  switch (status) {
-    case 'F':
-      return <Chip label="Finalizado" color="success" icon={<CheckCircleIcon />} />;
-    case 'EA':
-      return <Chip label="Em Andamento" color="primary" icon={<HourglassEmptyIcon />} />;
-    case 'C':
-      return <Chip label="Cancelado" color="error" icon={<CancelIcon />} />;
-    case 'D':
-      return <Chip label="Distrato" color="error" icon={<CancelIcon />} />;
-    default:
-      return <Chip label={status} />;
-  }
-};
+import TableSkeleton from '../components/TableSkeleton';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -198,103 +185,104 @@ const SaleList = () => {
       >
         Adicionar Venda
       </Button>
-      {loading ? (
-        <Typography>Carregando...</Typography>
-      ) : error ? (
-        <Typography color="error">{error}</Typography>
-      ) : (
-        <TableContainer component={Paper} elevation={10} sx={{ overflowX: 'auto' }}>
-          <Table stickyHeader aria-label="sales table">
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>
-                  <CustomCheckbox
-                    checked={selectedSales.length === salesList.length}
-                    onChange={(event) => {
-                      if (event.target.checked) {
-                        setSelectedSales(salesList.map((item) => item.id));
-                      } else {
-                        setSelectedSales([]);
-                      }
-                    }}
+
+      <TableContainer component={Paper} elevation={10} sx={{ overflowX: 'auto' }}>
+        <Table stickyHeader aria-label="sales table">
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                <CustomCheckbox
+                  checked={selectedSales.length === salesList.length}
+                  onChange={(event) => {
+                    if (event.target.checked) {
+                      setSelectedSales(salesList.map((item) => item.id));
+                    } else {
+                      setSelectedSales([]);
+                    }
+                  }}
+                />
+              </TableCell>
+              <TableCell sx={{ whiteSpace: 'nowrap' }}>Nome contratante</TableCell>
+              <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  Número do Contrato
+                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                    <ArrowDropUpIcon
+                      sx={{ width: 20, height: 20, cursor: 'pointer' }}
+                      onClick={() => setOrder('contract_number')}
+                    />
+                    <ArrowDropDown
+                      sx={{ width: 20, height: 20, cursor: 'pointer' }}
+                      onClick={() => setOrder('-contract_number')}
+                    />
+                  </Box>
+                </Box>
+              </TableCell>
+              <TableCell sx={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
+                <Box>Valor Total (R$)</Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                  <ArrowDropUpIcon
+                    sx={{ width: 20, height: 20, cursor: 'pointer' }}
+                    onClick={() => setOrder('total_value')}
                   />
-                </TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>Nome contratante</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    Número do Contrato
-                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                      <ArrowDropUpIcon
-                        sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                        onClick={() => setOrder('contract_number')}
-                      />
-                      <ArrowDropDown
-                        sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                        onClick={() => setOrder('-contract_number')}
-                      />
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
-                  <Box>Valor Total (R$)</Box>
+                  <ArrowDropDown
+                    sx={{ width: 20, height: 20, cursor: 'pointer' }}
+                    onClick={() => setOrder('-total_value')}
+                  />
+                </Box>
+              </TableCell>
+              <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  Venda
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
                     <ArrowDropUpIcon
                       sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                      onClick={() => setOrder('total_value')}
+                      onClick={() => setOrder('is_sale')}
                     />
                     <ArrowDropDown
                       sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                      onClick={() => setOrder('-total_value')}
+                      onClick={() => setOrder('-is_sale')}
                     />
                   </Box>
-                </TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    Venda
-                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                      <ArrowDropUpIcon
-                        sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                        onClick={() => setOrder('is_sale')}
-                      />
-                      <ArrowDropDown
-                        sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                        onClick={() => setOrder('-is_sale')}
-                      />
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>Status</Box>
+                </Box>
+              </TableCell>
+              <TableCell sx={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>Status</Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                  <ArrowDropUpIcon
+                    sx={{ width: 20, height: 20, cursor: 'pointer' }}
+                    onClick={() => setOrder('status')}
+                  />
+                  <ArrowDropDown
+                    sx={{ width: 20, height: 20, cursor: 'pointer' }}
+                    onClick={() => setOrder('-status')}
+                  />
+                </Box>
+              </TableCell>
+              <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  Data de Conclusão
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
                     <ArrowDropUpIcon
                       sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                      onClick={() => setOrder('status')}
+                      onClick={() => setOrder('document_completion_date')}
                     />
                     <ArrowDropDown
                       sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                      onClick={() => setOrder('-status')}
+                      onClick={() => setOrder('-document_completion_date')}
                     />
                   </Box>
-                </TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    Data de Conclusão
-                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                      <ArrowDropUpIcon
-                        sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                        onClick={() => setOrder('document_completion_date')}
-                      />
-                      <ArrowDropDown
-                        sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                        onClick={() => setOrder('-document_completion_date')}
-                      />
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>Unidade</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>Ações</TableCell>
-              </TableRow>
-            </TableHead>
+                </Box>
+              </TableCell>
+              <TableCell sx={{ whiteSpace: 'nowrap' }}>Unidade</TableCell>
+              <TableCell sx={{ whiteSpace: 'nowrap' }}>Ações</TableCell>
+            </TableRow>
+          </TableHead>
+          {loading ? (
+            <TableSkeleton rows={5} columns={9} />
+          ) : error ? (
+            <Typography color="error">{error}</Typography>
+          ) : (
             <TableBody>
               {salesList.map((item) => (
                 <TableRow key={item.id} hover>
@@ -396,9 +384,9 @@ const SaleList = () => {
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+          )}
+        </Table>
+      </TableContainer>
 
       <Dialog open={open} onClose={handleCloseModal}>
         <DialogTitle>Confirmar Exclusão</DialogTitle>
