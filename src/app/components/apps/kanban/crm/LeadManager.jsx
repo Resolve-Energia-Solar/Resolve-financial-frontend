@@ -8,11 +8,8 @@ import {
   DialogActions,
   Button,
   Divider,
-  Menu,
-  MenuItem,
   Alert,
   Grid,
-  Typography,
   Tabs,
   Tab,
 } from '@mui/material';
@@ -49,16 +46,16 @@ const LeadManager = ({
     snackbarOpen,
     setSnackbarOpen,
     handleUpdateLead,
-    handleDeleteLead,
     onDragEnd,
     handleLeadClick,
     setTabIndex,
     tabIndex,
-    anchorEl,
-    setAnchorEl,
     sellers,
     sdrs,
     addresses,
+    designers,
+    managers,
+    supervisors,
   } = useLeadManager(leads, statuses, {
     onUpdateLead,
     onAddLead,
@@ -90,7 +87,6 @@ const LeadManager = ({
                     }}
                   >
                     <ColumnWithActions
-                      key={status.id}
                       columnTitle={status.name}
                       statusId={status.id}
                       boardId={board}
@@ -144,19 +140,23 @@ const LeadManager = ({
                 <Grid item xs={12} md={8}>
                   <Tabs value={tabIndex} onChange={(_e, newValue) => setTabIndex(newValue)}>
                     <Tab label="Lead" />
+                    <Tab label="Vistorias" />
                     <Tab label="Vendas" />
                     <Tab label="Projetos" />
-                    <Tab label="Atividades" />
                   </Tabs>
 
                   <Box mt={2}>
                     {tabIndex === 0 && <LeadDetails selectedLead={selectedLead} />}
-                    {tabIndex === 1 && <SaleManager />}
-                    {tabIndex === 2 && (
-                      <ProjectManager/>
-                    )}
+                    {tabIndex === 1 && 'vistorias ...'}
+                    {tabIndex === 2 && <SaleManager />}
                     {tabIndex === 3 && (
-                      <Typography variant="body1">Conteúdo das Atividades...</Typography>
+                      <ProjectManager
+                        designers={designers}
+                        managers={managers}
+                        sellers={sellers}
+                        supervisors={supervisors}
+                        addresses={addresses.results}
+                      />
                     )}
                   </Box>
                 </Grid>
@@ -179,7 +179,27 @@ const LeadManager = ({
                 {tabIndex === 1 && (
                   <>
                     <Button onClick={handleUpdateSale} color="primary" variant="contained">
+                      Salvar Vistoria
+                    </Button>
+                    <Button onClick={() => setEditMode(false)} color="secondary" variant="outlined">
+                      Cancelar
+                    </Button>
+                  </>
+                )}
+                {tabIndex === 2 && (
+                  <>
+                    <Button onClick={handleUpdateSale} color="primary" variant="contained">
                       Salvar Venda
+                    </Button>
+                    <Button onClick={() => setEditMode(false)} color="secondary" variant="outlined">
+                      Cancelar
+                    </Button>
+                  </>
+                )}
+                {tabIndex === 3 && (
+                  <>
+                    <Button onClick={handleUpdateSale} color="primary" variant="contained">
+                      Salvar Projeto
                     </Button>
                     <Button onClick={() => setEditMode(false)} color="secondary" variant="outlined">
                       Cancelar
@@ -208,12 +228,6 @@ const LeadManager = ({
               </>
             )}
           </DialogActions>
-
-          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-            <MenuItem onClick={() => console.log('Enviar Email')}>Enviar Email</MenuItem>
-            <MenuItem onClick={() => console.log('Adicionar Nota')}>Adicionar Nota</MenuItem>
-            <MenuItem onClick={handleDeleteLead}>Excluir Lead</MenuItem>
-          </Menu>
         </Dialog>
       )}
       <Snackbar

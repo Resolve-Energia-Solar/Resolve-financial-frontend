@@ -42,8 +42,8 @@ const TabIconLeft = () => {
                     ))}
                 </Tabs>
                 <Box bgcolor="grey.200" mt={2}>
-                    {COMMON_TAB.map((panel) => (
-                        <TabPanel key={panel.value} value={panel.value}>
+                    {COMMON_TAB.map((panel, index) => (
+                        <TabPanel key={index} value={panel.value}>
                             {panel.label}
                         </TabPanel>
                     ))}

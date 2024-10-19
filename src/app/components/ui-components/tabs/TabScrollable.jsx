@@ -49,8 +49,8 @@ const TabScrollable = () => {
                     ))}
                 </Tabs>
                 <Box bgcolor="grey.200" mt={2}>
-                    {SCROLLABLE_TAB.map((panel) => (
-                        <TabPanel key={panel.value} value={panel.value}>
+                    {SCROLLABLE_TAB.map((panel, index) => (
+                        <TabPanel key={index} value={panel.value}>
                             {panel.label}
                         </TabPanel>
                     ))}

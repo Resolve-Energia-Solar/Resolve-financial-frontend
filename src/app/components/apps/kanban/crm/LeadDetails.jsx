@@ -99,7 +99,7 @@ const LeadDetails = ({ selectedLead }) => {
           ? selectedLead.addresses
               .map(
                 (address) =>
-                  `${address.street}, ${address.number} - ${address.city}, ${address.state}`
+                  `${address.street}, ${address.number} - ${address.city}, ${address.state}`,
               )
               .join('; ')
           : 'N/A',

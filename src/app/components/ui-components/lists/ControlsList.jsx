@@ -33,12 +33,12 @@ const ControlsList = () => {
     <>
       <BlankCard>
         <List>
-          {[0, 1, 2, 3].map((value) => {
+          {[0, 1, 2, 3].map((value, index) => {
             const labelId = `checkbox-list-label-${value}`;
 
             return (
               <ListItem
-                key={value}
+                key={index}
                 secondaryAction={
                   <IconButton edge="end" aria-label="comments">
                     <IconMessage width={20} height={20} />

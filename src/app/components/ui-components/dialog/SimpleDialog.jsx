@@ -40,8 +40,8 @@ const SimpleDialog = () => {
       <Dialog onClose={() => handleClose(selectedValue)} open={open}>
         <DialogTitle>Set backup account</DialogTitle>
         <List sx={{ pt: 0 }}>
-          {emails.map((email) => (
-            <ListItem button onClick={() => handleClose(email)} key={email}>
+          {emails.map((email, index) => (
+            <ListItem button onClick={() => handleClose(email)} key={index}>
               <ListItemAvatar>
                 <Avatar sx={{ bgcolor: 'primary.light', color: 'primary.main' }}>
                   <IconUser width={20} height={20} />

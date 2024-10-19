@@ -1,10 +1,5 @@
 import { Paper, Box, Typography } from '@mui/material';
-import {
-  Email,
-  Phone,
-  AccessTime,
-  TagSharp,
-} from '@mui/icons-material';
+import { Email, Phone, AccessTime, TagSharp } from '@mui/icons-material';
 
 const LeadCard = ({ lead, handleLeadClick }) => (
   <Paper

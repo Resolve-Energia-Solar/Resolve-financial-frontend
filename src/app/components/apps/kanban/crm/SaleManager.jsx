@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { Grid, Button, Card, CardContent, Typography, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -46,7 +48,7 @@ const SaleManager = ({ sales = [], sellers = [], sdrs = [], branches = [], campa
               variant="contained"
               color="primary"
               onClick={handleAddSale}
-              startIcon={<AddIcon />} 
+              startIcon={<AddIcon />}
               sx={{ mt: 2 }}
             >
               Adicionar Venda
@@ -55,7 +57,8 @@ const SaleManager = ({ sales = [], sellers = [], sdrs = [], branches = [], campa
         </Grid>
       )}
 
-      {sales.length > 0 && !showSaleForm && (
+      {sales.length > 0 &&
+        !showSaleForm &&
         sales.map((sale) => (
           <Grid item xs={12} key={sale.id}>
             <Card variant="outlined" sx={{ p: 3, mb: 3 }}>
@@ -75,8 +78,7 @@ const SaleManager = ({ sales = [], sellers = [], sdrs = [], branches = [], campa
               </CardContent>
             </Card>
           </Grid>
-        ))
-      )}
+        ))}
 
       {showSaleForm && (
         <Grid item xs={12}>
@@ -102,7 +104,11 @@ const SaleManager = ({ sales = [], sellers = [], sdrs = [], branches = [], campa
                 >
                   Cancelar
                 </Button>
-                <Button variant="contained" color="primary" onClick={() => console.log('Salvar venda')}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => console.log('Salvar venda')}
+                >
                   Salvar
                 </Button>
               </Box>

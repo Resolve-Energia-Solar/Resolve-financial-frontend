@@ -89,8 +89,8 @@ const TableFixedHeader = () => {
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>
-                                {columns.map((column) => (
-                                    <TableCell key={column.id} style={{ minWidth: column.minWidth }}>
+                                {columns.map((column, index) => (
+                                    <TableCell key={index} style={{ minWidth: column.minWidth }}>
                                         <Typography variant="h6" fontWeight="500">
                                             {column.label}
                                         </Typography>

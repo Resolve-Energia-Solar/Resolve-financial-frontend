@@ -1,6 +1,13 @@
 import { Grid, TextField, MenuItem } from '@mui/material';
 
-const SaleForm = ({ saleData, setSaleData, sellers = [], sdrs = [], branches = [], campaigns = [] }) => (
+const SaleForm = ({
+  saleData,
+  setSaleData,
+  sellers = [],
+  sdrs = [],
+  branches = [],
+  campaigns = [],
+}) => (
   <Grid container spacing={3}>
     <Grid item xs={12}>
       <TextField
@@ -27,6 +34,26 @@ const SaleForm = ({ saleData, setSaleData, sellers = [], sdrs = [], branches = [
           ))
         ) : (
           <MenuItem disabled>Nenhum vendedor disponível</MenuItem>
+        )}
+      </TextField>
+    </Grid>
+
+    <Grid item xs={6}>
+      <TextField
+        fullWidth
+        label="SDR"
+        select
+        value={saleData?.sdr || ''}
+        onChange={(e) => setSaleData({ ...saleData, sdr: e.target.value })}
+      >
+        {sdrs.length > 0 ? (
+          sdrs.map((sdr) => (
+            <MenuItem key={sdr.id} value={sdr.id}>
+              {sdr.complete_name} - {sdr.email}
+            </MenuItem>
+          ))
+        ) : (
+          <MenuItem disabled>Nenhum SDR disponível</MenuItem>
         )}
       </TextField>
     </Grid>
@@ -127,14 +154,15 @@ const SaleForm = ({ saleData, setSaleData, sellers = [], sdrs = [], branches = [
       </TextField>
     </Grid>
 
-    {/* Documento Completo */}
     <Grid item xs={6}>
       <TextField
         fullWidth
         label="Documento Completo"
         select
         value={saleData?.is_completed_document ? 'true' : 'false'}
-        onChange={(e) => setSaleData({ ...saleData, is_completed_document: e.target.value === 'true' })}
+        onChange={(e) =>
+          setSaleData({ ...saleData, is_completed_document: e.target.value === 'true' })
+        }
       >
         <MenuItem value="true">Sim</MenuItem>
         <MenuItem value="false">Não</MenuItem>

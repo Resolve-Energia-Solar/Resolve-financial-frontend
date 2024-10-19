@@ -71,11 +71,11 @@ const BasicTransferList = () => {
       sx={{ width: 200, height: 230, overflow: 'auto', border: `1px solid ${borderColor}` }}
     >
       <List dense component="div" role="list">
-        {items.map((value) => {
+        {items.map((value, index) => {
           const labelId = `transfer-list-item-${value}-label`;
 
           return (
-            <ListItem key={value} role="listitem" button onClick={handleToggle(value)}>
+            <ListItem key={index} role="listitem" button onClick={handleToggle(value)}>
               <ListItemIcon>
                 <CustomCheckbox
                   tabIndex={-1}

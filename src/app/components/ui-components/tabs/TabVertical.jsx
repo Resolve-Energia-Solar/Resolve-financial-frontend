@@ -39,9 +39,9 @@ const TabVertical = () => {
                         variant="scrollable"
                         scrollButtons="auto"
                     >
-                        {SCROLLABLE_TAB.map((tab) => (
+                        {SCROLLABLE_TAB.map((tab, index) => (
                             <Tab
-                                key={tab.value}
+                                key={index}
                                 icon={tab.icon}
                                 label={tab.label}
                                 iconPosition="top"

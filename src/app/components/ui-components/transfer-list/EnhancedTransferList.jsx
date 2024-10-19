@@ -105,11 +105,11 @@ const EnhancedTransferList = () => {
         component="div"
         role="list"
       >
-        {items.map((value) => {
+        {items.map((value, index) => {
           const labelId = `transfer-list-all-item-${value}-label`;
 
           return (
-            <ListItem key={value} role="listitem" button onClick={handleToggle(value)}>
+            <ListItem key={index} role="listitem" button onClick={handleToggle(value)}>
               <ListItemIcon>
                 <CustomCheckbox
                   checked={checked.indexOf(value) !== -1}
