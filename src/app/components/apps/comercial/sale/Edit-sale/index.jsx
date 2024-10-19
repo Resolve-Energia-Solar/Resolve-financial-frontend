@@ -12,7 +12,7 @@ import AutoCompleteCampaign from '@/app/components/apps/comercial/sale/component
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import FormDateTime from '@/app/components/forms/form-custom/FormDateTime';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
-import DocumentAttachments from '@/app/components/apps/comercial/sale/components/attachments';
+import DocumentAttachments from '@/app/components/apps/comercial/sale/components/attachments/attachments';
 import { useSelector } from 'react-redux';
 
 import useSale from '@/hooks/sales/useSale';
@@ -177,7 +177,7 @@ const EditSalePage = () => {
             />
             <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
               <Button variant="contained" color="primary" onClick={handleSave}>
-                Editar
+                Salvar Alterações
               </Button>
             </Stack>
           </Grid>

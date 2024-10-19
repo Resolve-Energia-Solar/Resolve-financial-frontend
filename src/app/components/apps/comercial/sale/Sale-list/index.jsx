@@ -44,6 +44,7 @@ import clickSignService from '@/services/ClickSign';
 import { Box } from '@mui/material';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 
+import StatusChip from '../components/DocumentStatusIcon';
 import useSendContract from '@/hooks/clicksign/useClickSign';
 
 import DashboardCards from '@/app/components/apps/comercial/sale/components/kpis/DashboardCards';
@@ -318,7 +319,9 @@ const SaleList = () => {
                     })}
                   </TableCell>
                   <TableCell>{item.is_sale ? 'Sim' : 'Não'}</TableCell>
-                  <TableCell>{getStatusChip(item.status)}</TableCell>
+                  <TableCell>
+                    <StatusChip status={item.status} />
+                  </TableCell>
                   <TableCell>
                     {item.document_completion_date &&
                       new Date(item.document_completion_date).toLocaleDateString()}

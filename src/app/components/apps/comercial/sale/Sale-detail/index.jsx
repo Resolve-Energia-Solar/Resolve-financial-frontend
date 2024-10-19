@@ -19,6 +19,7 @@ import Chip from '@mui/material/Chip';
 import { format } from 'date-fns';
 import useAttachmentsBySale from '@/hooks/attachments/useAttachmentsBySale';
 import { useRouter } from 'next/navigation';
+import StatusChip from '../components/DocumentStatusIcon';
 
 import {
   CheckCircle as CheckCircleIcon,
@@ -58,20 +59,6 @@ const SaleDetailPage = () => {
 
   const { loading, error, saleData } = useSale(id);
 
-  const getStatusChip = (status) => {
-    switch (status) {
-      case 'F':
-        return <Chip label="Finalizado" color="success" icon={<CheckCircleIcon />} />;
-      case 'EA':
-        return <Chip label="Em Andamento" color="primary" icon={<HourglassEmptyIcon />} />;
-      case 'C':
-        return <Chip label="Cancelado" color="error" icon={<CancelIcon />} />;
-      case 'D':
-        return <Chip label="Distrato" color="error" icon={<CancelIcon />} />;
-      default:
-        return <Chip label={status} />;
-    }
-  };
 
   const [value, setValue] = useState(0);
 
@@ -164,7 +151,9 @@ const SaleDetailPage = () => {
           </Grid>
           <Grid item xs={12} sm={12} lg={4}>
             <CustomFormLabel htmlFor="valor">Status da Venda</CustomFormLabel>
-            <CustomFormLabel>{getStatusChip(saleData.status)}</CustomFormLabel>
+            <CustomFormLabel>
+                <StatusChip status={saleData.status} />
+            </CustomFormLabel>
           </Grid>
           <Grid item xs={12} sm={12} lg={4}>
             <CustomFormLabel htmlFor="date">Conclusão do Documento</CustomFormLabel>
