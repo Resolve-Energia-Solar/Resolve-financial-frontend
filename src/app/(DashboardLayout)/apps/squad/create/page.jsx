@@ -6,7 +6,7 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import ParentCard from '@/app/components/shared/ParentCard';
 
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import AutoCompleteUsers from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-Users';
+import AutoCompleteUsers from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Users';
 import useSquad from '@/hooks/squad/useSquad';
 import useSquadForm from '@/hooks/squad/useSquadForm';
 

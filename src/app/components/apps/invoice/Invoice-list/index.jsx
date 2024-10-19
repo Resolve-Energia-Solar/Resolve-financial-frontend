@@ -52,7 +52,6 @@ function InvoiceList() {
     const tabItem = ["All", "Shipped", "Delivered", "Pending"];
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    // Handle status filter change
     const handleClick = (status) => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % tabItem.length);
         setActiveTab(status);

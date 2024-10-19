@@ -7,7 +7,7 @@ import branchService from '@/services/branchService';
 import departamentService from '@/services/departmentService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteBranch({ onChange, value, error, helperText }) {
+export default function AutoCompleteBranch({ onChange, value, error, helperText, disabled }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -81,6 +81,7 @@ useEffect(() => {
         options={options}
         loading={loading}
         value={selectedBranch}
+        disabled={disabled}
         onInputChange={(event, newInputValue) => {
           fetchBranchesByName(newInputValue);
         }}
