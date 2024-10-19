@@ -9,9 +9,9 @@ import { useParams } from 'next/navigation';
 import Alert from '@mui/material/Alert';
 
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import AutoCompleteUser from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-User';
-import AutoCompleteSale from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-Sales';
-import AutoCompleteAddresses from '@/app/components/apps/comercial/sale/auto-complete/Auto-Input-Addresses';
+import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-User';
+import AutoCompleteSale from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Sales';
+import AutoCompleteAddresses from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Addresses';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 
 import useProject from '@/hooks/projects/useProject';

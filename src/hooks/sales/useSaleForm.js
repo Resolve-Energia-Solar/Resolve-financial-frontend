@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react';
 import formatDate from '@/utils/formatDate';
 import saleService from '@/services/saleService';
+import { useDispatch, useSelector } from 'react-redux';
+
 
 const useSaleForm = (initialData, id) => {
+  const user = useSelector((state) => state.user);
+
   const [formData, setFormData] = useState({
     customerId: null,
-    sellerId: null,
-    salesSupervisorId: null,
-    salesManagerId: null,
-    branchId: '',
+    sellerId: user?.user?.id,
+    salesSupervisorId: user?.user?.user_manager?.user_manager,
+    salesManagerId: user?.user?.user_manager.id,
+    branchId: user?.user?.branch?.id,
     marketingCampaignId: null,
     leadId: null,
     isSale: false,
