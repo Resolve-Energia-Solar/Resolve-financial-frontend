@@ -129,6 +129,12 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Agendamentos',
+    icon: IconCalendar,
+    href: '/apps/inspections/schedule',
+  },
+  {
+    id: uniqueId(),
     title: 'Usuários',
     icon: IconUser,
     href: '/apps/users',
