@@ -64,11 +64,7 @@ const SaleList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const { filters, setFilters } = useContext(SaleDataContext);
-
-  useEffect(() => {
-    console.log('filters ', filters);
-  }, [filters]);
+  const { filters, refresh } = useContext(SaleDataContext);
 
   const {
     isSendingContract,
@@ -88,11 +84,11 @@ const SaleList = () => {
   const [alertOpen, setAlertOpen] = useState(false);
 
   const [order, setOrder] = useState('asc');
-  const [orderDirection, setOrderDirection] = useState('asc'); // Estado para direção da ordenação
+  const [orderDirection, setOrderDirection] = useState('asc');
 
-  console.log('order:', order);
 
   const [selectedSales, setSelectedSales] = useState([]);
+
 
   const [open, setOpen] = useState(false);
   const [saleToDelete, setSaleToDelete] = useState(null);
@@ -115,7 +111,7 @@ const SaleList = () => {
     };
 
     fetchSales();
-  }, [order, orderDirection, filters]);
+  }, [order, orderDirection, filters, refresh]);
 
   const showAlert = (message, type) => {
     setAlertMessage(message);
@@ -214,7 +210,12 @@ const SaleList = () => {
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           
-          <ActionFlash />
+          { selectedSales.length > 0 && (
+          <ActionFlash 
+            value={selectedSales}
+          />
+          )}
+
           <DrawerFilters />
         </Box>
       </Box>
