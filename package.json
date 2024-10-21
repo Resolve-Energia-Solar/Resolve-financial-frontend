@@ -59,6 +59,7 @@
     "react-spring": "^9.7.3",
     "react-swipeable-views": "^0.14.0",
     "react-syntax-highlighter": "^15.5.0",
+    "react-tinder-card": "^1.6.4",
     "redux-persist": "^6.0.0",
     "sharp": "^0.32.6",
     "simplebar-react": "^3.2.4",
