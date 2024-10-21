@@ -101,7 +101,7 @@ const SchedulingList = () => {
             variant='outlined'
             startIcon={<AddBoxRounded />}
             sx={{ marginTop: 1, marginBottom: 2 }}
-            onClick={() => handleCreateClick}
+            onClick={handleCreateClick}
           >
             Adicionar Agendamento
           </Button>
