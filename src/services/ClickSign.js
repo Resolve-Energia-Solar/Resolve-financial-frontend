@@ -58,13 +58,21 @@ const ClickSignService = {
                         },
                     }
                 );
-
+        
                 return response.data;
             } catch (error) {
-                console.error(`Erro ao criar signatário: ${error.response?.data?.message || error.message}`);
-                throw error;
+                if (error.response) {
+                    console.error(`Erro ao criar signatário: ${error.response?.status} - ${error.response?.statusText}`);
+                    console.error('Detalhes do erro:', JSON.stringify(error.response.data, null, 2));
+                } else if (error.request) {
+                    console.error('Erro na requisição:', error.request);
+                } else {
+                    console.error('Erro:', error.message);
+                }
+                throw error; 
             }
-        },
+        }
+        
     },
 
     AddSignerDocument: async (signerKey, documentKey, signAs = 'sign') => {
@@ -100,7 +108,7 @@ const ClickSignService = {
     },
 
     notification: {
-        email: async (request_signature_key, message = '') => {
+        email: async (request_signature_key, message = 'Contrato Resolve') => {
             try {
                 const response = await axios.post(
                     `${API_DOCUMENT_BASE_URL}/api/v1/notifications?access_token=${API_TOKEN}`,
@@ -115,14 +123,23 @@ const ClickSignService = {
                         },
                     }
                 );
-
+    
                 return response.data;
             } catch (error) {
-                console.error(`Erro ao enviar notificação por email: ${error.response?.data?.message || error.message}`);
+                console.error('Erro ao enviar notificação por email:');
+                if (error.response) {
+                    console.error('Status:', error.response.status);
+                    console.error('Headers:', error.response.headers);
+                    console.error('Data:', JSON.stringify(error.response.data));
+                } else if (error.request) {
+                    console.error('Request:', error.request);
+                } else {
+                    console.error('Erro:', error.message);
+                }
                 throw error;
             }
         },
-
+    
         whatsapp: async (request_signature_key) => {
             try {
                 const response = await axios.post(
@@ -137,14 +154,23 @@ const ClickSignService = {
                         },
                     }
                 );
-
+    
                 return response.data;
             } catch (error) {
-                console.error(`Erro ao enviar notificação por WhatsApp: ${error.response?.data?.message || error.message}`);
+                console.error('Erro ao enviar notificação por WhatsApp:');
+                if (error.response) {
+                    console.error('Status:', error.response.status);
+                    console.error('Headers:', error.response.headers);
+                    console.error('Data:', error.response.data);
+                } else if (error.request) {
+                    console.error('Request:', error.request);
+                } else {
+                    console.error('Erro:', error.message);
+                }
                 throw error;
             }
         },
-
+    
         sms: async (request_signature_key, message = '') => {
             try {
                 const response = await axios.post(
@@ -160,14 +186,24 @@ const ClickSignService = {
                         },
                     }
                 );
-
+    
                 return response.data;
             } catch (error) {
-                console.error(`Erro ao enviar notificação por SMS: ${error.response?.data?.message || error.message}`);
+                console.error('Erro ao enviar notificação por SMS:');
+                if (error.response) {
+                    console.error('Status:', error.response.status);
+                    console.error('Headers:', error.response.headers);
+                    console.error('Data:', error.response.data);
+                } else if (error.request) {
+                    console.error('Request:', error.request);
+                } else {
+                    console.error('Erro:', error.message);
+                }
                 throw error;
             }
         },
     },
+    
 };
 
 export default ClickSignService;

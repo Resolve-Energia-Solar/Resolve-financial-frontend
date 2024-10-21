@@ -5,17 +5,52 @@ const SaleForm = ({
   setSaleData,
   sellers = [],
   sdrs = [],
+  managers = [],
+  supervisors = [],
   branches = [],
   campaigns = [],
+  allUsers = [],
+  leadData = []
 }) => (
   <Grid container spacing={3}>
     <Grid item xs={12}>
       <TextField
         fullWidth
         label="Cliente"
-        value={saleData?.customer?.complete_name || ''}
-        disabled
-      />
+        select
+        value={saleData?.customer_id || ''}
+        onChange={(e) => setSaleData({ ...saleData, customer_id: e.target.value })}
+      >
+        {allUsers.length > 0 ? (
+          allUsers.map((user) => (
+            <MenuItem key={user.id} value={user.id}>
+              {user.complete_name}
+            </MenuItem>
+          ))
+        ) : (
+          <MenuItem disabled>Nenhum cliente disponível</MenuItem>
+        )}
+      </TextField>
+    </Grid>
+
+    <Grid item xs={12}>
+      <TextField
+        fullWidth
+        label="Lead"
+        select
+        value={saleData?.lead_id || ''}
+        onChange={(e) => setSaleData({ ...saleData, lead_id: e.target.value })}
+      >
+        {leadData.length > 0 ? (
+          leadData.map((lead) => (
+            <MenuItem key={lead.id} value={lead.id}>
+              {lead.name}
+            </MenuItem>
+          ))
+        ) : (
+          <MenuItem disabled>Nenhum lead disponível</MenuItem>
+        )}
+      </TextField>
     </Grid>
 
     <Grid item xs={6}>
@@ -23,13 +58,13 @@ const SaleForm = ({
         fullWidth
         label="Vendedor"
         select
-        value={saleData?.seller || ''}
-        onChange={(e) => setSaleData({ ...saleData, seller: e.target.value })}
+        value={saleData?.seller_id || ''}
+        onChange={(e) => setSaleData({ ...saleData, seller_id: e.target.value })}
       >
         {sellers.length > 0 ? (
           sellers.map((seller) => (
             <MenuItem key={seller.id} value={seller.id}>
-              {seller.complete_name} - {seller.email}
+              {seller.complete_name}
             </MenuItem>
           ))
         ) : (
@@ -43,13 +78,13 @@ const SaleForm = ({
         fullWidth
         label="SDR"
         select
-        value={saleData?.sdr || ''}
-        onChange={(e) => setSaleData({ ...saleData, sdr: e.target.value })}
+        value={saleData?.sdr_id || ''}
+        onChange={(e) => setSaleData({ ...saleData, sdr_id: e.target.value })}
       >
         {sdrs.length > 0 ? (
           sdrs.map((sdr) => (
             <MenuItem key={sdr.id} value={sdr.id}>
-              {sdr.complete_name} - {sdr.email}
+              {sdr.complete_name}
             </MenuItem>
           ))
         ) : (
@@ -62,18 +97,40 @@ const SaleForm = ({
       <TextField
         fullWidth
         label="Supervisor de Vendas"
-        value={saleData?.sales_supervisor?.complete_name || 'N/A'}
-        disabled
-      />
+        select
+        value={saleData?.sales_supervisor_id || ''}
+        onChange={(e) => setSaleData({ ...saleData, sales_supervisor_id: e.target.value })}
+      >
+        {supervisors.length > 0 ? (
+          supervisors.map((supervisor) => (
+            <MenuItem key={supervisor.id} value={supervisor.id}>
+              {supervisor.complete_name}
+            </MenuItem>
+          ))
+        ) : (
+          <MenuItem disabled>Nenhum supervisor disponível</MenuItem>
+        )}
+      </TextField>
     </Grid>
 
     <Grid item xs={6}>
       <TextField
         fullWidth
         label="Gerente de Vendas"
-        value={saleData?.sales_manager?.complete_name || 'N/A'}
-        disabled
-      />
+        select
+        value={saleData?.sales_manager_id || ''}
+        onChange={(e) => setSaleData({ ...saleData, sales_manager_id: e.target.value })}
+      >
+        {managers.length > 0 ? (
+          managers.map((manager) => (
+            <MenuItem key={manager.id} value={manager.id}>
+              {manager.complete_name}
+            </MenuItem>
+          ))
+        ) : (
+          <MenuItem disabled>Nenhum gerente disponível</MenuItem>
+        )}
+      </TextField>
     </Grid>
 
     <Grid item xs={6}>
@@ -87,7 +144,7 @@ const SaleForm = ({
         {campaigns.length > 0 ? (
           campaigns.map((campaign) => (
             <MenuItem key={campaign.id} value={campaign.id}>
-              {campaign.name} - {campaign.description}
+              {campaign.name}
             </MenuItem>
           ))
         ) : (
@@ -128,22 +185,6 @@ const SaleForm = ({
     <Grid item xs={6}>
       <TextField
         fullWidth
-        label="Status da Venda"
-        select
-        value={saleData?.status || ''}
-        onChange={(e) => setSaleData({ ...saleData, status: e.target.value })}
-      >
-        <MenuItem value="PENDING">Pendente</MenuItem>
-        <MenuItem value="IN_PROGRESS">Em andamento</MenuItem>
-        <MenuItem value="COMPLETED">Concluída</MenuItem>
-        <MenuItem value="CANCELLED">Cancelada</MenuItem>
-        <MenuItem value="ON_HOLD">Em espera</MenuItem>
-      </TextField>
-    </Grid>
-
-    <Grid item xs={6}>
-      <TextField
-        fullWidth
         label="Pré-Venda"
         select
         value={saleData?.is_sale ? 'true' : 'false'}
@@ -152,32 +193,6 @@ const SaleForm = ({
         <MenuItem value="true">Sim</MenuItem>
         <MenuItem value="false">Não</MenuItem>
       </TextField>
-    </Grid>
-
-    <Grid item xs={6}>
-      <TextField
-        fullWidth
-        label="Documento Completo"
-        select
-        value={saleData?.is_completed_document ? 'true' : 'false'}
-        onChange={(e) =>
-          setSaleData({ ...saleData, is_completed_document: e.target.value === 'true' })
-        }
-      >
-        <MenuItem value="true">Sim</MenuItem>
-        <MenuItem value="false">Não</MenuItem>
-      </TextField>
-    </Grid>
-
-    <Grid item xs={12}>
-      <TextField
-        fullWidth
-        label="Data de Conclusão do Documento"
-        type="date"
-        value={saleData?.document_completion_date || ''}
-        onChange={(e) => setSaleData({ ...saleData, document_completion_date: e.target.value })}
-        InputLabelProps={{ shrink: true }}
-      />
     </Grid>
   </Grid>
 );

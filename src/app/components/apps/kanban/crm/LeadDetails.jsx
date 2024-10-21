@@ -1,4 +1,4 @@
-import { Grid, Box, Typography, useTheme } from '@mui/material';
+import { Grid, Box, Typography, useTheme, Snackbar, Alert } from '@mui/material';
 import {
   Email,
   Phone,
@@ -13,7 +13,7 @@ import {
   AssignmentInd,
 } from '@mui/icons-material';
 
-const LeadDetails = ({ selectedLead }) => {
+const LeadDetails = ({ selectedLead, contractSuccess, contractError, setContractError, setContractSuccess}) => {
   const theme = useTheme();
 
   const details = [
@@ -133,6 +133,30 @@ const LeadDetails = ({ selectedLead }) => {
           </Box>
         </Grid>
       ))}
+      {contractSuccess && (
+        <Snackbar
+          open={Boolean(contractSuccess)}
+          autoHideDuration={6000}
+          onClose={() => setContractSuccess(null)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert onClose={() => setContractSuccess(null)} severity="success">
+            {contractSuccess}
+          </Alert>
+        </Snackbar>
+      )}
+      {contractError && (
+        <Snackbar
+          open={Boolean(contractError)}
+          autoHideDuration={6000}
+          onClose={() => setContractError(null)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert onClose={() => setContractError(null)} severity="error">
+            Erro ao enviar contrato: {contractError}
+          </Alert>
+        </Snackbar>
+      )}
     </Grid>
   );
 };

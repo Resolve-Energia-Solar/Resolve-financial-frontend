@@ -12,6 +12,8 @@ const StatusChip = ({ status }) => {
         return { label: 'Finalizado', color: 'success', icon: <CheckCircleIcon /> };
       case 'EA':
         return { label: 'Em Andamento', color: 'primary', icon: <HourglassEmptyIcon /> };
+      case 'P':
+        return { label: 'Pendente', color: 'warning', icon: <HourglassEmptyIcon /> };
       case 'C':
         return { label: 'Cancelado', color: 'error', icon: <CancelIcon /> };
       case 'D':

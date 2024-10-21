@@ -1,9 +1,16 @@
 import addressService from '@/services/addressService';
 import leadService from '@/services/leadService';
 import userService from '@/services/userService';
+import branchService from '@/services/branchService';
+import campaignService from '@/services/campaignService';
+import saleService from '@/services/saleService';
 import { useState, useEffect } from 'react';
 
-const useLeadManager = (initialLeads = [], initialStatuses = [], {  onDeleteLead, onUpdateLeadColumn }) => {
+const useLeadManager = (
+  initialLeads = [],
+  initialStatuses = [],
+  { onDeleteLead, onUpdateLeadColumn },
+) => {
   const [leadStars, setLeadStars] = useState({});
   const [selectedLead, setSelectedLead] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -32,12 +39,16 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], {  onDeleteLead
   const [statusesList, setStatusesList] = useState(initialStatuses);
   const [sellers, setSellers] = useState([]);
   const [sdrs, setSdrs] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [designers, setDesigners] = useState([]);
   const [managers, setManagers] = useState([]);
   const [supervisors, setSupervisors] = useState([]);
+  const [branches, setBranches] = useState([]);
+  const [campaigns, setCampaigns] = useState([]);
+  const [sales, setSales] = useState([]);
   const [tabIndex, setTabIndex] = useState(0);
-  
+
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
@@ -48,7 +59,7 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], {  onDeleteLead
         console.error('Erro ao buscar endereços:', error);
       }
     };
-  
+
     fetchAddresses();
   }, []);
 
@@ -60,11 +71,13 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], {  onDeleteLead
 
         console.log('Usuários recebidos:', users);
 
-        const filteredSellers = users.filter(user => user.role?.name === 'SELLER');
+        setAllUsers(users);
+
+        const filteredSellers = users.filter(user => user.role?.name === 'Vendedor');
         const filteredSdrs = users.filter(user => user.role?.name === 'SDR');
-        const filteredDesigners = users.filter(user => user.role?.name === 'DESIGNER');
-        const filteredManagers = users.filter(user => user.role?.name === 'MANAGER');
-        const filteredSupervisors = users.filter(user => user.role?.name === 'SUPERVISOR');
+        const filteredDesigners = users.filter(user => user.role?.name === 'Projestita');
+        const filteredManagers = users.filter(user => user.role?.name === 'Gerente');
+        const filteredSupervisors = users.filter(user => user.role?.name === 'Supervisor Comercial');
 
         setSellers(filteredSellers);
         setSdrs(filteredSdrs);
@@ -80,10 +93,46 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], {  onDeleteLead
   }, []);
 
   useEffect(() => {
-    setLeadsList(initialLeads);
-    setStatusesList(initialStatuses);
-  }, [initialLeads, initialStatuses]);
-  
+    const fetchBranches = async () => {
+      try {
+        const response = await branchService.getBranches();
+        setBranches(response);
+        console.log('Unidades recebidas:', response);
+      } catch (error) {
+        console.error('Erro ao buscar unidades:', error);
+      }
+    };
+
+    fetchBranches();
+  }, []);
+
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const response = await campaignService.getCampaigns();
+        setCampaigns(response);
+        console.log('Campanhas recebidas:', response);
+      } catch (error) {
+        console.error('Erro ao buscar campanhas:', error);
+      }
+    };
+
+    fetchCampaigns();
+  }, []);
+
+  useEffect(() => {
+    const fetchSales = async () => {
+      try {
+        const response = await saleService.getSales();
+        setSales(response.results || []);
+        console.log('Vendas recebidas:', response.results);
+      } catch (error) {
+        console.error('Erro ao buscar vendas:', error);
+      }
+    };
+
+    fetchSales();
+  }, []);
 
   useEffect(() => {
     setLeadsList(initialLeads);
@@ -105,17 +154,19 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], {  onDeleteLead
         type: leadData.type || null,
         seller_id: typeof leadData.seller === 'number' ? leadData.seller : null,
         sdr_id: typeof leadData.sdr === 'number' ? leadData.sdr : null,
-        addresses_ids: Array.isArray(leadData.addresses_ids) ? leadData.addresses_ids : [leadData.addresses_ids], 
+        addresses_ids: Array.isArray(leadData.addresses_ids)
+          ? leadData.addresses_ids
+          : [leadData.addresses_ids],
         column_id: selectedLead.column?.id || null,
       };
-  
+
       try {
         const response = await leadService.patchLead(selectedLead.id, updatedLead);
-  
-        setLeadsList((prevLeads) =>
-          prevLeads.map((lead) => (lead.id === response.data?.id ? response.data : lead))
+
+        setLeadsList(prevLeads =>
+          prevLeads.map(lead => (lead.id === response.data?.id ? response.data : lead)),
         );
-  
+
         setSnackbarMessage('Lead atualizado com sucesso!');
         setSnackbarOpen(true);
       } catch (error) {
@@ -125,13 +176,12 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], {  onDeleteLead
       }
     }
   };
-  
 
   const handleUpdateColumnName = async (statusId, newColumnName) => {
     try {
       await onUpdateLeadColumn(statusId, newColumnName);
-      setStatusesList((prevStatuses) =>
-        prevStatuses.map((status) =>
+      setStatusesList(prevStatuses =>
+        prevStatuses.map(status =>
           status.id === statusId ? { ...status, name: newColumnName } : status,
         ),
       );
@@ -148,7 +198,7 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], {  onDeleteLead
     if (selectedLead) {
       try {
         await onDeleteLead(selectedLead.id);
-        setLeadsList((prevLeads) => prevLeads.filter((lead) => lead.id !== selectedLead.id));
+        setLeadsList(prevLeads => prevLeads.filter(lead => lead.id !== selectedLead.id));
         setSnackbarMessage('Lead excluído com sucesso!');
         setSnackbarOpen(true);
       } catch (error) {
@@ -158,63 +208,65 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], {  onDeleteLead
     }
   };
 
-  const onDragEnd = async (result) => {
+  const onDragEnd = async result => {
     if (!result.destination) return;
-  
+
     const { source, destination, draggableId } = result;
-  
+
     if (source.droppableId !== destination.droppableId) {
-      const leadId = parseInt(draggableId); 
-      const destinationColumnId = parseInt(destination.droppableId); 
-  
-      setLeadsList((prevLeads) =>
-        prevLeads.map((lead) =>
+      const leadId = parseInt(draggableId);
+      const destinationColumnId = parseInt(destination.droppableId);
+
+      setLeadsList(prevLeads =>
+        prevLeads.map(lead =>
           lead.id === leadId
             ? { ...lead, column: { ...lead.column, id: destinationColumnId } }
-            : lead
-        )
+            : lead,
+        ),
       );
-  
+
       try {
         await leadService.patchLead(leadId, {
           column_id: destinationColumnId,
         });
-  
+
         setSnackbarMessage('Lead movido com sucesso!');
         setSnackbarOpen(true);
       } catch (error) {
         console.error('Erro ao mover o lead:', error);
         setSnackbarMessage('Erro ao mover o lead.');
         setSnackbarOpen(true);
-  
-        setLeadsList((prevLeads) =>
-          prevLeads.map((lead) =>
+
+        setLeadsList(prevLeads =>
+          prevLeads.map(lead =>
             lead.id === leadId
               ? { ...lead, column: { ...lead.column, id: source.droppableId } }
-              : lead
-          )
+              : lead,
+          ),
         );
       }
     }
   };
-  
-  const handleLeadClick = async (lead) => {
+
+  const handleLeadClick = async lead => {
     try {
       const leadBody = await leadService.getLeadById(lead.id);
-      console.log("Objeto lead completo:", leadBody);
-  
-      const selectedSeller = leadBody.seller ? sellers.find((seller) => seller.id === leadBody.seller.id) : null;
-      const selectedSdr = leadBody.sdr ? sdrs.find((sdr) => sdr.id === leadBody.sdr.id) : null;
-  
-      console.log("Vendedor selecionado:", selectedSeller);
-      console.log("SDR selecionado:", selectedSdr);
-  
+      console.log('Objeto lead completo:', leadBody);
+
+      const selectedSeller = leadBody.seller
+        ? sellers.find(seller => seller.id === leadBody.seller.id)
+        : null;
+      const selectedSdr = leadBody.sdr ? sdrs.find(sdr => sdr.id === leadBody.sdr.id) : null;
+
+      console.log('Vendedor selecionado:', selectedSeller);
+      console.log('SDR selecionado:', selectedSdr);
+
       setSelectedLead({
         ...leadBody,
         seller: selectedSeller,
         sdr: selectedSdr,
       });
-  
+
       setLeadData({
         id: leadBody.id,
         name: leadBody.name,
@@ -231,33 +283,36 @@ const useLeadManager = (initialLeads = [], initialStatuses = [], {  onDeleteLead
         created_at: leadBody.created_at || '',
         seller: selectedSeller?.id || 'N/A',
         sdr: selectedSdr?.id || 'N/A',
-        addresses_ids: leadBody.addresses.map(addr => addr.id) || [],  
+        addresses_ids: leadBody.addresses.map(addr => addr.id) || [],
         column: leadBody.column?.name || 'N/A',
         seller_id: leadBody.seller_id || null,
         sdr_id: leadBody.sdr_id || null,
         column_id: leadBody.column_id || null,
       });
-  
+
       setTabIndex(0);
       setOpenModal(true);
     } catch (error) {
-      console.error("Erro ao buscar os dados do lead:", error);
+      console.error('Erro ao buscar os dados do lead:', error);
     }
   };
-  
-  
-  
+
   return {
     leadsList,
     statusesList,
+    sales,
     leadData,
     setLeadData,
     sellers,
     sdrs,
+    allUsers,
+    setAllUsers,
     designers,
     managers,
     supervisors,
     addresses,
+    branches,
+    campaigns,
     selectedLead,
     setSelectedLead,
     openModal,

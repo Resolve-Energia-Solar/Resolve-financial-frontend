@@ -36,6 +36,7 @@ import {
   MoreVert as MoreVertIcon,
   ArrowDropDown as ArrowDropDownIcon,
   ArrowDropUp,
+  FlashOn,
 } from '@mui/icons-material';
 
 import { useRouter } from 'next/navigation';
@@ -49,13 +50,25 @@ import useSendContract from '@/hooks/clicksign/useClickSign';
 
 import DashboardCards from '@/app/components/apps/comercial/sale/components/kpis/DashboardCards';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import { IconEyeglass } from '@tabler/icons-react';
+import { IconActivity, IconEyeglass } from '@tabler/icons-react';
 import TableSkeleton from '../components/TableSkeleton';
+import DrawerFilters from '../components/DrawerFilters/DrawerFilters';
+
+import { useContext } from 'react';
+
+import { SaleDataContext } from '@/app/context/SaleContext';
+import ActionFlash from '../components/flashAction/actionFlash';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const { filters, setFilters } = useContext(SaleDataContext);
+
+  useEffect(() => {
+    console.log('filters ', filters);
+  }, [filters]);
 
   const {
     isSendingContract,
@@ -102,7 +115,7 @@ const SaleList = () => {
     };
 
     fetchSales();
-  }, [order, orderDirection]);
+  }, [order, orderDirection, filters]);
 
   const showAlert = (message, type) => {
     setAlertMessage(message);
@@ -176,7 +189,7 @@ const SaleList = () => {
 
   const handleSort = (field) => {
     if (order === field) {
-      setOrderDirection(orderDirection === 'asc' ? 'desc' : 'asc'); 
+      setOrderDirection(orderDirection === 'asc' ? 'desc' : 'asc');
     } else {
       setOrder(field);
       setOrderDirection('asc');
@@ -189,14 +202,22 @@ const SaleList = () => {
       <Typography variant="h6" gutterBottom>
         Lista de Vendas
       </Typography>
-      <Button
-        variant="outlined"
-        startIcon={<AddBoxRounded />}
-        sx={{ marginTop: 1, marginBottom: 2 }}
-        onClick={handleCreateClick}
-      >
-        Adicionar Venda
-      </Button>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Button
+          variant="outlined"
+          startIcon={<AddBoxRounded />}
+          sx={{ marginTop: 1, marginBottom: 2 }}
+          onClick={handleCreateClick}
+        >
+          Adicionar Venda
+        </Button>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          
+          <ActionFlash />
+          <DrawerFilters />
+        </Box>
+      </Box>
 
       <TableContainer component={Paper} elevation={10} sx={{ overflowX: 'auto' }}>
         <Table stickyHeader aria-label="sales table">
@@ -214,9 +235,22 @@ const SaleList = () => {
                   }}
                 />
               </TableCell>
-              <TableCell>Nome contratante</TableCell>
+
               <TableCell
-                sx={{ cursor: 'pointer', whiteSpace: 'nowrap'  }}
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                onClick={() => handleSort('customer.complete_name')}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  Nome contratante
+                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                    {order === 'customer.complete_name' &&
+                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                  </Box>
+                </Box>
+              </TableCell>
+
+              <TableCell
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('contract_number')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -227,13 +261,13 @@ const SaleList = () => {
                   </Box>
                 </Box>
               </TableCell>
-                
+
               <TableCell
-                sx={{ cursor: 'pointer', whiteSpace: 'nowrap'  }}
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('total_value')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                Valor Total (R$)
+                  Valor Total (R$)
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
                     {order === 'total_value' &&
                       (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
@@ -242,11 +276,11 @@ const SaleList = () => {
               </TableCell>
 
               <TableCell
-                sx={{ cursor: 'pointer', whiteSpace: 'nowrap'  }}
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('is_sale')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                Venda
+                  Venda
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
                     {order === 'is_sale' &&
                       (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
@@ -255,11 +289,11 @@ const SaleList = () => {
               </TableCell>
 
               <TableCell
-                sx={{ cursor: 'pointer', whiteSpace: 'nowrap'  }}
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('status')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                Status
+                  Status
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
                     {order === 'status' &&
                       (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
@@ -268,11 +302,11 @@ const SaleList = () => {
               </TableCell>
 
               <TableCell
-                sx={{ cursor: 'pointer', whiteSpace: 'nowrap'  }}
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('document_completion_date')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                Data de Conclusão
+                  Data de Conclusão
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
                     {order === 'document_completion_date' &&
                       (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
