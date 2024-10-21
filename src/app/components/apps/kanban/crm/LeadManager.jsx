@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Snackbar,
@@ -12,7 +12,11 @@ import {
   Grid,
   Tabs,
   Tab,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
+import DescriptionIcon from '@mui/icons-material/Description';
 import LeadDetails from './LeadDetails';
 import LeadForm from './LeadForm';
 import LeadCard from './LeadCard';
@@ -22,6 +26,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import useLeadManager from '@/hooks/boards/useLeadManager';
 import SaleManager from './SaleManager';
 import ProjectManager from './ProjectManager';
+import clickSignService from '@/services/ClickSign';
 
 const LeadManager = ({
   leads,
@@ -52,18 +57,110 @@ const LeadManager = ({
     tabIndex,
     sellers,
     sdrs,
+    allUsers,
     addresses,
     designers,
     managers,
     supervisors,
+    branches,
+    campaigns,
+    sales,
   } = useLeadManager(leads, statuses, {
     onUpdateLead,
     onAddLead,
     onDeleteLead,
   });
 
+  const [contractError, setContractError] = useState(null);
+  const [contractSuccess, setContractSuccess] = useState(null);
+  const [isSendingContract, setIsSendingContract] = useState(false);
+
   const activateEditMode = () => {
     setEditMode(true);
+  };
+
+  const handleSendContract = async (sale) => {
+    try {
+      setIsSendingContract(true);
+
+      const documentData = {
+        Address: 'Endereço Fictício',
+        Phone: selectedLead?.phone,
+      };
+      const path = `/Contratos/Contrato-${sale.contract_number}.pdf`;
+
+      const documentoCriado = await clickSignService.v1.createDocumentModel(documentData, path);
+
+      if (!documentoCriado || !documentoCriado.document || !documentoCriado.document.key) {
+        throw new Error('Falha na criação do documento');
+      }
+
+      const documentKey = documentoCriado.document.key;
+      console.log('Documento criado com sucesso:', documentKey);
+
+      const signer = await clickSignService.v1.createSigner(
+        selectedLead?.first_document,
+        selectedLead?.birth_date,
+        selectedLead?.phone,
+        selectedLead?.customer?.email || selectedLead?.email,
+        selectedLead?.customer?.complete_name,
+        'whatsapp',
+        { selfie_enabled: false, handwritten_enabled: false },
+      );
+
+      if (!signer || !signer.signer || !signer.signer.key) {
+        throw new Error('Falha na criação do signatário');
+      }
+
+      const signerKey = signer.signer.key;
+      console.log('Signatário criado:', signerKey);
+
+      const listaAdicionada = await clickSignService.AddSignerDocument(
+        signerKey,
+        documentKey,
+        'contractor',
+        'Por favor, assine o contrato.',
+      );
+
+      if (
+        !listaAdicionada ||
+        !listaAdicionada.list ||
+        !listaAdicionada.list.request_signature_key
+      ) {
+        throw new Error('Falha ao adicionar o signatário ao documento');
+      }
+
+      const requestSignatureKey = listaAdicionada.list.request_signature_key;
+      console.log('Signatário adicionado ao documento:', listaAdicionada);
+
+      const emailNotificacao = await clickSignService.notification.email(
+        requestSignatureKey,
+        'Por favor, assine o contrato.',
+      );
+      console.log('Notificação por e-mail enviada:', emailNotificacao);
+
+      const whatsappNotificacao = await clickSignService.notification.whatsapp(requestSignatureKey);
+      console.log('Notificação por WhatsApp enviada:', whatsappNotificacao);
+
+      setContractSuccess('Contrato enviado com sucesso!');
+      setIsSendingContract(false);
+    } catch (error) {
+      if (error.response && error.response.data) {
+        console.error(
+          'Erro ao processar o contrato:',
+          JSON.stringify(error.response.data, null, 2),
+        );
+        setContractError(`Erro: ${error.response.data.message || 'Erro ao enviar contrato.'}`);
+      } else {
+        console.error('Erro ao processar o contrato:', error.message);
+        setContractError(error.message || 'Erro ao enviar contrato.');
+      }
+      setIsSendingContract(false);
+    }
+  };
+
+  const handleGenerateProposal = () => {
+    console.log('Gerar proposta');
   };
 
   return (
@@ -138,18 +235,76 @@ const LeadManager = ({
             ) : (
               <Grid container spacing={3}>
                 <Grid item xs={12} md={8}>
-                  <Tabs value={tabIndex} onChange={(_e, newValue) => setTabIndex(newValue)}>
-                    <Tab label="Lead" />
-                    <Tab label="Vistorias" />
-                    <Tab label="Vendas" />
-                    <Tab label="Projetos" />
-                  </Tabs>
+                  <Box display="flex" alignItems="center" justifyContent="space-between">
+                    <Tabs value={tabIndex} onChange={(_e, newValue) => setTabIndex(newValue)}>
+                      <Tab label="Lead" />
+                      <Tab label="Vendas" />
+                      <Tab label="Projetos" />
+                    </Tabs>
+
+                    <Box display="flex" gap={2}>
+                      <Tooltip title="Enviar Contrato">
+                        <IconButton
+                          color="primary"
+                          onClick={handleSendContract}
+                          disabled={isSendingContract}
+                          sx={{
+                            border: '1px solid #ccc',
+                            borderRadius: '8px',
+                            padding: '8px',
+                            transition: 'background-color 0.3s',
+                            '&:hover': {
+                              backgroundColor: '#e0e0e0',
+                            },
+                          }}
+                        >
+                          <SendIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Gerar Proposta">
+                        <IconButton
+                          color="primary"
+                          onClick={handleGenerateProposal}
+                          sx={{
+                            border: '1px solid #ccc',
+                            borderRadius: '8px',
+                            padding: '8px',
+                            transition: 'background-color 0.3s',
+                            '&:hover': {
+                              backgroundColor: '#e0e0e0',
+                            },
+                          }}
+                        >
+                          <DescriptionIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                  </Box>
 
                   <Box mt={2}>
-                    {tabIndex === 0 && <LeadDetails selectedLead={selectedLead} />}
-                    {tabIndex === 1 && 'vistorias ...'}
-                    {tabIndex === 2 && <SaleManager />}
-                    {tabIndex === 3 && (
+                    {tabIndex === 0 && (
+                      <LeadDetails
+                        contractSuccess={contractSuccess}
+                        contractError={contractError}
+                        selectedLead={selectedLead}
+                        setContractError={setContractError}
+                        setContractSuccess={setContractSuccess}
+                      />
+                    )}
+                    {tabIndex === 1 && (
+                      <SaleManager
+                        managers={managers}
+                        supervisors={supervisors}
+                        sellers={sellers}
+                        sdrs={sdrs}
+                        allUsers={allUsers}
+                        branches={branches}
+                        campaigns={campaigns}
+                        leadData={leadsList}
+                        sales={sales}
+                      />
+                    )}
+                    {tabIndex === 2 && (
                       <ProjectManager
                         designers={designers}
                         managers={managers}
@@ -179,16 +334,6 @@ const LeadManager = ({
                 {tabIndex === 1 && (
                   <>
                     <Button onClick={handleUpdateSale} color="primary" variant="contained">
-                      Salvar Vistoria
-                    </Button>
-                    <Button onClick={() => setEditMode(false)} color="secondary" variant="outlined">
-                      Cancelar
-                    </Button>
-                  </>
-                )}
-                {tabIndex === 2 && (
-                  <>
-                    <Button onClick={handleUpdateSale} color="primary" variant="contained">
                       Salvar Venda
                     </Button>
                     <Button onClick={() => setEditMode(false)} color="secondary" variant="outlined">
@@ -196,7 +341,7 @@ const LeadManager = ({
                     </Button>
                   </>
                 )}
-                {tabIndex === 3 && (
+                {tabIndex === 2 && (
                   <>
                     <Button onClick={handleUpdateSale} color="primary" variant="contained">
                       Salvar Projeto
@@ -219,11 +364,9 @@ const LeadManager = ({
                     </Button>
                   </>
                 ) : (
-                  <>
-                    <Button onClick={() => setOpenModal(false)} color="primary" variant="contained">
-                      Fechar
-                    </Button>
-                  </>
+                  <Button onClick={() => setOpenModal(false)} color="primary" variant="contained">
+                    Fechar
+                  </Button>
                 )}
               </>
             )}
