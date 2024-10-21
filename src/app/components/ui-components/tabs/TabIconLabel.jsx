@@ -30,9 +30,9 @@ const TabIconLabel = () => {
         <ChildCard title="Icon with Label" codeModel={<IconWithLabelCode />}>
             <TabContext value={value}>
                 <Tabs value={value} onChange={handleChange} aria-label="icon tabs example">
-                    {COMMON_TAB.map((tab) => (
+                    {COMMON_TAB.map((tab, index) => (
                         <Tab
-                            key={tab.value}
+                            key={index}
                             icon={tab.icon}
                             label={tab.label}
                             value={tab.value}

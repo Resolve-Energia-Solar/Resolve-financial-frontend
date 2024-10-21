@@ -1,12 +1,10 @@
-import { solarizedDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import apiClient from './apiClient';
 
 const saleService = {
-    getSales: async () => { 
-        const response = await apiClient.get(`/api/sales/`);
+    getSales: async (ordering = '') => { 
+        const response = await apiClient.get(`/api/sales/?ordering=${ordering}`);
         return response.data;
     },
-
     getSaleByFullName: async (fullName) => {
         const response = await apiClient.get(`/api/sales/?q=${fullName}`);
         return response.data;
@@ -19,6 +17,11 @@ const saleService = {
 
     updateSale: async (id, data) => {
         const response = await apiClient.put(`/api/sales/${id}/`, data);
+        return response.data;
+    },
+
+    updateSalePartial: async (id, data) => {
+        const response = await apiClient.patch(`/api/sales/${id}/`, data);
         return response.data;
     },
 

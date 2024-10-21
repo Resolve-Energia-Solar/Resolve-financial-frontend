@@ -1,4 +1,4 @@
-import { Grid, Box, Typography, useTheme } from '@mui/material';
+import { Grid, Box, Typography, useTheme, Snackbar, Alert } from '@mui/material';
 import {
   Email,
   Phone,
@@ -10,9 +10,10 @@ import {
   Badge,
   Wc,
   Place,
+  AssignmentInd,
 } from '@mui/icons-material';
 
-const LeadDetails = ({ selectedLead }) => {
+const LeadDetails = ({ selectedLead, contractSuccess, contractError, setContractError, setContractSuccess}) => {
   const theme = useTheme();
 
   const details = [
@@ -71,19 +72,44 @@ const LeadDetails = ({ selectedLead }) => {
     {
       icon: <CalendarToday fontSize="small" />,
       label: 'Criado em',
-      value: new Date(selectedLead.created_at).toLocaleDateString('pt-BR'),
+      value: selectedLead.created_at
+        ? new Date(selectedLead.created_at).toLocaleDateString('pt-BR')
+        : 'N/A',
     },
     {
       icon: <Badge fontSize="small" />,
       label: 'Status',
-      value: selectedLead.column ? selectedLead.column.name : 'N/A', // Verificação adicionada
+      value: selectedLead.column ? selectedLead.column.name : 'N/A',
+    },
+    {
+      icon: <AssignmentInd fontSize="small" />,
+      label: 'Vendedor',
+      value: selectedLead.seller ? selectedLead.seller.complete_name : 'N/A',
+    },
+    {
+      icon: <AssignmentInd fontSize="small" />,
+      label: 'SDR',
+      value: selectedLead.sdr ? selectedLead.sdr.complete_name : 'N/A',
+    },
+    {
+      icon: <Place fontSize="small" />,
+      label: 'Endereço',
+      value:
+        selectedLead.addresses && selectedLead.addresses.length > 0
+          ? selectedLead.addresses
+              .map(
+                (address) =>
+                  `${address.street}, ${address.number} - ${address.city}, ${address.state}`,
+              )
+              .join('; ')
+          : 'N/A',
     },
   ];
 
   return (
     <Grid container spacing={3}>
       {details.map((detail, index) => (
-        <Grid item xs={12} sm={6} md={4} key={index}>
+        <Grid item xs={12} sm={6} md={6} key={index}>
           <Box display="flex" alignItems="center">
             <Box
               display="flex"
@@ -107,6 +133,30 @@ const LeadDetails = ({ selectedLead }) => {
           </Box>
         </Grid>
       ))}
+      {contractSuccess && (
+        <Snackbar
+          open={Boolean(contractSuccess)}
+          autoHideDuration={6000}
+          onClose={() => setContractSuccess(null)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert onClose={() => setContractSuccess(null)} severity="success">
+            {contractSuccess}
+          </Alert>
+        </Snackbar>
+      )}
+      {contractError && (
+        <Snackbar
+          open={Boolean(contractError)}
+          autoHideDuration={6000}
+          onClose={() => setContractError(null)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert onClose={() => setContractError(null)} severity="error">
+            Erro ao enviar contrato: {contractError}
+          </Alert>
+        </Snackbar>
+      )}
     </Grid>
   );
 };

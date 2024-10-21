@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Snackbar,
@@ -8,23 +8,21 @@ import {
   DialogActions,
   Button,
   Divider,
-  Menu,
-  MenuItem,
   Alert,
   Grid,
-  Typography,
   Tabs,
   Tab,
 } from '@mui/material';
+
 import LeadDetails from './LeadDetails';
 import LeadForm from './LeadForm';
 import LeadCard from './LeadCard';
 import SimpleBar from 'simplebar-react';
 import ColumnWithActions from './LeadHeader';
-import GenerateProposalModal from './GenerateProposal';
-import GenerateProjectModal from './GenerateProject';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import useLeadManager from '@/hooks/boards/useLeadManager';
+import SaleManager from './SaleManager';
+import ProjectManager from './ProjectManager';
 
 const LeadManager = ({
   leads,
@@ -41,7 +39,6 @@ const LeadManager = ({
     leadData,
     setLeadData,
     selectedLead,
-    setSelectedLead,
     openModal,
     setOpenModal,
     editMode,
@@ -50,27 +47,38 @@ const LeadManager = ({
     snackbarOpen,
     setSnackbarOpen,
     handleUpdateLead,
-    handleUpdateColumnName,
-    handleDeleteLead,
     onDragEnd,
     handleLeadClick,
     setTabIndex,
     tabIndex,
-    openProposalModal,
-    setOpenProposalModal,
-    openProjectModal,
-    setOpenProjectModal,
-    anchorEl,
-    setAnchorEl,
+    sellers,
+    sdrs,
+    allUsers,
+    addresses,
+    designers,
+    managers,
+    supervisors,
+    branches,
+    campaigns,
+    sales,
   } = useLeadManager(leads, statuses, {
     onUpdateLead,
     onAddLead,
     onDeleteLead,
-    onUpdateLeadColumn,
   });
+
+  const [contractError, setContractError] = useState(null);
+  const [contractSuccess, setContractSuccess] = useState(null);
 
   const activateEditMode = () => {
     setEditMode(true);
+  };
+
+  const statusColors = {
+    'Novo Lead': '#ecf2ff',
+    'Primeiro Contato': '#fef5e5',
+    'Terceiro Contato': '#e8f7ff',
+    'Quarto Contato': '#e6fffa',
   };
 
   return (
@@ -86,7 +94,8 @@ const LeadManager = ({
                     {...provided.droppableProps}
                     sx={{
                       minWidth: '300px',
-                      backgroundColor: '#f5f5f5',
+                      backgroundColor: statusColors[status.name] || '#f5f5f5',
+
                       p: 2,
                       maxHeight: '80vh',
                       overflowY: 'auto',
@@ -94,14 +103,12 @@ const LeadManager = ({
                     }}
                   >
                     <ColumnWithActions
-                      key={status.id}
                       columnTitle={status.name}
                       statusId={status.id}
                       boardId={board}
-                      onEditStatus={handleUpdateColumnName}
+                      onUpdateLeadColumn={onUpdateLeadColumn}
                       leads={leadsList}
                       onAddLead={onAddLead}
-                      position={status.position}
                     />
                     {leadsList
                       .filter((lead) => lead.column.id === status.id)
@@ -134,27 +141,58 @@ const LeadManager = ({
           <Divider />
           <DialogContent>
             {editMode ? (
-              <LeadForm leadData={leadData} setLeadData={setLeadData} />
+              <LeadForm
+                leadData={leadData}
+                setLeadData={setLeadData}
+                sellers={sellers}
+                sdrs={sdrs}
+                addresses={addresses.results}
+                snackbarMessage={snackbarMessage}
+                snackbarOpen={snackbarOpen}
+                setSnackbarOpen={setSnackbarOpen}
+              />
             ) : (
               <Grid container spacing={3}>
                 <Grid item xs={12} md={8}>
-                  <Tabs value={tabIndex} onChange={(_e, newValue) => setTabIndex(newValue)}>
-                    <Tab label="Lead" />
-                    <Tab label="Vendas" />
-                    <Tab label="Tarefas" />
-                    <Tab label="Atividades" />
-                  </Tabs>
+                  <Box display="flex" alignItems="center" justifyContent="space-between">
+                    <Tabs value={tabIndex} onChange={(_e, newValue) => setTabIndex(newValue)}>
+                      <Tab label="Lead" />
+                      <Tab label="Vendas" />
+                      <Tab label="Projetos" />
+                    </Tabs>
+                  </Box>
 
                   <Box mt={2}>
-                    {tabIndex === 0 && <LeadDetails selectedLead={selectedLead} />}
+                    {tabIndex === 0 && (
+                      <LeadDetails
+                        contractSuccess={contractSuccess}
+                        contractError={contractError}
+                        selectedLead={selectedLead}
+                        setContractError={setContractError}
+                        setContractSuccess={setContractSuccess}
+                      />
+                    )}
                     {tabIndex === 1 && (
-                      <Typography variant="body1">Conteúdo das Propostas...</Typography>
+                      <SaleManager
+                        managers={managers}
+                        supervisors={supervisors}
+                        sellers={sellers}
+                        sdrs={sdrs}
+                        allUsers={allUsers}
+                        branches={branches}
+                        campaigns={campaigns}
+                        leadData={leadsList}
+                        sales={sales}
+                      />
                     )}
                     {tabIndex === 2 && (
-                      <Typography variant="body1">Conteúdo das Tarefas...</Typography>
-                    )}
-                    {tabIndex === 3 && (
-                      <Typography variant="body1">Conteúdo das Atividades...</Typography>
+                      <ProjectManager
+                        designers={designers}
+                        managers={managers}
+                        sellers={sellers}
+                        supervisors={supervisors}
+                        addresses={addresses.results}
+                      />
                     )}
                   </Box>
                 </Grid>
@@ -164,43 +202,58 @@ const LeadManager = ({
           <DialogActions>
             {editMode ? (
               <>
-                <Button onClick={handleUpdateLead} color="primary" variant="contained">
-                  Salvar
-                </Button>
-                <Button onClick={() => setEditMode(false)} color="secondary" variant="outlined">
-                  Cancelar
-                </Button>
+                {tabIndex === 0 && (
+                  <>
+                    <Button onClick={handleUpdateLead} color="primary" variant="contained">
+                      Salvar
+                    </Button>
+                    <Button onClick={() => setEditMode(false)} color="secondary" variant="outlined">
+                      Cancelar
+                    </Button>
+                  </>
+                )}
+                {tabIndex === 1 && (
+                  <>
+                    <Button onClick={handleUpdateSale} color="primary" variant="contained">
+                      Salvar Venda
+                    </Button>
+                    <Button onClick={() => setEditMode(false)} color="secondary" variant="outlined">
+                      Cancelar
+                    </Button>
+                  </>
+                )}
+                {tabIndex === 2 && (
+                  <>
+                    <Button onClick={handleUpdateSale} color="primary" variant="contained">
+                      Salvar Projeto
+                    </Button>
+                    <Button onClick={() => setEditMode(false)} color="secondary" variant="outlined">
+                      Cancelar
+                    </Button>
+                  </>
+                )}
               </>
             ) : (
               <>
-                <Button onClick={() => setOpenModal(false)} color="primary" variant="contained">
-                  Fechar
-                </Button>
-                <Button onClick={activateEditMode} color="primary" variant="outlined">
-                  Editar
-                </Button>
+                {tabIndex === 0 ? (
+                  <>
+                    <Button onClick={activateEditMode} color="primary" variant="outlined">
+                      Editar
+                    </Button>
+                    <Button onClick={() => setOpenModal(false)} color="primary" variant="contained">
+                      Fechar
+                    </Button>
+                  </>
+                ) : (
+                  <Button onClick={() => setOpenModal(false)} color="primary" variant="contained">
+                    Fechar
+                  </Button>
+                )}
               </>
             )}
           </DialogActions>
-          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-            <MenuItem onClick={() => console.log('Enviar Email')}>Enviar Email</MenuItem>
-            <MenuItem onClick={() => console.log('Adicionar Nota')}>Adicionar Nota</MenuItem>
-            <MenuItem onClick={handleDeleteLead}>Excluir Lead</MenuItem>
-          </Menu>
         </Dialog>
       )}
-
-      <GenerateProposalModal
-        open={openProposalModal}
-        onClose={() => setOpenProposalModal(false)}
-        lead={selectedLead}
-      />
-      <GenerateProjectModal
-        open={openProjectModal}
-        onClose={() => setOpenProjectModal(false)}
-        lead={selectedLead}
-      />
-
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}

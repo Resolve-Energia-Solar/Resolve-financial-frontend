@@ -12,17 +12,30 @@ import {
   DialogActions,
   TextField,
   Button,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import { MoreVert, Add } from '@mui/icons-material';
+import leadService from '@/services/leadService';
 
-const ColumnWithActions = ({ columnTitle, leads, statusId, boardId, onAddLead, onEditStatus }) => {
+const ColumnWithActions = ({ columnTitle, leads, statusId, boardId, onUpdateLeadColumn }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openLeadModal, setOpenLeadModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
-  const [leadName, setLeadName] = useState('');
-  const [leadEmail, setLeadEmail] = useState('');
-  const [leadPhone, setLeadPhone] = useState('');
+  const [leadData, setLeadData] = useState({
+    complete_name: '',
+    contact_email: '',
+    phone: '',
+    first_document: '',
+    second_document: '',
+    type: '',
+    birth_date: '',
+    gender: '',
+    origin: '',
+  });
   const [columnName, setColumnName] = useState(columnTitle);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const leadsCount = leads ? leads.filter((lead) => lead.column.id === statusId).length : 0;
 
@@ -40,25 +53,51 @@ const ColumnWithActions = ({ columnTitle, leads, statusId, boardId, onAddLead, o
 
   const handleCloseLeadModal = () => {
     setOpenLeadModal(false);
-    setLeadName('');
-    setLeadEmail('');
-    setLeadPhone('');
+    setLeadData({
+      complete_name: '',
+      contact_email: '',
+      phone: '',
+      first_document: '',
+      second_document: '',
+      type: '',
+      birth_date: '',
+      gender: '',
+      origin: '',
+    });
   };
 
   const handleSaveLead = async () => {
     try {
       const newLeadData = {
-        name: leadName,
-        contact_email: leadEmail,
-        phone: leadPhone,
-        column: statusId,
+        name: leadData.complete_name || '',
+        contact_email: leadData.contact_email || '',
+        phone: leadData.phone || '',
+        first_document: leadData.first_document || null,
+        second_document: leadData.second_document || null,
+        type: leadData.type || null,
+        birth_date: leadData.birth_date || null,
+        gender: leadData.gender || null,
+        origin: leadData.origin || null,
+        seller_id: leadData.seller_id || null,
+        sdr_id: leadData.sdr_id || null,
+        addresses_ids: leadData.addresses_ids || [],
+        column_id: statusId,
         board_id: boardId,
       };
 
-      await onAddLead(newLeadData);
+      await leadService.createLead(newLeadData);
+      setSnackbarOpen(true);
+      setSnackbarMessage('Lead adicionado com sucesso!');
       handleCloseLeadModal();
     } catch (error) {
       console.error('Erro ao adicionar lead:', error);
+      if (error.response && error.response.data) {
+        console.error('Detalhes do erro:', error.response.data);
+        setSnackbarMessage(`Erro ao adicionar lead: ${JSON.stringify(error.response.data)}`);
+      } else {
+        setSnackbarMessage('Erro ao adicionar lead. Tente novamente.');
+      }
+      setSnackbarOpen(true);
     }
   };
 
@@ -68,12 +107,23 @@ const ColumnWithActions = ({ columnTitle, leads, statusId, boardId, onAddLead, o
 
   const handleCloseEditModal = () => {
     setOpenEditModal(false);
-    setColumnName(columnTitle);
   };
 
   const handleSaveEditColumn = async () => {
-    await onEditStatus(statusId, columnName);
-    setOpenEditModal(false);
+    try {
+      await onUpdateLeadColumn(statusId, columnName);
+      setOpenEditModal(false);
+      setSnackbarMessage('Coluna atualizada com sucesso!');
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error('Erro ao editar nome da coluna:', error);
+      if (error.response && error.response.data) {
+        setSnackbarMessage(`Erro ao atualizar a coluna: ${error.response.data.message}`);
+      } else {
+        setSnackbarMessage('Erro ao atualizar a coluna. Tente novamente.');
+      }
+      setSnackbarOpen(true);
+    }
   };
 
   return (
@@ -97,7 +147,12 @@ const ColumnWithActions = ({ columnTitle, leads, statusId, boardId, onAddLead, o
             <IconButton onClick={handleOpenMenu}>
               <MoreVert />
             </IconButton>
-            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
+            <Menu
+              anchorEl={anchorEl}
+              disableEnforceFocus
+              open={Boolean(anchorEl)}
+              onClose={handleCloseMenu}
+            >
               <MenuItem onClick={() => handleOpenEditModal()}>Editar status</MenuItem>
             </Menu>
           </Box>
@@ -112,27 +167,30 @@ const ColumnWithActions = ({ columnTitle, leads, statusId, boardId, onAddLead, o
             margin="dense"
             label="Nome do Lead"
             fullWidth
-            value={leadName}
-            onChange={(e) => setLeadName(e.target.value)}
+            value={leadData.complete_name}
+            onChange={(e) => setLeadData({ ...leadData, complete_name: e.target.value })}
           />
           <TextField
             margin="dense"
             label="Email do Lead"
             fullWidth
-            value={leadEmail}
-            onChange={(e) => setLeadEmail(e.target.value)}
+            value={leadData.contact_email}
+            onChange={(e) => setLeadData({ ...leadData, contact_email: e.target.value })}
           />
           <TextField
             margin="dense"
             label="Telefone do Lead"
             fullWidth
-            value={leadPhone}
-            onChange={(e) => setLeadPhone(e.target.value)}
+            value={leadData.phone}
+            onChange={(e) => setLeadData({ ...leadData, phone: e.target.value })}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseLeadModal}>Cancelar</Button>
-          <Button onClick={handleSaveLead} disabled={!leadName || !leadEmail || !leadPhone}>
+          <Button
+            onClick={handleSaveLead}
+            disabled={!leadData.complete_name || !leadData.contact_email || !leadData.phone}
+          >
             Adicionar
           </Button>
         </DialogActions>
@@ -157,6 +215,20 @@ const ColumnWithActions = ({ columnTitle, leads, statusId, boardId, onAddLead, o
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarMessage.includes('Erro') ? 'error' : 'success'}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

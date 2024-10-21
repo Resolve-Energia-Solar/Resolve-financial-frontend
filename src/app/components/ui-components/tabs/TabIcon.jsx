@@ -29,13 +29,13 @@ const TabIcon = () => {
         <ChildCard title="Icon" codeModel={<IconCode />}>
             <TabContext value={value}>
                 <Tabs value={value} onChange={handleChange} aria-label="icon tabs example">
-                    {COMMON_TAB.map((tab) => (
-                        <Tab key={tab.value} icon={tab.icon} value={tab.value} />
+                    {COMMON_TAB.map((tab, index) => (
+                        <Tab key={index} icon={tab.icon} value={tab.value} />
                     ))}
                 </Tabs>
                 <Box bgcolor="grey.200" mt={2}>
-                    {COMMON_TAB.map((panel) => (
-                        <TabPanel key={panel.value} value={panel.value}>
+                    {COMMON_TAB.map((panel, index) => (
+                        <TabPanel key={index} value={panel.value}>
                             {panel.label}
                         </TabPanel>
                     ))}

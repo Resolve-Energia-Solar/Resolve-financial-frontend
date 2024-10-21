@@ -5,7 +5,7 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import userService from '@/services/userService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteUser({ onChange, value, error, helperText }) {
+export default function AutoCompleteUser({ onChange, value, error, helperText, disabled }) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
@@ -78,6 +78,7 @@ export default function AutoCompleteUser({ onChange, value, error, helperText })
         getOptionLabel={(option) => option.name}
         options={options}
         loading={loading}
+        disabled={disabled}
         value={selectedUser}
         onInputChange={(event, newInputValue) => {
           fetchUsersByName(newInputValue);

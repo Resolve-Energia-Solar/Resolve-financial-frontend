@@ -15,15 +15,12 @@ function KanbanPage() {
     error,
     leads,
     statuses,
-    columns,
-    setColumns,
-    setLeads,
     snackbarMessage,
     snackbarOpen,
     handleSnackbarClose,
-    updateLeadColumn,
     handleDeleteLead,
     handleUpdateLead,
+    updateColumnName,
   } = useKanban();
 
   return (
@@ -33,10 +30,6 @@ function KanbanPage() {
           boards={boards}
           selectedBoard={selectedBoard}
           onBoardChange={(e) => setSelectedBoard(e.target.value)}
-          leads={leads}
-          columns={columns}
-          setColumns={setColumns}
-          setLeads={setLeads}
         />
 
         {loading ? (
@@ -52,7 +45,7 @@ function KanbanPage() {
                 leads={leads}
                 statuses={statuses}
                 board={selectedBoard}
-                onUpdateLeadColumn={updateLeadColumn}
+                onUpdateLeadColumn={updateColumnName}
                 onUpdateLead={handleUpdateLead}
                 onDeleteLead={handleDeleteLead}
               />
@@ -68,7 +61,7 @@ function KanbanPage() {
           open={snackbarOpen}
           autoHideDuration={4000}
           onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
           <Alert
             onClose={handleSnackbarClose}

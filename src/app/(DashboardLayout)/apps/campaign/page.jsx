@@ -116,8 +116,8 @@ const CampaignList = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {campaignsList.map((item) => (
-                                        <TableRow key={item.id} hover>
+                                    {campaignsList.map((item, index) => (
+                                        <TableRow key={index} hover>
                                             <TableCell>{item.id}</TableCell>
                                             <TableCell>{item.name}</TableCell>
                                             <TableCell>{new Date(item.start_datetime).toLocaleDateString()}</TableCell>
