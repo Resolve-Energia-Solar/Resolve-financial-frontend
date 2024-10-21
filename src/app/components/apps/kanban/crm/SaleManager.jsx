@@ -7,6 +7,7 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import StatusIcon from '@mui/icons-material/AssignmentTurnedIn';
 import SaleForm from './LeadSale';
 import saleService from '@/services/saleService';
+import StatusChip from '../../comercial/sale/components/DocumentStatusIcon';
 
 const SaleManager = ({
   sales = [],
@@ -144,7 +145,7 @@ const SaleManager = ({
                 <Box display="flex" alignItems="center" mb={1}>
                   <StatusIcon sx={{ color: '#607d8b', mr: 1 }} /> 
                   <Typography variant="body1">
-                    Status: {sale.status || 'N/A'}
+                    Status: <StatusChip status={sale.status} />
                   </Typography>
                 </Box>
 
