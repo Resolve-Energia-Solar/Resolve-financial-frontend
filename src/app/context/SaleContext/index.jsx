@@ -9,9 +9,15 @@ export const SaleDataContextProvider = ({ children }) => {
     statusDocument: [],
   });
 
+  const [refresh, setRefresh] = useState(false);
+
+  const refreshData = () => {
+    setRefresh((prev) => !prev);
+  };
+
 
   return (
-    <SaleDataContext.Provider value={{ filters, setFilters }}>
+    <SaleDataContext.Provider value={{ filters, setFilters, refreshData, refresh }}>
       {children}
     </SaleDataContext.Provider>
   );

@@ -20,6 +20,11 @@ const saleService = {
         return response.data;
     },
 
+    updateSalePartial: async (id, data) => {
+        const response = await apiClient.patch(`/api/sales/${id}/`, data);
+        return response.data;
+    },
+
     createSale: async (data) => {
         const response = await apiClient.post(`/api/sales/`, data);
         return response.data;
