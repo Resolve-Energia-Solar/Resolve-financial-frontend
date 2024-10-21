@@ -79,6 +79,13 @@ const LeadManager = ({
     setEditMode(true);
   };
 
+  const statusColors = {
+    'Novo Lead': '#ecf2ff',
+    'Primeiro Contato': '#fef5e5',
+    'Terceiro Contato': '#e8f7ff',
+    'Quarto Contato': '#e6fffa',
+  };
+
   const handleSendContract = async (sale) => {
     try {
       setIsSendingContract(true);
@@ -176,7 +183,8 @@ const LeadManager = ({
                     {...provided.droppableProps}
                     sx={{
                       minWidth: '300px',
-                      backgroundColor: '#f5f5f5',
+                      backgroundColor: statusColors[status.name] || '#f5f5f5', // Aplica cor com base no status
+
                       p: 2,
                       maxHeight: '80vh',
                       overflowY: 'auto',
