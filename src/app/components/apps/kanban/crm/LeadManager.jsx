@@ -12,11 +12,8 @@ import {
   Grid,
   Tabs,
   Tab,
-  IconButton,
-  Tooltip,
 } from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
-import DescriptionIcon from '@mui/icons-material/Description';
+
 import LeadDetails from './LeadDetails';
 import LeadForm from './LeadForm';
 import LeadCard from './LeadCard';
@@ -26,7 +23,6 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import useLeadManager from '@/hooks/boards/useLeadManager';
 import SaleManager from './SaleManager';
 import ProjectManager from './ProjectManager';
-import clickSignService from '@/services/ClickSign';
 
 const LeadManager = ({
   leads,
@@ -73,7 +69,6 @@ const LeadManager = ({
 
   const [contractError, setContractError] = useState(null);
   const [contractSuccess, setContractSuccess] = useState(null);
-  const [isSendingContract, setIsSendingContract] = useState(false);
 
   const activateEditMode = () => {
     setEditMode(true);
@@ -84,90 +79,6 @@ const LeadManager = ({
     'Primeiro Contato': '#fef5e5',
     'Terceiro Contato': '#e8f7ff',
     'Quarto Contato': '#e6fffa',
-  };
-
-  const handleSendContract = async (sale) => {
-    try {
-      setIsSendingContract(true);
-
-      const documentData = {
-        Address: 'Endereço Fictício',
-        Phone: selectedLead?.phone,
-      };
-      const path = `/Contratos/Contrato-${sale.contract_number}.pdf`;
-
-      const documentoCriado = await clickSignService.v1.createDocumentModel(documentData, path);
-
-      if (!documentoCriado || !documentoCriado.document || !documentoCriado.document.key) {
-        throw new Error('Falha na criação do documento');
-      }
-
-      const documentKey = documentoCriado.document.key;
-      console.log('Documento criado com sucesso:', documentKey);
-
-      const signer = await clickSignService.v1.createSigner(
-        selectedLead?.first_document,
-        selectedLead?.birth_date,
-        selectedLead?.phone,
-        selectedLead?.customer?.email || selectedLead?.email,
-        selectedLead?.customer?.complete_name,
-        'whatsapp',
-        { selfie_enabled: false, handwritten_enabled: false },
-      );
-
-      if (!signer || !signer.signer || !signer.signer.key) {
-        throw new Error('Falha na criação do signatário');
-      }
-
-      const signerKey = signer.signer.key;
-      console.log('Signatário criado:', signerKey);
-
-      const listaAdicionada = await clickSignService.AddSignerDocument(
-        signerKey,
-        documentKey,
-        'contractor',
-        'Por favor, assine o contrato.',
-      );
-
-      if (
-        !listaAdicionada ||
-        !listaAdicionada.list ||
-        !listaAdicionada.list.request_signature_key
-      ) {
-        throw new Error('Falha ao adicionar o signatário ao documento');
-      }
-
-      const requestSignatureKey = listaAdicionada.list.request_signature_key;
-      console.log('Signatário adicionado ao documento:', listaAdicionada);
-
-      const emailNotificacao = await clickSignService.notification.email(
-        requestSignatureKey,
-        'Por favor, assine o contrato.',
-      );
-      console.log('Notificação por e-mail enviada:', emailNotificacao);
-
-      const whatsappNotificacao = await clickSignService.notification.whatsapp(requestSignatureKey);
-      console.log('Notificação por WhatsApp enviada:', whatsappNotificacao);
-
-      setContractSuccess('Contrato enviado com sucesso!');
-      setIsSendingContract(false);
-    } catch (error) {
-      if (error.response && error.response.data) {
-        console.error(
-          'Erro ao processar o contrato:',
-          JSON.stringify(error.response.data, null, 2),
-        );
-        setContractError(`Erro: ${error.response.data.message || 'Erro ao enviar contrato.'}`);
-      } else {
-        console.error('Erro ao processar o contrato:', error.message);
-        setContractError(error.message || 'Erro ao enviar contrato.');
-      }
-      setIsSendingContract(false);
-    }
-  };
-
-  const handleGenerateProposal = () => {
-    console.log('Gerar proposta');
   };
 
   return (
@@ -183,7 +94,7 @@ const LeadManager = ({
                     {...provided.droppableProps}
                     sx={{
                       minWidth: '300px',
-                      backgroundColor: statusColors[status.name] || '#f5f5f5', // Aplica cor com base no status
+                      backgroundColor: statusColors[status.name] || '#f5f5f5',
 
                       p: 2,
                       maxHeight: '80vh',
@@ -249,44 +160,6 @@ const LeadManager = ({
                       <Tab label="Vendas" />
                       <Tab label="Projetos" />
                     </Tabs>
-
-                    <Box display="flex" gap={2}>
-                      <Tooltip title="Enviar Contrato">
-                        <IconButton
-                          color="primary"
-                          onClick={handleSendContract}
-                          disabled={isSendingContract}
-                          sx={{
-                            border: '1px solid #ccc',
-                            borderRadius: '8px',
-                            padding: '8px',
-                            transition: 'background-color 0.3s',
-                            '&:hover': {
-                              backgroundColor: '#e0e0e0',
-                            },
-                          }}
-                        >
-                          <SendIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Gerar Proposta">
-                        <IconButton
-                          color="primary"
-                          onClick={handleGenerateProposal}
-                          sx={{
-                            border: '1px solid #ccc',
-                            borderRadius: '8px',
-                            padding: '8px',
-                            transition: 'background-color 0.3s',
-                            '&:hover': {
-                              backgroundColor: '#e0e0e0',
-                            },
-                          }}
-                        >
-                          <DescriptionIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
                   </Box>
 
                   <Box mt={2}>
