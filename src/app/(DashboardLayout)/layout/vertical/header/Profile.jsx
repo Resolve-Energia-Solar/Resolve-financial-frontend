@@ -83,7 +83,7 @@ const Profile = () => {
               {user?.first_name || ''} {user?.last_name || ''}
             </Typography>
             <Typography variant="subtitle2" color="textSecondary">
-              {user?.role.name || ''}
+              {user?.role?.name || ''}
             </Typography>
             <Typography
               variant="subtitle2"

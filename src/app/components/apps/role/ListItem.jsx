@@ -62,7 +62,7 @@ const ListItem = ({ roles = [], onDelete }) => {
 
                     <TableCell>
                       <Typography variant="subtitle1" fontWeight={600} noWrap>
-                        {role.name}
+                        {role?.name}
                       </Typography>
                     </TableCell>
             
