@@ -67,9 +67,6 @@ const LeadManager = ({
     onDeleteLead,
   });
 
-  const [contractError, setContractError] = useState(null);
-  const [contractSuccess, setContractSuccess] = useState(null);
-
   const activateEditMode = () => {
     setEditMode(true);
   };
@@ -163,15 +160,7 @@ const LeadManager = ({
                   </Box>
 
                   <Box mt={2}>
-                    {tabIndex === 0 && (
-                      <LeadDetails
-                        contractSuccess={contractSuccess}
-                        contractError={contractError}
-                        selectedLead={selectedLead}
-                        setContractError={setContractError}
-                        setContractSuccess={setContractSuccess}
-                      />
-                    )}
+                    {tabIndex === 0 && <LeadDetails selectedLead={selectedLead} />}
                     {tabIndex === 1 && (
                       <SaleManager
                         managers={managers}

@@ -29,7 +29,7 @@ const Language = () => {
   const open = Boolean(anchorEl);
   const customizer = useSelector((state) => state.customizer);
   const currentLang =
-    Languages.find((_lang) => _lang.value === customizer.isLanguage) || Languages[2];
+    Languages.find((_lang) => _lang.value === customizer.isLanguage) || Languages[1];
   const { i18n } = useTranslation();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
