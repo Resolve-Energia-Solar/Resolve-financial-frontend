@@ -11,7 +11,7 @@ const useSaleForm = (initialData, id) => {
     customerId: null,
     sellerId: user?.user?.id,
     salesSupervisorId: user?.user?.user_manager?.user_manager,
-    salesManagerId: user?.user?.user_manager.id,
+    salesManagerId: user?.user?.user_manager?.id,
     branchId: user?.user?.branch?.id,
     marketingCampaignId: null,
     leadId: null,

@@ -104,7 +104,7 @@ const SaleManager = ({
         Address: sale.customer_address || 'Endereço Fictício',
         Phone: sale?.customer?.phone_numbers[0]?.phone_number || 'Telefone Fictício',
       };
-      const path = `/Contratos/Contrato-${sale?.customer?.contract_number}.pdf`;
+      const path = `/Contratos/Contrato-${sale?.customer?.complete_name}.pdf`;
 
       const documentoCriado = await ClickSignService.v1.createDocumentModel(documentData, path);
 

@@ -70,7 +70,7 @@ export default function Login() {
         >
           <Box p={4}>
             <AuthLogin
-              title="Bem vindo ao Resolve CRM"
+              title="Bem vindo ao Resolve ERP"
             />
           </Box>
         </Grid>
