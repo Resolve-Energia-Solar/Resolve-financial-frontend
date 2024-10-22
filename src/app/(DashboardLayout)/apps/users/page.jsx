@@ -116,14 +116,14 @@ const UserList = () => {
                                 </TableHead>
                                 <TableBody>
                                     {userList.map((item) => (
-                                        <TableRow key={item.id} hover>
-                                            <TableCell>{item.id}</TableCell>
+                                        <TableRow key={item?.id} hover>
+                                            <TableCell>{item?.id}</TableCell>
                                             <TableCell>{item?.username}</TableCell> 
                                             <TableCell>{item?.email}</TableCell>
                                             <TableCell>{item?.department?.name || 'N/A'}</TableCell> 
                                             <TableCell>{item?.role?.name || 'N/A'}</TableCell>
                                             <TableCell>
-                                                <Chip label={`${item.user_permissions.length} permissões`} />
+                                                <Chip label={`${item?.user_permissions?.length} permissões`} />
                                             </TableCell>
                                             <TableCell>
                                                 <Tooltip title="Editar">
