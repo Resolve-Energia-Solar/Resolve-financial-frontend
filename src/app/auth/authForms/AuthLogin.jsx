@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -25,16 +25,9 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 const AuthLogin = ({ title, subtitle, subtext }) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  
-  const {
-    formData,
-    formErrors,
-    success,
-    loading,
-    error,
-    handleInputChange,
-    handleSubmit,
-  } = useLoginForm();
+
+  const { formData, formErrors, success, loading, error, handleInputChange, handleSubmit } =
+    useLoginForm();
 
   useEffect(() => {
     if (success) {
@@ -43,6 +36,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
   }, [success, router]);
 
   const handleFormSubmit = async (event) => {
+    console.log('handleFormSubmit', event, dispatch, Cookies);
     await handleSubmit(event, dispatch, Cookies);
   };
 
@@ -154,10 +148,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
         autoHideDuration={3000}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert
-          severity="error"
-          sx={{ width: '100%' }}
-        >
+        <Alert severity="error" sx={{ width: '100%' }}>
           Falha no login. Verifique suas credenciais e tente novamente.
         </Alert>
       </Snackbar>
