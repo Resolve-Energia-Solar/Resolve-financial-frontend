@@ -7,11 +7,11 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import Typography from '@mui/material/Typography';
-import Dialog from '@mui/material/Dialog'; 
-import DialogActions from '@mui/material/DialogActions'; 
-import DialogContent from '@mui/material/DialogContent'; 
-import DialogContentText from '@mui/material/DialogContentText'; 
-import DialogTitle from '@mui/material/DialogTitle'; 
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import CircularProgress from '@mui/material/CircularProgress';
 import * as dropdownData from './data';
 import { IconMail } from '@tabler/icons-react';
@@ -28,7 +28,8 @@ const Profile = () => {
     setAnchorEl2(null);
   };
 
-  const user = useSelector((state) => state.user?.user); 
+  const user = useSelector((state) => state.user?.user);
+  console.log(user);
   const { handleLogout, requestLogout, cancelLogout, loading, confirmLogout } = useLogout();
 
   return (
@@ -46,8 +47,8 @@ const Profile = () => {
         onClick={handleClick2}
       >
         <Avatar
-          src={user?.profile_picture || "/images/profile/user-1.jpg"}
-          alt={'ProfileImg'}
+          src={user?.profile_picture || '/images/profile/user-1.jpg'}
+          alt={user?.first_name}
           sx={{
             width: 35,
             height: 35,
@@ -72,10 +73,14 @@ const Profile = () => {
       >
         <Typography variant="h5">Perfil</Typography>
         <Stack direction="row" py={3} spacing={2} alignItems="center">
-          <Avatar src={user?.profile_picture || "/images/profile/user-1.jpg"} alt={"ProfileImg"} sx={{ width: 95, height: 95 }} />
+          <Avatar
+            src={user?.profile_picture || '/images/profile/user-1.jpg'}
+            alt={user?.first_name}
+            sx={{ width: 95, height: 95 }}
+          />
           <Box>
             <Typography variant="subtitle2" color="textPrimary" fontWeight={600}>
-              {user?.first_name || ''} {user?.last_name || ''} 
+              {user?.first_name || ''} {user?.last_name || ''}
             </Typography>
             <Typography variant="subtitle2" color="textSecondary">
               {user?.role.name || ''}
@@ -104,7 +109,8 @@ const Profile = () => {
                     bgcolor="primary.light"
                     display="flex"
                     alignItems="center"
-                    justifyContent="center" flexShrink="0"
+                    justifyContent="center"
+                    flexShrink="0"
                   >
                     <Avatar
                       src={profile.icon}
