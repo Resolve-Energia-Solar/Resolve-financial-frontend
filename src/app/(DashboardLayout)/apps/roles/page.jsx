@@ -27,10 +27,10 @@ import {
 import { useRouter } from 'next/navigation';
 import BlankCard from '@/app/components/shared/BlankCard';
 import PageContainer from "@/app/components/container/PageContainer";
-import roleService from "@/services/roleService"; // Assumindo que este serviço existe
+import roleService from "@/services/roleService";
 
 const RoleList = () => {
-    const [rolesList, setRolesList] = useState([]); // Mantenha o nome plural
+    const [rolesList, setRolesList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [open, setOpen] = useState(false);

@@ -85,6 +85,9 @@ const SaleList = () => {
   const [alertType, setAlertType] = useState('success');
   const [alertOpen, setAlertOpen] = useState(false);
 
+  const [proposalHTML, setProposalHTML] = useState(''); // Estado para armazenar o HTML da proposta
+  const [dialogOpen, setDialogOpen] = useState(false); // Estado para controlar o diálogo
+
   const [order, setOrder] = useState('asc');
   const [orderDirection, setOrderDirection] = useState('asc');
 
@@ -159,14 +162,34 @@ const SaleList = () => {
     }
   };
 
-  const handleGenerateProposal = async (id) => {
+  const handleGenerateProposal = async (item) => {
     try {
-      await clickSignService.v1.generateProposal(id);
-      showAlert('Proposta gerada com sucesso', 'success');
+      const response = await fetch('/api/proposal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          customer: item?.customer?.complete_name,
+          total_value: Number(item.total_value).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          })
+        }),
+      });
+
+      const data = await response.text(); // Recebe o HTML da API como texto
+      setProposalHTML(data); // Armazena o HTML da proposta no estado
+      setDialogOpen(true); // Abre o diálogo
     } catch (err) {
-      showAlert('Erro ao gerar a proposta', 'error');
-      console.error('Erro ao gerar a proposta:', err);
+      setError('Erro ao gerar proposta');
     }
+  };
+
+  // Função para fechar o diálogo
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setProposalHTML(''); // Limpa o HTML ao fechar
   };
 
   const handleSendContract = async (sale) => {
@@ -401,7 +424,7 @@ const SaleList = () => {
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          handleGenerateProposal(item.id);
+                          handleGenerateProposal(item);
                           handleMenuClose();
                         }}
                       >
@@ -463,6 +486,18 @@ const SaleList = () => {
         <DialogActions>
           <Button onClick={() => setSuccessContract(null)} color="success">
             Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={dialogOpen} onClose={handleCloseDialog} fullWidth maxWidth="md">
+        <DialogTitle>Proposta Gerada</DialogTitle>
+        <DialogContent>
+          <div dangerouslySetInnerHTML={{ __html: proposalHTML }} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Fechar
           </Button>
         </DialogActions>
       </Dialog>
