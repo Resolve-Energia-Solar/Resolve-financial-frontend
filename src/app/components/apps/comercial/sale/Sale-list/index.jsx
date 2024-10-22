@@ -58,6 +58,7 @@ import { useContext } from 'react';
 
 import { SaleDataContext } from '@/app/context/SaleContext';
 import ActionFlash from '../components/flashAction/actionFlash';
+import SwipeCard from '../components/tinder';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -86,9 +87,7 @@ const SaleList = () => {
   const [order, setOrder] = useState('asc');
   const [orderDirection, setOrderDirection] = useState('asc');
 
-
   const [selectedSales, setSelectedSales] = useState([]);
-
 
   const [open, setOpen] = useState(false);
   const [saleToDelete, setSaleToDelete] = useState(null);
@@ -209,13 +208,8 @@ const SaleList = () => {
         </Button>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          
-          { selectedSales.length > 0 && (
-          <ActionFlash 
-            value={selectedSales}
-          />
-          )}
-
+          <SwipeCard />
+          {selectedSales.length > 0 && <ActionFlash value={selectedSales} />}
           <DrawerFilters />
         </Box>
       </Box>
