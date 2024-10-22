@@ -59,6 +59,7 @@ import { useContext } from 'react';
 import { SaleDataContext } from '@/app/context/SaleContext';
 import ActionFlash from '../components/flashAction/actionFlash';
 import SwipeCard from '../components/tinder';
+import StatusPreSale from '../components/StatusPreSale';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -341,7 +342,9 @@ const SaleList = () => {
                       currency: 'BRL',
                     })}
                   </TableCell>
-                  <TableCell>{item.is_sale ? 'Sim' : 'Não'}</TableCell>
+                  <TableCell>
+                    <StatusPreSale status={item.is_sale} />
+                  </TableCell>
                   <TableCell>
                     <StatusChip status={item.status} />
                   </TableCell>
