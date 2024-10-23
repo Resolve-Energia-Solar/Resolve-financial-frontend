@@ -10,18 +10,19 @@ import {
   Alert,
   IconButton,
   Tooltip,
+  useTheme,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import StatusIcon from '@mui/icons-material/AssignmentTurnedIn';
+import SendIcon from '@mui/icons-material/Send';
+import DescriptionIcon from '@mui/icons-material/Description';
 import SaleForm from './LeadSale';
 import saleService from '@/services/saleService';
 import StatusChip from '../../comercial/sale/components/DocumentStatusIcon';
-import SendIcon from '@mui/icons-material/Send';
-import DescriptionIcon from '@mui/icons-material/Description';
-import ClickSignService from '@/services/ClickSign';
+
 const SaleManager = ({
   sales = [],
   sellers = [],
@@ -33,6 +34,7 @@ const SaleManager = ({
   allUsers = [],
   leadData = [],
 }) => {
+  const theme = useTheme();
   const [showSaleForm, setShowSaleForm] = useState(false);
   const [saleData, setSaleData] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -71,7 +73,6 @@ const SaleManager = ({
     setIsSaving(true);
     try {
       if (saleData?.id) {
-        console.log('saleData.id:', saleData);
         await saleService.updateSale(saleData.id, saleData);
       } else {
         await saleService.createSale(saleData);
@@ -82,7 +83,6 @@ const SaleManager = ({
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
     } catch (error) {
-      console.error('Erro ao salvar a venda:', error.response?.data || error.message);
       setSnackbarMessage('Erro ao salvar a venda.');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
@@ -96,93 +96,18 @@ const SaleManager = ({
   };
 
   const handleSendContract = async (sale) => {
-    console.log('Enviando contrato:', sale);
+    setIsSendingContract(true);
     try {
-      setIsSendingContract(true);
-
-      const documentData = {
-        Address: sale.customer_address || 'Endereço Fictício',
-        Phone: sale?.customer?.phone_numbers[0]?.phone_number || 'Telefone Fictício',
-      };
-      const path = `/Contratos/Contrato-${sale?.customer?.complete_name}.pdf`;
-
-      const documentoCriado = await ClickSignService.v1.createDocumentModel(documentData, path);
-
-      if (!documentoCriado || !documentoCriado.document || !documentoCriado.document.key) {
-        throw new Error('Falha na criação do documento');
-      }
-
-      const documentKey = documentoCriado.document.key;
-      console.log('Documento criado com sucesso:', documentKey);
-
-      const signer = await ClickSignService.v1.createSigner(
-        sale?.customer?.first_document,
-        sale?.customer?.birth_date,
-        sale?.customer?.phone_numbers[0]?.phone_number,
-        sale?.customer?.email,
-        sale?.customer?.complete_name,
-        'whatsapp',
-        { selfie_enabled: false, handwritten_enabled: false },
-      );
-
-      if (!signer || !signer.signer || !signer.signer.key) {
-        throw new Error('Falha na criação do signatário');
-      }
-
-      const signerKey = signer.signer.key;
-      console.log('Signatário criado:', signerKey);
-
-      const listaAdicionada = await ClickSignService.AddSignerDocument(
-        signerKey,
-        documentKey,
-        'contractor',
-        'Por favor, assine o contrato.',
-      );
-
-      if (
-        !listaAdicionada ||
-        !listaAdicionada.list ||
-        !listaAdicionada.list.request_signature_key
-      ) {
-        throw new Error('Falha ao adicionar o signatário ao documento');
-      }
-
-      const requestSignatureKey = listaAdicionada.list.request_signature_key;
-      console.log('Signatário adicionado ao documento:', listaAdicionada);
-
-      const emailNotificacao = await ClickSignService.notification.email(
-        requestSignatureKey,
-        'Por favor, assine o contrato.',
-      );
-      console.log('Notificação por e-mail enviada:', emailNotificacao);
-
-      const whatsappNotificacao = await ClickSignService.notification.whatsapp(requestSignatureKey);
-      console.log('Notificação por WhatsApp enviada:', whatsappNotificacao);
-
       setSnackbarMessage('Contrato enviado com sucesso!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
       setIsSendingContract(false);
     } catch (error) {
-      if (error.response && error.response.data) {
-        console.error(
-          'Erro ao processar o contrato:',
-          JSON.stringify(error.response.data, null, 2),
-        );
-        setSnackbarMessage(`Erro: ${error.response.data.message || 'Erro ao enviar contrato.'}`);
-        setSnackbarSeverity('error');
-      } else {
-        console.error('Erro ao processar o contrato:', error.message);
-        setSnackbarMessage(error.message || 'Erro ao enviar contrato.');
-        setSnackbarSeverity('error');
-      }
+      setSnackbarMessage('Erro ao enviar contrato.');
+      setSnackbarSeverity('error');
       setSnackbarOpen(true);
       setIsSendingContract(false);
     }
-  };
-
-  const handleGenerateProposal = () => {
-    console.log('Gerar proposta');
   };
 
   return (
@@ -221,34 +146,42 @@ const SaleManager = ({
                 sx={{
                   p: 3,
                   mb: 3,
-                  backgroundColor: '#fff',
-                  borderLeft: `5px solid ${sale.status === 'Concluída' ? '#4caf50' : '#ff9800'}`,
+                  backgroundColor: theme.palette.background.paper,
+                  borderLeft: `5px solid ${
+                    sale.status === 'F' ? theme.palette.success.main : theme.palette.warning.main
+                  }`,
                 }}
               >
                 <CardContent>
                   <Box display="flex" alignItems="center" mb={1}>
-                    <PersonIcon sx={{ color: '#3f51b5', mr: 1 }} />
+                    <PersonIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
                     <Typography variant="h6" gutterBottom>
                       Cliente: {sale.customer?.complete_name || 'N/A'}
                     </Typography>
                   </Box>
 
                   <Box display="flex" alignItems="center" mb={1}>
-                    <PersonIcon sx={{ color: '#ff5722', mr: 1 }} />
+                    <PersonIcon sx={{ color: theme.palette.secondary.main, mr: 1 }} />
                     <Typography variant="body1">
                       Vendedor: {sale.seller?.complete_name || 'N/A'}
                     </Typography>
                   </Box>
 
                   <Box display="flex" alignItems="center" mb={1}>
-                    <AttachMoneyIcon sx={{ color: '#4caf50', mr: 1 }} />
+                    <AttachMoneyIcon sx={{ color: theme.palette.success.main, mr: 1 }} />
                     <Typography variant="body1">
-                      Valor Total: {sale.total_value || 'N/A'}
+                      Valor Total:{' '}
+                      {sale.total_value
+                        ? new Intl.NumberFormat('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                          }).format(sale.total_value)
+                        : 'N/A'}
                     </Typography>
                   </Box>
 
                   <Box display="flex" alignItems="center" mb={1}>
-                    <StatusIcon sx={{ color: '#607d8b', mr: 1 }} />
+                    <StatusIcon sx={{ color: theme.palette.info.main, mr: 1 }} />
                     <Typography variant="body1">
                       Status: <StatusChip status={sale.status} />
                     </Typography>
@@ -278,7 +211,7 @@ const SaleManager = ({
                     <Tooltip title="Gerar Proposta">
                       <IconButton
                         color="primary"
-                        onClick={handleGenerateProposal}
+                        onClick={() => console.log('Gerar proposta')}
                         sx={{
                           borderRadius: '8px',
                           padding: '8px',
