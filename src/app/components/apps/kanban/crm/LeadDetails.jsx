@@ -1,4 +1,4 @@
-import { Grid, Box, Typography, useTheme, Snackbar, Alert } from '@mui/material';
+import { Grid, Box, Typography, useTheme, Card, CardContent } from '@mui/material';
 import {
   Email,
   Phone,
@@ -16,7 +16,7 @@ import {
 const LeadDetails = ({ selectedLead }) => {
   const theme = useTheme();
 
-  const details = [
+  const personalDetails = [
     {
       icon: <AccountBox fontSize="small" />,
       label: 'Nome',
@@ -33,16 +33,6 @@ const LeadDetails = ({ selectedLead }) => {
       value: selectedLead.byname || 'N/A',
     },
     {
-      icon: <Description fontSize="small" />,
-      label: 'Documento Principal',
-      value: selectedLead.first_document || 'N/A',
-    },
-    {
-      icon: <Badge fontSize="small" />,
-      label: 'Documento Secundário',
-      value: selectedLead.second_document || 'N/A',
-    },
-    {
       icon: <CalendarToday fontSize="small" />,
       label: 'Data de Nascimento',
       value: selectedLead.birth_date
@@ -54,6 +44,22 @@ const LeadDetails = ({ selectedLead }) => {
       label: 'Gênero',
       value: selectedLead.gender === 'M' ? 'Masculino' : 'Feminino',
     },
+  ];
+
+  const documentDetails = [
+    {
+      icon: <Description fontSize="small" />,
+      label: 'Documento Principal',
+      value: selectedLead.first_document || 'N/A',
+    },
+    {
+      icon: <Badge fontSize="small" />,
+      label: 'Documento Secundário',
+      value: selectedLead.second_document || 'N/A',
+    },
+  ];
+
+  const contactDetails = [
     {
       icon: <Email fontSize="small" />,
       label: 'E-mail',
@@ -64,6 +70,22 @@ const LeadDetails = ({ selectedLead }) => {
       label: 'Telefone',
       value: selectedLead.phone || 'N/A',
     },
+    {
+      icon: <Place fontSize="small" />,
+      label: 'Endereço',
+      value:
+        selectedLead.addresses && selectedLead.addresses.length > 0
+          ? selectedLead.addresses
+              .map(
+                (address) =>
+                  `${address.street}, ${address.number} - ${address.city}, ${address.state}`,
+              )
+              .join('; ')
+          : 'N/A',
+    },
+  ];
+
+  const otherDetails = [
     {
       icon: <Place fontSize="small" />,
       label: 'Origem',
@@ -91,49 +113,64 @@ const LeadDetails = ({ selectedLead }) => {
       label: 'SDR',
       value: selectedLead.sdr ? selectedLead.sdr.complete_name : 'N/A',
     },
-    {
-      icon: <Place fontSize="small" />,
-      label: 'Endereço',
-      value:
-        selectedLead.addresses && selectedLead.addresses.length > 0
-          ? selectedLead.addresses
-              .map(
-                (address) =>
-                  `${address.street}, ${address.number} - ${address.city}, ${address.state}`,
-              )
-              .join('; ')
-          : 'N/A',
-    },
   ];
 
-  return (
-    <Grid container spacing={3}>
-      {details.map((detail, index) => (
-        <Grid item xs={12} sm={6} md={6} key={index}>
-          <Box display="flex" alignItems="center">
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              sx={{
-                width: 24,
-                height: 24,
-                marginRight: 1,
-                color: theme.palette.text.secondary,
-              }}
-            >
-              {detail.icon}
-            </Box>
-            <Box>
-              <Typography variant="subtitle2" color="textSecondary">
-                {detail.label}
-              </Typography>
-              <Typography variant="body1">{detail.value}</Typography>
-            </Box>
-          </Box>
+  const renderSection = (title, details) => (
+    <Card
+      variant="outlined"
+      sx={{
+        mb: 3,
+        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+        '&:hover': {
+          transform: 'scale(1.02)',
+          boxShadow: 3,
+        },
+        backgroundColor: theme.palette.background.paper,
+        borderColor: theme.palette.primary.secondary,
+      }}
+    >
+      <CardContent>
+        <Typography variant="h6" gutterBottom color="primary">
+          {title}
+        </Typography>
+        <Grid container spacing={3}>
+          {details.map((detail, index) => (
+            <Grid item xs={12} sm={6} md={6} key={index}>
+              <Box display="flex" alignItems="center">
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  sx={{
+                    width: 24,
+                    height: 24,
+                    marginRight: 1,
+                    color: theme.palette.text.secondary,
+                  }}
+                >
+                  {detail.icon}
+                </Box>
+                <Box>
+                  <Typography variant="subtitle2" color="textSecondary">
+                    {detail.label}
+                  </Typography>
+                  <Typography variant="body1">{detail.value}</Typography>
+                </Box>
+              </Box>
+            </Grid>
+          ))}
         </Grid>
-      ))}
-    </Grid>
+      </CardContent>
+    </Card>
+  );
+
+  return (
+    <>
+      {renderSection('Informações Pessoais', personalDetails)}
+      {renderSection('Documentos', documentDetails)}
+      {renderSection('Contato', contactDetails)}
+      {renderSection('Outros Detalhes', otherDetails)}
+    </>
   );
 };
 

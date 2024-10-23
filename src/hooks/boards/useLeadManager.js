@@ -1,20 +1,20 @@
-import addressService from '@/services/addressService';
-import leadService from '@/services/leadService';
-import userService from '@/services/userService';
-import branchService from '@/services/branchService';
-import campaignService from '@/services/campaignService';
-import saleService from '@/services/saleService';
-import { useState, useEffect } from 'react';
+import addressService from '@/services/addressService'
+import leadService from '@/services/leadService'
+import userService from '@/services/userService'
+import branchService from '@/services/branchService'
+import campaignService from '@/services/campaignService'
+import saleService from '@/services/saleService'
+import { useState, useEffect } from 'react'
 
 const useLeadManager = (
   initialLeads = [],
   initialStatuses = [],
   { onDeleteLead, onUpdateLeadColumn },
 ) => {
-  const [leadStars, setLeadStars] = useState({});
-  const [selectedLead, setSelectedLead] = useState(null);
-  const [openModal, setOpenModal] = useState(false);
-  const [editMode, setEditMode] = useState(false);
+  const [leadStars, setLeadStars] = useState({})
+  const [selectedLead, setSelectedLead] = useState(null)
+  const [openModal, setOpenModal] = useState(false)
+  const [editMode, setEditMode] = useState(false)
   const [leadData, setLeadData] = useState({
     name: '',
     contact_email: '',
@@ -32,112 +32,112 @@ const useLeadManager = (
     column: {
       name: '',
     },
-  });
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [leadsList, setLeadsList] = useState(initialLeads);
-  const [statusesList, setStatusesList] = useState(initialStatuses);
-  const [sellers, setSellers] = useState([]);
-  const [sdrs, setSdrs] = useState([]);
-  const [allUsers, setAllUsers] = useState([]);
-  const [addresses, setAddresses] = useState([]);
-  const [designers, setDesigners] = useState([]);
-  const [managers, setManagers] = useState([]);
-  const [supervisors, setSupervisors] = useState([]);
-  const [branches, setBranches] = useState([]);
-  const [campaigns, setCampaigns] = useState([]);
-  const [sales, setSales] = useState([]);
-  const [tabIndex, setTabIndex] = useState(0);
+  })
+  const [snackbarMessage, setSnackbarMessage] = useState('')
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
+  const [leadsList, setLeadsList] = useState(initialLeads)
+  const [statusesList, setStatusesList] = useState(initialStatuses)
+  const [sellers, setSellers] = useState([])
+  const [sdrs, setSdrs] = useState([])
+  const [allUsers, setAllUsers] = useState([])
+  const [addresses, setAddresses] = useState([])
+  const [designers, setDesigners] = useState([])
+  const [managers, setManagers] = useState([])
+  const [supervisors, setSupervisors] = useState([])
+  const [branches, setBranches] = useState([])
+  const [campaigns, setCampaigns] = useState([])
+  const [sales, setSales] = useState([])
+  const [tabIndex, setTabIndex] = useState(0)
 
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
-        const response = await addressService.getAddresses();
-        setAddresses(response);
-        console.log('Endereços recebidos:', response);
+        const response = await addressService.getAddresses()
+        setAddresses(response)
+        console.log('Endereços recebidos:', response)
       } catch (error) {
-        console.error('Erro ao buscar endereços:', error);
+        console.error('Erro ao buscar endereços:', error)
       }
-    };
+    }
 
-    fetchAddresses();
-  }, []);
+    fetchAddresses()
+  }, [])
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await userService.getUser();
-        const users = response.results || [];
+        const response = await userService.getUser()
+        const users = response.results || []
 
-        console.log('Usuários recebidos:', users);
+        console.log('Usuários recebidos:', users)
 
-        setAllUsers(users);
+        setAllUsers(users)
 
-        const filteredSellers = users.filter(user => user.role?.name === 'Vendedor');
-        const filteredSdrs = users.filter(user => user.role?.name === 'SDR');
-        const filteredDesigners = users.filter(user => user.role?.name === 'Projestita');
-        const filteredManagers = users.filter(user => user.role?.name === 'Gerente');
-        const filteredSupervisors = users.filter(user => user.role?.name === 'Supervisor Comercial');
+        const filteredSellers = users.filter(user => user.role?.name === 'Vendedor')
+        const filteredSdrs = users.filter(user => user.role?.name === 'SDR')
+        const filteredDesigners = users.filter(user => user.role?.name === 'Projestita')
+        const filteredManagers = users.filter(user => user.role?.name === 'Gerente')
+        const filteredSupervisors = users.filter(user => user.role?.name === 'Supervisor Comercial')
 
-        setSellers(filteredSellers);
-        setSdrs(filteredSdrs);
-        setDesigners(filteredDesigners);
-        setManagers(filteredManagers);
-        setSupervisors(filteredSupervisors);
+        setSellers(filteredSellers)
+        setSdrs(filteredSdrs)
+        setDesigners(filteredDesigners)
+        setManagers(filteredManagers)
+        setSupervisors(filteredSupervisors)
       } catch (error) {
-        console.error('Erro ao buscar usuários:', error);
+        console.error('Erro ao buscar usuários:', error)
       }
-    };
+    }
 
-    fetchUsers();
-  }, []);
+    fetchUsers()
+  }, [])
 
   useEffect(() => {
     const fetchBranches = async () => {
       try {
-        const response = await branchService.getBranches();
-        setBranches(response);
-        console.log('Unidades recebidas:', response);
+        const response = await branchService.getBranches()
+        setBranches(response)
+        console.log('Unidades recebidas:', response)
       } catch (error) {
-        console.error('Erro ao buscar unidades:', error);
+        console.error('Erro ao buscar unidades:', error)
       }
-    };
+    }
 
-    fetchBranches();
-  }, []);
+    fetchBranches()
+  }, [])
 
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const response = await campaignService.getCampaigns();
-        setCampaigns(response);
-        console.log('Campanhas recebidas:', response);
+        const response = await campaignService.getCampaigns()
+        setCampaigns(response)
+        console.log('Campanhas recebidas:', response)
       } catch (error) {
-        console.error('Erro ao buscar campanhas:', error);
+        console.error('Erro ao buscar campanhas:', error)
       }
-    };
+    }
 
-    fetchCampaigns();
-  }, []);
+    fetchCampaigns()
+  }, [])
 
   useEffect(() => {
     const fetchSales = async () => {
       try {
-        const response = await saleService.getSales();
-        setSales(response.results || []);
-        console.log('Vendas recebidas:', response.results);
+        const response = await saleService.getSales()
+        setSales(response.results || [])
+        console.log('Vendas recebidas:', response.results)
       } catch (error) {
-        console.error('Erro ao buscar vendas:', error);
+        console.error('Erro ao buscar vendas:', error)
       }
-    };
+    }
 
-    fetchSales();
-  }, []);
+    fetchSales()
+  }, [])
 
   useEffect(() => {
-    setLeadsList(initialLeads);
-    setStatusesList(initialStatuses);
-  }, [initialLeads, initialStatuses]);
+    setLeadsList(initialLeads)
+    setStatusesList(initialStatuses)
+  }, [initialLeads, initialStatuses])
 
   const handleUpdateLead = async () => {
     if (selectedLead) {
@@ -158,64 +158,66 @@ const useLeadManager = (
           ? leadData.addresses_ids
           : [leadData.addresses_ids],
         column_id: selectedLead.column?.id || null,
-      };
+      }
 
       try {
-        const response = await leadService.patchLead(selectedLead.id, updatedLead);
+        const response = await leadService.patchLead(selectedLead.id, updatedLead)
 
         setLeadsList(prevLeads =>
           prevLeads.map(lead => (lead.id === response.data?.id ? response.data : lead)),
-        );
+        )
 
-        setSnackbarMessage('Lead atualizado com sucesso!');
-        setSnackbarOpen(true);
+        setSnackbarMessage('Lead atualizado com sucesso!')
+        setSnackbarOpen(true)
+
+        setOpenModal(false)
       } catch (error) {
-        setSnackbarMessage('Erro ao atualizar lead.');
-        setSnackbarOpen(true);
-        console.error('Erro ao atualizar lead:', error.response?.data || error.message);
+        setSnackbarMessage('Erro ao atualizar lead.')
+        setSnackbarOpen(true)
+        console.error('Erro ao atualizar lead:', error.response?.data || error.message)
       }
     }
-  };
+  }
 
   const handleUpdateColumnName = async (statusId, newColumnName) => {
     try {
-      await onUpdateLeadColumn(statusId, newColumnName);
+      await onUpdateLeadColumn(statusId, newColumnName)
       setStatusesList(prevStatuses =>
         prevStatuses.map(status =>
           status.id === statusId ? { ...status, name: newColumnName } : status,
         ),
-      );
-      setSnackbarMessage('Coluna atualizada com sucesso!');
-      setSnackbarOpen(true);
+      )
+      setSnackbarMessage('Coluna atualizada com sucesso!')
+      setSnackbarOpen(true)
     } catch (error) {
-      console.error('Erro ao atualizar a coluna:', error);
-      setSnackbarMessage('Erro ao atualizar a coluna.');
-      setSnackbarOpen(true);
+      console.error('Erro ao atualizar a coluna:', error)
+      setSnackbarMessage('Erro ao atualizar a coluna.')
+      setSnackbarOpen(true)
     }
-  };
+  }
 
   const handleDeleteLead = async () => {
     if (selectedLead) {
       try {
-        await onDeleteLead(selectedLead.id);
-        setLeadsList(prevLeads => prevLeads.filter(lead => lead.id !== selectedLead.id));
-        setSnackbarMessage('Lead excluído com sucesso!');
-        setSnackbarOpen(true);
+        await onDeleteLead(selectedLead.id)
+        setLeadsList(prevLeads => prevLeads.filter(lead => lead.id !== selectedLead.id))
+        setSnackbarMessage('Lead excluído com sucesso!')
+        setSnackbarOpen(true)
       } catch (error) {
-        setSnackbarMessage('Erro ao excluir lead.');
-        setSnackbarOpen(true);
+        setSnackbarMessage('Erro ao excluir lead.')
+        setSnackbarOpen(true)
       }
     }
-  };
+  }
 
   const onDragEnd = async result => {
-    if (!result.destination) return;
+    if (!result.destination) return
 
-    const { source, destination, draggableId } = result;
+    const { source, destination, draggableId } = result
 
     if (source.droppableId !== destination.droppableId) {
-      const leadId = parseInt(draggableId);
-      const destinationColumnId = parseInt(destination.droppableId);
+      const leadId = parseInt(draggableId)
+      const destinationColumnId = parseInt(destination.droppableId)
 
       setLeadsList(prevLeads =>
         prevLeads.map(lead =>
@@ -223,19 +225,19 @@ const useLeadManager = (
             ? { ...lead, column: { ...lead.column, id: destinationColumnId } }
             : lead,
         ),
-      );
+      )
 
       try {
         await leadService.patchLead(leadId, {
           column_id: destinationColumnId,
-        });
+        })
 
-        setSnackbarMessage('Lead movido com sucesso!');
-        setSnackbarOpen(true);
+        setSnackbarMessage('Lead movido com sucesso!')
+        setSnackbarOpen(true)
       } catch (error) {
-        console.error('Erro ao mover o lead:', error);
-        setSnackbarMessage('Erro ao mover o lead.');
-        setSnackbarOpen(true);
+        console.error('Erro ao mover o lead:', error)
+        setSnackbarMessage('Erro ao mover o lead.')
+        setSnackbarOpen(true)
 
         setLeadsList(prevLeads =>
           prevLeads.map(lead =>
@@ -243,29 +245,29 @@ const useLeadManager = (
               ? { ...lead, column: { ...lead.column, id: source.droppableId } }
               : lead,
           ),
-        );
+        )
       }
     }
-  };
+  }
 
   const handleLeadClick = async lead => {
     try {
-      const leadBody = await leadService.getLeadById(lead.id);
-      console.log('Objeto lead completo:', leadBody);
+      const leadBody = await leadService.getLeadById(lead.id)
+      console.log('Objeto lead completo:', leadBody)
 
       const selectedSeller = leadBody.seller
         ? sellers.find(seller => seller.id === leadBody.seller.id)
-        : null;
-      const selectedSdr = leadBody.sdr ? sdrs.find(sdr => sdr.id === leadBody.sdr.id) : null;
+        : null
+      const selectedSdr = leadBody.sdr ? sdrs.find(sdr => sdr.id === leadBody.sdr.id) : null
 
-      console.log('Vendedor selecionado:', selectedSeller);
-      console.log('SDR selecionado:', selectedSdr);
+      console.log('Vendedor selecionado:', selectedSeller)
+      console.log('SDR selecionado:', selectedSdr)
 
       setSelectedLead({
         ...leadBody,
         seller: selectedSeller,
         sdr: selectedSdr,
-      });
+      })
 
       setLeadData({
         id: leadBody.id,
@@ -288,14 +290,14 @@ const useLeadManager = (
         seller_id: leadBody.seller_id || null,
         sdr_id: leadBody.sdr_id || null,
         column_id: leadBody.column_id || null,
-      });
+      })
 
-      setTabIndex(0);
-      setOpenModal(true);
+      setTabIndex(0)
+      setOpenModal(true)
     } catch (error) {
-      console.error('Erro ao buscar os dados do lead:', error);
+      console.error('Erro ao buscar os dados do lead:', error)
     }
-  };
+  }
 
   return {
     leadsList,
@@ -329,7 +331,7 @@ const useLeadManager = (
     handleLeadClick,
     setTabIndex,
     tabIndex,
-  };
-};
+  }
+}
 
-export default useLeadManager;
+export default useLeadManager

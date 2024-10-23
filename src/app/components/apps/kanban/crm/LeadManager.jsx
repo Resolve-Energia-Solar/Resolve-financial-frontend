@@ -201,26 +201,6 @@ const LeadManager = ({
                     </Button>
                   </>
                 )}
-                {tabIndex === 1 && (
-                  <>
-                    <Button onClick={handleUpdateSale} color="primary" variant="contained">
-                      Salvar Venda
-                    </Button>
-                    <Button onClick={() => setEditMode(false)} color="secondary" variant="outlined">
-                      Cancelar
-                    </Button>
-                  </>
-                )}
-                {tabIndex === 2 && (
-                  <>
-                    <Button onClick={handleUpdateSale} color="primary" variant="contained">
-                      Salvar Projeto
-                    </Button>
-                    <Button onClick={() => setEditMode(false)} color="secondary" variant="outlined">
-                      Cancelar
-                    </Button>
-                  </>
-                )}
               </>
             ) : (
               <>
