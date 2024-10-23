@@ -19,11 +19,11 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import StatusIcon from '@mui/icons-material/AssignmentTurnedIn';
 import SendIcon from '@mui/icons-material/Send';
 import DescriptionIcon from '@mui/icons-material/Description';
+import SaleForm from './SaleForm';
 import saleService from '@/services/saleService';
 import StatusChip from '../../comercial/sale/components/DocumentStatusIcon';
-import ProposalForm from './ProposalForm';
 
-const SaleManager = ({
+const ProposalManager = ({
   sales = [],
   sellers = [],
   sdrs = [],
@@ -120,7 +120,7 @@ const SaleManager = ({
             onClick={handleAddSale}
             startIcon={<AddIcon />}
           >
-            Adicionar Venda
+            Adicionar Proposta
           </Button>
         </Box>
       </Grid>
@@ -233,7 +233,7 @@ const SaleManager = ({
               <Typography variant="h6" gutterBottom>
                 {saleData?.id ? 'Editar Venda' : 'Adicionar Venda'}
               </Typography>
-              <ProposalForm
+              <SaleForm
                 saleData={saleData}
                 setSaleData={setSaleData}
                 sellers={sellers}
@@ -282,4 +282,4 @@ const SaleManager = ({
   );
 };
 
-export default SaleManager;
+export default ProposalManager;

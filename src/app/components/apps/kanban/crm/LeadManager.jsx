@@ -24,6 +24,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import useLeadManager from '@/hooks/boards/useLeadManager';
 import SaleManager from './SaleManager';
 import ProjectManager from './ProjectManager';
+import ProposalManager from './ProposalManager';
 
 const LeadManager = ({
   leads,
@@ -162,6 +163,7 @@ const LeadManager = ({
                       indicatorColor="primary"
                     >
                       <Tab label="Lead" />
+                      <Tab label="Proposta" />
                       <Tab label="Vendas" />
                       <Tab label="Projetos" />
                     </Tabs>
@@ -169,7 +171,7 @@ const LeadManager = ({
 
                   <Box mt={2}>
                     {tabIndex === 0 && <LeadDetails selectedLead={selectedLead} />}
-                    {tabIndex === 1 && (
+                    {tabIndex === 2 && (
                       <SaleManager
                         managers={managers}
                         supervisors={supervisors}
@@ -182,7 +184,20 @@ const LeadManager = ({
                         sales={sales}
                       />
                     )}
-                    {tabIndex === 2 && (
+                    {tabIndex === 1 && (
+                      <ProposalManager
+                        managers={managers}
+                        supervisors={supervisors}
+                        sellers={sellers}
+                        sdrs={sdrs}
+                        allUsers={allUsers}
+                        branches={branches}
+                        campaigns={campaigns}
+                        leadData={leadsList}
+                        sales={sales}
+                      />
+                    )}
+                    {tabIndex === 3 && (
                       <ProjectManager
                         designers={designers}
                         managers={managers}
