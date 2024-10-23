@@ -1,7 +1,9 @@
 import React from 'react';
-import { Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Box, FormControl, InputLabel, Select, MenuItem, useTheme } from '@mui/material';
 
 function KanbanHeader({ boards, selectedBoard, onBoardChange }) {
+  const theme = useTheme();
+
   return (
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
       <Box display="flex" alignItems="center" gap={2}>
@@ -14,10 +16,16 @@ function KanbanHeader({ boards, selectedBoard, onBoardChange }) {
             label="Selecionar Quadro"
             sx={{
               minWidth: '200px',
-              bgcolor: '#f0f0f0',
+              bgcolor: theme.palette.background.paper,
               borderRadius: '10px',
               '&:hover': {
-                bgcolor: '#e0e0e0',
+                bgcolor: theme.palette.action.hover,
+              },
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: theme.palette.primary.main,
+              },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: theme.palette.primary.dark,
               },
             }}
           >

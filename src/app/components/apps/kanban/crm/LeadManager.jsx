@@ -12,6 +12,7 @@ import {
   Grid,
   Tabs,
   Tab,
+  useTheme, // Importando o tema
 } from '@mui/material';
 
 import LeadDetails from './LeadDetails';
@@ -33,6 +34,8 @@ const LeadManager = ({
   onDeleteLead,
   onUpdateLeadColumn,
 }) => {
+  const theme = useTheme(); // Acessando o tema
+
   const {
     leadsList,
     statusesList,
@@ -72,10 +75,10 @@ const LeadManager = ({
   };
 
   const statusColors = {
-    'Novo Lead': '#ecf2ff',
-    'Primeiro Contato': '#fef5e5',
-    'Terceiro Contato': '#e8f7ff',
-    'Quarto Contato': '#e6fffa',
+    'Novo Lead': theme.palette.info.light,
+    'Primeiro Contato': theme.palette.warning.light,
+    'Terceiro Contato': theme.palette.primary.light,
+    'Quarto Contato': theme.palette.success.light,
   };
 
   return (
@@ -91,12 +94,12 @@ const LeadManager = ({
                     {...provided.droppableProps}
                     sx={{
                       minWidth: '300px',
-                      backgroundColor: statusColors[status.name] || '#f5f5f5',
-
+                      backgroundColor: statusColors[status.name] || theme.palette.grey[200],
                       p: 2,
                       maxHeight: '80vh',
                       overflowY: 'auto',
                       borderRadius: 2,
+                      boxShadow: theme.shadows[1],
                     }}
                   >
                     <ColumnWithActions
@@ -152,7 +155,12 @@ const LeadManager = ({
               <Grid container spacing={3}>
                 <Grid item xs={12} md={8}>
                   <Box display="flex" alignItems="center" justifyContent="space-between">
-                    <Tabs value={tabIndex} onChange={(_e, newValue) => setTabIndex(newValue)}>
+                    <Tabs
+                      value={tabIndex}
+                      onChange={(_e, newValue) => setTabIndex(newValue)}
+                      textColor="primary"
+                      indicatorColor="primary"
+                    >
                       <Tab label="Lead" />
                       <Tab label="Vendas" />
                       <Tab label="Projetos" />
