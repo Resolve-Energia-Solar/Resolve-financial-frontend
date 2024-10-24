@@ -6,6 +6,16 @@ import projectService from '@/services/projectService';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+
+const formatTime = (time) => {
+  if (!time) return null;
+  const date = new Date(time);
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${hours}:${minutes}`;
+};
+
 const useScheduleForm = (initialData, id) => {
   const user = useSelector((state) => state.user);
   const [serviceData, setServiceData] = useState(null);
@@ -56,7 +66,7 @@ const useScheduleForm = (initialData, id) => {
           setServiceData(serviceInfo);
           setFormData((prev) => ({
             ...prev,
-            category_id: serviceInfo.category_id,
+            category_id: serviceInfo.category.id,
           }));
         } catch (error) {
           console.error(`Erro ao buscar serviço com id ${formData.service_id}:`, error);
@@ -112,7 +122,7 @@ const useScheduleForm = (initialData, id) => {
           const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
             params: {
               address: addressString,
-              key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+              key: GOOGLE_MAPS_API_KEY,
             },
           });
 
@@ -162,11 +172,12 @@ const useScheduleForm = (initialData, id) => {
       project_id: formData.project_id,
       schedule_agent_id: formData.schedule_agent_id,
       schedule_date: formData.schedule_date,
-      schedule_start_time: formData.schedule_start_time,
-      schedule_end_time: formData.schedule_end_time,
+      schedule_start_time: formatTime(formData.schedule_start_time), // Formato correto
+      schedule_end_time: formatTime(formData.schedule_end_time), // Formato correto
       latitude: formData.latitude,
       longitude: formData.longitude,
       status: formData.status,
+      project: formData.project_id,
     };
 
     try {

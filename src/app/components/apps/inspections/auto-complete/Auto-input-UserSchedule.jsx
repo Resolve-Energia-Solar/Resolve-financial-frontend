@@ -50,7 +50,6 @@ export default function AutoCompleteUserSchedule({
       if (!name) return;
       setLoading(true);
       try {
-        console.log('query input -> ', query);
         const users = await userService.getUsersBySchedule(query);
         const formattedUsers = users.results.map(user => ({
           id: user.id,
@@ -62,7 +61,7 @@ export default function AutoCompleteUserSchedule({
       }
       setLoading(false);
     }, 300), 
-    []
+    [query]
   );
 
   const handleOpen = () => {

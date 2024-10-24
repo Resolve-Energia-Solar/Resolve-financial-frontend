@@ -34,12 +34,19 @@ const userService = {
   getUsersBySchedule: async (query) => {
     try {
       console.log('query service -> ', query);
+
+      const formatTime = (time) => {
+        if (!time) return null;
+        const date = new Date(time);
+        return date.toTimeString().split(' ')[0];
+      };
+
       const response = await apiClient.get(`/api/users/`, {
         params: {
           category: query.category,
           date: query.scheduleDate,
-          start_time: query.scheduleStartTime,
-          end_time: query.scheduleEndTime,
+          start_time: formatTime(query.scheduleStartTime),
+          end_time: formatTime(query.scheduleEndTime),
           latitude: query.scheduleLatitude,
           longitude: query.scheduleLongitude,
         },
