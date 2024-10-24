@@ -1,4 +1,3 @@
-import { get, update } from 'lodash';
 import apiClient from './apiClient';
 
 const serviceCatalogService = {
@@ -18,6 +17,16 @@ const serviceCatalogService = {
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar serviço com id ${id}:`, error);
+      throw error;
+    }
+  },
+
+  getServiceCatalogByName: async (name) => {
+    try {
+      const response = await apiClient.get(`/api/services/?name=${name}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar serviço com nome ${name}:`, error);
       throw error;
     }
   },

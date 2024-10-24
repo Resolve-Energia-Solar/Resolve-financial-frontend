@@ -1,4 +1,4 @@
-import apiClient from "./apiClient";
+import apiClient from './apiClient';
 
 const userService = {
   getUser: async () => {
@@ -27,6 +27,26 @@ const userService = {
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar usuário com id ${name}:`, error);
+      throw error;
+    }
+  },
+
+  getUsersBySchedule: async (query) => {
+    try {
+      console.log('query service -> ', query);
+      const response = await apiClient.get(`/api/users/`, {
+        params: {
+          category: query.category,
+          date: query.scheduleDate,
+          start_time: query.scheduleStartTime,
+          end_time: query.scheduleEndTime,
+          latitude: query.scheduleLatitude,
+          longitude: query.scheduleLongitude,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar usuários:`, error);
       throw error;
     }
   },
@@ -71,4 +91,3 @@ const userService = {
 };
 
 export default userService;
-

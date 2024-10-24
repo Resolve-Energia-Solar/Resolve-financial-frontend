@@ -43,6 +43,7 @@
     "i18next": "^23.5.1",
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
+    "modernize-main": "file:",
     "moment": "^2.29.4",
     "next": "14.2.7",
     "prop-types": "^15.7.2",
