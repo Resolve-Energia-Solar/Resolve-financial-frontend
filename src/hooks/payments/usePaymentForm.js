@@ -12,11 +12,12 @@ const usePaymentForm = (initialData, id) => {
     due_date: null,
     is_paid: false,
     installments: [],
+    create_installments: true,
   });
 
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false); // Adiciona o estado de loading
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -70,7 +71,7 @@ const usePaymentForm = (initialData, id) => {
 
   const handleSave = async () => {
     setLoading(true);
-    const dataToSend = {
+    let dataToSend = {
       sale_id: formData.sale_id,
       financier_id: formData.financier_id,
       value: formData.value,
@@ -78,9 +79,15 @@ const usePaymentForm = (initialData, id) => {
       installments_number: formData.installments_number,
       due_date: formData.due_date ? formatDate(formData.due_date) : null,
       is_paid: formData.is_paid,
-      installments: formData.installments,
+      create_installments: formData.create_installments,
     };
-
+    
+    if (!formData.create_installments) {
+      dataToSend = { ...dataToSend, installments: formData.installments };
+    }
+    
+    
+    
     try {
       if (id) {
         await paymentService.updatePayment(id, dataToSend);

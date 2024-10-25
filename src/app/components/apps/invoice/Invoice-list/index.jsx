@@ -5,10 +5,6 @@ import {
   Table,
   TextField,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Tooltip,
   IconButton,
   TableHead,
@@ -17,14 +13,17 @@ import {
   TableBody,
   Box,
   Typography,
-  Grid,
   Stack,
   InputAdornment,
-  Chip,
   Paper,
   TableContainer,
   Menu,
   MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
 import Link from 'next/link';
 import {
@@ -55,6 +54,9 @@ function InvoiceList() {
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [menuOpenRowId, setMenuOpenRowId] = useState(null);
 
+  const [open, setOpen] = useState(false);
+  const [invoiceToDelete, setInvoiceToDelete] = useState(null);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -82,6 +84,26 @@ function InvoiceList() {
     router.push(`/apps/invoice/${id}/update`);
   };
 
+  const handleCreateClick = () => {
+    router.push('/apps/invoice/create');
+  };
+
+  const handleDeleteClick = (id) => {
+    setInvoiceToDelete(id);
+    setOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await paymentService.deletePayment(invoiceToDelete);
+      setPaymentsList((prev) => prev.filter((payment) => payment.id !== invoiceToDelete));
+    } catch (error) {
+      console.log('Error: ', error);
+    } finally {
+      setOpen(false);
+    }
+  }
+
   return (
     <Box>
       <DashboardCards />
@@ -97,6 +119,7 @@ function InvoiceList() {
             variant="outlined"
             startIcon={<AddBoxRounded />}
             sx={{ marginTop: 1, marginBottom: 2 }}
+            onClick={handleCreateClick}
           >
             Adicionar Pagamento
           </Button>
@@ -161,8 +184,7 @@ function InvoiceList() {
             {paymentsList.map((payment) => (
               <TableRow key={payment.id}>
                 <TableCell padding="checkbox">
-                  <CustomCheckbox
-                  />
+                  <CustomCheckbox />
                 </TableCell>
                 <TableCell>
                   <Typography variant="h6" fontSize="14px">
@@ -170,7 +192,7 @@ function InvoiceList() {
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography fontSize="14px">{payment.installments_number}x</Typography>
+                  <Typography fontSize="14px">{payment.installments.length}x</Typography>
                 </TableCell>
                 <TableCell>
                   <Typography fontSize="14px">
@@ -219,16 +241,7 @@ function InvoiceList() {
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
-                        // handleViewClick(payment.id);
-                        handleMenuClose();
-                      }}
-                    >
-                      <IconEyeglass fontSize="small" sx={{ mr: 1 }} />
-                      Visualizar
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        // handleDeleteClick(item.id);
+                        handleDeleteClick(payment.id);
                         handleMenuClose();
                       }}
                     >
@@ -243,6 +256,22 @@ function InvoiceList() {
         </Table>
       </TableContainer>
 
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>Confirmar Exclusão</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Tem certeza de que deseja excluir esta venda? Esta ação não pode ser desfeita.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={()=> setOpen(false)} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleConfirmDelete} color="error">
+            Excluir
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

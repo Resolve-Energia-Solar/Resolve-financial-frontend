@@ -38,6 +38,15 @@ const paymentService = {
       throw error;
     }
   },
+  deletePayment: async (id) => {
+    try {
+      const response = await apiClient.delete(`/api/payments/${id}/`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao deletar payment:', error);
+      throw error;
+    }
+  },
 };
 
 export default paymentService;
