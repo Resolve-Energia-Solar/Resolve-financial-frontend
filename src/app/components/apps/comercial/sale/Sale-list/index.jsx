@@ -85,8 +85,8 @@ const SaleList = () => {
   const [alertType, setAlertType] = useState('success');
   const [alertOpen, setAlertOpen] = useState(false);
 
-  const [proposalHTML, setProposalHTML] = useState(''); // Estado para armazenar o HTML da proposta
-  const [dialogOpen, setDialogOpen] = useState(false); // Estado para controlar o diálogo
+  const [proposalHTML, setProposalHTML] = useState('');
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const [order, setOrder] = useState('asc');
   const [orderDirection, setOrderDirection] = useState('asc');
@@ -178,9 +178,9 @@ const SaleList = () => {
         }),
       });
 
-      const data = await response.text(); // Recebe o HTML da API como texto
-      setProposalHTML(data); // Armazena o HTML da proposta no estado
-      setDialogOpen(true); // Abre o diálogo
+      const data = await response.text();
+      setProposalHTML(data);
+      setDialogOpen(true);
     } catch (err) {
       setError('Erro ao gerar proposta');
     }
