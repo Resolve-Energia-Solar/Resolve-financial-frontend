@@ -12,7 +12,7 @@ import {
   Grid,
   Tabs,
   Tab,
-  useTheme, // Importando o tema
+  useTheme,
 } from '@mui/material';
 
 import LeadDetails from './LeadDetails';
@@ -35,7 +35,7 @@ const LeadManager = ({
   onDeleteLead,
   onUpdateLeadColumn,
 }) => {
-  const theme = useTheme(); // Acessando o tema
+  const theme = useTheme();
 
   const {
     leadsList,

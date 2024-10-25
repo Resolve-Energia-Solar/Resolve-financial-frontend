@@ -25,12 +25,12 @@ class ErrorBoundary extends React.Component {
           justifyContent="center"
           height="100vh"
           textAlign="center"
-          sx={{ backgroundColor: '#f0f0f0' }}
+          sx={{ backgroundColor: '#fff' }}
         >
           <img
-            src="/public/images/backgrounds/maintenance2.svg"
+            src="https://res.cloudinary.com/dyykoh8t4/image/upload/v1725114122/Resolve/Logo_R_grande_com_fundo_amarelo_1_gbxfez.png"
             alt="Página em manutenção"
-            style={{ width: '300px', marginBottom: '20px' }}
+            style={{ width: '100px', marginBottom: '20px' }}
           />
           <Typography variant="h4" gutterBottom>
             Estamos em manutenção. Tente novamente mais tarde.
