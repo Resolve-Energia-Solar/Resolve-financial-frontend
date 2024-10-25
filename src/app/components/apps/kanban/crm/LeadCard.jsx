@@ -1,5 +1,6 @@
-import { Paper, Box, Typography, useTheme } from '@mui/material';
+import { Paper, Box, Typography, useTheme, Grid, Stack, Rating } from '@mui/material';
 import { Email, Phone, AccessTime, TagSharp } from '@mui/icons-material';
+import ChildCard from '@/app/components/shared/ChildCard';
 
 const LeadCard = ({ lead, handleLeadClick }) => {
   const theme = useTheme();
@@ -42,12 +43,17 @@ const LeadCard = ({ lead, handleLeadClick }) => {
           {lead.phone}
         </Typography>
       </Box>
-      <Box display="flex" alignItems="center" mt={1}>
+      <Box display="flex" alignItems="center" mt={1} mb={1}>
         <AccessTime sx={{ fontSize: '1rem', color: theme.palette.text.secondary, mr: 1 }} />
         <Typography variant="body2" color="textSecondary">
           Criado em: {new Date(lead.created_at).toLocaleDateString('pt-BR')}
         </Typography>
       </Box>
+      <Grid item xs={12} lg={4} sm={6} display="flex" alignItems="stretch">
+        <Stack spacing={2}>
+          <Rating name="size-small" defaultValue={2} size="small" />
+        </Stack>
+      </Grid>
     </Paper>
   );
 };

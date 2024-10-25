@@ -1,430 +1,249 @@
-"use client";
-import React, { useContext, useState } from "react";
-import { InvoiceContext } from "@/app/context/InvoiceContext/index";
+'use client';
+import React, { useContext, useState } from 'react';
+import { InvoiceContext } from '@/app/context/InvoiceContext/index';
 import {
-    Table,
-    TextField,
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Badge,
-    Tooltip,
-    IconButton,
-    Tabs,
-    Tab,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
-    Box,
-    Typography,
-    Grid,
-    Stack,
-    InputAdornment,
-    Chip,
-} from "@mui/material";
-import Link from "next/link";
-import EditIcon from "@mui/icons-material/Edit";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import DeleteIcon from "@mui/icons-material/Delete";
+  Table,
+  TextField,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Tooltip,
+  IconButton,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Box,
+  Typography,
+  Grid,
+  Stack,
+  InputAdornment,
+  Chip,
+  Paper,
+  TableContainer,
+  Menu,
+  MenuItem,
+} from '@mui/material';
+import Link from 'next/link';
 import {
-    IconEdit,
-    IconEye,
-    IconListDetails,
-    IconSearch,
-    IconShoppingBag,
-    IconSortAscending,
-    IconTrash,
-    IconTruck,
-} from "@tabler/icons-react";
-import CustomCheckbox from "@/app/components/forms/theme-elements/CustomCheckbox";
+  IconEdit,
+  IconEye,
+  IconEyeglass,
+  IconListDetails,
+  IconSearch,
+  IconShoppingBag,
+  IconSortAscending,
+  IconTrash,
+  IconTruck,
+} from '@tabler/icons-react';
+import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
+
+import { useEffect } from 'react';
+
+import paymentService from '@/services/paymentService';
+import PaymentChip from '../components/PaymentChip';
+import PaymentStatusChip from '../components/PaymentStatusChip';
+import { AddBoxRounded, Delete, Edit, MoreVert } from '@mui/icons-material';
+import DashboardCards from '../components/kpis/DashboardCards';
+import { useRouter } from 'next/navigation';
 
 function InvoiceList() {
-    const { invoices, deleteInvoice } = useContext(InvoiceContext);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [activeTab, setActiveTab] = useState("All");
-    const [selectedProducts, setSelectedProducts] = useState([]);
-    const [selectAll, setSelectAll] = useState(false);
-    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const router = useRouter();
+  const [paymentsList, setPaymentsList] = useState([]);
+  const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+  const [menuOpenRowId, setMenuOpenRowId] = useState(null);
 
-    const tabItem = ["All", "Shipped", "Delivered", "Pending"];
-    const [currentIndex, setCurrentIndex] = useState(0);
-
-    const handleClick = (status) => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % tabItem.length);
-        setActiveTab(status);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await paymentService.getPayments();
+        setPaymentsList(response.results);
+      } catch (error) {
+        console.log('Error: ', error);
+      }
     };
 
-    // Filter invoices based on search term
-    const filteredInvoices = invoices.filter(
-        (invoice) => {
-            return (
-                (invoice.billFrom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    invoice.billTo.toLowerCase().includes(searchTerm.toLowerCase())) &&
-                (activeTab === "All" || invoice.status === activeTab)
-            );
-        }
-    );
+    fetchData();
+  }, []);
 
-    const handleTabChange = (event, newValue) => {
-        setActiveTab(newValue);
-    };
+  const handleMenuClick = (event, id) => {
+    setMenuAnchorEl(event.currentTarget);
+    setMenuOpenRowId(id);
+  };
 
-    // Calculate the counts for different statuses
-    const Shipped = invoices.filter(
-        (t) => t.status === "Shipped"
-    ).length;
-    const Delivered = invoices.filter(
-        (t) => t.status === "Delivered"
-    ).length;
-    const Pending = invoices.filter(
-        (t) => t.status === "Pending"
-    ).length;
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+    setMenuOpenRowId(null);
+  };
 
-    // Toggle all checkboxes
-    const toggleSelectAll = () => {
-        const selectAllValue = !selectAll;
-        setSelectAll(selectAllValue);
-        if (selectAllValue) {
-            setSelectedProducts(invoices.map((invoice) => invoice.id));
-        } else {
-            setSelectedProducts([]);
-        }
-    };
+  const handleEditClick = (id) => {
+    router.push(`/apps/invoice/${id}/update`);
+  };
 
-    // Toggle individual product selection
-    const toggleSelectProduct = (productId) => {
-        const index = selectedProducts.indexOf(productId);
-        if (index === -1) {
-            setSelectedProducts([...selectedProducts, productId]);
-        } else {
-            setSelectedProducts(
-                selectedProducts.filter((id) => id !== productId)
-            );
-        }
-    };
+  return (
+    <Box>
+      <DashboardCards />
 
-    // Handle opening delete confirmation dialog
-    const handleDelete = () => {
-        setOpenDeleteDialog(true);
-    };
-
-    // Handle confirming deletion of selected products
-    const handleConfirmDelete = async () => {
-        for (const productId of selectedProducts) {
-            await deleteInvoice(productId);
-        }
-        setSelectedProducts([]);
-        setSelectAll(false);
-        setOpenDeleteDialog(false);
-    };
-
-    // Handle closing delete confirmation dialog
-    const handleCloseDeleteDialog = () => {
-        setOpenDeleteDialog(false);
-    };
-
-    return (
+      <Stack
+        mt={3}
+        justifyContent="space-between"
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={{ xs: 1, sm: 2, md: 4 }}
+      >
         <Box>
-            <Grid container spacing={3}>
-                <Grid item xs={12} sm={6} lg={3}>
-                    <Box backgroundColor="primary.light" p={3} onClick={() => handleClick("All")} sx={{ cursor: "pointer" }}>
-                        <Stack direction="row" gap={2} alignItems="center">
-                            <Box
-                                width={38}
-                                height={38}
-                                bgcolor="primary.main"
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                            >
-                                <Typography
-                                    color="primary.contrastText"
-                                    display="flex"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                >
-                                    <IconListDetails width={22} />
-                                </Typography>
-                            </Box>
-                            <Box>
-                                <Typography>Total</Typography>
-                                <Typography fontWeight={500}>
-                                    {invoices.length} Invoices
-                                </Typography>
-                            </Box>
-                        </Stack>
-                    </Box>
-                </Grid>
-                <Grid item xs={12} sm={6} lg={3}>
-                    <Box backgroundColor="secondary.light" p={3} onClick={() => handleClick("Shipped")} sx={{ cursor: "pointer" }}>
-                        <Stack direction="row" gap={2} alignItems="center">
-                            <Box
-                                width={38}
-                                height={38}
-                                bgcolor="secondary.main"
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                            >
-                                <Typography
-                                    color="primary.contrastText"
-                                    display="flex"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                >
-                                    <IconShoppingBag width={22} />
-                                </Typography>
-                            </Box>
-                            <Box>
-                                <Typography>Shipped</Typography>
-                                <Typography fontWeight={500}>{Shipped} Invoices</Typography>
-                            </Box>
-                        </Stack>
-                    </Box>
-                </Grid>
-                <Grid item xs={12} sm={6} lg={3}>
-                    <Box backgroundColor="success.light" p={3} onClick={() => handleClick("Delivered")} sx={{ cursor: "pointer" }}>
-                        <Stack direction="row" gap={2} alignItems="center">
-                            <Box
-                                width={38}
-                                height={38}
-                                bgcolor="success.main"
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                            >
-                                <Typography
-                                    color="primary.contrastText"
-                                    display="flex"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                >
-                                    <IconTruck width={22} />
-                                </Typography>
-                            </Box>
-                            <Box>
-                                <Typography>Delivered</Typography>
-                                <Typography fontWeight={500}>{Delivered} Invoices</Typography>
-                            </Box>
-                        </Stack>
-                    </Box>
-                </Grid>
-                <Grid item xs={12} sm={6} lg={3}>
-                    <Box backgroundColor="warning.light" p={3} onClick={() => handleClick("Pending")} sx={{ cursor: "pointer" }}>
-                        <Stack direction="row" gap={2} alignItems="center">
-                            <Box
-                                width={38}
-                                height={38}
-                                bgcolor="warning.main"
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                            >
-                                <Typography
-                                    color="primary.contrastText"
-                                    display="flex"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                >
-                                    <IconSortAscending width={22} />
-                                </Typography>
-                            </Box>
-                            <Box>
-                                <Typography>Pending</Typography>
-                                <Typography fontWeight={500}>{Pending} Invoices</Typography>
-                            </Box>
-                        </Stack>
-                    </Box>
-                </Grid>
-            </Grid>
-
-            <Stack
-                mt={3}
-                justifyContent="space-between"
-                direction={{ xs: "column", sm: "row" }}
-                spacing={{ xs: 1, sm: 2, md: 4 }}
-            >
-                <TextField
-                    id="search"
-                    type="text"
-                    size="small"
-                    variant="outlined"
-                    placeholder="Search"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <IconSearch size={"16"} />
-                            </InputAdornment>
-                        ),
-                    }}
-                />
-                <Box display="flex" gap={1}>
-                    {selectAll && (
-                        <Button
-                            variant="outlined"
-                            color="error"
-                            onClick={handleDelete}
-                            startIcon={<IconTrash width={18} />}
-                        >
-                            Delete All
-                        </Button>
-                    )}
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        component={Link}
-                        href="/apps/invoice/create"
-                    >
-                        New Invoice
-                    </Button>
-                </Box>
-            </Stack>
-            <Box sx={{ overflowX: "auto" }}>
-                <Table sx={{ whiteSpace: { xs: "nowrap", md: "unset" } }}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell padding="checkbox">
-                                <CustomCheckbox
-                                    checked={selectAll}
-                                    onChange={toggleSelectAll}
-                                />
-                            </TableCell>
-                            <TableCell>
-                                <Typography variant="h6" fontSize="14px">
-                                    Id
-                                </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography variant="h6" fontSize="14px">
-                                    Bill From
-                                </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography variant="h6" fontSize="14px">
-                                    Bill To
-                                </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography variant="h6" fontSize="14px">
-                                    Total Cost
-                                </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography variant="h6" fontSize="14px">
-                                    Status
-                                </Typography>
-                            </TableCell>
-                            <TableCell align="center">
-                                <Typography variant="h6" fontSize="14px">
-                                    Action
-                                </Typography>
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {filteredInvoices.map(
-                            (invoice) => (
-                                <TableRow key={invoice.id}>
-                                    <TableCell padding="checkbox">
-                                        <CustomCheckbox
-                                            checked={selectedProducts.includes(invoice.id)}
-                                            onChange={() => toggleSelectProduct(invoice.id)}
-                                        />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Typography variant="h6" fontSize="14px">
-                                            {invoice.id}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Typography variant="h6" fontSize="14px">
-                                            {invoice.billFrom}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Typography fontSize="14px">{invoice.billTo}</Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Typography fontSize="14px">{invoice.totalCost}</Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        {invoice.status === "Shipped" ? (
-                                            <Chip
-                                                color="primary"
-                                                label={invoice.status}
-                                                size="small"
-                                            />
-                                        ) : invoice.status === "Delivered" ? (
-                                            <Chip
-                                                color="success"
-                                                label={invoice.status}
-                                                size="small"
-                                            />
-                                        ) : invoice.status === "Pending" ? (
-                                            <Chip
-                                                color="warning"
-                                                label={invoice.status}
-                                                size="small"
-                                            />
-                                        ) : (
-                                            ""
-                                        )}
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        <Tooltip title="Edit Invoice">
-                                            <IconButton
-                                                color="success"
-                                                component={Link}
-                                                href={`/apps/invoice/edit/${invoice.billFrom}`}
-                                            >
-                                                <IconEdit width={22} />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="View Invoice">
-                                            <IconButton
-                                                color="primary"
-                                                component={Link}
-                                                href={`/apps/invoice/detail/${invoice.billFrom}`}
-                                            >
-                                                <IconEye width={22} />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Delete Invoice">
-                                            <IconButton
-                                                color="error"
-                                                onClick={() => {
-                                                    setSelectedProducts([invoice.id]);
-                                                    handleDelete();
-                                                }}
-                                            >
-                                                <IconTrash width={22} />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </TableCell>
-                                </TableRow>
-                            )
-                        )}
-                    </TableBody>
-                </Table>
-            </Box>
-            <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
-                <DialogTitle>Confirm Delete</DialogTitle>
-                <DialogContent>
-                    Are you sure you want to delete selected invoices?
-                </DialogContent>
-                <DialogActions>
-                    <Button variant="contained" onClick={handleCloseDeleteDialog}>Cancel</Button>
-                    <Button color="error" variant="outlined" onClick={handleConfirmDelete}>
-                        Delete
-                    </Button>
-                </DialogActions>
-            </Dialog>
+          <Button
+            variant="outlined"
+            startIcon={<AddBoxRounded />}
+            sx={{ marginTop: 1, marginBottom: 2 }}
+          >
+            Adicionar Pagamento
+          </Button>
         </Box>
-    );
+
+        <TextField
+          id="search"
+          type="text"
+          size="small"
+          variant="outlined"
+          placeholder="Search"
+          onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconSearch size={'16'} />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Stack>
+      <TableContainer component={Paper} elevation={10} sx={{ overflowX: 'auto' }}>
+        <Table stickyHeader aria-label="sales table">
+          <TableHead>
+            <TableRow>
+              <TableCell padding="checkbox">
+                <CustomCheckbox />
+              </TableCell>
+              <TableCell>
+                <Typography variant="h6" fontSize="14px">
+                  Cliente
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="h6" fontSize="14px">
+                  Parcelas
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="h6" fontSize="14px">
+                  Valor
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="h6" fontSize="14px">
+                  Tipo Pagamento
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="h6" fontSize="14px">
+                  Status
+                </Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography variant="h6" fontSize="14px">
+                  Ações
+                </Typography>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {paymentsList.map((payment) => (
+              <TableRow key={payment.id}>
+                <TableCell padding="checkbox">
+                  <CustomCheckbox
+                  />
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6" fontSize="14px">
+                    {payment?.sale?.customer?.complete_name}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography fontSize="14px">{payment.installments_number}x</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography fontSize="14px">
+                    {Number(payment?.value).toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    })}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <PaymentChip paymentType={payment.payment_type} />
+                </TableCell>
+                <TableCell>
+                  <PaymentStatusChip paymentType={payment.is_paid} />
+                </TableCell>
+                <TableCell>
+                  <Tooltip title="Ações">
+                    <IconButton
+                      size="small"
+                      onClick={(event) => handleMenuClick(event, payment.id)}
+                    >
+                      <MoreVert fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Menu
+                    anchorEl={menuAnchorEl}
+                    open={menuOpenRowId === payment.id}
+                    onClose={handleMenuClose}
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        handleEditClick(payment.id);
+                        handleMenuClose();
+                      }}
+                    >
+                      <Edit fontSize="small" sx={{ mr: 1 }} />
+                      Editar
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        // handleViewClick(payment.id);
+                        handleMenuClose();
+                      }}
+                    >
+                      <IconEyeglass fontSize="small" sx={{ mr: 1 }} />
+                      Visualizar
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        // handleDeleteClick(item.id);
+                        handleMenuClose();
+                      }}
+                    >
+                      <Delete fontSize="small" sx={{ mr: 1 }} />
+                      Excluir
+                    </MenuItem>
+                  </Menu>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+    </Box>
+  );
 }
 export default InvoiceList;

@@ -11,7 +11,12 @@ import {
   IconButton,
   Tooltip,
   useTheme,
+  CircularProgress,
+  Modal,
 } from '@mui/material';
+
+import axios from 'axios';
+import PreviewIcon from '@mui/icons-material/Preview';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
@@ -19,11 +24,12 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import StatusIcon from '@mui/icons-material/AssignmentTurnedIn';
 import SendIcon from '@mui/icons-material/Send';
 import DescriptionIcon from '@mui/icons-material/Description';
+import SaleForm from './SaleForm';
 import saleService from '@/services/saleService';
 import StatusChip from '../../comercial/sale/components/DocumentStatusIcon';
-import ProposalForm from './ProposalForm';
+import Contract from '@/app/components/templates/ContractPreview';
 
-const SaleManager = ({
+const ProposalManager = ({
   sales = [],
   sellers = [],
   sdrs = [],
@@ -42,6 +48,21 @@ const SaleManager = ({
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [isSendingContract, setIsSendingContract] = useState(false);
+  const [sendingContractId, setSendingContractId] = useState(null);
+  const [contractPreview, setContractPreview] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [currentSale, setCurrentSale] = useState(null);
+
+  const handleOpen = (sale) => {
+    console.log('Abrindo contrato:', sale);
+    setCurrentSale(sale);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setCurrentSale(null);
+  };
 
   const handleAddSale = () => {
     setSaleData({
@@ -96,17 +117,84 @@ const SaleManager = ({
   };
 
   const handleSendContract = async (sale) => {
+    console.log('Enviando contrato:', sale);
+    setSendingContractId(sale.id);
     setIsSendingContract(true);
+
     try {
+      // Preparação dos dados para a criação do documento
+      const documentData = {
+        Address: sale.customer_address || 'Endereço Fictício',
+        Phone: sale?.customer?.phone_numbers[0]?.phone_number || 'Telefone Fictício',
+      };
+      const path = `/Contratos/Contrato-${sale?.customer?.complete_name}.pdf`;
+
+      // Criação do Documento (chamada para a rota API de criação de documento)
+      const documentResponse = await axios.post('/api/clicksign/createDocument', {
+        data: documentData,
+        path: path,
+        usePreTemplate: false, // ajuste conforme necessário
+      });
+
+      const documentKey = documentResponse.data?.document?.key;
+      if (!documentKey) {
+        throw new Error('Falha na criação do documento');
+      }
+      console.log('Documento criado com sucesso:', documentKey);
+
+      // Criação do Signatário (chamada para a rota API de criação de signatário)
+      const signerResponse = await axios.post('/api/clicksign/createSigner', {
+        documentation: sale?.customer?.first_document,
+        birthday: sale?.customer?.birth_date,
+        phone_number: sale?.customer?.phone_numbers[0]?.phone_number,
+        email: sale?.customer?.email,
+        name: sale?.customer?.complete_name,
+        auth: 'whatsapp',
+        methods: { selfie_enabled: false, handwritten_enabled: false },
+      });
+
+      const signerKey = signerResponse.data?.signer?.key;
+      if (!signerKey) {
+        throw new Error('Falha na criação do signatário');
+      }
+      console.log('Signatário criado:', signerKey);
+
+      // Adicionar Signatário ao Documento (chamada para a rota API de adição de signatário)
+      const addSignerResponse = await axios.post('/api/clicksign/addSignerDocument', {
+        signerKey: signerKey,
+        documentKey: documentKey,
+        signAs: 'contractor',
+      });
+
+      const requestSignatureKey = addSignerResponse.data?.list?.request_signature_key;
+      if (!requestSignatureKey) {
+        throw new Error('Falha ao adicionar o signatário ao documento');
+      }
+      console.log('Signatário adicionado ao documento:', requestSignatureKey);
+
+      // Enviar Notificação por E-mail (chamada para a rota API de notificação por e-mail)
+      await axios.post('/api/clicksign/notification/email', {
+        request_signature_key: requestSignatureKey,
+        message: 'Por favor, assine o contrato.',
+      });
+      console.log('Notificação por e-mail enviada');
+
+      // Enviar Notificação por WhatsApp (chamada para a rota API de notificação por WhatsApp)
+      await axios.post('/api/clicksign/notification/whatsapp', {
+        request_signature_key: requestSignatureKey,
+      });
+      console.log('Notificação por WhatsApp enviada');
+
       setSnackbarMessage('Contrato enviado com sucesso!');
       setSnackbarSeverity('success');
-      setSnackbarOpen(true);
-      setIsSendingContract(false);
     } catch (error) {
+      console.error('Erro ao enviar contrato:', error.message);
       setSnackbarMessage('Erro ao enviar contrato.');
       setSnackbarSeverity('error');
+    } finally {
       setSnackbarOpen(true);
       setIsSendingContract(false);
+      setSendingContractId(null);
     }
   };
 
@@ -120,7 +208,7 @@ const SaleManager = ({
             onClick={handleAddSale}
             startIcon={<AddIcon />}
           >
-            Adicionar Venda
+            Adicionar Proposta
           </Button>
         </Box>
       </Grid>
@@ -195,17 +283,77 @@ const SaleManager = ({
                     >
                       <EditIcon />
                     </IconButton>
-                    <Tooltip title="Enviar Contrato">
+                    <Tooltip title="Preview do Contrato">
                       <IconButton
                         color="primary"
-                        onClick={() => handleSendContract(sale)}
-                        disabled={isSendingContract}
+                        onClick={() => handleOpen(sale)}
                         sx={{
                           borderRadius: '8px',
                           padding: '8px',
                         }}
                       >
-                        <SendIcon />
+                        <PreviewIcon />
+                      </IconButton>
+                    </Tooltip>
+
+                    <Modal open={open} onClose={handleClose}>
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          width: '40%',
+                          bgcolor: 'background.paper',
+                          boxShadow: 2,
+                          p: 4,
+                          maxHeight: '90vh',
+                          overflowY: 'auto',
+                        }}
+                      >
+                        {currentSale && (
+                          <Contract
+                            id_customer={currentSale.customer?.complete_name || 'N/A'}
+                            id_first_document={currentSale.firstDocument || 'N/A'}
+                            id_second_document={currentSale.secondDocument || 'N/A'}
+                            id_customer_address={currentSale.customerAddress || 'N/A'}
+                            id_customer_house={currentSale.customerHouse || 'N/A'}
+                            id_customer_zip={currentSale.customerZip || 'N/A'}
+                            id_customer_city={currentSale.customerCity || 'N/A'}
+                            id_customer_locality={currentSale.customerLocality || 'N/A'}
+                            id_customer_state={currentSale.customerState || 'N/A'}
+                            quantity_material_3={currentSale.quantityMaterial3 || 'N/A'}
+                            id_material_3={currentSale.material3 || 'N/A'}
+                            id_material_1={currentSale.material1 || 'N/A'}
+                            id_material_2={currentSale.material2 || 'N/A'}
+                            watt_pico={currentSale.wattPico || 'N/A'}
+                            project_value_format={currentSale.total_value || 'N/A'}
+                            id_payment_method={currentSale.paymentMethod || 'N/A'}
+                            id_payment_detail={currentSale.paymentDetail || 'N/A'}
+                            observation_payment={currentSale.observationPayment || 'N/A'}
+                            dia={new Date().getDate()}
+                            mes={new Date().toLocaleString('default', { month: 'long' })}
+                            ano={new Date().getFullYear()}
+                          />
+                        )}
+                      </Box>
+                    </Modal>
+
+                    <Tooltip title="Enviar Contrato">
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleSendContract(sale)}
+                        disabled={sendingContractId === sale.id}
+                        sx={{
+                          borderRadius: '8px',
+                          padding: '8px',
+                        }}
+                      >
+                        {sendingContractId === sale.id ? (
+                          <CircularProgress size={24} />
+                        ) : (
+                          <SendIcon />
+                        )}
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Gerar Proposta">
@@ -233,7 +381,7 @@ const SaleManager = ({
               <Typography variant="h6" gutterBottom>
                 {saleData?.id ? 'Editar Venda' : 'Adicionar Venda'}
               </Typography>
-              <ProposalForm
+              <SaleForm
                 saleData={saleData}
                 setSaleData={setSaleData}
                 sellers={sellers}
@@ -282,4 +430,4 @@ const SaleManager = ({
   );
 };
 
-export default SaleManager;
+export default ProposalManager;

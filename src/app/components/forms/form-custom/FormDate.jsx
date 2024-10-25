@@ -12,7 +12,9 @@ const FormDate = ({ label, value, onChange, error, helperText }) => {
 
   return (
     <div>
+      {label && (
       <CustomFormLabel htmlFor="date">{label}</CustomFormLabel>
+      )}
       <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
         <DatePicker
           renderInput={(props) => (
