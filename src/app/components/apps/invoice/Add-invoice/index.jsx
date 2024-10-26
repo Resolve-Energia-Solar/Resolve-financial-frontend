@@ -1,451 +1,331 @@
-"use client";
-import React, { useState, useContext, useEffect } from "react";
-import { InvoiceContext } from "@/app/context/InvoiceContext";
+'use client';
+import React, { useContext, useState, useEffect } from 'react';
+import { InvoiceContext } from '@/app/context/InvoiceContext/index';
+import { usePathname, useRouter } from 'next/navigation';
 import {
-    Alert,
-    Button,
-    MenuItem,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    Typography,
-    IconButton,
-    Tooltip,
-    Box,
-    Stack,
-    Divider,
-    Grid,
-} from "@mui/material";
-import { useRouter } from "next/navigation";
-import { format, isValid } from "date-fns";
-import {
-    IconPlus,
-    IconSquareRoundedPlus,
-    IconTrash,
-} from "@tabler/icons-react";
-import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
-import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
-import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
+  Button,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Alert,
+  IconButton,
+  Tooltip,
+  Box,
+  Stack,
+  Divider,
+  Grid,
+  CircularProgress,
+  FormControlLabel,
+} from '@mui/material';
+import { format, isValid } from 'date-fns';
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
+import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
+import { IconSquareRoundedPlus, IconTrash } from '@tabler/icons-react';
+import { useParams } from 'next/navigation';
+
+import usePayment from '@/hooks/payments/usePayment';
+import usePaymentForm from '@/hooks/payments/usePaymentForm';
+import AutoCompleteSale from '../../comercial/sale/components/auto-complete/Auto-Input-Sales';
+import FormSelect from '@/app/components/forms/form-custom/FormSelect';
+import AutoCompleteFinancier from '../components/auto-complete/Auto-Input-financiers';
+import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
+import FormDate from '@/app/components/forms/form-custom/FormDate';
+import CustomFieldMoney from '../components/CustomFieldMoney';
+import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 
 const CreateInvoice = () => {
-    const { addInvoice, invoices } = useContext(InvoiceContext);
-    const [showAlert, setShowAlert] = useState(false);
-    const router = useRouter();
-    const [formData, setFormData] = useState({
-        id: 0,
-        billFrom: "",
-        billTo: "",
-        totalCost: 0,
-        status: "Pending",
-        billFromAddress: "",
-        billToAddress: "",
-        orders: [{ itemName: "", unitPrice: "", units: "", unitTotalPrice: 0 }],
-        vat: 0,
-        grandTotal: 0,
-        subtotal: 0,
-        date: new Date().toISOString().split("T")[0],
-    });
+  const {
+    formData,
+    handleChange,
+    handleSave,
+    formErrors,
+    success,
+    loading: formLoading,
+    handleInstallmentChange,
+    handleAddItem,
+    handleDeleteItem,
+  } = usePaymentForm();
 
-    useEffect(() => {
-        if (invoices.length > 0) {
-            const lastId = invoices[invoices.length - 1].id;
-            setFormData((prevData) => ({
-                ...prevData,
-                id: lastId + 1,
-            }));
-        } else {
-            setFormData((prevData) => ({
-                ...prevData,
-                id: 1,
-            }));
-        }
-    }, [invoices]);
+  const statusOptions = [
+    { value: 'C', label: 'Crédito' },
+    { value: 'D', label: 'Débito' },
+    { value: 'B', label: 'Boleto' },
+    { value: 'F', label: 'Financiamento' },
+    { value: 'PI', label: 'Parcelamento Interno' },
+  ];
 
-    const calculateTotals = (orders) => {
-        let subtotal = 0;
+  const orderDate = new Date();
+  const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
+  const formattedOrderDate = format(parsedDate, 'EEEE, MMMM dd, yyyy');
 
-        orders.forEach((order) => {
-            const unitPrice = parseFloat(order.unitPrice) || 0;
-            const units = parseInt(order.units) || 0;
-            const totalCost = unitPrice * units;
+  return (
+    <Box>
+      <Stack
+        direction="row"
+        spacing={{ xs: 1, sm: 2, md: 4 }}
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
+        <Typography variant="h5">Criar Pagamento</Typography>
+        <Box display="flex" gap={1}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSave}
+            disabled={formLoading}
+            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null} // Ícone de loading
+          >
+            {formLoading ? 'Salvando...' : 'Salvar Alterações'}{' '}
+            {/* Altera o texto com base no loading */}
+          </Button>
+        </Box>
+      </Stack>
+      <Divider></Divider>
 
-            subtotal += totalCost;
-            order.unitTotalPrice = totalCost;
-        });
+      <Stack
+        direction="row"
+        spacing={{ xs: 1, sm: 2, md: 4 }}
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
+        <Box>
+          <FormSelect
+            label="Status do Pagamento"
+            options={statusOptions}
+            value={formData.payment_type}
+            onChange={(e) => handleChange('payment_type', e.target.value)}
+            {...(formErrors.payment_type && { error: true, helperText: formErrors.payment_type })}
+          />
+        </Box>
+        <Box textAlign="right">
+          <CustomFormLabel htmlFor="demo-simple-select">Data do Registro</CustomFormLabel>
+          <Typography variant="body1"> {formattedOrderDate}</Typography>
+        </Box>
+      </Stack>
+      <Divider></Divider>
 
-        const vat = subtotal * 0.1;
-        const grandTotal = subtotal + vat;
-
-        return { subtotal, vat, grandTotal };
-    };
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => {
-            const newFormData = { ...prevData, [name]: value };
-            const totals = calculateTotals(newFormData.orders);
-            return {
-                ...newFormData,
-                ...totals,
-            };
-        });
-    };
-
-    const handleOrderChange = (index, field, value) => {
-        setFormData((prevData) => {
-            const updatedOrders = [...prevData.orders];
-            updatedOrders[index] = {
-                ...updatedOrders[index],
-                [field]: value,
-            };
-            const totals = calculateTotals(updatedOrders);
-            return {
-                ...prevData,
-                orders: updatedOrders,
-                ...totals,
-            };
-        });
-    };
-
-    const handleAddItem = () => {
-        setFormData((prevData) => {
-            const updatedOrders = [
-                ...prevData.orders,
-                { itemName: "", unitPrice: "", units: "", unitTotalPrice: 0 },
-            ];
-            const totals = calculateTotals(updatedOrders);
-            return {
-                ...prevData,
-                orders: updatedOrders,
-                ...totals,
-            };
-        });
-    };
-
-    const handleDeleteItem = (index) => {
-        setFormData((prevData) => {
-            const updatedOrders = prevData.orders.filter((_, i) => i !== index);
-            const totals = calculateTotals(updatedOrders);
-            return {
-                ...prevData,
-                orders: updatedOrders,
-                ...totals,
-            };
-        });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await addInvoice(formData);
-            setFormData({
-                id: 0,
-                billFrom: "",
-                billTo: "",
-                totalCost: 0,
-                status: "Pending",
-                billFromAddress: "",
-                billToAddress: "",
-                orders: [{ itemName: "", unitPrice: "", units: "", unitTotalPrice: 0 }],
-                vat: 0,
-                grandTotal: 0,
-                subtotal: 0,
-                date: new Date().toISOString().split("T")[0],
-            });
-            setShowAlert(true);
-            setTimeout(() => {
-                setShowAlert(false);
-            }, 5000);
-            router.push("/apps/invoice/list");
-        } catch (error) {
-            console.error("Error adding invoice:", error);
-        }
-    };
-
-    const parsedDate = isValid(new Date(formData.date))
-        ? new Date(formData.date)
-        : new Date();
-    const formattedOrderDate = format(parsedDate, "EEEE, MMMM dd, yyyy");
-
-    return (
-        <form onSubmit={handleSubmit}>
-            <Box>
-                <Stack
-                    direction="row"
-                    spacing={{ xs: 1, sm: 2, md: 4 }}
-                    justifyContent="space-between"
-                    mb={3}
-                >
-                    <Typography variant="h5"># {formData.id}</Typography>
-                    <Box display="flex" gap={1}>
-                        <Button
-                            variant="outlined"
-                            color="error"
-                            onClick={() => {
-                                router.push("/apps/invoice/list");
-                            }}
-                        >
-                            Cancel
-                        </Button>
-                        <Button type="submit" variant="contained" color="primary">
-                            Create Invoice
-                        </Button>
-                    </Box>
-                </Stack>
-                <Divider></Divider>
-                <Stack
-                    direction="row"
-                    spacing={{ xs: 1, sm: 2, md: 4 }}
-                    justifyContent="space-between"
-                    alignItems="center"
-                    mb={3}
-                >
-                    <Box>
-                        <CustomFormLabel htmlFor="demo-simple-select">
-                            Order Status
-                        </CustomFormLabel>
-
-                        <CustomSelect
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={formData.status}
-                            onChange={handleChange}
-                        >
-                            <MenuItem value="Pending">Pending</MenuItem>
-                            <MenuItem value="Shipped">Shipped</MenuItem>
-                            <MenuItem value="Delivered">Delivered</MenuItem>
-                        </CustomSelect>
-                    </Box>
-                    <Box textAlign="right">
-                        <CustomFormLabel htmlFor="demo-simple-select">
-                            Order Date
-                        </CustomFormLabel>
-                        <Typography variant="body1"> {formattedOrderDate}</Typography>
-                    </Box>
-                </Stack>
-                <Divider></Divider>
-
-                <Grid container spacing={3} mb={4}>
-                    <Grid item xs={12} sm={6}>
-                        <CustomFormLabel htmlFor="bill-from">Bill From</CustomFormLabel>
-                        <CustomTextField
-                            id="bill-from"
-                            name="billFrom"
-                            value={formData.billFrom}
-                            onChange={handleChange}
-                            fullWidth
+      <Grid container spacing={3} mb={4}>
+        <Grid item xs={12} sm={6}>
+          <CustomFormLabel htmlFor="name">Venda</CustomFormLabel>
+          <AutoCompleteSale
+            onChange={(id) => handleChange('sale_id', id)}
+            value={formData.sale_id}
+            {...(formErrors.sale_id && { error: true, helperText: formErrors.sale_id })}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <CustomFormLabel htmlFor="name">Financiador</CustomFormLabel>
+          <AutoCompleteFinancier
+            onChange={(id) => handleChange('financier_id', id)}
+            value={formData.financier_id}
+            {...(formErrors.financier_id && { error: true, helperText: formErrors.financier_id })}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <CustomFormLabel htmlFor="valor">Valor</CustomFormLabel>
+          <CustomFieldMoney
+            value={formData.value}
+            onChange={(value) => handleChange('value', value)}
+            {...(formErrors.value && { error: true, helperText: formErrors.value })}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <FormDate
+            label="Data do Pagamento"
+            name="due_date"
+            value={formData.due_date}
+            onChange={(newValue) => handleChange('due_date', newValue)}
+            {...(formErrors.due_date && { error: true, helperText: formErrors.due_date })}
+          />
+        </Grid>
+        {formData.create_installments && (
+          <Grid item xs={12} sm={12}>
+            <CustomFormLabel htmlFor="valor">Número de Parcelas</CustomFormLabel>
+            <CustomTextField
+              name="value"
+              placeholder="1"
+              variant="outlined"
+              fullWidth
+              value={formData.installments_number}
+              onChange={(e) => handleChange('installments_number', e.target.value)}
+              {...(formErrors.installments_number && {
+                error: true,
+                helperText: formErrors.installments_number,
+              })}
+            />
+          </Grid>
+        )}
+        <Grid item xs={12} sm={6}>
+          <FormControlLabel
+            control={
+              <CustomSwitch
+                checked={formData.create_installments}
+                onChange={(e) => handleChange('create_installments', e.target.checked)}
+              />
+            }
+            label={formData.create_installments ? 'Gerar parcelas' : 'Não gerar parcelas'}
+          />
+        </Grid>
+      </Grid>
+      {!formData.create_installments && (
+        <Paper variant="outlined">
+          <TableContainer sx={{ whiteSpace: { xs: 'nowrap', md: 'unset' } }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <Typography variant="h6" fontSize="14px">
+                      Valor
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="h6" fontSize="14px">
+                      Número da Parcela
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="h6" fontSize="14px">
+                      Vencimento
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="h6" fontSize="14px">
+                      Status
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="h6" fontSize="14px">
+                      Ações
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {formData.installments.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} style={{ textAlign: 'center' }}>
+                      <Button variant="contained" color="primary" onClick={handleAddItem}>
+                        Adicionar uma nova parcela
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  formData.installments.map((installment, index) => (
+                    <TableRow key={installment.id}>
+                      <TableCell>
+                        <CustomFieldMoney
+                          value={installment.installment_value}
+                          onChange={(value) =>
+                            handleInstallmentChange(index, 'installment_value', value)
+                          }
+                          {...(formErrors.installments &&
+                            formErrors.installments[index]?.installment_value && {
+                              error: true,
+                              helperText: formErrors.installments[index].installment_value,
+                            })}
+                          fullWidth
                         />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <CustomFormLabel
-                            htmlFor="bill-to"
-                            sx={{
-                                mt: {
-                                    xs: 0,
-                                    sm: 3,
-                                },
-                            }}
-                        >
-                            Bill To
-                        </CustomFormLabel>
+                      </TableCell>
+                      <TableCell>
                         <CustomTextField
-                            name="billTo"
-                            value={formData.billTo}
-                            onChange={handleChange}
-                            fullWidth
+                          type="number"
+                          value={installment.installment_number}
+                          onChange={(e) =>
+                            handleInstallmentChange(index, 'installment_number', e.target.value)
+                          }
+                          {...(formErrors.installments &&
+                            formErrors.installments[index]?.installment_number && {
+                              error: true,
+                              helperText: formErrors.installments[index].installment_number,
+                            })}
+                          fullWidth
                         />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <CustomFormLabel
-                            htmlFor="From Address"
-                            sx={{
-                                mt: 0,
-                            }}
-                        >
-                            From Address
-                        </CustomFormLabel>
-                        <CustomTextField
-                            name="billFromAddress"
-                            value={formData.billFromAddress}
-                            onChange={handleChange}
-                            fullWidth
+                      </TableCell>
+                      <TableCell>
+                        <FormDate
+                          name="due_date"
+                          value={installment.due_date}
+                          onChange={(newValue) =>
+                            handleInstallmentChange(index, 'due_date', newValue)
+                          }
+                          {...(formErrors.installments &&
+                            formErrors.installments[index]?.due_date && {
+                              error: true,
+                              helperText: formErrors.installments[index].due_date,
+                            })}
+                          fullWidth
                         />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <CustomFormLabel
-                            htmlFor="Bill To Address"
-                            sx={{
-                                mt: 0,
-                            }}
-                        >
-                            Bill To Address
-                        </CustomFormLabel>
-                        <CustomTextField
-                            name="billToAddress"
-                            value={formData.billToAddress}
-                            onChange={handleChange}
-                            fullWidth
+                      </TableCell>
+                      <TableCell>
+                        <FormControlLabel
+                          control={
+                            <CustomSwitch
+                              checked={installment.is_paid}
+                              onChange={(e) =>
+                                handleInstallmentChange(index, 'is_paid', e.target.checked)
+                              }
+                            />
+                          }
+                          label={installment.is_paid ? 'Pago' : 'Pendente'}
                         />
-                    </Grid>
-                </Grid>
-                {/* Orders Table */}
-                <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    mb={2}
-                >
-                    <Typography variant="h6">Items Details :</Typography>
-                    <Button
-                        onClick={handleAddItem}
-                        variant="contained"
-                        color="primary"
-                        startIcon={<IconPlus width={18} />}
-                    >
-                        Add Item
-                    </Button>
-                </Stack>
-
-                <Paper variant="outlined">
-                    <TableContainer sx={{ whiteSpace: { xs: "nowrap", md: "unset" } }}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>
-                                        <Typography variant="h6" fontSize="14px">
-                                            Item Name
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Typography variant="h6" fontSize="14px">
-                                            Unit Price
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Typography variant="h6" fontSize="14px">
-                                            Units
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Typography variant="h6" fontSize="14px">
-                                            Total Cost
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell>
-                                        <Typography variant="h6" fontSize="14px">
-                                            Actions
-                                        </Typography>
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {formData.orders.map((order, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell>
-                                            <CustomTextField
-                                                type="text"
-                                                value={order.itemName}
-                                                placeholder="Item Name"
-                                                onChange={(e) =>
-                                                    handleOrderChange(index, "itemName", e.target.value)
-                                                }
-                                                fullWidth
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <CustomTextField
-                                                type="number"
-                                                value={order.unitPrice}
-                                                placeholder="Unit Price"
-                                                onChange={(e) =>
-                                                    handleOrderChange(index, "unitPrice", e.target.value)
-                                                }
-                                                fullWidth
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <CustomTextField
-                                                type="number"
-                                                value={order.units}
-                                                placeholder="Units"
-                                                onChange={(e) =>
-                                                    handleOrderChange(index, "units", e.target.value)
-                                                }
-                                                fullWidth
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography variant="body1">
-                                                {order.unitTotalPrice}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell></TableCell>
-                                        <TableCell>
-                                            <Tooltip title="Add Item">
-                                                <IconButton onClick={handleAddItem} color="primary">
-                                                    <IconSquareRoundedPlus width={22} />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="Delete Item">
-                                                <IconButton
-                                                    onClick={() => handleDeleteItem(index)}
-                                                    color="error"
-                                                >
-                                                    <IconTrash width={22} />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Paper>
-
-                {/* Totals */}
-                <Box p={3} backgroundColor="primary.light" mt={3}>
-                    <Box display="flex" justifyContent="end" gap={3} mb={3}>
-                        <Typography variant="body1" fontWeight={600}>
-                            Sub Total:
-                        </Typography>
-                        <Typography variant="body1" fontWeight={600}>
-                            {formData.subtotal}
-                        </Typography>
-                    </Box>
-                    <Box display="flex" justifyContent="end" gap={3} mb={3}>
-                        <Typography variant="body1" fontWeight={600}>
-                            VAT:
-                        </Typography>
-                        <Typography variant="body1" fontWeight={600}>
-                            {formData.vat}
-                        </Typography>
-                    </Box>
-                    <Box display="flex" justifyContent="end" gap={3}>
-                        <Typography variant="body1" fontWeight={600}>
-                            Grand Total:
-                        </Typography>
-                        <Typography variant="body1" fontWeight={600}>
-                            {formData.grandTotal}
-                        </Typography>
-                    </Box>
-                </Box>
-
-                {showAlert && (
-                    <Alert
-                        severity="success"
-                        sx={{ position: "fixed", top: 16, right: 16 }}
-                    >
-                        Invoice added successfully.
-                    </Alert>
+                      </TableCell>
+                      <TableCell>
+                        <Tooltip title="Add Item">
+                          <IconButton onClick={handleAddItem} color="primary">
+                            <IconSquareRoundedPlus width={22} />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete Item">
+                          <IconButton color="error" onClick={() => handleDeleteItem(index)}>
+                            <IconTrash width={22} />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))
                 )}
-            </Box>
-        </form>
-    );
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      )}
+      {/* <Box p={3} backgroundColor="primary.light" mt={3}>
+        <Box display="flex" justifyContent="end" gap={3} mb={3}>
+          <Typography variant="body1" fontWeight={600}>
+            Sub Total:
+          </Typography>
+          <Typography variant="body1" fontWeight={600}>
+            0
+          </Typography>
+        </Box>
+        <Box display="flex" justifyContent="end" gap={3} mb={3}>
+          <Typography variant="body1" fontWeight={600}>
+            VAT:
+          </Typography>
+          <Typography variant="body1" fontWeight={600}>
+            0
+          </Typography>
+        </Box>
+        <Box display="flex" justifyContent="end" gap={3}>
+          <Typography variant="body1" fontWeight={600}>
+            Grand Total:
+          </Typography>
+          <Typography variant="body1" fontWeight={600}>
+            0
+          </Typography>
+        </Box>
+      </Box> */}
+    </Box>
+  );
 };
 
 export default CreateInvoice;

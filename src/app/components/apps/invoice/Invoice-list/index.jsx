@@ -5,10 +5,6 @@ import {
   Table,
   TextField,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Tooltip,
   IconButton,
   TableHead,
@@ -17,14 +13,17 @@ import {
   TableBody,
   Box,
   Typography,
-  Grid,
   Stack,
   InputAdornment,
-  Chip,
   Paper,
   TableContainer,
   Menu,
   MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
 import Link from 'next/link';
 import {
@@ -48,12 +47,16 @@ import PaymentStatusChip from '../components/PaymentStatusChip';
 import { AddBoxRounded, Delete, Edit, MoreVert } from '@mui/icons-material';
 import DashboardCards from '../components/kpis/DashboardCards';
 import { useRouter } from 'next/navigation';
+import PaymentList from '../components/paymentList/paymentList';
 
 function InvoiceList() {
   const router = useRouter();
   const [paymentsList, setPaymentsList] = useState([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [menuOpenRowId, setMenuOpenRowId] = useState(null);
+
+  const [open, setOpen] = useState(false);
+  const [invoiceToDelete, setInvoiceToDelete] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,6 +85,26 @@ function InvoiceList() {
     router.push(`/apps/invoice/${id}/update`);
   };
 
+  const handleCreateClick = () => {
+    router.push('/apps/invoice/create');
+  };
+
+  const handleDeleteClick = (id) => {
+    setInvoiceToDelete(id);
+    setOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await paymentService.deletePayment(invoiceToDelete);
+      setPaymentsList((prev) => prev.filter((payment) => payment.id !== invoiceToDelete));
+    } catch (error) {
+      console.log('Error: ', error);
+    } finally {
+      setOpen(false);
+    }
+  }
+
   return (
     <Box>
       <DashboardCards />
@@ -97,6 +120,7 @@ function InvoiceList() {
             variant="outlined"
             startIcon={<AddBoxRounded />}
             sx={{ marginTop: 1, marginBottom: 2 }}
+            onClick={handleCreateClick}
           >
             Adicionar Pagamento
           </Button>
@@ -118,131 +142,7 @@ function InvoiceList() {
           }}
         />
       </Stack>
-      <TableContainer component={Paper} elevation={10} sx={{ overflowX: 'auto' }}>
-        <Table stickyHeader aria-label="sales table">
-          <TableHead>
-            <TableRow>
-              <TableCell padding="checkbox">
-                <CustomCheckbox />
-              </TableCell>
-              <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Cliente
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Parcelas
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Valor
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Tipo Pagamento
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Status
-                </Typography>
-              </TableCell>
-              <TableCell align="center">
-                <Typography variant="h6" fontSize="14px">
-                  Ações
-                </Typography>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paymentsList.map((payment) => (
-              <TableRow key={payment.id}>
-                <TableCell padding="checkbox">
-                  <CustomCheckbox
-                  />
-                </TableCell>
-                <TableCell>
-                  <Typography variant="h6" fontSize="14px">
-                    {payment?.sale?.customer?.complete_name}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography fontSize="14px">{payment.installments_number}x</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography fontSize="14px">
-                    {Number(payment?.value).toLocaleString('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    })}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <PaymentChip paymentType={payment.payment_type} />
-                </TableCell>
-                <TableCell>
-                  <PaymentStatusChip paymentType={payment.is_paid} />
-                </TableCell>
-                <TableCell>
-                  <Tooltip title="Ações">
-                    <IconButton
-                      size="small"
-                      onClick={(event) => handleMenuClick(event, payment.id)}
-                    >
-                      <MoreVert fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                  <Menu
-                    anchorEl={menuAnchorEl}
-                    open={menuOpenRowId === payment.id}
-                    onClose={handleMenuClose}
-                    anchorOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right',
-                    }}
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right',
-                    }}
-                  >
-                    <MenuItem
-                      onClick={() => {
-                        handleEditClick(payment.id);
-                        handleMenuClose();
-                      }}
-                    >
-                      <Edit fontSize="small" sx={{ mr: 1 }} />
-                      Editar
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        // handleViewClick(payment.id);
-                        handleMenuClose();
-                      }}
-                    >
-                      <IconEyeglass fontSize="small" sx={{ mr: 1 }} />
-                      Visualizar
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        // handleDeleteClick(item.id);
-                        handleMenuClose();
-                      }}
-                    >
-                      <Delete fontSize="small" sx={{ mr: 1 }} />
-                      Excluir
-                    </MenuItem>
-                  </Menu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
+      <PaymentList />
     </Box>
   );
 }
