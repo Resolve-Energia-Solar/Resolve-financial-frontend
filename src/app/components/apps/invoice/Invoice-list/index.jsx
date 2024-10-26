@@ -47,6 +47,7 @@ import PaymentStatusChip from '../components/PaymentStatusChip';
 import { AddBoxRounded, Delete, Edit, MoreVert } from '@mui/icons-material';
 import DashboardCards from '../components/kpis/DashboardCards';
 import { useRouter } from 'next/navigation';
+import PaymentList from '../components/paymentList/paymentList';
 
 function InvoiceList() {
   const router = useRouter();
@@ -141,137 +142,7 @@ function InvoiceList() {
           }}
         />
       </Stack>
-      <TableContainer component={Paper} elevation={10} sx={{ overflowX: 'auto' }}>
-        <Table stickyHeader aria-label="sales table">
-          <TableHead>
-            <TableRow>
-              <TableCell padding="checkbox">
-                <CustomCheckbox />
-              </TableCell>
-              <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Cliente
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Parcelas
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Valor
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Tipo Pagamento
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Status
-                </Typography>
-              </TableCell>
-              <TableCell align="center">
-                <Typography variant="h6" fontSize="14px">
-                  Ações
-                </Typography>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paymentsList.map((payment) => (
-              <TableRow key={payment.id}>
-                <TableCell padding="checkbox">
-                  <CustomCheckbox />
-                </TableCell>
-                <TableCell>
-                  <Typography variant="h6" fontSize="14px">
-                    {payment?.sale?.customer?.complete_name}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography fontSize="14px">{payment.installments.length}x</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography fontSize="14px">
-                    {Number(payment?.value).toLocaleString('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    })}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <PaymentChip paymentType={payment.payment_type} />
-                </TableCell>
-                <TableCell>
-                  <PaymentStatusChip paymentType={payment.is_paid} />
-                </TableCell>
-                <TableCell>
-                  <Tooltip title="Ações">
-                    <IconButton
-                      size="small"
-                      onClick={(event) => handleMenuClick(event, payment.id)}
-                    >
-                      <MoreVert fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                  <Menu
-                    anchorEl={menuAnchorEl}
-                    open={menuOpenRowId === payment.id}
-                    onClose={handleMenuClose}
-                    anchorOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right',
-                    }}
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right',
-                    }}
-                  >
-                    <MenuItem
-                      onClick={() => {
-                        handleEditClick(payment.id);
-                        handleMenuClose();
-                      }}
-                    >
-                      <Edit fontSize="small" sx={{ mr: 1 }} />
-                      Editar
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        handleDeleteClick(payment.id);
-                        handleMenuClose();
-                      }}
-                    >
-                      <Delete fontSize="small" sx={{ mr: 1 }} />
-                      Excluir
-                    </MenuItem>
-                  </Menu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Confirmar Exclusão</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Tem certeza de que deseja excluir esta venda? Esta ação não pode ser desfeita.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={()=> setOpen(false)} color="primary">
-            Cancelar
-          </Button>
-          <Button onClick={handleConfirmDelete} color="error">
-            Excluir
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <PaymentList />
     </Box>
   );
 }

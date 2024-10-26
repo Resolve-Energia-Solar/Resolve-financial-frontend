@@ -19,6 +19,8 @@ import FormPageSkeleton from '../components/FormPageSkeleton';
 import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
 import { useState } from 'react';
+import EditInvoicePage from '../../../invoice/Edit-invoice';
+import PaymentList from '../../../invoice/components/paymentList/paymentList';
 
 const EditSalePage = () => {
   const userPermissions = useSelector((state) => state.user.permissions);
@@ -57,6 +59,7 @@ const EditSalePage = () => {
       <Tabs value={value} onChange={handleChangeTab}>
         <Tab label="Venda" />
         <Tab label="Anexos" />
+        <Tab label="Pagamentos" />
       </Tabs>
       {loading ? (
         <FormPageSkeleton />
@@ -190,6 +193,12 @@ const EditSalePage = () => {
       )}
 
       {value === 1 && <DocumentAttachments objectId={id_sale} contentType={context_type_sale} />}
+
+      {value === 2 && (
+        <Box sx = {{ mt: 3 }}>
+          <PaymentList />
+        </Box>
+        )}
     </Box>
   );
 };

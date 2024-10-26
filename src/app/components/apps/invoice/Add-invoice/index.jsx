@@ -60,8 +60,6 @@ const CreateInvoice = () => {
     { value: 'PI', label: 'Parcelamento Interno' },
   ];
 
-  const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.value);
-
   const orderDate = new Date();
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
   const formattedOrderDate = format(parsedDate, 'EEEE, MMMM dd, yyyy');
