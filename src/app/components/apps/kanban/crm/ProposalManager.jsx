@@ -24,7 +24,6 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import StatusIcon from '@mui/icons-material/AssignmentTurnedIn';
 import SendIcon from '@mui/icons-material/Send';
 import DescriptionIcon from '@mui/icons-material/Description';
-import SaleForm from './SaleForm';
 import saleService from '@/services/saleService';
 import StatusChip from '../../comercial/sale/components/DocumentStatusIcon';
 import Contract from '@/app/components/templates/ContractPreview';
