@@ -49,12 +49,12 @@ const LeadDetails = ({ selectedLead }) => {
   const documentDetails = [
     {
       icon: <Description fontSize="small" />,
-      label: 'Documento Principal',
+      label: 'CFP/CNPJ',
       value: selectedLead.first_document || 'N/A',
     },
     {
       icon: <Badge fontSize="small" />,
-      label: 'Documento Secundário',
+      label: 'RG',
       value: selectedLead.second_document || 'N/A',
     },
   ];

@@ -164,26 +164,11 @@ const LeadManager = ({
                     >
                       <Tab label="Lead" />
                       <Tab label="Proposta" />
-                      <Tab label="Vendas" />
-                      <Tab label="Projetos" />
                     </Tabs>
                   </Box>
 
                   <Box mt={2}>
                     {tabIndex === 0 && <LeadDetails selectedLead={selectedLead} />}
-                    {tabIndex === 2 && (
-                      <SaleManager
-                        managers={managers}
-                        supervisors={supervisors}
-                        sellers={sellers}
-                        sdrs={sdrs}
-                        allUsers={allUsers}
-                        branches={branches}
-                        campaigns={campaigns}
-                        leadData={leadsList}
-                        sales={sales}
-                      />
-                    )}
                     {tabIndex === 1 && (
                       <ProposalManager
                         managers={managers}
@@ -195,15 +180,6 @@ const LeadManager = ({
                         campaigns={campaigns}
                         leadData={leadsList}
                         sales={sales}
-                      />
-                    )}
-                    {tabIndex === 3 && (
-                      <ProjectManager
-                        designers={designers}
-                        managers={managers}
-                        sellers={sellers}
-                        supervisors={supervisors}
-                        addresses={addresses.results}
                       />
                     )}
                   </Box>
