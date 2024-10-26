@@ -43,7 +43,7 @@ export const Profile = () => {
               {userProfile?.first_name || 'Usuário'} 
             </Typography>
             <Typography variant="caption">
-              {userProfile?.role.name || 'TI'}
+              {userProfile?.role?.name || 'TI'}
             </Typography>
           </Box>
           <Box sx={{ ml: 'auto' }}>

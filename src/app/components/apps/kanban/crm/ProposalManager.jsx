@@ -24,10 +24,10 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import StatusIcon from '@mui/icons-material/AssignmentTurnedIn';
 import SendIcon from '@mui/icons-material/Send';
 import DescriptionIcon from '@mui/icons-material/Description';
-import SaleForm from './SaleForm';
 import saleService from '@/services/saleService';
 import StatusChip from '../../comercial/sale/components/DocumentStatusIcon';
 import Contract from '@/app/components/templates/ContractPreview';
+import ProposalForm from './ProposalForm';
 
 const ProposalManager = ({
   sales = [],
@@ -55,6 +55,8 @@ const ProposalManager = ({
 
   const handleOpen = (sale) => {
     console.log('Abrindo contrato:', sale);
+    console.log('Abrindo dados da venda:', saleData);
+    console.log('Abrindo dados do lead:', leadData);
     setCurrentSale(sale);
     setOpen(true);
   };
@@ -122,18 +124,16 @@ const ProposalManager = ({
     setIsSendingContract(true);
 
     try {
-      // Preparação dos dados para a criação do documento
       const documentData = {
         Address: sale.customer_address || 'Endereço Fictício',
         Phone: sale?.customer?.phone_numbers[0]?.phone_number || 'Telefone Fictício',
       };
       const path = `/Contratos/Contrato-${sale?.customer?.complete_name}.pdf`;
 
-      // Criação do Documento (chamada para a rota API de criação de documento)
       const documentResponse = await axios.post('/api/clicksign/createDocument', {
         data: documentData,
         path: path,
-        usePreTemplate: false, // ajuste conforme necessário
+        usePreTemplate: false,
       });
 
       const documentKey = documentResponse.data?.document?.key;
@@ -142,7 +142,6 @@ const ProposalManager = ({
       }
       console.log('Documento criado com sucesso:', documentKey);
 
-      // Criação do Signatário (chamada para a rota API de criação de signatário)
       const signerResponse = await axios.post('/api/clicksign/createSigner', {
         documentation: sale?.customer?.first_document,
         birthday: sale?.customer?.birth_date,
@@ -159,7 +158,6 @@ const ProposalManager = ({
       }
       console.log('Signatário criado:', signerKey);
 
-      // Adicionar Signatário ao Documento (chamada para a rota API de adição de signatário)
       const addSignerResponse = await axios.post('/api/clicksign/addSignerDocument', {
         signerKey: signerKey,
         documentKey: documentKey,
@@ -172,14 +170,12 @@ const ProposalManager = ({
       }
       console.log('Signatário adicionado ao documento:', requestSignatureKey);
 
-      // Enviar Notificação por E-mail (chamada para a rota API de notificação por e-mail)
       await axios.post('/api/clicksign/notification/email', {
         request_signature_key: requestSignatureKey,
         message: 'Por favor, assine o contrato.',
       });
       console.log('Notificação por e-mail enviada');
 
-      // Enviar Notificação por WhatsApp (chamada para a rota API de notificação por WhatsApp)
       await axios.post('/api/clicksign/notification/whatsapp', {
         request_signature_key: requestSignatureKey,
       });
@@ -201,7 +197,7 @@ const ProposalManager = ({
   return (
     <Grid container spacing={4}>
       <Grid item xs={12}>
-        <Box display="flex" justifyContent="flex-end" mt={4}>
+        <Box display="flex" justifyContent="flex-start" mt={4}>
           <Button
             variant="contained"
             color="primary"
@@ -213,20 +209,20 @@ const ProposalManager = ({
         </Box>
       </Grid>
 
-      {sales.length === 0 && !showSaleForm && (
+      {sales.filter((sale) => sale.lead.id === leadData.id).length === 0 && !showSaleForm && (
         <Grid item xs={12}>
-          <Box display="flex" flexDirection="column" alignItems="center" mt={4}>
+          <Box display="flex" alignItems="center" mt={4}>
             <Typography variant="h6" gutterBottom>
-              Nenhuma venda encontrada
+              Nenhuma proposta encontrada
             </Typography>
           </Box>
         </Grid>
       )}
 
-      {sales.filter((sale) => sale.lead_id === leadData.id).length > 0 &&
+      {sales.filter((sale) => sale.lead.id === leadData.id).length > 0 &&
         !showSaleForm &&
         sales
-          .filter((sale) => sale.lead_id === leadData.id)
+          .filter((sale) => sale.lead.id === leadData.id)
           .map((sale) => (
             <Grid item xs={12} key={sale.id}>
               <Card
@@ -379,9 +375,9 @@ const ProposalManager = ({
           <Card variant="outlined" sx={{ p: 3 }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                {saleData?.id ? 'Editar Venda' : 'Adicionar Venda'}
+                {saleData?.id ? 'Editar Proposta' : 'Adicionar Proposta'}
               </Typography>
-              <SaleForm
+              <ProposalForm
                 saleData={saleData}
                 setSaleData={setSaleData}
                 sellers={sellers}

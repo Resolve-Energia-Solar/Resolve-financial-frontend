@@ -1,4 +1,20 @@
-import { Grid, TextField, MenuItem } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  MenuItem,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  Checkbox,
+} from '@mui/material';
+import AutoCompleteLead from '../../comercial/sale/components/auto-complete/Auto-Input-Leads';
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import useProposalForm from '@/hooks/proposals/useProposalForm';
+import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
+import KitSolarService from '@/services/kitSolarService';
+import { useEffect, useState } from 'react';
 
 const ProposalForm = ({
   saleData,
@@ -10,191 +26,170 @@ const ProposalForm = ({
   branches = [],
   campaigns = [],
   allUsers = [],
-  leadData = []
-}) => (
-  <Grid container spacing={3}>
-    <Grid item xs={12}>
-      <TextField
-        fullWidth
-        label="Cliente"
-        select
-        value={saleData?.customer_id || ''}
-        onChange={(e) => setSaleData({ ...saleData, customer_id: e.target.value })}
-      >
-        {allUsers.length > 0 ? (
-          allUsers.map((user) => (
-            <MenuItem key={user.id} value={user.id}>
-              {user.complete_name}
-            </MenuItem>
-          ))
-        ) : (
-          <MenuItem disabled>Nenhum cliente disponível</MenuItem>
-        )}
-      </TextField>
-    </Grid>
+  leadData = [],
+}) => {
+  const { formData, handleChange, handleSave, formErrors, success } = useProposalForm();
+  const [kits, setKits] = useState([]);
+  const [selectedKits, setSelectedKits] = useState([]);
 
-    <Grid item xs={12}>
-      <TextField
-        fullWidth
-        label="Lead"
-        select
-        value={saleData?.lead_id || ''}
-        onChange={(e) => setSaleData({ ...saleData, lead_id: e.target.value })}
-      >
-        {leadData.length > 0 ? (
-          leadData.map((lead) => (
-            <MenuItem key={lead.id} value={lead.id}>
-              {lead.name}
-            </MenuItem>
-          ))
-        ) : (
-          <MenuItem disabled>Nenhum lead disponível</MenuItem>
-        )}
-      </TextField>
-    </Grid>
+  useEffect(() => {
+    const fetchKits = async () => {
+      try {
+        const response = await KitSolarService.getKitSolar();
+        console.log('response', response);
+        setKits(response.results || []);
+      } catch (error) {
+        console.error('Erro ao buscar kits solares', error);
+        setKits([]);
+      }
+    };
+    fetchKits();
+  }, []);
 
-    <Grid item xs={6}>
-      <TextField
-        fullWidth
-        label="Vendedor"
-        select
-        value={saleData?.seller_id || ''}
-        onChange={(e) => setSaleData({ ...saleData, seller_id: e.target.value })}
-      >
-        {sellers.length > 0 ? (
-          sellers.map((seller) => (
-            <MenuItem key={seller.id} value={seller.id}>
-              {seller.complete_name}
-            </MenuItem>
-          ))
-        ) : (
-          <MenuItem disabled>Nenhum vendedor disponível</MenuItem>
-        )}
-      </TextField>
-    </Grid>
+  const handleKitSelection = (kitId) => {
+    setSelectedKits((prevSelectedKits) => {
+      if (prevSelectedKits.includes(kitId)) {
+        return prevSelectedKits.filter((id) => id !== kitId);
+      } else {
+        return [...prevSelectedKits, kitId];
+      }
+    });
+    handleChange('kits', selectedKits);
+  };
 
-    <Grid item xs={6}>
-      <TextField
-        fullWidth
-        label="SDR"
-        select
-        value={saleData?.sdr_id || ''}
-        onChange={(e) => setSaleData({ ...saleData, sdr_id: e.target.value })}
-      >
-        {sdrs.length > 0 ? (
-          sdrs.map((sdr) => (
-            <MenuItem key={sdr.id} value={sdr.id}>
-              {sdr.complete_name}
-            </MenuItem>
-          ))
-        ) : (
-          <MenuItem disabled>Nenhum SDR disponível</MenuItem>
-        )}
-      </TextField>
-    </Grid>
+  return (
+    <Grid container spacing={3}>
+      <Grid item xs={12} sm={6}>
+        <CustomFormLabel htmlFor="leads">Lead</CustomFormLabel>
+        <AutoCompleteLead
+          onChange={(id) => handleChange('lead_id', id)}
+          value={formData.lead_id}
+          {...(formErrors.lead_id && { error: true, helperText: formErrors.lead_id })}
+        />
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <CustomFormLabel htmlFor="created_by_id">Criado por</CustomFormLabel>
+        <AutoCompleteUser
+          label="Criado por"
+          onChange={(id) => handleChange('created_by_id', id)}
+          value={formData.created_by_id}
+          {...(formErrors.created_by_id && { error: true, helperText: formErrors.created_by_id })}
+        />
+      </Grid>
 
-    <Grid item xs={6}>
-      <TextField
-        fullWidth
-        label="Supervisor de Vendas"
-        select
-        value={saleData?.sales_supervisor_id || ''}
-        onChange={(e) => setSaleData({ ...saleData, sales_supervisor_id: e.target.value })}
-      >
-        {supervisors.length > 0 ? (
-          supervisors.map((supervisor) => (
-            <MenuItem key={supervisor.id} value={supervisor.id}>
-              {supervisor.complete_name}
-            </MenuItem>
-          ))
-        ) : (
-          <MenuItem disabled>Nenhum supervisor disponível</MenuItem>
-        )}
-      </TextField>
-    </Grid>
+      <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="Prazo para Aceitação"
+          type="date"
+          value={formData.due_date || ''}
+          onChange={(e) => handleChange('due_date', e.target.value)}
+          InputLabelProps={{ shrink: true }}
+          {...(formErrors.due_date && { error: true, helperText: formErrors.due_date })}
+        />
+      </Grid>
 
-    <Grid item xs={6}>
-      <TextField
-        fullWidth
-        label="Gerente de Vendas"
-        select
-        value={saleData?.sales_manager_id || ''}
-        onChange={(e) => setSaleData({ ...saleData, sales_manager_id: e.target.value })}
-      >
-        {managers.length > 0 ? (
-          managers.map((manager) => (
-            <MenuItem key={manager.id} value={manager.id}>
-              {manager.complete_name}
-            </MenuItem>
-          ))
-        ) : (
-          <MenuItem disabled>Nenhum gerente disponível</MenuItem>
-        )}
-      </TextField>
-    </Grid>
+      <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="Valor da Proposta"
+          type="number"
+          value={formData.value || ''}
+          onChange={(e) => handleChange('value', e.target.value)}
+          {...(formErrors.value && { error: true, helperText: formErrors.value })}
+        />
+      </Grid>
 
-    <Grid item xs={6}>
-      <TextField
-        fullWidth
-        label="Campanha de Marketing"
-        select
-        value={saleData?.marketing_campaign_id || ''}
-        onChange={(e) => setSaleData({ ...saleData, marketing_campaign_id: e.target.value })}
-      >
-        {campaigns.length > 0 ? (
-          campaigns.map((campaign) => (
-            <MenuItem key={campaign.id} value={campaign.id}>
-              {campaign.name}
-            </MenuItem>
-          ))
-        ) : (
-          <MenuItem disabled>Nenhuma campanha disponível</MenuItem>
-        )}
-      </TextField>
-    </Grid>
+      <Grid item xs={12}>
+        <TextField
+          fullWidth
+          label="Status da Proposta"
+          select
+          value={formData.status || ''}
+          onChange={(e) => handleChange('status', e.target.value)}
+          {...(formErrors.status && { error: true, helperText: formErrors.status })}
+        >
+          <MenuItem value="P">Pendente</MenuItem>
+          <MenuItem value="A">Aceita</MenuItem>
+          <MenuItem value="R">Rejeitada</MenuItem>
+        </TextField>
+      </Grid>
 
-    <Grid item xs={6}>
-      <TextField
-        fullWidth
-        label="Filial"
-        select
-        value={saleData?.branch_id || ''}
-        onChange={(e) => setSaleData({ ...saleData, branch_id: e.target.value })}
-      >
-        {branches.length > 0 ? (
-          branches.map((branch) => (
-            <MenuItem key={branch.id} value={branch.id}>
-              {branch.name} - {branch.address.city}, {branch.address.state}
-            </MenuItem>
-          ))
-        ) : (
-          <MenuItem disabled>Nenhuma filial disponível</MenuItem>
-        )}
-      </TextField>
-    </Grid>
+      <Grid item xs={12}>
+        <TextField
+          fullWidth
+          label="Observação"
+          multiline
+          rows={4}
+          value={formData.observation || ''}
+          onChange={(e) => handleChange('observation', e.target.value)}
+        />
+      </Grid>
 
-    <Grid item xs={6}>
-      <TextField
-        fullWidth
-        label="Valor Total"
-        value={saleData?.total_value || ''}
-        onChange={(e) => setSaleData({ ...saleData, total_value: e.target.value })}
-      />
-    </Grid>
+      <Grid item xs={12}>
+        <CustomFormLabel>Kits Solares Disponíveis</CustomFormLabel>
+        <Grid container spacing={2}>
+          {kits.length > 0 ? (
+            kits.map((kit) => (
+              <Grid item xs={12} sm={6} md={4} key={kit.id}>
+                <Card
+                  variant="outlined"
+                  sx={{
+                    borderColor: selectedKits.includes(kit.id) ? 'primary.main' : 'grey.400',
+                    borderWidth: selectedKits.includes(kit.id) ? 2 : 1,
+                    position: 'relative',
+                    cursor: 'pointer',
+                    '&:hover': { boxShadow: 4 },
+                  }}
+                  onClick={() => handleKitSelection(kit.id)}
+                >
+                  <CardContent
+                    sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
+                  >
+                    <Typography variant="h6" fontWeight="bold" gutterBottom>
+                      {`Kit Solar ID: ${kit.id}`}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      {kit.inversors_model.description}
+                    </Typography>
+                    <Typography variant="subtitle1" color="text.primary" fontWeight="bold">
+                      {`Preço: R$ ${kit.price}`}
+                    </Typography>
+                  </CardContent>
+                  <Checkbox
+                    checked={selectedKits.includes(kit.id)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Impede que o clique no checkbox dispare o evento de clique no Card
+                      handleKitSelection(kit.id);
+                    }}
+                    sx={{
+                      position: 'absolute',
+                      bottom: 8,
+                      left: 8,
+                      color: selectedKits.includes(kit.id) ? 'primary.main' : 'grey.400',
+                    }}
+                  />
+                </Card>
+              </Grid>
+            ))
+          ) : (
+            <Typography variant="body2" color="textSecondary">
+              Nenhum kit disponível.
+            </Typography>
+          )}
+        </Grid>
+      </Grid>
 
-    <Grid item xs={6}>
-      <TextField
-        fullWidth
-        label="Pré-Venda"
-        select
-        value={saleData?.is_sale ? 'true' : 'false'}
-        onChange={(e) => setSaleData({ ...saleData, is_sale: e.target.value === 'true' })}
-      >
-        <MenuItem value="true">Sim</MenuItem>
-        <MenuItem value="false">Não</MenuItem>
-      </TextField>
+      <Box display="flex" justifyContent="flex-end" mt={3} width="100%">
+        <Button variant="outlined" color="secondary" sx={{ mr: 2 }}>
+          Cancelar
+        </Button>
+        <Button variant="contained" color="primary" onClick={handleSave}>
+          Salvar
+        </Button>
+      </Box>
     </Grid>
-  </Grid>
-);
+  );
+};
 
 export default ProposalForm;

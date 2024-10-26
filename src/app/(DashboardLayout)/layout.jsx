@@ -8,7 +8,6 @@ import Customizer from './layout/shared/customizer/Customizer';
 import Navigation from './layout/horizontal/navbar/Navigation';
 import HorizontalHeader from './layout/horizontal/header/Header';
 import { useSelector } from 'react-redux';
-import ErrorBoundary from '../components/ErrorBoundary';
 
 const MainWrapper = styled('div')(() => ({
   display: 'flex',
@@ -31,55 +30,53 @@ export default function RootLayout({ children }) {
   const theme = useTheme();
 
   return (
-    <ErrorBoundary>
-      <MainWrapper
-        className={customizer.activeMode === 'dark' ? 'darkbg mainwrapper' : 'mainwrapper'}
+    <MainWrapper
+      className={customizer.activeMode === 'dark' ? 'darkbg mainwrapper' : 'mainwrapper'}
+    >
+      {/* ------------------------------------------- */}
+      {/* Sidebar */}
+      {/* ------------------------------------------- */}
+
+      {customizer.isHorizontal ? '' : <Sidebar />}
+
+      {/* ------------------------------------------- */}
+      {/* Main Wrapper */}
+      {/* ------------------------------------------- */}
+      <PageWrapper
+        className="page-wrapper"
+        sx={{
+          ...(customizer.isCollapse && {
+            [theme.breakpoints.up('lg')]: {
+              ml: `${customizer.MiniSidebarWidth}px`,
+            },
+          }),
+        }}
       >
         {/* ------------------------------------------- */}
-        {/* Sidebar */}
+        {/* Header */}
         {/* ------------------------------------------- */}
-
-        {customizer.isHorizontal ? '' : <Sidebar />}
-
-        {/* ------------------------------------------- */}
-        {/* Main Wrapper */}
-        {/* ------------------------------------------- */}
-        <PageWrapper
-          className="page-wrapper"
+        {customizer.isHorizontal ? <HorizontalHeader /> : <Header />}
+        {/* PageContent */}
+        {customizer.isHorizontal ? <Navigation /> : ''}
+        <Container
           sx={{
-            ...(customizer.isCollapse && {
-              [theme.breakpoints.up('lg')]: {
-                ml: `${customizer.MiniSidebarWidth}px`,
-              },
-            }),
+            pt: '1px',
+            maxWidth: customizer.isLayout === 'boxed' ? 'lg' : '100%!important',
           }}
         >
           {/* ------------------------------------------- */}
-          {/* Header */}
-          {/* ------------------------------------------- */}
-          {customizer.isHorizontal ? <HorizontalHeader /> : <Header />}
           {/* PageContent */}
-          {customizer.isHorizontal ? <Navigation /> : ''}
-          <Container
-            sx={{
-              pt: '1px',
-              maxWidth: customizer.isLayout === 'boxed' ? 'lg' : '100%!important',
-            }}
-          >
-            {/* ------------------------------------------- */}
-            {/* PageContent */}
-            {/* ------------------------------------------- */}
+          {/* ------------------------------------------- */}
 
-            {children}
+          {children}
 
-            {/* ------------------------------------------- */}
-            {/* End Page */}
-            {/* ------------------------------------------- */}
-          </Container>
-          <Customizer />
-          {/*  <Customizer /> */}
-        </PageWrapper>
-      </MainWrapper>
-    </ErrorBoundary>
+          {/* ------------------------------------------- */}
+          {/* End Page */}
+          {/* ------------------------------------------- */}
+        </Container>
+        <Customizer />
+        {/*  <Customizer /> */}
+      </PageWrapper>
+    </MainWrapper>
   );
 }
