@@ -172,8 +172,8 @@ const useScheduleForm = (initialData, id) => {
       project_id: formData.project_id,
       schedule_agent_id: formData.schedule_agent_id,
       schedule_date: formData.schedule_date,
-      schedule_start_time: formatTime(formData.schedule_start_time), // Formato correto
-      schedule_end_time: formatTime(formData.schedule_end_time), // Formato correto
+      schedule_start_time: formatTime(formData.schedule_start_time),
+      schedule_end_time: formatTime(formData.schedule_end_time),
       latitude: formData.latitude,
       longitude: formData.longitude,
       status: formData.status,

@@ -90,6 +90,16 @@ const SchedulingList = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    const [year, month, day] = dateString.split("-");
+    return `${day}/${month}/${year}`;
+  };
+
+  const formatTime = (timeString) => {
+    const [hours, minutes] = timeString.split(":");
+    return `${hours}:${minutes}`;
+  };
+
   return (
     <PageContainer title={'Agendamentos'} description={'Lista de agendamentos'}>
       <BlankCard>
@@ -132,8 +142,8 @@ const SchedulingList = () => {
                   {scheduleList.map((item) => (
                     <TableRow key={item.id}>
                       <TableCell>{item.id}</TableCell>
-                      <TableCell>{new Date(item.schedule_date).toLocaleDateString()}</TableCell>
-                      <TableCell>{new Date(item.schedule_date).toLocaleTimeString()}</TableCell>
+                      <TableCell>{formatDate(item.schedule_date)}</TableCell>
+                      <TableCell>{formatTime(item.schedule_start_time)}</TableCell>
                       <TableCell>{item.project}</TableCell>
                       <TableCell>{item.service.name}</TableCell>
                       <TableCell>{item.schedule_agent.complete_name}</TableCell>
