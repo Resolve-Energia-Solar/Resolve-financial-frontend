@@ -22,8 +22,6 @@ import SimpleBar from 'simplebar-react';
 import ColumnWithActions from './LeadHeader';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import useLeadManager from '@/hooks/boards/useLeadManager';
-import SaleManager from './SaleManager';
-import ProjectManager from './ProjectManager';
 import ProposalManager from './ProposalManager';
 
 const LeadManager = ({
@@ -59,12 +57,12 @@ const LeadManager = ({
     sdrs,
     allUsers,
     addresses,
-    designers,
     managers,
     supervisors,
     branches,
     campaigns,
     sales,
+    proposals,
   } = useLeadManager(leads, statuses, {
     onUpdateLead,
     onAddLead,
@@ -171,6 +169,7 @@ const LeadManager = ({
                     {tabIndex === 0 && <LeadDetails selectedLead={selectedLead} />}
                     {tabIndex === 1 && (
                       <ProposalManager
+                        proposals={proposals}
                         managers={managers}
                         supervisors={supervisors}
                         sellers={sellers}

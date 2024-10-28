@@ -11,18 +11,15 @@ import {
   IconButton,
   Tooltip,
   useTheme,
-  CircularProgress,
   Modal,
 } from '@mui/material';
-
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import axios from 'axios';
-import PreviewIcon from '@mui/icons-material/Preview';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import StatusIcon from '@mui/icons-material/AssignmentTurnedIn';
-import SendIcon from '@mui/icons-material/Send';
 import DescriptionIcon from '@mui/icons-material/Description';
 import saleService from '@/services/saleService';
 import StatusChip from '../../comercial/sale/components/DocumentStatusIcon';
@@ -30,7 +27,6 @@ import Contract from '@/app/components/templates/ContractPreview';
 import ProposalForm from './ProposalForm';
 
 const ProposalManager = ({
-  sales = [],
   sellers = [],
   sdrs = [],
   branches = [],
@@ -39,10 +35,13 @@ const ProposalManager = ({
   supervisors = [],
   allUsers = [],
   leadData = [],
+  proposals = [],
 }) => {
   const theme = useTheme();
+
   const [showSaleForm, setShowSaleForm] = useState(false);
-  const [saleData, setSaleData] = useState(null);
+  const [showProposalForm, setShowProposalForm] = useState(false);
+  const [proposalData, setProposalData] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -53,11 +52,10 @@ const ProposalManager = ({
   const [open, setOpen] = useState(false);
   const [currentSale, setCurrentSale] = useState(null);
 
-  const handleOpen = (sale) => {
-    console.log('Abrindo contrato:', sale);
-    console.log('Abrindo dados da venda:', saleData);
-    console.log('Abrindo dados do lead:', leadData);
-    setCurrentSale(sale);
+  const handleOpen = (proposal) => {
+    s;
+    console.log('Abrindo contrato:', proposal);
+    setCurrentSale(proposal);
     setOpen(true);
   };
 
@@ -66,42 +64,38 @@ const ProposalManager = ({
     setCurrentSale(null);
   };
 
-  const handleAddSale = () => {
-    setSaleData({
-      customer_id: null,
-      seller_id: null,
-      sales_supervisor_id: null,
-      sales_manager_id: null,
-      marketing_campaign_id: null,
-      branch_id: null,
-      total_value: '',
-      is_sale: false,
-      is_completed_document: false,
-      lead_id: leadData.id,
+  const handleAddProposal = () => {
+    setProposalData({
+      lead_id: null,
+      created_by_id: null,
+      due_date: null,
+      value: null,
+      status: 'P',
+      observation: null,
+      kits: [],
     });
-    setShowSaleForm(true);
+    setShowProposalForm(true);
   };
 
-  const handleEditSale = (sale) => {
-    setSaleData(sale);
-    setShowSaleForm(true);
+  const handleEditProposal = (proposal) => {
+    setProposalData(proposal);
+    setShowProposalForm(true);
   };
 
-  const handleCloseSaleForm = () => {
-    setShowSaleForm(false);
-    setSaleData(null);
+  const handleCloseProposalForm = () => {
+    setShowProposalForm(false);
+    setProposalData(null);
   };
 
   const handleSaveSale = async () => {
     setIsSaving(true);
     try {
-      if (saleData?.id) {
-        await saleService.updateSale(saleData.id, saleData);
+      if (proposalData?.id) {
+        await saleService.updateSale(proposalData.id, proposalData);
       } else {
-        await saleService.createSale(saleData);
+        await saleService.createSale(proposalData);
       }
       setShowSaleForm(false);
-      setSaleData(null);
       setSnackbarMessage('Venda salva com sucesso!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
@@ -201,7 +195,7 @@ const ProposalManager = ({
           <Button
             variant="contained"
             color="primary"
-            onClick={handleAddSale}
+            onClick={handleAddProposal}
             startIcon={<AddIcon />}
           >
             Adicionar Proposta
@@ -209,7 +203,7 @@ const ProposalManager = ({
         </Box>
       </Grid>
 
-      {sales.filter((sale) => sale.lead.id === leadData.id).length === 0 && !showSaleForm && (
+      {proposals.filter((proposal) => proposal.id).length === 0 && !showSaleForm && (
         <Grid item xs={12}>
           <Box display="flex" alignItems="center" mt={4}>
             <Typography variant="h6" gutterBottom>
@@ -219,12 +213,12 @@ const ProposalManager = ({
         </Grid>
       )}
 
-      {sales.filter((sale) => sale.lead.id === leadData.id).length > 0 &&
-        !showSaleForm &&
-        sales
-          .filter((sale) => sale.lead.id === leadData.id)
-          .map((sale) => (
-            <Grid item xs={12} key={sale.id}>
+      {proposals.filter((proposal) => proposal.id).length > 0 &&
+        !showProposalForm &&
+        proposals
+          .filter((proposal) => proposal.id)
+          .map((proposal) => (
+            <Grid item xs={12} key={proposal.id}>
               <Card
                 variant="outlined"
                 sx={{
@@ -232,7 +226,9 @@ const ProposalManager = ({
                   mb: 3,
                   backgroundColor: theme.palette.background.paper,
                   borderLeft: `5px solid ${
-                    sale.status === 'F' ? theme.palette.success.main : theme.palette.warning.main
+                    proposal.status === 'F'
+                      ? theme.palette.success.main
+                      : theme.palette.warning.main
                   }`,
                 }}
               >
@@ -240,14 +236,7 @@ const ProposalManager = ({
                   <Box display="flex" alignItems="center" mb={1}>
                     <PersonIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
                     <Typography variant="h6" gutterBottom>
-                      Cliente: {sale.customer?.complete_name || 'N/A'}
-                    </Typography>
-                  </Box>
-
-                  <Box display="flex" alignItems="center" mb={1}>
-                    <PersonIcon sx={{ color: theme.palette.secondary.main, mr: 1 }} />
-                    <Typography variant="body1">
-                      Vendedor: {sale.seller?.complete_name || 'N/A'}
+                      Cliente: {proposal.lead?.name || 'N/A'}
                     </Typography>
                   </Box>
 
@@ -255,11 +244,11 @@ const ProposalManager = ({
                     <AttachMoneyIcon sx={{ color: theme.palette.success.main, mr: 1 }} />
                     <Typography variant="body1">
                       Valor Total:{' '}
-                      {sale.total_value
+                      {proposal.value
                         ? new Intl.NumberFormat('pt-BR', {
                             style: 'currency',
                             currency: 'BRL',
-                          }).format(sale.total_value)
+                          }).format(proposal.value)
                         : 'N/A'}
                     </Typography>
                   </Box>
@@ -267,22 +256,33 @@ const ProposalManager = ({
                   <Box display="flex" alignItems="center" mb={1}>
                     <StatusIcon sx={{ color: theme.palette.info.main, mr: 1 }} />
                     <Typography variant="body1">
-                      Status: <StatusChip status={sale.status} />
+                      Status: <StatusChip status={proposal.status} />
                     </Typography>
                   </Box>
 
                   <Box display="flex" justifyContent="flex-end" gap={2}>
-                    <IconButton
-                      variant="outlined"
-                      color="primary"
-                      onClick={() => handleEditSale(sale)}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <Tooltip title="Preview do Contrato">
+                    <Tooltip title="Editar Proposta">
+                      <IconButton
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => handleEditSale(proposal)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Criar Venda">
+                      <IconButton
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => handleEditSale(proposal)}
+                      >
+                        <AddShoppingCartIcon />
+                      </IconButton>
+                    </Tooltip>
+                    {/* <Tooltip title="Preview do Contrato">
                       <IconButton
                         color="primary"
-                        onClick={() => handleOpen(sale)}
+                        onClick={() => handleOpen(proposal)}
                         sx={{
                           borderRadius: '8px',
                           padding: '8px',
@@ -290,7 +290,7 @@ const ProposalManager = ({
                       >
                         <PreviewIcon />
                       </IconButton>
-                    </Tooltip>
+                    </Tooltip> */}
 
                     <Modal open={open} onClose={handleClose}>
                       <Box
@@ -299,7 +299,7 @@ const ProposalManager = ({
                           top: '50%',
                           left: '50%',
                           transform: 'translate(-50%, -50%)',
-                          width: '40%',
+                          width: '60%',
                           bgcolor: 'background.paper',
                           boxShadow: 2,
                           p: 4,
@@ -335,23 +335,23 @@ const ProposalManager = ({
                       </Box>
                     </Modal>
 
-                    <Tooltip title="Enviar Contrato">
+                    {/*  <Tooltip title="Enviar Contrato">
                       <IconButton
                         color="primary"
-                        onClick={() => handleSendContract(sale)}
-                        disabled={sendingContractId === sale.id}
+                        onClick={() => handleSendContract(proposal)}
+                        disabled={sendingContractId === proposal.id}
                         sx={{
                           borderRadius: '8px',
                           padding: '8px',
                         }}
                       >
-                        {sendingContractId === sale.id ? (
+                        {sendingContractId === proposal.id ? (
                           <CircularProgress size={24} />
                         ) : (
                           <SendIcon />
                         )}
                       </IconButton>
-                    </Tooltip>
+                    </Tooltip> */}
                     <Tooltip title="Gerar Proposta">
                       <IconButton
                         color="primary"
@@ -370,16 +370,14 @@ const ProposalManager = ({
             </Grid>
           ))}
 
-      {showSaleForm && (
+      {showProposalForm && (
         <Grid item xs={12}>
           <Card variant="outlined" sx={{ p: 3 }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                {saleData?.id ? 'Editar Proposta' : 'Adicionar Proposta'}
+                {proposalData?.id ? 'Editar Proposta' : 'Adicionar Proposta'}
               </Typography>
               <ProposalForm
-                saleData={saleData}
-                setSaleData={setSaleData}
                 sellers={sellers}
                 sdrs={sdrs}
                 branches={branches.results}
@@ -389,24 +387,6 @@ const ProposalManager = ({
                 allUsers={allUsers}
                 leadData={leadData}
               />
-              <Box display="flex" justifyContent="flex-end" mt={3}>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  onClick={handleCloseSaleForm}
-                  sx={{ mr: 2 }}
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSaveSale}
-                  disabled={isSaving}
-                >
-                  {isSaving ? 'Salvando...' : 'Salvar'}
-                </Button>
-              </Box>
             </CardContent>
           </Card>
         </Grid>
