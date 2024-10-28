@@ -41,13 +41,25 @@ const useScheduleForm = (initialData, id) => {
 
   useEffect(() => {
     if (initialData) {
+      const initialStartTime = initialData.schedule_start_time;
+      const currentDate = new Date();
+      const [hours, minutes, seconds] = initialStartTime.split(':').map(Number);
+      const startTime = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        currentDate.getDate(),
+        hours,
+        minutes,
+        seconds,
+      );
+
       setFormData({
         schedule_creator: initialData.schedule_creator || null,
-        service_id: initialData.service_id || null,
-        project_id: initialData.project_id || null,
-        schedule_agent_id: initialData.schedule_agent_id || null,
+        service_id: initialData.service.id || null,
+        project_id: initialData.project || null,
+        schedule_agent_id: initialData.schedule_agent.id || null,
         schedule_date: initialData.schedule_date || '',
-        schedule_start_time: initialData.schedule_start_time || '',
+        schedule_start_time: startTime || '',
         schedule_end_time: initialData.schedule_end_time || '',
         latitude: initialData.latitude || null,
         longitude: initialData.longitude || null,
