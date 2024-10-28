@@ -12,7 +12,7 @@ const BCrumb = [
         title: "Home",
     },
     {
-        title: "Invoice Details",
+        title: "Detalhes do pagamento",
     },
 ];
 
@@ -20,10 +20,10 @@ const InvoiceDetailPage = () => {
     return (
         <InvoiceProvider>
             <PageContainer
-                title="Invoice Detail"
-                description="this is Invoice Detail"
+                title="Detalhes do pagamento"
+                description="Detalhes do pagamento"
             >
-                <Breadcrumb title="Invoice Detail" items={BCrumb} />
+                <Breadcrumb title="Detalhes do pagamento" items={BCrumb} />
                 <BlankCard>
                     <CardContent>
                         <InvoiceDetail />

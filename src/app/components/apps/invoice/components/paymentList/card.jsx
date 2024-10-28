@@ -44,9 +44,9 @@ const PaymentCard = ({ sale = null }) => {
   const [menuOpenRowId, setMenuOpenRowId] = useState(null);
   const [open, setOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [detailModalOpen, setDetailModalOpen] = useState(false); // Estado para o modal de detalhes
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [invoiceToEdit, setInvoiceToEdit] = useState(null);
-  const [invoiceToView, setInvoiceToView] = useState(null); // Estado para ID de visualização
+  const [invoiceToView, setInvoiceToView] = useState(null);
   const [invoiceToDelete, setInvoiceToDelete] = useState(null);
   const router = useRouter();
 
@@ -111,7 +111,8 @@ const PaymentCard = ({ sale = null }) => {
           </Grid>
         )}
         {paymentsList.map((payment) => {
-          const progressValue = 50;
+          console.log('payment', payment);
+          const progressValue = payment?.percentual_paid || 0;
 
           return (
             <Grid item xs={12} sm={6} md={4} key={payment.id}>
