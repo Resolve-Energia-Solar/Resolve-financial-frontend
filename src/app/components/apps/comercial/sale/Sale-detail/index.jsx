@@ -26,9 +26,10 @@ import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import FormPageSkeleton from '../components/FormPageSkeleton';
 import useSale from '@/hooks/sales/useSale';
 import { useState } from 'react';
+import PaymentCard from '../../../invoice/components/paymentList/card';
 
 const SaleDetailPage = () => {
-  const theme = useTheme(); 
+  const theme = useTheme();
   const params = useParams();
   const { id } = params;
 
@@ -80,6 +81,7 @@ const SaleDetailPage = () => {
       >
         <Tab label="Venda" />
         <Tab label="Anexos" />
+        <Tab label="Pagamentos" />
       </Tabs>
       {loading ? (
         <FormPageSkeleton />
@@ -245,6 +247,12 @@ const SaleDetailPage = () => {
             )}
           </List>
         </Grid>
+      )}
+
+      {value === 2 && (
+        <Box sx={{ mt: 3 }}>
+          <PaymentCard sale={id} />
+        </Box>
       )}
     </Box>
   );

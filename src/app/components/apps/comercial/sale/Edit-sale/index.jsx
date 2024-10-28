@@ -20,7 +20,8 @@ import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
 import { useState } from 'react';
 import EditInvoicePage from '../../../invoice/Edit-invoice';
-import PaymentList from '../../../invoice/components/paymentList/paymentList';
+import PaymentList from '../../../invoice/components/paymentList/list';
+import PaymentCard from '../../../invoice/components/paymentList/card';
 
 const EditSalePage = () => {
   const userPermissions = useSelector((state) => state.user.permissions);
@@ -196,7 +197,7 @@ const EditSalePage = () => {
 
       {value === 2 && (
         <Box sx = {{ mt: 3 }}>
-          <PaymentList />
+          <PaymentCard sale={id_sale} />
         </Box>
         )}
     </Box>

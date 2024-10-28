@@ -1,7 +1,4 @@
 'use client';
-import React, { useContext, useState, useEffect } from 'react';
-import { InvoiceContext } from '@/app/context/InvoiceContext/index';
-import { usePathname, useRouter } from 'next/navigation';
 import {
   Button,
   Typography,
@@ -24,7 +21,6 @@ import {
 } from '@mui/material';
 import { format, isValid } from 'date-fns';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { IconSquareRoundedPlus, IconTrash } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
@@ -39,9 +35,10 @@ import FormDate from '@/app/components/forms/form-custom/FormDate';
 import CustomFieldMoney from '../components/CustomFieldMoney';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 
-const EditInvoicePage = () => {
+const EditInvoicePage = ({payment_id=null}) => {
   const params = useParams();
-  const { id } = params;
+  let id = payment_id;
+  if (!payment_id) id = params.id;
 
   const { loading, error, paymentData } = usePayment(id);
   const {
@@ -236,7 +233,9 @@ const EditInvoicePage = () => {
                       <FormDate
                         name="due_date"
                         value={installment.due_date}
-                        onChange={(newValue) => handleInstallmentChange(index, 'due_date', newValue)}
+                        onChange={(newValue) =>
+                          handleInstallmentChange(index, 'due_date', newValue)
+                        }
                         {...(formErrors.installments &&
                           formErrors.installments[index]?.due_date && {
                             error: true,
@@ -304,7 +303,6 @@ const EditInvoicePage = () => {
           </Typography>
         </Box>
       </Box> */}
-
     </Box>
   );
 };

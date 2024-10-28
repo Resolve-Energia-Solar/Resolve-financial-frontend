@@ -2,15 +2,24 @@ import { create } from "lodash";
 import apiClient from "./apiClient";
 
 const paymentService = {
-  getPayments: async () => {
+  getPayments: async (params = {}) => {
     try {
-      const response = await apiClient.get('/api/payments/');
+      const queryParams = new URLSearchParams();
+  
+      if (params.sale) {
+        queryParams.append('sale', params.sale);
+      }
+  
+      const url = `/api/payments/?${queryParams.toString()}`;
+  
+      const response = await apiClient.get(url);
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar payments:', error);
       throw error;
     }
   },
+  
   getPaymentById: async (id) => {
     try {
       const response = await apiClient.get(`/api/payments/${id}/`);
