@@ -7,6 +7,7 @@ import {
   IconAlertCircle,
   IconNotes,
   IconCalendar,
+  IconClockQuestion,
   IconMail,
   IconTicket,
   IconEdit,
@@ -114,6 +115,12 @@ const Menuitems = [
     title: 'Categorias',
     icon: IconBox,
     href: '/apps/inspections/category',
+  },
+  {
+    id: uniqueId(),
+    title: 'Prazos',
+    icon: IconClockQuestion,
+    href: '/apps/inspections/deadline',
   },
   {
     id: uniqueId(),
