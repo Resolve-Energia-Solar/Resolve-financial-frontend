@@ -9,7 +9,6 @@ import {
 import { useParams } from 'next/navigation';
 
 import AutoCompleteCategory from '@/app/components/apps/inspections/auto-complete/Auto-Input-Category';
-import AutoCompleteSquads from '@/app/components/apps/squads/auto-complete/Auto-Input-Squads';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
@@ -17,6 +16,7 @@ import PageContainer from '@/app/components/container/PageContainer';
 import ParentCard from '@/app/components/shared/ParentCard';
 import useCategory from '@/hooks/inspections/category/useCategory';
 import useCategoryForm from '@/hooks/inspections/category/useCategoryForm';
+import AutoCompleteUsers from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Users';
 
 const CategoryForm = () => {
   const params = useParams();
@@ -41,6 +41,7 @@ const CategoryForm = () => {
       { success && <Alert severity="success" sx={{ marginBottom: 3 }}>A categoria foi atualizada com sucesso!</Alert>}
       <ParentCard title="Categoria">
         <Grid container spacing={3}>
+
           <Grid item xs={12} sm={12} lg={6}>
             <CustomFormLabel htmlFor="name">Categoria</CustomFormLabel>
             <CustomTextField
@@ -52,17 +53,8 @@ const CategoryForm = () => {
               {...(formErrors.name && { error: true, helperText: formErrors.name })}
             />
           </Grid>
-          {console.log('squads enviados: ', formData.squads)}
-          <Grid item xs={12}>
-            <CustomFormLabel htmlFor="name">Squads</CustomFormLabel>
-            <AutoCompleteSquads
-              fullWidth
-              onChange={(ids) => handleChange('squads', ids)}
-              value={formData.squads}
-              {...(formErrors.squads && { error: true, helperText: formErrors.squads })}
-            />
-          </Grid>
-          <Grid item xs={12}>
+
+          <Grid item xs={12} sm={12} lg={6}>
             <CustomFormLabel htmlFor="category">Categoria Principal</CustomFormLabel>
             <AutoCompleteCategory
               fullWidth
@@ -71,6 +63,17 @@ const CategoryForm = () => {
               {...(formErrors.main_category && { error: true, helperText: formErrors.main_category })}
             />
           </Grid>
+
+          <Grid item xs={12}>
+            <CustomFormLabel htmlFor="members">Membros</CustomFormLabel>
+            <AutoCompleteUsers
+              fullWidth
+              value={formData.members}
+              onChange={(ids) => handleChange('members', ids)}
+              {...(formErrors.members && { error: true, helperText: formErrors.members })}
+            />
+          </Grid>
+
           <Grid item xs={12} sm={12} lg={12}>
             <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
               <Button variant="contained" color="primary" onClick={handleSave}>

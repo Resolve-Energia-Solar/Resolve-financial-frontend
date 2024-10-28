@@ -12,7 +12,7 @@ import useCategoryForm from '@/hooks/inspections/category/useCategoryForm';
 import { useRouter } from 'next/navigation';
 
 import Alert from '@mui/material/Alert';
-import AutoCompleteSquads from "@/app/components/apps/squads/auto-complete/Auto-Input-Squads";
+import AutoCompleteUsers from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Users';
 import AutoCompleteCategory from "@/app/components/apps/inspections/auto-complete/Auto-Input-Category";
 import Breadcrumb from "@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb";
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
@@ -45,7 +45,8 @@ const CategoryForm = () => {
       )}
       <ParentCard title="Nova Categoria">
         <Grid container spacing={3}>
-          <Grid item xs={12}>
+
+          <Grid item xs={12} sm={6} lg={6}>
             <CustomFormLabel htmlFor="name">Nome da Categoria</CustomFormLabel>
             <CustomTextField
               name="name"
@@ -55,15 +56,8 @@ const CategoryForm = () => {
               {...(formErrors.name && { error: true, helperText: formErrors.name })}
             />
           </Grid>
-          <Grid item xs={12}>
-            <CustomFormLabel htmlFor="squads">Squads</CustomFormLabel>
-            <AutoCompleteSquads
-              fullWidth
-              onChange={(ids) => handleChange('squads', ids)}
-              {...(formErrors.squads && { error: true, helperText: formErrors.squads })}
-            />
-          </Grid>
-          <Grid item xs={12}>
+
+          <Grid item xs={12} sm={6} lg={6}>
             <CustomFormLabel htmlFor="category">Categoria Principal</CustomFormLabel>
             <AutoCompleteCategory
               fullWidth
@@ -71,6 +65,16 @@ const CategoryForm = () => {
               {...(formErrors.main_category && { error: true, helperText: formErrors.main_category })}
             />
           </Grid>
+
+          <Grid item xs={12}>
+            <CustomFormLabel htmlFor="members">Membros</CustomFormLabel>
+            <AutoCompleteUsers
+              fullWidth
+              onChange={(ids) => handleChange('members', ids)}
+              {...(formErrors.members && { error: true, helperText: formErrors.members })}
+            />
+          </Grid>
+
           <Grid item xs={12} sm={12} lg={12}>
             <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
               <Button variant="contained" color="primary" onClick={handleSave}>

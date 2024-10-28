@@ -3,9 +3,9 @@ import categoryService from '@/services/categoryService';
 
 const useCategoryForm = (initialData, id) => {
   const [formData, setFormData] = useState({
-    main_category: null,
     name: '',
-    squads: [],
+    members: [],
+    main_category: null,
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -14,9 +14,9 @@ const useCategoryForm = (initialData, id) => {
   useEffect(() => {
     if (initialData) {
       setFormData({
-        main_category: initialData.main_category || null,
         name: initialData.name || '',
-        squads: initialData.squads?.map((item) => item.id) || [],
+        members: initialData.members?.map((item) => item.id) || [],
+        main_category: initialData.main_category || null,
       });
     }
   }, [initialData]);
@@ -27,10 +27,11 @@ const useCategoryForm = (initialData, id) => {
 
   const handleSave = async () => {
     const dataToSend = {
-      main_category: formData.main_category,
       name: formData.name,
-      squads_id: formData.squads,
+      members_id: formData.members,
+      main_category: formData.main_category,
     };
+    console.log('dataToSend: ', dataToSend);
 
     try {
       if (id) {
