@@ -21,7 +21,7 @@ import SendIcon from '@mui/icons-material/Send';
 import DescriptionIcon from '@mui/icons-material/Description';
 import saleService from '@/services/saleService';
 import StatusChip from '../../comercial/sale/components/DocumentStatusIcon';
-import ProposalForm from './ProposalForm';
+import ProposalForm from '../../proposal/ProposalForm';
 
 const SaleManager = ({
   sales = [],

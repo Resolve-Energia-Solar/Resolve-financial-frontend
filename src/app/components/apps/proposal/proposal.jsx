@@ -13,18 +13,20 @@ import {
   useTheme,
   Modal,
 } from '@mui/material';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Person as PersonIcon,
+  AttachMoney as AttachMoneyIcon,
+  AssignmentTurnedIn as StatusIcon,
+  Description as DescriptionIcon,
+  AddShoppingCart as AddShoppingCartIcon,
+} from '@mui/icons-material';
 import axios from 'axios';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import PersonIcon from '@mui/icons-material/Person';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import StatusIcon from '@mui/icons-material/AssignmentTurnedIn';
-import DescriptionIcon from '@mui/icons-material/Description';
 import saleService from '@/services/saleService';
-import StatusChip from '../../comercial/sale/components/DocumentStatusIcon';
+import StatusChip from '@/app/components/apps/comercial/sale/components/DocumentStatusIcon';
 import Contract from '@/app/components/templates/ContractPreview';
-import ProposalForm from '../../proposal/ProposalForm';
+import ProposalForm from './ProposalForm';
 
 const ProposalManager = ({
   sellers = [],
@@ -39,33 +41,31 @@ const ProposalManager = ({
 }) => {
   const theme = useTheme();
 
-  const [showSaleForm, setShowSaleForm] = useState(false);
-  const [showProposalForm, setShowProposalForm] = useState(false);
-  const [proposalData, setProposalData] = useState(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [isSaleFormVisible, setSaleFormVisible] = useState(false);
+  const [isProposalFormVisible, setProposalFormVisible] = useState(false);
+  const [currentProposalData, setCurrentProposalData] = useState(null);
+  const [isSaving, setSaving] = useState(false);
+  const [isSnackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-  const [isSendingContract, setIsSendingContract] = useState(false);
+  const [isSendingContract, setSendingContract] = useState(false);
   const [sendingContractId, setSendingContractId] = useState(null);
   const [contractPreview, setContractPreview] = useState(null);
-  const [open, setOpen] = useState(false);
-  const [currentSale, setCurrentSale] = useState(null);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [selectedSale, setSelectedSale] = useState(null);
 
-  const handleOpen = (proposal) => {
-    s;
-    console.log('Abrindo contrato:', proposal);
-    setCurrentSale(proposal);
-    setOpen(true);
+  const openModal = (proposal) => {
+    setSelectedSale(proposal);
+    setModalOpen(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-    setCurrentSale(null);
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedSale(null);
   };
 
   const handleAddProposal = () => {
-    setProposalData({
+    setCurrentProposalData({
       lead_id: null,
       created_by_id: null,
       due_date: null,
@@ -74,28 +74,28 @@ const ProposalManager = ({
       observation: null,
       kits: [],
     });
-    setShowProposalForm(true);
+    setProposalFormVisible(true);
   };
 
   const handleEditProposal = (proposal) => {
-    setProposalData(proposal);
-    setShowProposalForm(true);
+    setCurrentProposalData(proposal);
+    setProposalFormVisible(true);
   };
 
-  const handleCloseProposalForm = () => {
-    setShowProposalForm(false);
-    setProposalData(null);
+  const closeProposalForm = () => {
+    setProposalFormVisible(false);
+    setCurrentProposalData(null);
   };
 
-  const handleSaveSale = async () => {
-    setIsSaving(true);
+  const saveSale = async () => {
+    setSaving(true);
     try {
-      if (proposalData?.id) {
-        await saleService.updateSale(proposalData.id, proposalData);
+      if (currentProposalData?.id) {
+        await saleService.updateSale(currentProposalData.id, currentProposalData);
       } else {
-        await saleService.createSale(proposalData);
+        await saleService.createSale(currentProposalData);
       }
-      setShowSaleForm(false);
+      setSaleFormVisible(false);
       setSnackbarMessage('Venda salva com sucesso!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
@@ -104,18 +104,17 @@ const ProposalManager = ({
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
     } finally {
-      setIsSaving(false);
+      setSaving(false);
     }
   };
 
-  const handleCloseSnackbar = () => {
+  const closeSnackbar = () => {
     setSnackbarOpen(false);
   };
 
-  const handleSendContract = async (sale) => {
-    console.log('Enviando contrato:', sale);
+  const sendContract = async (sale) => {
     setSendingContractId(sale.id);
-    setIsSendingContract(true);
+    setSendingContract(true);
 
     try {
       const documentData = {
@@ -131,10 +130,7 @@ const ProposalManager = ({
       });
 
       const documentKey = documentResponse.data?.document?.key;
-      if (!documentKey) {
-        throw new Error('Falha na criação do documento');
-      }
-      console.log('Documento criado com sucesso:', documentKey);
+      if (!documentKey) throw new Error('Falha na criação do documento');
 
       const signerResponse = await axios.post('/api/clicksign/createSigner', {
         documentation: sale?.customer?.first_document,
@@ -147,10 +143,7 @@ const ProposalManager = ({
       });
 
       const signerKey = signerResponse.data?.signer?.key;
-      if (!signerKey) {
-        throw new Error('Falha na criação do signatário');
-      }
-      console.log('Signatário criado:', signerKey);
+      if (!signerKey) throw new Error('Falha na criação do signatário');
 
       const addSignerResponse = await axios.post('/api/clicksign/addSignerDocument', {
         signerKey: signerKey,
@@ -159,31 +152,25 @@ const ProposalManager = ({
       });
 
       const requestSignatureKey = addSignerResponse.data?.list?.request_signature_key;
-      if (!requestSignatureKey) {
-        throw new Error('Falha ao adicionar o signatário ao documento');
-      }
-      console.log('Signatário adicionado ao documento:', requestSignatureKey);
+      if (!requestSignatureKey) throw new Error('Falha ao adicionar o signatário ao documento');
 
       await axios.post('/api/clicksign/notification/email', {
         request_signature_key: requestSignatureKey,
         message: 'Por favor, assine o contrato.',
       });
-      console.log('Notificação por e-mail enviada');
 
       await axios.post('/api/clicksign/notification/whatsapp', {
         request_signature_key: requestSignatureKey,
       });
-      console.log('Notificação por WhatsApp enviada');
 
       setSnackbarMessage('Contrato enviado com sucesso!');
       setSnackbarSeverity('success');
     } catch (error) {
-      console.error('Erro ao enviar contrato:', error.message);
       setSnackbarMessage('Erro ao enviar contrato.');
       setSnackbarSeverity('error');
     } finally {
       setSnackbarOpen(true);
-      setIsSendingContract(false);
+      setSendingContract(false);
       setSendingContractId(null);
     }
   };
@@ -203,7 +190,7 @@ const ProposalManager = ({
         </Box>
       </Grid>
 
-      {proposals.filter((proposal) => proposal.id).length === 0 && !showSaleForm && (
+      {proposals.filter((proposal) => proposal.id).length === 0 && !isSaleFormVisible && (
         <Grid item xs={12}>
           <Box display="flex" alignItems="center" mt={4}>
             <Typography variant="h6" gutterBottom>
@@ -214,7 +201,7 @@ const ProposalManager = ({
       )}
 
       {proposals.filter((proposal) => proposal.id).length > 0 &&
-        !showProposalForm &&
+        !isProposalFormVisible &&
         proposals
           .filter((proposal) => proposal.id)
           .map((proposal) => (
@@ -265,7 +252,7 @@ const ProposalManager = ({
                       <IconButton
                         variant="outlined"
                         color="primary"
-                        onClick={() => handleEditSale(proposal)}
+                        onClick={() => handleEditProposal(proposal)}
                       >
                         <EditIcon />
                       </IconButton>
@@ -274,25 +261,12 @@ const ProposalManager = ({
                       <IconButton
                         variant="outlined"
                         color="primary"
-                        onClick={() => handleEditSale(proposal)}
+                        onClick={() => handleEditProposal(proposal)}
                       >
                         <AddShoppingCartIcon />
                       </IconButton>
                     </Tooltip>
-                    {/* <Tooltip title="Preview do Contrato">
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleOpen(proposal)}
-                        sx={{
-                          borderRadius: '8px',
-                          padding: '8px',
-                        }}
-                      >
-                        <PreviewIcon />
-                      </IconButton>
-                    </Tooltip> */}
-
-                    <Modal open={open} onClose={handleClose}>
+                    <Modal open={isModalOpen} onClose={closeModal}>
                       <Box
                         sx={{
                           position: 'absolute',
@@ -307,26 +281,26 @@ const ProposalManager = ({
                           overflowY: 'auto',
                         }}
                       >
-                        {currentSale && (
+                        {selectedSale && (
                           <Contract
-                            id_customer={currentSale.customer?.complete_name || 'N/A'}
-                            id_first_document={currentSale.firstDocument || 'N/A'}
-                            id_second_document={currentSale.secondDocument || 'N/A'}
-                            id_customer_address={currentSale.customerAddress || 'N/A'}
-                            id_customer_house={currentSale.customerHouse || 'N/A'}
-                            id_customer_zip={currentSale.customerZip || 'N/A'}
-                            id_customer_city={currentSale.customerCity || 'N/A'}
-                            id_customer_locality={currentSale.customerLocality || 'N/A'}
-                            id_customer_state={currentSale.customerState || 'N/A'}
-                            quantity_material_3={currentSale.quantityMaterial3 || 'N/A'}
-                            id_material_3={currentSale.material3 || 'N/A'}
-                            id_material_1={currentSale.material1 || 'N/A'}
-                            id_material_2={currentSale.material2 || 'N/A'}
-                            watt_pico={currentSale.wattPico || 'N/A'}
-                            project_value_format={currentSale.total_value || 'N/A'}
-                            id_payment_method={currentSale.paymentMethod || 'N/A'}
-                            id_payment_detail={currentSale.paymentDetail || 'N/A'}
-                            observation_payment={currentSale.observationPayment || 'N/A'}
+                            id_customer={selectedSale.customer?.complete_name || 'N/A'}
+                            id_first_document={selectedSale.firstDocument || 'N/A'}
+                            id_second_document={selectedSale.secondDocument || 'N/A'}
+                            id_customer_address={selectedSale.customerAddress || 'N/A'}
+                            id_customer_house={selectedSale.customerHouse || 'N/A'}
+                            id_customer_zip={selectedSale.customerZip || 'N/A'}
+                            id_customer_city={selectedSale.customerCity || 'N/A'}
+                            id_customer_locality={selectedSale.customerLocality || 'N/A'}
+                            id_customer_state={selectedSale.customerState || 'N/A'}
+                            quantity_material_3={selectedSale.quantityMaterial3 || 'N/A'}
+                            id_material_3={selectedSale.material3 || 'N/A'}
+                            id_material_1={selectedSale.material1 || 'N/A'}
+                            id_material_2={selectedSale.material2 || 'N/A'}
+                            watt_pico={selectedSale.wattPico || 'N/A'}
+                            project_value_format={selectedSale.total_value || 'N/A'}
+                            id_payment_method={selectedSale.paymentMethod || 'N/A'}
+                            id_payment_detail={selectedSale.paymentDetail || 'N/A'}
+                            observation_payment={selectedSale.observationPayment || 'N/A'}
                             dia={new Date().getDate()}
                             mes={new Date().toLocaleString('default', { month: 'long' })}
                             ano={new Date().getFullYear()}
@@ -335,23 +309,6 @@ const ProposalManager = ({
                       </Box>
                     </Modal>
 
-                    {/*  <Tooltip title="Enviar Contrato">
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleSendContract(proposal)}
-                        disabled={sendingContractId === proposal.id}
-                        sx={{
-                          borderRadius: '8px',
-                          padding: '8px',
-                        }}
-                      >
-                        {sendingContractId === proposal.id ? (
-                          <CircularProgress size={24} />
-                        ) : (
-                          <SendIcon />
-                        )}
-                      </IconButton>
-                    </Tooltip> */}
                     <Tooltip title="Gerar Proposta">
                       <IconButton
                         color="primary"
@@ -370,12 +327,12 @@ const ProposalManager = ({
             </Grid>
           ))}
 
-      {showProposalForm && (
+      {isProposalFormVisible && (
         <Grid item xs={12}>
           <Card variant="outlined" sx={{ p: 3 }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                {proposalData?.id ? 'Editar Proposta' : 'Adicionar Proposta'}
+                {currentProposalData?.id ? 'Editar Proposta' : 'Adicionar Proposta'}
               </Typography>
               <ProposalForm
                 sellers={sellers}
@@ -393,12 +350,12 @@ const ProposalManager = ({
       )}
 
       <Snackbar
-        open={snackbarOpen}
+        open={isSnackbarOpen}
         autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
+        onClose={closeSnackbar}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+        <Alert onClose={closeSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
           {snackbarMessage}
         </Alert>
       </Snackbar>
@@ -407,3 +364,4 @@ const ProposalManager = ({
 };
 
 export default ProposalManager;
+
