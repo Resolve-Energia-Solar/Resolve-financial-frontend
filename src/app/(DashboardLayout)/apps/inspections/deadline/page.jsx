@@ -63,11 +63,11 @@ const DeadlineList = () => {
   }, []);
 
   const handleCreateClick = () => {
-    //router.push('/apps/inspections/deadline/create');
+    router.push('/apps/inspections/deadline/create');
   }
 
   const handleEditClick = (id) => {
-    //router.push(`/apps/inspections/deadline/${id}`);
+    router.push(`/apps/inspections/deadline/${id}/update`);
   }
 
   const handleDeleteClick = (id) => {
