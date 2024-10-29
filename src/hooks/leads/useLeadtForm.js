@@ -22,7 +22,7 @@ const useLeadForm = (initialData, id) => {
 
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false); // Novo estado para o loading
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -51,7 +51,7 @@ const useLeadForm = (initialData, id) => {
   };
 
   const handleSave = async () => {
-    setLoading(true); // Define o loading como true ao iniciar o salvamento
+    setLoading(true);
     const dataToSend = {
       seller_id: formData.seller_id,
       sdr_id: formData.sdr_id,
@@ -83,7 +83,7 @@ const useLeadForm = (initialData, id) => {
       setFormErrors(err.response?.data || {});
       console.log(err.response?.data || err);
     } finally {
-      setLoading(false); // Define o loading como false após a tentativa de salvamento
+      setLoading(false);
     }
   };
 
@@ -93,7 +93,7 @@ const useLeadForm = (initialData, id) => {
     handleSave,
     formErrors,
     success,
-    loading, // Retorna o estado de loading
+    loading,
   };
 };
 
