@@ -9,46 +9,10 @@ import {
   Typography,
   Checkbox,
 } from '@mui/material';
-import AutoCompleteLead from '../comercial/sale/components/auto-complete/Auto-Input-Leads';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import useProposalForm from '@/hooks/proposals/useProposalForm';
-import AutoCompleteUser from '../comercial/sale/components/auto-complete/Auto-Input-User';
-import KitSolarService from '@/services/kitSolarService';
-import { useEffect, useState } from 'react';
+import AutoCompleteLead from '../../comercial/sale/components/auto-complete/Auto-Input-Leads';
 
 const ProposalForm = () => {
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success,
-  } = useProposalForm();
-  const [availableKits, setAvailableKits] = useState([]);
-  const [selectedKitIds, setSelectedKitIds] = useState([]);
-
-  useEffect(() => {
-    const fetchAvailableKits = async () => {
-      try {
-        const response = await KitSolarService.getKitSolar();
-        setAvailableKits(response.results || []);
-      } catch (error) {
-        console.error('Erro ao buscar kits solares', error);
-        setAvailableKits([]);
-      }
-    };
-    fetchAvailableKits();
-  }, []);
-
-  const handleKitSelection = (kitId) => {
-    setSelectedKitIds((prevSelectedKitIds) =>
-      prevSelectedKitIds.includes(kitId)
-        ? prevSelectedKitIds.filter((id) => id !== kitId)
-        : [...prevSelectedKitIds, kitId]
-    );
-    handleChange('kitIds', selectedKitIds);
-  };
-
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={6}>
@@ -188,4 +152,3 @@ const ProposalForm = () => {
 };
 
 export default ProposalForm;
-

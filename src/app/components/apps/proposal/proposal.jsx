@@ -28,17 +28,7 @@ import StatusChip from '@/app/components/apps/comercial/sale/components/Document
 import Contract from '@/app/components/templates/ContractPreview';
 import ProposalForm from './ProposalForm';
 
-const ProposalManager = ({
-  sellers = [],
-  sdrs = [],
-  branches = [],
-  campaigns = [],
-  managers = [],
-  supervisors = [],
-  allUsers = [],
-  leadData = [],
-  proposals = [],
-}) => {
+const ProposalManager = () => {
   const theme = useTheme();
 
   const [isSaleFormVisible, setSaleFormVisible] = useState(false);

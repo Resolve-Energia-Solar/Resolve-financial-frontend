@@ -24,7 +24,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import saleService from '@/services/saleService';
 import StatusChip from '../../comercial/sale/components/DocumentStatusIcon';
 import Contract from '@/app/components/templates/ContractPreview';
-import ProposalForm from '../../proposal/ProposalForm';
+import ProposalForm from '../../proposal/Add-proposal';
 
 const ProposalManager = ({
   sellers = [],
@@ -279,19 +279,6 @@ const ProposalManager = ({
                         <AddShoppingCartIcon />
                       </IconButton>
                     </Tooltip>
-                    {/* <Tooltip title="Preview do Contrato">
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleOpen(proposal)}
-                        sx={{
-                          borderRadius: '8px',
-                          padding: '8px',
-                        }}
-                      >
-                        <PreviewIcon />
-                      </IconButton>
-                    </Tooltip> */}
-
                     <Modal open={open} onClose={handleClose}>
                       <Box
                         sx={{
@@ -334,24 +321,6 @@ const ProposalManager = ({
                         )}
                       </Box>
                     </Modal>
-
-                    {/*  <Tooltip title="Enviar Contrato">
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleSendContract(proposal)}
-                        disabled={sendingContractId === proposal.id}
-                        sx={{
-                          borderRadius: '8px',
-                          padding: '8px',
-                        }}
-                      >
-                        {sendingContractId === proposal.id ? (
-                          <CircularProgress size={24} />
-                        ) : (
-                          <SendIcon />
-                        )}
-                      </IconButton>
-                    </Tooltip> */}
                     <Tooltip title="Gerar Proposta">
                       <IconButton
                         color="primary"
