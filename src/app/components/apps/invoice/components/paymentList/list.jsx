@@ -19,7 +19,7 @@ import {
   DialogTitle,
   Button,
 } from '@mui/material';
-import { MoreVert, Edit, Delete } from '@mui/icons-material';
+import { MoreVert, Edit, Delete, Visibility } from '@mui/icons-material';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import PaymentChip from '../PaymentChip';
 import PaymentStatusChip from '../PaymentStatusChip';
@@ -63,6 +63,10 @@ const PaymentList = () => {
 
   const handleCreateClick = () => {
     router.push('/apps/invoice/create');
+  };
+
+  const handleDetailClick = (id) => {
+    router.push(`/apps/invoice/${id}/view`);
   };
 
   const handleDeleteClick = (id) => {
@@ -166,6 +170,15 @@ const PaymentList = () => {
                     anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                     transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                   >
+                    <MenuItem
+                      onClick={() => {
+                        handleDetailClick(payment.id);
+                        handleMenuClose();
+                      }}
+                    >
+                      <Visibility fontSize="small" sx={{ mr: 1 }} />
+                      Visualizar
+                    </MenuItem>
                     <MenuItem
                       onClick={() => {
                         handleEditClick(payment.id);

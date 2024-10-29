@@ -47,7 +47,7 @@ import PaymentStatusChip from '../components/PaymentStatusChip';
 import { AddBoxRounded, Delete, Edit, MoreVert } from '@mui/icons-material';
 import DashboardCards from '../components/kpis/DashboardCards';
 import { useRouter } from 'next/navigation';
-import PaymentList from '../components/paymentList/paymentList';
+import PaymentList from '../components/paymentList/list';
 
 function InvoiceList() {
   const router = useRouter();

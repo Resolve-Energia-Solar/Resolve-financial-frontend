@@ -5,6 +5,7 @@ import branchService from '@/services/branchService'
 import campaignService from '@/services/campaignService'
 import saleService from '@/services/saleService'
 import { useState, useEffect } from 'react'
+import ProposalService from '@/services/proposalService'
 
 const useLeadManager = (
   initialLeads = [],
@@ -47,7 +48,23 @@ const useLeadManager = (
   const [branches, setBranches] = useState([])
   const [campaigns, setCampaigns] = useState([])
   const [sales, setSales] = useState([])
+  const [proposals, setProposals] = useState([]);
+
   const [tabIndex, setTabIndex] = useState(0)
+
+  useEffect(() => {
+    const fetchProposals = async () => {
+      try {
+        const response = await ProposalService.getProposals();
+        setProposals(response.results || []);
+        console.log('Propostas recebidas:', response.results);
+      } catch (error) {
+        console.error('Erro ao buscar propostas:', error);
+      }
+    };
+  
+    fetchProposals();
+  }, []);
 
   useEffect(() => {
     const fetchAddresses = async () => {
@@ -300,6 +317,7 @@ const useLeadManager = (
   }
 
   return {
+    proposals,
     leadsList,
     statusesList,
     sales,

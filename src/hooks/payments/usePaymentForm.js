@@ -10,7 +10,6 @@ const usePaymentForm = (initialData, id) => {
     payment_type: '',
     installments_number: '',
     due_date: null,
-    is_paid: false,
     installments: [],
     create_installments: true,
   });
@@ -28,7 +27,6 @@ const usePaymentForm = (initialData, id) => {
         payment_type: initialData.payment_type || '',
         installments_number: initialData.installments_number || '',
         due_date: initialData.due_date || null,
-        is_paid: initialData.is_paid || false,
         installments: initialData.installments || [],
       });
     }
@@ -78,7 +76,6 @@ const usePaymentForm = (initialData, id) => {
       payment_type: formData.payment_type,
       installments_number: formData.installments_number,
       due_date: formData.due_date ? formatDate(formData.due_date) : null,
-      is_paid: formData.is_paid,
       create_installments: formData.create_installments,
     };
     

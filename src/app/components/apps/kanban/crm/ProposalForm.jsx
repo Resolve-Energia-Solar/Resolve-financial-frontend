@@ -16,18 +16,7 @@ import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto
 import KitSolarService from '@/services/kitSolarService';
 import { useEffect, useState } from 'react';
 
-const ProposalForm = ({
-  saleData,
-  setSaleData,
-  sellers = [],
-  sdrs = [],
-  managers = [],
-  supervisors = [],
-  branches = [],
-  campaigns = [],
-  allUsers = [],
-  leadData = [],
-}) => {
+const ProposalForm = ({}) => {
   const { formData, handleChange, handleSave, formErrors, success } = useProposalForm();
   const [kits, setKits] = useState([]);
   const [selectedKits, setSelectedKits] = useState([]);
@@ -131,7 +120,7 @@ const ProposalForm = ({
         <Grid container spacing={2}>
           {kits.length > 0 ? (
             kits.map((kit) => (
-              <Grid item xs={12} sm={6} md={4} key={kit.id}>
+              <Grid item xs={12} sm={6} md={6} key={kit.id}>
                 <Card
                   variant="outlined"
                   sx={{
@@ -153,13 +142,16 @@ const ProposalForm = ({
                       {kit.inversors_model.description}
                     </Typography>
                     <Typography variant="subtitle1" color="text.primary" fontWeight="bold">
-                      {`Preço: R$ ${kit.price}`}
+                      {`Preço: R$ ${Math.round(kit.price).toLocaleString('pt-BR', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}`}
                     </Typography>
                   </CardContent>
                   <Checkbox
                     checked={selectedKits.includes(kit.id)}
                     onClick={(e) => {
-                      e.stopPropagation(); // Impede que o clique no checkbox dispare o evento de clique no Card
+                      e.stopPropagation();
                       handleKitSelection(kit.id);
                     }}
                     sx={{
