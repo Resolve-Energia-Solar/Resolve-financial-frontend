@@ -168,6 +168,7 @@ const useKanban = () => {
     handleDeleteLead,
     handleUpdateLead,
     updateColumnName,
+    fetchBoardDetails
   };
 };
 

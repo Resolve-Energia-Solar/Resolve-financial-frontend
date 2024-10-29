@@ -1,100 +1,13 @@
-'use client';
-import React, { useState } from 'react';
-import { Box, CardContent, CircularProgress, Typography, Snackbar, Alert } from '@mui/material';
-import BlankCard from '@/app/components/shared/BlankCard';
-import KanbanHeader from '@/app/components/apps/kanban/crm/KanbanHeader';
-import TaskManager from '@/app/components/apps/kanban/crm/LeadManager';
+'use client'
 
-function KanbanPage() {
-  const [boards] = useState([
-    { id: 1, name: 'Quadro de Tarefas' },
-    { id: 2, name: 'Quadro de Projetos' },
-  ]);
-  const [selectedBoard, setSelectedBoard] = useState(1);
-  const [tasks] = useState([
-    { id: 1, title: 'Tarefa 1', column: { id: 1 }, description: 'Descrição da Tarefa 1' },
-    { id: 2, title: 'Tarefa 2', column: { id: 1 }, description: 'Descrição da Tarefa 2' },
-    { id: 3, title: 'Tarefa 3', column: { id: 2 }, description: 'Descrição da Tarefa 3' },
-    { id: 4, title: 'Tarefa 4', column: { id: 2 }, description: 'Descrição da Tarefa 4' },
-  ]);
-  const [statuses] = useState([
-    { id: 1, name: 'A Fazer' },
-    { id: 2, name: 'Em Progresso' },
-    { id: 3, name: 'Concluído' },
-  ]);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [loading] = useState(false);
-  const [error] = useState(null);
-
-  const handleSnackbarClose = () => setSnackbarOpen(false);
-
-  const handleDeleteTask = (taskId) => {
-    console.log(`Tarefa ${taskId} deletada`);
-    setSnackbarMessage('Tarefa deletada com sucesso!');
-    setSnackbarOpen(true);
-  };
-
-  const handleUpdateTask = (taskId) => {
-    console.log(`Tarefa ${taskId} atualizada`);
-    setSnackbarMessage('Tarefa atualizada com sucesso!');
-    setSnackbarOpen(true);
-  };
-
-  const updateColumnName = (columnId, newName) => {
-    console.log(`Coluna ${columnId} renomeada para ${newName}`);
-  };
+import KanbanBoard from '@/app/components/apps/kanban/erp/KanbanBoard';
+import { kanbans } from "./kanbans.json";
+export default function Kanban() {
 
   return (
-    <BlankCard>
-      <CardContent>
-        <KanbanHeader
-          boards={boards}
-          selectedBoard={selectedBoard}
-          onBoardChange={(e) => setSelectedBoard(parseInt(e.target.value, 10))}
-        />
+    <div>
 
-        {loading ? (
-          <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
-            <CircularProgress />
-          </Box>
-        ) : error ? (
-          <Typography color="error">Erro: {error}</Typography>
-        ) : (
-          <>
-            {selectedBoard && tasks.length > 0 && statuses.length > 0 ? (
-              <TaskManager
-                tasks={tasks.filter((task) => task.column.id === selectedBoard)}
-                statuses={statuses}
-                board={selectedBoard}
-                onUpdateTaskColumn={updateColumnName}
-                onUpdateTask={handleUpdateTask}
-                onDeleteTask={handleDeleteTask}
-              />
-            ) : (
-              <Typography variant="body1" mt={4}>
-                Nenhuma tarefa disponível para este quadro.
-              </Typography>
-            )}
-          </>
-        )}
-
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={4000}
-          onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        >
-          <Alert
-            onClose={handleSnackbarClose}
-            severity={snackbarMessage.includes('Erro') ? 'error' : 'success'}
-          >
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
-      </CardContent>
-    </BlankCard>
+      <KanbanBoard board={kanbans.infraestrutura} />
+    </div>
   );
 }
-
-export default KanbanPage;
