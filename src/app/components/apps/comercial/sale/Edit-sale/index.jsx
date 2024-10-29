@@ -19,8 +19,6 @@ import FormPageSkeleton from '../components/FormPageSkeleton';
 import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
 import { useState } from 'react';
-import EditInvoicePage from '../../../invoice/Edit-invoice';
-import PaymentList from '../../../invoice/components/paymentList/list';
 import PaymentCard from '../../../invoice/components/paymentList/card';
 
 const EditSalePage = () => {

@@ -112,7 +112,7 @@ const PaymentCard = ({ sale = null }) => {
         )}
         {paymentsList.map((payment) => {
           console.log('payment', payment);
-          const progressValue = payment?.percentual_paid || 0;
+          const progressValue = payment?.percentual_paid*100 || 0;
 
           return (
             <Grid item xs={12} sm={6} md={4} key={payment.id}>
