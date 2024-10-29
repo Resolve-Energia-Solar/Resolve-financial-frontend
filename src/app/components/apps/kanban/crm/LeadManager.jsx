@@ -16,7 +16,6 @@ import {
 } from '@mui/material';
 
 import LeadDetails from './LeadDetails';
-import LeadForm from './LeadForm';
 import LeadCard from './LeadCard';
 import SimpleBar from 'simplebar-react';
 import ColumnWithActions from './LeadHeader';
