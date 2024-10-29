@@ -1,20 +1,13 @@
 'use client';
-import { Grid, Button, Stack, FormControlLabel, Tabs, Tab, Box, Typography } from '@mui/material';
+import { Grid, Button, Stack, Box, Typography, CircularProgress, Alert } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
-import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import { useParams } from 'next/navigation';
 
 import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-User';
-import AutoCompleteBranch from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Branch';
-import AutoCompleteLead from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Leads';
-import AutoCompleteCampaign from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Campaign';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import FormDateTime from '@/app/components/forms/form-custom/FormDateTime';
-import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import FormPageSkeleton from '../../comercial/sale/components/FormPageSkeleton';
 
-import { useState } from 'react';
 import useLead from '@/hooks/leads/useLead';
 import useLeadForm from '@/hooks/leads/useLeadtForm';
 import AutoCompleteAddresses from '../../comercial/sale/components/auto-complete/Auto-Input-Addresses';
@@ -26,11 +19,14 @@ const EditLeadPage = ({ leadId = null, onClosedModal = null }) => {
   if (!leadId) id = params.id;
 
   const { loading, error, leadData } = useLead(id);
-  console.log('leadData', leadData);
-  const { formData, handleChange, handleSave, formErrors, success } = useLeadForm(leadData, id);
-  console.log('formData', formData);
-
-  const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.totalValue);
+  const {
+    formData,
+    handleChange,
+    handleSave,
+    loading: formLoading,
+    formErrors,
+    success,
+  } = useLeadForm(leadData, id);
 
   const typeOptions = [
     { value: 'PF', label: 'Pessoa Física' },
@@ -46,10 +42,15 @@ const EditLeadPage = ({ leadId = null, onClosedModal = null }) => {
     { value: 'Q', label: 'Qualificação' },
     { value: 'M', label: 'Moderado' },
     { value: 'N', label: 'Negociação' },
-  ]
+  ];
 
   return (
     <Box>
+      { success && (
+      <Alert severity="success" sx={{ mt: 2 }}>
+        Lead atualizado com sucesso!
+      </Alert>
+      )}
       {loading ? (
         <FormPageSkeleton />
       ) : error ? (
@@ -96,8 +97,8 @@ const EditLeadPage = ({ leadId = null, onClosedModal = null }) => {
                 placeholder="CPF/CNPJ"
                 variant="outlined"
                 fullWidth
-                value={formData.firstDocument}
-                onChange={(e) => handleChange('firstDocument', e.target.value)}
+                value={formData.first_document}
+                onChange={(e) => handleChange('first_document', e.target.value)}
                 {...(formErrors.first_document && {
                   error: true,
                   helperText: formErrors.first_document,
@@ -117,6 +118,18 @@ const EditLeadPage = ({ leadId = null, onClosedModal = null }) => {
                   error: true,
                   helperText: formErrors.second_document,
                 })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} lg={4}>
+              <CustomFormLabel htmlFor="name">Telefone</CustomFormLabel>
+              <CustomTextField
+                name="phone"
+                placeholder="Telefone"
+                variant="outlined"
+                fullWidth
+                value={formData.phone}
+                onChange={(e) => handleChange('phone', e.target.value)}
+                {...(formErrors.phone && { error: true, helperText: formErrors.phone })}
               />
             </Grid>
             <Grid item xs={12} sm={12} lg={4}>
@@ -197,8 +210,14 @@ const EditLeadPage = ({ leadId = null, onClosedModal = null }) => {
                     Fechar
                   </Button>
                 )}
-                <Button variant="contained" color="primary" onClick={handleSave}>
-                  Salvar Alterações
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSave}
+                  disabled={formLoading}
+                  endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                >
+                  {formLoading ? 'Salvando...' : 'Salvar Alterações'}{' '}
                 </Button>
               </Stack>
             </Grid>
