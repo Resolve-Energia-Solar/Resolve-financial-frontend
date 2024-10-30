@@ -1,6 +1,24 @@
 import React from 'react';
+import {
+  Box,
+  Card,
+  CardContent,
+  Grid,
+  Typography,
+  Tooltip,
+  IconButton,
+  useTheme,
+} from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import EditIcon from '@mui/icons-material/Edit';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import DescriptionIcon from '@mui/icons-material/Description';
+import StatusChip from '../../comercial/sale/components/DocumentStatusIcon';
 
-export default function ProposalCard({ proposal }) {
+export default function ProposalCard({ proposal, handleEditProposal }) {
+  const theme = useTheme();
+
   return (
     <Grid item xs={12} key={proposal.id}>
       <Card
@@ -36,7 +54,6 @@ export default function ProposalCard({ proposal }) {
           </Box>
 
           <Box display="flex" alignItems="center" mb={1}>
-            <StatusIcon sx={{ color: theme.palette.info.main, mr: 1 }} />
             <Typography variant="body1">
               Status: <StatusChip status={proposal.status} />
             </Typography>

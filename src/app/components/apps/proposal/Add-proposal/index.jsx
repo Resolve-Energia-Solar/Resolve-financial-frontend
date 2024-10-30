@@ -8,6 +8,8 @@ import {
   CardContent,
   Typography,
   Checkbox,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import useProposalForm from '@/hooks/proposal/useProposalForm';
@@ -15,9 +17,10 @@ import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto
 import { useState, useEffect } from 'react';
 
 const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
-  const { formData, setFormData, handleChange, handleSave, formErrors } = useProposalForm();
+  const { formData, setFormData, handleChange, handleSave, formErrors, snackbar, closeSnackbar } =
+    useProposalForm();
   const [selectedKitIds, setSelectedKitIds] = useState([]);
-
+  console.log(selectedLead);
   useEffect(() => {
     if (selectedLead) {
       setFormData((prevData) => ({
@@ -39,17 +42,13 @@ const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
     <Grid container spacing={3}>
       <Grid item xs={12} sm={6}>
         <CustomFormLabel htmlFor="leadId">Lead</CustomFormLabel>
-        <TextField
-          fullWidth
-          value={selectedLead?.name || ''} // Exibe o nome do Lead (ou outro campo desejado)
-          disabled // Desabilita o campo para edição
-        />
+        <TextField fullWidth value={selectedLead?.name || ''} disabled />
       </Grid>
       <Grid item xs={12} sm={6}>
-        <CustomFormLabel htmlFor="createdById">Criado por</CustomFormLabel>
+        <CustomFormLabel htmlFor="created_by_id">Criado por</CustomFormLabel>
         <AutoCompleteUser
           label="Criado por"
-          onChange={(created_by_id) => handleChange('createdById', created_by_id)}
+          onChange={(created_by_id) => handleChange('created_by_id', created_by_id)}
           value={formData.created_by_id}
           {...(formErrors.created_by_id && { error: true, helperText: formErrors.created_by_id })}
         />
@@ -61,7 +60,7 @@ const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
           label="Prazo para Aceitação"
           type="date"
           value={formData.due_date || ''}
-          onChange={(e) => handleChange('dueDate', e.target.value)}
+          onChange={(e) => handleChange('due_date', e.target.value)}
           InputLabelProps={{ shrink: true }}
           {...(formErrors.due_date && { error: true, helperText: formErrors.due_date })}
         />
@@ -165,10 +164,24 @@ const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
         <Button variant="outlined" color="secondary" onClick={handleCloseForm} sx={{ mr: 2 }}>
           Cancelar
         </Button>
-        <Button variant="contained" color="primary" onClick={handleSave}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleSave(selectedLead.id, selectedKitIds, handleCloseForm)}
+        >
           Salvar
         </Button>
       </Box>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={closeSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={closeSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 };

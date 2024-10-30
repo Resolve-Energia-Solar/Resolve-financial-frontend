@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
-import proposalService from '@/services/proposalService';
-import formatDate from '@/utils/formatDate';
+import { useState, useEffect } from 'react'
+import proposalService from '@/services/proposalService'
 
 const useProposalForm = (initialData, id) => {
   const [formData, setFormData] = useState({
@@ -11,10 +10,11 @@ const useProposalForm = (initialData, id) => {
     status: null,
     observation: null,
     kits: [],
-  });
+  })
 
-  const [formErrors, setFormErrors] = useState({});
-  const [success, setSuccess] = useState(false);
+  const [formErrors, setFormErrors] = useState({})
+  const [success, setSuccess] = useState(false)
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' })
 
   useEffect(() => {
     if (initialData) {
@@ -26,41 +26,56 @@ const useProposalForm = (initialData, id) => {
         status: initialData.status || null,
         observation: initialData.observation || null,
         kits: initialData.kits || [],
-      });
+      })
     }
-  }, [initialData]);
+  }, [initialData])
 
   const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
 
-  const handleSave = async () => {
+  const handleSave = async (selectedLead, selectedKitIds, handleCloseForm) => {
     const dataToSend = {
-      lead_id: formData.lead_id,
+      ...formData,
+      lead_id: selectedLead,
       created_by_id: formData.created_by_id,
-      due_date: formData.due_date ? formatDate(formData.due_date) : null,
+      due_date: formData.due_date,
       value: formData.value,
       status: formData.status,
       observation: formData.observation,
-      kits: formData.kits,
-    };
-    
-    console.log('dataToSend', dataToSend);
+      kits: selectedKitIds,
+    }
+
+    if (!dataToSend.lead_id) {
+      alert('O campo "Lead" é obrigatório.')
+      return
+    }
+    if (dataToSend.kits.length === 0) {
+      alert('Selecione pelo menos um kit para a proposta.')
+      return
+    }
 
     try {
-      if (id) {
-        await proposalService.updateProposal(id, dataToSend);
-      } else {
-        await proposalService.createProposal(dataToSend);
+      await proposalService.createProposal(dataToSend)
+      setFormErrors({})
+      setSuccess(true)
+      setSnackbar({ open: true, message: 'Proposta criada com sucesso!', severity: 'success' })
+      if (handleCloseForm) {
+        setTimeout(() => {
+          handleCloseForm()
+        }, 4000)
       }
-      setFormErrors({});
-      setSuccess(true);
     } catch (err) {
-      setSuccess(false);
-      setFormErrors(err.response?.data || {});
-      console.error(err.response?.data || err);
+      setSuccess(false)
+      setFormErrors(err.response?.data || {})
+      setSnackbar({ open: true, message: 'Erro ao criar proposta.', severity: 'error' })
+      console.error(err.response?.data || err)
     }
-  };
+  }
+
+  const closeSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }))
+  }
 
   return {
     formData,
@@ -68,8 +83,10 @@ const useProposalForm = (initialData, id) => {
     handleSave,
     formErrors,
     success,
-    setFormData
-  };
-};
+    setFormData,
+    snackbar,
+    closeSnackbar,
+  }
+}
 
-export default useProposalForm;
+export default useProposalForm

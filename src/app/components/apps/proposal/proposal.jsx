@@ -1,16 +1,39 @@
-import { Grid, Button, Card, CardContent, Typography, Box, Snackbar, Alert } from '@mui/material';
+import {
+  Grid,
+  Button,
+  Box,
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import ProposalForm from './Add-proposal';
-import { useState } from 'react';
+import ProposalCard from './proposalCard/index';
+import { useState, useEffect } from 'react';
 import useKitSolar from '@/hooks/kits/useKitSolar';
+import ProposalService from '@/services/proposalService';
 
 const ProposalManager = ({ selectedLead }) => {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [proposals, setProposals] = useState([]);
 
   const { kits, loading, error } = useKitSolar();
+
+  useEffect(() => {
+    const fetchProposals = async () => {
+      const fetchedProposals = await ProposalService.getProposals();
+      setProposals(fetchedProposals.results);
+    };
+
+    if (selectedLead) fetchProposals();
+  }, [selectedLead]);
+
   const handleAddProposal = () => {
     setIsFormVisible(true);
   };
@@ -37,24 +60,22 @@ const ProposalManager = ({ selectedLead }) => {
           </Button>
         </Box>
       </Grid>
-      {isFormVisible && (
-        <Grid item xs={12}>
-          <Card variant="outlined" sx={{ p: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Adicionar Proposta
-              </Typography>
-              <ProposalForm
-                kits={kits}
-                selectedLead={selectedLead}
-                loading={loading}
-                error={error}
-                handleCloseForm={handleCloseForm}
-              />
-            </CardContent>
-          </Card>
-        </Grid>
-      )}
+
+      {proposals.length > 0 &&
+        proposals.map((proposal) => <ProposalCard key={proposal.id} proposal={proposal} />)}
+
+      <Dialog open={isFormVisible} onClose={handleCloseForm} maxWidth="md" fullWidth>
+        <DialogTitle>Adicionar Proposta</DialogTitle>
+        <DialogContent dividers>
+          <ProposalForm
+            kits={kits}
+            selectedLead={selectedLead}
+            loading={loading}
+            error={error}
+            handleCloseForm={handleCloseForm}
+          />
+        </DialogContent>
+      </Dialog>
 
       <Snackbar
         open={isSnackbarOpen}
