@@ -8,59 +8,47 @@ import {
   CardContent,
   Typography,
   Checkbox,
+  Snackbar,
+  Alert,
 } from '@mui/material';
-import AutoCompleteLead from '../../comercial/sale/components/auto-complete/Auto-Input-Leads';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import useProposalForm from '@/hooks/proposals/useProposalForm';
+import useProposalForm from '@/hooks/proposal/useProposalForm';
 import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
-import KitSolarService from '@/services/kitSolarService';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 
-const ProposalForm = ({}) => {
-  const { formData, handleChange, handleSave, formErrors, success } = useProposalForm();
-  const [kits, setKits] = useState([]);
-  const [selectedKits, setSelectedKits] = useState([]);
-
+const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
+  const { formData, setFormData, handleChange, handleSave, formErrors, snackbar, closeSnackbar } =
+    useProposalForm();
+  const [selectedKitIds, setSelectedKitIds] = useState([]);
+  console.log(selectedLead);
   useEffect(() => {
-    const fetchKits = async () => {
-      try {
-        const response = await KitSolarService.getKitSolar();
-        console.log('response', response);
-        setKits(response.results || []);
-      } catch (error) {
-        console.error('Erro ao buscar kits solares', error);
-        setKits([]);
-      }
-    };
-    fetchKits();
-  }, []);
+    if (selectedLead) {
+      setFormData((prevData) => ({
+        ...prevData,
+        leadId: selectedLead.id,
+      }));
+    }
+  }, [selectedLead]);
 
   const handleKitSelection = (kitId) => {
-    setSelectedKits((prevSelectedKits) => {
-      if (prevSelectedKits.includes(kitId)) {
-        return prevSelectedKits.filter((id) => id !== kitId);
-      } else {
-        return [...prevSelectedKits, kitId];
-      }
-    });
-    handleChange('kits', selectedKits);
+    setSelectedKitIds((prevSelected) =>
+      prevSelected.includes(kitId)
+        ? prevSelected.filter((id) => id !== kitId)
+        : [...prevSelected, kitId],
+    );
   };
 
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={6}>
-        <CustomFormLabel htmlFor="leads">Lead</CustomFormLabel>
-        <AutoCompleteLead
-          onChange={(id) => handleChange('lead_id', id)}
-          value={formData.lead_id}
-          {...(formErrors.lead_id && { error: true, helperText: formErrors.lead_id })}
-        />
+        <CustomFormLabel htmlFor="leadId">Lead</CustomFormLabel>
+        <TextField fullWidth value={selectedLead?.name || ''} disabled />
       </Grid>
       <Grid item xs={12} sm={6}>
         <CustomFormLabel htmlFor="created_by_id">Criado por</CustomFormLabel>
         <AutoCompleteUser
           label="Criado por"
-          onChange={(id) => handleChange('created_by_id', id)}
+          onChange={(created_by_id) => handleChange('created_by_id', created_by_id)}
           value={formData.created_by_id}
           {...(formErrors.created_by_id && { error: true, helperText: formErrors.created_by_id })}
         />
@@ -118,14 +106,14 @@ const ProposalForm = ({}) => {
       <Grid item xs={12}>
         <CustomFormLabel>Kits Solares Disponíveis</CustomFormLabel>
         <Grid container spacing={2}>
-          {kits.length > 0 ? (
+          {kits && kits.length > 0 ? (
             kits.map((kit) => (
               <Grid item xs={12} sm={6} md={6} key={kit.id}>
                 <Card
                   variant="outlined"
                   sx={{
-                    borderColor: selectedKits.includes(kit.id) ? 'primary.main' : 'grey.400',
-                    borderWidth: selectedKits.includes(kit.id) ? 2 : 1,
+                    borderColor: selectedKitIds.includes(kit.id) ? 'primary.main' : 'grey.400',
+                    borderWidth: selectedKitIds.includes(kit.id) ? 2 : 1,
                     position: 'relative',
                     cursor: 'pointer',
                     '&:hover': { boxShadow: 4 },
@@ -139,7 +127,7 @@ const ProposalForm = ({}) => {
                       {`Kit Solar ID: ${kit.id}`}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" gutterBottom>
-                      {kit.inversors_model.description}
+                      {kit?.inversorsModel?.description}
                     </Typography>
                     <Typography variant="subtitle1" color="text.primary" fontWeight="bold">
                       {`Preço: R$ ${Math.round(kit.price).toLocaleString('pt-BR', {
@@ -149,7 +137,7 @@ const ProposalForm = ({}) => {
                     </Typography>
                   </CardContent>
                   <Checkbox
-                    checked={selectedKits.includes(kit.id)}
+                    checked={selectedKitIds.includes(kit.id)}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleKitSelection(kit.id);
@@ -158,7 +146,7 @@ const ProposalForm = ({}) => {
                       position: 'absolute',
                       bottom: 8,
                       left: 8,
-                      color: selectedKits.includes(kit.id) ? 'primary.main' : 'grey.400',
+                      color: selectedKitIds.includes(kit.id) ? 'primary.main' : 'grey.400',
                     }}
                   />
                 </Card>
@@ -173,13 +161,27 @@ const ProposalForm = ({}) => {
       </Grid>
 
       <Box display="flex" justifyContent="flex-end" mt={3} width="100%">
-        <Button variant="outlined" color="secondary" sx={{ mr: 2 }}>
+        <Button variant="outlined" color="secondary" onClick={handleCloseForm} sx={{ mr: 2 }}>
           Cancelar
         </Button>
-        <Button variant="contained" color="primary" onClick={handleSave}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleSave(selectedLead.id, selectedKitIds, handleCloseForm)}
+        >
           Salvar
         </Button>
       </Box>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={closeSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={closeSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 };

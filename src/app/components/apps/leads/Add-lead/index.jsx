@@ -18,7 +18,7 @@ import { useSelector } from 'react-redux';
 
 import useSaleForm from '@/hooks/sales/useSaleForm';
 
-const CreateSale = ({ onClosedModal = null }) => {
+const CreateSale = () => {
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const hasPermission = (permissions) => {
@@ -165,11 +165,6 @@ const CreateSale = ({ onClosedModal = null }) => {
             label={formData.isSale ? 'Pré-Venda' : 'Venda'}
           />
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-            {onClosedModal && (
-              <Button variant="contained" color="primary" onClick={onClosedModal}>
-                Fechar
-              </Button>
-            )}
             <Button variant="contained" color="primary" onClick={handleSave}>
               Criar
             </Button>
@@ -178,6 +173,6 @@ const CreateSale = ({ onClosedModal = null }) => {
       </Grid>
     </Box>
   );
-};
+}
 
 export default CreateSale;

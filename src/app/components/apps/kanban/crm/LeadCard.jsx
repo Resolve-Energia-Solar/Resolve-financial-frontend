@@ -1,6 +1,5 @@
 import { Paper, Box, Typography, useTheme, Grid, Stack, Rating } from '@mui/material';
 import { Email, Phone, AccessTime, TagSharp } from '@mui/icons-material';
-import ChildCard from '@/app/components/shared/ChildCard';
 
 const LeadCard = ({ lead, handleLeadClick }) => {
   const theme = useTheme();

@@ -11,7 +11,6 @@ import {
   Tabs,
   Tab,
   useTheme,
-  Button,
 } from '@mui/material';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ImageIcon from '@mui/icons-material/Image';
@@ -29,12 +28,10 @@ import useSale from '@/hooks/sales/useSale';
 import { useState } from 'react';
 import PaymentCard from '../../../invoice/components/paymentList/card';
 
-const SaleDetailPage = ({ saleId = null, onClosedModal = null }) => {
-  const params = useParams();
-  let id = saleId;
-  if (!saleId) id = params.id;
-
+const SaleDetailPage = () => {
   const theme = useTheme();
+  const params = useParams();
+  const { id } = params;
 
   const router = useRouter();
 
@@ -256,11 +253,6 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null }) => {
         <Box sx={{ mt: 3 }}>
           <PaymentCard sale={id} />
         </Box>
-      )}
-      {onClosedModal && (
-        <Button variant="contained" color="primary" onClick={onClosedModal} sx={{ mt: 3 }}>
-          Fechar
-        </Button>
       )}
     </Box>
   );
