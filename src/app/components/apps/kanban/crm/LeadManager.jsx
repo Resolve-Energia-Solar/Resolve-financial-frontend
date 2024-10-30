@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
   Button,
   Divider,
   Alert,
@@ -20,9 +19,10 @@ import LeadCard from './LeadCard';
 import SimpleBar from 'simplebar-react';
 import ColumnWithActions from './LeadHeader';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import useLeadManager from '@/hooks/boards/useLeadManager';
-import ProposalManager from './ProposalManager';
+import useLeadManager from '@/hooks/boards/useKanbanForm';
 import EditLeadPage from '../../leads/Edit-lead';
+import ProposalManager from '../../proposal/proposal';
+import SaleListCards from '../../comercial/sale/components/salesList/cards';
 
 const LeadManager = ({
   leads,
@@ -39,31 +39,16 @@ const LeadManager = ({
   const {
     leadsList,
     statusesList,
-    leadData,
-    setLeadData,
     selectedLead,
     openModal,
     setOpenModal,
-    editMode,
-    setEditMode,
     snackbarMessage,
     snackbarOpen,
     setSnackbarOpen,
-    handleUpdateLead,
     onDragEnd,
     handleLeadClick,
     setTabIndex,
     tabIndex,
-    sellers,
-    sdrs,
-    allUsers,
-    addresses,
-    managers,
-    supervisors,
-    branches,
-    campaigns,
-    sales,
-    proposals,
   } = useLeadManager(leads, statuses, {
     onUpdateLead,
     onAddLead,
@@ -133,11 +118,11 @@ const LeadManager = ({
 
       {selectedLead && (
         <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth maxWidth="lg">
-          <DialogTitle>{editMode ? 'Editar Lead' : 'Detalhes do Lead'}</DialogTitle>
+          <DialogTitle>Detalhes do Lead</DialogTitle>
           <Divider />
           <DialogContent>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={8}>
+              <Grid item xs={12}>
                 <Box display="flex" alignItems="center" justifyContent="space-between">
                   <Tabs
                     value={tabIndex}
@@ -147,32 +132,22 @@ const LeadManager = ({
                   >
                     <Tab label="Lead" />
                     <Tab label="Proposta" />
+                    <Tab label="Venda" />
                   </Tabs>
                 </Box>
 
                 <Box mt={2}>
                   {tabIndex === 0 && (
                     <>
-                      <LeadDetails selectedLead={selectedLead} />
-                      <Button variant="contained" color="primary" onClick={() => setEditLead(true)}>
-                        Editar
-                      </Button>
+                      <LeadDetails
+                        selectedLead={selectedLead}
+                        onUpdateLead={() => setEditLead(true)}
+                      />
                     </>
                   )}
-                  {tabIndex === 1 && (
-                    <ProposalManager
-                      proposals={proposals}
-                      managers={managers}
-                      supervisors={supervisors}
-                      sellers={sellers}
-                      sdrs={sdrs}
-                      allUsers={allUsers}
-                      branches={branches}
-                      campaigns={campaigns}
-                      leadData={leadsList}
-                      sales={sales}
-                    />
-                  )}
+                  {tabIndex === 1 && <ProposalManager selectedLead={selectedLead} />}
+
+                  {tabIndex === 2 && <SaleListCards leadId={selectedLead.id} />}
                 </Box>
               </Grid>
             </Grid>
@@ -190,7 +165,6 @@ const LeadManager = ({
         </Alert>
       </Snackbar>
 
-      {/* Modal de edição de lead */}
       <Dialog open={editLead} onClose={() => setEditLead(false)} fullWidth maxWidth="xl">
         <DialogContent>
           <EditLeadPage leadId={selectedLead?.id} onClosedModal={() => setEditLead(false)} />

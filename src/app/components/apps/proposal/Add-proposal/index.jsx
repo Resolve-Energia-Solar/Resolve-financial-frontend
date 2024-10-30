@@ -10,26 +10,48 @@ import {
   Checkbox,
 } from '@mui/material';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import AutoCompleteLead from '../../comercial/sale/components/auto-complete/Auto-Input-Leads';
+import useProposalForm from '@/hooks/proposal/useProposalForm';
+import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
+import { useState, useEffect } from 'react';
 
-const ProposalForm = () => {
+const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
+  const { formData, setFormData, handleChange, handleSave, formErrors } = useProposalForm();
+  const [selectedKitIds, setSelectedKitIds] = useState([]);
+
+  useEffect(() => {
+    if (selectedLead) {
+      setFormData((prevData) => ({
+        ...prevData,
+        leadId: selectedLead.id,
+      }));
+    }
+  }, [selectedLead]);
+
+  const handleKitSelection = (kitId) => {
+    setSelectedKitIds((prevSelected) =>
+      prevSelected.includes(kitId)
+        ? prevSelected.filter((id) => id !== kitId)
+        : [...prevSelected, kitId],
+    );
+  };
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={6}>
         <CustomFormLabel htmlFor="leadId">Lead</CustomFormLabel>
-        <AutoCompleteLead
-          onChange={(leadId) => handleChange('leadId', leadId)}
-          value={formData.leadId}
-          {...(formErrors.leadId && { error: true, helperText: formErrors.leadId })}
+        <TextField
+          fullWidth
+          value={selectedLead?.name || ''} // Exibe o nome do Lead (ou outro campo desejado)
+          disabled // Desabilita o campo para edição
         />
       </Grid>
       <Grid item xs={12} sm={6}>
         <CustomFormLabel htmlFor="createdById">Criado por</CustomFormLabel>
         <AutoCompleteUser
           label="Criado por"
-          onChange={(createdById) => handleChange('createdById', createdById)}
-          value={formData.createdById}
-          {...(formErrors.createdById && { error: true, helperText: formErrors.createdById })}
+          onChange={(created_by_id) => handleChange('createdById', created_by_id)}
+          value={formData.created_by_id}
+          {...(formErrors.created_by_id && { error: true, helperText: formErrors.created_by_id })}
         />
       </Grid>
 
@@ -38,10 +60,10 @@ const ProposalForm = () => {
           fullWidth
           label="Prazo para Aceitação"
           type="date"
-          value={formData.dueDate || ''}
+          value={formData.due_date || ''}
           onChange={(e) => handleChange('dueDate', e.target.value)}
           InputLabelProps={{ shrink: true }}
-          {...(formErrors.dueDate && { error: true, helperText: formErrors.dueDate })}
+          {...(formErrors.due_date && { error: true, helperText: formErrors.due_date })}
         />
       </Grid>
 
@@ -85,8 +107,8 @@ const ProposalForm = () => {
       <Grid item xs={12}>
         <CustomFormLabel>Kits Solares Disponíveis</CustomFormLabel>
         <Grid container spacing={2}>
-          {availableKits.length > 0 ? (
-            availableKits.map((kit) => (
+          {kits && kits.length > 0 ? (
+            kits.map((kit) => (
               <Grid item xs={12} sm={6} md={6} key={kit.id}>
                 <Card
                   variant="outlined"
@@ -140,7 +162,7 @@ const ProposalForm = () => {
       </Grid>
 
       <Box display="flex" justifyContent="flex-end" mt={3} width="100%">
-        <Button variant="outlined" color="secondary" sx={{ mr: 2 }}>
+        <Button variant="outlined" color="secondary" onClick={handleCloseForm} sx={{ mr: 2 }}>
           Cancelar
         </Button>
         <Button variant="contained" color="primary" onClick={handleSave}>

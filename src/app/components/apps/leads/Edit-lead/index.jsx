@@ -1,5 +1,5 @@
 'use client';
-import { Grid, Button, Stack, Box, Typography, CircularProgress, Alert } from '@mui/material';
+import { Grid, Button, Stack, Box, Typography, CircularProgress, Alert, Divider } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import { useParams } from 'next/navigation';
@@ -46,10 +46,21 @@ const EditLeadPage = ({ leadId = null, onClosedModal = null }) => {
 
   return (
     <Box>
-      { success && (
-      <Alert severity="success" sx={{ mt: 2 }}>
-        Lead atualizado com sucesso!
-      </Alert>
+      <Stack
+        direction="row"
+        spacing={{ xs: 1, sm: 2, md: 4 }}
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
+        <Typography variant="h5"># {formData.name}</Typography>
+        
+      </Stack>
+      <Divider></Divider>
+      {success && (
+        <Alert severity="success" sx={{ mt: 2 }}>
+          Lead atualizado com sucesso!
+        </Alert>
       )}
       {loading ? (
         <FormPageSkeleton />
