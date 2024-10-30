@@ -17,7 +17,7 @@ import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto
 import { useState, useEffect } from 'react';
 
 const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal }) => {
-  const { formData, setFormData, handleChange, handleSave, formErrors, snackbar, closeSnackbar } =
+  const { formData, setFormData, handleChange, handleUpdate, formErrors, snackbar, closeSnackbar } =
     useProposalForm();
   const [selectedKitIds, setSelectedKitIds] = useState([]);
 
@@ -25,7 +25,7 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal }) => 
     console.log('proposal', proposal);
     if (proposal) {
       setFormData({
-        leadId: proposal.leadId || selectedLead.id,
+        lead_id: proposal.leadId || selectedLead.id,
         created_by_id: proposal.created_by.id || '',
         due_date: proposal.due_date || '',
         value: proposal.value || '',
@@ -35,7 +35,7 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal }) => 
       setSelectedKitIds(proposal.kits || []);
     } else {
       setFormData({
-        leadId: selectedLead.id,
+        lead_id: selectedLead.id,
         created_by_id: '',
         due_date: '',
         value: '',
@@ -183,7 +183,9 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal }) => 
         <Button
           variant="contained"
           color="primary"
-          onClick={() => handleSave(formData, selectedKitIds, handleCloseForm)}
+          onClick={() =>
+            handleUpdate(proposal.id, selectedLead.id, selectedKitIds, handleCloseForm)
+          }
         >
           Salvar
         </Button>

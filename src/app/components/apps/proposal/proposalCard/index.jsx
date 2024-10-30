@@ -67,9 +67,11 @@ export default function ProposalCard({ proposal, handleEditProposal }) {
             <AssignmentTurnedInIcon
               sx={{
                 color:
-                  proposal.status === 'A' ? theme.palette.success.main : 
-                  proposal.status === 'P' ? theme.palette.warning.main : 
-                  theme.palette.error.main,
+                  proposal.status === 'A'
+                    ? theme.palette.success.main
+                    : proposal.status === 'P'
+                    ? theme.palette.warning.main
+                    : theme.palette.error.main,
                 mr: 1,
               }}
             />
@@ -81,7 +83,8 @@ export default function ProposalCard({ proposal, handleEditProposal }) {
           <Box display="flex" alignItems="center" mb={1}>
             <EventIcon sx={{ color: theme.palette.info.main, mr: 1 }} />
             <Typography variant="body1">
-              Prazo para Aceitação: {proposal.due_date ? new Date(proposal.due_date).toLocaleDateString('pt-BR') : 'N/A'}
+              Prazo para Aceitação:{' '}
+              {proposal.due_date ? new Date(proposal.due_date).toLocaleDateString('pt-BR') : 'N/A'}
             </Typography>
           </Box>
 
@@ -99,7 +102,7 @@ export default function ProposalCard({ proposal, handleEditProposal }) {
               <IconButton
                 variant="outlined"
                 color="primary"
-                onClick={() => handleEditProposal(proposal)}
+                onClick={() => console.log('Criar Venda')}
               >
                 <AddShoppingCartIcon />
               </IconButton>
