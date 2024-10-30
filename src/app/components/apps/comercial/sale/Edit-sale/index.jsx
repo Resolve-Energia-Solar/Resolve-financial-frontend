@@ -1,5 +1,5 @@
 'use client';
-import { Grid, Button, Stack, FormControlLabel, Tabs, Tab, Box, Typography } from '@mui/material';
+import { Grid, Button, Stack, FormControlLabel, Tabs, Tab, Box, Typography, CircularProgress, Alert } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
@@ -37,7 +37,14 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
   const context_type_sale = 44;
 
   const { loading, error, saleData } = useSale(id);
-  const { formData, handleChange, handleSave, formErrors, success } = useSaleForm(saleData, id);
+  const {
+    formData,
+    handleChange,
+    handleSave,
+    formErrors,
+    loading: formLoading,
+    success,
+  } = useSaleForm(saleData, id);
 
   const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.totalValue);
 
@@ -61,6 +68,11 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
         <Tab label="Anexos" />
         <Tab label="Pagamentos" />
       </Tabs>
+      {success && (
+        <Alert severity="success" sx={{ mt: 2 }}>
+          Venda atualizada com sucesso
+        </Alert>
+      )}
       {loading ? (
         <FormPageSkeleton />
       ) : error ? (
@@ -82,7 +94,10 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
                 <AutoCompleteUser
                   onChange={(id) => handleChange('customerId', id)}
                   value={formData.customerId}
-                  {...(formErrors.customer_id && { error: true, helperText: formErrors.customer_id })}
+                  {...(formErrors.customer_id && {
+                    error: true,
+                    helperText: formErrors.customer_id,
+                  })}
                 />
               </Grid>
               <Grid item xs={12} sm={12} lg={4}>
@@ -147,7 +162,10 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
                   fullWidth
                   value={formattedValue}
                   onChange={(e) => handleValueChange(e, handleChange)}
-                  {...(formErrors.total_value && { error: true, helperText: formErrors.total_value })}
+                  {...(formErrors.total_value && {
+                    error: true,
+                    helperText: formErrors.total_value,
+                  })}
                 />
               </Grid>
               <Grid item xs={12} sm={12} lg={4}>
@@ -184,7 +202,9 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
               </Grid>
             </Grid>
           )}
-          {value === 1 && <DocumentAttachments objectId={id_sale} contentType={context_type_sale} />}
+          {value === 1 && (
+            <DocumentAttachments objectId={id_sale} contentType={context_type_sale} />
+          )}
           {value === 2 && (
             <Box sx={{ mt: 3 }}>
               <PaymentCard sale={id_sale} />
@@ -196,8 +216,14 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
                 Fechar
               </Button>
             )}
-            <Button variant="contained" color="primary" onClick={handleSave}>
-              Salvar Alterações
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSave}
+              disabled={formLoading}
+              endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+            >
+              {formLoading ? 'Salvando...' : 'Salvar Alterações'}{' '}
             </Button>
           </Stack>
         </>

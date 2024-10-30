@@ -11,6 +11,7 @@ const saleService = {
     },
     getSaleByLead: async (lead) => {
         const response = await apiClient.get(`/api/sales/?lead=${lead}`);
+        console.log(response.data);
         return response.data;
     },
     getSaleById: async (id) => { 

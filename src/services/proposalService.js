@@ -14,7 +14,10 @@ const ProposalService = {
     const response = await apiClient.get(`/api/comercial-proposals/${id}/`)
     return response.data
   },
-
+  getProposalByLead: async lead => {
+    const response = await apiClient.get(`/api/comercial-proposals/?lead=${lead}`)
+    return response.data
+  },
   updateProposal: async (id, data) => {
     const response = await apiClient.put(`/api/comercial-proposals/${id}/`, data)
     return response.data

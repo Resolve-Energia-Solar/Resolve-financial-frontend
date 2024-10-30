@@ -8,14 +8,11 @@ import {
   Box,
   IconButton,
   Tooltip,
-  Modal,
-  useTheme,
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
+  useTheme,
 } from '@mui/material';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
@@ -23,7 +20,6 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import StatusIcon from '@mui/icons-material/AssignmentTurnedIn';
 import DescriptionIcon from '@mui/icons-material/Description';
 import StatusChip from '../DocumentStatusIcon';
-import Contract from '@/app/components/templates/ContractPreview';
 import saleService from '@/services/saleService';
 import EditSalePage from '../../Edit-sale';
 import SaleDetailPage from '../../Sale-detail';
@@ -66,9 +62,10 @@ const SaleListCards = ({ leadId = null }) => {
 
   return (
     <Grid container spacing={2}>
-      {salesList.map((sale) => (
-        <Grid item xs={8} key={sale.id}>
+      <Grid item xs={8}>
+        {salesList.map((sale) => (
           <Card
+            key={sale.id}
             variant="outlined"
             sx={{
               p: 3,
@@ -127,69 +124,21 @@ const SaleListCards = ({ leadId = null }) => {
                     <DescriptionIcon />
                   </IconButton>
                 </Tooltip>
-
-                {/* <Modal>
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: '60%',
-                    bgcolor: 'background.paper',
-                    boxShadow: 2,
-                    p: 4,
-                    maxHeight: '90vh',
-                    overflowY: 'auto',
-                  }}
-                >
-                  {currentSale && (
-                    <Contract
-                      id_customer={currentSale.customer?.complete_name || 'N/A'}
-                      id_first_document={currentSale.firstDocument || 'N/A'}
-                      id_second_document={currentSale.secondDocument || 'N/A'}
-                      id_customer_address={currentSale.customerAddress || 'N/A'}
-                      id_customer_house={currentSale.customerHouse || 'N/A'}
-                      id_customer_zip={currentSale.customerZip || 'N/A'}
-                      id_customer_city={currentSale.customerCity || 'N/A'}
-                      id_customer_locality={currentSale.customerLocality || 'N/A'}
-                      id_customer_state={currentSale.customerState || 'N/A'}
-                      quantity_material_3={currentSale.quantityMaterial3 || 'N/A'}
-                      id_material_3={currentSale.material3 || 'N/A'}
-                      id_material_1={currentSale.material1 || 'N/A'}
-                      id_material_2={currentSale.material2 || 'N/A'}
-                      watt_pico={currentSale.wattPico || 'N/A'}
-                      project_value_format={currentSale.total_value || 'N/A'}
-                      id_payment_method={currentSale.paymentMethod || 'N/A'}
-                      id_payment_detail={currentSale.paymentDetail || 'N/A'}
-                      observation_payment={currentSale.observationPayment || 'N/A'}
-                      dia={new Date().getDate()}
-                      mes={new Date().toLocaleString('default', { month: 'long' })}
-                      ano={new Date().getFullYear()}
-                    />
-                  )}
-                </Box>
-              </Modal> */}
-
-                {/* <Tooltip title="Gerar Proposta">
-                <IconButton
-                  color="primary"
-                  sx={{
-                    borderRadius: '8px',
-                    padding: '8px',
-                  }}
-                >
-                  <DescriptionIcon />
-                </IconButton>
-              </Tooltip> */}
               </Box>
             </CardContent>
           </Card>
-        </Grid>
-      ))}
+        ))}
+      </Grid>
+
       <Grid item xs={4}>
-        <Box display="flex" justifyContent="flex-start">
-          <Button variant="contained" color="primary" startIcon={<AddIcon />} fullWidth onClick={handleCreateClick}>
+        <Box display="flex" justifyContent="flex-end" alignItems="flex-start">
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={handleCreateClick}
+            fullWidth
+          >
             Nova Venda
           </Button>
         </Box>

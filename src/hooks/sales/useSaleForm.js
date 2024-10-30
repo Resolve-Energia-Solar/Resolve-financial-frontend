@@ -3,7 +3,6 @@ import formatDate from '@/utils/formatDate';
 import saleService from '@/services/saleService';
 import { useDispatch, useSelector } from 'react-redux';
 
-
 const useSaleForm = (initialData, id) => {
   const user = useSelector((state) => state.user);
 
@@ -24,6 +23,7 @@ const useSaleForm = (initialData, id) => {
 
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -51,6 +51,7 @@ const useSaleForm = (initialData, id) => {
   };
 
   const handleSave = async () => {
+    setLoading(true);
     const dataToSend = {
       customer_id: formData.customerId,
       seller_id: formData.sellerId,
@@ -80,6 +81,8 @@ const useSaleForm = (initialData, id) => {
       setSuccess(false);
       setFormErrors(err.response?.data || {});
       console.log(err.response?.data || err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -89,6 +92,7 @@ const useSaleForm = (initialData, id) => {
     handleSave,
     formErrors,
     success,
+    loading,
   };
 };
 
