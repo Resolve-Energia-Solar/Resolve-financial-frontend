@@ -142,6 +142,12 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Formulários',
+    icon: IconFileDescription,
+    href: '/apps/inspections/form-builder',
+  },
+  {
+    id: uniqueId(),
     title: 'Usuários',
     icon: IconUser,
     href: '/apps/users',
