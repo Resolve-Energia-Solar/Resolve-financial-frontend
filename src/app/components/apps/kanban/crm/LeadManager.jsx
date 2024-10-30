@@ -21,6 +21,8 @@ import ColumnWithActions from './LeadHeader';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import useLeadManager from '@/hooks/boards/useKanbanForm';
 import EditLeadPage from '../../leads/Edit-lead';
+import useLead from '@/hooks/leads/useLead';
+import ProposalManager from '../../proposal/proposal';
 import SaleListCards from '../../comercial/sale/components/salesList/cards';
 
 const LeadManager = ({
@@ -142,9 +144,7 @@ const LeadManager = ({
                       
                     </>
                   )}
-                  {tabIndex === 1 && (
-                    <Box> Em desenvolvimento</Box>
-                  )}
+                  {tabIndex === 1 && <ProposalManager />}
 
                   {tabIndex === 2 && (
                     <SaleListCards leadId={selectedLead.id} />

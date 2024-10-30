@@ -11,25 +11,29 @@ import {
 } from '@mui/material';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AutoCompleteLead from '../../comercial/sale/components/auto-complete/Auto-Input-Leads';
+import useProposalForm from '@/hooks/proposal/useProposalForm';
+import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
 
 const ProposalForm = () => {
+  const { formData, handleChange, handleSave, formErrors, success } = useProposalForm();
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={6}>
         <CustomFormLabel htmlFor="leadId">Lead</CustomFormLabel>
         <AutoCompleteLead
-          onChange={(leadId) => handleChange('leadId', leadId)}
-          value={formData.leadId}
-          {...(formErrors.leadId && { error: true, helperText: formErrors.leadId })}
+          onChange={(lead_id) => handleChange('leadId', lead_id)}
+          value={formData.lead_id}
+          {...(formErrors.lead_id && { error: true, helperText: formErrors.lead_id })}
         />
       </Grid>
       <Grid item xs={12} sm={6}>
         <CustomFormLabel htmlFor="createdById">Criado por</CustomFormLabel>
         <AutoCompleteUser
           label="Criado por"
-          onChange={(createdById) => handleChange('createdById', createdById)}
-          value={formData.createdById}
-          {...(formErrors.createdById && { error: true, helperText: formErrors.createdById })}
+          onChange={(created_by_id) => handleChange('createdById', created_by_id)}
+          value={formData.created_by_id}
+          {...(formErrors.created_by_id && { error: true, helperText: formErrors.created_by_id })}
         />
       </Grid>
 
@@ -38,10 +42,10 @@ const ProposalForm = () => {
           fullWidth
           label="Prazo para Aceitação"
           type="date"
-          value={formData.dueDate || ''}
+          value={formData.due_date || ''}
           onChange={(e) => handleChange('dueDate', e.target.value)}
           InputLabelProps={{ shrink: true }}
-          {...(formErrors.dueDate && { error: true, helperText: formErrors.dueDate })}
+          {...(formErrors.due_date && { error: true, helperText: formErrors.due_date })}
         />
       </Grid>
 
@@ -82,7 +86,7 @@ const ProposalForm = () => {
         />
       </Grid>
 
-      <Grid item xs={12}>
+     {/*  <Grid item xs={12}>
         <CustomFormLabel>Kits Solares Disponíveis</CustomFormLabel>
         <Grid container spacing={2}>
           {availableKits.length > 0 ? (
@@ -137,7 +141,7 @@ const ProposalForm = () => {
             </Typography>
           )}
         </Grid>
-      </Grid>
+      </Grid> */}
 
       <Box display="flex" justifyContent="flex-end" mt={3} width="100%">
         <Button variant="outlined" color="secondary" sx={{ mr: 2 }}>
