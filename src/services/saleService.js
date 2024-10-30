@@ -9,7 +9,10 @@ const saleService = {
         const response = await apiClient.get(`/api/sales/?q=${fullName}`);
         return response.data;
     },
-
+    getSaleByLead: async (lead) => {
+        const response = await apiClient.get(`/api/sales/?lead=${lead}`);
+        return response.data;
+    },
     getSaleById: async (id) => { 
         const response = await apiClient.get(`/api/sales/${id}/`);
         return response.data;

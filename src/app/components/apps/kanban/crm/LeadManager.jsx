@@ -21,7 +21,7 @@ import ColumnWithActions from './LeadHeader';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import useLeadManager from '@/hooks/boards/useKanbanForm';
 import EditLeadPage from '../../leads/Edit-lead';
-import useLead from '@/hooks/leads/useLead';
+import SaleListCards from '../../comercial/sale/components/salesList/cards';
 
 const LeadManager = ({
   leads,
@@ -34,12 +34,6 @@ const LeadManager = ({
 }) => {
   const theme = useTheme();
   const [editLead, setEditLead] = useState(false);
-
-  console.log('leads:', leads);
-
-  const { loading, error, leadData } = useLead(leads.id);
-
-  console.log('leadData:', leadData);
 
   const {
     leadsList,
@@ -127,7 +121,7 @@ const LeadManager = ({
           <Divider />
           <DialogContent>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={8}>
+              <Grid item xs={12}>
                 <Box display="flex" alignItems="center" justifyContent="space-between">
                   <Tabs
                     value={tabIndex}
@@ -144,10 +138,8 @@ const LeadManager = ({
                 <Box mt={2}>
                   {tabIndex === 0 && (
                     <>
-                      <LeadDetails selectedLead={selectedLead} />
-                      <Button variant="contained" color="primary" onClick={() => setEditLead(true)}>
-                        Editar
-                      </Button>
+                      <LeadDetails selectedLead={selectedLead} onUpdateLead={() => setEditLead(true)} />
+                      
                     </>
                   )}
                   {tabIndex === 1 && (
@@ -155,7 +147,7 @@ const LeadManager = ({
                   )}
 
                   {tabIndex === 2 && (
-                    <Box> Em desenvolvimento</Box>
+                    <SaleListCards leadId={selectedLead.id} />
                   )}
                 </Box>
               </Grid>

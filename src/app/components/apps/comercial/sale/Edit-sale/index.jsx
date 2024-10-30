@@ -21,16 +21,17 @@ import useSaleForm from '@/hooks/sales/useSaleForm';
 import { useState } from 'react';
 import PaymentCard from '../../../invoice/components/paymentList/card';
 
-const EditSalePage = () => {
+const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
+  const params = useParams();
+  let id = saleId;
+  if (!saleId) id = params.id;
+
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const hasPermission = (permissions) => {
     if (!permissions) return true;
     return permissions.some((permission) => userPermissions.includes(permission));
   };
-
-  const params = useParams();
-  const { id } = params;
 
   const id_sale = id;
   const context_type_sale = 44;
@@ -180,24 +181,27 @@ const EditSalePage = () => {
                   }
                   label={formData.isSale ? 'Pré-Venda' : 'Venda'}
                 />
-                <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-                  <Button variant="contained" color="primary" onClick={handleSave}>
-                    Salvar Alterações
-                  </Button>
-                </Stack>
               </Grid>
             </Grid>
           )}
+          {value === 1 && <DocumentAttachments objectId={id_sale} contentType={context_type_sale} />}
+          {value === 2 && (
+            <Box sx={{ mt: 3 }}>
+              <PaymentCard sale={id_sale} />
+            </Box>
+          )}
+          <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
+            {onClosedModal && (
+              <Button variant="contained" color="primary" onClick={onClosedModal}>
+                Fechar
+              </Button>
+            )}
+            <Button variant="contained" color="primary" onClick={handleSave}>
+              Salvar Alterações
+            </Button>
+          </Stack>
         </>
       )}
-
-      {value === 1 && <DocumentAttachments objectId={id_sale} contentType={context_type_sale} />}
-
-      {value === 2 && (
-        <Box sx = {{ mt: 3 }}>
-          <PaymentCard sale={id_sale} />
-        </Box>
-        )}
     </Box>
   );
 };

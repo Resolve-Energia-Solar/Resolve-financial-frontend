@@ -1,4 +1,4 @@
-import { Grid, Box, Typography, useTheme, Card, CardContent } from '@mui/material';
+import { Grid, Box, Typography, useTheme, Card, CardContent, Button } from '@mui/material';
 import {
   Email,
   Phone,
@@ -13,7 +13,7 @@ import {
   AssignmentInd,
 } from '@mui/icons-material';
 
-const LeadDetails = ({ selectedLead }) => {
+const LeadDetails = ({ selectedLead, onUpdateLead }) => {
   const theme = useTheme();
 
   const personalDetails = [
@@ -165,12 +165,19 @@ const LeadDetails = ({ selectedLead }) => {
   );
 
   return (
-    <>
-      {renderSection('Informações Pessoais', personalDetails)}
-      {renderSection('Documentos', documentDetails)}
-      {renderSection('Contato', contactDetails)}
-      {renderSection('Outros Detalhes', otherDetails)}
-    </>
+    <Grid container spacing={3} alignItems="flex-start">
+      <Grid item xs={8}>
+        {renderSection('Informações Pessoais', personalDetails)}
+        {renderSection('Documentos', documentDetails)}
+        {renderSection('Contato', contactDetails)}
+        {renderSection('Outros Detalhes', otherDetails)}
+      </Grid>
+      <Grid item xs={4}>
+        <Button variant="contained" color="primary" fullWidth onClick={onUpdateLead}>
+          Editar
+        </Button>
+      </Grid>
+    </Grid>
   );
 };
 
