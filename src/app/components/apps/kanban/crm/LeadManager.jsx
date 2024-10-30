@@ -22,6 +22,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import useLeadManager from '@/hooks/boards/useKanbanForm';
 import EditLeadPage from '../../leads/Edit-lead';
 import useLead from '@/hooks/leads/useLead';
+import ProposalManager from '../../proposal/proposal';
 
 const LeadManager = ({
   leads,
@@ -150,13 +151,9 @@ const LeadManager = ({
                       </Button>
                     </>
                   )}
-                  {tabIndex === 1 && (
-                    <Box> Em desenvolvimento</Box>
-                  )}
+                  {tabIndex === 1 && <ProposalManager />}
 
-                  {tabIndex === 2 && (
-                    <Box> Em desenvolvimento</Box>
-                  )}
+                  {tabIndex === 2 && <Box> Em desenvolvimento</Box>}
                 </Box>
               </Grid>
             </Grid>
