@@ -27,7 +27,7 @@ const ProposalManager = ({ selectedLead }) => {
 
   useEffect(() => {
     const fetchProposals = async () => {
-      const fetchedProposals = await ProposalService.getProposals();
+      const fetchedProposals = await ProposalService.getProposalByLead(selectedLead.id);
       setProposals(fetchedProposals.results);
     };
 
@@ -48,21 +48,31 @@ const ProposalManager = ({ selectedLead }) => {
 
   return (
     <Grid container spacing={4}>
-      <Grid item xs={12}>
-        <Box display="flex" justifyContent="flex-start" mt={4}>
+      <Grid item xs={8}>
+        <Box display="flex" flexDirection="column" gap={2}>
+          {proposals.length > 0 ? (
+            proposals.map((proposal) => <ProposalCard key={proposal.id} proposal={proposal} />)
+          ) : (
+            <Box display="flex" justifyContent="center" mt={4}>
+              <Alert severity="info">Nenhuma proposta encontrada.</Alert>
+            </Box>
+          )}
+        </Box>
+      </Grid>
+
+      <Grid item xs={4}>
+        <Box display="flex" justifyContent="flex-end">
           <Button
             variant="contained"
             color="primary"
             onClick={handleAddProposal}
             startIcon={<AddIcon />}
+            fullWidth
           >
             Adicionar Proposta
           </Button>
         </Box>
       </Grid>
-
-      {proposals.length > 0 &&
-        proposals.map((proposal) => <ProposalCard key={proposal.id} proposal={proposal} />)}
 
       <Dialog open={isFormVisible} onClose={handleCloseForm} maxWidth="md" fullWidth>
         <DialogTitle>Adicionar Proposta</DialogTitle>
