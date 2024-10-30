@@ -7,10 +7,10 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import ProposalForm from './Add-proposal';
+import ProposalEditForm from './Edit-proposal/index';
 import ProposalCard from './proposalCard/index';
 import { useState, useEffect } from 'react';
 import useKitSolar from '@/hooks/kits/useKitSolar';
@@ -18,6 +18,8 @@ import ProposalService from '@/services/proposalService';
 
 const ProposalManager = ({ selectedLead }) => {
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedProposal, setSelectedProposal] = useState(null);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
@@ -36,10 +38,19 @@ const ProposalManager = ({ selectedLead }) => {
 
   const handleAddProposal = () => {
     setIsFormVisible(true);
+    setIsEditMode(false);
+    setSelectedProposal(null);
+  };
+
+  const handleEditProposal = (proposal) => {
+    setIsFormVisible(true);
+    setIsEditMode(true);
+    setSelectedProposal(proposal);
   };
 
   const handleCloseForm = () => {
     setIsFormVisible(false);
+    setSelectedProposal(null);
   };
 
   const closeSnackbar = () => {
@@ -51,7 +62,13 @@ const ProposalManager = ({ selectedLead }) => {
       <Grid item xs={8}>
         <Box display="flex" flexDirection="column" gap={2}>
           {proposals.length > 0 ? (
-            proposals.map((proposal) => <ProposalCard key={proposal.id} proposal={proposal} />)
+            proposals.map((proposal) => (
+              <ProposalCard
+                handleEditProposal={handleEditProposal}
+                key={proposal.id}
+                proposal={proposal}
+              />
+            ))
           ) : (
             <Box display="flex" justifyContent="center" mt={4}>
               <Alert severity="info">Nenhuma proposta encontrada.</Alert>
@@ -75,15 +92,24 @@ const ProposalManager = ({ selectedLead }) => {
       </Grid>
 
       <Dialog open={isFormVisible} onClose={handleCloseForm} maxWidth="md" fullWidth>
-        <DialogTitle>Adicionar Proposta</DialogTitle>
+        <DialogTitle>{isEditMode ? 'Editar Proposta' : 'Adicionar Proposta'}</DialogTitle>
         <DialogContent dividers>
-          <ProposalForm
-            kits={kits}
-            selectedLead={selectedLead}
-            loading={loading}
-            error={error}
-            handleCloseForm={handleCloseForm}
-          />
+          {isEditMode ? (
+            <ProposalEditForm
+              kits={kits}
+              selectedLead={selectedLead}
+              handleCloseForm={handleCloseForm}
+              proposal={selectedProposal}
+            />
+          ) : (
+            <ProposalForm
+              kits={kits}
+              selectedLead={selectedLead}
+              handleCloseForm={handleCloseForm}
+              loading={loading}
+              error={error}
+            />
+          )}
         </DialogContent>
       </Dialog>
 
