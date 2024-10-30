@@ -5,9 +5,6 @@ import { kanbans } from "./kanbans.json";
 export default function Kanban() {
 
   return (
-    <div>
-
-      <KanbanBoard board={kanbans.infraestrutura} />
-    </div>
+    <KanbanBoard board={kanbans.infraestrutura} sx />
   );
 }
