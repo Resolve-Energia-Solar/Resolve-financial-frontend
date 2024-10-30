@@ -10,21 +10,39 @@ import {
   Checkbox,
 } from '@mui/material';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import AutoCompleteLead from '../../comercial/sale/components/auto-complete/Auto-Input-Leads';
 import useProposalForm from '@/hooks/proposal/useProposalForm';
 import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
+import { useState, useEffect } from 'react';
 
-const ProposalForm = () => {
-  const { formData, handleChange, handleSave, formErrors, success } = useProposalForm();
+const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
+  const { formData, setFormData, handleChange, handleSave, formErrors } = useProposalForm();
+  const [selectedKitIds, setSelectedKitIds] = useState([]);
+
+  useEffect(() => {
+    if (selectedLead) {
+      setFormData((prevData) => ({
+        ...prevData,
+        leadId: selectedLead.id,
+      }));
+    }
+  }, [selectedLead]);
+
+  const handleKitSelection = (kitId) => {
+    setSelectedKitIds((prevSelected) =>
+      prevSelected.includes(kitId)
+        ? prevSelected.filter((id) => id !== kitId)
+        : [...prevSelected, kitId],
+    );
+  };
 
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={6}>
         <CustomFormLabel htmlFor="leadId">Lead</CustomFormLabel>
-        <AutoCompleteLead
-          onChange={(lead_id) => handleChange('leadId', lead_id)}
-          value={formData.lead_id}
-          {...(formErrors.lead_id && { error: true, helperText: formErrors.lead_id })}
+        <TextField
+          fullWidth
+          value={selectedLead?.name || ''} // Exibe o nome do Lead (ou outro campo desejado)
+          disabled // Desabilita o campo para edição
         />
       </Grid>
       <Grid item xs={12} sm={6}>
@@ -86,11 +104,11 @@ const ProposalForm = () => {
         />
       </Grid>
 
-     {/*  <Grid item xs={12}>
+      <Grid item xs={12}>
         <CustomFormLabel>Kits Solares Disponíveis</CustomFormLabel>
         <Grid container spacing={2}>
-          {availableKits.length > 0 ? (
-            availableKits.map((kit) => (
+          {kits && kits.length > 0 ? (
+            kits.map((kit) => (
               <Grid item xs={12} sm={6} md={6} key={kit.id}>
                 <Card
                   variant="outlined"
@@ -141,10 +159,10 @@ const ProposalForm = () => {
             </Typography>
           )}
         </Grid>
-      </Grid> */}
+      </Grid>
 
       <Box display="flex" justifyContent="flex-end" mt={3} width="100%">
-        <Button variant="outlined" color="secondary" sx={{ mr: 2 }}>
+        <Button variant="outlined" color="secondary" onClick={handleCloseForm} sx={{ mr: 2 }}>
           Cancelar
         </Button>
         <Button variant="contained" color="primary" onClick={handleSave}>

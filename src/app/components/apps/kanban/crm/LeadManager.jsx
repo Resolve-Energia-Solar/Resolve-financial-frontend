@@ -21,7 +21,6 @@ import ColumnWithActions from './LeadHeader';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import useLeadManager from '@/hooks/boards/useKanbanForm';
 import EditLeadPage from '../../leads/Edit-lead';
-import useLead from '@/hooks/leads/useLead';
 import ProposalManager from '../../proposal/proposal';
 import SaleListCards from '../../comercial/sale/components/salesList/cards';
 
@@ -140,15 +139,15 @@ const LeadManager = ({
                 <Box mt={2}>
                   {tabIndex === 0 && (
                     <>
-                      <LeadDetails selectedLead={selectedLead} onUpdateLead={() => setEditLead(true)} />
-                      
+                      <LeadDetails
+                        selectedLead={selectedLead}
+                        onUpdateLead={() => setEditLead(true)}
+                      />
                     </>
                   )}
-                  {tabIndex === 1 && <ProposalManager />}
+                  {tabIndex === 1 && <ProposalManager selectedLead={selectedLead} />}
 
-                  {tabIndex === 2 && (
-                    <SaleListCards leadId={selectedLead.id} />
-                  )}
+                  {tabIndex === 2 && <SaleListCards leadId={selectedLead.id} />}
                 </Box>
               </Grid>
             </Grid>
@@ -166,7 +165,6 @@ const LeadManager = ({
         </Alert>
       </Snackbar>
 
-      {/* Modal de edição de lead */}
       <Dialog open={editLead} onClose={() => setEditLead(false)} fullWidth maxWidth="xl">
         <DialogContent>
           <EditLeadPage leadId={selectedLead?.id} onClosedModal={() => setEditLead(false)} />
