@@ -20,7 +20,7 @@ import ColumnWithActions from './LeadHeader';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import useLeadManager from '@/hooks/boards/useKanbanForm';
 import EditLeadPage from '../../leads/Edit-lead';
-import ProposalManager from '../../proposal/proposal';
+import ProposalManager from '../../proposal';
 import SaleListCards from '../../comercial/sale/components/salesList/cards';
 
 const LeadManager = ({
