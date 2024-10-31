@@ -1,14 +1,26 @@
-import { Grid, TextField, Box, Button, Typography, Snackbar, Alert } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  Box,
+  Button,
+  Typography,
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogContent,
+} from '@mui/material';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import useProposalForm from '@/hooks/proposal/useProposalForm';
 import { useState, useEffect } from 'react';
 import KitSelectionCard from '../../kits/KitSelectionCard';
 import AddKitButton from '../../kits/AddKitCard';
+import AddKitForm from '../../kits/AddKitForm';
 
 const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
   const { formData, setFormData, handleChange, handleSave, formErrors, snackbar, closeSnackbar } =
     useProposalForm();
   const [selectedKitIds, setSelectedKitIds] = useState([]);
+  const [isAddKitModalOpen, setIsAddKitModalOpen] = useState(false);
 
   useEffect(() => {
     if (selectedLead) {
@@ -28,7 +40,17 @@ const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
   };
 
   const handleAddKit = () => {
-    console.log('Adicionar novo kit');
+    setIsAddKitModalOpen(true);
+  };
+
+  const handleAddKitSave = (newKitData) => {
+    console.log('Novo Kit Adicionado:', newKitData);
+    setSelectedKitIds((prevSelectedKits) => [...prevSelectedKits, newKitData.id]);
+    kits.push(newKitData);
+  };
+
+  const handleAddKitCancel = () => {
+    setIsAddKitModalOpen(false);
   };
 
   return (
@@ -72,9 +94,9 @@ const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
       <Grid item xs={12}>
         <CustomFormLabel>Kits Solares Disponíveis</CustomFormLabel>
 
-        <Grid container spacing={2}>
-          <Grid xs={12} sm={4} md={4}>
-            <Box display="flex" justifyContent="center" mt={2.5}>
+        <Grid container spacing={1.5}>
+          <Grid item xs={12} sm={4} md={4}>
+            <Box display="flex" justifyContent="center" mt={1}>
               <AddKitButton onClick={handleAddKit} />
             </Box>
           </Grid>
@@ -108,6 +130,7 @@ const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
           Salvar
         </Button>
       </Box>
+
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
@@ -118,6 +141,12 @@ const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      <Dialog open={isAddKitModalOpen} onClose={handleAddKitCancel} maxWidth="md" fullWidth>
+        <DialogContent dividers>
+          <AddKitForm handleAddKitSave={handleAddKitSave}  onCancel={handleAddKitCancel} />
+        </DialogContent>
+      </Dialog>
     </Grid>
   );
 };
