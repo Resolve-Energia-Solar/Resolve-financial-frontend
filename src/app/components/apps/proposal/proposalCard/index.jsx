@@ -14,7 +14,10 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import EditIcon from '@mui/icons-material/Edit';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import DescriptionIcon from '@mui/icons-material/Description';
-import StatusChip from '../../comercial/sale/components/DocumentStatusIcon';
+import EventIcon from '@mui/icons-material/Event';
+import BadgeIcon from '@mui/icons-material/Badge';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import StatusChip from '../DocumentStatusIcon/index';
 
 export default function ProposalCard({ proposal, handleEditProposal }) {
   const theme = useTheme();
@@ -41,6 +44,13 @@ export default function ProposalCard({ proposal, handleEditProposal }) {
           </Box>
 
           <Box display="flex" alignItems="center" mb={1}>
+            <BadgeIcon sx={{ color: theme.palette.secondary.main, mr: 1 }} />
+            <Typography variant="body1">
+              Vendedor: {proposal.lead.seller?.complete_name || 'N/A'}
+            </Typography>
+          </Box>
+
+          <Box display="flex" alignItems="center" mb={1}>
             <AttachMoneyIcon sx={{ color: theme.palette.success.main, mr: 1 }} />
             <Typography variant="body1">
               Valor Total:{' '}
@@ -54,8 +64,27 @@ export default function ProposalCard({ proposal, handleEditProposal }) {
           </Box>
 
           <Box display="flex" alignItems="center" mb={1}>
+            <AssignmentTurnedInIcon
+              sx={{
+                color:
+                  proposal.status === 'A'
+                    ? theme.palette.success.main
+                    : proposal.status === 'P'
+                    ? theme.palette.warning.main
+                    : theme.palette.error.main,
+                mr: 1,
+              }}
+            />
             <Typography variant="body1">
               Status: <StatusChip status={proposal.status} />
+            </Typography>
+          </Box>
+
+          <Box display="flex" alignItems="center" mb={1}>
+            <EventIcon sx={{ color: theme.palette.info.main, mr: 1 }} />
+            <Typography variant="body1">
+              Prazo para Aceitação:{' '}
+              {proposal.due_date ? new Date(proposal.due_date).toLocaleDateString('pt-BR') : 'N/A'}
             </Typography>
           </Box>
 
@@ -73,12 +102,12 @@ export default function ProposalCard({ proposal, handleEditProposal }) {
               <IconButton
                 variant="outlined"
                 color="primary"
-                onClick={() => handleEditProposal(proposal)}
+                onClick={() => console.log('Criar Venda')}
               >
                 <AddShoppingCartIcon />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Gerar Proposta">
+            <Tooltip title="Ver Proposta">
               <IconButton
                 color="primary"
                 onClick={() => console.log('Gerar proposta')}
