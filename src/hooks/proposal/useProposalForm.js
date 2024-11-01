@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
 import proposalService from '@/services/proposalService'
+import { useSelector } from 'react-redux'
 
 const useProposalForm = (initialData, id) => {
+  const user = useSelector(state => state.user?.user)
+
   const [formData, setFormData] = useState({
     lead_id: null,
     created_by_id: null,
@@ -35,22 +38,24 @@ const useProposalForm = (initialData, id) => {
   }
 
   const handleSave = async (selectedLead, selectedKitIds, handleCloseForm) => {
+    const formattedValue = parseFloat(formData.value)
+
     const dataToSend = {
       ...formData,
       lead_id: selectedLead,
-      created_by_id: formData.created_by_id,
+      created_by_id: user.id,
       due_date: formData.due_date,
-      value: formData.value,
+      value: formattedValue,
       status: 'P',
       observation: formData.observation,
-      kits: selectedKitIds,
+      kits_id: selectedKitIds,
     }
 
     if (!dataToSend.lead_id) {
       setSnackbar({ open: true, message: 'O campo "Lead" é obrigatório.', severity: 'warning' })
       return
     }
-    if (dataToSend.kits.length === 0) {
+    if (dataToSend.kits_id.length === 0) {
       setSnackbar({
         open: true,
         message: 'Selecione pelo menos um kit para a proposta.',
@@ -86,7 +91,7 @@ const useProposalForm = (initialData, id) => {
       value: formData.value,
       status: formData.status,
       observation: formData.observation,
-      kits: selectedKitIds,
+      kits_id: selectedKitIds,
     }
 
     if (!dataToSend.lead_id) {

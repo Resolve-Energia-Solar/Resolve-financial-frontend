@@ -16,7 +16,7 @@ import KitSelectionCard from '../../kits/KitSelectionCard';
 import AddKitButton from '../../kits/AddKitCard';
 import AddKitForm from '../../kits/AddKitForm';
 
-const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
+const ProposalForm = ({ kits, selectedLead, handleCloseForm, reloadKits }) => {
   const { formData, setFormData, handleChange, handleSave, formErrors, snackbar, closeSnackbar } =
     useProposalForm();
   const [selectedKitIds, setSelectedKitIds] = useState([]);
@@ -30,6 +30,16 @@ const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
       }));
     }
   }, [selectedLead]);
+
+  useEffect(() => {
+    const selectedKits = kits.filter((kit) => selectedKitIds.includes(kit.id));
+    const totalValue = selectedKits.reduce((sum, kit) => sum + Number(kit.price || 0), 0);
+
+    setFormData((prevData) => ({
+      ...prevData,
+      value: totalValue,
+    }));
+  }, [selectedKitIds, kits]);
 
   const handleKitSelection = (kitId) => {
     setSelectedKitIds((prevSelected) =>
@@ -47,6 +57,8 @@ const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
     console.log('Novo Kit Adicionado:', newKitData);
     setSelectedKitIds((prevSelectedKits) => [...prevSelectedKits, newKitData.id]);
     kits.push(newKitData);
+    reloadKits();
+    setIsAddKitModalOpen(false);
   };
 
   const handleAddKitCancel = () => {
@@ -74,12 +86,16 @@ const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
         <TextField
           fullWidth
           label="Valor da Proposta"
-          type="number"
-          value={formData.value || ''}
+          value={`R$ ${(Number(formData.value) || 0).toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}`}
           onChange={(e) => handleChange('value', e.target.value)}
           {...(formErrors.value && { error: true, helperText: formErrors.value })}
+          disabled
         />
       </Grid>
+
       <Grid item xs={12}>
         <TextField
           fullWidth
@@ -144,7 +160,7 @@ const ProposalForm = ({ kits, selectedLead, handleCloseForm }) => {
 
       <Dialog open={isAddKitModalOpen} onClose={handleAddKitCancel} maxWidth="md" fullWidth>
         <DialogContent dividers>
-          <AddKitForm handleAddKitSave={handleAddKitSave}  onCancel={handleAddKitCancel} />
+          <AddKitForm onSave={handleAddKitSave} onCancel={handleAddKitCancel} />
         </DialogContent>
       </Dialog>
     </Grid>

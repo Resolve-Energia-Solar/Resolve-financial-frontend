@@ -1,9 +1,9 @@
 import { Grid, TextField, Box, Button, Typography, Snackbar, Alert, Switch } from '@mui/material';
 import useKitForm from '@/hooks/kits/usekitForm';
 import AutoCompleteBranch from '../../comercial/sale/components/auto-complete/Auto-Input-Branch';
-import AutoCompleteInversor from '../../materials/autoCompleteInversor';
 import AutoCompleteModule from '../../materials/autoCompleteModule';
-
+import AutoCompleteInversor from '../../materials/autoCompleteInversor';
+import AutoCompleteRoofType from '../../roof/autoCompleteRoof';
 const AddKitForm = ({ onCancel, onSave }) => {
   const { formData, handleChange, handleSave, formErrors, snackbar, closeSnackbar } = useKitForm();
 
@@ -44,14 +44,10 @@ const AddKitForm = ({ onCancel, onSave }) => {
           />
         </Grid>
         <Grid item xs={6}>
-          <TextField
-            label="Tipo de Telhado (Roof Type ID)"
-            fullWidth
-            required
+          <AutoCompleteRoofType
+            onChange={(id) => handleChange('roof_type_id', id)}
             value={formData.roof_type_id}
-            onChange={(e) => handleChange('roof_type_id', e.target.value)}
-            error={!!formErrors.roof_type_id}
-            helperText={formErrors.roof_type_id}
+            {...(formErrors.roof_type_id && { error: true, helperText: formErrors.roof_type_id })}
           />
         </Grid>
         <Grid item xs={6}>

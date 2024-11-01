@@ -27,12 +27,12 @@ const ProposalManager = ({ selectedLead }) => {
 
   const { kits, loading, error } = useKitSolar();
 
-  useEffect(() => {
-    const fetchProposals = async () => {
-      const fetchedProposals = await ProposalService.getProposalByLead(selectedLead.id);
-      setProposals(fetchedProposals.results);
-    };
+  const fetchProposals = async () => {
+    const fetchedProposals = await ProposalService.getProposalByLead(selectedLead.id);
+    setProposals(fetchedProposals.results);
+  };
 
+  useEffect(() => {
     if (selectedLead) fetchProposals();
   }, [selectedLead]);
 
@@ -51,6 +51,7 @@ const ProposalManager = ({ selectedLead }) => {
   const handleCloseForm = () => {
     setIsFormVisible(false);
     setSelectedProposal(null);
+    fetchProposals();
   };
 
   const closeSnackbar = () => {
