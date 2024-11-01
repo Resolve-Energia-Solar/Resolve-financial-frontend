@@ -23,16 +23,22 @@ import EventIcon from '@mui/icons-material/Event';
 import BadgeIcon from '@mui/icons-material/Badge';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import StatusChip from '../DocumentStatusIcon/index';
+import CreateSale from '../../leads/Add-lead';
 
 export default function ProposalCard({ proposal, handleEditProposal }) {
   const theme = useTheme();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
   const [proposalHTML, setProposalHTML] = useState('');
   const [error, setError] = useState(null);
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setProposalHTML('');
+  };
+
+  const handleOpenCreateSale = () => {
+    setCreateModalOpen(true);
   };
 
   const handleGenerateProposal = async (proposal) => {
@@ -151,7 +157,7 @@ export default function ProposalCard({ proposal, handleEditProposal }) {
               <IconButton
                 variant="outlined"
                 color="primary"
-                onClick={() => console.log('Criar Venda')}
+                onClick={handleOpenCreateSale}
               >
                 <AddShoppingCartIcon />
               </IconButton>
@@ -169,6 +175,14 @@ export default function ProposalCard({ proposal, handleEditProposal }) {
               </IconButton>
             </Tooltip>
           </Box>
+
+          <Dialog open={createModalOpen} onClose={() => setCreateModalOpen(false)}>
+            <DialogTitle>Nova Venda</DialogTitle>
+            <DialogContent>
+              <CreateSale onClosedModal={() => setCreateModalOpen(false)} />
+            </DialogContent>
+          </Dialog>
+
           <Dialog open={dialogOpen} onClose={handleCloseDialog} fullWidth maxWidth="md">
             <DialogTitle>Proposta Gerada</DialogTitle>
             <DialogContent>
