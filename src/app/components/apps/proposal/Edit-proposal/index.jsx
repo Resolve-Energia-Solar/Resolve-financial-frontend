@@ -22,7 +22,6 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal }) => 
   const [selectedKitIds, setSelectedKitIds] = useState([]);
 
   useEffect(() => {
-    console.log('proposal', proposal);
     if (proposal) {
       setFormData({
         lead_id: proposal.leadId || selectedLead.id,

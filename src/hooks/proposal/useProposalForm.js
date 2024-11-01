@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
 import proposalService from '@/services/proposalService'
+import { useSelector } from 'react-redux'
 
 const useProposalForm = (initialData, id) => {
+  const user = useSelector(state => state.user?.user)
+
   const [formData, setFormData] = useState({
     lead_id: null,
     created_by_id: null,
@@ -35,23 +38,29 @@ const useProposalForm = (initialData, id) => {
   }
 
   const handleSave = async (selectedLead, selectedKitIds, handleCloseForm) => {
+    const formattedValue = parseFloat(formData.value)
+
     const dataToSend = {
       ...formData,
       lead_id: selectedLead,
-      created_by_id: formData.created_by_id,
+      created_by_id: user.id,
       due_date: formData.due_date,
-      value: formData.value,
-      status: formData.status,
+      value: formattedValue,
+      status: 'P',
       observation: formData.observation,
-      kits: selectedKitIds,
+      kits_id: selectedKitIds,
     }
 
     if (!dataToSend.lead_id) {
-      alert('O campo "Lead" é obrigatório.')
+      setSnackbar({ open: true, message: 'O campo "Lead" é obrigatório.', severity: 'warning' })
       return
     }
-    if (dataToSend.kits.length === 0) {
-      alert('Selecione pelo menos um kit para a proposta.')
+    if (dataToSend.kits_id.length === 0) {
+      setSnackbar({
+        open: true,
+        message: 'Selecione pelo menos um kit para a proposta.',
+        severity: 'warning',
+      })
       return
     }
 
@@ -82,36 +91,39 @@ const useProposalForm = (initialData, id) => {
       value: formData.value,
       status: formData.status,
       observation: formData.observation,
-      kits: selectedKitIds,
-    };
-  
+      kits_id: selectedKitIds,
+    }
+
     if (!dataToSend.lead_id) {
-      alert('O campo "Lead" é obrigatório.');
-      return;
+      setSnackbar({ open: true, message: 'O campo "Lead" é obrigatório.', severity: 'warning' })
+      return
     }
     if (dataToSend.kits.length === 0) {
-      alert('Selecione pelo menos um kit para a proposta.');
-      return;
+      setSnackbar({
+        open: true,
+        message: 'Selecione pelo menos um kit para a proposta.',
+        severity: 'warning',
+      })
+      return
     }
-  
+
     try {
-      await proposalService.updateProposal(id, dataToSend); // Usa o `id` fornecido
-      setFormErrors({});
-      setSuccess(true);
-      setSnackbar({ open: true, message: 'Proposta atualizada com sucesso!', severity: 'success' });
+      await proposalService.updateProposal(id, dataToSend)
+      setFormErrors({})
+      setSuccess(true)
+      setSnackbar({ open: true, message: 'Proposta atualizada com sucesso!', severity: 'success' })
       if (handleCloseForm) {
         setTimeout(() => {
-          handleCloseForm();
-        }, 4000);
+          handleCloseForm()
+        }, 4000)
       }
     } catch (err) {
-      setSuccess(false);
-      setFormErrors(err.response?.data || {});
-      setSnackbar({ open: true, message: 'Erro ao atualizar proposta.', severity: 'error' });
-      console.error(err.response?.data || err);
+      setSuccess(false)
+      setFormErrors(err.response?.data || {})
+      setSnackbar({ open: true, message: 'Erro ao atualizar proposta.', severity: 'error' })
+      console.error(err.response?.data || err)
     }
-  };
-  
+  }
 
   const closeSnackbar = () => {
     setSnackbar(prev => ({ ...prev, open: false }))
