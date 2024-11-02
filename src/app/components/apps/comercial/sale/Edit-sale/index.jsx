@@ -1,5 +1,16 @@
 'use client';
-import { Grid, Button, Stack, FormControlLabel, Tabs, Tab, Box, Typography, CircularProgress, Alert } from '@mui/material';
+import {
+  Grid,
+  Button,
+  Stack,
+  FormControlLabel,
+  Tabs,
+  Tab,
+  Box,
+  Typography,
+  CircularProgress,
+  Alert,
+} from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
@@ -20,6 +31,8 @@ import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
 import { useState } from 'react';
 import PaymentCard from '../../../invoice/components/paymentList/card';
+import ProjectListCards from '../../../project/components/projectList/cards';
+import projectService from '@/services/projectService';
 
 const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
   const params = useParams();
@@ -67,6 +80,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
         <Tab label="Venda" />
         <Tab label="Anexos" />
         <Tab label="Pagamentos" />
+        <Tab label="Projetos" />
       </Tabs>
       {success && (
         <Alert severity="success" sx={{ mt: 2 }}>
@@ -104,7 +118,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
                 <CustomFormLabel htmlFor="branch">Franquia</CustomFormLabel>
                 <AutoCompleteBranch
                   onChange={(id) => handleChange('branchId', id)}
-                  disabled={!hasPermission(['accounts.can_change_branch_field'])}
+                  disabled={!hasPermission(['accounts.change_branch_field'])}
                   value={formData.branchId}
                   {...(formErrors.branch_id && { error: true, helperText: formErrors.branch_id })}
                 />
@@ -114,7 +128,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
                 <AutoCompleteUser
                   onChange={(id) => handleChange('sellerId', id)}
                   value={formData.sellerId}
-                  disabled={!hasPermission(['accounts.can_change_seller_field'])}
+                  disabled={!hasPermission(['accounts.change_seller_field'])}
                   {...(formErrors.seller_id && { error: true, helperText: formErrors.seller_id })}
                 />
               </Grid>
@@ -123,7 +137,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
                 <AutoCompleteUser
                   onChange={(id) => handleChange('salesSupervisorId', id)}
                   value={formData.salesSupervisorId}
-                  disabled={!hasPermission(['accounts.can_change_supervisor_field'])}
+                  disabled={!hasPermission(['accounts.change_supervisor_field'])}
                   {...(formErrors.sales_supervisor_id && {
                     error: true,
                     helperText: formErrors.sales_supervisor_id,
@@ -135,7 +149,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
                 <AutoCompleteUser
                   onChange={(id) => handleChange('salesManagerId', id)}
                   value={formData.salesManagerId}
-                  disabled={!hasPermission(['accounts.can_change_usermanger_field'])}
+                  disabled={!hasPermission(['accounts.change_usermanager_field'])}
                   {...(formErrors.sales_manager_id && {
                     error: true,
                     helperText: formErrors.sales_manager_id,
@@ -210,21 +224,28 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
               <PaymentCard sale={id_sale} />
             </Box>
           )}
+
+          {value === 3 && <ProjectListCards saleId={id_sale} />}
+
+
+
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             {onClosedModal && (
               <Button variant="contained" color="primary" onClick={onClosedModal}>
                 Fechar
               </Button>
             )}
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSave}
-              disabled={formLoading}
-              endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-            >
-              {formLoading ? 'Salvando...' : 'Salvar Alterações'}{' '}
-            </Button>
+            {value === 0 && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSave}
+                disabled={formLoading}
+                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+              >
+                {formLoading ? 'Salvando...' : 'Salvar Alterações'}
+              </Button>
+            )}
           </Stack>
         </>
       )}

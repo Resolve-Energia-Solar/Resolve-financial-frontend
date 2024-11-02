@@ -19,7 +19,7 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import StatusChip from '../DocumentStatusIcon/index';
 
-export default function ProposalCard({ proposal, handleEditProposal }) {
+export default function ProposalCard({ proposal, handleEditProposal, onAddSale }) {
   const theme = useTheme();
 
   return (
@@ -102,7 +102,7 @@ export default function ProposalCard({ proposal, handleEditProposal }) {
               <IconButton
                 variant="outlined"
                 color="primary"
-                onClick={() => console.log('Criar Venda')}
+                onClick={() => onAddSale(proposal)}
               >
                 <AddShoppingCartIcon />
               </IconButton>

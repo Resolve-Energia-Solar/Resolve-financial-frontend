@@ -69,7 +69,7 @@ const CreateSale = ({ onClosedModal = null }) => {
           <AutoCompleteBranch
             onChange={(id) => handleChange('branchId', id)}
             value={formData.branchId}
-            disabled={!hasPermission(['accounts.can_change_branch_field'])}
+            disabled={!hasPermission(['accounts.change_branch_field'])}
             {...(formErrors.branch_id && { error: true, helperText: formErrors.branch_id })}
           />
         </Grid>
@@ -79,7 +79,7 @@ const CreateSale = ({ onClosedModal = null }) => {
           <AutoCompleteUser
             onChange={(id) => handleChange('sellerId', id)}
             value={formData.sellerId}
-            disabled={!hasPermission(['accounts.can_change_seller_field'])}
+            disabled={!hasPermission(['accounts.change_seller_field'])}
             {...(formErrors.seller_id && { error: true, helperText: formErrors.seller_id })}
           />
         </Grid>
@@ -89,7 +89,7 @@ const CreateSale = ({ onClosedModal = null }) => {
           <AutoCompleteUser
             onChange={(id) => handleChange('salesSupervisorId', id)}
             value={formData.salesSupervisorId}
-            disabled={!hasPermission(['accounts.can_change_supervisor_field'])}
+            disabled={!hasPermission(['accounts.change_supervisor_field'])}
             {...(formErrors.sales_supervisor_id && {
               error: true,
               helperText: formErrors.sales_supervisor_id,
@@ -102,7 +102,7 @@ const CreateSale = ({ onClosedModal = null }) => {
           <AutoCompleteUser
             onChange={(id) => handleChange('salesManagerId', id)}
             value={formData.salesManagerId}
-            disabled={!hasPermission(['accounts.can_change_usermanger_field'])}
+            disabled={!hasPermission(['accounts.change_usermanager_field'])}
             {...(formErrors.sales_manager_id && {
               error: true,
               helperText: formErrors.sales_manager_id,

@@ -7,16 +7,20 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  useTheme,
 } from '@mui/material';
-import { Add as AddIcon } from '@mui/icons-material';
+import { Add as AddIcon, CallToAction, FlashAuto, SolarPower } from '@mui/icons-material';
 import ProposalForm from './Add-proposal';
 import ProposalEditForm from './Edit-proposal/index';
 import ProposalCard from './proposalCard/index';
 import { useState, useEffect } from 'react';
 import useKitSolar from '@/hooks/kits/useKitSolar';
 import ProposalService from '@/services/proposalService';
+import CustomFormLabel from '../../forms/theme-elements/CustomFormLabel';
+import FormPreSale from './components/formPreSale/FormPreSale';
 
 const ProposalManager = ({ selectedLead }) => {
+  const theme = useTheme();
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedProposal, setSelectedProposal] = useState(null);
@@ -24,6 +28,9 @@ const ProposalManager = ({ selectedLead }) => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [proposals, setProposals] = useState([]);
+  const [isSaleModalOpen, setSaleModalOpen] = useState(false);
+
+  console.log('selectedProposal', selectedProposal);
 
   const { kits, loading, error } = useKitSolar();
 
@@ -48,6 +55,11 @@ const ProposalManager = ({ selectedLead }) => {
     setSelectedProposal(proposal);
   };
 
+  const handleAddSale = (proposal) => {
+    setSaleModalOpen(true);
+    setSelectedProposal(proposal);
+  };
+
   const handleCloseForm = () => {
     setIsFormVisible(false);
     setSelectedProposal(null);
@@ -67,6 +79,7 @@ const ProposalManager = ({ selectedLead }) => {
                 handleEditProposal={handleEditProposal}
                 key={proposal.id}
                 proposal={proposal}
+                onAddSale={handleAddSale}
               />
             ))
           ) : (
@@ -110,6 +123,19 @@ const ProposalManager = ({ selectedLead }) => {
               error={error}
             />
           )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={isSaleModalOpen}
+        onClose={() => setSaleModalOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Gerar Pré-Venda</DialogTitle>
+
+        <DialogContent dividers>
+          <FormPreSale selectedProposal={selectedProposal} />
         </DialogContent>
       </Dialog>
 
