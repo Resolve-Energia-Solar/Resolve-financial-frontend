@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Card,
@@ -8,6 +8,11 @@ import {
   Tooltip,
   IconButton,
   useTheme,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogActions,
+  Button,
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
@@ -18,9 +23,59 @@ import EventIcon from '@mui/icons-material/Event';
 import BadgeIcon from '@mui/icons-material/Badge';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import StatusChip from '../DocumentStatusIcon/index';
+import CreateSale from '../../leads/Add-lead';
 
 export default function ProposalCard({ proposal, handleEditProposal, onAddSale }) {
   const theme = useTheme();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [proposalHTML, setProposalHTML] = useState('');
+  const [error, setError] = useState(null);
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setProposalHTML('');
+  };
+
+  const handleOpenCreateSale = () => {
+    setCreateModalOpen(true);
+  };
+
+  const handleGenerateProposal = async (proposal) => {
+    try {
+      const response = await fetch('/api/proposal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          customer: proposal.lead?.name || 'N/A',
+          seller: proposal.lead.seller?.complete_name || 'N/A',
+          total_value: proposal.value
+            ? new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(proposal.value)
+            : 'N/A',
+          due_date: proposal.due_date
+            ? new Date(proposal.due_date).toLocaleDateString('pt-BR')
+            : 'N/A',
+          status: proposal.status,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Falha ao gerar proposta');
+      }
+
+      const data = await response.text();
+      setProposalHTML(data);
+      setDialogOpen(true);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || 'Erro ao gerar proposta');
+    }
+  };
 
   return (
     <Grid item xs={12} key={proposal.id}>
@@ -110,7 +165,7 @@ export default function ProposalCard({ proposal, handleEditProposal, onAddSale }
             <Tooltip title="Ver Proposta">
               <IconButton
                 color="primary"
-                onClick={() => console.log('Gerar proposta')}
+                onClick={() => handleGenerateProposal(proposal)}
                 sx={{
                   borderRadius: '8px',
                   padding: '8px',
@@ -120,6 +175,29 @@ export default function ProposalCard({ proposal, handleEditProposal, onAddSale }
               </IconButton>
             </Tooltip>
           </Box>
+
+          <Dialog open={createModalOpen} onClose={() => setCreateModalOpen(false)}>
+            <DialogTitle>Nova Venda</DialogTitle>
+            <DialogContent>
+              <CreateSale onClosedModal={() => setCreateModalOpen(false)} />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={dialogOpen} onClose={handleCloseDialog} fullWidth maxWidth="md">
+            <DialogTitle>Proposta Gerada</DialogTitle>
+            <DialogContent>
+              {error ? (
+                <Typography color="error">{error}</Typography>
+              ) : (
+                <div dangerouslySetInnerHTML={{ __html: proposalHTML }} />
+              )}
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDialog} color="primary">
+                Fechar
+              </Button>
+            </DialogActions>
+          </Dialog>
         </CardContent>
       </Card>
     </Grid>
