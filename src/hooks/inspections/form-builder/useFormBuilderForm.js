@@ -12,6 +12,16 @@ const useFormBuilderForm = (initialData, id) => {
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
 
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        service_id: initialData.service?.id || null,
+        form_name: initialData.name || '',
+        form_fields: JSON.parse(initialData.campos) || [],
+      });
+    }
+  }, [initialData]);
+
   const handleChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,

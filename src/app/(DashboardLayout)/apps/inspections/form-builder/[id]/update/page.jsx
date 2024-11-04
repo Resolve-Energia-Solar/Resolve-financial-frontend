@@ -3,7 +3,7 @@ import React, {
   useState,
   useEffect,
 } from "react";
-import { useRouter } from 'next/navigation';
+import { useParams } from "next/navigation";
 import { v4 as uuidv4 } from 'uuid';
 
 /* material */
@@ -13,7 +13,7 @@ import {
   Stack,
   Alert,
   MenuItem
-} from '@mui/material';
+} from "@mui/material";
 
 /* components */
 import AutoCompleteServiceCatalog from "@/app/components/apps/inspections/auto-complete/Auto-input-Service";
@@ -28,76 +28,71 @@ import FBTextType from "@/app/components/apps/inspections/form-builder/FBTextTyp
 import FBSelectType from "@/app/components/apps/inspections/form-builder/FBSelectType";
 
 /* hooks */
+import useFormBuilder from "@/hooks/inspections/form-builder/useFormBuilder";
 import useFormBuilderForm from "@/hooks/inspections/form-builder/useFormBuilderForm";
 
 const FormBuilderForm = () => {
-  const router = useRouter();
+  const params = useParams();
+  const { id } = params;
+
+  const { loading, error, formBuilderData } = useFormBuilder(id);
 
   const optionsFB = fbOptions;
-
-  const [fields, setFields] = useState([]);
-
-  const addField = () => {
-    const newFields = {
-      id: uuidv4(),
-      label: '',
-      description: '',
-      type: 'text',
-      required: false,
-      options: [],
-    };
-    setFields([...fields, newFields]);
-  }
-
-  const removeField = (id) => {
-    setFields(fields.filter(field => field.id !== id));
-  };
-
-  const handleFieldChange = (id, event) => {
-    const { name, value } = event.target;
-    const updatedFields = fields.map(field => 
-      field.id === id ? { ...field, [name]: value } : field
-    );
-    console.log(updatedFields);
-    setFields(updatedFields);
-  };
-
-  const handleClearFields = () => {
-    setFields([]);
-  };
-
-  const handleSubmit = () => {
-    const formJSON = JSON.stringify(fields);
-    console.log(formJSON);
-  };
 
   const {
     formData,
     handleChange,
     handleSave,
     formErrors,
-    success
-  } = useFormBuilderForm();
+    success,
+  } = useFormBuilderForm(formBuilderData, id);
 
-  useEffect(() => {
-    if (success) {
-      router.push('/apps/inspections/form-builder');
-    }
-  }, [success, router]);
+  if (loading) return <div>Carregando...</div>;
+  if (error) return <div>{error}</div>;
 
-  useEffect(() => {
-    handleChange('form_fields', fields);
-  }, [fields]);
+  const handleClearFields = () => {
+    handleChange("form_fields", []);
+  };
+
+  const addField = () => {
+    const newField = {
+      id: uuidv4(),
+      label: "",
+      description: "",
+      type: "text",
+      required: false,
+      options: [],
+    };
+
+    handleChange("form_fields", [...formData.form_fields, newField]);
+  };
+
+  const removeField = (id) => {
+    const updatedFields = formData.form_fields.filter(field => field.id !== id);
+    handleChange("form_fields", updatedFields);
+  };
+
+  const handleFieldChange = (id, event) => {
+    const { name, value } = event.target;
+    const updatedFields = formData.form_fields.map(field => 
+      field.id === id ? { ...field, [name]: value } : field
+    );
+    handleChange("form_fields", updatedFields);
+  };
 
   return (
-    <PageContainer title='Criação de Formulário'>
-      <Breadcrumb
-        title="Criar Formulário"
-        description="Criador de Formulários"
-      />
-      {success && <Alert severity="success" sx={{ marginBottom: 3 }}>Formulário criado com sucesso!</Alert>}
-      <ParentCard
-        title='Novo Formulário'
+    <PageContainer
+      title={"Edição de Formulário"}
+      description={"Editor de Formulário"}
+    >
+      <Breadcrumb title={"Editar Formulário"} />
+      {success && (
+        <Alert severity="success" sx={{ marginBottom: 3 }}>
+          Formulário atualizado com sucesso!
+        </Alert>
+      )}
+      <ParentCard 
+        title="Formulário"
         footer={
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button
@@ -121,7 +116,6 @@ const FormBuilderForm = () => {
         }
       >
         <Grid container spacing={3}>
-
           {/* Name */}
           <Grid item xs={12} sm={12} lg={6}>
             <CustomFormLabel
@@ -132,8 +126,9 @@ const FormBuilderForm = () => {
             <CustomTextField
               name="form_name"
               variant="outlined"
-              required
+              required={true}
               fullWidth
+              value={formData.form_name}
               onChange={(e) => handleChange('form_name', e.target.value)}
               {...(formErrors.form_name && { error: true, helperText: formErrors.form_name })}
             />
@@ -149,6 +144,7 @@ const FormBuilderForm = () => {
             <AutoCompleteServiceCatalog
               onChange={(id) => handleChange('service_id', id)}
               value={formData.service_id}
+              required={true}
               fullWidth
               {...(formErrors.service_id && {
                 error: true,
@@ -156,7 +152,7 @@ const FormBuilderForm = () => {
               })}
             />
           </Grid>
-          
+
           {/* Add Field Button */}
           <Grid item xs={12} sm={12} lg={12} justifyContent="center" mt={2}>
             <Stack direction="row" spacing={2} justifyContent="center">
@@ -169,7 +165,7 @@ const FormBuilderForm = () => {
               </Button>
             </Stack>
           </Grid>
-          
+
           <Grid item xs={12} sm={12} lg={12}>
             <Alert severity="info">
               Pré visualização do Formulário
@@ -178,7 +174,7 @@ const FormBuilderForm = () => {
 
           {/* Fields Preview */}
           <Grid item xs={12} sm={12} lg={12}>
-            {fields.map((field) => (
+            {formData.form_fields.map((field) => (
               <ParentCard
                 title={`Novo Campo`}
                 key={field.id}

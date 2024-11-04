@@ -67,7 +67,7 @@ const FormBuilderList = () => {
   }
 
   const handleEditClick = (id) => {
-    //router.push(`/apps/inspections/deadline/${id}/update`);
+    router.push(`/apps/inspections/form-builder/${id}/update`);
   }
 
   const handleDeleteClick = (form) => {
