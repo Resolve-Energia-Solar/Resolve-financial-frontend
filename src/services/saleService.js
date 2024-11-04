@@ -14,6 +14,10 @@ const saleService = {
         console.log(response.data);
         return response.data;
     },
+    createPreSale: async (data) => {
+        const response = await apiClient.post(`/api/generate-pre-sale/`, data);
+        return response.data;
+    },
     getSaleById: async (id) => { 
         const response = await apiClient.get(`/api/sales/${id}/`);
         return response.data;

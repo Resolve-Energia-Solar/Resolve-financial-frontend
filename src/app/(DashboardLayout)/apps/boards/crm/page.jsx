@@ -5,6 +5,7 @@ import BlankCard from '@/app/components/shared/BlankCard';
 import KanbanHeader from '@/app/components/apps/kanban/crm/KanbanHeader';
 import useKanban from '@/hooks/boards/useKanban';
 import LeadManager from '@/app/components/apps/kanban/crm/LeadManager';
+import { KanbanDataContextProvider } from '@/app/context/kanbancontext';
 
 function KanbanPage() {
   const {
@@ -24,6 +25,7 @@ function KanbanPage() {
   } = useKanban();
 
   return (
+    <KanbanDataContextProvider>
     <BlankCard>
       <CardContent>
         <KanbanHeader
@@ -72,6 +74,7 @@ function KanbanPage() {
         </Snackbar>
       </CardContent>
     </BlankCard>
+    </KanbanDataContextProvider>
   );
 }
 

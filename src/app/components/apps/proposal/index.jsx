@@ -136,7 +136,7 @@ const ProposalManager = ({ selectedLead }) => {
         <DialogTitle>Gerar Pré-Venda</DialogTitle>
 
         <DialogContent dividers>
-          <FormPreSale selectedProposal={selectedProposal} />
+          <FormPreSale selectedProposal={selectedProposal} onClose={() => setSaleModalOpen(false)} />
         </DialogContent>
       </Dialog>
 

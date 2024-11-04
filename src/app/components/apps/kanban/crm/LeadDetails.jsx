@@ -166,17 +166,19 @@ const LeadDetails = ({ selectedLead, onUpdateLead }) => {
 
   return (
     <Grid container spacing={3} alignItems="flex-start">
-      <Grid item xs={8}>
+      <Grid item xs={onUpdateLead ? 8 : 12}>
         {renderSection('Informações Pessoais', personalDetails)}
         {renderSection('Documentos', documentDetails)}
         {renderSection('Contato', contactDetails)}
         {renderSection('Outros Detalhes', otherDetails)}
       </Grid>
+      { onUpdateLead && (
       <Grid item xs={4}>
         <Button variant="contained" color="primary" fullWidth onClick={onUpdateLead}>
           Editar
         </Button>
       </Grid>
+      )}
     </Grid>
   );
 };

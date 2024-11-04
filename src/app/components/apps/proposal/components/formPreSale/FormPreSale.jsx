@@ -1,7 +1,10 @@
-import { Box, Card, CardContent, Tab, Tabs, Typography, useTheme } from '@mui/material';
+import { Box, Button, Card, CardContent, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import { CallToAction, FlashAuto, SolarPower } from '@mui/icons-material';
 import { useState } from 'react';
-import FormCustomer from './FormCustomer';
+import saleService from '@/services/saleService';
+import LeadDetails from '../../../kanban/crm/LeadDetails';
+import { useContext } from 'react';
+import { KanbanDataContext } from '@/app/context/kanbancontext';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -12,12 +15,37 @@ function TabPanel(props) {
   );
 }
 
-function FormPreSale({ selectedProposal }) {
+function FormPreSale({ selectedProposal, onClose }) {
   const theme = useTheme();
   const [value, setValue] = useState(0);
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const { idSaleSuccess, setIdSaleSuccess } = useContext(KanbanDataContext);
 
   const handleChangeTab = (event, newValue) => {
     setValue(newValue);
+  };
+
+
+  const sendData = {
+    lead_id: selectedProposal.lead.id,
+    kits: selectedProposal.kits.map((kit) => kit),
+  };
+
+  const handleCreatePreSale = async () => {
+    setLoading(true);
+    try {
+      const response = await saleService.createPreSale(sendData);
+      setSuccess(true);
+      setIdSaleSuccess(response.pre_sale_id);
+      onClose();
+    } catch (error) {
+      console.log(error);
+      setSuccess(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -25,10 +53,8 @@ function FormPreSale({ selectedProposal }) {
       <Tabs value={value} onChange={handleChangeTab} sx={{ paddingBottom: 2 }}>
         <Tab label="Projetos" />
         <Tab label="Cliente" />
-        <Tab label="Pagamentos" />
       </Tabs>
 
-      {/* Renderização condicional com CSS para ocultar abas em vez de desmontá-las */}
       <TabPanel value={value} index={0}>
         {selectedProposal?.kits.map((kit) => (
           <Card
@@ -70,14 +96,21 @@ function FormPreSale({ selectedProposal }) {
       </TabPanel>
 
       <TabPanel value={value} index={1}>
-        <FormCustomer />
+        <LeadDetails selectedLead={selectedProposal.lead} />
       </TabPanel>
 
-      <TabPanel value={value} index={2}>
-        <Typography variant="h6">Seção de Pagamentos em desenvolvimento</Typography>
-      </TabPanel>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleCreatePreSale}
+        sx={{ mt: 2 }}
+        disabled={loading}
+      >
+        {loading ? 'Aguarde...' : 'Criar Pré-venda'}
+      </Button>
     </Box>
   );
 }
 
 export default FormPreSale;
+

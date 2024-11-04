@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Box,
   Snackbar,
@@ -22,6 +22,7 @@ import useLeadManager from '@/hooks/boards/useKanbanForm';
 import EditLeadPage from '../../leads/Edit-lead';
 import ProposalManager from '../../proposal';
 import SaleListCards from '../../comercial/sale/components/salesList/cards';
+import { KanbanDataContext } from '@/app/context/kanbancontext';
 
 const LeadManager = ({
   leads,
@@ -34,6 +35,9 @@ const LeadManager = ({
 }) => {
   const theme = useTheme();
   const [editLead, setEditLead] = useState(false);
+
+  const { idSaleSuccess, setIdSaleSuccess } = useContext(KanbanDataContext);
+
 
   const {
     leadsList,
@@ -53,6 +57,12 @@ const LeadManager = ({
     onAddLead,
     onDeleteLead,
   });
+
+  useEffect(() => {
+    if (idSaleSuccess !== null) {
+      setTabIndex(2);
+    }
+  }, [idSaleSuccess]);
 
   const statusColors = {
     'Novo Lead': theme.palette.info.light,

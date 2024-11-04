@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   Grid,
   Button,
@@ -24,6 +24,7 @@ import saleService from '@/services/saleService';
 import EditSalePage from '../../Edit-sale';
 import SaleDetailPage from '../../Sale-detail';
 import CreateSale from '../../Add-sale';
+import { KanbanDataContext } from '@/app/context/kanbancontext';
 
 const SaleListCards = ({ leadId = null }) => {
   const theme = useTheme();
@@ -34,9 +35,12 @@ const SaleListCards = ({ leadId = null }) => {
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
+  const { idSaleSuccess, setIdSaleSuccess } = useContext(KanbanDataContext);
+
   const handleEditClick = (id) => {
     setSelectedSaleId(id);
     setEditModalOpen(true);
+    console.log('Edit Sale ID: ', id);
   };
 
   const handleDetailClick = (id) => {
@@ -47,6 +51,13 @@ const SaleListCards = ({ leadId = null }) => {
   const handleCreateClick = () => {
     setCreateModalOpen(true);
   };
+
+  useEffect(() => {
+    if (idSaleSuccess !== null) {
+      handleEditClick(idSaleSuccess);
+      setIdSaleSuccess(null);
+    }
+  }, [idSaleSuccess]);
 
   useEffect(() => {
     const fetchData = async () => {
