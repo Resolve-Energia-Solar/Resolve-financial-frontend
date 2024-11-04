@@ -61,6 +61,7 @@ const useScheduleForm = (initialData, id) => {
         schedule_date: initialData.schedule_date || '',
         schedule_start_time: startTime || '',
         schedule_end_time: initialData.schedule_end_time || '',
+        address_id: initialData.address?.id || null,
         latitude: initialData.latitude || null,
         longitude: initialData.longitude || null,
         status: initialData.status || 'Pendente',
@@ -95,7 +96,7 @@ const useScheduleForm = (initialData, id) => {
         try {
           const projectInfo = await projectService.getProjectById(formData.project_id);
 
-          if (projectInfo?.addresses?.length > 0) {
+          if (projectInfo?.addresses?.length > 0 && !formData.address_id) {
             setFormData((prev) => ({
               ...prev,
               address_id: projectInfo.addresses[0]?.id,
@@ -186,6 +187,7 @@ const useScheduleForm = (initialData, id) => {
       schedule_date: formData.schedule_date,
       schedule_start_time: formatTime(formData.schedule_start_time),
       schedule_end_time: formatTime(formData.schedule_end_time),
+      address_id: formData.address_id,
       latitude: formData.latitude,
       longitude: formData.longitude,
       status: formData.status,

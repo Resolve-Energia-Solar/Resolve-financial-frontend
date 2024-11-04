@@ -63,7 +63,7 @@ const FormBuilderList = () => {
   }, []);
 
   const handleCreateClick = () => {
-    //router.push('/apps/inspections/deadline/create');
+    router.push('/apps/inspections/form-builder/create');
   }
 
   const handleEditClick = (id) => {
