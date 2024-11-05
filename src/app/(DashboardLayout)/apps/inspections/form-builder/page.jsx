@@ -25,6 +25,7 @@ import {
   IconButton,
   Paper,
   Box,
+  TablePagination,
 } from "@mui/material";
 import {
   AddBoxRounded,
@@ -45,6 +46,10 @@ const FormBuilderList = () => {
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [formToDelete, setFormToDelete] = useState(null);
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -90,6 +95,15 @@ const FormBuilderList = () => {
     } finally {
       handleCloseModal();
     }
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   return (
@@ -169,7 +183,7 @@ const FormBuilderList = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {formList.map((form) => (
+                  {formList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((form) => (
                     <TableRow key={form.id}>
                       <TableCell>
                         {form.id}
@@ -206,6 +220,15 @@ const FormBuilderList = () => {
                   ))}
                 </TableBody>
               </Table>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={formList.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </TableContainer>
           )}
         </CardContent>

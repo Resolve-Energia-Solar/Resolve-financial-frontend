@@ -1,8 +1,5 @@
 'use client';
-import React, {
-  useState,
-  useEffect,
-} from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 
 /* material */
@@ -24,6 +21,7 @@ import {
   Tooltip,
   IconButton,
   Paper,
+  TablePagination,
 } from "@mui/material";
 import {
   AddBoxRounded,
@@ -44,6 +42,10 @@ const SchedulingList = () => {
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [scheduleToDelete, setScheduleToDelete] = useState(null);
+  
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  
   const router = useRouter();
 
   useEffect(() => {
@@ -100,6 +102,15 @@ const SchedulingList = () => {
     return `${hours}:${minutes}`;
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <PageContainer title={'Agendamentos'} description={'Lista de agendamentos'}>
       <BlankCard>
@@ -139,8 +150,8 @@ const SchedulingList = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {scheduleList.map((item) => (
-                    <TableRow key={item.id}>
+                  {scheduleList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item) => (
+                    <TableRow key={item.id} hover>
                       <TableCell>{item.id}</TableCell>
                       <TableCell>{formatDate(item.schedule_date)}</TableCell>
                       <TableCell>{formatTime(item.schedule_start_time)}</TableCell>
@@ -172,6 +183,15 @@ const SchedulingList = () => {
                   ))}
                 </TableBody>
               </Table>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={scheduleList.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </TableContainer>
           )}
         </CardContent>

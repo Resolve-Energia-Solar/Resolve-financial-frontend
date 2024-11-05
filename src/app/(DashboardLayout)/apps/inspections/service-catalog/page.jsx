@@ -20,6 +20,7 @@ import {
   Tooltip,
   IconButton,
   Paper,
+  TablePagination,
 } from "@mui/material";
 import {
   AddBoxRounded,
@@ -41,6 +42,10 @@ const ServiceCatalogList = () => {
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [serviceCatalogToDelete, setServiceCatalogToDelete] = useState(null);
+  
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  
   const router = useRouter();
 
   useEffect(() => {
@@ -87,6 +92,15 @@ const ServiceCatalogList = () => {
     }
   };
 
+  // Funções da Paginação
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // Reset para a primeira página
+  };
 
   return (
     <PageContainer title={capitalizeFirstWord(pageName)} description={pageDescription}>
@@ -118,7 +132,7 @@ const ServiceCatalogList = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {serviceCatalogList.map((item) => (
+                  {serviceCatalogList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item) => (
                     <TableRow key={item.id} hover>
                       <TableCell>{item.id}</TableCell>
                       <TableCell>{item.name}</TableCell>
@@ -149,6 +163,15 @@ const ServiceCatalogList = () => {
                   ))}
                 </TableBody>
               </Table>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={serviceCatalogList.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </TableContainer>
           )}
         </CardContent>

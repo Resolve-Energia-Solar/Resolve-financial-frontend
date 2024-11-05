@@ -25,6 +25,7 @@ import {
   Tooltip,
   IconButton,
   Paper,
+  TablePagination,
 } from "@mui/material";
 import {
   AddBoxRounded,
@@ -45,6 +46,10 @@ const DeadlineList = () => {
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [deadlineToDelete, setDeadlineToDelete] = useState(null);
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -91,6 +96,15 @@ const DeadlineList = () => {
     }
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <PageContainer
       title={'Prazos'}
@@ -133,7 +147,7 @@ const DeadlineList = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {deadlineList.map((deadline) => (
+                    {deadlineList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((deadline) => (
                       <TableRow key={deadline.id}>
                         <TableCell>{deadline.id}</TableCell>
                         <TableCell>{deadline.name}</TableCell>
@@ -163,6 +177,15 @@ const DeadlineList = () => {
                     ))}
                   </TableBody>
                 </Table>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={deadlineList.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
               </TableContainer>
             )}
         </CardContent>

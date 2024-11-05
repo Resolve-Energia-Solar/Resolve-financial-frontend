@@ -20,6 +20,7 @@ import {
   Tooltip,
   IconButton,
   Paper,
+  TablePagination,
 } from "@mui/material";
 import {
   AddBoxRounded,
@@ -41,6 +42,10 @@ const CategoryList = () => {
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
+  
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  
   const router = useRouter();
 
   useEffect(() => {
@@ -87,6 +92,15 @@ const CategoryList = () => {
     }
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <PageContainer title={capitalizeFirstWord(pageName)} description={pageDescription}>
       <BlankCard>
@@ -114,7 +128,7 @@ const CategoryList = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {categoriesList.map((item) => (
+                  {categoriesList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item) => (
                     <TableRow key={item.id} hover>
                       <TableCell>{item.id}</TableCell>
                       <TableCell>{item.name}</TableCell>
@@ -142,6 +156,15 @@ const CategoryList = () => {
                   ))}
                 </TableBody>
               </Table>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={categoriesList.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </TableContainer>
           )}
         </CardContent>
