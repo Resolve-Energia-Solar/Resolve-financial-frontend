@@ -112,7 +112,7 @@ const ScheduleForm = () => {
           </Grid>
           
           {/* Endereço */}
-          <Grid item xs={12} sm={12} lg={4}>
+          <Grid item xs={12} sm={12} lg={6}>
             <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
             <AutoCompleteAddress
               onChange={(id) => handleChange('address_id', id)}
@@ -121,8 +121,19 @@ const ScheduleForm = () => {
             />
           </Grid>
 
+          {/* Status do Agendamento */}
+          <Grid item xs={12} sm={12} lg={6}>
+            <FormSelect
+              label="Status do Agendamento"
+              options={statusOptions}
+              onChange={(e) => handleChange('status', e.target.value)}
+              value={formData.status || ''}
+              {...(formErrors.status && { error: true, helperText: formErrors.status })}
+            />
+          </Grid>
+
           {/* Agente de Campo */}
-          <Grid item xs={12} sm={12} lg={4}>
+          <Grid item xs={12} sm={12} lg={12}>
             <CustomFormLabel htmlFor="field_agent">Agente de Campo</CustomFormLabel>
             <AutoCompleteUserSchedule
               onChange={(id) => handleChange('schedule_agent_id', id)}
@@ -136,17 +147,6 @@ const ScheduleForm = () => {
                 scheduleLongitude: formData.longitude,
                }}
               {...(formErrors.schedule_agent_id && { error: true, helperText: formErrors.schedule_agent_id })}
-            />
-          </Grid>
-
-          {/* Status do Agendamento */}
-          <Grid item xs={12} sm={12} lg={4}>
-            <FormSelect
-              label="Status do Agendamento"
-              options={statusOptions}
-              onChange={(e) => handleChange('status', e.target.value)}
-              value={formData.status || ''}
-              {...(formErrors.status && { error: true, helperText: formErrors.status })}
             />
           </Grid>
 
