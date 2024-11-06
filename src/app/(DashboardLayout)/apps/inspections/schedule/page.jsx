@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 /* material */
@@ -22,19 +22,16 @@ import {
   IconButton,
   Paper,
   TablePagination,
-} from "@mui/material";
-import {
-  AddBoxRounded,
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-} from "@mui/icons-material";
+  TableSortLabel,
+} from '@mui/material';
+import { AddBoxRounded, Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 
 /* components */
-import PageContainer from "@/app/components/container/PageContainer";
-import BlankCard from "@/app/components/shared/BlankCard";
+import PageContainer from '@/app/components/container/PageContainer';
+import BlankCard from '@/app/components/shared/BlankCard';
 
 /* services */
-import scheduleService from "@/services/scheduleService";
+import scheduleService from '@/services/scheduleService';
 
 const SchedulingList = () => {
   const [scheduleList, setScheduleList] = useState([]);
@@ -42,10 +39,12 @@ const SchedulingList = () => {
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [scheduleToDelete, setScheduleToDelete] = useState(null);
-  
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState('id');
+
   const router = useRouter();
 
   useEffect(() => {
@@ -69,7 +68,7 @@ const SchedulingList = () => {
 
   const handleEditClick = (id) => {
     router.push(`/apps/inspections/schedule/${id}/update`);
-  }
+  };
 
   const handleDeleteClick = (id) => {
     setScheduleToDelete(id);
@@ -84,7 +83,7 @@ const SchedulingList = () => {
   const handleConfirmDelete = async () => {
     try {
       await scheduleService.deleteSchedule(scheduleToDelete);
-      setScheduleList(scheduleList.filter(item => item.id !== scheduleToDelete));
+      setScheduleList(scheduleList.filter((item) => item.id !== scheduleToDelete));
     } catch (err) {
       setError('Erro ao excluir agendamento');
     } finally {
@@ -93,12 +92,12 @@ const SchedulingList = () => {
   };
 
   const formatDate = (dateString) => {
-    const [year, month, day] = dateString.split("-");
+    const [year, month, day] = dateString.split('-');
     return `${day}/${month}/${year}`;
   };
 
   const formatTime = (timeString) => {
-    const [hours, minutes] = timeString.split(":");
+    const [hours, minutes] = timeString.split(':');
     return `${hours}:${minutes}`;
   };
 
@@ -111,15 +110,45 @@ const SchedulingList = () => {
     setPage(0);
   };
 
+  const handleRequestSort = (property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  const getComparator = (order, orderBy) => {
+    return order === 'desc'
+      ? (a, b) => {
+          if (orderBy === 'service') {
+            return b.service.name < a.service.name ? -1 : 1;
+          }
+          if (orderBy === 'schedule_agent') {
+            return b.schedule_agent.complete_name < a.schedule_agent.complete_name ? -1 : 1;
+          }
+          return b[orderBy] < a[orderBy] ? -1 : 1;
+        }
+      : (a, b) => {
+          if (orderBy === 'service') {
+            return a.service.name < b.service.name ? -1 : 1;
+          }
+          if (orderBy === 'schedule_agent') {
+            return a.schedule_agent.complete_name < b.schedule_agent.complete_name ? -1 : 1;
+          }
+          return a[orderBy] < b[orderBy] ? -1 : 1;
+        };
+  };
+
+  const sortedScheduleList = scheduleList.sort(getComparator(order, orderBy));
+
   return (
     <PageContainer title={'Agendamentos'} description={'Lista de agendamentos'}>
       <BlankCard>
         <CardContent>
-          <Typography variant='h6' gutterBottom>
+          <Typography variant="h6" gutterBottom>
             Lista de Agendamentos
           </Typography>
           <Button
-            variant='outlined'
+            variant="outlined"
             startIcon={<AddBoxRounded />}
             sx={{ marginTop: 1, marginBottom: 2 }}
             onClick={handleCreateClick}
@@ -127,60 +156,114 @@ const SchedulingList = () => {
             Adicionar Agendamento
           </Button>
           {loading ? (
-            <Typography>
-              Carregando...
-            </Typography>
+            <Typography>Carregando...</Typography>
           ) : error ? (
-            <Typography color={'error'}>
-              {error}
-            </Typography>
+            <Typography color={'error'}>{error}</Typography>
           ) : (
             <TableContainer component={Paper} elevation={3}>
-              <Table aria-label='table'>
+              <Table aria-label="table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell>Data</TableCell>
-                    <TableCell>Hora</TableCell>
-                    <TableCell>Projeto</TableCell>
-                    <TableCell>Serviço</TableCell>
-                    <TableCell>Responsável Técnico</TableCell>
-                    <TableCell>Status</TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={orderBy === 'id'}
+                        direction={orderBy === 'id' ? order : 'asc'}
+                        onClick={() => handleRequestSort('id')}
+                      >
+                        ID
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={orderBy === 'schedule_date'}
+                        direction={orderBy === 'schedule_date' ? order : 'asc'}
+                        onClick={() => handleRequestSort('schedule_date')}
+                      >
+                        Data
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={orderBy === 'schedule_start_time'}
+                        direction={orderBy === 'schedule_start_time' ? order : 'asc'}
+                        onClick={() => handleRequestSort('schedule_start_time')}
+                      >
+                        Hora
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={orderBy === 'project'}
+                        direction={orderBy === 'project' ? order : 'asc'}
+                        onClick={() => handleRequestSort('project')}
+                      >
+                        Projeto
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={orderBy === 'service'}
+                        direction={orderBy === 'service' ? order : 'asc'}
+                        onClick={() => handleRequestSort('service')}
+                      >
+                        Serviço
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={orderBy === 'schedule_agent'}
+                        direction={orderBy === 'schedule_agent' ? order : 'asc'}
+                        onClick={() => handleRequestSort('schedule_agent')}
+                      >
+                        Responsável Técnico
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={orderBy === 'status'}
+                        direction={orderBy === 'status' ? order : 'asc'}
+                        onClick={() => handleRequestSort('status')}
+                      >
+                        Status
+                      </TableSortLabel>
+                    </TableCell>
                     <TableCell>Ações</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {scheduleList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item) => (
-                    <TableRow key={item.id} hover>
-                      <TableCell>{item.id}</TableCell>
-                      <TableCell>{formatDate(item.schedule_date)}</TableCell>
-                      <TableCell>{formatTime(item.schedule_start_time)}</TableCell>
-                      <TableCell>{item.project}</TableCell>
-                      <TableCell>{item.service.name}</TableCell>
-                      <TableCell>{item.schedule_agent.complete_name}</TableCell>
-                      <TableCell>{item.status}</TableCell>
-                      <TableCell>
-                        <Tooltip title="Editar">
-                          <IconButton
-                            color="primary"
-                            size="small"
-                            onClick={() => handleEditClick(item.id)}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Excluir">
-                          <IconButton
-                            color="error"
-                            size="small"
-                            onClick={() => handleDeleteClick(item.id)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {sortedScheduleList
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((item) => (
+                      <TableRow key={item.id} hover>
+                        <TableCell>{item.id}</TableCell>
+                        <TableCell>{formatDate(item.schedule_date)}</TableCell>
+                        <TableCell>{formatTime(item.schedule_start_time)}</TableCell>
+                        <TableCell>{item.project}</TableCell>
+                        <TableCell>{item.service.name}</TableCell>
+                        <TableCell>{item.schedule_agent.complete_name}</TableCell>
+                        <TableCell>{item.status}</TableCell>
+                        <TableCell>
+                          <Tooltip title="Editar">
+                            <IconButton
+                              color="primary"
+                              size="small"
+                              onClick={() => handleEditClick(item.id)}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Excluir">
+                            <IconButton
+                              color="error"
+                              size="small"
+                              onClick={() => handleDeleteClick(item.id)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
               <TablePagination
@@ -204,29 +287,17 @@ const SchedulingList = () => {
         aria-describedby="alert-dialog-description"
         onClose={handleCloseModal}
       >
-        <DialogTitle
-          id='alert-dialog-title'
-        >
-          Confirmar Exclusão
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-title">Confirmar Exclusão</DialogTitle>
         <DialogContent>
-          <DialogContentText
-            id='alert-dialog-description'
-          >
+          <DialogContentText id="alert-dialog-description">
             Tem certeza de que deseja excluir este agendamento? Esta ação não pode ser desfeita.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button
-            color="primary"
-            onClick={handleCloseModal}
-          >
+          <Button color="primary" onClick={handleCloseModal}>
             Cancelar
           </Button>
-          <Button
-            color="error"
-            onClick={handleConfirmDelete}
-          >
+          <Button color="error" onClick={handleConfirmDelete}>
             Excluir
           </Button>
         </DialogActions>

@@ -21,6 +21,7 @@ import {
   IconButton,
   Paper,
   TablePagination,
+  TableSortLabel,
 } from "@mui/material";
 import {
   AddBoxRounded,
@@ -42,10 +43,12 @@ const CategoryList = () => {
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
-  
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState('id'); // Ordenação padrão
+
   const router = useRouter();
 
   useEffect(() => {
@@ -101,6 +104,22 @@ const CategoryList = () => {
     setPage(0);
   };
 
+  const handleRequestSort = (property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  // Função de comparação para ordenação
+  const getComparator = (order, orderBy) => {
+    return order === 'desc'
+      ? (a, b) => (b[orderBy] < a[orderBy] ? -1 : 1)
+      : (a, b) => (a[orderBy] < b[orderBy] ? -1 : 1);
+  };
+
+  // Aplicar ordenação aos dados
+  const sortedCategoriesList = categoriesList.sort(getComparator(order, orderBy));
+
   return (
     <PageContainer title={capitalizeFirstWord(pageName)} description={pageDescription}>
       <BlankCard>
@@ -122,13 +141,29 @@ const CategoryList = () => {
               <Table aria-label="table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell>Nome</TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={orderBy === 'id'}
+                        direction={orderBy === 'id' ? order : 'asc'}
+                        onClick={() => handleRequestSort('id')}
+                      >
+                        ID
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={orderBy === 'name'}
+                        direction={orderBy === 'name' ? order : 'asc'}
+                        onClick={() => handleRequestSort('name')}
+                      >
+                        Nome
+                      </TableSortLabel>
+                    </TableCell>
                     <TableCell>Ações</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {categoriesList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item) => (
+                  {sortedCategoriesList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item) => (
                     <TableRow key={item.id} hover>
                       <TableCell>{item.id}</TableCell>
                       <TableCell>{item.name}</TableCell>

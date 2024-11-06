@@ -21,6 +21,7 @@ import {
   IconButton,
   Paper,
   TablePagination,
+  TableSortLabel,
 } from "@mui/material";
 import {
   AddBoxRounded,
@@ -42,10 +43,12 @@ const ServiceCatalogList = () => {
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [serviceCatalogToDelete, setServiceCatalogToDelete] = useState(null);
-  
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState('id'); // Ordenação padrão
+
   const router = useRouter();
 
   useEffect(() => {
@@ -102,6 +105,38 @@ const ServiceCatalogList = () => {
     setPage(0); // Reset para a primeira página
   };
 
+  const handleRequestSort = (property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  // Função de comparação para ordenação
+  const getComparator = (order, orderBy) => {
+    return order === 'desc'
+      ? (a, b) => {
+          if (orderBy === 'category') {
+            return (b.category.name < a.category.name ? -1 : 1);
+          }
+          if (orderBy === 'deadline') {
+            return (b.deadline.name < a.deadline.name ? -1 : 1);
+          }
+          return (b[orderBy] < a[orderBy] ? -1 : 1);
+        }
+      : (a, b) => {
+          if (orderBy === 'category') {
+            return (a.category.name < b.category.name ? -1 : 1);
+          }
+          if (orderBy === 'deadline') {
+            return (a.deadline.name < b.deadline.name ? -1 : 1);
+          }
+          return (a[orderBy] < b[orderBy] ? -1 : 1);
+        };
+  };
+
+  // Aplicar ordenação aos dados
+  const sortedServiceCatalogList = serviceCatalogList.sort(getComparator(order, orderBy));
+
   return (
     <PageContainer title={capitalizeFirstWord(pageName)} description={pageDescription}>
       <BlankCard>
@@ -123,16 +158,56 @@ const ServiceCatalogList = () => {
               <Table aria-label="table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell>Nome</TableCell>
-                    <TableCell>Descrição</TableCell>
-                    <TableCell>Categoria</TableCell>
-                    <TableCell>Prazo</TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={orderBy === 'id'}
+                        direction={orderBy === 'id' ? order : 'asc'}
+                        onClick={() => handleRequestSort('id')}
+                      >
+                        ID
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={orderBy === 'name'}
+                        direction={orderBy === 'name' ? order : 'asc'}
+                        onClick={() => handleRequestSort('name')}
+                      >
+                        Nome
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={orderBy === 'description'}
+                        direction={orderBy === 'description' ? order : 'asc'}
+                        onClick={() => handleRequestSort('description')}
+                      >
+                        Descrição
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={orderBy === 'category'}
+                        direction={orderBy === 'category' ? order : 'asc'}
+                        onClick={() => handleRequestSort('category')}
+                      >
+                        Categoria
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={orderBy === 'deadline'}
+                        direction={orderBy === 'deadline' ? order : 'asc'}
+                        onClick={() => handleRequestSort('deadline')}
+                      >
+                        Prazo
+                      </TableSortLabel>
+                    </TableCell>
                     <TableCell>Ações</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {serviceCatalogList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item) => (
+                  {sortedServiceCatalogList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item) => (
                     <TableRow key={item.id} hover>
                       <TableCell>{item.id}</TableCell>
                       <TableCell>{item.name}</TableCell>

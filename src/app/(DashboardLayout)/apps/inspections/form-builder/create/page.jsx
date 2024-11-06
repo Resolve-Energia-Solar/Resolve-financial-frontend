@@ -212,7 +212,7 @@ const FormBuilderForm = () => {
                       </CustomSelect>
                     </Grid>
                     <Grid item xs={12}>
-                      <CustomFormLabel htmlFor="field_required">Obrigatório</CustomFormLabel>
+                      <CustomFormLabel htmlFor="field_required">Campo Obrigatório?</CustomFormLabel>
                       <CustomSelect
                         id={'field_required'}
                         name="required"
