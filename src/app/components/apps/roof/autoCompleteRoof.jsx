@@ -5,7 +5,14 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import useRoofTypes from '@/hooks/roofTypes/useRoofTypes';
 
-export default function AutoCompleteRoofType({ onChange, value, error, helperText, disabled }) {
+export default function AutoCompleteRoofType({
+  onChange,
+  value,
+  error,
+  helperText,
+  labeltitle,
+  disabled,
+}) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const { loading, roofTypes, searchByName } = useRoofTypes();
@@ -41,7 +48,7 @@ export default function AutoCompleteRoofType({ onChange, value, error, helperTex
       getOptionLabel={(option) => option.name || ''}
       renderInput={(params) => (
         <CustomTextField
-          label="Tipo de Telhado"
+          label={labeltitle}
           error={error}
           helperText={helperText}
           {...params}

@@ -1,5 +1,14 @@
 'use client';
-import { Grid, Button, Stack, Box, Typography, CircularProgress, Alert, Divider } from '@mui/material';
+import {
+  Grid,
+  Button,
+  Stack,
+  Box,
+  Typography,
+  CircularProgress,
+  Alert,
+  Divider,
+} from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import { useParams } from 'next/navigation';
@@ -12,6 +21,7 @@ import useLead from '@/hooks/leads/useLead';
 import useLeadForm from '@/hooks/leads/useLeadtForm';
 import AutoCompleteAddresses from '../../comercial/sale/components/auto-complete/Auto-Input-Addresses';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
+import AutoCompleteOrigin from '../auto-input-origin';
 
 const EditLeadPage = ({ leadId = null, onClosedModal = null }) => {
   const params = useParams();
@@ -54,7 +64,6 @@ const EditLeadPage = ({ leadId = null, onClosedModal = null }) => {
         mb={3}
       >
         <Typography variant="h5"># {formData.name}</Typography>
-        
       </Stack>
       <Divider></Divider>
       {success && (
@@ -211,6 +220,15 @@ const EditLeadPage = ({ leadId = null, onClosedModal = null }) => {
                 value={formData.funnel}
                 onChange={(e) => handleChange('funnel', e.target.value)}
                 {...(formErrors.funnel && { error: true, helperText: formErrors.funnel })}
+              />
+            </Grid>
+            
+            <Grid item xs={12} sm={12} lg={4}>
+              <CustomFormLabel htmlFor="branch">Origem</CustomFormLabel>
+              <AutoCompleteOrigin
+                onChange={(id) => handleChange('origin_id', id)}
+                value={formData.origin_id}
+                {...(formErrors.origin_id && { error: true, helperText: formErrors.origin_id })}
               />
             </Grid>
 

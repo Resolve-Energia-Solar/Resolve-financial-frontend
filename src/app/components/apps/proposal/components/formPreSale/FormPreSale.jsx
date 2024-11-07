@@ -1,10 +1,24 @@
-import { Box, Button, Card, CardContent, Tab, Tabs, Typography, useTheme } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Tab,
+  Tabs,
+  Typography,
+  useTheme,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  List,
+  ListItem,
+} from '@mui/material';
 import { CallToAction, FlashAuto, SolarPower } from '@mui/icons-material';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import saleService from '@/services/saleService';
 import ProposalService from '@/services/proposalService';
 import LeadDetails from '../../../kanban/crm/LeadDetails';
-import { useContext } from 'react';
 import { KanbanDataContext } from '@/app/context/kanbancontext';
 
 function TabPanel(props) {
@@ -21,6 +35,8 @@ function FormPreSale({ selectedProposal, onClose }) {
   const [value, setValue] = useState(0);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMessages, setErrorMessages] = useState([]);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
 
   const { idSaleSuccess, setIdSaleSuccess } = useContext(KanbanDataContext);
 
@@ -39,14 +55,23 @@ function FormPreSale({ selectedProposal, onClose }) {
       const response = await saleService.createPreSale(sendData);
       setSuccess(true);
       setIdSaleSuccess(response.pre_sale_id);
-      ProposalService.updateProposalPartial(selectedProposal.id, {status: 'A'});
+      ProposalService.updateProposalPartial(selectedProposal.id, { status: 'A' });
       onClose();
     } catch (error) {
       console.log(error);
+      const errors = Object.entries(error.response.data).map(
+        ([key, value]) => `${key}: ${value}`
+      );
+      setErrorMessages(errors);
+      setErrorDialogOpen(true);
       setSuccess(false);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCloseErrorDialog = () => {
+    setErrorDialogOpen(false);
   };
 
   return (
@@ -109,9 +134,33 @@ function FormPreSale({ selectedProposal, onClose }) {
       >
         {loading ? 'Aguarde...' : 'Criar Pré-venda'}
       </Button>
+
+      <Dialog open={errorDialogOpen} onClose={handleCloseErrorDialog}>
+        <DialogTitle>Erros na criação da pré-venda</DialogTitle>
+        <DialogContent>
+          <List>
+            {errorMessages.map((message, index) => (
+              <ListItem
+                key={index}
+                sx={{
+                  borderBottom: '1px solid',
+                  borderColor: theme.palette.divider,
+                  py: 1,
+                }}
+              >
+                <Typography color="error">{message}</Typography>
+              </ListItem>
+            ))}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseErrorDialog} color="primary">
+            Fechar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
 
 export default FormPreSale;
-

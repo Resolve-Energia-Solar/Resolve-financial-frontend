@@ -4,22 +4,33 @@ import {
   MenuItem,
   Box,
   Button,
-  Card,
-  CardContent,
   Typography,
-  Checkbox,
   Snackbar,
   Alert,
+  Dialog,
+  DialogContent,
 } from '@mui/material';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import useProposalForm from '@/hooks/proposal/useProposalForm';
 import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
 import { useState, useEffect } from 'react';
+import KitSelectionCard from '../../kits/KitSelectionCard';
+import AddKitButton from '../../kits/AddKitCard'; // Importação do botão de adicionar kit
+import AddKitForm from '../../kits/AddKitForm'; // Importação do formulário de adicionar kit
 
-const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal }) => {
-  const { formData, setFormData, handleChange, handleUpdate, formErrors, snackbar, closeSnackbar } =
-    useProposalForm();
+const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal, reloadKits }) => {
+  const {
+    formData,
+    setFormData,
+    handleChange,
+    handleUpdate,
+    formErrors,
+    snackbar,
+    closeSnackbar,
+  } = useProposalForm();
   const [selectedKitIds, setSelectedKitIds] = useState([]);
+  const [isEditingKits, setIsEditingKits] = useState(false);
+  const [isAddKitModalOpen, setIsAddKitModalOpen] = useState(false); // Estado para controlar o modal
 
   useEffect(() => {
     if (proposal) {
@@ -31,7 +42,9 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal }) => 
         status: proposal.status || '',
         observation: proposal.observation || '',
       });
-      setSelectedKitIds(proposal.kits || []);
+
+      const kitIds = proposal.kits ? proposal.kits.map((kit) => kit.id) : [];
+      setSelectedKitIds(kitIds);
     } else {
       setFormData({
         lead_id: selectedLead.id,
@@ -45,12 +58,43 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal }) => 
     }
   }, [proposal, selectedLead, setFormData]);
 
+  useEffect(() => {
+    const selectedKits = kits.filter((kit) => selectedKitIds.includes(kit.id));
+    const totalValue = selectedKits.reduce((sum, kit) => sum + Number(kit.price || 0), 0);
+
+    setFormData((prevData) => ({
+      ...prevData,
+      value: totalValue,
+    }));
+  }, [selectedKitIds, kits]);
+
   const handleKitSelection = (kitId) => {
     setSelectedKitIds((prevSelected) =>
       prevSelected.includes(kitId)
         ? prevSelected.filter((id) => id !== kitId)
         : [...prevSelected, kitId],
     );
+  };
+
+  const toggleEditKits = () => {
+    setIsEditingKits(!isEditingKits);
+  };
+
+  // Funções para controlar o modal de adicionar kit
+  const handleAddKit = () => {
+    setIsAddKitModalOpen(true);
+  };
+
+  const handleAddKitSave = (newKitData) => {
+    console.log('Novo Kit Adicionado:', newKitData);
+    setSelectedKitIds((prevSelectedKits) => [...prevSelectedKits, newKitData.id]);
+    kits.push(newKitData);
+    if (reloadKits) reloadKits(); // Atualiza a lista de kits se a função estiver disponível
+    setIsAddKitModalOpen(false);
+  };
+
+  const handleAddKitCancel = () => {
+    setIsAddKitModalOpen(false);
   };
 
   return (
@@ -85,10 +129,13 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal }) => 
         <TextField
           fullWidth
           label="Valor da Proposta"
-          type="number"
-          value={formData.value || ''}
+          value={`R$ ${(Number(formData.value) || 0).toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}`}
           onChange={(e) => handleChange('value', e.target.value)}
           {...(formErrors.value && { error: true, helperText: formErrors.value })}
+          disabled
         />
       </Grid>
 
@@ -119,54 +166,33 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal }) => 
       </Grid>
 
       <Grid item xs={12}>
-        <CustomFormLabel>Kits Solares Disponíveis</CustomFormLabel>
-        <Grid container spacing={2}>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <CustomFormLabel>{isEditingKits ? 'Todos os Kits' : 'Kits Selecionados'}</CustomFormLabel>
+          <Button variant="outlined" color="primary" onClick={toggleEditKits}>
+            {isEditingKits ? 'Concluir' : 'Mudar Kits'}
+          </Button>
+        </Box>
+
+        <Grid container spacing={1.5}>
+          {isEditingKits && (
+            <Grid item xs={12} sm={6} md={4}>
+              <Box display="flex" justifyContent="center" mt={1}>
+                <AddKitButton onClick={handleAddKit} />
+              </Box>
+            </Grid>
+          )}
           {kits && kits.length > 0 ? (
-            kits.map((kit) => (
-              <Grid item xs={12} sm={6} md={6} key={kit.id}>
-                <Card
-                  variant="outlined"
-                  sx={{
-                    borderColor: selectedKitIds.includes(kit.id) ? 'primary.main' : 'grey.400',
-                    borderWidth: selectedKitIds.includes(kit.id) ? 2 : 1,
-                    position: 'relative',
-                    cursor: 'pointer',
-                    '&:hover': { boxShadow: 4 },
-                  }}
-                  onClick={() => handleKitSelection(kit.id)}
-                >
-                  <CardContent
-                    sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
-                  >
-                    <Typography variant="h6" fontWeight="bold" gutterBottom>
-                      {`Kit Solar ID: ${kit.id}`}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
-                      {kit?.inversorsModel?.description}
-                    </Typography>
-                    <Typography variant="subtitle1" color="text.primary" fontWeight="bold">
-                      {`Preço: R$ ${Math.round(kit.price).toLocaleString('pt-BR', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}`}
-                    </Typography>
-                  </CardContent>
-                  <Checkbox
-                    checked={selectedKitIds.includes(kit.id)}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleKitSelection(kit.id);
-                    }}
-                    sx={{
-                      position: 'absolute',
-                      bottom: 8,
-                      left: 8,
-                      color: selectedKitIds.includes(kit.id) ? 'primary.main' : 'grey.400',
-                    }}
+            kits
+              .filter((kit) => isEditingKits || selectedKitIds.includes(kit.id))
+              .map((kit) => (
+                <Grid item xs={12} sm={6} md={4} key={kit.id}>
+                  <KitSelectionCard
+                    kit={kit}
+                    selected={selectedKitIds.includes(kit.id)}
+                    onSelect={handleKitSelection}
                   />
-                </Card>
-              </Grid>
-            ))
+                </Grid>
+              ))
           ) : (
             <Typography variant="body2" color="textSecondary">
               Nenhum kit disponível.
@@ -199,6 +225,12 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal }) => 
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      <Dialog open={isAddKitModalOpen} onClose={handleAddKitCancel} maxWidth="md" fullWidth>
+        <DialogContent dividers>
+          <AddKitForm onSave={handleAddKitSave} onCancel={handleAddKitCancel} />
+        </DialogContent>
+      </Dialog>
     </Grid>
   );
 };

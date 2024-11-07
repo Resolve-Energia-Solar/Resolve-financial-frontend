@@ -6,7 +6,14 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import addressService from '@/services/addressService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteAddresses({ onChange, value = [], error, helperText }) {
+export default function AutoCompleteAddresses({
+  onChange,
+  value = [],
+  error,
+  helperText,
+  labeltitle,
+  disabled,
+}) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -16,11 +23,11 @@ export default function AutoCompleteAddresses({ onChange, value = [], error, hel
     const fetchDefaultAddresses = async () => {
       if (value.length > 0) {
         try {
-          const addresses = await Promise.all(value.map(id => addressService.getAddressById(id))); 
+          const addresses = await Promise.all(value.map((id) => addressService.getAddressById(id)));
           console.log('Addresses:', addresses);
-          const formattedAddresses = addresses.map(address => ({
+          const formattedAddresses = addresses.map((address) => ({
             id: address.id,
-            name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`
+            name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
           }));
           setSelectedAddresses(formattedAddresses);
         } catch (error) {
@@ -34,7 +41,7 @@ export default function AutoCompleteAddresses({ onChange, value = [], error, hel
 
   const handleChange = (event, newValue) => {
     setSelectedAddresses(newValue);
-    onChange(newValue.map(address => address.id)); 
+    onChange(newValue.map((address) => address.id));
   };
 
   const fetchAddressesByName = useCallback(
@@ -47,7 +54,7 @@ export default function AutoCompleteAddresses({ onChange, value = [], error, hel
       try {
         const addresses = await addressService.getAddressByFullAddress(name);
         if (addresses && addresses.results) {
-          const formattedAddresses = addresses.results.map(address => ({
+          const formattedAddresses = addresses.results.map((address) => ({
             id: address.id,
             name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
           }));
@@ -58,9 +65,8 @@ export default function AutoCompleteAddresses({ onChange, value = [], error, hel
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
-  
 
   const handleOpen = () => {
     setOpen(true);
@@ -93,6 +99,7 @@ export default function AutoCompleteAddresses({ onChange, value = [], error, hel
             error={error}
             helperText={helperText}
             {...params}
+            label={labeltitle}
             size="small"
             variant="outlined"
             InputProps={{

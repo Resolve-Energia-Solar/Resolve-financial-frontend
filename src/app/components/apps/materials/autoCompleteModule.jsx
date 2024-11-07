@@ -6,7 +6,7 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import materialService from '@/services/materialsService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteModule({ onChange, value, error, helperText, disabled }) {
+export default function AutoCompleteModule({ onChange, value, error, helperText,labeltitle, disabled }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -81,7 +81,7 @@ export default function AutoCompleteModule({ onChange, value, error, helperText,
       getOptionLabel={(option) => option.name || ''}
       renderInput={(params) => (
         <CustomTextField
-          label="Modelo do Modulo"
+          label={labeltitle}
           error={error}
           helperText={helperText}
           {...params}
