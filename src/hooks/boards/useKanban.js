@@ -1,156 +1,157 @@
-import { useState, useEffect } from 'react';
-import boardService from '@/services/boardService';
-import leadService from '@/services/leadService';
-import columnService from '@/services/boardCollunService';
+import { useState, useEffect } from 'react'
+import boardService from '@/services/boardService'
+import leadService from '@/services/leadService'
+import columnService from '@/services/boardCollunService'
 
 const useKanban = () => {
-  const [boards, setBoards] = useState([]);
-  const [selectedBoard, setSelectedBoard] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [leads, setLeads] = useState([]);
-  const [statuses, setStatuses] = useState([]);
-  const [columns, setColumns] = useState([]);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [boards, setBoards] = useState([])
+  const [selectedBoard, setSelectedBoard] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [leads, setLeads] = useState([])
+  const [statuses, setStatuses] = useState([])
+  const [columns, setColumns] = useState([])
+  const [snackbarMessage, setSnackbarMessage] = useState('')
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
+
+  const addLead = newLead => {
+    setLeads(prevLeads => [...prevLeads, newLead])
+  }
 
   const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
+    setSnackbarOpen(false)
+  }
 
   const fetchBoards = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
-      const data = await boardService.getBoards();
-      setBoards(data);
+      const data = await boardService.getBoards()
+      setBoards(data)
 
       if (data.results && data.results.length > 0 && !selectedBoard) {
-        setSelectedBoard(data.results[0].id);
+        setSelectedBoard(data.results[0].id)
       }
     } catch (err) {
-      setError(err.message || 'Erro ao buscar os boards');
+      setError(err.message || 'Erro ao buscar os boards')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  const fetchBoardDetails = async (boardId) => {
-    if (!boardId) return;
+  const fetchBoardDetails = async boardId => {
+    if (!boardId) return
 
-    setLoading(true);
+    setLoading(true)
     try {
-      const board = boards.results.find((b) => b.id === boardId);
+      const board = boards.results.find(b => b.id === boardId)
 
       if (board) {
-        setColumns(board.columns || []);
-        
-        const sortedColumns = board.columns.sort((a, b) => a.position - b.position);
-        setLeads(sortedColumns.flatMap((column) => column.leads || []));
+        setColumns(board.columns || [])
+
+        const sortedColumns = board.columns.sort((a, b) => a.position - b.position)
+        setLeads(sortedColumns.flatMap(column => column.leads || []))
         setStatuses(
-          sortedColumns.map((column) => ({
+          sortedColumns.map(column => ({
             id: column.id,
             name: column.name,
             position: column.position,
           })),
-        );
+        )
       }
     } catch (err) {
-      setError('Erro ao buscar detalhes do board selecionado');
+      setError('Erro ao buscar detalhes do board selecionado')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchBoardDetails(selectedBoard);
-  }, [selectedBoard, boards]);
+    fetchBoardDetails(selectedBoard)
+  }, [selectedBoard, boards])
 
   useEffect(() => {
-    fetchBoards();
-  }, []);
+    fetchBoards()
+  }, [])
 
   const reloadBoardDetails = async () => {
-    await fetchBoardDetails(selectedBoard);
-  };
+    await fetchBoardDetails(selectedBoard)
+  }
 
   const updateLeadColumn = async (leadId, newColumnId) => {
     try {
-      await leadService.patchLead(leadId, { column_id: newColumnId });
-      
-      setLeads((prevLeads) => {
-        const updatedLeads = prevLeads.map((lead) => {
+      await leadService.patchLead(leadId, { column_id: newColumnId })
+
+      setLeads(prevLeads => {
+        const updatedLeads = prevLeads.map(lead => {
           if (lead.id === leadId) {
-            return { ...lead, column_id: newColumnId };
+            return { ...lead, column_id: newColumnId }
           }
-          return lead;
-        });
-        return updatedLeads;
-      });
+          return lead
+        })
+        return updatedLeads
+      })
 
-      await reloadBoardDetails(); 
-
+      await reloadBoardDetails()
     } catch (err) {
-      console.error('Erro ao atualizar o status do lead:', err.message || err);
+      console.error('Erro ao atualizar o status do lead:', err.message || err)
     }
-  };
+  }
 
-  const handleDeleteLead = async (leadId) => {
+  const handleDeleteLead = async leadId => {
     try {
-      await boardService.deleteLead(leadId);
-      setLeads((prevLeads) => prevLeads.filter((lead) => lead.id !== leadId));
-      setSnackbarMessage('Lead excluído com sucesso!');
-      setSnackbarOpen(true);
+      await boardService.deleteLead(leadId)
+      setLeads(prevLeads => prevLeads.filter(lead => lead.id !== leadId))
+      setSnackbarMessage('Lead excluído com sucesso!')
+      setSnackbarOpen(true)
 
-      await reloadBoardDetails(); 
-
+      await reloadBoardDetails()
     } catch (error) {
-      console.error('Erro ao excluir lead:', error);
-      setSnackbarMessage('Erro ao excluir lead.');
-      setSnackbarOpen(true);
+      console.error('Erro ao excluir lead:', error)
+      setSnackbarMessage('Erro ao excluir lead.')
+      setSnackbarOpen(true)
     }
-  };
+  }
 
-  const handleUpdateLead = async (updatedLead) => {
+  const handleUpdateLead = async updatedLead => {
     try {
-      await leadService.patchLead(updatedLead.id, updatedLead);
-      setLeads((prevLeads) =>
-        prevLeads.map((lead) => (lead.id === updatedLead.id ? updatedLead : lead)),
-      );
-      setSnackbarMessage('Lead atualizado com sucesso!');
-      setSnackbarOpen(true);
+      await leadService.patchLead(updatedLead.id, updatedLead)
+      setLeads(prevLeads =>
+        prevLeads.map(lead => (lead.id === updatedLead.id ? updatedLead : lead)),
+      )
+      setSnackbarMessage('Lead atualizado com sucesso!')
+      setSnackbarOpen(true)
 
-      await reloadBoardDetails(); 
-
+      await reloadBoardDetails()
     } catch (error) {
-      console.error('Erro ao atualizar lead:', error);
-      setSnackbarMessage('Erro ao atualizar lead.');
-      setSnackbarOpen(true);
+      console.error('Erro ao atualizar lead:', error)
+      setSnackbarMessage('Erro ao atualizar lead.')
+      setSnackbarOpen(true)
     }
-  };
+  }
 
   const updateColumnName = async (columnId, newName) => {
     try {
-      await columnService.updateColumnPatch(columnId, { name: newName });
+      await columnService.updateColumnPatch(columnId, { name: newName })
 
-      setStatuses((prevStatuses) =>
-        prevStatuses.map((status) =>
+      setStatuses(prevStatuses =>
+        prevStatuses.map(status =>
           status.id === columnId ? { ...status, name: newName } : status,
         ),
-      );
+      )
 
-      setSnackbarMessage('Nome da coluna atualizado com sucesso!');
-      setSnackbarOpen(true);
+      setSnackbarMessage('Nome da coluna atualizado com sucesso!')
+      setSnackbarOpen(true)
 
-      await reloadBoardDetails(); 
-
+      await reloadBoardDetails()
     } catch (error) {
-      console.error('Erro ao atualizar o nome da coluna:', error);
-      setSnackbarMessage('Erro ao atualizar o nome da coluna.');
-      setSnackbarOpen(true);
+      console.error('Erro ao atualizar o nome da coluna:', error)
+      setSnackbarMessage('Erro ao atualizar o nome da coluna.')
+      setSnackbarOpen(true)
     }
-  };
+  }
 
   return {
+    addLead,
     boards,
     selectedBoard,
     setSelectedBoard,
@@ -168,8 +169,8 @@ const useKanban = () => {
     handleDeleteLead,
     handleUpdateLead,
     updateColumnName,
-    fetchBoardDetails
-  };
-};
+    fetchBoardDetails,
+  }
+}
 
-export default useKanban;
+export default useKanban

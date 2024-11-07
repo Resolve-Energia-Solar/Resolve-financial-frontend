@@ -23,8 +23,10 @@ import EditLeadPage from '../../leads/Edit-lead';
 import ProposalManager from '../../proposal';
 import SaleListCards from '../../comercial/sale/components/salesList/cards';
 import { KanbanDataContext } from '@/app/context/kanbancontext';
+import ClicksignLogsPage from '../../notifications/clicksign';
 
 const LeadManager = ({
+  addLead,
   leads,
   statuses,
   board,
@@ -37,7 +39,6 @@ const LeadManager = ({
   const [editLead, setEditLead] = useState(false);
 
   const { idSaleSuccess, setIdSaleSuccess } = useContext(KanbanDataContext);
-
 
   const {
     leadsList,
@@ -99,6 +100,7 @@ const LeadManager = ({
                       onUpdateLeadColumn={onUpdateLeadColumn}
                       leads={leadsList}
                       onAddLead={onAddLead}
+                      addLead={addLead}
                     />
                     {leadsList
                       .filter((lead) => lead.column.id === status.id)
@@ -142,6 +144,7 @@ const LeadManager = ({
                     <Tab label="Lead" />
                     <Tab label="Proposta" />
                     <Tab label="Venda" />
+                    <Tab label="Envios" />
                   </Tabs>
                 </Box>
 
@@ -157,6 +160,7 @@ const LeadManager = ({
                   {tabIndex === 1 && <ProposalManager selectedLead={selectedLead} />}
 
                   {tabIndex === 2 && <SaleListCards leadId={selectedLead.id} />}
+                  {tabIndex === 3 && <ClicksignLogsPage />}
                 </Box>
               </Grid>
             </Grid>

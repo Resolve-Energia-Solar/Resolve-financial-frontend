@@ -9,6 +9,7 @@ import { KanbanDataContextProvider } from '@/app/context/kanbancontext';
 
 function KanbanPage() {
   const {
+    addLead,
     boards,
     selectedBoard,
     setSelectedBoard,
@@ -47,6 +48,7 @@ function KanbanPage() {
                 leads={leads}
                 statuses={statuses}
                 board={selectedBoard}
+                addLead={addLead}
                 onUpdateLeadColumn={updateColumnName}
                 onUpdateLead={handleUpdateLead}
                 onDeleteLead={handleDeleteLead}
