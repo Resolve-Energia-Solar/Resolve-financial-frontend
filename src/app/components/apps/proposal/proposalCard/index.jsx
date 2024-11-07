@@ -153,6 +153,7 @@ export default function ProposalCard({ proposal, handleEditProposal, onAddSale }
                 <EditIcon />
               </IconButton>
             </Tooltip>
+            { proposal.status !=='A' && (
             <Tooltip title="Criar Venda">
               <IconButton
                 variant="outlined"
@@ -162,6 +163,7 @@ export default function ProposalCard({ proposal, handleEditProposal, onAddSale }
                 <AddShoppingCartIcon />
               </IconButton>
             </Tooltip>
+            )}
             <Tooltip title="Ver Proposta">
               <IconButton
                 color="primary"
