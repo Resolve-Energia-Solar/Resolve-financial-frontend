@@ -259,7 +259,7 @@ const SaleList = () => {
       <TableContainer
         component={Paper}
         elevation={10}
-        sx={{ overflowX: 'auto', maxHeight: '70vh' }}
+        sx={{ overflowX: 'auto', maxHeight: '50vh' }}
         onScroll={handleScroll}
       >
         <Table stickyHeader aria-label="sales table">
