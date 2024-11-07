@@ -25,6 +25,7 @@ import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import CreateSale from '../../leads/Add-lead';
 import ProposalStatusChip from '../components/ProposalStatusChip';
 
+
 export default function ProposalCard({ proposal, handleEditProposal, onAddSale }) {
   const theme = useTheme();
   const [dialogOpen, setDialogOpen] = useState(false);

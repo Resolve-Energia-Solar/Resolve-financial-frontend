@@ -1,9 +1,10 @@
 import apiClient from './apiClient';
 
 const saleService = {
-    getSales: async ({ ordering, params }) => {
+    getSales: async ({ ordering, params, nextPage }) => {
         const urlParams = params ? `&${params}` : '';
-        const response = await apiClient.get(`/api/sales/?ordering=${ordering || ''}${urlParams}`);
+        const urlNextPage = nextPage ? `&page=${nextPage}` : '';
+        const response = await apiClient.get(`/api/sales/?ordering=${ordering || ''}${urlParams}${urlNextPage}`);
         return response.data;
     },
     getSaleByFullName: async (fullName) => {

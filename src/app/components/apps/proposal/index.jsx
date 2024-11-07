@@ -8,8 +8,9 @@ import {
   DialogTitle,
   DialogContent,
   useTheme,
+  Skeleton,
 } from '@mui/material';
-import { Add as AddIcon, CallToAction, FlashAuto, SolarPower } from '@mui/icons-material';
+import { Add as AddIcon } from '@mui/icons-material';
 import ProposalForm from './Add-proposal';
 import ProposalEditForm from './Edit-proposal/index';
 import ProposalCard from './proposalCard/index';
@@ -17,6 +18,7 @@ import { useState, useEffect } from 'react';
 import useKitSolar from '@/hooks/kits/useKitSolar';
 import ProposalService from '@/services/proposalService';
 import FormPreSale from './components/formPreSale/FormPreSale';
+import SkeletonCard from '../project/components/SkeletonCard';
 
 const ProposalManager = ({ selectedLead }) => {
   const theme = useTheme();
@@ -28,12 +30,20 @@ const ProposalManager = ({ selectedLead }) => {
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [proposals, setProposals] = useState([]);
   const [isSaleModalOpen, setSaleModalOpen] = useState(false);
+  const [loadingProposals, setLoadingProposals] = useState(true);
 
-  const { kits, loading, error } = useKitSolar();
+  const { kits, loading: loadingKits, error } = useKitSolar();
 
   const fetchProposals = async () => {
-    const fetchedProposals = await ProposalService.getProposalByLead(selectedLead.id);
-    setProposals(fetchedProposals.results);
+    setLoadingProposals(true);
+    try {
+      const fetchedProposals = await ProposalService.getProposalByLead(selectedLead.id);
+      setProposals(fetchedProposals.results);
+    } catch (err) {
+      console.error('Erro ao buscar propostas:', err);
+    } finally {
+      setLoadingProposals(false);
+    }
   };
 
   useEffect(() => {
@@ -71,7 +81,11 @@ const ProposalManager = ({ selectedLead }) => {
     <Grid container spacing={4}>
       <Grid item xs={8}>
         <Box display="flex" flexDirection="column" gap={2}>
-          {proposals.length > 0 ? (
+          {loadingProposals ? (
+            Array.from({ length: 3 }).map((_, index) => (
+              <SkeletonCard key={index} />
+            ))
+          ) : proposals.length > 0 ? (
             proposals.map((proposal) => (
               <ProposalCard
                 handleEditProposal={handleEditProposal}
@@ -117,7 +131,7 @@ const ProposalManager = ({ selectedLead }) => {
               kits={kits}
               selectedLead={selectedLead}
               handleCloseForm={handleCloseForm}
-              loading={loading}
+              loading={loadingKits}
               error={error}
             />
           )}
@@ -131,7 +145,6 @@ const ProposalManager = ({ selectedLead }) => {
         fullWidth
       >
         <DialogTitle>Gerar Pré-Venda</DialogTitle>
-
         <DialogContent dividers>
           <FormPreSale selectedProposal={selectedProposal} onClose={() => setSaleModalOpen(false)} />
         </DialogContent>
