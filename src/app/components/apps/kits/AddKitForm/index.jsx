@@ -22,6 +22,7 @@ const AddKitForm = ({ onCancel, onSave }) => {
       <Grid container spacing={3}>
         <Grid item xs={6}>
           <AutoCompleteInversor
+            labeltitle="Modelo do inversor"
             onChange={(id) => handleChange('inversors_model_id', id)}
             value={formData.inversors_model_id}
             error={!!formErrors.inversors_model_id}
@@ -30,6 +31,7 @@ const AddKitForm = ({ onCancel, onSave }) => {
         </Grid>
         <Grid item xs={6}>
           <AutoCompleteModule
+            labeltitle="Modelo de Módulo"
             onChange={(id) => handleChange('modules_model_id', id)}
             value={formData.modules_model_id}
             error={!!formErrors.modules_model_id}
@@ -38,6 +40,7 @@ const AddKitForm = ({ onCancel, onSave }) => {
         </Grid>
         <Grid item xs={6}>
           <AutoCompleteBranch
+            labeltitle="Unidade"
             onChange={(id) => handleChange('branch_id', id)}
             value={formData.branch_id}
             {...(formErrors.branch_id && { error: true, helperText: formErrors.branch_id })}
@@ -45,6 +48,7 @@ const AddKitForm = ({ onCancel, onSave }) => {
         </Grid>
         <Grid item xs={6}>
           <AutoCompleteRoofType
+            labeltitle="Tipo de Telhado"
             onChange={(id) => handleChange('roof_type_id', id)}
             value={formData.roof_type_id}
             {...(formErrors.roof_type_id && { error: true, helperText: formErrors.roof_type_id })}
@@ -149,7 +153,6 @@ const AddKitForm = ({ onCancel, onSave }) => {
           />
         </Grid>
       </Grid>
-
       <Box display="flex" justifyContent="space-between" mt={3}>
         <Button variant="outlined" color="secondary" onClick={onCancel}>
           Cancelar

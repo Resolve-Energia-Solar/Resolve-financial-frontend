@@ -7,12 +7,16 @@ import {
   Typography,
   Snackbar,
   Alert,
+  Dialog,
+  DialogContent,
 } from '@mui/material';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import useProposalForm from '@/hooks/proposal/useProposalForm';
 import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
 import { useState, useEffect } from 'react';
 import KitSelectionCard from '../../kits/KitSelectionCard';
+import AddKitButton from '../../kits/AddKitCard'; // Importação do botão de adicionar kit
+import AddKitForm from '../../kits/AddKitForm'; // Importação do formulário de adicionar kit
 
 const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal, reloadKits }) => {
   const {
@@ -26,6 +30,7 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal, reloa
   } = useProposalForm();
   const [selectedKitIds, setSelectedKitIds] = useState([]);
   const [isEditingKits, setIsEditingKits] = useState(false);
+  const [isAddKitModalOpen, setIsAddKitModalOpen] = useState(false); // Estado para controlar o modal
 
   useEffect(() => {
     if (proposal) {
@@ -73,6 +78,23 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal, reloa
 
   const toggleEditKits = () => {
     setIsEditingKits(!isEditingKits);
+  };
+
+  // Funções para controlar o modal de adicionar kit
+  const handleAddKit = () => {
+    setIsAddKitModalOpen(true);
+  };
+
+  const handleAddKitSave = (newKitData) => {
+    console.log('Novo Kit Adicionado:', newKitData);
+    setSelectedKitIds((prevSelectedKits) => [...prevSelectedKits, newKitData.id]);
+    kits.push(newKitData);
+    if (reloadKits) reloadKits(); // Atualiza a lista de kits se a função estiver disponível
+    setIsAddKitModalOpen(false);
+  };
+
+  const handleAddKitCancel = () => {
+    setIsAddKitModalOpen(false);
   };
 
   return (
@@ -152,6 +174,13 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal, reloa
         </Box>
 
         <Grid container spacing={1.5}>
+          {isEditingKits && (
+            <Grid item xs={12} sm={6} md={4}>
+              <Box display="flex" justifyContent="center" mt={1}>
+                <AddKitButton onClick={handleAddKit} />
+              </Box>
+            </Grid>
+          )}
           {kits && kits.length > 0 ? (
             kits
               .filter((kit) => isEditingKits || selectedKitIds.includes(kit.id))
@@ -196,6 +225,12 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal, reloa
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      <Dialog open={isAddKitModalOpen} onClose={handleAddKitCancel} maxWidth="md" fullWidth>
+        <DialogContent dividers>
+          <AddKitForm onSave={handleAddKitSave} onCancel={handleAddKitCancel} />
+        </DialogContent>
+      </Dialog>
     </Grid>
   );
 };

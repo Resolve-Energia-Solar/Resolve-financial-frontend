@@ -6,7 +6,7 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import branchService from '@/services/branchService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteBranch({ onChange, value, error, helperText, disabled }) {
+export default function AutoCompleteBranch({ onChange, value, error, helperText, labeltitle, disabled }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -91,6 +91,7 @@ export default function AutoCompleteBranch({ onChange, value, error, helperText,
             error={error}
             helperText={helperText}
             {...params}
+            label={labeltitle}
             size="small"
             variant="outlined"
             InputProps={{

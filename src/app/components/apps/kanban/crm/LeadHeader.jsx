@@ -14,6 +14,7 @@ import {
   Button,
   Snackbar,
   Alert,
+  Grid,
 } from '@mui/material';
 import { MoreVert, Add } from '@mui/icons-material';
 import leadService from '@/services/leadService';
@@ -161,51 +162,65 @@ const ColumnWithActions = ({
       </Box>
 
       <Dialog open={openLeadModal} onClose={handleCloseLeadModal}>
-        <DialogTitle>Adicionar Lead</DialogTitle>
+        <DialogTitle sx={{ mb: 1 }}>Adicionar Lead</DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Nome do Lead"
-            fullWidth
-            value={leadData.complete_name}
-            onChange={(e) => setLeadData({ ...leadData, complete_name: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            label="Email do Lead"
-            fullWidth
-            value={leadData.contact_email}
-            onChange={(e) => setLeadData({ ...leadData, contact_email: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            label="Telefone do Lead"
-            fullWidth
-            value={leadData.phone}
-            onChange={(e) => setLeadData({ ...leadData, phone: e.target.value })}
-          />
-          <AutoCompleteOrigin
-            value={leadData.origin_id}
-            onChange={(id) => setLeadData({ ...leadData, origin_id: id })}
-            helperText="Selecione a origem do lead"
-            error={!!leadData.originError}
-          />
-          <AutoCompleteUser
-            value={leadData.seller_id}
-            onChange={(id) => setLeadData({ ...leadData, seller_id: id })}
-            helperText="Selecione o vendedor responsável pelo lead"
-          />
-          <AutoCompleteUser
-            value={leadData.sdr_id}
-            onChange={(id) => setLeadData({ ...leadData, sdr_id: id })}
-            helperText="Selecione a sdr responsável pelo lead"
-          />
-          <AutoCompleteAddresses
-            value={leadData.addresses_ids}
-            onChange={(ids) => setLeadData({ ...leadData, addresses_ids: ids })}
-            helperText="Selecione o endereço do lead"
-          />
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                margin="dense"
+                autoFocus
+                label="Nome do Lead"
+                fullWidth
+                value={leadData.complete_name}
+                onChange={(e) => setLeadData({ ...leadData, complete_name: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Email do Lead"
+                fullWidth
+                value={leadData.contact_email}
+                onChange={(e) => setLeadData({ ...leadData, contact_email: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Telefone do Lead"
+                fullWidth
+                value={leadData.phone}
+                onChange={(e) => setLeadData({ ...leadData, phone: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <AutoCompleteOrigin
+                labeltitle="Origem do Lead"
+                value={leadData.origin_id}
+                onChange={(id) => setLeadData({ ...leadData, origin_id: id })}
+                error={!!leadData.originError}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <AutoCompleteUser
+                labeltitle="Vendedor"
+                value={leadData.seller_id}
+                onChange={(id) => setLeadData({ ...leadData, seller_id: id })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <AutoCompleteUser
+                labeltitle="SDR"
+                value={leadData.sdr_id}
+                onChange={(id) => setLeadData({ ...leadData, sdr_id: id })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <AutoCompleteAddresses
+                labeltitle="Endereço"
+                value={leadData.addresses_ids}
+                onChange={(ids) => setLeadData({ ...leadData, addresses_ids: ids })}
+              />
+            </Grid>
+          </Grid>
         </DialogContent>
 
         <DialogActions>

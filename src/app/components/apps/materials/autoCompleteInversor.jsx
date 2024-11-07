@@ -6,7 +6,14 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import materialService from '@/services/materialsService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteInversor({ onChange, value, error, helperText, disabled }) {
+export default function AutoCompleteInversor({
+  onChange,
+  value,
+  error,
+  helperText,
+  labeltitle,
+  disabled,
+}) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -39,7 +46,7 @@ export default function AutoCompleteInversor({ onChange, value, error, helperTex
       setLoading(true);
       try {
         const response = await materialService.getMaterialByName(name);
-        console.log("Resposta da API: ", response);
+        console.log('Resposta da API: ', response);
         if (Array.isArray(response.results)) {
           const formattedMaterials = response.results.map((material) => ({
             id: material.id,
@@ -56,7 +63,7 @@ export default function AutoCompleteInversor({ onChange, value, error, helperTex
         setLoading(false);
       }
     }, 300),
-    []
+    [],
   );
 
   const handleOpen = () => setOpen(true);
@@ -81,7 +88,7 @@ export default function AutoCompleteInversor({ onChange, value, error, helperTex
       getOptionLabel={(option) => option.name || ''}
       renderInput={(params) => (
         <CustomTextField
-          label="Modelo do Inversor"
+          label={labeltitle}
           error={error}
           helperText={helperText}
           {...params}
