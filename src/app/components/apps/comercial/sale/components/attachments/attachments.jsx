@@ -19,6 +19,7 @@ import {
   CircularProgress,
   Link,
   useTheme,
+  Skeleton,
 } from '@mui/material';
 import { useState, useEffect } from 'react';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
@@ -31,13 +32,14 @@ import useAttachmentForm from '@/hooks/attachments/useAttachmentsForm';
 import attachmentService from '@/services/attachmentService';
 
 export default function FileUpload({ objectId, contentType }) {
-  const theme = useTheme(); 
+  const theme = useTheme();
   const [selectedFile, setSelectedFile] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [fileToDelete, setFileToDelete] = useState(null);
   const [attachments, setAttachments] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingAttachments, setLoadingAttachments] = useState(true);
 
   const { formData, handleChange, handleSave, formErrors, success } = useAttachmentForm(
     null,
@@ -75,22 +77,31 @@ export default function FileUpload({ objectId, contentType }) {
   };
 
   const handleSendFile = async () => {
-    setLoading(true); 
+    setLoading(true);
+    setLoadingAttachments(true);
     await handleSave();
     if (success) {
       const updatedAttachments = await attachmentService.getAttachments(objectId);
       setAttachments(updatedAttachments.results);
+      setLoadingAttachments(false);
+      handleCloseModal();
     }
-    setLoading(false); 
+    setLoading(false);
+    setLoadingAttachments(false);
   };
 
   const handleDeleteFile = async (id) => {
+    setFileToDelete(attachments.find((attachment) => attachment.id === id));
+    setOpenDeleteDialog(true);
     try {
       await attachmentService.deleteAttachment(id);
       const updatedAttachments = await attachmentService.getAttachments(objectId);
+      setLoadingAttachments(true);
       setAttachments(updatedAttachments.results);
     } catch (error) {
       console.error('Erro ao deletar o arquivo:', error);
+    } finally {
+      setLoadingAttachments(false);
     }
   };
 
@@ -107,6 +118,7 @@ export default function FileUpload({ objectId, contentType }) {
   };
 
   useEffect(() => {
+    setLoadingAttachments(true);
     if (success) {
       resetForm();
       handleCloseModal();
@@ -116,13 +128,22 @@ export default function FileUpload({ objectId, contentType }) {
       };
       fetchAttachments();
     }
+    setLoadingAttachments(false);
   }, [success]);
 
   useEffect(() => {
     const fetchAttachments = async () => {
-      const updatedAttachments = await attachmentService.getAttachmentByIdSale(objectId);
-      setAttachments(updatedAttachments.results);
+      try {
+        setLoadingAttachments(true);
+        const updatedAttachments = await attachmentService.getAttachmentByIdSale(objectId);
+        setAttachments(updatedAttachments.results);
+      } catch (error) {
+        console.error('Erro ao carregar anexos:', error);
+      } finally {
+        setLoadingAttachments(false);
+      }
     };
+
     fetchAttachments();
   }, [objectId]);
 
@@ -136,7 +157,7 @@ export default function FileUpload({ objectId, contentType }) {
               padding: 5,
               textAlign: 'center',
               borderRadius: 1,
-              backgroundColor: theme.palette.background.default, 
+              backgroundColor: theme.palette.background.default,
               position: 'relative',
               height: '100%',
               display: 'flex',
@@ -147,7 +168,9 @@ export default function FileUpload({ objectId, contentType }) {
             }}
             onClick={handleOpenModal}
           >
-            <UploadFileIcon sx={{ fontSize: 50, marginBottom: 2, color: theme.palette.primary.main }} />
+            <UploadFileIcon
+              sx={{ fontSize: 50, marginBottom: 2, color: theme.palette.primary.main }}
+            />
             <Typography>Clique para adicionar um arquivo</Typography>
           </Box>
         </Grid>
@@ -165,8 +188,8 @@ export default function FileUpload({ objectId, contentType }) {
               left: '50%',
               transform: 'translate(-50%, -50%)',
               width: 400,
-              bgcolor: theme.palette.background.paper, 
-              border: `2px solid ${theme.palette.primary.main}`, 
+              bgcolor: theme.palette.background.paper,
+              border: `2px solid ${theme.palette.primary.main}`,
               boxShadow: 24,
               p: 4,
             }}
@@ -193,7 +216,9 @@ export default function FileUpload({ objectId, contentType }) {
               }}
               onClick={() => document.getElementById('file-upload').click()}
             >
-              <UploadFileIcon sx={{ fontSize: 50, marginBottom: 2, color: theme.palette.primary.main }} />
+              <UploadFileIcon
+                sx={{ fontSize: 50, marginBottom: 2, color: theme.palette.primary.main }}
+              />
               <Typography>Clique para adicionar um arquivo</Typography>
               <input type="file" id="file-upload" hidden onChange={handleFileSelect} />
             </Box>
@@ -260,7 +285,13 @@ export default function FileUpload({ objectId, contentType }) {
         <Grid item sm={12} lg={6}>
           <Typography variant="h6">Anexos</Typography>
           <List>
-            {Array.isArray(attachments) && attachments.length > 0 ? (
+            {loadingAttachments ? (
+              <>
+                <Skeleton variant="rectangular" width="100%" height={40} sx={{ marginBottom: 1 }} />
+                <Skeleton variant="rectangular" width="100%" height={40} sx={{ marginBottom: 1 }} />
+                <Skeleton variant="rectangular" width="100%" height={40} sx={{ marginBottom: 1 }} />
+              </>
+            ) : Array.isArray(attachments) && attachments.length > 0 ? (
               attachments.map((file, index) => (
                 <ListItem key={index} sx={{ borderBottom: `1px dashed ${theme.palette.divider}` }}>
                   <Box sx={{ width: '100%' }}>
@@ -293,9 +324,11 @@ export default function FileUpload({ objectId, contentType }) {
                 </ListItem>
               ))
             ) : (
-              <Typography variant="body2" color="textSecondary">
-                Nenhum arquivo anexado.
-              </Typography>
+              <ListItem>
+                <Typography variant="body2" color="textSecondary">
+                  Nenhum arquivo encontrado
+                </Typography>
+              </ListItem>
             )}
           </List>
         </Grid>

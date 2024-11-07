@@ -22,10 +22,11 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import EventIcon from '@mui/icons-material/Event';
 import BadgeIcon from '@mui/icons-material/Badge';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import StatusChip from '../DocumentStatusIcon/index';
 import CreateSale from '../../leads/Add-lead';
+import ProposalStatusChip from '../components/ProposalStatusChip';
 
-export default function ProposalCard({ proposal, handleEditProposal }) {
+
+export default function ProposalCard({ proposal, handleEditProposal, onAddSale }) {
   const theme = useTheme();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -131,7 +132,7 @@ export default function ProposalCard({ proposal, handleEditProposal }) {
               }}
             />
             <Typography variant="body1">
-              Status: <StatusChip status={proposal.status} />
+              Status: <ProposalStatusChip status={proposal.status} />
             </Typography>
           </Box>
 
@@ -153,15 +154,17 @@ export default function ProposalCard({ proposal, handleEditProposal }) {
                 <EditIcon />
               </IconButton>
             </Tooltip>
+            { proposal.status !=='A' && (
             <Tooltip title="Criar Venda">
               <IconButton
                 variant="outlined"
                 color="primary"
-                onClick={handleOpenCreateSale}
+                onClick={() => onAddSale(proposal)}
               >
                 <AddShoppingCartIcon />
               </IconButton>
             </Tooltip>
+            )}
             <Tooltip title="Ver Proposta">
               <IconButton
                 color="primary"

@@ -5,9 +5,11 @@ import BlankCard from '@/app/components/shared/BlankCard';
 import KanbanHeader from '@/app/components/apps/kanban/crm/KanbanHeader';
 import useKanban from '@/hooks/boards/useKanban';
 import LeadManager from '@/app/components/apps/kanban/crm/LeadManager';
+import { KanbanDataContextProvider } from '@/app/context/kanbancontext';
 
 function KanbanPage() {
   const {
+    addLead,
     boards,
     selectedBoard,
     setSelectedBoard,
@@ -24,6 +26,7 @@ function KanbanPage() {
   } = useKanban();
 
   return (
+    <KanbanDataContextProvider>
     <BlankCard>
       <CardContent>
         <KanbanHeader
@@ -45,6 +48,7 @@ function KanbanPage() {
                 leads={leads}
                 statuses={statuses}
                 board={selectedBoard}
+                addLead={addLead}
                 onUpdateLeadColumn={updateColumnName}
                 onUpdateLead={handleUpdateLead}
                 onDeleteLead={handleDeleteLead}
@@ -72,6 +76,7 @@ function KanbanPage() {
         </Snackbar>
       </CardContent>
     </BlankCard>
+    </KanbanDataContextProvider>
   );
 }
 

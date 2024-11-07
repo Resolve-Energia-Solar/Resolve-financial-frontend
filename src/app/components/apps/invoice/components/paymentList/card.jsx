@@ -15,8 +15,10 @@ import {
   DialogTitle,
   Button,
   Box,
+  Skeleton,
+  useTheme,
 } from '@mui/material';
-import { MoreVert, Edit, Delete, Visibility } from '@mui/icons-material';
+import { MoreVert, Edit, Delete, Visibility, Add } from '@mui/icons-material';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import PaymentChip from '../PaymentChip';
 import paymentService from '@/services/paymentService';
@@ -25,6 +27,7 @@ import { styled } from '@mui/material/styles';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import EditInvoicePage from '../../Edit-invoice';
 import DetailInvoicePage from '../../Invoice-detail';
+import CreateInvoice from '../../Add-invoice';
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -39,15 +42,20 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 }));
 
 const PaymentCard = ({ sale = null }) => {
+  const theme = useTheme();
   const [paymentsList, setPaymentsList] = useState([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [menuOpenRowId, setMenuOpenRowId] = useState(null);
   const [open, setOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+
+  const [invoiceToCreate, setInvoiceToCreate] = useState(null);
   const [invoiceToEdit, setInvoiceToEdit] = useState(null);
   const [invoiceToView, setInvoiceToView] = useState(null);
   const [invoiceToDelete, setInvoiceToDelete] = useState(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -57,11 +65,18 @@ const PaymentCard = ({ sale = null }) => {
         setPaymentsList(response.results);
       } catch (error) {
         console.log('Error: ', error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, [sale]);
+
+  const handleAddPayment = () => {
+    setCreateModalOpen(true);
+    console.log('Adicionar novo pagamento');
+  };
 
   const handleMenuClick = (event, id) => {
     setMenuAnchorEl(event.currentTarget);
@@ -81,6 +96,11 @@ const PaymentCard = ({ sale = null }) => {
   const handleDetailClick = (id) => {
     setInvoiceToView(id);
     setDetailModalOpen(true);
+  };
+  
+ const handleCreateClick = () => {
+    setCreateModalOpen(true);
+    
   };
 
   const handleDeleteClick = (id) => {
@@ -102,91 +122,137 @@ const PaymentCard = ({ sale = null }) => {
   return (
     <>
       <Grid container spacing={3}>
-        { /* verificando se a lista de pagamentos está vazia */ }
-        {paymentsList.length === 0 && (
-          <Grid item xs={12}>
-            <Typography variant="h6" color="textSecondary">
-              Nenhuma fatura encontrada
-            </Typography>
-          </Grid>
-        )}
-        {paymentsList.map((payment) => {
-          console.log('payment', payment);
-          const progressValue = payment?.percentual_paid*100 || 0;
+        {/* Card de Adicionar Pagamento */}
+        <Grid item xs={12} sm={6} md={4}>
+          <Card elevation={10} onClick={handleCreateClick} sx={{ cursor: 'pointer', textAlign: 'center', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <CardContent>
+              <Add fontSize="large" color="primary" />
+              <Typography variant="subtitle1" color="text.secondary">
+                Adicionar Pagamento
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
 
-          return (
-            <Grid item xs={12} sm={6} md={4} key={payment.id}>
+        {loading ? (
+          [...Array(3)].map((_, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
               <Card elevation={10}>
                 <CardContent>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Box>
-                      <Typography fontSize="14px" color="text.secondary">
-                        {payment.installments.length}x parcelas
-                      </Typography>
-                      <Typography fontSize="14px">
-                        {Number(payment?.value).toLocaleString('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL',
-                        })}
-                      </Typography>
-                    </Box>
-                    <PaymentChip paymentType={payment.payment_type} />
-                  </Box>
-                  <Box mt={2}>
-                    <Typography variant="caption" color="text.secondary" fontSize="12px">
-                      {progressValue}% Pago
-                    </Typography>
-                    <BorderLinearProgress variant="determinate" value={progressValue} sx={{ mt: 1 }} />
-                  </Box>
+                  <Skeleton variant="text" width="60%" height={20} />
+                  <Skeleton variant="text" width="80%" height={20} />
+                  <Skeleton variant="rectangular" width="100%" height={10} sx={{ mt: 2 }} />
                 </CardContent>
                 <CardActions disableSpacing>
-                  <CustomCheckbox />
-                  <Tooltip title="Ações">
-                    <IconButton size="small" onClick={(event) => handleMenuClick(event, payment.id)}>
-                      <MoreVert fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                  <Menu
-                    anchorEl={menuAnchorEl}
-                    open={menuOpenRowId === payment.id}
-                    onClose={handleMenuClose}
-                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                  >
-                    <MenuItem
-                      onClick={() => {
-                        handleDetailClick(payment.id);
-                        handleMenuClose();
-                      }}
-                    >
-                      <Visibility fontSize="small" sx={{ mr: 1 }} />
-                      Visualizar
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        handleEditClick(payment.id);
-                        handleMenuClose();
-                      }}
-                    >
-                      <Edit fontSize="small" sx={{ mr: 1 }} />
-                      Editar
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        handleDeleteClick(payment.id);
-                        handleMenuClose();
-                      }}
-                    >
-                      <Delete fontSize="small" sx={{ mr: 1 }} />
-                      Excluir
-                    </MenuItem>
-                  </Menu>
+                  <Skeleton variant="circular" width={24} height={24} />
                 </CardActions>
               </Card>
             </Grid>
-          );
-        })}
+          ))
+        ) : paymentsList.length === 0 ? (
+          <Grid item xs={12}>
+            <Typography variant="body2" color={theme.palette.text.secondary}>
+              Nenhuma fatura encontrada.
+            </Typography>
+          </Grid>
+        ) : (
+          paymentsList.map((payment) => {
+            const progressValue = payment?.percentual_paid * 100 || 0;
+
+            return (
+              <Grid item xs={12} sm={6} md={4} key={payment.id}>
+                <Card elevation={10}>
+                  <CardContent>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Box>
+                        <Typography fontSize="14px" color="text.secondary">
+                          {payment.installments.length}x parcelas
+                        </Typography>
+                        <Typography fontSize="14px">
+                          {Number(payment?.value).toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                          })}
+                        </Typography>
+                      </Box>
+                      <PaymentChip paymentType={payment.payment_type} />
+                    </Box>
+                    <Box mt={2}>
+                      <Typography variant="caption" color="text.secondary" fontSize="12px">
+                        {progressValue}% Pago
+                      </Typography>
+                      <BorderLinearProgress
+                        variant="determinate"
+                        value={progressValue}
+                        sx={{ mt: 1 }}
+                      />
+                    </Box>
+                  </CardContent>
+                  <CardActions disableSpacing>
+                    <CustomCheckbox />
+                    <Tooltip title="Ações">
+                      <IconButton
+                        size="small"
+                        onClick={(event) => handleMenuClick(event, payment.id)}
+                      >
+                        <MoreVert fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    <Menu
+                      anchorEl={menuAnchorEl}
+                      open={menuOpenRowId === payment.id}
+                      onClose={handleMenuClose}
+                      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    >
+                      <MenuItem
+                        onClick={() => {
+                          handleDetailClick(payment.id);
+                          handleMenuClose();
+                        }}
+                      >
+                        <Visibility fontSize="small" sx={{ mr: 1 }} />
+                        Visualizar
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          handleEditClick(payment.id);
+                          handleMenuClose();
+                        }}
+                      >
+                        <Edit fontSize="small" sx={{ mr: 1 }} />
+                        Editar
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          handleDeleteClick(payment.id);
+                          handleMenuClose();
+                        }}
+                      >
+                        <Delete fontSize="small" sx={{ mr: 1 }} />
+                        Excluir
+                      </MenuItem>
+                    </Menu>
+                  </CardActions>
+                </Card>
+              </Grid>
+            );
+          })
+        )}
       </Grid>
+
+      {/* Modal de Adicionar Pagamento */}
+      <Dialog open={createModalOpen} onClose={() => setCreateModalOpen(false)} maxWidth="md" fullWidth>
+        <DialogTitle>Adicionar Pagamento</DialogTitle>
+        <DialogContent>
+          <CreateInvoice />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setCreateModalOpen(false)} color="primary">
+            Cancelar
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Modal de Confirmação de Exclusão */}
       <Dialog open={open} onClose={() => setOpen(false)}>
@@ -218,7 +284,12 @@ const PaymentCard = ({ sale = null }) => {
       </Dialog>
 
       {/* Modal de Detalhes */}
-      <Dialog open={detailModalOpen} onClose={() => setDetailModalOpen(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={detailModalOpen}
+        onClose={() => setDetailModalOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogContent>
           <DetailInvoicePage payment_id={invoiceToView} />
         </DialogContent>

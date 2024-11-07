@@ -1,8 +1,10 @@
 import apiClient from './apiClient';
 
 const saleService = {
-    getSales: async (ordering = '') => { 
-        const response = await apiClient.get(`/api/sales/?ordering=${ordering}`);
+    getSales: async ({ ordering, params, nextPage }) => {
+        const urlParams = params ? `&${params}` : '';
+        const urlNextPage = nextPage ? `&page=${nextPage}` : '';
+        const response = await apiClient.get(`/api/sales/?ordering=${ordering || ''}${urlParams}${urlNextPage}`);
         return response.data;
     },
     getSaleByFullName: async (fullName) => {
@@ -12,6 +14,10 @@ const saleService = {
     getSaleByLead: async (lead) => {
         const response = await apiClient.get(`/api/sales/?lead=${lead}`);
         console.log(response.data);
+        return response.data;
+    },
+    createPreSale: async (data) => {
+        const response = await apiClient.post(`/api/generate-pre-sale/`, data);
         return response.data;
     },
     getSaleById: async (id) => { 

@@ -74,7 +74,9 @@ const LeadDetails = ({ selectedLead, onUpdateLead }) => {
       icon: <Place fontSize="small" />,
       label: 'Endereço',
       value:
-        selectedLead.addresses && selectedLead.addresses.length > 0
+        selectedLead.addresses &&
+        Array.isArray(selectedLead.addresses) &&
+        selectedLead.addresses.length > 0
           ? selectedLead.addresses
               .map(
                 (address) =>
@@ -89,7 +91,7 @@ const LeadDetails = ({ selectedLead, onUpdateLead }) => {
     {
       icon: <Place fontSize="small" />,
       label: 'Origem',
-      value: selectedLead.origin || 'N/A',
+      value: selectedLead.origin?.name || 'N/A',
     },
     {
       icon: <CalendarToday fontSize="small" />,
@@ -166,17 +168,19 @@ const LeadDetails = ({ selectedLead, onUpdateLead }) => {
 
   return (
     <Grid container spacing={3} alignItems="flex-start">
-      <Grid item xs={8}>
+      <Grid item xs={onUpdateLead ? 8 : 12}>
         {renderSection('Informações Pessoais', personalDetails)}
         {renderSection('Documentos', documentDetails)}
         {renderSection('Contato', contactDetails)}
         {renderSection('Outros Detalhes', otherDetails)}
       </Grid>
-      <Grid item xs={4}>
-        <Button variant="contained" color="primary" fullWidth onClick={onUpdateLead}>
-          Editar
-        </Button>
-      </Grid>
+      {onUpdateLead && (
+        <Grid item xs={4}>
+          <Button variant="contained" color="primary" fullWidth onClick={onUpdateLead}>
+            Editar
+          </Button>
+        </Grid>
+      )}
     </Grid>
   );
 };

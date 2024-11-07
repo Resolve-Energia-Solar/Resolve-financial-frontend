@@ -4,10 +4,7 @@ import { createContext, useState } from 'react';
 export const SaleDataContext = createContext();
 
 export const SaleDataContextProvider = ({ children }) => {
-  const [filters, setFilters] = useState({
-    dateRange: [null, null],
-    statusDocument: [],
-  });
+  const [filters, setFilters] = useState([]);
 
   const [refresh, setRefresh] = useState(false);
 
