@@ -98,7 +98,7 @@ const useProposalForm = (initialData, id) => {
       setSnackbar({ open: true, message: 'O campo "Lead" é obrigatório.', severity: 'warning' })
       return
     }
-    if (dataToSend.kits.length === 0) {
+    if (dataToSend.kits_id.length === 0) {
       setSnackbar({
         open: true,
         message: 'Selecione pelo menos um kit para a proposta.',
