@@ -175,7 +175,7 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null }) => {
                     borderBottom: `1px dashed ${theme.palette.divider}`,
                   }}
                 >
-                  {saleData.marketing_campaign.name}
+                  {saleData?.marketing_campaign?.name}
                 </CustomFormLabel>
               </Grid>
               <Grid item xs={12} sm={12} lg={4}>

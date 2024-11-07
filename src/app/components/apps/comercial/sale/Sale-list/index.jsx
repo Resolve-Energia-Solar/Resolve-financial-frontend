@@ -68,6 +68,7 @@ const SaleList = () => {
 
   const { filters, refresh } = useContext(SaleDataContext);
 
+
   const {
     isSendingContract,
     loading: loadingContract,
@@ -99,12 +100,15 @@ const SaleList = () => {
 
   useEffect(() => {
     const fetchSales = async () => {
+      const ordering = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : null
       try {
         setLoading(true);
-        const data = await saleService.getSales(
-          order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : null,
-        );
+        const data = await saleService.getSales({
+          ordering,
+          params: filters[1]
+        });
         setSalesList(data.results);
+        console.log(data);
       } catch (err) {
         setError('Erro ao carregar Vendas');
         showAlert('Erro ao carregar Vendas', 'error');
@@ -232,7 +236,7 @@ const SaleList = () => {
         </Button>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <SwipeCard />
+          {/* <SwipeCard /> */}
           {selectedSales.length > 0 && <ActionFlash value={selectedSales} />}
           <DrawerFilters />
         </Box>
@@ -296,12 +300,12 @@ const SaleList = () => {
 
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('is_sale')}
+                onClick={() => handleSort('is_pre_sale')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   Venda
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'is_sale' &&
+                    {order === 'is_pre_sale' &&
                       (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                   </Box>
                 </Box>
@@ -366,7 +370,7 @@ const SaleList = () => {
                     })}
                   </TableCell>
                   <TableCell>
-                    <StatusPreSale status={item.is_sale} />
+                    <StatusPreSale status={item.is_pre_sale} />
                   </TableCell>
                   <TableCell>
                     <StatusChip status={item.status} />

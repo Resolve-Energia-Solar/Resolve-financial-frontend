@@ -9,7 +9,6 @@ const ProposalService = {
     const response = await apiClient.get(`/api/comercial-proposals/?q=${fullName}`)
     return response.data
   },
-
   getProposalById: async id => {
     const response = await apiClient.get(`/api/comercial-proposals/${id}/`)
     return response.data

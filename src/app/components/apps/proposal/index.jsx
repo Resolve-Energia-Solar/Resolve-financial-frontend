@@ -16,7 +16,6 @@ import ProposalCard from './proposalCard/index';
 import { useState, useEffect } from 'react';
 import useKitSolar from '@/hooks/kits/useKitSolar';
 import ProposalService from '@/services/proposalService';
-import CustomFormLabel from '../../forms/theme-elements/CustomFormLabel';
 import FormPreSale from './components/formPreSale/FormPreSale';
 
 const ProposalManager = ({ selectedLead }) => {
@@ -29,8 +28,6 @@ const ProposalManager = ({ selectedLead }) => {
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [proposals, setProposals] = useState([]);
   const [isSaleModalOpen, setSaleModalOpen] = useState(false);
-
-  console.log('selectedProposal', selectedProposal);
 
   const { kits, loading, error } = useKitSolar();
 

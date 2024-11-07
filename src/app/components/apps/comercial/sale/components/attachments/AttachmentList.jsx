@@ -15,6 +15,7 @@ import {
   Button,
   ListItemSecondaryAction,
   useTheme,
+  Skeleton,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ImageIcon from '@mui/icons-material/Image';
@@ -22,7 +23,7 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { useState } from 'react';
 
-const AttachmentList = ({ attachments, handleDeleteClick }) => {
+const AttachmentList = ({ attachments, handleDeleteClick, loading }) => {
   const theme = useTheme();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [fileToDelete, setFileToDelete] = useState(null);
@@ -55,7 +56,16 @@ const AttachmentList = ({ attachments, handleDeleteClick }) => {
     <Box>
       <Typography variant="h6">Anexos</Typography>
       <List>
-        {Array.isArray(attachments) && attachments.length > 0 ? (
+        {loading ? (
+          Array.from(new Array(3)).map((_, index) => (
+            <ListItem key={index} sx={{ borderBottom: `1px dashed ${theme.palette.divider}` }}>
+              <Stack direction="row" alignItems="center" spacing={2} width="100%">
+                <Skeleton variant="circular" width={40} height={40} />
+                <Skeleton variant="text" width="60%" height={20} />
+              </Stack>
+            </ListItem>
+          ))
+        ) : Array.isArray(attachments) && attachments.length > 0 ? (
           attachments.map((file, index) => (
             <ListItem key={index} sx={{ borderBottom: `1px dashed ${theme.palette.divider}` }}>
               <Box sx={{ width: '100%' }}>

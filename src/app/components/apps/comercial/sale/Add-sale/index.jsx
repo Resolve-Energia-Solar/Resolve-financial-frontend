@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Grid, Button, Stack, FormControlLabel, Box } from '@mui/material';
+import { Grid, Button, Stack, FormControlLabel, Box, CircularProgress } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
@@ -26,7 +26,15 @@ const CreateSale = ({ onClosedModal = null }) => {
     return permissions.some((permission) => userPermissions.includes(permission));
   };
 
-  const { formData, handleChange, handleSave, formErrors, success } = useSaleForm();
+  const {
+    formData,
+    handleChange,
+    handleSave,
+    formErrors,
+    loading: formLoading,
+    success,
+    successData,
+  } = useSaleForm();
 
   const { formattedValue, handleValueChange } = useCurrencyFormatter();
 
@@ -40,7 +48,7 @@ const CreateSale = ({ onClosedModal = null }) => {
   const router = useRouter();
   useEffect(() => {
     if (success) {
-      router.push('/apps/commercial/sale');
+      router.push(`/apps/commercial/sale/${successData.id}/edit`);
     }
   }, [success]);
 
@@ -170,8 +178,14 @@ const CreateSale = ({ onClosedModal = null }) => {
                 Fechar
               </Button>
             )}
-            <Button variant="contained" color="primary" onClick={handleSave}>
-              Criar
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSave}
+              disabled={formLoading}
+              endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+            >
+              {formLoading || success ? 'Salvando...' : 'Criar'}
             </Button>
           </Stack>
         </Grid>

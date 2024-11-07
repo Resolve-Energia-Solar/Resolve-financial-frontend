@@ -24,6 +24,7 @@ const useSaleForm = (initialData, id) => {
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [successData, setSuccessData] = useState(null); 
 
   useEffect(() => {
     if (initialData) {
@@ -35,7 +36,7 @@ const useSaleForm = (initialData, id) => {
         branchId: initialData.branch?.id || '',
         marketingCampaignId: initialData.marketing_campaign?.id || null,
         leadId: initialData.lead?.id || null,
-        isSale: initialData.is_sale || false,
+        isSale: initialData.is_pre_sale || false,
         totalValue: initialData.total_value || '',
         status: initialData.status || '',
         completedDocument: initialData.completed_document || false,
@@ -60,7 +61,7 @@ const useSaleForm = (initialData, id) => {
       branch_id: formData.branchId,
       marketing_campaign_id: formData.marketingCampaignId,
       lead_id: formData.leadId,
-      is_sale: formData.isSale,
+      is_pre_sale: formData.isSale,
       total_value: formData.totalValue,
       status: formData.status,
       completed_document: formData.completedDocument,
@@ -70,15 +71,18 @@ const useSaleForm = (initialData, id) => {
     };
 
     try {
+      let response;
       if (id) {
-        await saleService.updateSale(id, dataToSend);
+        response = await saleService.updateSale(id, dataToSend);
       } else {
-        await saleService.createSale(dataToSend);
+        response = await saleService.createSale(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);
+      setSuccessData(response?.data || dataToSend); // Armazena os dados criados
     } catch (err) {
       setSuccess(false);
+      setSuccessData(null);
       setFormErrors(err.response?.data || {});
       console.log(err.response?.data || err);
     } finally {
@@ -93,6 +97,7 @@ const useSaleForm = (initialData, id) => {
     formErrors,
     success,
     loading,
+    successData,
   };
 };
 

@@ -22,8 +22,8 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import EventIcon from '@mui/icons-material/Event';
 import BadgeIcon from '@mui/icons-material/Badge';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import StatusChip from '../DocumentStatusIcon/index';
 import CreateSale from '../../leads/Add-lead';
+import ProposalStatusChip from '../components/ProposalStatusChip';
 
 export default function ProposalCard({ proposal, handleEditProposal, onAddSale }) {
   const theme = useTheme();
@@ -131,7 +131,7 @@ export default function ProposalCard({ proposal, handleEditProposal, onAddSale }
               }}
             />
             <Typography variant="body1">
-              Status: <StatusChip status={proposal.status} />
+              Status: <ProposalStatusChip status={proposal.status} />
             </Typography>
           </Box>
 

@@ -18,6 +18,7 @@ import {
   Grid,
   CircularProgress,
   FormControlLabel,
+  Skeleton,
 } from '@mui/material';
 import { format, isValid } from 'date-fns';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
@@ -34,6 +35,7 @@ import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import CustomFieldMoney from '../components/CustomFieldMoney';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
+import EditInvoiceSkeleton from '../components/EditInvoiceSkeleton';
 
 const EditInvoicePage = ({payment_id=null}) => {
   const params = useParams();
@@ -69,6 +71,10 @@ const EditInvoicePage = ({payment_id=null}) => {
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
   const formattedOrderDate = format(parsedDate, 'EEEE, MMMM dd, yyyy');
 
+  if (loading) {
+    return <EditInvoiceSkeleton />;
+  }
+
   return (
     <Box>
       <Stack
@@ -88,11 +94,16 @@ const EditInvoicePage = ({payment_id=null}) => {
             endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null} // Ícone de loading
           >
             {formLoading ? 'Salvando...' : 'Salvar Alterações'}{' '}
-            {/* Altera o texto com base no loading */}
           </Button>
         </Box>
       </Stack>
       <Divider></Divider>
+
+      {success && (
+        <Alert severity="success" sx={{ mt: 2 }}>
+          Pagamento atualizado com sucesso!
+        </Alert>
+      )}
 
       <Stack
         direction="row"

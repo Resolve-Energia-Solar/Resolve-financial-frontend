@@ -2,6 +2,7 @@ import { Box, Button, Card, CardContent, Tab, Tabs, Typography, useTheme } from 
 import { CallToAction, FlashAuto, SolarPower } from '@mui/icons-material';
 import { useState } from 'react';
 import saleService from '@/services/saleService';
+import ProposalService from '@/services/proposalService';
 import LeadDetails from '../../../kanban/crm/LeadDetails';
 import { useContext } from 'react';
 import { KanbanDataContext } from '@/app/context/kanbancontext';
@@ -27,7 +28,6 @@ function FormPreSale({ selectedProposal, onClose }) {
     setValue(newValue);
   };
 
-
   const sendData = {
     lead_id: selectedProposal.lead.id,
     kits: selectedProposal.kits.map((kit) => kit),
@@ -39,6 +39,7 @@ function FormPreSale({ selectedProposal, onClose }) {
       const response = await saleService.createPreSale(sendData);
       setSuccess(true);
       setIdSaleSuccess(response.pre_sale_id);
+      ProposalService.updateProposalPartial(selectedProposal.id, {status: 'A'});
       onClose();
     } catch (error) {
       console.log(error);

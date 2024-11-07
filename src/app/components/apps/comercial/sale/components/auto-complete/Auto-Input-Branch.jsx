@@ -88,7 +88,6 @@ export default function AutoCompleteBranch({ onChange, value, error, helperText,
         onChange={handleChange}
         renderInput={(params) => (
           <CustomTextField
-            label="Franquia"
             error={error}
             helperText={helperText}
             {...params}

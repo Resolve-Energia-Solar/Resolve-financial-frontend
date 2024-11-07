@@ -13,6 +13,7 @@ import {
   Divider,
   Grid,
   useTheme,
+  Skeleton,
 } from '@mui/material';
 import { format, isValid } from 'date-fns';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
@@ -21,6 +22,7 @@ import { useParams } from 'next/navigation';
 import usePayment from '@/hooks/payments/usePayment';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import PaymentStatusChip from '../components/PaymentStatusChip';
+import EditInvoiceSkeleton from '../components/EditInvoiceSkeleton';
 
 const DetailInvoicePage = ({ payment_id = null }) => {
   const theme = useTheme();
@@ -43,11 +45,13 @@ const DetailInvoicePage = ({ payment_id = null }) => {
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
   const formattedOrderDate = format(parsedDate, 'EEEE, MMMM dd, yyyy');
 
-  // Função para formatar valores em BRL
   const formatToBRL = (value) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
-  if (loading) return <Typography>Loading...</Typography>;
+  if (loading) {
+    return <EditInvoiceSkeleton />;
+  }
+
   if (error) return <Typography>Error loading payment details.</Typography>;
 
   return (
@@ -165,7 +169,9 @@ const DetailInvoicePage = ({ payment_id = null }) => {
                   <TableCell>{formatToBRL(installment.installment_value)}</TableCell>
                   <TableCell>{installment.installment_number}</TableCell>
                   <TableCell>{format(new Date(installment.due_date), 'dd/MM/yyyy')}</TableCell>
-                  <TableCell><PaymentStatusChip isPaid={installment.is_paid} /></TableCell>
+                  <TableCell>
+                    <PaymentStatusChip isPaid={installment.is_paid} />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

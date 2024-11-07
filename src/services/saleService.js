@@ -1,8 +1,9 @@
 import apiClient from './apiClient';
 
 const saleService = {
-    getSales: async (ordering = '') => { 
-        const response = await apiClient.get(`/api/sales/?ordering=${ordering}`);
+    getSales: async ({ ordering, params }) => {
+        const urlParams = params ? `&${params}` : '';
+        const response = await apiClient.get(`/api/sales/?ordering=${ordering || ''}${urlParams}`);
         return response.data;
     },
     getSaleByFullName: async (fullName) => {

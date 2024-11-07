@@ -5,15 +5,15 @@ import {
   Cancel as CancelIcon,
 } from '@mui/icons-material';
 
-const StatusChip = ({ status }) => {
+const ProposalStatusChip = ({ status }) => {
   const getChipProps = (status) => {
     switch (status) {
       case 'A':
-        return { label: 'Finalizado', color: 'success', icon: <CheckCircleIcon /> };
+        return { label: 'Aceita', color: 'success', icon: <CheckCircleIcon /> };
       case 'P':
         return { label: 'Pendente', color: 'warning', icon: <HourglassEmptyIcon /> };
       case 'R':
-        return { label: 'Cancelado', color: 'error', icon: <CancelIcon /> };
+        return { label: 'Rejeitada', color: 'error', icon: <CancelIcon /> };
       default:
         return { label: status };
     }
@@ -24,4 +24,4 @@ const StatusChip = ({ status }) => {
   return <Chip label={label} color={color} icon={icon} />;
 };
 
-export default StatusChip;
+export default ProposalStatusChip;
