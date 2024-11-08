@@ -87,7 +87,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
       ) : error ? (
         <Typography color="error">{error}</Typography>
       ) : (
-        <>
+        <Box>
           {value === 0 && (
             <>
               {success && (
@@ -247,7 +247,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
               </Button>
             )}
           </Stack>
-        </>
+        </Box>
       )}
     </Box>
   );
