@@ -245,7 +245,7 @@ const PaymentCard = ({ sale = null }) => {
       <Dialog open={createModalOpen} onClose={() => setCreateModalOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle>Adicionar Pagamento</DialogTitle>
         <DialogContent>
-          <CreateInvoice />
+          <CreateInvoice sale={sale} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setCreateModalOpen(false)} color="primary">

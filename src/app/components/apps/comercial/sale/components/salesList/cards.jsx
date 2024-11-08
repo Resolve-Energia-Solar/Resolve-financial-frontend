@@ -173,7 +173,12 @@ const SaleListCards = ({ leadId = null }) => {
       {/* Modal de Edição */}
       <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="lg" fullWidth>
         <DialogTitle>Editar Venda</DialogTitle>
-        <DialogContent>
+        <DialogContent
+          sx={{
+            height: { xs: '80vh', md: '60vh' },
+            overflowY: 'auto',
+          }}
+        >
           <EditSalePage saleId={selectedSaleId} onClosedModal={() => setEditModalOpen(false)} />
         </DialogContent>
       </Dialog>
@@ -186,7 +191,10 @@ const SaleListCards = ({ leadId = null }) => {
         fullWidth
       >
         <DialogTitle>Detalhes da Venda</DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{
+            height: { xs: '80vh', md: '60vh' },
+            overflowY: 'auto',
+          }}>
           <SaleDetailPage saleId={selectedSaleId} onClosedModal={() => setDetailModalOpen(false)} />
         </DialogContent>
       </Dialog>
@@ -200,7 +208,7 @@ const SaleListCards = ({ leadId = null }) => {
       >
         <DialogTitle>Nova Venda</DialogTitle>
         <DialogContent>
-          <CreateSale onClosedModal={() => setCreateModalOpen(false)} />
+          <CreateSale onClosedModal={() => setCreateModalOpen(false)} leadId={leadId} />
         </DialogContent>
       </Dialog>
     </Grid>

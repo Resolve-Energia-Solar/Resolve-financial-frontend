@@ -148,7 +148,13 @@ const LeadManager = ({
                   </Tabs>
                 </Box>
 
-                <Box mt={2}>
+                <Box
+                  mt={2}
+                  sx={{
+                    height: { xs: '80vh', md: '60vh' },
+                    overflowY: 'auto',
+                  }}
+                >
                   {tabIndex === 0 && (
                     <>
                       <LeadDetails
