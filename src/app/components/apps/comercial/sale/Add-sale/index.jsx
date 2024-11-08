@@ -18,7 +18,7 @@ import { useSelector } from 'react-redux';
 
 import useSaleForm from '@/hooks/sales/useSaleForm';
 
-const CreateSale = ({ onClosedModal = null }) => {
+const CreateSale = ({ onClosedModal = null, leadId = null }) => {
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const hasPermission = (permissions) => {
@@ -45,6 +45,8 @@ const CreateSale = ({ onClosedModal = null }) => {
     { value: 'D', label: 'Distrato' },
   ];
 
+  formData.leadId = leadId;
+
   const router = useRouter();
   useEffect(() => {
     if (success) {
@@ -60,6 +62,7 @@ const CreateSale = ({ onClosedModal = null }) => {
           <AutoCompleteLead
             onChange={(id) => handleChange('leadId', id)}
             value={formData.leadId}
+            disabled={!!leadId}
             {...(formErrors.lead_id && { error: true, helperText: formErrors.lead_id })}
           />
         </Grid>

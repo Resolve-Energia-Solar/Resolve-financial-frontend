@@ -6,7 +6,7 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import leadService from '@/services/leadService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteLead({ onChange, value, error, helperText }) {
+export default function AutoCompleteLead({ onChange, value, error, helperText, ...props }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -78,6 +78,7 @@ export default function AutoCompleteLead({ onChange, value, error, helperText })
         options={options}
         loading={loading}
         value={selectedLead}
+        {...props}
         onInputChange={(event, newInputValue) => {
           fetchLeadsByName(newInputValue);
         }}
@@ -89,6 +90,7 @@ export default function AutoCompleteLead({ onChange, value, error, helperText })
             helperText={helperText}
             size="small"
             variant="outlined"
+            {...props}
             InputProps={{
               ...params.InputProps,
               endAdornment: (
