@@ -21,6 +21,7 @@ import leadService from '@/services/leadService';
 import AutoCompleteOrigin from '../../leads/auto-input-origin';
 import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
 import AutoCompleteAddresses from '../../comercial/sale/components/auto-complete/Auto-Input-Addresses';
+import theme from '@/utils/theme';
 
 const ColumnWithActions = ({
   columnTitle,
@@ -29,6 +30,7 @@ const ColumnWithActions = ({
   boardId,
   onUpdateLeadColumn,
   addLead,
+  statusColors,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openLeadModal, setOpenLeadModal] = useState(false);
@@ -130,7 +132,19 @@ const ColumnWithActions = ({
 
   return (
     <>
-      <Box sx={{ padding: '6px', borderRadius: '8px' }}>
+      <Box
+        sx={{
+          width: '100%',
+          minHeight: '50px',
+          padding: '5px',
+          position: 'sticky',
+          top: 0,
+          zIndex: 1,
+          marginTop: '10px',
+          backgroundColor: statusColors[columnTitle] || statusColors.default,
+          transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+        }}
+      >
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography variant="subtitle1" fontWeight={600}>
             {columnTitle}{' '}

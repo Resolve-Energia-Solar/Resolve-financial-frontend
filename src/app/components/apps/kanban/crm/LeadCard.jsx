@@ -9,6 +9,7 @@ const LeadCard = ({ lead, handleLeadClick }) => {
       sx={{
         p: 2,
         mb: 2,
+        mx: 1,
         backgroundColor: theme.palette.background.paper,
         transition: 'background-color 0.2s ease',
         '&:hover': {
