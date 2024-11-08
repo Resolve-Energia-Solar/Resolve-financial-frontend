@@ -208,7 +208,7 @@ const SaleListCards = ({ leadId = null }) => {
       >
         <DialogTitle>Nova Venda</DialogTitle>
         <DialogContent>
-          <CreateSale onClosedModal={() => setCreateModalOpen(false)} />
+          <CreateSale onClosedModal={() => setCreateModalOpen(false)} leadId={leadId} />
         </DialogContent>
       </Dialog>
     </Grid>

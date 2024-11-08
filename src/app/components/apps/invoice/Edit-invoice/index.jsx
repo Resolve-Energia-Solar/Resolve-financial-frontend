@@ -63,6 +63,9 @@ const EditInvoicePage = ({payment_id=null}) => {
     { value: 'PI', label: 'Parcelamento Interno' },
   ];
 
+  // setar sale_id 63 como padrão
+  // handleChange('sale_id', 63);
+
   const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.value);
 
   console.log(formErrors.installments);
