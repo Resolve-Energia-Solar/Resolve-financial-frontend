@@ -8,7 +8,6 @@ import {
   DialogTitle,
   DialogContent,
   useTheme,
-  Skeleton,
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import ProposalForm from './Add-proposal';
@@ -82,9 +81,7 @@ const ProposalManager = ({ selectedLead }) => {
       <Grid item xs={8}>
         <Box display="flex" flexDirection="column" gap={2}>
           {loadingProposals ? (
-            Array.from({ length: 3 }).map((_, index) => (
-              <SkeletonCard key={index} />
-            ))
+            Array.from({ length: 3 }).map((_, index) => <SkeletonCard key={index} />)
           ) : proposals.length > 0 ? (
             proposals.map((proposal) => (
               <ProposalCard
@@ -146,7 +143,10 @@ const ProposalManager = ({ selectedLead }) => {
       >
         <DialogTitle>Gerar Pré-Venda</DialogTitle>
         <DialogContent dividers>
-          <FormPreSale selectedProposal={selectedProposal} onClose={() => setSaleModalOpen(false)} />
+          <FormPreSale
+            selectedProposal={selectedProposal}
+            onClose={() => setSaleModalOpen(false)}
+          />
         </DialogContent>
       </Dialog>
 

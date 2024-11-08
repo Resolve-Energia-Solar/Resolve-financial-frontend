@@ -68,8 +68,9 @@ const LeadManager = ({
   const statusColors = {
     'Novo Lead': theme.palette.info.light,
     'Primeiro Contato': theme.palette.warning.light,
-    'Terceiro Contato': theme.palette.primary.light,
+    'Terceiro Contato': theme.palette.secondary.light,
     'Quarto Contato': theme.palette.success.light,
+    default: theme.palette.grey[200],
   };
 
   return (
@@ -85,8 +86,8 @@ const LeadManager = ({
                     {...provided.droppableProps}
                     sx={{
                       minWidth: '300px',
-                      backgroundColor: statusColors[status.name] || theme.palette.grey[200],
-                      p: 2,
+                      backgroundColor: statusColors[status.name] || statusColors.default,
+                      paddingX: '10px',
                       maxHeight: '80vh',
                       overflowY: 'auto',
                       borderRadius: 2,
@@ -101,6 +102,7 @@ const LeadManager = ({
                       leads={leadsList}
                       onAddLead={onAddLead}
                       addLead={addLead}
+                      statusColors={statusColors}
                     />
                     {leadsList
                       .filter((lead) => lead.column.id === status.id)
