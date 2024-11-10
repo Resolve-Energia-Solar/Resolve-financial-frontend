@@ -79,7 +79,7 @@ const useSaleForm = (initialData, id) => {
       }
       setFormErrors({});
       setSuccess(true);
-      setSuccessData(response?.data || dataToSend); // Armazena os dados criados
+      setSuccessData(response);
     } catch (err) {
       setSuccess(false);
       setSuccessData(null);

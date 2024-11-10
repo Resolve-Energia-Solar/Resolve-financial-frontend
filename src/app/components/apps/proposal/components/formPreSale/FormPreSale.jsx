@@ -59,7 +59,7 @@ function FormPreSale({ selectedProposal, onClose }) {
       onClose();
     } catch (error) {
       console.log(error);
-      const errors = Object.entries(error.response.data).map(
+      const errors = Object.entries(error?.response?.data).map(
         ([key, value]) => `${key}: ${value}`
       );
       setErrorMessages(errors);

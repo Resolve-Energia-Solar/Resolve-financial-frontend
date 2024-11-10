@@ -63,9 +63,6 @@ const EditInvoicePage = ({payment_id=null}) => {
     { value: 'PI', label: 'Parcelamento Interno' },
   ];
 
-  // setar sale_id 63 como padrão
-  // handleChange('sale_id', 63);
-
   const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.value);
 
   console.log(formErrors.installments);
@@ -94,7 +91,7 @@ const EditInvoicePage = ({payment_id=null}) => {
             color="primary"
             onClick={handleSave}
             disabled={formLoading}
-            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null} // Ícone de loading
+            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
           >
             {formLoading ? 'Salvando...' : 'Salvar Alterações'}{' '}
           </Button>

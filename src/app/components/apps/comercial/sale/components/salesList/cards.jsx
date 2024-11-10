@@ -35,6 +35,7 @@ const SaleListCards = ({ leadId = null }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const { idSaleSuccess, setIdSaleSuccess } = useContext(KanbanDataContext);
@@ -52,6 +53,10 @@ const SaleListCards = ({ leadId = null }) => {
 
   const handleCreateClick = () => {
     setCreateModalOpen(true);
+  };
+
+  const handleRefresh = () => {
+    setRefresh(!refresh);
   };
 
   useEffect(() => {
@@ -74,7 +79,7 @@ const SaleListCards = ({ leadId = null }) => {
       }
     };
     fetchData();
-  }, [leadId]);
+  }, [leadId, refresh]);
 
   return (
     <Grid container spacing={2}>
@@ -208,7 +213,7 @@ const SaleListCards = ({ leadId = null }) => {
       >
         <DialogTitle>Nova Venda</DialogTitle>
         <DialogContent>
-          <CreateSale onClosedModal={() => setCreateModalOpen(false)} leadId={leadId} />
+          <CreateSale onClosedModal={() => setCreateModalOpen(false)} leadId={leadId} refresh={handleRefresh} />
         </DialogContent>
       </Dialog>
     </Grid>
