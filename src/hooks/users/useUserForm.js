@@ -33,6 +33,7 @@ const useUserForm = (initialData, id) => {
 
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
+  const [dataReceived, setDataReceived] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -102,9 +103,11 @@ const useUserForm = (initialData, id) => {
     console.log('dataToSend', dataToSend);
     try {
       if (id) {
-        await userService.updateUser(id, dataToSend);
+        const request = await userService.updateUser(id, dataToSend);
+        setDataReceived(request);
       } else {
-        await userService.createUser(dataToSend);
+        const request = await userService.createUser(dataToSend);
+        setDataReceived(request);
       }
       setFormErrors({});
       setSuccess(true);
@@ -119,6 +122,7 @@ const useUserForm = (initialData, id) => {
     formData,
     handleChange,
     handleSave,
+    dataReceived,
     formErrors,
     success,
   };

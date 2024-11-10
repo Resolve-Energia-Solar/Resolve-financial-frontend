@@ -52,7 +52,6 @@ const CreateInvoice = ({sale=null}) => {
     handleDeleteItem,
   } = usePaymentForm();
 
-
   const statusOptions = [
     { value: 'C', label: 'Crédito' },
     { value: 'D', label: 'Débito' },
@@ -61,7 +60,7 @@ const CreateInvoice = ({sale=null}) => {
     { value: 'PI', label: 'Parcelamento Interno' },
   ];
 
-  formData.sale_id = sale;
+  sale ? formData.sale_id = sale : null;
   formData.payment_type = 'C';
 
   const orderDate = new Date();
@@ -123,7 +122,7 @@ const CreateInvoice = ({sale=null}) => {
             onChange={(id) => handleChange('sale_id', id)}
             value={formData.sale_id}
             {...(formErrors.sale_id && { error: true, helperText: formErrors.sale_id })}
-            disabled={!!formData.sale_id}
+            disabled={!!sale}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
