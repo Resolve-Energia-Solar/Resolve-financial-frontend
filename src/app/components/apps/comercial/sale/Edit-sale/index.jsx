@@ -33,6 +33,7 @@ import { useState } from 'react';
 import PaymentCard from '../../../invoice/components/paymentList/card';
 import ProjectListCards from '../../../project/components/projectList/cards';
 import projectService from '@/services/projectService';
+import FileUpload from '../components/attachments/attachmentsOptions';
 
 const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
   const params = useParams();
@@ -219,7 +220,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
             </>
           )}
           {value === 1 && (
-            <DocumentAttachments objectId={id_sale} contentType={context_type_sale} />
+            <FileUpload objectId={id_sale} contentType={context_type_sale} />
           )}
           {value === 2 && (
             <Box sx={{ mt: 3 }}>
