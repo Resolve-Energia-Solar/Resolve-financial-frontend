@@ -25,16 +25,31 @@ const FBTextType = ({ onChange, field }) => {
         onChange={(e) => handleChange(e, field.id)}
       />
       <CustomFormLabel
-        htmlFor={`field_label_${field.id}`}
+        htmlFor={`field_description_${field.id}`}
       >
-        Descrição do Campo
+        Informação do Campo
       </CustomFormLabel>
       <CustomTextField
-        id={`field_label_${field.id}`}
+        id={`field_description_${field.id}`}
         name="description"
         variant="outlined"
         fullWidth
+        multiline
+        rows={4}
         value={field.description}
+        onChange={(e) => handleChange(e, field.id)}
+      />
+      <CustomFormLabel
+        htmlFor={`field_placeholder_${field.id}`}
+      >
+        Dica do Campo (Placeholder)
+      </CustomFormLabel>
+      <CustomTextField
+        id={`field_placeholder_${field.id}`}
+        name="placeholder"
+        variant="outlined"
+        fullWidth
+        value={field.placeholder}
         onChange={(e) => handleChange(e, field.id)}
       />
     </>

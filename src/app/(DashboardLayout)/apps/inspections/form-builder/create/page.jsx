@@ -42,6 +42,7 @@ const FormBuilderForm = () => {
       id: uuidv4(),
       label: '',
       description: '',
+      placeholder: '',
       type: 'text',
       required: false,
       options: [],

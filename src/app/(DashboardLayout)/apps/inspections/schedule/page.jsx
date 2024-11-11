@@ -23,6 +23,8 @@ import {
   Paper,
   TablePagination,
   TableSortLabel,
+  TextField,
+  Grid
 } from '@mui/material';
 import { AddBoxRounded, Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 
@@ -39,6 +41,16 @@ const SchedulingList = () => {
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [scheduleToDelete, setScheduleToDelete] = useState(null);
+  
+  const [filter, setFilter] = useState({
+    id: '',
+    schedule_date: '',
+    schedule_start_time: '',
+    service: '',
+    project: '',
+    schedule_agent: '',
+    status: ''
+  });
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -138,7 +150,17 @@ const SchedulingList = () => {
         };
   };
 
-  const sortedScheduleList = scheduleList.sort(getComparator(order, orderBy));
+  const filteredScheduleList = scheduleList.filter(item =>
+    (!filter.id || item.id.toString().includes(filter.id)) &&
+    (!filter.schedule_date || item.schedule_date.includes(filter.schedule_date)) &&
+    (!filter.schedule_start_time || item.schedule_start_time.includes(filter.schedule_start_time)) &&
+    (!filter.service || item.service.name.includes(filter.service)) &&
+    (!filter.project || item.project.includes(filter.project)) &&
+    (!filter.schedule_agent || item.schedule_agent.complete_name.includes(filter.schedule_agent)) &&
+    (!filter.status || item.status.includes(filter.status))
+  );
+
+  const sortedScheduleList = filteredScheduleList.sort(getComparator(order, orderBy));
 
   return (
     <PageContainer title={'Agendamentos'} description={'Lista de agendamentos'}>
@@ -160,122 +182,175 @@ const SchedulingList = () => {
           ) : error ? (
             <Typography color={'error'}>{error}</Typography>
           ) : (
-            <TableContainer component={Paper} elevation={3}>
-              <Table aria-label="table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>
-                      <TableSortLabel
-                        active={orderBy === 'id'}
-                        direction={orderBy === 'id' ? order : 'asc'}
-                        onClick={() => handleRequestSort('id')}
-                      >
-                        ID
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell>
-                      <TableSortLabel
-                        active={orderBy === 'schedule_date'}
-                        direction={orderBy === 'schedule_date' ? order : 'asc'}
-                        onClick={() => handleRequestSort('schedule_date')}
-                      >
-                        Data
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell>
-                      <TableSortLabel
-                        active={orderBy === 'schedule_start_time'}
-                        direction={orderBy === 'schedule_start_time' ? order : 'asc'}
-                        onClick={() => handleRequestSort('schedule_start_time')}
-                      >
-                        Hora
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell>
-                      <TableSortLabel
-                        active={orderBy === 'project'}
-                        direction={orderBy === 'project' ? order : 'asc'}
-                        onClick={() => handleRequestSort('project')}
-                      >
-                        Projeto
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell>
-                      <TableSortLabel
-                        active={orderBy === 'service'}
-                        direction={orderBy === 'service' ? order : 'asc'}
-                        onClick={() => handleRequestSort('service')}
-                      >
-                        Serviço
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell>
-                      <TableSortLabel
-                        active={orderBy === 'schedule_agent'}
-                        direction={orderBy === 'schedule_agent' ? order : 'asc'}
-                        onClick={() => handleRequestSort('schedule_agent')}
-                      >
-                        Responsável Técnico
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell>
-                      <TableSortLabel
-                        active={orderBy === 'status'}
-                        direction={orderBy === 'status' ? order : 'asc'}
-                        onClick={() => handleRequestSort('status')}
-                      >
-                        Status
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell>Ações</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {sortedScheduleList
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((item) => (
-                      <TableRow key={item.id} hover>
-                        <TableCell>{item.id}</TableCell>
-                        <TableCell>{formatDate(item.schedule_date)}</TableCell>
-                        <TableCell>{formatTime(item.schedule_start_time)}</TableCell>
-                        <TableCell>{item.project}</TableCell>
-                        <TableCell>{item.service.name}</TableCell>
-                        <TableCell>{item.schedule_agent.complete_name}</TableCell>
-                        <TableCell>{item.status}</TableCell>
-                        <TableCell>
-                          <Tooltip title="Editar">
-                            <IconButton
-                              color="primary"
-                              size="small"
-                              onClick={() => handleEditClick(item.id)}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Excluir">
-                            <IconButton
-                              color="error"
-                              size="small"
-                              onClick={() => handleDeleteClick(item.id)}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={scheduleList.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableContainer>
+            <>
+              <Grid sx={{marginBottom:2}}>
+                {/* <TextField
+                  label="Filtrar por ID"
+                  variant="outlined"
+                  size="small"
+                  sx={{ marginRight: 1 }}
+                  onChange={e => setFilter({...filter, id: e.target.value})}
+                /> */}
+                <TextField
+                  label="Filtrar por Data"
+                  variant="outlined"
+                  size="small"
+                  sx={{ marginRight: 1 }}
+                  onChange={e => setFilter({...filter, schedule_date: e.target.value})}
+                />
+                {/* <TextField
+                  label="Filtrar por Hora"
+                  variant="outlined"
+                  size="small"
+                  sx={{ marginRight: 1 }}
+                  onChange={e => setFilter({...filter, schedule_start_time: e.target.value})}
+                /> */}
+                {/* <TextField
+                  label="Filtrar por Serviço"
+                  variant="outlined"
+                  size="small"
+                  sx={{ marginRight: 1 }}
+                  onChange={e => setFilter({...filter, service: e.target.value})}
+                /> */}
+                {/* <TextField
+                  label="Filtrar por Projeto"
+                  variant="outlined"
+                  size="small"
+                  sx={{ marginRight: 1 }}
+                  onChange={e => setFilter({...filter, project: e.target.value})}
+                /> */}
+                <TextField
+                  label="Filtrar por Responsável"
+                  variant="outlined"
+                  size="small"
+                  sx={{ marginRight: 1 }}
+                  onChange={e => setFilter({...filter, schedule_agent: e.target.value})}
+                />
+                <TextField
+                  label="Filtrar por Status"
+                  variant="outlined"
+                  size="small"
+                  onChange={e => setFilter({...filter, status: e.target.value})}
+                />
+              </Grid>
+              
+              <TableContainer component={Paper} elevation={3}>
+                <Table aria-label="table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>
+                        <TableSortLabel
+                          active={orderBy === 'id'}
+                          direction={orderBy === 'id' ? order : 'asc'}
+                          onClick={() => handleRequestSort('id')}
+                        >
+                          ID
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell>
+                        <TableSortLabel
+                          active={orderBy === 'schedule_date'}
+                          direction={orderBy === 'schedule_date' ? order : 'asc'}
+                          onClick={() => handleRequestSort('schedule_date')}
+                        >
+                          Data
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell>
+                        <TableSortLabel
+                          active={orderBy === 'schedule_start_time'}
+                          direction={orderBy === 'schedule_start_time' ? order : 'asc'}
+                          onClick={() => handleRequestSort('schedule_start_time')}
+                        >
+                          Hora
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell>
+                        <TableSortLabel
+                          active={orderBy === 'project'}
+                          direction={orderBy === 'project' ? order : 'asc'}
+                          onClick={() => handleRequestSort('project')}
+                        >
+                          Projeto
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell>
+                        <TableSortLabel
+                          active={orderBy === 'service'}
+                          direction={orderBy === 'service' ? order : 'asc'}
+                          onClick={() => handleRequestSort('service')}
+                        >
+                          Serviço
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell>
+                        <TableSortLabel
+                          active={orderBy === 'schedule_agent'}
+                          direction={orderBy === 'schedule_agent' ? order : 'asc'}
+                          onClick={() => handleRequestSort('schedule_agent')}
+                        >
+                          Responsável Técnico
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell>
+                        <TableSortLabel
+                          active={orderBy === 'status'}
+                          direction={orderBy === 'status' ? order : 'asc'}
+                          onClick={() => handleRequestSort('status')}
+                        >
+                          Status
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell>Ações</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {sortedScheduleList
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((item) => (
+                        <TableRow key={item.id} hover>
+                          <TableCell>{item.id}</TableCell>
+                          <TableCell>{formatDate(item.schedule_date)}</TableCell>
+                          <TableCell>{formatTime(item.schedule_start_time)}</TableCell>
+                          <TableCell>{item.project}</TableCell>
+                          <TableCell>{item.service.name}</TableCell>
+                          <TableCell>{item.schedule_agent.complete_name}</TableCell>
+                          <TableCell>{item.status}</TableCell>
+                          <TableCell>
+                            <Tooltip title="Editar">
+                              <IconButton
+                                color="primary"
+                                size="small"
+                                onClick={() => handleEditClick(item.id)}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Excluir">
+                              <IconButton
+                                color="error"
+                                size="small"
+                                onClick={() => handleDeleteClick(item.id)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={filteredScheduleList.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </TableContainer>
+            </>
           )}
         </CardContent>
       </BlankCard>

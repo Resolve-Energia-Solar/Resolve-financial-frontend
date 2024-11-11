@@ -53,7 +53,7 @@ const FBSelectType = ({ onChange, field }) => {
       <CustomFormLabel
         htmlFor={`field_label_${field.id}`}
       >
-        Descrição do Campo
+        Informação do Campo
       </CustomFormLabel>
       <CustomTextField
         id={`field_label_${field.id}`}

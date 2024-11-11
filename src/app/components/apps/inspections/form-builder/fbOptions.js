@@ -6,8 +6,6 @@ const fbOptions = [
   { value: 'date', label: 'Data' },
   { value: 'time', label: 'Hora' },
   { value: 'select', label: 'Seleção' },
-  { value: 'checkbox', label: 'Checkbox' },
-  { value: 'radio', label: 'Radio' },
 ];
 
 export default fbOptions;
