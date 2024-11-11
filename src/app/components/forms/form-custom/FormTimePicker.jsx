@@ -3,31 +3,36 @@ import React from 'react'
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { ptBR } from 'date-fns/locale';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
-const FormTimePicker = () => {
+const FormTimePicker = ({ label, value, onChange, error, helperText }) => {
     const [value2, setValue2] = React.useState(null);
     return (
         <div>
-            <CustomFormLabel htmlFor="time">Time</CustomFormLabel>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <CustomFormLabel htmlFor="time">{label}</CustomFormLabel>
+            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
                 <TimePicker
-                    value={value2}
+                    value={value}
                     onChange={(newValue) => {
-                        setValue2(newValue);
+                        console.log('Hora no picker ->',newValue);
+                        onChange(newValue);
                     }}
-                    renderInput={(params) => (
+                    inputFormat="HH:mm"
+                    renderInput={(props) => (
                         <CustomTextField
-                            {...params}
+                            {...props}
                             fullWidth
+                            error={error}
+                            helperText={error ? helperText : ''}
                             sx={{
                                 '& .MuiSvgIcon-root': {
                                     width: '18px',
                                     height: '18px',
                                 },
                                 '& .MuiFormHelperText-root': {
-                                    display: 'none',
+                                    display: error ? 'block' : 'none',
                                 },
                             }}
                         />
