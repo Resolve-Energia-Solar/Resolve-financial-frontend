@@ -31,9 +31,9 @@ const ProposalForm = ({ kits, selectedLead, handleCloseForm, reloadKits }) => {
     }
   }, [selectedLead]);
 
-  useEffect(() => {
+ useEffect(() => {
     const selectedKits = kits.filter((kit) => selectedKitIds.includes(kit.id));
-    const totalValue = selectedKits.reduce((sum, kit) => sum + Number(kit.price || 0), 0);
+    const totalValue = selectedKits.reduce((sum, kit) => sum + Number(kit.cost_value || 0), 0);
 
     setFormData((prevData) => ({
       ...prevData,

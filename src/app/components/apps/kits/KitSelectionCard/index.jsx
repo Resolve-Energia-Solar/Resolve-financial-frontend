@@ -84,7 +84,7 @@ const KitSelectionCard = ({ kit, selected, onSelect }) => {
             textAlign="center"
             sx={{ mb: 1 }}
           >
-            {`Preço: R$ ${parseFloat(kit.price).toLocaleString('pt-BR', {
+            {`Preço: R$ ${parseFloat(kit.cost_value).toLocaleString('pt-BR', {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}`}

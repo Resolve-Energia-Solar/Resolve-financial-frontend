@@ -14,10 +14,10 @@ import ProposalForm from './Add-proposal';
 import ProposalEditForm from './Edit-proposal/index';
 import ProposalCard from './proposalCard/index';
 import { useState, useEffect } from 'react';
-import useKitSolar from '@/hooks/kits/useKitSolar';
 import ProposalService from '@/services/proposalService';
 import FormPreSale from './components/formPreSale/FormPreSale';
 import SkeletonCard from '../project/components/SkeletonCard';
+import useProducts from '@/hooks/products/useProducts';
 
 const ProposalManager = ({ selectedLead }) => {
   const theme = useTheme();
@@ -31,10 +31,12 @@ const ProposalManager = ({ selectedLead }) => {
   const [isSaleModalOpen, setSaleModalOpen] = useState(false);
   const [loadingProposals, setLoadingProposals] = useState(true);
 
-  const { kits, loading: loadingKits, error } = useKitSolar();
+  const { products, loading, error, totalPages, currentPage, setCurrentPage, fetchProducts } =
+    useProducts();
 
   const fetchProposals = async () => {
     setLoadingProposals(true);
+    console.log('Buscando propostas do lead:', products);
     try {
       const fetchedProposals = await ProposalService.getProposalByLead(selectedLead.id);
       setProposals(fetchedProposals.results);
@@ -118,17 +120,17 @@ const ProposalManager = ({ selectedLead }) => {
         <DialogContent dividers>
           {isEditMode ? (
             <ProposalEditForm
-              kits={kits}
+              kits={products}
               selectedLead={selectedLead}
               handleCloseForm={handleCloseForm}
               proposal={selectedProposal}
             />
           ) : (
             <ProposalForm
-              kits={kits}
+              kits={products}
               selectedLead={selectedLead}
               handleCloseForm={handleCloseForm}
-              loading={loadingKits}
+              loading={loading}
               error={error}
             />
           )}
