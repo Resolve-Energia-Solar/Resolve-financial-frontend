@@ -181,6 +181,13 @@ const Menuitems = [
     href: '/apps/roles',
     permissions: ['accounts.view_role'],
   },
+  {
+    id: uniqueId(),
+    title: 'TimeLine',
+    icon: IconChartLine,
+    href: '/apps/timeline',
+    permissions: ['accounts.view_role'],
+  },
   // {
   //   id: uniqueId(),
   //   title: 'Perfils',
