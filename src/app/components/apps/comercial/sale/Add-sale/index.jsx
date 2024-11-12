@@ -64,15 +64,6 @@ const CreateSale = ({ onClosedModal = null, leadId = null, refresh }) => {
     <Box>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="leads">Leads</CustomFormLabel>
-          <AutoCompleteLead
-            onChange={(id) => handleChange('leadId', id)}
-            value={formData.leadId}
-            disabled={!!leadId}
-            {...(formErrors.lead_id && { error: true, helperText: formErrors.lead_id })}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="name">Cliente</CustomFormLabel>
           <AutoCompleteUser
             onChange={(id) => handleChange('customerId', id)}

@@ -33,7 +33,7 @@ import { useState } from 'react';
 import PaymentCard from '../../../invoice/components/paymentList/card';
 import ProjectListCards from '../../../project/components/projectList/cards';
 import projectService from '@/services/projectService';
-import FileUpload from '../components/attachments/attachmentsOptions';
+import FileUpload from '../components/attachments/attachments';
 
 const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
   const params = useParams();
@@ -97,14 +97,6 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
                 </Alert>
               )}
               <Grid container spacing={3}>
-                <Grid item xs={12} sm={12} lg={4}>
-                  <CustomFormLabel htmlFor="leads">Leads</CustomFormLabel>
-                  <AutoCompleteLead
-                    onChange={(id) => handleChange('leadId', id)}
-                    value={formData.leadId}
-                    {...(formErrors.lead_id && { error: true, helperText: formErrors.lead_id })}
-                  />
-                </Grid>
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="name">Cliente</CustomFormLabel>
                   <AutoCompleteUser
