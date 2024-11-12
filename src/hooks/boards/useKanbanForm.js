@@ -165,6 +165,7 @@ const useLeadManager = (
     handleLeadClick,
     setTabIndex,
     tabIndex,
+    setSnackbarMessage
   }
 }
 

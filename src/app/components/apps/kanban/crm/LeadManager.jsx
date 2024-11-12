@@ -11,6 +11,9 @@ import {
   Tabs,
   Tab,
   useTheme,
+  DialogActions,
+  TextField,
+  Button,
 } from '@mui/material';
 
 import LeadDetails from './LeadDetails';
@@ -24,6 +27,10 @@ import ProposalManager from '../../proposal';
 import SaleListCards from '../../comercial/sale/components/salesList/cards';
 import { KanbanDataContext } from '@/app/context/kanbancontext';
 import ClicksignLogsPage from '../../notifications/clicksign';
+import AutoCompleteOrigin from '../../leads/auto-input-origin';
+import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
+import AutoCompleteAddresses from '../../comercial/sale/components/auto-complete/Auto-Input-Addresses';
+import leadService from '@/services/leadService';
 
 const LeadManager = ({
   addLead,
@@ -36,9 +43,19 @@ const LeadManager = ({
   onUpdateLeadColumn,
 }) => {
   const theme = useTheme();
-  const [editLead, setEditLead] = useState(false);
 
+  const [editLead, setEditLead] = useState(false);
+  const [openLeadModal, setOpenLeadModal] = useState(false);
   const { idSaleSuccess, setIdSaleSuccess } = useContext(KanbanDataContext);
+  const [leadData, setLeadData] = useState({
+    complete_name: '',
+    contact_email: '',
+    phone: '',
+    origin_id: '',
+    seller_id: null,
+    sdr_id: null,
+    addresses_ids: [],
+  });
 
   const {
     leadsList,
@@ -46,13 +63,14 @@ const LeadManager = ({
     selectedLead,
     openModal,
     setOpenModal,
-    snackbarMessage,
     snackbarOpen,
     setSnackbarOpen,
     onDragEnd,
     handleLeadClick,
     setTabIndex,
     tabIndex,
+    snackbarMessage,
+    setSnackbarMessage
   } = useLeadManager(leads, statuses, {
     onUpdateLead,
     onAddLead,
@@ -71,6 +89,52 @@ const LeadManager = ({
     'Terceiro Contato': theme.palette.secondary.light,
     'Quarto Contato': theme.palette.success.light,
     default: theme.palette.grey[200],
+  };
+
+  const handleOpenLeadModal = () => {
+    setOpenLeadModal(true);
+  };
+
+  const handleCloseLeadModal = () => {
+    setOpenLeadModal(false);
+    setLeadData({
+      complete_name: '',
+      contact_email: '',
+      phone: '',
+      origin_id: '',
+      seller_id: null,
+      sdr_id: null,
+      addresses_ids: [],
+    });
+  };
+
+  const handleSaveLead = async () => {
+    try {
+      const newLeadData = {
+        name: leadData.complete_name || '',
+        contact_email: leadData.contact_email || '',
+        phone: leadData.phone || '',
+        origin_id: leadData.origin_id || null,
+        column_id: statusesList[0].id,
+        board_id: board,
+        seller_id: typeof leadData.seller_id === 'number' ? leadData.seller_id : null,
+        sdr_id: typeof leadData.sdr_id === 'number' ? leadData.sdr_id : null,
+        addresses_ids: Array.isArray(leadData.addresses_ids) ? leadData.addresses_ids : [],
+      };
+
+      console.log('Enviando dados do lead:', newLeadData);
+
+      const createdLead = await leadService.createLead(newLeadData);
+      addLead(createdLead);
+
+      setSnackbarMessage('Lead adicionado com sucesso!');
+      setSnackbarOpen(true);
+      handleCloseLeadModal();
+    } catch (error) {
+      console.error('Erro ao adicionar lead:', error);
+      setSnackbarMessage('Erro ao adicionar lead. Tente novamente.');
+      setSnackbarOpen(true);
+    }
   };
 
   return (
@@ -120,6 +184,29 @@ const LeadManager = ({
                           )}
                         </Draggable>
                       ))}
+
+                    {leadsList.filter((lead) => lead.column.id === status.id).length === 0 && (
+                      <Box
+                        onClick={() => handleOpenLeadModal(status.id)}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          height: '100px',
+                          border: '2px dashed',
+                          borderColor: theme.palette.grey[400],
+                          borderRadius: 2,
+                          cursor: 'pointer',
+                          mt: 2,
+                          '&:hover': {
+                            backgroundColor: theme.palette.action.hover,
+                          },
+                        }}
+                      >
+                        + Adicionar Novo Lead
+                      </Box>
+                    )}
+
                     {provided.placeholder}
                   </Box>
                 )}
@@ -127,6 +214,77 @@ const LeadManager = ({
             ))}
           </Box>
         </DragDropContext>
+        <Dialog open={openLeadModal} onClose={handleCloseLeadModal}>
+          <DialogTitle sx={{ mb: 1 }}>Adicionar Lead</DialogTitle>
+          <DialogContent>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  margin="dense"
+                  label="Nome do Lead"
+                  fullWidth
+                  value={leadData.complete_name}
+                  onChange={(e) => setLeadData({ ...leadData, complete_name: e.target.value })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Email do Lead"
+                  fullWidth
+                  value={leadData.contact_email}
+                  onChange={(e) => setLeadData({ ...leadData, contact_email: e.target.value })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Telefone do Lead"
+                  fullWidth
+                  value={leadData.phone}
+                  onChange={(e) => setLeadData({ ...leadData, phone: e.target.value })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <AutoCompleteOrigin
+                  labeltitle="Origem do Lead"
+                  value={leadData.origin_id}
+                  onChange={(id) => setLeadData({ ...leadData, origin_id: id })}
+                  error={!!leadData.originError}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <AutoCompleteUser
+                  labeltitle="Vendedor"
+                  value={leadData.seller_id}
+                  onChange={(id) => setLeadData({ ...leadData, seller_id: id })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <AutoCompleteUser
+                  labeltitle="SDR"
+                  value={leadData.sdr_id}
+                  onChange={(id) => setLeadData({ ...leadData, sdr_id: id })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <AutoCompleteAddresses
+                  labeltitle="Endereço"
+                  value={leadData.addresses_ids}
+                  onChange={(ids) => setLeadData({ ...leadData, addresses_ids: ids })}
+                />
+              </Grid>
+            </Grid>
+          </DialogContent>
+
+          <DialogActions>
+            <Button onClick={handleCloseLeadModal}>Cancelar</Button>
+            <Button
+              onClick={handleSaveLead}
+              disabled={!leadData.complete_name || !leadData.contact_email || !leadData.phone}
+            >
+              Adicionar
+            </Button>
+          </DialogActions>
+        </Dialog>
       </SimpleBar>
 
       {selectedLead && (
@@ -147,6 +305,7 @@ const LeadManager = ({
                     <Tab label="Proposta" />
                     <Tab label="Venda" />
                     <Tab label="Envios" />
+                    <Tab label="Atividades" />
                   </Tabs>
                 </Box>
 
@@ -169,6 +328,7 @@ const LeadManager = ({
 
                   {tabIndex === 2 && <SaleListCards leadId={selectedLead.id} />}
                   {tabIndex === 3 && <ClicksignLogsPage />}
+                  {tabIndex === 4 && 'Atividades'}
                 </Box>
               </Grid>
             </Grid>

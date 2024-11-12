@@ -21,7 +21,6 @@ import leadService from '@/services/leadService';
 import AutoCompleteOrigin from '../../leads/auto-input-origin';
 import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
 import AutoCompleteAddresses from '../../comercial/sale/components/auto-complete/Auto-Input-Addresses';
-import theme from '@/utils/theme';
 
 const ColumnWithActions = ({
   columnTitle,
