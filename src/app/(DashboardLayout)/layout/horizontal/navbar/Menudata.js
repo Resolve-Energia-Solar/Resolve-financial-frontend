@@ -15,7 +15,7 @@ import {
 import { uniqueId } from 'lodash';
 
 const Menuitems = [
-  {
+ /*  {
     id: uniqueId(),
     title: 'Dashboard',
     icon: IconHome,
@@ -36,7 +36,7 @@ const Menuitems = [
         href: '/dashboards/ecommerce',
       },
     ],
-  },
+  }, */
   {
     id: uniqueId(),
     title: 'Apps',

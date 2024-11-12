@@ -73,19 +73,21 @@ const Menuitems = [
     subheader: 'Home',
   },
 
-  {
+ /*  {
     id: uniqueId(),
     title: 'Dashboard',
     icon: IconAperture,
     href: '/',
     chip: 'Novo',
     chipColor: 'secondary',
-  },
+  }, */
   {
     id: uniqueId(),
     title: 'Quadros',
     icon: IconLayoutKanban,
     href: '/apps/boards/crm',
+    chip: 'Novo',
+    chipColor: 'secondary'
   },
   {
     id: uniqueId(),

@@ -15,8 +15,8 @@ import useProposalForm from '@/hooks/proposal/useProposalForm';
 import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
 import { useState, useEffect } from 'react';
 import KitSelectionCard from '../../kits/KitSelectionCard';
-import AddKitButton from '../../kits/AddKitCard'; // Importação do botão de adicionar kit
-import AddKitForm from '../../kits/AddKitForm'; // Importação do formulário de adicionar kit
+import AddKitButton from '../../kits/AddKitCard'; 
+import AddKitForm from '../../kits/AddKitForm';
 
 const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal, reloadKits }) => {
   const {
@@ -30,7 +30,7 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal, reloa
   } = useProposalForm();
   const [selectedKitIds, setSelectedKitIds] = useState([]);
   const [isEditingKits, setIsEditingKits] = useState(false);
-  const [isAddKitModalOpen, setIsAddKitModalOpen] = useState(false); // Estado para controlar o modal
+  const [isAddKitModalOpen, setIsAddKitModalOpen] = useState(false); 
 
   useEffect(() => {
     if (proposal) {
@@ -80,7 +80,6 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal, reloa
     setIsEditingKits(!isEditingKits);
   };
 
-  // Funções para controlar o modal de adicionar kit
   const handleAddKit = () => {
     setIsAddKitModalOpen(true);
   };
@@ -89,7 +88,7 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal, reloa
     console.log('Novo Kit Adicionado:', newKitData);
     setSelectedKitIds((prevSelectedKits) => [...prevSelectedKits, newKitData.id]);
     kits.push(newKitData);
-    if (reloadKits) reloadKits(); // Atualiza a lista de kits se a função estiver disponível
+    if (reloadKits) reloadKits();
     setIsAddKitModalOpen(false);
   };
 
