@@ -11,15 +11,11 @@ import {
   Tabs,
   Tab,
   useTheme,
-  DialogActions,
-  TextField,
-  Button,
 } from '@mui/material';
 
-import LeadDetails from './LeadDetails';
-import LeadCard from './LeadCard';
+import LeadDetails from '../../leads/leadDetails/LeadDetails';
+import LeadCard from './KanbanCard';
 import SimpleBar from 'simplebar-react';
-import ColumnWithActions from './LeadHeader';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import useLeadManager from '@/hooks/boards/useKanbanForm';
 import EditLeadPage from '../../leads/Edit-lead';
@@ -27,12 +23,11 @@ import ProposalManager from '../../proposal';
 import SaleListCards from '../../comercial/sale/components/salesList/cards';
 import { KanbanDataContext } from '@/app/context/kanbancontext';
 import ClicksignLogsPage from '../../notifications/clicksign';
-import AutoCompleteOrigin from '../../leads/auto-input-origin';
-import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
-import AutoCompleteAddresses from '../../comercial/sale/components/auto-complete/Auto-Input-Addresses';
 import leadService from '@/services/leadService';
+import LeadDialog from '../../leads/LeadDialog/LeadDialog';
+import ColumnWithActions from './ColumnHeader';
 
-const LeadManager = ({
+const KanbanManager = ({
   addLead,
   leads,
   statuses,
@@ -70,7 +65,7 @@ const LeadManager = ({
     setTabIndex,
     tabIndex,
     snackbarMessage,
-    setSnackbarMessage
+    setSnackbarMessage,
   } = useLeadManager(leads, statuses, {
     onUpdateLead,
     onAddLead,
@@ -214,77 +209,13 @@ const LeadManager = ({
             ))}
           </Box>
         </DragDropContext>
-        <Dialog open={openLeadModal} onClose={handleCloseLeadModal}>
-          <DialogTitle sx={{ mb: 1 }}>Adicionar Lead</DialogTitle>
-          <DialogContent>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  margin="dense"
-                  label="Nome do Lead"
-                  fullWidth
-                  value={leadData.complete_name}
-                  onChange={(e) => setLeadData({ ...leadData, complete_name: e.target.value })}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="Email do Lead"
-                  fullWidth
-                  value={leadData.contact_email}
-                  onChange={(e) => setLeadData({ ...leadData, contact_email: e.target.value })}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="Telefone do Lead"
-                  fullWidth
-                  value={leadData.phone}
-                  onChange={(e) => setLeadData({ ...leadData, phone: e.target.value })}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <AutoCompleteOrigin
-                  labeltitle="Origem do Lead"
-                  value={leadData.origin_id}
-                  onChange={(id) => setLeadData({ ...leadData, origin_id: id })}
-                  error={!!leadData.originError}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <AutoCompleteUser
-                  labeltitle="Vendedor"
-                  value={leadData.seller_id}
-                  onChange={(id) => setLeadData({ ...leadData, seller_id: id })}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <AutoCompleteUser
-                  labeltitle="SDR"
-                  value={leadData.sdr_id}
-                  onChange={(id) => setLeadData({ ...leadData, sdr_id: id })}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <AutoCompleteAddresses
-                  labeltitle="Endereço"
-                  value={leadData.addresses_ids}
-                  onChange={(ids) => setLeadData({ ...leadData, addresses_ids: ids })}
-                />
-              </Grid>
-            </Grid>
-          </DialogContent>
-
-          <DialogActions>
-            <Button onClick={handleCloseLeadModal}>Cancelar</Button>
-            <Button
-              onClick={handleSaveLead}
-              disabled={!leadData.complete_name || !leadData.contact_email || !leadData.phone}
-            >
-              Adicionar
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <LeadDialog
+          openLeadModal={openLeadModal}
+          handleCloseLeadModal={handleCloseLeadModal}
+          handleSaveLead={handleSaveLead}
+          leadData={leadData}
+          setLeadData={setLeadData}
+        />
       </SimpleBar>
 
       {selectedLead && (
@@ -355,4 +286,4 @@ const LeadManager = ({
   );
 };
 
-export default LeadManager;
+export default KanbanManager;

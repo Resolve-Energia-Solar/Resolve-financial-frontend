@@ -18,7 +18,7 @@ import { CallToAction, FlashAuto, SolarPower } from '@mui/icons-material';
 import { useState, useContext } from 'react';
 import saleService from '@/services/saleService';
 import ProposalService from '@/services/proposalService';
-import LeadDetails from '../../../kanban/crm/LeadDetails';
+import LeadDetails from '../../../leads/leadDetails/LeadDetails';
 import { KanbanDataContext } from '@/app/context/kanbancontext';
 
 function TabPanel(props) {

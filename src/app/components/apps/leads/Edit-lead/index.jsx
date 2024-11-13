@@ -49,9 +49,20 @@ const EditLeadPage = ({ leadId = null, onClosedModal = null }) => {
   ];
 
   const funnelOptions = [
-    { value: 'Q', label: 'Qualificação' },
-    { value: 'M', label: 'Moderado' },
-    { value: 'N', label: 'Negociação' },
+    { value: 'N', label: 'Não Interessado' },
+    { value: 'P', label: 'Pouco Interessado' },
+    { value: 'I', label: 'Interessado' },
+    { value: 'M', label: 'Muito Interessado' },
+    { value: 'PC', label: 'Pronto para Comprar' },
+  ];
+
+  const qualificationOptions = [
+    { value: 0, label: '0 - Ruim' },
+    { value: 1, label: '1 - Muito Baixa' },
+    { value: 2, label: '2 - Baixa' },
+    { value: 3, label: '3 - Média' },
+    { value: 4, label: '4 - Boa' },
+    { value: 5, label: '5 - Excelente' },
   ];
 
   return (
@@ -185,6 +196,33 @@ const EditLeadPage = ({ leadId = null, onClosedModal = null }) => {
               />
             </Grid>
             <Grid item xs={12} sm={12} lg={4}>
+              <CustomFormLabel htmlFor="kwp">Potência (kWp)</CustomFormLabel>
+              <CustomTextField
+                name="kwp"
+                placeholder="Potência (kWp)"
+                type="number"
+                variant="outlined"
+                fullWidth
+                value={formData.kwp}
+                onChange={(e) => handleChange('kwp', e.target.value)}
+                {...(formErrors.kwp && { error: true, helperText: formErrors.kwp })}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={12} lg={4}>
+              <FormSelect
+                label="Qualificação"
+                options={qualificationOptions}
+                value={formData.qualification}
+                onChange={(e) => handleChange('qualification', e.target.value)}
+                {...(formErrors.qualification && {
+                  error: true,
+                  helperText: formErrors.qualification,
+                })}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={12} lg={4}>
               <CustomFormLabel htmlFor="branch">Endereço</CustomFormLabel>
               <AutoCompleteAddresses
                 onChange={(ids) => handleChange('addresses_ids', ids)}
@@ -222,7 +260,7 @@ const EditLeadPage = ({ leadId = null, onClosedModal = null }) => {
                 {...(formErrors.funnel && { error: true, helperText: formErrors.funnel })}
               />
             </Grid>
-            
+
             <Grid item xs={12} sm={12} lg={4}>
               <CustomFormLabel htmlFor="branch">Origem</CustomFormLabel>
               <AutoCompleteOrigin

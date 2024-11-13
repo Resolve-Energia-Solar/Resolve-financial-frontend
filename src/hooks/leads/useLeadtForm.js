@@ -19,6 +19,8 @@ const useLeadForm = (initialData, id) => {
     phone: '',
     origin: '',
     funnel: '',
+    qualification: '',
+    kwp: '',
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -44,6 +46,8 @@ const useLeadForm = (initialData, id) => {
         phone: initialData.phone || '',
         origin: initialData.origin || '',
         funnel: initialData.funnel || '',
+        qualification: initialData.qualification || '',
+        kwp: initialData.kwp || '',
       });
     }
   }, [initialData]);
@@ -71,6 +75,8 @@ const useLeadForm = (initialData, id) => {
       phone: formData.phone,
       origin: formData.origin,
       funnel: formData.funnel,
+      qualification: formData.qualification !== '' ? Number(formData.qualification) : null,
+      kwp: formData.kwp !== '' ? parseFloat(formData.kwp) : null,
     };
 
     try {

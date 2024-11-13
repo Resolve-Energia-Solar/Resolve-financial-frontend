@@ -14,13 +14,10 @@ import {
   Button,
   Snackbar,
   Alert,
-  Grid,
 } from '@mui/material';
 import { MoreVert, Add } from '@mui/icons-material';
 import leadService from '@/services/leadService';
-import AutoCompleteOrigin from '../../leads/auto-input-origin';
-import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
-import AutoCompleteAddresses from '../../comercial/sale/components/auto-complete/Auto-Input-Addresses';
+import LeadDialog from '../../leads/LeadDialog/LeadDialog';
 
 const ColumnWithActions = ({
   columnTitle,
@@ -42,7 +39,16 @@ const ColumnWithActions = ({
     seller_id: null,
     sdr_id: null,
     addresses_ids: [],
+    gender: '',
+    funnel: '',
+    qualification: '',
+    kwp: '',
+    byname: '',
+    first_document: '',
+    second_document: '',
+    birth_date: '',
   });
+
   const [columnName, setColumnName] = useState(columnTitle);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -78,11 +84,19 @@ const ColumnWithActions = ({
     try {
       const newLeadData = {
         name: leadData.complete_name || '',
+        byname: leadData.byname || '',
         contact_email: leadData.contact_email || '',
         phone: leadData.phone || '',
+        gender: leadData.gender || '',
+        funnel: leadData.funnel || '',
+        qualification: leadData.qualification !== '' ? Number(leadData.qualification) : null,
+        kwp: leadData.kwp !== '' ? parseFloat(leadData.kwp) : null,
+        first_document: leadData.first_document || '',
+        second_document: leadData.second_document || '',
+        birth_date: leadData.birth_date || null,
         origin_id: leadData.origin_id || null,
-        column_id: statusId,
-        board_id: boardId,
+        column_id: statusesList[0].id,
+        board_id: board,
         seller_id: typeof leadData.seller_id === 'number' ? leadData.seller_id : null,
         sdr_id: typeof leadData.sdr_id === 'number' ? leadData.sdr_id : null,
         addresses_ids: Array.isArray(leadData.addresses_ids) ? leadData.addresses_ids : [],
@@ -174,78 +188,13 @@ const ColumnWithActions = ({
         </Box>
       </Box>
 
-      <Dialog open={openLeadModal} onClose={handleCloseLeadModal}>
-        <DialogTitle sx={{ mb: 1 }}>Adicionar Lead</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                margin="dense"
-                autoFocus
-                label="Nome do Lead"
-                fullWidth
-                value={leadData.complete_name}
-                onChange={(e) => setLeadData({ ...leadData, complete_name: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Email do Lead"
-                fullWidth
-                value={leadData.contact_email}
-                onChange={(e) => setLeadData({ ...leadData, contact_email: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Telefone do Lead"
-                fullWidth
-                value={leadData.phone}
-                onChange={(e) => setLeadData({ ...leadData, phone: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <AutoCompleteOrigin
-                labeltitle="Origem do Lead"
-                value={leadData.origin_id}
-                onChange={(id) => setLeadData({ ...leadData, origin_id: id })}
-                error={!!leadData.originError}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <AutoCompleteUser
-                labeltitle="Vendedor"
-                value={leadData.seller_id}
-                onChange={(id) => setLeadData({ ...leadData, seller_id: id })}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <AutoCompleteUser
-                labeltitle="SDR"
-                value={leadData.sdr_id}
-                onChange={(id) => setLeadData({ ...leadData, sdr_id: id })}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <AutoCompleteAddresses
-                labeltitle="Endereço"
-                value={leadData.addresses_ids}
-                onChange={(ids) => setLeadData({ ...leadData, addresses_ids: ids })}
-              />
-            </Grid>
-          </Grid>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={handleCloseLeadModal}>Cancelar</Button>
-          <Button
-            onClick={handleSaveLead}
-            disabled={!leadData.complete_name || !leadData.contact_email || !leadData.phone}
-          >
-            Adicionar
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <LeadDialog
+        openLeadModal={openLeadModal}
+        handleCloseLeadModal={handleCloseLeadModal}
+        handleSaveLead={handleSaveLead}
+        leadData={leadData}
+        setLeadData={setLeadData}
+      />
 
       <Dialog open={openEditModal} onClose={handleCloseEditModal}>
         <DialogTitle>Editar Nome da Coluna</DialogTitle>

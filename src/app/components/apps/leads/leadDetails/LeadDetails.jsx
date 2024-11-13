@@ -11,6 +11,8 @@ import {
   Wc,
   Place,
   AssignmentInd,
+  Assessment,
+  Bolt,
 } from '@mui/icons-material';
 
 const LeadDetails = ({ selectedLead, onUpdateLead }) => {
@@ -42,14 +44,19 @@ const LeadDetails = ({ selectedLead, onUpdateLead }) => {
     {
       icon: <Wc fontSize="small" />,
       label: 'Gênero',
-      value: selectedLead.gender === 'M' ? 'Masculino' : 'Feminino',
+      value:
+        selectedLead.gender === 'M'
+          ? 'Masculino'
+          : selectedLead.gender === 'F'
+          ? 'Feminino'
+          : 'Outro',
     },
   ];
 
   const documentDetails = [
     {
       icon: <Description fontSize="small" />,
-      label: 'CFP/CNPJ',
+      label: 'CPF/CNPJ',
       value: selectedLead.first_document || 'N/A',
     },
     {
@@ -114,6 +121,26 @@ const LeadDetails = ({ selectedLead, onUpdateLead }) => {
       icon: <AssignmentInd fontSize="small" />,
       label: 'SDR',
       value: selectedLead.sdr ? selectedLead.sdr.complete_name : 'N/A',
+    },
+    {
+      icon: <Assessment fontSize="small" />,
+      label: 'Funil',
+      value:
+        selectedLead.funnel === 'Q'
+          ? 'Qualificado'
+          : selectedLead.funnel === 'M'
+          ? 'Meio'
+          : 'Não Qualificado',
+    },
+    {
+      icon: <Bolt fontSize="small" />,
+      label: 'Potência (kWp)',
+      value: selectedLead.kwp || 'N/A',
+    },
+    {
+      icon: <Assessment fontSize="small" />,
+      label: 'Qualificação',
+      value: selectedLead.qualification || 'N/A',
     },
   ];
 
