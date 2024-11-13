@@ -10,16 +10,16 @@ import {
   Tooltip,
   useTheme,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import StatusIcon from '@mui/icons-material/AssignmentTurnedIn';
 import DescriptionIcon from '@mui/icons-material/Description';
 import StatusChip from '../../../proposal/components/ProposalStatusChip';
 import projectService from '@/services/projectService';
 import { CallToAction, FlashAuto, SolarPower, ViewModule } from '@mui/icons-material';
 import SkeletonCard from '../SkeletonCard';
+import CustomAccordion from '@/app/components/apps/project/components/CustomAccordion';
+import CheckListRateio from '../../../checklist/Checklist-list';
 
 const ProjectListCards = ({ saleId = null }) => {
   const theme = useTheme();
@@ -57,11 +57,9 @@ const ProjectListCards = ({ saleId = null }) => {
 
   return (
     <Grid container spacing={2} mt={2}>
-      <Grid item xs={8}>
+      <Grid item xs={12}>
         {loading ? (
-          Array.from({ length: 3 }).map((_, index) => (
-            <SkeletonCard key={index} />
-          ))
+          Array.from({ length: 3 }).map((_, index) => <SkeletonCard key={index} />)
         ) : projectsList.length === 0 ? (
           <Grid item xs={12}>
             <Typography variant="body2" color={theme.palette.text.secondary}>
@@ -83,6 +81,8 @@ const ProjectListCards = ({ saleId = null }) => {
               }}
             >
               <CardContent>
+              <CustomAccordion title="Informações Adicionais" defaultExpanded>
+
                 <Box display="flex" alignItems="center" mb={1}>
                   <PersonIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
                   <Typography variant="h6" gutterBottom>
@@ -113,7 +113,21 @@ const ProjectListCards = ({ saleId = null }) => {
                     Status: <StatusChip status={project.status} />
                   </Typography>
                 </Box>
-                <Box display="flex" justifyContent="flex-end" gap={2}>
+                </CustomAccordion>
+
+
+                <CustomAccordion title="Checklist Rateio">
+                  <CheckListRateio units={project.units} />
+                </CustomAccordion>
+
+                <CustomAccordion title="Documentos">
+                  <Typography>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada
+                    lacus ex, sit amet blandit leo lobortis eget.
+                  </Typography>
+                </CustomAccordion>
+
+                <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
                   <Tooltip title="Editar Projeto">
                     <IconButton
                       variant="outlined"
@@ -138,7 +152,7 @@ const ProjectListCards = ({ saleId = null }) => {
           ))
         )}
       </Grid>
-      <Grid item xs={4}>
+      {/* <Grid item xs={4}>
         <Box display="flex" justifyContent="flex-end" alignItems="flex-start">
           <Button
             variant="contained"
@@ -150,7 +164,7 @@ const ProjectListCards = ({ saleId = null }) => {
             Novo Projeto
           </Button>
         </Box>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 };
