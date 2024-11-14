@@ -25,6 +25,7 @@ function KanbanPage() {
     updateColumnName,
     searchTerm,
     setSearchTerm,
+    loadMoreLeads,
   } = useKanban();
 
   return (
@@ -57,6 +58,7 @@ function KanbanPage() {
                   onUpdateLead={handleUpdateLead}
                   onDeleteLead={handleDeleteLead}
                   searchTerm={searchTerm}
+                  loadMoreLeads={loadMoreLeads}
                 />
               ) : (
                 <Typography variant="body1" mt={4}>

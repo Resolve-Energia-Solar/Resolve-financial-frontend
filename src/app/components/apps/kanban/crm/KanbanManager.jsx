@@ -1,5 +1,5 @@
 'use client';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
   Box,
   Snackbar,
@@ -38,6 +38,7 @@ const KanbanManager = ({
   onDeleteLead,
   onUpdateLeadColumn,
   searchTerm,
+  loadMoreLeads,
 }) => {
   const theme = useTheme();
   const [editLead, setEditLead] = useState(false);
@@ -52,6 +53,9 @@ const KanbanManager = ({
     sdr_id: null,
     addresses_ids: [],
   });
+
+  const observerRef = useRef({});
+  const [loadingColumns, setLoadingColumns] = useState({});
 
   const {
     leadsList,
@@ -87,11 +91,8 @@ const KanbanManager = ({
     default: theme.palette.grey[200],
   };
 
-  const filteredLeads = leadsList.filter(
-    (lead) =>
-      (lead.name?.toLowerCase().trim() || '').includes(searchTerm.toLowerCase().trim()) ||
-      (lead.contact_email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-      (lead.phone?.toLowerCase() || '').includes(searchTerm.toLowerCase()),
+  const filteredLeads = leadsList.filter((lead) =>
+    (lead.name?.toLowerCase().trim() || '').includes(searchTerm.toLowerCase().trim()),
   );
 
   const handleOpenLeadModal = () => {
@@ -140,6 +141,51 @@ const KanbanManager = ({
     }
   };
 
+  const handleLoadMore = useCallback(
+    async (statusId) => {
+      if (loadingColumns[statusId]) return; // Evita chamadas simultâneas para a mesma coluna
+
+      setLoadingColumns((prev) => ({ ...prev, [statusId]: true }));
+
+      try {
+        await loadMoreLeads(statusId);
+      } catch (error) {
+        console.error(`Erro ao carregar mais leads para a coluna ${statusId}:`, error);
+      } finally {
+        setLoadingColumns((prev) => ({ ...prev, [statusId]: false }));
+      }
+    },
+    [loadingColumns, loadMoreLeads],
+  );
+
+  const createObserver = useCallback(
+    (statusId) => {
+      return new IntersectionObserver(
+        async (entries) => {
+          const entry = entries[0];
+          if (entry.isIntersecting && !loadingColumns[statusId]) {
+            console.log(`Carregando mais leads para coluna ${statusId}`);
+            await handleLoadMore(statusId);
+          }
+        },
+        { root: null, rootMargin: '200px', threshold: 0.1 },
+      );
+    },
+    [handleLoadMore, loadingColumns],
+  );
+
+  useEffect(() => {
+    statusesList.forEach((status) => {
+      if (!observerRef.current[status.id]) {
+        observerRef.current[status.id] = createObserver(status.id);
+      }
+    });
+
+    return () => {
+      Object.values(observerRef.current).forEach((observer) => observer.disconnect());
+    };
+  }, [statusesList, createObserver]);
+
   return (
     <>
       <SimpleBar>
@@ -153,12 +199,14 @@ const KanbanManager = ({
                     {...provided.droppableProps}
                     sx={{
                       minWidth: '300px',
+                      maxHeight: '75vh',
                       backgroundColor: statusColors[status.name] || statusColors.default,
                       paddingX: '10px',
-                      maxHeight: '80vh',
+                      minHeight: '25vh',
                       overflowY: 'auto',
                       borderRadius: 2,
                       boxShadow: theme.shadows[1],
+                      position: 'relative',
                     }}
                   >
                     <ColumnWithActions
@@ -171,6 +219,7 @@ const KanbanManager = ({
                       addLead={addLead}
                       statusColors={statusColors}
                     />
+
                     {filteredLeads
                       .filter((lead) => lead.column.id === status.id)
                       .map((lead, index) => (
@@ -187,6 +236,17 @@ const KanbanManager = ({
                           )}
                         </Draggable>
                       ))}
+
+                    <Box
+                      ref={(el) => {
+                        if (el && observerRef.current[status.id]) {
+                          observerRef.current[status.id].observe(el);
+                        }
+                      }}
+                      sx={{ height: '20px', backgroundColor: 'transparent' }}
+                    >
+                      {loadingColumns[status.id] && 'Carregando...'}
+                    </Box>
 
                     {filteredLeads.filter((lead) => lead.column.id === status.id).length === 0 && (
                       <Box
@@ -209,7 +269,6 @@ const KanbanManager = ({
                         + Adicionar Novo Lead
                       </Box>
                     )}
-
                     {provided.placeholder}
                   </Box>
                 )}
