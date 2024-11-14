@@ -12,6 +12,8 @@ import {
   Tabs,
   Tab,
   useTheme,
+  TextField,
+  Button,
 } from '@mui/material';
 
 import LeadDetails from '../../leads/leadDetails/LeadDetails';
@@ -27,6 +29,7 @@ import ClicksignLogsPage from '../../notifications/clicksign';
 import leadService from '@/services/leadService';
 import LeadDialog from '../../leads/LeadDialog/LeadDialog';
 import ColumnWithActions from './ColumnHeader';
+import columnService from '@/services/boardCollunService';
 
 const KanbanManager = ({
   addLead,
@@ -43,6 +46,9 @@ const KanbanManager = ({
   const theme = useTheme();
   const [editLead, setEditLead] = useState(false);
   const [openLeadModal, setOpenLeadModal] = useState(false);
+  const [openAddColumnModal, setOpenAddColumnModal] = useState(false);
+  const [newColumnName, setNewColumnName] = useState('');
+
   const { idSaleSuccess, setIdSaleSuccess } = useContext(KanbanDataContext);
   const [leadData, setLeadData] = useState({
     complete_name: '',
@@ -76,6 +82,34 @@ const KanbanManager = ({
     onAddLead,
     onDeleteLead,
   });
+
+  const handleOpenAddColumnModal = () => setOpenAddColumnModal(true);
+  const handleCloseAddColumnModal = () => {
+    setOpenAddColumnModal(false);
+    setNewColumnName('');
+  };
+
+  const handleSaveNewColumn = async () => {
+    if (!newColumnName.trim()) return;
+
+    const newColumnData = {
+      name: newColumnName,
+      board: board,
+      position: statuses.length,
+    };
+
+    try {
+      const newColumn = await columnService.createColumn(newColumnData);
+      statuses.push(newColumn);
+      setSnackbarMessage('Coluna adicionada com sucesso!');
+      setSnackbarOpen(true);
+      handleCloseAddColumnModal();
+    } catch (error) {
+      console.error('Erro ao adicionar coluna:', error);
+      setSnackbarMessage('Erro ao adicionar coluna. Tente novamente.');
+      setSnackbarOpen(true);
+    }
+  };
 
   useEffect(() => {
     if (idSaleSuccess !== null) {
@@ -143,7 +177,7 @@ const KanbanManager = ({
 
   const handleLoadMore = useCallback(
     async (statusId) => {
-      if (loadingColumns[statusId]) return; 
+      if (loadingColumns[statusId]) return;
 
       setLoadingColumns((prev) => ({ ...prev, [statusId]: true }));
 
@@ -174,7 +208,7 @@ const KanbanManager = ({
     [handleLoadMore, loadingColumns],
   );
 
-  useEffect(() => {
+ /*  useEffect(() => {
     statusesList.forEach((status) => {
       if (!observerRef.current[status.id]) {
         observerRef.current[status.id] = createObserver(status.id);
@@ -184,7 +218,7 @@ const KanbanManager = ({
     return () => {
       Object.values(observerRef.current).forEach((observer) => observer.disconnect());
     };
-  }, [statusesList, createObserver]);
+  }, [statusesList, createObserver]); */
 
   return (
     <>
@@ -274,7 +308,55 @@ const KanbanManager = ({
                 )}
               </Droppable>
             ))}
+            <Box
+              onClick={handleOpenAddColumnModal}
+              sx={{
+                minWidth: '300px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100px',
+                border: '2px dashed',
+                borderColor: theme.palette.grey[400],
+                borderRadius: 2,
+                cursor: 'pointer',
+                mt: 2,
+                '&:hover': {
+                  backgroundColor: theme.palette.action.hover,
+                },
+              }}
+            >
+              + Adicionar Nova Coluna
+            </Box>
           </Box>
+          <Dialog
+            open={openAddColumnModal}
+            onClose={handleCloseAddColumnModal}
+            fullWidth
+            maxWidth="sm"
+          >
+            <DialogTitle>Adicionar Nova Coluna</DialogTitle>
+            <DialogContent>
+              <Box display="flex" flexDirection="column" gap={3} mt={2}>
+                <TextField
+                  label="Nome da Coluna"
+                  variant="outlined"
+                  fullWidth
+                  value={newColumnName}
+                  onChange={(e) => setNewColumnName(e.target.value)}
+                  placeholder="Digite o nome da nova coluna"
+                />
+                <Box display="flex" justifyContent="flex-end" gap={2}>
+                  <Button onClick={handleCloseAddColumnModal} color="secondary" variant="outlined">
+                    Cancelar
+                  </Button>
+                  <Button onClick={handleSaveNewColumn} color="primary" variant="contained">
+                    Salvar
+                  </Button>
+                </Box>
+              </Box>
+            </DialogContent>
+          </Dialog>
         </DragDropContext>
         <LeadDialog
           openLeadModal={openLeadModal}
