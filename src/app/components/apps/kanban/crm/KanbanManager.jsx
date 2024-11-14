@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
+'use client';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
   Box,
   Snackbar,
@@ -36,9 +37,10 @@ const KanbanManager = ({
   onAddLead,
   onDeleteLead,
   onUpdateLeadColumn,
+  searchTerm,
+  loadMoreLeads,
 }) => {
   const theme = useTheme();
-
   const [editLead, setEditLead] = useState(false);
   const [openLeadModal, setOpenLeadModal] = useState(false);
   const { idSaleSuccess, setIdSaleSuccess } = useContext(KanbanDataContext);
@@ -51,6 +53,9 @@ const KanbanManager = ({
     sdr_id: null,
     addresses_ids: [],
   });
+
+  const observerRef = useRef({});
+  const [loadingColumns, setLoadingColumns] = useState({});
 
   const {
     leadsList,
@@ -85,6 +90,10 @@ const KanbanManager = ({
     'Quarto Contato': theme.palette.success.light,
     default: theme.palette.grey[200],
   };
+
+  const filteredLeads = leadsList.filter((lead) =>
+    (lead.name?.toLowerCase().trim() || '').includes(searchTerm.toLowerCase().trim()),
+  );
 
   const handleOpenLeadModal = () => {
     setOpenLeadModal(true);
@@ -132,6 +141,51 @@ const KanbanManager = ({
     }
   };
 
+  const handleLoadMore = useCallback(
+    async (statusId) => {
+      if (loadingColumns[statusId]) return; 
+
+      setLoadingColumns((prev) => ({ ...prev, [statusId]: true }));
+
+      try {
+        await loadMoreLeads(statusId);
+      } catch (error) {
+        console.error(`Erro ao carregar mais leads para a coluna ${statusId}:`, error);
+      } finally {
+        setLoadingColumns((prev) => ({ ...prev, [statusId]: false }));
+      }
+    },
+    [loadingColumns, loadMoreLeads],
+  );
+
+  const createObserver = useCallback(
+    (statusId) => {
+      return new IntersectionObserver(
+        async (entries) => {
+          const entry = entries[0];
+          if (entry.isIntersecting && !loadingColumns[statusId]) {
+            console.log(`Carregando mais leads para coluna ${statusId}`);
+            await handleLoadMore(statusId);
+          }
+        },
+        { root: null, rootMargin: '200px', threshold: 0.1 },
+      );
+    },
+    [handleLoadMore, loadingColumns],
+  );
+
+  useEffect(() => {
+    statusesList.forEach((status) => {
+      if (!observerRef.current[status.id]) {
+        observerRef.current[status.id] = createObserver(status.id);
+      }
+    });
+
+    return () => {
+      Object.values(observerRef.current).forEach((observer) => observer.disconnect());
+    };
+  }, [statusesList, createObserver]);
+
   return (
     <>
       <SimpleBar>
@@ -145,12 +199,14 @@ const KanbanManager = ({
                     {...provided.droppableProps}
                     sx={{
                       minWidth: '300px',
+                      maxHeight: '75vh',
                       backgroundColor: statusColors[status.name] || statusColors.default,
                       paddingX: '10px',
-                      maxHeight: '80vh',
+                      minHeight: '25vh',
                       overflowY: 'auto',
                       borderRadius: 2,
                       boxShadow: theme.shadows[1],
+                      position: 'relative',
                     }}
                   >
                     <ColumnWithActions
@@ -158,12 +214,13 @@ const KanbanManager = ({
                       statusId={status.id}
                       boardId={board}
                       onUpdateLeadColumn={onUpdateLeadColumn}
-                      leads={leadsList}
+                      leads={filteredLeads}
                       onAddLead={onAddLead}
                       addLead={addLead}
                       statusColors={statusColors}
                     />
-                    {leadsList
+
+                    {filteredLeads
                       .filter((lead) => lead.column.id === status.id)
                       .map((lead, index) => (
                         <Draggable draggableId={lead.id.toString()} index={index} key={lead.id}>
@@ -180,7 +237,18 @@ const KanbanManager = ({
                         </Draggable>
                       ))}
 
-                    {leadsList.filter((lead) => lead.column.id === status.id).length === 0 && (
+                    <Box
+                      ref={(el) => {
+                        if (el && observerRef.current[status.id]) {
+                          observerRef.current[status.id].observe(el);
+                        }
+                      }}
+                      sx={{ height: '20px', backgroundColor: 'transparent' }}
+                    >
+                      {loadingColumns[status.id] && 'Carregando...'}
+                    </Box>
+
+                    {filteredLeads.filter((lead) => lead.column.id === status.id).length === 0 && (
                       <Box
                         onClick={() => handleOpenLeadModal(status.id)}
                         sx={{
@@ -201,7 +269,6 @@ const KanbanManager = ({
                         + Adicionar Novo Lead
                       </Box>
                     )}
-
                     {provided.placeholder}
                   </Box>
                 )}

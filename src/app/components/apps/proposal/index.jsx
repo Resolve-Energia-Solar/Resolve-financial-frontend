@@ -31,8 +31,7 @@ const ProposalManager = ({ selectedLead }) => {
   const [isSaleModalOpen, setSaleModalOpen] = useState(false);
   const [loadingProposals, setLoadingProposals] = useState(true);
 
-  const { products, loading, error, totalPages, currentPage, setCurrentPage, fetchProducts } =
-    useProducts();
+  const { products, loading, error } = useProducts();
 
   const fetchProposals = async () => {
     setLoadingProposals(true);

@@ -27,8 +27,10 @@ import useUnit from '@/hooks/units/useUnit';
 import useUnitForm from '@/hooks/units/useUnitForm';
 import AutoCompleteAddress from '../../comercial/sale/components/auto-complete/Auto-Input-Address';
 import AutoCompleteSupplyAds from '../components/auto-complete/Auto-Input-SupplyAds';
+import FormSelect from '@/app/components/forms/form-custom/FormSelect';
+import { useEffect } from 'react';
 
-const EditChecklistPage = ({ unitId = null, onClosedModal = null }) => {
+const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = null }) => {
   const params = useParams();
   let id = unitId;
   if (!unitId) id = params.id;
@@ -40,6 +42,12 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null }) => {
     return permissions.some((permission) => userPermissions.includes(permission));
   };
 
+  const statusOptions = [
+    { value: 'M', label: 'Monofásico' },
+    { value: 'B', label: 'Bifásico' },
+    { value: 'T', label: 'Trifásico' },
+  ];
+
   const { loading, error, unitData } = useUnit(id);
   const {
     formData,
@@ -49,6 +57,13 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null }) => {
     loading: formLoading,
     success,
   } = useUnitForm(unitData, id);
+
+  useEffect(() => {
+    if (success) {
+      onRefresh();
+      onClosedModal();
+    }
+  }, [success]);
 
   return (
     <Box>
@@ -65,7 +80,7 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null }) => {
               </Alert>
             )}
             <Grid container spacing={3}>
-            <Grid item xs={12} sm={12} lg={4}>
+              <Grid item xs={12} sm={12} lg={4}>
                 <CustomFormLabel htmlFor="account_number">Número do medidor</CustomFormLabel>
                 <CustomTextField
                   fullWidth
@@ -104,12 +119,11 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null }) => {
               </Grid>
 
               <Grid item xs={12} sm={12} lg={6}>
-                <CustomFormLabel htmlFor="type">Tipo de Fornecimento</CustomFormLabel>
-                <CustomTextField
-                  fullWidth
-                  variant="outlined"
-                  value={formData.type}
+                <FormSelect
+                  label="Tipo de Fornecimento"
+                  options={statusOptions}
                   onChange={(e) => handleChange('type', e.target.value)}
+                  value={formData.type}
                   {...(formErrors.type && { error: true, helperText: formErrors.type })}
                 />
               </Grid>
@@ -128,7 +142,6 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null }) => {
                 />
               </Grid>
 
-
               <Grid item xs={12} sm={12} lg={6}>
                 <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
                 <AutoCompleteAddress
@@ -139,7 +152,9 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null }) => {
               </Grid>
 
               <Grid item xs={12} sm={12} lg={6}>
-                <CustomFormLabel htmlFor="supply_adquance_ids">Adequação de Fornecimento</CustomFormLabel>
+                <CustomFormLabel htmlFor="supply_adquance_ids">
+                  Adequação de Fornecimento
+                </CustomFormLabel>
                 <AutoCompleteSupplyAds
                   onChange={(ids) => handleChange('supply_adquance_ids', ids)}
                   value={formData.supply_adquance_ids}
@@ -155,11 +170,11 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null }) => {
                 <Box>
                   <Typography variant="body1" color="textSecondary">
                     Atualmente:{' '}
-                      <Link href={formData.bill_file} target="_blank" rel="noopener noreferrer">
-                        {formData.bill_file?.length > 30
-                          ? `${formData.bill_file.slice(0, 30)}...`
-                          : formData.bill_file}
-                      </Link>
+                    <Link href={formData.bill_file} target="_blank" rel="noopener noreferrer">
+                      {formData.bill_file?.length > 30
+                        ? `${formData.bill_file.slice(0, 30)}...`
+                        : formData.bill_file}
+                    </Link>
                   </Typography>
                   <Box mt={1}>
                     Modificar:

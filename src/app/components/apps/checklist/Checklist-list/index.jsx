@@ -19,13 +19,13 @@ import {
 } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { IconTrash } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import EditChecklistPage from '../Edit-checklist';
 import CreateChecklistPage from '../Add-checklist';
 import unitService from '@/services/unitService';
+import SupplyChip from '../components/SupplyChip';
 
-const CheckListRateio = ({ projectId = null, initialUnits = [] }) => {
-  console.log('units: ', initialUnits);
+const CheckListRateio = ({ projectId = null }) => {
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedUnitId, setSelectedUnitId] = useState(null);
@@ -34,8 +34,25 @@ const CheckListRateio = ({ projectId = null, initialUnits = [] }) => {
   const [confirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [unitToDelete, setUnitToDelete] = useState(null);
 
-  // Estado para armazenar as unidades
-  const [units, setUnits] = useState(initialUnits);
+  const [reload, setReload] = useState(false);
+
+  const reloadPage = () => {
+    setReload(!reload);
+  };
+
+  useEffect(() => {
+    const fetchUnits = async () => {
+      try {
+        const response = await unitService.getUnitByIdProject(projectId);
+        setUnits(response.results);
+      } catch (error) {
+        console.log('Error: ', error);
+      }
+    };
+    fetchUnits();
+  }, [projectId, reload]);
+
+  const [units, setUnits] = useState([]);
 
   const handleEdit = (unitId) => {
     setSelectedUnitId(unitId);
@@ -48,14 +65,11 @@ const CheckListRateio = ({ projectId = null, initialUnits = [] }) => {
 
   const handleDelete = async (unitId) => {
     try {
-      // Chama o serviço para excluir a unidade
-      await unitService.deleteUnit(unitId); // Supondo que deleteUnit seja um método de exclusão no seu serviço
-      // Atualiza o estado removendo a unidade da lista
+      await unitService.deleteUnit(unitId);
       setUnits((prevUnits) => prevUnits.filter((unit) => unit.id !== unitId));
       setConfirmDeleteModalOpen(false);
     } catch (error) {
       console.error('Erro ao excluir a unidade', error);
-      // Adicione uma mensagem de erro se necessário
     }
   };
 
@@ -124,7 +138,7 @@ const CheckListRateio = ({ projectId = null, initialUnits = [] }) => {
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
-                      <Typography variant="body2">{unit?.type}</Typography>
+                      <Typography variant="body2"><SupplyChip status={unit?.type} /></Typography>
                     </TableCell>
                     <TableCell align="center">
                       <Tooltip title="Edit Item">
@@ -160,6 +174,7 @@ const CheckListRateio = ({ projectId = null, initialUnits = [] }) => {
           <EditChecklistPage
             onClosedModal={() => setEditModalOpen(false)}
             unitId={selectedUnitId}
+            onRefresh={reloadPage}
           />
         </DialogContent>
       </Dialog>
@@ -171,6 +186,7 @@ const CheckListRateio = ({ projectId = null, initialUnits = [] }) => {
           <CreateChecklistPage
             onClosedModal={() => setAddModalOpen(false)}
             projectId={projectId}
+            onRefresh={reloadPage}
           />
         </DialogContent>
       </Dialog>

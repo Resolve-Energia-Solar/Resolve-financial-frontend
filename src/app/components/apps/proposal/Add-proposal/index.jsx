@@ -111,11 +111,11 @@ const ProposalForm = ({ kits, selectedLead, handleCloseForm, reloadKits }) => {
         <CustomFormLabel>Kits Solares Disponíveis</CustomFormLabel>
 
         <Grid container spacing={1.5}>
-          <Grid item xs={12} sm={4} md={4}>
+          {/* <Grid item xs={12} sm={4} md={4}>
             <Box display="flex" justifyContent="center" mt={1}>
               <AddKitButton onClick={handleAddKit} />
             </Box>
-          </Grid>
+          </Grid> */}
           {kits && kits.length > 0 ? (
             kits.map((kit) => (
               <Grid item xs={12} sm={6} md={4} key={kit.id}>
