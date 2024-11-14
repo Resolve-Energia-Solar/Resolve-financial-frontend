@@ -19,14 +19,17 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
   const fetchDefaultAddress = async (addressId) => {
     if (addressId) {
       try {
+        console.log('addressId', addressId);
         const addressValue = await addressService.getAddressById(addressId);
+        console.log('addressValue', addressValue);
         if (addressValue) {
           setSelectedAddress({
             id: addressValue.id,
             name: `${addressValue.street}, ${addressValue.number}, ${addressValue.city}, ${addressValue.state}`,
           });
-          onChange(addressValue.id); // Envia o valor numérico de addressId
+          onChange(addressValue.id);
         }
+        console.log('selectedAddress', selectedAddress);
       } catch (error) {
         console.error('Erro ao buscar address:', error);
       }
@@ -39,7 +42,7 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
 
   const handleChange = (event, newValue) => {
     setSelectedAddress(newValue);
-    onChange(newValue ? parseInt(newValue.id) : null); // Garante que o ID é numérico
+    onChange(newValue ? newValue.id : null);
   };
 
   const fetchAddressesByName = useCallback(
@@ -48,7 +51,7 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
       setLoading(true);
       try {
         const response = await addressService.getAddressByFullAddress(name);
-        const formattedAddresses = response.results.map(address => ({
+        const formattedAddresses = response.results.map((address) => ({
           id: address.id,
           name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
         }));
@@ -57,8 +60,8 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
         console.error('Erro ao buscar endereços:', error);
       }
       setLoading(false);
-    }, 300), 
-    []
+    }, 300),
+    [],
   );
 
   const handleOpen = () => {
@@ -127,7 +130,10 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
       <Dialog open={openModal} onClose={handleCloseModal} maxWidth="lg">
         <DialogTitle>Adicionar Novo Endereço</DialogTitle>
         <DialogContent>
-          <CreateAddressPage onClosedModal={handleCloseModal} selectedAddressId={fetchDefaultAddress} />
+          <CreateAddressPage
+            onClosedModal={handleCloseModal}
+            selectedAddressId={fetchDefaultAddress}
+          />
         </DialogContent>
       </Dialog>
     </div>
