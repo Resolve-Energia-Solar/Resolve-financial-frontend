@@ -37,7 +37,7 @@ const unitService = {
   },
   getUnitByIdProject: async (id) => {
     try {
-      const response = await apiClient.get(`/api/units/`);
+      const response = await apiClient.get(`/api/units/?project=${id}`);
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar unit com nome ${id}:`, error);
