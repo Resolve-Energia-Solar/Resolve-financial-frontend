@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react'
 import boardService from '@/services/boardService'
 import leadService from '@/services/leadService'
@@ -13,6 +14,7 @@ const useKanban = () => {
   const [columns, setColumns] = useState([])
   const [snackbarMessage, setSnackbarMessage] = useState('')
   const [snackbarOpen, setSnackbarOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('');
 
   const addLead = newLead => {
     setLeads(prevLeads => [...prevLeads, newLead])
@@ -170,6 +172,8 @@ const useKanban = () => {
     handleUpdateLead,
     updateColumnName,
     fetchBoardDetails,
+    searchTerm,
+    setSearchTerm
   }
 }
 

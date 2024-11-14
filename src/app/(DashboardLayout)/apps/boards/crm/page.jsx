@@ -23,6 +23,8 @@ function KanbanPage() {
     handleDeleteLead,
     handleUpdateLead,
     updateColumnName,
+    searchTerm,
+    setSearchTerm,
   } = useKanban();
 
   return (
@@ -33,6 +35,8 @@ function KanbanPage() {
             boards={boards}
             selectedBoard={selectedBoard}
             onBoardChange={(e) => setSelectedBoard(e.target.value)}
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
           />
 
           {loading ? (
@@ -52,6 +56,7 @@ function KanbanPage() {
                   onUpdateLeadColumn={updateColumnName}
                   onUpdateLead={handleUpdateLead}
                   onDeleteLead={handleDeleteLead}
+                  searchTerm={searchTerm}
                 />
               ) : (
                 <Typography variant="body1" mt={4}>

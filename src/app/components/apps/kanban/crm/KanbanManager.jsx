@@ -1,3 +1,4 @@
+'use client';
 import React, { useContext, useEffect, useState } from 'react';
 import {
   Box,
@@ -36,9 +37,9 @@ const KanbanManager = ({
   onAddLead,
   onDeleteLead,
   onUpdateLeadColumn,
+  searchTerm,
 }) => {
   const theme = useTheme();
-
   const [editLead, setEditLead] = useState(false);
   const [openLeadModal, setOpenLeadModal] = useState(false);
   const { idSaleSuccess, setIdSaleSuccess } = useContext(KanbanDataContext);
@@ -85,6 +86,13 @@ const KanbanManager = ({
     'Quarto Contato': theme.palette.success.light,
     default: theme.palette.grey[200],
   };
+
+  const filteredLeads = leadsList.filter(
+    (lead) =>
+      (lead.name?.toLowerCase().trim() || '').includes(searchTerm.toLowerCase().trim()) ||
+      (lead.contact_email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (lead.phone?.toLowerCase() || '').includes(searchTerm.toLowerCase()),
+  );
 
   const handleOpenLeadModal = () => {
     setOpenLeadModal(true);
@@ -158,12 +166,12 @@ const KanbanManager = ({
                       statusId={status.id}
                       boardId={board}
                       onUpdateLeadColumn={onUpdateLeadColumn}
-                      leads={leadsList}
+                      leads={filteredLeads}
                       onAddLead={onAddLead}
                       addLead={addLead}
                       statusColors={statusColors}
                     />
-                    {leadsList
+                    {filteredLeads
                       .filter((lead) => lead.column.id === status.id)
                       .map((lead, index) => (
                         <Draggable draggableId={lead.id.toString()} index={index} key={lead.id}>
@@ -180,7 +188,7 @@ const KanbanManager = ({
                         </Draggable>
                       ))}
 
-                    {leadsList.filter((lead) => lead.column.id === status.id).length === 0 && (
+                    {filteredLeads.filter((lead) => lead.column.id === status.id).length === 0 && (
                       <Box
                         onClick={() => handleOpenLeadModal(status.id)}
                         sx={{
