@@ -143,7 +143,7 @@ const KanbanManager = ({
 
   const handleLoadMore = useCallback(
     async (statusId) => {
-      if (loadingColumns[statusId]) return; // Evita chamadas simultâneas para a mesma coluna
+      if (loadingColumns[statusId]) return; 
 
       setLoadingColumns((prev) => ({ ...prev, [statusId]: true }));
 
