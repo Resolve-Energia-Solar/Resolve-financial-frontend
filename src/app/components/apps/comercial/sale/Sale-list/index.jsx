@@ -395,8 +395,8 @@ const SaleList = () => {
                     <StatusChip status={item.status} />
                   </TableCell>
                   <TableCell>
-                    {item.document_completion_date &&
-                      new Date(item.document_completion_date).toLocaleDateString()}
+                    {item?.document_completion_date &&
+                      new Date(item?.document_completion_date).toLocaleDateString()}
                   </TableCell>
                   <TableCell>{item.branch.name}</TableCell>
                   <TableCell>

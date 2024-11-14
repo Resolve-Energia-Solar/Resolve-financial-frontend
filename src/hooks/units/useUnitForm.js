@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import formatDate from '@/utils/formatDate';
 import unitService from '@/services/unitService';
 
 const useUnitForm = (initialData, id) => {
@@ -12,24 +11,29 @@ const useUnitForm = (initialData, id) => {
     type: '',
     unit_number: '',
     account_number: '',
+    project_id: null,
     project: null,
+    bill_file: null,
   });
 
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (initialData) {
       setFormData({
         address_id: initialData.address?.id || null,
-        supply_adquance_ids: initialData.supply_adquances?.map((item) => item.id) || [],
+        supply_adquance_ids: initialData.supply_adquance?.map((item) => item.id) || [],
         name: initialData.name || '',
         main_unit: initialData.main_unit || false,
         unit_percentage: initialData.unit_percentage || 0,
         type: initialData.type || '',
         unit_number: initialData.unit_number || '',
         account_number: initialData.account_number || '',
+        project_id: initialData.project || null,
         project: initialData.project || null,
+        bill_file: initialData.bill_file || null,
       });
     }
   }, [initialData]);
@@ -39,18 +43,28 @@ const useUnitForm = (initialData, id) => {
   };
 
   const handleSave = async () => {
-    const dataToSend = {
-      address_id: formData.address_id,
-      supply_adquance_ids: formData.supply_adquance_ids,
-      name: formData.name,
-      main_unit: formData.main_unit,
-      unit_percentage: formData.unit_percentage,
-      type: formData.type,
-      unit_number: formData.unit_number,
-      account_number: formData.account_number,
-      project: formData.project,
-    };
-    console.log('dataToSend', dataToSend);
+    setLoading(true); // Define o estado de loading como true
+    const is_file = formData.bill_file instanceof File || (formData.bill_file instanceof FileList && formData.bill_file.length > 0);
+    const dataToSend = new FormData();
+    
+    dataToSend.append('address_id', formData.address_id);
+    dataToSend.append('name', formData.name);
+    dataToSend.append('main_unit', formData.main_unit);
+    dataToSend.append('unit_percentage', formData.unit_percentage);
+    dataToSend.append('type', formData.type);
+    dataToSend.append('unit_number', formData.unit_number);
+    dataToSend.append('account_number', formData.account_number);
+    dataToSend.append('project_id', formData.project_id);
+    dataToSend.append('project', formData.project);
+
+    formData.supply_adquance_ids.forEach((supplyAdquanceId) => {
+      dataToSend.append('supply_adquance_ids', supplyAdquanceId);
+    });
+
+    if (is_file) {
+      dataToSend.append('bill_file', formData.bill_file);
+    }
+
     try {
       if (id) {
         await unitService.updateUnit(id, dataToSend);
@@ -63,6 +77,8 @@ const useUnitForm = (initialData, id) => {
       setSuccess(false);
       setFormErrors(err.response?.data || {});
       console.log(err.response?.data || err);
+    } finally {
+      setLoading(false); 
     }
   };
 
@@ -72,6 +88,7 @@ const useUnitForm = (initialData, id) => {
     handleSave,
     formErrors,
     success,
+    loading,
   };
 };
 

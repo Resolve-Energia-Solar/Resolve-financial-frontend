@@ -21,16 +21,23 @@ import { Edit } from '@mui/icons-material';
 import { IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 import EditChecklistPage from '../Edit-checklist';
+import CreateChecklistPage from '../Add-checklist';
 
-const CheckListRateio = ({ units = [] }) => {
+const CheckListRateio = ({ projectId=null, units = [] }) => {
   console.log('units: ', units);
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedUnitId, setSelectedUnitId] = useState(null);
-  
+
+  const [AddModalOpen, setAddModalOpen] = useState(false);
+
   const handleEdit = (unitId) => {
     setSelectedUnitId(unitId);
     setEditModalOpen(true);
+  };
+
+  const handleAdd = () => {
+    setAddModalOpen(true);
   }
 
   return (
@@ -71,9 +78,7 @@ const CheckListRateio = ({ units = [] }) => {
               {units.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} align="center">
-                    <Button variant="contained" color="primary">
-                      Adicionar uma nova parcela
-                    </Button>
+                    <Typography variant="body2">Nenhuma unidade disponível</Typography>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -114,7 +119,7 @@ const CheckListRateio = ({ units = [] }) => {
               )}
               <TableRow>
                 <TableCell colSpan={5} align="center">
-                  <Button variant="contained" color="primary">
+                  <Button variant="contained" color="primary" onClick={() => handleAdd()}>
                     Adicionar Unidade
                   </Button>
                 </TableCell>
@@ -128,7 +133,10 @@ const CheckListRateio = ({ units = [] }) => {
       <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle>Editar Unidade</DialogTitle>
         <DialogContent>
-          <EditChecklistPage onClosedModal={() => setEditModalOpen(false)} unitId={selectedUnitId} />
+          <EditChecklistPage
+            onClosedModal={() => setEditModalOpen(false)}
+            unitId={selectedUnitId}
+          />
         </DialogContent>
         {/* <DialogActions>
           <Button onClick={() => setEditModalOpen(false)} color="primary">
@@ -137,6 +145,21 @@ const CheckListRateio = ({ units = [] }) => {
         </DialogActions> */}
       </Dialog>
 
+      {/* Modal de Edição */}
+      <Dialog open={AddModalOpen} onClose={() => setAddModalOpen(false)} maxWidth="md" fullWidth>
+        <DialogTitle>Editar Unidade</DialogTitle>
+        <DialogContent>
+          <CreateChecklistPage
+            onClosedModal={() => setAddModalOpen(false)}
+            projectId={projectId}
+          />
+        </DialogContent>
+        {/* <DialogActions>
+          <Button onClick={() => setEditModalOpen(false)} color="primary">
+            Cancelar
+          </Button>
+        </DialogActions> */}
+      </Dialog>
     </Box>
   );
 };

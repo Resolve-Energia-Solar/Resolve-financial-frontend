@@ -17,7 +17,6 @@ const useSaleForm = (initialData, id) => {
     totalValue: '',
     status: '',
     completedDocument: false,
-    documentCompletionDate: null,
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -38,9 +37,6 @@ const useSaleForm = (initialData, id) => {
         totalValue: initialData.total_value || '',
         status: initialData.status || '',
         completedDocument: initialData.completed_document || false,
-        documentCompletionDate: initialData.document_completion_date
-          ? new Date(initialData.document_completion_date)
-          : null,
       });
     }
   }, [initialData]);
@@ -62,9 +58,6 @@ const useSaleForm = (initialData, id) => {
       total_value: formData.totalValue,
       status: formData.status,
       completed_document: formData.completedDocument,
-      document_completion_date: formData.documentCompletionDate
-        ? formatDate(formData.documentCompletionDate)
-        : null,
     };
 
     try {

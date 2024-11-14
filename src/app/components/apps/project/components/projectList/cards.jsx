@@ -16,7 +16,7 @@ import StatusIcon from '@mui/icons-material/AssignmentTurnedIn';
 import DescriptionIcon from '@mui/icons-material/Description';
 import StatusChip from '../../../proposal/components/ProposalStatusChip';
 import projectService from '@/services/projectService';
-import { CallToAction, FlashAuto, SolarPower, ViewModule } from '@mui/icons-material';
+import { CallToAction, FlashAuto, SolarPower } from '@mui/icons-material';
 import SkeletonCard from '../SkeletonCard';
 import CustomAccordion from '@/app/components/apps/project/components/CustomAccordion';
 import CheckListRateio from '../../../checklist/Checklist-list';
@@ -117,7 +117,7 @@ const ProjectListCards = ({ saleId = null }) => {
 
 
                 <CustomAccordion title="Checklist Rateio">
-                  <CheckListRateio units={project.units} />
+                  <CheckListRateio units={project.units} projectId={project.id} />
                 </CustomAccordion>
 
                 <CustomAccordion title="Documentos">

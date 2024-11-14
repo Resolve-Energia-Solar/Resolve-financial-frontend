@@ -10,15 +10,13 @@ import {
   Typography,
   CircularProgress,
   Alert,
+  Input,
+  Link,
 } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import { useParams } from 'next/navigation';
 
-import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-User';
-import AutoCompleteBranch from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Branch';
-import AutoCompleteCampaign from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Campaign';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import FormDateTime from '@/app/components/forms/form-custom/FormDateTime';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
@@ -28,6 +26,7 @@ import FormPageSkeleton from '@/app/components/apps/comercial/sale/components/Fo
 import useUnit from '@/hooks/units/useUnit';
 import useUnitForm from '@/hooks/units/useUnitForm';
 import AutoCompleteAddress from '../../comercial/sale/components/auto-complete/Auto-Input-Address';
+import AutoCompleteSupplyAds from '../components/auto-complete/Auto-Input-SupplyAds';
 
 const EditChecklistPage = ({ unitId = null, onClosedModal = null }) => {
   const params = useParams();
@@ -66,12 +65,17 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null }) => {
               </Alert>
             )}
             <Grid container spacing={3}>
-              <Grid item xs={12} sm={12} lg={4}>
-                <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
-                <AutoCompleteAddress
-                  onChange={(id) => handleChange('address_id', id)}
-                  value={formData.address_id}
-                  {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
+            <Grid item xs={12} sm={12} lg={4}>
+                <CustomFormLabel htmlFor="account_number">Número do medidor</CustomFormLabel>
+                <CustomTextField
+                  fullWidth
+                  variant="outlined"
+                  value={formData.account_number}
+                  onChange={(e) => handleChange('account_number', e.target.value)}
+                  {...(formErrors.account_number && {
+                    error: true,
+                    helperText: formErrors.account_number,
+                  })}
                 />
               </Grid>
               <Grid item xs={12} sm={12} lg={4}>
@@ -99,46 +103,77 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null }) => {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={12} lg={4}>
+              <Grid item xs={12} sm={12} lg={6}>
                 <CustomFormLabel htmlFor="type">Tipo de Fornecimento</CustomFormLabel>
                 <CustomTextField
                   fullWidth
                   variant="outlined"
                   value={formData.type}
-                    onChange={(e) => handleChange('type', e.target.value)}
-                    {...(formErrors.type && { error: true, helperText: formErrors.type })}
+                  onChange={(e) => handleChange('type', e.target.value)}
+                  {...(formErrors.type && { error: true, helperText: formErrors.type })}
                 />
               </Grid>
 
-              <Grid item xs={12} sm={12} lg={4}>
+              <Grid item xs={12} sm={12} lg={6}>
                 <CustomFormLabel htmlFor="unit_number">Conta contrato</CustomFormLabel>
                 <CustomTextField
                   fullWidth
                   variant="outlined"
                   value={formData.unit_number}
-                    onChange={(e) => handleChange('unit_number', e.target.value)}
-                    {...(formErrors.unit_number && {
-                        error: true,
-                        helperText: formErrors.unit_number,
-                    })}
+                  onChange={(e) => handleChange('unit_number', e.target.value)}
+                  {...(formErrors.unit_number && {
+                    error: true,
+                    helperText: formErrors.unit_number,
+                  })}
                 />
               </Grid>
 
-              <Grid item xs={12} sm={12} lg={4}>
-                <CustomFormLabel htmlFor="account_number">Número do medidor</CustomFormLabel>
-                <CustomTextField
-                  fullWidth
-                  variant="outlined"
-                  value={formData.account_number}
-                    onChange={(e) => handleChange('account_number', e.target.value)}
-                    {...(formErrors.account_number && {
-                        error: true,
-                        helperText: formErrors.account_number,
-                    })}
+
+              <Grid item xs={12} sm={12} lg={6}>
+                <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
+                <AutoCompleteAddress
+                  onChange={(id) => handleChange('address_id', id)}
+                  value={formData.address_id}
+                  {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
                 />
               </Grid>
 
-              
+              <Grid item xs={12} sm={12} lg={6}>
+                <CustomFormLabel htmlFor="supply_adquance_ids">Adequação de Fornecimento</CustomFormLabel>
+                <AutoCompleteSupplyAds
+                  onChange={(ids) => handleChange('supply_adquance_ids', ids)}
+                  value={formData.supply_adquance_ids}
+                  {...(formErrors.supply_adquance_ids && {
+                    error: true,
+                    helperText: formErrors.supply_adquance_ids,
+                  })}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="bill_file">Arquivo</CustomFormLabel>
+                <Box>
+                  <Typography variant="body1" color="textSecondary">
+                    Atualmente:{' '}
+                      <Link href={formData.bill_file} target="_blank" rel="noopener noreferrer">
+                        {formData.bill_file?.length > 30
+                          ? `${formData.bill_file.slice(0, 30)}...`
+                          : formData.bill_file}
+                      </Link>
+                  </Typography>
+                  <Box mt={1}>
+                    Modificar:
+                    <Input
+                      type="file"
+                      onChange={(e) => handleChange('bill_file', e.target.files[0])}
+                      {...(formErrors.bill_file && { error: true })}
+                    />
+                  </Box>
+                  <Typography variant="caption" color="error">
+                    {formErrors.bill_file && formErrors.bill_file}
+                  </Typography>
+                </Box>
+              </Grid>
 
               <Grid item xs={12} sm={12} lg={12}>
                 <CustomFormLabel>Geradora</CustomFormLabel>

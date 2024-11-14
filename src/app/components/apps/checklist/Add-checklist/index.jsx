@@ -10,47 +10,31 @@ import {
   Typography,
   CircularProgress,
   Alert,
+  Input,
+  Link,
 } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
-import { useParams } from 'next/navigation';
 
-import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-User';
-import AutoCompleteBranch from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Branch';
-import AutoCompleteLead from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Leads';
-import AutoCompleteCampaign from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Campaign';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import FormDateTime from '@/app/components/forms/form-custom/FormDateTime';
-import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
-import DocumentAttachments from '@/app/components/apps/comercial/sale/components/attachments/attachments';
 import { useSelector } from 'react-redux';
-import FormPageSkeleton from '../components/FormPageSkeleton';
 
-import useSale from '@/hooks/sales/useSale';
-import useSaleForm from '@/hooks/sales/useSaleForm';
-import { useState } from 'react';
-import PaymentCard from '../../../invoice/components/paymentList/card';
-import ProjectListCards from '../../../project/components/projectList/cards';
-import projectService from '@/services/projectService';
-import FileUpload from '../components/attachments/attachments';
+import useUnitForm from '@/hooks/units/useUnitForm';
+import AutoCompleteAddress from '../../comercial/sale/components/auto-complete/Auto-Input-Address';
+import AutoCompleteSupplyAds from '../components/auto-complete/Auto-Input-SupplyAds';
+import supplyService from '@/services/supplyAdequanceService';
+import { useEffect, useState } from 'react';
 
-const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
-  const params = useParams();
-  let id = saleId;
-  if (!saleId) id = params.id;
 
+const CreateChecklistPage = ({ projectId = null, onClosedModal = null }) => {
   const userPermissions = useSelector((state) => state.user.permissions);
+  const [fileLoading, setFileLoading] = useState(false);
 
   const hasPermission = (permissions) => {
     if (!permissions) return true;
     return permissions.some((permission) => userPermissions.includes(permission));
   };
 
-  const id_sale = id;
-  const context_type_sale = 44;
-
-  const { loading, error, saleData } = useSale(id);
   const {
     formData,
     handleChange,
@@ -58,192 +42,208 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
     formErrors,
     loading: formLoading,
     success,
-  } = useSaleForm(saleData, id);
+  } = useUnitForm();
 
-  const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.totalValue);
+  formData.project_id = projectId;
+  formData.project = projectId;
 
-  const statusOptions = [
-    { value: 'F', label: 'Finalizado' },
-    { value: 'EA', label: 'Em Andamento' },
-    { value: 'C', label: 'Cancelado' },
-    { value: 'D', label: 'Distrato' },
-  ];
+  useEffect(() => {
+    if (formData.bill_file) {
+      setFileLoading(true);
 
-  const [value, setValue] = useState(0);
-
-  const handleChangeTab = (event, newValue) => {
-    setValue(newValue);
-  };
+      const formDataToSend = new FormData();
+      formDataToSend.append('bill_file', formData.bill_file);
+  
+      supplyService.getFieldsDocuments(formDataToSend)
+        .then((response) => {
+          handleChange('name', response.name);
+          handleChange('account_number', response.account);
+          handleChange('type', response.type);
+          handleChange('unit_number', response.uc);
+        })
+        .catch((error) => {
+          console.error('Error uploading file:', error);
+        })
+        .finally(() => {
+          setFileLoading(false);
+        });
+    }
+  }, [formData.bill_file]);
 
   return (
     <Box>
-      <Tabs value={value} onChange={handleChangeTab}>
-        <Tab label="Venda" />
-        <Tab label="Anexos" />
-        <Tab label="Pagamentos" />
-        <Tab label="Projetos" />
-      </Tabs>
-      {loading ? (
-        <FormPageSkeleton />
-      ) : error ? (
-        <Typography color="error">{error}</Typography>
-      ) : (
-        <Box>
-          {value === 0 && (
-            <>
-              {success && (
-                <Alert severity="success" sx={{ mt: 2 }}>
-                  Venda atualizada com sucesso
-                </Alert>
-              )}
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={12} lg={4}>
-                  <CustomFormLabel htmlFor="name">Cliente</CustomFormLabel>
-                  <AutoCompleteUser
-                    onChange={(id) => handleChange('customerId', id)}
-                    value={formData.customerId}
-                    {...(formErrors.customer_id && {
-                      error: true,
-                      helperText: formErrors.customer_id,
-                    })}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12} lg={4}>
-                  <CustomFormLabel htmlFor="branch">Franquia</CustomFormLabel>
-                  <AutoCompleteBranch
-                    onChange={(id) => handleChange('branchId', id)}
-                    disabled={!hasPermission(['accounts.change_branch_field'])}
-                    value={formData.branchId}
-                    {...(formErrors.branch_id && { error: true, helperText: formErrors.branch_id })}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12} lg={4}>
-                  <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
-                  <AutoCompleteUser
-                    onChange={(id) => handleChange('sellerId', id)}
-                    value={formData.sellerId}
-                    disabled={!hasPermission(['accounts.change_seller_field'])}
-                    {...(formErrors.seller_id && { error: true, helperText: formErrors.seller_id })}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12} lg={4}>
-                  <CustomFormLabel htmlFor="name">Supervisor de Vendas</CustomFormLabel>
-                  <AutoCompleteUser
-                    onChange={(id) => handleChange('salesSupervisorId', id)}
-                    value={formData.salesSupervisorId}
-                    disabled={!hasPermission(['accounts.change_supervisor_field'])}
-                    {...(formErrors.sales_supervisor_id && {
-                      error: true,
-                      helperText: formErrors.sales_supervisor_id,
-                    })}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12} lg={4}>
-                  <CustomFormLabel htmlFor="name">Gerente de Vendas</CustomFormLabel>
-                  <AutoCompleteUser
-                    onChange={(id) => handleChange('salesManagerId', id)}
-                    value={formData.salesManagerId}
-                    disabled={!hasPermission(['accounts.change_usermanager_field'])}
-                    {...(formErrors.sales_manager_id && {
-                      error: true,
-                      helperText: formErrors.sales_manager_id,
-                    })}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12} lg={4}>
-                  <CustomFormLabel htmlFor="branch">Campanha de Marketing</CustomFormLabel>
-                  <AutoCompleteCampaign
-                    onChange={(id) => handleChange('marketingCampaignId', id)}
-                    value={formData.marketingCampaignId}
-                    {...(formErrors.marketing_campaign_id && {
-                      error: true,
-                      helperText: formErrors.marketing_campaign_id,
-                    })}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12} lg={4}>
-                  <CustomFormLabel htmlFor="valor">Valor</CustomFormLabel>
-                  <CustomTextField
-                    name="total_value"
-                    placeholder="R$ 20.000,00"
-                    variant="outlined"
-                    fullWidth
-                    value={formattedValue}
-                    onChange={(e) => handleValueChange(e, handleChange)}
-                    {...(formErrors.total_value && {
-                      error: true,
-                      helperText: formErrors.total_value,
-                    })}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12} lg={4}>
-                  <FormSelect
-                    label="Status da Venda"
-                    options={statusOptions}
-                    value={formData.status}
-                    onChange={(e) => handleChange('status', e.target.value)}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12} lg={4}>
-                  <FormDateTime
-                    label="Conclusão do Documento"
-                    name="document_completion_date"
-                    value={formData.documentCompletionDate}
-                    onChange={(newValue) => handleChange('documentCompletionDate', newValue)}
-                    {...(formErrors.document_completion_date && {
-                      error: true,
-                      helperText: formErrors.document_completion_date,
-                    })}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12} lg={12}>
-                  <CustomFormLabel>Venda</CustomFormLabel>
-                  <FormControlLabel
-                    control={
-                      <CustomSwitch
-                        checked={formData.isSale}
-                        onChange={(e) => handleChange('isSale', e.target.checked)}
-                      />
-                    }
-                    label={formData.isSale ? 'Pré-Venda' : 'Venda'}
-                  />
-                </Grid>
-              </Grid>
-            </>
+      <Box>
+        <>
+          {success && (
+            <Alert severity="success" sx={{ mt: 2 }}>
+              Unidade cadastrada com sucesso
+            </Alert>
           )}
-          {value === 1 && (
-            <FileUpload objectId={id_sale} contentType={context_type_sale} />
-          )}
-          {value === 2 && (
-            <Box sx={{ mt: 3 }}>
-              <PaymentCard sale={id_sale} />
-            </Box>
-          )}
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={12} lg={4}>
+              <CustomFormLabel htmlFor="account_number">Número do medidor</CustomFormLabel>
+              <CustomTextField
+                fullWidth
+                variant="outlined"
+                value={formData.account_number}
+                onChange={(e) => handleChange('account_number', e.target.value)}
+                {...(formErrors.account_number && {
+                  error: true,
+                  helperText: formErrors.account_number,
+                })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} lg={4}>
+              <CustomFormLabel htmlFor="name">Nome</CustomFormLabel>
+              <CustomTextField
+                fullWidth
+                variant="outlined"
+                value={formData.name}
+                onChange={(e) => handleChange('name', e.target.value)}
+                {...(formErrors.name && { error: true, helperText: formErrors.name })}
+              />
+            </Grid>
 
-          {value === 3 && <ProjectListCards saleId={id_sale} />}
+            <Grid item xs={12} sm={12} lg={4}>
+              <CustomFormLabel htmlFor="unit_percentage">Porcentagem de Rateio</CustomFormLabel>
+              <CustomTextField
+                fullWidth
+                variant="outlined"
+                value={formData.unit_percentage}
+                onChange={(e) => handleChange('unit_percentage', e.target.value)}
+                {...(formErrors.unit_percentage && {
+                  error: true,
+                  helperText: formErrors.unit_percentage,
+                })}
+              />
+            </Grid>
 
-          <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-            {onClosedModal && (
-              <Button variant="contained" color="primary" onClick={onClosedModal}>
-                Fechar
-              </Button>
-            )}
-            {value === 0 && (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSave}
-                disabled={formLoading}
-                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-              >
-                {formLoading ? 'Salvando...' : 'Salvar Alterações'}
-              </Button>
-            )}
-          </Stack>
-        </Box>
-      )}
+            <Grid item xs={12} sm={12} lg={6}>
+              <CustomFormLabel htmlFor="type">Tipo de Fornecimento</CustomFormLabel>
+              <CustomTextField
+                fullWidth
+                variant="outlined"
+                value={formData.type}
+                onChange={(e) => handleChange('type', e.target.value)}
+                {...(formErrors.type && { error: true, helperText: formErrors.type })}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={12} lg={6}>
+              <CustomFormLabel htmlFor="unit_number">Conta contrato</CustomFormLabel>
+              <CustomTextField
+                fullWidth
+                variant="outlined"
+                value={formData.unit_number}
+                onChange={(e) => handleChange('unit_number', e.target.value)}
+                {...(formErrors.unit_number && {
+                  error: true,
+                  helperText: formErrors.unit_number,
+                })}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={12} lg={6}>
+              <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
+              <AutoCompleteAddress
+                onChange={(id) => handleChange('address_id', id)}
+                value={formData.address_id}
+                {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={12} lg={6}>
+              <CustomFormLabel htmlFor="supply_adquance_ids">
+                Adequação de Fornecimento
+              </CustomFormLabel>
+              <AutoCompleteSupplyAds
+                onChange={(ids) => handleChange('supply_adquance_ids', ids)}
+                value={formData.supply_adquance_ids}
+                {...(formErrors.supply_adquance_ids && {
+                  error: true,
+                  helperText: formErrors.supply_adquance_ids,
+                })}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <CustomFormLabel htmlFor="bill_file">Arquivo</CustomFormLabel>
+              <Box>
+                <Typography variant="body1" color="textSecondary">
+                  Atualmente:{' '}
+                  {formData.bill_file ? (
+                    <Link
+                      href={URL.createObjectURL(formData.bill_file)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {formData.bill_file.name.length > 30
+                        ? `${formData.bill_file.name.slice(0, 30)}...`
+                        : formData.bill_file.name}
+                    </Link>
+                  ) : (
+                    'Nenhum arquivo selecionado'
+                  )}
+                </Typography>
+
+                {/* Loading do arquivo */}
+                {fileLoading && (
+                  <Box display="flex" alignItems="center" mt={1}>
+                    <CircularProgress size={20} color="inherit" />
+                    <Typography variant="caption" color="textSecondary" sx={{ ml: 1 }}>
+                      Carregando documento...
+                    </Typography>
+                  </Box>
+                )}
+
+                <Box mt={1}>
+                  Modificar:
+                  <Input
+                    type="file"
+                    onChange={(e) => handleChange('bill_file', e.target.files[0])}
+                    {...(formErrors.bill_file && { error: true })}
+                  />
+                </Box>
+                <Typography variant="caption" color="error">
+                  {formErrors.bill_file && formErrors.bill_file}
+                </Typography>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={12} lg={12}>
+              <CustomFormLabel>Geradora</CustomFormLabel>
+              <FormControlLabel
+                control={
+                  <CustomSwitch
+                    checked={formData.main_unit}
+                    onChange={(e) => handleChange('main_unit', e.target.checked)}
+                  />
+                }
+                label={formData.main_unit ? 'Geradora' : 'Beneficiária'}
+              />
+            </Grid>
+          </Grid>
+        </>
+
+        <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
+          {onClosedModal && (
+            <Button variant="contained" color="primary" onClick={onClosedModal}>
+              Fechar
+            </Button>
+          )}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSave}
+            disabled={formLoading}
+            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+          >
+            {formLoading ? 'Salvando...' : 'Criar'}
+          </Button>
+        </Stack>
+      </Box>
     </Box>
   );
 };
 
-export default EditSalePage;
+export default CreateChecklistPage;
