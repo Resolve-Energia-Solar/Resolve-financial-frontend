@@ -46,7 +46,7 @@ function FormPreSale({ selectedProposal, onClose }) {
 
   const sendData = {
     lead_id: selectedProposal.lead.id,
-    kits: selectedProposal.kits.map((kit) => kit),
+    kits: selectedProposal.kits?.map((kit) => kit),
   };
 
   const handleCreatePreSale = async () => {
@@ -82,7 +82,7 @@ function FormPreSale({ selectedProposal, onClose }) {
       </Tabs>
 
       <TabPanel value={value} index={0}>
-        {selectedProposal?.kits.map((kit) => (
+        {selectedProposal?.kits?.map((kit) => (
           <Card
             key={kit.id}
             variant="outlined"
@@ -122,7 +122,7 @@ function FormPreSale({ selectedProposal, onClose }) {
       </TabPanel>
 
       <TabPanel value={value} index={1}>
-        <LeadDetails selectedLead={selectedProposal.lead} />
+        <LeadDetails selectedLead={selectedProposal?.lead} />
       </TabPanel>
 
       <Button
