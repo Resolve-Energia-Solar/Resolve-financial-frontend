@@ -22,14 +22,20 @@ import { IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 import EditChecklistPage from '../Edit-checklist';
 import CreateChecklistPage from '../Add-checklist';
+import unitService from '@/services/unitService';
 
-const CheckListRateio = ({ projectId=null, units = [] }) => {
-  console.log('units: ', units);
+const CheckListRateio = ({ projectId = null, initialUnits = [] }) => {
+  console.log('units: ', initialUnits);
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedUnitId, setSelectedUnitId] = useState(null);
 
   const [AddModalOpen, setAddModalOpen] = useState(false);
+  const [confirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [unitToDelete, setUnitToDelete] = useState(null);
+
+  // Estado para armazenar as unidades
+  const [units, setUnits] = useState(initialUnits);
 
   const handleEdit = (unitId) => {
     setSelectedUnitId(unitId);
@@ -38,7 +44,25 @@ const CheckListRateio = ({ projectId=null, units = [] }) => {
 
   const handleAdd = () => {
     setAddModalOpen(true);
-  }
+  };
+
+  const handleDelete = async (unitId) => {
+    try {
+      // Chama o serviço para excluir a unidade
+      await unitService.deleteUnit(unitId); // Supondo que deleteUnit seja um método de exclusão no seu serviço
+      // Atualiza o estado removendo a unidade da lista
+      setUnits((prevUnits) => prevUnits.filter((unit) => unit.id !== unitId));
+      setConfirmDeleteModalOpen(false);
+    } catch (error) {
+      console.error('Erro ao excluir a unidade', error);
+      // Adicione uma mensagem de erro se necessário
+    }
+  };
+
+  const openDeleteModal = (unitId) => {
+    setUnitToDelete(unitId);
+    setConfirmDeleteModalOpen(true);
+  };
 
   return (
     <Box>
@@ -82,7 +106,7 @@ const CheckListRateio = ({ projectId=null, units = [] }) => {
                   </TableCell>
                 </TableRow>
               ) : (
-                units.map((unit, index) => (
+                units.map((unit) => (
                   <TableRow key={unit.id}>
                     <TableCell align="center">
                       <Typography variant="body2">{unit?.name}</Typography>
@@ -109,7 +133,7 @@ const CheckListRateio = ({ projectId=null, units = [] }) => {
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Delete Item">
-                        <IconButton color="error">
+                        <IconButton color="error" onClick={() => openDeleteModal(unit.id)}>
                           <IconTrash width={22} />
                         </IconButton>
                       </Tooltip>
@@ -138,27 +162,35 @@ const CheckListRateio = ({ projectId=null, units = [] }) => {
             unitId={selectedUnitId}
           />
         </DialogContent>
-        {/* <DialogActions>
-          <Button onClick={() => setEditModalOpen(false)} color="primary">
-            Cancelar
-          </Button>
-        </DialogActions> */}
       </Dialog>
 
-      {/* Modal de Edição */}
+      {/* Modal de Adicionar */}
       <Dialog open={AddModalOpen} onClose={() => setAddModalOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>Editar Unidade</DialogTitle>
+        <DialogTitle>Adicionar Unidade</DialogTitle>
         <DialogContent>
           <CreateChecklistPage
             onClosedModal={() => setAddModalOpen(false)}
             projectId={projectId}
           />
         </DialogContent>
-        {/* <DialogActions>
-          <Button onClick={() => setEditModalOpen(false)} color="primary">
+      </Dialog>
+
+      {/* Modal de Confirmação de Exclusão */}
+      <Dialog open={confirmDeleteModalOpen} onClose={() => setConfirmDeleteModalOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Confirmar Exclusão</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2">
+            Tem certeza que deseja excluir esta unidade? Esta ação não pode ser desfeita.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmDeleteModalOpen(false)} color="primary">
             Cancelar
           </Button>
-        </DialogActions> */}
+          <Button onClick={() => handleDelete(unitToDelete)} color="error">
+            Excluir
+          </Button>
+        </DialogActions>
       </Dialog>
     </Box>
   );

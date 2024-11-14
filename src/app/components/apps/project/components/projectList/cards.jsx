@@ -117,7 +117,7 @@ const ProjectListCards = ({ saleId = null }) => {
 
 
                 <CustomAccordion title="Checklist Rateio">
-                  <CheckListRateio units={project.units} projectId={project.id} />
+                  <CheckListRateio initialUnits={project.units} projectId={project.id} />
                 </CustomAccordion>
 
                 <CustomAccordion title="Documentos">
