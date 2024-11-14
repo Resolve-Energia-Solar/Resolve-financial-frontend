@@ -48,14 +48,14 @@ const useProposalForm = (initialData, id) => {
       value: formattedValue,
       status: 'P',
       observation: formData.observation,
-      kits_id: selectedKitIds,
+      products_id: selectedKitIds,
     }
 
     if (!dataToSend.lead_id) {
       setSnackbar({ open: true, message: 'O campo "Lead" é obrigatório.', severity: 'warning' })
       return
     }
-    if (dataToSend.kits_id.length === 0) {
+    if (dataToSend.products_id.length === 0) {
       setSnackbar({
         open: true,
         message: 'Selecione pelo menos um kit para a proposta.',
@@ -91,7 +91,7 @@ const useProposalForm = (initialData, id) => {
       value: formData.value,
       status: formData.status,
       observation: formData.observation,
-      kits_id: selectedKitIds,
+      products_id: selectedKitIds,
     }
 
     if (!dataToSend.lead_id) {
