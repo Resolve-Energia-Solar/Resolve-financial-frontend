@@ -45,6 +45,8 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
     success,
   } = useUnitForm();
 
+  console.log('formData', formData);
+
   const statusOptions = [
     { value: 'M', label: 'Monofásico' },
     { value: 'B', label: 'Bifásico' },
