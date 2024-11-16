@@ -30,14 +30,22 @@ export default function FileUpload({ objectId, contentType }) {
   const theme = useTheme();
   const [selectedAttachment, setSelectedAttachment] = useState(null);
 
-  const { formData, clearForm, handleChange, handleSave, formErrors, setFormErrors, success, refreshSuccess, loading } = useAttachmentForm(
+  const {
+    formData,
+    clearForm,
+    handleChange,
+    handleSave,
+    formErrors,
+    setFormErrors,
+    success,
+    refreshSuccess,
+    loading,
+  } = useAttachmentForm(
     selectedAttachment || null,
     selectedAttachment?.id || null,
     selectedAttachment?.object_id || objectId,
     selectedAttachment?.content_type?.id || parseInt(contentType),
   );
-
-  console.log('formData: ', formData);
 
   const [attachments, setAttachments] = useState([]);
   const [openModal, setOpenModal] = useState(false);
@@ -46,7 +54,8 @@ export default function FileUpload({ objectId, contentType }) {
   const handleOpenModal = (attachment, documentType) => {
     setOpenModal(true);
     if (documentType) handleChange('document_type', parseInt(documentType));
-    if (attachment) setSelectedAttachment({ ...attachment, content_type_id: attachment?.content_type?.id });
+    if (attachment)
+      setSelectedAttachment({ ...attachment, content_type_id: attachment?.content_type?.id });
   };
 
   const handleCloseModal = () => {
@@ -56,7 +65,6 @@ export default function FileUpload({ objectId, contentType }) {
     setFormErrors({});
     clearForm();
   };
-
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
@@ -149,7 +157,13 @@ export default function FileUpload({ objectId, contentType }) {
                 <Typography variant="caption" sx={{ marginTop: 1 }}>
                   {doc.label}
                 </Typography>
-                <Input type="file" id="file-upload" hidden onChange={handleFileSelect} sx={{ display: 'none' }} />
+                <Input
+                  type="file"
+                  id="file-upload"
+                  hidden
+                  onChange={handleFileSelect}
+                  sx={{ display: 'none' }}
+                />
               </Box>
             </Grid>
           ))}
@@ -216,13 +230,44 @@ export default function FileUpload({ objectId, contentType }) {
             />
 
             {selectedFile && (
-              <List sx={{ marginTop: 2 }}>
+              <List
+                sx={{
+                  marginTop: 2,
+                  border: `1px solid ${theme.palette.primary.main}`,
+                  borderRadius: 1,
+                }}
+              >
                 <ListItem>
                   {getFileIcon(selectedFile.name)}
-                  <ListItemText primary={selectedFile.name} sx={{ marginLeft: 2 }} />
-                  <IconButton edge="end" aria-label="delete" onClick={() => setSelectedFile(null)}>
-                    <DeleteIcon />
-                  </IconButton>
+                  <Link
+                    href={URL.createObjectURL(selectedFile)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{ marginLeft: 2 }}
+                  >
+                    {selectedFile.name.length > 30
+                      ? `${selectedFile.name.slice(0, 30)}...`
+                      : selectedFile.name}
+                  </Link>
+                </ListItem>
+              </List>
+            )}
+
+            {formData.file?.length > 0 && !selectedFile && (
+              <List
+                sx={{
+                  marginTop: 2,
+                  border: `1px solid ${theme.palette.primary.main}`,
+                  borderRadius: 1,
+                }}
+              >
+                <ListItem>
+                  {getFileIcon('file')}
+                  <Link href={formData.file} target="_blank" rel="noopener noreferrer">
+                    {formData.file?.length > 30
+                      ? `${formData.file.slice(0, 30)}...`
+                      : formData.file}
+                  </Link>
                 </ListItem>
               </List>
             )}
