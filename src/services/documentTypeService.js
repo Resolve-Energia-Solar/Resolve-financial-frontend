@@ -13,6 +13,10 @@ const documentType = {
         const response = await apiClient.get(`/api/document-types/?app_label__in=engineering`);
         return response.data
     },
+    getDocumentTypeFromContract: async () => {
+        const response = await apiClient.get(`/api/document-types/?app_label__in=contracts`);
+        return response.data
+    },
     updateDocumentType: async (id, data) => {
         const response = await apiClient.put(`/api/document-types/${id}/`, data);
         return response.data;

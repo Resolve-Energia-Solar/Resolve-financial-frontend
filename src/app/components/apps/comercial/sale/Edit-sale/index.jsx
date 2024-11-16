@@ -18,7 +18,6 @@ import { useParams } from 'next/navigation';
 
 import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-User';
 import AutoCompleteBranch from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Branch';
-import AutoCompleteLead from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Leads';
 import AutoCompleteCampaign from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Campaign';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import FormDateTime from '@/app/components/forms/form-custom/FormDateTime';
@@ -29,11 +28,14 @@ import FormPageSkeleton from '../components/FormPageSkeleton';
 
 import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PaymentCard from '../../../invoice/components/paymentList/card';
 import ProjectListCards from '../../../project/components/projectList/cards';
-import projectService from '@/services/projectService';
-import FileUpload from '../components/attachments/attachments';
+import documentTypeService from '@/services/documentTypeService';
+import Attachments from '@/app/components/shared/attachments';
+
+
+const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
 const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
   const params = useParams();
@@ -52,7 +54,6 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
 
   const { loading, error, saleData } = useSale(id);
 
-  console.log('seller - saleData', saleData?.seller?.id);
 
   const {
     formData,
@@ -63,7 +64,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
     success,
   } = useSaleForm(saleData, id);
 
-  console.log('seller - formData', formData.sellerId);
+  const [documentTypes, setDocumentTypes] = useState([]);
 
   const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.totalValue);
 
@@ -79,6 +80,19 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
   const handleChangeTab = (event, newValue) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await documentTypeService.getDocumentTypeFromContract();
+        setDocumentTypes(response.results);
+        console.log('Document Types: ', response.results);
+      } catch (error) {
+        console.log('Error: ', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <Box>
@@ -217,7 +231,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
             </>
           )}
           {value === 1 && (
-            <FileUpload objectId={id_sale} contentType={context_type_sale} />
+            <Attachments contentType={CONTEXT_TYPE_SALE_ID} objectId={id_sale} documentTypes={documentTypes} />
           )}
           {value === 2 && (
             <Box sx={{ mt: 3 }}>

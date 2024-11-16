@@ -20,7 +20,7 @@ import { CallToAction, FlashAuto, PictureAsPdf, SolarPower } from '@mui/icons-ma
 import SkeletonCard from '../SkeletonCard';
 import CustomAccordion from '@/app/components/apps/project/components/CustomAccordion';
 import CheckListRateio from '../../../checklist/Checklist-list';
-import FileUpload from '../attachments/attachmentsOptions';
+import Attachments from '@/app/components/shared/attachments';
 import documentTypeService from '@/services/documentTypeService';
 
 const CONTEXT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
@@ -139,14 +139,13 @@ const ProjectListCards = ({ saleId = null }) => {
                 </Box>
                 </CustomAccordion>
 
-
                 <CustomAccordion title="Checklist Rateio">
                   <CheckListRateio projectId={project.id} />
                 </CustomAccordion>
 
                 <CustomAccordion title="Documentos">
                   <Typography>
-                    <FileUpload contentType={CONTEXT_TYPE_PROJECT_ID} objectId={project.id} documentTypes={documentTypes} />
+                    <Attachments contentType={CONTEXT_TYPE_PROJECT_ID} objectId={project.id} documentTypes={documentTypes} />
                   </Typography>
                 </CustomAccordion>
 

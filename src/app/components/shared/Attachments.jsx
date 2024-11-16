@@ -27,7 +27,7 @@ import attachmentService from '@/services/attachmentService';
 import { DocumentScanner, UploadFile } from '@mui/icons-material';
 
 
-export default function FileUpload({ objectId, contentType, documentTypes }) {
+export default function Attachments({ objectId, contentType, documentTypes }) {
   const theme = useTheme();
   const [selectedAttachment, setSelectedAttachment] = useState(null);
 
