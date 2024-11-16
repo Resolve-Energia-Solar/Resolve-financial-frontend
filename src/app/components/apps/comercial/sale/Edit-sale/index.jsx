@@ -51,6 +51,9 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
   const context_type_sale = 44;
 
   const { loading, error, saleData } = useSale(id);
+
+  console.log('seller - saleData', saleData?.seller?.id);
+
   const {
     formData,
     handleChange,
@@ -59,6 +62,8 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
     loading: formLoading,
     success,
   } = useSaleForm(saleData, id);
+
+  console.log('seller - formData', formData.sellerId);
 
   const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.totalValue);
 

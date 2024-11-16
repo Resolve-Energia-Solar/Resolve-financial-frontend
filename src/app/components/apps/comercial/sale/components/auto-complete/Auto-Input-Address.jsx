@@ -27,7 +27,7 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
             id: addressValue.id,
             name: `${addressValue.street}, ${addressValue.number}, ${addressValue.city}, ${addressValue.state}`,
           });
-          onChange(addressValue.id);
+          if (!value) onChange(addressValue.id);
         }
         console.log('selectedAddress', selectedAddress);
       } catch (error) {

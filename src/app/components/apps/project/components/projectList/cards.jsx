@@ -20,11 +20,17 @@ import { CallToAction, FlashAuto, SolarPower } from '@mui/icons-material';
 import SkeletonCard from '../SkeletonCard';
 import CustomAccordion from '@/app/components/apps/project/components/CustomAccordion';
 import CheckListRateio from '../../../checklist/Checklist-list';
+import FileUpload from '../attachments/attachmentsOptions';
+
+const CONTEXT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTEXT_TYPE_PROJECT_ID;
+
 
 const ProjectListCards = ({ saleId = null }) => {
   const theme = useTheme();
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  console.log('CONTEXT_TYPE_PROJECT_ID: ', CONTEXT_TYPE_PROJECT_ID);
 
   const handleEditClick = (id) => {
     setSelectedProjectId(id);
@@ -122,8 +128,7 @@ const ProjectListCards = ({ saleId = null }) => {
 
                 <CustomAccordion title="Documentos">
                   <Typography>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada
-                    lacus ex, sit amet blandit leo lobortis eget.
+                    <FileUpload contentType={CONTEXT_TYPE_PROJECT_ID} objectId={project.id} />
                   </Typography>
                 </CustomAccordion>
 

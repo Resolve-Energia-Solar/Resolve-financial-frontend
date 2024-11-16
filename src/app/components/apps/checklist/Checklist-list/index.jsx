@@ -131,6 +131,7 @@ const CheckListRateio = ({ projectId = null }) => {
                           {item?.name}
                         </Typography>
                       ))}
+                      { unit.supply_adquance?.length === 0 && <Typography variant="body2">Nenhuma</Typography>}
                     </TableCell>
                     <TableCell align="center">
                       <Typography variant="body2">

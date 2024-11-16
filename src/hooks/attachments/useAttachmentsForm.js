@@ -13,14 +13,30 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
 
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false); // Estado de loading
+  const [loading, setLoading] = useState(false);
+  const [refreshSuccess, setRefreshSuccess] = useState(false);
+
+  const refreshSuccessState = () => {
+    setRefreshSuccess((prev) => !prev);
+  };
+
+  const clearForm = () => {
+    setFormData({
+      object_id: object_id,
+      content_type_id: content_type_id,
+      file: [],
+      status: '',
+      document_type: '',
+      description: ''
+    });
+  };
 
   useEffect(() => {
     if (initialData) {
       setFormData({
         object_id: initialData.object_id || null,
         content_type_id: initialData.content_type_id || null,
-        file: initialData.file || [], // ensure this is an array
+        file: initialData.file || [],
         status: initialData.status || null,
         document_type: initialData.document_type || null,
         description: initialData.description || ''
@@ -30,7 +46,6 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
 
   const handleChange = (field, value) => {
     if (field === 'file') {
-      // Ensure value is always treated as an array
       const filesArray = value instanceof FileList ? Array.from(value) : [value];
       setFormData((prev) => ({ ...prev, [field]: filesArray }));
     } else {
@@ -57,29 +72,33 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
 
     try {
       if (id) {
-        await attachmentService.updateAttachment(id, dataToSend);
+        await attachmentService.patchAttachment(id, dataToSend);
       } else {
         await attachmentService.createAttachment(dataToSend);
       }
 
       setFormErrors({});
       setSuccess(true);
+      refreshSuccessState();
     } catch (err) {
       setSuccess(false);
       setFormErrors(err.response?.data || {});
       console.log(err.response?.data || err);
     } finally {
-      setLoading(false); // Finaliza o loading
+      setLoading(false);
     }
   };
 
   return {
     formData,
+    clearForm,
     handleChange,
     handleSave,
     formErrors,
+    setFormErrors,
     success,
-    loading, // Retorna o estado de loading
+    refreshSuccess,
+    loading,
   };
 };
 
