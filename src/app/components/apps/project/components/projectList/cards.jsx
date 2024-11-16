@@ -16,13 +16,14 @@ import StatusIcon from '@mui/icons-material/AssignmentTurnedIn';
 import DescriptionIcon from '@mui/icons-material/Description';
 import StatusChip from '../../../proposal/components/ProposalStatusChip';
 import projectService from '@/services/projectService';
-import { CallToAction, FlashAuto, SolarPower } from '@mui/icons-material';
+import { CallToAction, FlashAuto, PictureAsPdf, SolarPower } from '@mui/icons-material';
 import SkeletonCard from '../SkeletonCard';
 import CustomAccordion from '@/app/components/apps/project/components/CustomAccordion';
 import CheckListRateio from '../../../checklist/Checklist-list';
 import FileUpload from '../attachments/attachmentsOptions';
+import documentTypeService from '@/services/documentTypeService';
 
-const CONTEXT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTEXT_TYPE_PROJECT_ID;
+const CONTEXT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
 
 const ProjectListCards = ({ saleId = null }) => {
@@ -31,6 +32,9 @@ const ProjectListCards = ({ saleId = null }) => {
   const [loading, setLoading] = useState(true);
 
   console.log('CONTEXT_TYPE_PROJECT_ID: ', CONTEXT_TYPE_PROJECT_ID);
+
+  const [documentTypes, setDocumentTypes] = useState([]);
+
 
   const handleEditClick = (id) => {
     setSelectedProjectId(id);
@@ -60,6 +64,20 @@ const ProjectListCards = ({ saleId = null }) => {
     };
     fetchData();
   }, [saleId]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await documentTypeService.getDocumentTypeFromEngineering();
+        setDocumentTypes(response.results);
+        console.log('Document Types: ', response.results);
+      } catch (error) {
+        console.log('Error: ', error);
+      }
+    };
+    fetchData();
+  }, []);
+
 
   return (
     <Grid container spacing={2} mt={2}>
@@ -128,7 +146,7 @@ const ProjectListCards = ({ saleId = null }) => {
 
                 <CustomAccordion title="Documentos">
                   <Typography>
-                    <FileUpload contentType={CONTEXT_TYPE_PROJECT_ID} objectId={project.id} />
+                    <FileUpload contentType={CONTEXT_TYPE_PROJECT_ID} objectId={project.id} documentTypes={documentTypes} />
                   </Typography>
                 </CustomAccordion>
 

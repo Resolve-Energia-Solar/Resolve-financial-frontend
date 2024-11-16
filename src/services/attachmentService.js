@@ -1,8 +1,8 @@
 import { create, get } from "lodash";
 import apiClient from "./apiClient";
 
-const CONTEXT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTEXT_TYPE_PROJECT_ID;
-const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTEXT_TYPE_SALE_ID;
+const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
+const CONTENT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
 const attachmentService = {
   getAttachments: async () => {
@@ -43,7 +43,7 @@ const attachmentService = {
   },
   getAttachmentByIdSale: async (id) => {
     try {
-      const response = await apiClient.get(`/api/attachments/?object_id=${id}&content_type_id=${CONTEXT_TYPE_SALE_ID}`);
+      const response = await apiClient.get(`/api/attachments/?object_id=${id}&content_type_id=${CONTENT_TYPE_SALE_ID}`);
       console.log(response.data);
       return response.data;
     } catch (error) {
@@ -53,7 +53,7 @@ const attachmentService = {
   },
   getAttanchmentByIdProject: async (id) => {
     try {
-      const response = await apiClient.get(`/api/attachments/?object_id=${id}&content_type_id=${CONTEXT_TYPE_PROJECT_ID}`);
+      const response = await apiClient.get(`/api/attachments/?object_id=${id}&content_type_id=${CONTENT_TYPE_PROJECT_ID}`);
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar anexo com id ${id}:`, error);

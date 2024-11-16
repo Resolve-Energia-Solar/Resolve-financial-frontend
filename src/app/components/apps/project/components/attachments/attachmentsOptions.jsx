@@ -24,9 +24,10 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import useAttachmentForm from '@/hooks/attachments/useAttachmentsForm';
 import attachmentService from '@/services/attachmentService';
-import { UploadFile } from '@mui/icons-material';
+import { DocumentScanner, UploadFile } from '@mui/icons-material';
 
-export default function FileUpload({ objectId, contentType }) {
+
+export default function FileUpload({ objectId, contentType, documentTypes }) {
   const theme = useTheme();
   const [selectedAttachment, setSelectedAttachment] = useState(null);
 
@@ -46,6 +47,8 @@ export default function FileUpload({ objectId, contentType }) {
     selectedAttachment?.object_id || objectId,
     selectedAttachment?.content_type?.id || parseInt(contentType),
   );
+
+  console.log('formData: ', formData);
 
   const [attachments, setAttachments] = useState([]);
   const [openModal, setOpenModal] = useState(false);
@@ -97,12 +100,6 @@ export default function FileUpload({ objectId, contentType }) {
     return <DescriptionIcon />;
   };
 
-  const documentTypes = [
-    { label: 'ART', icon: <PictureAsPdfIcon />, id: '3' },
-    { label: 'Projeto', icon: <PictureAsPdfIcon />, id: '1' },
-    { label: 'TRT', icon: <PictureAsPdfIcon />, id: '2' },
-  ];
-
   return (
     <Box sx={{ padding: 3 }}>
       <Grid container spacing={3}>
@@ -126,7 +123,7 @@ export default function FileUpload({ objectId, contentType }) {
             >
               {getFileIcon(attachment.file)}
               <Typography variant="caption" sx={{ marginTop: 1 }}>
-                {attachment.document_type}
+                {attachment?.document_type?.name}
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginBottom: 1 }}></Box>
             </Box>
@@ -134,7 +131,7 @@ export default function FileUpload({ objectId, contentType }) {
         ))}
 
         {documentTypes
-          .filter((doc) => !attachments.some((att) => att.document_type === parseInt(doc.id, 10)))
+          .filter((doc) => !attachments.some((att) => att?.document_type?.id === parseInt(doc.id, 10)))
           .map((doc) => (
             <Grid item xs={3} key={doc.id}>
               <Box
@@ -153,17 +150,10 @@ export default function FileUpload({ objectId, contentType }) {
                 }}
                 onClick={() => handleOpenModal(null, doc.id)}
               >
-                {doc.icon}
-                <Typography variant="caption" sx={{ marginTop: 1 }}>
-                  {doc.label}
+              <DescriptionIcon />
+              <Typography variant="caption" sx={{ marginTop: 1 }}>
+                  {doc.name}
                 </Typography>
-                <Input
-                  type="file"
-                  id="file-upload"
-                  hidden
-                  onChange={handleFileSelect}
-                  sx={{ display: 'none' }}
-                />
               </Box>
             </Grid>
           ))}
