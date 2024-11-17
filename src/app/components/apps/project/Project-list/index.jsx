@@ -146,8 +146,6 @@ const ProjectList = () => {
                 <TableCell>Nome contratante</TableCell>
                 <TableCell>Número do Contrato</TableCell>
                 <TableCell>Status do Projeto</TableCell>
-                <TableCell>Tipo de Forneciemento</TableCell>
-                <TableCell>KWp</TableCell>
                 <TableCell>Ações</TableCell>
               </TableRow>
             </TableHead>
@@ -158,8 +156,6 @@ const ProjectList = () => {
                   <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                   <TableCell>{item.sale?.contract_number}</TableCell>
                   <TableCell>{getStatusChip(item.status)}</TableCell>
-                  <TableCell>{getSupplyTypeChip(item.supply_type)}</TableCell>
-                  <TableCell>{item.kwp}</TableCell>
                   <TableCell>
                     <Tooltip title="Editar">
                       <IconButton
