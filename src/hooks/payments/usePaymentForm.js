@@ -17,6 +17,7 @@ const usePaymentForm = (initialData, id) => {
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState(null);
 
   useEffect(() => {
     if (initialData) {
@@ -87,9 +88,11 @@ const usePaymentForm = (initialData, id) => {
     
     try {
       if (id) {
-        await paymentService.updatePayment(id, dataToSend);
+        const response = await paymentService.updatePayment(id, dataToSend);
+        setResponse(response);
       } else {
-        await paymentService.createPayment(dataToSend);
+        const response = await paymentService.createPayment(dataToSend);
+        setResponse(response);
       }
       setFormErrors({});
       setSuccess(true);
@@ -108,6 +111,7 @@ const usePaymentForm = (initialData, id) => {
     handleSave,
     formErrors,
     success,
+    response,
     loading, 
     handleInstallmentChange,
     handleAddItem,

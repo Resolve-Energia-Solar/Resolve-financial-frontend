@@ -24,33 +24,41 @@ import {
 } from '@mui/material';
 import { format, isValid } from 'date-fns';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { IconSquareRoundedPlus, IconTrash } from '@tabler/icons-react';
-import { useParams } from 'next/navigation';
 
-import usePayment from '@/hooks/payments/usePayment';
 import usePaymentForm from '@/hooks/payments/usePaymentForm';
 import AutoCompleteSale from '../../comercial/sale/components/auto-complete/Auto-Input-Sales';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import AutoCompleteFinancier from '../components/auto-complete/Auto-Input-financiers';
-import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import CustomFieldMoney from '../components/CustomFieldMoney';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 
-const CreateInvoice = ({sale=null}) => {
+const CreateInvoice = ({sale=null, onClosedModal = null, onRefresh = null }) => {
   const {
     formData,
     handleChange,
     handleSave,
     formErrors,
     success,
+    response,
     loading: formLoading,
     handleInstallmentChange,
     handleAddItem,
     handleDeleteItem,
   } = usePaymentForm();
+
+  useEffect(() => {
+    if (success) {
+      if (onClosedModal) {
+        onClosedModal();
+        onRefresh();
+      } else {
+        router.push(`/apps/invoice/${response.id}/update`);
+      }
+    }
+  }, [response, success]);
 
   const statusOptions = [
     { value: 'C', label: 'Crédito' },

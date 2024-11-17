@@ -51,12 +51,17 @@ const PaymentCard = ({ sale = null }) => {
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
-  const [invoiceToCreate, setInvoiceToCreate] = useState(null);
+  const [refresh, setRefresh] = useState(false);
+
   const [invoiceToEdit, setInvoiceToEdit] = useState(null);
   const [invoiceToView, setInvoiceToView] = useState(null);
   const [invoiceToDelete, setInvoiceToDelete] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  const handleRefresh = () => {
+    setRefresh(!refresh);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,7 +76,7 @@ const PaymentCard = ({ sale = null }) => {
     };
 
     fetchData();
-  }, [sale]);
+  }, [sale, refresh]);
 
   const handleAddPayment = () => {
     setCreateModalOpen(true);
@@ -149,12 +154,6 @@ const PaymentCard = ({ sale = null }) => {
               </Card>
             </Grid>
           ))
-        ) : paymentsList.length === 0 ? (
-          <Grid item xs={12}>
-            <Typography variant="body2" color={theme.palette.text.secondary}>
-              Nenhuma fatura encontrada.
-            </Typography>
-          </Grid>
         ) : (
           paymentsList.map((payment) => {
             const progressValue = payment?.percentual_paid * 100 || 0;
@@ -245,7 +244,7 @@ const PaymentCard = ({ sale = null }) => {
       <Dialog open={createModalOpen} onClose={() => setCreateModalOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle>Adicionar Pagamento</DialogTitle>
         <DialogContent>
-          <CreateInvoice sale={sale} />
+          <CreateInvoice sale={sale} onClosedModal={() => setCreateModalOpen(false)} onRefresh={handleRefresh} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setCreateModalOpen(false)} color="primary">
@@ -274,7 +273,7 @@ const PaymentCard = ({ sale = null }) => {
       <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle>Editar Fatura</DialogTitle>
         <DialogContent>
-          <EditInvoicePage payment_id={invoiceToEdit} />
+          <EditInvoicePage payment_id={invoiceToEdit} onClosedModal={() => setEditModalOpen(false)} onRefresh={handleRefresh} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setEditModalOpen(false)} color="primary">

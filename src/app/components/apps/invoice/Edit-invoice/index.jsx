@@ -36,8 +36,9 @@ import FormDate from '@/app/components/forms/form-custom/FormDate';
 import CustomFieldMoney from '../components/CustomFieldMoney';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import EditInvoiceSkeleton from '../components/EditInvoiceSkeleton';
+import { useEffect } from 'react';
 
-const EditInvoicePage = ({payment_id=null}) => {
+const EditInvoicePage = ({payment_id=null, onClosedModal = null, onRefresh = null}) => {
   const params = useParams();
   let id = payment_id;
   if (!payment_id) id = params.id;
@@ -54,6 +55,15 @@ const EditInvoicePage = ({payment_id=null}) => {
     handleAddItem,
     handleDeleteItem,
   } = usePaymentForm(paymentData, id);
+
+  useEffect(() => {
+    if (success) {
+      if (onClosedModal) {
+        onClosedModal();
+        onRefresh();
+      } 
+    }
+  }, [success]);
 
   const statusOptions = [
     { value: 'C', label: 'Crédito' },
