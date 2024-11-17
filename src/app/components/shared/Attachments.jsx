@@ -56,9 +56,9 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
 
   const handleOpenModal = (attachment, documentType) => {
     setOpenModal(true);
-    if (documentType) handleChange('document_type', parseInt(documentType));
+    if (documentType) handleChange('document_type_id', parseInt(documentType));
     if (attachment)
-      setSelectedAttachment({ ...attachment, content_type_id: attachment?.content_type?.id });
+      setSelectedAttachment({ ...attachment, content_type_id: attachment?.content_type?.id, document_type_id: attachment?.document_type?.id });
   };
 
   const handleCloseModal = () => {

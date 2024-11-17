@@ -16,11 +16,11 @@ import StatusIcon from '@mui/icons-material/AssignmentTurnedIn';
 import DescriptionIcon from '@mui/icons-material/Description';
 import StatusChip from '../../../proposal/components/ProposalStatusChip';
 import projectService from '@/services/projectService';
-import { CallToAction, FlashAuto, PictureAsPdf, SolarPower } from '@mui/icons-material';
+import { CallToAction, FlashAuto, SolarPower } from '@mui/icons-material';
 import SkeletonCard from '../SkeletonCard';
 import CustomAccordion from '@/app/components/apps/project/components/CustomAccordion';
 import CheckListRateio from '../../../checklist/Checklist-list';
-import Attachments from '@/app/components/shared/attachments';
+import Attachments from '@/app/components/shared/Attachments';
 import documentTypeService from '@/services/documentTypeService';
 
 const CONTEXT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;

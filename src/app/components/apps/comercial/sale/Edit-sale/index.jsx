@@ -22,7 +22,6 @@ import AutoCompleteCampaign from '@/app/components/apps/comercial/sale/component
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import FormDateTime from '@/app/components/forms/form-custom/FormDateTime';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
-import DocumentAttachments from '@/app/components/apps/comercial/sale/components/attachments/attachments';
 import { useSelector } from 'react-redux';
 import FormPageSkeleton from '../components/FormPageSkeleton';
 
@@ -32,7 +31,7 @@ import { useEffect, useState } from 'react';
 import PaymentCard from '../../../invoice/components/paymentList/card';
 import ProjectListCards from '../../../project/components/projectList/cards';
 import documentTypeService from '@/services/documentTypeService';
-import Attachments from '@/app/components/shared/attachments';
+import Attachments from '@/app/components/shared/Attachments';
 
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
