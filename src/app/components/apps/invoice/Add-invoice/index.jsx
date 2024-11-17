@@ -94,7 +94,6 @@ const CreateInvoice = ({sale=null, onClosedModal = null, onRefresh = null }) => 
             endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null} // Ícone de loading
           >
             {formLoading ? 'Salvando...' : 'Salvar Alterações'}{' '}
-            {/* Altera o texto com base no loading */}
           </Button>
         </Box>
       </Stack>
