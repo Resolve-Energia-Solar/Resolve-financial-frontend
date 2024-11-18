@@ -269,6 +269,8 @@ const KanbanManager = ({
                     <ColumnWithActions
                       columnTitle={status.name}
                       statusId={status.id}
+                      isLeadOverdue={isLeadOverdue}
+                      status={status.name}
                       boardId={board}
                       onUpdateLeadColumn={onUpdateLeadColumn}
                       leads={filteredLeads}
