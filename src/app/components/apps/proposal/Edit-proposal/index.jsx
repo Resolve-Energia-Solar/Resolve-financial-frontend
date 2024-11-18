@@ -15,65 +15,60 @@ import useProposalForm from '@/hooks/proposal/useProposalForm';
 import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
 import { useState, useEffect } from 'react';
 import KitSelectionCard from '../../kits/KitSelectionCard';
-import AddKitButton from '../../kits/AddKitCard'; 
+import AddKitButton from '../../kits/AddKitCard';
 import AddKitForm from '../../kits/AddKitForm';
 
 const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal, reloadKits }) => {
-  const {
-    formData,
-    setFormData,
-    handleChange,
-    handleUpdate,
-    formErrors,
-    snackbar,
-    closeSnackbar,
-  } = useProposalForm();
+  const { formData, setFormData, handleChange, handleUpdate, formErrors, snackbar, closeSnackbar } =
+    useProposalForm();
   const [selectedKitIds, setSelectedKitIds] = useState([]);
   const [isEditingKits, setIsEditingKits] = useState(false);
-  const [isAddKitModalOpen, setIsAddKitModalOpen] = useState(false); 
-
+  const [isAddKitModalOpen, setIsAddKitModalOpen] = useState(false);
+  console.log('gege', proposal);
   useEffect(() => {
     if (proposal) {
       setFormData({
         lead_id: proposal.leadId || selectedLead.id,
-        created_by_id: proposal.created_by.id || '',
+        created_by_id: proposal.created_by?.id || '',
         due_date: proposal.due_date || '',
         value: proposal.value || '',
         status: proposal.status || '',
         observation: proposal.observation || '',
       });
 
-      const kitIds = proposal.kits ? proposal.kits.map((kit) => kit.id) : [];
-      setSelectedKitIds(kitIds);
-    } else {
-      setFormData({
-        lead_id: selectedLead.id,
-        created_by_id: '',
-        due_date: '',
-        value: '',
-        status: '',
-        observation: '',
-      });
-      setSelectedKitIds([]);
+      if (Array.isArray(proposal.proposal_products)) {
+        const kitIds = proposal.proposal_products.map((kit) => kit.id);
+        console.log('Kit IDs:', kitIds);
+        setSelectedKitIds(kitIds);
+      } else {
+        setSelectedKitIds([]);
+      }
     }
   }, [proposal, selectedLead, setFormData]);
 
   useEffect(() => {
-    const selectedKits = kits.filter((kit) => selectedKitIds.includes(kit.id));
-    const totalValue = selectedKits.reduce((sum, kit) => sum + Number(kit.price || 0), 0);
+    if (kits && kits.length > 0 && selectedKitIds.length > 0) {
+      const selectedKits = kits.filter((kit) => selectedKitIds.includes(kit.id));
+      const totalValue = selectedKits.reduce((sum, kit) => sum + Number(kit.product_value || 0), 0);
 
-    setFormData((prevData) => ({
-      ...prevData,
-      value: totalValue,
-    }));
-  }, [selectedKitIds, kits]);
+      setFormData((prevData) => ({
+        ...prevData,
+        value: totalValue,
+      }));
+    }
+  }, [selectedKitIds, kits, setFormData]);
 
   const handleKitSelection = (kitId) => {
-    setSelectedKitIds((prevSelected) =>
-      prevSelected.includes(kitId)
-        ? prevSelected.filter((id) => id !== kitId)
-        : [...prevSelected, kitId],
-    );
+    setSelectedKitIds((prevSelected) => {
+      if (prevSelected.includes(kitId)) {
+        return prevSelected.filter((id) => id !== kitId);
+      }
+      const kitExists = kits.find((kit) => kit.id === kitId);
+      if (kitExists) {
+        return [...prevSelected, kitId];
+      }
+      return prevSelected;
+    });
   };
 
   const toggleEditKits = () => {
@@ -173,13 +168,6 @@ const ProposalEditForm = ({ kits, selectedLead, handleCloseForm, proposal, reloa
         </Box>
 
         <Grid container spacing={1.5}>
-          {isEditingKits && (
-            <Grid item xs={12} sm={6} md={4}>
-              <Box display="flex" justifyContent="center" mt={1}>
-                <AddKitButton onClick={handleAddKit} />
-              </Box>
-            </Grid>
-          )}
           {kits && kits.length > 0 ? (
             kits
               .filter((kit) => isEditingKits || selectedKitIds.includes(kit.id))
