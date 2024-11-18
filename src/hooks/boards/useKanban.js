@@ -81,6 +81,7 @@ const useKanban = () => {
           id: column.id,
           name: column.name,
           position: column.position,
+          
         }))
       );
     } catch (err) {

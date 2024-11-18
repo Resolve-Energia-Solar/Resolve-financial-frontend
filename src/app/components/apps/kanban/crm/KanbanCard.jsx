@@ -1,15 +1,16 @@
 import { Paper, Box, Typography, useTheme, Rating, Avatar, Tooltip } from '@mui/material';
-import { Phone, AccessTime, TagSharp, Bolt, AssignmentInd } from '@mui/icons-material';
+import { Phone, AccessTime, TagSharp, Bolt } from '@mui/icons-material';
 import { WbSunny } from '@mui/icons-material';
 
-const KanbanCard = ({ lead, handleLeadClick }) => {
+const KanbanCard = ({ lead, handleLeadClick, status, isLeadOverdue }) => {
   const theme = useTheme();
-  console.log(lead);
+  const overdue = isLeadOverdue(lead, status);
+
   const getInitials = (name) => {
     if (!name) return '';
     const words = name.split(' ');
     const initials = words.map((word) => word[0]).join('');
-    return initials.slice(0, 2).toUpperCase(); // Pega as duas primeiras iniciais
+    return initials.slice(0, 2).toUpperCase();
   };
   const formatPhone = (phone) => {
     if (!phone) return 'N/A';
@@ -42,6 +43,7 @@ const KanbanCard = ({ lead, handleLeadClick }) => {
         p: 2,
         mb: 2,
         mx: 1,
+        borderLeft: overdue ? '5px solid red' : 'none',
         backgroundColor: theme.palette.background.paper,
         transition: 'background-color 0.2s ease',
         '&:hover': {

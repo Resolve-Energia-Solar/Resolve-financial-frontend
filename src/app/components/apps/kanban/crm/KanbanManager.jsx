@@ -62,7 +62,6 @@ const KanbanManager = ({
 
   const observerRef = useRef({});
   const [loadingColumns, setLoadingColumns] = useState({});
-
   const {
     leadsList,
     statusesList,
@@ -82,6 +81,13 @@ const KanbanManager = ({
     onAddLead,
     onDeleteLead,
   });
+
+  const [scrollStatus, setScrollStatus] = useState(
+    statusesList.reduce((acc, status) => {
+      acc[status.id] = false;
+      return acc;
+    }, {}),
+  );
 
   const handleOpenAddColumnModal = () => setOpenAddColumnModal(true);
   const handleCloseAddColumnModal = () => {
@@ -116,6 +122,22 @@ const KanbanManager = ({
       setTabIndex(2);
     }
   }, [idSaleSuccess]);
+
+  const statusTimes = {
+    'Novo Lead': 24,
+    'Primeiro Contato': 48,
+    'Terceiro Contato': 72,
+    'Quarto Contato': 96,
+    default: 120,
+  };
+
+  const isLeadOverdue = (lead, status) => {
+    const columnTimeLimit = statusTimes[status] || statusTimes.default;
+    const updatedAt = new Date(lead.created_at);
+    const now = new Date();
+    const hoursDiff = Math.abs(now - updatedAt) / 36e5;
+    return hoursDiff > columnTimeLimit;
+  };
 
   const statusColors = {
     'Novo Lead': theme.palette.info.light,
@@ -177,19 +199,19 @@ const KanbanManager = ({
 
   const handleLoadMore = useCallback(
     async (statusId) => {
-      if (loadingColumns[statusId]) return;
+      if (scrollStatus[statusId]) return;
 
-      setLoadingColumns((prev) => ({ ...prev, [statusId]: true }));
+      setScrollStatus((prev) => ({ ...prev, [statusId]: true }));
 
       try {
         await loadMoreLeads(statusId);
       } catch (error) {
         console.error(`Erro ao carregar mais leads para a coluna ${statusId}:`, error);
       } finally {
-        setLoadingColumns((prev) => ({ ...prev, [statusId]: false }));
+        setScrollStatus((prev) => ({ ...prev, [statusId]: false }));
       }
     },
-    [loadingColumns, loadMoreLeads],
+    [scrollStatus, loadMoreLeads],
   );
 
   const createObserver = useCallback(
@@ -208,7 +230,7 @@ const KanbanManager = ({
     [handleLoadMore, loadingColumns],
   );
 
- /*  useEffect(() => {
+  useEffect(() => {
     statusesList.forEach((status) => {
       if (!observerRef.current[status.id]) {
         observerRef.current[status.id] = createObserver(status.id);
@@ -218,7 +240,7 @@ const KanbanManager = ({
     return () => {
       Object.values(observerRef.current).forEach((observer) => observer.disconnect());
     };
-  }, [statusesList, createObserver]); */
+  }, [statusesList, createObserver]);
 
   return (
     <>
@@ -265,7 +287,12 @@ const KanbanManager = ({
                               {...provided.dragHandleProps}
                               mb={2}
                             >
-                              <LeadCard lead={lead} handleLeadClick={handleLeadClick} />
+                              <LeadCard
+                                lead={lead}
+                                isLeadOverdue={isLeadOverdue}
+                                status={status.name}
+                                handleLeadClick={handleLeadClick}
+                              />
                             </Box>
                           )}
                         </Draggable>
@@ -279,7 +306,7 @@ const KanbanManager = ({
                       }}
                       sx={{ height: '20px', backgroundColor: 'transparent' }}
                     >
-                      {loadingColumns[status.id] && 'Carregando...'}
+                      {scrollStatus[status.id] && 'Carregando...'}
                     </Box>
 
                     {filteredLeads.filter((lead) => lead.column.id === status.id).length === 0 && (
