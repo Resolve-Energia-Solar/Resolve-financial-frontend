@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import CheckListRateio from '@/app/components/apps/checklist/Checklist-list';
 import Attachments from '@/app/components/shared/Attachments';
 import documentTypeService from '@/services/documentTypeService';
+import ProductCard from '@/app/components/apps/product/Product-list';
 
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
@@ -50,7 +51,7 @@ export default function EditProject() {
         </Box>
       )}
 
-      {value === 2 && <Box mt={2}>Produto</Box>}
+      {value === 2 && <Box mt={2}> <ProductCard /></Box>}
 
       {value === 3 && (
         <Attachments
