@@ -30,6 +30,7 @@ import leadService from '@/services/leadService';
 import LeadDialog from '../../leads/LeadDialog/LeadDialog';
 import ColumnWithActions from './ColumnHeader';
 import columnService from '@/services/boardCollunService';
+import Activities from '../../activities';
 
 const KanbanManager = ({
   addLead,
@@ -197,7 +198,7 @@ const KanbanManager = ({
     }
   };
 
-  const handleLoadMore = useCallback(
+/*   const handleLoadMore = useCallback(
     async (statusId) => {
       if (scrollStatus[statusId]) return;
 
@@ -213,8 +214,8 @@ const KanbanManager = ({
     },
     [scrollStatus, loadMoreLeads],
   );
-
-  const createObserver = useCallback(
+ */
+ /*  const createObserver = useCallback(
     (statusId) => {
       return new IntersectionObserver(
         async (entries) => {
@@ -228,9 +229,9 @@ const KanbanManager = ({
       );
     },
     [handleLoadMore, loadingColumns],
-  );
+  ); */
 
-  useEffect(() => {
+  /* useEffect(() => {
     statusesList.forEach((status) => {
       if (!observerRef.current[status.id]) {
         observerRef.current[status.id] = createObserver(status.id);
@@ -241,7 +242,7 @@ const KanbanManager = ({
       Object.values(observerRef.current).forEach((observer) => observer.disconnect());
     };
   }, [statusesList, createObserver]);
-
+ */
   return (
     <>
       <SimpleBar>
@@ -435,7 +436,7 @@ const KanbanManager = ({
 
                   {tabIndex === 2 && <SaleListCards leadId={selectedLead.id} />}
                   {tabIndex === 3 && <ClicksignLogsPage />}
-                  {tabIndex === 4 && 'Atividades'}
+                  {tabIndex === 4 && <Activities/>}
                 </Box>
               </Grid>
             </Grid>

@@ -41,7 +41,7 @@ const useKanban = () => {
     }
   };
 
-  const fetchBoardDetails = async (boardId, page = 1, pageSize = 30) => {
+  const fetchBoardDetails = async (boardId, page = 1, pageSize = 40) => {
     if (!boardId) {
       console.error("Erro: boardId está indefinido");
       return;
