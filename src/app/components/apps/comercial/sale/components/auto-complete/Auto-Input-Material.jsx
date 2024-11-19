@@ -3,34 +3,34 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import RoofTypeService from '@/services/RoofTypeService';
+import materialService from '@/services/materialsService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteRoofType({ onChange, value, error, helperText }) {
+export default function AutoCompleteMaterial({ onChange, value, error, helperText }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedRoofType, setSelectedRoofType] = useState(null);
+  const [selectedMaterial, setSelectedMaterial] = useState(null);
 
   useEffect(() => {
-    const fetchDefaultRoofType = async () => {
+    const fetchDefaultMaterial = async () => {
       if (value) {
         try {
-          const roofType = await RoofTypeService.getRoofTypeById(value);
-          if (roofType) {
-            setSelectedRoofType({ id: roofType.id, name: roofType.name });
+          const material = await materialService.getMaterialById(value);
+          if (material) {
+            setSelectedMaterial({ id: material.id, name: material.name, price: material.price });
           }
         } catch (error) {
-          console.error('Erro ao buscar tipo de telhado:', error);
+          console.error('Erro ao buscar material:', error);
         }
       }
     };
 
-    fetchDefaultRoofType();
+    fetchDefaultMaterial();
   }, [value]);
 
   const handleChange = (event, newValue) => {
-    setSelectedRoofType(newValue);
+    setSelectedMaterial(newValue);
     if (newValue) {
       onChange(newValue.id);
     } else {
@@ -38,23 +38,25 @@ export default function AutoCompleteRoofType({ onChange, value, error, helperTex
     }
   };
 
-  const fetchRoofTypesByName = useCallback(
+  const fetchMaterialsByName = useCallback(
     debounce(async (name) => {
       if (!name) return;
       setLoading(true);
       try {
-        const roofTypes = await RoofTypeService.getRoofTypeByName(name); // Usando o RoofTypeService
-        if (roofTypes && roofTypes.results) {
-          const formattedRoofTypes = roofTypes.results
-            .filter(roofType => roofType.name)
-            .map(roofType => ({
-              id: roofType.id,
-              name: roofType.name,
+        const materials = await materialService.getMaterialByName(name);
+        if (materials && materials.results) {
+          const formattedMaterials = materials.results
+            .filter(material => material.name)
+            .map(material => ({
+              id: material.id,
+              name: material.name,
+              price: material.price,
+              attributes: material.attributes,
             }));
-          setOptions(formattedRoofTypes);
+          setOptions(formattedMaterials);
         }
       } catch (error) {
-        console.error('Erro ao buscar tipos de telhado:', error);
+        console.error('Erro ao buscar materiais:', error);
       }
       setLoading(false);
     }, 300),
@@ -81,9 +83,9 @@ export default function AutoCompleteRoofType({ onChange, value, error, helperTex
         getOptionLabel={(option) => option.name}
         options={options}
         loading={loading}
-        value={selectedRoofType}
+        value={selectedMaterial}
         onInputChange={(event, newInputValue) => {
-          fetchRoofTypesByName(newInputValue);
+          fetchMaterialsByName(newInputValue);
         }}
         onChange={handleChange}
         renderInput={(params) => (
@@ -108,6 +110,12 @@ export default function AutoCompleteRoofType({ onChange, value, error, helperTex
           <li {...props}>
             <div>
               <strong>{option.name}</strong>
+              <div>Preço: R${option.price}</div>
+              <div>
+                {option.attributes?.map((attr, index) => (
+                  <div key={index}>{`${attr.key}: ${attr.value}`}</div>
+                ))}
+              </div>
             </div>
           </li>
         )}

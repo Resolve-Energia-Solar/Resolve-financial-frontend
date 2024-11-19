@@ -17,7 +17,10 @@ const projectService = {
         const response = await apiClient.put(`/api/projects/${id}/`, data);
         return response.data;
     },
-
+    partialUpdateProject: async (id, data) => {
+        const response = await apiClient.patch(`/api/projects/${id}/`, data);
+        return response.data;
+    },
     createProject: async (data) => {
         const response = await apiClient.post(`/api/projects/`, data);
         return response.data;

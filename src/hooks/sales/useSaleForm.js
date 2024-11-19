@@ -8,10 +8,10 @@ const useSaleForm = (initialData, id) => {
 
   const [formData, setFormData] = useState({
     customerId: null,
-    sellerId: user?.user?.id,
-    salesSupervisorId: user?.user?.user_manager?.user_manager,
-    salesManagerId: user?.user?.user_manager?.id,
-    branchId: user?.user?.branch?.id,
+    sellerId: null,
+    salesSupervisorId: null,
+    salesManagerId: null,
+    branchId: null,
     marketingCampaignId: null,
     isSale: false,
     totalValue: '',
