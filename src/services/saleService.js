@@ -11,6 +11,10 @@ const saleService = {
         const response = await apiClient.get(`/api/sales/?q=${fullName}`);
         return response.data;
     },
+    getSalesProducts: async (id) => {
+        const response = await apiClient.get(`/api/sales/${id}/?fields=sale_products`);
+        return response.data;
+    },
     getSaleByLead: async (lead) => {
         const response = await apiClient.get(`/api/sales/?lead=${lead}`);
         console.log(response.data);
@@ -20,7 +24,7 @@ const saleService = {
         const response = await apiClient.post(`/api/generate-pre-sale/`, data);
         return response.data;
     },
-    getSaleById: async (id) => { 
+    getSaleById: async (id) => {
         const response = await apiClient.get(`/api/sales/${id}/`);
         return response.data;
     },
@@ -35,6 +39,11 @@ const saleService = {
         return response.data;
     },
 
+    patchSaleProduct: async (id, ids) => {
+        const response = await apiClient.patch(`/api/sales/${id}/`, { products_ids: ids });
+        return response.data;
+    },
+
     createSale: async (data) => {
         const response = await apiClient.post(`/api/sales/`, data);
         return response.data;
@@ -44,7 +53,7 @@ const saleService = {
         const response = await apiClient.delete(`/api/sales/${id}/`);
         return response.data;
     },
-    
+
 };
 
 export default saleService;

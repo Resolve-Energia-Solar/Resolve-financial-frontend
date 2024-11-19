@@ -6,7 +6,6 @@ import { useParams } from 'next/navigation';
 import CheckListRateio from '@/app/components/apps/checklist/Checklist-list';
 import Attachments from '@/app/components/shared/Attachments';
 import documentTypeService from '@/services/documentTypeService';
-import ProductCard from '@/app/components/apps/product/Product-list';
 
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
@@ -39,7 +38,6 @@ export default function EditProject() {
       <Tabs value={value} onChange={handleChangeTab}>
         <Tab label="Informações Adicionais" />
         <Tab label="Checklist Rateio" />
-        <Tab label="Produtos" />
         <Tab label="Anexos" />
       </Tabs>
 
@@ -51,9 +49,7 @@ export default function EditProject() {
         </Box>
       )}
 
-      {value === 2 && <Box mt={2}> <ProductCard /></Box>}
-
-      {value === 3 && (
+      {value === 2 && (
         <Attachments
           contentType={CONTENT_TYPE_PROJECT_ID}
           objectId={id}
