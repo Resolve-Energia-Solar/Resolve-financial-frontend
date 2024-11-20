@@ -32,7 +32,10 @@ const useProductForm = (initialData, id) => {
         product_value: initialData.product_value || '',
         reference_value: initialData.reference_value || '',
         cost_value: initialData.cost_value || '',
-        materials_ids: initialData.materials || [],
+        materials_ids: initialData.materials.map(({ material, ...rest }) => ({
+          ...rest,
+          material_id: material.id,
+        })) || [],
         default: initialData.default || '',
       });
     }
