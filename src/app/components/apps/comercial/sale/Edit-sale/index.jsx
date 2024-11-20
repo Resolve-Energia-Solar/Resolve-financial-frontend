@@ -32,6 +32,7 @@ import PaymentCard from '../../../invoice/components/paymentList/card';
 import ProjectListCards from '../../../project/components/projectList/cards';
 import documentTypeService from '@/services/documentTypeService';
 import Attachments from '@/app/components/shared/Attachments';
+import ProductCard from '@/app/components/apps/product/Product-list';
 
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
@@ -97,6 +98,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
     <Box>
       <Tabs value={value} onChange={handleChangeTab}>
         <Tab label="Venda" />
+        <Tab label="Produtos" />
         <Tab label="Anexos" />
         <Tab label="Pagamentos" />
         <Tab label="Projetos" />
@@ -229,16 +231,23 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
               </Grid>
             </>
           )}
+
           {value === 1 && (
+            <Box sx={{ mt: 3 }}>
+              <ProductCard sale={saleData} />
+            </Box>
+          )}
+
+          {value === 2 && (
             <Attachments contentType={CONTEXT_TYPE_SALE_ID} objectId={id_sale} documentTypes={documentTypes} />
           )}
-          {value === 2 && (
+          {value === 3 && (
             <Box sx={{ mt: 3 }}>
               <PaymentCard sale={id_sale} />
             </Box>
           )}
 
-          {value === 3 && <ProjectListCards saleId={id_sale} />}
+          {value === 4 && <ProjectListCards saleId={id_sale} />}
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             {onClosedModal && (

@@ -4,9 +4,9 @@ import { CheckCircle as CheckCircleIcon, Build as BuildIcon } from '@mui/icons-m
 const ProductChip = ({ status }) => {
   const getChipProps = (status) => {
     switch (status) {
-      case true:
+      case "S":
         return { label: 'Padrão', color: 'primary', icon: <CheckCircleIcon /> };
-      case false:
+      case "N":
         return { label: 'Customizado', color: 'secondary', icon: <BuildIcon /> };
       default:
         return { label: status };

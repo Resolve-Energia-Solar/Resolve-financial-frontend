@@ -34,6 +34,7 @@ import AutoCompleteFinancier from '../components/auto-complete/Auto-Input-financ
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import CustomFieldMoney from '../components/CustomFieldMoney';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
+import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
 
 const CreateInvoice = ({sale=null, onClosedModal = null, onRefresh = null }) => {
   const {
@@ -123,7 +124,7 @@ const CreateInvoice = ({sale=null, onClosedModal = null, onRefresh = null }) => 
       <Divider></Divider>
 
       <Grid container spacing={3} mb={4}>
-        <Grid item xs={12} sm={6}>
+        {/* <Grid item xs={12} sm={6}>
           <CustomFormLabel htmlFor="name">Venda</CustomFormLabel>
           <AutoCompleteSale
             onChange={(id) => handleChange('sale_id', id)}
@@ -131,9 +132,19 @@ const CreateInvoice = ({sale=null, onClosedModal = null, onRefresh = null }) => 
             {...(formErrors.sale_id && { error: true, helperText: formErrors.sale_id })}
             disabled={!!sale}
           />
-        </Grid>
+        </Grid> */}
+
         <Grid item xs={12} sm={6}>
-          <CustomFormLabel htmlFor="name">Financiador</CustomFormLabel>
+          <CustomFormLabel htmlFor="name">Tomador</CustomFormLabel>
+          <AutoCompleteUser
+            onChange={(id) => handleChange('borrower_id', id)}
+            value={formData.borrower_id}
+            {...(formErrors.borrower_id && { error: true, helperText: formErrors.borrower_id })}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <CustomFormLabel htmlFor="name">Financiadora</CustomFormLabel>
           <AutoCompleteFinancier
             onChange={(id) => handleChange('financier_id', id)}
             value={formData.financier_id}

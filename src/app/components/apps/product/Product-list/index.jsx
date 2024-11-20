@@ -15,28 +15,77 @@ import {
   Chip,
   Box,
   Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  CircularProgress,
 } from '@mui/material';
-import { MoreVert, Visibility, Add, CheckCircle, Save } from '@mui/icons-material';
-import CustomRadio from '@/app/components/forms/theme-elements/CustomRadio';
+import { MoreVert, Visibility, Add, CheckCircle, Save, Edit, Delete } from '@mui/icons-material';
+import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import { useRouter } from 'next/navigation';
 import ProductChip from '@/app/components/apps/product/components/ProductChip';
 import productService from '@/services/productsService';
+import saleService from '@/services/saleService';
+import CreateProduct from '../Add-product';
+import EditProduct from '../Edit-product';
+import DetailProduct from '../Product-detail';
 
 const ProductCard = ({ sale = null }) => {
   const theme = useTheme();
   const [productList, setProductsList] = useState([]);
+  const [onRefreshList, setOnRefreshList] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [menuOpenRowId, setMenuOpenRowId] = useState(null);
-  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [selectedProductIds, setSelectedProductIds] = useState([]);
+  const [initialProductIds, setInitialProductIds] = useState([]);
+
+  const [selectedEditProduct, setSelectedEditProduct] = useState(null);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteProductId, setDeleteProductId] = useState(null);
+
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [selectedProductDetail, setSelectedProductDetail] = useState(null);
+
+  const handleRefreshList = () => {
+    setOnRefreshList((prev) => !prev);
+    setProductsList([]);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
-        const response = await productService.getProducts(sale);
-        setProductsList(response.results);
-        console.log('Products: ', response.results);
+        const response = await saleService.getSalesProducts(sale.id);
+        setSelectedProductIds(response.sale_products.map((item) => item.product.id));
+        setInitialProductIds(response.sale_products.map((item) => item.product.id));
+        setProductsList((prevProducts) => [
+          ...prevProducts,
+          ...response.sale_products.map((item) => item.product),
+        ]);
+
+        const responseDefault = await productService.getProductsDefault();
+        setProductsList((prevProducts) => [
+          ...prevProducts,
+          ...responseDefault.results.filter(
+            (product) => !prevProducts.map((item) => item.id).includes(product.id),
+          ),
+        ]);
+
+        setProductsList((prevProducts) =>
+          prevProducts.sort((a, b) => {
+            const isSelectedA = selectedProductIds.includes(a.id);
+            const isSelectedB = selectedProductIds.includes(b.id);
+            if (isSelectedA && !isSelectedB) return -1;
+            if (!isSelectedA && isSelectedB) return 1;
+            return 0;
+          }),
+        );
       } catch (error) {
         console.log('Error: ', error);
       } finally {
@@ -45,7 +94,7 @@ const ProductCard = ({ sale = null }) => {
     };
 
     fetchData();
-  }, [sale]);
+  }, [onRefreshList]);
 
   const handleMenuClick = (event, id) => {
     setMenuAnchorEl(event.currentTarget);
@@ -58,35 +107,74 @@ const ProductCard = ({ sale = null }) => {
   };
 
   const handleDetailClick = (id) => {
-    setInvoiceToView(id);
     setDetailModalOpen(true);
+    setSelectedProductDetail(id);
   };
 
   const handleCreateClick = () => {
     setCreateModalOpen(true);
   };
 
-  const handleRadioChange = (id) => {
-    console.log('ID: ', id);
-    console.log('Selected Product ID: ', selectedProductId);
-    setSelectedProductId((prevSelectedId) => (prevSelectedId === id ? null : id));
+  const handleApplyChanges = async () => {
+    try {
+      const response = await saleService.patchSaleProduct(sale.id, selectedProductIds);
+      setInitialProductIds(selectedProductIds);
+      handleRefreshList();
+      console.log('Response: ', response);
+    } catch (error) {
+      console.log('Error: ', error);
+    }
+  };
+
+  const handleCheckboxChange = (id) => {
+    setSelectedProductIds((prevSelectedIds) =>
+      prevSelectedIds.includes(id)
+        ? prevSelectedIds.filter((productId) => productId !== id)
+        : [...prevSelectedIds, id],
+    );
+  };
+
+  const handleEditClick = (id) => {
+    setEditModalOpen(true);
+    setSelectedEditProduct(id);
+  };
+
+  const handleDeleteClick = (id) => {
+    setDeleteProductId(id);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await productService.deleteProduct(deleteProductId);
+      setProductsList((prevProducts) => prevProducts.filter((product) => product.id !== deleteProductId));
+      setDeleteModalOpen(false);
+      setDeleteProductId(null);
+    } catch (error) {
+      console.log('Error: ', error);
+    }
   };
 
   return (
     <>
       <Alert severity="info" sx={{ mb: 2 }}>
         <Typography variant="subtitle1">
-            Selecione um produto ou adicione um novo produto.
-        </Typography>   
-        </Alert>
-      {selectedProductId && (
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-          <Chip
-            label="Desselecionar"
-            color="secondary"
-            icon={<CheckCircle />}
-            onClick={() => setSelectedProductId(null)}
-          />
+          Selecione um ou mais produtos ou adicione um novo produto.
+        </Typography>
+      </Alert>
+
+      {sale?.sale_products && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mb: 2 }}>
+          {(selectedProductIds.length !== initialProductIds.length ||
+            selectedProductIds.some((id) => !initialProductIds.includes(id))) && (
+            <Chip
+              label="Aplicar Mudanças"
+              color="primary"
+              icon={<Save />}
+              onClick={handleApplyChanges}
+              disabled={loading}
+            />
+          )}
         </Box>
       )}
 
@@ -102,17 +190,12 @@ const ProductCard = ({ sale = null }) => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: selectedProductId ? theme.palette.primary.light : 'inherit',
             }}
           >
             <CardContent>
-              {!selectedProductId ? (
-                <Add fontSize="large" color="primary" />
-              ) : (
-                <Save fontSize="large" color="primary" />
-              )}
+              <Add fontSize="large" color="primary" />
               <Typography variant="subtitle1" color="text.secondary">
-                {!selectedProductId ? 'Adicionar Produto' : 'Salvar Alteração'}
+                Adicionar Produto
               </Typography>
             </CardContent>
           </Card>
@@ -133,67 +216,156 @@ const ProductCard = ({ sale = null }) => {
                 </Card>
               </Grid>
             ))
-          : productList.map((product) => {
-              const progressValue = product?.percentual_paid * 100 || 0;
-
-              return (
-                <Grid item xs={12} sm={6} md={4} key={product.id}>
-                  <Card elevation={10}>
-                    <CardContent>
-                      <Stack spacing={1}>
-                        <Stack direction="row" alignItems="center" justifyContent="space-between">
-                          <Typography variant="subtitle1">{product?.name}</Typography>
-                          <ProductChip status={true} />
-                        </Stack>
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                          <Typography variant="caption" color="text.secondary">
-                            Valor do Produto
-                          </Typography>
-                          <Typography variant="subtitle1" fontWeight={600}>
-                            {Number(product?.product_value).toLocaleString('pt-BR', {
-                              style: 'currency',
-                              currency: 'BRL',
-                            })}
-                          </Typography>
-                        </Stack>
+          : productList.map((product) => (
+              <Grid item xs={12} sm={6} md={4} key={product.id}>
+                <Card elevation={10}>
+                  <CardContent>
+                    <Stack spacing={1}>
+                      <Stack direction="row" alignItems="center" justifyContent="space-between">
+                        <Typography variant="subtitle1">{product?.name}</Typography>
+                        <ProductChip status={product?.default} />
                       </Stack>
-                    </CardContent>
-                    <CardActions disableSpacing>
-                      <CustomRadio
-                        checked={selectedProductId === product.id}
-                        onChange={() => handleRadioChange(product.id)}
-                      />
-                      <Tooltip title="Ações">
-                        <IconButton
-                          size="small"
-                          onClick={(event) => handleMenuClick(event, product.id)}
-                        >
-                          <MoreVert fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                      <Menu
-                        anchorEl={menuAnchorEl}
-                        open={menuOpenRowId === product.id}
-                        onClose={handleMenuClose}
-                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                      <Stack direction="row" alignItems="center" spacing={1}>
+                        <Typography variant="caption" color="text.secondary">
+                          Valor do Produto
+                        </Typography>
+                        <Typography variant="subtitle1" fontWeight={600}>
+                          {Number(product?.product_value).toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                          })}
+                        </Typography>
+                      </Stack>
+                    </Stack>
+                  </CardContent>
+                  <CardActions disableSpacing>
+                    <CustomCheckbox
+                      disabled={product.default === 'N'}
+                      checked={selectedProductIds.includes(product.id)}
+                      onChange={() => handleCheckboxChange(product.id)}
+                    />
+                    <Tooltip title="Ações">
+                      <IconButton
+                        size="small"
+                        onClick={(event) => handleMenuClick(event, product.id)}
                       >
+                        <MoreVert fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    <Menu
+                      anchorEl={menuAnchorEl}
+                      open={menuOpenRowId === product.id}
+                      onClose={handleMenuClose}
+                      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    >
+                      <MenuItem
+                      onClick={() => {
+                        handleDetailClick(product.id);
+                        handleMenuClose();
+                      }}
+                      >
+                        <Visibility fontSize="small" sx={{ mr: 1 }} />
+                        Visualizar
+                      </MenuItem>
+                      {product.default === 'N' && (
                         <MenuItem
                           onClick={() => {
-                            handleDetailClick(product.id);
+                            handleEditClick(product.id);
                             handleMenuClose();
                           }}
                         >
-                          <Visibility fontSize="small" sx={{ mr: 1 }} />
-                          Visualizar
+                          <Edit fontSize="small" sx={{ mr: 1 }} />
+                          Editar
                         </MenuItem>
-                      </Menu>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              );
-            })}
+                      )}
+                      {product.default === 'N' && (
+                        <MenuItem
+                        onClick={() => {
+                          handleDeleteClick(product.id);
+                          handleMenuClose();
+                        }}
+                        >
+                          <Delete fontSize="small" sx={{ mr: 1 }} />
+                          Excluir
+                        </MenuItem>
+                      )}
+                    </Menu>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
       </Grid>
+
+      <Dialog open={detailModalOpen} onClose={() => setDetailModalOpen(false)} maxWidth="md" fullWidth>
+        <DialogContent>
+          <DetailProduct
+            productId={selectedProductDetail}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDetailModalOpen(false)} color="primary">
+            Fechar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogContent>
+          <CreateProduct
+            sale={sale}
+            onClosedModal={() => setCreateModalOpen(false)}
+            onRefresh={handleRefreshList}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setCreateModalOpen(false)} color="primary">
+            Cancelar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="md" fullWidth>
+        <DialogContent>
+          <EditProduct
+            productId={selectedEditProduct}
+            onClosedModal={() => setEditModalOpen(false)}
+            onRefresh={handleRefreshList}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEditModalOpen(false)} color="primary">
+            Cancelar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>Confirmar Exclusão</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Tem certeza de que deseja excluir este produto? Esta ação não pode ser desfeita.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteModalOpen(false)} color="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={confirmDelete} color="error" variant="contained">
+            Excluir
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
