@@ -25,14 +25,14 @@ const useProductForm = (initialData, id) => {
     if (initialData) {
       setFormData({
         sale_id: initialData.sale?.id || null,
-        branch_id: initialData.branch_id || null,
-        roof_type_id: initialData.roof_type_id || null,
+        branch_id: initialData.branch.id || null,
+        roof_type_id: initialData.roof_type.id || null,
         name: initialData.name || '',
         description: initialData.description || '',
         product_value: initialData.product_value || '',
         reference_value: initialData.reference_value || '',
         cost_value: initialData.cost_value || '',
-        materials_ids: initialData.materials_ids || [],
+        materials_ids: initialData.materials || [],
         default: initialData.default || '',
       });
     }
@@ -60,7 +60,7 @@ const useProductForm = (initialData, id) => {
         ...prev,
         materials_ids: [
           ...prev.materials_ids,
-          { id: newId, amount: '', material_id: '' },
+          { amount: '', material_id: '' },
         ],
       };
     });
