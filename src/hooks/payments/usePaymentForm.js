@@ -5,6 +5,7 @@ import paymentService from '@/services/paymentService';
 const usePaymentForm = (initialData, id) => {
   const [formData, setFormData] = useState({
     sale_id: null,
+    borrower_id: null,
     financier_id: null,
     value: '',
     payment_type: '',
@@ -23,6 +24,7 @@ const usePaymentForm = (initialData, id) => {
     if (initialData) {
       setFormData({
         sale_id: initialData.sale?.id || null,
+        borrower_id: initialData.borrower?.id || null,
         financier_id: initialData.financier?.id || null,
         value: initialData.value || '',
         payment_type: initialData.payment_type || '',
@@ -72,6 +74,7 @@ const usePaymentForm = (initialData, id) => {
     setLoading(true);
     let dataToSend = {
       sale_id: formData.sale_id,
+      borrower_id: formData.borrower_id,
       financier_id: formData.financier_id,
       value: formData.value,
       payment_type: formData.payment_type,
