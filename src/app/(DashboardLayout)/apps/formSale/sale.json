@@ -1,0 +1,229 @@
+{
+    "id": 44,
+    "customer": {
+        "id": 6,
+        "complete_name": "Matheus Barbosa de Almeida Macias",
+        "birth_date": "2001-12-13",
+        "first_document": "02506529276",
+        "email": "matheus.macias@resolvenergiasolar.com",
+        "phone_numbers": []
+    },
+    "seller": {
+        "id": 1,
+        "complete_name": "Leonardo",
+        "birth_date": "2003-05-16",
+        "first_document": "05084426211",
+        "email": "leonardo.costa@resolvenergiasolar.com",
+        "phone_numbers": [
+            {
+                "id": 1,
+                "country_code": 55,
+                "phone_number": "91988458968",
+                "is_main": true,
+                "user": 1
+            }
+        ]
+    },
+    "sales_supervisor": {
+        "id": 2,
+        "complete_name": "Beatriz dos Santos Souza Costa",
+        "birth_date": null,
+        "first_document": "1",
+        "email": "beatriz.costa@resolvenergiasolar.com",
+        "phone_numbers": []
+    },
+    "sales_manager": {
+        "id": 3,
+        "complete_name": "Max Rosa Oliveira",
+        "birth_date": null,
+        "first_document": "2",
+        "email": "max.junior@resolvenergiasolar.com",
+        "phone_numbers": []
+    },
+    "branch": {
+        "id": 1,
+        "owners": [],
+        "address": {
+            "id": 1,
+            "zip_code": "66060000",
+            "country": "brasil",
+            "state": "PA",
+            "city": "Belém",
+            "neighborhood": "Marco",
+            "street": "Avenida Alcindo Cacela",
+            "number": "123",
+            "complement": "até 739/740"
+        },
+        "name": "Matriz",
+        "picture": null,
+        "transfer_percentage": null,
+        "discount_allowed": null
+    },
+    "marketing_campaign": null,
+    "missing_documents": [],
+    "sale_products": [
+        {
+            "id": 111,
+            "product": {
+                "id": 83,
+                "materials": [
+                    {
+                        "material": {
+                            "id": 4,
+                            "name": "Material A",
+                            "price": "120.500",
+                            "attributes": [
+                                {
+                                    "key": "Tamanho",
+                                    "value": "Grande"
+                                },
+                                {
+                                    "key": "Cor",
+                                    "value": "Azul"
+                                }
+                            ]
+                        },
+                        "amount": "10.000000",
+                        "id": 124
+                    }
+                ],
+                "branch": {
+                    "id": 1,
+                    "owners": [],
+                    "address": {
+                        "id": 1,
+                        "zip_code": "66060000",
+                        "country": "brasil",
+                        "state": "PA",
+                        "city": "Belém",
+                        "neighborhood": "Marco",
+                        "street": "Avenida Alcindo Cacela",
+                        "number": "123",
+                        "complement": "até 739/740"
+                    },
+                    "name": "Matriz",
+                    "picture": null,
+                    "transfer_percentage": null,
+                    "discount_allowed": null
+                },
+                "roof_type": {
+                    "id": 1,
+                    "name": "Cêramica",
+                    "created_at": "2024-11-18T13:56:56.093859-03:00"
+                },
+                "name": "Produto 487 KWP",
+                "description": "",
+                "product_value": "4000.350000",
+                "reference_value": "4000.350000",
+                "cost_value": "4000.350000",
+                "default": "N",
+                "created_at": "2024-11-20T13:39:04.282404-03:00"
+            },
+            "amount": "1.000000",
+            "value": "4000.350000",
+            "reference_value": "4000.350000",
+            "cost_value": "4000.350000",
+            "created_at": "2024-11-20T13:39:04.316763-03:00",
+            "sale": 44,
+            "commercial_proposal": null
+        },
+        {
+            "id": 110,
+            "product": {
+                "id": 54,
+                "materials": [
+                    {
+                        "material": {
+                            "id": 6,
+                            "name": "Material B",
+                            "price": "1200.500",
+                            "attributes": [
+                                {
+                                    "key": "Tamanho",
+                                    "value": "Grande"
+                                },
+                                {
+                                    "key": "Cor",
+                                    "value": "Azul"
+                                }
+                            ]
+                        },
+                        "amount": "0.000000",
+                        "id": 92
+                    },
+                    {
+                        "material": {
+                            "id": 7,
+                            "name": "Material B",
+                            "price": "1200.500",
+                            "attributes": [
+                                {
+                                    "key": "Tamanho",
+                                    "value": "Grande"
+                                },
+                                {
+                                    "key": "Cor",
+                                    "value": "Azul"
+                                }
+                            ]
+                        },
+                        "amount": "0.000000",
+                        "id": 91
+                    }
+                ],
+                "branch": {
+                    "id": 1,
+                    "owners": [],
+                    "address": {
+                        "id": 1,
+                        "zip_code": "66060000",
+                        "country": "brasil",
+                        "state": "PA",
+                        "city": "Belém",
+                        "neighborhood": "Marco",
+                        "street": "Avenida Alcindo Cacela",
+                        "number": "123",
+                        "complement": "até 739/740"
+                    },
+                    "name": "Matriz",
+                    "picture": null,
+                    "transfer_percentage": null,
+                    "discount_allowed": null
+                },
+                "roof_type": {
+                    "id": 1,
+                    "name": "Cêramica",
+                    "created_at": "2024-11-18T13:56:56.093859-03:00"
+                },
+                "name": "Teste 2",
+                "description": "Testando",
+                "product_value": "1.000000",
+                "reference_value": "1.000000",
+                "cost_value": "1.000000",
+                "default": "S",
+                "created_at": "2024-11-18T15:38:54.341859-03:00"
+            },
+            "amount": "1.000000",
+            "value": "1.000000",
+            "reference_value": "1.000000",
+            "cost_value": "1.000000",
+            "created_at": "2024-11-20T12:37:53.040798-03:00",
+            "sale": 44,
+            "commercial_proposal": null
+        }
+    ],
+    "can_generate_contract": "false",
+    "total_paid": 20000.0,
+    "total_value": "2001.000",
+    "contract_number": "RES01",
+    "signature_date": null,
+    "is_pre_sale": true,
+    "status": "P",
+    "transfer_percentage": null,
+    "financial_completion_date": null,
+    "created_at": "2024-11-16T15:51:56.933874-03:00",
+    "products": [
+        83,
+        54
+    ]
+}

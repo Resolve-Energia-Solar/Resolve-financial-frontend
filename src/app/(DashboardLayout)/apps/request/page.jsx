@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import requestConcessionaireService from "@/services/requestConcessionaireService"
+import unitService from "@/services/unitService";
 import {
-  Container,
   Table,
   TableBody,
   TableCell,
@@ -20,6 +21,7 @@ import {
 import InfoIcon from "@mui/icons-material/Info";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
+import Loading from "@/app/loading";
 
 const requestsType = [
   {
@@ -170,7 +172,8 @@ const data = [
   },
 ];
 
-const Request = () => {
+const RequestCE = () => {
+
   const [selectedItem, setSelectedItem] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -209,60 +212,86 @@ const Request = () => {
     return datee;
   };
 
+  const [requestData, setRequestData] = useState();
+  const [load, setLoad] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const requestConceData = await requestConcessionaireService.index();
+        console.log('asdasdasd',requestConceData);
+
+
+        setLoad(true)
+        setRequestData(requestConceData.results)
+        
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+      }
+    }
+    fetchData()
+  }, [])
+
+
+
   return (
     <div >
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Projeto</TableCell>
-              <TableCell>Endereços</TableCell>
-              <TableCell>Tipo</TableCell>
-              <TableCell>Situação</TableCell>
-              <TableCell>Data de Solicitação</TableCell>
-              <TableCell>Data de Vencimento</TableCell>
-              <TableCell>Data de Conclusão</TableCell>
-              <TableCell>Protocol Provisório</TableCell>
-              <TableCell>Protocol Permanente</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Solicitante</TableCell>
-              <TableCell>Prazo</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.map((item) => (
-              <TableRow key={item.id} onClick={() => handleRowClick(item)}>
-                <TableCell>{item.id}</TableCell>
-                <TableCell>{`${item.project.project_number} - ${item.project.sale.customer.name}`}</TableCell>
-                <TableCell>
-                  {`${item.branch.address.zipcode}, | ${item.branch.address.localidade}, - ${item.branch.address.rua}, - ${item.branch.address.bairro}`}
-                </TableCell>
-                <TableCell>{item.type.name}</TableCell>
-                <TableCell>
-                  {item.situation.map((situation) => (
-                    <div>{situation.name}</div>
-                  ))}
-                </TableCell>
-                <TableCell>{item.request_date}</TableCell>
-                <TableCell>{item.completed_at}</TableCell>
-                <TableCell>
-                  {due_date(item.completed_at, item.type.deadline)}
-                </TableCell>
-                <TableCell>{item.protocol_one}</TableCell>
-                <TableCell>{item.protocol_two}</TableCell>
-                <TableCell>{item.status}</TableCell>
-                <TableCell>{item.user.name}</TableCell>
-                <TableCell>
-                  <IconButton onClick={() => handleRowClick(item)}>
-                    <InfoIcon />
-                  </IconButton>
-                </TableCell>
+
+      {
+        (load) ? <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>Projeto</TableCell>
+                <TableCell>Endereços</TableCell>
+                <TableCell>Tipo</TableCell>
+                <TableCell>Situação</TableCell>
+                <TableCell>Data de Solicitação</TableCell>
+                <TableCell>Data de Vencimento</TableCell>
+                <TableCell>Data de Conclusão</TableCell>
+                <TableCell>Protocol Provisório</TableCell>
+                <TableCell>Protocol Permanente</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Solicitante</TableCell>
+                <TableCell>Prazo</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {requestData.map((item) => (
+                <TableRow key={item.id} onClick={() => handleRowClick(item)}>
+                  <TableCell>{item.id}</TableCell>
+                  <TableCell>{`${item.project.project_number} - ${item.project.sale?.customer?.name}`}</TableCell>
+                  <TableCell>
+                    {`${item.branch?.address?.zipcode}, | ${item.branch?.address.localidade}, - ${item.branch?.address.rua}, - ${item.branch?.address?.bairro}`}
+                  </TableCell>
+                  <TableCell>{item.type.name}</TableCell>
+                  <TableCell>
+                    {item.situation.map((situation) => (
+                      <div>{situation.name}</div>
+                    ))}
+                  </TableCell>
+                  <TableCell>{item.request_date}</TableCell>
+                  <TableCell>{item.completed_at}</TableCell>
+                  <TableCell>
+                    {due_date(item.completed_at, item.type.deadline)}
+                  </TableCell>
+                  <TableCell>{item.protocol_one}</TableCell>
+                  <TableCell>{item.protocol_two}</TableCell>
+                  <TableCell>{item.status}</TableCell>
+                  <TableCell>{item.user?.name}</TableCell>
+                  <TableCell>
+                    <IconButton onClick={() => handleRowClick(item)}>
+                      <InfoIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer> :
+          <Loading />
+      }
 
       {/* Drawer para o painel de detalhes */}
       <Drawer anchor="right" open={isDrawerOpen} onClose={handleCloseDrawer}>
@@ -275,7 +304,7 @@ const Request = () => {
             <TextField
               label="Endereço"
               name="address_id"
-              value={`${formData.branch.address.zipcode} | ${formData.branch.address.localidade} - ${formData.branch.address.rua} - ${formData.branch.address.bairro}`}
+              value={`${formData.branch?.address.zipcode} | ${formData.branch?.address.localidade} - ${formData.branch?.address.rua} - ${formData.branch?.address.bairro}`}
               onChange={handleInputChange}
               fullWidth
               margin="normal"
@@ -285,7 +314,7 @@ const Request = () => {
             <TextField
               label="Tipo da Solicitação"
               name="type_id"
-              value={`${formData.project.project_number} - ${formData.project.sale.customer.name}`}
+              value={`${formData.project.project_number} - ${formData.project.sale?.customer?.name}`}
               onChange={handleInputChange}
               fullWidth
               margin="normal"
@@ -384,7 +413,7 @@ const Request = () => {
             <TextField
               label="Solicitante"
               type="text"
-              value={formData.user.name}
+              value={formData?.user?.name}
               fullWidth
               margin="normal"
               disabled
@@ -407,4 +436,4 @@ const Request = () => {
   );
 };
 
-export default Request;
+export default RequestCE;
