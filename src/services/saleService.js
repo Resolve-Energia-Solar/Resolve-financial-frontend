@@ -15,6 +15,10 @@ const saleService = {
         const response = await apiClient.get(`/api/sales/${id}/?fields=sale_products`);
         return response.data;
     },
+    getTotalPaidSales: async (id) => {
+        const response = await apiClient.get(`https://crm.resolvenergiasolar.com/api/sales/${id}/?fields=total_paid,total_value`);
+        return response.data;
+    },
     getSaleByLead: async (lead) => {
         const response = await apiClient.get(`/api/sales/?lead=${lead}`);
         console.log(response.data);

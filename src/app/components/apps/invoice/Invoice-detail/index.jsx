@@ -86,7 +86,7 @@ const DetailInvoicePage = ({ payment_id = null }) => {
       <Divider />
 
       <Grid container spacing={3} mb={4}>
-        <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={6}>
           <CustomFormLabel>Venda</CustomFormLabel>
           <Typography
             sx={{
@@ -99,7 +99,7 @@ const DetailInvoicePage = ({ payment_id = null }) => {
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6}>
-          <CustomFormLabel>Financiador</CustomFormLabel>
+          <CustomFormLabel>Tomador</CustomFormLabel>
           <Typography
             sx={{
               fontStyle: 'italic',
@@ -107,7 +107,19 @@ const DetailInvoicePage = ({ payment_id = null }) => {
               borderBottom: `1px dashed ${theme.palette.divider}`,
             }}
           >
-            {paymentData?.financier.name}
+            {paymentData?.borrower?.complete_name}
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <CustomFormLabel>Financiadora</CustomFormLabel>
+          <Typography
+            sx={{
+              fontStyle: 'italic',
+              fontWeight: 'light',
+              borderBottom: `1px dashed ${theme.palette.divider}`,
+            }}
+          >
+            {paymentData?.financier?.name}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6}>

@@ -28,6 +28,7 @@ import useProductForm from '@/hooks/products/useProductForm';
 import AutoCompleteBranch from '../../comercial/sale/components/auto-complete/Auto-Input-Branch';
 import AutoCompleteRoofType from '../../roof/autoCompleteRoof';
 import AutoCompleteMaterial from '../../comercial/sale/components/auto-complete/Auto-Input-Material';
+import CustomFieldMoney from '../../invoice/components/CustomFieldMoney';
 
 const CreateProduct = ({ sale = null, onClosedModal = null, onRefresh = null }) => {
   const {
@@ -94,10 +95,10 @@ const CreateProduct = ({ sale = null, onClosedModal = null, onRefresh = null }) 
         </Grid>
         <Grid item xs={12} sm={12} lg={6}>
           <CustomFormLabel htmlFor="product_value">Valor do Produto</CustomFormLabel>
-          <CustomTextField
+          <CustomFieldMoney
             name="product_value"
             value={formData.product_value}
-            onChange={(e) => handleChange('product_value', e.target.value)}
+            onChange={(value) => handleChange('product_value', value)}
             placeholder="R$ 3.000,00"
             variant="outlined"
             fullWidth
@@ -106,10 +107,10 @@ const CreateProduct = ({ sale = null, onClosedModal = null, onRefresh = null }) 
         </Grid>
         <Grid item xs={12} sm={12} lg={6}>
           <CustomFormLabel htmlFor="reference_value">Valor de Referência</CustomFormLabel>
-          <CustomTextField
+          <CustomFieldMoney
             name="reference_value"
             value={formData.reference_value}
-            onChange={(e) => handleChange('reference_value', e.target.value)}
+            onChange={(value) => handleChange('reference_value', value)}
             placeholder="R$ 14.000,00"
             variant="outlined"
             fullWidth
@@ -121,10 +122,10 @@ const CreateProduct = ({ sale = null, onClosedModal = null, onRefresh = null }) 
         </Grid>
         <Grid item xs={12} sm={12} lg={6}>
           <CustomFormLabel htmlFor="cost_value">Valor de Custo</CustomFormLabel>
-          <CustomTextField
+          <CustomFieldMoney
             name="cost_value"
             value={formData.cost_value}
-            onChange={(e) => handleChange('cost_value', e.target.value)}
+            onChange={(value) => handleChange('cost_value', value)}
             placeholder="R$ 10.000,00"
             variant="outlined"
             fullWidth
@@ -198,6 +199,7 @@ const CreateProduct = ({ sale = null, onClosedModal = null, onRefresh = null }) 
                         onChange={(value) => handleMaterialChange(index, 'material_id', value)}
                         variant="outlined"
                         fullWidth
+                        value={material.material_id}
                         {...(formErrors.materials_ids &&
                           formErrors.materials_ids[index]?.material_id && {
                             error: true,
