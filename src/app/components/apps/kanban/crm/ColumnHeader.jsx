@@ -26,6 +26,7 @@ const ColumnWithActions = ({
   leads,
   statusId,
   boardId,
+  collumnValue,
   onUpdateLeadColumn,
   addLead,
   statusColors,
@@ -58,7 +59,6 @@ const ColumnWithActions = ({
   const [columnName, setColumnName] = useState(columnTitle);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-
   const getTimeIconColor = (lead) => {
     if (isLeadOverdue(lead, status)) {
       return theme.palette.error.main;
@@ -256,6 +256,16 @@ const ColumnWithActions = ({
               Atrasados: {overdueLeads}
             </Typography>
           </Box>
+        </Box>
+        <Box mt={2}>
+          <Typography variant="subtitle2">
+            Valor total de propostas:{' '}
+            <strong>
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                collumnValue,
+              )}
+            </strong>
+          </Typography>
         </Box>
       </Box>
     </>

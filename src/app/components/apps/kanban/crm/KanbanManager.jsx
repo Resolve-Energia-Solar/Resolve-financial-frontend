@@ -43,13 +43,13 @@ const KanbanManager = ({
   onUpdateLeadColumn,
   searchTerm,
   loadMoreLeads,
+  columns,
 }) => {
   const theme = useTheme();
   const [editLead, setEditLead] = useState(false);
   const [openLeadModal, setOpenLeadModal] = useState(false);
   const [openAddColumnModal, setOpenAddColumnModal] = useState(false);
   const [newColumnName, setNewColumnName] = useState('');
-
   const { idSaleSuccess, setIdSaleSuccess } = useContext(KanbanDataContext);
   const [leadData, setLeadData] = useState({
     complete_name: '',
@@ -89,6 +89,8 @@ const KanbanManager = ({
       return acc;
     }, {}),
   );
+
+  console.log('leadsList:', statuses);
 
   const handleOpenAddColumnModal = () => setOpenAddColumnModal(true);
   const handleCloseAddColumnModal = () => {
@@ -198,7 +200,7 @@ const KanbanManager = ({
     }
   };
 
-/*   const handleLoadMore = useCallback(
+  /*   const handleLoadMore = useCallback(
     async (statusId) => {
       if (scrollStatus[statusId]) return;
 
@@ -215,7 +217,7 @@ const KanbanManager = ({
     [scrollStatus, loadMoreLeads],
   );
  */
- /*  const createObserver = useCallback(
+  /*  const createObserver = useCallback(
     (statusId) => {
       return new IntersectionObserver(
         async (entries) => {
@@ -277,6 +279,7 @@ const KanbanManager = ({
                       onAddLead={onAddLead}
                       addLead={addLead}
                       statusColors={statusColors}
+                      collumnValue={status.proposals_value}
                     />
 
                     {filteredLeads
@@ -438,7 +441,7 @@ const KanbanManager = ({
 
                   {tabIndex === 2 && <SaleListCards leadId={selectedLead.id} />}
                   {tabIndex === 3 && <ClicksignLogsPage />}
-                  {tabIndex === 4 && <Activities/>}
+                  {tabIndex === 4 && <Activities />}
                 </Box>
               </Grid>
             </Grid>
