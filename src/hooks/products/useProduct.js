@@ -12,16 +12,7 @@ const useProduct = (id) => {
     const fetchProduct = async () => {
       try {
         const data = await ProductService.getProductById(id);
-        
-        const updatedData = {
-          ...data,
-          materials: data.materials.map(({ material, ...rest }) => ({
-            ...rest,
-            material_id: material,
-          })),
-        };
-
-        setProductData(updatedData);
+        setProductData(data);
       } catch (err) {
         setError('Erro ao carregar o produto');
       } finally {

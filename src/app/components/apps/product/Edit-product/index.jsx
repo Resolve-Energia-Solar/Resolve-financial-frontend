@@ -1,7 +1,5 @@
 'use client';
-import React, { useContext, useState, useEffect } from 'react';
-import { InvoiceContext } from '@/app/context/InvoiceContext/index';
-import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 import {
   Button,
   Typography,
@@ -30,10 +28,10 @@ import AutoCompleteRoofType from '../../roof/autoCompleteRoof';
 import AutoCompleteMaterial from '../../comercial/sale/components/auto-complete/Auto-Input-Material';
 import CustomFieldMoney from '../../invoice/components/CustomFieldMoney';
 import useProduct from '@/hooks/products/useProduct';
+import FormPageSkeleton from '../../comercial/sale/components/FormPageSkeleton';
 
 const EditProduct = ({ productId = null, onClosedModal = null, onRefresh = null }) => {
   const { loading, error, productData } = useProduct(productId); 
-
 
   const {
     formData,
@@ -48,10 +46,6 @@ const EditProduct = ({ productId = null, onClosedModal = null, onRefresh = null 
     handleDeleteMaterial,
   } = useProductForm(productData, productId);
 
-  console.log('formData.product_value', formData.product_value);
-  console.log('formData.reference_value', formData.reference_value);
-  console.log('formData.cost_value', formData.cost_value);
-  
 
   useEffect(() => {
     if (success) {
@@ -61,6 +55,10 @@ const EditProduct = ({ productId = null, onClosedModal = null, onRefresh = null 
       }
     }
   }, [success]);
+
+  if (loading) {
+    return <FormPageSkeleton />;
+  }
 
   return (
     <Box>
@@ -199,7 +197,7 @@ const EditProduct = ({ productId = null, onClosedModal = null, onRefresh = null 
                     <TableCell style={{ width: '40%' }}>
                       <AutoCompleteMaterial
                         name="material"
-                        value={material?.material_id}
+                        value={material?.material?.id}
                         onChange={(value) => handleMaterialChange(index, 'material_id', value)}
                         variant="outlined"
                         fullWidth

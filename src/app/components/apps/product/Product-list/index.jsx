@@ -30,6 +30,7 @@ import productService from '@/services/productsService';
 import saleService from '@/services/saleService';
 import CreateProduct from '../Add-product';
 import EditProduct from '../Edit-product';
+import DetailProduct from '../Product-detail';
 
 const ProductCard = ({ sale = null }) => {
   const theme = useTheme();
@@ -47,6 +48,9 @@ const ProductCard = ({ sale = null }) => {
   const [loading, setLoading] = useState(true);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteProductId, setDeleteProductId] = useState(null);
+
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [selectedProductDetail, setSelectedProductDetail] = useState(null);
 
   const handleRefreshList = () => {
     setOnRefreshList((prev) => !prev);
@@ -103,7 +107,8 @@ const ProductCard = ({ sale = null }) => {
   };
 
   const handleDetailClick = (id) => {
-    router.push(`/products/${id}`);
+    setDetailModalOpen(true);
+    setSelectedProductDetail(id);
   };
 
   const handleCreateClick = () => {
@@ -255,10 +260,10 @@ const ProductCard = ({ sale = null }) => {
                       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                     >
                       <MenuItem
-                      // onClick={() => {
-                      //   handleDetailClick(payment.id);
-                      //   handleMenuClose();
-                      // }}
+                      onClick={() => {
+                        handleDetailClick(product.id);
+                        handleMenuClose();
+                      }}
                       >
                         <Visibility fontSize="small" sx={{ mr: 1 }} />
                         Visualizar
@@ -291,6 +296,19 @@ const ProductCard = ({ sale = null }) => {
               </Grid>
             ))}
       </Grid>
+
+      <Dialog open={detailModalOpen} onClose={() => setDetailModalOpen(false)} maxWidth="md" fullWidth>
+        <DialogContent>
+          <DetailProduct
+            productId={selectedProductDetail}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDetailModalOpen(false)} color="primary">
+            Fechar
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog
         open={createModalOpen}
