@@ -14,20 +14,27 @@ import {
   Button,
   Snackbar,
   Alert,
+  LinearProgress,
 } from '@mui/material';
 import { MoreVert, Add } from '@mui/icons-material';
 import leadService from '@/services/leadService';
 import LeadDialog from '../../leads/LeadDialog/LeadDialog';
+import { useTheme } from '@mui/material/styles';
 
 const ColumnWithActions = ({
   columnTitle,
   leads,
   statusId,
   boardId,
+  collumnValue,
   onUpdateLeadColumn,
   addLead,
   statusColors,
+  isLeadOverdue,
+  status,
 }) => {
+  const theme = useTheme();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [openLeadModal, setOpenLeadModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -52,21 +59,28 @@ const ColumnWithActions = ({
   const [columnName, setColumnName] = useState(columnTitle);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-
-  const leadsCount = leads ? leads.filter((lead) => lead.column.id === statusId).length : 0;
-
-  const handleOpenMenu = (event) => {
-    setAnchorEl(event.currentTarget);
+  const getTimeIconColor = (lead) => {
+    if (isLeadOverdue(lead, status)) {
+      return theme.palette.error.main;
+    }
+    if (status === 'Primeiro Contato') {
+      return theme.palette.warning.main;
+    }
+    return theme.palette.text.secondary;
   };
 
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
-  };
+  const leadsCount = leads.filter((lead) => lead.column.id === statusId).length;
+  const onTimeLeads = leads.filter(
+    (lead) => lead.column.id === statusId && !isLeadOverdue(lead, status),
+  ).length;
+  const overdueLeads = leadsCount - onTimeLeads;
 
-  const handleOpenLeadModal = () => {
-    setOpenLeadModal(true);
-  };
+  const onTimePercentage = leadsCount > 0 ? (onTimeLeads / leadsCount) * 100 : 0;
 
+  const handleOpenMenu = (event) => setAnchorEl(event.currentTarget);
+  const handleCloseMenu = () => setAnchorEl(null);
+
+  const handleOpenLeadModal = () => setOpenLeadModal(true);
   const handleCloseLeadModal = () => {
     setOpenLeadModal(false);
     setLeadData({
@@ -154,8 +168,8 @@ const ColumnWithActions = ({
           top: 0,
           zIndex: 1,
           marginTop: '10px',
-          backgroundColor: statusColors[columnTitle] || statusColors.default,
           transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+          backgroundColor: statusColors[status] || statusColors.default,
         }}
       >
         <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -169,66 +183,91 @@ const ColumnWithActions = ({
           <Box display="flex" alignItems="center">
             <Tooltip title="Novo Lead" arrow>
               <IconButton onClick={handleOpenLeadModal}>
-                <Add />
+                <Add sx={{ color: getTimeIconColor({ status }) }} />
               </IconButton>
             </Tooltip>
-
             <IconButton onClick={handleOpenMenu}>
-              <MoreVert />
+              <MoreVert sx={{ color: theme.palette.text.secondary }} />
             </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              disableEnforceFocus
-              open={Boolean(anchorEl)}
-              onClose={handleCloseMenu}
-            >
-              <MenuItem onClick={handleOpenEditModal}>Editar status</MenuItem>
+            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
+              <MenuItem onClick={() => setOpenEditModal(true)}>Editar status</MenuItem>
             </Menu>
           </Box>
         </Box>
-      </Box>
 
-      <LeadDialog
-        openLeadModal={openLeadModal}
-        handleCloseLeadModal={handleCloseLeadModal}
-        handleSaveLead={handleSaveLead}
-        leadData={leadData}
-        setLeadData={setLeadData}
-      />
+        <LeadDialog
+          openLeadModal={openLeadModal}
+          handleCloseLeadModal={handleCloseLeadModal}
+          handleSaveLead={handleSaveLead}
+          leadData={leadData}
+          setLeadData={setLeadData}
+        />
 
-      <Dialog open={openEditModal} onClose={handleCloseEditModal}>
-        <DialogTitle>Editar Nome da Coluna</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Nome da Coluna"
-            fullWidth
-            value={columnName}
-            onChange={(e) => setColumnName(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseEditModal}>Cancelar</Button>
-          <Button onClick={handleSaveEditColumn} disabled={!columnName}>
-            Salvar
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Dialog open={openEditModal} onClose={handleCloseEditModal}>
+          <DialogTitle>Editar Nome da Coluna</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Nome da Coluna"
+              fullWidth
+              value={columnName}
+              onChange={(e) => setColumnName(e.target.value)}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseEditModal}>Cancelar</Button>
+            <Button onClick={handleSaveEditColumn} disabled={!columnName}>
+              Salvar
+            </Button>
+          </DialogActions>
+        </Dialog>
 
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-      >
-        <Alert
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
           onClose={handleCloseSnackbar}
-          severity={snackbarMessage.includes('sucesso') ? 'success' : 'error'}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbarMessage.includes('sucesso') ? 'success' : 'error'}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+
+        <Box mt={1}>
+          <LinearProgress
+            variant="determinate"
+            value={onTimePercentage}
+            sx={{
+              height: '8px',
+              borderRadius: '4px',
+              backgroundColor: '#f44336',
+              '& .MuiLinearProgress-bar': { backgroundColor: '#4caf50' },
+            }}
+          />
+          <Box display="flex" justifyContent="space-between" mt={0.5}>
+            <Typography variant="caption" color="success.main">
+              No prazo: {onTimeLeads}
+            </Typography>
+            <Typography variant="caption" color="error.main">
+              Atrasados: {overdueLeads}
+            </Typography>
+          </Box>
+        </Box>
+        <Box mt={2}>
+          <Typography variant="subtitle2">
+            Valor total de propostas:{' '}
+            <strong>
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                collumnValue,
+              )}
+            </strong>
+          </Typography>
+        </Box>
+      </Box>
     </>
   );
 };

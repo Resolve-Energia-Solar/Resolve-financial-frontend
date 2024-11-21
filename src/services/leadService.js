@@ -45,7 +45,7 @@ const leadService = {
     }
   },
 
-  getLeadsByColumn: async (boardId, columnId, page = 1, pageSize = 20, searchTerm = '') => {
+  getLeadsByColumn: async (boardId, columnId, page = 1, pageSize = 60, searchTerm = '') => {
     try {
       const params = {
         board_id: boardId,

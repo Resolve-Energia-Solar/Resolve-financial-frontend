@@ -43,13 +43,14 @@ const useProposalForm = (initialData, id) => {
     const dataToSend = {
       ...formData,
       lead_id: selectedLead,
-      created_by_id: user.id,
+      created_by_id: formData.created_by_id,
       due_date: formData.due_date,
       value: formattedValue,
-      status: 'P',
+      status: formData.status,
       observation: formData.observation,
       products_id: selectedKitIds,
-    }
+    };
+    
 
     if (!dataToSend.lead_id) {
       setSnackbar({ open: true, message: 'O campo "Lead" é obrigatório.', severity: 'warning' })
@@ -92,39 +93,39 @@ const useProposalForm = (initialData, id) => {
       status: formData.status,
       observation: formData.observation,
       products_id: selectedKitIds,
-    }
-
+    };
+  
     if (!dataToSend.lead_id) {
-      setSnackbar({ open: true, message: 'O campo "Lead" é obrigatório.', severity: 'warning' })
-      return
+      setSnackbar({ open: true, message: 'O campo "Lead" é obrigatório.', severity: 'warning' });
+      return;
     }
-    if (dataToSend.kits_id.length === 0) {
+    if (!dataToSend.products_id || dataToSend.products_id.length === 0) {
       setSnackbar({
         open: true,
         message: 'Selecione pelo menos um kit para a proposta.',
         severity: 'warning',
-      })
-      return
+      });
+      return;
     }
-
+  
     try {
-      await proposalService.updateProposal(id, dataToSend)
-      setFormErrors({})
-      setSuccess(true)
-      setSnackbar({ open: true, message: 'Proposta atualizada com sucesso!', severity: 'success' })
+      await proposalService.updateProposal(id, dataToSend);
+      setFormErrors({});
+      setSuccess(true);
+      setSnackbar({ open: true, message: 'Proposta atualizada com sucesso!', severity: 'success' });
       if (handleCloseForm) {
         setTimeout(() => {
-          handleCloseForm()
-        }, 4000)
+          handleCloseForm();
+        }, 4000);
       }
     } catch (err) {
-      setSuccess(false)
-      setFormErrors(err.response?.data || {})
-      setSnackbar({ open: true, message: 'Erro ao atualizar proposta.', severity: 'error' })
-      console.error(err.response?.data || err)
+      setSuccess(false);
+      setFormErrors(err.response?.data || {});
+      setSnackbar({ open: true, message: 'Erro ao atualizar proposta.', severity: 'error' });
+      console.error(err.response?.data || err);
     }
-  }
-
+  };
+  
   const closeSnackbar = () => {
     setSnackbar(prev => ({ ...prev, open: false }))
   }

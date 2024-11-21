@@ -21,7 +21,6 @@ import {
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
-import sale from './sale.json'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props
@@ -69,210 +68,256 @@ export default function FormSale() {
                     <Tab label="Envios de Contrato" {...a11yProps(2)} />
                 </Tabs>
             </Box>
+            <TextField
+                select
+                label="Contratante"
+                name="type_id"
+                value={''}
+
+
+                margin="normal"
+                sx={{ marginInline: 3, width: '80%' }}
+            >
+                <MenuItem>Max Oliveira Junior</MenuItem>
+            </TextField>
             <TabPanel value={value} index={0}>
-                <TextField
-                    select
-                    label="Contratante"
-                    name="type_id"
-                    value={''}
+                <Paper elevation={10} sx={{ border: 0 }}>
+                    <Box border={1} p={3}>
+                        <Box display={'flex'} gap={1} flexDirection={'column'} mb={2}>
+                            <Box display={'flex'} gap={1} >
+                                <Typography>Inversor: Growatt</Typography>
+                                <Typography>Quantidade: 1</Typography>
+                            </Box>
+                            <Box display={'flex'} gap={1} >
+                                <Typography>Modulo: Hanersun</Typography>
+                                <Typography>Quantidade: 10</Typography>
+                            </Box>
 
-                    fullWidth
-                    margin="normal"
-
-                >
-                    <MenuItem>Max Oliveira Junior</MenuItem>
-                </TextField>
-                <Box border={1} p={3}>
-                    <Box display={'flex'} gap={1} flexDirection={'column'} mb={2}>
-                        <Box display={'flex'} gap={1} >
-                            <Typography>Inversor: Growatt</Typography>
-                            <Typography>Quantidade: 1</Typography>
                         </Box>
-                        <Box display={'flex'} gap={1} >
-                            <Typography>Modulo: Hanersun</Typography>
-                            <Typography>Quantidade: 10</Typography>
+                        <Box mb={2}>
+                            <TextField
+                                select
+                                label="Homologador"
+                                name="type_id"
+                                value={''}
+
+                                fullWidth
+                                margin="normal"
+
+                            >
+                                <MenuItem>Max Oliveira Junior</MenuItem>
+                            </TextField>
                         </Box>
 
-                    </Box>
-                    <Box mb={2}>
-                        <TextField
-                            select
-                            label="Homologador"
-                            name="type_id"
-                            value={''}
-
-                            fullWidth
-                            margin="normal"
-
-                        >
-                            <MenuItem>Max Oliveira Junior</MenuItem>
-                        </TextField>
-                    </Box>
-
-                    <Accordion expanded={expanded === 'additional'} onChange={handleAccordionChange('additional')}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel1bh-content"
-                            id="panel1bh-header"
-                        >
-                            <Typography>Adicionais</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Box component="form" sx={{ '& > :not(style)': { m: 1 } }} noValidate autoComplete="off">
-                                <Box>
-                                    <Table>
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>Descrição</TableCell>
-                                                <TableCell>Valor</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            <TableRow key={1}>
-                                                <TableCell>Poste Auxiliar</TableCell>
-                                                <TableCell>R$ 900,00</TableCell>
-                                            </TableRow>
-                                        </TableBody>
-                                    </Table>
+                        <Accordion expanded={expanded === 'additional'} onChange={handleAccordionChange('additional')}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel1bh-content"
+                                id="panel1bh-header"
+                            >
+                                <Typography>Adicionais</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Box component="form" sx={{ '& > :not(style)': { m: 1 } }} noValidate autoComplete="off">
+                                    <Box>
+                                        <Table>
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell>Descrição</TableCell>
+                                                    <TableCell>Valor</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                <TableRow key={1}>
+                                                    <TableCell>Poste Auxiliar</TableCell>
+                                                    <TableCell>R$ 900,00</TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                    </Box>
+                                    <Button variant="contained">Adicionar</Button>
                                 </Box>
-                                <Button variant="contained">Adicionar</Button>
-                            </Box>
-                        </AccordionDetails>
-                    </Accordion>
-                    <Accordion expanded={expanded === 'checklist'} onChange={handleAccordionChange('checklist')}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel1bh-content"
-                            id="panel1bh-header"
-                        >
-                            <Typography>Checklist de Rateio</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Box component="form" sx={{ '& > :not(style)': { m: 1 } }} noValidate autoComplete="off">
-                                <Box sx={{ overflowX: 'auto' }}>
-                                    <Table>
-                                        <TableHead>
-                                            <TableRow>
+                            </AccordionDetails>
+                        </Accordion>
+                        <Accordion expanded={expanded === 'checklist'} onChange={handleAccordionChange('checklist')}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel1bh-content"
+                                id="panel1bh-header"
+                            >
+                                <Typography>Checklist de Rateio</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Box component="form" sx={{ '& > :not(style)': { m: 1 } }} noValidate autoComplete="off">
+                                    <Box sx={{ overflowX: 'auto' }}>
+                                        <Table>
+                                            <TableHead>
+                                                <TableRow>
 
-                                                <TableCell>Conta</TableCell>
-                                                <TableCell>Nº Contrato</TableCell>
-                                                <TableCell>Classificação</TableCell>
-                                                <TableCell>Nº medidor</TableCell>
-                                                <TableCell>%</TableCell>
-                                                <TableCell>Endereço</TableCell>
-                                                <TableCell>Tipo Fornecimento</TableCell>
-                                                <TableCell>Homologador</TableCell>
-                                                <TableCell>Adquações</TableCell>
-                                                <TableCell>Nova U.C</TableCell>
-                                                <TableCell>Troca Titularidade</TableCell>
+                                                    <TableCell>Conta</TableCell>
+                                                    <TableCell>Nº Contrato</TableCell>
+                                                    <TableCell>Classificação</TableCell>
+                                                    <TableCell>Nº medidor</TableCell>
+                                                    <TableCell>%</TableCell>
+                                                    <TableCell>Endereço</TableCell>
+                                                    <TableCell>Tipo Fornecimento</TableCell>
+                                                    <TableCell>Homologador</TableCell>
+                                                    <TableCell>Adquações</TableCell>
+                                                    <TableCell>Nova U.C</TableCell>
+                                                    <TableCell>Troca Titularidade</TableCell>
 
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
 
-                                            <TableRow key={1}>
+                                                <TableRow key={1}>
 
-                                                <TableCell>Geradora</TableCell>
-                                                <TableCell>
-                                                    8454545
-                                                </TableCell>
-                                                <TableCell>Residencial</TableCell>
-                                                <TableCell>
-                                                    12312312312
-                                                </TableCell>
-                                                <TableCell>50%</TableCell>
-                                                <TableCell>Rua manaus,52,aguas lindas, ananindeua</TableCell>
-                                                <TableCell>
-                                                    Bifasico
-                                                </TableCell>
-                                                <TableCell>Homologador</TableCell>
-                                                <TableCell>Adequação</TableCell>
-                                                <TableCell>
-                                                    Sim
-                                                </TableCell>
-                                                <TableCell>Não</TableCell>
-                                            </TableRow>
-                                            <TableRow key={1}>
+                                                    <TableCell>Geradora</TableCell>
+                                                    <TableCell>
+                                                        8454545
+                                                    </TableCell>
+                                                    <TableCell>Residencial</TableCell>
+                                                    <TableCell>
+                                                        12312312312
+                                                    </TableCell>
+                                                    <TableCell>50%</TableCell>
+                                                    <TableCell>Rua manaus,52,aguas lindas, ananindeua</TableCell>
+                                                    <TableCell>
+                                                        Bifasico
+                                                    </TableCell>
+                                                    <TableCell>Homologador</TableCell>
+                                                    <TableCell>Adequação</TableCell>
+                                                    <TableCell>
+                                                        Sim
+                                                    </TableCell>
+                                                    <TableCell>Não</TableCell>
+                                                </TableRow>
+                                                <TableRow key={1}>
 
-                                                <TableCell>Geradora</TableCell>
-                                                <TableCell>
-                                                    8454545
-                                                </TableCell>
-                                                <TableCell>Residencial</TableCell>
-                                                <TableCell>
-                                                    12312312312
-                                                </TableCell>
-                                                <TableCell>50%</TableCell>
-                                                <TableCell>Rua manaus,52,aguas lindas, ananindeua</TableCell>
-                                                <TableCell>
-                                                    Bifasico
-                                                </TableCell>
-                                                <TableCell>Homologador</TableCell>
-                                                <TableCell>Adequação</TableCell>
-                                                <TableCell>
-                                                    Sim
-                                                </TableCell>
-                                                <TableCell>Não</TableCell>
-                                            </TableRow>
-                                        </TableBody>
-                                    </Table>
+                                                    <TableCell>Geradora</TableCell>
+                                                    <TableCell>
+                                                        8454545
+                                                    </TableCell>
+                                                    <TableCell>Residencial</TableCell>
+                                                    <TableCell>
+                                                        12312312312
+                                                    </TableCell>
+                                                    <TableCell>50%</TableCell>
+                                                    <TableCell>Rua manaus,52,aguas lindas, ananindeua</TableCell>
+                                                    <TableCell>
+                                                        Bifasico
+                                                    </TableCell>
+                                                    <TableCell>Homologador</TableCell>
+                                                    <TableCell>Adequação</TableCell>
+                                                    <TableCell>
+                                                        Sim
+                                                    </TableCell>
+                                                    <TableCell>Não</TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                    </Box>
+                                    <Button variant="contained">Adicionar Endereço</Button>
                                 </Box>
-                                <Button variant="contained">Adicionar Endereço</Button>
-                            </Box>
-                        </AccordionDetails>
-                    </Accordion>
-                    <Accordion expanded={expanded === 'panel2'} onChange={handleAccordionChange('panel2')}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel2bh-content"
-                            id="panel2bh-header"
-                        >
-                            <Typography>Documentos</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Box component="form" sx={{ '& > :not(style)': { m: 1 } }} noValidate autoComplete="off">
+                            </AccordionDetails>
+                        </Accordion>
+                        <Accordion expanded={expanded === 'panel2'} onChange={handleAccordionChange('panel2')}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel2bh-content"
+                                id="panel2bh-header"
+                            >
+                                <Typography>Documentos</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Box component="form" sx={{ '& > :not(style)': { m: 1 } }} noValidate autoComplete="off">
 
-                            </Box>
-                        </AccordionDetails>
-                    </Accordion>
+                                </Box>
+                            </AccordionDetails>
+                        </Accordion>
+                    </Box>
+                </Paper>
+                <Box width={'100%'} display={'flex'} mt={2} justifyContent={'center'}>
+                    <Button variant="contained">Novo projeto</Button>
                 </Box>
-                <Box width={'100%'} display={'flex'} mt={2} justifyContent={'center'}><Button variant="contained">Novo projeto</Button></Box>
 
-                
             </TabPanel>
             <TabPanel value={value} index={1}>
-                <Paper elevation={3} sx={{ p: 2 }}>
-                    <Typography variant="h5" gutterBottom>
-                        Conteúdo da Aba 2
-                    </Typography>
-                    <Typography>
-                        Aqui você pode adicionar o conteúdo para a segunda aba.
-                    </Typography>
-                </Paper>
+
+                <Accordion expanded={expanded === 'solfacil'} onChange={handleAccordionChange('solfacil')}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1bh-content"
+                        id="panel1bh-header"
+
+                    >
+                        <Box display="flex" justifyContent="space-evenly" width="100%">
+                            <Typography>Max Oliveira</Typography>
+                            <Typography>Financiamento</Typography>
+                            <Typography>Solfácil</Typography>
+                            <Typography>2</Typography>
+                            <Typography>R$ 25.200,00</Typography>
+                        </Box>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Box component="form" sx={{ '& > :not(style)': { m: 1 } }} noValidate autoComplete="off">
+                            <Box>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>nº</TableCell>
+                                            <TableCell>Data vencimento</TableCell>
+                                            <TableCell>Valor</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        <TableRow key={1}>
+                                            <TableCell>Poste Auxiliar</TableCell>
+                                            <TableCell>25/11/2024</TableCell>
+                                            <TableCell>R$ 900,00</TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                            </Box>
+
+                        </Box>
+                    </AccordionDetails>
+                </Accordion>
             </TabPanel>
             <TabPanel value={value} index={2}>
                 <Paper elevation={3} sx={{ p: 2 }}>
-                    <Typography variant="h5" gutterBottom>
-                        Conteúdo da Aba 3
-                    </Typography>
-                    <Typography>
-                        Aqui você pode adicionar o conteúdo para a terceira aba.
-                    </Typography>
+                    <Box>
+                        <Typography variant="h5" gutterBottom>
+                            Descrição
+                        </Typography>
+                        <Typography>
+                            Data envio
+                        </Typography>
+                        <Typography>
+                            Prazo
+                        </Typography>
+                        <Typography>
+                            Data assinatura
+                        </Typography>
+                        <Typography>
+                            Status
+                        </Typography>
+                    </Box>
                 </Paper>
             </TabPanel>
             <Box border={1} display={'flex'} justifyContent={'space-between'} alignItems={'center'} paddingInline={3}>
-                    <Box display={'flex'} gap={2}>
-                        <Button>Salvar</Button>
-                        <Button>Enviar Contrato</Button>
-                        <Button>Salvar e enviar Contrato</Button>
-                    </Box>
-                    <Box p={1}>
-                        <Typography>Adicionais:</Typography>
-                        <Typography>Ajuste:</Typography>
-                        <Typography>Total:</Typography>
-                    </Box>
-
+                <Box display={'flex'} gap={2}>
+                    <Button>Salvar</Button>
+                    <Button>Enviar Contrato</Button>
+                    <Button>Salvar e enviar Contrato</Button>
                 </Box>
+                <Box p={1} textAlign={'end'}>
+                    <Typography>Adicionais: R$ 900,00</Typography>
+                    <Typography>Ajuste:  R$ -100,00</Typography>
+                    <Typography>Total:  R$ 27.752,22</Typography>
+                </Box>
+
+            </Box>
         </Box>
     )
 }

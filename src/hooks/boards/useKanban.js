@@ -41,7 +41,7 @@ const useKanban = () => {
     }
   };
 
-  const fetchBoardDetails = async (boardId, page = 1, pageSize = 30) => {
+  const fetchBoardDetails = async (boardId, page = 1, pageSize = 40) => {
     if (!boardId) {
       console.error("Erro: boardId está indefinido");
       return;
@@ -81,6 +81,8 @@ const useKanban = () => {
           id: column.id,
           name: column.name,
           position: column.position,
+          proposals_value: column.proposals_value,
+          
         }))
       );
     } catch (err) {

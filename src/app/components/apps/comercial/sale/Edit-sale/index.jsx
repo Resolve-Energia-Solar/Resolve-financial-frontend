@@ -123,7 +123,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
         <Box>
           {value === 0 && (
             <Box sx={{ mt: 3 }}>
-              <EditCustomer userId={formData.customerId} />
+              <EditCustomer userId={saleData.customer.id} />
             </Box>
           )}
 

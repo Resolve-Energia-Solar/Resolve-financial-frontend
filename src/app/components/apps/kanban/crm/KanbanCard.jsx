@@ -1,33 +1,40 @@
 import { Paper, Box, Typography, useTheme, Rating, Avatar, Tooltip } from '@mui/material';
-import { Phone, AccessTime, TagSharp, Bolt, AssignmentInd } from '@mui/icons-material';
-import { WbSunny } from '@mui/icons-material';
+import { Phone, AccessTime, TagSharp, Bolt, WbSunny } from '@mui/icons-material';
+import { keyframes } from '@emotion/react';
 
-const KanbanCard = ({ lead, handleLeadClick }) => {
+const KanbanCard = ({ lead, handleLeadClick, status, isLeadOverdue }) => {
   const theme = useTheme();
-  console.log(lead);
+
+  const getTimeIconColor = () => {
+    if (isLeadOverdue(lead, status)) {
+      return theme.palette.error.main; 
+    }
+    if (status === 'Primeiro Contato' || status === 'Terceiro Contato') {
+      return theme.palette.warning.main; 
+    }
+    return theme.palette.text.secondary; 
+  };
+
   const getInitials = (name) => {
     if (!name) return '';
     const words = name.split(' ');
     const initials = words.map((word) => word[0]).join('');
-    return initials.slice(0, 2).toUpperCase(); // Pega as duas primeiras iniciais
+    return initials.slice(0, 2).toUpperCase();
   };
+
   const formatPhone = (phone) => {
     if (!phone) return 'N/A';
-
     const cleaned = phone.replace(/\D/g, '');
-
     if (cleaned.length === 11) {
       return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`;
     } else if (cleaned.length === 10) {
       return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`;
     }
-
     return phone;
   };
 
   const formatKwp = (kwp) => {
     if (!kwp) return 'N/A';
-
     return (
       parseFloat(kwp).toLocaleString('pt-BR', {
         minimumFractionDigits: 2,
@@ -35,6 +42,19 @@ const KanbanCard = ({ lead, handleLeadClick }) => {
       }) + ' kWp'
     );
   };
+
+  const pulseAnimation = keyframes`
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  `;
+
+  const overdueStyle = isLeadOverdue(lead, status)
+    ? {
+        animation: `${pulseAnimation} 1.5s infinite`,
+        color: theme.palette.error.main,
+      }
+    : {};
 
   return (
     <Paper
@@ -52,10 +72,17 @@ const KanbanCard = ({ lead, handleLeadClick }) => {
       }}
       onClick={() => handleLeadClick(lead)}
     >
-      <Box display="flex" justifyContent="center" flexDirection="column" alignItems="center">
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
         <Typography variant="p" fontWeight={600} color={theme.palette.text.primary}>
           {lead.name}
         </Typography>
+        <AccessTime
+          sx={{
+            fontSize: '1.2rem',
+            color: getTimeIconColor(),
+            ...overdueStyle,
+          }}
+        />
       </Box>
 
       <Box display="flex" alignItems="center" mt={1}>
@@ -95,43 +122,33 @@ const KanbanCard = ({ lead, handleLeadClick }) => {
         />
       </Box>
 
-      <Box display="flex" alignItems="center" mt={1} mb={1}>
-        <AccessTime sx={{ fontSize: '1rem', color: theme.palette.text.secondary, mr: 1 }} />
-        <Typography variant="body2" color={theme.palette.text.secondary}>
-          Criado em: {new Date(lead.created_at).toLocaleDateString('pt-BR')}
-        </Typography>
-      </Box>
       <Box display="flex" alignItems="center" gap={1} mt={2}>
         <Tooltip title={`Vendedor: ${lead.seller?.complete_name || 'N/A'}`} arrow>
-          <Box display="flex" alignItems="center">
-            <Avatar
-              sx={{
-                bgcolor: theme.palette.warning.main,
-                color: theme.palette.common.black,
-                width: 27,
-                height: 27,
-                fontSize: '0.75rem',
-              }}
-            >
-              {getInitials(lead.seller?.complete_name)}
-            </Avatar>
-          </Box>
+          <Avatar
+            sx={{
+              bgcolor: theme.palette.warning.main,
+              color: theme.palette.common.black,
+              width: 27,
+              height: 27,
+              fontSize: '0.75rem',
+            }}
+          >
+            {getInitials(lead.seller?.complete_name)}
+          </Avatar>
         </Tooltip>
 
         <Tooltip title={`SDR: ${lead.sdr?.complete_name || 'N/A'}`} arrow>
-          <Box display="flex" alignItems="center">
-            <Avatar
-              sx={{
-                bgcolor: theme.palette.warning.main,
-                color: theme.palette.common.black,
-                width: 27,
-                height: 27,
-                fontSize: '0.75rem',
-              }}
-            >
-              {getInitials(lead.sdr?.complete_name)}
-            </Avatar>
-          </Box>
+          <Avatar
+            sx={{
+              bgcolor: theme.palette.info.main,
+              color: theme.palette.common.black,
+              width: 27,
+              height: 27,
+              fontSize: '0.75rem',
+            }}
+          >
+            {getInitials(lead.sdr?.complete_name)}
+          </Avatar>
         </Tooltip>
       </Box>
     </Paper>
@@ -139,3 +156,4 @@ const KanbanCard = ({ lead, handleLeadClick }) => {
 };
 
 export default KanbanCard;
+
