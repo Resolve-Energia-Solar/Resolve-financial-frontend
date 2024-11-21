@@ -13,6 +13,14 @@ const projectService = {
         const response = await apiClient.get(`/api/projects/?sale=${id}`);
         return response.data
     },
+    generateProjectBySale: async (id) => {
+        const response = await apiClient.post(`/api/generate-projects/`, { sale_id: id });
+        return response.data
+    },
+    getPreviewGenerateProject: async (id) => {
+        const response = await apiClient.get(`/api/generate-projects/?sale_id=${id}`);
+        return response.data
+    },
     updateProject: async (id, data) => {
         const response = await apiClient.put(`/api/projects/${id}/`, data);
         return response.data;
