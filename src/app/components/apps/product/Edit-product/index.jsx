@@ -197,7 +197,7 @@ const EditProduct = ({ productId = null, onClosedModal = null, onRefresh = null 
                     <TableCell style={{ width: '40%' }}>
                       <AutoCompleteMaterial
                         name="material"
-                        value={material?.material?.id}
+                        value={material?.material_id}
                         onChange={(value) => handleMaterialChange(index, 'material_id', value)}
                         variant="outlined"
                         fullWidth

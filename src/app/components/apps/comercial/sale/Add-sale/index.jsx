@@ -149,18 +149,6 @@ const CreateSale = ({ onClosedModal = null, leadId = null, refresh }) => {
             {...(formErrors.status && { error: true, helperText: formErrors.status })}
           />
         </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <FormDate
-            label="Conclusão do Documento"
-            name="document_completion_date"
-            value={formData.documentCompletionDate}
-            onChange={(newValue) => handleChange('documentCompletionDate', newValue)}
-            {...(formErrors.document_completion_date && {
-              error: true,
-              helperText: formErrors.document_completion_date,
-            })}
-          />
-        </Grid>
         <Grid item xs={12} sm={12} lg={12}>
           <CustomFormLabel>Venda</CustomFormLabel>
           <FormControlLabel
