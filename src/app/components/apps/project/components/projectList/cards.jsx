@@ -28,6 +28,12 @@ import CheckListRateio from '../../../checklist/Checklist-list';
 import Attachments from '@/app/components/shared/Attachments';
 import documentTypeService from '@/services/documentTypeService';
 
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import InfoIcon from '@mui/icons-material/Info';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import CategoryIcon from '@mui/icons-material/Category';
+
 const CONTEXT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
 const ProjectListCards = ({ saleId = null }) => {
@@ -36,6 +42,7 @@ const ProjectListCards = ({ saleId = null }) => {
   const [loading, setLoading] = useState(true);
   const [loadingGenerate, setLoadingGenerate] = useState(false);
   const [responseGenerateError, setResponseGenerateError] = useState(null);
+  const [responsePreviewGenerate, setResponsePreviewGenerate] = useState(null);
 
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
@@ -79,6 +86,16 @@ const ProjectListCards = ({ saleId = null }) => {
       }
     };
     fetchData();
+
+    const fetchPreviewGenerateProject = async () => {
+      try {
+        const response = await projectService.getPreviewGenerateProject(saleId);
+        setResponsePreviewGenerate(response);
+      } catch (error) {
+        console.log('Error: ', error);
+      }
+    };
+    fetchPreviewGenerateProject();
   }, [refresh]);
 
   useEffect(() => {
@@ -219,34 +236,166 @@ const ProjectListCards = ({ saleId = null }) => {
         </Box>
       </Grid>
 
-      <Dialog
-        open={createModalOpen}
-        onClose={closeGenerateModal}
-        maxWidth="md"
-        fullWidth
-      >
+      <Dialog open={createModalOpen} onClose={closeGenerateModal} maxWidth="md" fullWidth>
         <DialogContent>
-          <Alert severity="info">
+          <Alert severity="info" sx={{ mb: 2 }}>
             O projeto será gerado automaticamente com base nos Produtos da Venda.
           </Alert>
-          {responseGenerateError && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {responseGenerateError}
-            </Alert>
+
+          {/* Lista de pendentes para geração */}
+          {responsePreviewGenerate?.pending_generation?.length > 0 && (
+            <>
+              <Typography variant="h6" gutterBottom color="warning.main">
+                Pendentes de Geração:
+              </Typography>
+              {responsePreviewGenerate.pending_generation.map((product) => (
+                <Card
+                  key={product.product_id}
+                  variant="h5"
+                  sx={{
+                    mb: 2,
+                    p: 2,
+                    backgroundColor: theme.palette.warning.light,
+                    borderLeft: `5px solid ${theme.palette.warning.main}`,
+                  }}
+                >
+                  <CardContent>
+                    <Typography
+                      variant="h5"
+                      fontWeight="bold"
+                      gutterBottom
+                      sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                    >
+                      <CategoryIcon color="primary" />
+                      {product?.product_name ?? 'Produto não especificado'}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="textSecondary"
+                      sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                    >
+                      <InfoIcon color="info" />
+                      <strong>Quantidade:</strong> {product?.amount ?? 'N/A'}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="textSecondary"
+                      sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                    >
+                      <AttachMoneyIcon color="success" />
+                      <strong>Valor:</strong> R$ {product?.value?.toFixed(2) ?? 'N/A'}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="textSecondary"
+                      sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                    >
+                      <AttachMoneyIcon color="info" />
+                      <strong>Valor de Referência:</strong> R${' '}
+                      {product?.reference_value?.toFixed(2) ?? 'N/A'}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="textSecondary"
+                      sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                    >
+                      <AttachMoneyIcon color="error" />
+                      <strong>Custo:</strong> R$ {product?.cost_value?.toFixed(2) ?? 'N/A'}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              ))}
+            </>
           )}
+
+          {/* Lista de já gerados */}
+          {responsePreviewGenerate?.already_generated?.length > 0 && (
+            <>
+              <Typography variant="h6" gutterBottom color="success.main">
+                Já Gerados:
+              </Typography>
+              {responsePreviewGenerate.already_generated.map((product) => (
+                <Card
+                  key={product.product_id}
+                  variant="h5"
+                  sx={{
+                    mb: 2,
+                    p: 2,
+                    backgroundColor: theme.palette.success.light,
+                    borderLeft: `5px solid ${theme.palette.success.main}`,
+                  }}
+                >
+                  <CardContent>
+                    <Typography
+                      variant="h5"
+                      fontWeight="bold"
+                      gutterBottom
+                      sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                    >
+                      <CategoryIcon color="primary" />
+                      {product?.product_name ?? 'Produto não especificado'}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="textSecondary"
+                      sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                    >
+                      <InfoIcon color="info" />
+                      <strong>Quantidade:</strong> {product?.amount ?? 'N/A'}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="textSecondary"
+                      sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                    >
+                      <AttachMoneyIcon color="success" />
+                      <strong>Valor:</strong> R$ {product?.value?.toFixed(2) ?? 'N/A'}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="textSecondary"
+                      sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                    >
+                      <AttachMoneyIcon color="info" />
+                      <strong>Valor de Referência:</strong> R${' '}
+                      {product?.reference_value?.toFixed(2) ?? 'N/A'}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="textSecondary"
+                      sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                    >
+                      <AttachMoneyIcon color="error" />
+                      <strong>Custo:</strong> R$ {product?.cost_value?.toFixed(2) ?? 'N/A'}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              ))}
+            </>
+          )}
+
+          {/* Caso não haja itens para exibir */}
+          {responsePreviewGenerate?.pending_generation?.length === 0 &&
+            responsePreviewGenerate?.already_generated?.length === 0 && (
+              <Typography variant="body2" color="textSecondary">
+                Nenhum produto disponível para exibição.
+              </Typography>
+            )}
         </DialogContent>
         <DialogActions>
           <Button onClick={closeGenerateModal} color="secondary">
             Cancelar
           </Button>
-          <Button
-            onClick={fetchGenerateProject}
-            color="primary"
-            disabled={loadingGenerate}
-            endIcon={loadingGenerate ? <CircularProgress size={20} color="inherit" /> : null}
-          >
-            Gerar Projeto
-          </Button>
+          {responsePreviewGenerate?.pending_generation?.length > 0 && (
+            <Button
+              onClick={fetchGenerateProject}
+              color="primary"
+              disabled={loadingGenerate}
+              endIcon={loadingGenerate ? <CircularProgress size={20} color="inherit" /> : null}
+            >
+              Gerar Projetos
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </Grid>
