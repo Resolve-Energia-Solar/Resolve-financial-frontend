@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import requestConcessionaireService from "@/services/requestConcessionaireService"
-import unitService from "@/services/unitService";
+import situationEnergyService from "@/services/situationEnergyService"
 import {
   Table,
   TableBody,
@@ -17,160 +17,15 @@ import {
   TextField,
   Button,
   MenuItem,
+  Box,
+  Autocomplete,
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import Loading from "@/app/loading";
+import { LoadingButton } from "@mui/lab";
 
-const requestsType = [
-  {
-    id: 1,
-    name: "Vistoria Final",
-  },
-  {
-    id: 1,
-    name: "Parecer de acesso",
-  },
-];
-
-const data = [
-  {
-    id: 1,
-    project: {
-      id: 1,
-      project_number: "12254",
-      sale: {
-        customer: {
-          id: 1,
-          name: "John Doe",
-          email: "mynbi@example.com",
-          contract_number: "RES00005",
-        },
-      },
-    },
-    branch: {
-      id: 1,
-      address: {
-        id: 1,
-        zipcode: "66690720",
-        rua: "Manaus",
-        bairro: "aguas",
-        localidade: "ananindeua",
-        estado: "Rio de Janeiro",
-        pais: "Brasil",
-      },
-    },
-    type: {
-      id: 1,
-      name: "Vistorial Equatorial",
-      descricao: "Vistorial Equatorial",
-      deadline: 7,
-    },
-    request_date: "2024-11-12",
-    due_date: "2024-11-12",
-    status: "Solicitado",
-    situation: [
-      { id: 1, name: "Projeto errado" },
-      { id: 2, name: "Projeto errado" },
-    ],
-    request_id: "",
-    completed_at: "2024-11-12",
-    protocol_one: "56565658",
-    protocol_two: "3475637845",
-    user: { id: 1, name: "Max Oliveira" },
-  },
-  {
-    id: 2,
-    project: {
-      id: 1,
-      project_number: "12254",
-      sale: {
-        customer: {
-          id: 1,
-          name: "John Doe",
-          email: "mynbi@example.com",
-          contract_number: "RES00005",
-        },
-      },
-    },
-    branch: {
-      id: 1,
-      address: {
-        id: 1,
-        zipcode: "66690720",
-        rua: "Manaus",
-        bairro: "aguas",
-        localidade: "ananindeua",
-        estado: "Rio de Janeiro",
-        pais: "Brasil",
-      },
-    },
-    type: {
-      id: 1,
-      name: "Vistorial Equatorial",
-      descricao: "Vistorial Equatorial",
-      deadline: 7,
-    },
-    request_date: "2024-11-12",
-    due_date: "2024-11-12",
-    status: "Solicitado",
-    situation: [
-      { id: 1, name: "Projeto errado" },
-      { id: 2, name: "Projeto errado" },
-    ],
-    request_id: "",
-    completed_at: "2024-11-12",
-    protocol_one: "",
-    protocol_two: "",
-    user: { id: 1, name: "Max Oliveira" },
-  },
-  {
-    id: 3,
-    project: {
-      id: 1,
-      project_number: "7545",
-      sale: {
-        customer: {
-          id: 1,
-          name: "John Doe",
-          email: "mynbi@example.com",
-          contract_number: "RES00005",
-        },
-      },
-    },
-    branch: {
-      id: 1,
-      address: {
-        id: 1,
-        zipcode: "66690720",
-        rua: "Manaus",
-        bairro: "aguas",
-        localidade: "ananindeua",
-        estado: "Rio de Janeiro",
-        pais: "Brasil",
-      },
-    },
-    type: {
-      id: 1,
-      name: "Vistorial Equatorial",
-      descricao: "Vistorial Equatorial",
-      deadline: 7,
-    },
-    request_date: "2024-11-12",
-    due_date: "2024-11-12",
-    status: "Solicitado",
-    situation: [
-      { id: 1, name: "Projeto errado" },
-      { id: 2, name: "Projeto errado" },
-    ],
-    request_id: "",
-    completed_at: "2024-11-12",
-    protocol_one: "",
-    protocol_two: "",
-    user: { id: 1, name: "Max Oliveira" },
-  },
-];
 
 const RequestCE = () => {
 
@@ -178,13 +33,28 @@ const RequestCE = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState();
+  const [selectedValues, setSelectedValues] = useState([]);
+  const [situationOptions, setSituationOptions] = useState([])
 
   const handleRowClick = (item) => {
     setSelectedItem(item);
     setFormData(item);
     setIsEditing(false);
     setIsDrawerOpen(true);
+    fetchSituations()
+
   };
+
+
+  const fetchSituations = async () => {
+    try {
+      const situationData = await situationEnergyService.index();
+      setSituationOptions(situationData.results)
+      setSelectedValues(situationData.results);
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+    }
+  }
 
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
@@ -219,12 +89,12 @@ const RequestCE = () => {
     const fetchData = async () => {
       try {
         const requestConceData = await requestConcessionaireService.index();
-        console.log('asdasdasd',requestConceData);
+        console.log('asdasdasd', requestConceData);
 
 
         setLoad(true)
         setRequestData(requestConceData.results)
-        
+
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       }
@@ -233,10 +103,14 @@ const RequestCE = () => {
   }, [])
 
 
+  const handleChangeSituation = (event, newValue) => {
+    const values = newValue.map((option) => option.id);
+    setSelectedValues(newValue);
+    handleInputChange({ target: { name: 'situation', value: values } })
+  };
 
   return (
     <div >
-
       {
         (load) ? <TableContainer component={Paper}>
           <Table>
@@ -262,8 +136,8 @@ const RequestCE = () => {
                 <TableRow key={item.id} onClick={() => handleRowClick(item)}>
                   <TableCell>{item.id}</TableCell>
                   <TableCell>{`${item.project.project_number} - ${item.project.sale?.customer?.name}`}</TableCell>
-                  <TableCell>
-                    {`${item.branch?.address?.zipcode}, | ${item.branch?.address.localidade}, - ${item.branch?.address.rua}, - ${item.branch?.address?.bairro}`}
+                  <TableCell width={'100%'}>
+                    {`${item.unit?.address?.zip_code}, ${item.unit?.address.street}, ${item.unit?.address.neighborhood}, ${item.unit?.address?.city} - ${item.unit?.address?.state},  ${item.unit?.address.number}`}
                   </TableCell>
                   <TableCell>{item.type.name}</TableCell>
                   <TableCell>
@@ -272,9 +146,9 @@ const RequestCE = () => {
                     ))}
                   </TableCell>
                   <TableCell>{item.request_date}</TableCell>
-                  <TableCell>{item.completed_at}</TableCell>
+                  <TableCell>{item.conclusion_date}</TableCell>
                   <TableCell>
-                    {due_date(item.completed_at, item.type.deadline)}
+                    {due_date(item.conclusion_date, item.type.deadline)}
                   </TableCell>
                   <TableCell>{item.protocol_one}</TableCell>
                   <TableCell>{item.protocol_two}</TableCell>
@@ -295,7 +169,7 @@ const RequestCE = () => {
 
       {/* Drawer para o painel de detalhes */}
       <Drawer anchor="right" open={isDrawerOpen} onClose={handleCloseDrawer}>
-        {selectedItem && (
+        {selectedItem && situationOptions.length > 0 ? (
           <div style={{ width: 400, padding: "20px" }}>
             <Typography variant="h6" gutterBottom>
               {isEditing ? "Editar Item" : "Detalhes do Item"}
@@ -304,17 +178,19 @@ const RequestCE = () => {
             <TextField
               label="Endereço"
               name="address_id"
-              value={`${formData.branch?.address.zipcode} | ${formData.branch?.address.localidade} - ${formData.branch?.address.rua} - ${formData.branch?.address.bairro}`}
+              value={formData.unit.id}
               onChange={handleInputChange}
               fullWidth
+              select
               margin="normal"
               disabled
-            />
+            >
 
+            </TextField>
             <TextField
-              label="Tipo da Solicitação"
-              name="type_id"
-              value={`${formData.project.project_number} - ${formData.project.sale?.customer?.name}`}
+              label="Projeto"
+              name="project"
+              value={formData.project.id}
               onChange={handleInputChange}
               fullWidth
               margin="normal"
@@ -356,7 +232,7 @@ const RequestCE = () => {
               label="Data de Conclusão"
               name="price"
               type="date"
-              value={formData.completed_at}
+              value={formData.conclusion_date}
               onChange={handleInputChange}
               fullWidth
               margin="normal"
@@ -388,28 +264,26 @@ const RequestCE = () => {
               name="status"
               type="text"
               value={formData.status}
+              onChange={handleInputChange}
               fullWidth
               margin="normal"
               disabled={!isEditing}
             >
-              <MenuItem value="Deferido">Deferido</MenuItem>
-              <MenuItem value="Indeferido">Indeferido</MenuItem>
-              <MenuItem value="Solicitado">Solicitado</MenuItem>
+              <MenuItem value="D">Deferido</MenuItem>
+              <MenuItem value="I">Indeferido</MenuItem>
+              <MenuItem value="S">Solicitado</MenuItem>
             </TextField>
-            <TextField
-              label="Status"
-              select
-              name="situation_id"
-              type="text"
-              value={formData.status}
-              fullWidth
-              margin="normal"
+            <Autocomplete
+              multiple
+              options={situationOptions}
+              getOptionLabel={(option) => option.name}
+              value={selectedValues}
+              onChange={handleChangeSituation}
               disabled={!isEditing}
-            >
-              <MenuItem value="Deferido">Deferido</MenuItem>
-              <MenuItem value="Indeferido">Indeferido</MenuItem>
-              <MenuItem value="Solicitado">Solicitado</MenuItem>
-            </TextField>
+              renderInput={(params) => (
+                <TextField {...params} label="Selecione opções" variant="outlined" />
+              )}
+            />
             <TextField
               label="Solicitante"
               type="text"
@@ -418,7 +292,7 @@ const RequestCE = () => {
               margin="normal"
               disabled
             />
-            <div style={{ marginTop: "20px" }}>
+            <Box mt={4} >
               <Button
                 variant="contained"
                 color={isEditing ? "secondary" : "primary"}
@@ -428,9 +302,9 @@ const RequestCE = () => {
               >
                 {isEditing ? "Salvar" : "Editar"}
               </Button>
-            </div>
+            </Box>
           </div>
-        )}
+        ) : <Loading />}
       </Drawer>
     </div>
   );
