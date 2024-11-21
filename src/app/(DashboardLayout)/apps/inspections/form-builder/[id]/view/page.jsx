@@ -1,8 +1,8 @@
 'use client';
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "next/navigation";
 
-import { Box, Button, Chip, Divider, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Chip, Divider, FormControl, Grid, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
 
 import Breadcrumb from "@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb";
 import fbOptions from "@/app/components/apps/inspections/form-builder/fbOptions";
@@ -12,13 +12,10 @@ import PageContainer from "@/app/components/container/PageContainer";
 import useFormBuilder from "@/hooks/inspections/form-builder/useFormBuilder";
 import useFormBuilderForm from "@/hooks/inspections/form-builder/useFormBuilderForm";
 import ParentCard from "@/app/components/shared/ParentCard";
-import { formatDate, formatDateTime } from "@/utils/inspectionFormatDate";
+import { formatDateTime } from "@/utils/inspectionFormatDate";
 import Logo from "@/app/(DashboardLayout)/layout/shared/logo/Logo";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
 import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
-import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
 import FormDateTime from "@/app/components/forms/form-custom/FormDateTime";
 import FormTimePicker from "@/app/components/forms/form-custom/FormTimePicker";
 
@@ -30,16 +27,23 @@ const FormBuilderView = () => {
 
   const {
     formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success,
   } = useFormBuilderForm(formBuilderData, id);
 
   const optionsFB = fbOptions;
 
+  const [formDataSend, setFormDataSend] = useState({});
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormDataSend((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = (event) => {
-    console.log('Formulário enviado');
+    event.preventDefault();
+    console.log('Formulário enviado', formDataSend);
   };
 
   const BCrumb = [
@@ -133,9 +137,10 @@ const FormBuilderView = () => {
                   case 'number':
                     return (
                       <Grid item xs={12} sm={12} lg={6} key={campo.id}>
-                        <CustomFormLabel htmlFor={campo.label}>{campo.label}</CustomFormLabel>
+                        <CustomFormLabel htmlFor={`${campo.type}-${campo.id}`}>{campo.label}</CustomFormLabel>
                         <TextField
-                          name={campo.label}
+                          id={`${campo.type}-${campo.id}`}
+                          name={`${campo.type}-${campo.id}`}
                           fullWidth
                           required={campo.required}
                           placeholder={campo.placeholder}
@@ -144,9 +149,11 @@ const FormBuilderView = () => {
                           rows={campo.type === 'ariaText' ? 4 : 1}
                           variant="outlined"
                           helperText={campo.description}
+                          value={formDataSend[`${campo.type}-${campo.id}`] || ''}
                           InputProps={{
                             'aria-label': campo.description,
                           }}
+                          onChange={handleChange}
                         />
                       </Grid>
                     );
@@ -154,13 +161,15 @@ const FormBuilderView = () => {
                     return (
                       <Grid item xs={12} sm={12} lg={6} key={campo.id}>
                         <FormControl fullWidth required={campo.required} variant="outlined">
-                          <CustomFormLabel htmlFor={campo.label} sx={{ mt: 0 }}>
+                          <CustomFormLabel htmlFor={`${campo.type}-${campo.id}`} sx={{ mt: 0 }}>
                             {campo.label}
                           </CustomFormLabel>
                           <CustomSelect
-                            id={campo.label}
-                            name={campo.label}
+                            id={`${campo.type}-${campo.id}`}
+                            name={`${campo.type}-${campo.id}`}
                             variant="outlined"
+                            value={formDataSend[`${campo.type}-${campo.id}`] || ''}
+                            onChange={handleChange}
                           >
                             {campo.options.map(option => (
                               <MenuItem key={option.id} value={option.value}>
@@ -176,8 +185,9 @@ const FormBuilderView = () => {
                       <Grid item xs={12} sm={12} lg={6} key={campo.id}>
                         <FormDateTime
                           label={campo.label}
-                          name={campo.label}
-                          onChange={() => {}}
+                          name={`${campo.type}-${campo.id}`}
+                          value={formDataSend[`${campo.type}-${campo.id}`] || null}
+                          onChange={(time) => setFormDataSend((prev) => ({ ...prev, [`${campo.type}-${campo.id}`]: time }))}
                         />
                       </Grid>
                     );
@@ -186,16 +196,17 @@ const FormBuilderView = () => {
                       <Grid item xs={12} sm={12} lg={6} key={campo.id}>
                         <FormTimePicker
                           label={campo.label}
-                          name={campo.label}
+                          name={`${campo.type}-${campo.id}`}
                           helperText={campo.description}
-                          onChange={() => {}}
+                          value={formDataSend[`${campo.type}-${campo.id}`] || null}
+                          onChange={(time) => setFormDataSend((prev) => ({ ...prev, [`${campo.type}-${campo.id}`]: time }))}
                         />
                       </Grid>
                     );
                   case 'file':
                     return (
                       <Grid item xs={12} sm={12} lg={6} key={campo.id}>
-                        <CustomFormLabel htmlFor={campo.label}>{campo.label}</CustomFormLabel>
+                        <CustomFormLabel htmlFor={`${campo.type}-${campo.id}`}>{campo.label}</CustomFormLabel>
                         <Stack direction="row" spacing={2} alignItems="center" sx={{ border: '1px solid #ccc', borderRadius: '4px', padding: '10px' }}>
                           <Button
                             variant="contained"
@@ -203,20 +214,19 @@ const FormBuilderView = () => {
                             color="primary"
                             sx={{ flexShrink: 0 }}
                           >
-                            {campo.file ? 'Alterar' : 'Selecionar'}
+                            {formDataSend[`${campo.type}-${campo.id}`] ? 'Alterar' : 'Selecionar'}
                             <input
                               type="file"
                               onChange={(event) => {
                                 const file = event.target.files[0];
+                                setFormDataSend((prev) => ({ ...prev, [`${campo.type}-${campo.id}`]: file }));
                               }}
                               hidden
                             />
                           </Button>
                           <div style={{ flexGrow: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                            {campo.file ? (
-                              <strong>{campo.file.name}</strong>
-                            ) : formData.banner ? (
-                              <strong>{formData.banner.name || formData.banner}</strong>
+                            {formDataSend[`${campo.type}-${campo.id}`] ? (
+                              <strong>{formDataSend[`${campo.type}-${campo.id}`].name}</strong>
                             ) : (
                               <span>Nenhum banner selecionado</span>
                             )}
