@@ -1,7 +1,8 @@
 'use client';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import { Alert, Button, Grid, } from '@mui/material';
+import { Alert, Button, Grid, MenuItem, } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -64,6 +65,20 @@ const FBSelectType = ({ onChange, field }) => {
         value={field.description}
         onChange={(e) => handleChange(e, field.id)}
       />
+      <Grid item xs={12}>
+        <CustomFormLabel htmlFor={`field_label_${field.id}`}>Multi Campo?</CustomFormLabel>
+        <CustomSelect
+          id={`field_label_${field.id}`}
+          name="multiple"
+          value={field.multiple}
+          onChange={(e) => handleChange(e, field.id)}
+          fullWidth
+          variant="outlined"
+        >
+          <MenuItem value={true}>Sim</MenuItem>
+          <MenuItem value={false}>Não</MenuItem>
+        </CustomSelect>
+      </Grid>
       <Grid item xs={12} sm={12} lg={12} marginTop={2}>
         <Alert severity="info">
           Opções do Campo

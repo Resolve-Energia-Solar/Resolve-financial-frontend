@@ -45,6 +45,7 @@ const FormBuilderForm = () => {
       placeholder: '',
       type: 'text',
       required: false,
+      multiple: false,
       options: [],
     };
     setFields([...fields, newFields]);
@@ -65,11 +66,6 @@ const FormBuilderForm = () => {
 
   const handleClearFields = () => {
     setFields([]);
-  };
-
-  const handleSubmit = () => {
-    const formJSON = JSON.stringify(fields);
-    console.log(formJSON);
   };
 
   const {

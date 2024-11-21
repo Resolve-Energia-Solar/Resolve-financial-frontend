@@ -158,6 +158,31 @@ const FormBuilderView = () => {
                       </Grid>
                     );
                   case 'select':
+                    if (campo.multiple) {
+                      return (
+                        <Grid item xs={12} sm={12} lg={6} key={campo.id}>
+                          <FormControl fullWidth required={campo.required} variant="outlined">
+                            <CustomFormLabel htmlFor={`${campo.type}-${campo.id}`} sx={{ mt: 0 }}>
+                              {campo.label}
+                            </CustomFormLabel>
+                            <CustomSelect
+                              id={`${campo.type}-${campo.id}`}
+                              name={`${campo.type}-${campo.id}`}
+                              variant="outlined"
+                              value={formDataSend[`${campo.type}-${campo.id}`] || []}
+                              onChange={handleChange}
+                              multiple
+                            >
+                              {campo.options.map(option => (
+                                <MenuItem key={option.id} value={option.value}>
+                                  {option.label}
+                                </MenuItem>
+                              ))}
+                            </CustomSelect>
+                          </FormControl>
+                        </Grid>
+                      );
+                    }
                     return (
                       <Grid item xs={12} sm={12} lg={6} key={campo.id}>
                         <FormControl fullWidth required={campo.required} variant="outlined">
