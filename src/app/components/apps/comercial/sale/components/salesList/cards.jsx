@@ -34,9 +34,12 @@ import { KanbanDataContext } from '@/app/context/kanbancontext';
 import SkeletonCard from '@/app/components/apps/project/components/SkeletonCard';
 import Contract from '@/app/components/templates/ContractPreview';
 import axios from 'axios';
+import leadService from '@/services/leadService';
 
 const SaleListCards = ({ leadId = null }) => {
   const theme = useTheme();
+
+  console.log('leadId: ', leadId);
 
   const [salesList, setSalesList] = useState([]);
   const [selectedSaleId, setSelectedSaleId] = useState(null);
@@ -173,8 +176,8 @@ const SaleListCards = ({ leadId = null }) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await saleService.getSaleByLead(leadId);
-        setSalesList(response.results);
+        const response = await leadService.getAllSalesByLead(leadId);
+        setSalesList(response || []);
       } catch (error) {
         console.log('Error: ', error);
       } finally {
@@ -196,7 +199,7 @@ const SaleListCards = ({ leadId = null }) => {
             </Typography>
           </Grid>
         ) : (
-          salesList.map((sale) => (
+          salesList?.sales.map((sale) => (
             <Card
               key={sale.id}
               variant="outlined"
@@ -213,7 +216,7 @@ const SaleListCards = ({ leadId = null }) => {
                 <Box display="flex" alignItems="center" mb={1}>
                   <PersonIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
                   <Typography variant="h6" gutterBottom>
-                    Cliente: {sale.customer?.complete_name || 'N/A'}
+                    Cliente: {salesList.customer?.complete_name || 'N/A'}
                   </Typography>
                 </Box>
 
@@ -317,7 +320,7 @@ const SaleListCards = ({ leadId = null }) => {
             overflowY: 'auto',
           }}
         >
-          <EditSalePage saleId={selectedSaleId} onClosedModal={() => setEditModalOpen(false)} />
+          <EditSalePage saleId={selectedSaleId} onClosedModal={() => setEditModalOpen(false)} refresh={handleRefresh} />
         </DialogContent>
       </Dialog>
 

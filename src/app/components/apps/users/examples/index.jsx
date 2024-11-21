@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
-import UserList from '@/app/components/apps/users/UserList';
+import UserList from '@/app/components/apps/users/examples/UserList';
 import { Fade } from '@mui/material';
 
 const UserApp = () => {

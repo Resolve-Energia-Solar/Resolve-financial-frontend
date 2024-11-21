@@ -141,6 +141,8 @@ const ProductCard = ({ sale = null }) => {
 
   const handleDeleteClick = (id) => {
     setDeleteProductId(id);
+    setInitialProductIds((prevIds) => prevIds.filter((productId) => productId !== id));
+    setSelectedProductIds((prevIds) => prevIds.filter((productId) => productId !== id));
     setDeleteModalOpen(true);
   };
 
