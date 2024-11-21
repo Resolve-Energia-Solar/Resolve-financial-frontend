@@ -36,10 +36,10 @@ import Contract from '@/app/components/templates/ContractPreview';
 import axios from 'axios';
 import leadService from '@/services/leadService';
 
-const SaleListCards = ({ leadId = null }) => {
+const SaleListCards = ({ leadId, lead }) => {
   const theme = useTheme();
 
-  console.log('leadId: ', leadId);
+  console.log('leadId: ', lead);
 
   const [salesList, setSalesList] = useState([]);
   const [selectedSaleId, setSelectedSaleId] = useState(null);
@@ -58,13 +58,12 @@ const SaleListCards = ({ leadId = null }) => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('info');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-
+  console.log('salesList: ', salesList);
   const { idSaleSuccess, setIdSaleSuccess } = useContext(KanbanDataContext);
 
   const handleEditClick = (id) => {
     setSelectedSaleId(id);
     setEditModalOpen(true);
-    console.log('Edit Sale ID: ', id);
   };
 
   const handleDetailClick = (id) => {
@@ -80,21 +79,46 @@ const SaleListCards = ({ leadId = null }) => {
     setRefresh(!refresh);
   };
 
-  const handleOpen = (sale) => {
-    setCurrentSale(sale);
-    setOpen(true);
+  const handleOpen = async (saleId) => {
+    try {
+      const sale = await saleService.getSaleById(saleId);
+
+      setCurrentSale(sale);
+
+      setOpen(true);
+    } catch (error) {
+      console.error('Erro ao buscar dados da venda:', error.message);
+    }
   };
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const handleSendContract = async (sale) => {
-    console.log('Enviando contrato:', sale);
-    setSendingContractId(sale.id);
+  const handleSendContract = async (saleId) => {
+    setSendingContractId(saleId);
     setIsSendingContract(true);
 
     try {
+      const sale = await saleService.getSaleById(saleId);
+      console.log('Dados da venda:', sale);
+
+      const missingFields = [];
+      if (!sale?.customer?.complete_name) missingFields.push('Nome Completo');
+      if (!sale?.customer?.email) missingFields.push('Email');
+      if (!sale?.customer?.first_document) missingFields.push('Documento');
+      if (!sale?.customer?.birth_date) missingFields.push('Data de Nascimento');
+      if (!sale?.customer?.phone_numbers?.[0]?.phone_number) missingFields.push('Telefone');
+
+      if (missingFields.length > 0) {
+        setSnackbarMessage(
+          `Os seguintes campos obrigatórios estão faltando: ${missingFields.join(', ')}`,
+        );
+        setSnackbarSeverity('warning');
+        setSnackbarOpen(true);
+        return;
+      }
+
       const documentData = {
         Address: sale.customer_address || 'Endereço Fictício',
         Phone: sale?.customer?.phone_numbers[0]?.phone_number || 'Telefone Fictício',
@@ -156,7 +180,7 @@ const SaleListCards = ({ leadId = null }) => {
       setSnackbarSeverity('success');
     } catch (error) {
       console.error('Erro ao enviar contrato:', error.message);
-      setSnackbarMessage('Erro ao enviar contrato.');
+      setSnackbarMessage(`Erro ao enviar contrato: ${error.message}`);
       setSnackbarSeverity('error');
     } finally {
       setSnackbarOpen(true);
@@ -264,7 +288,7 @@ const SaleListCards = ({ leadId = null }) => {
                   <Tooltip title="Preview do Contrato">
                     <IconButton
                       color="primary"
-                      onClick={() => handleOpen(sale)}
+                      onClick={() => handleOpen(sale.id)}
                       sx={{
                         borderRadius: '8px',
                         padding: '8px',
@@ -277,7 +301,7 @@ const SaleListCards = ({ leadId = null }) => {
                   <Tooltip title="Enviar Contrato">
                     <IconButton
                       color="primary"
-                      onClick={() => handleSendContract(sale)}
+                      onClick={() => handleSendContract(sale.id)}
                       disabled={sendingContractId === sale.id}
                       sx={{
                         borderRadius: '8px',
@@ -320,7 +344,11 @@ const SaleListCards = ({ leadId = null }) => {
             overflowY: 'auto',
           }}
         >
-          <EditSalePage saleId={selectedSaleId} onClosedModal={() => setEditModalOpen(false)} refresh={handleRefresh} />
+          <EditSalePage
+            saleId={selectedSaleId}
+            onClosedModal={() => setEditModalOpen(false)}
+            refresh={handleRefresh}
+          />
         </DialogContent>
       </Dialog>
 
@@ -349,7 +377,11 @@ const SaleListCards = ({ leadId = null }) => {
       >
         <DialogTitle>Nova Venda</DialogTitle>
         <DialogContent>
-          <CreateSale onClosedModal={() => setCreateModalOpen(false)} leadId={leadId} refresh={handleRefresh} />
+          <CreateSale
+            onClosedModal={() => setCreateModalOpen(false)}
+            leadId={leadId}
+            refresh={handleRefresh}
+          />
         </DialogContent>
       </Dialog>
 
@@ -404,11 +436,20 @@ const SaleListCards = ({ leadId = null }) => {
       </Modal>
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={4000}
+        autoHideDuration={6000}
         onClose={() => setSnackbarOpen(false)}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert severity={snackbarMessage.includes('Erro') ? 'error' : 'success'}>
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={
+            snackbarMessage.includes('Erro')
+              ? 'error'
+              : snackbarMessage.includes('sucesso')
+              ? 'success'
+              : 'warning'
+          }
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>

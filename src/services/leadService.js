@@ -16,7 +16,7 @@ const leadService = {
   },
   getAllSalesByLead: async leadId => {
     try {
-      const response = await apiClient.get(`/api/leads/${leadId}/?fields=sales,customer`)
+      const response = await apiClient.get(`/api/leads/${leadId}/`)
       return response.data
     } catch (error) {
       console.error('Erro ao buscar vendas do lead:', error)
