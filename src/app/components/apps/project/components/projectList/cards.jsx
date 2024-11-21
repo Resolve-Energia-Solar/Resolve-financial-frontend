@@ -9,6 +9,11 @@ import {
   IconButton,
   Tooltip,
   useTheme,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
@@ -16,7 +21,7 @@ import StatusIcon from '@mui/icons-material/AssignmentTurnedIn';
 import DescriptionIcon from '@mui/icons-material/Description';
 import StatusChip from '../../../proposal/components/ProposalStatusChip';
 import projectService from '@/services/projectService';
-import { CallToAction, FlashAuto, SolarPower } from '@mui/icons-material';
+import { Add, CallToAction, FlashAuto, SolarPower } from '@mui/icons-material';
 import SkeletonCard from '../SkeletonCard';
 import CustomAccordion from '@/app/components/apps/project/components/CustomAccordion';
 import CheckListRateio from '../../../checklist/Checklist-list';
@@ -25,16 +30,22 @@ import documentTypeService from '@/services/documentTypeService';
 
 const CONTEXT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
-
 const ProjectListCards = ({ saleId = null }) => {
   const theme = useTheme();
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingGenerate, setLoadingGenerate] = useState(false);
+  const [responseGenerateError, setResponseGenerateError] = useState(null);
 
-  console.log('CONTEXT_TYPE_PROJECT_ID: ', CONTEXT_TYPE_PROJECT_ID);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
 
   const [documentTypes, setDocumentTypes] = useState([]);
 
+  const [refresh, setRefresh] = useState(false);
+
+  const refreshList = () => {
+    setRefresh(!refresh);
+  };
 
   const handleEditClick = (id) => {
     setSelectedProjectId(id);
@@ -50,6 +61,11 @@ const ProjectListCards = ({ saleId = null }) => {
     setCreateModalOpen(true);
   };
 
+  const closeGenerateModal = () => {
+    setCreateModalOpen(false);
+    setResponseGenerateError(null);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -63,7 +79,7 @@ const ProjectListCards = ({ saleId = null }) => {
       }
     };
     fetchData();
-  }, [saleId]);
+  }, [refresh]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,10 +94,22 @@ const ProjectListCards = ({ saleId = null }) => {
     fetchData();
   }, []);
 
+  const fetchGenerateProject = async () => {
+    setLoadingGenerate(true);
+    try {
+      const response = await projectService.generateProjectBySale(saleId);
+      refreshList();
+      setCreateModalOpen(false);
+    } catch (error) {
+      setResponseGenerateError(error?.response?.data?.message);
+    } finally {
+      setLoadingGenerate(false);
+    }
+  };
 
   return (
     <Grid container spacing={2} mt={2}>
-      <Grid item xs={12}>
+      <Grid item xs={8}>
         {loading ? (
           Array.from({ length: 3 }).map((_, index) => <SkeletonCard key={index} />)
         ) : projectsList.length === 0 ? (
@@ -105,38 +133,37 @@ const ProjectListCards = ({ saleId = null }) => {
               }}
             >
               <CardContent>
-              <CustomAccordion title="Informações Adicionais" defaultExpanded>
-
-                <Box display="flex" alignItems="center" mb={1}>
-                  <PersonIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
-                  <Typography variant="h6" gutterBottom>
-                    Projetista: {project?.designer?.complete_name || 'N/A'}
-                  </Typography>
-                </Box>
-                <Box display="flex" alignItems="center" mb={1}>
-                  <SolarPower sx={{ color: theme.palette.secondary.main, mr: 1 }} />
-                  <Typography variant="h6" gutterBottom>
-                    Quantidade Modulos: {project?.solar_energy_kit?.modules_amount || 'N/A'}
-                  </Typography>
-                </Box>
-                <Box display="flex" alignItems="center" mb={1}>
-                  <CallToAction sx={{ color: theme.palette.secondary.main, mr: 1 }} />
-                  <Typography variant="h6" gutterBottom>
-                    Quantidade Inversores: {project?.solar_energy_kit?.inversor_amount || 'N/A'}
-                  </Typography>
-                </Box>
-                <Box display="flex" alignItems="center" mb={1}>
-                  <FlashAuto sx={{ color: theme.palette.secondary.main, mr: 1 }} />
-                  <Typography variant="h6" gutterBottom>
-                    KWP: {project?.solar_energy_kit?.kwp || 'N/A'}
-                  </Typography>
-                </Box>
-                <Box display="flex" alignItems="center" mb={1}>
-                  <StatusIcon sx={{ color: theme.palette.info.main, mr: 1 }} />
-                  <Typography variant="body1">
-                    Status: <StatusChip status={project.status} />
-                  </Typography>
-                </Box>
+                <CustomAccordion title="Informações Adicionais" defaultExpanded>
+                  <Box display="flex" alignItems="center" mb={1}>
+                    <PersonIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
+                    <Typography variant="h6" gutterBottom>
+                      Projetista: {project?.designer?.complete_name || 'N/A'}
+                    </Typography>
+                  </Box>
+                  <Box display="flex" alignItems="center" mb={1}>
+                    <SolarPower sx={{ color: theme.palette.secondary.main, mr: 1 }} />
+                    <Typography variant="h6" gutterBottom>
+                      Quantidade Modulos: {project?.solar_energy_kit?.modules_amount || 'N/A'}
+                    </Typography>
+                  </Box>
+                  <Box display="flex" alignItems="center" mb={1}>
+                    <CallToAction sx={{ color: theme.palette.secondary.main, mr: 1 }} />
+                    <Typography variant="h6" gutterBottom>
+                      Quantidade Inversores: {project?.solar_energy_kit?.inversor_amount || 'N/A'}
+                    </Typography>
+                  </Box>
+                  <Box display="flex" alignItems="center" mb={1}>
+                    <FlashAuto sx={{ color: theme.palette.secondary.main, mr: 1 }} />
+                    <Typography variant="h6" gutterBottom>
+                      KWP: {project?.solar_energy_kit?.kwp || 'N/A'}
+                    </Typography>
+                  </Box>
+                  <Box display="flex" alignItems="center" mb={1}>
+                    <StatusIcon sx={{ color: theme.palette.info.main, mr: 1 }} />
+                    <Typography variant="body1">
+                      Status: <StatusChip status={project.status} />
+                    </Typography>
+                  </Box>
                 </CustomAccordion>
 
                 <CustomAccordion title="Checklist Rateio">
@@ -145,7 +172,11 @@ const ProjectListCards = ({ saleId = null }) => {
 
                 <CustomAccordion title="Documentos">
                   <Typography>
-                    <Attachments contentType={CONTEXT_TYPE_PROJECT_ID} objectId={project.id} documentTypes={documentTypes} />
+                    <Attachments
+                      contentType={CONTEXT_TYPE_PROJECT_ID}
+                      objectId={project.id}
+                      documentTypes={documentTypes}
+                    />
                   </Typography>
                 </CustomAccordion>
 
@@ -174,19 +205,50 @@ const ProjectListCards = ({ saleId = null }) => {
           ))
         )}
       </Grid>
-      {/* <Grid item xs={4}>
+      <Grid item xs={4}>
         <Box display="flex" justifyContent="flex-end" alignItems="flex-start">
           <Button
             variant="contained"
             color="primary"
-            startIcon={<AddIcon />}
+            startIcon={<Add />}
             onClick={handleCreateClick}
             fullWidth
           >
-            Novo Projeto
+            Gerar Projeto
           </Button>
         </Box>
-      </Grid> */}
+      </Grid>
+
+      <Dialog
+        open={createModalOpen}
+        onClose={closeGenerateModal}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogContent>
+          <Alert severity="info">
+            O projeto será gerado automaticamente com base nos Produtos da Venda.
+          </Alert>
+          {responseGenerateError && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {responseGenerateError}
+            </Alert>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeGenerateModal} color="secondary">
+            Cancelar
+          </Button>
+          <Button
+            onClick={fetchGenerateProject}
+            color="primary"
+            disabled={loadingGenerate}
+            endIcon={loadingGenerate ? <CircularProgress size={20} color="inherit" /> : null}
+          >
+            Gerar Projeto
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 };
