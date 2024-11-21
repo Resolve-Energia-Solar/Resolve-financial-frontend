@@ -38,6 +38,8 @@ function FormPreSale({ selectedProposal, onClose }) {
   const [errorMessages, setErrorMessages] = useState([]);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
 
+  console.log('selectedProposal:', selectedProposal);
+
   const { idSaleSuccess, setIdSaleSuccess } = useContext(KanbanDataContext);
 
   const handleChangeTab = (event, newValue) => {

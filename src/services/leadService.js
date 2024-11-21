@@ -14,6 +14,15 @@ const leadService = {
     const response = await apiClient.post('/api/leads/', data)
     return response.data
   },
+  getAllSalesByLead: async leadId => {
+    try {
+      const response = await apiClient.get(`/api/leads/${leadId}/?fields=sales,customer`)
+      return response.data
+    } catch (error) {
+      console.error('Erro ao buscar vendas do lead:', error)
+      throw error
+    }
+  },
   updateLead: async (id, data) => {
     try {
       const response = await apiClient.put(`/api/leads/${id}/`, data)
