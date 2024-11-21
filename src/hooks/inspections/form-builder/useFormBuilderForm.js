@@ -6,8 +6,10 @@ import formBuilderService from '@/services/formBuilderService';
 const useFormBuilderForm = (initialData, id) => {
   const [formData, setFormData] = useState({
     service_id: null,
+    service: '',
     form_name: '',
     form_fields: [],
+    created_at: '',
   });
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
@@ -16,8 +18,10 @@ const useFormBuilderForm = (initialData, id) => {
     if (initialData) {
       setFormData({
         service_id: initialData.service?.id || null,
+        service: initialData.service || null,
         form_name: initialData.name || '',
         form_fields: JSON.parse(initialData.campos) || [],
+        created_at: initialData.created_at || '',
       });
     }
   }, [initialData]);

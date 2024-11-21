@@ -6,6 +6,7 @@ const fbOptions = [
   { value: 'date', label: 'Data' },
   { value: 'time', label: 'Hora' },
   { value: 'select', label: 'Seleção' },
+  { value: 'file', label: 'Arquivo' },
 ];
 
 export default fbOptions;

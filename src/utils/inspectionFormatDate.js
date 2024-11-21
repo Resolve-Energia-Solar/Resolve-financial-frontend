@@ -1,7 +1,21 @@
 const formatDate = (dateString) => {
   if (!dateString) return null;
   const [year, month, day] = dateString.split('-');
+  if (day.includes('T')) {
+    const [newDay, time] = day.split('T');
+    return `${newDay}/${month}/${year}`;
+  }
   return `${day}/${month}/${year}`;
+};
+
+const formatDateTime = (dateString) => {
+  if (!dateString) return null;
+  const [year, month, day] = dateString.split('-');
+  if (day.includes('T')) {
+    const [newDay, time] = day.split('T');
+    return `${newDay}/${month}/${year} às ${time.split('.')[0]}`;
+  }
+  return `${day}/${month}/${year} às ${dateString.split('T')[1].split('.')[0]}`;
 };
 
 const formatTime = (timeString) => {
@@ -33,4 +47,4 @@ const formatTimeToSend = (timeString) => {
   return `${hours}:${minutes}`;
 };
 
-export { formatDate, formatTime, formatGetTime, formatTimeToSend };
+export { formatDate, formatDateTime, formatTime, formatGetTime, formatTimeToSend };

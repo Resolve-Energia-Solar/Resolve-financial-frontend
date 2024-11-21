@@ -3,9 +3,10 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { Alert, Button, Grid, } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 const FBSelectType = ({ onChange, field }) => {
-  const [options, setOptions] = useState([{ value: '0', label: '' }]);
+  const [options, setOptions] = useState(field.options || [{ id: uuidv4(), value: '0', label: '' }]);
 
   const handleChange = (event) => {
     onChange(field.id, event);
@@ -13,12 +14,12 @@ const FBSelectType = ({ onChange, field }) => {
 
   const handleOptionChange = (index, event) => {
     const newOptions = [...options];
-    newOptions[index] = { value: `${index}`, label: event.target.value };
+    newOptions[index] = { ...newOptions[index], label: event.target.value };
     setOptions(newOptions);
   };
 
   const addOption = () => {
-    setOptions([...options, { value: `${options.length + 1}`, label: '' }]);
+    setOptions([...options, {id: uuidv4(), value: `${options.length + 1}`, label: '' }]);
   };
 
   const removeOption = (index) => {
