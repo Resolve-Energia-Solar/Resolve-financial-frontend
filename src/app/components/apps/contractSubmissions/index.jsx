@@ -20,10 +20,11 @@ import PreviewIcon from '@mui/icons-material/Preview';
 import saleService from '@/services/saleService';
 import Contract from '../../templates/ContractPreview';
 import axios from 'axios';
+import contractService from '@/services/contract-submissions';
 
 function ContractSubmissions({ sale }) {
-  const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [contracts, setContracts] = useState([]);
   const [currentSale, setCurrentSale] = useState(null);
   const [open, setOpen] = useState(false);
   const [sendingContractId, setSendingContractId] = useState(null);
@@ -43,19 +44,47 @@ function ContractSubmissions({ sale }) {
   };
 
   useEffect(() => {
-    const fetchSubmissions = async () => {
+    const fetchContractsBySale = async () => {
       try {
-        const response = await axios.get('/api/clicksign/submissions');
-        setSubmissions(response.data);
+        console.log(`Buscando contratos para venda: ${sale?.id}`);
+        const contractsResponse = await contractService.getContractsBySaleId(sale?.id);
+
+        console.log('Contratos retornados:', contractsResponse);
+        setContracts(contractsResponse.results || []);
+
+        // Caso existam contratos, busque os metadados de todos
+        if (contractsResponse.results && contractsResponse.results.length > 0) {
+          const documentKeys = contractsResponse.results.map((contract) => contract.key_number);
+
+          // Usamos Promise.all para fazer várias requisições simultaneamente
+          const documentPromises = documentKeys.map((key) =>
+            axios.get(`/api/clicksign/getDocument/${key}`).catch((error) => {
+              console.error(`Erro ao buscar o contrato com chave ${key}:`, error.message);
+              return null; // Ignora o contrato que falhou
+            }),
+          );
+
+          const documentResponses = await Promise.all(documentPromises);
+          const documentData = documentResponses
+            .filter((response) => response !== null)
+            .map((response) => response.data);
+
+          setContracts(documentData); // Atualiza com os metadados de todos os contratos válidos
+        }
       } catch (error) {
-        console.error('Erro ao buscar envios:', error);
+        console.error('Erro ao buscar contratos ou metadados do documento:', error.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSubmissions();
-  }, []);
+    if (sale?.id) {
+      fetchContractsBySale();
+    } else {
+      console.error('ID da venda não fornecido.');
+      setLoading(false);
+    }
+  }, [sale?.id]);
 
   const handleSendContract = async () => {
     if (!sale?.id) {
@@ -105,7 +134,16 @@ function ContractSubmissions({ sale }) {
         throw new Error('Falha na criação do documento');
       }
       console.log('Documento criado com sucesso:', documentKey);
-
+      await contractService.createContract({
+        sale_id: sale.id,
+        submit_datetime: new Date().toISOString(),
+        status: 'P',
+        due_date: new Date(new Date().setDate(new Date().getDate() + 7))
+          .toISOString()
+          .split('T')[0],
+        key_number: documentKey,
+        link: `https://clicksign.com/documents/${documentKey}`,
+      });
       const signerResponse = await axios.post('/api/clicksign/createSigner', {
         documentation: fetchedSale?.customer?.first_document,
         birthday: fetchedSale?.customer?.birth_date,
@@ -169,11 +207,11 @@ function ContractSubmissions({ sale }) {
   return (
     <Fade in={!loading}>
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
+        <Typography mb={5} variant="h4" gutterBottom>
           Envios para Clicksign
         </Typography>
 
-        {submissions.length === 0 ? (
+        {contracts.length === 0 ? (
           <Box textAlign="center" mt={10} mb={5}>
             <Typography variant="body1" color="text.secondary">
               Sem envios disponíveis.
@@ -181,17 +219,40 @@ function ContractSubmissions({ sale }) {
           </Box>
         ) : (
           <Grid container spacing={3}>
-            {submissions.map((submission, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
+            {contracts.map((contract, index) => (
+              <Grid item xs={12} sm={6} md={4} key={contract.key}>
                 <Slide direction="up" in={!loading} mountOnEnter unmountOnExit>
-                  <Card sx={{ transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' } }}>
+                  <Card
+                    sx={{
+                      transition: 'transform 0.3s',
+                      '&:hover': { transform: 'scale(1.05)' },
+                      boxShadow: 3,
+                      borderRadius: 2,
+                    }}
+                  >
                     <CardContent>
-                      <Typography variant="h6">{submission.clientName}</Typography>
+                      <Typography variant="h6">{contract.document?.filename}</Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Data: {new Date(submission.date).toLocaleDateString('pt-BR')}
+                        Data de Upload:{' '}
+                        {new Date(contract.document?.uploaded_at).toLocaleDateString('pt-BR')}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Status: {submission.status}
+                        Status: {contract.document?.status}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Data de Vencimento:{' '}
+                        {new Date(contract.document?.deadline_at).toLocaleDateString('pt-BR')}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Link para visualização:{' '}
+                        <a
+                          href={contract.document?.downloads?.original_file_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: '#1976d2', textDecoration: 'none' }}
+                        >
+                          Abrir Contrato
+                        </a>
                       </Typography>
                     </CardContent>
                   </Card>
@@ -229,7 +290,9 @@ function ContractSubmissions({ sale }) {
             variant="contained"
             color="secondary"
             onClick={() => handleSendContract(sale?.id)}
-            startIcon={sendingContractId === sale?.id ? <CircularProgress size={20} /> : <SendIcon />}
+            startIcon={
+              sendingContractId === sale?.id ? <CircularProgress size={20} /> : <SendIcon />
+            }
             disabled={sendingContractId === sale?.id}
             sx={{
               borderRadius: '8px',
@@ -297,10 +360,7 @@ function ContractSubmissions({ sale }) {
           onClose={() => setSnackbarOpen(false)}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
-          <Alert
-            onClose={() => setSnackbarOpen(false)}
-            severity={snackbarSeverity}
-          >
+          <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
             {snackbarMessage}
           </Alert>
         </Snackbar>
