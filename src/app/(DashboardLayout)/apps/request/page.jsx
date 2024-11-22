@@ -24,7 +24,6 @@ import InfoIcon from "@mui/icons-material/Info";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import Loading from "@/app/loading";
-import { LoadingButton } from "@mui/lab";
 
 
 const RequestCE = () => {
@@ -38,7 +37,10 @@ const RequestCE = () => {
 
   const handleRowClick = (item) => {
     setSelectedItem(item);
-    setFormData(item);
+    setFormData(item)
+    console.log('sadfsdf',item)
+    setSelectedValues(item.situation);
+  
     setIsEditing(false);
     setIsDrawerOpen(true);
     fetchSituations()
@@ -50,7 +52,7 @@ const RequestCE = () => {
     try {
       const situationData = await situationEnergyService.index();
       setSituationOptions(situationData.results)
-      setSelectedValues(situationData.results);
+
     } catch (error) {
       console.error('Erro ao buscar dados:', error);
     }
@@ -69,8 +71,25 @@ const RequestCE = () => {
     setIsEditing(!isEditing);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     console.log("Dados salvos:", formData);
+    try {
+      const dataCreate = await requestConcessionaireService.update(formData.id, {
+        status: formData.status,
+        company_id: formData.company.id,
+        request_date: formData.request_date,
+        conclusion_date:formData.conclusion_date,
+        type_id: formData.type.id,
+        project_id: formData.project.id,
+        interim_protocol: formData.interim_protocol,
+        final_protocol: formData.final_protocol,
+        situation_ids:formData.situation
+      })
+      fetchData()
+
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+    }
     setIsEditing(false);
   };
 
@@ -86,22 +105,23 @@ const RequestCE = () => {
   const [load, setLoad] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const requestConceData = await requestConcessionaireService.index();
-        console.log('asdasdasd', requestConceData);
 
-
-        setLoad(true)
-        setRequestData(requestConceData.results)
-
-      } catch (error) {
-        console.error('Erro ao buscar dados:', error);
-      }
-    }
     fetchData()
   }, [])
 
+  const fetchData = async () => {
+    try {
+      const requestConceData = await requestConcessionaireService.index();
+      console.log('asdasdasd', requestConceData);
+
+
+      setLoad(true)
+      setRequestData(requestConceData.results)
+
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+    }
+  }
 
   const handleChangeSituation = (event, newValue) => {
     const values = newValue.map((option) => option.id);
@@ -142,7 +162,7 @@ const RequestCE = () => {
                   <TableCell>{item.type.name}</TableCell>
                   <TableCell>
                     {item.situation.map((situation) => (
-                      <div>{situation.name}</div>
+                      <div key={situation.id}>{situation.name}</div>
                     ))}
                   </TableCell>
                   <TableCell>{item.request_date}</TableCell>
@@ -150,8 +170,8 @@ const RequestCE = () => {
                   <TableCell>
                     {due_date(item.conclusion_date, item.type.deadline)}
                   </TableCell>
-                  <TableCell>{item.protocol_one}</TableCell>
-                  <TableCell>{item.protocol_two}</TableCell>
+                  <TableCell>{item.interim_protocol}</TableCell>
+                  <TableCell>{item.final_protocol}</TableCell>
                   <TableCell>{item.status}</TableCell>
                   <TableCell>{item.user?.name}</TableCell>
                   <TableCell>
@@ -230,7 +250,7 @@ const RequestCE = () => {
             />
             <TextField
               label="Data de Conclusão"
-              name="price"
+              name="conclusion_date"
               type="date"
               value={formData.conclusion_date}
               onChange={handleInputChange}
@@ -240,9 +260,9 @@ const RequestCE = () => {
             />
             <TextField
               label="Protocolo Provisório"
-              name="protocol_one"
+              name="interim_protocol"
               type="text"
-              value={formData.protocol_one}
+              value={formData.interim_protocol}
               onChange={handleInputChange}
               fullWidth
               margin="normal"
@@ -250,9 +270,9 @@ const RequestCE = () => {
             />
             <TextField
               label="Protocolo Permanente"
-              name="protocol_two"
+              name="final_protocol"
               type="text"
-              value={formData.protocol_two}
+              value={formData.final_protocol}
               onChange={handleInputChange}
               fullWidth
               margin="normal"
