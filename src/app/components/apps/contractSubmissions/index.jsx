@@ -52,15 +52,13 @@ function ContractSubmissions({ sale }) {
         console.log('Contratos retornados:', contractsResponse);
         setContracts(contractsResponse.results || []);
 
-        // Caso existam contratos, busque os metadados de todos
         if (contractsResponse.results && contractsResponse.results.length > 0) {
           const documentKeys = contractsResponse.results.map((contract) => contract.key_number);
 
-          // Usamos Promise.all para fazer várias requisições simultaneamente
           const documentPromises = documentKeys.map((key) =>
             axios.get(`/api/clicksign/getDocument/${key}`).catch((error) => {
               console.error(`Erro ao buscar o contrato com chave ${key}:`, error.message);
-              return null; // Ignora o contrato que falhou
+              return null; 
             }),
           );
 
@@ -69,7 +67,7 @@ function ContractSubmissions({ sale }) {
             .filter((response) => response !== null)
             .map((response) => response.data);
 
-          setContracts(documentData); // Atualiza com os metadados de todos os contratos válidos
+          setContracts(documentData);
         }
       } catch (error) {
         console.error('Erro ao buscar contratos ou metadados do documento:', error.message);

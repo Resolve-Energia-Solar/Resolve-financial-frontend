@@ -420,7 +420,7 @@ const KanbanManager = ({
                     <Tab label="Lead" />
                     <Tab label="Proposta" />
                     <Tab label="Venda" />
-                    <Tab label="Envios" />
+                    {/* <Tab label="Envios" /> */}
                     <Tab label="Atividades" />
                   </Tabs>
                 </Box>
@@ -443,8 +443,8 @@ const KanbanManager = ({
                   {tabIndex === 1 && <ProposalManager selectedLead={selectedLead} />}
 
                   {tabIndex === 2 && <SaleListCards lead={selectedLead} leadId={selectedLead.id} />}
-                  {tabIndex === 3 && <ClicksignLogsPage />}
-                  {tabIndex === 4 && <Activities lead={selectedLead} />}
+{/*                   {tabIndex === 3 && <ClicksignLogsPage />}
+ */}                  {tabIndex === 3 && <Activities lead={selectedLead} />}
                 </Box>
               </Grid>
             </Grid>
