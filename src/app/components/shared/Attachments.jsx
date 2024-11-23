@@ -48,8 +48,6 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
     selectedAttachment?.content_type?.id || parseInt(contentType),
   );
 
-  console.log('formData: ', formData);
-
   const [attachments, setAttachments] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);

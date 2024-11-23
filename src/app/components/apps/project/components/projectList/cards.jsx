@@ -132,7 +132,7 @@ const ProjectListCards = ({ saleId = null }) => {
         ) : projectsList.length === 0 ? (
           <Grid item xs={12}>
             <Typography variant="body2" color={theme.palette.text.secondary}>
-              Nenhuma fatura encontrada.
+              Nenhum projeto encontrado.
             </Typography>
           </Grid>
         ) : (
