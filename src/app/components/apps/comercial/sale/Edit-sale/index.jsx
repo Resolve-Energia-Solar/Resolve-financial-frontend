@@ -20,7 +20,6 @@ import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/au
 import AutoCompleteBranch from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Branch';
 import AutoCompleteCampaign from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Campaign';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import FormDateTime from '@/app/components/forms/form-custom/FormDateTime';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import { useSelector } from 'react-redux';
 import FormPageSkeleton from '../components/FormPageSkeleton';
@@ -33,8 +32,8 @@ import ProjectListCards from '../../../project/components/projectList/cards';
 import documentTypeService from '@/services/documentTypeService';
 import Attachments from '@/app/components/shared/Attachments';
 import ProductCard from '@/app/components/apps/product/Product-list';
-import UserForm from '@/app/(DashboardLayout)/apps/users/[id]/update/page';
 import EditCustomer from '../../../users/Edit-user/customer';
+import ContractSubmissions from '../../../contractSubmissions';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -114,6 +113,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
         <Tab label="Anexos" />
         <Tab label="Pagamentos" />
         <Tab label="Projetos" />
+        <Tab label="Envios" />
       </Tabs>
       {loading ? (
         <FormPageSkeleton />
@@ -240,7 +240,11 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
           )}
 
           {value === 3 && (
-            <Attachments contentType={CONTEXT_TYPE_SALE_ID} objectId={id_sale} documentTypes={documentTypes} />
+            <Attachments
+              contentType={CONTEXT_TYPE_SALE_ID}
+              objectId={id_sale}
+              documentTypes={documentTypes}
+            />
           )}
           {value === 4 && (
             <Box sx={{ mt: 3 }}>
@@ -249,6 +253,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
           )}
 
           {value === 5 && <ProjectListCards saleId={id_sale} />}
+          {value === 6 && <ContractSubmissions sale={saleData} />}
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             {onClosedModal && (

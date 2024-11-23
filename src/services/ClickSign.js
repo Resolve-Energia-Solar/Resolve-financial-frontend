@@ -36,6 +36,34 @@ const ClickSignService = {
             }
         },
 
+        getDocument: async (key) => {
+            try {
+                const response = await axios.get(
+                    `${API_DOCUMENT_BASE_URL}/api/v1/documents/${key}?access_token=${API_TOKEN}`,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json',
+                        },
+                    }
+                );
+
+                return response.data;
+            } catch (error) {
+                console.error(`Erro ao buscar documento com chave ${key}:`);
+                if (error.response) {
+                    console.error('Status:', error.response.status);
+                    console.error('Headers:', error.response.headers);
+                    console.error('Data:', error.response.data);
+                } else if (error.request) {
+                    console.error('Request:', error.request);
+                } else {
+                    console.error('Erro:', error.message);
+                }
+                throw error;
+            }
+        },
+
         createSigner: async (documentation = null, birthday = null, phone_number, email, name, auth, methods) => {
             try {
                 const response = await axios.post(

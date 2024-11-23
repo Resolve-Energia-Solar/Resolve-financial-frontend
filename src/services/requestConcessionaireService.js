@@ -11,7 +11,7 @@ const requestConcessionaireService = {
     }
   },
 
-  findOne: async (id) => {
+  find: async (id) => {
     try {
       const response = await apiClient.get(`/api/requests-energy-companies/${id}/`);
       return response.data;
@@ -23,6 +23,7 @@ const requestConcessionaireService = {
   update: async (id, data) => {
     try {
       const response = await apiClient.patch(`/api/requests-energy-companies/${id}/`, data);
+      console.log(response.data)
       return response.data;
     } catch (error) {
       console.error(`Erro ao atualizar solicitação com id ${id}:`, error);

@@ -7,6 +7,7 @@ import {
   IconAlertCircle,
   IconNotes,
   IconCalendar,
+  IconClockQuestion,
   IconMail,
   IconTicket,
   IconEdit,
@@ -64,6 +65,7 @@ import {
   IconTag,
   IconTools,
   IconCircuitSwitchOpen,
+  IconHomeQuestion,
   IconMailForward,
   IconMailFast
 } from '@tabler/icons-react';
@@ -124,6 +126,39 @@ const Menuitems = [
     icon: IconStar,
     href: '/apps/campaign',
     permissions: ['resolve_crm.view_marketingcampaign'],
+    title: 'Categorias',
+    icon: IconBox,
+    href: '/apps/inspections/category',
+  },
+  {
+    id: uniqueId(),
+    title: 'Prazos',
+    icon: IconClockQuestion,
+    href: '/apps/inspections/deadline',
+  },
+  {
+    id: uniqueId(),
+    title: 'Serviços',
+    icon: IconBoxMultiple,
+    href: '/apps/inspections/service-catalog',
+  },
+  {
+    id: uniqueId(),
+    title: 'Tipos de Telhado',
+    icon: IconHomeQuestion,
+    href: '/apps/inspections/roof-type',
+  },
+  {
+    id: uniqueId(),
+    title: 'Agendamentos',
+    icon: IconCalendar,
+    href: '/apps/inspections/schedule',
+  },
+  {
+    id: uniqueId(),
+    title: 'Formulários',
+    icon: IconFileDescription,
+    href: '/apps/inspections/form-builder',
   },
   {
     id: uniqueId(),

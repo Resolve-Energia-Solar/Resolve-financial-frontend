@@ -12,7 +12,7 @@ const BCrumb = [
         title: "Home",
     },
     {
-        title: "Lista de Pagamentos",
+        title: "Solicitações da Concessionária de Energia",
     },
 ];
 

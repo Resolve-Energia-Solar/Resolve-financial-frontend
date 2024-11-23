@@ -28,7 +28,6 @@ import { useParams } from 'next/navigation';
 
 import usePayment from '@/hooks/payments/usePayment';
 import usePaymentForm from '@/hooks/payments/usePaymentForm';
-import AutoCompleteSale from '../../comercial/sale/components/auto-complete/Auto-Input-Sales';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import AutoCompleteFinancier from '../components/auto-complete/Auto-Input-financiers';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
@@ -127,6 +126,7 @@ const EditInvoicePage = ({payment_id=null, onClosedModal = null, onRefresh = nul
             options={statusOptions}
             value={formData.payment_type}
             onChange={(e) => handleChange('payment_type', e.target.value)}
+            {...(formErrors.payment_type && { error: true, helperText: formErrors.payment_type })}
           />
         </Box>
         <Box textAlign="right">

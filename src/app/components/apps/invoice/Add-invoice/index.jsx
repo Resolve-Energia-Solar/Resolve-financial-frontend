@@ -70,7 +70,6 @@ const CreateInvoice = ({sale=null, onClosedModal = null, onRefresh = null }) => 
   ];
 
   sale ? formData.sale_id = sale : null;
-  formData.payment_type = 'C';
 
   const orderDate = new Date();
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();

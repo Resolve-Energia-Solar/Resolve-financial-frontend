@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { format, isValid } from 'date-fns';
 import requestConcessionaireService from "@/services/requestConcessionaireService"
 import situationEnergyService from "@/services/situationEnergyService"
 import {
@@ -19,13 +20,27 @@ import {
   MenuItem,
   Box,
   Autocomplete,
+  Chip,
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import Loading from "@/app/loading";
-import { LoadingButton } from "@mui/lab";
+import PageContainer from "@/app/components/container/PageContainer";
+import Breadcrumb from "../../layout/shared/breadcrumb/Breadcrumb";
+import { CardContent } from "@mui/material";
+import BlankCard from "@/app/components/shared/BlankCard";
+import DashboardCards from "@/app/components/apps/invoice/components/kpis/DashboardCards";
 
+const BCrumb = [
+  {
+    to: "/",
+    title: "Home",
+  },
+  {
+    title: "Solicitações",
+  },
+];
 
 const RequestCE = () => {
 
@@ -38,19 +53,45 @@ const RequestCE = () => {
 
   const handleRowClick = (item) => {
     setSelectedItem(item);
-    setFormData(item);
+    setFormData(item)
+    console.log('sadfsdf', item)
+    setSelectedValues(item.situation);
+
     setIsEditing(false);
     setIsDrawerOpen(true);
     fetchSituations()
 
   };
+  function getStatusRequest(status) {
+
+    let textStatus
+    let iconColor
+
+    switch (status) {
+
+      case 'I':
+        textStatus = 'Indeferido'
+        iconColor = 'error'
+        break
+      case 'D':
+        textStatus = 'Deferido'
+        iconColor = 'success'
+        break
+      case 'S':
+        textStatus = 'Solicitado'
+        iconColor = 'warning'
+        break
+    }
+
+    return { textStatus, iconColor }
+  }
 
 
   const fetchSituations = async () => {
     try {
       const situationData = await situationEnergyService.index();
       setSituationOptions(situationData.results)
-      setSelectedValues(situationData.results);
+
     } catch (error) {
       console.error('Erro ao buscar dados:', error);
     }
@@ -69,8 +110,25 @@ const RequestCE = () => {
     setIsEditing(!isEditing);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     console.log("Dados salvos:", formData);
+    try {
+      const dataCreate = await requestConcessionaireService.update(formData.id, {
+        status: formData.status,
+        company_id: formData.company.id,
+        request_date: formData.request_date,
+        conclusion_date: formData.conclusion_date,
+        type_id: formData.type.id,
+        project_id: formData.project.id,
+        interim_protocol: formData.interim_protocol,
+        final_protocol: formData.final_protocol,
+        situation_ids: formData.situation
+      })
+      fetchData()
+
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+    }
     setIsEditing(false);
   };
 
@@ -86,22 +144,21 @@ const RequestCE = () => {
   const [load, setLoad] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const requestConceData = await requestConcessionaireService.index();
-        console.log('asdasdasd', requestConceData);
 
-
-        setLoad(true)
-        setRequestData(requestConceData.results)
-
-      } catch (error) {
-        console.error('Erro ao buscar dados:', error);
-      }
-    }
     fetchData()
   }, [])
 
+  const fetchData = async () => {
+    try {
+      const requestConceData = await requestConcessionaireService.index();
+      console.log('asdasdasd', requestConceData);
+      setLoad(true)
+      setRequestData(requestConceData.results)
+
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+    }
+  }
 
   const handleChangeSituation = (event, newValue) => {
     const values = newValue.map((option) => option.id);
@@ -111,65 +168,74 @@ const RequestCE = () => {
 
   return (
     <div >
-      {
-        (load) ? <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Projeto</TableCell>
-                <TableCell>Endereços</TableCell>
-                <TableCell>Tipo</TableCell>
-                <TableCell>Situação</TableCell>
-                <TableCell>Data de Solicitação</TableCell>
-                <TableCell>Data de Vencimento</TableCell>
-                <TableCell>Data de Conclusão</TableCell>
-                <TableCell>Protocol Provisório</TableCell>
-                <TableCell>Protocol Permanente</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Solicitante</TableCell>
-                <TableCell>Prazo</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {requestData.map((item) => (
-                <TableRow key={item.id} onClick={() => handleRowClick(item)}>
-                  <TableCell>{item.id}</TableCell>
-                  <TableCell>{`${item.project.project_number} - ${item.project.sale?.customer?.name}`}</TableCell>
-                  <TableCell width={'100%'}>
-                    {`${item.unit?.address?.zip_code}, ${item.unit?.address.street}, ${item.unit?.address.neighborhood}, ${item.unit?.address?.city} - ${item.unit?.address?.state},  ${item.unit?.address.number}`}
-                  </TableCell>
-                  <TableCell>{item.type.name}</TableCell>
-                  <TableCell>
-                    {item.situation.map((situation) => (
-                      <div>{situation.name}</div>
+      <PageContainer title="Solicitações da Concessionária de Energia" description="Essa é a Lista de Pagamentos">
+        <Breadcrumb title="Solicitações da Concessionária de Energia" items={BCrumb} />
+        <BlankCard>
+          <CardContent>
+            <DashboardCards />
+            {
+              (load) ? <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>ID</TableCell>
+                      <TableCell>Projeto</TableCell>
+                      <TableCell>Endereços</TableCell>
+                      <TableCell>Tipo</TableCell>
+                      <TableCell>Situação</TableCell>
+                      <TableCell>Data de Solicitação</TableCell>
+                      <TableCell>Data de Vencimento</TableCell>
+                      <TableCell>Data de Conclusão</TableCell>
+                      <TableCell>Protocol Provisório</TableCell>
+                      <TableCell>Protocol Permanente</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Solicitante</TableCell>
+                      <TableCell>Prazo</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {requestData.map((item) => (
+                      <TableRow key={item.id} onClick={() => handleRowClick(item)}>
+                        <TableCell>{item.id}</TableCell>
+                        <TableCell>{`${item.project.project_number} - ${item.project.sale?.customer?.complete_name}`}</TableCell>
+                        <TableCell >
+                          {`${item.unit?.address?.zip_code}, ${item.unit?.address.street}, ${item.unit?.address.neighborhood}, ${item.unit?.address?.city} - ${item.unit?.address?.state},  ${item.unit?.address.number}`}
+                        </TableCell>
+                        <TableCell>{item.type.name}</TableCell>
+                        <TableCell>
+                          {item.situation.map((situation) => (
+                            <Chip key={item.id} label={situation.name} color={'primary'} sx={{ margin: 0.1 }} />
+                          ))}
+                        </TableCell>
+                        <TableCell>{format(new Date(item.request_date), 'dd/MM/yyyy')}</TableCell>
+                        <TableCell>{format(new Date(item.conclusion_date), 'dd/MM/yyyy')}</TableCell>
+                        <TableCell>
+                          {format(new Date(item.conclusion_date), 'dd/MM/yyyy')}
+                        </TableCell>
+                        <TableCell>{item.interim_protocol}</TableCell>
+                        <TableCell>{item.final_protocol}</TableCell>
+                        <TableCell>
+                          <Chip label={getStatusRequest(item.status).textStatus} color={getStatusRequest(item.status).iconColor} />
+                        </TableCell>
+                        <TableCell>{item.user?.name}</TableCell>
+                        <TableCell>
+                          <IconButton onClick={() => handleRowClick(item)}>
+                            <InfoIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </TableCell>
-                  <TableCell>{item.request_date}</TableCell>
-                  <TableCell>{item.conclusion_date}</TableCell>
-                  <TableCell>
-                    {due_date(item.conclusion_date, item.type.deadline)}
-                  </TableCell>
-                  <TableCell>{item.protocol_one}</TableCell>
-                  <TableCell>{item.protocol_two}</TableCell>
-                  <TableCell>{item.status}</TableCell>
-                  <TableCell>{item.user?.name}</TableCell>
-                  <TableCell>
-                    <IconButton onClick={() => handleRowClick(item)}>
-                      <InfoIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer> :
-          <Loading />
-      }
-
+                  </TableBody>
+                </Table>
+              </TableContainer> :
+                <Loading />
+            }
+          </CardContent>
+        </BlankCard>
+      </PageContainer>
       {/* Drawer para o painel de detalhes */}
       <Drawer anchor="right" open={isDrawerOpen} onClose={handleCloseDrawer}>
-        {selectedItem && situationOptions.length > 0 ? (
+        {selectedItem && situationOptions.length > 0 &&
           <div style={{ width: 400, padding: "20px" }}>
             <Typography variant="h6" gutterBottom>
               {isEditing ? "Editar Item" : "Detalhes do Item"}
@@ -177,11 +243,8 @@ const RequestCE = () => {
 
             <TextField
               label="Endereço"
-              name="address_id"
-              value={formData.unit.id}
-              onChange={handleInputChange}
+              value={`${formData.unit?.address?.zip_code}, ${formData.unit?.address.street}, ${formData.unit?.address.neighborhood}, ${formData.unit?.address?.city} - ${formData.unit?.address?.state},  ${formData.unit?.address.number}`}
               fullWidth
-              select
               margin="normal"
               disabled
             >
@@ -190,7 +253,7 @@ const RequestCE = () => {
             <TextField
               label="Projeto"
               name="project"
-              value={formData.project.id}
+              value={`${formData.project.project_number} | ${formData.project.sale?.customer?.complete_name}`}
               onChange={handleInputChange}
               fullWidth
               margin="normal"
@@ -218,7 +281,7 @@ const RequestCE = () => {
               onChange={handleInputChange}
               fullWidth
               margin="normal"
-              disabled={!isEditing}
+              disabled={!isEditing || formData.request_date}
             />
             <TextField
               label="Data de Vencimento"
@@ -230,33 +293,33 @@ const RequestCE = () => {
             />
             <TextField
               label="Data de Conclusão"
-              name="price"
+              name="conclusion_date"
               type="date"
               value={formData.conclusion_date}
               onChange={handleInputChange}
               fullWidth
               margin="normal"
-              disabled={!isEditing}
+              disabled={!isEditing || formData.conclusion_date}
             />
             <TextField
               label="Protocolo Provisório"
-              name="protocol_one"
+              name="interim_protocol"
               type="text"
-              value={formData.protocol_one}
+              value={formData.interim_protocol}
               onChange={handleInputChange}
               fullWidth
               margin="normal"
-              disabled={!isEditing}
+              disabled={!isEditing || formData.interim_protocol}
             />
             <TextField
               label="Protocolo Permanente"
-              name="protocol_two"
+              name="final_protocol"
               type="text"
-              value={formData.protocol_two}
+              value={formData.final_protocol}
               onChange={handleInputChange}
               fullWidth
               margin="normal"
-              disabled={!isEditing}
+              disabled={!isEditing || formData.final_protocol}
             />
             <TextField
               label="Status"
@@ -267,7 +330,7 @@ const RequestCE = () => {
               onChange={handleInputChange}
               fullWidth
               margin="normal"
-              disabled={!isEditing}
+              disabled={!isEditing || formData.status != 'S'}
             >
               <MenuItem value="D">Deferido</MenuItem>
               <MenuItem value="I">Indeferido</MenuItem>
@@ -287,7 +350,7 @@ const RequestCE = () => {
             <TextField
               label="Solicitante"
               type="text"
-              value={formData?.user?.name}
+              value={formData?.requested_by?.complete_name}
               fullWidth
               margin="normal"
               disabled
@@ -295,7 +358,7 @@ const RequestCE = () => {
             <Box mt={4} >
               <Button
                 variant="contained"
-                color={isEditing ? "secondary" : "primary"}
+                color={isEditing ? "primary" : "secondary"}
                 onClick={isEditing ? handleSave : handleEditToggle}
                 startIcon={isEditing ? <SaveIcon /> : <EditIcon />}
                 fullWidth
@@ -303,8 +366,7 @@ const RequestCE = () => {
                 {isEditing ? "Salvar" : "Editar"}
               </Button>
             </Box>
-          </div>
-        ) : <Loading />}
+          </div>}
       </Drawer>
     </div>
   );
