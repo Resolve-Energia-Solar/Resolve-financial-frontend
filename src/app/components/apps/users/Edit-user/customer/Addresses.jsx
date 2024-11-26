@@ -29,7 +29,7 @@ export default function ListAddresses({ userId = null }) {
   const [refresh, setRefresh] = useState(false);
 
   const [openEditModal, setOpenEditModal] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState(null); // Estado para o endereço selecionado
+  const [selectedAddress, setSelectedAddress] = useState(null);
 
   const handleRefresh = () => {
     setRefresh(!refresh);
@@ -84,7 +84,7 @@ export default function ListAddresses({ userId = null }) {
           {loading ? (
             Array.from(new Array(5)).map((_, rowIndex) => (
               <TableRow key={rowIndex}>
-                {Array.from(new Array(5)).map((_, colIndex) => (
+                {Array.from(new Array(6)).map((_, colIndex) => (
                   <TableCell key={colIndex}>
                     <Skeleton variant="text" width="100%" height={40} />
                   </TableCell>

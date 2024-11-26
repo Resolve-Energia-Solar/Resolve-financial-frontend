@@ -22,22 +22,16 @@ const CreateAddressPage = ({ selectedAddressId = null, onClosedModal = null, use
     dataReceived,
   } = useAddressForm();
 
+  formData.user_id = userId;
+
 
 
   useEffect(() => {
-    if (!success) return;
-
-    const closeModal = () => {
-      if (onClosedModal) onClosedModal();
-      if (dataReceived && selectedAddressId) selectedAddressId(dataReceived.id);
-      console.log(dataReceived);
-    };
-
-    if (userId) {
-      userService.updateUser(userId, { addresses_ids: [dataReceived.id] }).then(closeModal);
-      onRefresh();
-    } else {
-      closeModal();
+    if (success) {
+      if (onClosedModal) {
+        onClosedModal();
+        onRefresh();
+      }
     }
   }, [success]);
 
