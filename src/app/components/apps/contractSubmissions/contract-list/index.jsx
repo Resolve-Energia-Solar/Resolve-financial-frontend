@@ -7,17 +7,42 @@ import {
   CardContent,
   Typography,
   Grid,
-  CircularProgress,
   Fade,
   Slide,
+  Tooltip,
+  IconButton,
+  Menu,
+  MenuItem,
+  Skeleton,
+  CardActions,
 } from '@mui/material';
+import { MoreVert } from '@mui/icons-material';
 import axios from 'axios';
 import contractService from '@/services/contract-submissions';
+import ContractChip from '../components/contractChip';
 
 function ContractSubmissions({ sale }) {
   const [loading, setLoading] = useState(true);
   const [contracts, setContracts] = useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedContract, setSelectedContract] = useState(null);
 
+  const open = Boolean(anchorEl);
+
+  const handleMenuOpen = (event, contract) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedContract(contract);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedContract(null);
+  };
+
+  const handleEventosClick = () => {
+    console.log('Eventos clicado para o contrato:', selectedContract);
+    handleMenuClose();
+  };
 
   useEffect(() => {
     const fetchContractsBySale = async () => {
@@ -43,7 +68,6 @@ function ContractSubmissions({ sale }) {
             .map((response) => response.data);
 
           console.log('Dados de documentos:', documentData);
-          console.log('contratos', contracts);
           setContracts(documentData);
         }
       } catch (error) {
@@ -63,9 +87,22 @@ function ContractSubmissions({ sale }) {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-        <CircularProgress />
-      </Box>
+      <Grid container spacing={3} sx={{ mt: 3 }}>
+        {Array.from({ length: 3 }).map((_, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <Card elevation={10}>
+              <CardContent>
+                <Skeleton variant="text" width="60%" height={20} />
+                <Skeleton variant="text" width="80%" height={20} />
+                <Skeleton variant="rectangular" width="100%" height={10} sx={{ mt: 2 }} />
+              </CardContent>
+              <CardActions disableSpacing sx={{ justifyContent: 'flex-end', display: 'flex' }}>
+                <Skeleton variant="circular" width={24} height={24} />
+              </CardActions>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
     );
   }
 
@@ -89,6 +126,7 @@ function ContractSubmissions({ sale }) {
                 <Slide direction="up" in={!loading} mountOnEnter unmountOnExit>
                   <Card
                     sx={{
+                      position: 'relative',
                       transition: 'transform 0.3s',
                       '&:hover': { transform: 'scale(1.05)' },
                       boxShadow: 3,
@@ -96,29 +134,52 @@ function ContractSubmissions({ sale }) {
                     }}
                   >
                     <CardContent>
-                      <Typography variant="h6">{contract.document?.filename}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Data de Upload:{' '}
-                        {new Date(contract.document?.uploaded_at).toLocaleDateString('pt-BR')}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Status: {contract.document?.status}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Data de Vencimento:{' '}
-                        {new Date(contract.document?.deadline_at).toLocaleDateString('pt-BR')}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Link para visualização:{' '}
-                        <a
-                          href={contract.document?.downloads?.original_file_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: '#1976d2', textDecoration: 'none' }}
-                        >
-                          Abrir Contrato
-                        </a>
-                      </Typography>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'flex-start',
+                        }}
+                      >
+                        <Box>
+                          <Typography variant="h6">{contract.document?.filename}</Typography>
+                          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                            Data de Upload:{' '}
+                            {new Date(contract.document?.uploaded_at).toLocaleDateString('pt-BR')}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Data de Vencimento:{' '}
+                            {new Date(contract.document?.deadline_at).toLocaleDateString('pt-BR')}
+                          </Typography>
+                        </Box>
+                        <ContractChip status={contract.document?.status} />
+                      </Box>
+
+                      <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          Link para visualização:{' '}
+                          <a
+                            href={contract.document?.downloads?.original_file_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: '#1976d2', textDecoration: 'none' }}
+                          >
+                            Abrir Contrato
+                          </a>
+                        </Typography>
+
+                        {/* Submenu abaixo do link */}
+                        <Box sx={{ marginTop: 2, display: 'flex', justifyContent: 'flex-end' }}>
+                          <Tooltip title="Mais opções">
+                            <IconButton
+                              size="small"
+                              onClick={(event) => handleMenuOpen(event, contract)}
+                            >
+                              <MoreVert />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
+                      </Box>
                     </CardContent>
                   </Card>
                 </Slide>
@@ -126,6 +187,11 @@ function ContractSubmissions({ sale }) {
             ))}
           </Grid>
         )}
+
+        {/* Submenu */}
+        <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
+          <MenuItem onClick={handleEventosClick}>Eventos</MenuItem>
+        </Menu>
       </Box>
     </Fade>
   );
