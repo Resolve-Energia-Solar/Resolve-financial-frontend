@@ -11,6 +11,7 @@ const useAddressForm = (initialData, id) => {
     street: '',
     number: '',
     complement: '',
+    user_id: ''
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -48,6 +49,7 @@ const useAddressForm = (initialData, id) => {
       street: formData.street,
       number: formData.number,
       complement: formData.complement,
+      user_id: formData.user_id,
     };
 
     try {
