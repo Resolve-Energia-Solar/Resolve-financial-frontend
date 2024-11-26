@@ -35,6 +35,7 @@ import ProductCard from '@/app/components/apps/product/Product-list';
 import EditCustomer from '../../../users/Edit-user/customer/customer';
 import ContractSubmissions from '../../../contractSubmissions';
 import CustomerTabs from '../../../users/Edit-user/customer/tabs';
+import SendContract from '../../../contractSubmissions/Send-contract';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -276,6 +277,11 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
           </Stack>
         </Box>
       )}
+
+      
+      <Box p={3} backgroundColor="primary.light" mt={3}>
+        <SendContract sale={saleData} />
+      </Box>
     </Box>
   );
 };
