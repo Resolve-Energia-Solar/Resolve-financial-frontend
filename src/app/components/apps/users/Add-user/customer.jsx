@@ -1,8 +1,7 @@
 'use client';
-import { Grid, Button, Stack, FormControlLabel, Alert } from '@mui/material';
+import { Grid, Button, Stack, FormControlLabel } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
-import { useParams } from 'next/navigation';
 
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-User';
@@ -11,23 +10,16 @@ import AutoCompleteAddresses from '@/app/components/apps/comercial/sale/componen
 import AutoCompleteDepartament from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Departament';
 import AutoCompleteRole from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Role';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
+import { useRouter } from 'next/navigation';
 
-import useUser from '@/hooks/users/useUser';
+import { useEffect } from 'react';
+
 import useUserForm from '@/hooks/users/useUserForm';
-import FormPageSkeleton from '../../comercial/sale/components/FormPageSkeleton';
 
-export default function EditCustomer({ userId = null }) {
-  const params = useParams();
-  let id = userId;
-  if (!userId) id = params.id;
+export default function CreateCustomer({ onClosedModal = null, selectedUserId = null }) {
+  const { formData, handleChange, handleSave, formErrors, success, dataReceived } = useUserForm();
 
-  const { loading, error, userData } = useUser(id);
-
-  console.log('userData', userData);
-
-  const { formData, handleChange, handleSave, formErrors, success } = useUserForm(userData, id);
-
-  console.log('formData', formData);
+  const router = useRouter();
 
   const gender_options = [
     { value: 'M', label: 'Masculino' },
@@ -40,18 +32,26 @@ export default function EditCustomer({ userId = null }) {
     { value: false, label: 'Inativo' },
   ];
 
-  if (loading) return <FormPageSkeleton />;
-  if (error) return <div>{error}</div>;
+  const contract_type_options = [
+    { value: 'P', label: 'PJ' },
+    { value: 'C', label: 'CLT' },
+  ];
+
+  useEffect(() => {
+    if (success) {
+      if (onClosedModal) {
+        onClosedModal();
+        selectedUserId(dataReceived.id);
+      } else {
+        router.push(`/apps/users/${dataReceived.id}/update`);
+      }
+    }
+  }, [success]);
 
   return (
     <Grid container spacing={3}>
-      {success && (
-        <Grid item xs={12}>
-          <Alert severity="success">O usuário foi atualizado com sucesso!</Alert>
-        </Grid>
-      )}
       <Grid item xs={12} sm={12} lg={4}>
-        <CustomFormLabel htmlFor="username">Nome de Usuário</CustomFormLabel>
+        <CustomFormLabel htmlFor="username">Usuário</CustomFormLabel>
         <CustomTextField
           name="username"
           variant="outlined"
@@ -84,12 +84,43 @@ export default function EditCustomer({ userId = null }) {
         />
       </Grid>
       <Grid item xs={12} sm={12} lg={4}>
+        <CustomFormLabel htmlFor="email">Nome Completo</CustomFormLabel>
+        <CustomTextField
+          name="complete_name"
+          variant="outlined"
+          fullWidth
+          value={formData.complete_name}
+          onChange={(e) => handleChange('complete_name', e.target.value)}
+          {...(formErrors.complete_name && { error: true, helperText: formErrors.complete_name })}
+        />
+      </Grid>
+      <Grid item xs={12} sm={12} lg={4}>
+        <CustomFormLabel htmlFor="email">CPF</CustomFormLabel>
+        <CustomTextField
+          name="first_document"
+          variant="outlined"
+          fullWidth
+          value={formData.first_document}
+          onChange={(e) => handleChange('first_document', e.target.value)}
+          {...(formErrors.first_document && { error: true, helperText: formErrors.first_document })}
+        />
+      </Grid>
+      <Grid item xs={12} sm={12} lg={4}>
         <FormSelect
           label="Gênero"
           options={gender_options}
           value={formData.gender}
           onChange={(e) => handleChange('gender', e.target.value)}
           {...(formErrors.gender && { error: true, helperText: formErrors.gender })}
+        />
+      </Grid>
+      <Grid item xs={12} sm={12} lg={4}>
+        <FormSelect
+          label="Status"
+          options={status_options}
+          value={formData.is_active}
+          onChange={(e) => handleChange('is_active', e.target.value)}
+          {...(formErrors.is_active && { error: true, helperText: formErrors.is_active })}
         />
       </Grid>
       <Grid item xs={12} sm={12} lg={4}>
@@ -124,7 +155,7 @@ export default function EditCustomer({ userId = null }) {
       <Grid item xs={12} sm={12} lg={12}>
         <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
           <Button variant="contained" color="primary" onClick={handleSave}>
-            Editar
+            Criar
           </Button>
         </Stack>
       </Grid>

@@ -62,6 +62,7 @@ const ProductCard = ({ sale = null }) => {
       setLoading(true);
       try {
         const response = await saleService.getSalesProducts(sale.id);
+        console.log('Response: ', response);
         setSelectedProductIds(response.sale_products.map((item) => item.product.id));
         setInitialProductIds(response.sale_products.map((item) => item.product.id));
         setProductsList((prevProducts) => [
@@ -86,6 +87,8 @@ const ProductCard = ({ sale = null }) => {
             return 0;
           }),
         );
+
+        console.log('ProductsList: ', productsList);
       } catch (error) {
         console.log('Error: ', error);
       } finally {

@@ -32,8 +32,9 @@ import ProjectListCards from '../../../project/components/projectList/cards';
 import documentTypeService from '@/services/documentTypeService';
 import Attachments from '@/app/components/shared/Attachments';
 import ProductCard from '@/app/components/apps/product/Product-list';
-import EditCustomer from '../../../users/Edit-user/customer';
+import EditCustomer from '../../../users/Edit-user/customer/customer';
 import ContractSubmissions from '../../../contractSubmissions';
+import CustomerTabs from '../../../users/Edit-user/customer/tabs';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -123,7 +124,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
         <Box>
           {value === 0 && (
             <Box sx={{ mt: 3 }}>
-              <EditCustomer userId={saleData.customer.id} />
+              <CustomerTabs userId={saleData.customer.id} />
             </Box>
           )}
 

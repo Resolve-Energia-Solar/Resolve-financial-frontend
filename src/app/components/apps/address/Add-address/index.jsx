@@ -1,20 +1,14 @@
 'use client';
-import {
-  Grid,
-  Button,
-  Stack,
-  Alert,
-  CircularProgress,
-  Box,
-} from '@mui/material';
+import { Grid, Button, Stack, Alert, CircularProgress, Box } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import { useSelector } from 'react-redux';
 import useAddressForm from '@/hooks/address/useAddressForm';
 import { useEffect, useState } from 'react';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
+import userService from '@/services/userService';
 
-const CreateAddressPage = ({ selectedAddressId = null, onClosedModal = null }) => {
+const CreateAddressPage = ({ selectedAddressId = null, onClosedModal = null, userId = null, onRefresh = null }) => {
   const userPermissions = useSelector((state) => state.user.permissions);
   const [fileLoading, setFileLoading] = useState(false);
 
@@ -28,13 +22,22 @@ const CreateAddressPage = ({ selectedAddressId = null, onClosedModal = null }) =
     dataReceived,
   } = useAddressForm();
 
+
+
   useEffect(() => {
-    if (success) {
-      if (onClosedModal) {
-        onClosedModal();
-        selectedAddressId(dataReceived.id);
-        console.log(dataReceived);
-      }
+    if (!success) return;
+
+    const closeModal = () => {
+      if (onClosedModal) onClosedModal();
+      if (dataReceived && selectedAddressId) selectedAddressId(dataReceived.id);
+      console.log(dataReceived);
+    };
+
+    if (userId) {
+      userService.updateUser(userId, { addresses_ids: [dataReceived.id] }).then(closeModal);
+      onRefresh();
+    } else {
+      closeModal();
     }
   }, [success]);
 
