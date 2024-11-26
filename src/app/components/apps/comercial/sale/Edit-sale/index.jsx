@@ -32,10 +32,14 @@ import ProjectListCards from '../../../project/components/projectList/cards';
 import documentTypeService from '@/services/documentTypeService';
 import Attachments from '@/app/components/shared/Attachments';
 import ProductCard from '@/app/components/apps/product/Product-list';
-import EditCustomer from '../../../users/Edit-user/customer/customer';
-import ContractSubmissions from '../../../contractSubmissions';
+import ContractSubmissions from '../../../contractSubmissions/contract-list';
 import CustomerTabs from '../../../users/Edit-user/customer/tabs';
 import SendContract from '../../../contractSubmissions/Send-contract';
+import PreviewContract from '../../../contractSubmissions/Preview-contract';
+import { Preview } from '@mui/icons-material';
+import PreviewContractModal from '../../../contractSubmissions/Preview-contract';
+import useSendContract from '@/hooks/contract/useSendContract';
+import SendContractButton from '../../../contractSubmissions/Send-contract';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -45,6 +49,8 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
   if (!saleId) id = params.id;
 
   const userPermissions = useSelector((state) => state.user.permissions);
+
+  const [openPreview, setOpenPreview] = useState(false);
 
   const hasPermission = (permissions) => {
     if (!permissions) return true;
@@ -278,10 +284,32 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
         </Box>
       )}
 
-      
-      <Box p={3} backgroundColor="primary.light" mt={3}>
-        <SendContract sale={saleData} />
+      <Box
+        p={3}
+        backgroundColor="primary.light"
+        mt={3}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Stack direction="row" spacing={2}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setOpenPreview(true)}
+            startIcon={<Preview />}
+            sx={{
+              borderRadius: '8px',
+              paddingX: 3,
+            }}
+          >
+            Preview do Contrato
+          </Button>
+
+          <SendContractButton sale={saleData} />
+        </Stack>
       </Box>
+      <PreviewContractModal sale={saleData} open={openPreview} onClose={() => setOpenPreview(false)} />
     </Box>
   );
 };

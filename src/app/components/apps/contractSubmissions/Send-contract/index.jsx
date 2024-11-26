@@ -1,166 +1,87 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Box, Typography, CircularProgress, Snackbar, Alert, Button, Fade } from '@mui/material';
+import React, { useState } from 'react';
+import { Button, CircularProgress, Snackbar, Alert, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
-import saleService from '@/services/saleService';
-import axios from 'axios';
-import contractService from '@/services/contract-submissions';
+import useSendContract from '@/hooks/contract/useSendContract';
 
-export default function SendContract({ sale }) {
-  const [sendingContractId, setSendingContractId] = useState(null);
-  const [isSendingContract, setIsSendingContract] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('info');
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+export default function SendContractButton({ sale }) {
+  const {
+    sendContract,
+    sendingContractId,
+    snackbarMessage,
+    snackbarSeverity,
+    snackbarOpen,
+    handleCloseSnackbar,
+  } = useSendContract();
 
-  const handleSendContract = async () => {
-    if (!sale?.id) {
-      setSnackbarMessage('ID da venda não encontrado.');
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
-      return;
-    }
+  const [dialogOpen, setDialogOpen] = useState(false); // Controle do diálogo de confirmação
 
-    setSendingContractId(sale.id);
-    setIsSendingContract(true);
+  const handleOpenDialog = () => setDialogOpen(true);
+  const handleCloseDialog = () => setDialogOpen(false);
 
-    try {
-      const fetchedSale = await saleService.getSaleById(sale.id);
-      console.log('Dados da venda:', fetchedSale);
-
-      const missingFields = [];
-      if (!fetchedSale?.customer?.complete_name) missingFields.push('Nome Completo');
-      if (!fetchedSale?.customer?.email) missingFields.push('Email');
-      if (!fetchedSale?.customer?.first_document) missingFields.push('Documento');
-      if (!fetchedSale?.customer?.birth_date) missingFields.push('Data de Nascimento');
-      if (!fetchedSale?.customer?.phone_numbers?.[0]?.phone_number) missingFields.push('Telefone');
-
-      if (missingFields.length > 0) {
-        setSnackbarMessage(
-          `Os seguintes campos obrigatórios estão faltando: ${missingFields.join(', ')}`,
-        );
-        setSnackbarSeverity('warning');
-        setSnackbarOpen(true);
-        return;
-      }
-
-      const documentData = {
-        Address: fetchedSale.customer_address || 'Endereço Fictício',
-        Phone: fetchedSale?.customer?.phone_numbers[0]?.phone_number || 'Telefone Fictício',
-      };
-      const path = `/Contratos/Contrato-${fetchedSale?.customer?.complete_name}.pdf`;
-
-      const documentResponse = await axios.post('/api/clicksign/createDocument', {
-        data: documentData,
-        path,
-        usePreTemplate: false,
-      });
-
-      const documentKey = documentResponse.data?.document?.key;
-      if (!documentKey) {
-        throw new Error('Falha na criação do documento');
-      }
-      console.log('Documento criado com sucesso:', documentKey);
-      await contractService.createContract({
-        sale_id: sale.id,
-        submit_datetime: new Date().toISOString(),
-        status: 'P',
-        due_date: new Date(new Date().setDate(new Date().getDate() + 7))
-          .toISOString()
-          .split('T')[0],
-        key_number: documentKey,
-        link: `https://clicksign.com/documents/${documentKey}`,
-      });
-      const signerResponse = await axios.post('/api/clicksign/createSigner', {
-        documentation: fetchedSale?.customer?.first_document,
-        birthday: fetchedSale?.customer?.birth_date,
-        phone_number: fetchedSale?.customer?.phone_numbers[0]?.phone_number,
-        email: fetchedSale?.customer?.email,
-        name: fetchedSale?.customer?.complete_name,
-        auth: 'whatsapp',
-        methods: { selfie_enabled: false, handwritten_enabled: false },
-      });
-
-      const signerKey = signerResponse.data?.signer?.key;
-      if (!signerKey) {
-        throw new Error('Falha na criação do signatário');
-      }
-      console.log('Signatário criado:', signerKey);
-
-      const addSignerResponse = await axios.post('/api/clicksign/addSignerDocument', {
-        signerKey,
-        documentKey,
-        signAs: 'contractor',
-      });
-
-      const requestSignatureKey = addSignerResponse.data?.list?.request_signature_key;
-      if (!requestSignatureKey) {
-        throw new Error('Falha ao adicionar o signatário ao documento');
-      }
-      console.log('Signatário adicionado ao documento:', requestSignatureKey);
-
-      await axios.post('/api/clicksign/notification/email', {
-        request_signature_key: requestSignatureKey,
-        message: 'Por favor, assine o contrato.',
-      });
-      console.log('Notificação por e-mail enviada');
-
-      await axios.post('/api/clicksign/notification/whatsapp', {
-        request_signature_key: requestSignatureKey,
-      });
-      console.log('Notificação por WhatsApp enviada');
-
-      setSnackbarMessage('Contrato enviado com sucesso!');
-      setSnackbarSeverity('success');
-    } catch (error) {
-      console.error('Erro ao enviar contrato:', error.message);
-      setSnackbarMessage(`Erro ao enviar contrato: ${error.message}`);
-      setSnackbarSeverity('error');
-    } finally {
-      setSnackbarOpen(true);
-      setIsSendingContract(false);
-      setSendingContractId(null);
-    }
+  const handleConfirmSend = () => {
+    sendContract(sale);
+    handleCloseDialog();
   };
 
   return (
-    <Box>
-      <Box
+    <>
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={handleOpenDialog}
+        startIcon={sendingContractId === sale?.id ? <CircularProgress size={20} /> : <SendIcon />}
+        disabled={sendingContractId === sale?.id}
         sx={{
-          left: 0,
-          right: 0,
-          display: 'flex',
-          justifyContent: 'center',
-          gap: 2,
-          padding: 2,
+          borderRadius: '8px',
+          paddingX: 3,
         }}
       >
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => handleSendContract(sale?.id)}
-          startIcon={sendingContractId === sale?.id ? <CircularProgress size={20} /> : <SendIcon />}
-          disabled={sendingContractId === sale?.id}
-          sx={{
-            borderRadius: '8px',
-            paddingX: 3,
-          }}
-        >
-          Enviar Contrato
-        </Button>
-      </Box>
+        Enviar Contrato
+      </Button>
+
+      <Dialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        aria-labelledby="confirm-send-contract-title"
+        aria-describedby="confirm-send-contract-description"
+      >
+        <DialogTitle id="confirm-send-contract-title">
+          Confirmar envio de contrato
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="confirm-send-contract-description">
+            Você tem certeza de que deseja enviar o contrato para {sale?.customer?.complete_name || 'este cliente'}? 
+            Esta ação não pode ser desfeita.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleConfirmSend}
+            color="secondary"
+            autoFocus
+            disabled={sendingContractId === sale?.id}
+            startIcon={sendingContractId === sale?.id ? <CircularProgress size={20} /> : null}
+          >
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
-        onClose={() => setSnackbarOpen(false)}
+        onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
           {snackbarMessage}
         </Alert>
       </Snackbar>
-    </Box>
+    </>
   );
 }
