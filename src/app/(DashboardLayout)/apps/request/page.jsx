@@ -51,17 +51,16 @@ const RequestCE = () => {
   const [selectedValues, setSelectedValues] = useState([]);
   const [situationOptions, setSituationOptions] = useState([])
 
-  const handleRowClick = (item) => {
-    setSelectedItem(item);
+  const handleRowClick = async (item) => {
     setFormData(item)
-    console.log('sadfsdf', item)
+    setSelectedItem(item);
     setSelectedValues(item.situation);
-
     setIsEditing(false);
     setIsDrawerOpen(true);
     fetchSituations()
-
   };
+
+
   function getStatusRequest(status) {
 
     let textStatus
@@ -111,7 +110,6 @@ const RequestCE = () => {
   };
 
   const handleSave = async () => {
-    console.log("Dados salvos:", formData);
     try {
       const dataCreate = await requestConcessionaireService.update(formData.id, {
         status: formData.status,
@@ -122,10 +120,9 @@ const RequestCE = () => {
         project_id: formData.project.id,
         interim_protocol: formData.interim_protocol,
         final_protocol: formData.final_protocol,
-        situation_ids: formData.situation
+        situation_ids: formData.situation.map((option) => option.id)
       })
       fetchData()
-
     } catch (error) {
       console.error('Erro ao buscar dados:', error);
     }
@@ -151,7 +148,7 @@ const RequestCE = () => {
   const fetchData = async () => {
     try {
       const requestConceData = await requestConcessionaireService.index();
-      console.log('asdasdasd', requestConceData);
+
       setLoad(true)
       setRequestData(requestConceData.results)
 
@@ -161,9 +158,10 @@ const RequestCE = () => {
   }
 
   const handleChangeSituation = (event, newValue) => {
-    const values = newValue.map((option) => option.id);
+
+    // const values = newValue.map((option) => option.id);
     setSelectedValues(newValue);
-    handleInputChange({ target: { name: 'situation', value: values } })
+    handleInputChange({ target: { name: 'situation', value: newValue } })
   };
 
   return (
@@ -281,11 +279,11 @@ const RequestCE = () => {
               onChange={handleInputChange}
               fullWidth
               margin="normal"
-              disabled={!isEditing || formData.request_date}
+              disabled={!isEditing}
             />
             <TextField
               label="Data de Vencimento"
-              value={formData.request_date}
+              value={due_date(formData.request_date, formData.type.dea)}
               type="date"
               fullWidth
               margin="normal"
@@ -299,7 +297,7 @@ const RequestCE = () => {
               onChange={handleInputChange}
               fullWidth
               margin="normal"
-              disabled={!isEditing || formData.conclusion_date}
+              disabled={!isEditing}
             />
             <TextField
               label="Protocolo Provisório"
@@ -309,7 +307,7 @@ const RequestCE = () => {
               onChange={handleInputChange}
               fullWidth
               margin="normal"
-              disabled={!isEditing || formData.interim_protocol}
+              disabled={!isEditing}
             />
             <TextField
               label="Protocolo Permanente"
@@ -319,7 +317,7 @@ const RequestCE = () => {
               onChange={handleInputChange}
               fullWidth
               margin="normal"
-              disabled={!isEditing || formData.final_protocol}
+              disabled={!isEditing}
             />
             <TextField
               label="Status"
