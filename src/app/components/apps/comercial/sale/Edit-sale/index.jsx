@@ -22,24 +22,21 @@ import AutoCompleteCampaign from '@/app/components/apps/comercial/sale/component
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import { useSelector } from 'react-redux';
-import FormPageSkeleton from '../components/FormPageSkeleton';
+import FormPageSkeleton from '@/app/components/apps/comercial/sale/components/FormPageSkeleton';
 
 import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
 import { useEffect, useState } from 'react';
-import PaymentCard from '../../../invoice/components/paymentList/card';
-import ProjectListCards from '../../../project/components/projectList/cards';
+import PaymentCard from '@/app/components/apps/invoice/components/paymentList/card';
 import documentTypeService from '@/services/documentTypeService';
 import Attachments from '@/app/components/shared/Attachments';
 import ProductCard from '@/app/components/apps/product/Product-list';
-import ContractSubmissions from '../../../contractSubmissions/contract-list';
-import CustomerTabs from '../../../users/Edit-user/customer/Tabs';
-import SendContract from '../../../contractSubmissions/Send-contract';
-import PreviewContract from '../../../contractSubmissions/Preview-contract';
+import ContractSubmissions from '@/app/components/apps/contractSubmissions/contract-list';
+import CustomerTabs from '@/app/components/apps/users/Edit-user/customer/Tabs';
 import { Preview } from '@mui/icons-material';
-import PreviewContractModal from '../../../contractSubmissions/Preview-contract';
-import useSendContract from '@/hooks/contract/useSendContract';
-import SendContractButton from '../../../contractSubmissions/Send-contract';
+import PreviewContractModal from '@/app/components/apps/contractSubmissions/Preview-contract';
+import SendContractButton from '@/app/components/apps/contractSubmissions/Send-contract';
+import ProjectListCards from '@/app/components/apps/project/components/projectList/cards';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
