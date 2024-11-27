@@ -15,17 +15,34 @@ import {
   MenuItem,
   Skeleton,
   CardActions,
+  Dialog,
+  DialogContent,
+  DialogTitle,
 } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
 import axios from 'axios';
 import contractService from '@/services/contract-submissions';
 import ContractChip from '../components/contractChip';
+import EventsTimeline from '../components/EventsTimeline';
 
 function ContractSubmissions({ sale }) {
   const [loading, setLoading] = useState(true);
   const [contracts, setContracts] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedContract, setSelectedContract] = useState(null);
+
+  const [openEventsModal, setOpenEventsModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState([]);
+
+  const openModalEvents = (events) => {
+    setOpenEventsModal(true);
+    setSelectedEvent(events);
+  };
+
+  const closeModalEvents = () => {
+    setOpenEventsModal(false);
+    setSelectedEvent([]);
+  };
 
   const open = Boolean(anchorEl);
 
@@ -37,11 +54,6 @@ function ContractSubmissions({ sale }) {
   const handleMenuClose = () => {
     setAnchorEl(null);
     setSelectedContract(null);
-  };
-
-  const handleEventosClick = () => {
-    console.log('Eventos clicado para o contrato:', selectedContract);
-    handleMenuClose();
   };
 
   useEffect(() => {
@@ -87,7 +99,7 @@ function ContractSubmissions({ sale }) {
 
   if (loading) {
     return (
-      <Grid container spacing={3} sx={{ mt: 3 }}>
+      <Grid container spacing={3} sx={{ mt: 2 }}>
         {Array.from({ length: 3 }).map((_, index) => (
           <Grid item xs={12} sm={6} md={4} key={index}>
             <Card elevation={10}>
@@ -121,7 +133,7 @@ function ContractSubmissions({ sale }) {
           </Box>
         ) : (
           <Grid container spacing={3}>
-            {contracts.map((contract, index) => (
+            {contracts.map((contract) => (
               <Grid item xs={12} sm={6} md={4} key={contract.key}>
                 <Slide direction="up" in={!loading} mountOnEnter unmountOnExit>
                   <Card
@@ -168,7 +180,6 @@ function ContractSubmissions({ sale }) {
                           </a>
                         </Typography>
 
-                        {/* Submenu abaixo do link */}
                         <Box sx={{ marginTop: 2, display: 'flex', justifyContent: 'flex-end' }}>
                           <Tooltip title="Mais opções">
                             <IconButton
@@ -190,8 +201,19 @@ function ContractSubmissions({ sale }) {
 
         {/* Submenu */}
         <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
-          <MenuItem onClick={handleEventosClick}>Eventos</MenuItem>
+          <MenuItem
+            onClick={() => openModalEvents(selectedContract?.document?.events || [])}
+          >
+            Eventos
+          </MenuItem>
         </Menu>
+
+        <Dialog open={openEventsModal} onClose={closeModalEvents} maxWidth="lg">
+          <DialogTitle sx={{ textAlign: 'center' }}>Eventos</DialogTitle>
+          <DialogContent>
+            <EventsTimeline events={selectedEvent} />
+          </DialogContent>
+        </Dialog>
       </Box>
     </Fade>
   );
