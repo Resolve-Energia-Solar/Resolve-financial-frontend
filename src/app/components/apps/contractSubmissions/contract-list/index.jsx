@@ -37,6 +37,7 @@ function ContractSubmissions({ sale }) {
   const openModalEvents = (events) => {
     setOpenEventsModal(true);
     setSelectedEvent(events);
+    handleMenuClose();
   };
 
   const closeModalEvents = () => {

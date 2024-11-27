@@ -6,7 +6,8 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import EditCustomer from './customer';
 import ListAddresses from './Addresses';
-import ListPhones from './phones';
+import ListPhones from './Phones';
+
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
