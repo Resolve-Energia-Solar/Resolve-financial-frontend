@@ -33,7 +33,7 @@ import documentTypeService from '@/services/documentTypeService';
 import Attachments from '@/app/components/shared/Attachments';
 import ProductCard from '@/app/components/apps/product/Product-list';
 import ContractSubmissions from '../../../contractSubmissions/contract-list';
-import CustomerTabs from '../../../users/Edit-user/customer/tabs';
+import CustomerTabs from '../../../users/Edit-user/customer/Tabs';
 import SendContract from '../../../contractSubmissions/Send-contract';
 import PreviewContract from '../../../contractSubmissions/Preview-contract';
 import { Preview } from '@mui/icons-material';
