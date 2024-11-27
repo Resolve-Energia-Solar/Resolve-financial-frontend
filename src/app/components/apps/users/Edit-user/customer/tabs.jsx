@@ -4,9 +4,9 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import EditCustomer from './customer';
-import ListAddresses from './Addresses';
-import ListPhones from './Phones';
+import EditCustomer from '@/app/components/apps/users/Edit-user/customer/Customer';
+import ListAddresses from '@/app/components/apps/users/Edit-user/customer/Addresses';
+import ListPhones from '@/app/components/apps/users/Edit-user/customer/Phones';
 
 
 function TabPanel(props) {

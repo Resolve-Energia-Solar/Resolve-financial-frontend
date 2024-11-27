@@ -1,20 +1,15 @@
 'use client';
-import { Grid, Button, Stack, FormControlLabel, Alert, CircularProgress } from '@mui/material';
+import { Grid, Button, Stack, Alert, CircularProgress } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import { useParams } from 'next/navigation';
 
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-User';
-import AutoCompleteBranch from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Branch';
-import AutoCompleteAddresses from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Addresses';
-import AutoCompleteDepartament from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Departament';
-import AutoCompleteRole from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Role';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 
 import useUser from '@/hooks/users/useUser';
 import useUserForm from '@/hooks/users/useUserForm';
-import FormPageSkeleton from '../../../comercial/sale/components/FormPageSkeleton';
+import FormPageSkeleton from '@/app/components/apps/comercial/sale/components/FormPageSkeleton';
 
 export default function EditCustomer({ userId = null }) {
   const params = useParams();
