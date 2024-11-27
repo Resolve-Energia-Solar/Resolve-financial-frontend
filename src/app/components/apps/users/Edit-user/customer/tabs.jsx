@@ -4,10 +4,10 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import EditCustomer from '@/app/components/apps/users/Edit-user/customer/Customer';
+import EditCustomer from '@/app/components/apps/users/Edit-user/customer/customer';
 import ListAddresses from '@/app/components/apps/users/Edit-user/customer/Addresses';
 import ListPhones from '@/app/components/apps/users/Edit-user/customer/Phones';
-
+ 
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
