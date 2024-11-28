@@ -14,7 +14,7 @@ import {
   List,
   ListItem,
 } from '@mui/material';
-import { CallToAction, FlashAuto, SolarPower } from '@mui/icons-material';
+import { AttachMoney, CallToAction, FlashAuto, SolarPower } from '@mui/icons-material';
 import { useState, useContext } from 'react';
 import saleService from '@/services/saleService';
 import ProposalService from '@/services/proposalService';
@@ -48,7 +48,7 @@ function FormPreSale({ selectedProposal, onClose }) {
 
   const sendData = {
     lead_id: selectedProposal.lead.id,
-    kits: selectedProposal.kits?.map((kit) => kit),
+    commercial_proposal_id: selectedProposal.id,
   };
 
   const handleCreatePreSale = async () => {
@@ -84,9 +84,9 @@ function FormPreSale({ selectedProposal, onClose }) {
       </Tabs>
 
       <TabPanel value={value} index={0}>
-        {selectedProposal?.kits?.map((kit) => (
+        {selectedProposal?.commercial_products?.map((product) => (
           <Card
-            key={kit.id}
+            key={product.id}
             variant="outlined"
             sx={{
               p: 3,
@@ -101,21 +101,29 @@ function FormPreSale({ selectedProposal, onClose }) {
               <Box display="flex" alignItems="center" mb={1}>
                 <SolarPower sx={{ color: theme.palette.secondary.main, mr: 1 }} />
                 <Typography variant="h6" gutterBottom>
-                  Quantidade Modulos: {kit?.modules_amount || 'N/A'}
+                  Quantidade Modulos: {product?.modules_amount || 'N/A'}
                 </Typography>
               </Box>
 
               <Box display="flex" alignItems="center" mb={1}>
                 <CallToAction sx={{ color: theme.palette.secondary.main, mr: 1 }} />
                 <Typography variant="h6" gutterBottom>
-                  Quantidade Inversores: {kit?.inversor_amount || 'N/A'}
+                  Quantidade Inversores: {product?.inversor_amount || 'N/A'}
                 </Typography>
               </Box>
 
               <Box display="flex" alignItems="center" mb={1}>
                 <FlashAuto sx={{ color: theme.palette.secondary.main, mr: 1 }} />
                 <Typography variant="h6" gutterBottom>
-                  KWP: {kit?.kwp || 'N/A'}
+                  KWP: {product?.kwp || 'N/A'}
+                </Typography>
+              </Box>
+
+
+              <Box display="flex" alignItems="center" mb={1}>
+                <AttachMoney sx={{ color: theme.palette.secondary.main, mr: 1 }} />
+                <Typography variant="h6" gutterBottom>
+                  Valor: {product?.product?.product_value ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product?.product?.product_value) : 'N/A'}
                 </Typography>
               </Box>
             </CardContent>
