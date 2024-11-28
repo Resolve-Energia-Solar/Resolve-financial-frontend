@@ -59,17 +59,6 @@ export default function useSendContract() {
       const documentKey = documentResponse.data?.document?.key;
       if (!documentKey) throw new Error('Falha na criação do documento');
 
-      await contractService.createContract({
-        sale_id: sale.id,
-        submit_datetime: new Date().toISOString(),
-        status: 'P',
-        due_date: new Date(new Date().setDate(new Date().getDate() + 7))
-          .toISOString()
-          .split('T')[0],
-        key_number: documentKey,
-        link: `https://clicksign.com/documents/${documentKey}`,
-      });
-
       const signerResponse = await axios.post('/api/clicksign/createSigner', {
         documentation: fetchedSale?.customer?.first_document,
         birthday: fetchedSale?.customer?.birth_date,
@@ -91,6 +80,18 @@ export default function useSendContract() {
 
       const requestSignatureKey = addSignerResponse.data?.list?.request_signature_key;
       if (!requestSignatureKey) throw new Error('Falha ao adicionar o signatário ao documento');
+
+      await contractService.createContract({
+        sale_id: sale.id,
+        submit_datetime: new Date().toISOString(),
+        status: 'P',
+        due_date: new Date(new Date().setDate(new Date().getDate() + 7))
+          .toISOString()
+          .split('T')[0],
+        key_number: documentKey,
+        request_signature_key: requestSignatureKey,
+        link: `https://clicksign.com/documents/${documentKey}`,
+      });
 
       await axios.post('/api/clicksign/notification/email', {
         request_signature_key: requestSignatureKey,
