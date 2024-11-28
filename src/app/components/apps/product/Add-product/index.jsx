@@ -30,7 +30,7 @@ import AutoCompleteRoofType from '../../roof/autoCompleteRoof';
 import AutoCompleteMaterial from '../../comercial/sale/components/auto-complete/Auto-Input-Material';
 import CustomFieldMoney from '../../invoice/components/CustomFieldMoney';
 
-const CreateProduct = ({ sale = null, onClosedModal = null, onRefresh = null }) => {
+const CreateProduct = ({ sale = null, onClosedModal = null, onRefresh = null, onAddProduct = null }) => {
   const {
     formData,
     handleChange,
@@ -46,9 +46,13 @@ const CreateProduct = ({ sale = null, onClosedModal = null, onRefresh = null }) 
 
   useEffect(() => {
     if (success) {
+      if (onAddProduct) {
+        onAddProduct(response);
+      }
+
       if (onClosedModal) {
         onClosedModal();
-        onRefresh();
+        if (onRefresh) onRefresh();
       }
     }
   }, [success]);

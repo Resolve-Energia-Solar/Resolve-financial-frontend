@@ -18,7 +18,7 @@ import { useSelector } from 'react-redux';
 
 import useSaleForm from '@/hooks/sales/useSaleForm';
 
-const CreateSale = ({ onClosedModal = null, leadId = null, refresh }) => {
+const CreateSale = ({ onClosedModal = null, leadId = null, refresh = null }) => {
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const hasPermission = (permissions) => {
@@ -58,7 +58,7 @@ const CreateSale = ({ onClosedModal = null, leadId = null, refresh }) => {
         router.push(`/apps/commercial/sale/${successData.id}/update`);
       }
     }
-  }, [successData, success]);
+  }, [success]);
 
   return (
     <Box>

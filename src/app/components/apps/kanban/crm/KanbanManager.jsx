@@ -420,7 +420,6 @@ const KanbanManager = ({
                     <Tab label="Lead" />
                     <Tab label="Proposta" />
                     <Tab label="Venda" />
-                    {/* <Tab label="Envios" /> */}
                     <Tab label="Atividades" />
                   </Tabs>
                 </Box>
