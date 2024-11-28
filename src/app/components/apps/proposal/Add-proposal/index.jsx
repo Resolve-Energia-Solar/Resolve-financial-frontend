@@ -56,6 +56,7 @@ const ProposalForm = ({ onClosedModal = null, leadId = null, onRefresh = null })
 
   formData.lead_id = leadId;
   formData.commercial_products_ids = selectedProducts;
+  formData.value = totalValue;
 
   const status_options = [
     { value: 'A', label: 'Aceita' },
@@ -118,7 +119,7 @@ const ProposalForm = ({ onClosedModal = null, leadId = null, onRefresh = null })
         <CustomFieldMoney
           name="value"
           fullWidth
-          value={totalValue}
+          value={formData.value}
           disabled
           onChange={(value) => handleChange('value', value)}
           {...(formErrors.value && { error: true, helperText: formErrors.value })}

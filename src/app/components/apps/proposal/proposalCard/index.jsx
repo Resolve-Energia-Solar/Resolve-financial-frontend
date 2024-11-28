@@ -165,7 +165,7 @@ export default function ProposalCard({ proposal, handleEditProposal, onAddSale }
               </IconButton>
             </Tooltip>
             )}
-            <Tooltip title="Ver Proposta">
+            {/* <Tooltip title="Ver Proposta">
               <IconButton
                 color="primary"
                 onClick={() => handleGenerateProposal(proposal)}
@@ -176,7 +176,7 @@ export default function ProposalCard({ proposal, handleEditProposal, onAddSale }
               >
                 <DescriptionIcon />
               </IconButton>
-            </Tooltip>
+            </Tooltip> */}
           </Box>
 
           <Dialog open={createModalOpen} onClose={() => setCreateModalOpen(false)}>
