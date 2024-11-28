@@ -15,7 +15,7 @@ export default function SendContractButton({ sale }) {
     handleCloseSnackbar,
   } = useSendContract();
 
-  const [dialogOpen, setDialogOpen] = useState(false); // Controle do diálogo de confirmação
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleOpenDialog = () => setDialogOpen(true);
   const handleCloseDialog = () => setDialogOpen(false);
