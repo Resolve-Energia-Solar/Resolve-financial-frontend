@@ -30,12 +30,16 @@ const ProposalManager = ({ selectedLead }) => {
   const [proposals, setProposals] = useState([]);
   const [isSaleModalOpen, setSaleModalOpen] = useState(false);
   const [loadingProposals, setLoadingProposals] = useState(true);
+  const [refresh, setRefresh] = useState(false);
+
+  const refreshProposals = () => {
+    setRefresh(!refresh);
+  };
 
   const { products, loading, error } = useProducts();
 
   const fetchProposals = async () => {
     setLoadingProposals(true);
-    console.log('Buscando propostas do lead:', products);
     try {
       const fetchedProposals = await ProposalService.getProposalByLead(selectedLead.id);
       setProposals(fetchedProposals.results);
@@ -48,7 +52,7 @@ const ProposalManager = ({ selectedLead }) => {
 
   useEffect(() => {
     if (selectedLead) fetchProposals();
-  }, [selectedLead]);
+  }, [refresh]);
 
   const handleAddProposal = () => {
     setIsFormVisible(true);
@@ -70,20 +74,31 @@ const ProposalManager = ({ selectedLead }) => {
   const handleCloseForm = () => {
     setIsFormVisible(false);
     setSelectedProposal(null);
-    fetchProposals();
   };
 
   const closeSnackbar = () => {
     setIsSnackbarOpen(false);
   };
 
+  if (loadingProposals) {
+    return (
+      <Grid container spacing={4}>
+        <Grid item xs={8}>
+          <Box display="flex" flexDirection="column" gap={2}>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <SkeletonCard key={index} />
+            ))}
+          </Box>
+        </Grid>
+      </Grid>
+    );
+  }
+
   return (
     <Grid container spacing={4}>
       <Grid item xs={8}>
         <Box display="flex" flexDirection="column" gap={2}>
-          {loadingProposals ? (
-            Array.from({ length: 3 }).map((_, index) => <SkeletonCard key={index} />)
-          ) : proposals.length > 0 ? (
+          {proposals.length > 0 ? (
             proposals.map((proposal) => (
               <ProposalCard
                 handleEditProposal={handleEditProposal}
@@ -126,11 +141,9 @@ const ProposalManager = ({ selectedLead }) => {
             />
           ) : (
             <ProposalForm
-              kits={products}
-              selectedLead={selectedLead}
-              handleCloseForm={handleCloseForm}
-              loading={loading}
-              error={error}
+              leadId={selectedLead.id}
+              onClosedModal={handleCloseForm}
+              onRefresh={refreshProposals}
             />
           )}
         </DialogContent>
