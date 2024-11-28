@@ -134,10 +134,9 @@ const ProposalManager = ({ selectedLead }) => {
         <DialogContent dividers>
           {isEditMode ? (
             <ProposalEditForm
-              kits={products}
-              selectedLead={selectedLead}
-              handleCloseForm={handleCloseForm}
-              proposal={selectedProposal}
+              proposalId={selectedProposal?.id}
+              onClosedModal={handleCloseForm}
+              onRefresh={refreshProposals}
             />
           ) : (
             <ProposalForm
