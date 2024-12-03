@@ -103,7 +103,7 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null }) => {
                     borderBottom: `1px dashed ${theme.palette.divider}`,
                   }}
                 >
-                  {saleData.lead.name}
+                  {saleData?.lead?.name}
                 </CustomFormLabel>
               </Grid>
               <Grid item xs={12} sm={12} lg={4}>
@@ -205,7 +205,11 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null }) => {
                     borderBottom: `1px dashed ${theme.palette.divider}`,
                   }}
                 >
-                  {format(new Date(saleData.document_completion_date), 'dd/MM/yyyy HH:mm:ss')}
+                  {saleData?.document_completion_date ? (
+                    format(new Date(saleData?.document_completion_date), 'dd/MM/yyyy HH:mm:ss')
+                  ) : (
+                    'Não informado'
+                  )}
                 </CustomFormLabel>
               </Grid>
               <Grid item xs={12} sm={12} lg={12}>

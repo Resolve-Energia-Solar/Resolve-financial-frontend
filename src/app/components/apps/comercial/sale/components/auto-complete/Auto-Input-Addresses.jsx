@@ -24,8 +24,6 @@ export default function AutoCompleteAddresses({
   const [openModal, setOpenModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
-  console.log('Value:', value);
-
   const handleOpenModal = () => {
     setOpenModal(true);
   };
@@ -39,8 +37,6 @@ export default function AutoCompleteAddresses({
   useEffect(() => {
     setValuesDefault(value);
   }, [value]);
-
-  console.log('Values Default:', valuesDefault);
 
   useEffect(() => {
     const fetchDefaultAddresses = async () => {
