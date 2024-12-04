@@ -60,7 +60,7 @@ const MyScheduleList = () => {
 
   const { filters, refresh } = useContext(MyScheduleDataContext);
 
-  const [order, setOrder] = useState('asc');
+  const [order, setOrder] = useState('schedule_date');
   const [orderDirection, setOrderDirection] = useState('asc');
 
   useEffect(() => {

@@ -72,6 +72,7 @@ const useScheduleForm = (initialData, id) => {
         execution_started_at: initialData.execution_started_at || null,
         execution_finished_at: initialData.execution_finished_at || null,
       });
+      setAddressData(initialData.address || null);
     }
   }, [initialData]);
 
