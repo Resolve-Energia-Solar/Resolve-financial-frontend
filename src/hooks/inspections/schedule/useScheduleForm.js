@@ -34,6 +34,9 @@ const useScheduleForm = (initialData, id) => {
     latitude: null,
     longitude: null,
     status: 'Pendente',
+    going_to_location_at: null,
+    execution_started_at: null,
+    execution_finished_at: null,
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -65,6 +68,9 @@ const useScheduleForm = (initialData, id) => {
         latitude: initialData.latitude || null,
         longitude: initialData.longitude || null,
         status: initialData.status || 'Pendente',
+        going_to_location_at: initialData.going_to_location_at || null,
+        execution_started_at: initialData.execution_started_at || null,
+        execution_finished_at: initialData.execution_finished_at || null,
       });
     }
   }, [initialData]);
@@ -176,6 +182,8 @@ const useScheduleForm = (initialData, id) => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    console.log('Field: ', field, 'Value: ', value);
+    console.log('FormData: ', formData);
   };
 
   const handleSave = async () => {
@@ -192,7 +200,12 @@ const useScheduleForm = (initialData, id) => {
       longitude: formData.longitude,
       status: formData.status,
       project: formData.project_id,
+      going_to_location_at: formData.going_to_location_at,
+      execution_started_at: formData.execution_started_at,
+      execution_finished_at: formData.execution_finished_at,
     };
+
+    console.log('Data to send: ', dataToSend);
 
     try {
       if (id) {
