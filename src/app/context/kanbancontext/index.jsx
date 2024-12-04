@@ -6,6 +6,7 @@ export const KanbanDataContext = createContext();
 export const KanbanDataContextProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [leads, setLeads] = useState([]);
+  const [idSaleSuccess, setIdSaleSuccess] = useState(null);
 
   const addCategory = (category) => {
     setCategories((prevCategories) => [...prevCategories, category]);
@@ -16,7 +17,7 @@ export const KanbanDataContextProvider = ({ children }) => {
   };
 
   return (
-    <KanbanDataContext.Provider value={{ categories, leads, addCategory, addLead }}>
+    <KanbanDataContext.Provider value={{ categories, leads, addCategory, addLead, idSaleSuccess, setIdSaleSuccess }}>
       {children}
     </KanbanDataContext.Provider>
   );

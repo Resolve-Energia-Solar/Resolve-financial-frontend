@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -11,7 +10,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import { IconTrash, IconHash, IconMapPin, IconUsers } from '@tabler/icons-react';
+import { IconTrash, IconHash, IconUsers } from '@tabler/icons-react';
 import { Slide, Switch, Zoom } from '@mui/material';
 
 const ListItem = ({ roles = [], onDelete }) => {
@@ -62,12 +61,10 @@ const ListItem = ({ roles = [], onDelete }) => {
 
                     <TableCell>
                       <Typography variant="subtitle1" fontWeight={600} noWrap>
-                        {role.name}
+                        {role?.name}
                       </Typography>
                     </TableCell>
-            
 
-             
                     <TableCell align="right">
                       <Tooltip title="Deletar Filial">
                         <Switch

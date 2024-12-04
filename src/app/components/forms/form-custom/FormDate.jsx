@@ -6,13 +6,15 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ptBR } from 'date-fns/locale';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isValid } from 'date-fns';
 
 const FormDate = ({ label, value, onChange, error, helperText }) => {
 
   return (
     <div>
+      {label && (
       <CustomFormLabel htmlFor="date">{label}</CustomFormLabel>
+      )}
       <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
         <DatePicker
           renderInput={(props) => (
@@ -23,9 +25,13 @@ const FormDate = ({ label, value, onChange, error, helperText }) => {
               helperText={helperText}
             />
           )}
-          value={value ? parseISO(value) : null}
+          value={value && isValid(parseISO(value)) ? parseISO(value) : null}
           onChange={(newValue) => {
-            onChange(newValue ? format(newValue, 'yyyy-MM-dd') : ''); 
+            if (newValue && isValid(newValue)) {
+              onChange(format(newValue, 'yyyy-MM-dd'));
+            } else {
+              onChange('');
+            }
           }}
           inputFormat="dd/MM/yyyy"
         />

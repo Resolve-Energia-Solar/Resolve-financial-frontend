@@ -4,29 +4,32 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import userService from '@/services/userService';
 import { debounce } from 'lodash';
+import { IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import UserForm from '@/app/(DashboardLayout)/apps/users/create/page';
 
-export default function AutoCompleteUser({ onChange, value, error, helperText, disabled }) {
+export default function AutoCompleteUser({ onChange, value, error, helperText, disabled, labeltitle }) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState(null);
+  const [openModal, setOpenModal] = React.useState(false);
 
+  const fetchDefaultUser = async (userId) => {
+    if (userId) {
+      try {
+        const user = await userService.getUserById(userId);
+        if (user) {
+          setSelectedUser({ id: user.id, name: user.complete_name });
+        }
+      } catch (error) {
+        console.error('Erro ao buscar usuário:', error);
+      }
+    }
+  };
 
   React.useEffect(() => {
-    const fetchDefaultUser = async () => {
-      if (value) {
-        try {
-          const user = await userService.getUserById(value);
-          if (user) {
-            setSelectedUser({ id: user.id, name: user.complete_name });
-          }
-        } catch (error) {
-          console.error('Erro ao buscar usuário:', error);
-        }
-      }
-    };
-
-    fetchDefaultUser();
+    fetchDefaultUser(value);
   }, [value]);
 
   const handleChange = (event, newValue) => {
@@ -66,6 +69,13 @@ export default function AutoCompleteUser({ onChange, value, error, helperText, d
     setOptions([]);
   };
 
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
 
   return (
     <div>
@@ -87,6 +97,7 @@ export default function AutoCompleteUser({ onChange, value, error, helperText, d
         renderInput={(params) => (
           <CustomTextField
             {...params}
+            label={labeltitle}
             error={error}
             helperText={helperText}
             size="small"
@@ -97,12 +108,33 @@ export default function AutoCompleteUser({ onChange, value, error, helperText, d
                 <React.Fragment>
                   {loading ? <CircularProgress color="inherit" size={20} /> : null}
                   {params.InputProps.endAdornment}
+                  <IconButton 
+                    onClick={handleOpenModal} 
+                    aria-label="Adicionar usuário" 
+                    edge="end"
+                    size="small" // Mantém o botão pequeno
+                    sx={{ padding: '4px' }} // Ajusta o padding para manter o tamanho pequeno
+                  >
+                    <AddIcon fontSize="small" />
+                  </IconButton>
                 </React.Fragment>
               ),
             }}
           />
         )}
       />
+
+      {/* Modal para adicionar usuário */}
+      <Dialog open={openModal} onClose={handleCloseModal} maxWidth="lg">
+        <DialogTitle>Adicionar Novo Usuário</DialogTitle>
+        <DialogContent>
+          <UserForm onClosedModal={handleCloseModal} selectedUserId={fetchDefaultUser} />
+        </DialogContent>
+        {/* <DialogActions>
+          <Button onClick={handleCloseModal} color="primary">Cancelar</Button>
+          <Button onClick={() => {} color="primary">Salvar</Button>
+        </DialogActions> */}
+      </Dialog>
     </div>
   );
 }

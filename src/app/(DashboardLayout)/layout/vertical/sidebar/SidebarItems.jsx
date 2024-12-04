@@ -22,7 +22,7 @@ const SidebarItems = () => {
   const hasPermission = (permissions) => {
     // Se não houver permissões definidas, retorna true para permitir acesso
     if (!permissions) return true; 
-    return permissions.some(permission => userPermissions.includes(permission));
+    return permissions.some(permission => userPermissions?.includes(permission));
   };
 
   return (

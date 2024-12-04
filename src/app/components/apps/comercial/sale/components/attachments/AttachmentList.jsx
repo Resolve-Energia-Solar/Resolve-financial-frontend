@@ -14,34 +14,35 @@ import {
   DialogActions,
   Button,
   ListItemSecondaryAction,
+  useTheme,
+  Skeleton,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ImageIcon from '@mui/icons-material/Image';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import DescriptionIcon from '@mui/icons-material/Description';
-
 import { useState } from 'react';
 
-const AttachmentList = ({ attachments, handleDeleteClick }) => {
+const AttachmentList = ({ attachments, handleDeleteClick, loading }) => {
+  const theme = useTheme();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-
+  const [fileToDelete, setFileToDelete] = useState(null);
 
   const getFileIcon = (fileName) => {
     const ext = fileName.split('.').pop().toLowerCase();
     if (['png', 'jpg', 'jpeg', 'gif'].includes(ext)) {
-      return <ImageIcon />;
+      return <ImageIcon sx={{ color: theme.palette.primary.main }} />;
     } else if (ext === 'pdf') {
-      return <PictureAsPdfIcon />;
+      return <PictureAsPdfIcon sx={{ color: theme.palette.error.main }} />;
     } else {
-      return <DescriptionIcon />;
+      return <DescriptionIcon sx={{ color: theme.palette.text.secondary }} />;
     }
   };
 
   const handleDeleteFile = async (id) => {
     try {
-      await attachmentService.deleteAttachment(id);
-      const updatedAttachments = await attachmentService.getAttachments(objectId);
-      setAttachments(updatedAttachments.results);
+      await handleDeleteClick(id);
+      setOpenDeleteDialog(false);
     } catch (error) {
       console.error('Erro ao deletar o arquivo:', error);
     }
@@ -49,17 +50,24 @@ const AttachmentList = ({ attachments, handleDeleteClick }) => {
 
   const handleConfirmDelete = () => {
     handleDeleteFile(fileToDelete.id);
-    setOpenDeleteDialog(false);
-    setFileToDelete(null);
   };
 
   return (
     <Box>
       <Typography variant="h6">Anexos</Typography>
       <List>
-        {Array.isArray(attachments) && attachments.length > 0 ? (
+        {loading ? (
+          Array.from(new Array(3)).map((_, index) => (
+            <ListItem key={index} sx={{ borderBottom: `1px dashed ${theme.palette.divider}` }}>
+              <Stack direction="row" alignItems="center" spacing={2} width="100%">
+                <Skeleton variant="circular" width={40} height={40} />
+                <Skeleton variant="text" width="60%" height={20} />
+              </Stack>
+            </ListItem>
+          ))
+        ) : Array.isArray(attachments) && attachments.length > 0 ? (
           attachments.map((file, index) => (
-            <ListItem key={index} sx={{ borderBottom: '1px dashed #ccc' }}>
+            <ListItem key={index} sx={{ borderBottom: `1px dashed ${theme.palette.divider}` }}>
               <Box sx={{ width: '100%' }}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                   <Stack direction="row" alignItems="center">
@@ -68,7 +76,7 @@ const AttachmentList = ({ attachments, handleDeleteClick }) => {
                       href={file.file}
                       target="_blank"
                       rel="noopener noreferrer"
-                      sx={{ marginLeft: 2 }}
+                      sx={{ marginLeft: 2, color: theme.palette.primary.main }}
                     >
                       {file.description}
                     </Link>
@@ -77,9 +85,12 @@ const AttachmentList = ({ attachments, handleDeleteClick }) => {
                     <IconButton
                       edge="end"
                       aria-label="delete"
-                      onClick={() => handleDeleteClick(file)}
+                      onClick={() => {
+                        setFileToDelete(file);
+                        setOpenDeleteDialog(true);
+                      }}
                     >
-                      <DeleteIcon />
+                      <DeleteIcon sx={{ color: theme.palette.error.main }} />
                     </IconButton>
                   </ListItemSecondaryAction>
                 </Stack>
@@ -87,7 +98,7 @@ const AttachmentList = ({ attachments, handleDeleteClick }) => {
             </ListItem>
           ))
         ) : (
-          <Typography variant="body2" color="textSecondary">
+          <Typography variant="body2" color={theme.palette.text.secondary}>
             Nenhum arquivo anexado.
           </Typography>
         )}
@@ -106,8 +117,10 @@ const AttachmentList = ({ attachments, handleDeleteClick }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDeleteDialog(false)}>Cancelar</Button>
-          <Button onClick={handleConfirmDelete} autoFocus>
+          <Button onClick={() => setOpenDeleteDialog(false)} sx={{ color: theme.palette.text.primary }}>
+            Cancelar
+          </Button>
+          <Button onClick={handleConfirmDelete} autoFocus sx={{ color: theme.palette.error.main }}>
             Confirmar
           </Button>
         </DialogActions>

@@ -1,257 +1,185 @@
-"use client";
-import React, { useContext, useEffect, useState } from "react";
-import { InvoiceContext } from "@/app/context/InvoiceContext/index";
-import { usePathname } from "next/navigation";
+'use client';
 import {
-    Card,
-    CardContent,
-    Typography,
-    Button,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    Badge,
-    Box,
-    Stack,
-    Chip,
-    Divider,
-    Grid,
-} from "@mui/material";
-import { format, isValid, parseISO } from "date-fns";
-import Link from "next/link";
-import Logo from "@/app/(DashboardLayout)/layout/shared/logo/Logo";
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box,
+  Stack,
+  Divider,
+  Grid,
+  useTheme,
+  Skeleton,
+} from '@mui/material';
+import { format, isValid } from 'date-fns';
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import { useParams } from 'next/navigation';
 
-const InvoiceDetail = () => {
-    const { invoices } = useContext(InvoiceContext);
-    const [selectedInvoice, setSelectedInvoice] = useState(null);
+import usePayment from '@/hooks/payments/usePayment';
+import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
+import PaymentStatusChip from '../components/PaymentStatusChip';
+import EditInvoiceSkeleton from '../components/EditInvoiceSkeleton';
 
-    useEffect(() => {
-        // Set the first invoice as the default selected invoice initially
-        if (invoices.length > 0) {
-            setSelectedInvoice(invoices[0]);
-        }
-    }, [invoices]);
+const DetailInvoicePage = ({ payment_id = null }) => {
+  const theme = useTheme();
+  const params = useParams();
+  let id = payment_id;
+  if (!payment_id) id = params.id;
 
-    // Get the last part of the URL path as the billFrom parameter
-    const pathName = usePathname();
-    const getTitle = pathName.split("/").pop();
+  const { loading, error, paymentData } = usePayment(id);
+  const { formattedValue } = useCurrencyFormatter(paymentData?.value);
 
-    // Find the invoice that matches the billFrom extracted from the URL
-    useEffect(() => {
-        if (getTitle) {
-            const invoice = invoices.find(
-                (p) => p.billFrom === getTitle
-            );
-            if (invoice) {
-                setSelectedInvoice(invoice);
-            }
-        }
-    }, [getTitle, invoices]);
+  const statusLabels = {
+    C: 'Crédito',
+    D: 'Débito',
+    B: 'Boleto',
+    F: 'Financiamento',
+    PI: 'Parcelamento Interno',
+  };
 
-    if (!selectedInvoice) {
-        return <div>Loading...</div>;
-    }
+  const orderDate = paymentData?.created_at;
+  const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
+  const formattedOrderDate = format(parsedDate, 'EEEE, MMMM dd, yyyy');
 
-    const orderDate = selectedInvoice.orderDate
-        ? isValid(parseISO(selectedInvoice.orderDate))
-            ? format(parseISO(selectedInvoice.orderDate), "EEEE, MMMM dd, yyyy")
-            : "Invalid Date"
-        : format(new Date(), "EEEE, MMMM dd, yyyy");
+  const formatToBRL = (value) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
-    return (
-        <>
-            <Stack
-                direction={{ xs: 'column', sm: 'row' }}
-                alignItems="center"
-                justifyContent="space-between"
-                mb={2}
-            >
-                <Box sx={{
-                    textAlign: {
-                        xs: "center",
-                        sm: "left"
-                    }
-                }}>
-                    <Typography variant="h5"># {selectedInvoice.id}</Typography>
-                    <Box mt={1}>
-                        <Chip
-                            size="small"
-                            color="secondary"
-                            variant="outlined"
-                            label={orderDate}
-                        ></Chip>
-                    </Box>
-                </Box>
+  if (loading) {
+    return <EditInvoiceSkeleton />;
+  }
 
-                <Logo />
-                <Box textAlign="right">
-                    {selectedInvoice.status === "Shipped" ? (
-                        <Chip size="small" color="primary" label={selectedInvoice.status} />
-                    ) : selectedInvoice.status === "Delivered" ? (
-                        <Chip size="small" color="success" label={selectedInvoice.status} />
-                    ) : selectedInvoice.status === "Pending" ? (
-                        <Chip size="small" color="warning" label={selectedInvoice.status} />
-                    ) : (
-                        ""
-                    )}
-                </Box>
-            </Stack>
-            <Divider></Divider>
+  if (error) return <Typography>Error loading payment details.</Typography>;
 
-            <Grid container spacing={3} mt={2} mb={4}>
-                <Grid item xs={12} sm={6}>
-                    <Paper variant="outlined">
-                        <Box p={3} display="flex" flexDirection="column" gap="4px">
-                            <Typography variant="h6" mb={2}>
-                                From :
-                            </Typography>
-                            <Typography variant="body1">
-                                {selectedInvoice.billFrom}
-                            </Typography>
-                            <Typography variant="body1">
-                                {selectedInvoice.billFromEmail}
-                            </Typography>
-                            <Typography variant="body1">
-                                {selectedInvoice.billFromAddress}
-                            </Typography>
-                            <Typography variant="body1">
-                                {selectedInvoice.billFromPhone}
-                            </Typography>
-                        </Box>
-                    </Paper>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <Paper variant="outlined">
-                        <Box p={3} display="flex" flexDirection="column" gap="4px">
-                            <Typography variant="h6" mb={2}>
-                                To :
-                            </Typography>
-                            <Typography variant="body1">{selectedInvoice.billTo}</Typography>
-                            <Typography variant="body1">
-                                {selectedInvoice.billToEmail}
-                            </Typography>
-                            <Typography variant="body1">
-                                {selectedInvoice.billToAddress}
-                            </Typography>
-                            <Typography variant="body1">
-                                {selectedInvoice.billToPhone}
-                            </Typography>
-                        </Box>
-                    </Paper>
-                </Grid>
-            </Grid>
+  return (
+    <Box>
+      <Stack
+        direction="row"
+        spacing={{ xs: 1, sm: 2, md: 4 }}
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
+        <Typography variant="h5">Detalhes do Pagamento # {id}</Typography>
+      </Stack>
+      <Divider />
 
-            <Paper variant="outlined">
-                <TableContainer>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    <Typography variant="h6" fontSize="14px">
-                                        Item Name
-                                    </Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Typography variant="h6" fontSize="14px">
-                                        Unit Price
-                                    </Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Typography variant="h6" fontSize="14px">
-                                        Unit
-                                    </Typography>
-                                </TableCell>
-                                <TableCell align="right">
-                                    <Typography variant="h6" fontSize="14px">
-                                        Total Cost
-                                    </Typography>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {selectedInvoice.orders.map(
-                                (
-                                    order,
-                                    index
-                                ) => (
-                                    <TableRow key={index}>
-                                        <TableCell>
-                                            <Typography variant="body1">{order.itemName}</Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography variant="body1">{order.unitPrice}</Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography variant="body1">{order.units}</Typography>
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            <Typography variant="body1">
-                                                {order.unitTotalPrice}
-                                            </Typography>
-                                        </TableCell>
-                                    </TableRow>
-                                )
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Paper>
-            <Box p={3} backgroundColor="primary.light" mt={3}>
-                <Box display="flex" justifyContent="end" gap={3} mb={3}>
-                    <Typography variant="body1" fontWeight={600}>
-                        Sub Total:
-                    </Typography>
-                    <Typography variant="body1" fontWeight={600}>
-                        {selectedInvoice.totalCost}
-                    </Typography>
-                </Box>
-                <Box display="flex" justifyContent="end" gap={3} mb={3}>
-                    <Typography variant="body1" fontWeight={600}>
-                        Vat:
-                    </Typography>
-                    <Typography variant="body1" fontWeight={600}>
-                        {selectedInvoice.vat}
-                    </Typography>
-                </Box>
-                <Box display="flex" justifyContent="end" gap={3}>
-                    <Typography variant="body1" fontWeight={600}>
-                        Grand Total:
-                    </Typography>
-                    <Typography variant="body1" fontWeight={600}>
-                        {selectedInvoice.grandTotal}
-                    </Typography>
-                </Box>
-            </Box>
-            <Box
-                display="flex"
-                alignItems="center"
-                gap={1}
-                mt={3}
-                justifyContent="end"
-            >
-                <Button
-                    variant="contained"
-                    color="secondary"
-                    component={Link}
-                    href={`/apps/invoice/edit/${selectedInvoice.billFrom}`}
-                >
-                    Edit Invoice
-                </Button>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    component={Link}
-                    href="/apps/invoice/list"
-                >
-                    Back to Invoice List
-                </Button>
-            </Box>
-        </>
-    );
+      <Stack
+        direction="row"
+        spacing={{ xs: 1, sm: 2, md: 4 }}
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
+        <Box>
+          <Typography variant="subtitle1">Status do Pagamento</Typography>
+          <Typography>{statusLabels[paymentData?.payment_type] || 'Desconhecido'}</Typography>
+        </Box>
+        <Box textAlign="right">
+          <CustomFormLabel>Data do Registro</CustomFormLabel>
+          <Typography variant="body1"> {formattedOrderDate}</Typography>
+        </Box>
+      </Stack>
+      <Divider />
+
+      <Grid container spacing={3} mb={4}>
+        <Grid item xs={12} sm={6}>
+          <CustomFormLabel>Venda</CustomFormLabel>
+          <Typography
+            sx={{
+              fontStyle: 'italic',
+              fontWeight: 'light',
+              borderBottom: `1px dashed ${theme.palette.divider}`,
+            }}
+          >
+            {paymentData?.sale.contract_number} - {paymentData?.sale.customer.complete_name}
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <CustomFormLabel>Financiador</CustomFormLabel>
+          <Typography
+            sx={{
+              fontStyle: 'italic',
+              fontWeight: 'light',
+              borderBottom: `1px dashed ${theme.palette.divider}`,
+            }}
+          >
+            {paymentData?.financier.name}
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <CustomFormLabel>Valor</CustomFormLabel>
+          <Typography
+            sx={{
+              fontStyle: 'italic',
+              fontWeight: 'light',
+              borderBottom: `1px dashed ${theme.palette.divider}`,
+            }}
+          >
+            {formattedValue}
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <CustomFormLabel>Data do Pagamento</CustomFormLabel>
+          <Typography
+            sx={{
+              fontStyle: 'italic',
+              fontWeight: 'light',
+              borderBottom: `1px dashed ${theme.palette.divider}`,
+            }}
+          >
+            {format(new Date(paymentData?.due_date), 'dd/MM/yyyy')}
+          </Typography>
+        </Grid>
+      </Grid>
+
+      <Paper variant="outlined">
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <Typography variant="h6" fontSize="14px">
+                    Valor
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6" fontSize="14px">
+                    Número da Parcela
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6" fontSize="14px">
+                    Vencimento
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6" fontSize="14px">
+                    Status
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {paymentData.installments.map((installment) => (
+                <TableRow key={installment.id}>
+                  <TableCell>{formatToBRL(installment.installment_value)}</TableCell>
+                  <TableCell>{installment.installment_number}</TableCell>
+                  <TableCell>{format(new Date(installment.due_date), 'dd/MM/yyyy')}</TableCell>
+                  <TableCell>
+                    <PaymentStatusChip isPaid={installment.is_paid} />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
+    </Box>
+  );
 };
 
-export default InvoiceDetail;
+export default DetailInvoicePage;

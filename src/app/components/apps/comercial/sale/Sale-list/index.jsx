@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Table,
   TableBody,
@@ -23,46 +23,37 @@ import {
   Alert,
   CircularProgress,
   Backdrop,
+  Box,
 } from '@mui/material';
 import {
   Edit as EditIcon,
   Delete as DeleteIcon,
-  CheckCircle as CheckCircleIcon,
-  HourglassEmpty as HourglassEmptyIcon,
-  Cancel as CancelIcon,
   AddBoxRounded,
   Description as DescriptionIcon,
   Send as SendIcon,
   MoreVert as MoreVertIcon,
   ArrowDropDown as ArrowDropDownIcon,
-  ArrowDropUp,
-  FlashOn,
+  ArrowDropUp as ArrowDropUpIcon,
 } from '@mui/icons-material';
-
 import { useRouter } from 'next/navigation';
 import saleService from '@/services/saleService';
-import clickSignService from '@/services/ClickSign';
-import { Box } from '@mui/material';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
-
 import StatusChip from '../components/DocumentStatusIcon';
 import useSendContract from '@/hooks/clicksign/useClickSign';
-
 import DashboardCards from '@/app/components/apps/comercial/sale/components/kpis/DashboardCards';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import { IconActivity, IconEyeglass } from '@tabler/icons-react';
 import TableSkeleton from '../components/TableSkeleton';
 import DrawerFilters from '../components/DrawerFilters/DrawerFilters';
-
-import { useContext } from 'react';
-
 import { SaleDataContext } from '@/app/context/SaleContext';
 import ActionFlash from '../components/flashAction/actionFlash';
+import StatusPreSale from '../components/StatusPreSale';
+import { IconEyeglass } from '@tabler/icons-react';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   const { filters, refresh } = useContext(SaleDataContext);
 
@@ -83,25 +74,50 @@ const SaleList = () => {
   const [alertType, setAlertType] = useState('success');
   const [alertOpen, setAlertOpen] = useState(false);
 
+  const [proposalHTML, setProposalHTML] = useState('');
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   const [order, setOrder] = useState('asc');
   const [orderDirection, setOrderDirection] = useState('asc');
 
-
   const [selectedSales, setSelectedSales] = useState([]);
-
 
   const [open, setOpen] = useState(false);
   const [saleToDelete, setSaleToDelete] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
+    setPage(1);
+    setHasMore(true);
+    setSalesList([]);
+  }, [order, orderDirection, filters, refresh]);
+
+  useEffect(() => {
     const fetchSales = async () => {
+      const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
       try {
         setLoading(true);
-        const data = await saleService.getSales(
-          order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : null,
-        );
-        setSalesList(data.results);
+        const queryParams = new URLSearchParams(filters[1]).toString();
+        const data = await saleService.getSales({
+          ordering: orderingParam,
+          params: queryParams,
+          nextPage: page,
+        });
+        if (page === 1) {
+          setSalesList(data.results);
+        } else {
+          setSalesList((prevSalesList) => {
+            const newItems = data.results.filter(
+              (item) => !prevSalesList.some((existingItem) => existingItem.id === item.id),
+            );
+            return [...prevSalesList, ...newItems];
+          });
+        }
+        if (data.next) {
+          setHasMore(true);
+        } else {
+          setHasMore(false);
+        }
       } catch (err) {
         setError('Erro ao carregar Vendas');
         showAlert('Erro ao carregar Vendas', 'error');
@@ -111,7 +127,7 @@ const SaleList = () => {
     };
 
     fetchSales();
-  }, [order, orderDirection, filters, refresh]);
+  }, [page, order, orderDirection, filters, refresh]);
 
   const showAlert = (message, type) => {
     setAlertMessage(message);
@@ -159,14 +175,33 @@ const SaleList = () => {
     }
   };
 
-  const handleGenerateProposal = async (id) => {
+  const handleGenerateProposal = async (item) => {
     try {
-      await clickSignService.v1.generateProposal(id);
-      showAlert('Proposta gerada com sucesso', 'success');
+      const response = await fetch('/api/proposal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          customer: item?.customer?.complete_name,
+          total_value: Number(item.total_value).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          }),
+        }),
+      });
+
+      const data = await response.text();
+      setProposalHTML(data);
+      setDialogOpen(true);
     } catch (err) {
-      showAlert('Erro ao gerar a proposta', 'error');
-      console.error('Erro ao gerar a proposta:', err);
+      setError('Erro ao gerar proposta');
     }
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setProposalHTML('');
   };
 
   const handleSendContract = async (sale) => {
@@ -192,6 +227,13 @@ const SaleList = () => {
     }
   };
 
+  const handleScroll = (event) => {
+    const { scrollTop, scrollHeight, clientHeight } = event.target;
+    if (scrollTop + clientHeight >= scrollHeight - 5 && hasMore && !loading) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
+
   return (
     <Box>
       <DashboardCards />
@@ -209,18 +251,17 @@ const SaleList = () => {
         </Button>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          
-          { selectedSales.length > 0 && (
-          <ActionFlash 
-            value={selectedSales}
-          />
-          )}
-
+          {selectedSales.length > 0 && <ActionFlash value={selectedSales} />}
           <DrawerFilters />
         </Box>
       </Box>
 
-      <TableContainer component={Paper} elevation={10} sx={{ overflowX: 'auto' }}>
+      <TableContainer
+        component={Paper}
+        elevation={10}
+        sx={{ overflowX: 'auto', maxHeight: '50vh' }}
+        onScroll={handleScroll}
+      >
         <Table stickyHeader aria-label="sales table">
           <TableHead>
             <TableRow>
@@ -278,12 +319,12 @@ const SaleList = () => {
 
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('is_sale')}
+                onClick={() => handleSort('is_pre_sale')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   Venda
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'is_sale' &&
+                    {order === 'is_pre_sale' &&
                       (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                   </Box>
                 </Box>
@@ -319,9 +360,9 @@ const SaleList = () => {
               <TableCell>Ações</TableCell>
             </TableRow>
           </TableHead>
-          {loading ? (
+          {loading && page === 1 ? (
             <TableSkeleton rows={5} columns={9} />
-          ) : error ? (
+          ) : error && page === 1 ? (
             <Typography color="error">{error}</Typography>
           ) : (
             <TableBody>
@@ -347,13 +388,15 @@ const SaleList = () => {
                       currency: 'BRL',
                     })}
                   </TableCell>
-                  <TableCell>{item.is_sale ? 'Sim' : 'Não'}</TableCell>
+                  <TableCell>
+                    <StatusPreSale status={item.is_pre_sale} />
+                  </TableCell>
                   <TableCell>
                     <StatusChip status={item.status} />
                   </TableCell>
                   <TableCell>
-                    {item.document_completion_date &&
-                      new Date(item.document_completion_date).toLocaleDateString()}
+                    {item?.document_completion_date &&
+                      new Date(item?.document_completion_date).toLocaleDateString()}
                   </TableCell>
                   <TableCell>{item.branch.name}</TableCell>
                   <TableCell>
@@ -404,7 +447,7 @@ const SaleList = () => {
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          handleGenerateProposal(item.id);
+                          handleGenerateProposal(item);
                           handleMenuClose();
                         }}
                       >
@@ -424,6 +467,20 @@ const SaleList = () => {
                   </TableCell>
                 </TableRow>
               ))}
+              {loading && page > 1 && (
+                <TableRow>
+                  <TableCell colSpan={9} align="center">
+                    <CircularProgress />
+                  </TableCell>
+                </TableRow>
+              )}
+              {!hasMore && (
+                <TableRow>
+                  <TableCell colSpan={9} align="center">
+                    <Typography variant="body2">Você viu tudo!</Typography>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           )}
         </Table>
@@ -447,7 +504,7 @@ const SaleList = () => {
       </Dialog>
 
       <Dialog open={errorContract !== null} onClose={() => setErrorContract(null)}>
-        <DialogTitle>Error ao enviar contrato</DialogTitle>
+        <DialogTitle>Erro ao enviar contrato</DialogTitle>
         <DialogContent>
           <DialogContentText>{errorContract}</DialogContentText>
         </DialogContent>
@@ -466,6 +523,18 @@ const SaleList = () => {
         <DialogActions>
           <Button onClick={() => setSuccessContract(null)} color="success">
             Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={dialogOpen} onClose={handleCloseDialog} fullWidth maxWidth="md">
+        <DialogTitle>Proposta Gerada</DialogTitle>
+        <DialogContent>
+          <div dangerouslySetInnerHTML={{ __html: proposalHTML }} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Fechar
           </Button>
         </DialogActions>
       </Dialog>

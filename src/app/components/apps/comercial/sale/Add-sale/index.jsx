@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Grid, Button, Stack, FormControlLabel, Box } from '@mui/material';
+import { Grid, Button, Stack, FormControlLabel, Box, CircularProgress } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
@@ -18,7 +18,7 @@ import { useSelector } from 'react-redux';
 
 import useSaleForm from '@/hooks/sales/useSaleForm';
 
-const CreateSale = () => {
+const CreateSale = ({ onClosedModal = null, leadId = null, refresh }) => {
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const hasPermission = (permissions) => {
@@ -26,7 +26,15 @@ const CreateSale = () => {
     return permissions.some((permission) => userPermissions.includes(permission));
   };
 
-  const { formData, handleChange, handleSave, formErrors, success } = useSaleForm();
+  const {
+    formData,
+    handleChange,
+    handleSave,
+    formErrors,
+    loading: formLoading,
+    success,
+    successData,
+  } = useSaleForm();
 
   const { formattedValue, handleValueChange } = useCurrencyFormatter();
 
@@ -37,24 +45,24 @@ const CreateSale = () => {
     { value: 'D', label: 'Distrato' },
   ];
 
+  leadId ? formData.leadId = leadId : null;
+
   const router = useRouter();
+
   useEffect(() => {
-    if (success) {
-      router.push('/apps/commercial/sale');
+    if (successData && success) {
+      if (onClosedModal) {
+        onClosedModal();
+        refresh();
+      } else {
+        router.push(`/apps/commercial/sale/${successData.id}/update`);
+      }
     }
-  }, [success]);
+  }, [successData, success]);
 
   return (
     <Box>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="leads">Leads</CustomFormLabel>
-          <AutoCompleteLead
-            onChange={(id) => handleChange('leadId', id)}
-            value={formData.leadId}
-            {...(formErrors.lead_id && { error: true, helperText: formErrors.lead_id })}
-          />
-        </Grid>
         <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="name">Cliente</CustomFormLabel>
           <AutoCompleteUser
@@ -69,7 +77,7 @@ const CreateSale = () => {
           <AutoCompleteBranch
             onChange={(id) => handleChange('branchId', id)}
             value={formData.branchId}
-            disabled={!hasPermission(['accounts.can_change_branch_field'])}
+            disabled={!hasPermission(['accounts.change_branch_field'])}
             {...(formErrors.branch_id && { error: true, helperText: formErrors.branch_id })}
           />
         </Grid>
@@ -79,7 +87,7 @@ const CreateSale = () => {
           <AutoCompleteUser
             onChange={(id) => handleChange('sellerId', id)}
             value={formData.sellerId}
-            disabled={!hasPermission(['accounts.can_change_seller_field'])}
+            disabled={!hasPermission(['accounts.change_seller_field'])}
             {...(formErrors.seller_id && { error: true, helperText: formErrors.seller_id })}
           />
         </Grid>
@@ -89,7 +97,7 @@ const CreateSale = () => {
           <AutoCompleteUser
             onChange={(id) => handleChange('salesSupervisorId', id)}
             value={formData.salesSupervisorId}
-            disabled={!hasPermission(['accounts.can_change_supervisor_field'])}
+            disabled={!hasPermission(['accounts.change_supervisor_field'])}
             {...(formErrors.sales_supervisor_id && {
               error: true,
               helperText: formErrors.sales_supervisor_id,
@@ -102,7 +110,7 @@ const CreateSale = () => {
           <AutoCompleteUser
             onChange={(id) => handleChange('salesManagerId', id)}
             value={formData.salesManagerId}
-            disabled={!hasPermission(['accounts.can_change_usermanger_field'])}
+            disabled={!hasPermission(['accounts.change_usermanager_field'])}
             {...(formErrors.sales_manager_id && {
               error: true,
               helperText: formErrors.sales_manager_id,
@@ -165,14 +173,25 @@ const CreateSale = () => {
             label={formData.isSale ? 'Pré-Venda' : 'Venda'}
           />
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-            <Button variant="contained" color="primary" onClick={handleSave}>
-              Criar
+            {onClosedModal && (
+              <Button variant="contained" color="primary" onClick={onClosedModal}>
+                Fechar
+              </Button>
+            )}
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSave}
+              disabled={formLoading}
+              endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+            >
+              {formLoading || success ? 'Salvando...' : 'Criar'}
             </Button>
           </Stack>
         </Grid>
       </Grid>
     </Box>
   );
-}
+};
 
 export default CreateSale;

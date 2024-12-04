@@ -75,19 +75,21 @@ const Menuitems = [
     subheader: 'Home',
   },
 
-  {
+ /*  {
     id: uniqueId(),
     title: 'Dashboard',
     icon: IconAperture,
     href: '/',
     chip: 'Novo',
     chipColor: 'secondary',
-  },
+  }, */
   {
     id: uniqueId(),
     title: 'Quadros',
     icon: IconLayoutKanban,
     href: '/apps/boards/crm',
+    chip: 'Novo',
+    chipColor: 'secondary'
   },
   {
     id: uniqueId(),
@@ -98,10 +100,10 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Campanhas',
-    icon: IconStar,
-    href: '/apps/campaign',
-    permissions: ['resolve_crm.view_marketingcampaign'],
+    title: 'Pagamentos',
+    icon: IconCurrencyDollar,
+    href: '/apps/invoice',
+    permissions: ['financial.view_payment'],
   },
   {
     id: uniqueId(),
@@ -109,6 +111,13 @@ const Menuitems = [
     icon: IconTools,
     href: '/apps/project',
     permissions: ['resolve_crm.view_project'],
+  },
+  {
+    id: uniqueId(),
+    title: 'Campanhas',
+    icon: IconStar,
+    href: '/apps/campaign',
+    permissions: ['resolve_crm.view_marketingcampaign'],
   },
   {
     id: uniqueId(),

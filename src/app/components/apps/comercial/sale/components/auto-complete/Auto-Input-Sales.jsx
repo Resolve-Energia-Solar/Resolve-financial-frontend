@@ -6,7 +6,7 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import saleService from '@/services/saleService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteSale({ onChange, value, error, helperText }) {
+export default function AutoCompleteSale({ onChange, value, error, helperText, ...rest }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -83,6 +83,7 @@ export default function AutoCompleteSale({ onChange, value, error, helperText })
         options={options}
         loading={loading}
         value={selectedSale}
+        {...rest}
         onInputChange={(event, newInputValue) => {
           fetchSalesByName(newInputValue);
         }}
@@ -94,6 +95,7 @@ export default function AutoCompleteSale({ onChange, value, error, helperText })
             {...params}
             size="small"
             variant="outlined"
+            {...rest}
             InputProps={{
               ...params.InputProps,
               endAdornment: (

@@ -23,6 +23,7 @@ const attachmentService = {
   getAttachmentByIdSale: async (id) => {
     try {
       const response = await apiClient.get(`/api/attachments/?object_id=${id}&content_type_id=44`);
+      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar anexo com id ${id}:`, error);

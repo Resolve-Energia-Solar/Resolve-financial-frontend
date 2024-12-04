@@ -1,28 +1,28 @@
-"use client";
-import Container from "@mui/material/Container";
-import { styled, useTheme } from "@mui/material/styles";
-import React from "react";
-import Header from "./layout/vertical/header/Header";
-import Sidebar from "./layout/vertical/sidebar/Sidebar";
-import Customizer from "./layout/shared/customizer/Customizer";
-import Navigation from "./layout/horizontal/navbar/Navigation";
-import HorizontalHeader from "./layout/horizontal/header/Header";
+'use client';
+import Container from '@mui/material/Container';
+import { styled, useTheme } from '@mui/material/styles';
+import React from 'react';
+import Header from './layout/vertical/header/Header';
+import Sidebar from './layout/vertical/sidebar/Sidebar';
+import Customizer from './layout/shared/customizer/Customizer';
+import Navigation from './layout/horizontal/navbar/Navigation';
+import HorizontalHeader from './layout/horizontal/header/Header';
 import { useSelector } from 'react-redux';
 
-const MainWrapper = styled("div")(() => ({
-  display: "flex",
-  minHeight: "100vh",
-  width: "100%",
+const MainWrapper = styled('div')(() => ({
+  display: 'flex',
+  minHeight: '100vh',
+  width: '100%',
 }));
 
-const PageWrapper = styled("div")(() => ({
-  display: "flex",
+const PageWrapper = styled('div')(() => ({
+  display: 'flex',
   flexGrow: 1,
-  paddingBottom: "60px",
-  flexDirection: "column",
+  paddingBottom: '60px',
+  flexDirection: 'column',
   zIndex: 1,
-  width: "100%",
-  backgroundColor: "transparent",
+  width: '100%',
+  backgroundColor: 'transparent',
 }));
 
 export default function RootLayout({ children }) {
@@ -30,12 +30,14 @@ export default function RootLayout({ children }) {
   const theme = useTheme();
 
   return (
-    <MainWrapper className={customizer.activeMode === 'dark' ? 'darkbg mainwrapper' : 'mainwrapper'}>
+    <MainWrapper
+      className={customizer.activeMode === 'dark' ? 'darkbg mainwrapper' : 'mainwrapper'}
+    >
       {/* ------------------------------------------- */}
       {/* Sidebar */}
       {/* ------------------------------------------- */}
 
-      {customizer.isHorizontal ? "" : <Sidebar />}
+      {customizer.isHorizontal ? '' : <Sidebar />}
 
       {/* ------------------------------------------- */}
       {/* Main Wrapper */}
@@ -44,7 +46,7 @@ export default function RootLayout({ children }) {
         className="page-wrapper"
         sx={{
           ...(customizer.isCollapse && {
-            [theme.breakpoints.up("lg")]: {
+            [theme.breakpoints.up('lg')]: {
               ml: `${customizer.MiniSidebarWidth}px`,
             },
           }),
@@ -55,26 +57,25 @@ export default function RootLayout({ children }) {
         {/* ------------------------------------------- */}
         {customizer.isHorizontal ? <HorizontalHeader /> : <Header />}
         {/* PageContent */}
-        {customizer.isHorizontal ? <Navigation /> : ""}
+        {customizer.isHorizontal ? <Navigation /> : ''}
         <Container
           sx={{
             pt: '1px',
-            maxWidth: customizer.isLayout === "boxed" ? "lg" : "100%!important",
+            maxWidth: customizer.isLayout === 'boxed' ? 'lg' : '100%!important',
           }}
         >
           {/* ------------------------------------------- */}
           {/* PageContent */}
           {/* ------------------------------------------- */}
 
-            {children}
-         
+          {children}
 
           {/* ------------------------------------------- */}
           {/* End Page */}
           {/* ------------------------------------------- */}
         </Container>
-        <Customizer/>
-       {/*  <Customizer /> */}
+        <Customizer />
+        {/*  <Customizer /> */}
       </PageWrapper>
     </MainWrapper>
   );

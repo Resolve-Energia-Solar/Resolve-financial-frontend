@@ -16,12 +16,12 @@ import AutoCompleteRole from '@/app/components/apps/comercial/sale/components/au
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import { useRouter } from 'next/navigation';
 
+import { useEffect } from 'react';
+
 import useUserForm from '@/hooks/users/useUserForm';
 
-export default function UserForm() {
-  const { formData, handleChange, handleSave, formErrors, success } = useUserForm();
-
-  console.log('formData', formData);
+export default function UserForm({ onClosedModal = null, selectedUserId = null }) {
+  const { formData, handleChange, handleSave, formErrors, success, dataReceived } = useUserForm();
 
   const router = useRouter();
 
@@ -41,9 +41,16 @@ export default function UserForm() {
     { value: 'C', label: 'CLT' },
   ];
 
-  if (success) {
-    router.push('/apps/users');
-  }
+  useEffect(() => {
+    if (success) {
+      if (onClosedModal) {
+        onClosedModal();
+        selectedUserId(dataReceived.id);
+      } else {
+        router.push(`/apps/users/${dataReceived.id}/update`);
+      }
+    }
+  }, [success]);
 
   return (
     <PageContainer title="Criação de usuário" description="Criador de Usuários">
@@ -86,6 +93,28 @@ export default function UserForm() {
               value={formData.email}
               onChange={(e) => handleChange('email', e.target.value)}
               {...(formErrors.email && { error: true, helperText: formErrors.email })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} lg={4}>
+            <CustomFormLabel htmlFor="email">Nome Completo</CustomFormLabel>
+            <CustomTextField
+              name="complete_name"
+              variant="outlined"
+              fullWidth
+              value={formData.complete_name}
+              onChange={(e) => handleChange('complete_name', e.target.value)}
+              {...(formErrors.complete_name && { error: true, helperText: formErrors.complete_name })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} lg={4}>
+            <CustomFormLabel htmlFor="email">CPF</CustomFormLabel>
+            <CustomTextField
+              name="first_document"
+              variant="outlined"
+              fullWidth
+              value={formData.first_document}
+              onChange={(e) => handleChange('first_document', e.target.value)}
+              {...(formErrors.first_document && { error: true, helperText: formErrors.first_document })}
             />
           </Grid>
           <Grid item xs={12} sm={12} lg={4}>

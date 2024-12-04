@@ -1,0 +1,2798 @@
+<!doctype html>
+<html lang="pt-br" dir="ltr">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <style>
+        body,
+        html {
+            margin: 0 auto !important;
+            overflow-x: auto !important;
+            width: 100% !important
+        }
+        
+        html {
+            background-color: #eeeeee !important
+        }
+        
+        body {
+            background-color: #fff !important
+        }
+        
+        .sp-container {
+            left: auto !important;
+            right: 0 !important
+        }
+        
+        .gjs-cv-canvas {
+            width: 85% !important;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+        }
+        
+        body,
+        html {
+            margin-top: 0px !important;
+            margin-right: auto !important;
+            margin-bottom: 0px !important;
+            margin-left: auto !important;
+            overflow-x: auto !important;
+            width: 100% !important;
+            max-width: 21cm !important;
+        }
+        
+        html {
+            background-color: rgb(238, 238, 238) !important;
+        }
+        
+        body {
+            background-color: rgb(255, 255, 255) !important;
+            margin-top: 0px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        * {
+            box-sizing: border-box;
+            font-family: Roboto, sans-serif;
+        }
+        
+        section {
+            display: flex;
+            justify-content: flex-start;
+            align-items: stretch;
+            flex-wrap: nowrap;
+            padding-top: 10px;
+            padding-right: 10px;
+            padding-bottom: 10px;
+            padding-left: 10px;
+            min-height: 75px;
+        }
+        
+        section>div {
+            flex-grow: 1;
+            flex-basis: 100%;
+            padding-top: 5px;
+            padding-right: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+        }
+        
+        #imyw {
+            height: 1122px;
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #irhk {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #iir64 {
+            width: 100%;
+        }
+        
+        #iyff {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-direction: column;
+        }
+        
+        #idxjp {
+            max-width: 35%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #ib27n {
+            max-width: 5px;
+            background-color: rgb(255, 205, 45);
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            border-bottom-left-radius: 5px;
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #i2wn7 {
+            padding-top: 0px;
+            padding-right: 30px;
+            padding-bottom: 0px;
+            padding-left: 30px;
+            width: 100%;
+        }
+        
+        #i5cli {
+            width: 75%;
+        }
+        
+        #i2qaf {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            width: 100%;
+        }
+        
+        #i87qd {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-weight: 800;
+        }
+        
+        #iwx4h {
+            padding-top: 5px;
+            padding-right: 30px;
+            padding-bottom: 5px;
+            padding-left: 30px;
+        }
+        
+        #icxv1 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-weight: 800;
+            margin-top: 5px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #ibmpq {
+            font-weight: normal;
+        }
+        
+        #itj9l {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-weight: 700;
+            font-size: 34px;
+            margin-top: 10px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #iffv8 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-weight: 700;
+            font-size: 16px;
+            margin-top: 20px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #ijzl9 {
+            font-weight: normal;
+        }
+        
+        #i9qry {
+            font-weight: normal;
+        }
+        
+        #iq5f8 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-weight: 700;
+            font-size: 16px;
+            margin-top: 5px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #iwv3r {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #imkf8 {
+            width: 100%;
+        }
+        
+        #ipenj {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #in45k {
+            max-width: 5px;
+            background-color: rgb(255, 205, 45);
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            border-bottom-left-radius: 5px;
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #i2zek {
+            display: flex;
+            align-items: center;
+        }
+        
+        #izl78 {
+            padding-top: 0px;
+            padding-right: 30px;
+            padding-bottom: 0px;
+            padding-left: 30px;
+            margin-top: 10px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #ifjy6 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-size: 20px;
+            color: rgb(141, 147, 150);
+            text-align: left;
+        }
+        
+        #iuh0g {
+            max-width: 48%;
+            border-top-width: 3px;
+            border-right-width: 3px;
+            border-bottom-width: 3px;
+            border-left-width: 3px;
+            border-top-style: solid;
+            border-right-style: solid;
+            border-bottom-style: solid;
+            border-left-style: solid;
+            border-top-color: rgb(255, 205, 42);
+            border-right-color: rgb(255, 205, 42);
+            border-bottom-color: rgb(255, 205, 42);
+            border-left-color: rgb(255, 205, 42);
+            border-image-source: initial;
+            border-image-slice: initial;
+            border-image-width: initial;
+            border-image-outset: initial;
+            border-image-repeat: initial;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            border-bottom-left-radius: 10px;
+            min-height: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+            padding-top: 10px;
+            padding-right: 20px;
+            padding-bottom: 5px;
+            padding-left: 20px;
+        }
+        
+        #ip853 {
+            width: 91.43%;
+        }
+        
+        #ii2av {
+            padding-top: 10px;
+            padding-right: 30px;
+            padding-bottom: 10px;
+            padding-left: 30px;
+        }
+        
+        #ipalf {
+            width: 100%;
+        }
+        
+        #ioplh {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #i63jn {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #iq4gb {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            flex-direction: column;
+        }
+        
+        #i4tag {
+            height: 1122px;
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #im2ir {
+            padding-top: 0px;
+            padding-right: 30px;
+            padding-bottom: 0px;
+            padding-left: 30px;
+            min-height: 140px;
+            justify-content: space-between;
+        }
+        
+        #inbbf {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            border-bottom-left-radius: 10px;
+            border-top-width: 3px;
+            border-right-width: 3px;
+            border-bottom-width: 3px;
+            border-left-width: 3px;
+            border-top-style: solid;
+            border-right-style: solid;
+            border-bottom-style: solid;
+            border-left-style: solid;
+            border-top-color: rgb(255, 205, 42);
+            border-right-color: rgb(255, 205, 42);
+            border-bottom-color: rgb(255, 205, 42);
+            border-left-color: rgb(255, 205, 42);
+            border-image-source: initial;
+            border-image-slice: initial;
+            border-image-width: initial;
+            border-image-outset: initial;
+            border-image-repeat: initial;
+            max-width: 48%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding-top: 10px;
+            padding-right: 20px;
+            padding-bottom: 20px;
+            padding-left: 20px;
+        }
+        
+        #iqqlk {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-size: 20px;
+            color: rgb(141, 147, 150);
+            text-align: left;
+        }
+        
+        #ivqyn {
+            max-width: 5px;
+            background-color: rgb(255, 205, 45);
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            border-bottom-left-radius: 5px;
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #ir4ql {
+            display: flex;
+            align-items: center;
+        }
+        
+        #ip6uv {
+            padding-top: 0px;
+            padding-right: 30px;
+            padding-bottom: 0px;
+            padding-left: 30px;
+            margin-top: 10px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #isd76 {
+            width: 100%;
+        }
+        
+        #i9afc {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #ijs9j {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #iyxga {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            flex-direction: column;
+        }
+        
+        #ipyze {
+            height: 1122px;
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #id5aa {
+            padding-top: 0px;
+            padding-right: 30px;
+            padding-bottom: 0px;
+            padding-left: 30px;
+        }
+        
+        #i6a9x {
+            width: 34px;
+            height: 34px;
+        }
+        
+        #ikcba {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #iejkf {
+            padding-top: 5px;
+            padding-right: 5px;
+            padding-bottom: 5px;
+            padding-left: 10px;
+        }
+        
+        #icsly {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            align-items: center;
+            min-height: auto;
+        }
+        
+        #iftu3 {
+            width: 30px;
+            height: 30px;
+        }
+        
+        #iqusa {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #ixrdu {
+            padding-top: 5px;
+            padding-right: 5px;
+            padding-bottom: 5px;
+            padding-left: 10px;
+        }
+        
+        #imv4h {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            align-items: center;
+            min-height: auto;
+            margin-top: 2px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #irgmv {
+            width: 30px;
+            height: 30px;
+        }
+        
+        #iaf14y {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #i893xv {
+            padding-top: 5px;
+            padding-right: 5px;
+            padding-bottom: 5px;
+            padding-left: 10px;
+        }
+        
+        #izzu9k {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            align-items: center;
+            min-height: auto;
+            margin-top: 2px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #iyfjxu {
+            width: 30px;
+            height: 30px;
+        }
+        
+        #i879sr {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #iocewj {
+            padding-top: 5px;
+            padding-right: 5px;
+            padding-bottom: 5px;
+            padding-left: 10px;
+        }
+        
+        #ihmec7 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            align-items: center;
+            min-height: auto;
+            margin-top: 2px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #ivczny {
+            width: 30px;
+            height: 30px;
+        }
+        
+        #i1vyt2 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #ir7flz {
+            padding-top: 5px;
+            padding-right: 5px;
+            padding-bottom: 5px;
+            padding-left: 10px;
+        }
+        
+        #il0z5i {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            align-items: center;
+            min-height: auto;
+            margin-top: 2px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #if8muw {
+            width: 30px;
+            height: 30px;
+        }
+        
+        #iv3msv {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #ilapii {
+            padding-top: 5px;
+            padding-right: 5px;
+            padding-bottom: 5px;
+            padding-left: 10px;
+        }
+        
+        #iitrrk {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            align-items: center;
+            min-height: auto;
+            margin-top: 2px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        .icones {
+            width: 34px;
+            height: 34px;
+        }
+        
+        #i3ki5t {
+            padding-top: 0px;
+            padding-right: 30px;
+            padding-bottom: 0px;
+            padding-left: 30px;
+            min-height: auto;
+            flex-direction: row-reverse;
+        }
+        
+        #i2fc6k {
+            max-width: 5px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            border-bottom-left-radius: 5px;
+            background-color: rgb(255, 205, 42);
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #izoxr6 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: left;
+            color: rgb(31, 29, 29);
+            font-size: 18px;
+            font-weight: 800;
+        }
+        
+        #if12dt {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: left;
+            color: rgb(31, 29, 29);
+            font-size: 16px;
+            font-weight: 800;
+            margin-top: 5px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #iv4ulh {
+            font-weight: normal;
+        }
+        
+        #isg2dc {
+            padding-top: 0px;
+            padding-right: 30px;
+            padding-bottom: 0px;
+            padding-left: 30px;
+        }
+        
+        #i4dfcw {
+            width: 12px;
+            height: 12px;
+        }
+        
+        .point {
+            margin-top: 0px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 10px;
+        }
+        
+        #i3dbqg {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-size: 12px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #if022r {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            align-items: center;
+            min-height: auto;
+            flex-direction: row-reverse;
+        }
+        
+        #ik213l {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #icarez {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: center;
+            color: rgb(85, 84, 84);
+            margin-top: 20px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #i5bh35 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            margin-top: 20px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #i8iqxi {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #ilef65 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            width: 75%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #if8u3p {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            flex-direction: column;
+            background-position-x: 0%;
+            background-position-y: 0%;
+            background-attachment: scroll;
+            background-size: auto;
+        }
+        
+        #id1zwg {
+            height: 1122px;
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            background-position-x: 50%;
+            background-position-y: 50%;
+            background-attachment: scroll;
+            background-size: cover;
+            background-image: url("/proposal/img/sunbestartboard1copy_2_9394.png");
+        }
+        
+        #id0t63 {
+            max-width: 5px;
+            background-color: rgb(255, 205, 45);
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            border-bottom-left-radius: 5px;
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #ivmm9k {
+            display: flex;
+            align-items: center;
+        }
+        
+        #iuhb0g {
+            padding-top: 0px;
+            padding-right: 30px;
+            padding-bottom: 0px;
+            padding-left: 30px;
+            margin-top: 10px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #ikakly {
+            width: 100%;
+        }
+        
+        #i1lzji {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #ib5hln {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #ixik66 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            flex-direction: column;
+            max-width: 100%;
+        }
+        
+        #iuvk3l {
+            height: 1122px;
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #i20d35 {
+            padding-top: 0px;
+            padding-right: 30px;
+            padding-bottom: 0px;
+            padding-left: 30px;
+        }
+        
+        #i1bf3v {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-size: 48px;
+            font-weight: 800;
+            text-align: center;
+        }
+        
+        #i3uejl {
+            background-color: rgb(255, 205, 45);
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+            border-bottom-left-radius: 12px;
+            padding-top: 20px;
+            padding-right: 5px;
+            padding-bottom: 20px;
+            padding-left: 5px;
+        }
+        
+        #icw38e {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #iatwjl {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #ih40hp {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-size: 14px;
+            font-weight: 800;
+            text-align: right;
+            margin-top: 20px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #ipef79 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-size: 22px;
+            font-weight: 800;
+            text-align: center;
+        }
+        
+        #ixce5g {
+            padding-top: 5px;
+            padding-right: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+        }
+        
+        #i4oiaz {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-size: 28px;
+            font-weight: 800;
+        }
+        
+        #iusk9b {
+            font-weight: normal;
+        }
+        
+        #ixf5qc {
+            padding-top: 0px;
+            padding-right: 30px;
+            padding-bottom: 0px;
+            padding-left: 30px;
+        }
+        
+        #itwp9y {
+            max-width: 45%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #i9dajm {
+            display: flex;
+            justify-content: flex-start;
+            align-items: stretch;
+            flex-direction: column;
+        }
+        
+        #iogbr3 {
+            width: 80%;
+        }
+        
+        #ivseei {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #ipg45t {
+            padding-top: 0px;
+            padding-right: 30px;
+            padding-bottom: 0px;
+            padding-left: 30px;
+        }
+        
+        #iwqk7j {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        #iphwyk {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: justify;
+            font-size: 14px;
+            margin-top: 20px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #iipbv2 {
+            margin-top: 0px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            background-position-x: 50%;
+            background-position-y: 50%;
+            background-attachment: scroll;
+            background-size: contain;
+            background-image: url("/proposal/img/ativo13_99f3.png");
+            background-repeat: repeat-y;
+        }
+        
+        #iall6g {
+            padding-top: 0px;
+            padding-right: 60px;
+            padding-bottom: 0px;
+            padding-left: 60px;
+            min-height: 180px;
+        }
+        
+        #ibmffz {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 10px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #io175d {
+            padding-top: 0px;
+            padding-right: 25px;
+            padding-bottom: 0px;
+            padding-left: 25px;
+            min-height: auto;
+            margin-top: 46px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #icmz9j {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #ik0wmb {
+            width: 12px;
+            height: 12px;
+            margin-top: 0px;
+            margin-right: 10px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #icblj6 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-size: 14px;
+        }
+        
+        #ia30dj {
+            width: 12px;
+            height: 12px;
+            margin-top: 0px;
+            margin-right: 10px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #i2444m {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-size: 14px;
+        }
+        
+        #iiygjj {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #i6mnri {
+            padding-top: 0px;
+            padding-right: 25px;
+            padding-bottom: 0px;
+            padding-left: 25px;
+            min-height: auto;
+            margin-top: 10px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #iky0zu {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 10px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #inijj5 {
+            width: 12px;
+            height: 12px;
+            margin-top: 0px;
+            margin-right: 10px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #i27r9d {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-size: 14px;
+        }
+        
+        #ihnocx {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 5px;
+            padding-right: 5px;
+            padding-bottom: 5px;
+            padding-left: 21px;
+        }
+        
+        #ipdzki {
+            padding-top: 0px;
+            padding-right: 25px;
+            padding-bottom: 0px;
+            padding-left: 25px;
+            min-height: auto;
+            margin-top: 46px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #izmzok {
+            width: 12px;
+            height: 12px;
+            margin-top: 0px;
+            margin-right: 10px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #i1jf5w {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-size: 14px;
+        }
+        
+        #ivn41m {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 5px;
+            padding-right: 5px;
+            padding-bottom: 5px;
+            padding-left: 21px;
+        }
+        
+        #ie2k8m {
+            padding-top: 0px;
+            padding-right: 25px;
+            padding-bottom: 0px;
+            padding-left: 25px;
+            min-height: auto;
+            margin-top: 10px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #ivoylm {
+            margin-top: 0px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            background-position-x: 50%;
+            background-position-y: 50%;
+            background-attachment: scroll;
+            background-size: contain;
+            background-image: url("/proposal/img/ativo14_79a6.png");
+            background-repeat: repeat-y;
+        }
+        
+        #i076kl {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 10px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #iambuh {
+            width: 12px;
+            height: 12px;
+            margin-top: 0px;
+            margin-right: 10px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #i1oeqi {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-size: 14px;
+        }
+        
+        #i1m9ee {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 5px;
+            padding-right: 0px;
+            padding-bottom: 5px;
+            padding-left: 16px;
+        }
+        
+        #i86ch1 {
+            padding-top: 0px;
+            padding-right: 25px;
+            padding-bottom: 0px;
+            padding-left: 25px;
+            min-height: auto;
+            margin-top: 46px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #i3vkz2 {
+            width: 12px;
+            height: 12px;
+            margin-top: 0px;
+            margin-right: 10px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #isxmxk {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-size: 14px;
+        }
+        
+        #ilbwlc {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 5px;
+            padding-right: 5px;
+            padding-bottom: 5px;
+            padding-left: 16px;
+        }
+        
+        #igju68 {
+            padding-top: 0px;
+            padding-right: 25px;
+            padding-bottom: 0px;
+            padding-left: 25px;
+            min-height: auto;
+            margin-top: 10px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #icbuif {
+            margin-top: 0px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            background-position-x: 50%;
+            background-position-y: 50%;
+            background-attachment: scroll;
+            background-size: contain;
+            background-image: url("/proposal/img/ativo15_19b1.png");
+            background-repeat: repeat-y;
+        }
+        
+        #iwai13 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            flex-direction: column;
+        }
+        
+        #iquusp {
+            height: 1122px;
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            background-position-x: 50%;
+            background-position-y: 50%;
+            background-attachment: scroll;
+            background-size: cover;
+            background-image: url("/proposal/img/sunbestartboard1copy3_b102.png");
+        }
+        
+        #ioe7ia {
+            max-width: 5px;
+            background-color: rgb(255, 205, 45);
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            border-bottom-left-radius: 5px;
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #ijwh9e {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-size: 40px;
+            color: rgb(141, 147, 150);
+        }
+        
+        #iomypt {
+            display: flex;
+            align-items: center;
+        }
+        
+        #icj8aj {
+            padding-top: 0px;
+            padding-right: 30px;
+            padding-bottom: 0px;
+            padding-left: 30px;
+            margin-top: 10px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #i22mz7 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            flex-direction: column;
+        }
+        
+        #i5yiep {
+            height: 1122px;
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #ifje5u {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            flex-direction: column;
+        }
+        
+        #ip5bdq {
+            height: 1122px;
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            background-position-x: 50%;
+            background-position-y: 50%;
+            background-attachment: scroll;
+            background-size: cover;
+            background-image: url("/proposal/img/sunbestartboard1copy4_ef49.png");
+            display: none;
+        }
+        
+        #i6ahmw {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        #ivs8i7 {
+            padding-top: 0px;
+            padding-right: 30px;
+            padding-bottom: 0px;
+            padding-left: 30px;
+        }
+        
+        #ikgvdh {
+            width: 80px;
+            height: 80px;
+        }
+        
+        #i7tgyo {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: center;
+            color: rgb(31, 29, 29);
+            line-height: 22px;
+            font-weight: 900;
+            margin-top: 5px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #ifukbk {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: center;
+            color: rgb(31, 29, 29);
+            line-height: 22px;
+            font-weight: 900;
+            margin-top: 2px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #idmm8b {
+            font-weight: normal;
+        }
+        
+        #iqo7pk {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: center;
+            color: rgb(31, 29, 29);
+            line-height: normal;
+            font-weight: 900;
+            margin-top: 2px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            font-size: 9px;
+        }
+        
+        #i2qyij {
+            font-weight: normal;
+        }
+        
+        #ip7p53 {
+            font-weight: normal;
+        }
+        
+        #inhxjh {
+            width: 80px;
+            height: 80px;
+        }
+        
+        #i0wbny {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: center;
+            color: rgb(31, 29, 29);
+            line-height: 22px;
+            font-weight: 900;
+            margin-top: 5px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #idaoh4 {
+            font-weight: normal;
+        }
+        
+        #ideumx {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: center;
+            color: rgb(31, 29, 29);
+            line-height: 22px;
+            font-weight: 900;
+            margin-top: 2px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #i8oy5u {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: center;
+            color: rgb(31, 29, 29);
+            line-height: normal;
+            font-weight: 900;
+            margin-top: 2px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            font-size: 9px;
+        }
+        
+        #ibgi52 {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        #i7oc4a {
+            width: 80px;
+            height: 80px;
+        }
+        
+        #ina73h {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: center;
+            color: rgb(31, 29, 29);
+            line-height: 22px;
+            font-weight: 900;
+            margin-top: 5px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #izk3sf {
+            font-weight: normal;
+        }
+        
+        #i6xl1j {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: center;
+            color: rgb(31, 29, 29);
+            line-height: 22px;
+            font-weight: 900;
+            margin-top: 2px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #igzk9y {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: center;
+            color: rgb(31, 29, 29);
+            line-height: normal;
+            font-weight: 900;
+            margin-top: 2px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            font-size: 9px;
+        }
+        
+        #ixismg {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        #ig9d7s {
+            font-weight: normal;
+        }
+        
+        #if9caj {
+            font-weight: normal;
+        }
+        
+        #iqmxgk {
+            font-weight: normal;
+        }
+        
+        #ik2z93 {
+            font-weight: normal;
+        }
+        
+        #i9pg5r {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            background-position-x: 50%;
+            background-position-y: 50%;
+            background-attachment: scroll;
+            background-size: cover;
+            background-image: url("/proposal/img/ativo24_0109.png");
+            min-height: 100px;
+        }
+        
+        #ir0ad6 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #i3t5o2 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            color: rgb(35, 31, 32);
+            font-size: 20px;
+            font-weight: 900;
+            margin-top: 85px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #i9cmo1 {
+            max-width: 30%;
+            min-height: 208px;
+            border-top-left-radius: 115px;
+            border-top-right-radius: 115px;
+            border-bottom-right-radius: 115px;
+            border-bottom-left-radius: 115px;
+            margin-top: 0px;
+            margin-right: 10px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #ih6i7o {
+            padding-top: 0px;
+            padding-right: 30px;
+            padding-bottom: 0px;
+            padding-left: 30px;
+        }
+        
+        #i8pla1 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            color: rgb(35, 31, 32);
+            font-size: 34px;
+        }
+        
+        #ivm9ug {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            color: rgb(35, 31, 32);
+            font-size: 20px;
+            font-weight: 900;
+            margin-top: 5px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #iwe9ee {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            color: rgb(35, 31, 32);
+            font-size: 20px;
+            font-weight: 900;
+            margin-top: 5px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #i9avyz {
+            padding-top: 0px;
+            padding-right: 30px;
+            padding-bottom: 0px;
+            padding-left: 30px;
+            flex-direction: row;
+        }
+        
+        #io0qda {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            align-items: center;
+            min-height: auto;
+        }
+        
+        #io0mwr {
+            padding-top: 5px;
+            padding-right: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+        }
+        
+        #i2ghqr {
+            padding-top: 5px;
+            padding-right: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            max-width: 40%;
+        }
+        
+        #i9tz48 {
+            width: 30px;
+            height: 42px;
+        }
+        
+        #itag4z {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            color: rgb(255, 205, 42);
+        }
+        
+        #i57zt9 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            color: rgb(255, 205, 42);
+            margin-top: 5px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            font-weight: 900;
+            font-size: 18px;
+        }
+        
+        #i4mjyl {
+            padding-top: 5px;
+            padding-right: 5px;
+            padding-bottom: 5px;
+            padding-left: 15px;
+        }
+        
+        #iyjjii {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            align-items: center;
+            min-height: auto;
+        }
+        
+        #imdmgf {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            font-size: 14px;
+            margin-top: 15px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #i2a54l {
+            margin-top: 20px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            align-items: center;
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            min-height: auto;
+        }
+        
+        #iz3ktc {
+            width: 24px;
+            height: 24px;
+            margin-top: 0px;
+            margin-right: 10px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #iqw44n {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: center;
+            color: rgb(31, 29, 29);
+            line-height: 22px;
+            font-weight: 900;
+            margin-top: 5px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #i0bq5a {
+            width: 24px;
+            height: 24px;
+            margin-top: 0px;
+            margin-right: 10px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #idy444 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: left;
+            color: rgb(31, 29, 29);
+            line-height: 22px;
+            font-weight: 900;
+            margin-top: 0px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #i16ggx {
+            margin-top: 10px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            align-items: center;
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            min-height: auto;
+        }
+        
+        #itvvi8 {
+            width: 100%;
+            margin-top: 0px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            border-top-left-radius: 26px;
+            border-top-right-radius: 26px;
+            border-bottom-right-radius: 26px;
+            border-bottom-left-radius: 26px;
+        }
+        
+        #i7ci6x {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            text-align: left;
+            color: rgb(31, 29, 29);
+            line-height: 22px;
+            font-weight: 900;
+            margin-top: 0px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+        }
+        
+        #ibeto4 {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            min-height: auto;
+        }
+        
+        #ijmgvh {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #idjk4y {
+            width: 25%;
+        }
+        
+        #iaor9n {
+            width: 100%;
+        }
+        
+        #i0zp0w {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #iqcxlh {
+            padding-top: 0px;
+            padding-right: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+        }
+        
+        #i0b5yk {
+            font-family: -apple-system, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        #if90xk {
+            width: 200px;
+            height: 200px;
+            border-top-left-radius: 300px;
+            border-top-right-radius: 300px;
+            border-bottom-right-radius: 300px;
+            border-bottom-left-radius: 300px;
+            margin-top: 0px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-left: 4px;
+        }
+        
+        #iljstw {
+            width: 75%;
+        }
+        
+        #i29u68 {
+            width: 380px;
+        }
+        
+        #i28dm {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #idk7mn {
+            width: 396px;
+        }
+        
+        #idxw3m {
+            width: 272px;
+        }
+        
+        #i0b5yk td,
+        th {
+            width: 100px;
+            background-color: rgb(255, 255, 255);
+            text-align: center !important;
+            font-size: 14px !important;
+            padding-top: 8px !important;
+            padding-right: 4px !important;
+            padding-bottom: 8px !important;
+            padding-left: 4px !important;
+            border-top-width: 0px !important;
+            border-right-width: 0px !important;
+            border-bottom-width: 1px !important;
+            border-left-width: 0px !important;
+            border-top-style: none !important;
+            border-right-style: none !important;
+            border-bottom-style: solid !important;
+            border-left-style: none !important;
+            border-bottom-color: rgb(0, 0, 0) !important;
+        }
+        
+        #i0b5yk th:nth-child(1) {
+            width: 50%;
+            background-color: rgb(29, 29, 27);
+            color: rgb(244, 191, 19);
+        }
+        
+        #i0b5yk th:nth-child(2) {
+            background-color: rgb(244, 191, 19) !important;
+            color: rgb(29, 29, 27) !important;
+            border-left-width: 2px !important;
+            border-left-style: solid !important;
+            border-left-color: rgb(29, 29, 27) !important;
+        }
+        
+        #i0b5yk th:nth-child(3) {
+            background-color: rgb(244, 191, 19) !important;
+            color: rgb(29, 29, 27) !important;
+            border-left-width: 2px !important;
+            border-left-style: solid !important;
+            border-left-color: rgb(29, 29, 27) !important;
+        }
+        
+        #i3dbqg td:nth-child(5) {
+            display: none;
+        }
+        
+        #i3dbqg th:nth-child(5) {
+            display: none;
+        }
+        
+        #i3dbqg td:nth-child(4) {
+            display: none;
+        }
+        
+        #i3dbqg th:nth-child(4) {
+            display: none;
+        }
+        
+        #i3dbqg td:nth-child(2) {
+            width: 10%;
+        }
+        
+        #i3dbqg th:nth-child(2) {
+            width: 10%;
+        }
+        
+        #i3dbqg td:nth-child(3) {
+            display: none;
+        }
+        
+        #i3dbqg th:nth-child(3) {
+            display: none;
+        }
+        </style>
+
+
+</head>
+
+<body>
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.css' type='text/css' />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <script src='https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.bundle.min.js'></script>
+    <section id="imyw">
+        <div draggable="true" data-highlightable="1" id="iyff">
+            <section id="irhk">
+                <div draggable="true" data-highlightable="1"><img
+                        src="/proposal/img/ativo300_4b98.png"
+                        id="iir64" />
+                    <div id="iyeog">
+                        <link rel="preconnect" href="https://fonts.googleapis.com" />
+                        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+                        <link
+                            href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&display=swap"
+                            rel="stylesheet" />
+                    </div>
+                </div>
+            </section>
+            <section id="i2wn7">
+                <div draggable="true" data-highlightable="1" id="iws9p"><img
+                        src="/proposal/img/ativo100_a8e9.png"
+                        id="iljstw" /></div>
+                <div draggable="true" data-highlightable="1" id="ib27n">
+                </div>
+                <div draggable="true" data-highlightable="1" id="idxjp">
+                    <div id="iawtf">
+                        <link rel="preconnect" href="https://fonts.googleapis.com" />
+                        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+                        <link
+                            href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+                            rel="stylesheet" />
+                    </div><img
+                        src="/proposal/img/ativo3_0e0d.png"
+                        id="i5cli" />
+                </div>
+            </section>
+            <section id="i2qaf">
+                <div draggable="true" data-highlightable="1" id="iwx4h">
+                    <div id="i87qd">SISTEMA FOTOVOLTAICO
+                    </div>
+                    <div id="icxv1"><span id="ibmpq">5,27 kWp</span></div>
+                    <div id="itj9l"> {{ customer }}
+                    </div>
+                    <div id="iffv8"><span id="ijzl9">12/10/2024</span></div>
+                    <div id="iq5f8"><span id="i9qry">Proposta validade até dia 18/10/2024</span></div>
+                </div>
+            </section>
+            <section id="iwv3r">
+                <div draggable="true" data-highlightable="1" id="ipenj"><img
+                        src="/proposal/img/ativo5_b042.png"
+                        id="imkf8" /></div>
+            </section>
+        </div>
+    </section>
+    <section id="i4tag">
+        <div draggable="true" data-highlightable="1" id="iq4gb">
+            <section id="izl78">
+                <div draggable="true" data-highlightable="1" id="in45k">
+                </div>
+                <div draggable="true" data-highlightable="1" id="i2zek"><img
+                        src="/proposal/img/ativo500_5e29.png"
+                        id="idk7mn" /></div>
+            </section>
+            <section id="ii2av">
+                <div draggable="true" data-highlightable="1" id="i28dm"><img
+                        src="/proposal/img/i2_1eb9.png"
+                        id="ip853" /></div>
+            </section>
+            <section id="im2ir">
+                <div draggable="true" data-highlightable="1" id="iuh0g">
+                    <div id="iqqlk">Seu
+                        <b id="i7pnk"> CONSUMO!
+                        </b>
+                    </div>
+                </div>
+                <div draggable="true" data-highlightable="1" id="inbbf">
+                    <div id="ifjy6">Sua
+                        <b draggable="true" data-highlightable="1" id="i4kgb">ECONOMIA!
+                        </b>
+                    </div>
+                </div>
+            </section>
+            <section id="i63jn">
+                <div draggable="true" data-highlightable="1" id="ioplh"><img
+                        src="/proposal/img/ativo600_2b46.png"
+                        id="ipalf" /></div>
+            </section>
+        </div>
+    </section>
+    <section id="id1zwg">
+        <div draggable="true" data-highlightable="1" id="if8u3p">
+        </div>
+    </section>
+    <section id="iquusp">
+        <div draggable="true" data-highlightable="1" id="iwai13">
+        </div>
+    </section>
+    <section id="ip5bdq">
+        <div draggable="true" data-highlightable="1" id="ifje5u">
+        </div>
+    </section>
+    <section id="ipyze">
+        <div draggable="true" data-highlightable="1" id="iyxga">
+            <section id="ip6uv">
+                <div draggable="true" data-highlightable="1" id="ivqyn">
+                </div>
+                <div draggable="true" data-highlightable="1" id="ir4ql"><img
+                        src="/proposal/img/ativo800_8791.png"
+                        id="idxw3m" /></div>
+            </section>
+            <section id="id5aa">
+                <div draggable="true" data-highlightable="1" id="ih54p">
+                    <section id="icsly"><img
+                            src="/proposal/img/i3_f45a.png"
+                            id="i6a9x" class="icones" />
+                        <div draggable="true" data-highlightable="1" id="iejkf">
+                            <div id="ikcba">Potência do sistema: 5,27kWp
+                            </div>
+                        </div>
+                    </section>
+                    <section id="imv4h"><img
+                            src="/proposal/img/i4_8d0d.png"
+                            id="iftu3" class="icones" />
+                        <div draggable="true" data-highlightable="1" id="ixrdu">
+                            <div id="iqusa">Inversor: 1 GOODWE 3,3kW
+                            </div>
+                        </div>
+                    </section>
+                    <section id="izzu9k"><img
+                            src="/proposal/img/i5_69a3.png"
+                            id="irgmv" class="icones" />
+                        <div draggable="true" data-highlightable="1" id="i893xv">
+                            <div id="iaf14y">9 Módulos Solares HANERSUN 585W de 585W
+                            </div>
+                        </div>
+                    </section>
+                    <section id="ihmec7"><img
+                            src="/proposal/img/i6_85dd.png"
+                            id="iyfjxu" class="icones" />
+                        <div draggable="true" data-highlightable="1" id="iocewj">
+                            <div id="i879sr">Geração estimada mensal de 599,22kWh/mês
+                            </div>
+                        </div>
+                    </section>
+                    <section id="il0z5i"><img
+                            src="/proposal/img/i7_75f2.png"
+                            id="ivczny" class="icones" />
+                        <div draggable="true" data-highlightable="1" id="ir7flz">
+                            <div id="i1vyt2">Economia de R$ 685,51 por mês
+                            </div>
+                        </div>
+                    </section>
+                    <section id="iitrrk"><img
+                            src="/proposal/img/i7_75f2.png"
+                            id="if8muw" class="icones" />
+                        <div draggable="true" data-highlightable="1" id="ilapii">
+                            <div id="iv3msv">Área minima: 22,50 m²
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </section>
+            <section id="i3ki5t">
+                <div draggable="true" data-highlightable="1" id="i0rtbr">
+                    <div id="izoxr6"><span>Descrição detalhada do kit</span></div>
+                    <div id="if12dt"><span id="iv4ulh">Composto por</span></div>
+                </div>
+                <div draggable="true" data-highlightable="1" id="i2fc6k">
+                </div>
+            </section>
+            <section id="isg2dc">
+                <div draggable="true" data-highlightable="1" id="ifzqgo">
+                    <section id="if022r">
+                        <div draggable="true" data-highlightable="1" id="ik213l">
+                            <div id="i3dbqg">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Qtd</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>HANERSUN 585W</td>
+                                            <td>9</td>
+                                        </tr>
+                                        <tr>
+                                            <td>GOODWE 3,3kW</td>
+                                            <td>1</td>
+                                        </tr>
+                                        <tr>
+                                            <td>CABO SOLAR FOTOVOLTAICO FLEXIVEL 6MM 1,8KV CC RL 25 VERMELHO </td>
+                                            <td>25</td>
+                                        </tr>
+                                        <tr>
+                                            <td>CABO SOLAR FOTOVOLTAICO FLEXIVEL 6MM 1,8KV CC RL 25 PRETO</td>
+                                            <td>25</td>
+                                        </tr>
+                                        <tr>
+                                            <td>ESTRUTURA SOLAR ROMAGNOLE 412210 RS223 KIT FIXACAO 4 PAINEIS TELHA
+                                                FIBROCIMENTO PARAFUSO MADEIRA </td>
+                                            <td>9</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div><img
+                            src="/proposal/img/ativo9_9fc8.png"
+                            id="i4dfcw" class="point" />
+                    </section>
+                </div>
+            </section>
+            <div id="icarez">Retorno de investimento em
+                <b id="iguzvi">3 anos
+                </b>
+            </div>
+            <section id="i5bh35">
+                <div draggable="true" data-highlightable="1" id="i8iqxi">
+                    <div id="ilef65">
+                        <div style="width: 100%; background-color: white;">
+                            <canvas id="graficoPayBack" width="100%"></canvas>
+                        </div>
+
+                        <script>
+                            var ctx = document.getElementById('graficoPayBack').getContext('2d');
+                            var payback = [{ "Id": 3906396, "Ano": 0, "ValorProduzidoAnualmente": 0.0, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": -17944.92, "VPL": -17944.92, "Sobra": -17944.92, "ValorPoupanca": 0.0, "Saldo": -17944.92, "ContaComEnergiaAnual": 0.0, "ValorInjetadoAnualmente": 0.0, "GeracaoAnual": 0.0, "ContaSemEnergiaAnual": 0.0, "ContaComEnergiaAnualAntes": 0.0, "EconomiaAnual": 0.0, "EconomiaAnualAntes": 0.0, "PorcentagemEficiencia": 0.0, "PorcentagemEficienciaAntes": 0.0, "ContaComEnergiaMensal": 0.0, "ContaComEnergiaMensalAntes": 0.0, "EconomiaMensal": 0.0, "EconomiaMensalAntes": 0.0, "ValorInjetadoMensalmente": 0.0, "ValorInjetadoDiariamente": 0.0, "AnoDescrito": 0, "ContaSemEnergiaMensal": 0.0, "ValorDisponibilidade": 0.0, "ValorkWh": 0.0, "ValorTUSDFioB": 0.0, "PorcentagemEscalaTUSDFioB": 0.0, "ValorTUSDFioBComDesconto": 0.0, "ValorkWhPonta": 0.0 }, { "Id": 3906397, "Ano": 1, "ValorProduzidoAnualmente": 8226.12943152, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 8226.12943152, "VPL": 7858.3582647306075, "Sobra": -10086.561735269392, "ValorPoupanca": 0.0, "Saldo": -10086.561735269392, "ContaComEnergiaAnual": 1146.0247450799998, "ValorInjetadoAnualmente": 906.0247450799998, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 9372.1541766, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 8226.12943152, "EconomiaAnualAntes": 9132.1541766, "PorcentagemEficiencia": 87.77202419544756, "PorcentagemEficienciaAntes": 97.43922266452655, "ContaComEnergiaMensal": 95.50206208999998, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 685.5107859599999, "EconomiaMensalAntes": 761.0128480499999, "ValorInjetadoMensalmente": 75.50206208999998, "ValorInjetadoDiariamente": 2.5167354029999993, "AnoDescrito": 2025, "ContaSemEnergiaMensal": 781.0128480499999, "ValorDisponibilidade": 0.0, "ValorkWh": 1.27, "ValorTUSDFioB": 0.42, "PorcentagemEscalaTUSDFioB": 30.0, "ValorTUSDFioBComDesconto": 0.126, "ValorkWhPonta": 0.0 }, { "Id": 3906398, "Ano": 2, "ValorProduzidoAnualmente": 8734.6911060576, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 8734.6911060576, "VPL": 7971.134243774247, "Sobra": -2115.4274914951447, "ValorPoupanca": 0.0, "Saldo": -2115.4274914951447, "ContaComEnergiaAnual": 1762.1215717344, "ValorInjetadoAnualmente": 1522.1215717344, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 10496.812677792, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 8734.6911060576, "EconomiaAnualAntes": 10256.812677792, "PorcentagemEficiencia": 83.21279396113734, "PorcentagemEficienciaAntes": 97.71359166475587, "ContaComEnergiaMensal": 146.8434643112, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 727.8909255048001, "EconomiaMensalAntes": 854.7343898160001, "ValorInjetadoMensalmente": 126.84346431120001, "ValorInjetadoDiariamente": 4.22811547704, "AnoDescrito": 2026, "ContaSemEnergiaMensal": 874.7343898160001, "ValorDisponibilidade": 0.0, "ValorkWh": 1.4224, "ValorTUSDFioB": 0.47040000000000004, "PorcentagemEscalaTUSDFioB": 45.0, "ValorTUSDFioBComDesconto": 0.21168000000000003, "ValorkWhPonta": 0.0 }, { "Id": 3906399, "Ano": 3, "ValorProduzidoAnualmente": 9243.395318670338, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 9243.395318670338, "VPL": 8058.243476930005, "Sobra": 5942.8159854348605, "ValorPoupanca": 278.12378811835146, "Saldo": 6220.939773553212, "ContaComEnergiaAnual": 2513.034880456704, "ValorInjetadoAnualmente": 2273.034880456704, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 11756.430199127042, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 9243.395318670338, "EconomiaAnualAntes": 11516.430199127042, "PorcentagemEficiencia": 78.62416704823114, "PorcentagemEficienciaAntes": 97.95856398638915, "ContaComEnergiaMensal": 209.41957337139198, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 770.2829432225282, "EconomiaMensalAntes": 959.7025165939202, "ValorInjetadoMensalmente": 189.41957337139198, "ValorInjetadoDiariamente": 6.3139857790464, "AnoDescrito": 2027, "ContaSemEnergiaMensal": 979.7025165939202, "ValorDisponibilidade": 0.0, "ValorkWh": 1.5930880000000003, "ValorTUSDFioB": 0.5268480000000001, "PorcentagemEscalaTUSDFioB": 60.0, "ValorTUSDFioBComDesconto": 0.3161088, "ValorkWhPonta": 0.0 }, { "Id": 3906400, "Ano": 4, "ValorProduzidoAnualmente": 9744.952990382902, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 9744.952990382902, "VPL": 8115.679589208613, "Sobra": 14058.495574643473, "ValorPoupanca": 657.9375928933144, "Saldo": 14716.433167536788, "ContaComEnergiaAnual": 3422.248832639386, "ValorInjetadoAnualmente": 3182.248832639386, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 13167.20182302229, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 9744.952990382902, "EconomiaAnualAntes": 12927.20182302229, "PorcentagemEficiencia": 74.00929310086421, "PorcentagemEficienciaAntes": 98.17728927356175, "ContaComEnergiaMensal": 285.1874027199488, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 812.0794158652419, "EconomiaMensalAntes": 1077.2668185851908, "ValorInjetadoMensalmente": 265.1874027199488, "ValorInjetadoDiariamente": 8.83958009066496, "AnoDescrito": 2028, "ContaSemEnergiaMensal": 1097.2668185851908, "ValorDisponibilidade": 0.0, "ValorkWh": 1.7842585600000005, "ValorTUSDFioB": 0.5900697600000001, "PorcentagemEscalaTUSDFioB": 75.0, "ValorTUSDFioBComDesconto": 0.4425523200000001, "ValorkWhPonta": 0.0 }, { "Id": 3906401, "Ano": 5, "ValorProduzidoAnualmente": 10230.32361071763, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 10230.32361071763, "VPL": 8138.9953790862455, "Sobra": 22197.49095372972, "ValorPoupanca": 1038.8425766345508, "Saldo": 23236.33353036427, "ContaComEnergiaAnual": 4516.942431067335, "ValorInjetadoAnualmente": 4276.942431067335, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 14747.266041784966, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 10230.32361071763, "EconomiaAnualAntes": 14507.266041784966, "PorcentagemEficiencia": 69.37098430130024, "PorcentagemEficienciaAntes": 98.37257970853727, "ContaComEnergiaMensal": 376.41186925561124, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 852.5269675598025, "EconomiaMensalAntes": 1208.9388368154139, "ValorInjetadoMensalmente": 356.41186925561124, "ValorInjetadoDiariamente": 11.880395641853708, "AnoDescrito": 2029, "ContaSemEnergiaMensal": 1228.9388368154139, "ValorDisponibilidade": 0.0, "ValorkWh": 1.9983695872000007, "ValorTUSDFioB": 0.6608781312000002, "PorcentagemEscalaTUSDFioB": 90.0, "ValorTUSDFioBComDesconto": 0.5947903180800002, "ValorkWhPonta": 0.0 }, { "Id": 3906402, "Ano": 6, "ValorProduzidoAnualmente": 10954.520719248703, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 10954.520719248703, "VPL": 8325.514802500222, "Sobra": 30523.00575622994, "ValorPoupanca": 1428.476669391561, "Saldo": 31951.482425621503, "ContaComEnergiaAnual": 5562.417247550461, "ValorInjetadoAnualmente": 5322.417247550461, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 16516.937966799163, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 10954.520719248703, "EconomiaAnualAntes": 16276.937966799163, "PorcentagemEficiencia": 66.32295127140682, "PorcentagemEficienciaAntes": 98.54694616833686, "ContaComEnergiaMensal": 463.53477062920507, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 912.8767266040586, "EconomiaMensalAntes": 1356.4114972332636, "ValorInjetadoMensalmente": 443.53477062920507, "ValorInjetadoDiariamente": 14.784492354306837, "AnoDescrito": 2030, "ContaSemEnergiaMensal": 1376.4114972332636, "ValorDisponibilidade": 0.0, "ValorkWh": 2.238173937664001, "ValorTUSDFioB": 0.7401835069440003, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 0.7401835069440003, "ValorkWhPonta": 0.0 }, { "Id": 3906403, "Ano": 7, "ValorProduzidoAnualmente": 12297.863205558548, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 12297.863205558548, "VPL": 8928.606024686867, "Sobra": 39451.611780916806, "ValorPoupanca": 1846.3354313469063, "Saldo": 41297.94721226371, "ContaComEnergiaAnual": 6201.107317256517, "ValorInjetadoAnualmente": 5961.107317256517, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 18498.970522815063, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 12297.863205558548, "EconomiaAnualAntes": 18258.970522815063, "PorcentagemEficiencia": 66.47863561051359, "PorcentagemEficienciaAntes": 98.70263050744363, "ContaComEnergiaMensal": 516.7589431047097, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 1024.8219337965456, "EconomiaMensalAntes": 1521.5808769012554, "ValorInjetadoMensalmente": 496.7589431047097, "ValorInjetadoDiariamente": 16.558631436823656, "AnoDescrito": 2031, "ContaSemEnergiaMensal": 1541.5808769012554, "ValorDisponibilidade": 0.0, "ValorkWh": 2.5067548101836814, "ValorTUSDFioB": 0.8290055277772803, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 0.8290055277772803, "ValorkWhPonta": 0.0 }, { "Id": 3906404, "Ano": 8, "ValorProduzidoAnualmente": 13802.406790225574, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 13802.406790225574, "VPL": 9572.935025303055, "Sobra": 49024.54680621986, "ValorPoupanca": 2294.3487905310894, "Saldo": 51318.895596750954, "ContaComEnergiaAnual": 6916.4401953273, "ValorInjetadoAnualmente": 6676.4401953273, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 20718.846985552875, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 13802.406790225574, "EconomiaAnualAntes": 20478.846985552875, "PorcentagemEficiencia": 66.61763948471605, "PorcentagemEficienciaAntes": 98.84163438164609, "ContaComEnergiaMensal": 576.370016277275, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 1150.2005658521311, "EconomiaMensalAntes": 1706.5705821294061, "ValorInjetadoMensalmente": 556.370016277275, "ValorInjetadoDiariamente": 18.5456672092425, "AnoDescrito": 2032, "ContaSemEnergiaMensal": 1726.5705821294061, "ValorDisponibilidade": 0.0, "ValorkWh": 2.8075653874057234, "ValorTUSDFioB": 0.9284861911105541, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 0.9284861911105541, "ValorkWhPonta": 0.0 }, { "Id": 3906405, "Ano": 9, "ValorProduzidoAnualmente": 15487.495605052645, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 15487.495605052645, "VPL": 10261.42724857967, "Sobra": 59285.97405479953, "ValorPoupanca": 2774.583585764618, "Saldo": 62060.55764056415, "ContaComEnergiaAnual": 7717.613018766576, "ValorInjetadoAnualmente": 7477.613018766576, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 23205.108623819222, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 15487.495605052645, "EconomiaAnualAntes": 22965.108623819222, "PorcentagemEficiencia": 66.74175008668254, "PorcentagemEficienciaAntes": 98.96574498361258, "ContaComEnergiaMensal": 643.134418230548, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 1290.624633754387, "EconomiaMensalAntes": 1913.7590519849352, "ValorInjetadoMensalmente": 623.134418230548, "ValorInjetadoDiariamente": 20.771147274351602, "AnoDescrito": 2033, "ContaSemEnergiaMensal": 1933.7590519849352, "ValorDisponibilidade": 0.0, "ValorkWh": 3.1444732338944106, "ValorTUSDFioB": 1.0399045340438207, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 1.0399045340438207, "ValorkWhPonta": 0.0 }, { "Id": 3906406, "Ano": 10, "ValorProduzidoAnualmente": 17374.795077658964, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 17374.795077658964, "VPL": 10997.210838950854, "Sobra": 70283.18489375038, "ValorPoupanca": 3289.2530530275176, "Saldo": 73572.43794677789, "ContaComEnergiaAnual": 8614.926581018566, "ValorInjetadoAnualmente": 8374.926581018566, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 25989.721658677532, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 17374.795077658964, "EconomiaAnualAntes": 25749.721658677532, "PorcentagemEficiencia": 66.85256312415262, "PorcentagemEficienciaAntes": 99.07655802108266, "ContaComEnergiaMensal": 717.9105484182138, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 1447.8995898049136, "EconomiaMensalAntes": 2145.8101382231275, "ValorInjetadoMensalmente": 697.9105484182138, "ValorInjetadoDiariamente": 23.263684947273795, "AnoDescrito": 2034, "ContaSemEnergiaMensal": 2165.8101382231275, "ValorDisponibilidade": 0.0, "ValorkWh": 3.5218100219617403, "ValorTUSDFioB": 1.1646930781290792, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 1.1646930781290792, "ValorkWhPonta": 0.0 }, { "Id": 3906407, "Ano": 11, "ValorProduzidoAnualmente": 19488.570486978046, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 19488.570486978046, "VPL": 11783.630898888032, "Sobra": 82066.81579263842, "ValorPoupanca": 3840.7269790954774, "Saldo": 85907.54277173389, "ContaComEnergiaAnual": 9619.917770740794, "ValorInjetadoAnualmente": 9379.917770740794, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 29108.48825771884, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 19488.570486978046, "EconomiaAnualAntes": 28868.48825771884, "PorcentagemEficiencia": 66.9515033361795, "PorcentagemEficienciaAntes": 99.17549823310952, "ContaComEnergiaMensal": 801.6598142283996, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 1624.0475405815039, "EconomiaMensalAntes": 2405.7073548099033, "ValorInjetadoMensalmente": 781.6598142283996, "ValorInjetadoDiariamente": 26.055327140946652, "AnoDescrito": 2035, "ContaSemEnergiaMensal": 2425.7073548099033, "ValorDisponibilidade": 0.0, "ValorkWh": 3.9444272245971495, "ValorTUSDFioB": 1.304456247504569, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 1.304456247504569, "ValorkWhPonta": 0.0 }, { "Id": 3906421, "Ano": 12, "ValorProduzidoAnualmente": 21855.998945415413, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 21855.998945415413, "VPL": 12624.264740012417, "Sobra": 94691.08053265083, "ValorPoupanca": 4431.542568928058, "Saldo": 99122.62310157888, "ContaComEnergiaAnual": 10745.507903229693, "ValorInjetadoAnualmente": 10505.507903229693, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 32601.506848645105, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 21855.998945415413, "EconomiaAnualAntes": 32361.506848645105, "PorcentagemEficiencia": 67.03984281120347, "PorcentagemEficienciaAntes": 99.2638377081335, "ContaComEnergiaMensal": 895.4589919358077, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 1821.3332454512845, "EconomiaMensalAntes": 2696.792237387092, "ValorInjetadoMensalmente": 875.4589919358077, "ValorInjetadoDiariamente": 29.181966397860258, "AnoDescrito": 2036, "ContaSemEnergiaMensal": 2716.792237387092, "ValorDisponibilidade": 0.0, "ValorkWh": 4.417758491548808, "ValorTUSDFioB": 1.4609909972051174, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 1.4609909972051174, "ValorkWhPonta": 0.0 }, { "Id": 3906408, "Ano": 13, "ValorProduzidoAnualmente": 24507.51881886526, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 24507.51881886526, "VPL": 13522.938197110421, "Sobra": 108214.01872976124, "ValorPoupanca": 5064.416076552826, "Saldo": 113278.43480631406, "ContaComEnergiaAnual": 12006.168851617256, "ValorInjetadoAnualmente": 11766.168851617256, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 36513.68767048252, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 24507.51881886526, "EconomiaAnualAntes": 36273.68767048252, "PorcentagemEficiencia": 67.11871734247488, "PorcentagemEficienciaAntes": 99.3427122394049, "ContaComEnergiaMensal": 1000.5140709681046, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 2042.2932349054383, "EconomiaMensalAntes": 3022.807305873543, "ValorInjetadoMensalmente": 980.5140709681046, "ValorInjetadoDiariamente": 32.68380236560349, "AnoDescrito": 2037, "ContaSemEnergiaMensal": 3042.807305873543, "ValorDisponibilidade": 0.0, "ValorkWh": 4.947889510534665, "ValorTUSDFioB": 1.6363099168697317, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 1.6363099168697317, "ValorkWhPonta": 0.0 }, { "Id": 3906409, "Ano": 14, "ValorProduzidoAnualmente": 27477.2210771291, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 27477.2210771291, "VPL": 14483.743079537468, "Sobra": 122697.76180929871, "ValorPoupanca": 5742.255252675179, "Saldo": 128440.0170619739, "ContaComEnergiaAnual": 13418.109113811328, "ValorInjetadoAnualmente": 13178.109113811328, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 40895.330190940425, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 27477.2210771291, "EconomiaAnualAntes": 40655.330190940425, "PorcentagemEficiencia": 67.18914103111008, "PorcentagemEficienciaAntes": 99.41313592804009, "ContaComEnergiaMensal": 1118.1757594842773, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 2289.7684230940918, "EconomiaMensalAntes": 3387.944182578369, "ValorInjetadoMensalmente": 1098.1757594842773, "ValorInjetadoDiariamente": 36.605858649475906, "AnoDescrito": 2038, "ContaSemEnergiaMensal": 3407.944182578369, "ValorDisponibilidade": 0.0, "ValorkWh": 5.541636251798826, "ValorTUSDFioB": 1.8326671068940996, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 1.8326671068940996, "ValorkWhPonta": 0.0 }, { "Id": 3906410, "Ano": 15, "ValorProduzidoAnualmente": 30803.28760638459, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 30803.28760638459, "VPL": 15511.055839697154, "Sobra": 138208.81764899587, "ValorPoupanca": 6468.172665973006, "Saldo": 144676.9903149689, "ContaComEnergiaAnual": 14999.482207468689, "ValorInjetadoAnualmente": 14759.482207468689, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 45802.76981385328, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 30803.28760638459, "EconomiaAnualAntes": 45562.76981385328, "PorcentagemEficiencia": 67.25201932453434, "PorcentagemEficienciaAntes": 99.47601422146437, "ContaComEnergiaMensal": 1249.9568506223907, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 2566.9406338653826, "EconomiaMensalAntes": 3796.8974844877735, "ValorInjetadoMensalmente": 1229.9568506223907, "ValorInjetadoDiariamente": 40.99856168741302, "AnoDescrito": 2039, "ContaSemEnergiaMensal": 3816.8974844877735, "ValorDisponibilidade": 0.0, "ValorkWh": 6.206632602014685, "ValorTUSDFioB": 2.0525871597213916, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 2.0525871597213916, "ValorkWhPonta": 0.0 }, { "Id": 3906411, "Ano": 16, "ValorProduzidoAnualmente": 34528.48211915075, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 34528.48211915075, "VPL": 16609.557543848354, "Sobra": 154818.37519284422, "ValorPoupanca": 7245.499959025109, "Saldo": 162063.87515186932, "ContaComEnergiaAnual": 16770.62007236493, "ValorInjetadoAnualmente": 16530.62007236493, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 51299.10219151568, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 34528.48211915075, "EconomiaAnualAntes": 51059.10219151568, "PorcentagemEficiencia": 67.30816065794887, "PorcentagemEficienciaAntes": 99.53215555487891, "ContaComEnergiaMensal": 1397.5516726970775, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 2877.3735099292294, "EconomiaMensalAntes": 4254.925182626307, "ValorInjetadoMensalmente": 1377.5516726970775, "ValorInjetadoDiariamente": 45.91838908990258, "AnoDescrito": 2040, "ContaSemEnergiaMensal": 4274.925182626307, "ValorDisponibilidade": 0.0, "ValorkWh": 6.951428514256448, "ValorTUSDFioB": 2.298897618887959, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 2.298897618887959, "ValorkWhPonta": 0.0 }, { "Id": 3906412, "Ano": 17, "ValorProduzidoAnualmente": 38700.69997344884, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 38700.69997344884, "VPL": 17784.25523644758, "Sobra": 172602.6304292918, "ValorPoupanca": 8077.803104090855, "Saldo": 180680.43353338266, "ContaComEnergiaAnual": 18754.294481048724, "ValorInjetadoAnualmente": 18514.294481048724, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 57454.994454497566, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 38700.69997344884, "EconomiaAnualAntes": 57214.994454497566, "PorcentagemEficiencia": 67.35828684849757, "PorcentagemEficienciaAntes": 99.5822817454276, "ContaComEnergiaMensal": 1562.857873420727, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 3225.058331120737, "EconomiaMensalAntes": 4767.916204541464, "ValorInjetadoMensalmente": 1542.857873420727, "ValorInjetadoDiariamente": 51.4285957806909, "AnoDescrito": 2041, "ContaSemEnergiaMensal": 4787.916204541464, "ValorDisponibilidade": 0.0, "ValorkWh": 7.785599935967222, "ValorTUSDFioB": 2.574765333154514, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 2.574765333154514, "ValorkWhPonta": 0.0 }, { "Id": 3906413, "Ano": 18, "ValorProduzidoAnualmente": 43373.583970262705, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 43373.583970262705, "VPL": 19040.504795605866, "Sobra": 191643.13522489768, "ValorPoupanca": 8968.89872852521, "Saldo": 200612.03395342288, "ContaComEnergiaAnual": 20976.009818774575, "ValorInjetadoAnualmente": 20736.009818774575, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 64349.59378903728, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 43373.583970262705, "EconomiaAnualAntes": 64109.59378903728, "PorcentagemEficiencia": 67.40304237577318, "PorcentagemEficienciaAntes": 99.6270372727032, "ContaComEnergiaMensal": 1748.0008182312147, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 3614.4653308552256, "EconomiaMensalAntes": 5342.46614908644, "ValorInjetadoMensalmente": 1728.0008182312147, "ValorInjetadoDiariamente": 57.60002727437382, "AnoDescrito": 2042, "ContaSemEnergiaMensal": 5362.46614908644, "ValorDisponibilidade": 0.0, "ValorkWh": 8.71987192828329, "ValorTUSDFioB": 2.883737173133056, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 2.883737173133056, "ValorkWhPonta": 0.0 }, { "Id": 3906414, "Ano": 19, "ValorProduzidoAnualmente": 48607.214046694244, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 48607.214046694244, "VPL": 20384.035384056697, "Sobra": 212027.1706089544, "ValorPoupanca": 9922.871584499064, "Saldo": 221950.04219345344, "ContaComEnergiaAnual": 23464.330997027522, "ValorInjetadoAnualmente": 23224.330997027522, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 72071.54504372177, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 48607.214046694244, "EconomiaAnualAntes": 71831.54504372177, "PorcentagemEficiencia": 67.44300266798356, "PorcentagemEficienciaAntes": 99.66699756491359, "ContaComEnergiaMensal": 1955.3609164189602, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 4050.6011705578535, "EconomiaMensalAntes": 5985.962086976814, "ValorInjetadoMensalmente": 1935.3609164189602, "ValorInjetadoDiariamente": 64.51203054729868, "AnoDescrito": 2043, "ContaSemEnergiaMensal": 6005.962086976814, "ValorDisponibilidade": 0.0, "ValorkWh": 9.766256559677286, "ValorTUSDFioB": 3.2297856339090227, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 3.2297856339090227, "ValorkWhPonta": 0.0 }, { "Id": 3906415, "Ano": 20, "ValorProduzidoAnualmente": 54468.87973229756, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 54468.87973229756, "VPL": 21820.975607326265, "Sobra": 233848.14621628064, "ValorPoupanca": 10944.093242921932, "Saldo": 244792.23945920257, "ContaComEnergiaAnual": 26251.250716670827, "ValorInjetadoAnualmente": 26011.250716670827, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 80720.13044896838, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 54468.87973229756, "EconomiaAnualAntes": 80480.13044896838, "PorcentagemEficiencia": 67.47868150031425, "PorcentagemEficienciaAntes": 99.70267639724428, "ContaComEnergiaMensal": 2187.6042263892355, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 4539.073311024797, "EconomiaMensalAntes": 6706.677537414032, "ValorInjetadoMensalmente": 2167.6042263892355, "ValorInjetadoDiariamente": 72.25347421297451, "AnoDescrito": 2044, "ContaSemEnergiaMensal": 6726.677537414032, "ValorDisponibilidade": 0.0, "ValorkWh": 10.938207346838562, "ValorTUSDFioB": 3.6173599099781057, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 3.6173599099781057, "ValorkWhPonta": 0.0 }, { "Id": 3906416, "Ano": 21, "ValorProduzidoAnualmente": 61033.945300173276, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 61033.945300173276, "VPL": 23357.881498602015, "Sobra": 257206.02771488266, "ValorPoupanca": 12037.242097056507, "Saldo": 269243.26981193916, "ContaComEnergiaAnual": 29372.600802671328, "ValorInjetadoAnualmente": 29132.600802671328, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 90406.5461028446, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 61033.945300173276, "EconomiaAnualAntes": 90166.5461028446, "PorcentagemEficiencia": 67.51053760060951, "PorcentagemEficienciaAntes": 99.73453249753953, "ContaComEnergiaMensal": 2447.716733555944, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 5086.162108347773, "EconomiaMensalAntes": 7513.878841903716, "ValorInjetadoMensalmente": 2427.716733555944, "ValorInjetadoDiariamente": 80.92389111853146, "AnoDescrito": 2045, "ContaSemEnergiaMensal": 7533.878841903716, "ValorDisponibilidade": 0.0, "ValorkWh": 12.25079222845919, "ValorTUSDFioB": 4.051443099175478, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 4.051443099175478, "ValorkWhPonta": 0.0 }, { "Id": 3906417, "Ano": 22, "ValorProduzidoAnualmente": 68386.81873619408, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 68386.81873619408, "VPL": 25001.76645814637, "Sobra": 282207.794173029, "ValorPoupanca": 13207.324767297756, "Saldo": 295415.1189403268, "ContaComEnergiaAnual": 32868.51289899189, "ValorInjetadoAnualmente": 32628.51289899189, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 101255.33163518597, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 68386.81873619408, "EconomiaAnualAntes": 101015.33163518597, "PorcentagemEficiencia": 67.5389805473017, "PorcentagemEficienciaAntes": 99.76297544423171, "ContaComEnergiaMensal": 2739.0427415826575, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 5698.901561349507, "EconomiaMensalAntes": 8417.944302932165, "ValorInjetadoMensalmente": 2719.0427415826575, "ValorInjetadoDiariamente": 90.63475805275525, "AnoDescrito": 2046, "ContaSemEnergiaMensal": 8437.944302932165, "ValorDisponibilidade": 0.0, "ValorkWh": 13.720887295874293, "ValorTUSDFioB": 4.537616271076536, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 4.537616271076536, "ValorkWhPonta": 0.0 }, { "Id": 3906418, "Ano": 23, "ValorProduzidoAnualmente": 76622.03698453738, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 76622.03698453738, "VPL": 26760.133284037547, "Sobra": 308967.92745706654, "ValorPoupanca": 14459.699004990713, "Saldo": 323427.62646205723, "ContaComEnergiaAnual": 36783.93444687092, "ValorInjetadoAnualmente": 36543.93444687092, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 113405.9714314083, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 76622.03698453738, "EconomiaAnualAntes": 113165.9714314083, "PorcentagemEficiencia": 67.56437603541974, "PorcentagemEficienciaAntes": 99.78837093234975, "ContaComEnergiaMensal": 3065.3278705725766, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 6385.169748711448, "EconomiaMensalAntes": 9430.497619284024, "ValorInjetadoMensalmente": 3045.3278705725766, "ValorInjetadoDiariamente": 101.51092901908588, "AnoDescrito": 2047, "ContaSemEnergiaMensal": 9450.497619284024, "ValorDisponibilidade": 0.0, "ValorkWh": 15.36739377137921, "ValorTUSDFioB": 5.082130223605721, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 5.082130223605721, "ValorkWhPonta": 0.0 }, { "Id": 3906419, "Ano": 24, "ValorProduzidoAnualmente": 85845.48142268187, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 85845.48142268187, "VPL": 28641.00844057959, "Sobra": 337608.9358976461, "ValorPoupanca": 15800.098200009837, "Saldo": 353409.03409765597, "ContaComEnergiaAnual": 41169.20658049543, "ValorInjetadoAnualmente": 40929.20658049543, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 127014.6880031773, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 85845.48142268187, "EconomiaAnualAntes": 126774.6880031773, "PorcentagemEficiencia": 67.58705057838226, "PorcentagemEficienciaAntes": 99.81104547531228, "ContaComEnergiaMensal": 3430.767215041286, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 7153.790118556823, "EconomiaMensalAntes": 10564.557333598108, "ValorInjetadoMensalmente": 3410.767215041286, "ValorInjetadoDiariamente": 113.69224050137619, "AnoDescrito": 2048, "ContaSemEnergiaMensal": 10584.557333598108, "ValorDisponibilidade": 0.0, "ValorkWh": 17.211481023944717, "ValorTUSDFioB": 5.6919858504384075, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 5.6919858504384075, "ValorkWhPonta": 0.0 }, { "Id": 3906420, "Ano": 25, "ValorProduzidoAnualmente": 96175.73919340369, "CustoManutencao": 0.0, "TarifaMinima": 0.0, "FluxoCaixa": 96175.73919340369, "VPL": 30652.978720952306, "Sobra": 368261.9146185984, "ValorPoupanca": 17234.657604150405, "Saldo": 385496.57222274883, "ContaComEnergiaAnual": 46080.71137015489, "ValorInjetadoAnualmente": 45840.71137015489, "GeracaoAnual": 7190.672579999999, "ContaSemEnergiaAnual": 142256.45056355858, "ContaComEnergiaAnualAntes": 240.0, "EconomiaAnual": 96175.73919340369, "EconomiaAnualAntes": 142016.45056355858, "PorcentagemEficiencia": 67.60729570602737, "PorcentagemEficienciaAntes": 99.8312906029574, "ContaComEnergiaMensal": 3840.0592808462407, "ContaComEnergiaMensalAntes": 20.0, "EconomiaMensal": 8014.644932783641, "EconomiaMensalAntes": 11834.704213629882, "ValorInjetadoMensalmente": 3820.0592808462407, "ValorInjetadoDiariamente": 127.33530936154135, "AnoDescrito": 2049, "ContaSemEnergiaMensal": 11854.704213629882, "ValorDisponibilidade": 0.0, "ValorkWh": 19.276858746818085, "ValorTUSDFioB": 6.375024152491017, "PorcentagemEscalaTUSDFioB": 100.0, "ValorTUSDFioBComDesconto": 6.375024152491017, "ValorkWhPonta": 0.0 }];
+                            this.retornoInvestimento = payback
+                                .filter(function (item) {
+                                    return item.Saldo > 0;
+                                })
+                                .shift();
+                            var colors = []
+                            for (var i = 0; i < payback.map(c => c.Saldo).length; i++) {
+                                if (payback.map(c => c.Saldo)[i] > 0) {
+                                    colors[i] = '#FFEA00';
+                                } else {
+                                    colors[i] = '#6F6F6F';
+                                }
+                            }
+                            this.barChart = new Chart(ctx, {
+                                type: "bar",
+                                data: {
+                                    labels: payback.map(c => c.Ano),
+                                    datasets: [
+                                        {
+                                            label: 'Gráfico de Retorno de Investimento',
+                                            data: payback.map(c => c.Saldo),
+                                            backgroundColor: colors,
+                                            borderColor: colors,
+                                            borderWidth: 1
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    tooltips: {
+                                        callbacks: {
+                                            label: function (tooltipItem, data) {
+                                                var textoRetorno = 'Saldo: ' +
+                                                    tooltipItem.yLabel.toLocaleString('pt-br',
+                                                        {
+                                                            style: 'currency',
+                                                            currency: 'BRL'
+                                                        });
+
+                                                return textoRetorno;
+                                            }
+                                        }
+                                    },
+                                    legend: {
+                                        display: false
+                                    },
+                                    scales: {
+                                        yAxes: [
+                                            {
+                                                ticks: {
+                                                    // Include a dollar sign in the ticks
+                                                    callback: function (value, index, values) {
+                                                        return value.toLocaleString('pt-br',
+                                                            {
+                                                                style: 'currency',
+                                                                currency: 'BRL'
+                                                            });
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        xAxes: [
+                                            {
+                                                ticks: {
+                                                    // Include a dollar sign in the ticks
+                                                    callback: function (value, index, values) {
+                                                        return 'Ano: ' + value;
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            });
+                        </script>
+                    </div>
+                </div>
+            </section>
+            <section id="ijs9j">
+                <div draggable="true" data-highlightable="1" id="i9afc"><img
+                        src="/proposal/img/semasd_8512.png"
+                        id="isd76" /></div>
+            </section>
+        </div>
+    </section>
+    <section id="iuvk3l">
+        <div draggable="true" data-highlightable="1" id="ixik66">
+            <section id="iuhb0g">
+                <div draggable="true" data-highlightable="1" id="id0t63">
+                </div>
+                <div draggable="true" data-highlightable="1" id="ivmm9k"><img
+                        src="/proposal/img/ativo700_436e.png"
+                        id="i29u68" /></div>
+            </section>
+            <section id="i20d35">
+                <div draggable="true" data-highlightable="1" id="ixce5g">
+                    <div id="i4oiaz"><span>Valor do INVESTIMENTO:</span></div>
+                    <section id="iatwjl">
+                        <div draggable="true" data-highlightable="1" id="i3uejl">
+                            <div id="ipef79">
+                                <div>Nossa proposta de
+                                </div>
+                                <div>pagamento a vista
+                                </div>
+                            </div>
+                        </div>
+                        <div draggable="true" data-highlightable="1" id="icw38e">
+                            <div id="i1bf3v">
+                                <div id="i01er1">{{ total_value }}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <div id="ih40hp"><span><span id="iusk9b">simulação de financiamento -</span> 120 dias de
+                            carência</span></div>
+                </div>
+            </section>
+            <section id="ixf5qc">
+                <div draggable="true" data-highlightable="1" id="itwp9y"><img
+                        src="/proposal/img/ativo10_aad6.png"
+                        id="iogbr3" /></div>
+                <div draggable="true" data-highlightable="1" id="i9dajm">
+                    <div id="ivseei"><span id="i0b5yk">
+                            <table style='font-size:9px;text-align:center;border-collapse: collapse;margin: 0 auto;'>
+                                <tr>
+                                    <th style='border: 1px solid black;'> Descrição </th>
+                                    <th style='border: 1px solid black;'> Qtd Meses </th>
+                                    <th style='border: 1px solid black;'> Parcela </th>
+                                </tr>
+                                <tr>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> SOLFACIL</td>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> 12 meses </td>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> R$1.857,01</td>
+                                </tr>
+                                <tr>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> SOLFACIL</td>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> 24 meses </td>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> R$1.094,14</td>
+                                </tr>
+                                <tr>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> SOLFACIL</td>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> 36 meses </td>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> R$821,95</td>
+                                </tr>
+                                <tr>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> SOLFACIL</td>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> 48 meses </td>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> R$684,23</td>
+                                </tr>
+                                <tr>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> SOLFACIL</td>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> 60 meses </td>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> R$596,55</td>
+                                </tr>
+                                <tr>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> SOLFACIL</td>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> 72 meses </td>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> R$551,01</td>
+                                </tr>
+                                <tr>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> SOLFACIL</td>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> 84 meses </td>
+                                    <td style='border: 1px solid black;font-size:15px;padding:10px'> R$524,73</td>
+                                </tr>
+                            </table>
+                        </span></div>
+                </div>
+            </section>
+            <section id="ipg45t">
+                <div draggable="true" data-highlightable="1">
+                    <div id="iwqk7j"><i>Simulação sujeita a análise de crédito conforme a instituição financeira
+                            escolhida
+                        </i></div>
+                    <div id="iphwyk"><i>&quot; para o correto dimensionamento e precificação do seu projeto é
+                            fundamental a nossa visita técnica. Uma vez que a face e a inclinação de telhado podem
+                            alterar a geração de energia do sistema fotovoltaico. Na visita nós avaliaremos também as
+                            condições da estrutura fisica, como elétrica. É possivel que sejam necessárias adequações
+                            para a sua segurança e a correta homologação do sistema junto á concessionária de
+                            Energia.&quot;
+                        </i></div>
+                </div>
+            </section>
+            <section id="iall6g">
+                <div draggable="true" data-highlightable="1" id="iipbv2">
+                    <div id="ibmffz">
+                        <div>SEM ENERGIA
+                        </div>
+                        <div>SOLAR
+                        </div>
+                    </div>
+                    <section id="io175d">
+                        <div draggable="true" data-highlightable="1" id="icmz9j"><img
+                                src="/proposal/img/ativo11_53b1.png"
+                                id="ik0wmb" />
+                            <div id="icblj6"><b id="ii35tw">R$ 9.372,15 / ANO
+                                </b></div>
+                        </div>
+                    </section>
+                    <section id="i6mnri">
+                        <div draggable="true" data-highlightable="1" id="iiygjj"><img
+                                src="/proposal/img/ativo11_53b1.png"
+                                id="ia30dj" />
+                            <div id="i2444m"><b id="ihy408">R$ 781,01 / MÊS
+                                </b></div>
+                        </div>
+                    </section>
+                </div>
+                <div draggable="true" data-highlightable="1" id="ivoylm">
+                    <div id="iky0zu">
+                        <div>
+                            <div>COM ENERGIA
+                            </div>
+                            <div>SOLAR
+                            </div>
+                        </div>
+                    </div>
+                    <section id="ipdzki">
+                        <div draggable="true" data-highlightable="1" id="ihnocx"><img
+                                src="/proposal/img/ativo12_c91f.png"
+                                id="inijj5" />
+                            <div id="i27r9d"><b id="ib7rwq">R$ 1.146,02/ ANO
+                                </b></div>
+                        </div>
+                    </section>
+                    <section id="ie2k8m">
+                        <div draggable="true" data-highlightable="1" id="ivn41m"><img
+                                src="/proposal/img/ativo12_c91f.png"
+                                id="izmzok" />
+                            <div id="i1jf5w"><b id="i7tr79">R$ 95,50 / MÊS
+                                </b></div>
+                        </div>
+                    </section>
+                </div>
+                <div draggable="true" data-highlightable="1" id="icbuif">
+                    <div id="i076kl">
+                        <div>
+                            <div>SUA ECONÔMIA
+                            </div>
+                            <div>SERÁ DE
+                            </div>
+                        </div>
+                    </div>
+                    <section id="i86ch1">
+                        <div draggable="true" data-highlightable="1" id="i1m9ee"><img
+                                src="/proposal/img/ativo12_c91f.png"
+                                id="iambuh" />
+                            <div id="i1oeqi"><b id="i4xr5i">R$ 8.226,13 / ANO
+                                </b></div>
+                        </div>
+                    </section>
+                    <section id="igju68">
+                        <div draggable="true" data-highlightable="1" id="ilbwlc"><img
+                                src="/proposal/img/ativo12_c91f.png"
+                                id="i3vkz2" />
+                            <div id="isxmxk"><b id="iifedo">R$ 685,51 / MÊS
+                                </b></div>
+                        </div>
+                    </section>
+                </div>
+            </section>
+            <section id="iqcxlh">
+                <div draggable="true" data-highlightable="1" id="i0zp0w"><img
+                        src="/proposal/img/semasd_a12d.png"
+                        id="iaor9n" /></div>
+            </section>
+        </div>
+    </section>
+    <section id="i5yiep">
+        <div draggable="true" data-highlightable="1" id="i22mz7">
+            <section id="icj8aj">
+                <div draggable="true" data-highlightable="1" id="ioe7ia">
+                </div>
+                <div draggable="true" data-highlightable="1" id="iomypt">
+                    <div id="ijwh9e">Nosso
+                        <b>COMPROMISSO
+                        </b>
+                    </div>
+                </div>
+            </section>
+            <section id="ivs8i7">
+                <div draggable="true" data-highlightable="1" id="i6ahmw"><img
+                        src="/proposal/img/ativo16_36f0.png"
+                        id="ikgvdh" />
+                    <div id="i7tgyo">
+                        <div><span>COM A</span></div>
+                    </div>
+                    <div id="ifukbk">
+                        <div><span id="idmm8b">NATUREZA</span></div>
+                    </div>
+                    <div id="iqo7pk">
+                        <div>
+                            <div><span id="i2qyij">Energia limpa e totalmente</span></div>
+                            <div><span id="ip7p53">sustentavel</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div draggable="true" data-highlightable="1" id="ibgi52"><img
+                        src="/proposal/img/ativo17_1737.png"
+                        id="inhxjh" />
+                    <div id="iqw44n">
+                        <div><span>COM SEU</span></div>
+                    </div>
+                    <div id="ideumx">
+                        <div><span id="idaoh4">PROJETO</span></div>
+                    </div>
+                    <div id="i8oy5u">
+                        <div>
+                            <div>
+                                <div><span id="ig9d7s">Equipe de profissionais</span></div>
+                                <div><span id="if9caj">altamente qualificados</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div draggable="true" data-highlightable="1" id="ixismg"><img
+                        src="/proposal/img/ativo18_f233.png"
+                        id="i7oc4a" />
+                    <div id="ina73h">
+                        <div><span>COM SEU</span></div>
+                    </div>
+                    <div id="i6xl1j">
+                        <div><span id="izk3sf">BOLSO</span></div>
+                    </div>
+                    <div id="igzk9y">
+                        <div>
+                            <div>
+                                <div><span id="iqmxgk">Economizando na sua fatura</span></div>
+                                <div><span id="ik2z93">de energia</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="i9pg5r">
+                <div draggable="true" data-highlightable="1" id="ir0ad6">
+                    <div id="i8pla1">
+                        <div>ENTRE EM
+                        </div>
+                        <div><b>CONTATO!
+                            </b></div>
+                    </div>
+                </div>
+            </section>
+            <section id="ih6i7o">
+                <div draggable="true" data-highlightable="1" id="i9cmo1"><img
+                        src="/proposal/img/whatsappimage20240619at150343_31bf.jpeg"
+                        id="if90xk" /></div>
+                <div draggable="true" data-highlightable="1" id="i5c0vq">
+                    <div id="i3t5o2">
+                        <div id="ioa613">Guilherme Kauã da Silva Vieira
+                        </div>
+                    </div>
+                    <div id="ivm9ug">
+                        <div id="i89pjf">91983847743
+                        </div>
+                    </div>
+                    <div id="iwe9ee">
+                        <div id="iktyd4">gkauasilva444@gmail.com
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="i9avyz">
+                <div draggable="true" data-highlightable="1" id="io0mwr">
+                    <section id="iyjjii"><img
+                            src="/proposal/img/ativo20_f51e.png"
+                            id="i9tz48" />
+                        <div draggable="true" data-highlightable="1" id="i4mjyl">
+                            <div id="itag4z">VISITE NOSSA LOJA
+                            </div>
+                            <div id="i57zt9">BELEM
+                            </div>
+                        </div>
+                    </section>
+                    <div id="imdmgf">TV SAO ROQUE, 110 - CRUZEIRO, BELEM-PA 66810-020
+                    </div>
+                    <section id="io0qda">
+                    </section>
+                    <section id="i2a54l"><img
+                            src="/proposal/img/ativo21_b7df.png"
+                            id="iz3ktc" />
+                        <div draggable="true" data-highlightable="1" id="id4zs7">
+                            <div id="i7ci6x">
+                                <div><span id="it274b">@resolveenergiasolar</span></div>
+                            </div>
+                        </div>
+                    </section>
+                    <section id="i16ggx"><img
+                            src="/proposal/img/ativo22_85bf.png"
+                            id="i0bq5a" />
+                        <div draggable="true" data-highlightable="1" id="iwaq7m">
+                            <div id="idy444">
+                                <div id="iqojnh"><span id="isg0xi">+55 91984061589</span></div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div draggable="true" data-highlightable="1" id="i2ghqr"><img src="" id="itvvi8" />
+                    <div id="i0wbny">
+                        <div id="ihg9uz"><span id="io0uff">Sede BELEM-PA</span></div>
+                    </div>
+                </div>
+            </section>
+            <section id="ibeto4">
+                <div draggable="true" data-highlightable="1" id="ijmgvh"><img
+                        src="/proposal/img/ativo23_2454.png"
+                        id="idjk4y" /></div>
+            </section>
+            <section id="ib5hln">
+                <div draggable="true" data-highlightable="1" id="i1lzji"><img
+                        src="/proposal/img/semasd_a12d.png"
+                        id="ikakly" /></div>
+            </section>
+        </div>
+    </section>
+
+</body>
+
+</html>

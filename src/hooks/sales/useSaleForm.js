@@ -3,7 +3,6 @@ import formatDate from '@/utils/formatDate';
 import saleService from '@/services/saleService';
 import { useDispatch, useSelector } from 'react-redux';
 
-
 const useSaleForm = (initialData, id) => {
   const user = useSelector((state) => state.user);
 
@@ -11,19 +10,19 @@ const useSaleForm = (initialData, id) => {
     customerId: null,
     sellerId: user?.user?.id,
     salesSupervisorId: user?.user?.user_manager?.user_manager,
-    salesManagerId: user?.user?.user_manager.id,
+    salesManagerId: user?.user?.user_manager?.id,
     branchId: user?.user?.branch?.id,
     marketingCampaignId: null,
-    leadId: null,
     isSale: false,
     totalValue: '',
     status: '',
     completedDocument: false,
-    documentCompletionDate: null,
   });
 
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [successData, setSuccessData] = useState(null); 
 
   useEffect(() => {
     if (initialData) {
@@ -34,14 +33,10 @@ const useSaleForm = (initialData, id) => {
         salesManagerId: initialData.sales_manager?.id || null,
         branchId: initialData.branch?.id || '',
         marketingCampaignId: initialData.marketing_campaign?.id || null,
-        leadId: initialData.lead?.id || null,
-        isSale: initialData.is_sale || false,
+        isSale: initialData.is_pre_sale || false,
         totalValue: initialData.total_value || '',
         status: initialData.status || '',
         completedDocument: initialData.completed_document || false,
-        documentCompletionDate: initialData.document_completion_date
-          ? new Date(initialData.document_completion_date)
-          : null,
       });
     }
   }, [initialData]);
@@ -51,6 +46,7 @@ const useSaleForm = (initialData, id) => {
   };
 
   const handleSave = async () => {
+    setLoading(true);
     const dataToSend = {
       customer_id: formData.customerId,
       seller_id: formData.sellerId,
@@ -58,28 +54,29 @@ const useSaleForm = (initialData, id) => {
       sales_manager_id: formData.salesManagerId,
       branch_id: formData.branchId,
       marketing_campaign_id: formData.marketingCampaignId,
-      lead_id: formData.leadId,
-      is_sale: formData.isSale,
+      is_pre_sale: formData.isSale,
       total_value: formData.totalValue,
       status: formData.status,
       completed_document: formData.completedDocument,
-      document_completion_date: formData.documentCompletionDate
-        ? formatDate(formData.documentCompletionDate)
-        : null,
     };
 
     try {
+      let response;
       if (id) {
-        await saleService.updateSale(id, dataToSend);
+        response = await saleService.updateSale(id, dataToSend);
       } else {
-        await saleService.createSale(dataToSend);
+        response = await saleService.createSale(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);
+      setSuccessData(response);
     } catch (err) {
       setSuccess(false);
+      setSuccessData(null);
       setFormErrors(err.response?.data || {});
       console.log(err.response?.data || err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -89,6 +86,8 @@ const useSaleForm = (initialData, id) => {
     handleSave,
     formErrors,
     success,
+    loading,
+    successData,
   };
 };
 

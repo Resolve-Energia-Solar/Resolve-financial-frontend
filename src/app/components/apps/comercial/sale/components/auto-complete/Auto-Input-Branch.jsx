@@ -1,19 +1,18 @@
-'use client'
+'use client';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import branchService from '@/services/branchService';
-import departamentService from '@/services/departmentService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteBranch({ onChange, value, error, helperText, disabled }) {
+export default function AutoCompleteBranch({ onChange, value, error, helperText, labeltitle, disabled }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedBranch, setSelectedBranch] = useState(null);
 
-useEffect(() => {
+  useEffect(() => {
     const fetchDefaultBranch = async () => {
       if (value) {
         try {
@@ -46,7 +45,7 @@ useEffect(() => {
       try {
         const branches = await branchService.getBranchByName(name);
         if (branches && branches.results) {
-          const formattedBranches = branches.results.map(branch => ({
+          const formattedBranches = branches.results.map((branch) => ({
             id: branch.id,
             name: branch.name,
           }));
@@ -57,7 +56,7 @@ useEffect(() => {
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
 
   const handleOpen = () => {
@@ -72,6 +71,7 @@ useEffect(() => {
   return (
     <div>
       <Autocomplete
+        fullWidth
         sx={{ width: '100%' }}
         open={open}
         onOpen={handleOpen}
@@ -91,6 +91,7 @@ useEffect(() => {
             error={error}
             helperText={helperText}
             {...params}
+            label={labeltitle}
             size="small"
             variant="outlined"
             InputProps={{
