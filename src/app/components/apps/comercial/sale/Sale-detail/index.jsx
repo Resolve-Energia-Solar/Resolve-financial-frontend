@@ -28,6 +28,7 @@ import FormPageSkeleton from '../components/FormPageSkeleton';
 import useSale from '@/hooks/sales/useSale';
 import { useState } from 'react';
 import PaymentCard from '../../../invoice/components/paymentList/card';
+import DetailCustomer from '../../../users/User-detail/customer/customer';
 
 const SaleDetailPage = ({ saleId = null, onClosedModal = null }) => {
   const params = useParams();
@@ -82,6 +83,7 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null }) => {
           color: theme.palette.text.primary,
         }}
       >
+        <Tab label="Cliente" />
         <Tab label="Venda" />
         <Tab label="Anexos" />
         <Tab label="Pagamentos" />
@@ -92,7 +94,7 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null }) => {
         <Typography color={theme.palette.error.main}>{error}</Typography>
       ) : (
         <>
-          {value === 0 && (
+          {value === 1 && (
             <Grid container spacing={3}>
               <Grid item xs={12} sm={12} lg={4}>
                 <CustomFormLabel htmlFor="leads">Leads</CustomFormLabel>
@@ -223,8 +225,12 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null }) => {
           )}
         </>
       )}
+      
+      {value === 0 && (
+        <DetailCustomer userId={saleData?.customer?.id} />
+      )}
 
-      {value === 1 && (
+      {value === 2 && (
         <Grid item sm={12} lg={6} sx={{ mt: 2 }}>
           <List>
             {Array.isArray(attachments) && attachments.length > 0 ? (
@@ -256,7 +262,7 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null }) => {
         </Grid>
       )}
 
-      {value === 2 && (
+      {value === 3 && (
         <Box sx={{ mt: 3 }}>
           <PaymentCard sale={id} />
         </Box>
