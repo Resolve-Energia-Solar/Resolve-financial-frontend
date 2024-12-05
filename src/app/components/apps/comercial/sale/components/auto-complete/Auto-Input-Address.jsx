@@ -9,7 +9,7 @@ import { IconButton, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
 
-export default function AutoCompleteAddress({ onChange, value, error, helperText }) {
+export default function AutoCompleteAddress({ onChange, value, error, helperText, ...props }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -93,6 +93,7 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
         options={options}
         loading={loading}
         value={selectedAddress}
+        {...props}
         onInputChange={(event, newInputValue) => {
           fetchAddressesByName(newInputValue);
         }}

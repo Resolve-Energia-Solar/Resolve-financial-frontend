@@ -31,6 +31,8 @@ import CategoryIcon from '@mui/icons-material/Category';
 import CheckListRateio from '../../checklist/Checklist-list';
 import StatusChip from '../../comercial/sale/components/DocumentStatusIcon';
 import SkeletonCard from '../components/SkeletonCard';
+import CheckListRateioDetail from '../../checklist/Checklist-detail/checklistDetail';
+import AttachmentDetails from '@/app/components/shared/AttachmentDetails';
 
 const CONTEXT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
@@ -182,12 +184,12 @@ const ProjectListDetail = ({ saleId = null }) => {
                 </CustomAccordion>
 
                 <CustomAccordion title="Checklist Rateio">
-                  <CheckListRateio projectId={project.id} />
+                  <CheckListRateioDetail projectId={project.id} />
                 </CustomAccordion>
 
                 <CustomAccordion title="Documentos">
                   <Typography>
-                    <Attachments
+                    <AttachmentDetails
                       contentType={CONTEXT_TYPE_PROJECT_ID}
                       objectId={project.id}
                       documentTypes={documentTypes}

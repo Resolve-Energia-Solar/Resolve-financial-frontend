@@ -68,24 +68,6 @@ const ProductCardDetail = ({ sale = null }) => {
           ...prevProducts,
           ...response.sale_products.map((item) => item.product),
         ]);
-
-        const responseDefault = await productService.getProductsDefault();
-        setProductsList((prevProducts) => [
-          ...prevProducts,
-          ...responseDefault.results.filter(
-            (product) => !prevProducts.map((item) => item.id).includes(product.id),
-          ),
-        ]);
-
-        setProductsList((prevProducts) =>
-          prevProducts.sort((a, b) => {
-            const isSelectedA = selectedProductIds.includes(a.id);
-            const isSelectedB = selectedProductIds.includes(b.id);
-            if (isSelectedA && !isSelectedB) return -1;
-            if (!isSelectedA && isSelectedB) return 1;
-            return 0;
-          }),
-        );
       } catch (error) {
         console.log('Error: ', error);
       } finally {

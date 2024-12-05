@@ -90,6 +90,7 @@ export default function AutoCompleteSupplyAds({
         options={options}
         loading={loading}
         value={selectedSupplies}
+        disabled={disabled}
         onInputChange={(event, newInputValue) => {
           fetchSuppliesByName(newInputValue);
         }}
