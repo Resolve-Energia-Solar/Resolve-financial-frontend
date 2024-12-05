@@ -4,9 +4,9 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import EditCustomer from '@/app/components/apps/users/Edit-user/customer/customer';
-import ListAddresses from '@/app/components/apps/users/Edit-user/customer/Addresses';
-import ListPhones from '@/app/components/apps/users/Edit-user/customer/Phones';
+import DetailCustomer from './customer';
+import ListAddresses from './Addresses';
+import ListPhones from './Phones';
  
 
 function TabPanel(props) {
@@ -43,7 +43,7 @@ function a11yProps(index) {
   };
 }
 
-export default function CustomerTabs({ userId = null }) {
+export default function CustomerDetailTabs({ userId = null }) {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -67,7 +67,7 @@ export default function CustomerTabs({ userId = null }) {
         <Tab label="Telefones" {...a11yProps(2)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-        <EditCustomer userId={userId} />
+        <DetailCustomer userId={userId} />
       </TabPanel>
       <TabPanel value={value} index={1}>
         <ListAddresses userId={userId} />

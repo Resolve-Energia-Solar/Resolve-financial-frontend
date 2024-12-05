@@ -59,16 +59,6 @@ export default function ListAddresses({ userId = null }) {
 
   return (
     <TableContainer component={Paper}>
-      <Box sx={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
-        <Button
-          variant="outlined"
-          startIcon={<AddBoxRounded />}
-          sx={{ marginBottom: 2 }}
-          onClick={() => setOpenModal(true)}
-        >
-          Adicionar Endereço
-        </Button>
-      </Box>
       <Table sx={{ width: '100%' }} aria-label="table of addresses">
         <TableHead>
           <TableRow>
@@ -77,7 +67,6 @@ export default function ListAddresses({ userId = null }) {
             <TableCell align="right">Bairro</TableCell>
             <TableCell align="right">Cidade</TableCell>
             <TableCell align="right">CEP</TableCell>
-            <TableCell align="right">Ações</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -101,17 +90,6 @@ export default function ListAddresses({ userId = null }) {
                 <TableCell align="right">{row.neighborhood}</TableCell>
                 <TableCell align="right">{row.city}</TableCell>
                 <TableCell align="right">{row.zip_code}</TableCell>
-                <TableCell align="right">
-                  <Tooltip title="Editar">
-                    <IconButton
-                      color="primary"
-                      size="small"
-                      onClick={() => handleEditClick(row.id)}
-                    >
-                      <Edit />
-                    </IconButton>
-                  </Tooltip>
-                </TableCell>
               </TableRow>
             ))
           ) : (
@@ -124,29 +102,6 @@ export default function ListAddresses({ userId = null }) {
         </TableBody>
       </Table>
 
-      {/* Criar endereço */}
-      <Dialog open={openModal} onClose={() => setOpenModal(false)} maxWidth="lg">
-        <DialogTitle>Adicionar Novo Endereço</DialogTitle>
-        <DialogContent>
-          <CreateAddressPage
-            onClosedModal={() => setOpenModal(false)}
-            userId={userId}
-            onRefresh={handleRefresh}
-          />
-        </DialogContent>
-      </Dialog>
-
-      {/* Editar endereço */}
-      <Dialog open={openEditModal} onClose={() => setOpenEditModal(false)} maxWidth="lg">
-        <DialogTitle>Editar Endereço</DialogTitle>
-        <DialogContent>
-          <EditAddressPage
-            onClosedModal={() => setOpenEditModal(false)}
-            addressId={selectedAddress}
-            onRefresh={handleRefresh}
-          />
-        </DialogContent>
-      </Dialog>
     </TableContainer>
   );
 }

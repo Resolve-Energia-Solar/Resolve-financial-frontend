@@ -59,23 +59,12 @@ export default function ListPhones({ userId = null }) {
 
   return (
     <TableContainer component={Paper}>
-      <Box sx={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
-        <Button
-          variant="outlined"
-          startIcon={<AddBoxRounded />}
-          sx={{ marginBottom: 2 }}
-          onClick={() => setOpenModal(true)}
-        >
-          Adicionar Telefone
-        </Button>
-      </Box>
       <Table sx={{ width: '100%' }} aria-label="table of phones">
         <TableHead>
           <TableRow>
             <TableCell>Código do País</TableCell>
             <TableCell>Telefone</TableCell>
             <TableCell align="right">Principal</TableCell>
-            <TableCell align="right">Ações</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -97,17 +86,6 @@ export default function ListPhones({ userId = null }) {
                 </TableCell>
                 <TableCell align="left">{row.phone_number}</TableCell>
                 <TableCell align="right">{row.is_main ? 'Sim' : 'Não'}</TableCell>
-                <TableCell align="right">
-                  <Tooltip title="Editar">
-                    <IconButton
-                      color="primary"
-                      size="small"
-                      onClick={() => handleEditClick(row.id)}
-                    >
-                      <Edit />
-                    </IconButton>
-                  </Tooltip>
-                </TableCell>
               </TableRow>
             ))
           ) : (
@@ -119,30 +97,6 @@ export default function ListPhones({ userId = null }) {
           )}
         </TableBody>
       </Table>
-
-      {/* Criar telefone */}
-      <Dialog open={openModal} onClose={() => setOpenModal(false)} maxWidth="lg">
-        <DialogTitle>Adicionar Novo Telefone</DialogTitle>
-        <DialogContent>
-          <CreatePhonePage
-            onClosedModal={() => setOpenModal(false)}
-            userId={userId}
-            onRefresh={handleRefresh}
-          />
-        </DialogContent>
-      </Dialog>
-
-      {/* Editar telefone */}
-      <Dialog open={openEditModal} onClose={() => setOpenEditModal(false)} maxWidth="lg">
-        <DialogTitle>Editar Telefone</DialogTitle>
-        <DialogContent>
-          <EditPhonePage
-            onClosedModal={() => setOpenEditModal(false)}
-            phoneId={selectedPhone}
-            onRefresh={handleRefresh}
-          />
-        </DialogContent>
-      </Dialog>
     </TableContainer>
   );
 }
