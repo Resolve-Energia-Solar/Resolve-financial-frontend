@@ -3,11 +3,12 @@ import Tabs from '@mui/material/Tabs';
 import Box from '@mui/material/Box';
 import { Tab, Typography } from '@mui/material';
 import TabPanel from '@/app/components/apps/commission/TabPainel';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Sale from '@/app/components/apps/commission/Sale';
 import Commission from '@/app/components/apps/commission/Commission';
 import Releases from '@/app/components/apps/commission/Releases';
 import Debtor from '@/app/components/apps/commission/Debtor';
+import commissionService from '@/services/commissionService';
 
 
 
@@ -35,10 +36,20 @@ function a11yProps(index) {
 function commission() {
 
   const [value, setValue] = useState(0);
+  const [data, setData] = useState([])
+
+  useEffect(() => {
+    const fectchAll = async () => {
+      const commissionData = await commissionService.getCommissiomAll()
+      setData(commissionData.results)
+    }
+    fectchAll()
+  }, [])
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
   return (
 
     <Box sx={{ p: 2, border: '1px solid grey' }}>
@@ -57,15 +68,15 @@ function commission() {
       </TabPanel>
 
       <TabPanel value={value} index={1} >
-        <Commission data={rows}/>
+        <Commission data={data} />
       </TabPanel>
 
       <TabPanel value={value} index={2} >
-        <Releases data={rows} /> 
+        <Releases data={rows} />
       </TabPanel>
 
       <TabPanel value={value} index={3} >
-      <Debtor data={rows} />
+        <Debtor data={rows} />
       </TabPanel>
     </Box>
 

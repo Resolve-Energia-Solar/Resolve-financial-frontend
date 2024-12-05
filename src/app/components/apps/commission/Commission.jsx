@@ -14,6 +14,7 @@ import Button from '@mui/material/Button';
 
 function Commission({ data }) {
 
+  console.log(data)
 
   return (
 
@@ -21,10 +22,10 @@ function Commission({ data }) {
 
       <Box sx={{ p: 2, border: '1px none grey', height: '50%', padding: '0px', marginBottom: '15px' }}>
 
-      <Box sx={{  p: 2, border: '1px solid grey', width: '40%', height: '50%', padding: '10px', display: 'flex', flexDirection: '',  alignItems: 'center', marginBottom: '15px'}}>
-            <Typography variant='h6' sx={{ marginRight: 2 }}>Total de comissão </Typography>
-            <Typography >R$ 7.000,00 </Typography>
-          </Box>
+        <Box sx={{ p: 2, border: '1px solid grey', width: '40%', height: '50%', padding: '10px', display: 'flex', flexDirection: '', alignItems: 'center', marginBottom: '15px' }}>
+          <Typography variant='h6' sx={{ marginRight: 2 }}>Total de comissão </Typography>
+          <Typography >R$ 7.000,00 </Typography>
+        </Box>
 
       </Box>
 
@@ -44,32 +45,33 @@ function Commission({ data }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {DataCommission.map((row) => (
+            {data.map((item) => (
               <TableRow
-                key={row.name}
+                key={item.id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
-                <TableCell align="right">{row.nome_cliente}</TableCell>
-                <TableCell align="right">{row.unidade}</TableCell>
-                <TableCell align="right">{row.especificacao_pagamento}</TableCell>
-                <TableCell align="right">{row.valor_projeto}</TableCell>
-                <TableCell align="right">{row.diferenca}</TableCell>
-                <TableCell align="right">{row.percentual_repassse}</TableCell>
-                <TableCell align="right">{row.valor_final}</TableCell>
-                <TableCell align="right">{row.status_pagamento}</TableCell>
-                <TableCell align="right">{row.ajuste}</TableCell>
+                <TableCell align="right">{item.nome_cliente}</TableCell>
+                <TableCell align="right">{item.sale.branch?.name}</TableCell>
+                <TableCell align="right">{item.status}</TableCell>
+                <TableCell align="right">{item.status}</TableCell>
+                <TableCell align="right">{item.difference_value}</TableCell>
+                <TableCell align="right">{item.transfer_percentage}</TableCell>
+                <TableCell align="right">{item.status}</TableCell>
+                <TableCell align="right">{item.status}</TableCell>
+                <TableCell align="right">{item.installment_value}</TableCell>
+
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <Box sx={{ marginTop: '15px', display: 'flex', justifyContent: 'flex-end'}}>
-      <Button variant="text" sx={{ marginRight: '10px' }}>Editar</Button>
-      <Button variant="text">Adicionar</Button>
+      <Box sx={{ marginTop: '15px', display: 'flex', justifyContent: 'flex-end' }}>
+        <Button variant="text" sx={{ marginRight: '10px' }}>Editar</Button>
+        <Button variant="text">Adicionar</Button>
       </Box>
-      
-      </>
-    
+
+    </>
+
   )
 }
 
