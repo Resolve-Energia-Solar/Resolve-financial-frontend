@@ -57,7 +57,6 @@ function FormPreSale({ selectedProposal, onClose }) {
       const response = await saleService.createPreSale(sendData);
       setSuccess(true);
       setIdSaleSuccess(response.pre_sale_id);
-      ProposalService.updateProposalPartial(selectedProposal.id, { status: 'A' });
       onClose();
     } catch (error) {
       console.log(error);
