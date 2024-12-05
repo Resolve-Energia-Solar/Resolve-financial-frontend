@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 
-const FormSelect = ({ label, options, value, onChange, error, helperText }) => {
+const FormSelect = ({ label, options, value, onChange, error, helperText, ...props }) => {
     return (
         <FormControl fullWidth variant="outlined" error={error} >
             <CustomFormLabel>{label}</CustomFormLabel>
@@ -17,6 +17,7 @@ const FormSelect = ({ label, options, value, onChange, error, helperText }) => {
                 value={value}
                 onChange={onChange}
                 label={label}
+                {...props}
             >
                 {options.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -24,7 +25,7 @@ const FormSelect = ({ label, options, value, onChange, error, helperText }) => {
                     </MenuItem>
                 ))}
             </Select>
-            {helperText && <FormHelperText>{helperText}</FormHelperText>} {/* Exibe o helperText */}
+            {helperText && <FormHelperText>{helperText}</FormHelperText>}
         </FormControl>
     );
 };

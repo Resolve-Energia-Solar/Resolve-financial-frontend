@@ -40,6 +40,7 @@ import StatusChip from '../components/DocumentStatusIcon';
 import CustomerDetailTabs from '../../../users/User-detail/customer/tabs';
 import PaymentCardDetail from '../../../invoice/Invoice-detail/invoiceListDetail';
 import ProjectListDetail from '../../../project/Project-Detail/projectListDetail';
+import AttachmentDetails from '@/app/components/shared/AttachmentDetails';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -261,7 +262,7 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null, refresh }) => {
           )}
 
           {value === 3 && (
-            <Attachments
+            <AttachmentDetails
               contentType={CONTEXT_TYPE_SALE_ID}
               objectId={id_sale}
               documentTypes={documentTypes}
