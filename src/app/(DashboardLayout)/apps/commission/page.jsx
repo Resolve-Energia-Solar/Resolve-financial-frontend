@@ -1,0 +1,77 @@
+'use client'
+import Tabs from '@mui/material/Tabs';
+import Box from '@mui/material/Box';
+import { Tab, Typography } from '@mui/material';
+import TabPanel from '@/app/components/apps/commission/TabPainel';
+import { useState } from 'react';
+import Sale from '@/app/components/apps/commission/Sale';
+import Commission from '@/app/components/apps/commission/Commission';
+import Releases from '@/app/components/apps/commission/Releases';
+import Debtor from '@/app/components/apps/commission/Debtor';
+
+
+
+function createData(statcommi, name, datac, statvistoria, statusdoc, statusfinanceiro, unidade, especpagam, valprojeto) {
+  return { statcommi, name, datac, statvistoria, statusdoc, statusfinanceiro, unidade, especpagam, valprojeto };
+}
+
+const rows = [
+  createData('Finalizado', 'Maximus', '26/12/2023', 'Aprovado', 'Finalizado', 'Liquidado', 'Umarizal', 'Sol Agora', 26456.00),
+  createData('Bloqueaado', 'Alpha', '10/01/2024', 'Pendente', 'Em andamento', 'Em aberto', 'Belém', 'Sol Agora', 12345.00),
+  createData('Finalizado', 'Beta', '15/01/2024', 'Aprovado', 'Finalizado', 'Liquidado', 'Ananindeua', 'Sol Agora', 18567.00),
+  createData('Bloqueado', 'Gamma', '20/01/2024', 'Aguardando', 'Em andamento', 'Em aberto', 'Marituba', 'Sol Agora', 22890.00),
+  createData('Finalizado', 'Delta', '25/01/2024', 'Aprovado', 'Finalizado', 'Liquidado', 'Santarém', 'Sol Agora', 30123.00),
+  createData('Bloqueado', 'Epsilon', '05/02/2024', 'Pendente', 'Em andamento', 'Em aberto', 'Castanhal', 'Sol Agora', 14670.00),
+  createData('Finalizado', 'Zeta', '10/02/2024', 'Aprovado', 'Finalizado', 'Liquidado', 'Marabá', 'Sol Agora', 25340.00),
+];
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
+function commission() {
+
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+  return (
+
+    <Box sx={{ p: 2, border: '1px solid grey' }}>
+
+      <Box sx={{ p: 2, borderBottom: '1px solid grey', borderRadius: '0px' }}>
+        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+          <Tab label="Vendas" {...a11yProps(0)} />
+          <Tab label="Comissão" {...a11yProps(1)} />
+          <Tab label="Lançamentos" {...a11yProps(2)} />
+          <Tab label="Saldo devedor" {...a11yProps(3)} />
+        </Tabs>
+      </Box>
+
+      <TabPanel value={value} index={0} >
+        <Sale data={rows} />
+      </TabPanel>
+
+      <TabPanel value={value} index={1} >
+        <Commission data={rows}/>
+      </TabPanel>
+
+      <TabPanel value={value} index={2} >
+        <Releases data={rows} /> 
+      </TabPanel>
+
+      <TabPanel value={value} index={3} >
+      <Debtor data={rows} />
+      </TabPanel>
+    </Box>
+
+
+
+  )
+}
+
+export default commission;

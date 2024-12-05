@@ -1,0 +1,47 @@
+[
+    {
+      "nome_cliente": "João Silva",
+      "unidade": "Umarizal",
+      "especificacao_pagamento": "Sol Agora",
+      "valor_projeto": 10000.00,
+      "status_pagamento": "Pago",
+      "diferenca": 0.00,
+      "percentual_repassse": 20,
+      "valor_final": 2000.00,
+      "ajuste": 0.00
+    },
+    {
+      "nome_cliente": "Maria Oliveira",
+      "unidade": "Umarizal",
+      "especificacao_pagamento": "Sol Agora",
+      "valor_projeto": 15000.00,
+      "status_pagamento": "Em aberto",
+      "diferenca": 15000.00,
+      "percentual_repassse": 20,
+      "valor_final": 3000.00,
+      "ajuste": 0.00
+    },
+    {
+      "nome_cliente": "Carlos Souza",
+      "unidade": "Umarizal",
+      "especificacao_pagamento": "Sol Agora",
+      "valor_projeto": 8000.00,
+      "status_pagamento": "Pago",
+      "diferenca": 0.00,
+      "percentual_repassse": 20,
+      "valor_final": 1600.00,
+      "ajuste": 0.00
+    },
+    {
+      "nome_cliente": "Patrícia Costa",
+      "unidade": "Umarizal",
+      "especificacao_pagamento": "Sol Agora",
+      "valor_projeto": 20000.00,
+      "status_pagamento": "Em aberto",
+      "diferenca": 20000.00,
+      "percentual_repassse": 20,
+      "valor_final": 4000.00,
+      "ajuste": 0.00
+    }
+  ]
+  
