@@ -38,6 +38,8 @@ const EditLeadPage = ({ leadId = null, onClosedModal = null }) => {
     success,
   } = useLeadForm(leadData, id);
 
+  console.log('formData', formData);
+
   const typeOptions = [
     { value: 'PF', label: 'Pessoa Física' },
     { value: 'PJ', label: 'Pessoa Jurídica' },
@@ -223,7 +225,7 @@ const EditLeadPage = ({ leadId = null, onClosedModal = null }) => {
             </Grid>
 
             <Grid item xs={12} sm={12} lg={4}>
-              <CustomFormLabel htmlFor="branch">Endereço</CustomFormLabel>
+              <CustomFormLabel htmlFor="branch">Endereço Principal</CustomFormLabel>
               <AutoCompleteAddresses
                 onChange={(ids) => handleChange('addresses_ids', ids)}
                 value={formData.addresses_ids}

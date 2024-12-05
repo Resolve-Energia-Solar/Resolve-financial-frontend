@@ -445,7 +445,7 @@ const SaleList = () => {
                         <DeleteIcon fontSize="small" sx={{ mr: 1 }} />
                         Excluir
                       </MenuItem>
-                      <MenuItem
+                      {/* <MenuItem
                         onClick={() => {
                           handleGenerateProposal(item);
                           handleMenuClose();
@@ -462,7 +462,7 @@ const SaleList = () => {
                       >
                         <SendIcon fontSize="small" sx={{ mr: 1 }} />
                         Enviar Contrato
-                      </MenuItem>
+                      </MenuItem> */}
                     </Menu>
                   </TableCell>
                 </TableRow>

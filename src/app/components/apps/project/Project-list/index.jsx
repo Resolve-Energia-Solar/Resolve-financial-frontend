@@ -39,8 +39,8 @@ const getStatusChip = (status) => {
   switch (status) {
     case 'P':
       return <Chip label="Pendente" color="warning" icon={<HourglassEmptyIcon />} />;
-    case 'F':
-      return <Chip label="Finalizado" color="success" icon={<CheckCircleIcon />} />;
+    case 'CO':
+      return <Chip label="Concluido" color="success" icon={<CheckCircleIcon />} />;
     case 'EA':
       return <Chip label="Em Andamento" color="primary" icon={<HourglassEmptyIcon />} />;
     case 'C':

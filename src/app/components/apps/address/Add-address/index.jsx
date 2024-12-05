@@ -24,13 +24,14 @@ const CreateAddressPage = ({ selectedAddressId = null, onClosedModal = null, use
 
   formData.user_id = userId;
 
-
-
   useEffect(() => {
     if (success) {
       if (onClosedModal) {
         onClosedModal();
         onRefresh();
+      }
+      if (selectedAddressId) {
+        selectedAddressId(dataReceived.id);
       }
     }
   }, [success]);
@@ -213,3 +214,4 @@ const CreateAddressPage = ({ selectedAddressId = null, onClosedModal = null, use
 };
 
 export default CreateAddressPage;
+
