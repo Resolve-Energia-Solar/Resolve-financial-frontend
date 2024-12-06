@@ -1,0 +1,32 @@
+[
+    {
+      "unidade": "Umarizal",
+      "valor": 15000.00,
+      "categoria": "Saldo Devedor",
+      "data_lancamento": "11-06-2024",
+      "status": "Pago"
+    },
+    {
+      "unidade": "Umarizal",
+      "valor": 999.90,
+      "categoria": "Saldo Devedor",
+      "data_lancamento": "10-02-2024",
+      "status": "Pendente"
+    },
+
+    {
+      "unidade": "Umarizal",
+      "valor": 945.50,
+      "categoria": "Saldo Devedor",
+      "data_lancamento": "12-12-2024",
+      "status": "Pendente"
+    },
+    {
+      "unidade": "Umarizal",
+      "valor": 120.00,
+      "categoria": "Saldo Devedor",
+      "data_lancamento": "09-12-2024",
+      "status": "Pago"
+    }
+  ]
+  
