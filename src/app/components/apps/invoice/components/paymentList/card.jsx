@@ -214,7 +214,7 @@ const PaymentCard = ({ sale = null }) => {
                       </Box>
                     </CardContent>
                     <CardActions disableSpacing>
-                      <CustomCheckbox />
+                      {/* <CustomCheckbox /> */}
                       <Tooltip title="Ações">
                         <IconButton
                           size="small"
