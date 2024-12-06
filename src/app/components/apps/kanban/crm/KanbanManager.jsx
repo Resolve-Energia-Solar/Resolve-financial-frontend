@@ -90,6 +90,7 @@ const KanbanManager = ({
     }, {}),
   );
 
+  console.log('selecttedLead:', selectedLead);
   console.log('leadsList:', statuses);
 
   const handleOpenAddColumnModal = () => setOpenAddColumnModal(true);
@@ -149,6 +150,8 @@ const KanbanManager = ({
     'Quarto Contato': theme.palette.success.light,
     default: theme.palette.grey[200],
   };
+
+  
 
   const filteredLeads = leadsList.filter((lead) =>
     (lead.name?.toLowerCase().trim() || '').includes(searchTerm.toLowerCase().trim()),
@@ -417,7 +420,6 @@ const KanbanManager = ({
                     <Tab label="Lead" />
                     <Tab label="Proposta" />
                     <Tab label="Venda" />
-                    <Tab label="Envios" />
                     <Tab label="Atividades" />
                   </Tabs>
                 </Box>
@@ -439,9 +441,9 @@ const KanbanManager = ({
                   )}
                   {tabIndex === 1 && <ProposalManager selectedLead={selectedLead} />}
 
-                  {tabIndex === 2 && <SaleListCards leadId={selectedLead.id} />}
-                  {tabIndex === 3 && <ClicksignLogsPage />}
-                  {tabIndex === 4 && <Activities />}
+                  {tabIndex === 2 && <SaleListCards lead={selectedLead} leadId={selectedLead.id} />}
+{/*                   {tabIndex === 3 && <ClicksignLogsPage />}
+ */}                  {tabIndex === 3 && <Activities lead={selectedLead} />}
                 </Box>
               </Grid>
             </Grid>

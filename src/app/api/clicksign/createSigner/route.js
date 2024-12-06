@@ -17,6 +17,6 @@ export async function POST(req) {
     return new Response(JSON.stringify(response), { status: 200 });
   } catch (error) {
     console.error('Erro ao criar signatário:', error.message);
-    return new Response(JSON.stringify({ error: 'Erro ao criar signatário' }), { status: 500 });
+    return new Response(JSON.stringify(error.message), { status: 500 });
   }
 }

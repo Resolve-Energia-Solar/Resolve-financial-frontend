@@ -168,38 +168,6 @@ const Customizer = () => {
               </StyledBox>
             </Stack>
 
-            <Box pt={3} />
-            {/* ------------------------------------------- */}
-            {/* ------------ Configuração de Cor do Tema ------------- */}
-            {/* ------------------------------------------- */}
-            <Typography variant="h6" gutterBottom>
-              Cores do Tema
-            </Typography>
-            <Grid container spacing={2}>
-              {thColors.map((thcolor) => (
-                <Grid item xs={4} key={thcolor.id}>
-                  <StyledBox onClick={() => dispatch(setTheme(thcolor.disp))}>
-                    <Tooltip title={`${thcolor.disp}`} placement="top">
-                      <Box
-                        sx={{
-                          backgroundColor: thcolor.bgColor,
-                          width: '25px',
-                          height: '25px',
-                          borderRadius: '60px',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          display: 'flex',
-                          color: 'white',
-                        }}
-                        aria-label={`${thcolor.bgColor}`}
-                      >
-                        {customizer.activeTheme === thcolor.disp ? <IconCheck width={13} /> : ''}
-                      </Box>
-                    </Tooltip>
-                  </StyledBox>
-                </Grid>
-              ))}
-            </Grid>
             <Box pt={4} />
             {/* ------------------------------------------- */}
             {/* ------------ Layout Horizontal / Vertical ------------- */}

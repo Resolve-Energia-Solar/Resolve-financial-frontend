@@ -7,6 +7,7 @@ import { debounce } from 'lodash';
 import { IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import UserForm from '@/app/(DashboardLayout)/apps/users/create/page';
+import CreateCustomer from '@/app/components/apps/users/Add-user/customer';
 
 export default function AutoCompleteUser({ onChange, value, error, helperText, disabled, labeltitle }) {
   const [open, setOpen] = React.useState(false);
@@ -129,7 +130,7 @@ export default function AutoCompleteUser({ onChange, value, error, helperText, d
       <Dialog open={openModal} onClose={handleCloseModal} maxWidth="lg">
         <DialogTitle>Adicionar Novo Usuário</DialogTitle>
         <DialogContent>
-          <UserForm onClosedModal={handleCloseModal} selectedUserId={fetchDefaultUser} />
+          <CreateCustomer onClosedModal={handleCloseModal} selectedUserId={fetchDefaultUser} />
         </DialogContent>
         {/* <DialogActions>
           <Button onClick={handleCloseModal} color="primary">Cancelar</Button>

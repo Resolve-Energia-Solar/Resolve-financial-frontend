@@ -33,6 +33,7 @@ const useUserForm = (initialData, id) => {
 
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [dataReceived, setDataReceived] = useState(false);
 
   useEffect(() => {
@@ -72,6 +73,7 @@ const useUserForm = (initialData, id) => {
   };
 
   const handleSave = async () => {
+    setLoading(true);
     const dataToSend = {
       branch_id: formData.branch_id,
       department_id: formData.department_id,
@@ -111,9 +113,11 @@ const useUserForm = (initialData, id) => {
       }
       setFormErrors({});
       setSuccess(true);
+      setLoading(false);
     } catch (err) {
       setSuccess(false);
       setFormErrors(err.response?.data || {});
+      setLoading(false);
       console.log(err.response?.data || err);
     }
   };
@@ -125,6 +129,7 @@ const useUserForm = (initialData, id) => {
     dataReceived,
     formErrors,
     success,
+    loading,
   };
 };
 

@@ -1,20 +1,14 @@
 'use client';
-import {
-  Grid,
-  Button,
-  Stack,
-  Alert,
-  CircularProgress,
-  Box,
-} from '@mui/material';
+import { Grid, Button, Stack, Alert, CircularProgress, Box } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import { useSelector } from 'react-redux';
 import useAddressForm from '@/hooks/address/useAddressForm';
 import { useEffect, useState } from 'react';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
+import userService from '@/services/userService';
 
-const CreateAddressPage = ({ selectedAddressId = null, onClosedModal = null }) => {
+const CreateAddressPage = ({ selectedAddressId = null, onClosedModal = null, userId = null, onRefresh = null }) => {
   const userPermissions = useSelector((state) => state.user.permissions);
   const [fileLoading, setFileLoading] = useState(false);
 
@@ -28,12 +22,16 @@ const CreateAddressPage = ({ selectedAddressId = null, onClosedModal = null }) =
     dataReceived,
   } = useAddressForm();
 
+  formData.user_id = userId;
+
   useEffect(() => {
     if (success) {
       if (onClosedModal) {
         onClosedModal();
+        onRefresh();
+      }
+      if (selectedAddressId) {
         selectedAddressId(dataReceived.id);
-        console.log(dataReceived);
       }
     }
   }, [success]);
@@ -216,3 +214,4 @@ const CreateAddressPage = ({ selectedAddressId = null, onClosedModal = null }) =
 };
 
 export default CreateAddressPage;
+

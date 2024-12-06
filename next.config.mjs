@@ -1,4 +1,11 @@
 const nextConfig = {
+  experimental: {
+    turbo: {
+      resolveAlias: {
+        canvas: './empty-module.js',
+      },
+    },
+  },
   reactStrictMode: false,
   images: {
     domains: ['res.cloudinary.com'],

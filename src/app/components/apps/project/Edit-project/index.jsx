@@ -9,9 +9,10 @@ import documentTypeService from '@/services/documentTypeService';
 
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
-export default function EditProject() {
+export default function EditProject({ projectId=null }) {
   const params = useParams();
-  const { id } = params;
+  let id = projectId;
+  if (!projectId) id = params.id;
 
   const [value, setValue] = useState(0);
   const [documentTypes, setDocumentTypes] = useState([]);
@@ -39,9 +40,10 @@ export default function EditProject() {
         <Tab label="Informações Adicionais" />
         <Tab label="Checklist Rateio" />
         <Tab label="Anexos" />
+        <Tab label="Solicitações" />
       </Tabs>
 
-      {value === 0 && <EditProjectTab />}
+      {value === 0 && <EditProjectTab projectId={id} />}
 
       {value === 1 && (
         <Box mt={2}>
@@ -56,6 +58,7 @@ export default function EditProject() {
           documentTypes={documentTypes}
         />
       )}
+      {value === 3 && <div>Solicitações</div>}
     </>
   );
 }

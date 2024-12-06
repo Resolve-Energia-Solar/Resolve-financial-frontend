@@ -1,0 +1,43 @@
+[
+    {
+      "status": "L",
+      "unidade": "Umarizal",
+      "valor_projeto": 12000.00,
+      "categoria": "Residencial",
+      "n_parcelas": 1,
+      "percentual_pagamento": 100,
+      "data_pagamento": "2024-11-30",
+      "reajuste": 0.00
+    },
+    {
+      "status": "L",
+      "unidade": "Umarizal",
+      "valor_projeto": 20000.00,
+      "categoria": "Comercial",
+      "n_parcelas": 6,
+      "percentual_pagamento": 30,
+      "data_pagamento": "2024-12-05",
+      "reajuste": 0.00
+    },
+    {
+      "status": "L",
+      "unidade": "Umarizal",
+      "valor_projeto": 8000.00,
+      "categoria": "Residencial",
+      "n_parcelas": 3,
+      "percentual_pagamento": 100,
+      "data_pagamento": "2024-11-15",
+      "reajuste": 200.00
+    },
+    {
+      "status": "L",
+      "unidade": "Umarizal",
+      "valor_projeto": 15000.00,
+      "categoria": "Industrial",
+      "n_parcelas": 12,
+      "percentual_pagamento": 10,
+      "data_pagamento": "2024-12-10",
+      "reajuste": 500.00
+    }
+  ]
+  

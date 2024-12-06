@@ -20,7 +20,6 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  CircularProgress,
 } from '@mui/material';
 import { MoreVert, Visibility, Add, CheckCircle, Save, Edit, Delete } from '@mui/icons-material';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
@@ -62,6 +61,7 @@ const ProductCard = ({ sale = null }) => {
       setLoading(true);
       try {
         const response = await saleService.getSalesProducts(sale.id);
+        console.log('Response: ', response);
         setSelectedProductIds(response.sale_products.map((item) => item.product.id));
         setInitialProductIds(response.sale_products.map((item) => item.product.id));
         setProductsList((prevProducts) => [
@@ -86,6 +86,7 @@ const ProductCard = ({ sale = null }) => {
             return 0;
           }),
         );
+        
       } catch (error) {
         console.log('Error: ', error);
       } finally {

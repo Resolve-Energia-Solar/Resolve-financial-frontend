@@ -1,20 +1,40 @@
-import apiClient from './apiClient'
+import apiClient from './apiClient';
 
 const HistoryService = {
-  getHistory: async (contentType, objectId) => {
-    const response = await apiClient.get(`/history/`, {
-      params: {
-        content_type: contentType,
-        object_id: objectId,
-      },
-    })
-    return response.data
-  },
+  getHistory: async (contentType, objectId, token) => {
+    if (!token) {
+      console.error('Erro: Token não fornecido.');
+      throw new Error('Token não fornecido.');
+    }
 
-  getAllHistory: async () => {
-    const response = await apiClient.get(`/history/`)
-    return response.data
-  },
-}
+    try {
+      const response = await apiClient.get('/api/history/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        params: {
+          content_type: contentType,
+          object_id: objectId,
+        },
+      });
 
-export default HistoryService
+      console.log('Histórico:', response.data);
+
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar histórico:', {
+        message: error.message,
+        status: error.response?.status || 'Sem status',
+        data: error.response?.data || 'Sem dados de resposta',
+        headers: error.response?.headers || 'Sem cabeçalhos',
+        config: error.config || 'Sem configuração',
+      });
+
+      throw error;
+    }
+  },
+};
+
+export default HistoryService;
+

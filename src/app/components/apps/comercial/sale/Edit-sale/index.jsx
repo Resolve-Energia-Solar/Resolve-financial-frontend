@@ -20,21 +20,23 @@ import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/au
 import AutoCompleteBranch from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Branch';
 import AutoCompleteCampaign from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Campaign';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import FormDateTime from '@/app/components/forms/form-custom/FormDateTime';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import { useSelector } from 'react-redux';
-import FormPageSkeleton from '../components/FormPageSkeleton';
+import FormPageSkeleton from '@/app/components/apps/comercial/sale/components/FormPageSkeleton';
 
 import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
 import { useEffect, useState } from 'react';
-import PaymentCard from '../../../invoice/components/paymentList/card';
-import ProjectListCards from '../../../project/components/projectList/cards';
+import PaymentCard from '@/app/components/apps/invoice/components/paymentList/card';
 import documentTypeService from '@/services/documentTypeService';
 import Attachments from '@/app/components/shared/Attachments';
 import ProductCard from '@/app/components/apps/product/Product-list';
-import UserForm from '@/app/(DashboardLayout)/apps/users/[id]/update/page';
-import EditCustomer from '../../../users/Edit-user/customer';
+import ContractSubmissions from '@/app/components/apps/contractSubmissions/contract-list';
+import CustomerTabs from '@/app/components/apps/users/Edit-user/customer/tabs';
+import { Preview } from '@mui/icons-material';
+import PreviewContractModal from '@/app/components/apps/contractSubmissions/Preview-contract';
+import SendContractButton from '@/app/components/apps/contractSubmissions/Send-contract';
+import ProjectListCards from '@/app/components/apps/project/components/projectList/cards';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -44,6 +46,8 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
   if (!saleId) id = params.id;
 
   const userPermissions = useSelector((state) => state.user.permissions);
+
+  const [openPreview, setOpenPreview] = useState(false);
 
   const hasPermission = (permissions) => {
     if (!permissions) return true;
@@ -114,6 +118,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
         <Tab label="Anexos" />
         <Tab label="Pagamentos" />
         <Tab label="Projetos" />
+        <Tab label="Envios" />
       </Tabs>
       {loading ? (
         <FormPageSkeleton />
@@ -123,7 +128,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
         <Box>
           {value === 0 && (
             <Box sx={{ mt: 3 }}>
-              <EditCustomer userId={formData.customerId} />
+              <CustomerTabs userId={saleData.customer.id} />
             </Box>
           )}
 
@@ -240,7 +245,11 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
           )}
 
           {value === 3 && (
-            <Attachments contentType={CONTEXT_TYPE_SALE_ID} objectId={id_sale} documentTypes={documentTypes} />
+            <Attachments
+              contentType={CONTEXT_TYPE_SALE_ID}
+              objectId={id_sale}
+              documentTypes={documentTypes}
+            />
           )}
           {value === 4 && (
             <Box sx={{ mt: 3 }}>
@@ -249,6 +258,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
           )}
 
           {value === 5 && <ProjectListCards saleId={id_sale} />}
+          {value === 6 && <ContractSubmissions sale={saleData} />}
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             {onClosedModal && (
@@ -270,6 +280,33 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
           </Stack>
         </Box>
       )}
+
+      <Box
+        p={3}
+        backgroundColor="primary.light"
+        mt={3}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Stack direction="row" spacing={2}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setOpenPreview(true)}
+            startIcon={<Preview />}
+            sx={{
+              borderRadius: '8px',
+              paddingX: 3,
+            }}
+          >
+            Preview do Contrato
+          </Button>
+
+          <SendContractButton sale={saleData} />
+        </Stack>
+      </Box>
+      <PreviewContractModal sale={saleData} open={openPreview} onClose={() => setOpenPreview(false)} />
     </Box>
   );
 };

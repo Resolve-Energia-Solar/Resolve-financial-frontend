@@ -26,7 +26,24 @@ const userService = {
       throw error;
     }
   },
-
+  getAddressByUserId: async (id) => {
+    try {
+      const response = await apiClient.get(`/api/users/${id}/?fields=addresses`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar endereço do usuário com id ${id}:`, error);
+      throw error;
+    }
+  },
+  getPhoneByUserId: async (id) => {
+    try {
+      const response = await apiClient.get(`/api/users/${id}/?fields=phone_numbers`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar telefone do usuário com id ${id}:`, error);
+      throw error;
+    }
+  },
   getUserByIdQuery: async (id, query) => {
     try {
       const response = await apiClient.get(`/api/users/${id}/`, {
@@ -84,7 +101,15 @@ const userService = {
       throw error;
     }
   },
-
+  putUser: async (id, data) => {
+    try {
+      const response = await apiClient.put(`/api/users/${id}/`, data);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao atualizar usuário com id ${id}:`, error);
+      throw error;
+    }
+  },
   createUser: async (data) => {
     try {
       const response = await apiClient.post('/api/users/', data);

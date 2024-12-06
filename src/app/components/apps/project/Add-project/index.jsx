@@ -1,11 +1,7 @@
 'use client';
 import { Grid, Button, Stack, FormControlLabel } from '@mui/material';
-import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
-import PageContainer from '@/app/components/container/PageContainer';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
-import ParentCard from '@/app/components/shared/ParentCard';
-import Alert from '@mui/material/Alert';
 
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-User';
@@ -29,7 +25,7 @@ export default function CreateProject() {
 
   const status_options = [
     { value: 'P', label: 'Pendente' },
-    { value: 'F', label: 'Finalizado' },
+    { value: 'CO', label: 'Concluido' },
     { value: 'EA', label: 'Em Andamento' },
     { value: 'C', label: 'Cancelado' },
     { value: 'D', label: 'Distrato' },

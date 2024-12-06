@@ -5,6 +5,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import addressService from '@/services/addressService';
 import { debounce } from 'lodash';
+import { IconButton, Dialog, DialogTitle, DialogContent } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import CreateAddressPage from '@/app/components/apps/address/Add-address';
 
 export default function AutoCompleteAddresses({
   onChange,
@@ -18,18 +21,38 @@ export default function AutoCompleteAddresses({
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedAddresses, setSelectedAddresses] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
+  const [valuesDefault, setValuesDefault] = useState(value);
+
+  useEffect(() => {
+    setValuesDefault(value);
+  }, [value]);
 
   useEffect(() => {
     const fetchDefaultAddresses = async () => {
-      if (value.length > 0) {
+      if (valuesDefault.length > 0) {
         try {
-          const addresses = await Promise.all(value.map((id) => addressService.getAddressById(id)));
+          const addresses = await Promise.all(
+            valuesDefault.map((id) => addressService.getAddressById(id)),
+          );
           console.log('Addresses:', addresses);
           const formattedAddresses = addresses.map((address) => ({
             id: address.id,
             name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
           }));
+          console.log('Formatted Addresses:', formattedAddresses);
           setSelectedAddresses(formattedAddresses);
+          console.log('Selected Addresses:', selectedAddresses);
         } catch (error) {
           console.error('Erro ao buscar endereços:', error);
         }
@@ -37,7 +60,16 @@ export default function AutoCompleteAddresses({
     };
 
     fetchDefaultAddresses();
-  }, [value]);
+  }, [valuesDefault, refresh]);
+
+  const addAddress = (address) => {
+    setValuesDefault([...valuesDefault, address]);
+    onChange([...valuesDefault, address]);
+  };
+
+  const refreshAddresses = () => {
+    setRefresh(!refresh);
+  };
 
   const handleChange = (event, newValue) => {
     setSelectedAddresses(newValue);
@@ -85,7 +117,7 @@ export default function AutoCompleteAddresses({
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.id === value.id} // Compara pelos IDs
+        isOptionEqualToValue={(option, value) => option.id === value.id}
         getOptionLabel={(option) => option.name}
         options={options}
         loading={loading}
@@ -108,12 +140,32 @@ export default function AutoCompleteAddresses({
                 <Fragment>
                   {loading ? <CircularProgress color="inherit" size={20} /> : null}
                   {params.InputProps.endAdornment}
+                  <IconButton
+                    onClick={handleOpenModal}
+                    aria-label="Adicionar endereço"
+                    edge="end"
+                    size="small"
+                    sx={{ padding: '4px' }}
+                  >
+                    <AddIcon fontSize="small" />
+                  </IconButton>
                 </Fragment>
               ),
             }}
           />
         )}
       />
+
+      <Dialog open={openModal} onClose={handleCloseModal} maxWidth="lg">
+        <DialogTitle>Adicionar Novo Endereço</DialogTitle>
+        <DialogContent>
+          <CreateAddressPage
+            onClosedModal={handleCloseModal}
+            selectedAddressId={addAddress}
+            onRefresh={refreshAddresses}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

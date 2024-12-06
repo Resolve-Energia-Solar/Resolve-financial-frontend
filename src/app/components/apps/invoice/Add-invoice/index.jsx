@@ -36,7 +36,7 @@ import CustomFieldMoney from '../components/CustomFieldMoney';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
 
-const CreateInvoice = ({sale=null, onClosedModal = null, onRefresh = null }) => {
+const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) => {
   const {
     formData,
     handleChange,
@@ -69,8 +69,7 @@ const CreateInvoice = ({sale=null, onClosedModal = null, onRefresh = null }) => 
     { value: 'PI', label: 'Parcelamento Interno' },
   ];
 
-  sale ? formData.sale_id = sale : null;
-  formData.payment_type = 'C';
+  sale ? (formData.sale_id = sale) : null;
 
   const orderDate = new Date();
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
@@ -124,16 +123,17 @@ const CreateInvoice = ({sale=null, onClosedModal = null, onRefresh = null }) => 
       <Divider></Divider>
 
       <Grid container spacing={3} mb={4}>
-        {/* <Grid item xs={12} sm={6}>
-          <CustomFormLabel htmlFor="name">Venda</CustomFormLabel>
-          <AutoCompleteSale
-            onChange={(id) => handleChange('sale_id', id)}
-            value={formData.sale_id}
-            {...(formErrors.sale_id && { error: true, helperText: formErrors.sale_id })}
-            disabled={!!sale}
-          />
-        </Grid> */}
-
+        {!sale && (
+          <Grid item xs={12} sm={6}>
+            <CustomFormLabel htmlFor="name">Venda</CustomFormLabel>
+            <AutoCompleteSale
+              onChange={(id) => handleChange('sale_id', id)}
+              value={formData.sale_id}
+              {...(formErrors.sale_id && { error: true, helperText: formErrors.sale_id })}
+              disabled={!!sale}
+            />
+          </Grid>
+        )}
         <Grid item xs={12} sm={6}>
           <CustomFormLabel htmlFor="name">Tomador</CustomFormLabel>
           <AutoCompleteUser

@@ -53,6 +53,8 @@ const PaymentCard = ({ sale = null }) => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [saleData, setSaleData] = useState(null);
 
+  const [error, setError] = useState(null);
+
   const [refresh, setRefresh] = useState(false);
 
   const [invoiceToEdit, setInvoiceToEdit] = useState(null);
