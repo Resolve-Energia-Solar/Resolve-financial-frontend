@@ -7,6 +7,7 @@ import {
   IconAlertCircle,
   IconNotes,
   IconCalendar,
+  IconClockQuestion,
   IconMail,
   IconTicket,
   IconEdit,
@@ -65,7 +66,7 @@ import {
   IconTools,
   IconCircuitSwitchOpen,
   IconMailForward,
-  IconMailFast
+  IconHomeQuestion,
 } from '@tabler/icons-react';
 
 const Menuitems = [
@@ -127,6 +128,42 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Categorias',
+    icon: IconBox,
+    href: '/apps/inspections/category',
+  },
+  {
+    id: uniqueId(),
+    title: 'Prazos',
+    icon: IconClockQuestion,
+    href: '/apps/inspections/deadline',
+  },
+  {
+    id: uniqueId(),
+    title: 'Serviços',
+    icon: IconBoxMultiple,
+    href: '/apps/inspections/service-catalog',
+  },
+  {
+    id: uniqueId(),
+    title: 'Tipos de Telhado',
+    icon: IconHomeQuestion,
+    href: '/apps/inspections/roof-type',
+  },
+  {
+    id: uniqueId(),
+    title: 'Agendamentos',
+    icon: IconCalendar,
+    href: '/apps/inspections/schedule',
+  },
+  {
+    id: uniqueId(),
+    title: 'Formulários',
+    icon: IconFileDescription,
+    href: '/apps/inspections/form-builder',
+  },
+  {
+    id: uniqueId(),
     title: 'Usuários',
     icon: IconUser,
     href: '/apps/users',
@@ -158,6 +195,13 @@ const Menuitems = [
     title: 'Cargos',
     icon: IconUserScan,
     href: '/apps/roles',
+    permissions: ['accounts.view_role'],
+  },
+  {
+    id: uniqueId(),
+    title: 'TimeLine',
+    icon: IconChartLine,
+    href: '/apps/timeline',
     permissions: ['accounts.view_role'],
   },
   // {
