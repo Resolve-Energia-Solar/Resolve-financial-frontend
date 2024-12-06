@@ -18,24 +18,27 @@ import { useParams } from 'next/navigation';
 
 import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-User';
 import AutoCompleteBranch from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Branch';
-import AutoCompleteLead from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Leads';
 import AutoCompleteCampaign from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Campaign';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import FormDateTime from '@/app/components/forms/form-custom/FormDateTime';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
-import DocumentAttachments from '@/app/components/apps/comercial/sale/components/attachments/attachments';
 import { useSelector } from 'react-redux';
 import FormPageSkeleton from '../components/FormPageSkeleton';
 
 import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PaymentCard from '../../../invoice/components/paymentList/card';
 import ProjectListCards from '../../../project/components/projectList/cards';
-import projectService from '@/services/projectService';
-import FileUpload from '../components/attachments/attachments';
+import documentTypeService from '@/services/documentTypeService';
+import Attachments from '@/app/components/shared/Attachments';
+import ProductCard from '@/app/components/apps/product/Product-list';
+import UserForm from '@/app/(DashboardLayout)/apps/users/[id]/update/page';
+import EditCustomer from '../../../users/Edit-user/customer';
 
-const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
+const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
+
+const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
   const params = useParams();
   let id = saleId;
   if (!saleId) id = params.id;
@@ -48,17 +51,22 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
   };
 
   const id_sale = id;
-  const context_type_sale = 44;
 
   const { loading, error, saleData } = useSale(id);
+
+  console.log('Sale Data: ', saleData);
+
   const {
     formData,
     handleChange,
     handleSave,
     formErrors,
+    successData,
     loading: formLoading,
     success,
   } = useSaleForm(saleData, id);
+
+  const [documentTypes, setDocumentTypes] = useState([]);
 
   const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.totalValue);
 
@@ -75,10 +83,34 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
     setValue(newValue);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await documentTypeService.getDocumentTypeFromContract();
+        setDocumentTypes(response.results);
+        console.log('Document Types: ', response.results);
+      } catch (error) {
+        console.log('Error: ', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (successData && success) {
+      if (onClosedModal) {
+        onClosedModal();
+        refresh();
+      }
+    }
+  }, [successData, success]);
+
   return (
     <Box>
       <Tabs value={value} onChange={handleChangeTab}>
+        <Tab label="Cliente" />
         <Tab label="Venda" />
+        <Tab label="Produtos" />
         <Tab label="Anexos" />
         <Tab label="Pagamentos" />
         <Tab label="Projetos" />
@@ -90,12 +122,13 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
       ) : (
         <Box>
           {value === 0 && (
+            <Box sx={{ mt: 3 }}>
+              <EditCustomer userId={formData.customerId} />
+            </Box>
+          )}
+
+          {value === 1 && (
             <>
-              {success && (
-                <Alert severity="success" sx={{ mt: 2 }}>
-                  Venda atualizada com sucesso
-                </Alert>
-              )}
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="name">Cliente</CustomFormLabel>
@@ -184,18 +217,6 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
                     onChange={(e) => handleChange('status', e.target.value)}
                   />
                 </Grid>
-                <Grid item xs={12} sm={12} lg={4}>
-                  <FormDateTime
-                    label="Conclusão do Documento"
-                    name="document_completion_date"
-                    value={formData.documentCompletionDate}
-                    onChange={(newValue) => handleChange('documentCompletionDate', newValue)}
-                    {...(formErrors.document_completion_date && {
-                      error: true,
-                      helperText: formErrors.document_completion_date,
-                    })}
-                  />
-                </Grid>
                 <Grid item xs={12} sm={12} lg={12}>
                   <CustomFormLabel>Venda</CustomFormLabel>
                   <FormControlLabel
@@ -211,16 +232,23 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
               </Grid>
             </>
           )}
-          {value === 1 && (
-            <FileUpload objectId={id_sale} contentType={context_type_sale} />
-          )}
+
           {value === 2 && (
+            <Box sx={{ mt: 3 }}>
+              <ProductCard sale={saleData} />
+            </Box>
+          )}
+
+          {value === 3 && (
+            <Attachments contentType={CONTEXT_TYPE_SALE_ID} objectId={id_sale} documentTypes={documentTypes} />
+          )}
+          {value === 4 && (
             <Box sx={{ mt: 3 }}>
               <PaymentCard sale={id_sale} />
             </Box>
           )}
 
-          {value === 3 && <ProjectListCards saleId={id_sale} />}
+          {value === 5 && <ProjectListCards saleId={id_sale} />}
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             {onClosedModal && (
@@ -228,7 +256,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null }) => {
                 Fechar
               </Button>
             )}
-            {value === 0 && (
+            {value === 1 && (
               <Button
                 variant="contained"
                 color="primary"

@@ -24,9 +24,10 @@ import AutoCompleteAddress from '../../comercial/sale/components/auto-complete/A
 import AutoCompleteSupplyAds from '../components/auto-complete/Auto-Input-SupplyAds';
 import supplyService from '@/services/supplyAdequanceService';
 import { useEffect, useState } from 'react';
+import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 
 
-const CreateChecklistPage = ({ projectId = null, onClosedModal = null }) => {
+const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh = null }) => {
   const userPermissions = useSelector((state) => state.user.permissions);
   const [fileLoading, setFileLoading] = useState(false);
 
@@ -44,13 +45,28 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null }) => {
     success,
   } = useUnitForm();
 
+  console.log('formData', formData);
+
+  const statusOptions = [
+    { value: 'M', label: 'Monofásico' },
+    { value: 'B', label: 'Bifásico' },
+    { value: 'T', label: 'Trifásico' },
+  ];
+
   formData.project_id = projectId;
   formData.project = projectId;
 
   useEffect(() => {
+    if (success) {
+      onRefresh();
+      onClosedModal();
+    }
+  }, [success]);
+
+  useEffect(() => {
     if (formData.bill_file) {
       setFileLoading(true);
-
+  
       const formDataToSend = new FormData();
       formDataToSend.append('bill_file', formData.bill_file);
   
@@ -58,8 +74,16 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null }) => {
         .then((response) => {
           handleChange('name', response.name);
           handleChange('account_number', response.account);
-          handleChange('type', response.type);
           handleChange('unit_number', response.uc);
+  
+          const typeInitial = response.type.toLowerCase().charAt(0);
+          const statusMap = {
+            'm': 'M',
+            'b': 'B',
+            't': 'T',
+          };
+  
+          handleChange('type', statusMap[typeInitial] || 'Unknown');
         })
         .catch((error) => {
           console.error('Error uploading file:', error);
@@ -69,6 +93,7 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null }) => {
         });
     }
   }, [formData.bill_file]);
+  
 
   return (
     <Box>
@@ -119,15 +144,14 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null }) => {
             </Grid>
 
             <Grid item xs={12} sm={12} lg={6}>
-              <CustomFormLabel htmlFor="type">Tipo de Fornecimento</CustomFormLabel>
-              <CustomTextField
-                fullWidth
-                variant="outlined"
-                value={formData.type}
-                onChange={(e) => handleChange('type', e.target.value)}
-                {...(formErrors.type && { error: true, helperText: formErrors.type })}
-              />
-            </Grid>
+                <FormSelect
+                  label="Tipo de Fornecimento"
+                  options={statusOptions}
+                  onChange={(e) => handleChange('type', e.target.value)}
+                  value={formData.type}
+                  {...(formErrors.type && { error: true, helperText: formErrors.type })}
+                />
+              </Grid>
 
             <Grid item xs={12} sm={12} lg={6}>
               <CustomFormLabel htmlFor="unit_number">Conta contrato</CustomFormLabel>

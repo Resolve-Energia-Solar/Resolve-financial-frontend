@@ -24,33 +24,42 @@ import {
 } from '@mui/material';
 import { format, isValid } from 'date-fns';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { IconSquareRoundedPlus, IconTrash } from '@tabler/icons-react';
-import { useParams } from 'next/navigation';
 
-import usePayment from '@/hooks/payments/usePayment';
 import usePaymentForm from '@/hooks/payments/usePaymentForm';
 import AutoCompleteSale from '../../comercial/sale/components/auto-complete/Auto-Input-Sales';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import AutoCompleteFinancier from '../components/auto-complete/Auto-Input-financiers';
-import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import CustomFieldMoney from '../components/CustomFieldMoney';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
+import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
 
-const CreateInvoice = ({sale=null}) => {
+const CreateInvoice = ({sale=null, onClosedModal = null, onRefresh = null }) => {
   const {
     formData,
     handleChange,
     handleSave,
     formErrors,
     success,
+    response,
     loading: formLoading,
     handleInstallmentChange,
     handleAddItem,
     handleDeleteItem,
   } = usePaymentForm();
+
+  useEffect(() => {
+    if (success) {
+      if (onClosedModal) {
+        onClosedModal();
+        onRefresh();
+      } else {
+        router.push(`/apps/invoice/${response.id}/update`);
+      }
+    }
+  }, [response, success]);
 
   const statusOptions = [
     { value: 'C', label: 'Crédito' },
@@ -86,7 +95,6 @@ const CreateInvoice = ({sale=null}) => {
             endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null} // Ícone de loading
           >
             {formLoading ? 'Salvando...' : 'Salvar Alterações'}{' '}
-            {/* Altera o texto com base no loading */}
           </Button>
         </Box>
       </Stack>
@@ -116,7 +124,7 @@ const CreateInvoice = ({sale=null}) => {
       <Divider></Divider>
 
       <Grid container spacing={3} mb={4}>
-        <Grid item xs={12} sm={6}>
+        {/* <Grid item xs={12} sm={6}>
           <CustomFormLabel htmlFor="name">Venda</CustomFormLabel>
           <AutoCompleteSale
             onChange={(id) => handleChange('sale_id', id)}
@@ -124,9 +132,19 @@ const CreateInvoice = ({sale=null}) => {
             {...(formErrors.sale_id && { error: true, helperText: formErrors.sale_id })}
             disabled={!!sale}
           />
-        </Grid>
+        </Grid> */}
+
         <Grid item xs={12} sm={6}>
-          <CustomFormLabel htmlFor="name">Financiador</CustomFormLabel>
+          <CustomFormLabel htmlFor="name">Tomador</CustomFormLabel>
+          <AutoCompleteUser
+            onChange={(id) => handleChange('borrower_id', id)}
+            value={formData.borrower_id}
+            {...(formErrors.borrower_id && { error: true, helperText: formErrors.borrower_id })}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <CustomFormLabel htmlFor="name">Financiadora</CustomFormLabel>
           <AutoCompleteFinancier
             onChange={(id) => handleChange('financier_id', id)}
             value={formData.financier_id}

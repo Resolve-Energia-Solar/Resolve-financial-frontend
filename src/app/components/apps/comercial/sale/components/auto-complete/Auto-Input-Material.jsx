@@ -1,0 +1,125 @@
+'use client';
+import { Fragment, useCallback, useEffect, useState } from 'react';
+import Autocomplete from '@mui/material/Autocomplete';
+import CircularProgress from '@mui/material/CircularProgress';
+import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
+import materialService from '@/services/materialsService';
+import { debounce } from 'lodash';
+
+export default function AutoCompleteMaterial({ onChange, value, error, helperText }) {
+  const [open, setOpen] = useState(false);
+  const [options, setOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedMaterial, setSelectedMaterial] = useState(null);
+
+  useEffect(() => {
+    const fetchDefaultMaterial = async () => {
+      if (value) {
+        try {
+          const material = await materialService.getMaterialById(value);
+          if (material) {
+            setSelectedMaterial({ id: material.id, name: material.name, price: material.price });
+          }
+        } catch (error) {
+          console.error('Erro ao buscar material:', error);
+        }
+      }
+    };
+
+    fetchDefaultMaterial();
+  }, [value]);
+
+  const handleChange = (event, newValue) => {
+    setSelectedMaterial(newValue);
+    if (newValue) {
+      onChange(newValue.id);
+    } else {
+      onChange(null);
+    }
+  };
+
+  const fetchMaterialsByName = useCallback(
+    debounce(async (name) => {
+      if (!name) return;
+      setLoading(true);
+      try {
+        const materials = await materialService.getMaterialByName(name);
+        if (materials && materials.results) {
+          const formattedMaterials = materials.results
+            .filter(material => material.name)
+            .map(material => ({
+              id: material.id,
+              name: material.name,
+              price: material.price,
+              attributes: material.attributes,
+            }));
+          setOptions(formattedMaterials);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar materiais:', error);
+      }
+      setLoading(false);
+    }, 300),
+    []
+  );
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setOptions([]);
+  };
+
+  return (
+    <div>
+      <Autocomplete
+        sx={{ width: '100%' }}
+        open={open}
+        onOpen={handleOpen}
+        onClose={handleClose}
+        isOptionEqualToValue={(option, value) => option.name === value.name}
+        getOptionLabel={(option) => option.name}
+        options={options}
+        loading={loading}
+        value={selectedMaterial}
+        onInputChange={(event, newInputValue) => {
+          fetchMaterialsByName(newInputValue);
+        }}
+        onChange={handleChange}
+        renderInput={(params) => (
+          <CustomTextField
+            error={error}
+            helperText={helperText}
+            {...params}
+            size="small"
+            variant="outlined"
+            InputProps={{
+              ...params.InputProps,
+              endAdornment: (
+                <Fragment>
+                  {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                  {params.InputProps.endAdornment}
+                </Fragment>
+              ),
+            }}
+          />
+        )}
+        renderOption={(props, option) => (
+          <li {...props}>
+            <div>
+              <strong>{option.name}</strong>
+              <div>Preço: R${option.price}</div>
+              <div>
+                {option.attributes?.map((attr, index) => (
+                  <div key={index}>{`${attr.key}: ${attr.value}`}</div>
+                ))}
+              </div>
+            </div>
+          </li>
+        )}
+      />
+    </div>
+  );
+}

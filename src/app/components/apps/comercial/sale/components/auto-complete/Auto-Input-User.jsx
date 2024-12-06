@@ -21,6 +21,7 @@ export default function AutoCompleteUser({ onChange, value, error, helperText, d
         const user = await userService.getUserById(userId);
         if (user) {
           setSelectedUser({ id: user.id, name: user.complete_name });
+          if (!value) onChange(user.id);
         }
       } catch (error) {
         console.error('Erro ao buscar usuário:', error);

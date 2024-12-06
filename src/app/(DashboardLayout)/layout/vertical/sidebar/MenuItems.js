@@ -114,6 +114,13 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Solicitações Conce.',
+    icon: IconMailFast,
+    href: '/apps/request',
+    permissions: ['resolve_crm.view_project'],
+  },
+  {
+    id: uniqueId(),
     title: 'Campanhas',
     icon: IconStar,
     href: '/apps/campaign',

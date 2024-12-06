@@ -8,22 +8,18 @@ const KitSelectionCard = ({ kit, selected, onSelect }) => {
     <Tooltip
       title={
         <Box>
-          <Typography variant="body2">
-            <strong>Inversor:</strong> {kit.inversors_model?.description || 'Não especificado'}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Quantidade de Inversores:</strong> {kit.inversor_amount || 'Não especificado'}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Quantidade de Módulos:</strong> {kit.modules_amount || 'Não especificado'}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Telhado:</strong> {kit.roof_type?.name || 'Não especificado'}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Descrição Técnica:</strong>{' '}
-            {kit.inversors_model?.technical_description || 'Não disponível'}
-          </Typography>
+          {kit?.materials?.length > 0 && (
+            <Box mt={1}>
+              <Typography variant="body2">
+                <strong>Materiais:</strong>
+              </Typography>
+              {kit.materials.map((item, index) => (
+                <Typography key={index} variant="body2" sx={{ pl: 2 }}>
+                  {item.material?.name}: {item.amount}
+                </Typography>
+              ))}
+            </Box>
+          )}
         </Box>
       }
       arrow
@@ -76,7 +72,7 @@ const KitSelectionCard = ({ kit, selected, onSelect }) => {
             fontWeight="bold"
             textAlign="center"
             gutterBottom
-          >{`Kit Solar ID: ${kit.id}`}</Typography>
+          >{`${kit.name}`}</Typography>
           <Typography
             variant="subtitle1"
             color="text.primary"

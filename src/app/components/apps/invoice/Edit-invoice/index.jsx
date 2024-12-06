@@ -36,8 +36,10 @@ import FormDate from '@/app/components/forms/form-custom/FormDate';
 import CustomFieldMoney from '../components/CustomFieldMoney';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import EditInvoiceSkeleton from '../components/EditInvoiceSkeleton';
+import { useEffect } from 'react';
+import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
 
-const EditInvoicePage = ({payment_id=null}) => {
+const EditInvoicePage = ({payment_id=null, onClosedModal = null, onRefresh = null}) => {
   const params = useParams();
   let id = payment_id;
   if (!payment_id) id = params.id;
@@ -55,6 +57,15 @@ const EditInvoicePage = ({payment_id=null}) => {
     handleDeleteItem,
   } = usePaymentForm(paymentData, id);
 
+  useEffect(() => {
+    if (success) {
+      if (onClosedModal) {
+        onClosedModal();
+        onRefresh();
+      } 
+    }
+  }, [success]);
+
   const statusOptions = [
     { value: 'C', label: 'Crédito' },
     { value: 'D', label: 'Débito' },
@@ -64,8 +75,6 @@ const EditInvoicePage = ({payment_id=null}) => {
   ];
 
   const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.value);
-
-  console.log(formErrors.installments);
 
   const orderDate = paymentData?.created_at;
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
@@ -128,16 +137,24 @@ const EditInvoicePage = ({payment_id=null}) => {
       <Divider></Divider>
 
       <Grid container spacing={3} mb={4}>
-        <Grid item xs={12} sm={6}>
+        {/* <Grid item xs={12} sm={6}>
           <CustomFormLabel htmlFor="name">Venda</CustomFormLabel>
           <AutoCompleteSale
             onChange={(id) => handleChange('sale_id', id)}
             value={formData.sale_id}
             {...(formErrors.sale_id && { error: true, helperText: formErrors.sale_id })}
           />
+        </Grid> */}
+        <Grid item xs={12} sm={6}>
+          <CustomFormLabel htmlFor="name">Tomador</CustomFormLabel>
+          <AutoCompleteUser
+            onChange={(id) => handleChange('borrower_id', id)}
+            value={formData.borrower_id}
+            {...(formErrors.borrower_id && { error: true, helperText: formErrors.borrower_id })}
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <CustomFormLabel htmlFor="name">Financiador</CustomFormLabel>
+          <CustomFormLabel htmlFor="name">Financiadora</CustomFormLabel>
           <AutoCompleteFinancier
             onChange={(id) => handleChange('financier_id', id)}
             value={formData.financier_id}

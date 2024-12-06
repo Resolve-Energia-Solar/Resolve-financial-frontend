@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
+'use client';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
   Box,
   Snackbar,
@@ -11,6 +12,8 @@ import {
   Tabs,
   Tab,
   useTheme,
+  TextField,
+  Button,
 } from '@mui/material';
 
 import LeadDetails from '../../leads/leadDetails/LeadDetails';
@@ -26,6 +29,8 @@ import ClicksignLogsPage from '../../notifications/clicksign';
 import leadService from '@/services/leadService';
 import LeadDialog from '../../leads/LeadDialog/LeadDialog';
 import ColumnWithActions from './ColumnHeader';
+import columnService from '@/services/boardCollunService';
+import Activities from '../../activities';
 
 const KanbanManager = ({
   addLead,
@@ -36,11 +41,15 @@ const KanbanManager = ({
   onAddLead,
   onDeleteLead,
   onUpdateLeadColumn,
+  searchTerm,
+  loadMoreLeads,
+  columns,
 }) => {
   const theme = useTheme();
-
   const [editLead, setEditLead] = useState(false);
   const [openLeadModal, setOpenLeadModal] = useState(false);
+  const [openAddColumnModal, setOpenAddColumnModal] = useState(false);
+  const [newColumnName, setNewColumnName] = useState('');
   const { idSaleSuccess, setIdSaleSuccess } = useContext(KanbanDataContext);
   const [leadData, setLeadData] = useState({
     complete_name: '',
@@ -52,6 +61,8 @@ const KanbanManager = ({
     addresses_ids: [],
   });
 
+  const observerRef = useRef({});
+  const [loadingColumns, setLoadingColumns] = useState({});
   const {
     leadsList,
     statusesList,
@@ -72,11 +83,64 @@ const KanbanManager = ({
     onDeleteLead,
   });
 
+  const [scrollStatus, setScrollStatus] = useState(
+    statusesList.reduce((acc, status) => {
+      acc[status.id] = false;
+      return acc;
+    }, {}),
+  );
+
+  console.log('leadsList:', statuses);
+
+  const handleOpenAddColumnModal = () => setOpenAddColumnModal(true);
+  const handleCloseAddColumnModal = () => {
+    setOpenAddColumnModal(false);
+    setNewColumnName('');
+  };
+
+  const handleSaveNewColumn = async () => {
+    if (!newColumnName.trim()) return;
+
+    const newColumnData = {
+      name: newColumnName,
+      board: board,
+      position: statuses.length,
+    };
+
+    try {
+      const newColumn = await columnService.createColumn(newColumnData);
+      statuses.push(newColumn);
+      setSnackbarMessage('Coluna adicionada com sucesso!');
+      setSnackbarOpen(true);
+      handleCloseAddColumnModal();
+    } catch (error) {
+      console.error('Erro ao adicionar coluna:', error);
+      setSnackbarMessage('Erro ao adicionar coluna. Tente novamente.');
+      setSnackbarOpen(true);
+    }
+  };
+
   useEffect(() => {
     if (idSaleSuccess !== null) {
       setTabIndex(2);
     }
   }, [idSaleSuccess]);
+
+  const statusTimes = {
+    'Novo Lead': 24,
+    'Primeiro Contato': 48,
+    'Terceiro Contato': 72,
+    'Quarto Contato': 96,
+    default: 120,
+  };
+
+  const isLeadOverdue = (lead, status) => {
+    const columnTimeLimit = statusTimes[status] || statusTimes.default;
+    const updatedAt = new Date(lead.created_at);
+    const now = new Date();
+    const hoursDiff = Math.abs(now - updatedAt) / 36e5;
+    return hoursDiff > columnTimeLimit;
+  };
 
   const statusColors = {
     'Novo Lead': theme.palette.info.light,
@@ -85,6 +149,10 @@ const KanbanManager = ({
     'Quarto Contato': theme.palette.success.light,
     default: theme.palette.grey[200],
   };
+
+  const filteredLeads = leadsList.filter((lead) =>
+    (lead.name?.toLowerCase().trim() || '').includes(searchTerm.toLowerCase().trim()),
+  );
 
   const handleOpenLeadModal = () => {
     setOpenLeadModal(true);
@@ -132,6 +200,51 @@ const KanbanManager = ({
     }
   };
 
+  /*   const handleLoadMore = useCallback(
+    async (statusId) => {
+      if (scrollStatus[statusId]) return;
+
+      setScrollStatus((prev) => ({ ...prev, [statusId]: true }));
+
+      try {
+        await loadMoreLeads(statusId);
+      } catch (error) {
+        console.error(`Erro ao carregar mais leads para a coluna ${statusId}:`, error);
+      } finally {
+        setScrollStatus((prev) => ({ ...prev, [statusId]: false }));
+      }
+    },
+    [scrollStatus, loadMoreLeads],
+  );
+ */
+  /*  const createObserver = useCallback(
+    (statusId) => {
+      return new IntersectionObserver(
+        async (entries) => {
+          const entry = entries[0];
+          if (entry.isIntersecting && !loadingColumns[statusId]) {
+            console.log(`Carregando mais leads para coluna ${statusId}`);
+            await handleLoadMore(statusId);
+          }
+        },
+        { root: null, rootMargin: '200px', threshold: 0.1 },
+      );
+    },
+    [handleLoadMore, loadingColumns],
+  ); */
+
+  /* useEffect(() => {
+    statusesList.forEach((status) => {
+      if (!observerRef.current[status.id]) {
+        observerRef.current[status.id] = createObserver(status.id);
+      }
+    });
+
+    return () => {
+      Object.values(observerRef.current).forEach((observer) => observer.disconnect());
+    };
+  }, [statusesList, createObserver]);
+ */
   return (
     <>
       <SimpleBar>
@@ -145,25 +258,31 @@ const KanbanManager = ({
                     {...provided.droppableProps}
                     sx={{
                       minWidth: '300px',
+                      maxHeight: '75vh',
                       backgroundColor: statusColors[status.name] || statusColors.default,
                       paddingX: '10px',
-                      maxHeight: '80vh',
+                      minHeight: '25vh',
                       overflowY: 'auto',
                       borderRadius: 2,
                       boxShadow: theme.shadows[1],
+                      position: 'relative',
                     }}
                   >
                     <ColumnWithActions
                       columnTitle={status.name}
                       statusId={status.id}
+                      isLeadOverdue={isLeadOverdue}
+                      status={status.name}
                       boardId={board}
                       onUpdateLeadColumn={onUpdateLeadColumn}
-                      leads={leadsList}
+                      leads={filteredLeads}
                       onAddLead={onAddLead}
                       addLead={addLead}
                       statusColors={statusColors}
+                      collumnValue={status.proposals_value}
                     />
-                    {leadsList
+
+                    {filteredLeads
                       .filter((lead) => lead.column.id === status.id)
                       .map((lead, index) => (
                         <Draggable draggableId={lead.id.toString()} index={index} key={lead.id}>
@@ -174,13 +293,29 @@ const KanbanManager = ({
                               {...provided.dragHandleProps}
                               mb={2}
                             >
-                              <LeadCard lead={lead} handleLeadClick={handleLeadClick} />
+                              <LeadCard
+                                lead={lead}
+                                isLeadOverdue={isLeadOverdue}
+                                status={status.name}
+                                handleLeadClick={handleLeadClick}
+                              />
                             </Box>
                           )}
                         </Draggable>
                       ))}
 
-                    {leadsList.filter((lead) => lead.column.id === status.id).length === 0 && (
+                    <Box
+                      ref={(el) => {
+                        if (el && observerRef.current[status.id]) {
+                          observerRef.current[status.id].observe(el);
+                        }
+                      }}
+                      sx={{ height: '20px', backgroundColor: 'transparent' }}
+                    >
+                      {scrollStatus[status.id] && 'Carregando...'}
+                    </Box>
+
+                    {filteredLeads.filter((lead) => lead.column.id === status.id).length === 0 && (
                       <Box
                         onClick={() => handleOpenLeadModal(status.id)}
                         sx={{
@@ -201,13 +336,60 @@ const KanbanManager = ({
                         + Adicionar Novo Lead
                       </Box>
                     )}
-
                     {provided.placeholder}
                   </Box>
                 )}
               </Droppable>
             ))}
+            <Box
+              onClick={handleOpenAddColumnModal}
+              sx={{
+                minWidth: '300px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100px',
+                border: '2px dashed',
+                borderColor: theme.palette.grey[400],
+                borderRadius: 2,
+                cursor: 'pointer',
+                mt: 2,
+                '&:hover': {
+                  backgroundColor: theme.palette.action.hover,
+                },
+              }}
+            >
+              + Adicionar Nova Coluna
+            </Box>
           </Box>
+          <Dialog
+            open={openAddColumnModal}
+            onClose={handleCloseAddColumnModal}
+            fullWidth
+            maxWidth="sm"
+          >
+            <DialogTitle>Adicionar Nova Coluna</DialogTitle>
+            <DialogContent>
+              <Box display="flex" flexDirection="column" gap={3} mt={2}>
+                <TextField
+                  label="Nome da Coluna"
+                  variant="outlined"
+                  fullWidth
+                  value={newColumnName}
+                  onChange={(e) => setNewColumnName(e.target.value)}
+                  placeholder="Digite o nome da nova coluna"
+                />
+                <Box display="flex" justifyContent="flex-end" gap={2}>
+                  <Button onClick={handleCloseAddColumnModal} color="secondary" variant="outlined">
+                    Cancelar
+                  </Button>
+                  <Button onClick={handleSaveNewColumn} color="primary" variant="contained">
+                    Salvar
+                  </Button>
+                </Box>
+              </Box>
+            </DialogContent>
+          </Dialog>
         </DragDropContext>
         <LeadDialog
           openLeadModal={openLeadModal}
@@ -259,7 +441,7 @@ const KanbanManager = ({
 
                   {tabIndex === 2 && <SaleListCards leadId={selectedLead.id} />}
                   {tabIndex === 3 && <ClicksignLogsPage />}
-                  {tabIndex === 4 && 'Atividades'}
+                  {tabIndex === 4 && <Activities />}
                 </Box>
               </Grid>
             </Grid>

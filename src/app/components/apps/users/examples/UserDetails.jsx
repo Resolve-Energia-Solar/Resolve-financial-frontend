@@ -16,9 +16,9 @@ import {
   DeleteContact,
   toggleStarredContact,
 } from '@/store/apps/contacts/ContactSlice';
-import BlankCard from '../../shared/BlankCard';
+import BlankCard from '../../../shared/BlankCard';
 import { IconPencil, IconStar, IconTrash, IconDeviceFloppy } from '@tabler/icons-react';
-import Scrollbar from '../../custom-scroll/Scrollbar';
+import Scrollbar from '../../../custom-scroll/Scrollbar';
 import Image from 'next/image';
 
 const UserDetails = async ({id}) => {

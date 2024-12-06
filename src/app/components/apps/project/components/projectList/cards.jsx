@@ -20,11 +20,21 @@ import { CallToAction, FlashAuto, SolarPower } from '@mui/icons-material';
 import SkeletonCard from '../SkeletonCard';
 import CustomAccordion from '@/app/components/apps/project/components/CustomAccordion';
 import CheckListRateio from '../../../checklist/Checklist-list';
+import Attachments from '@/app/components/shared/Attachments';
+import documentTypeService from '@/services/documentTypeService';
+
+const CONTEXT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
+
 
 const ProjectListCards = ({ saleId = null }) => {
   const theme = useTheme();
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  console.log('CONTEXT_TYPE_PROJECT_ID: ', CONTEXT_TYPE_PROJECT_ID);
+
+  const [documentTypes, setDocumentTypes] = useState([]);
+
 
   const handleEditClick = (id) => {
     setSelectedProjectId(id);
@@ -54,6 +64,20 @@ const ProjectListCards = ({ saleId = null }) => {
     };
     fetchData();
   }, [saleId]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await documentTypeService.getDocumentTypeFromEngineering();
+        setDocumentTypes(response.results);
+        console.log('Document Types: ', response.results);
+      } catch (error) {
+        console.log('Error: ', error);
+      }
+    };
+    fetchData();
+  }, []);
+
 
   return (
     <Grid container spacing={2} mt={2}>
@@ -115,15 +139,13 @@ const ProjectListCards = ({ saleId = null }) => {
                 </Box>
                 </CustomAccordion>
 
-
                 <CustomAccordion title="Checklist Rateio">
-                  <CheckListRateio initialUnits={project.units} projectId={project.id} />
+                  <CheckListRateio projectId={project.id} />
                 </CustomAccordion>
 
                 <CustomAccordion title="Documentos">
                   <Typography>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada
-                    lacus ex, sit amet blandit leo lobortis eget.
+                    <Attachments contentType={CONTEXT_TYPE_PROJECT_ID} objectId={project.id} documentTypes={documentTypes} />
                   </Typography>
                 </CustomAccordion>
 
