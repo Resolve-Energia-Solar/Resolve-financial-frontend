@@ -3,16 +3,18 @@ import { Tabs, Tab, Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 import EditProjectTab from '@/app/components/apps/project/Edit-project/tabs/EditProject';
 import { useParams } from 'next/navigation';
-import CheckListRateio from '@/app/components/apps/checklist/Checklist-list';
-import Attachments from '@/app/components/shared/Attachments';
 import documentTypeService from '@/services/documentTypeService';
+import CheckListRateioDetail from '../../checklist/Checklist-detail/checklistDetail';
+import AttachmentDetails from '@/app/components/shared/AttachmentDetails';
 
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
-export default function EditProject({ projectId=null }) {
+export default function DetailProject({ projectId=null }) {
   const params = useParams();
   let id = projectId;
   if (!projectId) id = params.id;
+
+  console.log('DetailProject id: ', id);
 
   const [value, setValue] = useState(0);
   const [documentTypes, setDocumentTypes] = useState([]);
@@ -43,16 +45,16 @@ export default function EditProject({ projectId=null }) {
         <Tab label="Solicitações" />
       </Tabs>
 
-      {value === 0 && <EditProjectTab projectId={id} />}
+      {value === 0 && <EditProjectTab projectId={id} detail={true} />}
 
       {value === 1 && (
         <Box mt={2}>
-          <CheckListRateio projectId={id} />
+          <CheckListRateioDetail projectId={id} />
         </Box>
       )}
 
       {value === 2 && (
-        <Attachments
+        <AttachmentDetails
           contentType={CONTENT_TYPE_PROJECT_ID}
           objectId={id}
           documentTypes={documentTypes}

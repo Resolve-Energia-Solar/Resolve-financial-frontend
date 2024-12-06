@@ -42,8 +42,7 @@ const BCrumb = [
   },
 ];
 
-const RequestCE = () => {
-
+const RequestCE = ({ project_id=null }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);

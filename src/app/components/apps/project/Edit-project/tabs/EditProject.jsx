@@ -10,10 +10,12 @@ import FormDate from '@/app/components/forms/form-custom/FormDate';
 
 import useProject from '@/hooks/projects/useProject';
 import useProjectForm from '@/hooks/projects/useProjectForm';
+import FormPageSkeleton from '../../../comercial/sale/components/FormPageSkeleton';
 
-export default function EditProjectTab() {
+export default function EditProjectTab({ projectId=null, detail=false }) {
   const params = useParams();
-  const { id } = params;
+  let id = projectId;
+  if (!projectId) id = params.id;
 
   const { loading, error, projectData } = useProject(id);
 
@@ -38,7 +40,7 @@ export default function EditProjectTab() {
     { value: 'D', label: 'Distrato' },
   ];
 
-  if (loading) return <div>Carregando...</div>;
+  if (loading) return <FormPageSkeleton />;
   if (error) return <div>{error}</div>;
 
   return (
@@ -49,6 +51,7 @@ export default function EditProjectTab() {
           <AutoCompleteSale
             onChange={(id) => handleChange('sale_id', id)}
             value={formData.sale_id}
+            disabled={detail}
             {...(formErrors.sale_id && { error: true, helperText: formErrors.sale_id })}
           />
         </Grid>
@@ -57,6 +60,7 @@ export default function EditProjectTab() {
           <AutoCompleteUser
             onChange={(id) => handleChange('designer_id', id)}
             value={formData.designer_id}
+            disabled={detail}
             {...(formErrors.designer_id && { error: true, helperText: formErrors.designer_id })}
           />
         </Grid>
@@ -65,6 +69,7 @@ export default function EditProjectTab() {
           <AutoCompleteUser
             onChange={(id) => handleChange('homologator_id', id)}
             value={formData.homologator_id}
+            disabled={detail}
             {...(formErrors.homologator_id && {
               error: true,
               helperText: formErrors.homologator_id,
@@ -77,6 +82,7 @@ export default function EditProjectTab() {
             options={status_options}
             value={formData.status}
             onChange={(e) => handleChange('status', e.target.value)}
+            disabled={detail}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={4}>
@@ -85,6 +91,7 @@ export default function EditProjectTab() {
             name="start_date"
             value={formData.start_date}
             onChange={(newValue) => handleChange('start_date', newValue)}
+            disabled={detail}
             {...(formErrors.start_date && { error: true, helperText: formErrors.start_date })}
           />
         </Grid>
@@ -94,17 +101,21 @@ export default function EditProjectTab() {
             name="end_date"
             value={formData.end_date}
             onChange={(newValue) => handleChange('end_date', newValue)}
+            disabled={detail}
             {...(formErrors.end_date && { error: true, helperText: formErrors.end_date })}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={12}>
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-            <Button variant="contained" color="primary" onClick={handleSave}>
-              Salvar alterações
-            </Button>
+            {!detail && (
+              <Button variant="contained" color="primary" onClick={handleSave}>
+                Salvar alterações
+              </Button>
+            )}
           </Stack>
         </Grid>
       </Grid>
     </>
   );
 }
+

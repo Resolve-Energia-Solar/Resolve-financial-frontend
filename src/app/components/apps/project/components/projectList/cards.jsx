@@ -33,6 +33,8 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import InfoIcon from '@mui/icons-material/Info';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import CategoryIcon from '@mui/icons-material/Category';
+import DetailProject from '../../Project-Detail';
+import EditProject from '../../Edit-project';
 
 const CONTEXT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
@@ -43,6 +45,9 @@ const ProjectListCards = ({ saleId = null }) => {
   const [loadingGenerate, setLoadingGenerate] = useState(false);
   const [responseGenerateError, setResponseGenerateError] = useState(null);
   const [responsePreviewGenerate, setResponsePreviewGenerate] = useState(null);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
 
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
@@ -397,6 +402,25 @@ const ProjectListCards = ({ saleId = null }) => {
             </Button>
           )}
         </DialogActions>
+      </Dialog>
+
+      {/* Modal de Edição */}
+      <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="md" fullWidth>
+        <DialogContent>
+          <EditProject projectId={selectedProjectId} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Detalhes */}
+      <Dialog
+        open={detailModalOpen}
+        onClose={() => setDetailModalOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogContent>
+          <DetailProject projectId={selectedProjectId} />
+        </DialogContent>
       </Dialog>
     </Grid>
   );

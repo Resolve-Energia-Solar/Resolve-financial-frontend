@@ -33,6 +33,7 @@ import StatusChip from '../../comercial/sale/components/DocumentStatusIcon';
 import SkeletonCard from '../components/SkeletonCard';
 import CheckListRateioDetail from '../../checklist/Checklist-detail/checklistDetail';
 import AttachmentDetails from '@/app/components/shared/AttachmentDetails';
+import DetailProject from '.';
 
 const CONTEXT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
@@ -43,6 +44,8 @@ const ProjectListDetail = ({ saleId = null }) => {
   const [loadingGenerate, setLoadingGenerate] = useState(false);
   const [responseGenerateError, setResponseGenerateError] = useState(null);
   const [responsePreviewGenerate, setResponsePreviewGenerate] = useState(null);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
 
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
@@ -213,6 +216,18 @@ const ProjectListDetail = ({ saleId = null }) => {
           ))
         )}
       </Grid>
+
+      {/* Modal de Detalhes */}
+      <Dialog
+        open={detailModalOpen}
+        onClose={() => setDetailModalOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogContent>
+          <DetailProject projectId={selectedProjectId} />
+        </DialogContent>
+      </Dialog>
     </Grid>
   );
 };

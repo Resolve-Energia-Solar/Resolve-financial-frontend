@@ -13,7 +13,7 @@ const useSaleForm = (initialData, id) => {
     salesManagerId: null,
     branchId: null,
     marketingCampaignId: null,
-    isSale: false,
+    isSale: true,
     totalValue: '',
     status: '',
     completedDocument: false,
