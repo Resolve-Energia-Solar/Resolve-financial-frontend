@@ -42,6 +42,7 @@ import BlankCard from "@/app/components/shared/BlankCard";
 
 /* services */
 import formBuilderService from "@/services/formBuilderService";
+import serviceCatalogService from "@/services/serviceCatalogService";
 
 const FormBuilderList = () => {
   const [formList, setFormList] = useState([]);
@@ -57,11 +58,12 @@ const FormBuilderList = () => {
 
   useEffect(() => {
     const fetchForms = async () => {
+      setLoading(true);
       try {
         const data = await formBuilderService.getForms();
-        setFormList(data.results);
+        setFormList(data);
       } catch (err) {
-        setError('Erro ao carregar formulários');
+        setError('Erro ao carregar formulários', err);
       } finally {
         setLoading(false);
       }
@@ -174,6 +176,15 @@ const FormBuilderList = () => {
                     </TableCell>
                     <TableCell
                       sx={{ whiteSpace: 'nowrap' }}
+                    >
+                      <Box
+                        sx={{ display: 'flex', alignItems: 'center' }}
+                      >
+                        Serviço
+                      </Box>
+                    </TableCell>
+                    <TableCell
+                      sx={{ whiteSpace: 'nowrap' }}
                       align="center"
                     >
                       Ações
@@ -188,6 +199,9 @@ const FormBuilderList = () => {
                       </TableCell>
                       <TableCell>
                         {form.name}
+                      </TableCell>
+                      <TableCell>
+                        {form.service?.name || 'Sem serviço associado'}
                       </TableCell>
                       <TableCell
                         align="center"
