@@ -32,6 +32,9 @@ import {
   Delete as DeleteIcon,
   Edit as EditIcon,
 } from "@mui/icons-material";
+import { 
+  IconEyeglass
+} from '@tabler/icons-react';
 
 /* components */
 import PageContainer from "@/app/components/container/PageContainer";
@@ -73,6 +76,10 @@ const FormBuilderList = () => {
 
   const handleEditClick = (id) => {
     router.push(`/apps/inspections/form-builder/${id}/update`);
+  }
+
+  const handleViewClick = (id) => {
+    router.push(`/apps/inspections/form-builder/${id}/view`);
   }
 
   const handleDeleteClick = (form) => {
@@ -204,6 +211,15 @@ const FormBuilderList = () => {
                             onClick={() => handleEditClick(form.id)}
                           >
                             <EditIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title={'Visualizar'}>
+                          <IconButton
+                            color="primary"
+                            size="small"
+                            onClick={() => handleViewClick(form.id)}
+                          >
+                            <IconEyeglass />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title={'Excluir'}>

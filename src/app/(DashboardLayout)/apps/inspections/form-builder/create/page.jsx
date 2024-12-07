@@ -45,6 +45,7 @@ const FormBuilderForm = () => {
       placeholder: '',
       type: 'text',
       required: false,
+      multiple: false,
       options: [],
     };
     setFields([...fields, newFields]);
@@ -65,11 +66,6 @@ const FormBuilderForm = () => {
 
   const handleClearFields = () => {
     setFields([]);
-  };
-
-  const handleSubmit = () => {
-    const formJSON = JSON.stringify(fields);
-    console.log(formJSON);
   };
 
   const {
@@ -242,6 +238,18 @@ const FormBuilderForm = () => {
               </ParentCard>
             ))}
           </Grid>
+        </Grid>
+        {/* Add Field Button */}
+        <Grid item xs={12} sm={12} lg={12} justifyContent="center" mt={2}>
+          <Stack direction="row" spacing={2} justifyContent="center">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={addField}
+            >
+              Adicionar Novo Campo
+            </Button>
+          </Stack>
         </Grid>
       </ParentCard>
     </PageContainer>
