@@ -7,6 +7,7 @@ const useServiceCatalogForm = (initialData, id) => {
     description: '',
     category_id: null,
     deadline_id: null,
+    form_id: null,
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -19,6 +20,7 @@ const useServiceCatalogForm = (initialData, id) => {
         description: initialData.description || '',
         category_id: initialData.category.id || null,
         deadline_id: initialData.deadline.id || null,
+        form_id: initialData.form || null,
       });
     }
   }, [initialData]);
@@ -33,6 +35,7 @@ const useServiceCatalogForm = (initialData, id) => {
       description: formData.description,
       category_id: formData.category_id,
       deadline_id: formData.deadline_id,
+      form: formData.form_id,
     };
 
     try {

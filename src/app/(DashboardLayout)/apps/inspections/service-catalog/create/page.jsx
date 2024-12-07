@@ -19,6 +19,7 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import PageContainer from "@/app/components/container/PageContainer";
 import ParentCard from "@/app/components/shared/ParentCard";
+import AutoCompleteFormBuilder from "@/app/components/apps/inspections/auto-complete/Auto-Input-FormBuilder";
 
 const ServiceCatalogForm = () => {
   const router = useRouter();
@@ -90,6 +91,17 @@ const ServiceCatalogForm = () => {
               fullWidth
               onChange={(id) => handleChange('deadline_id', id)}
               {...(formErrors.deadline_id && { error: true, helperText: formErrors.deadline_id })}
+            />
+          </Grid>
+
+          {/* Formulário */}
+          <Grid item xs={12}>
+            <CustomFormLabel htmlFor="form">Formulário</CustomFormLabel>
+            <AutoCompleteFormBuilder
+              fullWidth
+              onChange={(id) => handleChange('form_id', id)}
+              value={formData.form_id}
+              {...(formErrors.form_id && { error: true, helperText: formErrors.form_id })}
             />
           </Grid>
 

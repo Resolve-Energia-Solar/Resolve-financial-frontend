@@ -174,15 +174,6 @@ const FormBuilderList = () => {
                     </TableCell>
                     <TableCell
                       sx={{ whiteSpace: 'nowrap' }}
-                    >
-                      <Box
-                        sx={{ display: 'flex', alignItems: 'center' }}
-                      >
-                        Serviço
-                      </Box>
-                    </TableCell>
-                    <TableCell
-                      sx={{ whiteSpace: 'nowrap' }}
                       align="center"
                     >
                       Ações
@@ -197,9 +188,6 @@ const FormBuilderList = () => {
                       </TableCell>
                       <TableCell>
                         {form.name}
-                      </TableCell>
-                      <TableCell>
-                        {form.service.name}
                       </TableCell>
                       <TableCell
                         align="center"
