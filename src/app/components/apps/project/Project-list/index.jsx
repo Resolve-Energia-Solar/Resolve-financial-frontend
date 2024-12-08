@@ -151,7 +151,7 @@ const ProjectList = () => {
             </TableHead>
             <TableBody>
               {projectsList.map((item) => (
-                <TableRow key={item.id} hover>
+                <TableRow key={item.id} hover onClick={() => handleEditClick(item.id)} sx={{ cursor: 'pointer' }}>
                   <TableCell>{item.id}</TableCell>
                   <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                   <TableCell>{item.sale?.contract_number}</TableCell>
