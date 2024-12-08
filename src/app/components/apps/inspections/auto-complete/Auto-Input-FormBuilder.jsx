@@ -4,11 +4,28 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import formBuilderService from '@/services/formBuilderService';
 import { debounce } from 'lodash';
-import { IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
+import {
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography,
+} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import CreateForm from '../form-builder/CreateForm';
 //import CreateForm from '@/app/components/forms/CreateForm'; // Componente para criar novo formulário
 
-export default function AutoCompleteFormBuilder({ onChange, value, error, helperText, disabled, labeltitle }) {
+export default function AutoCompleteFormBuilder({
+  onChange,
+  value,
+  error,
+  helperText,
+  disabled,
+  labeltitle,
+  mode,
+}) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
@@ -48,17 +65,17 @@ export default function AutoCompleteFormBuilder({ onChange, value, error, helper
       setLoading(true);
       try {
         const forms = await formBuilderService.getFormByName(title);
-        const formattedForms = forms.results.map(form => ({
+        const formattedForms = forms.results.map((form) => ({
           id: form.id,
-          name: form.name
+          name: form.name,
         }));
         setOptions(formattedForms);
       } catch (error) {
         console.error('Erro ao buscar formulários:', error);
       }
       setLoading(false);
-    }, 300), 
-    []
+    }, 300),
+    [],
   );
 
   const handleOpen = () => {
@@ -109,9 +126,9 @@ export default function AutoCompleteFormBuilder({ onChange, value, error, helper
                 <React.Fragment>
                   {loading ? <CircularProgress color="inherit" size={20} /> : null}
                   {params.InputProps.endAdornment}
-                  <IconButton 
-                    onClick={handleOpenModal} 
-                    aria-label="Adicionar formulário" 
+                  <IconButton
+                    onClick={handleOpenModal}
+                    aria-label="Adicionar formulário"
                     edge="end"
                     size="small"
                     sx={{ padding: '4px' }}
@@ -130,10 +147,12 @@ export default function AutoCompleteFormBuilder({ onChange, value, error, helper
         <DialogTitle>Adicionar Novo Formulário</DialogTitle>
         <DialogContent>
           {/* <CreateForm onClosedModal={handleCloseModal} /> */}
-          <Typography>Novo Formulário</Typography>
+          <CreateForm onClosedModal={handleCloseModal} selectedFormId={fetchDefaultForm}/>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseModal} color="primary">Cancelar</Button>
+          <Button onClick={handleCloseModal} color="primary">
+            Cancelar
+          </Button>
           {/* Aqui pode ser adicionado um botão para salvar, se necessário */}
         </DialogActions>
       </Dialog>
