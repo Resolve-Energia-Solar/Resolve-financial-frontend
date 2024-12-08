@@ -57,7 +57,6 @@ function Commission({ data }) {
                 <TableCell align="center">{item.status}</TableCell>
                 <TableCell align="center">{item.status}</TableCell>
                 <TableCell align="center">{item.installment_value}</TableCell>
-
               </TableRow>
             ))}
           </TableBody>
