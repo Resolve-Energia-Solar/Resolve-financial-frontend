@@ -94,7 +94,7 @@ const RequestCE = ({ project_id=null }) => {
       console.error('Erro ao buscar dados:', error);
     }
   }
-
+  
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
   };
@@ -192,7 +192,7 @@ const RequestCE = ({ project_id=null }) => {
                   </TableHead>
                   <TableBody>
                     {requestData.map((item) => (
-                      <TableRow key={item.id} onClick={() => handleRowClick(item)}>
+                    <TableRow key={item.id} onClick={() => handleRowClick(item)}>
                         <TableCell>{item.id}</TableCell>
                         <TableCell>{`${item.project.project_number} - ${item.project.sale?.customer?.complete_name}`}</TableCell>
                         <TableCell >
