@@ -9,6 +9,7 @@ import Commission from '@/app/components/apps/commission/Commission';
 import Releases from '@/app/components/apps/commission/Releases';
 import Debtor from '@/app/components/apps/commission/Debtor';
 import commissionService from '@/services/commissionService';
+import saleService from '@/services/saleService';
 
 
 
@@ -36,15 +37,22 @@ function a11yProps(index) {
 function commission() {
 
   const [value, setValue] = useState(0);
-  const [data, setData] = useState([])
+  const [sale, setSale] = useState([])
 
-  useEffect(() => {
-    const fectchAll = async () => {
-      const commissionData = await commissionService.getCommissiomAll()
-      setData(commissionData.results)
-    }
-    fectchAll()
-  }, [])
+  
+  // useEffect(() => {
+
+  //   const fectchSaleAll = async () => {
+  //     const saleData = await saleService.getSales({ordering: 'asc'})
+  //     setSale(saleData.results)
+  //   }
+
+    
+  //   fectchSaleAll()
+  // }, [])
+
+
+  
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -52,9 +60,9 @@ function commission() {
 
   return (
 
-    <Box sx={{ p: 2, border: '1px solid grey' }}>
+    <Box sx={{ p: 2, border: '1px none grey'}}>
 
-      <Box sx={{ p: 2, borderBottom: '1px solid grey', borderRadius: '0px' }}>
+      <Box sx={{ p: 2, boxShadow: 2,borderRadius: '10px', backgroundColor: '#ECF2FF'  }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab label="Vendas" {...a11yProps(0)} />
           <Tab label="Comissão" {...a11yProps(1)} />
@@ -64,11 +72,11 @@ function commission() {
       </Box>
 
       <TabPanel value={value} index={0} >
-        <Sale data={rows} />
+        <Sale data={sale} />
       </TabPanel>
 
       <TabPanel value={value} index={1} >
-        <Commission data={data} />
+        <Commission />
       </TabPanel>
 
       <TabPanel value={value} index={2} >
@@ -77,6 +85,7 @@ function commission() {
 
       <TabPanel value={value} index={3} >
         <Debtor data={rows} />
+        
       </TabPanel>
     </Box>
 
