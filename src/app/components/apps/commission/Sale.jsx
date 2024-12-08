@@ -58,20 +58,20 @@ function Sale({ data }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((row) => (
+              {data.map((item) => (
                 <TableRow
-                  key={row.name}
+                  key={item.id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                  <TableCell align="center">{row.statcommi}</TableCell>
-                  <TableCell align="center">{row.name}</TableCell>
-                  <TableCell align="center">{row.datac}</TableCell>
-                  <TableCell align="center">{row.statvistoria}</TableCell>
-                  <TableCell align="center">{row.statusdoc}</TableCell>
-                  <TableCell align="center">{row.statusfinanceiro}</TableCell>
-                  <TableCell align="center">{row.unidade}</TableCell>
-                  <TableCell align="center">{row.especpagam}</TableCell>
-                  <TableCell align="center">{row.valprojeto}</TableCell>
+                  <TableCell align="center">{item.statcommi}</TableCell>
+                  <TableCell align="center">{item.name}</TableCell>
+                  <TableCell align="center">{item.datac}</TableCell>
+                  <TableCell align="center">{item.statvistoria}</TableCell>
+                  <TableCell align="center">{item.statusdoc}</TableCell>
+                  <TableCell align="center">{item.statusfinanceiro}</TableCell>
+                  <TableCell align="center">{item.unidade}</TableCell>
+                  <TableCell align="center">{item.especpagam}</TableCell>
+                  <TableCell align="center">{item.valprojeto}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -38,22 +38,21 @@ function commission() {
 
   const [value, setValue] = useState(0);
   const [sale, setSale] = useState([])
-  const [data, setData] = useState([])
+
   
-  useEffect(() => {
-    const fectchAll = async () => {
-      const commissionData = await commissionService.getCommissiomAll()
-      setData(commissionData.results)
-    }
+  // useEffect(() => {
 
-    const fectchSaleAll = async () => {
-      const saleData = await saleService.getSales()
-      setSale(saleData.results)
-    }
+  //   const fectchSaleAll = async () => {
+  //     const saleData = await saleService.getSales({ordering: 'asc'})
+  //     setSale(saleData.results)
+  //   }
 
-    fectchAll()
-    fectchSaleAll()
-  }, [])
+    
+  //   fectchSaleAll()
+  // }, [])
+
+
+  
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -77,7 +76,7 @@ function commission() {
       </TabPanel>
 
       <TabPanel value={value} index={1} >
-        <Commission data={data} />
+        <Commission />
       </TabPanel>
 
       <TabPanel value={value} index={2} >
