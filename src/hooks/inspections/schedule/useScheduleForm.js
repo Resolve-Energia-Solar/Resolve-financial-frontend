@@ -59,7 +59,7 @@ const useScheduleForm = (initialData, id) => {
       setFormData({
         schedule_creator: initialData.schedule_creator || null,
         service_id: initialData.service.id || null,
-        project_id: initialData.project || null,
+        project_id: initialData.project.id || null,
         schedule_agent_id: initialData.schedule_agent.id || null,
         schedule_date: initialData.schedule_date || '',
         schedule_start_time: startTime || '',
@@ -174,10 +174,26 @@ const useScheduleForm = (initialData, id) => {
 
       const totalHoursToAdd = (hours || 0) + (minutes || 0) / 60 + (seconds || 0) / 3600;
 
-      const startTime = new Date(formData.schedule_start_time);
+      const startTimeString = formData.schedule_start_time;
+      let startTime;
+
+      try {
+        startTime = new Date(startTimeString);
+        if (isNaN(startTime.getTime())) {
+          throw new Error('Invalid date');
+        }
+      } catch (error) {
+        console.error('Erro ao criar a data de início:', error);
+        return;
+      }
+
       const updatedStartTime = new Date(startTime.getTime() + totalHoursToAdd * 3600000);
 
-      setFormData((prev) => ({ ...prev, schedule_end_time: updatedStartTime.toISOString() }));
+      if (!isNaN(updatedStartTime.getTime())) {
+        setFormData((prev) => ({ ...prev, schedule_end_time: updatedStartTime.toISOString() }));
+      } else {
+        console.error('Erro ao calcular a data final: resultado inválido');
+      }
     }
   }, [formData.schedule_start_time, serviceData]);
 

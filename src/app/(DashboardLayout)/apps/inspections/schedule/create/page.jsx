@@ -1,27 +1,21 @@
 'use client';
-import React, {
-  useEffect,
-} from "react";
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 /* material */
-import {
-  Grid,
-  Button,
-  Stack,
-  Alert
-} from '@mui/material';
+import { Grid, Button, Stack, Alert, Tooltip } from '@mui/material';
+import HelpIcon from '@mui/icons-material/Help';
 
 /* components */
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
-import AutoCompleteAddress from "@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address";
-import AutoCompleteProject from "@/app/components/apps/inspections/auto-complete/Auto-input-Project";
+import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
+import AutoCompleteProject from '@/app/components/apps/inspections/auto-complete/Auto-input-Project';
 import AutoCompleteServiceCatalog from '@/app/components/apps/inspections/auto-complete/Auto-input-Service';
-import AutoCompleteUserSchedule from "@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule";
+import AutoCompleteUserSchedule from '@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule';
 import PageContainer from '@/app/components/container/PageContainer';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
-import FormSelect from "@/app/components/forms/form-custom/FormSelect";
-import FormTimePicker from "@/app/components/forms/form-custom/FormTimePicker";
+import FormSelect from '@/app/components/forms/form-custom/FormSelect';
+import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
 import ParentCard from '@/app/components/shared/ParentCard';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 
@@ -31,13 +25,7 @@ import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
 const ScheduleForm = () => {
   const router = useRouter();
 
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success
-  } = useSheduleForm();
+  const { formData, handleChange, handleSave, formErrors, success } = useSheduleForm();
 
   const statusOptions = [
     { value: 'Pendente', label: 'Pendente' },
@@ -52,24 +40,22 @@ const ScheduleForm = () => {
   }, [success, router]);
 
   return (
-    <PageContainer
-      title='Criação de Agendamento'
-    >
-      <Breadcrumb
-        title="Criar Agendamento"
-        description="Criador de Agendamentos"
-      />
-      {success && <Alert severity="success" sx={{ marginBottom: 3 }}>Agendamento criado com sucesso!</Alert>}
-      <ParentCard title='Novo Agendamento'>
+    <PageContainer title="Criação de Agendamento">
+      <Breadcrumb title="Criar Agendamento" description="Criador de Agendamentos" />
+      {success && (
+        <Alert severity="success" sx={{ marginBottom: 3 }}>
+          Agendamento criado com sucesso!
+        </Alert>
+      )}
+      <ParentCard title="Novo Agendamento">
         <Grid container spacing={3}>
-
           {/* Serviço */}
           <Grid item xs={12} sm={12} lg={6}>
             <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
             <AutoCompleteServiceCatalog
               onChange={(id) => handleChange('service_id', id)}
               value={formData.service_id}
-              {...(formErrors.service_id && { 
+              {...(formErrors.service_id && {
                 error: true,
                 helperText: formErrors.service_id,
               })}
@@ -84,7 +70,7 @@ const ScheduleForm = () => {
               value={formData.project_id}
               {...(formErrors.project_id && {
                 error: true,
-                helperText: formErrors.project_id
+                helperText: formErrors.project_id,
               })}
             />
           </Grid>
@@ -96,7 +82,10 @@ const ScheduleForm = () => {
               name="start_datetime"
               value={formData.schedule_date}
               onChange={(newValue) => handleChange('schedule_date', newValue)}
-              {...(formErrors.schedule_date && { error: true, helperText: formErrors.schedule_date })}
+              {...(formErrors.schedule_date && {
+                error: true,
+                helperText: formErrors.schedule_date,
+              })}
             />
           </Grid>
 
@@ -107,10 +96,13 @@ const ScheduleForm = () => {
               name="schedule_start_time"
               value={formData.schedule_start_time}
               onChange={(newValue) => handleChange('schedule_start_time', newValue)}
-              {...(formErrors.schedule_start_time && { error: true, helperText: formErrors.schedule_start_time })}
+              {...(formErrors.schedule_start_time && {
+                error: true,
+                helperText: formErrors.schedule_start_time,
+              })}
             />
           </Grid>
-          
+
           {/* Endereço */}
           <Grid item xs={12} sm={12} lg={6}>
             <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
@@ -134,7 +126,15 @@ const ScheduleForm = () => {
 
           {/* Agente de Campo */}
           <Grid item xs={12} sm={12} lg={12}>
-            <CustomFormLabel htmlFor="field_agent">Agente de Campo</CustomFormLabel>
+            <CustomFormLabel htmlFor="field_agent">
+              Agentes Disponíveis{' '}
+              <Tooltip
+                title="Os agentes de campo são alocados com base na disponibilidade de horário e proximidade geográfica. Ajuste os parâmetros para visualizar opções disponíveis."
+                placement="right-end"
+              >
+                <HelpIcon fontSize="small" />
+              </Tooltip>
+            </CustomFormLabel>
             <AutoCompleteUserSchedule
               onChange={(id) => handleChange('schedule_agent_id', id)}
               value={formData.schedule_agent_id}
@@ -145,19 +145,18 @@ const ScheduleForm = () => {
                 scheduleEndTime: formData.schedule_end_time,
                 scheduleLatitude: formData.latitude,
                 scheduleLongitude: formData.longitude,
-               }}
-              {...(formErrors.schedule_agent_id && { error: true, helperText: formErrors.schedule_agent_id })}
+              }}
+              {...(formErrors.schedule_agent_id && {
+                error: true,
+                helperText: formErrors.schedule_agent_id,
+              })}
             />
           </Grid>
 
           {/* Botão de Ação*/}
           <Grid item xs={12} sm={12} lg={12} justifyContent="flex-end" mt={2}>
             <Stack direction="row" spacing={2}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSave}
-              >
+              <Button variant="contained" color="primary" onClick={handleSave}>
                 Salvar
               </Button>
             </Stack>
@@ -166,6 +165,6 @@ const ScheduleForm = () => {
       </ParentCard>
     </PageContainer>
   );
-}
+};
 
 export default ScheduleForm;
