@@ -63,7 +63,7 @@ const RequestCE = ({ project_id = null }) => {
       console.error('Erro ao buscar dados:', error);
     }
   }
-
+  
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
   };

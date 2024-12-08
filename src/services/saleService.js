@@ -1,6 +1,7 @@
 import apiClient from './apiClient';
 
 const saleService = {
+
     getSales: async ({ ordering, params, nextPage }) => {
         const urlParams = params ? `&${params}` : '';
         const urlNextPage = nextPage ? `&page=${nextPage}` : '';
