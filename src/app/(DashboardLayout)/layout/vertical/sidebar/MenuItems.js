@@ -146,13 +146,6 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Tipos de Telhado',
-    icon: IconHomeQuestion,
-    href: '/apps/inspections/roof-type',
-    permissions: ['inspections.view_rooftype'],
-  },
-  {
-    id: uniqueId(),
     title: 'Agendamentos',
     icon: IconCalendar,
     href: '/apps/inspections/schedule',
@@ -160,16 +153,17 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Meus Agendamentos',
-    icon: IconCalendar,
-    href: '/apps/inspections/my-schedule',
-  },
-  {
-    id: uniqueId(),
     title: 'Formulários',
     icon: IconFileDescription,
     href: '/apps/inspections/form-builder',
     permissions: ['inspections.view_forms'],
+  },
+  {
+    id: uniqueId(),
+    title: 'Tipos de Telhado',
+    icon: IconHomeQuestion,
+    href: '/apps/inspections/roof-type',
+    permissions: ['inspections.view_rooftype'],
   },
   {
     id: uniqueId(),
