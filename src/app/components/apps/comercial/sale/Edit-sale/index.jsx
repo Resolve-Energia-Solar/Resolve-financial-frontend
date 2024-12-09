@@ -37,6 +37,7 @@ import { Preview } from '@mui/icons-material';
 import PreviewContractModal from '@/app/components/apps/contractSubmissions/Preview-contract';
 import SendContractButton from '@/app/components/apps/contractSubmissions/Send-contract';
 import ProjectListCards from '@/app/components/apps/project/components/projectList/cards';
+import useDocxTemplate from '@/hooks/modelTemplate/useDocxTemplate';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -306,7 +307,9 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
           <SendContractButton sale={saleData} />
         </Stack>
       </Box>
-      <PreviewContractModal sale={saleData} open={openPreview} onClose={() => setOpenPreview(false)} />
+      <PreviewContractModal open={openPreview} onClose={() => setOpenPreview(false)} userId={saleData?.customer?.id} />
+
+
     </Box>
   );
 };
