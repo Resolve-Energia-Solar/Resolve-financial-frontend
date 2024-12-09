@@ -1,6 +1,6 @@
 import { Box, Typography, Select, MenuItem, TextField, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 
-export default function CommissionDetails({ data, onChange, edit,setEdit }) {
+export default function CommissionDetails({ data, onChange, edit, setEdit }) {
 
 
   console.log(data)
@@ -26,7 +26,7 @@ export default function CommissionDetails({ data, onChange, edit,setEdit }) {
           <Typography variant="subtitle2" gutterBottom>
             Nome franquia
           </Typography>
-          <Select disabled fullWidth size="small" onChange={onChange} value={data.sale.branch.id} name='branch_id'>
+          <Select fullWidth size="small" onChange={onChange} value={data.sale.branch.id} name='branch_id' disabled={edit}>
             <MenuItem value="2">Matriz</MenuItem>
             <MenuItem value="3">Marambaia</MenuItem>
             <MenuItem value="4">Cidade Nova</MenuItem>
@@ -36,30 +36,24 @@ export default function CommissionDetails({ data, onChange, edit,setEdit }) {
           </Select>
         </Box>
 
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="subtitle2" gutterBottom>
-            Dados bancários
-          </Typography>
-          <TextField fullWidth size="small" />
-        </Box>
 
         <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
           <Box sx={{ flex: 1 }}>
             <Typography variant="subtitle2" gutterBottom>
               Ajuste
             </Typography>
-            <TextField fullWidth size="small" />
+            <TextField fullWidth size="small" value={data.difference_value} onChange={onChange} name='difference_value' disabled={edit}/>
           </Box>
           <Box sx={{ flex: 1 }}>
             <Typography variant="subtitle2" gutterBottom>
               Valor
             </Typography>
-            <TextField fullWidth size="small" value={data.installment_value} />
+            <TextField fullWidth size="small" value={data.installment_value} onChange={onChange} name='installment_value' disabled={edit}/>
           </Box>
         </Box>
 
         <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button variant="outlined" onClick={()=>setEdit(false)}>Editar</Button>
+          <Button variant="outlined" onClick={() => setEdit(false)}>Editar</Button>
           <Button variant="contained" color="primary">
             Salvar
           </Button>
@@ -104,6 +98,21 @@ export default function CommissionDetails({ data, onChange, edit,setEdit }) {
               <TableRow>
                 <TableCell>7% margem</TableCell>
                 <TableCell align="right">{data.margin_7}</TableCell>
+                <TableCell align="right">-</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Ajuste</TableCell>
+                <TableCell align="right">-</TableCell>
+                <TableCell align="right">-</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Especificação de pagamento</TableCell>
+                <TableCell align="right"></TableCell>
+                <TableCell align="right">-</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Percentual de repasse</TableCell>
+                <TableCell align="right"></TableCell>
                 <TableCell align="right">-</TableCell>
               </TableRow>
             </TableBody>

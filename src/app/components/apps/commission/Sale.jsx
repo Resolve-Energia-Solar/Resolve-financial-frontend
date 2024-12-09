@@ -10,7 +10,7 @@ import { Typography } from '@mui/material';
 
 
 function Sale({ data }) {
-
+  console.log(data)
   return (
 
     <>
@@ -65,13 +65,13 @@ function Sale({ data }) {
                 >
                   <TableCell align="center">{item.statcommi}</TableCell>
                   <TableCell align="center">{item.name}</TableCell>
-                  <TableCell align="center">{item.datac}</TableCell>
+                  <TableCell align="center">{item.signature_date}</TableCell>
                   <TableCell align="center">{item.statvistoria}</TableCell>
                   <TableCell align="center">{item.statusdoc}</TableCell>
                   <TableCell align="center">{item.statusfinanceiro}</TableCell>
-                  <TableCell align="center">{item.unidade}</TableCell>
-                  <TableCell align="center">{item.especpagam}</TableCell>
-                  <TableCell align="center">{item.valprojeto}</TableCell>
+                  <TableCell align="center">{item.branch.name}</TableCell>
+                  <TableCell align="center">{item.especpagam}</TableCell> 
+                  <TableCell align="center">{item.total_value}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

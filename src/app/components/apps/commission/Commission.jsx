@@ -32,7 +32,6 @@ function Commission({ data }) {
     setOpenDetails(true)
   }
 
-
   const handleInputChange = (e) => {
 
     console.log(e)
