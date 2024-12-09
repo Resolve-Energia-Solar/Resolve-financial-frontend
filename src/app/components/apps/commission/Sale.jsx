@@ -6,7 +6,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
-import { Typography } from '@mui/material';
+import { CircularProgress, Typography } from '@mui/material';
+import Loading from '@/app/(DashboardLayout)/loading';
 
 
 function Sale({ data }) {
@@ -41,7 +42,7 @@ function Sale({ data }) {
           </Box>
         </Box>
 
-        <TableContainer sx={{ borderRadius: '8px', boxShadow: '5' }}>
+        {data.length > 0 ? <TableContainer sx={{ borderRadius: '8px', boxShadow: '5' }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -62,22 +63,26 @@ function Sale({ data }) {
                 <TableRow
                   key={item.id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  
+
                 >
-                  <TableCell align="center">{item.statcommi}</TableCell> 
+                  <TableCell align="center">{item.statcommi}</TableCell>
                   <TableCell align="center">{item.complete_name}</TableCell>
                   <TableCell align="center">{item.signature_date}</TableCell>
                   <TableCell align="center">{item.statvistoria}</TableCell>
                   <TableCell align="center">{item.statusdoc}</TableCell>
                   <TableCell align="center">{item.statusfinanceiro}</TableCell>
                   <TableCell align="center">{item.branch.name}</TableCell>
-                  <TableCell align="center">{item.especpagam}</TableCell> 
-                  <TableCell align="center">{item.total_value}</TableCell> 
+                  <TableCell align="center">{item.especpagam}</TableCell>
+                  <TableCell align="center">{item.total_value}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-        </TableContainer>
+        </TableContainer> :
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress />
+          </Box>
+        }
       </Box>
     </>
 
