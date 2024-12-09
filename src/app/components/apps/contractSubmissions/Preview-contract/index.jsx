@@ -16,9 +16,8 @@ import useUser from '@/hooks/users/useUser';
 export default function PreviewContractDialog({ open, onClose, userId }) {
   const [previewText, setPreviewText] = useState('');
   const [isPreviewGenerated, setIsPreviewGenerated] = useState(false);
-  console.log('PreviewContractDialog', userId);
 
-  const { loading: userLoading, error: userError, userData } = useUser(userId);
+  const { loading: userLoading, error: userError, userData , reload} = useUser(userId);
 
   const cpf_format = userData?.first_document?.replace(
     /(\d{3})(\d{3})(\d{3})(\d{2})/,
@@ -34,6 +33,7 @@ export default function PreviewContractDialog({ open, onClose, userId }) {
   });
 
   const handleGeneratePreview = async () => {
+    await reload();
     const html = await generatePreview();
     setPreviewText(html);
     setIsPreviewGenerated(true);
@@ -44,6 +44,7 @@ export default function PreviewContractDialog({ open, onClose, userId }) {
     setPreviewText('');
     await handleGeneratePreview();
   };
+  
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
