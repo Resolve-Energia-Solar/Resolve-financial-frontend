@@ -30,6 +30,7 @@ export default function PreviewContractDialog({ open, onClose, userId }) {
     rg: userData?.second_document,
     cliente_nome: userData?.complete_name,
     cliente_endereco: userData?.addresses[0]?.street + ', ' + userData?.addresses[0]?.number,
+    mes_ano: new Date().toLocaleString('pt-BR', { month: 'numeric', year: 'numeric' }),
   });
 
   const handleGeneratePreview = async () => {
