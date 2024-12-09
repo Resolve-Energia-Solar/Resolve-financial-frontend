@@ -31,7 +31,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
 
   useEffect(() => {
     if (success) {
-      router.push('/');
+      router.push('/apps/commercial/sale');
     }
   }, [success, router]);
 

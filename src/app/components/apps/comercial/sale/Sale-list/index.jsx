@@ -236,7 +236,7 @@ const SaleList = () => {
 
   return (
     <Box>
-      <DashboardCards />
+      {/* <DashboardCards /> */}
       <Typography variant="h6" gutterBottom>
         Lista de Vendas
       </Typography>
@@ -445,7 +445,7 @@ const SaleList = () => {
                         <DeleteIcon fontSize="small" sx={{ mr: 1 }} />
                         Excluir
                       </MenuItem>
-                      {/* <MenuItem
+                      <MenuItem
                         onClick={() => {
                           handleGenerateProposal(item);
                           handleMenuClose();
@@ -454,7 +454,7 @@ const SaleList = () => {
                         <DescriptionIcon fontSize="small" sx={{ mr: 1 }} />
                         Gerar Proposta
                       </MenuItem>
-                      <MenuItem
+                      {/* <MenuItem
                         onClick={() => {
                           handleSendContract(item);
                           handleMenuClose();
