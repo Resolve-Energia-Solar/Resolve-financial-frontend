@@ -52,6 +52,7 @@ function commission() {
       const commissionData = await commissionService.getCommissiomAll()
       setComissions(commissionData.results)
     }
+    
     fectchComissionAll()
     fectchSaleAll()
   }, [])

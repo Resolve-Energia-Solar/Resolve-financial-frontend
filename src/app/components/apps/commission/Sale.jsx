@@ -53,7 +53,7 @@ function Sale({ data }) {
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Status financeiro</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Unidade</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Especificação de pagamento</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Valor do projeto</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Valor do projeto </TableCell>
 
               </TableRow>
             </TableHead>
@@ -62,16 +62,17 @@ function Sale({ data }) {
                 <TableRow
                   key={item.id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  
                 >
-                  <TableCell align="center">{item.statcommi}</TableCell>
-                  <TableCell align="center">{item.name}</TableCell>
+                  <TableCell align="center">{item.statcommi}</TableCell> 
+                  <TableCell align="center">{item.complete_name}</TableCell>
                   <TableCell align="center">{item.signature_date}</TableCell>
                   <TableCell align="center">{item.statvistoria}</TableCell>
                   <TableCell align="center">{item.statusdoc}</TableCell>
                   <TableCell align="center">{item.statusfinanceiro}</TableCell>
                   <TableCell align="center">{item.branch.name}</TableCell>
                   <TableCell align="center">{item.especpagam}</TableCell> 
-                  <TableCell align="center">{item.total_value}</TableCell>
+                  <TableCell align="center">{item.total_value}</TableCell> 
                 </TableRow>
               ))}
             </TableBody>

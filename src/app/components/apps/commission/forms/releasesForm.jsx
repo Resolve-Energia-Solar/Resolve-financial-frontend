@@ -1,6 +1,6 @@
 import { Box, Typography, Select, MenuItem, TextField, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 
-export default function CreateEntryForm() {
+export default function ReleasesForm() {
   return (
     <Box sx={{ p: 3, bgcolor: 'background.paper' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>

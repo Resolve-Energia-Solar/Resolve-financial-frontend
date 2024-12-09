@@ -42,13 +42,13 @@ export default function CommissionDetails({ data, onChange, edit, setEdit }) {
             <Typography variant="subtitle2" gutterBottom>
               Ajuste
             </Typography>
-            <TextField fullWidth size="small" value={data.difference_value} onChange={onChange} name='difference_value' disabled={edit}/>
+            <TextField fullWidth size="small" value={data.difference_value} onChange={onChange} name='difference_value' disabled={edit} />
           </Box>
           <Box sx={{ flex: 1 }}>
             <Typography variant="subtitle2" gutterBottom>
               Valor
             </Typography>
-            <TextField fullWidth size="small" value={data.installment_value} onChange={onChange} name='installment_value' disabled={edit}/>
+            <TextField fullWidth size="small" value={data.installment_value} onChange={onChange} name='installment_value' disabled={edit} />
           </Box>
         </Box>
 

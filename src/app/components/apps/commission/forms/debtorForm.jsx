@@ -1,6 +1,6 @@
 import { Box, Typography, Select, MenuItem, TextField, Paper } from '@mui/material';
 
-export default function SellerBalanceForm() {
+export default function DebtorForm() {
   return (
     <Paper sx={{ p: 3, maxWidth: 500, mx: 'auto' }}>
       <Typography variant="h6" gutterBottom>

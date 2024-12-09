@@ -40,7 +40,7 @@ export default function CommissionForm() {
             <Typography variant="subtitle2" gutterBottom>
               Ajuste
             </Typography>
-            <TextField fullWidth size="small" />
+            <TextField fullWidth size="small"  />
           </Box>
           <Box sx={{ flex: 1 }}>
             <Typography variant="subtitle2" gutterBottom>
@@ -58,7 +58,6 @@ export default function CommissionForm() {
         </Box>
       </Box>
 
-      {/* Right side - Summary table */}
       <Box sx={{ flex: 1 }}>
         <Typography variant="h6" gutterBottom>
           Resumo

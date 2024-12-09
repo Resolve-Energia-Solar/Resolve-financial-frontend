@@ -75,8 +75,6 @@ function Commission({ data }) {
                   onClick={() => handleClickRow(item)}
                 >
 
-
-
                   <TableCell align="center">{item.nome_cliente}</TableCell>
                   <TableCell align="center">{item.sale.branch?.name}</TableCell>
                   <TableCell align="center">{item.status}</TableCell>
@@ -92,14 +90,14 @@ function Commission({ data }) {
           </Table>
         </TableContainer>
         <Box sx={{ marginTop: '15px', display: 'flex', justifyContent: 'flex-end' }}>
-          <Button variant="text" sx={{ marginRight: '10px' }}>Editar</Button>
           <Button variant="text" onClick={toggleDrawer(true)}>Adicionar</Button>
         </Box>
-      </Box>
+        </Box>
 
       <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
         <CommissionForm />
       </Drawer>
+
       <Drawer anchor="right" open={openDetail} onClose={toggleDrawerDetails(false)}>
         <CommissionDetails data={formData} onChange={handleInputChange} edit={isEditing} setEdit={setIsEditing}/>
       </Drawer>
