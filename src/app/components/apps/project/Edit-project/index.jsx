@@ -1,15 +1,16 @@
 'use client';
-import { Tabs, Tab, Box } from '@mui/material';
+import { Tabs, Tab, Box, Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import EditProjectTab from '@/app/components/apps/project/Edit-project/tabs/EditProject';
 import { useParams } from 'next/navigation';
 import CheckListRateio from '@/app/components/apps/checklist/Checklist-list';
 import Attachments from '@/app/components/shared/Attachments';
 import documentTypeService from '@/services/documentTypeService';
+import ListRequest from '../../request/ListRequest';
 
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
-export default function EditProject({ projectId=null }) {
+export default function EditProject({ projectId = null }) {
   const params = useParams();
   let id = projectId;
   if (!projectId) id = params.id;
@@ -58,7 +59,13 @@ export default function EditProject({ projectId=null }) {
           documentTypes={documentTypes}
         />
       )}
-      {value === 3 && <div>Solicitações</div>}
+      {value === 3 &&
+        <div>
+          <ListRequest data={[]} />
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBlock: '12px' }}>
+            <Button>Novo</Button>
+          </div>
+        </div>}
     </>
   );
 }
