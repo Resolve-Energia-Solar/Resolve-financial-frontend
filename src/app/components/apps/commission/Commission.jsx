@@ -8,29 +8,38 @@ import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 import Button from '@mui/material/Button';
-import CommissionForm from './forms/commissionForm';
+import CommissionForm from './forms/CommissionForm';
 import { useState } from 'react';
 import { Drawer } from '@mui/material';
-import { useEffect } from 'react';
-import commissionService from '@/services/commissionService';
+import CommissionDetails from './forms/CommissionDetails';
 
 function Commission({ data }) {
   const [open, setOpen] = useState(false);
-  const [comissions, setComissions] = useState([])
-  const toggleDrawer = (newOpen) => {
+  const [openDetail, setOpenDetails] = useState(false);
+  const [formData, setFormData] = useState();
+  const [isEditing, setIsEditing] = useState(true);
+
+  const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
 
-  console.log(data)
+  const toggleDrawerDetails = (newOpen) => () => {
+    setOpenDetails(newOpen);
+  };
 
-  useEffect(() => {
+  const handleClickRow = (item) => {
+    setFormData(item)
+    setOpenDetails(true)
+  }
 
-    const fectchComissionAll = async () => {
-      const commissionData = await commissionService.getCommissiomAll()
-      setComissions(commissionData.results)
-    }
-    fectchComissionAll()
-  }, [])
+
+  const handleInputChange = (e) => {
+
+    console.log(e)
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
 
   return (
 
@@ -60,11 +69,15 @@ function Commission({ data }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {comissions.map((item) => (
+              {data.map((item) => (
                 <TableRow
                   key={item.id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  onClick={() => handleClickRow(item)}
                 >
+
+
+
                   <TableCell align="center">{item.nome_cliente}</TableCell>
                   <TableCell align="center">{item.sale.branch?.name}</TableCell>
                   <TableCell align="center">{item.status}</TableCell>
@@ -81,15 +94,18 @@ function Commission({ data }) {
         </TableContainer>
         <Box sx={{ marginTop: '15px', display: 'flex', justifyContent: 'flex-end' }}>
           <Button variant="text" sx={{ marginRight: '10px' }}>Editar</Button>
-          <Button variant="text" onClick={() => toggleDrawer(true)}>Adicionar</Button>
+          <Button variant="text" onClick={toggleDrawer(true)}>Adicionar</Button>
         </Box>
       </Box>
 
-      <Drawer open={open} onClose={toggleDrawer(false)}>
-
+      <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
         <CommissionForm />
       </Drawer>
+      <Drawer anchor="right" open={openDetail} onClose={toggleDrawerDetails(false)}>
+        <CommissionDetails data={formData} onChange={handleInputChange} edit={isEditing} setEdit={setIsEditing}/>
+      </Drawer>
     </>
+
 
   )
 }
