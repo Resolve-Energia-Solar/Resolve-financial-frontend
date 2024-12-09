@@ -94,6 +94,7 @@ const ColumnWithActions = ({
     });
   };
 
+  console.log('leads', statusId, boardId);
   const handleSaveLead = async () => {
     try {
       const newLeadData = {
@@ -109,8 +110,8 @@ const ColumnWithActions = ({
         second_document: leadData.second_document || '',
         birth_date: leadData.birth_date || null,
         origin_id: leadData.origin_id || null,
-        column_id: statusesList[0].id,
-        board_id: board,
+        column_id: statusId,
+        board_id: boardId,
         seller_id: typeof leadData.seller_id === 'number' ? leadData.seller_id : null,
         sdr_id: typeof leadData.sdr_id === 'number' ? leadData.sdr_id : null,
         addresses_ids: Array.isArray(leadData.addresses_ids) ? leadData.addresses_ids : [],
