@@ -1,5 +1,5 @@
 'use client';
-import { Tabs, Tab, Box, Button } from '@mui/material';
+import { Tabs, Tab, Box, Button, Drawer } from '@mui/material';
 import { useEffect, useState } from 'react';
 import EditProjectTab from '@/app/components/apps/project/Edit-project/tabs/EditProject';
 import { useParams } from 'next/navigation';
@@ -7,16 +7,22 @@ import CheckListRateio from '@/app/components/apps/checklist/Checklist-list';
 import Attachments from '@/app/components/shared/Attachments';
 import documentTypeService from '@/services/documentTypeService';
 import ListRequest from '../../request/ListRequest';
+import projectService from '@/services/projectService';
+import RequestEnergyCompany from '@/hooks/requestEnergyCompany/Request';
+import LateralForm from '../../request/LateralForm';
 
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
 export default function EditProject({ projectId = null }) {
+  const { selectedItem, isDrawerOpen, isEditing, formData, selectedValues, situationOptions, handleChangeSituation, requestData, load, due_date, handleSave, handleCloseDrawer, handleRowClick, handleEditToggle, handleInputChange } = RequestEnergyCompany()
+
   const params = useParams();
   let id = projectId;
   if (!projectId) id = params.id;
 
   const [value, setValue] = useState(0);
   const [documentTypes, setDocumentTypes] = useState([]);
+  const [projectData, setProjectData] = useState([]);
 
   const handleChangeTab = (event, newValue) => {
     setValue(newValue);
@@ -33,7 +39,19 @@ export default function EditProject({ projectId = null }) {
       }
     };
     fetchData();
+    fetchProject()
   }, []);
+
+
+  async function fetchProject() {
+    try {
+      const response = await projectService.getProjectById(id);
+      setProjectData(response);
+      console.log('Project: ', response);
+    } catch (error) {
+      console.log('Error: ', error);
+    }
+  }
 
   return (
     <>
@@ -61,10 +79,27 @@ export default function EditProject({ projectId = null }) {
       )}
       {value === 3 &&
         <div>
-          <ListRequest data={[]} />
+          {
+            (load) ? <ListRequest data={requestData} onClick={handleRowClick} /> :
+              < Loading />
+          }
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBlock: '12px' }}>
             <Button>Novo</Button>
           </div>
+          <Drawer anchor="right" open={isDrawerOpen} onClose={handleCloseDrawer}>
+            {selectedItem && situationOptions.length > 0 &&
+              <LateralForm
+                handleChangeSituation={handleChangeSituation}
+                isEditing={isEditing} formData={formData}
+                due_date={due_date}
+                handleInputChange={handleInputChange}
+                options={situationOptions}
+                multiSelectValues={selectedValues}
+                handleEditToggle={handleEditToggle}
+                handleSave={handleSave}
+              />
+            }
+          </Drawer>
         </div>}
     </>
   );
