@@ -540,7 +540,7 @@ const SaleList = () => {
         </DialogActions>
       </Dialog>
 
-      <Dialog open={true} onClose={true} fullWidth maxWidth="lg">
+      <Dialog open={false} onClose={false} fullWidth maxWidth="lg">
         <OnboardingCreateSale />
       </Dialog>
 
