@@ -8,6 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import { CircularProgress, Typography } from '@mui/material';
 import Loading from '@/app/(DashboardLayout)/loading';
+import { format } from 'date-fns';
 
 
 function Sale({ data }) {
@@ -46,7 +47,6 @@ function Sale({ data }) {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>Status de comissão</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Nome</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Data Contrato</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Status vistoria</TableCell>
@@ -65,9 +65,9 @@ function Sale({ data }) {
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
 
                 >
-                  <TableCell align="center">{item.statcommi}</TableCell>
-                  <TableCell align="center">{item.complete_name}</TableCell>
-                  <TableCell align="center">{item.signature_date}</TableCell>
+                  
+                  <TableCell align="center">{item.customer.complete_name}</TableCell>
+                  <TableCell align="center">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
                   <TableCell align="center">{item.statvistoria}</TableCell>
                   <TableCell align="center">{item.statusdoc}</TableCell>
                   <TableCell align="center">{item.statusfinanceiro}</TableCell>

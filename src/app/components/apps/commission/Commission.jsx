@@ -9,35 +9,24 @@ import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import CommissionForm from './forms/CommissionForm';
-import { useState } from 'react';
 import { Drawer } from '@mui/material';
 import CommissionDetails from './forms/CommissionDetails';
+import PaymentCommission from '@/hooks/commission/PaymentCommission';
+
 
 function Commission({ data }) {
-  const [open, setOpen] = useState(false);
-  const [openDetail, setOpenDetails] = useState(false);
-  const [formData, setFormData] = useState();
-  const [isEditing, setIsEditing] = useState(true);
 
-  const toggleDrawer = (newOpen) => () => {
-    setOpen(newOpen);
-  };
-
-  const toggleDrawerDetails = (newOpen) => () => {
-    setOpenDetails(newOpen);
-  };
-
-  const handleClickRow = (item) => {
-    setFormData(item)
-    setOpenDetails(true)
-  }
-
-  const handleInputChange = (e) => {
-
-    console.log(e)
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const {
+    toggleDrawer,
+    toggleDrawerDetails,
+    handleInputChange,
+    handleClickRow,
+    open,
+    openDetail,
+    formData,
+    isEditing,
+    setIsEditing
+  } = PaymentCommission()
 
 
   return (
@@ -92,14 +81,14 @@ function Commission({ data }) {
         <Box sx={{ marginTop: '15px', display: 'flex', justifyContent: 'flex-end' }}>
           <Button variant="text" onClick={toggleDrawer(true)}>Adicionar</Button>
         </Box>
-        </Box>
+      </Box>
 
       <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
         <CommissionForm />
       </Drawer>
 
       <Drawer anchor="right" open={openDetail} onClose={toggleDrawerDetails(false)}>
-        <CommissionDetails data={formData} onChange={handleInputChange} edit={isEditing} setEdit={setIsEditing}/>
+        <CommissionDetails data={formData} onChange={handleInputChange} edit={isEditing} setEdit={setIsEditing} />
       </Drawer>
     </>
 
