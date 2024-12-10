@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import userService from '@/services/userService';
 
 const useUser = (id) => {
@@ -6,24 +6,26 @@ const useUser = (id) => {
   const [error, setError] = useState(null);
   const [userData, setUserData] = useState(null);
 
-  useEffect(() => {
+  const fetchUser = useCallback(async () => {
     if (!id) return;
 
-    const fetchUser = async () => {
-      try {
-        const data = await userService.getUserById(id);
-        setUserData(data);
-      } catch (err) {
-        setError('Erro ao carregar o usuário');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await userService.getUserById(id);
+      setUserData(data);
+    } catch (err) {
+      setError('Erro ao carregar o usuário');
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
-  return { loading, error, userData };
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  return { loading, error, userData, reload: fetchUser };
 };
 
 export default useUser;

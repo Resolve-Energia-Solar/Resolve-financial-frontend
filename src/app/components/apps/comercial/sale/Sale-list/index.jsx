@@ -47,6 +47,7 @@ import { SaleDataContext } from '@/app/context/SaleContext';
 import ActionFlash from '../components/flashAction/actionFlash';
 import StatusPreSale from '../components/StatusPreSale';
 import { IconEyeglass } from '@tabler/icons-react';
+import OnboardingCreateSale from '../Add-sale/onboarding';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -236,7 +237,7 @@ const SaleList = () => {
 
   return (
     <Box>
-      <DashboardCards />
+      {/* <DashboardCards /> */}
       <Typography variant="h6" gutterBottom>
         Lista de Vendas
       </Typography>
@@ -454,7 +455,7 @@ const SaleList = () => {
                         <DescriptionIcon fontSize="small" sx={{ mr: 1 }} />
                         Gerar Proposta
                       </MenuItem>
-                      <MenuItem
+                      {/* <MenuItem
                         onClick={() => {
                           handleSendContract(item);
                           handleMenuClose();
@@ -462,7 +463,7 @@ const SaleList = () => {
                       >
                         <SendIcon fontSize="small" sx={{ mr: 1 }} />
                         Enviar Contrato
-                      </MenuItem>
+                      </MenuItem> */}
                     </Menu>
                   </TableCell>
                 </TableRow>
@@ -538,6 +539,11 @@ const SaleList = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog open={true} onClose={true} fullWidth maxWidth="lg">
+        <OnboardingCreateSale />
+      </Dialog>
+
 
       <Snackbar
         open={alertOpen}

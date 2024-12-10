@@ -39,8 +39,8 @@ const getStatusChip = (status) => {
   switch (status) {
     case 'P':
       return <Chip label="Pendente" color="warning" icon={<HourglassEmptyIcon />} />;
-    case 'F':
-      return <Chip label="Finalizado" color="success" icon={<CheckCircleIcon />} />;
+    case 'CO':
+      return <Chip label="Concluido" color="success" icon={<CheckCircleIcon />} />;
     case 'EA':
       return <Chip label="Em Andamento" color="primary" icon={<HourglassEmptyIcon />} />;
     case 'C':
@@ -151,7 +151,7 @@ const ProjectList = () => {
             </TableHead>
             <TableBody>
               {projectsList.map((item) => (
-                <TableRow key={item.id} hover>
+                <TableRow key={item.id} hover onClick={() => handleEditClick(item.id)} sx={{ cursor: 'pointer' }}>
                   <TableCell>{item.id}</TableCell>
                   <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                   <TableCell>{item.sale?.contract_number}</TableCell>

@@ -63,7 +63,7 @@ const TimelineList = () => {
                                         <TableCell
                                             key={indexSchedule}
                                             style={{
-                                                backgroundColor: schedule.status === 'Livre' ? 'green' : schedule.status === 'Ocupado' ? 'red' : 'Gray',
+                                                backgroundColor: schedule.status === 'Livre' ? 'green' : 'red',
                                                 color: 'white',
                                             }}
                                         >

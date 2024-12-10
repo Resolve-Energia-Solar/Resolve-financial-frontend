@@ -56,6 +56,8 @@ const EditInvoicePage = ({payment_id=null, onClosedModal = null, onRefresh = nul
     handleDeleteItem,
   } = usePaymentForm(paymentData, id);
 
+  console.log('Payment Data: ', formData);
+
   useEffect(() => {
     if (success) {
       if (onClosedModal) {
@@ -72,8 +74,6 @@ const EditInvoicePage = ({payment_id=null, onClosedModal = null, onRefresh = nul
     { value: 'F', label: 'Financiamento' },
     { value: 'PI', label: 'Parcelamento Interno' },
   ];
-
-  const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.value);
 
   const orderDate = paymentData?.created_at;
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
@@ -163,14 +163,11 @@ const EditInvoicePage = ({payment_id=null, onClosedModal = null, onRefresh = nul
         </Grid>
         <Grid item xs={12} sm={6}>
           <CustomFormLabel htmlFor="valor">Valor</CustomFormLabel>
-          <CustomTextField
-            name="value"
-            placeholder="R$ 1.000,00"
-            variant="outlined"
-            fullWidth
-            value={formattedValue}
-            onChange={(e) => handleValueChange(e, handleChange)}
+          <CustomFieldMoney
+            value={formData.value}
+            onChange={(value) => handleChange('value', value)}
             {...(formErrors.value && { error: true, helperText: formErrors.value })}
+            fullWidth
           />
         </Grid>
         <Grid item xs={12} sm={6}>

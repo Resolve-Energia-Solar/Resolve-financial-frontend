@@ -107,7 +107,7 @@ function InvoiceList() {
 
   return (
     <Box>
-      <DashboardCards />
+      {/* <DashboardCards /> */}
 
       <Stack
         mt={3}

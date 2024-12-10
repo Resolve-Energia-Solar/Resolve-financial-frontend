@@ -25,7 +25,7 @@ export default function CreateProject() {
 
   const status_options = [
     { value: 'P', label: 'Pendente' },
-    { value: 'F', label: 'Finalizado' },
+    { value: 'CO', label: 'Concluido' },
     { value: 'EA', label: 'Em Andamento' },
     { value: 'C', label: 'Cancelado' },
     { value: 'D', label: 'Distrato' },
