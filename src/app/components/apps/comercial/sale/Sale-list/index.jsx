@@ -47,6 +47,7 @@ import { SaleDataContext } from '@/app/context/SaleContext';
 import ActionFlash from '../components/flashAction/actionFlash';
 import StatusPreSale from '../components/StatusPreSale';
 import { IconEyeglass } from '@tabler/icons-react';
+import OnboardingCreateSale from '../Add-sale/onboarding';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -538,6 +539,11 @@ const SaleList = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog open={true} onClose={true} fullWidth maxWidth="lg">
+        <OnboardingCreateSale />
+      </Dialog>
+
 
       <Snackbar
         open={alertOpen}
