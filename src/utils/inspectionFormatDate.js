@@ -1,3 +1,11 @@
+const formatDateTime = (dateTimeString) => {
+  if (!dateTimeString) return null;
+  const [date, time] = dateTimeString.split('T');
+  const formattedDate = formatDate(date);
+  const formattedTime = formatTime(time);
+  return `${formattedDate} - ${formattedTime}`;
+};
+
 const formatDate = (dateString) => {
   if (!dateString) return null;
   const [year, month, day] = dateString.split('-');
@@ -47,4 +55,6 @@ const formatTimeToSend = (timeString) => {
   return `${hours}:${minutes}`;
 };
 
-export { formatDate, formatDateTime, formatTime, formatGetTime, formatTimeToSend };
+
+export { formatDateTime, formatDate, formatTime, formatGetTime, formatTimeToSend };
+

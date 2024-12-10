@@ -136,24 +136,6 @@ const FormBuilderForm = () => {
             />
           </Grid>
 
-          {/* Service */}
-          <Grid item xs={12} sm={12} lg={6}>
-            <CustomFormLabel
-              htmlFor="service_id"
-            >
-              Serviço
-            </CustomFormLabel>
-            <AutoCompleteServiceCatalog
-              onChange={(id) => handleChange('service_id', id)}
-              value={formData.service_id}
-              fullWidth
-              {...(formErrors.service_id && {
-                error: true,
-                helperText: formErrors.service_id,
-              })}
-            />
-          </Grid>
-          
           {/* Add Field Button */}
           <Grid item xs={12} sm={12} lg={12} justifyContent="center" mt={2}>
             <Stack direction="row" spacing={2} justifyContent="center">

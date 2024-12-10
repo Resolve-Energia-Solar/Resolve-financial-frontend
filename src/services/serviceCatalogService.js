@@ -31,6 +31,16 @@ const serviceCatalogService = {
     }
   },
 
+  getServiceCatalogByFormId: async (formId) => {
+    try {
+      const response = await apiClient.get(`/api/services/?form=${formId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar serviço com form_id ${formId}:`, error);
+      throw error;
+    }
+  },
+
   updateServiceCatalog: async (id, data) => {
     try {
       const response = await apiClient.patch(`/api/services/${id}/`, data);

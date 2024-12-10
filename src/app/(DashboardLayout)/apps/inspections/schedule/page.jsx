@@ -312,7 +312,7 @@ const SchedulingList = () => {
                           <TableCell>{item.id}</TableCell>
                           <TableCell>{formatDate(item.schedule_date)}</TableCell>
                           <TableCell>{formatTime(item.schedule_start_time)}</TableCell>
-                          <TableCell>{item.project}</TableCell>
+                          <TableCell>{item.project.project_number}</TableCell>
                           <TableCell>{item.service.name}</TableCell>
                           <TableCell>{item.schedule_agent.complete_name}</TableCell>
                           <TableCell>{item.status}</TableCell>

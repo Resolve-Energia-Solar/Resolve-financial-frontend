@@ -20,6 +20,7 @@ import ParentCard from '@/app/components/shared/ParentCard';
 /* hooks */
 import useServiceCatalog from '@/hooks/inspections/service-catalog/useServiceCatalog';
 import useServiceCatalogForm from '@/hooks/inspections/service-catalog/useServiceCatalogForm';
+import AutoCompleteFormBuilder from '@/app/components/apps/inspections/auto-complete/Auto-Input-FormBuilder';
 
 const ServiceCatalogForm = () => {
   const params = useParams();
@@ -92,6 +93,17 @@ const ServiceCatalogForm = () => {
               onChange={(id) => handleChange('deadline_id', id)}
               value={formData.deadline_id}
               {...(formErrors.deadline_id && { error: true, helperText: formErrors.deadline_id })}
+            />
+          </Grid>
+
+          {/* Formulário */}
+          <Grid item xs={12}>
+            <CustomFormLabel htmlFor="form">Formulário</CustomFormLabel>
+            <AutoCompleteFormBuilder
+              fullWidth
+              onChange={(id) => handleChange('form_id', id)}
+              value={formData.form_id}
+              {...(formErrors.form_id && { error: true, helperText: formErrors.form_id })}
             />
           </Grid>
         </Grid>

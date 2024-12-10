@@ -21,6 +21,22 @@ const scheduleService = {
     }
   },
 
+  getMySchedules: async ({ ordering, params, nextPage, userId }) => {
+    const urlParams = params ? `&${params}` : '';
+    const urlNextPage = nextPage ? `&page=${nextPage}` : '';
+    try {
+      const response = await apiClient.get(
+        `/api/schedule/?schedule_agent=${userId}&ordering=${
+          ordering || ''
+        }${urlParams}${urlNextPage}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar meus agendamentos:', error);
+      throw error;
+    }
+  },
+
   updateSchedule: async (id, data) => {
     try {
       const response = await apiClient.put(`/api/schedule/${id}/`, data);

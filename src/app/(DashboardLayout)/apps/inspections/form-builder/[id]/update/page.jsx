@@ -12,7 +12,8 @@ import {
   Button,
   Stack,
   Alert,
-  MenuItem
+  MenuItem,
+  Typography
 } from "@mui/material";
 
 /* components */
@@ -135,23 +136,13 @@ const FormBuilderForm = () => {
           </Grid>
 
           {/* Service */}
-          <Grid item xs={12} sm={12} lg={6}>
-            <CustomFormLabel
-              htmlFor="service_id"
-            >
-              Serviço
-            </CustomFormLabel>
-            <AutoCompleteServiceCatalog
-              onChange={(id) => handleChange('service_id', id)}
-              value={formData.service_id}
-              required={true}
-              fullWidth
-              {...(formErrors.service_id && {
-                error: true,
-                helperText: formErrors.service_id,
-              })}
-            />
-          </Grid>
+          {formData.service && (
+            <Grid item xs={12} sm={12} lg={6}>
+              <Typography variant="h6" gutterBottom>
+                Serviço: {formData.service.name}
+              </Typography>
+            </Grid>
+          )}
 
           {/* Add Field Button */}
           <Grid item xs={12} sm={12} lg={12} justifyContent="center" mt={2}>

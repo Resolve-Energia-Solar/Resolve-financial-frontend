@@ -9,10 +9,13 @@ const useFormBuilderForm = (initialData, id) => {
     service: '',
     form_name: '',
     form_fields: [],
+    service: null,
     created_at: '',
   });
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [dataReceived, setDataReceived] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -34,25 +37,30 @@ const useFormBuilderForm = (initialData, id) => {
   };
 
   const handleSave = async () => {
+    setLoading(true);
+
     const fieldsJSON = JSON.stringify(formData.form_fields);
 
     const dataToSend = {
-      service_id: formData.service_id,
       name: formData.form_name,
       campos: fieldsJSON,
     };
 
-    console.log(dataToSend);
+    console.log('dataToSend', dataToSend);
     try {
+      let response;
       if (id) {
-        await formBuilderService.updateForm(id, dataToSend);
+        response = await formBuilderService.updateForm(id, dataToSend);
       } else {
-        await formBuilderService.createForm(dataToSend);
+        response = await formBuilderService.createForm(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);
+      setLoading(false);
+      setDataReceived(response);
     } catch (err) {
       setSuccess(false);
+      setLoading(false);
       setFormErrors(err.response?.data || {});
       console.error(err.response?.data || err);
     }
@@ -64,6 +72,8 @@ const useFormBuilderForm = (initialData, id) => {
     handleSave,
     formErrors,
     success,
+    loading,
+    dataReceived,
   };
 };
 

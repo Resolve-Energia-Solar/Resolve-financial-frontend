@@ -1,10 +1,20 @@
 import apiClient from './apiClient';
+import serviceCatalogService from './serviceCatalogService';
 
 const formBuilderService = {
   getForms: async () => {
     try {
       const response = await apiClient.get('/api/forms/');
-      return response.data;
+      const formattedResults = await Promise.all(
+        response.data.results.map(async (item) => {
+          const serviceData = await serviceCatalogService.getServiceCatalogByFormId(item.id);
+          return {
+            ...item,
+            service: serviceData.results[0] || null,
+          };
+        }),
+      );
+      return formattedResults;
     } catch (error) {
       console.error('Erro ao buscar formulários:', error);
       throw error;
@@ -14,7 +24,11 @@ const formBuilderService = {
   getFormById: async (id) => {
     try {
       const response = await apiClient.get(`/api/forms/${id}/`);
-      return response.data;
+      const serviceData = await serviceCatalogService.getServiceCatalogByFormId(id);
+      return {
+        ...response.data,
+        service: serviceData.results[0] || null,
+      };
     } catch (error) {
       console.error(`Erro ao buscar formulário com id ${id}:`, error);
       throw error;

@@ -34,7 +34,7 @@ const Menuitems = [
     icon: IconLayoutKanban,
     href: '/apps/boards/crm',
     chip: 'Novo',
-    chipColor: 'secondary'
+    chipColor: 'secondary',
   },
   {
     id: uniqueId(),
@@ -86,30 +86,35 @@ const Menuitems = [
     title: 'Prazos',
     icon: IconClockQuestion,
     href: '/apps/inspections/deadline',
+    permissions: ['inspections.view_deadline'],
   },
   {
     id: uniqueId(),
     title: 'Serviços',
     icon: IconBoxMultiple,
     href: '/apps/inspections/service-catalog',
-  },
-  {
-    id: uniqueId(),
-    title: 'Tipos de Telhado',
-    icon: IconHomeQuestion,
-    href: '/apps/inspections/roof-type',
+    permissions: ['inspections.view_service'],
   },
   {
     id: uniqueId(),
     title: 'Agendamentos',
     icon: IconCalendar,
     href: '/apps/inspections/schedule',
+    permissions: ['inspections.view_schedule'],
   },
   {
     id: uniqueId(),
     title: 'Formulários',
     icon: IconFileDescription,
     href: '/apps/inspections/form-builder',
+    permissions: ['inspections.view_forms'],
+  },
+  {
+    id: uniqueId(),
+    title: 'Tipos de Telhado',
+    icon: IconHomeQuestion,
+    href: '/apps/inspections/roof-type',
+    permissions: ['inspections.view_rooftype'],
   },
   {
     id: uniqueId(),

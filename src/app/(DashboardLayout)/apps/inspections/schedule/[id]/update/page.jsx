@@ -1,32 +1,26 @@
 'use client';
-import React, {
-  useEffect,
-} from "react";
+import React, { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 
 /* material */
-import {
-  Grid,
-  Button,
-  Stack,
-  Alert
-} from '@mui/material';
+import { Grid, Button, Stack, Alert, Icon, Tooltip } from '@mui/material';
+import HelpIcon from '@mui/icons-material/Help';
 
 /* components */
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
-import AutoCompleteAddress from "@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address";
-import AutoCompleteProject from "@/app/components/apps/inspections/auto-complete/Auto-input-Project";
+import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
+import AutoCompleteProject from '@/app/components/apps/inspections/auto-complete/Auto-input-Project';
 import AutoCompleteServiceCatalog from '@/app/components/apps/inspections/auto-complete/Auto-input-Service';
-import AutoCompleteUserSchedule from "@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule";
+import AutoCompleteUserSchedule from '@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule';
 import PageContainer from '@/app/components/container/PageContainer';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
-import FormSelect from "@/app/components/forms/form-custom/FormSelect";
-import FormTimePicker from "@/app/components/forms/form-custom/FormTimePicker";
+import FormSelect from '@/app/components/forms/form-custom/FormSelect';
+import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
 import ParentCard from '@/app/components/shared/ParentCard';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 
 /* hooks */
-import useSchedule from "@/hooks/inspections/schedule/useSchedule";
+import useSchedule from '@/hooks/inspections/schedule/useSchedule';
 import useScheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
 
 const ScheduleForm = () => {
@@ -35,13 +29,10 @@ const ScheduleForm = () => {
 
   const { loading, error, scheduleData } = useSchedule(id);
 
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success
-  } = useScheduleForm(scheduleData, id);
+  const { formData, handleChange, handleSave, formErrors, success } = useScheduleForm(
+    scheduleData,
+    id,
+  );
 
   const statusOptions = [
     { value: 'Pendente', label: 'Pendente' },
@@ -53,12 +44,13 @@ const ScheduleForm = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <PageContainer
-      title={'Edição de Agendamento'}
-      description={'Editor de Agendamento'}
-    >
+    <PageContainer title={'Edição de Agendamento'} description={'Editor de Agendamento'}>
       <Breadcrumb title={'Editar Agendamento'} />
-      {success && <Alert severity="success" sx={{ marginBottom: 3 }}>O agendamento foi atualizado com sucesso!</Alert>}
+      {success && (
+        <Alert severity="success" sx={{ marginBottom: 3 }}>
+          O agendamento foi atualizado com sucesso!
+        </Alert>
+      )}
       <ParentCard title={'Agendamento'}>
         <Grid container spacing={3}>
           {/* Serviço */}
@@ -67,7 +59,7 @@ const ScheduleForm = () => {
             <AutoCompleteServiceCatalog
               onChange={(id) => handleChange('service_id', id)}
               value={formData.service_id}
-              {...(formErrors.service_id && { 
+              {...(formErrors.service_id && {
                 error: true,
                 helperText: formErrors.service_id,
               })}
@@ -82,7 +74,7 @@ const ScheduleForm = () => {
               value={formData.project_id}
               {...(formErrors.project_id && {
                 error: true,
-                helperText: formErrors.project_id
+                helperText: formErrors.project_id,
               })}
             />
           </Grid>
@@ -94,7 +86,10 @@ const ScheduleForm = () => {
               name="start_datetime"
               value={formData.schedule_date}
               onChange={(newValue) => handleChange('schedule_date', newValue)}
-              {...(formErrors.schedule_date && { error: true, helperText: formErrors.schedule_date })}
+              {...(formErrors.schedule_date && {
+                error: true,
+                helperText: formErrors.schedule_date,
+              })}
             />
           </Grid>
 
@@ -105,7 +100,10 @@ const ScheduleForm = () => {
               name="schedule_start_time"
               value={formData.schedule_start_time}
               onChange={(newValue) => handleChange('schedule_start_time', newValue)}
-              {...(formErrors.schedule_start_time && { error: true, helperText: formErrors.schedule_start_time })}
+              {...(formErrors.schedule_start_time && {
+                error: true,
+                helperText: formErrors.schedule_start_time,
+              })}
             />
           </Grid>
 
@@ -121,7 +119,15 @@ const ScheduleForm = () => {
 
           {/* Agente de Campo */}
           <Grid item xs={12} sm={12} lg={4}>
-            <CustomFormLabel htmlFor="field_agent">Agente de Campo</CustomFormLabel>
+            <CustomFormLabel htmlFor="field_agent">
+              Agentes Disponíveis{' '}
+              <Tooltip
+                title="Os agentes de campo são alocados com base na disponibilidade de horário e proximidade geográfica. Ajuste os parâmetros para visualizar opções disponíveis."
+                placement="right-end"
+              >
+                <HelpIcon fontSize="small" />
+              </Tooltip>
+            </CustomFormLabel>
             <AutoCompleteUserSchedule
               onChange={(id) => handleChange('schedule_agent_id', id)}
               value={formData.schedule_agent_id}
@@ -132,8 +138,11 @@ const ScheduleForm = () => {
                 scheduleEndTime: formData.schedule_end_time,
                 scheduleLatitude: formData.latitude,
                 scheduleLongitude: formData.longitude,
-               }}
-              {...(formErrors.schedule_agent_id && { error: true, helperText: formErrors.schedule_agent_id })}
+              }}
+              {...(formErrors.schedule_agent_id && {
+                error: true,
+                helperText: formErrors.schedule_agent_id,
+              })}
             />
           </Grid>
 
