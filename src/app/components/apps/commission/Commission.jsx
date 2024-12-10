@@ -12,20 +12,24 @@ import CommissionForm from './forms/CommissionForm';
 import { Drawer } from '@mui/material';
 import CommissionDetails from './forms/CommissionDetails';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
+import { useState } from 'react';
 
 
 function Commission({ data }) {
 
+
+
   const {
     toggleDrawer,
     toggleDrawerDetails,
-    handleInputChange,
+    handleInputChange, 
     handleClickRow,
     open,
     openDetail,
     formData,
     isEditing,
-    setIsEditing
+    setIsEditing,
+    row
   } = PaymentCommission()
 
 
@@ -60,10 +64,10 @@ function Commission({ data }) {
               {data.map((item) => (
                 <TableRow
                   key={item.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  id={item.id}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && '#ECF2FF'  }}
                   onClick={() => handleClickRow(item)}
                 >
-
                   <TableCell align="center">{item.nome_cliente}</TableCell>
                   <TableCell align="center">{item.sale.branch?.name}</TableCell>
                   <TableCell align="center">{item.status}</TableCell>

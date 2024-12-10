@@ -7,16 +7,18 @@ export default function PaymentCommission() {
     const [openDetail, setOpenDetails] = useState(false);
     const [formData, setFormData] = useState();
     const [isEditing, setIsEditing] = useState(true);
-
+    const [row, setRow] = useState();
     const toggleDrawer = (newOpen) => () => {
         setOpen(newOpen);
     };
 
     const toggleDrawerDetails = (newOpen) => () => {
         setOpenDetails(newOpen);
+        setRow(null);
     };
 
     const handleClickRow = (item) => {
+        setRow(item.id)
         setFormData(item)
         setOpenDetails(true)
     }
@@ -28,6 +30,7 @@ export default function PaymentCommission() {
         setFormData({ ...formData, [name]: value });
     };
 
+    
 
 
     return {
@@ -39,6 +42,7 @@ export default function PaymentCommission() {
         openDetail,
         isEditing,
         formData,
-        open
+        open,
+        row
     }
 }

@@ -1,4 +1,3 @@
-
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -7,9 +6,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import { CircularProgress, Typography } from '@mui/material';
-import Loading from '@/app/(DashboardLayout)/loading';
 import { format } from 'date-fns';
-
 
 function Sale({ data }) {
   console.log(data)
@@ -33,6 +30,7 @@ function Sale({ data }) {
                 <Typography variant='caption'>Liberado</Typography>
                 <Typography variant='h5'>R$ 7.000.00,00</Typography>
               </Box>
+
             </Box>
           </Box>
           <Box sx={{ p: 2, backgroundColor: '#FFA07A', boxShadow: '2', border: 'none', width: '35%', paddingLeft: '25px' }}>
@@ -62,8 +60,7 @@ function Sale({ data }) {
               {data.map((item) => (
                 <TableRow
                   key={item.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }/*, backgroundColor: row === item.id && '#ECF2FF' */}}
                 >
                   
                   <TableCell align="center">{item.customer.complete_name}</TableCell>

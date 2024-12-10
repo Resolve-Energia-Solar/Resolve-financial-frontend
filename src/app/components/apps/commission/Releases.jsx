@@ -10,36 +10,14 @@ import { Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import ReleasesForm from './forms/ReleasesForm';
 import { Drawer } from '@mui/material';
-import { useState } from 'react';
+import PaymentCommission from '@/hooks/commission/PaymentCommission';
+
 function Releases({ data }) {
 
-
-  const [open, setOpen] = useState(false);
-  const [openDetail, setOpenDetails] = useState(false);
-  const [formData, setFormData] = useState();
-  const [isEditing, setIsEditing] = useState(true);
-
-  const toggleDrawer = (newOpen) => () => {
-    setOpen(newOpen);
-  };
-
-  const toggleDrawerDetails = (newOpen) => () => {
-    setOpenDetails(newOpen);
-  };
-
-  const handleClickRow = (item) => {
-    setFormData(item)
-    setOpenDetails(true)
-  }
-
-  const handleInputChange = (e) => {
-
-    console.log(e)
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-
+  const {
+    toggleDrawer,
+    open
+  } = PaymentCommission()
 
 
   return (
@@ -103,7 +81,7 @@ function Releases({ data }) {
                   <TableCell align="center">{row.categoria}</TableCell>
                   <TableCell align="center">{row.n_parcelas}</TableCell>
                   <TableCell align="center">{row.percentual_pagamento}</TableCell>
-                  <TableCell align="center">{row.data_pagamento}</TableCell>
+                  <TableCell align="center">{row.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
                   <TableCell align="center">{row.reajuste}</TableCell>
                 </TableRow>
               ))}
