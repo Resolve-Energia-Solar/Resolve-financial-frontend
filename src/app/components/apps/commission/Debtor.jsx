@@ -7,40 +7,17 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
-import DataDebtor from './debtor.json';
 import Button from '@mui/material/Button';
-import { useState } from 'react';
 import { Drawer } from '@mui/material';
 import DebtorForm from './forms/DebtorForm';
-
+import PaymentCommission from '@/hooks/commission/PaymentCommission';
 
 function Debtor({ data }) {
 
-
-    const [open, setOpen] = useState(false);
-    const [openDetail, setOpenDetails] = useState(false);
-    const [formData, setFormData] = useState();
-    const [isEditing, setIsEditing] = useState(true);
-
-    const toggleDrawer = (newOpen) => () => {
-        setOpen(newOpen);
-    };
-
-    const toggleDrawerDetails = (newOpen) => () => {
-        setOpenDetails(newOpen);
-    };
-
-    const handleClickRow = (item) => {
-        setFormData(item)
-        setOpenDetails(true)
-    }
-
-    const handleInputChange = (e) => {
-
-        console.log(e)
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+    const {
+        toggleDrawer,
+        open,
+    } = PaymentCommission()
 
 
     return (
@@ -89,7 +66,7 @@ function Debtor({ data }) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {DataDebtor.map((row) => (
+                            {data.map((row) => (
                                 <TableRow
                                     key={row.name}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -97,7 +74,7 @@ function Debtor({ data }) {
                                     <TableCell align="center">{row.unidade}</TableCell>
                                     <TableCell align="center">{row.valor}</TableCell>
                                     <TableCell align="center">{row.categoria}</TableCell>
-                                    <TableCell align="center">{row.data_lancamento}</TableCell>
+                                    <TableCell align="center">{row.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
                                     <TableCell align="center">{row.status}</TableCell>
                                 </TableRow>
                             ))}
