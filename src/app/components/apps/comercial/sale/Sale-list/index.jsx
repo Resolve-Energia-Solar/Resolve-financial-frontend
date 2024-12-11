@@ -540,10 +540,14 @@ const SaleList = () => {
         </DialogActions>
       </Dialog>
 
-      <Dialog open={false} onClose={false} fullWidth maxWidth="lg">
+      <Dialog
+        open={false}
+        onClose={false}
+        fullWidth
+        maxWidth="lg"
+      >
         <OnboardingCreateSale />
       </Dialog>
-
 
       <Snackbar
         open={alertOpen}

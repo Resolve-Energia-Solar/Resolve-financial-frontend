@@ -29,7 +29,6 @@ import EditInvoicePage from '../../Edit-invoice';
 import DetailInvoicePage from '../../Invoice-detail';
 import CreateInvoice from '../../Add-invoice';
 import saleService from '@/services/saleService';
-import PaymentCardOnboardingSale from '@/app/components/apps/invoice/components/paymentList/cardSaleOnboarding';
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -43,7 +42,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   },
 }));
 
-const PaymentCard = ({ sale = null }) => {
+const PaymentCardOnboardingSale = ({ sale = null }) => {
   const theme = useTheme();
   const [paymentsList, setPaymentsList] = useState([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
@@ -81,19 +80,6 @@ const PaymentCard = ({ sale = null }) => {
     };
 
     fetchData();
-    const fetchSale = async () => {
-      try {
-        const data = await saleService.getTotalPaidSales(sale);
-        console.log(data);
-        setSaleData(data);
-      } catch (err) {
-        setError('Erro ao carregar a venda');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSale();
   }, [sale, refresh]);
 
   const handleAddPayment = () => {
@@ -265,29 +251,6 @@ const PaymentCard = ({ sale = null }) => {
             })}
       </Grid>
 
-      <Box p={3} backgroundColor="primary.light" mt={3}>
-        <Box display="flex" justifyContent="end" gap={3} mb={3}>
-          <Typography variant="body1" fontWeight={600}>
-            Pago:
-          </Typography>
-          <Typography variant="body1" fontWeight={600}>
-            {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-              saleData?.total_paid || 0,
-            )}
-          </Typography>
-        </Box>
-        <Box display="flex" justifyContent="end" gap={3}>
-          <Typography variant="body1" fontWeight={600}>
-            Total a Pagar:
-          </Typography>
-          <Typography variant="body1" fontWeight={600}>
-          {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-              saleData?.total_value || 0,
-            )}
-          </Typography>
-        </Box>
-      </Box>
-
       {/* Modal de Adicionar Pagamento */}
       <Dialog
         open={createModalOpen}
@@ -363,4 +326,4 @@ const PaymentCard = ({ sale = null }) => {
   );
 };
 
-export default PaymentCard;
+export default PaymentCardOnboardingSale;

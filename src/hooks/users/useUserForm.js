@@ -99,7 +99,8 @@ const useUserForm = (initialData, id) => {
       resignation_date: formData.resignation_date ? formatDate(formData.resignation_date) : null,
       person_type: formData.person_type,
       second_document: formData.second_document,
-      phone: formData.phone
+      phone: formData.phone,
+      phone_numbers_ids: [8]
     };
 
     console.log('dataToSend', dataToSend);
