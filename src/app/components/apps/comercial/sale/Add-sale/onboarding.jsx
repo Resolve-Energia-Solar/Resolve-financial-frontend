@@ -26,15 +26,15 @@ import ChecklistSales from '../../../checklist/Checklist-list/ChecklistSales';
 
 const steps = ['Dados do Cliente', 'Produtos', 'Financeiro', 'Documentos'];
 
-export default function OnboardingCreateSale({ onClose=null }) {
+export default function OnboardingCreateSale({ onClose=null, onEdit=null }) {
   return (
     <OnboardingSaleContextProvider>
-      <OnboardingCreateSaleContent />
+      <OnboardingCreateSaleContent onClose={onClose} onEdit={onEdit} />
     </OnboardingSaleContextProvider>
   );
 }
 
-function OnboardingCreateSaleContent() {
+function OnboardingCreateSaleContent({ onClose=null, onEdit=null }) {
   const [activeStep, setActiveStep] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDialogPaymentOpen, setIsDialogPaymentOpen] = useState(false);
@@ -212,7 +212,7 @@ function OnboardingCreateSaleContent() {
         <Fragment>
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Box sx={{ flex: '1 1 auto' }} />
-            <Button onClick={() => onClose()}>Finalizar</Button>
+            <Button onClick={() => onEdit(saleId)}>Finalizar</Button>
           </Box>
         </Fragment>
       ) : (

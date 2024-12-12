@@ -548,7 +548,7 @@ const SaleList = () => {
         fullWidth
         maxWidth="lg"
       >
-        <OnboardingCreateSale onClose={() => setOpenCreateSale(false)} />
+        <OnboardingCreateSale onClose={() => setOpenCreateSale(false)} onEdit={handleEditClick} />
       </Dialog>
 
       <Snackbar
