@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 
 import { Box, Button, CardContent, Drawer, Grid, Typography } from '@mui/material';
-import { FilterAlt } from '@mui/icons-material';
+import { FilterAlt, Close } from '@mui/icons-material';
 
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
@@ -59,9 +59,12 @@ export default function CategoryDrawerFilters() {
       <Drawer open={open} onClose={toggleDrawer(false)} anchor="right">
         <Box role="presentation" sx={{ padding: 2, maxWidth: '600px' }}>
           <CardContent>
-            <Typography variant="h5" sx={{ marginBottom: '25px' }}>
-              Filtros
-            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+              <Typography variant="h5" sx={{ marginBottom: '25px' }}>
+                Filtros
+              </Typography>
+              <Close onClick={toggleDrawer(false)} />
+            </Box>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <CustomFormLabel htmlFor="categoryName">Nome da Categoria</CustomFormLabel>
@@ -70,20 +73,32 @@ export default function CategoryDrawerFilters() {
                   onChange={handleNameChange}
                   placeholder="Nome da categoria"
                   error={false}
+                  fullWidth
                   helperText=""
                 />
               </Grid>
             </Grid>
           </CardContent>
           <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginTop: 2,
+                minWidth: {
+                  xs: '200px',
+                  sm: '300px',
+                  md: '500px',
+                },
+              }}
+            >
               <Grid container spacing={1}>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <Button variant="outlined" fullWidth onClick={clearFilters}>
                     Limpar Filtros
                   </Button>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <Button variant="contained" fullWidth onClick={applyFilters}>
                     Aplicar Filtros
                   </Button>
