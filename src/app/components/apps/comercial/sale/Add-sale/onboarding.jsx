@@ -21,10 +21,12 @@ import useSaleForm from '@/hooks/sales/useSaleForm';
 import { useSelector } from 'react-redux';
 import saleService from '@/services/saleService';
 import paymentService from '@/services/paymentService';
+import projectService from '@/services/projectService';
+import ChecklistSales from '../../../checklist/Checklist-list/ChecklistSales';
 
 const steps = ['Dados do Cliente', 'Produtos', 'Financeiro', 'Documentos'];
 
-export default function OnboardingCreateSale() {
+export default function OnboardingCreateSale({ onClose=null }) {
   return (
     <OnboardingSaleContextProvider>
       <OnboardingCreateSaleContent />
@@ -38,6 +40,8 @@ function OnboardingCreateSaleContent() {
   const [isDialogPaymentOpen, setIsDialogPaymentOpen] = useState(false);
   const [isDialogDocumentOpen, setIsDialogDocumentOpen] = useState(false);
   const [totalPayments, setTotalPayments] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [projectsList, setProjectsList] = useState([]);
 
   const user = useSelector((state) => state.user);
 
@@ -178,9 +182,9 @@ function OnboardingCreateSaleContent() {
       case 2:
         return <PaymentCard sale={saleId} />;
       case 3:
-        return <div>Finalize your ad creation process.</div>;
+        return <ChecklistSales saleId={saleId} />;
       default:
-        return <div>Unknown step</div>;
+        return <div>Parabéns, você finalizou o processo de venda!</div>;
     }
   };
 
@@ -206,10 +210,9 @@ function OnboardingCreateSaleContent() {
 
       {activeStep === steps.length ? (
         <Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>All steps completed - you&apos;re finished</Typography>
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Box sx={{ flex: '1 1 auto' }} />
-            <Button>Finalizar</Button>
+            <Button onClick={() => onClose()}>Finalizar</Button>
           </Box>
         </Fragment>
       ) : (
