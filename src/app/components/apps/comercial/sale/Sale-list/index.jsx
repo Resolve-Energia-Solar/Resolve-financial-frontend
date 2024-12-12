@@ -541,8 +541,8 @@ const SaleList = () => {
       </Dialog>
 
       <Dialog
-        open={false}
-        onClose={false}
+        open={true}
+        onClose={true}
         fullWidth
         maxWidth="lg"
       >

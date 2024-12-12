@@ -4,6 +4,8 @@ import { createContext, useState } from 'react';
 export const OnboardingSaleContext = createContext();
 
 export const OnboardingSaleContextProvider = ({ children }) => {
+  const [saleId, setSaleId] = useState(null);
+  const [totalValue, setTotalValue] = useState(0);
   const [customerId, setCustomerId] = useState(null);
   const [productIds, setProductIds] = useState([]);
   const [financialIds, setFinancialIds] = useState([]);
@@ -14,9 +16,25 @@ export const OnboardingSaleContextProvider = ({ children }) => {
   console.log('productIds', productIds);
 
   return (
-    <OnboardingSaleContext.Provider value={{ financialIds, setFinancialIds, productIds, setProductIds, customerId, setCustomerId, checklistIds, setChecklistIds, isCustomerClicked, setIsCustomerClicked }}>
+    <OnboardingSaleContext.Provider
+      value={{
+        saleId,
+        setSaleId,
+        totalValue,
+        setTotalValue,
+        customerId,
+        setCustomerId,
+        productIds,
+        setProductIds,
+        financialIds,
+        setFinancialIds,
+        checklistIds,
+        setChecklistIds,
+        isCustomerClicked,
+        setIsCustomerClicked,
+      }}
+    >
       {children}
     </OnboardingSaleContext.Provider>
   );
 };
-

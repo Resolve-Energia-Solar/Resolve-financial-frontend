@@ -12,6 +12,10 @@ const saleService = {
         const response = await apiClient.get(`/api/sales/?q=${fullName}`);
         return response.data;
     },
+    getSaleByIdWithPendingContract: async (id) => {
+        const response = await apiClient.get(`/api/sales/${id}/?fields=can_generate_contract`);
+        return response.data;
+    },
     getSalesProducts: async (id) => {
         const response = await apiClient.get(`/api/sales/${id}/?fields=sale_products`);
         return response.data;
