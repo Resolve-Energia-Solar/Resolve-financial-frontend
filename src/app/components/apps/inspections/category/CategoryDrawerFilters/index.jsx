@@ -6,6 +6,7 @@ import { FilterAlt, Close } from '@mui/icons-material';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { CategoryDataContext } from '@/app/context/Inspection/CategoryContext';
+import AutoCompleteUserFilter from '../../auto-complete/Auto-Input-UserFilter';
 
 export default function CategoryDrawerFilters() {
   const [open, setOpen] = useState(false);
@@ -32,6 +33,10 @@ export default function CategoryDrawerFilters() {
 
   const handleNameChange = (e) => {
     setTempFilters((prev) => ({ ...prev, name: e.target.value }));
+  };
+
+  const handleMemberChange = (event, value) => {
+    setTempFilters((prev) => ({ ...prev, members: value ? value.id : null }));
   };
 
   const clearFilters = () => {
@@ -67,7 +72,7 @@ export default function CategoryDrawerFilters() {
             </Box>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <CustomFormLabel htmlFor="categoryName">Nome da Categoria</CustomFormLabel>
+                <CustomFormLabel htmlFor="categoryName">Categoria</CustomFormLabel>
                 <CustomTextField
                   value={tempFilters.name}
                   onChange={handleNameChange}
@@ -75,6 +80,16 @@ export default function CategoryDrawerFilters() {
                   error={false}
                   fullWidth
                   helperText=""
+                />
+              </Grid>
+            </Grid>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="categoryName">Membro</CustomFormLabel>
+                <AutoCompleteUserFilter
+                  value={tempFilters.members}
+                  onChange={(id) => handleMemberChange(null, { id })}
+                  noOptionsText={'Nenhum membro encontrado'}
                 />
               </Grid>
             </Grid>
