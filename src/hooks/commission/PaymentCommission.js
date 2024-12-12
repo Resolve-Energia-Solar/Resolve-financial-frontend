@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { update } from "lodash";
+import { useEffect, useState } from "react";
+import saleService from '@/services/saleService';
 
 export default function PaymentCommission() {
 
@@ -8,6 +10,9 @@ export default function PaymentCommission() {
     const [formData, setFormData] = useState();
     const [isEditing, setIsEditing] = useState(true);
     const [row, setRow] = useState();
+    const [commission, setCommissionData] = useState([])
+
+
     const toggleDrawer = (newOpen) => () => {
         setOpen(newOpen);
     };
@@ -23,6 +28,7 @@ export default function PaymentCommission() {
         setOpenDetails(true)
     }
 
+
     const handleInputChange = (e) => {
 
         console.log(e)
@@ -30,8 +36,17 @@ export default function PaymentCommission() {
         setFormData({ ...formData, [name]: value });
     };
 
-    
 
+    // useEffect(() => {
+
+    //     const updateSale = async () => { 
+    //     const commissionData = await saleService.putCommission();
+    //     setCommissionData(commissionData.data);
+    //     }
+
+    //     updateSale()
+
+    // }, [])
 
     return {
         toggleDrawerDetails,
