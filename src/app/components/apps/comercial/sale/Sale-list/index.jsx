@@ -55,8 +55,10 @@ const SaleList = () => {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [openCreateSale, setOpenCreateSale] = useState(false);
 
   const { filters, refresh } = useContext(SaleDataContext);
+
 
   const {
     isSendingContract,
@@ -246,7 +248,7 @@ const SaleList = () => {
           variant="outlined"
           startIcon={<AddBoxRounded />}
           sx={{ marginTop: 1, marginBottom: 2 }}
-          onClick={handleCreateClick}
+          onClick={() => setOpenCreateSale(true)}
         >
           Adicionar Venda
         </Button>
@@ -541,12 +543,12 @@ const SaleList = () => {
       </Dialog>
 
       <Dialog
-        open={true}
-        onClose={true}
+        open={openCreateSale}
+        onClose={() => setOpenCreateSale(false)}
         fullWidth
         maxWidth="lg"
       >
-        <OnboardingCreateSale />
+        <OnboardingCreateSale onClose={() => setOpenCreateSale(false)} />
       </Dialog>
 
       <Snackbar
