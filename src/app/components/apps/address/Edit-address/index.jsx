@@ -207,7 +207,7 @@ const EditAddressPage = ({ selectedAddressId = null, onClosedModal = null, addre
           disabled={formLoading}
           endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
         >
-          {formLoading ? 'Salvando...' : 'Editar'}
+          {formLoading ? 'Salvando...' : 'Salvar'}
         </Button>
       </Stack>
     </Box>
