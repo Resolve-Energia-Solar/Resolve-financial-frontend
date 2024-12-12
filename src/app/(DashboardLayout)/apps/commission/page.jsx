@@ -12,8 +12,6 @@ import commissionService from '@/services/commissionService';
 import saleService from '@/services/saleService';
 
 
-
-
 function createData(statcommi, name, datac, statvistoria, statusdoc, statusfinanceiro, unidade, especpagam, valprojeto) {
   return { statcommi, name, datac, statvistoria, statusdoc, statusfinanceiro, unidade, especpagam, valprojeto };
 }
@@ -43,12 +41,12 @@ function commission() {
 
   useEffect(() => {
 
-    const fectchSaleAll = async () => {
+      const fectchSaleAll = async () => {
       const saleData = await saleService.getSales({ ordering: 'asc' })
       setSale(saleData.results)
     }
 
-    const fectchComissionAll = async () => {
+      const fectchComissionAll = async () => {
       const commissionData = await commissionService.getCommissiomAll()
       setComissions(commissionData.results)
     }
@@ -74,7 +72,6 @@ function commission() {
           <Tab label="Saldo devedor" {...a11yProps(3)} />
         </Tabs>
       </Box>
-
       <TabPanel value={value} index={0} >
         <Sale data={sale} />
       </TabPanel>
@@ -84,7 +81,7 @@ function commission() {
       </TabPanel>
 
       <TabPanel value={value} index={2} >
-        <Releases data={rows} />
+        <Releases data={comissions}/>
       </TabPanel>
 
       <TabPanel value={value} index={3} >
@@ -92,8 +89,6 @@ function commission() {
 
       </TabPanel>
     </Box>
-
-
 
   )
 }

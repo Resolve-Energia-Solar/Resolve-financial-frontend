@@ -6,10 +6,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
-import { Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import CommissionForm from './forms/CommissionForm';
 import { Drawer } from '@mui/material';
+import { CircularProgress, Typography } from '@mui/material';
 import CommissionDetails from './forms/CommissionDetails';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
 import { useState } from 'react';
@@ -45,7 +45,7 @@ function Commission({ data }) {
 
         </Box>
 
-        <TableContainer sx={{ border: 'none', borderRadius: '8px', boxShadow: '5' }}>
+        {data.length > 0 ?<TableContainer sx={{ border: 'none', borderRadius: '8px', boxShadow: '5' }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -64,7 +64,6 @@ function Commission({ data }) {
               {data.map((item) => (
                 <TableRow
                   key={item.id}
-                  id={item.id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && '#ECF2FF'  }}
                   onClick={() => handleClickRow(item)}
                 >
@@ -81,7 +80,11 @@ function Commission({ data }) {
               ))}
             </TableBody>
           </Table>
-        </TableContainer>
+        </TableContainer> :
+         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+         <CircularProgress />
+       </Box>
+     }
         <Box sx={{ marginTop: '15px', display: 'flex', justifyContent: 'flex-end' }}>
           <Button variant="text" onClick={toggleDrawer(true)}>Adicionar</Button>
         </Box>

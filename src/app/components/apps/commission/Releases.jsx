@@ -6,17 +6,19 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
-import { Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import ReleasesForm from './forms/ReleasesForm';
+import { CircularProgress, Typography } from '@mui/material';
 import { Drawer } from '@mui/material';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
 
 function Releases({ data }) {
 
   const {
+    handleClickRow,
     toggleDrawer,
-    open
+    open,
+    row
   } = PaymentCommission()
 
 
@@ -54,7 +56,7 @@ function Releases({ data }) {
           <ReleasesForm />
         </Drawer>
 
-        <TableContainer sx={{ borderRadius: '8px', boxShadow: '5' }}>
+        {data.length > 0 ? <TableContainer sx={{ borderRadius: '8px', boxShadow: '5' }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -69,28 +71,30 @@ function Releases({ data }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((row) => (
+              {data.map((item) => (
                 <TableRow
-                  key={row.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                // onClick={() => handleClickRow(item)}
+                  key={item.id}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && '#ECF2FF' }}
+                  onClick={() => handleClickRow(item)}
                 >
-                  <TableCell align="center">{row.status}</TableCell>
-                  <TableCell align="center">{row.unidade}</TableCell>
-                  <TableCell align="center">{row.valor_projeto}</TableCell>
-                  <TableCell align="center">{row.categoria}</TableCell>
-                  <TableCell align="center">{row.n_parcelas}</TableCell>
-                  <TableCell align="center">{row.percentual_pagamento}</TableCell>
-                  <TableCell align="center">{row.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
-                  <TableCell align="center">{row.reajuste}</TableCell>
+                  <TableCell align="center">{item.status}</TableCell>
+                  <TableCell align="center">{item.unidade}</TableCell>
+                  <TableCell align="center">{item.valor_projeto}</TableCell>
+                  <TableCell align="center">{item.categoria}</TableCell>
+                  <TableCell align="center">{item.n_parcelas}</TableCell>
+                  <TableCell align="center">{item.percentual_pagamento}</TableCell>
+                  <TableCell align="center">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
+                  <TableCell align="center">{item.reajuste}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-        </TableContainer>
+        </TableContainer> :
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress />
+          </Box>
+        }
       </Box>
-
-
     </>
 
   )
