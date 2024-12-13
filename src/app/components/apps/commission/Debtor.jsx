@@ -6,10 +6,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
-import { Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { Drawer } from '@mui/material';
 import DebtorForm from './forms/DebtorForm';
+import { CircularProgress, Typography } from '@mui/material';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
 
 function Debtor({ data }) {
@@ -54,7 +54,7 @@ function Debtor({ data }) {
                     <DebtorForm />
                 </Drawer>
 
-                <TableContainer sx={{ borderRadius: '8px', boxShadow: '5' }}>
+                {data.length > 0 ? <TableContainer sx={{ borderRadius: '8px', boxShadow: '5' }}>
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -80,7 +80,11 @@ function Debtor({ data }) {
                             ))}
                         </TableBody>
                     </Table>
-                </TableContainer>
+                </TableContainer> :
+                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <CircularProgress />
+                    </Box>
+                }
 
             </Box>
         </>

@@ -51,13 +51,17 @@ const useLoginForm = () => {
       Cookies.set('access_token', data.access, { expires: 1, sameSite: 'Strict' })
       console.log('data', data)
       const userData = await userService.getUserById(data.id)
-      console.log('userData', userData)
+      // const userEmployee = await userService.getEmployeeById(data.id)
+      // console.log('userData', userData)
       dispatch(
         setUser({
           user: userData,
-          user_permissions: userData.user_permissions,
-          last_login: userData.last_login,
-          access_token: data.access,
+          user_permissions: userData?.user_permissions,
+          last_login: userData?.last_login,
+          access_token: data?.access,
+          // user_manager: userEmployee?.user_manager,
+          // role: userEmployee?.role,
+          // branch: userEmployee?.branch,
         }),
       )
 
