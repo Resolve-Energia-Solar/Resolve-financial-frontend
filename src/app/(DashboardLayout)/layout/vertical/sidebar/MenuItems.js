@@ -38,6 +38,13 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Agendamentos',
+    icon: IconCalendar,
+    href: '/apps/inspections/schedule',
+    permissions: ['inspections.view_schedule'],
+  },
+  {
+    id: uniqueId(),
     title: 'Vendas',
     icon: IconShoppingCart,
     href: '/apps/commercial/sale',
@@ -94,13 +101,6 @@ const Menuitems = [
     icon: IconBoxMultiple,
     href: '/apps/inspections/service-catalog',
     permissions: ['inspections.view_service'],
-  },
-  {
-    id: uniqueId(),
-    title: 'Agendamentos',
-    icon: IconCalendar,
-    href: '/apps/inspections/schedule',
-    permissions: ['inspections.view_schedule'],
   },
   {
     id: uniqueId(),
