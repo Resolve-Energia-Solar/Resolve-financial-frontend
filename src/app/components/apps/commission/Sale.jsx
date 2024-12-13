@@ -7,9 +7,19 @@ import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import { Chip, CircularProgress, Typography } from '@mui/material';
 import { format } from 'date-fns';
+import PaymentCommission from '@/hooks/commission/PaymentCommission';
+
 
 
 function Sale({ data }) {
+
+  const {
+      handleClickRow,
+      toggleDrawer,
+      open,
+      row
+    } = PaymentCommission()
+  
   return (
 
     <>
@@ -60,7 +70,8 @@ function Sale({ data }) {
               {data.map((item) => (
                 <TableRow
                   key={item.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 }}}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && '#ECF2FF'}}
+                  onClick={() => handleClickRow(item)}
                 >
                   
                   <TableCell align="center">{item.customer.complete_name}</TableCell>

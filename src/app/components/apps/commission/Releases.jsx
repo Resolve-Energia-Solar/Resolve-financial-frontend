@@ -13,6 +13,7 @@ import { Drawer } from '@mui/material';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
 
 function Releases({ data }) {
+console.log(data)
 
   const {
     handleClickRow,
@@ -63,7 +64,6 @@ function Releases({ data }) {
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>status</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Unidade</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Valor projeto</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Categoria</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>N° de parcelas</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Percentual de pagamentos</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Data de pagamento</TableCell>
@@ -78,11 +78,10 @@ function Releases({ data }) {
                   onClick={() => handleClickRow(item)}
                 >
                   <TableCell align="center">{item.status}</TableCell>
-                  <TableCell align="center">{item.unidade}</TableCell>
-                  <TableCell align="center">{item.valor_projeto}</TableCell>
-                  <TableCell align="center">{item.categoria}</TableCell>
-                  <TableCell align="center">{item.n_parcelas}</TableCell>
-                  <TableCell align="center">{item.percentual_pagamento}</TableCell>
+                  <TableCell align="center">{item.sale.branch.name}</TableCell>
+                  <TableCell align="center">{item.total_value}</TableCell>
+                  <TableCell align="center">{item.installments_value}</TableCell>
+                  <TableCell align="center">{item.percentage}</TableCell>
                   <TableCell align="center">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
                   <TableCell align="center">{item.reajuste}</TableCell>
                 </TableRow>

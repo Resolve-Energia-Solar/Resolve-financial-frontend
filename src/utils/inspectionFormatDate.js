@@ -1,10 +1,10 @@
-const formatDateTime = (dateTimeString) => {
+/* const formatDateTime = (dateTimeString) => {
   if (!dateTimeString) return null;
   const [date, time] = dateTimeString.split('T');
   const formattedDate = formatDate(date);
   const formattedTime = formatTime(time);
   return `${formattedDate} - ${formattedTime}`;
-};
+}; */
 
 const formatDate = (dateString) => {
   if (!dateString) return null;

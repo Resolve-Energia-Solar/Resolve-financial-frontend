@@ -16,14 +16,14 @@ import {
   Box,
   Alert,
   Dialog,
-  DialogTitle,
   DialogContent,
   DialogActions,
   Button,
+  Switch,
+  FormControlLabel,
 } from '@mui/material';
 import { MoreVert, Visibility } from '@mui/icons-material';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
-import { useRouter } from 'next/navigation';
 import ProductChip from '@/app/components/apps/product/components/ProductChip';
 import productService from '@/services/productsService';
 import DetailProduct from '../Product-detail';
@@ -35,11 +35,11 @@ const ListProductsDefault = () => {
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [menuOpenRowId, setMenuOpenRowId] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedProductDetail, setSelectedProductDetail] = useState(null);
+  const [allowMultipleSelection, setAllowMultipleSelection] = useState(false);
 
-  const { productIds, setProductIds } = useContext(OnboardingSaleContext);
+  const { productIds, setProductIds, setTotalValue } = useContext(OnboardingSaleContext);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,14 +62,20 @@ const ListProductsDefault = () => {
     fetchData();
   }, []);
 
-  // Handle the product selection from the checkbox
   const handleCheckboxChange = (id) => {
     setProductIds((prevProductIds) => {
       const newProductIds = prevProductIds.includes(id)
         ? prevProductIds.filter((productId) => productId !== id)
         : [...prevProductIds, id];
-      
-      return newProductIds; // Update the context state
+  
+      // Atualiza o valor total
+      const totalValue = newProductIds.reduce((acc, productId) => {
+        const product = productList.find((p) => p.id === productId);
+        return acc + (Number(product?.product_value) || 0);
+      }, 0);
+      setTotalValue(totalValue);
+  
+      return newProductIds;
     });
   };
 
@@ -92,10 +98,20 @@ const ListProductsDefault = () => {
   return (
     <>
       <Alert severity="info" sx={{ mb: 2 }}>
-        <Typography variant="subtitle1">
-          Selecione um ou mais produtos
-        </Typography>
+        <Typography variant="subtitle1">Selecione um ou mais produtos</Typography>
       </Alert>
+
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={allowMultipleSelection}
+              onChange={(e) => setAllowMultipleSelection(e.target.checked)}
+            />
+          }
+          label="Permitir seleção múltipla"
+        />
+      </Box>
 
       <Grid container spacing={3}>
         {loading
@@ -137,7 +153,10 @@ const ListProductsDefault = () => {
                   </CardContent>
                   <CardActions disableSpacing>
                     <CustomCheckbox
-                      disabled={product.default === 'N'}
+                      disabled={
+                        product.default === 'N' ||
+                        (!allowMultipleSelection && productIds.length > 0 && !productIds.includes(product.id))
+                      }
                       checked={productIds.includes(product.id)}
                       onChange={() => handleCheckboxChange(product.id)}
                     />
