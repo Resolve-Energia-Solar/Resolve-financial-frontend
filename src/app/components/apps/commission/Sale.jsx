@@ -5,11 +5,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
-import { CircularProgress, Typography } from '@mui/material';
+import { Chip, CircularProgress, Typography } from '@mui/material';
 import { format } from 'date-fns';
 
+
 function Sale({ data }) {
-  console.log(data)
   return (
 
     <>
@@ -60,14 +60,14 @@ function Sale({ data }) {
               {data.map((item) => (
                 <TableRow
                   key={item.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 }/*, backgroundColor: row === item.id && '#ECF2FF' */}}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }}}
                 >
                   
                   <TableCell align="center">{item.customer.complete_name}</TableCell>
                   <TableCell align="center">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
-                  <TableCell align="center">{item.statvistoria}</TableCell>
-                  <TableCell align="center">{item.statusdoc}</TableCell>
-                  <TableCell align="center">{item.statusfinanceiro}</TableCell>
+                  <TableCell align="center">{item.projects.map((item) => <Chip key={item.id} label={item.status}/>)}</TableCell>
+                  <TableCell align="center">{item.projects.map(item => <Chip key={item.id} label={item.is_documentation_completed ? 'Concluido' : 'Pendente'} />)}</TableCell>
+                  <TableCell align="center">{item.financial_completion_date ? 'Concluido' : 'Pendente'}</TableCell>
                   <TableCell align="center">{item.branch.name}</TableCell>
                   <TableCell align="center">{item.especpagam}</TableCell>
                   <TableCell align="center">{item.total_value}</TableCell>

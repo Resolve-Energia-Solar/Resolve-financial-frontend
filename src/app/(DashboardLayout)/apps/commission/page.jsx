@@ -72,10 +72,11 @@ function commission() {
           <Tab label="Saldo devedor" {...a11yProps(3)} />
         </Tabs>
       </Box>
+
       <TabPanel value={value} index={0} >
         <Sale data={sale} />
       </TabPanel>
-
+      
       <TabPanel value={value} index={1} >
         <Commission data={comissions}/>
       </TabPanel>

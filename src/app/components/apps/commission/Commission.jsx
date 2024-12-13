@@ -12,11 +12,10 @@ import { Drawer } from '@mui/material';
 import { CircularProgress, Typography } from '@mui/material';
 import CommissionDetails from './forms/CommissionDetails';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
-import { useState } from 'react';
-
+import numeral from 'numeral'; 
 
 function Commission({ data }) {
-
+console.log(data)
 
 
   const {
@@ -67,13 +66,13 @@ function Commission({ data }) {
                   sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && '#ECF2FF'  }}
                   onClick={() => handleClickRow(item)}
                 >
-                  <TableCell align="center">{item.nome_cliente}</TableCell>
+                  <TableCell align="center">{item.sale.costumer?.complete_name}</TableCell>
                   <TableCell align="center">{item.sale.branch?.name}</TableCell>
+                  <TableCell align="center">{item.is_paid}</TableCell>
                   <TableCell align="center">{item.status}</TableCell>
-                  <TableCell align="center">{item.status}</TableCell>
-                  <TableCell align="center">{item.difference_value}</TableCell>
-                  <TableCell align="center">{item.transfer_percentage}</TableCell>
-                  <TableCell align="center">{item.status}</TableCell>
+                  <TableCell align="center">{item.sale.difference_value}</TableCell>
+                  <TableCell align="center">{numeral(item.sale.transfer_percentage/100).format('0,0.00%')}</TableCell>
+                  <TableCell align="center">{item.sale.total_value}</TableCell>
                   <TableCell align="center">{item.status}</TableCell>
                   <TableCell align="center">{item.installment_value}</TableCell>
                 </TableRow>
