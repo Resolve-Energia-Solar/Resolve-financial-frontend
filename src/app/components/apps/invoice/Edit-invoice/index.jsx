@@ -122,7 +122,7 @@ const EditInvoicePage = ({payment_id=null, onClosedModal = null, onRefresh = nul
       >
         <Box>
           <FormSelect
-            label="Status do Pagamento"
+            label="Forma de Pagamento"
             options={statusOptions}
             value={formData.payment_type}
             onChange={(e) => handleChange('payment_type', e.target.value)}
