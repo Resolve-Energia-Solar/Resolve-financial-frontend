@@ -157,6 +157,13 @@ const Menuitems = [
     icon: IconChartLine,
     href: '/apps/timeline',
     permissions: ['accounts.view_role'],
+  },
+  {
+    id: uniqueId(),
+    title: 'Contas a Pagar e Receber',
+    icon: IconCurrencyDollar,
+    href: '/apps/financial-record',
+    permissions: ['financial.view_financialrecord'],
   }
 ];
 
