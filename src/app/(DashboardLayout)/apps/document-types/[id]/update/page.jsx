@@ -1,5 +1,5 @@
 'use client';
-import { Grid, Button, Stack, Alert, FormControl, Select, MenuItem } from '@mui/material';
+import { Grid, Button, Stack, Alert, FormControl, Select, MenuItem, Skeleton } from '@mui/material';
 import { CheckCircle, Cancel } from '@mui/icons-material';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
@@ -48,7 +48,33 @@ export default function FormCustom() {
     }
   }, [success, router]);
 
-  if (loading) return <div>Carregando...</div>;
+  if (loading) {
+    return (
+      <Grid container spacing={3}>
+        {/* Simulando o título */}
+        <Grid item xs={12}>
+          <Skeleton variant="text" width="40%" height={30} />
+        </Grid>
+
+        {/* Simulando um campo de entrada */}
+        {Array.from(new Array(4)).map((_, index) => (
+          <Grid item xs={12} key={index}>
+            <Skeleton variant="text" width="30%" height={20} /> {/* Label */}
+            <Skeleton variant="rectangular" width="100%" height={56} /> {/* Campo */}
+          </Grid>
+        ))}
+
+        {/* Simulando os botões */}
+        <Grid item xs={12}>
+          <Stack direction="row" spacing={2}>
+            <Skeleton variant="rectangular" width={120} height={40} />
+            <Skeleton variant="rectangular" width={120} height={40} />
+          </Stack>
+        </Grid>
+      </Grid>
+    );
+  };
+
   if (error) return <div>{error}</div>;
 
   return (
@@ -151,7 +177,7 @@ export default function FormCustom() {
           <Grid item xs={12} sm={12} lg={12}>
             <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
               <Button variant="contained" color="primary" onClick={handleSave}>
-                Editar
+                Salvar
               </Button>
             </Stack>
           </Grid>

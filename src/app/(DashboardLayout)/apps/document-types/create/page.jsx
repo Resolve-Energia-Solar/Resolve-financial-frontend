@@ -8,6 +8,7 @@ import ParentCard from '@/app/components/shared/ParentCard';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import useDocumentTypeForm from '@/hooks/document-types/useDocumentTypeForm';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function FormCustom() {
   const {

@@ -19,6 +19,7 @@ import {
     DialogTitle,
     Button,
     TablePagination,
+    Skeleton,
 } from '@mui/material';
 import {
     Edit as EditIcon,
@@ -113,7 +114,26 @@ const DocumentTypeList = () => {
                         Criar Tipo
                     </Button>
                     {loading ? (
-                        <Typography>Carregando...</Typography>
+                        <Table>
+                        <TableHead>
+                            <TableRow>
+                            <TableCell><Skeleton variant="text" width="80%" /></TableCell>
+                            <TableCell><Skeleton variant="text" width="60%" /></TableCell>
+                            <TableCell><Skeleton variant="text" width="70%" /></TableCell>
+                            <TableCell><Skeleton variant="text" width="50%" /></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {Array.from(new Array(5)).map((_, index) => (
+                            <TableRow key={index}>
+                                <TableCell><Skeleton variant="rectangular" height={20} /></TableCell>
+                                <TableCell><Skeleton variant="rectangular" height={20} /></TableCell>
+                                <TableCell><Skeleton variant="rectangular" height={20} /></TableCell>
+                                <TableCell><Skeleton variant="rectangular" height={20} /></TableCell>
+                            </TableRow>
+                            ))}
+                        </TableBody>
+                        </Table>
                     ) : error ? (
                         <Typography color="error">{error}</Typography>
                     ) : (
