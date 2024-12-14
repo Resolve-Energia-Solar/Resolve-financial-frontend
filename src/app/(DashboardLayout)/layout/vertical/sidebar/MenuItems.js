@@ -38,6 +38,13 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Agendamentos',
+    icon: IconCalendar,
+    href: '/apps/inspections/schedule',
+    permissions: ['inspections.view_schedule'],
+  },
+  {
+    id: uniqueId(),
     title: 'Vendas',
     icon: IconShoppingCart,
     href: '/apps/commercial/sale',
@@ -97,13 +104,6 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Agendamentos',
-    icon: IconCalendar,
-    href: '/apps/inspections/schedule',
-    permissions: ['inspections.view_schedule'],
-  },
-  {
-    id: uniqueId(),
     title: 'Formulários',
     icon: IconFileDescription,
     href: '/apps/inspections/form-builder',
@@ -153,11 +153,25 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Tipos de Documentos',
+    icon: IconFileDescription,
+    href: '/apps/document-types',
+    permissions: ['core.view_documenttype'],
+  },
+  {
+    id: uniqueId(),
     title: 'TimeLine',
     icon: IconChartLine,
     href: '/apps/timeline',
     permissions: ['accounts.view_role'],
-  }
+  },
+  {
+    id: uniqueId(),
+    title: 'Contas a Pagar e Receber',
+    icon: IconCurrencyDollar,
+    href: '/apps/financial-record',
+    permissions: ['financial.view_financialrecord'],
+  },
 ];
 
 export default Menuitems;

@@ -14,10 +14,14 @@ import PaymentCommission from '@/hooks/commission/PaymentCommission';
 
 function Debtor({ data }) {
 
-    const {
-        toggleDrawer,
-        open,
-    } = PaymentCommission()
+console.log(data);
+
+  const {
+    handleClickRow,
+    toggleDrawer,
+    open,
+    row
+  } = PaymentCommission()
 
 
     return (
@@ -66,16 +70,17 @@ function Debtor({ data }) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {data.map((row) => (
+                            {data.map((item) => (
                                 <TableRow
-                                    key={row.name}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    key={item.id}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && '#ECF2FF'}}
+                                    onClick={() => handleClickRow(item)}
                                 >
-                                    <TableCell align="center">{row.unidade}</TableCell>
-                                    <TableCell align="center">{row.valor}</TableCell>
-                                    <TableCell align="center">{row.categoria}</TableCell>
-                                    <TableCell align="center">{row.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
-                                    <TableCell align="center">{row.status}</TableCell>
+                                    <TableCell align="center">{item.unidade}</TableCell>
+                                    <TableCell align="center">{item.valor}</TableCell>
+                                    <TableCell align="center">{item.categoria}</TableCell>
+                                    <TableCell align="center">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
+                                    <TableCell align="center">{item.status}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
