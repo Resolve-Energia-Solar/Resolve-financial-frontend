@@ -38,6 +38,7 @@ import PreviewContractModal from '@/app/components/apps/contractSubmissions/Prev
 import SendContractButton from '@/app/components/apps/contractSubmissions/Send-contract';
 import ProjectListCards from '@/app/components/apps/project/components/projectList/cards';
 import useDocxTemplate from '@/hooks/modelTemplate/useDocxTemplate';
+import ChecklistSales from '../../../checklist/Checklist-list/ChecklistSales';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -115,11 +116,10 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
       <Tabs value={value} onChange={handleChangeTab}>
         <Tab label="Cliente" />
         <Tab label="Venda" />
-        <Tab label="Produtos" />
         <Tab label="Anexos" />
         <Tab label="Pagamentos" />
-        <Tab label="Projetos" />
-        <Tab label="Envios" />
+        <Tab label="Checklist" />
+        {/* <Tab label="Envios" /> */}
       </Tabs>
       {loading ? (
         <FormPageSkeleton />
@@ -240,26 +240,20 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
           )}
 
           {value === 2 && (
-            <Box sx={{ mt: 3 }}>
-              <ProductCard sale={saleData} />
-            </Box>
-          )}
-
-          {value === 3 && (
             <Attachments
               contentType={CONTEXT_TYPE_SALE_ID}
               objectId={id_sale}
               documentTypes={documentTypes}
             />
           )}
-          {value === 4 && (
+          {value === 3 && (
             <Box sx={{ mt: 3 }}>
               <PaymentCard sale={id_sale} />
             </Box>
           )}
 
-          {value === 5 && <ProjectListCards saleId={id_sale} />}
-          {value === 6 && <ContractSubmissions sale={saleData} />}
+          {value === 4 && <ChecklistSales saleId={id_sale} />}
+          {/* {value === 5 && <ContractSubmissions sale={saleData} />} */}
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             {onClosedModal && (
@@ -268,21 +262,35 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
               </Button>
             )}
             {value === 1 && (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSave}
-                disabled={formLoading}
-                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-              >
-                {formLoading ? 'Salvando...' : 'Salvar Alterações'}
-              </Button>
+              <Box>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => setOpenPreview(true)}
+                  startIcon={<Preview />}
+                  sx={{
+                    paddingX: 3,
+                    mr: 2,
+                  }}
+                >
+                  Preview do Contrato
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSave}
+                  disabled={formLoading}
+                  endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                >
+                  {formLoading ? 'Salvando...' : 'Salvar Alterações'}
+                </Button>
+              </Box>
             )}
           </Stack>
         </Box>
       )}
 
-      <Box
+      {/* <Box
         p={3}
         backgroundColor="primary.light"
         mt={3}
@@ -306,10 +314,12 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
 
           <SendContractButton sale={saleData} />
         </Stack>
-      </Box>
-      <PreviewContractModal open={openPreview} onClose={() => setOpenPreview(false)} userId={saleData?.customer?.id} />
-
-
+      </Box> */}
+      <PreviewContractModal
+        open={openPreview}
+        onClose={() => setOpenPreview(false)}
+        userId={saleData?.customer?.id}
+      />
     </Box>
   );
 };

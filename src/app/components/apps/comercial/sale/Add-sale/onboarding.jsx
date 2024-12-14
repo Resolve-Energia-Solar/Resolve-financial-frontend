@@ -146,7 +146,6 @@ function OnboardingCreateSaleContent({ onClose=null, onEdit=null }) {
   user?.user ? (formData.salesSupervisorId = user.user.id) : null;
   user?.user ? (formData.salesManagerId = user.user.id) : null;
 
-  formData.isSale = false;
   formData.status = 'P';
   formData.branchId = 2;
 
