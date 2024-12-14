@@ -30,9 +30,15 @@ export default function FormCustom() {
     { label: 'Financeiro', value: 'financial' },
   ];
 
-  if (success) {
-    router.push('/apps/document-types');
-  }
+  useEffect(() => {
+      if (success) {
+        const timer = setTimeout(() => {
+          router.push('/apps/document-types');
+        }, 2000); // 2 segundos para exibir a mensagem
+  
+        return () => clearTimeout(timer); // Limpa o timer ao desmontar o componente
+      }
+    }, [success, router]);
 
   return (
     <PageContainer title="Criação de Cargo" description="Editor de Cargos">
