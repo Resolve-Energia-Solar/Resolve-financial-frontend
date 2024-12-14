@@ -153,6 +153,13 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Tipos de Documentos',
+    icon: IconFileDescription,
+    href: '/apps/document-types',
+    permissions: ['core.view_documenttype'],
+  },
+  {
+    id: uniqueId(),
     title: 'TimeLine',
     icon: IconChartLine,
     href: '/apps/timeline',
@@ -164,7 +171,7 @@ const Menuitems = [
     icon: IconCurrencyDollar,
     href: '/apps/financial-record',
     permissions: ['financial.view_financialrecord'],
-  }
+  },
 ];
 
 export default Menuitems;
