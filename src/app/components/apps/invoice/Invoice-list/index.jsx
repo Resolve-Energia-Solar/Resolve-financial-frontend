@@ -126,7 +126,7 @@ function InvoiceList() {
           </Button>
         </Box>
 
-        <TextField
+        {/* <TextField
           id="search"
           type="text"
           size="small"
@@ -140,7 +140,7 @@ function InvoiceList() {
               </InputAdornment>
             ),
           }}
-        />
+        /> */}
       </Stack>
       <PaymentList />
     </Box>
