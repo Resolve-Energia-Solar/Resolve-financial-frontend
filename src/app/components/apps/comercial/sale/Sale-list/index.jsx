@@ -48,6 +48,8 @@ import ActionFlash from '../components/flashAction/actionFlash';
 import StatusPreSale from '../components/StatusPreSale';
 import { IconEyeglass } from '@tabler/icons-react';
 import OnboardingCreateSale from '../Add-sale/onboarding';
+import { useSelector } from 'react-redux';
+
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -59,7 +61,15 @@ const SaleList = () => {
 
   const { filters, refresh } = useContext(SaleDataContext);
 
+  const user = useSelector((state) => state?.user?.user);
 
+  const userRole = {
+    user: user?.id,
+    role: user?.is_superuser ? 'Superuser' : user?.employee?.role?.name, 
+  }
+
+  console.log("userRole", userRole)
+  
   const {
     isSendingContract,
     loading: loadingContract,
@@ -102,6 +112,7 @@ const SaleList = () => {
         setLoading(true);
         const queryParams = new URLSearchParams(filters[1]).toString();
         const data = await saleService.getSales({
+          userRole: userRole,
           ordering: orderingParam,
           params: queryParams,
           nextPage: page,
@@ -268,7 +279,7 @@ const SaleList = () => {
         <Table stickyHeader aria-label="sales table">
           <TableHead>
             <TableRow>
-              <TableCell>
+              {/* <TableCell>
                 <CustomCheckbox
                   checked={selectedSales.length === salesList.length}
                   onChange={(event) => {
@@ -279,7 +290,7 @@ const SaleList = () => {
                     }
                   }}
                 />
-              </TableCell>
+              </TableCell> */}
 
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
@@ -371,7 +382,7 @@ const SaleList = () => {
             <TableBody>
               {salesList.map((item) => (
                 <TableRow key={item.id} hover>
-                  <TableCell>
+                  {/* <TableCell>
                     <CustomCheckbox
                       checked={selectedSales.includes(item.id)}
                       onChange={(event) => {
@@ -382,7 +393,7 @@ const SaleList = () => {
                         }
                       }}
                     />
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>{item.customer.complete_name}</TableCell>
                   <TableCell>{item.contract_number}</TableCell>
                   <TableCell>

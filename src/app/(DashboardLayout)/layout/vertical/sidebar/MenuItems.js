@@ -35,6 +35,7 @@ const Menuitems = [
     href: '/apps/boards/crm',
     chip: 'Novo',
     chipColor: 'secondary',
+    permissions: ['resolve_crm.view_board'],
   },
   {
     id: uniqueId(),
@@ -62,7 +63,7 @@ const Menuitems = [
     title: 'Comissionamento',
     icon: IconUserDollar,
     href: '/apps/commission',
-    permissions: ['financial.view_payment'],
+    permissions: ['financial.view_franchiseinstallment'],
   },
   {
     id: uniqueId(),

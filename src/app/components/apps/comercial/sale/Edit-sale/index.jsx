@@ -30,15 +30,11 @@ import { useEffect, useState } from 'react';
 import PaymentCard from '@/app/components/apps/invoice/components/paymentList/card';
 import documentTypeService from '@/services/documentTypeService';
 import Attachments from '@/app/components/shared/Attachments';
-import ProductCard from '@/app/components/apps/product/Product-list';
-import ContractSubmissions from '@/app/components/apps/contractSubmissions/contract-list';
 import CustomerTabs from '@/app/components/apps/users/Edit-user/customer/tabs';
 import { Preview } from '@mui/icons-material';
 import PreviewContractModal from '@/app/components/apps/contractSubmissions/Preview-contract';
-import SendContractButton from '@/app/components/apps/contractSubmissions/Send-contract';
-import ProjectListCards from '@/app/components/apps/project/components/projectList/cards';
-import useDocxTemplate from '@/hooks/modelTemplate/useDocxTemplate';
 import ChecklistSales from '../../../checklist/Checklist-list/ChecklistSales';
+import HasPermission from '@/app/components/permissions/HasPermissions';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -77,6 +73,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
   const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.totalValue);
 
   const statusOptions = [
+    { value: 'P', label: 'Pendente' },
     { value: 'F', label: 'Finalizado' },
     { value: 'EA', label: 'Em Andamento' },
     { value: 'C', label: 'Cancelado' },
@@ -194,6 +191,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
                   <AutoCompleteCampaign
                     onChange={(id) => handleChange('marketingCampaignId', id)}
                     value={formData.marketingCampaignId}
+                    disabled={!hasPermission(['resolve_crm.change_marketing_campaign_field'])}
                     {...(formErrors.marketing_campaign_id && {
                       error: true,
                       helperText: formErrors.marketing_campaign_id,
@@ -208,6 +206,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
                     variant="outlined"
                     fullWidth
                     value={formattedValue}
+                    disabled={!hasPermission(['accounts.change_total_value_field'])}
                     onChange={(e) => handleValueChange(e, handleChange)}
                     {...(formErrors.total_value && {
                       error: true,
@@ -221,20 +220,26 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
                     options={statusOptions}
                     value={formData.status}
                     onChange={(e) => handleChange('status', e.target.value)}
+                    disabled={!hasPermission(['accounts.change_status_sale_field'])}
                   />
                 </Grid>
-                <Grid item xs={12} sm={12} lg={12}>
-                  <CustomFormLabel>Venda</CustomFormLabel>
-                  <FormControlLabel
-                    control={
-                      <CustomSwitch
-                        checked={formData.isSale}
-                        onChange={(e) => handleChange('isSale', e.target.checked)}
-                      />
-                    }
-                    label={formData.isSale ? 'Pré-Venda' : 'Venda'}
-                  />
-                </Grid>
+                <HasPermission
+                  permissions={['accounts.change_pre_sale_field']}
+                  userPermissions={userPermissions}
+                >
+                  <Grid item xs={12} sm={12} lg={12}>
+                    <CustomFormLabel>Venda</CustomFormLabel>
+                    <FormControlLabel
+                      control={
+                        <CustomSwitch
+                          checked={formData.isSale}
+                          onChange={(e) => handleChange('isSale', e.target.checked)}
+                        />
+                      }
+                      label={formData.isSale ? 'Pré-Venda' : 'Venda'}
+                    />
+                  </Grid>
+                </HasPermission>
               </Grid>
             </>
           )}
