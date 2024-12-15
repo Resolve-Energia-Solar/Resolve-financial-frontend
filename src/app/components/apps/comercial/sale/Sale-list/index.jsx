@@ -24,6 +24,7 @@ import {
   CircularProgress,
   Backdrop,
   Box,
+  Drawer,
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -37,10 +38,8 @@ import {
 } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import saleService from '@/services/saleService';
-import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import StatusChip from '../components/DocumentStatusIcon';
 import useSendContract from '@/hooks/clicksign/useClickSign';
-import DashboardCards from '@/app/components/apps/comercial/sale/components/kpis/DashboardCards';
 import TableSkeleton from '../components/TableSkeleton';
 import DrawerFilters from '../components/DrawerFilters/DrawerFilters';
 import { SaleDataContext } from '@/app/context/SaleContext';
@@ -49,6 +48,8 @@ import StatusPreSale from '../components/StatusPreSale';
 import { IconEyeglass } from '@tabler/icons-react';
 import OnboardingCreateSale from '../Add-sale/onboarding';
 import { useSelector } from 'react-redux';
+import useSale from '@/hooks/sales/useSale';
+import EditDrawer from '../../Drawer/Form';
 
 
 const SaleList = () => {
@@ -59,17 +60,19 @@ const SaleList = () => {
   const [hasMore, setHasMore] = useState(true);
   const [openCreateSale, setOpenCreateSale] = useState(false);
 
+  const { handleRowClick, openDrawer, rowSelected, toggleDrawerClosed } = useSale()
+
   const { filters, refresh } = useContext(SaleDataContext);
 
   const user = useSelector((state) => state?.user?.user);
 
   const userRole = {
     user: user?.id,
-    role: user?.is_superuser ? 'Superuser' : user?.employee?.role?.name, 
+    role: user?.is_superuser ? 'Superuser' : user?.employee?.role?.name,
   }
 
   console.log("userRole", userRole)
-  
+
   const {
     isSendingContract,
     loading: loadingContract,
@@ -278,7 +281,7 @@ const SaleList = () => {
       >
         <Table stickyHeader aria-label="sales table">
           <TableHead>
-            <TableRow>
+            <TableRow >
               {/* <TableCell>
                 <CustomCheckbox
                   checked={selectedSales.length === salesList.length}
@@ -381,7 +384,7 @@ const SaleList = () => {
           ) : (
             <TableBody>
               {salesList.map((item) => (
-                <TableRow key={item.id} hover>
+                <TableRow key={item.id} onClick={() => handleRowClick(item)} hover sx={{ backgroundColor: rowSelected?.id === item.id && '#000000' }}>
                   {/* <TableCell>
                     <CustomCheckbox
                       checked={selectedSales.includes(item.id)}
@@ -582,6 +585,14 @@ const SaleList = () => {
           Enviando Contrato...
         </Typography>
       </Backdrop>
+      <Drawer
+        anchor='right'
+        open={openDrawer}
+        onClose={() => toggleDrawerClosed(false)}
+     
+      >
+        <EditDrawer saleId={rowSelected?.id} />
+      </Drawer>
     </Box>
   );
 };
