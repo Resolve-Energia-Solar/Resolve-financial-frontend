@@ -14,20 +14,25 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ImageIcon from '@mui/icons-material/Image';
 import DescriptionIcon from '@mui/icons-material/Description';
 import attachmentService from '@/services/attachmentService';
+import AttachmentsSkeleton from './AttachmentsSkeleton';
 
 export default function AttachmentDetails({ objectId, contentType }) {
   const theme = useTheme();
   const [attachments, setAttachments] = useState([]);
   const [selectedAttachment, setSelectedAttachment] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
       try {
         const response = await attachmentService.getAttanchmentByIdProject(objectId);
         setAttachments(response.results);
       } catch (error) {
         console.error('Error fetching attachments:', error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -49,6 +54,10 @@ export default function AttachmentDetails({ objectId, contentType }) {
     if (['jpg', 'jpeg', 'png'].includes(extension)) return <ImageIcon />;
     return <DescriptionIcon />;
   };
+
+  if (loading) {
+    return <AttachmentsSkeleton />;
+  }
 
   return (
     <Box sx={{ padding: 3 }}>
