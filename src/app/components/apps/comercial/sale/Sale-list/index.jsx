@@ -282,19 +282,6 @@ const SaleList = () => {
         <Table stickyHeader aria-label="sales table">
           <TableHead>
             <TableRow >
-              {/* <TableCell>
-                <CustomCheckbox
-                  checked={selectedSales.length === salesList.length}
-                  onChange={(event) => {
-                    if (event.target.checked) {
-                      setSelectedSales(salesList.map((item) => item.id));
-                    } else {
-                      setSelectedSales([]);
-                    }
-                  }}
-                />
-              </TableCell> */}
-
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('customer.complete_name')}
@@ -384,19 +371,8 @@ const SaleList = () => {
           ) : (
             <TableBody>
               {salesList.map((item) => (
-                <TableRow key={item.id} onClick={() => handleRowClick(item)} hover sx={{ backgroundColor: rowSelected?.id === item.id && '#000000' }}>
-                  {/* <TableCell>
-                    <CustomCheckbox
-                      checked={selectedSales.includes(item.id)}
-                      onChange={(event) => {
-                        if (event.target.checked) {
-                          setSelectedSales([...selectedSales, item.id]);
-                        } else {
-                          setSelectedSales(selectedSales.filter((id) => id !== item.id));
-                        }
-                      }}
-                    />
-                  </TableCell> */}
+                <TableRow key={item.id} onClick={() => handleRowClick(item)} hover sx={{ backgroundColor: rowSelected?.id === item.id && '#ECF2FF' }}>
+                  
                   <TableCell>{item.customer.complete_name}</TableCell>
                   <TableCell>{item.contract_number}</TableCell>
                   <TableCell>
@@ -471,15 +447,6 @@ const SaleList = () => {
                         <DescriptionIcon fontSize="small" sx={{ mr: 1 }} />
                         Gerar Proposta
                       </MenuItem>
-                      {/* <MenuItem
-                        onClick={() => {
-                          handleSendContract(item);
-                          handleMenuClose();
-                        }}
-                      >
-                        <SendIcon fontSize="small" sx={{ mr: 1 }} />
-                        Enviar Contrato
-                      </MenuItem> */}
                     </Menu>
                   </TableCell>
                 </TableRow>
@@ -589,7 +556,7 @@ const SaleList = () => {
         anchor='right'
         open={openDrawer}
         onClose={() => toggleDrawerClosed(false)}
-     
+
       >
         <EditDrawer saleId={rowSelected?.id} />
       </Drawer>
