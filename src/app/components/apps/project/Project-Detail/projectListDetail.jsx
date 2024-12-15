@@ -3,11 +3,14 @@ import projectService from '@/services/projectService';
 import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
 import ProductChip from '../../product/components/ProductChip';
 import CheckListRateioDetail from '../../checklist/Checklist-detail/checklistDetail';
+import ChecklistSalesSkeleton from '../../checklist/components/ChecklistSalesSkeleton';
 
 function ProjectListDetail({ saleId }) {
   const [projectsList, setProjectsList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
       try {
         const response = await projectService.getProjectBySale(saleId);
@@ -16,10 +19,15 @@ function ProjectListDetail({ saleId }) {
       } catch (error) {
         console.log('Error: ', error);
       } finally {
+        setLoading(false);
       }
     };
     fetchData();
   }, []);
+
+  if (loading) {
+    return <ChecklistSalesSkeleton />;
+  }
 
   return (
     <div>
