@@ -101,7 +101,7 @@ const AppDD = () => {
           </Grid>
         </Menu>
       </Box>
-      <Button
+      {/* <Button
         color="inherit"
         sx={{ color: (theme) => theme.palette.text.secondary }}
         variant="text"
@@ -127,7 +127,7 @@ const AppDD = () => {
         component={Link}
       >
         Email
-      </Button>
+      </Button> */}
     </>
   );
 };
