@@ -5,7 +5,7 @@ import { Button, CircularProgress, Snackbar, Alert, Dialog, DialogActions, Dialo
 import SendIcon from '@mui/icons-material/Send';
 import useSendContract from '@/hooks/contract/useSendContract';
 
-export default function SendContractButton({ sale }) {
+export default function SendContractButton({ sale, ...props }) {
   const {
     sendContract,
     sendingContractId,
@@ -33,10 +33,7 @@ export default function SendContractButton({ sale }) {
         onClick={handleOpenDialog}
         startIcon={sendingContractId === sale?.id ? <CircularProgress size={20} /> : <SendIcon />}
         disabled={sendingContractId === sale?.id}
-        sx={{
-          borderRadius: '8px',
-          paddingX: 3,
-        }}
+        {...props}
       >
         Enviar Contrato
       </Button>
