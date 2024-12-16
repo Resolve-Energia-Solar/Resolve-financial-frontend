@@ -19,7 +19,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import attachmentService from '@/services/attachmentService';
-import { UploadFile } from '@mui/icons-material';
+import { Image, UploadFile } from '@mui/icons-material';
 import AttachmentsSkeleton from './AttachmentsSkeleton';
 import useAttachmentForm from '@/hooks/attachments/useAttachmentsForm';
 
@@ -97,7 +97,7 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
   const getFileIcon = (fileName) => {
     const extension = fileName.split('.').pop();
     if (['pdf'].includes(extension)) return <PictureAsPdfIcon />;
-    if (['jpg', 'jpeg', 'png'].includes(extension)) return <ImageIcon />;
+    if (['jpg', 'jpeg', 'png'].includes(extension)) return <Image />;
     return <DescriptionIcon />;
   };
 
