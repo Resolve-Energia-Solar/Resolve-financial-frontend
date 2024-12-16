@@ -8,7 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import ReleasesForm from './forms/ReleasesForm';
-import { CircularProgress, Typography } from '@mui/material';
+import { Chip, CircularProgress, Typography } from '@mui/material';
 import { Drawer } from '@mui/material';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
 
@@ -77,7 +77,7 @@ console.log(data)
                   sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && '#ECF2FF' }}
                   onClick={() => handleClickRow(item)}
                 >
-                  <TableCell align="center">{item.status}</TableCell>
+                  <TableCell align="center"> <Chip>label={item.status ? 'Liberado' : 'Bloqueado'} sx={{ backgroundColor: item.status ? '#ECF2FF' : '#FFA07A' }}</Chip> </TableCell>
                   <TableCell align="center">{item.sale.branch.name}</TableCell>
                   <TableCell align="center">{item.total_value}</TableCell>
                   <TableCell align="center">{item.installments_value}</TableCell>

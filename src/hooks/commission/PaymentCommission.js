@@ -54,7 +54,7 @@ export default function PaymentCommission() {
         handleClickRow,
         setIsEditing,
         toggleDrawer,
-        openDetail,
+        openDetail, 
         isEditing,
         formData,
         open,
