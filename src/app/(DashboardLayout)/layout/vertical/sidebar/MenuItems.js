@@ -156,7 +156,7 @@ const Menuitems = [
     title: 'TimeLine',
     icon: IconChartLine,
     href: '/apps/timeline',
-    permissions: ['accounts.view_role'],
+    permissions: ['inspections.view_schedule'],
   }
 ];
 
