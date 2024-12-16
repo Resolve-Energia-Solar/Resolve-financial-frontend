@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 import { Chip, CircularProgress, Typography } from '@mui/material';
 import { format } from 'date-fns';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
-
+import { useTheme } from '@mui/material/styles';
 
 
 function Sale({ data }) {
@@ -19,6 +19,8 @@ function Sale({ data }) {
     open,
     row
   } = PaymentCommission()
+
+  const theme = useTheme();
 
   return (
 
