@@ -39,6 +39,15 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Quadro Op.',
+    icon: IconLayoutKanban,
+    href: '/apps/boards/erp',
+    chip: 'Novo',
+    chipColor: 'secondary',
+    permissions: ['resolve_crm.view_board'],
+  },
+  {
+    id: uniqueId(),
     title: 'Agendamentos',
     icon: IconCalendar,
     href: '/apps/inspections/schedule',

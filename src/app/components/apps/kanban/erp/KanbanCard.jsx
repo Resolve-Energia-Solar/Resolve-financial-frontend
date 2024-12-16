@@ -1,15 +1,19 @@
 // components/KanbanCard.js
-import { Box, Card, CardContent, Typography } from '@mui/material';
+import { Box, Card, CardContent, Typography, useTheme } from '@mui/material';
 import thermometer from '@/utils/due_date_thermometer';
 import ModalCardDetail from './ModalCardDetail';
 import { useState } from 'react';
 
 
+
 export default function KanbanCard({ task, modal }) {
+
+  const theme = useTheme();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <>
-      <Card variant="outlined" sx={{ mb: 2, padding: 0, overflowX: 'auto' }} onClick={() => setIsModalOpen(true)}>
+      <Card variant="outlined" sx={{ mb: 2, padding: 0, overflowX: 'auto', boxShadow: theme.shadows[1] }} onClick={() => setIsModalOpen(true)}>
         <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1, padding: 2.5 }} >
           <Box sx={{ bgcolor: thermometer(task.start_date, task.due_date, task.completion_date), width: '25px', height: '14px' }}>
 

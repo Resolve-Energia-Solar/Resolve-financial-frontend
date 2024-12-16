@@ -57,13 +57,18 @@ const Customizer = () => {
   const thColors = [
     {
       id: 1,
+      bgColor: '#FFCC00',
+      disp: 'RESOLVE_THEME',
+    },
+    {
+      id: 1,
       bgColor: '#5D87FF',
-      disp: 'AZUL',
+      disp: 'BLUE_THEME',
     },
     {
       id: 2,
       bgColor: '#0074BA',
-      disp: 'AQUA',
+      disp: 'AQUA_THEME',
     },
     {
       id: 3,
@@ -73,12 +78,12 @@ const Customizer = () => {
     {
       id: 4,
       bgColor: '#0A7EA4',
-      disp: 'VERDE',
+      disp: 'GREEN_THEME',
     },
     {
       id: 5,
       bgColor: '#01C0C8',
-      disp: 'CIANO',
+      disp: 'CIANO_THEME',
     },
     {
       id: 6,
@@ -168,6 +173,42 @@ const Customizer = () => {
               </StyledBox>
             </Stack>
 
+            <Box pt={4} />
+            {/* ------------------------------------------- */}
+            {/* ------------ Theme Color setting ------------- */}
+            {/* ------------------------------------------- */}
+            <Typography variant="h6" gutterBottom>
+              Theme Colors
+            </Typography>
+            <Grid container spacing={2}>
+              {thColors.map((thcolor) => (
+                <Grid key={thcolor.id} size={4}>
+                  <StyledBox onClick={() => dispatch(setTheme(thcolor.disp))}>
+                    <Tooltip title={`${thcolor.disp}`} placement="top">
+                      <Box
+                        sx={{
+                          backgroundColor: thcolor.bgColor,
+                          width: "25px",
+                          height: "25px",
+                          borderRadius: "60px",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          display: "flex",
+                          color: "white",
+                        }}
+                        aria-label={`${thcolor.bgColor}`}
+                      >
+                        {customizer.activeTheme === thcolor.disp ? (
+                          <IconCheck width={13} />
+                        ) : (
+                          ""
+                        )}
+                      </Box>
+                    </Tooltip>
+                  </StyledBox>
+                </Grid>
+              ))}
+            </Grid>
             <Box pt={4} />
             {/* ------------------------------------------- */}
             {/* ------------ Layout Horizontal / Vertical ------------- */}
