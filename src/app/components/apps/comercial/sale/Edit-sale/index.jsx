@@ -35,6 +35,8 @@ import { Preview } from '@mui/icons-material';
 import PreviewContractModal from '@/app/components/apps/contractSubmissions/Preview-contract';
 import ChecklistSales from '../../../checklist/Checklist-list/ChecklistSales';
 import HasPermission from '@/app/components/permissions/HasPermissions';
+import SendContractButton from '../../../contractSubmissions/Send-contract';
+import ContractSubmissions from '../../../contractSubmissions/contract-list';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -116,7 +118,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
         <Tab label="Anexos" />
         <Tab label="Pagamentos" />
         <Tab label="Checklist" />
-        {/* <Tab label="Envios" /> */}
+        <Tab label="Envios" />
       </Tabs>
       {loading ? (
         <FormPageSkeleton />
@@ -258,7 +260,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
           )}
 
           {value === 4 && <ChecklistSales saleId={id_sale} />}
-          {/* {value === 5 && <ContractSubmissions sale={saleData} />} */}
+          {value === 5 && <ContractSubmissions sale={saleData} />}
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             {onClosedModal && (
@@ -268,6 +270,8 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
             )}
             {value === 1 && (
               <Box>
+                <SendContractButton sale={saleData} sx={{ mr: 2 }} />
+
                 <Button
                   variant="contained"
                   color="primary"
