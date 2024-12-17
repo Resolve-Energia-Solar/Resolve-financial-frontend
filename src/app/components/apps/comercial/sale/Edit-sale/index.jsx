@@ -40,7 +40,7 @@ import ContractSubmissions from '../../../contractSubmissions/contract-list';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
-const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
+const EditSalePage = ({ saleId = null, onClosedModal = null, refresh=null, ...props }) => {
   const params = useParams();
   let id = saleId;
   if (!saleId) id = params.id;
@@ -111,7 +111,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
   }, [successData, success]);
 
   return (
-    <Box>
+    <Box {...props}>
       <Tabs value={value} onChange={handleChangeTab}>
         <Tab label="Cliente" />
         <Tab label="Venda" />
