@@ -29,17 +29,16 @@ export default function AutoCompleteUserFilter({
         console.error('Erro ao buscar usuário:', error);
       }
     }
-    return null; // Retorna null se não houver usuário
+    return null;
   };
 
-  // useEffect para definir o selectedUser baseado no value
   React.useEffect(() => {
     if (value) {
       fetchDefaultUser(value).then((user) => {
         setSelectedUser(user);
       });
     } else {
-      setSelectedUser(null); // Se value for null, reset selectedUser
+      setSelectedUser(null);
     }
   }, [value]);
 
@@ -87,12 +86,12 @@ export default function AutoCompleteUserFilter({
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.id === value.id} // Mudei para comparar pelo ID
+        isOptionEqualToValue={(option, value) => option.id === value.id}
         getOptionLabel={(option) => option.name}
         options={options}
         loading={loading}
         disabled={disabled}
-        value={selectedUser} // Aqui atribuímos o selectedUser como valor selecionado
+        value={selectedUser}
         onInputChange={(event, newInputValue) => {
           fetchUsersByName(newInputValue);
         }}
@@ -104,7 +103,6 @@ export default function AutoCompleteUserFilter({
             label={labeltitle}
             error={error}
             helperText={helperText}
-            size="small"
             variant="outlined"
           />
         )}

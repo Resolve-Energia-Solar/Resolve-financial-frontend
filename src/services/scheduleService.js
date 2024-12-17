@@ -1,9 +1,13 @@
 import apiClient from './apiClient';
 
 const scheduleService = {
-  getSchedules: async () => {
+  getSchedules: async ({ ordering, params, nextPage }) => {
     try {
-      const response = await apiClient.get('/api/schedule/');
+      const urlParams = params ? `&${params}` : '';
+      const urlNextPage = nextPage ? `&page=${nextPage}` : '';
+      const response = await apiClient.get(
+        `/api/schedule/?ordering=${ordering || ''}${urlParams}${urlNextPage}`,
+      );
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar agendamentos:', error);

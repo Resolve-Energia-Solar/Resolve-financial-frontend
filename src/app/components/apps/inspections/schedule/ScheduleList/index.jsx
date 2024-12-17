@@ -49,6 +49,7 @@ import {
 } from '@/app/context/Inspection/ScheduleContext';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
 import ScheduleStatusChip from '../StatusChip';
+import ScheduleDrawerFilters from '../ScheduleDrawerFilters';
 
 const SchedulingList = () => {
   const router = useRouter();
@@ -214,7 +215,7 @@ const SchedulingList = () => {
         </Button>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          {/* <CategoryDrawerFilters /> */}
+          <ScheduleDrawerFilters />
         </Box>
       </Box>
       <TableContainer
@@ -229,12 +230,12 @@ const SchedulingList = () => {
               {/* Status */}
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('id')}
+                onClick={() => handleSort('status')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   Status
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'id' &&
+                    {order === 'status' &&
                       (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                   </Box>
                 </Box>
@@ -243,12 +244,12 @@ const SchedulingList = () => {
               {/* Data do Agendamento */}
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('id')}
+                onClick={() => handleSort('schedule_date')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   Data
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'id' &&
+                    {order === 'schedule_date' &&
                       (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                   </Box>
                 </Box>
@@ -257,12 +258,12 @@ const SchedulingList = () => {
               {/* Hora do Agendamento */}
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('id')}
+                onClick={() => handleSort('schedule_start_time')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   Hora
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'id' &&
+                    {order === 'schedule_start_time' &&
                       (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                   </Box>
                 </Box>
@@ -271,12 +272,12 @@ const SchedulingList = () => {
               {/* Contratante */}
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('id')}
+                onClick={() => handleSort('customer.complete_name')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   Contratante
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'id' &&
+                    {order === 'customer.complete_name' &&
                       (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                   </Box>
                 </Box>
@@ -285,12 +286,26 @@ const SchedulingList = () => {
               {/* Endereço */}
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('id')}
+                onClick={() => handleSort('address.street')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   Endereço
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'id' &&
+                    {order === 'address.street' &&
+                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                  </Box>
+                </Box>
+              </TableCell>
+
+              {/* Serviço */}
+              <TableCell
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                onClick={() => handleSort('service.name')}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  Serviço
+                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                    {order === 'service.name' &&
                       (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                   </Box>
                 </Box>
@@ -299,44 +314,22 @@ const SchedulingList = () => {
               {/* Agente */}
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('id')}
+                onClick={() => handleSort('schedule_agent.complete_name')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   Agente
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'id' &&
+                    {order === 'schedule_agent.complete_name' &&
                       (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                   </Box>
                 </Box>
               </TableCell>
 
               {/* Vendedor */}
-              <TableCell
-                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('id')}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  Vendedor
-                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'id' &&
-                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                  </Box>
-                </Box>
-              </TableCell>
+              <TableCell>Vendedor</TableCell>
 
               {/* Unidade */}
-              <TableCell
-                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('id')}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  Unidade
-                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'id' &&
-                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                  </Box>
-                </Box>
-              </TableCell>
+              <TableCell>Unidade</TableCell>
 
               {/* Actions */}
               <TableCell align="right">Ações</TableCell>
@@ -359,6 +352,7 @@ const SchedulingList = () => {
                   <TableCell>
                     {`${schedule.address.street}, ${schedule.address.number}, ${schedule.address.neighborhood}, ${schedule.address.city} - ${schedule.address.state}`}
                   </TableCell>
+                  <TableCell>{schedule.service.name}</TableCell>
                   <TableCell>{schedule.schedule_agent.complete_name}</TableCell>
                   <TableCell>
                     {schedule.project
