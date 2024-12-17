@@ -205,6 +205,7 @@ const DocumentTypeList = () => {
                                 count={totalRows}
                                 rowsPerPage={rowsPerPage}
                                 page={page}
+                                labelRowsPerPage="Linhas por página"
                                 onPageChange={handleChangePage}
                                 onRowsPerPageChange={handleChangeRowsPerPage}
                             />

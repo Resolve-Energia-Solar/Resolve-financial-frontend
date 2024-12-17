@@ -243,6 +243,7 @@ const ServiceCatalogList = () => {
                 component="div"
                 count={serviceCatalogList.length}
                 rowsPerPage={rowsPerPage}
+                labelRowsPerPage="Linhas por página"
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}

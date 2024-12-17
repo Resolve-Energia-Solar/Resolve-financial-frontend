@@ -345,6 +345,7 @@ const SchedulingList = () => {
                   component="div"
                   count={filteredScheduleList.length}
                   rowsPerPage={rowsPerPage}
+                  labelRowsPerPage="Linhas por página"
                   page={page}
                   onPageChange={handleChangePage}
                   onRowsPerPageChange={handleChangeRowsPerPage}

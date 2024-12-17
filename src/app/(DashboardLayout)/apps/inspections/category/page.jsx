@@ -196,6 +196,7 @@ const CategoryList = () => {
                 component="div"
                 count={categoriesList.length}
                 rowsPerPage={rowsPerPage}
+                labelRowsPerPage="Linhas por página"
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
