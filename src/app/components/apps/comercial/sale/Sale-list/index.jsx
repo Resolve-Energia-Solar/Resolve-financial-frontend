@@ -24,6 +24,7 @@ import {
   CircularProgress,
   Backdrop,
   Box,
+  Drawer,
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -37,10 +38,8 @@ import {
 } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import saleService from '@/services/saleService';
-import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import StatusChip from '../components/DocumentStatusIcon';
 import useSendContract from '@/hooks/clicksign/useClickSign';
-import DashboardCards from '@/app/components/apps/comercial/sale/components/kpis/DashboardCards';
 import TableSkeleton from '../components/TableSkeleton';
 import DrawerFilters from '../components/DrawerFilters/DrawerFilters';
 import { SaleDataContext } from '@/app/context/SaleContext';
@@ -48,6 +47,10 @@ import ActionFlash from '../components/flashAction/actionFlash';
 import StatusPreSale from '../components/StatusPreSale';
 import { IconEyeglass } from '@tabler/icons-react';
 import OnboardingCreateSale from '../Add-sale/onboarding';
+import { useSelector } from 'react-redux';
+import useSale from '@/hooks/sales/useSale';
+import EditDrawer from '../../Drawer/Form';
+
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -57,8 +60,18 @@ const SaleList = () => {
   const [hasMore, setHasMore] = useState(true);
   const [openCreateSale, setOpenCreateSale] = useState(false);
 
+  const { handleRowClick, openDrawer, rowSelected, toggleDrawerClosed } = useSale()
+
   const { filters, refresh } = useContext(SaleDataContext);
 
+  const user = useSelector((state) => state?.user?.user);
+
+  const userRole = {
+    user: user?.id,
+    role: user?.is_superuser ? 'Superuser' : user?.employee?.role?.name,
+  }
+
+  console.log("userRole", userRole)
 
   const {
     isSendingContract,
@@ -102,6 +115,7 @@ const SaleList = () => {
         setLoading(true);
         const queryParams = new URLSearchParams(filters[1]).toString();
         const data = await saleService.getSales({
+          userRole: userRole,
           ordering: orderingParam,
           params: queryParams,
           nextPage: page,
@@ -267,20 +281,7 @@ const SaleList = () => {
       >
         <Table stickyHeader aria-label="sales table">
           <TableHead>
-            <TableRow>
-              <TableCell>
-                <CustomCheckbox
-                  checked={selectedSales.length === salesList.length}
-                  onChange={(event) => {
-                    if (event.target.checked) {
-                      setSelectedSales(salesList.map((item) => item.id));
-                    } else {
-                      setSelectedSales([]);
-                    }
-                  }}
-                />
-              </TableCell>
-
+            <TableRow >
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('customer.complete_name')}
@@ -370,19 +371,8 @@ const SaleList = () => {
           ) : (
             <TableBody>
               {salesList.map((item) => (
-                <TableRow key={item.id} hover>
-                  <TableCell>
-                    <CustomCheckbox
-                      checked={selectedSales.includes(item.id)}
-                      onChange={(event) => {
-                        if (event.target.checked) {
-                          setSelectedSales([...selectedSales, item.id]);
-                        } else {
-                          setSelectedSales(selectedSales.filter((id) => id !== item.id));
-                        }
-                      }}
-                    />
-                  </TableCell>
+                <TableRow key={item.id} onClick={() => handleRowClick(item)} hover sx={{ backgroundColor: rowSelected?.id === item.id && '#ECF2FF' }}>
+                  
                   <TableCell>{item.customer.complete_name}</TableCell>
                   <TableCell>{item.contract_number}</TableCell>
                   <TableCell>
@@ -457,15 +447,6 @@ const SaleList = () => {
                         <DescriptionIcon fontSize="small" sx={{ mr: 1 }} />
                         Gerar Proposta
                       </MenuItem>
-                      {/* <MenuItem
-                        onClick={() => {
-                          handleSendContract(item);
-                          handleMenuClose();
-                        }}
-                      >
-                        <SendIcon fontSize="small" sx={{ mr: 1 }} />
-                        Enviar Contrato
-                      </MenuItem> */}
                     </Menu>
                   </TableCell>
                 </TableRow>
@@ -571,6 +552,14 @@ const SaleList = () => {
           Enviando Contrato...
         </Typography>
       </Backdrop>
+      <Drawer
+        anchor='right'
+        open={openDrawer}
+        onClose={() => toggleDrawerClosed(false)}
+
+      >
+        <EditDrawer saleId={rowSelected?.id} />
+      </Drawer>
     </Box>
   );
 };

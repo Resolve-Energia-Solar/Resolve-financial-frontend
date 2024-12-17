@@ -85,6 +85,21 @@ const financialRecordList = () => {
         }
     };
 
+    const getStatusLabel = (status) => {
+        switch (status) {
+            case 'S':
+                return 'Solicitada';
+            case 'E':
+                return 'Em Andamento';
+            case 'P':
+                return 'Paga';
+            case 'C':
+                return 'Cancelada';
+            default:
+                return 'Desconhecido';
+        }
+    };
+    
     return (
         <PageContainer title="Contas a Receber/Pagar" description="Lista de Contas a Receber/Pagar">
             <BlankCard>
@@ -103,10 +118,13 @@ const financialRecordList = () => {
                         <TableContainer component={Paper} elevation={3}>
                             <Table aria-label="table">
                                 <TableHead>
-                                    <TableRow>
+                                <TableRow>
                                         <TableCell>Protocolo</TableCell>
+                                        <TableCell>Descrição</TableCell>
+                                        <TableCell>Beneficiário/Pagador</TableCell>
                                         <TableCell>Valor</TableCell>
                                         <TableCell>Data de Vencimento</TableCell>
+                                        <TableCell>Status</TableCell>
                                         <TableCell>Ações</TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -114,8 +132,11 @@ const financialRecordList = () => {
                                     {financialRecordList.map((item) => (
                                         <TableRow key={item.id} hover>
                                             <TableCell>{item.protocol}</TableCell>
+                                            <TableCell>{item.notes.length > 35 ? `${item.notes.substring(0, 35)}...` : item.notes}</TableCell>
+                                            <TableCell>{item.client_supplier_name}</TableCell>
                                             <TableCell>{item.value}</TableCell>
                                             <TableCell>{item.due_date}</TableCell>
+                                            <TableCell>{getStatusLabel(item.status)}</TableCell>
                                             <TableCell>
                                                 <Tooltip title="Editar">
                                                     <IconButton 
@@ -144,7 +165,6 @@ const financialRecordList = () => {
                     )}
                 </CardContent>
             </BlankCard>
-
 
             <Dialog open={open} onClose={handleCloseModal}>
                 <DialogTitle>Confirmar Exclusão</DialogTitle>

@@ -2,34 +2,31 @@
 import {
   Grid,
   Typography,
-  IconButton,
-  Box,
   List,
   ListItem,
-  ListItemText,
   Button,
-  Modal,
   CircularProgress,
   Alert,
   useTheme,
   Link,
-  Input,
+  Box,
+  Modal,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import ImageIcon from '@mui/icons-material/Image';
 import DescriptionIcon from '@mui/icons-material/Description';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import useAttachmentForm from '@/hooks/attachments/useAttachmentsForm';
 import attachmentService from '@/services/attachmentService';
-import { DocumentScanner, UploadFile } from '@mui/icons-material';
-
+import { Image, UploadFile } from '@mui/icons-material';
+import AttachmentsSkeleton from './AttachmentsSkeleton';
+import useAttachmentForm from '@/hooks/attachments/useAttachmentsForm';
 
 export default function Attachments({ objectId, contentType, documentTypes }) {
   const theme = useTheme();
   const [selectedAttachment, setSelectedAttachment] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const {
     formData,
@@ -40,7 +37,6 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
     setFormErrors,
     success,
     refreshSuccess,
-    loading,
   } = useAttachmentForm(
     selectedAttachment || null,
     selectedAttachment?.id || null,
@@ -56,7 +52,11 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
     setOpenModal(true);
     if (documentType) handleChange('document_type_id', parseInt(documentType));
     if (attachment)
-      setSelectedAttachment({ ...attachment, content_type_id: attachment?.content_type?.id, document_type_id: attachment?.document_type?.id });
+      setSelectedAttachment({
+        ...attachment,
+        content_type_id: attachment?.content_type?.id,
+        document_type_id: attachment?.document_type?.id,
+      });
   };
 
   const handleCloseModal = () => {
@@ -76,12 +76,15 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
   };
 
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
       try {
         const response = await attachmentService.getAttanchmentByIdProject(objectId);
         setAttachments(response.results);
       } catch (error) {
         console.log('Error: ', error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -94,9 +97,13 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
   const getFileIcon = (fileName) => {
     const extension = fileName.split('.').pop();
     if (['pdf'].includes(extension)) return <PictureAsPdfIcon />;
-    if (['jpg', 'jpeg', 'png'].includes(extension)) return <ImageIcon />;
+    if (['jpg', 'jpeg', 'png'].includes(extension)) return <Image />;
     return <DescriptionIcon />;
   };
+
+  if (loading) {
+    return <AttachmentsSkeleton />;
+  }
 
   return (
     <Box sx={{ padding: 3 }}>
@@ -129,7 +136,9 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
         ))}
 
         {documentTypes
-          .filter((doc) => !attachments.some((att) => att?.document_type?.id === parseInt(doc.id, 10)))
+          .filter(
+            (doc) => !attachments.some((att) => att?.document_type?.id === parseInt(doc.id, 10)),
+          )
           .map((doc) => (
             <Grid item xs={3} key={doc.id}>
               <Box
@@ -148,8 +157,8 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
                 }}
                 onClick={() => handleOpenModal(null, doc.id)}
               >
-              <DescriptionIcon />
-              <Typography variant="caption" sx={{ marginTop: 1 }}>
+                <DescriptionIcon />
+                <Typography variant="caption" sx={{ marginTop: 1 }}>
                   {doc.name}
                 </Typography>
               </Box>

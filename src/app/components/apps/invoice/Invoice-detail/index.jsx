@@ -75,7 +75,7 @@ const DetailInvoicePage = ({ payment_id = null }) => {
         mb={3}
       >
         <Box>
-          <Typography variant="subtitle1">Forma de Pagamento</Typography>
+          <Typography variant="subtitle1">Tipo de Pagamento</Typography>
           <Typography>{statusLabels[paymentData?.payment_type] || 'Desconhecido'}</Typography>
         </Box>
         <Box textAlign="right">

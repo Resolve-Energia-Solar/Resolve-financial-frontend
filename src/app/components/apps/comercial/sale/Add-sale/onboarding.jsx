@@ -143,12 +143,11 @@ function OnboardingCreateSaleContent({ onClose=null, onEdit=null }) {
   productIds ? (formData.productIds = productIds) : null;
   user?.user ? (formData.sellerId = user.user.id) : null;
 
-  user?.user ? (formData.salesSupervisorId = user.user.id) : null;
-  user?.user ? (formData.salesManagerId = user.user.id) : null;
+  user?.user?.employee?.user_manager ? (formData.salesSupervisorId = user?.user?.employee?.user_manager) : null;
+  user?.user?.employee?.user_manager ? (formData.salesManagerId = user?.user?.employee?.user_manager) : null;
 
-  formData.isSale = false;
   formData.status = 'P';
-  formData.branchId = 2;
+  user?.user?.employee?.branch ? (formData.branchId = user?.user?.employee?.branch?.id) : null;
 
   const handleBack = () => {
     if (activeStep > 1) {

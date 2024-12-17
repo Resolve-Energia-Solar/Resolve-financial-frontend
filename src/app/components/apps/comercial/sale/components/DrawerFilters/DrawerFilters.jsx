@@ -47,7 +47,8 @@ export default function DrawerFilters() {
     }
 
     if (filters.isPreSale) {
-      params.append('is_pre_sale', filters.isPreSale);
+      const preSaleValues = filters.isPreSale.map((option) => option.value);
+      params.append('is_pre_sale', preSaleValues.join(','));
     }
 
     return params.toString();
@@ -69,12 +70,12 @@ export default function DrawerFilters() {
     setTempFilters((prev) => ({ ...prev, customer: value ? value.id : null }));
   };
 
-  const handleIsPreSaleChange = (event) => {
-    setTempFilters((prev) => ({ ...prev, isPreSale: event.target.value }));
+  const handleIsPreSaleChange = (event, value) => {
+    setTempFilters((prev) => ({ ...prev, isPreSale: value }));
   };
 
   const clearFilters = () => {
-    setTempFilters({ documentCompletionDate: [null, null], statusDocument: [], branch: null });
+    setTempFilters({ documentCompletionDate: [null, null], statusDocument: [], branch: null, isPreSale: [] });
   };
 
   const applyFilters = () => {
@@ -97,8 +98,8 @@ export default function DrawerFilters() {
   ];
 
   const isPreSale = [
-    { value: true, label: 'Pré-Venda' },
-    { value: false, label: 'Venda' },
+    { value: 'true', label: 'Pré-Venda' },
+    { value: 'false', label: 'Venda' },
   ];
 
   return (
@@ -107,11 +108,28 @@ export default function DrawerFilters() {
         Filtros
       </Button>
       <Drawer open={open} onClose={toggleDrawer(false)} anchor="right">
-        <Box role="presentation" sx={{ padding: 2, maxWidth: '600px' }}>
-          <CardContent>
-            <Typography variant="h5" sx={{ marginBottom: '25px' }}>
-              Filtros
-            </Typography>
+        <Box
+          role="presentation"
+          sx={{
+            padding: 2,
+            maxWidth: '600px',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <Typography variant="h5" sx={{ marginBottom: '16px', flexShrink: 0 }}>
+            Filtros
+          </Typography>
+
+          <Box
+            sx={{
+              overflowY: 'auto',
+              flexGrow: 1,
+              marginBottom: 2,
+              paddingRight: '8px',
+            }}
+          >
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <CustomFormLabel htmlFor="statusDocument">Status da Documentação</CustomFormLabel>
@@ -122,7 +140,7 @@ export default function DrawerFilters() {
                   onChange={handleStatusChange}
                 />
               </Grid>
-              {/* <Grid item xs={12}>
+              <Grid item xs={12}>
                 <CustomFormLabel htmlFor="isPreSale">Tipo de Venda</CustomFormLabel>
                 <CheckboxesTags
                   options={isPreSale}
@@ -130,7 +148,7 @@ export default function DrawerFilters() {
                   value={tempFilters.isPreSale}
                   onChange={handleIsPreSaleChange}
                 />
-              </Grid> */}
+              </Grid>
               <Grid item xs={12}>
                 <FormDateRange
                   label="Selecione a Data de Conclusão"
@@ -142,7 +160,7 @@ export default function DrawerFilters() {
               </Grid>
               <Grid item xs={12}>
                 <CustomFormLabel htmlFor="branch">Franquia</CustomFormLabel>
-                <AutoCompleteBranch 
+                <AutoCompleteBranch
                   value={tempFilters.branch}
                   onChange={(id) => handleBranchChange(null, { id })}
                 />
@@ -155,23 +173,27 @@ export default function DrawerFilters() {
                 />
               </Grid>
             </Grid>
-          </CardContent>
-          <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
-              <Grid container spacing={1}>
-                <Grid item xs={6}>
-                  <Button variant="outlined" fullWidth onClick={clearFilters}>
-                    Limpar Filtros
-                  </Button>
-                </Grid>
-                <Grid item xs={6}>
-                  <Button variant="contained" fullWidth onClick={applyFilters}>
-                    Aplicar Filtros
-                  </Button>
-                </Grid>
+          </Box>
+
+          {/* Botões fixos no rodapé */}
+          <Box
+            sx={{
+              flexShrink: 0,
+            }}
+          >
+            <Grid container spacing={1}>
+              <Grid item xs={6}>
+                <Button variant="outlined" fullWidth onClick={clearFilters}>
+                  Limpar Filtros
+                </Button>
               </Grid>
-            </Box>
-          </CardContent>
+              <Grid item xs={6}>
+                <Button variant="contained" fullWidth onClick={applyFilters}>
+                  Aplicar Filtros
+                </Button>
+              </Grid>
+            </Grid>
+          </Box>
         </Box>
       </Drawer>
     </Box>

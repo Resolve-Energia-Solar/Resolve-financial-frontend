@@ -8,18 +8,20 @@ import Box from '@mui/material/Box';
 import { Chip, CircularProgress, Typography } from '@mui/material';
 import { format } from 'date-fns';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
-
+import { useTheme } from '@mui/material/styles';
 
 
 function Sale({ data }) {
-
+  console.log(data)
   const {
-      handleClickRow,
-      toggleDrawer,
-      open,
-      row
-    } = PaymentCommission()
-  
+    handleClickRow,
+    toggleDrawer,
+    open,
+    row
+  } = PaymentCommission()
+
+  const theme = useTheme();
+
   return (
 
     <>
@@ -70,15 +72,22 @@ function Sale({ data }) {
               {data.map((item) => (
                 <TableRow
                   key={item.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && '#ECF2FF'}}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && '#ECF2FF' }}
                   onClick={() => handleClickRow(item)}
                 >
-                  
+
                   <TableCell align="center">{item.customer.complete_name}</TableCell>
+
                   <TableCell align="center">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
-                  <TableCell align="center">{item.projects.map((item) => <Chip key={item.id} label={item.status}/>)}</TableCell>
-                  <TableCell align="center">{item.projects.map(item => <Chip key={item.id} label={item.is_documentation_completed ? 'Concluido' : 'Pendente'} />)}</TableCell>
-                  <TableCell align="center">{item.financial_completion_date ? 'Concluido' : 'Pendente'}</TableCell>
+
+                  <TableCell align="center">{item.projects.map((item) => <Chip key={item.id} label={item.status} sx={{ backgroundColor: item.status === 'Aprovado' ? '#E6FFFA' : '#FFA07A' }} />)}</TableCell>
+
+                  <TableCell align="center">{item.projects.map(item => <Chip key={item.id} label={item.is_documentation_completed ? 'Concluido' : 'Pendente'} sx={{ backgroundColor: item.is_documentation_completed ? '#ECF2FF' : '#FFA07A' }} />)}</TableCell>
+
+                  <TableCell align="center"> <Chip
+                    label={item.financial_completion_date ? 'Concluido' : 'Pendente'} sx={{backgroundColor: item.financial_completion_date ? '#ECF2FF' : '#FFA07A' }}
+                  /></TableCell>
+
                   <TableCell align="center">{item.branch.name}</TableCell>
                   <TableCell align="center">{item.especpagam}</TableCell>
                   <TableCell align="center">{item.total_value}</TableCell>

@@ -9,7 +9,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { Drawer } from '@mui/material';
 import DebtorForm from './forms/DebtorForm';
-import { CircularProgress, Typography } from '@mui/material';
+import { Chip, CircularProgress, Typography } from '@mui/material';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
 
 function Debtor({ data }) {
@@ -64,7 +64,7 @@ console.log(data);
                             <TableRow>
                                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Unidade</TableCell>
                                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Valor</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Categoria</TableCell>
+                                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Descrição</TableCell>
                                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Data de lançamento</TableCell>
                                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Status</TableCell>
                             </TableRow>
@@ -77,7 +77,7 @@ console.log(data);
                                     onClick={() => handleClickRow(item)}
                                 >
                                     <TableCell align="center">{item.unidade}</TableCell>
-                                    <TableCell align="center">{item.valor}</TableCell>
+                                    <TableCell align="center">{item.valprojeto}</TableCell>
                                     <TableCell align="center">{item.categoria}</TableCell>
                                     <TableCell align="center">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
                                     <TableCell align="center">{item.status}</TableCell>

@@ -30,18 +30,25 @@ import usePayment from '@/hooks/payments/usePayment';
 import usePaymentForm from '@/hooks/payments/usePaymentForm';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import AutoCompleteFinancier from '../components/auto-complete/Auto-Input-financiers';
-import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import CustomFieldMoney from '../components/CustomFieldMoney';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import EditInvoiceSkeleton from '../components/EditInvoiceSkeleton';
 import { useEffect } from 'react';
 import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
+import { useSelector } from 'react-redux';
 
 const EditInvoicePage = ({payment_id=null, onClosedModal = null, onRefresh = null}) => {
   const params = useParams();
   let id = payment_id;
   if (!payment_id) id = params.id;
+
+  const userPermissions = useSelector((state) => state.user.permissions);
+
+  const hasPermission = (permissions) => {
+    if (!permissions) return true;
+    return permissions.some((permission) => userPermissions.includes(permission));
+  };
 
   const { loading, error, paymentData } = usePayment(id);
   const {
@@ -122,7 +129,7 @@ const EditInvoicePage = ({payment_id=null, onClosedModal = null, onRefresh = nul
       >
         <Box>
           <FormSelect
-            label="Forma de Pagamento"
+            label="Tipo do Pagamento"
             options={statusOptions}
             value={formData.payment_type}
             onChange={(e) => handleChange('payment_type', e.target.value)}
@@ -274,9 +281,10 @@ const EditInvoicePage = ({payment_id=null, onClosedModal = null, onRefresh = nul
                         control={
                           <CustomSwitch
                             checked={installment.is_paid}
+                            disabled={!hasPermission(['financial.change_is_paid_field'])}
                             onChange={(e) =>
                               handleInstallmentChange(index, 'is_paid', e.target.checked)
-                            }
+                            }ß
                           />
                         }
                         label={installment.is_paid ? 'Pago' : 'Pendente'}

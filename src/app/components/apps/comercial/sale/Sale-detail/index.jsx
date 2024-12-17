@@ -77,14 +77,8 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null, refresh }) => {
 
   const [documentTypes, setDocumentTypes] = useState([]);
 
-  const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.totalValue);
+  const { formattedValue } = useCurrencyFormatter(formData.totalValue);
 
-  const statusOptions = [
-    { value: 'F', label: 'Finalizado' },
-    { value: 'EA', label: 'Em Andamento' },
-    { value: 'C', label: 'Cancelado' },
-    { value: 'D', label: 'Distrato' },
-  ];
 
   const [value, setValue] = useState(0);
 
@@ -119,11 +113,10 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null, refresh }) => {
       <Tabs value={value} onChange={handleChangeTab}>
         <Tab label="Cliente" />
         <Tab label="Venda" />
-        <Tab label="Produtos" />
         <Tab label="Anexos" />
         <Tab label="Pagamentos" />
-        <Tab label="Projetos" />
-        <Tab label="Envios" />
+        <Tab label="Checklist" />
+        {/* <Tab label="Envios" /> */}
       </Tabs>
       {loading ? (
         <FormPageSkeleton />
@@ -256,26 +249,20 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null, refresh }) => {
           )}
 
           {value === 2 && (
-            <Box sx={{ mt: 3 }}>
-              <ProductCardDetail sale={saleData} />
-            </Box>
-          )}
-
-          {value === 3 && (
             <AttachmentDetails
               contentType={CONTEXT_TYPE_SALE_ID}
               objectId={id_sale}
               documentTypes={documentTypes}
             />
           )}
-          {value === 4 && (
+          {value === 3 && (
             <Box sx={{ mt: 3 }}>
               <PaymentCardDetail sale={id_sale} />
             </Box>
           )}
 
-          {value === 5 && <ProjectListDetail saleId={id_sale} />}
-          {value === 6 && <ContractSubmissions sale={saleData} />}
+          {value === 4 && <ProjectListDetail saleId={id_sale} />}
+          {/* {value === 5 && <ContractSubmissions sale={saleData} />} */}
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             {onClosedModal && (
