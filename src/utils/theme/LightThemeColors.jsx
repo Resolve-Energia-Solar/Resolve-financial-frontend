@@ -4,16 +4,33 @@ const LightThemeColors = [
     palette: {
       primary: {
         main: '#FFCC00',
-        light: '#ECF2FF',
-        dark: '#4570EA',
+        light: '#FFF5CC',
+        dark: '#DCB00D',
         contrastText: '#ffffff',
       },
       secondary: {
-        main: '#49BEFF',
-        light: '#E8F7FF',
-        dark: '#23afdb',
+        main: '#303030',
+        light: '#7E8388',
+        dark: '#000000',
+        gray: '#C6C6C6',
         contrastText: '#ffffff',
       },
+      success: {
+        main: '#008253',
+        background: 'E9F9E6'
+      }, 
+      Warning: {
+        main: '#D62802',
+        background: 'FFEBE4'
+      },
+      info: {
+        main: '#006ED3',
+        background: 'DAE9FF'
+      },
+      action: {
+        hover: '#FFF5CC'
+      }
+      
     },
   },
   {

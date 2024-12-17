@@ -9,7 +9,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CommissionForm from './forms/CommissionForm';
 import { Drawer } from '@mui/material';
-import {  Chip, CircularProgress, Typography } from '@mui/material';
+import { Chip, CircularProgress, Typography } from '@mui/material';
 import CommissionDetails from './forms/CommissionDetails';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
 import numeral from 'numeral';
@@ -36,14 +36,14 @@ function Commission({ data }) {
 
     <>
       <Box sx={{ boxShadow: '1', padding: '20px' }} >
-        <Box sx={{ p: 2, height: '50%', padding: '0px', marginBottom: '15px', display: 'flex', justifyContent: 'space-between' }}>
-          <Box sx={{ p: 2, boxShadow: '4', backgroundColor: '#FFA07A', width: '40%', padding: '20px', display: 'flex', marginBottom: '25px' }}>
-            <Typography variant='h6' sx={{ marginRight: 2 }}>Total de comissão: </Typography>
-            <Typography >R$ 7.000,00 </Typography>
+        <Box sx={{ p: 2, height: '50%', marginBottom: '15px', display: 'flex', justifyContent: 'space-between' }}>
+          <Box sx={{ p: 2, boxShadow: '4', backgroundColor: 'primary.main', width: '40%', padding: '20px', display: 'flex', marginBottom: '25px' }}>
+            <Typography variant='h6' sx={{ marginRight: 2, color: 'primary.contrastText' }}>Total de comissão: </Typography>
+            <Typography color='primary.contrastText'>R$ 7.000,00 </Typography>
           </Box>
 
-          <Box sx={{ boxShadow: '1', marginBottom: '15px', display: 'flex', justifyContent: 'flex-end' }}>
-            <Button variant="text" onClick={toggleDrawer(true)}>Adicionar nova Comissão</Button>
+          <Box sx={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+            <Button variant="text" sx={{backgroundColor:'secondary.main',color:'primary.contrastText'}} onClick={toggleDrawer(true)}>Adicionar nova Comissão</Button>
           </Box>
 
         </Box>
@@ -66,8 +66,9 @@ function Commission({ data }) {
             <TableBody>
               {data.map((item) => (
                 <TableRow
+                hover
                   key={item.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && '#ECF2FF' }}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && 'primary.light' }}
                   onClick={() => handleClickRow(item)}
                 >
                   <TableCell align="center">{item.sale.customer.complete_name}</TableCell>
@@ -88,7 +89,7 @@ function Commission({ data }) {
             <CircularProgress />
           </Box>
         }
-        
+
       </Box>
 
       <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
