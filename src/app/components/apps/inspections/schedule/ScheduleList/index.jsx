@@ -349,31 +349,78 @@ const SchedulingList = () => {
             </TableRow>
           </TableHead>
           {loading && page === 1 ? (
-            <TableSkeleton rows={5} columns={9} />
+            <TableSkeleton rows={5} columns={10} />
           ) : error && page === 1 ? (
             <Typography color="error">{error}</Typography>
           ) : (
             <TableBody>
               {scheduleList.map((schedule) => (
-                <TableRow key={schedule.id} hover onClick={() => handleRowClick(schedule)}>
-                  <TableCell>
+                <TableRow key={schedule.id} hover>
+                  <TableCell onClick={() => handleRowClick(schedule)}>
                     <ScheduleStatusChip status={schedule.status} />
                   </TableCell>
-                  <TableCell>{formatDate(schedule.schedule_date)}</TableCell>
-                  <TableCell>{formatTime(schedule.schedule_start_time)}</TableCell>
-                  <TableCell>{schedule.customer.complete_name}</TableCell>
-                  <TableCell>
+                  <TableCell onClick={() => handleRowClick(schedule)}>
+                    {formatDate(schedule.schedule_date)}
+                  </TableCell>
+                  <TableCell onClick={() => handleRowClick(schedule)}>
+                    {formatTime(schedule.schedule_start_time)}
+                  </TableCell>
+                  <TableCell onClick={() => handleRowClick(schedule)}>
+                    {schedule.customer.complete_name}
+                  </TableCell>
+                  <TableCell onClick={() => handleRowClick(schedule)}>
                     {`${schedule.address.street}, ${schedule.address.number}, ${schedule.address.neighborhood}, ${schedule.address.city} - ${schedule.address.state}`}
                   </TableCell>
-                  <TableCell>{schedule.service.name}</TableCell>
-                  <TableCell>{schedule.schedule_agent.complete_name}</TableCell>
-                  <TableCell>
-                    {schedule.project
-                      ? schedule.project.sale.seller.complete_name
-                      : 'Sem projeto associado'}
+                  <TableCell onClick={() => handleRowClick(schedule)}>
+                    {schedule.service.name}
                   </TableCell>
-                  <TableCell>
-                    {schedule.project ? schedule.project.sale.branch.name : 'Sem projeto associado'}
+                  <TableCell onClick={() => handleRowClick(schedule)}>
+                    {schedule.schedule_agent ? (
+                      schedule.schedule_agent.complete_name
+                    ) : (
+                      <Box
+                        sx={{
+                          backgroundColor: 'error.light',
+                          color: 'error.main',
+                          padding: 1,
+                          textAlign: 'center',
+                        }}
+                      >
+                        Sem agente associado
+                      </Box>
+                    )}
+                  </TableCell>
+                  <TableCell onClick={() => handleRowClick(schedule)}>
+                    {schedule.project.id ? (
+                      schedule.project.sale.seller.complete_name
+                    ) : (
+                      <Box
+                        sx={{
+                          backgroundColor: 'error.light',
+                          color: 'error.main',
+                          padding: 1,
+                          textAlign: 'center',
+                        }}
+                      >
+                        Sem projeto associado
+                      </Box>
+                    )}
+                  </TableCell>
+                  <TableCell onClick={() => handleRowClick(schedule)}>
+                    {schedule.project.id ? (
+                      schedule.project.sale.branch.name
+                    ) : (
+                      <Box
+                        sx={{
+                          backgroundColor: 'error.light',
+                          color: 'error.main',
+                          padding: 1,
+                          textAlign: 'center',
+                        }}
+                      >
+                        Sem projeto associado
+                      </Box>
+                    )}
                   </TableCell>
                   <TableCell align="right">
                     <Tooltip title="Ações">

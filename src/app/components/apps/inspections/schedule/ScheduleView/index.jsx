@@ -111,17 +111,20 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                     <Divider />
                     <Box mt={2}>
                       <Typography variant="body1">
-                        <strong>Agente:</strong> {selectedSchedule.schedule_agent.complete_name}
+                        <strong>Agente:</strong>{' '}
+                        {selectedSchedule.schedule_agent
+                          ? selectedSchedule.schedule_agent.complete_name
+                          : 'Sem agente associado'}
                       </Typography>
                       <Typography variant="body1">
                         <strong>Vendedor:</strong>{' '}
-                        {selectedSchedule.project
+                        {selectedSchedule.project.id
                           ? selectedSchedule.project.sale.seller.complete_name
                           : 'Sem projeto associado'}
                       </Typography>
                       <Typography variant="body1">
                         <strong>Unidade:</strong>{' '}
-                        {selectedSchedule.project
+                        {selectedSchedule.project.id
                           ? selectedSchedule.project.sale.branch.name
                           : 'Sem projeto associado'}
                       </Typography>
