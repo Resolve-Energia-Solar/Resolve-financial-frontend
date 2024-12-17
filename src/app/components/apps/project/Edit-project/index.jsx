@@ -10,6 +10,7 @@ import ListRequest from '../../request/ListRequest';
 import projectService from '@/services/projectService';
 import RequestEnergyCompany from '@/hooks/requestEnergyCompany/Request';
 import LateralForm from '../../request/LateralForm';
+import History from '@/app/components/apps/history';
 
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
@@ -60,6 +61,7 @@ export default function EditProject({ projectId = null }) {
         <Tab label="Checklist Rateio" />
         <Tab label="Anexos" />
         <Tab label="Solicitações" />
+        <Tab label="Histórico" />
       </Tabs>
 
       {value === 0 && <EditProjectTab projectId={id} />}
@@ -100,7 +102,14 @@ export default function EditProject({ projectId = null }) {
               />
             }
           </Drawer>
-        </div>}
+      </div>}
+        
+      {value === 4 && (
+        <div>
+          <History contentType={CONTENT_TYPE_PROJECT_ID} objectId={id} />
+        </div>
+      )}
     </>
+
   );
 }
