@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useContext, use } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 
 // Components
@@ -29,6 +29,7 @@ import {
   Menu,
   MenuItem,
   CircularProgress,
+  Drawer,
 } from '@mui/material';
 import {
   AddBoxRounded,
@@ -50,6 +51,7 @@ import {
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
 import ScheduleStatusChip from '../StatusChip';
 import ScheduleDrawerFilters from '../ScheduleDrawerFilters';
+import ScheduleView from '../ScheduleView';
 
 const SchedulingList = () => {
   const router = useRouter();
@@ -74,6 +76,9 @@ const SchedulingList = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [scheduleToDelete, setScheduleToDelete] = useState(null);
+
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] = useState(null);
 
   useEffect(() => {
     setPage(1);
@@ -135,6 +140,16 @@ const SchedulingList = () => {
 
   const handleEditClick = (id) => {
     router.push(`/apps/inspections/schedule/${id}/update`);
+  };
+
+  const handleRowClick = (schedule) => {
+    setSelectedSchedule(schedule);
+    setDrawerOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setDrawerOpen(false);
+    setSelectedSchedule(null);
   };
 
   const handleDeleteClick = (id) => {
@@ -340,7 +355,7 @@ const SchedulingList = () => {
           ) : (
             <TableBody>
               {scheduleList.map((schedule) => (
-                <TableRow key={schedule.id} hover>
+                <TableRow key={schedule.id} hover onClick={() => handleRowClick(schedule)}>
                   <TableCell>
                     <ScheduleStatusChip status={schedule.status} />
                   </TableCell>
@@ -444,6 +459,13 @@ const SchedulingList = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Componente Drawer para exibir detalhes do agendamento */}
+      <ScheduleView
+        open={drawerOpen}
+        onClose={handleDrawerClose}
+        selectedSchedule={selectedSchedule}
+      />
     </Box>
   );
 };
