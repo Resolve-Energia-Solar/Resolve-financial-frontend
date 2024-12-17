@@ -59,6 +59,7 @@ const ScheduleForm = () => {
                 error: true,
                 helperText: formErrors.service_id,
               })}
+              noOptionsText={'Nenhum serviço encontrado'}
             />
           </Grid>
 
