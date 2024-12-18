@@ -47,7 +47,7 @@ console.log(data);
 
                         </Box>
 
-                        <Box sx={{ p: 2, height: '50%', padding: '10px', display: 'flex', alignItems: 'center', backgroundColor: theme.palette.primary.main }}>
+                        <Box sx={{ p: 2, height: '50%', padding: '10px', display: 'flex', alignItems: 'center', backgroundColor: theme.palette.secondary.main }}>
 
                             <Typography variant='h6' sx={{ marginRight: 2, color:'#FFFFFF' }}>Total: </Typography>
                             <Typography  color='#FFFFFF'>R$1.000.000,58</Typography>
@@ -55,11 +55,11 @@ console.log(data);
                         </Box>
                     </Box>
 
-                    <Box sx={{ p: 2, width: '30%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: theme.palette.secondary.main , marginTop: '15px' }}>
+                    <Box sx={{ p: 2, width: '30%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: 'secondary.main' , marginTop: '15px' }}>
 
                         <Typography variant='h6' sx={{ marginBottom: '8px', color:  '#FFFFFF' }}>Saldo</Typography>
 
-                        <Button variant="text" onClick={toggleDrawer(true)} sx={{ width: '100%', boxShadow: '2', backgroundColor: 'white' }}>Adicionar</Button>
+                        <Button variant="text" onClick={toggleDrawer(true)} sx={{ width: '100%', boxShadow: '2', backgroundColor: 'primary.contrastText' }}>Adicionar</Button>
 
                     </Box>
                 </Box>

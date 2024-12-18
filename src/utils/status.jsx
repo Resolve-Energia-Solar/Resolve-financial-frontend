@@ -7,6 +7,7 @@ import {
 } from '@mui/icons-material';
 
 function getSupplyTypeChip(type) {
+  
   switch (type) {
     case 'M ':
       return <Chip label="Monofásico" color="info" icon={<Settings />} />;

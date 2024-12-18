@@ -9,6 +9,11 @@ import { Chip, CircularProgress, Typography } from '@mui/material';
 import { format } from 'date-fns';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
 import { useTheme } from '@mui/material/styles';
+import {getStatusChip} from '@/utils/status';
+import DocumentStatusIcon from '../comercial/sale/components/DocumentStatusIcon';
+import FinancialChip from '../invoice/components/FinancialChip';
+import InspecStatusChip from '../inspections/components/InspecStatusChip'
+
 
 
 function Sale({ data }) {
@@ -22,6 +27,9 @@ function Sale({ data }) {
 
   const theme = useTheme();
 
+
+  
+
   return (
 
     <>
@@ -29,7 +37,7 @@ function Sale({ data }) {
         
         <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', marginBottom: '15px', padding: '0px'}}>
           
-          <Box sx={{ p: 2, backgroundColor:  theme.palette.secondary.main , boxShadow: '2',  display: 'flex', justifyContent: 'space-around', width: '55%', height: '100px'}}>
+          <Box sx={{ p: 2, backgroundColor:  'secondary.main' , boxShadow: '2',  display: 'flex', justifyContent: 'space-around', width: '55%', height: '100px'}}>
             
             <Box sx={{ p: 2, height: '50%', padding: '5px' }}>
 
@@ -49,7 +57,7 @@ function Sale({ data }) {
             </Box>
           </Box>
 
-          <Box sx={{ p: 2, backgroundColor: theme.palette.primary.main, boxShadow: '2',width: '35%', paddingLeft: '40px' }}>
+          <Box sx={{ p: 2, backgroundColor: 'secondary.main', boxShadow: '2',width: '35%', paddingLeft: '40px' }}>
 
             <Box>
               <Typography variant='caption' color='#FFFFFF'>Saldo devedor</Typography>
@@ -80,25 +88,24 @@ function Sale({ data }) {
                 <TableRow
                 hover
                   key={item.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && theme.palette.primary.light }}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && 'primary.light' }}
                   onClick={() => handleClickRow(item)}
                 >
                   <TableCell align="center">{item.customer.complete_name}</TableCell> 
-
                   <TableCell align="center">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
-
-                  <TableCell align="center">{item.projects.map((item) => <Chip key={item.id} label={item.status} sx={{ backgroundColor: item.status === 'Aprovado' ? theme.palette.primary.light : theme.palette.secondary.light}} />)}</TableCell>
-
-                  <TableCell align="center">{item.projects.map(item => <Chip key={item.id} label={item.is_documentation_completed ? 'Concluido' : 'Pendente'} sx={{ backgroundColor: item.is_documentation_completed ? theme.palette.primary.light : theme.palette.secondary.light}}/>)}</TableCell>
-
                   <TableCell align="center">
-                     <Chip
-                    label={item.financial_completion_date ? 'Concluido' : 'Pendente'} sx={{backgroundColor: item.financial_completion_date ? theme.palette.success.main : theme.palette.secondary.light }} />
+                    {item.projects.map((item) =>  <InspecStatusChip key={item.id} status={item.projects?.inspection.status} />)}
                   </TableCell>
-
+                  <TableCell align="center">
+                  {item.projects.map((item) =>  <DocumentStatusIcon key={item.id} status={item.is_documentation_completed} />)}
+                  </TableCell>
+                  <TableCell align="center">                
+                    <FinancialChip status={item.payment_status} />
+                  </TableCell>
+                  
                   <TableCell align="center">{item.branch.name}</TableCell>
                   <TableCell align="center">{item.especpagam}</TableCell>
-                  <TableCell align="center">{item.total_value}</TableCell>
+                  <TableCell align="center">{item.total_value}</TableCell>             
                 </TableRow>
               ))}
             </TableBody>
