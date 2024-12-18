@@ -10,6 +10,9 @@ import Releases from '@/app/components/apps/commission/Releases';
 import Debtor from '@/app/components/apps/commission/Debtor';
 import commissionService from '@/services/commissionService';
 import saleService from '@/services/saleService';
+import { ThreeMp } from '@mui/icons-material';
+import ThemeColors from '@/utils/theme/ThemeColors';
+import theme from '@/utils/theme';
 
 
 function createData(id, statcommi, name, datac, statvistoria, statusdoc, statusfinanceiro, unidade, especpagam, valprojeto) {
@@ -41,20 +44,19 @@ function commission() {
 
   useEffect(() => {
 
-      const fectchSaleAll = async () => {
+    const fectchSaleAll = async () => {
       const saleData = await saleService.getSales({ ordering: 'asc' })
       setSale(saleData.results)
     }
 
-      const fectchComissionAll = async () => {
+    const fectchComissionAll = async () => {
       const commissionData = await commissionService.getCommissiomAll()
       setComissions(commissionData.results)
     }
-    
+
     fectchComissionAll()
     fectchSaleAll()
   }, [])
-
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -64,25 +66,25 @@ function commission() {
 
     <Box sx={{ p: 2, border: '1px none grey' }}>
 
-      <Box sx={{ p: 2, boxShadow: 2, borderRadius: '10px', backgroundColor: '#ECF2FF' }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Vendas" {...a11yProps(0)} />
-          <Tab label="Comissão" {...a11yProps(1)} />
-          <Tab label="Lançamentos" {...a11yProps(2)} />
-          <Tab label="Saldo devedor" {...a11yProps(3)} />
+      <Box sx={{ p: 2, boxShadow: 2, borderRadius: '10px', backgroundColor: theme.palette.secondary.main }}>
+        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
+          <Tab sx={{ color: theme.palette.secondary.contrastText }} label="Vendas"  {...a11yProps(0)} />
+          <Tab sx={{ color: theme.palette.secondary.contrastText }} label="Comissão"{...a11yProps(1)} />
+          <Tab sx={{ color: theme.palette.secondary.contrastText }} label="Lançamentos" {...a11yProps(2)} />
+          <Tab sx={{ color: theme.palette.secondary.contrastText }} label="Saldo devedor" {...a11yProps(3)} />
         </Tabs>
       </Box>
 
       <TabPanel value={value} index={0} >
         <Sale data={sale} />
       </TabPanel>
-      
+
       <TabPanel value={value} index={1} >
-        <Commission data={comissions}/>
+        <Commission data={comissions} />
       </TabPanel>
 
       <TabPanel value={value} index={2} >
-        <Releases data={comissions}/>
+        <Releases data={comissions} />
       </TabPanel>
 
       <TabPanel value={value} index={3} >
