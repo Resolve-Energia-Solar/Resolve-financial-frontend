@@ -5,7 +5,7 @@ import InvoiceList from "@/app/components/apps/invoice/Invoice-list/index";
 import { InvoiceProvider } from "@/app/context/InvoiceContext/index";
 import BlankCard from "@/app/components/shared/BlankCard";
 import { CardContent } from "@mui/material";
-import ScheduleFormEdit from "@/app/components/apps/inspections/schedules/Edit-schedule";
+import ScheduleFormEdit from "@/app/components/apps/inspections/schedule/Edit-schedule";
 
 const BCrumb = [
     {

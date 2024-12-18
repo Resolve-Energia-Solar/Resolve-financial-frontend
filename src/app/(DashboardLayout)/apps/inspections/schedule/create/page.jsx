@@ -4,7 +4,7 @@ import PageContainer from "@/app/components/container/PageContainer";
 import { InvoiceProvider } from "@/app/context/InvoiceContext/index";
 import BlankCard from "@/app/components/shared/BlankCard";
 import { CardContent } from "@mui/material";
-import ScheduleFormCreate from "@/app/components/apps/inspections/schedules/Add-schedule";
+import ScheduleFormCreate from "@/app/components/apps/inspections/schedule/Add-schedule";
 
 const BCrumb = [
     {

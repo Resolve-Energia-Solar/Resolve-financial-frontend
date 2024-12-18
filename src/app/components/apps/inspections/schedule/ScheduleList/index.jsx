@@ -39,19 +39,15 @@ import {
   ArrowDropDown as ArrowDropDownIcon,
   ArrowDropUp as ArrowDropUpIcon,
 } from '@mui/icons-material';
-import PageContainer from '@/app/components/container/PageContainer';
-import BlankCard from '@/app/components/shared/BlankCard';
 
 // Services and utils
 import scheduleService from '@/services/scheduleService';
-import {
-  ScheduleDataContext,
-  ScheduleDataContextProvider,
-} from '@/app/context/Inspection/ScheduleContext';
-import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
+
 import ScheduleStatusChip from '../StatusChip';
 import ScheduleDrawerFilters from '../ScheduleDrawerFilters';
 import ScheduleView from '../ScheduleView';
+import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
+import { ScheduleDataContext } from '@/app/context/Inspection/ScheduleContext';
 
 const SchedulingList = () => {
   const router = useRouter();
@@ -366,7 +362,7 @@ const SchedulingList = () => {
                     {formatTime(schedule.schedule_start_time)}
                   </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
-                    {schedule.customer.complete_name}
+                    {schedule?.customer?.complete_name}
                   </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     {`${schedule.address.street}, ${schedule.address.number}, ${schedule.address.neighborhood}, ${schedule.address.city} - ${schedule.address.state}`}
