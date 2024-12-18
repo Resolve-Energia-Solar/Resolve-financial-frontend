@@ -38,7 +38,7 @@ import { useEffect } from 'react';
 import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
 import { useSelector } from 'react-redux';
 
-const EditInvoicePage = ({payment_id=null, onClosedModal = null, onRefresh = null}) => {
+const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = null }) => {
   const params = useParams();
   let id = payment_id;
   if (!payment_id) id = params.id;
@@ -70,7 +70,7 @@ const EditInvoicePage = ({payment_id=null, onClosedModal = null, onRefresh = nul
       if (onClosedModal) {
         onClosedModal();
         onRefresh();
-      } 
+      }
     }
   }, [success]);
 
@@ -81,6 +81,10 @@ const EditInvoicePage = ({payment_id=null, onClosedModal = null, onRefresh = nul
     { value: 'F', label: 'Financiamento' },
     { value: 'PI', label: 'Parcelamento Interno' },
   ];
+
+  useEffect(() => {
+    if (formData.payment_type !== 'F') formData.financier_id = null;
+  }, [formData.payment_type]);
 
   const orderDate = paymentData?.created_at;
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
@@ -160,14 +164,16 @@ const EditInvoicePage = ({payment_id=null, onClosedModal = null, onRefresh = nul
             {...(formErrors.borrower_id && { error: true, helperText: formErrors.borrower_id })}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <CustomFormLabel htmlFor="name">Financiadora</CustomFormLabel>
-          <AutoCompleteFinancier
-            onChange={(id) => handleChange('financier_id', id)}
-            value={formData.financier_id}
-            {...(formErrors.financier_id && { error: true, helperText: formErrors.financier_id })}
-          />
-        </Grid>
+        {formData.payment_type === 'F' && (
+          <Grid item xs={12} sm={6}>
+            <CustomFormLabel htmlFor="name">Financiadora</CustomFormLabel>
+            <AutoCompleteFinancier
+              onChange={(id) => handleChange('financier_id', id)}
+              value={formData.financier_id}
+              {...(formErrors.financier_id && { error: true, helperText: formErrors.financier_id })}
+            />
+          </Grid>
+        )}
         <Grid item xs={12} sm={6}>
           <CustomFormLabel htmlFor="valor">Valor</CustomFormLabel>
           <CustomFieldMoney
@@ -284,7 +290,8 @@ const EditInvoicePage = ({payment_id=null, onClosedModal = null, onRefresh = nul
                             disabled={!hasPermission(['financial.change_is_paid_field'])}
                             onChange={(e) =>
                               handleInstallmentChange(index, 'is_paid', e.target.checked)
-                            }ß
+                            }
+                            ß
                           />
                         }
                         label={installment.is_paid ? 'Pago' : 'Pendente'}

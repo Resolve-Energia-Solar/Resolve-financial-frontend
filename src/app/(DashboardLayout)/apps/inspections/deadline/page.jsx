@@ -231,6 +231,7 @@ const DeadlineList = () => {
                 count={deadlineList.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
+                labelRowsPerPage="Linhas por página"
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />

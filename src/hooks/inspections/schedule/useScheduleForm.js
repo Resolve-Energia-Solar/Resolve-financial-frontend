@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import scheduleService from '@/services/scheduleService';
 import serviceCatalogService from '@/services/serviceCatalogService';
 import addressService from '@/services/addressService';
-import projectService from '@/services/projectService';
+import userService from '@/services/userService';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 
@@ -25,6 +25,7 @@ const useScheduleForm = (initialData, id) => {
     schedule_creator: user?.user?.id,
     category_id: null,
     service_id: null,
+    customer_id: null,
     project_id: null,
     schedule_agent_id: null,
     schedule_date: '',
@@ -34,6 +35,7 @@ const useScheduleForm = (initialData, id) => {
     latitude: null,
     longitude: null,
     status: 'Pendente',
+    observation: '',
     going_to_location_at: null,
     execution_started_at: null,
     execution_finished_at: null,
@@ -59,15 +61,17 @@ const useScheduleForm = (initialData, id) => {
       setFormData({
         schedule_creator: initialData.schedule_creator || null,
         service_id: initialData.service.id || null,
-        project_id: initialData.project.id || null,
-        schedule_agent_id: initialData.schedule_agent.id || null,
+        customer_id: initialData?.customer?.id || null,
+        project_id: initialData.project?.id || null,
+        schedule_agent_id: initialData.schedule_agent?.id || null,
         schedule_date: initialData.schedule_date || '',
         schedule_start_time: startTime || '',
         schedule_end_time: initialData.schedule_end_time || '',
-        address_id: initialData.address?.id || null,
+        address_id: initialData?.address?.id || null,
         latitude: initialData.latitude || null,
         longitude: initialData.longitude || null,
         status: initialData.status || 'Pendente',
+        observation: initialData.observation || '',
         going_to_location_at: initialData.going_to_location_at || null,
         execution_started_at: initialData.execution_started_at || null,
         execution_finished_at: initialData.execution_finished_at || null,
@@ -98,25 +102,26 @@ const useScheduleForm = (initialData, id) => {
   }, [formData.service_id]);
 
   useEffect(() => {
-    const fetchProjectDetails = async () => {
-      if (formData.project_id) {
+    const fetchCustomerDetails = async () => {
+      if (formData.customer_id) {
         try {
-          const projectInfo = await projectService.getProjectById(formData.project_id);
+          const customerInfo = await userService.getUserById(formData.customer_id);
+          console.log('CustomerInfo: ', customerInfo);
 
-          if (projectInfo?.addresses?.length > 0 && !formData.address_id) {
+          if (customerInfo?.addresses?.length > 0 && !formData.address_id) {
             setFormData((prev) => ({
               ...prev,
-              address_id: projectInfo.addresses[0]?.id,
+              address_id: customerInfo.addresses[0]?.id,
             }));
           }
         } catch (error) {
-          console.error(`Erro ao buscar projeto com id ${formData.project_id}:`, error);
+          console.error(`Erro ao buscar cliente com id ${formData.customer_id}:`, error);
         }
       }
     };
 
-    fetchProjectDetails();
-  }, [formData.project_id]);
+    fetchCustomerDetails();
+  }, [formData.customer_id]);
 
   useEffect(() => {
     const fetchAddressDetails = async () => {
@@ -207,8 +212,7 @@ const useScheduleForm = (initialData, id) => {
     const dataToSend = {
       schedule_creator: formData.schedule_creator,
       service_id: formData.service_id,
-      project_id: formData.project_id,
-      schedule_agent_id: formData.schedule_agent_id,
+      customer_id: formData.customer_id,
       schedule_date: formData.schedule_date,
       schedule_start_time: formatTime(formData.schedule_start_time),
       schedule_end_time: formatTime(formData.schedule_end_time),
@@ -216,11 +220,19 @@ const useScheduleForm = (initialData, id) => {
       latitude: formData.latitude,
       longitude: formData.longitude,
       status: formData.status,
-      project: formData.project_id,
+      observation: formData.observation,
       going_to_location_at: formData.going_to_location_at,
       execution_started_at: formData.execution_started_at,
       execution_finished_at: formData.execution_finished_at,
     };
+
+    if (formData.project_id) {
+      dataToSend.project_id = formData.project_id;
+    }
+
+    if (formData.schedule_agent_id) {
+      dataToSend.schedule_agent_id = formData.schedule_agent_id;
+    }
 
     console.log('Data to send: ', dataToSend);
 

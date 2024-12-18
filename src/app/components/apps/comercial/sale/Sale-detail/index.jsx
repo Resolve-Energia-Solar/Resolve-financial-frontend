@@ -41,6 +41,7 @@ import CustomerDetailTabs from '../../../users/User-detail/customer/tabs';
 import PaymentCardDetail from '../../../invoice/Invoice-detail/invoiceListDetail';
 import ProjectListDetail from '../../../project/Project-Detail/projectListDetail';
 import AttachmentDetails from '@/app/components/shared/AttachmentDetails';
+import History from '@/app/components/apps/history';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -116,6 +117,7 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null, refresh }) => {
         <Tab label="Anexos" />
         <Tab label="Pagamentos" />
         <Tab label="Checklist" />
+        <Tab label="Histórico" />
         {/* <Tab label="Envios" /> */}
       </Tabs>
       {loading ? (
@@ -262,7 +264,8 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null, refresh }) => {
           )}
 
           {value === 4 && <ProjectListDetail saleId={id_sale} />}
-          {/* {value === 5 && <ContractSubmissions sale={saleData} />} */}
+          
+          {value === 5 && <History contentType={CONTEXT_TYPE_SALE_ID} objectId={id_sale} />}
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             {onClosedModal && (

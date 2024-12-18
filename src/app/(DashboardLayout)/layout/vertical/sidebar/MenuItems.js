@@ -39,6 +39,15 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Quadro Op.',
+    icon: IconLayoutKanban,
+    href: '/apps/boards/erp',
+    chip: 'Novo',
+    chipColor: 'secondary',
+    permissions: ['resolve_crm.view_board'],
+  },
+  {
+    id: uniqueId(),
     title: 'Agendamentos',
     icon: IconCalendar,
     href: '/apps/inspections/schedule',
@@ -164,15 +173,8 @@ const Menuitems = [
     title: 'TimeLine',
     icon: IconChartLine,
     href: '/apps/timeline',
-    permissions: ['accounts.view_role'],
-  },
-  {
-    id: uniqueId(),
-    title: 'Contas a Pagar e Receber',
-    icon: IconCurrencyDollar,
-    href: '/apps/financial-record',
-    permissions: ['financial.view_financialrecord'],
-  },
+    permissions: ['inspections.view_schedule'],
+  }
 ];
 
 export default Menuitems;

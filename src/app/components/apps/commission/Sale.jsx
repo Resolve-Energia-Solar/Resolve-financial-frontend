@@ -8,45 +8,47 @@ import Box from '@mui/material/Box';
 import { Chip, CircularProgress, Typography } from '@mui/material';
 import { format } from 'date-fns';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
-
+import { useTheme } from '@mui/material/styles';
 
 
 function Sale({ data }) {
-
+  console.log(data)
   const {
-      handleClickRow,
-      toggleDrawer,
-      open,
-      row
-    } = PaymentCommission()
-  
+    handleClickRow,
+    toggleDrawer,
+    open,
+    row
+  } = PaymentCommission()
+
+  const theme = useTheme();
+
   return (
 
     <>
       <Box sx={{ boxShadow: '4', padding: '20px' }} >
-        <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-around', marginBottom: '15px' }}>
-          <Box sx={{ p: 2, backgroundColor: '#ECF2FF', boxShadow: '2', border: 'none', display: 'flex', justifyContent: 'space-around', width: '55%', height: '100px' }}>
+        <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+          <Box sx={{ p: 2, backgroundColor:  theme.palette.secondary.main , boxShadow: '2',  display: 'flex', justifyContent: 'space-around', width: '55%', height: '100px'}}>
             <Box sx={{ p: 2, height: '50%', padding: '5px' }}>
 
               <Box>
-                <Typography variant='caption'>Bloqueado</Typography>
-                <Typography variant='h5'>R$ 157.000,00</Typography>
+                <Typography variant='caption'  color='#FFFFFF'>Bloqueado</Typography>
+                <Typography variant='h5' color='#FFFFFF'>R$ 157.000,00</Typography>
               </Box>
 
             </Box>
             <Box sx={{ p: 2, border: '1px none grey', padding: '5px' }}>
 
               <Box>
-                <Typography variant='caption'>Liberado</Typography>
-                <Typography variant='h5'>R$ 7.000.00,00</Typography>
+                <Typography variant='caption' color='#FFFFFF'>Liberado</Typography>
+                <Typography variant='h5' color='#FFFFFF'>R$ 7.000.00,00</Typography>
               </Box>
 
             </Box>
           </Box>
-          <Box sx={{ p: 2, backgroundColor: '#FFA07A', boxShadow: '2', border: 'none', width: '35%', paddingLeft: '25px' }}>
+          <Box sx={{ p: 2, backgroundColor: theme.palette.primary.main, boxShadow: '2',width: '35%', paddingLeft: '40px' }}>
             <Box>
-              <Typography variant='caption'>Saldo devedor</Typography>
-              <Typography variant='h5'>R$ 253.010,00</Typography>
+              <Typography variant='caption' color='#FFFFFF'>Saldo devedor</Typography>
+              <Typography variant='h5' color='#FFFFFF'>R$ 253.010,00</Typography>
             </Box>
           </Box>
         </Box>
@@ -69,16 +71,24 @@ function Sale({ data }) {
             <TableBody>
               {data.map((item) => (
                 <TableRow
+                hover
                   key={item.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && '#ECF2FF'}}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && theme.palette.primary.light }}
                   onClick={() => handleClickRow(item)}
                 >
-                  
-                  <TableCell align="center">{item.customer.complete_name}</TableCell>
+                  <TableCell align="center">{item.customer.complete_name}</TableCell> 
+
                   <TableCell align="center">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
-                  <TableCell align="center">{item.projects.map((item) => <Chip key={item.id} label={item.status}/>)}</TableCell>
-                  <TableCell align="center">{item.projects.map(item => <Chip key={item.id} label={item.is_documentation_completed ? 'Concluido' : 'Pendente'} />)}</TableCell>
-                  <TableCell align="center">{item.financial_completion_date ? 'Concluido' : 'Pendente'}</TableCell>
+
+                  <TableCell align="center">{item.projects.map((item) => <Chip key={item.id} label={item.status} sx={{ backgroundColor: item.status === 'Aprovado' ? theme.palette.primary.light : theme.palette.secondary.light}} />)}</TableCell>
+
+                  <TableCell align="center">{item.projects.map(item => <Chip key={item.id} label={item.is_documentation_completed ? 'Concluido' : 'Pendente'} sx={{ backgroundColor: item.is_documentation_completed ? theme.palette.primary.light : theme.palette.secondary.light}}/>)}</TableCell>
+
+                  <TableCell align="center">
+                     <Chip
+                    label={item.financial_completion_date ? 'Concluido' : 'Pendente'} sx={{backgroundColor: item.financial_completion_date ? theme.palette.success.main : theme.palette.secondary.light }} />
+                  </TableCell>
+
                   <TableCell align="center">{item.branch.name}</TableCell>
                   <TableCell align="center">{item.especpagam}</TableCell>
                   <TableCell align="center">{item.total_value}</TableCell>

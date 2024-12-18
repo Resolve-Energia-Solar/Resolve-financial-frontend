@@ -8,10 +8,11 @@ import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import ReleasesForm from './forms/ReleasesForm';
-import { CircularProgress, Typography } from '@mui/material';
+import { Chip, CircularProgress, Typography } from '@mui/material';
 import { Drawer } from '@mui/material';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
-
+import { useTheme } from '@mui/material/styles';
+import theme from '@/utils/theme';
 function Releases({ data }) {
 console.log(data)
 
@@ -31,24 +32,24 @@ console.log(data)
 
           <Box sx={{ p: 2, border: '1px none grey', width: '40%', height: '50%', }} >
 
-            <Box sx={{ p: 2, backgroundColor: '#ECF2FF', height: '50%', padding: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '15px' }}>
-              <Typography> Franquia</Typography>
-              <Typography variant='h6'>Umarizal</Typography>
+            <Box sx={{ p: 2, backgroundColor: theme.palette.secondary.main, height: '50%', padding: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '15px'}}>
+              <Typography color='#FFFFFF'> Franquia</Typography>
+              <Typography color='#FFFFFF' variant='h6'>Umarizal</Typography>
             </Box>
 
-            <Box sx={{ p: 2, height: '50%', padding: '10px', display: 'flex', alignItems: 'center', marginBottom: '15px', backgroundColor: '#ECF2FF	' }}>
-              <Typography variant='h6' sx={{ marginRight: 2 }}>Majoração: </Typography>
-              <Typography >R$ 27.752,22</Typography>
+            <Box sx={{ p: 2, height: '50%', padding: '10px', display: 'flex', alignItems: 'center', marginBottom: '15px', backgroundColor: theme.palette.secondary.main }}>
+              <Typography variant='h6' sx={{ marginRight: 2, color: '#FFFFFF'}}>Majoração: </Typography>
+              <Typography color='#FFFFFF' >R$ 27.752,22</Typography>
             </Box>
 
-            <Box sx={{ p: 2, height: '50%', padding: '10px', display: 'flex', alignItems: 'center', backgroundColor: '#FFA07A' }}>
-              <Typography variant='h6' sx={{ marginRight: 2 }}>Total: </Typography>
-              <Typography>R$1.000.000,58</Typography>
+            <Box sx={{ p: 2, height: '50%', padding: '10px', display: 'flex', alignItems: 'center', backgroundColor: theme.palette.primary.main }}>
+              <Typography variant='h6' sx={{ marginRight: 2, color: '#FFFFFF'}}>Total: </Typography>
+              <Typography  color='#FFFFFF'>R$1.000.000,58</Typography>
             </Box>
           </Box>
 
-          <Box sx={{ p: 2, width: '30%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#ECF2FF', marginTop: '15px' }}>
-            <Typography variant='h6' sx={{ marginBottom: '8px' }}>Nova comissão</Typography>
+          <Box sx={{ p: 2, width: '30%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: theme.palette.secondary.main , marginTop: '15px' }}>
+            <Typography variant='h6' sx={{ marginBottom: '8px', color:'#FFFFFF' }}>Nova comissão</Typography>
             <Button variant="text" onClick={toggleDrawer(true)} sx={{ width: '100%', border: '1px solid transparent', boxShadow: '2', backgroundColor: 'white' }}>Adicionar</Button>
           </Box>
         </Box>
@@ -74,10 +75,11 @@ console.log(data)
               {data.map((item) => (
                 <TableRow
                   key={item.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && '#ECF2FF' }}
+                  hover
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && 'primary.light' }}
                   onClick={() => handleClickRow(item)}
                 >
-                  <TableCell align="center">{item.status}</TableCell>
+                  <TableCell align="center"> <Chip>label={item.status ? 'Liberado' : 'Bloqueado'} sx={{ backgroundColor: item.status ? '#ECF2FF' : '#FFA07A' }}</Chip> </TableCell>
                   <TableCell align="center">{item.sale.branch.name}</TableCell>
                   <TableCell align="center">{item.total_value}</TableCell>
                   <TableCell align="center">{item.installments_value}</TableCell>

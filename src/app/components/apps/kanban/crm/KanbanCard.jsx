@@ -7,12 +7,12 @@ const KanbanCard = ({ lead, handleLeadClick, status, isLeadOverdue }) => {
 
   const getTimeIconColor = () => {
     if (isLeadOverdue(lead, status)) {
-      return theme.palette.error.main; 
+      return theme.palette.error.main;
     }
     if (status === 'Primeiro Contato' || status === 'Terceiro Contato') {
-      return theme.palette.warning.main; 
+      return theme.palette.warning.main;
     }
-    return theme.palette.text.secondary; 
+    return theme.palette.text.secondary;
   };
 
   const getInitials = (name) => {
@@ -51,9 +51,9 @@ const KanbanCard = ({ lead, handleLeadClick, status, isLeadOverdue }) => {
 
   const overdueStyle = isLeadOverdue(lead, status)
     ? {
-        animation: `${pulseAnimation} 1.5s infinite`,
-        color: theme.palette.error.main,
-      }
+      animation: `${pulseAnimation} 1.5s infinite`,
+      color: theme.palette.error.main,
+    }
     : {};
 
   return (

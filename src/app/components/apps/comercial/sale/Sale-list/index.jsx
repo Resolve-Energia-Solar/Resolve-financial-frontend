@@ -25,6 +25,7 @@ import {
   Backdrop,
   Box,
   Drawer,
+  CardContent,
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -50,7 +51,8 @@ import OnboardingCreateSale from '../Add-sale/onboarding';
 import { useSelector } from 'react-redux';
 import useSale from '@/hooks/sales/useSale';
 import EditDrawer from '../../Drawer/Form';
-
+import EditSalePage from '../Edit-sale';
+import ParentCard from '@/app/components/shared/ParentCard';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -60,7 +62,7 @@ const SaleList = () => {
   const [hasMore, setHasMore] = useState(true);
   const [openCreateSale, setOpenCreateSale] = useState(false);
 
-  const { handleRowClick, openDrawer, rowSelected, toggleDrawerClosed } = useSale()
+  const { handleRowClick, openDrawer, rowSelected, toggleDrawerClosed } = useSale();
 
   const { filters, refresh } = useContext(SaleDataContext);
 
@@ -69,9 +71,9 @@ const SaleList = () => {
   const userRole = {
     user: user?.id,
     role: user?.is_superuser ? 'Superuser' : user?.employee?.role?.name,
-  }
+  };
 
-  console.log("userRole", userRole)
+  console.log('userRole', userRole);
 
   const {
     isSendingContract,
@@ -281,7 +283,7 @@ const SaleList = () => {
       >
         <Table stickyHeader aria-label="sales table">
           <TableHead>
-            <TableRow >
+            <TableRow>
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('customer.complete_name')}
@@ -371,8 +373,12 @@ const SaleList = () => {
           ) : (
             <TableBody>
               {salesList.map((item) => (
-                <TableRow key={item.id} onClick={() => handleRowClick(item)} hover sx={{ backgroundColor: rowSelected?.id === item.id && '#ECF2FF' }}>
-                  
+                <TableRow
+                  key={item.id}
+                  onClick={() => handleRowClick(item)}
+                  hover
+                  sx={{ backgroundColor: rowSelected?.id === item.id && '#ECF2FF' }}
+                >
                   <TableCell>{item.customer.complete_name}</TableCell>
                   <TableCell>{item.contract_number}</TableCell>
                   <TableCell>
@@ -552,13 +558,12 @@ const SaleList = () => {
           Enviando Contrato...
         </Typography>
       </Backdrop>
-      <Drawer
-        anchor='right'
-        open={openDrawer}
-        onClose={() => toggleDrawerClosed(false)}
-
-      >
-        <EditDrawer saleId={rowSelected?.id} />
+      <Drawer anchor="right" open={openDrawer} onClose={() => toggleDrawerClosed(false)}>
+        <ParentCard title="Editar Venda">
+          <CardContent>
+            <EditSalePage saleId={rowSelected?.id} sx={{ maxWidth: '40vw', minWidth: '40vw' }} />
+          </CardContent>
+        </ParentCard>
       </Drawer>
     </Box>
   );

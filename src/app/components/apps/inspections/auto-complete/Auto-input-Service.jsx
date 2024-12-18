@@ -7,7 +7,13 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import serviceCatalogService from '@/services/serviceCatalogService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteServiceCatalog({ onChange, value, error, helperText }) {
+export default function AutoCompleteServiceCatalog({
+  onChange,
+  value,
+  error,
+  helperText,
+  noOptionsText,
+}) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -21,7 +27,7 @@ export default function AutoCompleteServiceCatalog({ onChange, value, error, hel
           if (serviceCatalogValue) {
             setSelectedServiceCatalog({
               id: serviceCatalogValue.id,
-              name: serviceCatalogValue.name
+              name: serviceCatalogValue.name,
             });
           }
         } catch (error) {
@@ -44,13 +50,12 @@ export default function AutoCompleteServiceCatalog({ onChange, value, error, hel
 
   const fetchServiceCatalogsByName = useCallback(
     debounce(async (name) => {
-      if (!name) return;
       setLoading(true);
       try {
         const response = await serviceCatalogService.getServiceCatalogByName(name);
-        const formattedServiceCatalogs = response.results.map(serviceCatalog => ({
+        const formattedServiceCatalogs = response.results.map((serviceCatalog) => ({
           id: serviceCatalog.id,
-          name: serviceCatalog.name
+          name: serviceCatalog.name,
         }));
         setOptions(formattedServiceCatalogs);
       } catch (error) {
@@ -58,7 +63,7 @@ export default function AutoCompleteServiceCatalog({ onChange, value, error, hel
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
 
   const handleOpen = () => {
@@ -82,11 +87,12 @@ export default function AutoCompleteServiceCatalog({ onChange, value, error, hel
         options={options}
         loading={loading}
         value={selectedServiceCatalog}
+        noOptionsText={noOptionsText}
         onInputChange={(event, newInputValue) => {
           fetchServiceCatalogsByName(newInputValue);
         }}
+        onFocus={() => fetchServiceCatalogsByName('')}
         onChange={handleChange}
-        
         renderInput={(params) => (
           <CustomTextField
             error={error}
@@ -109,4 +115,3 @@ export default function AutoCompleteServiceCatalog({ onChange, value, error, hel
     </Fragment>
   );
 }
-

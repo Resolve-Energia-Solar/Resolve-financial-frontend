@@ -79,6 +79,10 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
 
   sale ? (formData.sale_id = sale) : null;
 
+  useEffect(() => {
+    if (formData.payment_type !== 'F') formData.financier_id = null;
+  }, [formData.payment_type]);
+
   const orderDate = new Date();
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
   const formattedOrderDate = format(parsedDate, 'EEEE, MMMM dd, yyyy');
@@ -150,15 +154,16 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
             {...(formErrors.borrower_id && { error: true, helperText: formErrors.borrower_id })}
           />
         </Grid>
-
-        <Grid item xs={12} sm={6}>
-          <CustomFormLabel htmlFor="name">Financiadora</CustomFormLabel>
-          <AutoCompleteFinancier
-            onChange={(id) => handleChange('financier_id', id)}
-            value={formData.financier_id}
-            {...(formErrors.financier_id && { error: true, helperText: formErrors.financier_id })}
-          />
-        </Grid>
+        {formData.payment_type === 'F' && (
+          <Grid item xs={12} sm={6}>
+            <CustomFormLabel htmlFor="name">Financiadora</CustomFormLabel>
+            <AutoCompleteFinancier
+              onChange={(id) => handleChange('financier_id', id)}
+              value={formData.financier_id}
+              {...(formErrors.financier_id && { error: true, helperText: formErrors.financier_id })}
+            />
+          </Grid>
+        )}
         <Grid item xs={12} sm={6}>
           <CustomFormLabel htmlFor="valor">Valor</CustomFormLabel>
           <CustomFieldMoney

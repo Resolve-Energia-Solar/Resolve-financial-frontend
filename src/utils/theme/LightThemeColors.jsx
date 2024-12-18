@@ -1,5 +1,39 @@
 const LightThemeColors = [
   {
+    name: 'RESOLVE_THEME',
+    palette: {
+      primary: {
+        main: '#FFCC00',
+        light: '#FFF5CC',
+        dark: '#DCB00D',
+        contrastText: '#ffffff',
+      },
+      secondary: {
+        main: '#303030',
+        light: '#7E8388',
+        dark: '#000000',
+        contrastText: '#ffffff',
+      },
+      success: {
+        main: '#008253',
+        background: 'E9F9E6'
+      }, 
+      Warning: {
+        main: '#D62802',
+        background: 'FFEBE4'
+      },
+      info: {
+        main: '#006ED3',
+        background: 'DAE9FF'
+      },
+      action: {
+        hover: '#FFF5CC'
+      }
+
+      
+    },
+  },
+  {
     name: 'BLUE_THEME',
     palette: {
       primary: {

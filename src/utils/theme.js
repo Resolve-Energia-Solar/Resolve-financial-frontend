@@ -12,10 +12,13 @@ const theme = createTheme({
     error: {
       main: red.A400,
     },
+    gray: {
+      main: "#C4C4C4",
+    },
     
   },
 });
 
-export default {theme,darkTheme};
+export default theme;
 
 

@@ -13,10 +13,8 @@ import {
   Modal,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import DescriptionIcon from '@mui/icons-material/Description';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import attachmentService from '@/services/attachmentService';
 import { Image, UploadFile } from '@mui/icons-material';
