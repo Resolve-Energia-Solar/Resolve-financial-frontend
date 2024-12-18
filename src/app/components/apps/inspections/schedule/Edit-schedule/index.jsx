@@ -7,25 +7,23 @@ import { Grid, Button, Stack, Alert, Icon, Tooltip } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 
 /* components */
-import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
 import AutoCompleteProject from '@/app/components/apps/inspections/auto-complete/Auto-input-Project';
 import AutoCompleteServiceCatalog from '@/app/components/apps/inspections/auto-complete/Auto-input-Service';
 import AutoCompleteUserSchedule from '@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule';
-import PageContainer from '@/app/components/container/PageContainer';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
-import ParentCard from '@/app/components/shared/ParentCard';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 
 /* hooks */
 import useSchedule from '@/hooks/inspections/schedule/useSchedule';
 import useScheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
 
-const ScheduleFormEdit = () => {
+const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh = null }) => {
   const params = useParams();
-  const { id } = params;
+  let id = scheduleId;
+  if (!scheduleId) id = params.id;
 
   const { loading, error, scheduleData } = useSchedule(id);
 
@@ -39,6 +37,15 @@ const ScheduleFormEdit = () => {
     { value: 'Concluído', label: 'Concluído' },
     { value: 'Cancelado', label: 'Cancelado' },
   ];
+
+  useEffect(() => {
+    if (success) {
+      if (onClosedModal) {
+        onClosedModal();
+        onRefresh();
+      }
+    }
+  }, [success]);
 
   if (loading) return <div>Carregando...</div>;
   if (error) return <div>{error}</div>;

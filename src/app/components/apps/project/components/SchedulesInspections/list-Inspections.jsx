@@ -20,12 +20,17 @@ import {
 import { Edit } from '@mui/icons-material';
 import { IconTrash } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import EditChecklistPage from '../Edit-checklist';
-import CreateChecklistPage from '../Add-checklist';
 import unitService from '@/services/unitService';
-import SupplyChip from '../components/SupplyChip';
+import scheduleService from '@/services/scheduleService';
+import EditChecklistPage from '../../../checklist/Edit-checklist';
+import SupplyChip from '../../../checklist/components/SupplyChip';
+import CreateChecklistPage from '../../../checklist/Add-checklist';
+import ScheduleFormCreate from '../../../inspections/schedule/Add-schedule';
+import ScheduleFormEdit from '../../../inspections/schedule/Edit-schedule';
 
-const CheckListRateio = ({ projectId = null }) => {
+const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
+
+const ListInspection = ({ projectId = null, product = [] }) => {
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedUnitId, setSelectedUnitId] = useState(null);
@@ -43,7 +48,8 @@ const CheckListRateio = ({ projectId = null }) => {
   useEffect(() => {
     const fetchUnits = async () => {
       try {
-        const response = await unitService.getUnitByIdProject(projectId);
+        const response = await scheduleService.getAllSchedulesInspectionByProject(projectId);
+        console.log('response', response.results);
         setUnits(response.results);
       } catch (error) {
         console.log('Error: ', error);
@@ -53,6 +59,8 @@ const CheckListRateio = ({ projectId = null }) => {
   }, [projectId, reload]);
 
   const [units, setUnits] = useState([]);
+
+  console.log('product', product);  
 
   const handleEdit = (unitId) => {
     setSelectedUnitId(unitId);
@@ -65,7 +73,7 @@ const CheckListRateio = ({ projectId = null }) => {
 
   const handleDelete = async (unitId) => {
     try {
-      await unitService.deleteUnit(unitId);
+      await scheduleService.deleteSchedule(unitId);
       setUnits((prevUnits) => prevUnits.filter((unit) => unit.id !== unitId));
       setConfirmDeleteModalOpen(false);
     } catch (error) {
@@ -87,22 +95,22 @@ const CheckListRateio = ({ projectId = null }) => {
               <TableRow>
                 <TableCell align="center">
                   <Typography variant="h6" fontSize="14px">
-                    Nome
+                    Data da Vistoria
                   </Typography>
                 </TableCell>
                 <TableCell align="center">
                   <Typography variant="h6" fontSize="14px">
-                    Adequação de Fornecimento
+                    Horário de Início
                   </Typography>
                 </TableCell>
                 <TableCell align="center">
                   <Typography variant="h6" fontSize="14px">
-                    Geradora
+                    Horário de Término
                   </Typography>
                 </TableCell>
                 <TableCell align="center">
                   <Typography variant="h6" fontSize="14px">
-                    Tipo de Fornecimento
+                    Status
                   </Typography>
                 </TableCell>
                 <TableCell align="center">
@@ -123,23 +131,20 @@ const CheckListRateio = ({ projectId = null }) => {
                 units.map((unit) => (
                   <TableRow key={unit.id}>
                     <TableCell align="center">
-                      <Typography variant="body2">{unit?.name}</Typography>
+                      <Typography variant="body2">{unit?.schedule_date}</Typography>
                     </TableCell>
                     <TableCell align="center">
-                      {unit.supply_adquance?.map((item) => (
-                        <Typography key={item.id} variant="body2">
-                          {item?.name}
+                        <Typography variant="body2">
+                          {unit?.schedule_start_time}
                         </Typography>
-                      ))}
-                      { unit.supply_adquance?.length === 0 && <Typography variant="body2">Nenhuma</Typography>}
                     </TableCell>
                     <TableCell align="center">
                       <Typography variant="body2">
-                        {unit?.main_unit ? 'Geradora' : 'Beneficiária'}
+                        {unit?.schedule_end_time}
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
-                      <Typography variant="body2"><SupplyChip status={unit?.type} /></Typography>
+                      <Typography variant="body2"><SupplyChip status={unit?.status} /></Typography>
                     </TableCell>
                     <TableCell align="center">
                       <Tooltip title="Edit Item">
@@ -159,7 +164,7 @@ const CheckListRateio = ({ projectId = null }) => {
               <TableRow>
                 <TableCell colSpan={5} align="center">
                   <Button variant="contained" color="primary" onClick={() => handleAdd()}>
-                    Adicionar Unidade
+                    Agendar Vistoria
                   </Button>
                 </TableCell>
               </TableRow>
@@ -170,11 +175,11 @@ const CheckListRateio = ({ projectId = null }) => {
 
       {/* Modal de Edição */}
       <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>Editar Unidade</DialogTitle>
+        <DialogTitle>Editar vistoria</DialogTitle>
         <DialogContent>
-          <EditChecklistPage
+          <ScheduleFormEdit
             onClosedModal={() => setEditModalOpen(false)}
-            unitId={selectedUnitId}
+            scheduleId={selectedUnitId}
             onRefresh={reloadPage}
           />
         </DialogContent>
@@ -182,11 +187,14 @@ const CheckListRateio = ({ projectId = null }) => {
 
       {/* Modal de Adicionar */}
       <Dialog open={AddModalOpen} onClose={() => setAddModalOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>Adicionar Unidade</DialogTitle>
+        <DialogTitle>Agendar uma Vistoria</DialogTitle>
         <DialogContent>
-          <CreateChecklistPage
-            onClosedModal={() => setAddModalOpen(false)}
+          <ScheduleFormCreate
+            CreateSale={() => setAddModalOpen(false)}
+            serviceId={SERVICE_INSPECTION_ID}
             projectId={projectId}
+            products={[product]}
+            onClosedModal={() => setAddModalOpen(false)}
             onRefresh={reloadPage}
           />
         </DialogContent>
@@ -209,8 +217,9 @@ const CheckListRateio = ({ projectId = null }) => {
           </Button>
         </DialogActions>
       </Dialog>
+
     </Box>
   );
 };
 
-export default CheckListRateio;
+export default ListInspection;

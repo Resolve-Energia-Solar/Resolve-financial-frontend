@@ -3,7 +3,7 @@ import projectService from '@/services/projectService';
 import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
 import ChecklistSalesSkeleton from '../../../checklist/components/ChecklistSalesSkeleton';
 import ProductChip from '../../../product/components/ProductChip';
-import CheckListRateio from '../../../checklist/Checklist-list';
+import ListInspection from './list-Inspections';
 
 function SchedulesInspections({ saleId }) {
   const [projectsList, setProjectsList] = useState([]);
@@ -52,7 +52,7 @@ function SchedulesInspections({ saleId }) {
                 </Stack>
               </Stack>
 
-              <CheckListRateio projectId={project.id} />
+              <ListInspection projectId={project.id} product={project.product.id} />
             </CardContent>
           </Card>
         </Box>
