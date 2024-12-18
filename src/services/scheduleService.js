@@ -1,5 +1,7 @@
 import apiClient from './apiClient';
 
+const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
+
 const scheduleService = {
   getSchedules: async ({ ordering, params, nextPage }) => {
     try {
@@ -14,7 +16,15 @@ const scheduleService = {
       throw error;
     }
   },
-
+  getAllSchedulesInspectionByProject: async (projectId) => {
+    try {
+      const response = await apiClient.get(`/api/schedule/?service=${SERVICE_INSPECTION_ID}&project=${projectId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar agendamentos:', error);
+      throw error;
+    }
+  },
   getScheduleById: async (id) => {
     try {
       const response = await apiClient.get(`/api/schedule/${id}/`);
