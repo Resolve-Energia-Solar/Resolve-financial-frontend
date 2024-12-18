@@ -6,13 +6,13 @@ import userService from '@/services/userService';
 import { debounce } from 'lodash';
 
 export default function AutoCompleteUserSchedule({
-    onChange,
-    value,
-    error,
-    helperText,
-    disabled,
-    query,
-  }) {
+  onChange,
+  value,
+  error,
+  helperText,
+  disabled,
+  query,
+}) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
@@ -28,12 +28,14 @@ export default function AutoCompleteUserSchedule({
               id: user.id,
               name: user.complete_name,
               distance: (user.distance || 0).toFixed(2),
-              daily_schedules_count: user.daily_schedules_count || "0"
+              daily_schedules_count: user.daily_schedules_count || '0',
             });
           }
         } catch (error) {
           console.error('Erro ao buscar usuário:', error);
         }
+      } else {
+        setSelectedUser(null);
       }
     };
 
@@ -55,19 +57,19 @@ export default function AutoCompleteUserSchedule({
       setLoading(true);
       try {
         const users = await userService.getUsersBySchedule(query);
-        const formattedUsers = users.results.map(user => ({
+        const formattedUsers = users.results.map((user) => ({
           id: user.id,
           name: user.complete_name,
           distance: (user.distance || 0).toFixed(2),
-          daily_schedules_count: user.daily_schedules_count || "0"
+          daily_schedules_count: user.daily_schedules_count || '0',
         }));
         setOptions(formattedUsers);
       } catch (error) {
         console.error('Erro ao buscar usuários:', error);
       }
       setLoading(false);
-    }, 300), 
-    [query]
+    }, 300),
+    [query],
   );
 
   const handleOpen = () => {
@@ -80,7 +82,6 @@ export default function AutoCompleteUserSchedule({
     setOptions([]);
   };
 
-
   return (
     <div>
       <Autocomplete
@@ -89,7 +90,9 @@ export default function AutoCompleteUserSchedule({
         onOpen={handleOpen}
         onClose={handleClose}
         isOptionEqualToValue={(option, value) => option.name === value.name}
-        getOptionLabel={(option) => `${option.name} (Distância: ${option.distance} KMs | Agendamentos: ${option.daily_schedules_count})`}
+        getOptionLabel={(option) =>
+          `${option.name} (Distância: ${option.distance} KMs | Agendamentos: ${option.daily_schedules_count})`
+        }
         options={options}
         loading={loading}
         disabled={disabled}
