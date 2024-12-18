@@ -3,15 +3,12 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 /* material */
-import { Grid, Button, Stack, Alert, Tooltip } from '@mui/material';
-import HelpIcon from '@mui/icons-material/Help';
+import { Grid, Button, Stack, Alert } from '@mui/material';
 
 /* components */
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
-import AutoCompleteProject from '@/app/components/apps/inspections/auto-complete/Auto-input-Project';
 import AutoCompleteServiceCatalog from '@/app/components/apps/inspections/auto-complete/Auto-input-Service';
-import AutoCompleteUserSchedule from '@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule';
 import PageContainer from '@/app/components/container/PageContainer';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
@@ -23,6 +20,7 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
 import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-User';
 import AutoCompleteUserProject from '@/app/components/apps/inspections/auto-complete/Auto-input-UserProject';
+import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 
 const ScheduleForm = () => {
   const router = useRouter();
@@ -86,7 +84,7 @@ const ScheduleForm = () => {
                 onChange={(id) => handleChange('project_id', id)}
                 value={formData.project_id}
                 selectedClient={formData.customer_id}
-                noTextOptions={'Nenhum projeto encontrado'}
+                noTextOptions={'O cliente não possui projetos atualmente'}
                 {...(formErrors.project_id && {
                   error: true,
                   helperText: formErrors.project_id,
@@ -144,34 +142,21 @@ const ScheduleForm = () => {
             />
           </Grid>
 
-          {/* Agente de Campo */}
-          {/* <Grid item xs={12} sm={12} lg={12}>
-            <CustomFormLabel htmlFor="field_agent">
-              Agentes Disponíveis{' '}
-              <Tooltip
-                title="Os agentes de campo são alocados com base na disponibilidade de horário e proximidade geográfica. Ajuste os parâmetros para visualizar opções disponíveis."
-                placement="right-end"
-              >
-                <HelpIcon fontSize="small" />
-              </Tooltip>
-            </CustomFormLabel>
-            <AutoCompleteUserSchedule
-              onChange={(id) => handleChange('schedule_agent_id', id)}
-              value={formData.schedule_agent_id}
-              query={{
-                category: formData.category_id,
-                scheduleDate: formData.schedule_date,
-                scheduleStartTime: formData.schedule_start_time,
-                scheduleEndTime: formData.schedule_end_time,
-                scheduleLatitude: formData.latitude,
-                scheduleLongitude: formData.longitude,
-              }}
-              {...(formErrors.schedule_agent_id && {
-                error: true,
-                helperText: formErrors.schedule_agent_id,
-              })}
+          {/* Observação */}
+          <Grid item xs={12} sm={12} lg={12}>
+            <CustomFormLabel htmlFor="name">Observação</CustomFormLabel>
+            <CustomTextField
+              name="observation"
+              placeholder="Observação do agendamento"
+              variant="outlined"
+              fullWidth
+              multiline
+              rows={4}
+              value={formData.observation}
+              onChange={(e) => handleChange('observation', e.target.value)}
+              {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
             />
-          </Grid> */}
+          </Grid>
 
           {/* Botão de Ação*/}
           <Grid item xs={12} sm={12} lg={12} justifyContent="flex-end" mt={2}>
