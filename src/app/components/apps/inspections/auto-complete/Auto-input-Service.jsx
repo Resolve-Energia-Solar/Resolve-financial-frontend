@@ -91,8 +91,8 @@ export default function AutoCompleteServiceCatalog({
         onInputChange={(event, newInputValue) => {
           fetchServiceCatalogsByName(newInputValue);
         }}
-        onFocus={() => fetchServiceCatalogsByName('')}
         onChange={handleChange}
+        onFocus={() => fetchServiceCatalogsByName('')}
         renderInput={(params) => (
           <CustomTextField
             error={error}

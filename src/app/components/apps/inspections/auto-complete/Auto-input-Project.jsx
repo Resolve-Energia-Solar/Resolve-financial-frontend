@@ -1,10 +1,5 @@
 'use client';
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useState
-} from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -26,7 +21,7 @@ export default function AutoCompleteProject({ onChange, value, error, helperText
           if (projectValue) {
             setSelectedProject({
               id: projectValue.id,
-              project_number: projectValue.project_number
+              project_number: projectValue.project_number,
             });
           }
         } catch (error) {
@@ -49,17 +44,17 @@ export default function AutoCompleteProject({ onChange, value, error, helperText
 
   const fetchProjectsByCodeNumber = useCallback(
     debounce(async (codeNumber) => {
-      if (!codeNumber) return;
       setLoading(true);
       try {
         const response = await projectService.getProjects();
         const formattedProjects = response.results
-        .filter(project =>
-          project.project_number.toLowerCase().includes(codeNumber.toLowerCase()))
-        .map(project => ({
-          id: project.id,
-          project_number: project.project_number
-        }));
+          .filter((project) =>
+            project.project_number.toLowerCase().includes(codeNumber.toLowerCase()),
+          )
+          .map((project) => ({
+            id: project.id,
+            project_number: project.project_number,
+          }));
         console.log('formattedProjects: ', formattedProjects);
         setOptions(formattedProjects);
       } catch (error) {
@@ -67,7 +62,7 @@ export default function AutoCompleteProject({ onChange, value, error, helperText
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
 
   const handleOpen = () => {
@@ -95,6 +90,7 @@ export default function AutoCompleteProject({ onChange, value, error, helperText
           fetchProjectsByCodeNumber(newInputValue);
         }}
         onChange={handleChange}
+        onFocus={() => fetchProjectsByCodeNumber('')}
         renderInput={(params) => (
           <CustomTextField
             error={error}
