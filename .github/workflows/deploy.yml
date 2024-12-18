@@ -18,34 +18,41 @@ jobs:
     environment: resolve
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      # 1. Checkout do código
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Log in to Azure Container Registry
-      run: echo "${{ vars.AZURE_ACR_PASSWORD }}" | docker login resourceresolve.azurecr.io -u "${{ vars.AZURE_ACR_USERNAME }}" --password-stdin
+      # 2. Configurar Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    - name: Build and Push Docker Image with Cache
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        file: ./Dockerfile
-        tags: |
-          $DOCKER_IMAGE:${{ github.sha }}
-        cache-from: type=registry,ref=$DOCKER_IMAGE:cache
-        cache-to: type=registry,mode=max,ref=$DOCKER_IMAGE:cache
-        push: true
+      # 3. Log in no Azure Container Registry
+      - name: Log in to Azure Container Registry
+        run: echo "${{ vars.AZURE_ACR_PASSWORD }}" | docker login resourceresolve.azurecr.io -u "${{ vars.AZURE_ACR_USERNAME }}" --password-stdin
 
-    - name: Log in to Azure
-      run: az login --service-principal -u "${{ vars.AZURE_CLIENT_ID }}" -p "${{ vars.AZURE_CLIENT_SECRET }}" --tenant "${{ vars.AZURE_TENANT_ID }}"
+      # 4. Build e Push usando cache
+      - name: Build and Push Docker Image with Cache
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          tags: |
+            $DOCKER_IMAGE:${{ github.sha }}
+          cache-from: type=registry,ref="$DOCKER_IMAGE:cache"
+          cache-to: type=registry,mode=max,ref="$DOCKER_IMAGE:cache"
+          push: true
 
-    - name: Configure Access to AKS
-      run: |
-        az aks get-credentials --resource-group $AKS_RESOURCE_GROUP --name $AKS_CLUSTER_NAME --overwrite-existing
+      # 5. Login no Azure CLI
+      - name: Log in to Azure CLI
+        run: az login --service-principal -u "${{ vars.AZURE_CLIENT_ID }}" -p "${{ vars.AZURE_CLIENT_SECRET }}" --tenant "${{ vars.AZURE_TENANT_ID }}"
 
-    - name: Update Deployment on AKS
-      run: |
-        kubectl set image deployment/$DEPLOYMENT_NAME resolve-erp-frontend=$DOCKER_IMAGE:${{ github.sha }} -n $NAMESPACE
-        kubectl rollout status deployment/$DEPLOYMENT_NAME -n $NAMESPACE
+      # 6. Configurar Acesso ao Cluster AKS
+      - name: Configure Access to AKS
+        run: az aks get-credentials --resource-group "$AKS_RESOURCE_GROUP" --name "$AKS_CLUSTER_NAME" --overwrite-existing
+
+      # 7. Deploy da aplicação no cluster AKS
+      - name: Update Deployment on AKS
+        run: |
+          kubectl set image deployment/$DEPLOYMENT_NAME resolve-erp-frontend="$DOCKER_IMAGE:${{ github.sha }}" -n "$NAMESPACE"
+          kubectl rollout status deployment/$DEPLOYMENT_NAME -n "$NAMESPACE"
