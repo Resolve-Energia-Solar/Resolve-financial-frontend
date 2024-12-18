@@ -21,6 +21,7 @@ import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
 import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
 import AutoCompleteUserProject from '../../auto-complete/Auto-input-UserProject';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
+import AutoCompleteProject from '../../auto-complete/Auto-input-Project';
 
 const ScheduleFormCreate = ({
   serviceId = null,
