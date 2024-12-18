@@ -53,7 +53,6 @@ export default function AutoCompleteUserSchedule({
 
   const fetchUsersByName = React.useCallback(
     debounce(async (name) => {
-      //if (!name) return;
       setLoading(true);
       try {
         const users = await userService.getUsersBySchedule(query);
@@ -74,7 +73,6 @@ export default function AutoCompleteUserSchedule({
 
   const handleOpen = () => {
     setOpen(true);
-    fetchUsersByName('');
   };
 
   const handleClose = () => {
@@ -102,6 +100,7 @@ export default function AutoCompleteUserSchedule({
           fetchUsersByName(newInputValue);
         }}
         onChange={handleChange}
+        onFocus={() => fetchUsersByName('')}
         renderInput={(params) => (
           <CustomTextField
             {...params}
