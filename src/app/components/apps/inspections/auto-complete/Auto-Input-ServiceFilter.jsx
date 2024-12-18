@@ -55,7 +55,6 @@ export default function AutoCompleteServiceCatalogFilter({
 
   const fetchServiceCatalogsByName = useCallback(
     debounce(async (name) => {
-      if (!name) return;
       setLoading(true);
       try {
         const response = await serviceCatalogService.getServiceCatalogByName(name);
@@ -98,6 +97,7 @@ export default function AutoCompleteServiceCatalogFilter({
           fetchServiceCatalogsByName(newInputValue);
         }}
         onChange={handleChange}
+        onFocus={() => fetchServiceCatalogsByName('')}
         noOptionsText={noOptionsText}
         renderInput={(params) => (
           <CustomTextField

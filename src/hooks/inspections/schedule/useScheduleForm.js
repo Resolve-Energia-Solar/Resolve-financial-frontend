@@ -28,6 +28,7 @@ const useScheduleForm = (initialData, id) => {
     customer_id: null,
     project_id: null,
     schedule_agent_id: null,
+    products_ids: [],
     schedule_date: '',
     schedule_start_time: '',
     schedule_end_time: '',
@@ -64,6 +65,7 @@ const useScheduleForm = (initialData, id) => {
         customer_id: initialData?.customer?.id || null,
         project_id: initialData.project?.id || null,
         schedule_agent_id: initialData.schedule_agent?.id || null,
+        products_ids: initialData.products_ids || [],
         schedule_date: initialData.schedule_date || '',
         schedule_start_time: startTime || '',
         schedule_end_time: initialData.schedule_end_time || '',
@@ -204,8 +206,14 @@ const useScheduleForm = (initialData, id) => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    console.log('Field: ', field, 'Value: ', value);
-    console.log('FormData: ', formData);
+    if (
+      field === 'service_id' ||
+      field === 'schedule_start_time' ||
+      field === 'schedule_date' ||
+      field === 'address_id'
+    ) {
+      setFormData((prev) => ({ ...prev, schedule_agent_id: null }));
+    }
   };
 
   const handleSave = async () => {
@@ -213,6 +221,7 @@ const useScheduleForm = (initialData, id) => {
       schedule_creator: formData.schedule_creator,
       service_id: formData.service_id,
       customer_id: formData.customer_id,
+      products_ids: formData.products_ids,
       schedule_date: formData.schedule_date,
       schedule_start_time: formatTime(formData.schedule_start_time),
       schedule_end_time: formatTime(formData.schedule_end_time),
@@ -230,7 +239,7 @@ const useScheduleForm = (initialData, id) => {
       dataToSend.project_id = formData.project_id;
     }
 
-    if (formData.schedule_agent_id) {
+    if (formData.schedule_agent_id !== null) {
       dataToSend.schedule_agent_id = formData.schedule_agent_id;
     }
 

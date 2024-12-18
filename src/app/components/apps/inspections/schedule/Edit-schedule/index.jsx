@@ -7,25 +7,25 @@ import { Grid, Button, Stack, Alert, Icon, Tooltip } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 
 /* components */
-import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
-import AutoCompleteProject from '@/app/components/apps/inspections/auto-complete/Auto-input-Project';
 import AutoCompleteServiceCatalog from '@/app/components/apps/inspections/auto-complete/Auto-input-Service';
 import AutoCompleteUserSchedule from '@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule';
-import PageContainer from '@/app/components/container/PageContainer';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
-import ParentCard from '@/app/components/shared/ParentCard';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 
 /* hooks */
 import useSchedule from '@/hooks/inspections/schedule/useSchedule';
 import useScheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
+import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
+import AutoCompleteUserProject from '../../auto-complete/Auto-input-UserProject';
+import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 
-const ScheduleFormEdit = () => {
+const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh = null }) => {
   const params = useParams();
-  const { id } = params;
+  let id = scheduleId;
+  if (!scheduleId) id = params.id;
 
   const { loading, error, scheduleData } = useSchedule(id);
 
@@ -39,6 +39,15 @@ const ScheduleFormEdit = () => {
     { value: 'Concluído', label: 'Concluído' },
     { value: 'Cancelado', label: 'Cancelado' },
   ];
+
+  useEffect(() => {
+    if (success) {
+      if (onClosedModal) {
+        onClosedModal();
+        onRefresh();
+      }
+    }
+  }, [success]);
 
   if (loading) return <div>Carregando...</div>;
   if (error) return <div>{error}</div>;
@@ -56,21 +65,39 @@ const ScheduleFormEdit = () => {
               error: true,
               helperText: formErrors.service_id,
             })}
+            noOptionsText={'Nenhum serviço encontrado'}
+          />
+        </Grid>
+
+        {/* Cliente */}
+        <Grid item xs={12} sm={12} lg={6}>
+          <CustomFormLabel htmlFor="client">Cliente</CustomFormLabel>
+          <AutoCompleteUser
+            onChange={(id) => handleChange('customer_id', id)}
+            value={formData.customer_id}
+            {...(formErrors.customer_id && {
+              error: true,
+              helperText: formErrors.customer_id,
+            })}
           />
         </Grid>
 
         {/* Projeto */}
-        <Grid item xs={12} sm={12} lg={6}>
-          <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
-          <AutoCompleteProject
-            onChange={(id) => handleChange('project_id', id)}
-            value={formData.project_id}
-            {...(formErrors.project_id && {
-              error: true,
-              helperText: formErrors.project_id,
-            })}
-          />
-        </Grid>
+        {formData.customer_id && (
+          <Grid item xs={12} sm={12} lg={12}>
+            <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
+            <AutoCompleteUserProject
+              onChange={(id) => handleChange('project_id', id)}
+              value={formData.project_id}
+              selectedClient={formData.customer_id}
+              noTextOptions={'O cliente não possui projetos atualmente'}
+              {...(formErrors.project_id && {
+                error: true,
+                helperText: formErrors.project_id,
+              })}
+            />
+          </Grid>
+        )}
 
         {/* Data do Agendamento */}
         <Grid item xs={12} sm={12} lg={6}>
@@ -101,7 +128,7 @@ const ScheduleFormEdit = () => {
         </Grid>
 
         {/* Endereço */}
-        <Grid item xs={12} sm={12} lg={4}>
+        <Grid item xs={12} sm={12} lg={6}>
           <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
           <AutoCompleteAddress
             onChange={(id) => handleChange('address_id', id)}
@@ -110,8 +137,19 @@ const ScheduleFormEdit = () => {
           />
         </Grid>
 
+        {/* Status do Agendamento */}
+        <Grid item xs={12} sm={12} lg={6}>
+          <FormSelect
+            label="Status do Agendamento"
+            options={statusOptions}
+            onChange={(e) => handleChange('status', e.target.value)}
+            value={formData.status || ''}
+            {...(formErrors.status && { error: true, helperText: formErrors.status })}
+          />
+        </Grid>
+
         {/* Agente de Campo */}
-        <Grid item xs={12} sm={12} lg={4}>
+        <Grid item xs={12} sm={12} lg={12}>
           <CustomFormLabel htmlFor="field_agent">
             Agentes Disponíveis{' '}
             <Tooltip
@@ -139,14 +177,19 @@ const ScheduleFormEdit = () => {
           />
         </Grid>
 
-        {/* Status do Agendamento */}
-        <Grid item xs={12} sm={12} lg={4}>
-          <FormSelect
-            label="Status do Agendamento"
-            options={statusOptions}
-            onChange={(e) => handleChange('status', e.target.value)}
-            value={formData.status || ''}
-            {...(formErrors.status && { error: true, helperText: formErrors.status })}
+        {/* Observação */}
+        <Grid item xs={12} sm={12} lg={12}>
+          <CustomFormLabel htmlFor="name">Observação</CustomFormLabel>
+          <CustomTextField
+            name="observation"
+            placeholder="Observação do agendamento"
+            variant="outlined"
+            fullWidth
+            multiline
+            rows={4}
+            value={formData.observation}
+            onChange={(e) => handleChange('observation', e.target.value)}
+            {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
           />
         </Grid>
 
@@ -154,7 +197,7 @@ const ScheduleFormEdit = () => {
         <Grid item xs={12} sm={12} lg={12}>
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             <Button variant="contained" color="primary" onClick={handleSave}>
-              Salvar Alterações
+              Salvar
             </Button>
           </Stack>
         </Grid>

@@ -28,29 +28,39 @@ console.log(data);
 
         <>
             <Box sx={{ boxShadow: '4', padding: '20px' }} >
-                <Box sx={{ p: 2, border: '1px none grey', height: '50%', padding: '5px', marginBottom: '15px', display: 'flex', justifyContent: 'space-between' }}>
 
-                    <Box sx={{ p: 2, border: '1px none grey', width: '40%', height: '50%', }} >
+                <Box sx={{ p: 2, height: '50%', padding: '5px', marginBottom: '15px', display: 'flex', justifyContent: 'space-between' }}>
+
+                    <Box sx={{ p: 2, width: '40%', height: '50%', padding: '0px'}} >
 
                         <Box sx={{ p: 2, backgroundColor:  theme.palette.secondary.main, height: '50%', padding: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '15px' }}>
+
                             <Typography color='#FFFFFF'> Franquia</Typography>
                             <Typography variant='h6' color='#FFFFFF'>Umarizal</Typography>
+
                         </Box>
 
                         <Box sx={{ p: 2, height: '50%', padding: '10px', display: 'flex', alignItems: 'center', marginBottom: '15px', backgroundColor:  theme.palette.secondary.main }}>
+
                             <Typography variant='h6' sx={{ marginRight: 2, color:'#FFFFFF' }}>Saldo: </Typography>
                             <Typography color='#FFFFFF'>-R$ 27.752,22</Typography>
+
                         </Box>
 
                         <Box sx={{ p: 2, height: '50%', padding: '10px', display: 'flex', alignItems: 'center', backgroundColor: theme.palette.primary.main }}>
+
                             <Typography variant='h6' sx={{ marginRight: 2, color:'#FFFFFF' }}>Total: </Typography>
                             <Typography  color='#FFFFFF'>R$1.000.000,58</Typography>
+
                         </Box>
                     </Box>
 
                     <Box sx={{ p: 2, width: '30%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: theme.palette.secondary.main , marginTop: '15px' }}>
+
                         <Typography variant='h6' sx={{ marginBottom: '8px', color:  '#FFFFFF' }}>Saldo</Typography>
-                        <Button variant="text" onClick={toggleDrawer(true)} sx={{ width: '100%', border: '1px solid transparent', boxShadow: '2', backgroundColor: 'white' }}>Adicionar</Button>
+
+                        <Button variant="text" onClick={toggleDrawer(true)} sx={{ width: '100%', boxShadow: '2', backgroundColor: 'white' }}>Adicionar</Button>
+
                     </Box>
                 </Box>
 

@@ -44,7 +44,7 @@ const formatTimeToSend = (timeString) => {
   const date = new Date(timeString);
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
-  return `${hours}:${minutes}`;
+  return `${hours}:${minutes}:00`;
 };
 
 export { formatDateTime, formatDate, formatTime, formatGetTime, formatTimeToSend };

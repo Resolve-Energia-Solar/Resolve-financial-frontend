@@ -37,10 +37,11 @@ import ChecklistSales from '../../../checklist/Checklist-list/ChecklistSales';
 import HasPermission from '@/app/components/permissions/HasPermissions';
 import SendContractButton from '../../../contractSubmissions/Send-contract';
 import ContractSubmissions from '../../../contractSubmissions/contract-list';
+import SchedulesInspections from '../../../project/components/SchedulesInspections';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
-const EditSalePage = ({ saleId = null, onClosedModal = null, refresh=null, ...props }) => {
+const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...props }) => {
   const params = useParams();
   let id = saleId;
   if (!saleId) id = params.id;
@@ -114,6 +115,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh=null, ...pr
     <Box {...props}>
       <Tabs value={value} onChange={handleChangeTab}>
         <Tab label="Cliente" />
+        <Tab label="Vistoria" />
         <Tab label="Venda" />
         <Tab label="Anexos" />
         <Tab label="Pagamentos" />
@@ -132,7 +134,9 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh=null, ...pr
             </Box>
           )}
 
-          {value === 1 && (
+          {value === 1 && <SchedulesInspections saleId={id_sale} />}
+
+          {value === 2 && (
             <>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={12} lg={4}>
@@ -246,21 +250,21 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh=null, ...pr
             </>
           )}
 
-          {value === 2 && (
+          {value === 3 && (
             <Attachments
               contentType={CONTEXT_TYPE_SALE_ID}
               objectId={id_sale}
               documentTypes={documentTypes}
             />
           )}
-          {value === 3 && (
+          {value === 4 && (
             <Box sx={{ mt: 3 }}>
               <PaymentCard sale={id_sale} />
             </Box>
           )}
 
-          {value === 4 && <ChecklistSales saleId={id_sale} />}
-          {value === 5 && <ContractSubmissions sale={saleData} />}
+          {value === 5 && <ChecklistSales saleId={id_sale} />}
+          {value === 6 && <ContractSubmissions sale={saleData} />}
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             {onClosedModal && (
@@ -268,7 +272,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh=null, ...pr
                 Fechar
               </Button>
             )}
-            {value === 1 && (
+            {value === 2 && (
               <Box>
                 <SendContractButton sale={saleData} sx={{ mr: 2 }} />
 
@@ -291,7 +295,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh=null, ...pr
                   disabled={formLoading}
                   endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
                 >
-                  {formLoading ? 'Salvando...' : 'Salvar Alterações'}
+                  {formLoading ? 'Salvando...' : 'Salvar Alteraçõess'}
                 </Button>
               </Box>
             )}

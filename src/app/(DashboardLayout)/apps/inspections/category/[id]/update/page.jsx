@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  Alert,
-  Button,
-  Grid,
-  Stack,
-} from '@mui/material';
+import { Alert, Button, Grid, Stack } from '@mui/material';
 import { useParams } from 'next/navigation';
 
 import AutoCompleteCategory from '@/app/components/apps/inspections/auto-complete/Auto-Input-Category';
@@ -24,13 +19,10 @@ const CategoryForm = () => {
 
   const { loading, error, categoryData } = useCategory(id);
 
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success
-  } = useCategoryForm(categoryData, id);
+  const { formData, handleChange, handleSave, formErrors, success } = useCategoryForm(
+    categoryData,
+    id,
+  );
 
   if (loading) return <div>Carregando...</div>;
   if (error) return <div>{error}</div>;
@@ -38,10 +30,13 @@ const CategoryForm = () => {
   return (
     <PageContainer title="Edição de Categoria" description="Editor de Categoria">
       <Breadcrumb title="Editar Categoria" />
-      { success && <Alert severity="success" sx={{ marginBottom: 3 }}>A categoria foi atualizada com sucesso!</Alert>}
+      {success && (
+        <Alert severity="success" sx={{ marginBottom: 3 }}>
+          A categoria foi atualizada com sucesso!
+        </Alert>
+      )}
       <ParentCard title="Categoria">
         <Grid container spacing={3}>
-
           <Grid item xs={12} sm={12} lg={6}>
             <CustomFormLabel htmlFor="name">Categoria</CustomFormLabel>
             <CustomTextField
@@ -60,7 +55,10 @@ const CategoryForm = () => {
               fullWidth
               onChange={(id) => handleChange('main_category', id)}
               value={formData.main_category}
-              {...(formErrors.main_category && { error: true, helperText: formErrors.main_category })}
+              {...(formErrors.main_category && {
+                error: true,
+                helperText: formErrors.main_category,
+              })}
             />
           </Grid>
 
@@ -77,7 +75,7 @@ const CategoryForm = () => {
           <Grid item xs={12} sm={12} lg={12}>
             <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
               <Button variant="contained" color="primary" onClick={handleSave}>
-                Editar
+                Salvar
               </Button>
             </Stack>
           </Grid>
