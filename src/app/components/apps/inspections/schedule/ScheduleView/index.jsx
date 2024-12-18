@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import {
   Box,
@@ -25,6 +26,8 @@ import Logo from '@/app/(DashboardLayout)/layout/shared/logo/Logo';
 import ScheduleStatusChip from '../StatusChip';
 
 export default function ScheduleView({ open, onClose, selectedSchedule }) {
+  const router = useRouter();
+
   const formatDate = (dateString) => {
     const [year, month, day] = dateString.split('-');
     return `${day}/${month}/${year}`;
@@ -33,6 +36,10 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
   const formatTime = (timeString) => {
     const [hours, minutes] = timeString.split(':');
     return `${hours}:${minutes}`;
+  };
+
+  const handleEditClick = (id) => {
+    router.push(`/apps/inspections/schedule/${id}/update`);
   };
 
   return (
@@ -133,6 +140,18 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                 </Paper>
               </>
             )}
+            {/* Botão de Ação */}
+            <Grid item xs={12} sm={12} lg={12}>
+              <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleEditClick(selectedSchedule.id)}
+                >
+                  Editar Agendamento
+                </Button>
+              </Stack>
+            </Grid>
           </CardContent>
         </Box>
       </Drawer>

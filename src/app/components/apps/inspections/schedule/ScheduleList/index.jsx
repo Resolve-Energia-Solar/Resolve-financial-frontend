@@ -89,6 +89,8 @@ const SchedulingList = () => {
       const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
       try {
         const queryParams = new URLSearchParams(filters[1]).toString();
+        console.log('queryParams:', queryParams);
+        console.log('page:', page);
         const data = await scheduleService.getSchedules({
           ordering: orderingParam,
           params: queryParams,
@@ -117,7 +119,9 @@ const SchedulingList = () => {
       }
     };
 
-    fetchSchedules();
+    if (page === 1 || hasMore) {
+      fetchSchedules();
+    }
   }, [page, order, orderDirection, filters, refresh]);
 
   const showAlert = (message, type) => {
@@ -230,7 +234,17 @@ const SchedulingList = () => {
       <TableContainer
         component={Paper}
         elevation={10}
-        sx={{ overflowX: 'auto', maxHeight: '50vh' }}
+        sx={{
+          overflowX: 'auto',
+          maxHeight: '50vh',
+          scrollbarWidth: 'none',
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+          '&-ms-overflow-style:': {
+            display: 'none',
+          },
+        }}
         onScroll={handleScroll}
       >
         <Table stickyHeader aria-label="schedule table">
@@ -464,14 +478,14 @@ const SchedulingList = () => {
               ))}
               {loading && page > 1 && (
                 <TableRow>
-                  <TableCell colSpan={9} align="center">
+                  <TableCell colSpan={10} align="center">
                     <CircularProgress />
                   </TableCell>
                 </TableRow>
               )}
               {!hasMore && (
                 <TableRow>
-                  <TableCell colSpan={9} align="center">
+                  <TableCell colSpan={10} align="center">
                     <Typography variant="body2">Você viu tudo!</Typography>
                   </TableCell>
                 </TableRow>

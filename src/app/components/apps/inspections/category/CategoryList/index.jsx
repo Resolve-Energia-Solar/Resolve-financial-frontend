@@ -179,9 +179,7 @@ const CategoryList = () => {
           variant="outlined"
           startIcon={<AddBoxRounded />}
           sx={{ marginTop: 1, marginBottom: 2 }}
-          onClick={() => {
-            handleCreateClick;
-          }}
+          onClick={handleCreateClick}
         >
           Adicionar Categoria
         </Button>
@@ -228,7 +226,9 @@ const CategoryList = () => {
               </TableCell>
 
               {/* Actions */}
-              <TableCell align="right" sx={{paddingRight:3}}>Ações</TableCell>
+              <TableCell align="right" sx={{ paddingRight: 3 }}>
+                Ações
+              </TableCell>
             </TableRow>
           </TableHead>
           {loading && page === 1 ? (

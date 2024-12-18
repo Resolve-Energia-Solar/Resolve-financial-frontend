@@ -8,9 +8,9 @@ import HelpIcon from '@mui/icons-material/Help';
 
 /* components */
 import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
-import AutoCompleteProject from '@/app/components/apps/inspections/auto-complete/Auto-input-Project';
 import AutoCompleteServiceCatalog from '@/app/components/apps/inspections/auto-complete/Auto-input-Service';
 import AutoCompleteUserSchedule from '@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule';
+import PageContainer from '@/app/components/container/PageContainer';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
@@ -18,6 +18,9 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 
 /* hooks */
 import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
+import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
+import AutoCompleteUserProject from '../../auto-complete/Auto-input-UserProject';
+import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 
 const ScheduleFormCreate = ({
   serviceId = null,
@@ -133,38 +136,25 @@ const ScheduleFormCreate = ({
           />
         </Grid>
 
-        {/* Agente de Campo */}
+        {/* Observação */}
         <Grid item xs={12} sm={12} lg={12}>
-          <CustomFormLabel htmlFor="field_agent">
-            Agentes Disponíveis{' '}
-            <Tooltip
-              title="Os agentes de campo são alocados com base na disponibilidade de horário e proximidade geográfica. Ajuste os parâmetros para visualizar opções disponíveis."
-              placement="right-end"
-            >
-              <HelpIcon fontSize="small" />
-            </Tooltip>
-          </CustomFormLabel>
-          <AutoCompleteUserSchedule
-            onChange={(id) => handleChange('schedule_agent_id', id)}
-            value={formData.schedule_agent_id}
-            query={{
-              category: formData.category_id,
-              scheduleDate: formData.schedule_date,
-              scheduleStartTime: formData.schedule_start_time,
-              scheduleEndTime: formData.schedule_end_time,
-              scheduleLatitude: formData.latitude,
-              scheduleLongitude: formData.longitude,
-            }}
-            {...(formErrors.schedule_agent_id && {
-              error: true,
-              helperText: formErrors.schedule_agent_id,
-            })}
+          <CustomFormLabel htmlFor="name">Observação</CustomFormLabel>
+          <CustomTextField
+            name="observation"
+            placeholder="Observação do agendamento"
+            variant="outlined"
+            fullWidth
+            multiline
+            rows={4}
+            value={formData.observation}
+            onChange={(e) => handleChange('observation', e.target.value)}
+            {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
           />
         </Grid>
 
         {/* Botão de Ação*/}
-        <Grid item xs={12} sm={12} lg={12} justifyContent="flex-end" mt={2}>
-          <Stack direction="row" spacing={2}>
+        <Grid item xs={12} sm={12} lg={12}>
+          <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             <Button variant="contained" color="primary" onClick={handleSave}>
               Salvar
             </Button>

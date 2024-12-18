@@ -61,7 +61,6 @@ export default function AutoCompleteFormBuilder({
 
   const fetchFormsByTitle = React.useCallback(
     debounce(async (title) => {
-      if (!title) return;
       setLoading(true);
       try {
         const forms = await formBuilderService.getFormByName(title);
@@ -112,6 +111,7 @@ export default function AutoCompleteFormBuilder({
           fetchFormsByTitle(newInputValue);
         }}
         onChange={handleChange}
+        onFocus={() => fetchFormsByTitle('')}
         renderInput={(params) => (
           <CustomTextField
             {...params}
@@ -147,7 +147,7 @@ export default function AutoCompleteFormBuilder({
         <DialogTitle>Adicionar Novo Formulário</DialogTitle>
         <DialogContent>
           {/* <CreateForm onClosedModal={handleCloseModal} /> */}
-          <CreateForm onClosedModal={handleCloseModal} selectedFormId={fetchDefaultForm}/>
+          <CreateForm onClosedModal={handleCloseModal} selectedFormId={fetchDefaultForm} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModal} color="primary">

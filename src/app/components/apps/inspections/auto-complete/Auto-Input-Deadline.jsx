@@ -1,19 +1,12 @@
 'use client';
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import deadlineService from '@/services/deadlineService';
 
-import {
-  debounce,
-} from 'lodash';
+import { debounce } from 'lodash';
 
 export default function AutoCompleteDeadline({ onChange, value, error, helperText }) {
   const [open, setOpen] = useState(false);
@@ -29,7 +22,7 @@ export default function AutoCompleteDeadline({ onChange, value, error, helperTex
           if (deadlineValue) {
             setSelectedDeadline({
               id: deadlineValue.id,
-              name: deadlineValue.name
+              name: deadlineValue.name,
             });
           }
         } catch (error) {
@@ -52,21 +45,20 @@ export default function AutoCompleteDeadline({ onChange, value, error, helperTex
 
   const fetchDeadlinesByName = useCallback(
     debounce(async (name) => {
-      if (!name) return;
       setLoading(true);
       try {
         const responses = await deadlineService.getDeadlineByName(name);
-        const formattedDeadlines = responses.results.map(deadline => ({
+        const formattedDeadlines = responses.results.map((deadline) => ({
           id: deadline.id,
-          name: deadline.name
+          name: deadline.name,
         }));
         setOptions(formattedDeadlines);
       } catch (error) {
         console.error('Erro ao buscar prazos:', error);
       }
       setLoading(false);
-    }, 300), 
-    []
+    }, 300),
+    [],
   );
 
   const handleOpen = () => {
@@ -94,6 +86,7 @@ export default function AutoCompleteDeadline({ onChange, value, error, helperTex
           fetchDeadlinesByName(newInputValue);
         }}
         onChange={handleChange}
+        onFocus={() => fetchDeadlinesByName('')}
         renderInput={(params) => (
           <CustomTextField
             error={error}

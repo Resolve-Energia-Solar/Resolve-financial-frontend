@@ -1,36 +1,26 @@
 'use client';
-import React from "react";
+import React from 'react';
 
-import {
-  Button,
-  Grid,
-  Stack
-} from "@mui/material";
+import { Button, Grid, Stack } from '@mui/material';
 
 import useServiceCatalogForm from '@/hooks/inspections/service-catalog/useServiceCatalogForm';
 
 import { useRouter } from 'next/navigation';
 
 import Alert from '@mui/material/Alert';
-import AutoCompleteCategory from "@/app/components/apps/inspections/auto-complete/Auto-Input-Category";
-import AutoCompleteDeadline from "@/app/components/apps/inspections/auto-complete/Auto-Input-Deadline";
-import Breadcrumb from "@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb";
+import AutoCompleteCategory from '@/app/components/apps/inspections/auto-complete/Auto-Input-Category';
+import AutoCompleteDeadline from '@/app/components/apps/inspections/auto-complete/Auto-Input-Deadline';
+import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import PageContainer from "@/app/components/container/PageContainer";
-import ParentCard from "@/app/components/shared/ParentCard";
-import AutoCompleteFormBuilder from "@/app/components/apps/inspections/auto-complete/Auto-Input-FormBuilder";
+import PageContainer from '@/app/components/container/PageContainer';
+import ParentCard from '@/app/components/shared/ParentCard';
+import AutoCompleteFormBuilder from '@/app/components/apps/inspections/auto-complete/Auto-Input-FormBuilder';
 
 const ServiceCatalogForm = () => {
   const router = useRouter();
 
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success
-  } = useServiceCatalogForm();
+  const { formData, handleChange, handleSave, formErrors, success } = useServiceCatalogForm();
 
   if (success) {
     router.push('/apps/inspections/service-catalog');
@@ -109,7 +99,7 @@ const ServiceCatalogForm = () => {
           <Grid item xs={12} sm={12} lg={12}>
             <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
               <Button variant="contained" color="primary" onClick={handleSave}>
-                Criar
+                Salvar
               </Button>
             </Stack>
           </Grid>
