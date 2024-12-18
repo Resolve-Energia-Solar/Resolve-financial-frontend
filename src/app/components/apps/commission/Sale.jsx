@@ -10,6 +10,7 @@ import { format } from 'date-fns';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
 import { useTheme } from '@mui/material/styles';
 
+
 function Sale({ data }) {
   console.log(data)
   const {
@@ -85,7 +86,7 @@ function Sale({ data }) {
 
                   <TableCell align="center">
                      <Chip
-                    label={item.financial_completion_date ? 'Concluido' : 'Pendente'} sx={{backgroundColor: item.financial_completion_date ? theme.palette.primary.light : theme.palette.secondary.light }} />
+                    label={item.financial_completion_date ? 'Concluido' : 'Pendente'} sx={{backgroundColor: item.financial_completion_date ? theme.palette.success.main : theme.palette.secondary.light }} />
                   </TableCell>
 
                   <TableCell align="center">{item.branch.name}</TableCell>
