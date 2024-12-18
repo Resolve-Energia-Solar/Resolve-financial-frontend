@@ -6,40 +6,21 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
-import { Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import ReleasesForm from './forms/ReleasesForm';
+import { Chip, CircularProgress, Typography } from '@mui/material';
 import { Drawer } from '@mui/material';
-import { useState } from 'react';
+import PaymentCommission from '@/hooks/commission/PaymentCommission';
+
 function Releases({ data }) {
+console.log(data)
 
-
-  const [open, setOpen] = useState(false);
-  const [openDetail, setOpenDetails] = useState(false);
-  const [formData, setFormData] = useState();
-  const [isEditing, setIsEditing] = useState(true);
-
-  const toggleDrawer = (newOpen) => () => {
-    setOpen(newOpen);
-  };
-
-  const toggleDrawerDetails = (newOpen) => () => {
-    setOpenDetails(newOpen);
-  };
-
-  const handleClickRow = (item) => {
-    setFormData(item)
-    setOpenDetails(true)
-  }
-
-  const handleInputChange = (e) => {
-
-    console.log(e)
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-
+  const {
+    handleClickRow,
+    toggleDrawer,
+    open,
+    row
+  } = PaymentCommission()
 
 
   return (
@@ -76,14 +57,13 @@ function Releases({ data }) {
           <ReleasesForm />
         </Drawer>
 
-        <TableContainer sx={{ borderRadius: '8px', boxShadow: '5' }}>
+        {data.length > 0 ? <TableContainer sx={{ borderRadius: '8px', boxShadow: '5' }}>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>status</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Unidade</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Valor projeto</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Categoria</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>N° de parcelas</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Percentual de pagamentos</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Data de pagamento</TableCell>
@@ -91,28 +71,29 @@ function Releases({ data }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((row) => (
+              {data.map((item) => (
                 <TableRow
-                  key={row.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                // onClick={() => handleClickRow(item)}
+                  key={item.id}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && '#ECF2FF' }}
+                  onClick={() => handleClickRow(item)}
                 >
-                  <TableCell align="center">{row.status}</TableCell>
-                  <TableCell align="center">{row.unidade}</TableCell>
-                  <TableCell align="center">{row.valor_projeto}</TableCell>
-                  <TableCell align="center">{row.categoria}</TableCell>
-                  <TableCell align="center">{row.n_parcelas}</TableCell>
-                  <TableCell align="center">{row.percentual_pagamento}</TableCell>
-                  <TableCell align="center">{row.data_pagamento}</TableCell>
-                  <TableCell align="center">{row.reajuste}</TableCell>
+                  <TableCell align="center"> <Chip>label={item.status ? 'Liberado' : 'Bloqueado'} sx={{ backgroundColor: item.status ? '#ECF2FF' : '#FFA07A' }}</Chip> </TableCell>
+                  <TableCell align="center">{item.sale.branch.name}</TableCell>
+                  <TableCell align="center">{item.total_value}</TableCell>
+                  <TableCell align="center">{item.installments_value}</TableCell>
+                  <TableCell align="center">{item.percentage}</TableCell>
+                  <TableCell align="center">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
+                  <TableCell align="center">{item.reajuste}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-        </TableContainer>
+        </TableContainer> :
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress />
+          </Box>
+        }
       </Box>
-
-
     </>
 
   )

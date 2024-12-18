@@ -111,7 +111,7 @@ const DetailProduct = ({ productId = null }) => {
               borderBottom: `1px dashed`,
             }}
           >
-            {productData?.branch.name}
+            {productData?.branch?.name}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -123,7 +123,7 @@ const DetailProduct = ({ productId = null }) => {
               borderBottom: `1px dashed`,
             }}
           >
-            {productData?.roof_type.name}
+            {productData?.roof_type?.name}
           </Typography>
         </Grid>
       </Grid>

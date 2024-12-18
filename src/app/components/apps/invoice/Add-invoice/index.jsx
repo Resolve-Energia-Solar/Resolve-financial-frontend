@@ -35,6 +35,7 @@ import FormDate from '@/app/components/forms/form-custom/FormDate';
 import CustomFieldMoney from '../components/CustomFieldMoney';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
+import { useSelector } from 'react-redux';
 
 const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) => {
   const {
@@ -49,6 +50,13 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
     handleAddItem,
     handleDeleteItem,
   } = usePaymentForm();
+
+  const userPermissions = useSelector((state) => state.user.permissions);
+
+  const hasPermission = (permissions) => {
+    if (!permissions) return true;
+    return permissions.some((permission) => userPermissions.includes(permission));
+  };
 
   useEffect(() => {
     if (success) {
@@ -70,6 +78,10 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
   ];
 
   sale ? (formData.sale_id = sale) : null;
+
+  useEffect(() => {
+    if (formData.payment_type !== 'F') formData.financier_id = null;
+  }, [formData.payment_type]);
 
   const orderDate = new Date();
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
@@ -108,7 +120,7 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
       >
         <Box>
           <FormSelect
-            label="Status do Pagamento"
+            label="Tipo de Pagamento"
             options={statusOptions}
             value={formData.payment_type}
             onChange={(e) => handleChange('payment_type', e.target.value)}
@@ -142,15 +154,16 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
             {...(formErrors.borrower_id && { error: true, helperText: formErrors.borrower_id })}
           />
         </Grid>
-
-        <Grid item xs={12} sm={6}>
-          <CustomFormLabel htmlFor="name">Financiadora</CustomFormLabel>
-          <AutoCompleteFinancier
-            onChange={(id) => handleChange('financier_id', id)}
-            value={formData.financier_id}
-            {...(formErrors.financier_id && { error: true, helperText: formErrors.financier_id })}
-          />
-        </Grid>
+        {formData.payment_type === 'F' && (
+          <Grid item xs={12} sm={6}>
+            <CustomFormLabel htmlFor="name">Financiadora</CustomFormLabel>
+            <AutoCompleteFinancier
+              onChange={(id) => handleChange('financier_id', id)}
+              value={formData.financier_id}
+              {...(formErrors.financier_id && { error: true, helperText: formErrors.financier_id })}
+            />
+          </Grid>
+        )}
         <Grid item xs={12} sm={6}>
           <CustomFormLabel htmlFor="valor">Valor</CustomFormLabel>
           <CustomFieldMoney
@@ -292,6 +305,7 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
                           control={
                             <CustomSwitch
                               checked={installment.is_paid}
+                              disabled={!hasPermission(['financial.change_is_paid_field'])}
                               onChange={(e) =>
                                 handleInstallmentChange(index, 'is_paid', e.target.checked)
                               }

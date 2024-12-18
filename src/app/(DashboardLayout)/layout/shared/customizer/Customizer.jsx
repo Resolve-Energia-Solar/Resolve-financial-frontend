@@ -57,33 +57,45 @@ const Customizer = () => {
   const thColors = [
     {
       id: 1,
+      bgColor: '#FFCC00',
+      disp: 'RESOLVE_THEME',
+      describe: 'Tema Resolve'
+    },
+    {
+      id: 1,
       bgColor: '#5D87FF',
-      disp: 'AZUL',
+      disp: 'BLUE_THEME',
+      describe: 'Azul'
     },
     {
       id: 2,
       bgColor: '#0074BA',
-      disp: 'AQUA',
+      disp: 'AQUA_THEME',
+      describe: 'Aqua'
     },
     {
       id: 3,
       bgColor: '#763EBD',
-      disp: 'ROXO',
+      disp: 'PURPLE_THEME',
+      describe: 'Roxo'
     },
     {
       id: 4,
       bgColor: '#0A7EA4',
-      disp: 'VERDE',
+      disp: 'GREEN_THEME',
+      describe: 'Verde'
     },
     {
       id: 5,
       bgColor: '#01C0C8',
-      disp: 'CIANO',
+      disp: 'CYAN_THEME',
+      describe: 'Ciano'
     },
     {
       id: 6,
       bgColor: '#FA896B',
-      disp: 'LARANJA',
+      disp: 'ORANGE_THEME',
+      describe: 'Laranja'
     },
   ];
 
@@ -168,7 +180,43 @@ const Customizer = () => {
               </StyledBox>
             </Stack>
 
+            {/* ------------------------------------------- */}
+            {/* ------------ Theme Color setting ------------- */}
+            {/* ------------------------------------------- */}
+            <Typography variant="h6" gutterBottom>
+              Tema de Cores
+            </Typography>
+            <Grid container spacing={2}>
+              {thColors.map((thcolor) => (
+                <Grid key={thcolor.id} size={4}>
+                  <StyledBox onClick={() => dispatch(setTheme(thcolor.disp))}>
+                    <Tooltip title={`${thcolor.describe}`} placement="top">
+                      <Box
+                        sx={{
+                          backgroundColor: thcolor.bgColor,
+                          width: "25px",
+                          height: "25px",
+                          borderRadius: "60px",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          display: "flex",
+                          color: "white",
+                        }}
+                        aria-label={`${thcolor.bgColor}`}
+                      >
+                        {customizer.activeTheme === thcolor.disp ? (
+                          <IconCheck width={13} />
+                        ) : (
+                          ""
+                        )}
+                      </Box>
+                    </Tooltip>
+                  </StyledBox>
+                </Grid>
+              ))}
+            </Grid>,
             <Box pt={4} />
+
             {/* ------------------------------------------- */}
             {/* ------------ Layout Horizontal / Vertical ------------- */}
             {/* ------------------------------------------- */}

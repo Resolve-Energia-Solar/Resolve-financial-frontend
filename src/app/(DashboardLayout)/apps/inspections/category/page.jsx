@@ -23,7 +23,7 @@ const CategoryListing = () => {
     },
   ];
 
-  return (
+  return
     <CategoryDataContextProvider>
       <PageContainer title={'Categorias'} description={'Lista de Categorias'}>
         <Breadcrumb title={'Categorias'} items={BCrumb} />

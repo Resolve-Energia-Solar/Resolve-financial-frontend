@@ -12,20 +12,18 @@ import commissionService from '@/services/commissionService';
 import saleService from '@/services/saleService';
 
 
-
-
-function createData(statcommi, name, datac, statvistoria, statusdoc, statusfinanceiro, unidade, especpagam, valprojeto) {
-  return { statcommi, name, datac, statvistoria, statusdoc, statusfinanceiro, unidade, especpagam, valprojeto };
+function createData(id, statcommi, name, datac, statvistoria, statusdoc, statusfinanceiro, unidade, especpagam, valprojeto) {
+  return { id, statcommi, name, datac, statvistoria, statusdoc, statusfinanceiro, unidade, especpagam, valprojeto };
 }
 
 const rows = [
-  createData('Finalizado', 'Maximus', '26/12/2023', 'Aprovado', 'Finalizado', 'Liquidado', 'Umarizal', 'Sol Agora', 26456.00),
-  createData('Bloqueaado', 'Alpha', '10/01/2024', 'Pendente', 'Em andamento', 'Em aberto', 'Belém', 'Sol Agora', 12345.00),
-  createData('Finalizado', 'Beta', '15/01/2024', 'Aprovado', 'Finalizado', 'Liquidado', 'Ananindeua', 'Sol Agora', 18567.00),
-  createData('Bloqueado', 'Gamma', '20/01/2024', 'Aguardando', 'Em andamento', 'Em aberto', 'Marituba', 'Sol Agora', 22890.00),
-  createData('Finalizado', 'Delta', '25/01/2024', 'Aprovado', 'Finalizado', 'Liquidado', 'Santarém', 'Sol Agora', 30123.00),
-  createData('Bloqueado', 'Epsilon', '05/02/2024', 'Pendente', 'Em andamento', 'Em aberto', 'Castanhal', 'Sol Agora', 14670.00),
-  createData('Finalizado', 'Zeta', '10/02/2024', 'Aprovado', 'Finalizado', 'Liquidado', 'Marabá', 'Sol Agora', 25340.00),
+  createData(1, 'Finalizado', 'Maximus', '26/12/2023', 'Aprovado', 'Finalizado', 'Liquidado', 'Umarizal', 'Sol Agora', 26456.00),
+  createData(2, 'Bloqueaado', 'Alpha', '10/01/2024', 'Pendente', 'Em andamento', 'Em aberto', 'Belém', 'Sol Agora', 12345.00),
+  createData(3, 'Finalizado', 'Beta', '15/01/2024', 'Aprovado', 'Finalizado', 'Liquidado', 'Ananindeua', 'Sol Agora', 18567.00),
+  createData(4, 'Bloqueado', 'Gamma', '20/01/2024', 'Aguardando', 'Em andamento', 'Em aberto', 'Marituba', 'Sol Agora', 22890.00),
+  createData(5, 'Finalizado', 'Delta', '25/01/2024', 'Aprovado', 'Finalizado', 'Liquidado', 'Santarém', 'Sol Agora', 30123.00),
+  createData(6, 'Bloqueado', 'Epsilon', '05/02/2024', 'Pendente', 'Em andamento', 'Em aberto', 'Castanhal', 'Sol Agora', 14670.00),
+  createData(7, 'Finalizado', 'Zeta', '10/02/2024', 'Aprovado', 'Finalizado', 'Liquidado', 'Marabá', 'Sol Agora', 25340.00),
 ];
 
 function a11yProps(index) {
@@ -43,12 +41,12 @@ function commission() {
 
   useEffect(() => {
 
-    const fectchSaleAll = async () => {
+      const fectchSaleAll = async () => {
       const saleData = await saleService.getSales({ ordering: 'asc' })
       setSale(saleData.results)
     }
 
-    const fectchComissionAll = async () => {
+      const fectchComissionAll = async () => {
       const commissionData = await commissionService.getCommissiomAll()
       setComissions(commissionData.results)
     }
@@ -78,13 +76,13 @@ function commission() {
       <TabPanel value={value} index={0} >
         <Sale data={sale} />
       </TabPanel>
-
+      
       <TabPanel value={value} index={1} >
         <Commission data={comissions}/>
       </TabPanel>
 
       <TabPanel value={value} index={2} >
-        <Releases data={rows} />
+        <Releases data={comissions}/>
       </TabPanel>
 
       <TabPanel value={value} index={3} >
@@ -92,8 +90,6 @@ function commission() {
 
       </TabPanel>
     </Box>
-
-
 
   )
 }

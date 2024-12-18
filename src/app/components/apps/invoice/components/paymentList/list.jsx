@@ -25,6 +25,7 @@ import PaymentChip from '../PaymentChip';
 import PaymentStatusChip from '../PaymentStatusChip';
 import paymentService from '@/services/paymentService';
 import { useRouter } from 'next/navigation';
+import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
 
 const PaymentList = () => {
   const [paymentsList, setPaymentsList] = useState([]);
@@ -33,14 +34,20 @@ const PaymentList = () => {
   const [open, setOpen] = useState(false);
   const [invoiceToDelete, setInvoiceToDelete] = useState(null);
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
       try {
         const response = await paymentService.getPayments();
         setPaymentsList(response.results);
       } catch (error) {
+        setError('Erro ao carregar faturas');
         console.log('Error: ', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -91,9 +98,9 @@ const PaymentList = () => {
         <Table stickyHeader aria-label="sales table">
           <TableHead>
             <TableRow>
-              <TableCell padding="checkbox">
+              {/* <TableCell padding="checkbox">
                 <CustomCheckbox />
-              </TableCell>
+              </TableCell> */}
               <TableCell>
                 <Typography variant="h6" fontSize="14px">
                   Cliente
@@ -126,82 +133,88 @@ const PaymentList = () => {
               </TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {paymentsList.map((payment) => (
-              <TableRow key={payment.id}>
-                <TableCell padding="checkbox">
-                  <CustomCheckbox />
-                </TableCell>
-                <TableCell>
-                  <Typography fontSize="14px">
-                    {payment?.sale?.customer?.complete_name}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography fontSize="14px">{payment.installments.length}x</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography fontSize="14px">
-                    {Number(payment?.value).toLocaleString('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    })}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <PaymentChip paymentType={payment.payment_type} />
-                </TableCell>
-                <TableCell>
-                  <PaymentStatusChip paymentType={payment.is_paid} />
-                </TableCell>
-                <TableCell align="center">
-                  <Tooltip title="Ações">
-                    <IconButton
-                      size="small"
-                      onClick={(event) => handleMenuClick(event, payment.id)}
+          {loading ? (
+            <TableSkeleton rows={5} columns={6} />
+          ) : error ? (
+            <Typography color="error">{error}</Typography>
+          ) : (
+            <TableBody>
+              {paymentsList.map((payment) => (
+                <TableRow key={payment.id}>
+                  {/* <TableCell padding="checkbox">
+                    <CustomCheckbox />
+                  </TableCell> */}
+                  <TableCell>
+                    <Typography fontSize="14px">
+                      {payment?.sale?.customer?.complete_name}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography fontSize="14px">{payment.installments.length}x</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography fontSize="14px">
+                      {Number(payment?.value).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      })}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <PaymentChip paymentType={payment.payment_type} />
+                  </TableCell>
+                  <TableCell>
+                    <PaymentStatusChip paymentType={payment.is_paid} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Tooltip title="Ações">
+                      <IconButton
+                        size="small"
+                        onClick={(event) => handleMenuClick(event, payment.id)}
+                      >
+                        <MoreVert fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    <Menu
+                      anchorEl={menuAnchorEl}
+                      open={menuOpenRowId === payment.id}
+                      onClose={handleMenuClose}
+                      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                     >
-                      <MoreVert fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                  <Menu
-                    anchorEl={menuAnchorEl}
-                    open={menuOpenRowId === payment.id}
-                    onClose={handleMenuClose}
-                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                  >
-                    <MenuItem
-                      onClick={() => {
-                        handleDetailClick(payment.id);
-                        handleMenuClose();
-                      }}
-                    >
-                      <Visibility fontSize="small" sx={{ mr: 1 }} />
-                      Visualizar
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        handleEditClick(payment.id);
-                        handleMenuClose();
-                      }}
-                    >
-                      <Edit fontSize="small" sx={{ mr: 1 }} />
-                      Editar
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        handleDeleteClick(payment.id);
-                        handleMenuClose();
-                      }}
-                    >
-                      <Delete fontSize="small" sx={{ mr: 1 }} />
-                      Excluir
-                    </MenuItem>
-                  </Menu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+                      <MenuItem
+                        onClick={() => {
+                          handleDetailClick(payment.id);
+                          handleMenuClose();
+                        }}
+                      >
+                        <Visibility fontSize="small" sx={{ mr: 1 }} />
+                        Visualizar
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          handleEditClick(payment.id);
+                          handleMenuClose();
+                        }}
+                      >
+                        <Edit fontSize="small" sx={{ mr: 1 }} />
+                        Editar
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          handleDeleteClick(payment.id);
+                          handleMenuClose();
+                        }}
+                      >
+                        <Delete fontSize="small" sx={{ mr: 1 }} />
+                        Excluir
+                      </MenuItem>
+                    </Menu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          )}
         </Table>
       </TableContainer>
 

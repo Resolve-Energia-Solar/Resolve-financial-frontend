@@ -6,41 +6,22 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
-import { Typography } from '@mui/material';
-import DataDebtor from './debtor.json';
 import Button from '@mui/material/Button';
-import { useState } from 'react';
 import { Drawer } from '@mui/material';
 import DebtorForm from './forms/DebtorForm';
-
+import { Chip, CircularProgress, Typography } from '@mui/material';
+import PaymentCommission from '@/hooks/commission/PaymentCommission';
 
 function Debtor({ data }) {
 
+console.log(data);
 
-    const [open, setOpen] = useState(false);
-    const [openDetail, setOpenDetails] = useState(false);
-    const [formData, setFormData] = useState();
-    const [isEditing, setIsEditing] = useState(true);
-
-    const toggleDrawer = (newOpen) => () => {
-        setOpen(newOpen);
-    };
-
-    const toggleDrawerDetails = (newOpen) => () => {
-        setOpenDetails(newOpen);
-    };
-
-    const handleClickRow = (item) => {
-        setFormData(item)
-        setOpenDetails(true)
-    }
-
-    const handleInputChange = (e) => {
-
-        console.log(e)
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+  const {
+    handleClickRow,
+    toggleDrawer,
+    open,
+    row
+  } = PaymentCommission()
 
 
     return (
@@ -77,33 +58,38 @@ function Debtor({ data }) {
                     <DebtorForm />
                 </Drawer>
 
-                <TableContainer sx={{ borderRadius: '8px', boxShadow: '5' }}>
+                {data.length > 0 ? <TableContainer sx={{ borderRadius: '8px', boxShadow: '5' }}>
                     <Table>
                         <TableHead>
                             <TableRow>
                                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Unidade</TableCell>
                                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Valor</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Categoria</TableCell>
+                                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Descrição</TableCell>
                                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Data de lançamento</TableCell>
                                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Status</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {DataDebtor.map((row) => (
+                            {data.map((item) => (
                                 <TableRow
-                                    key={row.name}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    key={item.id}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && '#ECF2FF'}}
+                                    onClick={() => handleClickRow(item)}
                                 >
-                                    <TableCell align="center">{row.unidade}</TableCell>
-                                    <TableCell align="center">{row.valor}</TableCell>
-                                    <TableCell align="center">{row.categoria}</TableCell>
-                                    <TableCell align="center">{row.data_lancamento}</TableCell>
-                                    <TableCell align="center">{row.status}</TableCell>
+                                    <TableCell align="center">{item.unidade}</TableCell>
+                                    <TableCell align="center">{item.valprojeto}</TableCell>
+                                    <TableCell align="center">{item.categoria}</TableCell>
+                                    <TableCell align="center">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
+                                    <TableCell align="center">{item.status}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
-                </TableContainer>
+                </TableContainer> :
+                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <CircularProgress />
+                    </Box>
+                }
 
             </Box>
         </>

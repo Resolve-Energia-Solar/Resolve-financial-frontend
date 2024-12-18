@@ -35,6 +35,23 @@ const Menuitems = [
     href: '/apps/boards/crm',
     chip: 'Novo',
     chipColor: 'secondary',
+    permissions: ['resolve_crm.view_board'],
+  },
+  {
+    id: uniqueId(),
+    title: 'Quadro Op.',
+    icon: IconLayoutKanban,
+    href: '/apps/boards/erp',
+    chip: 'Novo',
+    chipColor: 'secondary',
+    permissions: ['resolve_crm.view_board'],
+  },
+  {
+    id: uniqueId(),
+    title: 'Agendamentos',
+    icon: IconCalendar,
+    href: '/apps/inspections/schedule',
+    permissions: ['inspections.view_schedule'],
   },
   {
     id: uniqueId(),
@@ -55,7 +72,7 @@ const Menuitems = [
     title: 'Comissionamento',
     icon: IconUserDollar,
     href: '/apps/commission',
-    permissions: ['financial.view_payment'],
+    permissions: ['financial.view_franchiseinstallment'],
   },
   {
     id: uniqueId(),
@@ -94,13 +111,6 @@ const Menuitems = [
     icon: IconBoxMultiple,
     href: '/apps/inspections/service-catalog',
     permissions: ['inspections.view_service'],
-  },
-  {
-    id: uniqueId(),
-    title: 'Agendamentos',
-    icon: IconCalendar,
-    href: '/apps/inspections/schedule',
-    permissions: ['inspections.view_schedule'],
   },
   {
     id: uniqueId(),
@@ -150,6 +160,13 @@ const Menuitems = [
     icon: IconUserScan,
     href: '/apps/roles',
     permissions: ['accounts.view_role'],
+  },
+  {
+    id: uniqueId(),
+    title: 'Tipos de Documentos',
+    icon: IconFileDescription,
+    href: '/apps/document-types',
+    permissions: ['core.view_documenttype'],
   },
   {
     id: uniqueId(),

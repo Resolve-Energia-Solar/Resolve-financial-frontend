@@ -70,7 +70,7 @@ const PaymentCard = ({ sale = null }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await paymentService.getPayments({ sale });
+        const response = await paymentService.getPaymentsBySale(sale);
         setPaymentsList(response.results);
       } catch (error) {
         console.log('Error: ', error);
@@ -143,7 +143,6 @@ const PaymentCard = ({ sale = null }) => {
   return (
     <>
       <Grid container spacing={3}>
-        {/* Card de Adicionar Pagamento */}
         <Grid item xs={12} sm={6} md={4}>
           <Card
             elevation={10}
@@ -264,29 +263,32 @@ const PaymentCard = ({ sale = null }) => {
               );
             })}
       </Grid>
+          
 
-      <Box p={3} backgroundColor="primary.light" mt={3}>
-        <Box display="flex" justifyContent="end" gap={3} mb={3}>
-          <Typography variant="body1" fontWeight={600}>
-            Pago:
-          </Typography>
-          <Typography variant="body1" fontWeight={600}>
-            {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-              saleData?.total_paid || 0,
-            )}
-          </Typography>
+      {sale && (
+        <Box p={3} backgroundColor="primary.light" mt={3}>
+          <Box display="flex" justifyContent="end" gap={3} mb={3}>
+            <Typography variant="body1" fontWeight={600}>
+              Pago:
+            </Typography>
+            <Typography variant="body1" fontWeight={600}>
+              {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                saleData?.total_paid || 0,
+              )}
+            </Typography>
+          </Box>
+          <Box display="flex" justifyContent="end" gap={3}>
+            <Typography variant="body1" fontWeight={600}>
+              Total a Pagar:
+            </Typography>
+            <Typography variant="body1" fontWeight={600}>
+              {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                saleData?.total_value || 0,
+              )}
+            </Typography>
+          </Box>
         </Box>
-        <Box display="flex" justifyContent="end" gap={3}>
-          <Typography variant="body1" fontWeight={600}>
-            Total a Pagar:
-          </Typography>
-          <Typography variant="body1" fontWeight={600}>
-          {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-              saleData?.total_value || 0,
-            )}
-          </Typography>
-        </Box>
-      </Box>
+      )}
 
       {/* Modal de Adicionar Pagamento */}
       <Dialog

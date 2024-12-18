@@ -30,18 +30,17 @@ import { useEffect, useState } from 'react';
 import PaymentCard from '@/app/components/apps/invoice/components/paymentList/card';
 import documentTypeService from '@/services/documentTypeService';
 import Attachments from '@/app/components/shared/Attachments';
-import ProductCard from '@/app/components/apps/product/Product-list';
-import ContractSubmissions from '@/app/components/apps/contractSubmissions/contract-list';
 import CustomerTabs from '@/app/components/apps/users/Edit-user/customer/tabs';
 import { Preview } from '@mui/icons-material';
 import PreviewContractModal from '@/app/components/apps/contractSubmissions/Preview-contract';
-import SendContractButton from '@/app/components/apps/contractSubmissions/Send-contract';
-import ProjectListCards from '@/app/components/apps/project/components/projectList/cards';
-import useDocxTemplate from '@/hooks/modelTemplate/useDocxTemplate';
+import ChecklistSales from '../../../checklist/Checklist-list/ChecklistSales';
+import HasPermission from '@/app/components/permissions/HasPermissions';
+import SendContractButton from '../../../contractSubmissions/Send-contract';
+import ContractSubmissions from '../../../contractSubmissions/contract-list';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
-const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
+const EditSalePage = ({ saleId = null, onClosedModal = null, refresh=null, ...props }) => {
   const params = useParams();
   let id = saleId;
   if (!saleId) id = params.id;
@@ -76,6 +75,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
   const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.totalValue);
 
   const statusOptions = [
+    { value: 'P', label: 'Pendente' },
     { value: 'F', label: 'Finalizado' },
     { value: 'EA', label: 'Em Andamento' },
     { value: 'C', label: 'Cancelado' },
@@ -111,14 +111,13 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
   }, [successData, success]);
 
   return (
-    <Box>
+    <Box {...props}>
       <Tabs value={value} onChange={handleChangeTab}>
         <Tab label="Cliente" />
         <Tab label="Venda" />
-        <Tab label="Produtos" />
         <Tab label="Anexos" />
         <Tab label="Pagamentos" />
-        <Tab label="Projetos" />
+        <Tab label="Checklist" />
         <Tab label="Envios" />
       </Tabs>
       {loading ? (
@@ -194,6 +193,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
                   <AutoCompleteCampaign
                     onChange={(id) => handleChange('marketingCampaignId', id)}
                     value={formData.marketingCampaignId}
+                    disabled={!hasPermission(['resolve_crm.change_marketing_campaign_field'])}
                     {...(formErrors.marketing_campaign_id && {
                       error: true,
                       helperText: formErrors.marketing_campaign_id,
@@ -208,6 +208,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
                     variant="outlined"
                     fullWidth
                     value={formattedValue}
+                    disabled={!hasPermission(['accounts.change_total_value_field'])}
                     onChange={(e) => handleValueChange(e, handleChange)}
                     {...(formErrors.total_value && {
                       error: true,
@@ -221,45 +222,45 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
                     options={statusOptions}
                     value={formData.status}
                     onChange={(e) => handleChange('status', e.target.value)}
+                    disabled={!hasPermission(['accounts.change_status_sale_field'])}
                   />
                 </Grid>
-                <Grid item xs={12} sm={12} lg={12}>
-                  <CustomFormLabel>Venda</CustomFormLabel>
-                  <FormControlLabel
-                    control={
-                      <CustomSwitch
-                        checked={formData.isSale}
-                        onChange={(e) => handleChange('isSale', e.target.checked)}
-                      />
-                    }
-                    label={formData.isSale ? 'Pré-Venda' : 'Venda'}
-                  />
-                </Grid>
+                <HasPermission
+                  permissions={['accounts.change_pre_sale_field']}
+                  userPermissions={userPermissions}
+                >
+                  <Grid item xs={12} sm={12} lg={12}>
+                    <CustomFormLabel>Venda</CustomFormLabel>
+                    <FormControlLabel
+                      control={
+                        <CustomSwitch
+                          checked={formData.isSale}
+                          onChange={(e) => handleChange('isSale', e.target.checked)}
+                        />
+                      }
+                      label={formData.isSale ? 'Pré-Venda' : 'Venda'}
+                    />
+                  </Grid>
+                </HasPermission>
               </Grid>
             </>
           )}
 
           {value === 2 && (
-            <Box sx={{ mt: 3 }}>
-              <ProductCard sale={saleData} />
-            </Box>
-          )}
-
-          {value === 3 && (
             <Attachments
               contentType={CONTEXT_TYPE_SALE_ID}
               objectId={id_sale}
               documentTypes={documentTypes}
             />
           )}
-          {value === 4 && (
+          {value === 3 && (
             <Box sx={{ mt: 3 }}>
               <PaymentCard sale={id_sale} />
             </Box>
           )}
 
-          {value === 5 && <ProjectListCards saleId={id_sale} />}
-          {value === 6 && <ContractSubmissions sale={saleData} />}
+          {value === 4 && <ChecklistSales saleId={id_sale} />}
+          {value === 5 && <ContractSubmissions sale={saleData} />}
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             {onClosedModal && (
@@ -268,21 +269,37 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
               </Button>
             )}
             {value === 1 && (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSave}
-                disabled={formLoading}
-                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-              >
-                {formLoading ? 'Salvando...' : 'Salvar Alterações'}
-              </Button>
+              <Box>
+                <SendContractButton sale={saleData} sx={{ mr: 2 }} />
+
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => setOpenPreview(true)}
+                  startIcon={<Preview />}
+                  sx={{
+                    paddingX: 3,
+                    mr: 2,
+                  }}
+                >
+                  Preview do Contrato
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSave}
+                  disabled={formLoading}
+                  endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                >
+                  {formLoading ? 'Salvando...' : 'Salvar Alterações'}
+                </Button>
+              </Box>
             )}
           </Stack>
         </Box>
       )}
 
-      <Box
+      {/* <Box
         p={3}
         backgroundColor="primary.light"
         mt={3}
@@ -306,10 +323,12 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh }) => {
 
           <SendContractButton sale={saleData} />
         </Stack>
-      </Box>
-      <PreviewContractModal open={openPreview} onClose={() => setOpenPreview(false)} userId={saleData?.customer?.id} />
-
-
+      </Box> */}
+      <PreviewContractModal
+        open={openPreview}
+        onClose={() => setOpenPreview(false)}
+        userId={saleData?.customer?.id}
+      />
     </Box>
   );
 };

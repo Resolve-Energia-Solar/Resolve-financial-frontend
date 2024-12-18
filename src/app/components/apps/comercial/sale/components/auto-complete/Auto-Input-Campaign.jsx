@@ -6,7 +6,7 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import campaignService from '@/services/campaignService'; 
 import { debounce } from 'lodash';
 
-export default function AutoCompleteCampaign({ onChange, value, error, helperText }) {
+export default function AutoCompleteCampaign({ onChange, value, error, helperText, disabled }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -81,6 +81,7 @@ export default function AutoCompleteCampaign({ onChange, value, error, helperTex
         options={options}
         loading={loading}
         value={selectedCampaign}
+        disabled={disabled}
         onInputChange={(event, newInputValue) => {
           fetchCampaignsByName(newInputValue);
         }}
@@ -92,6 +93,7 @@ export default function AutoCompleteCampaign({ onChange, value, error, helperTex
             {...params}
             size="small"
             variant="outlined"
+            disabled={disabled}
             InputProps={{
               ...params.InputProps,
               endAdornment: (

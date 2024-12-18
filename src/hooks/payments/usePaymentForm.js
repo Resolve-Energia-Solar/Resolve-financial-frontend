@@ -75,7 +75,7 @@ const usePaymentForm = (initialData, id) => {
     let dataToSend = {
       sale_id: formData.sale_id,
       borrower_id: formData.borrower_id,
-      financier_id: formData.financier_id,
+      financier_id: formData.financier_id ? formData.financier_id : undefined,
       value: formData.value,
       payment_type: formData.payment_type,
       installments_number: formData.installments_number,

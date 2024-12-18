@@ -62,16 +62,16 @@ export default function NavCollapse({
     '&:hover': {
       backgroundColor:
         pathname.includes(menu.href) || open
-          ? theme.palette.primary.main
-          : theme.palette.primary.light,
+          ? '#000000'
+          : '#000000',
       color: pathname.includes(menu.href) || open ? 'white' : theme.palette.primary.main,
     },
     color:
       open && level < 2
         ? 'white'
         : `inherit` && level > 1 && open
-        ? theme.palette.primary.main
-        : theme.palette.text.secondary,
+        ? '#000000'
+        : '#000000',
     borderRadius: `${customizer.borderRadius}px`,
   }));
 

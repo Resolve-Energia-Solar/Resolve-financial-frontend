@@ -165,6 +165,7 @@ const RoofTypeList = () => {
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
+                labelRowsPerPage="Linhas por página"
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </TableContainer>

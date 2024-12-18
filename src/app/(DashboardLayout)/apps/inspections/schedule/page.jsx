@@ -24,6 +24,7 @@ const ScheduleListing = () => {
   ];
 
   return (
+
     <ScheduleDataContextProvider>
       <PageContainer title={'Agendamentos'} description={'Lista de Agendamentos'}>
         <Breadcrumb title={'Agendamentos'} items={BCrumb} />

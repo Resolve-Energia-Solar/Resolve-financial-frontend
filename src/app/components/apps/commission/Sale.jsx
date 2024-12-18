@@ -1,4 +1,3 @@
-
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -6,12 +5,23 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
-import { CircularProgress, Typography } from '@mui/material';
-import Loading from '@/app/(DashboardLayout)/loading';
+import { Chip, CircularProgress, Typography } from '@mui/material';
+import { format } from 'date-fns';
+import PaymentCommission from '@/hooks/commission/PaymentCommission';
+import { useTheme } from '@mui/material/styles';
 
 
 function Sale({ data }) {
   console.log(data)
+  const {
+    handleClickRow,
+    toggleDrawer,
+    open,
+    row
+  } = PaymentCommission()
+
+  const theme = useTheme();
+
   return (
 
     <>
@@ -32,6 +42,7 @@ function Sale({ data }) {
                 <Typography variant='caption'>Liberado</Typography>
                 <Typography variant='h5'>R$ 7.000.00,00</Typography>
               </Box>
+
             </Box>
           </Box>
           <Box sx={{ p: 2, backgroundColor: '#FFA07A', boxShadow: '2', border: 'none', width: '35%', paddingLeft: '25px' }}>
@@ -46,7 +57,6 @@ function Sale({ data }) {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>Status de comissão</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Nome</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Data Contrato</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Status vistoria</TableCell>
@@ -62,15 +72,22 @@ function Sale({ data }) {
               {data.map((item) => (
                 <TableRow
                   key={item.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && '#ECF2FF' }}
+                  onClick={() => handleClickRow(item)}
                 >
-                  <TableCell align="center">{item.statcommi}</TableCell>
-                  <TableCell align="center">{item.complete_name}</TableCell>
-                  <TableCell align="center">{item.signature_date}</TableCell>
-                  <TableCell align="center">{item.statvistoria}</TableCell>
-                  <TableCell align="center">{item.statusdoc}</TableCell>
-                  <TableCell align="center">{item.statusfinanceiro}</TableCell>
+
+                  <TableCell align="center">{item.customer.complete_name}</TableCell>
+
+                  <TableCell align="center">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
+
+                  <TableCell align="center">{item.projects.map((item) => <Chip key={item.id} label={item.status} sx={{ backgroundColor: item.status === 'Aprovado' ? '#E6FFFA' : '#FFA07A' }} />)}</TableCell>
+
+                  <TableCell align="center">{item.projects.map(item => <Chip key={item.id} label={item.is_documentation_completed ? 'Concluido' : 'Pendente'} sx={{ backgroundColor: item.is_documentation_completed ? '#ECF2FF' : '#FFA07A' }} />)}</TableCell>
+
+                  <TableCell align="center"> <Chip
+                    label={item.financial_completion_date ? 'Concluido' : 'Pendente'} sx={{backgroundColor: item.financial_completion_date ? '#ECF2FF' : '#FFA07A' }}
+                  /></TableCell>
+
                   <TableCell align="center">{item.branch.name}</TableCell>
                   <TableCell align="center">{item.especpagam}</TableCell>
                   <TableCell align="center">{item.total_value}</TableCell>

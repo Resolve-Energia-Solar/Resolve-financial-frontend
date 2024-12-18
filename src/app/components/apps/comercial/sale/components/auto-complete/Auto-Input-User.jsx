@@ -110,15 +110,17 @@ export default function AutoCompleteUser({ onChange, value, error, helperText, d
                 <React.Fragment>
                   {loading ? <CircularProgress color="inherit" size={20} /> : null}
                   {params.InputProps.endAdornment}
-                  <IconButton 
-                    onClick={handleOpenModal} 
-                    aria-label="Adicionar usuário" 
-                    edge="end"
-                    size="small" // Mantém o botão pequeno
-                    sx={{ padding: '4px' }} // Ajusta o padding para manter o tamanho pequeno
-                  >
-                    <AddIcon fontSize="small" />
-                  </IconButton>
+                  {!disabled && (
+                    <IconButton 
+                      onClick={handleOpenModal} 
+                      aria-label="Adicionar usuário" 
+                      edge="end"
+                      size="small"
+                      sx={{ padding: '4px' }}
+                    >
+                      <AddIcon fontSize="small" />
+                    </IconButton>
+                  )}
                 </React.Fragment>
               ),
             }}

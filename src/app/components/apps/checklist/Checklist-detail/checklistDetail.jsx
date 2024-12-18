@@ -20,8 +20,6 @@ import {
 import { Edit } from '@mui/icons-material';
 import { IconEye, IconTrash } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import EditChecklistPage from '../Edit-checklist';
-import CreateChecklistPage from '../Add-checklist';
 import unitService from '@/services/unitService';
 import SupplyChip from '../components/SupplyChip';
 import ChecklistFormDetail from '.';

@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 const useSaleForm = (initialData, id) => {
   const user = useSelector((state) => state.user);
 
+  console.log('user', user);
+
   const [formData, setFormData] = useState({
     customerId: null,
     sellerId: null,
@@ -13,6 +15,7 @@ const useSaleForm = (initialData, id) => {
     salesManagerId: null,
     branchId: null,
     marketingCampaignId: null,
+    productIds: [],
     isSale: true,
     totalValue: '',
     status: '',
@@ -33,6 +36,7 @@ const useSaleForm = (initialData, id) => {
         salesManagerId: initialData.sales_manager?.id || null,
         branchId: initialData.branch?.id || '',
         marketingCampaignId: initialData.marketing_campaign?.id || null,
+        productIds: initialData.products?.map((product) => product.id) || [],
         isSale: initialData.is_pre_sale || false,
         totalValue: initialData.total_value || '',
         status: initialData.status || '',
@@ -53,7 +57,8 @@ const useSaleForm = (initialData, id) => {
       sales_supervisor_id: formData.salesSupervisorId,
       sales_manager_id: formData.salesManagerId,
       branch_id: formData.branchId,
-      marketing_campaign_id: formData.marketingCampaignId,
+      marketing_campaign_id: formData.marketingCampaignId ? formData.marketingCampaignId : undefined,
+      products_ids: formData.productIds,
       is_pre_sale: formData.isSale,
       total_value: formData.totalValue,
       status: formData.status,
