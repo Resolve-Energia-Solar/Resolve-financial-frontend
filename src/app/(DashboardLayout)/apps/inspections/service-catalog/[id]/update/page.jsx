@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  Alert,
-  Button,
-  Grid,
-  Stack,
-} from '@mui/material';
+import { Alert, Button, Grid, Stack } from '@mui/material';
 import { useParams } from 'next/navigation';
 
 /* components */
@@ -28,13 +23,10 @@ const ServiceCatalogForm = () => {
 
   const { loading, error, serviceCatalogData } = useServiceCatalog(id);
 
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success
-  } = useServiceCatalogForm(serviceCatalogData, id);
+  const { formData, handleChange, handleSave, formErrors, success } = useServiceCatalogForm(
+    serviceCatalogData,
+    id,
+  );
 
   if (loading) return <div>Carregando...</div>;
   if (error) return <div>{error}</div>;
@@ -42,7 +34,11 @@ const ServiceCatalogForm = () => {
   return (
     <PageContainer title="Edição de Serviço" description="Editor de Serviço">
       <Breadcrumb title="Editar Serviço" />
-      { success && <Alert severity="success" sx={{ marginBottom: 3 }}>O serviço foi atualizado com sucesso!</Alert>}
+      {success && (
+        <Alert severity="success" sx={{ marginBottom: 3 }}>
+          O serviço foi atualizado com sucesso!
+        </Alert>
+      )}
       <ParentCard title="Serviço">
         <Grid container spacing={3}>
           {/* Nome do Serviço */}
@@ -110,13 +106,13 @@ const ServiceCatalogForm = () => {
         <Grid item xs={12} sm={12} lg={12}>
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             <Button variant="contained" color="primary" onClick={handleSave}>
-              Editar
+              Salvar
             </Button>
           </Stack>
         </Grid>
       </ParentCard>
     </PageContainer>
   );
-}
+};
 
 export default ServiceCatalogForm;
