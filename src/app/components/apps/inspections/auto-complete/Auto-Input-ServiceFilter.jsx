@@ -1,17 +1,18 @@
 'use client';
 import { Fragment, useCallback, useEffect, useState } from 'react';
-
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import serviceCatalogService from '@/services/serviceCatalogService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteServiceCatalog({
+export default function AutoCompleteServiceCatalogFilter({
   onChange,
   value,
   error,
   helperText,
+  disabled,
+  labeltitle,
   noOptionsText,
 }) {
   const [open, setOpen] = useState(false);
@@ -19,24 +20,28 @@ export default function AutoCompleteServiceCatalog({
   const [loading, setLoading] = useState(false);
   const [selectedServiceCatalog, setSelectedServiceCatalog] = useState(null);
 
-  useEffect(() => {
-    const fetchDefaultServiceCatalog = async () => {
-      if (value) {
-        try {
-          const serviceCatalogValue = await serviceCatalogService.getServiceCatalogById(value);
-          if (serviceCatalogValue) {
-            setSelectedServiceCatalog({
-              id: serviceCatalogValue.id,
-              name: serviceCatalogValue.name,
-            });
-          }
-        } catch (error) {
-          console.error('Erro ao buscar catálogo de serviço:', error);
+  const fetchDefaultServiceCatalog = async (catalogId) => {
+    if (catalogId) {
+      try {
+        const serviceCatalogValue = await serviceCatalogService.getServiceCatalogById(catalogId);
+        if (serviceCatalogValue) {
+          return { id: serviceCatalogValue.id, name: serviceCatalogValue.name };
         }
+      } catch (error) {
+        console.error('Erro ao buscar catálogo de serviço:', error);
       }
-    };
+    }
+    return null;
+  };
 
-    fetchDefaultServiceCatalog();
+  useEffect(() => {
+    if (value) {
+      fetchDefaultServiceCatalog(value).then((catalog) => {
+        setSelectedServiceCatalog(catalog);
+      });
+    } else {
+      setSelectedServiceCatalog(null);
+    }
   }, [value]);
 
   const handleChange = (event, newValue) => {
@@ -50,6 +55,7 @@ export default function AutoCompleteServiceCatalog({
 
   const fetchServiceCatalogsByName = useCallback(
     debounce(async (name) => {
+      if (!name) return;
       setLoading(true);
       try {
         const response = await serviceCatalogService.getServiceCatalogByName(name);
@@ -82,23 +88,23 @@ export default function AutoCompleteServiceCatalog({
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.name === value.name}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
         getOptionLabel={(option) => option.name || ''}
         options={options}
         loading={loading}
+        disabled={disabled}
         value={selectedServiceCatalog}
-        noOptionsText={noOptionsText}
         onInputChange={(event, newInputValue) => {
           fetchServiceCatalogsByName(newInputValue);
         }}
-        onFocus={() => fetchServiceCatalogsByName('')}
         onChange={handleChange}
+        noOptionsText={noOptionsText}
         renderInput={(params) => (
           <CustomTextField
+            {...params}
+            label={labeltitle}
             error={error}
             helperText={helperText}
-            {...params}
-            size="small"
             variant="outlined"
             InputProps={{
               ...params.InputProps,
