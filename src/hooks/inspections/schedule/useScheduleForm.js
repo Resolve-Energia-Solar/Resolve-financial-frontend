@@ -204,8 +204,14 @@ const useScheduleForm = (initialData, id) => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    console.log('Field: ', field, 'Value: ', value);
-    console.log('FormData: ', formData);
+    if (
+      field === 'service_id' ||
+      field === 'schedule_start_time' ||
+      field === 'schedule_date' ||
+      field === 'address_id'
+    ) {
+      setFormData((prev) => ({ ...prev, schedule_agent_id: null }));
+    }
   };
 
   const handleSave = async () => {

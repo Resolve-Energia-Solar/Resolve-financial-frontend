@@ -20,8 +20,7 @@ const userService = {
     try {
       const response = await apiClient.get(`/api/employees/${id}/`);
       return response.data;
-    }
-    catch (error) {
+    } catch (error) {
       console.error(`Erro ao buscar funcionário com id ${id}:`, error);
       throw error;
     }

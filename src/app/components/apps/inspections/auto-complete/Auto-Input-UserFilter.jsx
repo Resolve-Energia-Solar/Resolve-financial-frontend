@@ -53,7 +53,6 @@ export default function AutoCompleteUserFilter({
 
   const fetchUsersByName = React.useCallback(
     debounce(async (name) => {
-      if (!name) return;
       setLoading(true);
       try {
         const users = await userService.getUserByName(name);
@@ -96,6 +95,7 @@ export default function AutoCompleteUserFilter({
           fetchUsersByName(newInputValue);
         }}
         onChange={handleChange}
+        onFocus={() => fetchUsersByName('')}
         noOptionsText={noOptionsText}
         renderInput={(params) => (
           <CustomTextField

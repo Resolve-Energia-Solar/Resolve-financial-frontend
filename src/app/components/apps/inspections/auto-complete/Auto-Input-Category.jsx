@@ -21,7 +21,7 @@ export default function AutoCompleteCategory({ onChange, value, error, helperTex
           if (categoryValue) {
             setSelectedCategory({
               id: categoryValue.id,
-              name: categoryValue.name
+              name: categoryValue.name,
             });
           }
         } catch (error) {
@@ -44,21 +44,20 @@ export default function AutoCompleteCategory({ onChange, value, error, helperTex
 
   const fetchCategoriesByName = useCallback(
     debounce(async (name) => {
-      if (!name) return;
       setLoading(true);
       try {
         const response = await categoryService.getCategoryByName(name);
-        const formattedCategories = response.results.map(category => ({
+        const formattedCategories = response.results.map((category) => ({
           id: category.id,
-          name: category.name
+          name: category.name,
         }));
         setOptions(formattedCategories);
       } catch (error) {
         console.error('Erro ao buscar categorias:', error);
       }
       setLoading(false);
-    }, 300), 
-    []
+    }, 300),
+    [],
   );
 
   const handleOpen = () => {
@@ -86,6 +85,7 @@ export default function AutoCompleteCategory({ onChange, value, error, helperTex
           fetchCategoriesByName(newInputValue);
         }}
         onChange={handleChange}
+        onFocus={() => fetchCategoriesByName('')}
         renderInput={(params) => (
           <CustomTextField
             error={error}
