@@ -25,9 +25,12 @@ function Sale({ data }) {
   return (
 
     <>
-      <Box sx={{ boxShadow: '4', padding: '20px' }} >
-        <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+      <Box sx={{ boxShadow: '4', padding: '20px'}} >
+        
+        <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', marginBottom: '15px', padding: '0px'}}>
+          
           <Box sx={{ p: 2, backgroundColor:  theme.palette.secondary.main , boxShadow: '2',  display: 'flex', justifyContent: 'space-around', width: '55%', height: '100px'}}>
+            
             <Box sx={{ p: 2, height: '50%', padding: '5px' }}>
 
               <Box>
@@ -45,11 +48,15 @@ function Sale({ data }) {
 
             </Box>
           </Box>
+
           <Box sx={{ p: 2, backgroundColor: theme.palette.primary.main, boxShadow: '2',width: '35%', paddingLeft: '40px' }}>
+
             <Box>
               <Typography variant='caption' color='#FFFFFF'>Saldo devedor</Typography>
               <Typography variant='h5' color='#FFFFFF'>R$ 253.010,00</Typography>
+
             </Box>
+
           </Box>
         </Box>
 
