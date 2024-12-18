@@ -4,43 +4,45 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import serviceCatalogService from '@/services/serviceCatalogService';
+import projectService from '@/services/projectService';
 import { debounce } from 'lodash';
+import saleService from '@/services/saleService';
 
-export default function AutoCompleteServiceCatalog({
+export default function AutoCompleteUserProject({
   onChange,
   value,
   error,
   helperText,
-  noOptionsText,
+  selectedClient,
+  noTextOptions,
 }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedServiceCatalog, setSelectedServiceCatalog] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null);
 
   useEffect(() => {
-    const fetchDefaultServiceCatalog = async () => {
+    const fetchDefaultProject = async () => {
       if (value) {
         try {
-          const serviceCatalogValue = await serviceCatalogService.getServiceCatalogById(value);
-          if (serviceCatalogValue) {
-            setSelectedServiceCatalog({
-              id: serviceCatalogValue.id,
-              name: serviceCatalogValue.name,
+          const projectValue = await projectService.getProjectById(value);
+          if (projectValue) {
+            setSelectedProject({
+              id: projectValue.id,
+              project_number: projectValue.project_number,
             });
           }
         } catch (error) {
-          console.error('Erro ao buscar catálogo de serviço:', error);
+          console.error('Erro ao buscar projeto:', error);
         }
       }
     };
 
-    fetchDefaultServiceCatalog();
+    fetchDefaultProject();
   }, [value]);
 
   const handleChange = (event, newValue) => {
-    setSelectedServiceCatalog(newValue);
+    setSelectedProject(newValue);
     if (newValue) {
       onChange(newValue.id);
     } else {
@@ -48,18 +50,31 @@ export default function AutoCompleteServiceCatalog({
     }
   };
 
-  const fetchServiceCatalogsByName = useCallback(
-    debounce(async (name) => {
+  const fetchProjectsByCodeNumber = useCallback(
+    debounce(async (codeNumber) => {
       setLoading(true);
       try {
-        const response = await serviceCatalogService.getServiceCatalogByName(name);
-        const formattedServiceCatalogs = response.results.map((serviceCatalog) => ({
-          id: serviceCatalog.id,
-          name: serviceCatalog.name,
-        }));
-        setOptions(formattedServiceCatalogs);
+        if (selectedClient) {
+          const responseSales = await saleService.getSales({
+            params: `customer=${selectedClient}`,
+          });
+
+          const projectsSet = new Set();
+          const allProjects = [];
+
+          responseSales.results.forEach((sale) => {
+            sale.projects.forEach((project) => {
+              if (!projectsSet.has(project.id)) {
+                projectsSet.add(project.id);
+                allProjects.push(project);
+              }
+            });
+          });
+
+          setOptions(allProjects);
+        }
       } catch (error) {
-        console.error('Erro ao buscar catálogos de serviço:', error);
+        console.error('Erro ao buscar projetos:', error);
       }
       setLoading(false);
     }, 300),
@@ -82,17 +97,17 @@ export default function AutoCompleteServiceCatalog({
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.name === value.name}
-        getOptionLabel={(option) => option.name || ''}
+        isOptionEqualToValue={(option, value) => option.project_number === value.project_number}
+        getOptionLabel={(option) => option.project_number || ''}
         options={options}
+        noOptionsText={noTextOptions}
         loading={loading}
-        value={selectedServiceCatalog}
-        noOptionsText={noOptionsText}
+        value={selectedProject}
         onInputChange={(event, newInputValue) => {
-          fetchServiceCatalogsByName(newInputValue);
+          fetchProjectsByCodeNumber(newInputValue);
         }}
-        onFocus={() => fetchServiceCatalogsByName('')}
         onChange={handleChange}
+        onFocus={() => fetchProjectsByCodeNumber('')}
         renderInput={(params) => (
           <CustomTextField
             error={error}

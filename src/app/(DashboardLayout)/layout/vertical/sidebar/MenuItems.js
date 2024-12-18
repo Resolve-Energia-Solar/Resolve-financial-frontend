@@ -173,15 +173,8 @@ const Menuitems = [
     title: 'TimeLine',
     icon: IconChartLine,
     href: '/apps/timeline',
-    permissions: ['accounts.view_role'],
-  },
-  {
-    id: uniqueId(),
-    title: 'Contas a Pagar e Receber',
-    icon: IconCurrencyDollar,
-    href: '/apps/financial-record',
-    permissions: ['financial.view_financialrecord'],
-  },
+    permissions: ['inspections.view_schedule'],
+  }
 ];
 
 export default Menuitems;

@@ -21,6 +21,8 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 
 /* hooks */
 import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
+import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-User';
+import AutoCompleteUserProject from '@/app/components/apps/inspections/auto-complete/Auto-input-UserProject';
 
 const ScheduleForm = () => {
   const router = useRouter();
@@ -59,21 +61,39 @@ const ScheduleForm = () => {
                 error: true,
                 helperText: formErrors.service_id,
               })}
+              noOptionsText={'Nenhum serviço encontrado'}
+            />
+          </Grid>
+
+          {/* Cliente */}
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel htmlFor="client">Cliente</CustomFormLabel>
+            <AutoCompleteUser
+              onChange={(id) => handleChange('customer_id', id)}
+              value={formData.customer_id}
+              {...(formErrors.customer_id && {
+                error: true,
+                helperText: formErrors.customer_id,
+              })}
             />
           </Grid>
 
           {/* Projeto */}
-          <Grid item xs={12} sm={12} lg={6}>
-            <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
-            <AutoCompleteProject
-              onChange={(id) => handleChange('project_id', id)}
-              value={formData.project_id}
-              {...(formErrors.project_id && {
-                error: true,
-                helperText: formErrors.project_id,
-              })}
-            />
-          </Grid>
+          {formData.customer_id && (
+            <Grid item xs={12} sm={12} lg={12}>
+              <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
+              <AutoCompleteUserProject
+                onChange={(id) => handleChange('project_id', id)}
+                value={formData.project_id}
+                selectedClient={formData.customer_id}
+                noTextOptions={'Nenhum projeto encontrado'}
+                {...(formErrors.project_id && {
+                  error: true,
+                  helperText: formErrors.project_id,
+                })}
+              />
+            </Grid>
+          )}
 
           {/* Data do Agendamento */}
           <Grid item xs={12} sm={12} lg={6}>
@@ -125,7 +145,7 @@ const ScheduleForm = () => {
           </Grid>
 
           {/* Agente de Campo */}
-          <Grid item xs={12} sm={12} lg={12}>
+          {/* <Grid item xs={12} sm={12} lg={12}>
             <CustomFormLabel htmlFor="field_agent">
               Agentes Disponíveis{' '}
               <Tooltip
@@ -151,7 +171,7 @@ const ScheduleForm = () => {
                 helperText: formErrors.schedule_agent_id,
               })}
             />
-          </Grid>
+          </Grid> */}
 
           {/* Botão de Ação*/}
           <Grid item xs={12} sm={12} lg={12} justifyContent="flex-end" mt={2}>

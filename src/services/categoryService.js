@@ -2,14 +2,13 @@ import { update } from 'lodash';
 import apiClient from './apiClient';
 
 const categoryService = {
-  getCategories: async () => {
-    try {
-      const response = await apiClient.get('/api/categories/');
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao buscar categorias:', error);
-      throw error;
-    }
+  getCategories: async ({ ordering, params, nextPage }) => {
+    const urlParams = params ? `&${params}` : '';
+    const urlNextPage = nextPage ? `&page=${nextPage}` : '';
+    const response = await apiClient.get(
+      `/api/categories/?ordering=${ordering || ''}${urlParams}${urlNextPage}`,
+    );
+    return response.data;
   },
 
   getCategoryById: async (id) => {
