@@ -1,0 +1,128 @@
+import { useContext, useState } from 'react';
+
+import { Box, Button, CardContent, Drawer, Grid, Typography } from '@mui/material';
+import { FilterAlt, Close } from '@mui/icons-material';
+
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
+import { CategoryDataContext } from '@/app/context/Inspection/CategoryContext';
+import AutoCompleteUserFilter from '../../auto-complete/Auto-Input-UserFilter';
+
+export default function CategoryDrawerFilters() {
+  const [open, setOpen] = useState(false);
+  const { filters, setFilters } = useContext(CategoryDataContext);
+
+  const [tempFilters, setTempFilters] = useState({
+    name: filters.name || '',
+    members: filters.members || null,
+  });
+
+  const createFilterParams = (filters) => {
+    const params = new URLSearchParams();
+
+    if (filters.name) {
+      params.append('name__icontains', filters.name);
+    }
+
+    if (filters.members) {
+      params.append('members', filters.members);
+    }
+
+    return params.toString();
+  };
+
+  const handleNameChange = (e) => {
+    setTempFilters((prev) => ({ ...prev, name: e.target.value }));
+  };
+
+  const handleMemberChange = (event, value) => {
+    setTempFilters((prev) => ({ ...prev, members: value ? value.id : null }));
+  };
+
+  const clearFilters = () => {
+    setTempFilters({ name: '', members: null });
+  };
+
+  const applyFilters = () => {
+    setFilters([tempFilters, decodeURIComponent(createFilterParams(tempFilters))]);
+    console.log('Filtros aplicados:', tempFilters);
+    setOpen(false);
+  };
+
+  const toggleDrawer = (inOpen) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setOpen(inOpen);
+  };
+
+  return (
+    <Box sx={{ display: 'flex' }}>
+      <Button variant="outlined" onClick={toggleDrawer(true)} startIcon={<FilterAlt />}>
+        Filtros
+      </Button>
+      <Drawer open={open} onClose={toggleDrawer(false)} anchor="right">
+        <Box role="presentation" sx={{ padding: 2, maxWidth: '600px' }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+              <Typography variant="h5" sx={{ marginBottom: '25px' }}>
+                Filtros
+              </Typography>
+              <Close onClick={toggleDrawer(false)} />
+            </Box>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="categoryName">Categoria</CustomFormLabel>
+                <CustomTextField
+                  value={tempFilters.name}
+                  onChange={handleNameChange}
+                  placeholder="Nome da categoria"
+                  error={false}
+                  fullWidth
+                  helperText=""
+                />
+              </Grid>
+            </Grid>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="categoryName">Membro</CustomFormLabel>
+                <AutoCompleteUserFilter
+                  value={tempFilters.members}
+                  onChange={(id) => handleMemberChange(null, { id })}
+                  noOptionsText={'Nenhum membro encontrado'}
+                />
+              </Grid>
+            </Grid>
+          </CardContent>
+          <CardContent>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginTop: 2,
+                minWidth: {
+                  xs: '200px',
+                  sm: '300px',
+                  md: '500px',
+                },
+              }}
+            >
+              <Grid container spacing={1}>
+                <Grid item xs={12} sm={6}>
+                  <Button variant="outlined" fullWidth onClick={clearFilters}>
+                    Limpar Filtros
+                  </Button>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Button variant="contained" fullWidth onClick={applyFilters}>
+                    Aplicar Filtros
+                  </Button>
+                </Grid>
+              </Grid>
+            </Box>
+          </CardContent>
+        </Box>
+      </Drawer>
+    </Box>
+  );
+}

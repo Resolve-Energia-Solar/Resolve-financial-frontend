@@ -16,7 +16,7 @@ const BCrumb = [
     },
 ];
 
-const InvoiceListing = () => {
+const CreateSchedule = () => {
     return (
         <InvoiceProvider>
             <PageContainer title="Criar Agendamento" description="Criar Agendamento">
@@ -30,4 +30,4 @@ const InvoiceListing = () => {
         </InvoiceProvider>
     );
 }
-export default InvoiceListing;
+export default CreateSchedule;
