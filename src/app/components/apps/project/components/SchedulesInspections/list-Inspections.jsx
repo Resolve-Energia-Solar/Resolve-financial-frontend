@@ -34,7 +34,7 @@ const ListInspection = ({ projectId = null, product = [] }) => {
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedUnitId, setSelectedUnitId] = useState(null);
-
+  const [selectedClientId, setSelectedClientId] = useState(null);
   const [AddModalOpen, setAddModalOpen] = useState(false);
   const [confirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [unitToDelete, setUnitToDelete] = useState(null);
@@ -67,7 +67,9 @@ const ListInspection = ({ projectId = null, product = [] }) => {
     setEditModalOpen(true);
   };
 
-  const handleAdd = () => {
+  const handleAdd = (ClientId) => {
+    setSelectedClientId(ClientId);
+    console.log('selectedClientId', selectedClientId);
     setAddModalOpen(true);
   };
 
@@ -163,7 +165,7 @@ const ListInspection = ({ projectId = null, product = [] }) => {
               )}
               <TableRow>
                 <TableCell colSpan={5} align="center">
-                  <Button variant="contained" color="primary" onClick={() => handleAdd()}>
+                  <Button variant="contained" color="primary" onClick={() => handleAdd(units[0]?.customer.id)}>
                     Agendar Vistoria
                   </Button>
                 </TableCell>
@@ -194,6 +196,7 @@ const ListInspection = ({ projectId = null, product = [] }) => {
             serviceId={SERVICE_INSPECTION_ID}
             projectId={projectId}
             products={[product]}
+            customerId={selectedClientId}
             onClosedModal={() => setAddModalOpen(false)}
             onRefresh={reloadPage}
           />
