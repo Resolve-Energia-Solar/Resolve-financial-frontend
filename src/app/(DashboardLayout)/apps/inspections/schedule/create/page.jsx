@@ -4,7 +4,7 @@ import PageContainer from '@/app/components/container/PageContainer';
 import { InvoiceProvider } from '@/app/context/InvoiceContext/index';
 import BlankCard from '@/app/components/shared/BlankCard';
 import { CardContent } from '@mui/material';
-import ScheduleFormCreate from '@/app/components/apps/inspections/schedule/Add-schedule';
+import ScheduleFormCreateExternal from '@/app/components/apps/inspections/schedule/Add-schedule-external';
 
 const BCrumb = [
   {
@@ -23,7 +23,7 @@ const CreateSchedule = () => {
         <Breadcrumb title="Criar Agendamento" items={BCrumb} />
         <BlankCard>
           <CardContent>
-            <ScheduleFormCreate />
+            <ScheduleFormCreateExternal />
           </CardContent>
         </BlankCard>
       </PageContainer>
