@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
+import theme from '@/utils/theme';
 
 // Components
 import {
@@ -213,7 +214,7 @@ const SchedulingList = () => {
   };
 
   return (
-    <Box>
+    <Box > 
       <Typography variant="h6" gutterBottom>
         Lista de Agendamentos
       </Typography>
