@@ -19,7 +19,7 @@ const LightThemeColors = [
         main: '#008253',
         background: 'E9F9E6'
       }, 
-      Warning: {
+      warning: {
         main: '#D62802',
         background: 'FFEBE4'
       },

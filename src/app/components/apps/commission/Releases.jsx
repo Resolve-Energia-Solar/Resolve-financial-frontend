@@ -92,7 +92,7 @@ console.log(data)
                   onClick={() => handleClickRow(item)}
                 >
                   <TableCell align="center">
-                      <StatusReleaseChip status={item.status} />
+                      <StatusReleaseChip status={item.is_payment_released} />
                   </TableCell>
                   <TableCell align="center">{item.sale.branch.name}</TableCell>
                   <TableCell align="center">{item.total_value}</TableCell>
