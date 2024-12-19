@@ -33,7 +33,7 @@ function Sale({ data }) {
   return (
 
     <>
-      <Box sx={{ margin: '0px' }} >
+      <Box sx={{ padding: '22px',border: '1px solid #E0E0E0', borderRadius: '8px' }} >
 
         <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', marginBottom: '15px', padding: '0px' }}> 
           <Box sx={{ width: '30%', p: 2, backgroundColor: 'secondary.main', boxShadow: '2', height: '100px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}> 
@@ -52,7 +52,7 @@ function Sale({ data }) {
             </Box> 
         </Box>
 
-          {data.length > 0 ? <TableContainer sx={{ borderRadius: '8px', boxShadow: '5' }}>
+          {data.length > 0 ? <TableContainer sx={{ borderRadius: '8px', boxShadow: '10' }}>
             <Table>
               <TableHead>
                 <TableRow>

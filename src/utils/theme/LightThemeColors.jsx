@@ -32,8 +32,6 @@ const LightThemeColors = [
         hover: '#FFCC00'
       },
       
-
-      
     },
   },
   {

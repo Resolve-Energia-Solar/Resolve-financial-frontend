@@ -28,7 +28,7 @@ function Debtor({ data }) {
     return (
 
         <>
-            <Box sx={{  margin: '0px'}} >
+            <Box sx={{ padding: '22px',border: '1px solid #E0E0E0', borderRadius: '8px'}} >
 
                 <Box sx={{ p: 2, height: '50%', padding: '0px', marginBottom: '15px', display: 'flex', justifyContent: 'space-between' }}>
 
@@ -69,7 +69,7 @@ function Debtor({ data }) {
                     <DebtorForm />
                 </Drawer>
 
-                {data.length > 0 ? <TableContainer sx={{ borderRadius: '8px', boxShadow: '5' }}>
+                {data.length > 0 ? <TableContainer sx={{ borderRadius: '8px', boxShadow: '10' }}>
                     <Table>
                         <TableHead>
                             <TableRow>

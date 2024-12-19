@@ -25,8 +25,9 @@ const ProjectListing = () => {
   ];
 
   return (
-    <SaleDataContextProvider>
-      <PageContainer title="Projetos" description="Lista de Projetos">
+  
+    <SaleDataContextProvider >
+      <PageContainer title="Projetos" description="Lista de Projetos"  >
         <Breadcrumb title="Projetos" items={BCrumb} />
         <BlankCard>
           <CardContent>

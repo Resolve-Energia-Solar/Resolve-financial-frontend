@@ -20,7 +20,7 @@ const BCrumb = [
 const ScheduleListing = () => {
   return (
     <ScheduleDataContextProvider>
-      <PageContainer title="Lista de Agendamentos" description="Essa é a Lista de Agendamentos">
+      <PageContainer title="Lista de Agendamentos" description="Essa é a Lista de Agendamentos" >
         <Breadcrumb title="Lista de Agendamentos" items={BCrumb} />
         <BlankCard>
           <CardContent>
