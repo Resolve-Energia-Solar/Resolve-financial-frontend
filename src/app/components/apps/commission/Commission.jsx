@@ -36,7 +36,7 @@ function Commission({ data }) {
   return (
 
     <>
-      <Box sx={{ boxShadow: '1', padding: '20px' }} >
+      <Box sx={{  margin: '0px' }} >
         <Box sx={{ p: 2, height: '50%', marginBottom: '15px', display: 'flex', justifyContent: 'space-between', padding: '0px' }}>
 
           <Box sx={{ p: 2, boxShadow: '4', backgroundColor: 'secondary.main', width: '40%', padding: '20px', display: 'flex', marginBottom: '25px' }}>

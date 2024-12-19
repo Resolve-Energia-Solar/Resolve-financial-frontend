@@ -28,7 +28,7 @@ console.log(data)
   return (
 
     <>
-      <Box sx={{ boxShadow: '4', padding: '20px' }} >
+      <Box sx={{  margin: '0px' }} >
 
         <Box sx={{ p: 2, height: '50%', padding: '0px', marginBottom: '15px', display: 'flex', justifyContent: 'space-between' }}>
 

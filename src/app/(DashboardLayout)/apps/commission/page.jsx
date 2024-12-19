@@ -64,7 +64,7 @@ function commission() {
 
   return (
 
-    <Box sx={{ p: 2, alignItems: 'center'}}>
+    <Box sx={{ p: 2}}>
 
       <Box sx={{ p: 2, boxShadow: 2, borderRadius: '10px', backgroundColor: theme.palette.secondary.main, padding: '25px', width: '96%', margin: 'auto'}}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
