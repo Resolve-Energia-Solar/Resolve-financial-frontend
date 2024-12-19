@@ -32,7 +32,7 @@ const ProjectListing = () => {
         <BlankCard>
           <CardContent>
             <ProjectList onClick={handleRowClick} />
-            <SideDrawer open={openDrawer} onClose={toggleDrawerClosed} title="Detalhes do Projeto" details={''}>
+            <SideDrawer open={openDrawer} onClose={toggleDrawerClosed} title="Detalhes do Projeto" >
               <Details id={rowSelected?.id} data={rowSelected} />
             </SideDrawer>
           </CardContent>
