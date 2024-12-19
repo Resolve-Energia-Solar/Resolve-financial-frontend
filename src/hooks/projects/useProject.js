@@ -12,7 +12,6 @@ const useProject = (id) => {
 
     setOpenDrawer(true)
     setRowSelected(item)
-    console.log(item)
 
   }
 
