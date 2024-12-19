@@ -26,6 +26,7 @@ import AutoCompleteProject from '../../auto-complete/Auto-input-Project';
 const ScheduleFormCreate = ({
   serviceId = null,
   projectId = null,
+  customerId = null,
   onClosedModal = null,
   products = [],
   onRefresh = null,
@@ -36,6 +37,7 @@ const ScheduleFormCreate = ({
 
   serviceId ? (formData.service_id = serviceId) : null;
   projectId ? (formData.project_id = projectId) : null;
+  customerId ? (formData.customer_id = customerId) : null;
   products.length > 0 ? (formData.products_ids = products) : null;
 
   const statusOptions = [
