@@ -11,17 +11,18 @@ import { Drawer } from '@mui/material';
 import DebtorForm from './forms/DebtorForm';
 import { Chip, CircularProgress, Typography } from '@mui/material';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
-import theme from '@/utils/theme';  
+import theme from '@/utils/theme';
+import PaymentStatusChip from '@/utils/status/PaymentStatusChip';
 function Debtor({ data }) {
 
-console.log(data);
+    console.log(data);
 
-  const {
-    handleClickRow,
-    toggleDrawer,
-    open,
-    row
-  } = PaymentCommission()
+    const {
+        handleClickRow,
+        toggleDrawer,
+        open,
+        row
+    } = PaymentCommission()
 
 
     return (
@@ -31,33 +32,33 @@ console.log(data);
 
                 <Box sx={{ p: 2, height: '50%', padding: '5px', marginBottom: '15px', display: 'flex', justifyContent: 'space-between' }}>
 
-                    <Box sx={{ p: 2, width: '40%', height: '50%', padding: '0px'}} >
+                    <Box sx={{ p: 2, width: '40%', height: '50%', padding: '0px' }} >
 
-                        <Box sx={{ p: 2, backgroundColor:  theme.palette.secondary.main, height: '50%', padding: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '15px' }}>
+                        <Box sx={{ p: 2, backgroundColor: theme.palette.secondary.main, height: '50%', padding: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '15px' }}>
 
                             <Typography color='#FFFFFF'> Franquia</Typography>
                             <Typography variant='h6' color='#FFFFFF'>Umarizal</Typography>
 
                         </Box>
 
-                        <Box sx={{ p: 2, height: '50%', padding: '10px', display: 'flex', alignItems: 'center', marginBottom: '15px', backgroundColor:  theme.palette.secondary.main }}>
+                        <Box sx={{ p: 2, height: '50%', padding: '10px', display: 'flex', alignItems: 'center', marginBottom: '15px', backgroundColor: theme.palette.secondary.main }}>
 
-                            <Typography variant='h6' sx={{ marginRight: 2, color:'#FFFFFF' }}>Saldo: </Typography>
+                            <Typography variant='h6' sx={{ marginRight: 2, color: '#FFFFFF' }}>Saldo: </Typography>
                             <Typography color='#FFFFFF'>-R$ 27.752,22</Typography>
 
                         </Box>
 
                         <Box sx={{ p: 2, height: '50%', padding: '10px', display: 'flex', alignItems: 'center', backgroundColor: theme.palette.secondary.main }}>
 
-                            <Typography variant='h6' sx={{ marginRight: 2, color:'#FFFFFF' }}>Total: </Typography>
-                            <Typography  color='#FFFFFF'>R$1.000.000,58</Typography>
+                            <Typography variant='h6' sx={{ marginRight: 2, color: '#FFFFFF' }}>Total: </Typography>
+                            <Typography color='#FFFFFF'>R$1.000.000,58</Typography>
 
                         </Box>
                     </Box>
 
-                    <Box sx={{ p: 2, width: '30%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: 'secondary.main' , marginTop: '15px' }}>
+                    <Box sx={{ p: 2, width: '30%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: 'secondary.main', marginTop: '15px' }}>
 
-                        <Typography variant='h6' sx={{ marginBottom: '8px', color:  '#FFFFFF' }}>Saldo</Typography>
+                        <Typography variant='h6' sx={{ marginBottom: '8px', color: '#FFFFFF' }}>Saldo</Typography>
 
                         <Button variant="text" onClick={toggleDrawer(true)} sx={{ width: '100%', boxShadow: '2', backgroundColor: 'primary.contrastText' }}>Adicionar</Button>
 
@@ -82,7 +83,7 @@ console.log(data);
                         <TableBody>
                             {data.map((item) => (
                                 <TableRow
-                                hover
+                                    hover
                                     key={item.id}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && 'primary.light' }}
                                     onClick={() => handleClickRow(item)}
@@ -91,7 +92,9 @@ console.log(data);
                                     <TableCell align="center">{item.valprojeto}</TableCell>
                                     <TableCell align="center">{item.categoria}</TableCell>
                                     <TableCell align="center">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
-                                    <TableCell align="center">{item.status}</TableCell>
+                                    <TableCell align="center">
+                                        <PaymentStatusChip status={item.payment_status} />
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

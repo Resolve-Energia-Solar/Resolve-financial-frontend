@@ -6,15 +6,13 @@ import {
 } from '@mui/icons-material';
 import theme from '@/utils/theme';
 
-const StatusInspectionChip = ({ status }) => {
+const StatusReleaseChip = ({ status }) => {
   const getChipProps = (status) => {
     switch (status) {
-      case 'Pendente':
-        return { label: 'Pendente', color: theme.palette.secondary.neutral, icon: '' };
-      case 'Concluído':
-        return { label: 'Pago', color: theme.palette.success.main, icon: <HourglassEmptyIcon /> };
-      case 'Cancelado':
-        return { label: 'Cancelado', color: theme.palette.warning.main, icon: <HourglassEmptyIcon /> };
+      case 'Liberado':
+        return { label: 'Liberado', color: theme.palette.success.main, icon: '' };
+      case 'Bloqueado':
+        return { label: 'Bloqueado', color: theme.palette.warning.main, icon: ''};
       default:
         return { label: status };
     }
@@ -25,4 +23,4 @@ const StatusInspectionChip = ({ status }) => {
   return <Chip label={label} sx={{backgroundColor: color}} icon={icon} />;
 };
 
-export default StatusInspectionChip;
+export default StatusReleaseChip;

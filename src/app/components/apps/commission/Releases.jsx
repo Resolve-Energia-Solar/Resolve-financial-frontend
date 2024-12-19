@@ -13,6 +13,7 @@ import { Drawer } from '@mui/material';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
 import { useTheme } from '@mui/material/styles';
 import theme from '@/utils/theme';
+import StatusReleaseChip from '@/utils/status/ReleaseStatus';
 function Releases({ data }) {
 console.log(data)
 
@@ -90,7 +91,9 @@ console.log(data)
                   sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && 'primary.light' }}
                   onClick={() => handleClickRow(item)}
                 >
-                  <TableCell align="center"> <Chip>label={item.status ? 'Liberado' : 'Bloqueado'} sx={{ backgroundColor: item.status ? 'success.main' : 'warning.main' }}</Chip> </TableCell>
+                  <TableCell align="center">
+                      <StatusReleaseChip status={item.status} />
+                  </TableCell>
                   <TableCell align="center">{item.sale.branch.name}</TableCell>
                   <TableCell align="center">{item.total_value}</TableCell>
                   <TableCell align="center">{item.installments_value}</TableCell>

@@ -26,7 +26,7 @@ const StatusChip = ({ status }) => {
 
   const { label, color, icon } = getChipProps(status);
   
-  return    <Chip label={label} color={color} icon={icon} />;
+  return    <Chip label={label} sx={{backgroundColor: color}} icon={icon} />;
 };
 
 export default StatusChip;
