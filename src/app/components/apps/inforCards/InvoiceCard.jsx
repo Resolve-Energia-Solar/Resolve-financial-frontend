@@ -38,29 +38,36 @@ const InvoiceCards = () => (
       backgroundColor="primary.light"
       iconColor="primary.main"
       IconComponent={IconListDetails}
-      title="Parcelamento Interno"
-      count="0"
+      title="Crédito"
+      count="-"
     />
     <InfoCard
       backgroundColor="success.light"
       iconColor="success.main"
       IconComponent={IconListDetails}
-      title="Financiamento"
-      count="0"
-    />
-    <InfoCard
-      backgroundColor="secondary.light"
-      iconColor="secondary.main"
-      IconComponent={IconPaperclip}
-      title="Boleto"
-      count="0 Pendentes"
+      title="Débito"
+      count="-"
     />
     <InfoCard
       backgroundColor="warning.light"
       iconColor="warning.main"
       IconComponent={IconSortAscending}
-      title="Crédito"
-      count="0 Pendentes"
+      title="Boleto"
+      count="-"
+    />
+    <InfoCard
+      backgroundColor="info.light"
+      iconColor="warning.main"
+      IconComponent={IconSortAscending}
+      title="Financiamento"
+      count="-"
+    />
+    <InfoCard
+      backgroundColor="info.light"
+      iconColor="warning.main"
+      IconComponent={IconSortAscending}
+      title="Parcelamento interno"
+      count="-"
     />
   </Grid>
 );
