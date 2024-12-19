@@ -10,7 +10,7 @@ import {
     MenuItem,
 } from '@mui/material'
 
-import { TabPanel, a11yProps } from '@/app/components/apps/saleForm/TabPanel'
+import { TabPanel, a11yProps } from '@/app/components/shared/TabPanel'
 import ProjectTab from '@/app/components/apps/saleForm/ProjectTab'
 import PaymentTab from '@/app/components/apps/saleForm/PaymentTab'
 import DocumentSignTab from '@/app/components/apps/saleForm/DocumentSignTab'
