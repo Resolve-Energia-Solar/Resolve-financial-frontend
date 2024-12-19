@@ -22,7 +22,7 @@ import {
 import { MoreVert, Edit, Delete, Visibility } from '@mui/icons-material';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import PaymentChip from '../PaymentChip';
-import PaymentStatusChip from '../PaymentStatusChip';
+import PaymentStatusChip from '../../../../../../utils/status/PaymentStatusChip';
 import paymentService from '@/services/paymentService';
 import { useRouter } from 'next/navigation';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';

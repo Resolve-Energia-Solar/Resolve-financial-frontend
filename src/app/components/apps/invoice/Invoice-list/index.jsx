@@ -43,7 +43,7 @@ import { useEffect } from 'react';
 
 import paymentService from '@/services/paymentService';
 import PaymentChip from '../components/PaymentChip';
-import PaymentStatusChip from '../components/PaymentStatusChip';
+import PaymentStatusChip from '../../../../../utils/status/PaymentStatusChip';
 import { AddBoxRounded, Delete, Edit, MoreVert } from '@mui/icons-material';
 import DashboardCards from '../components/kpis/DashboardCards';
 import { useRouter } from 'next/navigation';

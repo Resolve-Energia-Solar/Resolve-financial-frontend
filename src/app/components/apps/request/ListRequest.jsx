@@ -41,8 +41,7 @@ const ListRequest = ({ data, onClick }) => {
                     <TableCell>Data de Solicitação</TableCell>
                     <TableCell>Data de Vencimento</TableCell>
                     <TableCell>Data de Conclusão</TableCell>
-                    <TableCell>Protocol Provisório</TableCell>
-                    <TableCell>Protocol Permanente</TableCell>
+      
                     <TableCell>Status</TableCell>
                     <TableCell>Solicitante</TableCell>
                     <TableCell>Prazo</TableCell>
@@ -67,8 +66,7 @@ const ListRequest = ({ data, onClick }) => {
                         <TableCell>
                             {format(new Date(item.conclusion_date), 'dd/MM/yyyy')}
                         </TableCell>
-                        <TableCell>{item.interim_protocol}</TableCell>
-                        <TableCell>{item.final_protocol}</TableCell>
+                       
                         <TableCell>
                             <Chip label={getStatusRequest(item.status).textStatus} color={getStatusRequest(item.status).iconColor} />
                         </TableCell>

@@ -39,7 +39,7 @@ import {
 } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import saleService from '@/services/saleService';
-import StatusChip from '../components/DocumentStatusIcon';
+import StatusChip from '../../../../../../utils/status/DocumentStatusIcon';
 import useSendContract from '@/hooks/clicksign/useClickSign';
 import TableSkeleton from '../components/TableSkeleton';
 import DrawerFilters from '../components/DrawerFilters/DrawerFilters';

@@ -1,7 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import {
-  CardContent,
   Table,
   TableBody,
   TableCell,
@@ -13,11 +12,6 @@ import {
   IconButton,
   Tooltip,
   Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Button,
 } from '@mui/material';
 import {
@@ -31,8 +25,6 @@ import {
 } from '@mui/icons-material';
 
 import { useRouter } from 'next/navigation';
-import BlankCard from '@/app/components/shared/BlankCard';
-import PageContainer from '@/app/components/container/PageContainer';
 import projectService from '@/services/projectService';
 
 const getStatusChip = (status) => {
@@ -65,7 +57,8 @@ const getSupplyTypeChip = (type) => {
   }
 };
 
-const ProjectList = () => {
+
+const ProjectList = ({ onClick }) => {
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -151,7 +144,7 @@ const ProjectList = () => {
             </TableHead>
             <TableBody>
               {projectsList.map((item) => (
-                <TableRow key={item.id} hover onClick={() => handleEditClick(item.id)} sx={{ cursor: 'pointer' }}>
+                <TableRow key={item.id} hover sx={{ cursor: 'pointer' }} onClick={() => onClick(item)}>
                   <TableCell>{item.id}</TableCell>
                   <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                   <TableCell>{item.sale?.contract_number}</TableCell>

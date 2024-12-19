@@ -13,6 +13,7 @@ import { Chip, CircularProgress, Typography } from '@mui/material';
 import CommissionDetails from './forms/CommissionDetails';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
 import numeral from 'numeral';
+import theme from '@/utils/theme';
 
 function Commission({ data }) {
   console.log(data)
@@ -35,10 +36,10 @@ function Commission({ data }) {
   return (
 
     <>
-      <Box sx={{ boxShadow: '1', padding: '20px' }} >
+      <Box sx={{  margin: '0px' }} >
         <Box sx={{ p: 2, height: '50%', marginBottom: '15px', display: 'flex', justifyContent: 'space-between', padding: '0px' }}>
 
-          <Box sx={{ p: 2, boxShadow: '4', backgroundColor: 'primary.main', width: '40%', padding: '20px', display: 'flex', marginBottom: '25px' }}>
+          <Box sx={{ p: 2, boxShadow: '4', backgroundColor: 'secondary.main', width: '40%', padding: '20px', display: 'flex', marginBottom: '25px' }}>
 
             <Typography variant='h6' sx={{ marginRight: 2, color: 'primary.contrastText' }}>Total de comissão: </Typography>
             <Typography color='primary.contrastText'>R$ 7.000,00 </Typography>
@@ -86,7 +87,7 @@ function Commission({ data }) {
                   <TableCell align="center"><Chip> label={item.payment_status
                     ? 'Pago' : 'Pendente'} sx={{
                       backgroundColor: item.payment_status
-                        ? '#ECF2FF' : '#FFA07A'
+                        ? 'success.main' : 'warning.main'
                     }}</Chip></TableCell>
                   <TableCell align="center">{''}</TableCell>
                 </TableRow>

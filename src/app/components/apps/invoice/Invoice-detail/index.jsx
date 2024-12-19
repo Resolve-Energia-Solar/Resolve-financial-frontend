@@ -21,7 +21,7 @@ import { useParams } from 'next/navigation';
 
 import usePayment from '@/hooks/payments/usePayment';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
-import PaymentStatusChip from '../components/PaymentStatusChip';
+import PaymentStatusChip from '../../../../../utils/status/PaymentStatusChip';
 import EditInvoiceSkeleton from '../components/EditInvoiceSkeleton';
 
 const DetailInvoicePage = ({ payment_id = null }) => {

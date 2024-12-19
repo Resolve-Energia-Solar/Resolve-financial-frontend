@@ -25,7 +25,7 @@ import StatusIcon from '@mui/icons-material/AssignmentTurnedIn';
 import DescriptionIcon from '@mui/icons-material/Description';
 import PreviewIcon from '@mui/icons-material/Preview';
 import SendIcon from '@mui/icons-material/Send';
-import StatusChip from '../DocumentStatusIcon';
+import StatusChip from '../../../../../../../utils/status/DocumentStatusIcon';
 import saleService from '@/services/saleService';
 import EditSalePage from '../../Edit-sale';
 import SaleDetailPage from '../../Sale-detail';

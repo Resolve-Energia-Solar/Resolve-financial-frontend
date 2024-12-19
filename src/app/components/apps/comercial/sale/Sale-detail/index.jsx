@@ -36,7 +36,7 @@ import { Preview } from '@mui/icons-material';
 import PreviewContractModal from '@/app/components/apps/contractSubmissions/Preview-contract';
 import SendContractButton from '@/app/components/apps/contractSubmissions/Send-contract';
 import ProjectListCards from '@/app/components/apps/project/components/projectList/cards';
-import StatusChip from '../components/DocumentStatusIcon';
+import StatusChip from '../../../../../../utils/status/DocumentStatusIcon';
 import CustomerDetailTabs from '../../../users/User-detail/customer/tabs';
 import PaymentCardDetail from '../../../invoice/Invoice-detail/invoiceListDetail';
 import ProjectListDetail from '../../../project/Project-Detail/projectListDetail';

@@ -28,7 +28,7 @@ const CreateAddressPage = ({ selectedAddressId = null, onClosedModal = null, use
     if (success) {
       if (onClosedModal) {
         onClosedModal();
-        onRefresh();
+        // onRefresh();
       }
       if (selectedAddressId) {
         selectedAddressId(dataReceived.id);
