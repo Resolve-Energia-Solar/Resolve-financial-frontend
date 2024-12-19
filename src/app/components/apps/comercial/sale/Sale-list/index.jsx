@@ -53,7 +53,7 @@ import useSale from '@/hooks/sales/useSale';
 import EditDrawer from '../../Drawer/Form';
 import EditSalePage from '../Edit-sale';
 import ParentCard from '@/app/components/shared/ParentCard';
-
+import SaleCards from '../../../inforCards/SaleCard';
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -256,6 +256,7 @@ const SaleList = () => {
   return (
     <Box>
       {/* <DashboardCards /> */}
+      <SaleCards />
       <Typography variant="h6" gutterBottom>
         Lista de Vendas
       </Typography>

@@ -26,6 +26,7 @@ import {
 
 import { useRouter } from 'next/navigation';
 import projectService from '@/services/projectService';
+import ProjectCards from '../../inforCards/ProjectCard';
 
 const getStatusChip = (status) => {
   switch (status) {
@@ -115,6 +116,7 @@ const ProjectList = ({ onClick }) => {
 
   return (
     <>
+      <ProjectCards />
       <Typography variant="h6" gutterBottom>
         Lista de Projetos
       </Typography>

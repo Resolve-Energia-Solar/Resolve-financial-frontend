@@ -32,7 +32,7 @@ const InfoCard = ({ backgroundColor, iconColor, IconComponent, title, count }) =
   </Grid>
 );
 
-const DashboardCards = () => (
+const ProjectCards = () => (
   <Grid container spacing={3} sx={{ marginBottom: 3}}>
     <InfoCard
       backgroundColor="primary.light"
@@ -65,4 +65,4 @@ const DashboardCards = () => (
   </Grid>
 );
 
-export default DashboardCards;
+export default ProjectCards;
