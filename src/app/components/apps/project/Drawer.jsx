@@ -26,7 +26,6 @@ import {
 
 import { useRouter } from 'next/navigation';
 import projectService from '@/services/projectService';
-import ProjectCards from '../../inforCards/ProjectCard';
 
 const getStatusChip = (status) => {
   switch (status) {
@@ -58,8 +57,7 @@ const getSupplyTypeChip = (type) => {
   }
 };
 
-
-const ProjectList = ({ onClick }) => {
+const ProjectList = () => {
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -116,7 +114,6 @@ const ProjectList = ({ onClick }) => {
 
   return (
     <>
-      <ProjectCards />
       <Typography variant="h6" gutterBottom>
         Lista de Projetos
       </Typography>
@@ -146,7 +143,7 @@ const ProjectList = ({ onClick }) => {
             </TableHead>
             <TableBody>
               {projectsList.map((item) => (
-                <TableRow key={item.id} hover sx={{ cursor: 'pointer' }} onClick={() => onClick(item)}>
+                <TableRow key={item.id} hover onClick={() => handleEditClick(item.id)} sx={{ cursor: 'pointer' }}>
                   <TableCell>{item.id}</TableCell>
                   <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                   <TableCell>{item.sale?.contract_number}</TableCell>

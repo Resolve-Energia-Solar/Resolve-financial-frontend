@@ -43,17 +43,17 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
     marginBottom: theme.spacing(1),
 }));
 
-export default function ModalCardDetail({ open = true, onClose = () => { }, task_id }) {
-    const [title, setTitle] = useState("Título do Card");
-    const [description, setDescription] = useState("Adicione uma descrição mais detalhada...");
+export default function ModalCardDetail({ open, onClose, data }) {
+
+    console.log(data)
 
     return (
         <StyledDialog open={open} onClose={onClose}>
             <DialogTitle>
-                 <Box display="flex" alignItems="center" marginBottom={4}>
+                <Box display="flex" alignItems="center" marginBottom={4}>
                     <CreditCardIcon sx={{ mr: 1 }} />
                     <TextField
-                        value={title}
+                        value={data?.title}
                         onChange={(e) => setTitle(e.target.value)}
                         variant="standard"
                         sx={{
@@ -77,9 +77,9 @@ export default function ModalCardDetail({ open = true, onClose = () => { }, task
                         <Box display="flex" flexDirection={'column'} alignItems="flex-start" mb={3} gap={1}>
 
 
-                            <Typography variant="subtitle1" >Venda nº RES00025</Typography>
-                            <Typography variant="subtitle1" >Projeto nº RES564657</Typography>
-                            <Typography variant="subtitle1">Contratante: Max Oliveira Junior</Typography>
+                            <Typography variant="subtitle1" >Venda nº {data?.project.sale.contract_number}</Typography>
+                            <Typography variant="subtitle1" >Projeto nº {data?.project.project_number}</Typography>
+                            <Typography variant="subtitle1">Contratante: {data?.project.sale.customer.name}</Typography>
                             <Typography variant="subtitle1">Homologador: João Silva Vieigas Queiroz</Typography>
 
                         </Box>
@@ -93,7 +93,7 @@ export default function ModalCardDetail({ open = true, onClose = () => { }, task
                     </Box>
 
                 </Box>
-               
+
                 <IconButton
                     aria-label="close"
                     onClick={onClose}
@@ -117,7 +117,7 @@ export default function ModalCardDetail({ open = true, onClose = () => { }, task
                             <TextField
                                 multiline
                                 rows={4}
-                                value={description}
+                                value={data?.description}
                                 onChange={(e) => setDescription(e.target.value)}
                                 fullWidth
                                 variant="outlined"
@@ -165,59 +165,20 @@ export default function ModalCardDetail({ open = true, onClose = () => { }, task
                         </Box>
                         <Box>
                             <Typography variant="subtitle1" gutterBottom>Anexos</Typography>
-                            <List dense sx={{ maxHeight: '150px',overflowY:'auto'}}>
-                                <ListItem>
-                                    <ListItemIcon>
-                                        <AttachFileIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText primary="documento.pdf" secondary="RG ou CPF" />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemIcon>
-                                        <AttachFileIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText primary="imagem.jpg" secondary="ART" />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemIcon>
-                                        <AttachFileIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText primary="imagem.jpg" secondary="ART" />
-                                </ListItem> <ListItem>
-                                    <ListItemIcon>
-                                        <AttachFileIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText primary="imagem.jpg" secondary="ART" />
-                                </ListItem> <ListItem>
-                                    <ListItemIcon>
-                                        <AttachFileIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText primary="imagem.jpg" secondary="ART" />
-                                </ListItem> <ListItem>
-                                    <ListItemIcon>
-                                        <AttachFileIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText primary="imagem.jpg" secondary="ART" />
-                                </ListItem> <ListItem>
-                                    <ListItemIcon>
-                                        <AttachFileIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText primary="imagem.jpg" secondary="ART" />
-                                </ListItem> <ListItem>
-                                    <ListItemIcon>
-                                        <AttachFileIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText primary="imagem.jpg" secondary="ART" />
-                                </ListItem> <ListItem>
-                                    <ListItemIcon>
-                                        <AttachFileIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText primary="imagem.jpg" secondary="ART" />
-                                </ListItem>
+                            <List dense sx={{ maxHeight: '150px', overflowY: 'auto' }}>
+
+                                {data?.project.attachments.map((attachment) => {
+                                    <ListItem>
+                                        <ListItemIcon>
+                                            <AttachFileIcon fontSize="small" />
+                                        </ListItemIcon>
+                                        <ListItemText primary="documento.pdf" secondary={attachment?.name} />
+                                    </ListItem>
+                                })}
 
                             </List>
                             <Button variant="outlined" fullWidth size="small">
-                                Adicionar anexo
+                                Adicionar anexo s
                             </Button>
                         </Box>
                         <Box>

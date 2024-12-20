@@ -9,8 +9,6 @@ import HelpIcon from '@mui/icons-material/Help';
 /* components */
 import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
 import AutoCompleteServiceCatalog from '@/app/components/apps/inspections/auto-complete/Auto-input-Service';
-import AutoCompleteUserSchedule from '@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule';
-import PageContainer from '@/app/components/container/PageContainer';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
@@ -18,8 +16,6 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 
 /* hooks */
 import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
-import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
-import AutoCompleteUserProject from '../../auto-complete/Auto-input-UserProject';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import AutoCompleteProject from '../../auto-complete/Auto-input-Project';
 
@@ -40,6 +36,8 @@ const ScheduleFormCreate = ({
   customerId ? (formData.customer_id = customerId) : null;
   products.length > 0 ? (formData.products_ids = products) : null;
 
+  console.log('customerId', customerId);
+  
   const statusOptions = [
     { value: 'Pendente', label: 'Pendente' },
     { value: 'Concluído', label: 'Concluído' },

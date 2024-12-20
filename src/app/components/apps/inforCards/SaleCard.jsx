@@ -38,35 +38,35 @@ const SaleCards = () => (
       backgroundColor="primary.light"
       iconColor="primary.main"
       IconComponent={IconListDetails}
-      title="Parecer de acesso"
+      title="Em andamento"
       count="-"
     />
     <InfoCard
       backgroundColor="success.light"
       iconColor="success.main"
       IconComponent={IconListDetails}
-      title="Aumento de carga"
+      title="Finalizado"
       count="-"
     />
     <InfoCard
       backgroundColor="secondary.light"
       iconColor="secondary.main"
       IconComponent={IconPaperclip}
-      title="Vistoria final"
+      title="pendente"
       count="-"
     />
     <InfoCard
       backgroundColor="warning.light"
       iconColor="warning.main"
       IconComponent={IconSortAscending}
-      title="Ajuste de ramal"
+      title="Cancelado"
       count="-"
     />
       <InfoCard
       backgroundColor="warning.light"
       iconColor="warning.main"
       IconComponent={IconSortAscending}
-      title="Nova UC"
+      title="Distrato"
       count="-"
     />
   </Grid>

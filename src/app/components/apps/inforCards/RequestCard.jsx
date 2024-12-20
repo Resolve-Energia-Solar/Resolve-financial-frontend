@@ -32,44 +32,37 @@ const InfoCard = ({ backgroundColor, iconColor, IconComponent, title, count }) =
   </Grid>
 );
 
-const SaleCards = () => (
+const RequestCards = () => (
   <Grid container spacing={3} sx={{ marginBottom: 3}}>
     <InfoCard
       backgroundColor="primary.light"
       iconColor="primary.main"
       IconComponent={IconListDetails}
-      title="Parecer de acesso"
-      count="-"
+      title="Solicitado"
+      count="0"
     />
     <InfoCard
       backgroundColor="success.light"
       iconColor="success.main"
       IconComponent={IconListDetails}
-      title="Aumento de carga"
-      count="-"
+      title="Deferido"
+      count="0"
     />
     <InfoCard
       backgroundColor="secondary.light"
       iconColor="secondary.main"
       IconComponent={IconPaperclip}
-      title="Vistoria final"
-      count="-"
+      title="Boleto"
+      count="0 Pendentes"
     />
     <InfoCard
       backgroundColor="warning.light"
       iconColor="warning.main"
       IconComponent={IconSortAscending}
-      title="Ajuste de ramal"
-      count="-"
-    />
-      <InfoCard
-      backgroundColor="warning.light"
-      iconColor="warning.main"
-      IconComponent={IconSortAscending}
-      title="Nova UC"
-      count="-"
+      title="Indeferido"
+      count="0 Pendentes"
     />
   </Grid>
 );
 
-export default SaleCards;
+export default RequestCards;

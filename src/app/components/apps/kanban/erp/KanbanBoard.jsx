@@ -5,7 +5,7 @@ import KanbanColumn from './KanbanColumn';
 import Loading from '@/app/loading';
 import { useState } from 'react';
 
-export default function KanbanBoard({ board, boards, handleChangeBoard, handleChangeSearchBoard }) {
+export default function KanbanBoard({ board, boards, handleChangeBoard, handleChangeSearchBoard,onClickCard }) {
     const [showClearIcon, setShowClearIcon] = useState("none");
     const handleClick = () => {
         // TODO: Clear the search input
@@ -57,7 +57,7 @@ export default function KanbanBoard({ board, boards, handleChangeBoard, handleCh
                 {
                     board ? board?.columns?.map(
                         (column => (
-                            <KanbanColumn key={column.id} title={column.name} color={column.color} tasks={column.task} />
+                            <KanbanColumn key={column.id} title={column.name} onClickCard={onClickCard} color={column.color} tasks={column.task} />
                         ))
                     ) : <Loading />
                 }
