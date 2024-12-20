@@ -5,20 +5,28 @@ import { useEffect, useState } from "react";
 export default function RequestEnergyCompany() {
 
   const [selectedItem, setSelectedItem] = useState(null);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState();
+  const [formDataCreate, setFormDataCreate] = useState();
   const [selectedValues, setSelectedValues] = useState([]);
   const [situationOptions, setSituationOptions] = useState([])
+  const [openDrawerCreate, setOpenDrawerCreate] = useState(false)
 
   const handleRowClick = async (item) => {
     setFormData(item)
     setSelectedItem(item);
     setSelectedValues(item.situation);
     setIsEditing(false);
-    setIsDrawerOpen(true);
+    setOpenDrawer(true);
     fetchSituations()
   };
+
+  const handleCreateRequest = async (data) => {
+    setFormDataCreate(data)
+    setOpenDrawerCreate(true)
+  }
+
 
 
   const fetchSituations = async () => {
@@ -31,8 +39,8 @@ export default function RequestEnergyCompany() {
     }
   }
 
-  const handleCloseDrawer = () => {
-    setIsDrawerOpen(false);
+  const toggleDrawerClosed = () => {
+    setOpenDrawer(false);
   };
 
   const handleInputChange = (e) => {
@@ -62,6 +70,24 @@ export default function RequestEnergyCompany() {
       console.error('Erro ao buscar dados:', error);
     }
     setIsEditing(false);
+  };
+
+  const handleCreate = async () => {
+    try {
+      const dataCreate = await requestConcessionaireService.update(formData.id, {
+        status: formData.status,
+        company_id: formData.company.id,
+        request_date: formData.request_date,
+        conclusion_date: formData.conclusion_date,
+        type_id: formData.type.id,
+        project_id: formData.project.id,
+        interim_protocol: formData.interim_protocol,
+        final_protocol: formData.final_protocol,
+        situation_ids: formData.situation.map((option) => option.id)
+      })
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+    }
   };
 
   const due_date = (datee, days) => {
@@ -101,7 +127,7 @@ export default function RequestEnergyCompany() {
 
   return {
     selectedItem,
-    isDrawerOpen,
+    openDrawer,
     isEditing,
     formData,
     selectedValues,
@@ -109,12 +135,19 @@ export default function RequestEnergyCompany() {
     handleChangeSituation,
     requestData,
     load,
+    handleCreate,
     due_date,
     handleSave,
-    handleCloseDrawer,
+    toggleDrawerClosed,
     handleEditToggle,
     handleRowClick,
-    handleInputChange
+    handleInputChange,
+    handleCreateRequest,
+    openDrawerCreate,
+    setOpenDrawerCreate,
+    setSelectedItem,
+    setOpenDrawer,
+    formDataCreate
   }
 
 }

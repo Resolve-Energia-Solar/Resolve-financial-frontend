@@ -10,11 +10,11 @@ const StatusChip = ({ status }) => {
   const getChipProps = (status) => {
     switch (status) {
       case 'F':
-        return { label: 'Finalizado', color: theme.palette.success.main, icon: <CheckCircleIcon /> };
+        return { label: 'Finalizado', color: 'success', icon: <CheckCircleIcon /> };
       case 'EA':
-        return { label: 'Em Andamento', color: theme.palette.success.main, icon: <HourglassEmptyIcon /> };
+        return { label: 'Em Andamento', color: 'warning', icon: <HourglassEmptyIcon /> };
       case 'P':
-        return { label: 'Pendente', color: theme.palette.secondary.neutral, icon: <HourglassEmptyIcon /> };
+        return { label: 'Pendente', color: 'secondary', icon: <HourglassEmptyIcon /> };
       case 'C':
         return { label: 'Cancelado', color: 'error', icon: <CancelIcon /> };
       case 'D':
@@ -26,7 +26,7 @@ const StatusChip = ({ status }) => {
 
   const { label, color, icon } = getChipProps(status);
   
-  return    <Chip label={label} sx={{backgroundColor: color}} icon={icon} />;
+  return    <Chip label={label} color={color} icon={icon} />;
 };
 
 export default StatusChip;

@@ -53,7 +53,9 @@ import useSale from '@/hooks/sales/useSale';
 import EditDrawer from '../../Drawer/Form';
 import EditSalePage from '../Edit-sale';
 import ParentCard from '@/app/components/shared/ParentCard';
+import SideDrawer from '@/app/components/shared/SideDrawer';
 
+import SaleCards from '../../../inforCards/SaleCard';
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -256,6 +258,7 @@ const SaleList = () => {
   return (
     <Box>
       {/* <DashboardCards /> */}
+      <SaleCards />
       <Typography variant="h6" gutterBottom>
         Lista de Vendas
       </Typography>
@@ -558,13 +561,9 @@ const SaleList = () => {
           Enviando Contrato...
         </Typography>
       </Backdrop>
-      <Drawer anchor="right" open={openDrawer} onClose={() => toggleDrawerClosed(false)}>
-        <ParentCard title="Editar Venda">
-          <CardContent>
-            <EditSalePage saleId={rowSelected?.id} sx={{ maxWidth: '40vw', minWidth: '40vw' }} />
-          </CardContent>
-        </ParentCard>
-      </Drawer>
+      <SideDrawer open={openDrawer} onClose={() => toggleDrawerClosed(false)} title="Detalhamento da Venda">
+        <EditSalePage saleId={rowSelected?.id} sx={{ maxWidth: '40vw', minWidth: '40vw' }} />
+      </SideDrawer>
     </Box>
   );
 };
