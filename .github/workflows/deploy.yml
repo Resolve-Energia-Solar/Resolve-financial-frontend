@@ -51,15 +51,20 @@ jobs:
           echo "NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID=${{ vars.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID }}" >> .env
           echo "NEXT_PUBLIC_CONTENT_TYPE_SALE_ID=${{ vars.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID }}" >> .env
           echo "NEXT_PUBLIC_SUPABASE_URL=${{ vars.NEXT_PUBLIC_SUPABASE_URL }}" >> .env
+      
+      # 7. Criar ConfigMap com o arquivo .env
+      - name: Create ConfigMap from .env
+        run: |
+          kubectl create configmap resolve-frontend-env --from-file=.env -n "$NAMESPACE"
+
           
-          
-      # 7. Atualizar a Imagem do Deployment no AKS
+      # 8. Atualizar a Imagem do Deployment no AKS
       - name: Update Deployment on AKS
         run: |
           kubectl set image deployment/$DEPLOYMENT_NAME resolve-erp-frontend="${DOCKER_IMAGE}:${{ github.sha }}" -n "$NAMESPACE"
           kubectl rollout status deployment/$DEPLOYMENT_NAME -n "$NAMESPACE"
 
-      # 8. Debug Deployment (Opcional)
+      # 9. Debug Deployment (Opcional)
       #- name: Debug Deployment Logs
       #  run: |
       #    kubectl get pods -n "$NAMESPACE"
