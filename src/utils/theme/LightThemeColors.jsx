@@ -10,9 +10,9 @@ const LightThemeColors = [
       },
       secondary: {
         main: '#303030',
-        light: '#7E8388',
+        light: '#C6C6C6',
         dark: '#000000',
-        neutral: '#C6C6C6',
+        neutral: '#7E8387',
         contrastText: '#ffffff',
       },
       success: {
@@ -24,12 +24,12 @@ const LightThemeColors = [
         background: 'FFEBE4'
       },
       info: {
-        main: '#006ED3',
-        background: 'DAE9FF'
+        main: '#DAE9FF',
+        background: '#006ED3'
       },
     
       action: {
-        hover: '#FFCC00'
+        hover: '#FFF5CC '
       },
       
     },

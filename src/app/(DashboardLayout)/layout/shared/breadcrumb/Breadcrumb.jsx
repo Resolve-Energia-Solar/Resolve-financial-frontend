@@ -33,7 +33,7 @@ const Breadcrumb = ({ subtitle, items, title, children }) => (
         separator={
           <IconCircle
             size="5"
-            fill="textSecondary"
+            fill="#fff"
             fillOpacity={'0.6'}
             style={{ margin: '0 5px', color: '#FFF'}}
           />

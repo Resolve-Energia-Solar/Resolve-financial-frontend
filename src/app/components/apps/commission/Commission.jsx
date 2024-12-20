@@ -14,6 +14,7 @@ import CommissionDetails from './forms/CommissionDetails';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
 import numeral from 'numeral';
 import theme from '@/utils/theme';
+import PaymentStatusChip from '@/utils/status/PaymentStatusChip';
 
 function Commission({ data }) {
   console.log(data)
@@ -84,11 +85,9 @@ function Commission({ data }) {
                   <TableCell align="center">{item.difference_value}</TableCell>
                   <TableCell align="center">{numeral(item.sale.transfer_percentage / 100).format('0,0%')}</TableCell>
                   <TableCell align="center">{item.sale.total_value}</TableCell>
-                  <TableCell align="center"><Chip> label={item.payment_status
-                    ? 'Pago' : 'Pendente'} sx={{
-                      backgroundColor: item.payment_status
-                        ? 'success.main' : 'warning.main'
-                    }}</Chip></TableCell>
+                  <TableCell align="center">
+                  <PaymentStatusChip status={item.payment_status} />
+                   </TableCell>
                   <TableCell align="center">{''}</TableCell>
                 </TableRow>
               ))}
