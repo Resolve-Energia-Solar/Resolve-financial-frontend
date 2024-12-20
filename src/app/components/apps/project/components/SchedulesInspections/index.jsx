@@ -5,7 +5,7 @@ import ChecklistSalesSkeleton from '../../../checklist/components/ChecklistSales
 import ProductChip from '../../../product/components/ProductChip';
 import ListInspection from './list-Inspections';
 
-function SchedulesInspections({ saleId }) {
+function SchedulesInspections({ saleId, userId }) {
   const [projectsList, setProjectsList] = useState([]);
   const [customerId, setCustomerId] = useState(null);
   const [loading, setLoading] = useState(true);
