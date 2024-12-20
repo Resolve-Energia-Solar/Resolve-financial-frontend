@@ -28,8 +28,6 @@ function Sale({ data }) {
   const theme = useTheme();
 
 
-
-
   return (
 
     <>

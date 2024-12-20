@@ -30,11 +30,9 @@ import ScheduleFormEdit from '../../../inspections/schedule/Edit-schedule';
 
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
 
-const ListInspection = ({ projectId = null, product = [] }) => {
-
+const ListInspection = ({ projectId = null, product = [], customerId = null }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedUnitId, setSelectedUnitId] = useState(null);
-  const [selectedClientId, setSelectedClientId] = useState(null);
   const [AddModalOpen, setAddModalOpen] = useState(false);
   const [confirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [unitToDelete, setUnitToDelete] = useState(null);
@@ -49,7 +47,6 @@ const ListInspection = ({ projectId = null, product = [] }) => {
     const fetchUnits = async () => {
       try {
         const response = await scheduleService.getAllSchedulesInspectionByProject(projectId);
-        console.log('response', response.results);
         setUnits(response.results);
       } catch (error) {
         console.log('Error: ', error);
@@ -59,7 +56,6 @@ const ListInspection = ({ projectId = null, product = [] }) => {
   }, [projectId, reload]);
 
   const [units, setUnits] = useState([]);
-
   console.log('product', product);  
 
   const handleEdit = (unitId) => {
@@ -67,11 +63,10 @@ const ListInspection = ({ projectId = null, product = [] }) => {
     setEditModalOpen(true);
   };
 
-  const handleAdd = (ClientId) => {
-    setSelectedClientId(ClientId);
-    console.log('selectedClientId', selectedClientId);
+  const handleAdd = () => {
     setAddModalOpen(true);
   };
+
 
   const handleDelete = async (unitId) => {
     try {
@@ -165,7 +160,7 @@ const ListInspection = ({ projectId = null, product = [] }) => {
               )}
               <TableRow>
                 <TableCell colSpan={5} align="center">
-                  <Button variant="contained" color="primary" onClick={() => handleAdd(units[0]?.customer.id)}>
+                  <Button variant="contained" color="primary" onClick={() => handleAdd()}>
                     Agendar Vistoria
                   </Button>
                 </TableCell>
@@ -196,7 +191,7 @@ const ListInspection = ({ projectId = null, product = [] }) => {
             serviceId={SERVICE_INSPECTION_ID}
             projectId={projectId}
             products={[product]}
-            customerId={selectedClientId}
+            customerId={customerId}
             onClosedModal={() => setAddModalOpen(false)}
             onRefresh={reloadPage}
           />

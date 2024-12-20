@@ -7,6 +7,7 @@ import ListInspection from './list-Inspections';
 
 function SchedulesInspections({ saleId }) {
   const [projectsList, setProjectsList] = useState([]);
+  const [customerId, setCustomerId] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,6 +16,7 @@ function SchedulesInspections({ saleId }) {
       try {
         const response = await projectService.getProjectBySale(saleId);
         setProjectsList(response.results);
+        setCustomerId(projectsList[0]?.sale?.customer?.id);
       } catch (error) {
         console.log('Error: ', error);
       } finally {
@@ -52,7 +54,7 @@ function SchedulesInspections({ saleId }) {
                 </Stack>
               </Stack>
 
-              <ListInspection projectId={project.id} product={project.product.id} />
+              <ListInspection projectId={project.id} product={project.product.id} customerId={customerId} />
             </CardContent>
           </Card>
         </Box>
