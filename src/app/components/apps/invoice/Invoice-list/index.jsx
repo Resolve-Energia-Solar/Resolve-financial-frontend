@@ -48,6 +48,7 @@ import { AddBoxRounded, Delete, Edit, MoreVert } from '@mui/icons-material';
 import DashboardCards from '../components/kpis/DashboardCards';
 import { useRouter } from 'next/navigation';
 import PaymentList from '../components/paymentList/list';
+import InvoiceCards from '../../inforCards/InvoiceCard';
 
 function InvoiceList() {
   const router = useRouter();
@@ -108,7 +109,7 @@ function InvoiceList() {
   return (
     <Box>
       {/* <DashboardCards /> */}
-
+      <InvoiceCards/>
       <Stack
         mt={3}
         justifyContent="space-between"

@@ -32,37 +32,44 @@ const InfoCard = ({ backgroundColor, iconColor, IconComponent, title, count }) =
   </Grid>
 );
 
-const DashboardCards = () => (
+const InvoiceCards = () => (
   <Grid container spacing={3} sx={{ marginBottom: 3}}>
     <InfoCard
       backgroundColor="primary.light"
       iconColor="primary.main"
       IconComponent={IconListDetails}
-      title="Parcelamento Interno"
-      count="0"
+      title="Crédito"
+      count="-"
     />
     <InfoCard
       backgroundColor="success.light"
       iconColor="success.main"
       IconComponent={IconListDetails}
-      title="Financiamento"
-      count="0"
-    />
-    <InfoCard
-      backgroundColor="secondary.light"
-      iconColor="secondary.main"
-      IconComponent={IconPaperclip}
-      title="Boleto"
-      count="0 Pendentes"
+      title="Débito"
+      count="-"
     />
     <InfoCard
       backgroundColor="warning.light"
       iconColor="warning.main"
       IconComponent={IconSortAscending}
-      title="Crédito"
-      count="0 Pendentes"
+      title="Boleto"
+      count="-"
+    />
+    <InfoCard
+      backgroundColor="info.light"
+      iconColor="warning.main"
+      IconComponent={IconSortAscending}
+      title="Financiamento"
+      count="-"
+    />
+    <InfoCard
+      backgroundColor="info.light"
+      iconColor="warning.main"
+      IconComponent={IconSortAscending}
+      title="Parcelamento interno"
+      count="-"
     />
   </Grid>
 );
 
-export default DashboardCards;
+export default InvoiceCards;
