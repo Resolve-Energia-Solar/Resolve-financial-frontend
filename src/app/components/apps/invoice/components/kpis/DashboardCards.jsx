@@ -38,29 +38,36 @@ const SaleCards = () => (
       backgroundColor="primary.light"
       iconColor="primary.main"
       IconComponent={IconListDetails}
-      title="Parcelamento Interno"
-      count="0"
+      title="Parecer de acesso"
+      count="-"
     />
     <InfoCard
       backgroundColor="success.light"
       iconColor="success.main"
       IconComponent={IconListDetails}
-      title="Financiamento"
-      count="0"
+      title="Aumento de carga"
+      count="-"
     />
     <InfoCard
       backgroundColor="secondary.light"
       iconColor="secondary.main"
       IconComponent={IconPaperclip}
-      title="Boleto"
-      count="0 Pendentes"
+      title="Vistoria final"
+      count="-"
     />
     <InfoCard
       backgroundColor="warning.light"
       iconColor="warning.main"
       IconComponent={IconSortAscending}
-      title="Crédito"
-      count="0 Pendentes"
+      title="Ajuste de ramal"
+      count="-"
+    />
+      <InfoCard
+      backgroundColor="warning.light"
+      iconColor="warning.main"
+      IconComponent={IconSortAscending}
+      title="Nova UC"
+      count="-"
     />
   </Grid>
 );
