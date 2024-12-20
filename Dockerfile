@@ -1,18 +1,23 @@
+# Usar a imagem oficial do Node.js
 FROM node:20-alpine
 
-# Diretório de trabalho
+# Definir o diretório de trabalho dentro do container
 WORKDIR /app
 
-# Copia os arquivos essenciais e instala as dependências
+# Copiar os arquivos de dependências para o diretório de trabalho
 COPY package.json package-lock.json ./
-RUN npm install --legacy-peer-deps
 
-# Copia todo o projeto e realiza o build
+# Instalar dependências
+RUN npm ci
+
+# Copiar o restante do código-fonte para o container
 COPY . .
+
+# Realizar o build da aplicação
 RUN npm run build
 
-# Expose a porta padrão do Next.js
+# Expor a porta usada pela aplicação
 EXPOSE 3000
 
-# Comando de inicialização
+# Comando para iniciar a aplicação
 CMD ["npm", "run", "start"]
