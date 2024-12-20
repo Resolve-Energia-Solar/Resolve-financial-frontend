@@ -8,16 +8,15 @@ import theme from '../theme';
 const PaymentStatusChip = ({ isPaid }) => {
   const getChipProps = (isPaid) => {
     if (isPaid) {
-      return { label: 'Pago', color: theme.palette.success.main, icon: <CheckCircleIcon /> };
+      return { label: 'Pago', color: theme.palette.success.light, icon: <CheckCircleIcon /> };
     } else {
-      return { label: 'Não Pago', color:  'error', icon: <CancelIcon /> };
+      return { label: 'Não Pago', color: theme.palette.secondary.light, icon: <CancelIcon /> };
     }
   };
-  //ele não reconhece o warning 
-
+  
   const { label, color, icon } = getChipProps(isPaid);
 
-  return <Chip label={label} sx={{backgroundColor: color}} icon={icon} />;
+  return <Chip label={label} sx={{backgroundColor: color, color: '#fff'}} icon={icon} />;
 };
 
 export default PaymentStatusChip;

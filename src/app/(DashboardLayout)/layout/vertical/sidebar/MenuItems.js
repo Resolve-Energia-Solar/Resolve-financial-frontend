@@ -35,7 +35,7 @@ const Menuitems = [
     href: '/apps/boards/crm',
     chip: 'Novo',
     chipColor: 'secondary',
-    permissions: ['resolve_crm.view_board'],
+    permissions: ['core.view_board'],
   },
   {
     id: uniqueId(),

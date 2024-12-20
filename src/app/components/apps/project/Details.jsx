@@ -12,13 +12,15 @@ import { TabPanel } from '../../shared/TabPanel';
 import Infor from './Infor';
 import CheckList from './CheckList';
 import Loading from '@/app/loading';
+import SideDrawer from '../../shared/SideDrawer';
+import SendingForm from '../request/SendingForm';
 
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
 export default function Details({ id = null, data }) {
-  const { selectedItem, isDrawerOpen, isEditing, formData, selectedValues, situationOptions, handleChangeSituation, requestData, load, due_date, handleSave, handleCloseDrawer, handleRowClick, handleEditToggle, handleInputChange } = RequestEnergyCompany()
+  const { selectedItem, openDrawer, openDrawerCreate, setOpenDrawerCreate, isEditing, formData, selectedValues, situationOptions, handleChangeSituation, requestData, load, due_date, handleSave, handleRowClick, toggleDrawerClosed, handleInputChange, handleCreate, handleEditToggle, formDataCreate, handleCreateRequest } = RequestEnergyCompany()
 
-  console.log(data)
+  console.log('sending3', data)
 
   const [value, setValue] = useState(0);
   const [documentTypes, setDocumentTypes] = useState([]);
@@ -83,13 +85,13 @@ export default function Details({ id = null, data }) {
       <TabPanel value={value} index={3}>
         <div>
           {
-            (load) ? <ListRequest data={requestData} onClick={handleRowClick} /> :
+            (load) ? <ListRequest data={data?.requests_energy_company} onClick={handleRowClick} /> :
               < Loading />
           }
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBlock: '12px' }}>
-            <Button>Novo</Button>
+            <Button onClick={() => handleCreateRequest(data)}>Novo</Button>
           </div>
-          <Drawer anchor="right" open={isDrawerOpen} onClose={handleCloseDrawer}>
+          <SideDrawer title={'Detalhamento'} open={openDrawer} onClose={toggleDrawerClosed}>
             {selectedItem && situationOptions.length > 0 &&
               <LateralForm
                 handleChangeSituation={handleChangeSituation}
@@ -102,14 +104,25 @@ export default function Details({ id = null, data }) {
                 handleSave={handleSave}
               />
             }
-          </Drawer>
+          </SideDrawer>
+          <SideDrawer title={'Nova Solicitação'} open={openDrawerCreate} onClose={() => setOpenDrawerCreate(false)}>
+            <SendingForm
+              handleChangeSituation={handleChangeSituation}
+              formData={data}
+              due_date={due_date}
+              handleInputChange={handleInputChange}
+              options={situationOptions}
+              multiSelectValues={selectedValues}
+              handleSave={handleCreate}
+            />
+          </SideDrawer>
         </div>
       </TabPanel>
 
       <TabPanel value={value} index={4}>
-        <div>
-          <History contentType={CONTENT_TYPE_PROJECT_ID} objectId={id} />
-        </div>
+
+        <History contentType={CONTENT_TYPE_PROJECT_ID} objectId={id} />
+
       </TabPanel>
     </>
 
