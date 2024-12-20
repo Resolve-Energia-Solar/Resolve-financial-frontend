@@ -7,7 +7,10 @@ import Box from '@mui/material/Box';
 import EditCustomer from '@/app/components/apps/users/Edit-user/customer/customer';
 import ListAddresses from '@/app/components/apps/users/Edit-user/customer/Addresses';
 import ListPhones from '@/app/components/apps/users/Edit-user/customer/Phones';
- 
+import PersonIcon from '@mui/icons-material/Person';
+import HomeIcon from '@mui/icons-material/Home';
+import PhoneIcon from '@mui/icons-material/Phone';
+
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -52,19 +55,18 @@ export default function CustomerTabs({ userId = null }) {
 
   return (
     <Box
-      sx={{ bgcolor: 'background.paper', display: 'flex' }}
+      sx={{ bgcolor: 'background.paper', display: 'flex', padding: 0 }}
     >
       <Tabs
         orientation="vertical"
-        variant="scrollable"
         value={value}
         onChange={handleChange}
         aria-label="Vertical tabs example"
-        sx={{ borderRight: 1, borderColor: 'divider', width: '10%' }}
+        sx={{ borderRight: 1, borderColor: 'divider' }}
       >
-        <Tab label="Geral" {...a11yProps(0)} />
-        <Tab label="Endereços" {...a11yProps(1)} />
-        <Tab label="Telefones" {...a11yProps(2)} />
+        <Tab label={<PersonIcon />} sx={{ p: 0 }} {...a11yProps(0)} />
+        <Tab label={<HomeIcon />} sx={{ p: 0 }}  {...a11yProps(1)} />
+        <Tab label={<PhoneIcon />} sx={{ p: 0 }}   {...a11yProps(2)} />
       </Tabs>
       <TabPanel value={value} index={0}>
         <EditCustomer userId={userId} />
