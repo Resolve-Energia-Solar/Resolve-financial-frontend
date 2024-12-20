@@ -36,6 +36,7 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
   const [AddModalOpen, setAddModalOpen] = useState(false);
   const [confirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [unitToDelete, setUnitToDelete] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const [reload, setReload] = useState(false);
 
@@ -47,6 +48,8 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
     const fetchUnits = async () => {
       try {
         const response = await scheduleService.getAllSchedulesInspectionByProject(projectId);
+        console.log('response', response.results);
+        setLoading(false);
         setUnits(response.results);
       } catch (error) {
         console.log('Error: ', error);
@@ -82,6 +85,10 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
     setUnitToDelete(unitId);
     setConfirmDeleteModalOpen(true);
   };
+
+  if (loading) {
+    return <Typography variant="body2">Carregando...</Typography>;
+  }
 
   return (
     <Box>
