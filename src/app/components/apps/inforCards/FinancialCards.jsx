@@ -3,8 +3,8 @@ import { Grid, Box, Stack, Typography } from '@mui/material';
 import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
 
 const InfoCard = ({ backgroundColor, iconColor, IconComponent, title, count }) => (
-  <Grid item xs={12} sm={6} lg={3}>
-    <Box backgroundColor={backgroundColor} p={3} sx={{ cursor: 'pointer' }}>
+  <Grid  item  xs={12} sm={6} lg={2.4}>
+    <Box backgroundColor={backgroundColor} p={1} sx={{ cursor: 'pointer' }}>
       <Stack direction="row" gap={2} alignItems="center">
         <Box
           width={38}
