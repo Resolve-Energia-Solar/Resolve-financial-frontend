@@ -33,7 +33,6 @@ const RequestCE = () => {
           <CardContent>
             <DashboardCards />
             <Box sx={{ display: 'flex' }}>
-              <Button onClick={handleCreateRequest}>Nova Solicitação</Button>
             </Box>
             {
               (load) ? <ListRequest data={requestData} onClick={handleRowClick} /> :
@@ -59,7 +58,6 @@ const RequestCE = () => {
       </SideDrawer>
       {/* Criação de Nova Solicitação */}
       <SideDrawer title="Detalhes do Solicitação" open={openDrawerCreate} onClose={toggleDrawerCreateClosed}>
-
 
         <SendingForm handleChangeSituation={handleChangeSituation}
           isEditing={isEditing} formData={formData}

@@ -7,6 +7,18 @@ export default function boardOperation() {
     const [boards, setBoards] = useState()
     const [board, setBoard] = useState()
 
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [cardSelected, setCardSelected] = useState()
+    const handleCardClick = (item) => {
+        setIsModalOpen(true)
+        setCardSelected(item)
+    }
+
+    const handleModalClosed = () => {
+        setIsModalOpen(false)
+    }
+
+
     useEffect(() => {
 
         async function fetchData() {
@@ -55,6 +67,6 @@ export default function boardOperation() {
     }
 
 
-    return { boards, setBoard, board, handleSearch, handleChangeBoard }
+    return { boards, setBoard, board, handleSearch, handleChangeBoard, handleModalClosed, handleCardClick, isModalOpen, cardSelected }
 
 }

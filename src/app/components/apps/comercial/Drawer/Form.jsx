@@ -268,7 +268,7 @@ const EditDrawer = ({ saleId = null, onClosedModal = null, refresh }) => {
                             <TabPanel value={value} index={4} >
                                 <ChecklistSales saleId={id_sale} />
                             </TabPanel>
-                    
+
                             <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
                                 {onClosedModal && (
                                     <Button variant="contained" color="primary" onClick={onClosedModal}>
