@@ -30,10 +30,8 @@ import {
   IconEdit,
   IconEye,
   IconEyeglass,
-  IconListDetails,
   IconSearch,
   IconShoppingBag,
-  IconSortAscending,
   IconTrash,
   IconTruck,
 } from '@tabler/icons-react';
@@ -48,7 +46,14 @@ import { AddBoxRounded, Delete, Edit, MoreVert } from '@mui/icons-material';
 import DashboardCards from '../components/kpis/DashboardCards';
 import { useRouter } from 'next/navigation';
 import PaymentList from '../components/paymentList/list';
-import InvoiceCards from '../../inforCards/InvoiceCard';
+import InforCards from '../../inforCards/InforCards';
+import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 function InvoiceList() {
   const router = useRouter();
@@ -106,10 +111,62 @@ function InvoiceList() {
     }
   }
 
+  const cardsData = [
+      {
+        backgroundColor: 'primary.light',
+        iconColor: 'primary.main',
+        IconComponent: IconListDetails,
+        title: 'Crédito',
+        count: '-',
+      },
+      {
+        backgroundColor: 'success.light',
+        iconColor: 'success.main',
+        IconComponent: IconListDetails,
+        title: 'Débito',
+        count: '-',
+      },
+      {
+        backgroundColor: 'secondary.light',
+        iconColor: 'secondary.main',
+        IconComponent: IconPaperclip,
+        title: 'Boleto',
+        count: '-',
+      },
+      {
+        backgroundColor: 'warning.light',
+        iconColor: 'warning.main',
+        IconComponent: IconSortAscending,
+        title: 'Financiamento',
+        count: '-',
+      },
+      {
+        backgroundColor: 'warning.light',
+        iconColor: 'warning.main',
+        IconComponent: IconSortAscending,
+        title: 'Parcelamento Interno',
+        count: '-',
+      },
+    ];
+
   return (
     <Box>
       {/* <DashboardCards /> */}
-      <InvoiceCards/>
+      
+      <Accordion  sx={{marginBottom: 4}}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="sale-cards-content"
+          id="sale-cards-header"
+        >
+          <Typography variant="h6">Status</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <InforCards cardsData={cardsData} />
+        </AccordionDetails>
+      </Accordion>
+
+
       <Stack
         mt={3}
         justifyContent="space-between"
