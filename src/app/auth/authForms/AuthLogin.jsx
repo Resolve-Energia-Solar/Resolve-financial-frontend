@@ -49,8 +49,8 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
       )}
       {subtext}
 
-      <AuthSocialButtons title="Logar com" />
-      <Box mt={3}>
+      {/* <AuthSocialButtons title="Logar com" /> */}
+      {/* <Box mt={3}>
         <Divider>
           <Typography
             component="span"
@@ -63,7 +63,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             ou logar com
           </Typography>
         </Divider>
-      </Box>
+      </Box> */}
 
       <Stack>
         <Box>
