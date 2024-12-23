@@ -18,7 +18,6 @@ jobs:
     environment: resolve
 
     steps:
-
       # 1. Checkout do Código
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -27,7 +26,7 @@ jobs:
       - name: Log in to Azure Container Registry
         run: echo "${{ vars.AZURE_ACR_PASSWORD }}" | docker login resourceresolve.azurecr.io -u "${{ vars.AZURE_ACR_USERNAME }}" --password-stdin
 
-      # 3. Build e Push da Imagem Docker (Docker padrão)
+      # 3. Build e Push da Imagem Docker
       - name: Build and Push Docker Image
         run: |
           docker build -t "${DOCKER_IMAGE}:${{ github.sha }}" .
@@ -41,14 +40,35 @@ jobs:
       - name: Configure Access to AKS
         run: az aks get-credentials --resource-group "$AKS_RESOURCE_GROUP" --name "$AKS_CLUSTER_NAME" --overwrite-existing
 
-      # 6. Deploy da Aplicação no AKS
+      # 6. Criar o arquivo .env com as variáveis do GitHub Secrets
+      - name: Create .env File
+        run: |
+          echo "GENERATE_SOURCEMAP=${{ vars.GENERATE_SOURCEMAP }}" >> .env
+          echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID=${{ vars.NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID}}" >> .env
+          echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID=${{ vars.NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID}}" >> .env
+          echo "NEXT_PUBLIC_CLICKSIGN_TOKEN=${{ vars.NEXT_PUBLIC_CLICKSIGN_TOKEN}}" >> .env
+          echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_URL=${{ vars.NEXT_PUBLIC_API_BASE_CLICKSIGN_URL }}" >> .env
+          echo "NEXT_PUBLIC_API_BASE_URL=${{ vars.NEXT_PUBLIC_API_BASE_URL }}" >> .env
+          echo "NEXT_PUBLIC_CONTENT_TYPE_LEAD_ID=${{ vars.NEXT_PUBLIC_CONTENT_TYPE_LEAD_ID }}" >> .env
+          echo "NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID=${{ vars.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID }}" >> .env
+          echo "NEXT_PUBLIC_SERVICE_INSPECTION_ID=${{ vars.NEXT_PUBLIC_SERVICE_INSPECTION_ID}}" >> .env
+          echo "NEXT_PUBLIC_SUPABASE_KEY=${{ vars.NEXT_PUBLIC_SUPABASE_KEY}}" >> .env
+          echo "NEXT_PUBLIC_CONTENT_TYPE_SALE_ID=${{ vars.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID }}" >> .env
+          echo "NEXT_PUBLIC_SUPABASE_URL=${{ vars.NEXT_PUBLIC_SUPABASE_URL }}" >> .env
+
+      # 7. Criar ou Atualizar ConfigMap com o arquivo .env
+      - name: Create or Update ConfigMap from .env
+        run: |
+          kubectl create configmap resolve-frontend-env --from-file=.env -n "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
+
+      # 8. Atualizar a Imagem do Deployment no AKS
       - name: Update Deployment on AKS
         run: |
           kubectl set image deployment/$DEPLOYMENT_NAME resolve-erp-frontend="${DOCKER_IMAGE}:${{ github.sha }}" -n "$NAMESPACE"
           kubectl rollout status deployment/$DEPLOYMENT_NAME -n "$NAMESPACE"
 
-      # 7. Debug Deployment (Opcional)
-      - name: Debug Deployment Logs
-        run: |
-          kubectl get pods -n "$NAMESPACE"
-          kubectl logs deployment/$DEPLOYMENT_NAME -n "$NAMESPACE"
+      # 9. Debug Deployment (Opcional)
+      #- name: Debug Deployment Logs
+      #  run: |
+      #    kubectl get pods -n "$NAMESPACE"
+      #    kubectl logs deployment/$DEPLOYMENT_NAME -n "$NAMESPACE"
