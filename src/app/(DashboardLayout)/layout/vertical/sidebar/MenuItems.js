@@ -103,14 +103,14 @@ const Menuitems = [
     id: uniqueId(),
     title: 'Pagamentos',
     icon: IconCurrencyDollar,
-    href: '/apps/invoice',
+    href: '/',
     permissions: ['financial.view_payment'],
     children:[
       {
         id: uniqueId(),
         title: 'Pagamentos',
         icon: IconPoint,
-        href: '/apps/invoice/payments',
+        href: '/apps/invoice',
       },
       {
         id: uniqueId(),

@@ -82,7 +82,7 @@ export default function Details({ data, handleInputChange }) {
         <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="address">Status do pagamento</CustomFormLabel>
           <Box p={1} />
-          <CustomSelect fullWidth value={data.sale.payment_status} onChange={(e) => handleInputChange(e, data.sale.id)} >
+          <CustomSelect fullWidth value={data.sale.payment_status} name='payment_status' onChange={(e) => handleInputChange(e, data.sale.id)} >
             <MenuItem value="P" >
               <Chip label="Pago" color="success" />
             </MenuItem>

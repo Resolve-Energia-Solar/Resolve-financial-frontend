@@ -19,8 +19,11 @@ const usePayment = (id) => {
   }
 
   const editPaymentStatus = async (event, id) => {
-    const response = await saleService.updateSalePartial(id, { payment_status: event.target.value })
-    setRowSelected({ ...rowSelected, payment_status: event.target.value })
+    const { name, value } = event.target
+    const response = await saleService.updateSalePartial(id, { [name]: event.target.value })
+    if (response) {
+      setRowSelected({ ...rowSelected, sale: { ...rowSelected.sale, [name]: value } })
+    }
   }
 
   useEffect(() => {
