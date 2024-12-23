@@ -20,14 +20,13 @@ import {
   Button,
 } from '@mui/material';
 import { MoreVert, Edit, Delete, Visibility } from '@mui/icons-material';
-import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import PaymentChip from '../PaymentChip';
 import PaymentStatusChip from '../../../../../../utils/status/PaymentStatusChip';
 import paymentService from '@/services/paymentService';
 import { useRouter } from 'next/navigation';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
 
-const PaymentList = () => {
+const PaymentList = ({ onClick }) => {
   const [paymentsList, setPaymentsList] = useState([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [menuOpenRowId, setMenuOpenRowId] = useState(null);
@@ -84,7 +83,7 @@ const PaymentList = () => {
   const handleConfirmDelete = async () => {
     try {
       await paymentService.deletePayment(invoiceToDelete);
-      setPaymentsList((prev) => prev.filter((payment) => payment.id !== invoiceToDelete));
+      setPaymentsList((prev) => prev.filter((payment) => item?.id !== invoiceToDelete));
     } catch (error) {
       console.log('Error: ', error);
     } finally {
@@ -139,52 +138,50 @@ const PaymentList = () => {
             <Typography color="error">{error}</Typography>
           ) : (
             <TableBody>
-              {paymentsList.map((payment) => (
-                <TableRow key={payment.id}>
-                  {/* <TableCell padding="checkbox">
-                    <CustomCheckbox />
-                  </TableCell> */}
+              {paymentsList.map((item) => (
+                <TableRow key={item?.id} onClick={() => onClick(item)}>
+              
                   <TableCell>
                     <Typography fontSize="14px">
-                      {payment?.sale?.customer?.complete_name}
+                      {item?.sale?.customer?.complete_name}
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography fontSize="14px">{payment.installments.length}x</Typography>
+                    <Typography fontSize="14px">{item?.installments.length}x</Typography>
                   </TableCell>
                   <TableCell>
                     <Typography fontSize="14px">
-                      {Number(payment?.value).toLocaleString('pt-BR', {
+                      {Number(item?.value).toLocaleString('pt-BR', {
                         style: 'currency',
                         currency: 'BRL',
                       })}
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <PaymentChip paymentType={payment.payment_type} />
+                    <PaymentChip paymentType={item?.payment_type} />
                   </TableCell>
                   <TableCell>
-                    <PaymentStatusChip paymentType={payment.is_paid} />
+                    <PaymentStatusChip paymentType={item?.is_paid} />
                   </TableCell>
                   <TableCell align="center">
                     <Tooltip title="Ações">
                       <IconButton
                         size="small"
-                        onClick={(event) => handleMenuClick(event, payment.id)}
+                        onClick={(event) => handleMenuClick(event, item?.id)}
                       >
                         <MoreVert fontSize="small" />
                       </IconButton>
                     </Tooltip>
                     <Menu
                       anchorEl={menuAnchorEl}
-                      open={menuOpenRowId === payment.id}
+                      open={menuOpenRowId === item?.id}
                       onClose={handleMenuClose}
                       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                     >
                       <MenuItem
                         onClick={() => {
-                          handleDetailClick(payment.id);
+                          handleDetailClick(item?.id);
                           handleMenuClose();
                         }}
                       >
@@ -193,7 +190,7 @@ const PaymentList = () => {
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          handleEditClick(payment.id);
+                          handleEditClick(item?.id);
                           handleMenuClose();
                         }}
                       >
@@ -202,7 +199,7 @@ const PaymentList = () => {
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          handleDeleteClick(payment.id);
+                          handleDeleteClick(item?.id);
                           handleMenuClose();
                         }}
                       >

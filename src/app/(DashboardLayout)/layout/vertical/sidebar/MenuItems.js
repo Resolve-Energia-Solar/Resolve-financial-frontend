@@ -105,6 +105,20 @@ const Menuitems = [
     icon: IconCurrencyDollar,
     href: '/apps/invoice',
     permissions: ['financial.view_payment'],
+    children:[
+      {
+        id: uniqueId(),
+        title: 'Pagamentos',
+        icon: IconPoint,
+        href: '/apps/invoice/payments',
+      },
+      {
+        id: uniqueId(),
+        title: 'Parcelas',
+        icon: IconPoint,
+        href: '/apps/invoice/installments',
+      }
+    ]
   },
   {
     id: uniqueId(),
