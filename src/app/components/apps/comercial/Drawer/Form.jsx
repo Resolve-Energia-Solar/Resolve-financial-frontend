@@ -253,7 +253,7 @@ const EditDrawer = ({ saleId = null, onClosedModal = null, refresh }) => {
                                 </Grid>
 
                             </TabPanel>
-                            <TabPanel value={value} index={2} >
+                            <TabPanel value={value} index={2}>
                                 <Attachments
                                     contentType={CONTEXT_TYPE_SALE_ID}
                                     objectId={id_sale}
