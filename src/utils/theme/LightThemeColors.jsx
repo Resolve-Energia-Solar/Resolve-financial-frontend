@@ -10,26 +10,27 @@ const LightThemeColors = [
       },
       secondary: {
         main: '#303030',
-        light: '#7E8388',
+        light: '#C6C6C6',
         dark: '#000000',
+        neutral: '#7E8387',
         contrastText: '#ffffff',
       },
       success: {
         main: '#008253',
         background: 'E9F9E6'
       }, 
-      Warning: {
+      warning: {
         main: '#D62802',
         background: 'FFEBE4'
       },
       info: {
-        main: '#006ED3',
-        background: 'DAE9FF'
+        main: '#DAE9FF',
+        background: '#006ED3'
       },
+    
       action: {
-        hover: '#FFF5CC'
-      }
-
+        hover: '#FFF5CC '
+      },
       
     },
   },

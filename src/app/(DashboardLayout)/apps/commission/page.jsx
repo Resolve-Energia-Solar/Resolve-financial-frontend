@@ -64,9 +64,9 @@ function commission() {
 
   return (
 
-    <Box sx={{ p: 2, border: '1px none grey' }}>
+    <Box sx={{ p: 2}}>
 
-      <Box sx={{ p: 2, boxShadow: 2, borderRadius: '10px', backgroundColor: theme.palette.secondary.main }}>
+      <Box sx={{ p: 2, boxShadow: 2, borderRadius: '10px', backgroundColor: theme.palette.secondary.main, padding: '25px', width: '96%', margin: 'auto'}}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
           <Tab sx={{ color: theme.palette.secondary.contrastText }} label="Vendas"  {...a11yProps(0)} />
           <Tab sx={{ color: theme.palette.secondary.contrastText }} label="Comissão"{...a11yProps(1)} />

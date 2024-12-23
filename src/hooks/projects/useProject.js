@@ -5,6 +5,21 @@ const useProject = (id) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [projectData, setProjectData] = useState(null);
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [rowSelected, setRowSelected] = useState(null)
+
+  const handleRowClick = (item) => {
+
+    setOpenDrawer(true)
+    setRowSelected(item)
+
+  }
+
+  const toggleDrawerClosed = () => {
+    setOpenDrawer(false)
+    setRowSelected(null)
+  };
+
 
   useEffect(() => {
     if (!id) return;
@@ -23,7 +38,7 @@ const useProject = (id) => {
     fetchProject();
   }, [id]);
 
-  return { loading, error, projectData };
+  return { loading, error, projectData, openDrawer,rowSelected, toggleDrawerClosed, handleRowClick };
 };
 
 export default useProject;

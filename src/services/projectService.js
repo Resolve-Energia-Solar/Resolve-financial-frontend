@@ -2,15 +2,16 @@ import apiClient from './apiClient';
 
 const projectService = {
     getProjects: async () => { 
-        const response = await apiClient.get(`/api/projects/`);
+        const response = await apiClient.get(`/api/projects/?expand=units`);
         return response.data;
     },
     getProjectById: async (id) => { 
-        const response = await apiClient.get(`/api/projects/${id}/`);
+        const response = await apiClient.get(`/api/projects/${id}/?&expand=units`);
+        console.log('sending2',response.data);
         return response.data;
     },
     getProjectBySale: async (id) => {
-        const response = await apiClient.get(`/api/projects/?sale=${id}`);
+        const response = await apiClient.get(`/api/projects/?sale=${id}&expand=units`);
         return response.data
     },
     generateProjectBySale: async (id) => {

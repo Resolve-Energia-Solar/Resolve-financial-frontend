@@ -3,8 +3,7 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 /* material */
-import { Grid, Button, Stack, Tooltip } from '@mui/material';
-import HelpIcon from '@mui/icons-material/Help';
+import { Grid, Button, Stack } from '@mui/material';
 
 /* components */
 import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
@@ -16,71 +15,66 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 
 /* hooks */
 import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
+import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
+import AutoCompleteUserProject from '../../auto-complete/Auto-input-UserProject';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import AutoCompleteProject from '../../auto-complete/Auto-input-Project';
 
-const ScheduleFormCreate = ({
-  serviceId = null,
-  projectId = null,
-  customerId = null,
-  onClosedModal = null,
-  products = [],
-  onRefresh = null,
-}) => {
+const ScheduleFormCreateExternal = () => {
   const router = useRouter();
 
   const { formData, handleChange, handleSave, formErrors, success } = useSheduleForm();
 
-  serviceId ? (formData.service_id = serviceId) : null;
-  projectId ? (formData.project_id = projectId) : null;
-  customerId ? (formData.customer_id = customerId) : null;
-  products.length > 0 ? (formData.products_ids = products) : null;
-
-  console.log('customerId', customerId);
-  
   const statusOptions = [
     { value: 'Pendente', label: 'Pendente' },
     { value: 'Concluído', label: 'Concluído' },
     { value: 'Cancelado', label: 'Cancelado' },
   ];
 
-  console.log('formData', formData);
-
   useEffect(() => {
     if (success) {
-      if (onClosedModal) {
-        onClosedModal();
-        onRefresh();
-      } else {
-        router.push('/apps/inspections/schedule');
-      }
+      router.push('/apps/inspections/schedule');
     }
-  }, [success]);
+  }, [success, router]);
 
   return (
     <>
       <Grid container spacing={3}>
         {/* Serviço */}
-        {serviceId ? null : (
-          <Grid item xs={12} sm={12} lg={6}>
-            <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
-            <AutoCompleteServiceCatalog
-              onChange={(id) => handleChange('service_id', id)}
-              value={formData.service_id}
-              {...(formErrors.service_id && {
-                error: true,
-                helperText: formErrors.service_id,
-              })}
-            />
-          </Grid>
-        )}
+        <Grid item xs={12} sm={12} lg={6}>
+          <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
+          <AutoCompleteServiceCatalog
+            onChange={(id) => handleChange('service_id', id)}
+            value={formData.service_id}
+            {...(formErrors.service_id && {
+              error: true,
+              helperText: formErrors.service_id,
+            })}
+            noOptionsText={'Nenhum serviço encontrado'}
+          />
+        </Grid>
+
+        {/* Cliente */}
+        <Grid item xs={12} sm={12} lg={6}>
+          <CustomFormLabel htmlFor="client">Cliente</CustomFormLabel>
+          <AutoCompleteUser
+            onChange={(id) => handleChange('customer_id', id)}
+            value={formData.customer_id}
+            {...(formErrors.customer_id && {
+              error: true,
+              helperText: formErrors.customer_id,
+            })}
+          />
+        </Grid>
+
         {/* Projeto */}
-        {projectId ? null : (
-          <Grid item xs={12} sm={12} lg={6}>
+        {formData.customer_id && (
+          <Grid item xs={12} sm={12} lg={12}>
             <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
-            <AutoCompleteProject
+            <AutoCompleteUserProject
               onChange={(id) => handleChange('project_id', id)}
               value={formData.project_id}
+              selectedClient={formData.customer_id}
+              noTextOptions={'O cliente não possui projetos atualmente'}
               {...(formErrors.project_id && {
                 error: true,
                 helperText: formErrors.project_id,
@@ -88,10 +82,11 @@ const ScheduleFormCreate = ({
             />
           </Grid>
         )}
+
         {/* Data do Agendamento */}
         <Grid item xs={12} sm={12} lg={6}>
           <FormDate
-            label="Data do agendamento"
+            label="Data do Agendamento"
             name="start_datetime"
             value={formData.schedule_date}
             onChange={(newValue) => handleChange('schedule_date', newValue)}
@@ -166,4 +161,4 @@ const ScheduleFormCreate = ({
   );
 };
 
-export default ScheduleFormCreate;
+export default ScheduleFormCreateExternal;

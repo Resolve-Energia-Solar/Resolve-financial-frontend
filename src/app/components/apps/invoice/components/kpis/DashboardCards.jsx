@@ -3,13 +3,13 @@ import { Grid, Box, Stack, Typography } from '@mui/material';
 import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
 
 const InfoCard = ({ backgroundColor, iconColor, IconComponent, title, count }) => (
-  <Grid item xs={12} sm={6} lg={3}>
-    <Box backgroundColor={backgroundColor} p={3} sx={{ cursor: 'pointer' }}>
+  <Grid  item  xs={12} sm={6} lg={2.4}>
+    <Box backgroundColor={backgroundColor} p={1} sx={{ cursor: 'pointer' }}>
       <Stack direction="row" gap={2} alignItems="center">
         <Box
           width={38}
           height={38}
-          bgcolor={iconColor}
+          bgcolor={iconColor}   
           display="flex"
           alignItems="center"
           justifyContent="center"
@@ -32,37 +32,44 @@ const InfoCard = ({ backgroundColor, iconColor, IconComponent, title, count }) =
   </Grid>
 );
 
-const DashboardCards = () => (
-  <Grid container spacing={3} sx={{ marginBottom: 3 }}>
+const SaleCards = () => (
+  <Grid container spacing={3} sx={{ marginBottom: 3}}>
     <InfoCard
       backgroundColor="primary.light"
       iconColor="primary.main"
       IconComponent={IconListDetails}
-      title="Parcelamento Interno"
-      count="0"
+      title="Parecer de acesso"
+      count="-"
     />
     <InfoCard
       backgroundColor="success.light"
       iconColor="success.main"
       IconComponent={IconListDetails}
-      title="Financiamento"
-      count="0"
+      title="Aumento de carga"
+      count="-"
     />
     <InfoCard
       backgroundColor="secondary.light"
       iconColor="secondary.main"
       IconComponent={IconPaperclip}
-      title="Boleto"
-      count="0 Pendentes"
+      title="Vistoria final"
+      count="-"
     />
     <InfoCard
       backgroundColor="warning.light"
       iconColor="warning.main"
       IconComponent={IconSortAscending}
-      title="Crédito"
-      count="0 Pendentes"
+      title="Ajuste de ramal"
+      count="-"
+    />
+      <InfoCard
+      backgroundColor="warning.light"
+      iconColor="warning.main"
+      IconComponent={IconSortAscending}
+      title="Nova UC"
+      count="-"
     />
   </Grid>
 );
 
-export default DashboardCards;
+export default SaleCards;

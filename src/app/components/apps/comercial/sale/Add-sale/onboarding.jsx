@@ -192,7 +192,7 @@ function OnboardingCreateSaleContent({ onClose=null, onEdit=null }) {
       sx={{
         width: '100%',
         padding: 3,
-        height: { xs: '80vh', md: '50vh' },
+        height: { xs: '80vh', md: '70vh' },
         display: 'flex',
         flexDirection: 'column',
       }}

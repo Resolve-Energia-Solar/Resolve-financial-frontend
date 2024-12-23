@@ -13,6 +13,8 @@ import { Chip, CircularProgress, Typography } from '@mui/material';
 import CommissionDetails from './forms/CommissionDetails';
 import PaymentCommission from '@/hooks/commission/PaymentCommission';
 import numeral from 'numeral';
+import theme from '@/utils/theme';
+import PaymentStatusChip from '@/utils/status/PaymentStatusChip';
 
 function Commission({ data }) {
   console.log(data)
@@ -35,10 +37,10 @@ function Commission({ data }) {
   return (
 
     <>
-      <Box sx={{ boxShadow: '1', padding: '20px' }} >
+      <Box sx={{ padding: '22px',border: '1px solid #E0E0E0', borderRadius: '8px'}} >
         <Box sx={{ p: 2, height: '50%', marginBottom: '15px', display: 'flex', justifyContent: 'space-between', padding: '0px' }}>
 
-          <Box sx={{ p: 2, boxShadow: '4', backgroundColor: 'primary.main', width: '40%', padding: '20px', display: 'flex', marginBottom: '25px' }}>
+          <Box sx={{ p: 2, boxShadow: '4', backgroundColor: 'secondary.main', width: '40%', padding: '20px', display: 'flex', marginBottom: '25px' }}>
 
             <Typography variant='h6' sx={{ marginRight: 2, color: 'primary.contrastText' }}>Total de comissão: </Typography>
             <Typography color='primary.contrastText'>R$ 7.000,00 </Typography>
@@ -53,7 +55,7 @@ function Commission({ data }) {
 
         </Box>
 
-        {data.length > 0 ? <TableContainer sx={{ border: 'none', borderRadius: '8px', boxShadow: '5' }}>
+        {data.length > 0 ? <TableContainer sx={{ border: 'none', borderRadius: '8px', boxShadow: '10' }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -83,11 +85,9 @@ function Commission({ data }) {
                   <TableCell align="center">{item.difference_value}</TableCell>
                   <TableCell align="center">{numeral(item.sale.transfer_percentage / 100).format('0,0%')}</TableCell>
                   <TableCell align="center">{item.sale.total_value}</TableCell>
-                  <TableCell align="center"><Chip> label={item.payment_status
-                    ? 'Pago' : 'Pendente'} sx={{
-                      backgroundColor: item.payment_status
-                        ? '#ECF2FF' : '#FFA07A'
-                    }}</Chip></TableCell>
+                  <TableCell align="center">
+                  <PaymentStatusChip status={item.payment_status} />
+                   </TableCell>
                   <TableCell align="center">{''}</TableCell>
                 </TableRow>
               ))}

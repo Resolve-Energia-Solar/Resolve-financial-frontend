@@ -27,15 +27,6 @@ import {
 import { useRouter } from 'next/navigation';
 import projectService from '@/services/projectService';
 
-import InforCards from '../../inforCards/InforCards';
-import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
-import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
 const getStatusChip = (status) => {
   switch (status) {
     case 'P':
@@ -66,8 +57,7 @@ const getSupplyTypeChip = (type) => {
   }
 };
 
-
-const ProjectList = ({ onClick }) => {
+const ProjectList = () => {
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -122,62 +112,8 @@ const ProjectList = ({ onClick }) => {
     }
   };
 
-
-  const cardsData = [
-      {
-        backgroundColor: 'primary.light',
-        iconColor: 'primary.main',
-        IconComponent: IconListDetails,
-        title: 'Concluido',
-        count: '-',
-      },
-      {
-        backgroundColor: 'success.light',
-        iconColor: 'success.main',
-        IconComponent: IconListDetails,
-        title: 'Em andamento',
-        count: '-',
-      },
-      {
-        backgroundColor: 'secondary.light',
-        iconColor: 'secondary.main',
-        IconComponent: IconPaperclip,
-        title: 'Cancelado',
-        count: '-',
-      },
-      {
-        backgroundColor: 'warning.light',
-        iconColor: 'warning.main',
-        IconComponent: IconSortAscending,
-        title: 'Pendente',
-        count: '-',
-      },
-      {
-        backgroundColor: 'warning.light',
-        iconColor: 'warning.main',
-        IconComponent: IconSortAscending,
-        title: 'Distrato',
-        count: '-',
-      },
-    ];
-
-
   return (
     <>
-       <Accordion  sx={{marginBottom: 4}}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="sale-cards-content"
-          id="sale-cards-header"
-        >
-          <Typography variant="h6">Status</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <InforCards cardsData={cardsData} />
-        </AccordionDetails>
-      </Accordion>
-
-
       <Typography variant="h6" gutterBottom>
         Lista de Projetos
       </Typography>
@@ -207,7 +143,7 @@ const ProjectList = ({ onClick }) => {
             </TableHead>
             <TableBody>
               {projectsList.map((item) => (
-                <TableRow key={item.id} hover sx={{ cursor: 'pointer' }} onClick={() => onClick(item)}>
+                <TableRow key={item.id} hover onClick={() => handleEditClick(item.id)} sx={{ cursor: 'pointer' }}>
                   <TableCell>{item.id}</TableCell>
                   <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                   <TableCell>{item.sale?.contract_number}</TableCell>

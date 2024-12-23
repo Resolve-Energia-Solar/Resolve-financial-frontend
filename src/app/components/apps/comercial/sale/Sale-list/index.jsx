@@ -39,7 +39,7 @@ import {
 } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import saleService from '@/services/saleService';
-import StatusChip from '../components/DocumentStatusIcon';
+import StatusChip from '../../../../../../utils/status/DocumentStatusIcon';
 import useSendContract from '@/hooks/clicksign/useClickSign';
 import TableSkeleton from '../components/TableSkeleton';
 import DrawerFilters from '../components/DrawerFilters/DrawerFilters';
@@ -53,6 +53,15 @@ import useSale from '@/hooks/sales/useSale';
 import EditDrawer from '../../Drawer/Form';
 import EditSalePage from '../Edit-sale';
 import ParentCard from '@/app/components/shared/ParentCard';
+import SideDrawer from '@/app/components/shared/SideDrawer';
+import InforCards from '../../../inforCards/InforCards';
+import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -253,9 +262,62 @@ const SaleList = () => {
     }
   };
 
+  const cardsData = [
+    {
+      backgroundColor: 'primary.light',
+      iconColor: 'primary.main',
+      IconComponent: IconListDetails,
+      title: 'Em andamento',
+      count: '-',
+    },
+    {
+      backgroundColor: 'success.light',
+      iconColor: 'success.main',
+      IconComponent: IconListDetails,
+      title: 'Finalizado',
+      count: '-',
+    },
+    {
+      backgroundColor: 'secondary.light',
+      iconColor: 'secondary.main',
+      IconComponent: IconPaperclip,
+      title: 'Pendente',
+      count: '-',
+    },
+    {
+      backgroundColor: 'warning.light',
+      iconColor: 'warning.main',
+      IconComponent: IconSortAscending,
+      title: 'Cancelado',
+      count: '-',
+    },
+    {
+      backgroundColor: 'warning.light',
+      iconColor: 'warning.main',
+      IconComponent: IconSortAscending,
+      title: 'Distrato',
+      count: '-',
+    },
+  ];
+  
+
   return (
     <Box>
       {/* <DashboardCards /> */}
+
+      <Accordion  sx={{marginBottom: 4}}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="sale-cards-content"
+          id="sale-cards-header"
+        >
+          <Typography variant="h6">Status</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <InforCards cardsData={cardsData} />
+        </AccordionDetails>
+      </Accordion>
+
       <Typography variant="h6" gutterBottom>
         Lista de Vendas
       </Typography>
@@ -558,13 +620,9 @@ const SaleList = () => {
           Enviando Contrato...
         </Typography>
       </Backdrop>
-      <Drawer anchor="right" open={openDrawer} onClose={() => toggleDrawerClosed(false)}>
-        <ParentCard title="Editar Venda">
-          <CardContent>
-            <EditSalePage saleId={rowSelected?.id} sx={{ maxWidth: '40vw', minWidth: '40vw' }} />
-          </CardContent>
-        </ParentCard>
-      </Drawer>
+      <SideDrawer open={openDrawer} onClose={() => toggleDrawerClosed(false)} title="Detalhamento da Venda">
+        <EditSalePage saleId={rowSelected?.id} sx={{ maxWidth: '40vw', minWidth: '40vw' }} />
+      </SideDrawer>
     </Box>
   );
 };

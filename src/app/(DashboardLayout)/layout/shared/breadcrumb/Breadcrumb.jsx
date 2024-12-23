@@ -5,16 +5,20 @@ import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import NextLink from 'next/link';
+import theme from '@/utils/theme';
+
 
 // import breadcrumbImg from "public/images/breadcrumb/ChatBc.png";
 import { IconCircle } from '@tabler/icons-react';
 import Image from 'next/image';
 
-const Breadcrumb = ({ subtitle, items, title, children }) => (
+const 
+
+Breadcrumb = ({ subtitle, items, title, children }) => (
   <Grid
     container
     sx={{
-      backgroundColor: 'primary.light',
+      backgroundColor: 'secondary.main',
       borderRadius: (theme) => theme.shape.borderRadius / 4,
       p: '30px 25px 20px',
       marginBottom: '30px',
@@ -22,18 +26,18 @@ const Breadcrumb = ({ subtitle, items, title, children }) => (
       overflow: 'hidden',
     }}
   >
-    <Grid item xs={12} sm={6} lg={8} mb={1}>
-      <Typography variant="h4">{title}</Typography>
-      <Typography color="textSecondary" variant="h6" fontWeight={400} mt={0.8} mb={0}>
+    <Grid item xs={12} sm={6} lg={8} mb={1}> 
+      <Typography  variant="h4" color="primary.contrastText">{title}</Typography>
+      <Typography  variant="h6" fontWeight={400} mt={0.8} mb={0}>
         {subtitle}
       </Typography>
       <Breadcrumbs
         separator={
           <IconCircle
             size="5"
-            fill="textSecondary"
+            fill="#fff"
             fillOpacity={'0.6'}
-            style={{ margin: '0 5px' }}
+            style={{ margin: '0 5px', color: '#FFF'}}
           />
         }
         sx={{ alignItems: 'center', mt: items ? '10px' : '' }}
@@ -44,15 +48,15 @@ const Breadcrumb = ({ subtitle, items, title, children }) => (
               <div key={item.title}>
                 {item.to ? (
                   <NextLink href={item.to} passHref>
-                    <Typography color="textSecondary">{item.title}</Typography>
+                    <Typography color="secondary.contrastText" >{item.title}</Typography>
                   </NextLink>
                 ) : (
-                  <Typography color="textPrimary">{item.title}</Typography>
+                  <Typography color="secondary.contrastText">{item.title}</Typography>
                 )}
               </div>
             ))
           : ''}
-      </Breadcrumbs>
+      </Breadcrumbs >
     </Grid>
     <Grid item xs={12} sm={6} lg={4} display="flex" alignItems="flex-end">
       <Box

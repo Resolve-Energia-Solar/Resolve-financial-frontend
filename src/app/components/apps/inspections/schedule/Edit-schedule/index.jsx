@@ -56,47 +56,50 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     <>
       <Grid container spacing={3}>
         {/* Serviço */}
-        <Grid item xs={12} sm={12} lg={6}>
-          <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
-          <AutoCompleteServiceCatalog
-            onChange={(id) => handleChange('service_id', id)}
-            value={formData.service_id}
-            {...(formErrors.service_id && {
-              error: true,
-              helperText: formErrors.service_id,
-            })}
-            noOptionsText={'Nenhum serviço encontrado'}
-          />
-        </Grid>
+        {!onClosedModal && (
+          <>
+            <Grid item xs={12} sm={12} lg={6}>
+              <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
+              <AutoCompleteServiceCatalog
+                onChange={(id) => handleChange('service_id', id)}
+                value={formData.service_id}
+                {...(formErrors.service_id && {
+                  error: true,
+                  helperText: formErrors.service_id,
+                })}
+                noOptionsText={'Nenhum serviço encontrado'}
+              />
+            </Grid>
 
-        {/* Cliente */}
-        <Grid item xs={12} sm={12} lg={6}>
-          <CustomFormLabel htmlFor="client">Cliente</CustomFormLabel>
-          <AutoCompleteUser
-            onChange={(id) => handleChange('customer_id', id)}
-            value={formData.customer_id}
-            {...(formErrors.customer_id && {
-              error: true,
-              helperText: formErrors.customer_id,
-            })}
-          />
-        </Grid>
+            <Grid item xs={12} sm={12} lg={6}>
+              <CustomFormLabel htmlFor="client">Cliente</CustomFormLabel>
+              <AutoCompleteUser
+                onChange={(id) => handleChange('customer_id', id)}
+                value={formData.customer_id}
+                {...(formErrors.customer_id && {
+                  error: true,
+                  helperText: formErrors.customer_id,
+                })}
+              />
+            </Grid>
 
-        {/* Projeto */}
-        {formData.customer_id && (
-          <Grid item xs={12} sm={12} lg={12}>
-            <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
-            <AutoCompleteUserProject
-              onChange={(id) => handleChange('project_id', id)}
-              value={formData.project_id}
-              selectedClient={formData.customer_id}
-              noTextOptions={'O cliente não possui projetos atualmente'}
-              {...(formErrors.project_id && {
-                error: true,
-                helperText: formErrors.project_id,
-              })}
-            />
-          </Grid>
+            {/* Projeto */}
+            {formData.customer_id && (
+              <Grid item xs={12} sm={12} lg={12}>
+                <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
+                <AutoCompleteUserProject
+                  onChange={(id) => handleChange('project_id', id)}
+                  value={formData.project_id}
+                  selectedClient={formData.customer_id}
+                  noTextOptions={'O cliente não possui projetos atualmente'}
+                  {...(formErrors.project_id && {
+                    error: true,
+                    helperText: formErrors.project_id,
+                  })}
+                />
+              </Grid>
+            )}
+          </>
         )}
 
         {/* Data do Agendamento */}

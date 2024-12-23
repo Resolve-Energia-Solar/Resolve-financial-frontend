@@ -7,8 +7,13 @@ import PageContainer from '@/app/components/container/PageContainer';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import { SaleDataContextProvider } from '@/app/context/SaleContext';
 import ProjectList from '@/app/components/apps/project/Project-list';
+import Details from '@/app/components/apps/project/Details';
+import useProject from '@/hooks/projects/useProject';
+import SideDrawer from '@/app/components/shared/SideDrawer';
 
 const ProjectListing = () => {
+
+  const { openDrawer, toggleDrawerClosed, handleRowClick, rowSelected } = useProject()
   const BCrumb = [
     {
       to: '/',
@@ -20,12 +25,16 @@ const ProjectListing = () => {
   ];
 
   return (
-    <SaleDataContextProvider>
-      <PageContainer title="Projetos" description="Lista de Projetos">
+  
+    <SaleDataContextProvider >
+      <PageContainer title="Projetos" description="Lista de Projetos"  >
         <Breadcrumb title="Projetos" items={BCrumb} />
         <BlankCard>
           <CardContent>
-            <ProjectList />
+            <ProjectList onClick={handleRowClick} />
+            <SideDrawer open={openDrawer} onClose={toggleDrawerClosed} title="Detalhes do Projeto" >
+              <Details id={rowSelected?.id} data={rowSelected} />
+            </SideDrawer>
           </CardContent>
         </BlankCard>
       </PageContainer>

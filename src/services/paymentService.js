@@ -1,4 +1,3 @@
-import { create } from "lodash";
 import apiClient from "./apiClient";
 
 const paymentService = {

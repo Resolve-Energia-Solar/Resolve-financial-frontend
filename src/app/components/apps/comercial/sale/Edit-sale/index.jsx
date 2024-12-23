@@ -59,8 +59,6 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
 
   const { loading, error, saleData } = useSale(id);
 
-  console.log('Sale Data: ', saleData);
-
   const {
     formData,
     handleChange,
@@ -134,7 +132,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
             </Box>
           )}
 
-          {value === 1 && <SchedulesInspections saleId={id_sale} />}
+          {value === 1 && <SchedulesInspections userId={saleData.customer.id}saleId={id_sale} />}
 
           {value === 2 && (
             <>

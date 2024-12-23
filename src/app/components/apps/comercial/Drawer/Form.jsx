@@ -253,7 +253,7 @@ const EditDrawer = ({ saleId = null, onClosedModal = null, refresh }) => {
                                 </Grid>
 
                             </TabPanel>
-                            <TabPanel value={value} index={2} >
+                            <TabPanel value={value} index={2}>
                                 <Attachments
                                     contentType={CONTEXT_TYPE_SALE_ID}
                                     objectId={id_sale}
@@ -268,7 +268,7 @@ const EditDrawer = ({ saleId = null, onClosedModal = null, refresh }) => {
                             <TabPanel value={value} index={4} >
                                 <ChecklistSales saleId={id_sale} />
                             </TabPanel>
-                    
+
                             <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
                                 {onClosedModal && (
                                     <Button variant="contained" color="primary" onClick={onClosedModal}>
