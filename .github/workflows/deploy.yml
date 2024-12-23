@@ -29,7 +29,7 @@ jobs:
       # 3. Build e Push da Imagem Docker
       - name: Build and Push Docker Image
         run: |
-          docker build -t "${DOCKER_IMAGE}:${{ github.sha }}" .
+          docker build --no-cache -t "${DOCKER_IMAGE}:${{ github.sha }}" .
           docker push "${DOCKER_IMAGE}:${{ github.sha }}"
 
       # 4. Log in ao Azure CLI
