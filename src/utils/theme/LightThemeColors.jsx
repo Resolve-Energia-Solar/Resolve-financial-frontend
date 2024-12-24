@@ -1,10 +1,12 @@
+import { light } from "@mui/material/styles/createPalette";
+
 const LightThemeColors = [
   {
     name: 'RESOLVE_THEME',
     palette: {
       primary: {
         main: '#FFCC00',
-        light: '#FFF5CC',
+        light: '#FFF8E1',
         dark: '#DCB00D',
         contrastText: '#ffffff',
       },
@@ -16,20 +18,20 @@ const LightThemeColors = [
         contrastText: '#ffffff',
       },
       success: {
-        main: '#008253',
-        background: 'E9F9E6'
+        main: '#4CAF50',
+        light: '#E8F5E9'
       }, 
       warning: {
-        main: '#D62802',
-        background: 'FFEBE4'
+        main: '#FF9800',
+        light: '#FFF3E0'
       },
       info: {
         main: '#DAE9FF',
-        background: '#006ED3'
+        light: '#006ED3'
       },
     
       action: {
-        hover: '#FFF5CC '
+        hover: '#FFF8E1'
       },
       
     },

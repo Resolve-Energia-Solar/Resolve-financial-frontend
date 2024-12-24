@@ -16,7 +16,6 @@ function SchedulesInspections({ saleId, userId }) {
       try {
         const response = await projectService.getProjectBySale(saleId);
         setProjectsList(response.results);
-        setCustomerId(projectsList[0]?.sale?.customer?.id);
       } catch (error) {
         console.log('Error: ', error);
       } finally {
@@ -25,6 +24,14 @@ function SchedulesInspections({ saleId, userId }) {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (projectsList.length > 0) {
+      setCustomerId(projectsList[0]?.sale?.customer?.id);
+      console.log('Updated customerId:', projectsList[0]?.sale?.customer?.id);
+    }
+  }, [projectsList]);
+  
 
   if (loading) {
     return <ChecklistSalesSkeleton />;

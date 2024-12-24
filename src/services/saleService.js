@@ -2,13 +2,15 @@ import apiClient from './apiClient';
 
 const saleService = {
 
-    getSales: async ({ ordering, params, nextPage, userRole }) => {
+    getSales: async ({ ordering, params, nextPage, userRole, limit, page }) => {
+        limit = limit || 5;
+        page = page || 1;
         const urlParams = params ? `&${params}` : '';
         const urlNextPage = nextPage ? `&page=${nextPage}` : '';
         const onlyMySales = userRole?.role === 'Vendedor' ? `&seller=${userRole?.user}` : ''
         console.log("onlyMySales", onlyMySales)
         console.log("userRole", userRole)
-        const response = await apiClient.get(`/api/sales/?ordering=${ordering || ''}${urlParams}${urlNextPage}${onlyMySales}`);
+        const response = await apiClient.get(`/api/sales/?ordering=${ordering || ''}${urlParams}${urlNextPage}${onlyMySales}&page=${page}&limit=${limit}`);
         return response.data;
     },
     getSaleByFullName: async (fullName) => {

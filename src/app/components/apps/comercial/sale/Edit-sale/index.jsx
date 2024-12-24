@@ -132,7 +132,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
             </Box>
           )}
 
-          {value === 1 && <SchedulesInspections userId={saleData.customer.id}saleId={id_sale} />}
+          {value === 1 && <SchedulesInspections userId={saleData.customer.id} saleId={id_sale} />}
 
           {value === 2 && (
             <>

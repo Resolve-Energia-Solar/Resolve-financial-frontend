@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Box, Stack, Typography } from '@mui/material';
 
-const InfoCard = ({ backgroundColor, iconColor, IconComponent, title, count }) => (
+const InfoCard = ({ backgroundColor, iconColor,  IconComponent, title, count }) => (
   <Grid item xs={12} sm={6} lg={2.4}>
     <Box bgcolor={backgroundColor} p={1} sx={{ cursor: 'pointer' }}>
       <Stack direction="row" gap={2} alignItems="center">

@@ -58,9 +58,30 @@ export default function AutoCompleteDepartament({ onChange, value, error, helper
     }, 300),
     []
   );
+
+  const fetchInitialDepartaments = useCallback(async () => {
+    setLoading(true);
+    try {
+      const departaments = await departmentService.getDepartment({ limit: 5 });
+      if (departaments && departaments.results) {
+        const formattedDepartaments = departaments.results.map(departament => ({
+          id: departament.id,
+          name: departament.name,
+        }));
+        setOptions(formattedDepartaments);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar departamentos:', error);
+    }
+    setLoading(false);
+  }
+  , []);
   
   const handleOpen = () => {
     setOpen(true);
+    if (options.length === 0) {
+      fetchInitialDepartaments();
+    }
   };
 
   // Função para fechar o autocomplete

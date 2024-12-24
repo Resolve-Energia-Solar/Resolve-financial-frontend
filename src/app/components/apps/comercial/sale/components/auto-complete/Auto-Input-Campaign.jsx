@@ -58,10 +58,27 @@ export default function AutoCompleteCampaign({ onChange, value, error, helperTex
     }, 300),
     []
   );
+
+  const fetchInitialCampaigns = useCallback(async () => {
+    setLoading(true);
+    try {
+      const campaigns = await campaignService.getCampaigns({ limit: 5 });
+      const formattedCampaigns = campaigns.results.map(campaign => ({
+        id: campaign.id,
+        name: campaign.name,
+      }));
+      setOptions(formattedCampaigns);
+    } catch (error) {
+      console.error('Erro ao buscar campanhas:', error);
+    }
+  }, []);
   
 
   const handleOpen = () => {
     setOpen(true);
+    if (options.length === 0) {
+      fetchInitialCampaigns();
+    }
   };
 
   const handleClose = () => {

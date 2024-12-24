@@ -63,8 +63,30 @@ export default function AutoCompleteMaterial({ onChange, value, error, helperTex
     []
   );
 
+  const fetchInitialMaterials = useCallback(async () => {
+    setLoading(true);
+    try {
+      const materials = await materialService.getMaterials({ limit: 5 });
+      const formattedMaterials = materials.results
+        .filter(material => material.name)
+        .map(material => ({
+          id: material.id,
+          name: material.name,
+          price: material.price,
+          attributes: material.attributes,
+        }));
+      setOptions(formattedMaterials);
+    } catch (error) {
+      console.error('Erro ao buscar materiais:', error);
+    }
+    setLoading(false);
+  }, []);
+
   const handleOpen = () => {
     setOpen(true);
+    if (options.length === 0) {
+      fetchInitialMaterials();
+    }
   };
 
   const handleClose = () => {
