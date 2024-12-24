@@ -13,6 +13,11 @@ const style = {
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 4,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+
 };
 
 
@@ -26,7 +31,7 @@ export default function BasicModal({ message, title, open, onClose, IconComponen
       >
         <Box sx={style}>
 
-          <Typography id="modal-modal-title" variant="h3" component="h2">
+          <Typography id="modal-modal-title" variant="h3" component="h2" >
             {title}
           </Typography>
 
@@ -34,7 +39,7 @@ export default function BasicModal({ message, title, open, onClose, IconComponen
             {message}
           </Typography>
 
-          <IconComponent sx={{ mt: 2 }}/>
+          <IconComponent sx={{p: 2, fontSize: 150, color: 'success.main',  }}/>
         </Box>
     </Modal>
     
