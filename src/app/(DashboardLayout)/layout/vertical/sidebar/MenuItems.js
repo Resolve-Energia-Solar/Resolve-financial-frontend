@@ -101,7 +101,7 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Pagamentos',
+    title: 'Financeiro',
     icon: IconCurrencyDollar,
     href: '/',
     permissions: ['financial.view_payment'],
