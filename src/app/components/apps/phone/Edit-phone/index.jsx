@@ -44,19 +44,19 @@ const EditPhonePage = ({ phoneId = null, onClosedModal = null, onRefresh = null 
         </Alert>
       )}
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={12} lg={6}>
-          <CustomFormLabel htmlFor="country_code">Código do País</CustomFormLabel>
+        <Grid item xs={12} sm={12} lg={4}>
+          <CustomFormLabel htmlFor="area_code">Código de Área</CustomFormLabel>
           <CustomTextField
             fullWidth
             variant="outlined"
-            value={formData.country_code}
-            onChange={(e) => handleChange('country_code', e.target.value)}
-            error={!!formErrors.country_code}
-            helperText={formErrors.country_code}
+            value={formData.area_code}
+            onChange={(e) => handleChange('area_code', e.target.value)}
+            error={!!formErrors.area_code}
+            helperText={formErrors.area_code}
           />
         </Grid>
 
-        <Grid item xs={12} sm={12} lg={6}>
+        <Grid item xs={12} sm={12} lg={8}>
           <CustomFormLabel htmlFor="phone_number">Número</CustomFormLabel>
           <CustomTextField
             fullWidth

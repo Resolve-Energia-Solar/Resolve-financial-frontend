@@ -4,6 +4,7 @@ import phoneNumberService from '@/services/phoneNumberService';
 const usePhoneNumberForm = (initialData, id) => {
   const [formData, setFormData] = useState({
     country_code: '',
+    area_code: '',
     phone_number: '',
     is_main: false,
     user_id: '',
@@ -17,6 +18,7 @@ const usePhoneNumberForm = (initialData, id) => {
     if (initialData) {
       setFormData({
         country_code: initialData.country_code || '',
+        area_code: initialData.area_code || '',
         phone_number: initialData.phone_number || '',
         is_main: initialData.is_main || false,
         user_id: initialData.user.id || '',
@@ -32,6 +34,7 @@ const usePhoneNumberForm = (initialData, id) => {
     setLoading(true);
     const dataToSend = {
       country_code: formData.country_code,
+      area_code: formData.area_code,
       phone_number: formData.phone_number,
       is_main: formData.is_main,
       user_id: formData.user_id,
