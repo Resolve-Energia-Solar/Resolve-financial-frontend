@@ -21,10 +21,10 @@ import useSaleForm from '@/hooks/sales/useSaleForm';
 import { useSelector } from 'react-redux';
 import saleService from '@/services/saleService';
 import paymentService from '@/services/paymentService';
-import projectService from '@/services/projectService';
 import ChecklistSales from '../../../checklist/Checklist-list/ChecklistSales';
+import SchedulesInspections from '../../../project/components/SchedulesInspections';
 
-const steps = ['Dados do Cliente', 'Produtos', 'Financeiro', 'Documentos'];
+const steps = ['Dados do Cliente', 'Produtos', 'Financeiro', 'Documentos', 'Agendar Vistoria'];
 
 export default function OnboardingCreateSale({ onClose=null, onEdit=null }) {
   return (
@@ -41,7 +41,6 @@ function OnboardingCreateSaleContent({ onClose=null, onEdit=null }) {
   const [isDialogDocumentOpen, setIsDialogDocumentOpen] = useState(false);
   const [totalPayments, setTotalPayments] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [projectsList, setProjectsList] = useState([]);
 
   const user = useSelector((state) => state.user);
 
@@ -182,6 +181,9 @@ function OnboardingCreateSaleContent({ onClose=null, onEdit=null }) {
         return <PaymentCard sale={saleId} />;
       case 3:
         return <ChecklistSales saleId={saleId} />;
+      case 4:
+        return <SchedulesInspections userId={customerId} saleId={saleId} />
+
       default:
         return <div>Parabéns, você finalizou o processo de venda!</div>;
     }
