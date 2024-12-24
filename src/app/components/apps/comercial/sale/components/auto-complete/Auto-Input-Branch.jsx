@@ -59,8 +59,25 @@ export default function AutoCompleteBranch({ onChange, value, error, helperText,
     [],
   );
 
+  const fetchInitialBranches = useCallback(async () => {
+    setLoading(true);
+    try {
+      const branches = await branchService.getBranches({ limit: 5 });
+      const formattedBranches = branches.results.map((branch) => ({
+        id: branch.id,
+        name: branch.name,
+      }));
+      setOptions(formattedBranches);
+    } catch (error) {
+      console.error('Erro ao buscar branches:', error);
+    }
+  }, []);
+
   const handleOpen = () => {
     setOpen(true);
+    if (options.length === 0) {
+      fetchInitialBranches();
+    }
   };
 
   const handleClose = () => {

@@ -43,6 +43,7 @@ export default function DetailProject({ projectId=null }) {
         <Tab label="Checklist Rateio" />
         <Tab label="Anexos" />
         <Tab label="Solicitações" />
+        <Tab label="Esteira" />
       </Tabs>
 
       {value === 0 && <EditProjectTab projectId={id} detail={true} />}
@@ -61,6 +62,11 @@ export default function DetailProject({ projectId=null }) {
         />
       )}
       {value === 3 && <div>Solicitações</div>}
+
+      {value === 4 && 
+        <div>Esteira
+          <GanttChart data={data} />
+        </div>}
     </>
   );
 }

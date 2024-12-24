@@ -61,9 +61,30 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
     }, 300),
     []
   );
+
+  const fetchInitialSales = useCallback(async () => {
+    setLoading(true);
+    try {
+      const sales = await saleService.getSales({ limit: 5, page: 1 });
+      if (sales && sales.results) {
+        const formattedSales = sales.results.map(sale => ({
+          id: sale.id,
+          name: `${sale.contract_number} - ${sale.customer.complete_name}`,
+        }));
+        setOptions(formattedSales);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar vendas:', error);
+    }
+    setLoading(false);
+  }
+  , []);
   
   const handleOpen = () => {
     setOpen(true);
+    if (options.length === 0) {
+      fetchInitialSales();
+    }
   };
 
   const handleClose = () => {

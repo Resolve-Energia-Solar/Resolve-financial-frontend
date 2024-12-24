@@ -1,9 +1,16 @@
 import apiClient from './apiClient'
 
 const leadService = {
-  getLeads: async () => {
+  getLeads: async ({ page = 1, limit = 10 } = {}) => {
     try {
-      const response = await apiClient.get('/api/leads/')
+      const response = await apiClient.get('/api/leads/',
+        {
+          params: {
+            page,
+            limit,
+          },
+        }
+      )
       return response.data
     } catch (error) {
       console.error('Erro ao buscar leads:', error)

@@ -1,9 +1,14 @@
 import apiClient from "./apiClient";
 
 const campaignService = {
-  getCampaigns: async () => {
+  getCampaigns: async ({ page = 1, limit = 10 } = {}) => {
     try {
-      const response = await apiClient.get('/api/marketing-campaigns/');
+      const response = await apiClient.get('/api/marketing-campaigns/',
+        {params: {
+            page,
+            limit
+          }}
+      );
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar marketing-campaigns:', error);

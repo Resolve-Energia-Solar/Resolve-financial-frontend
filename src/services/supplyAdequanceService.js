@@ -1,8 +1,10 @@
 import apiClient from './apiClient';
 
 const supplyService = {
-    getSupplyAd: async () => { 
-        const response = await apiClient.get(`/api/supply-adequances/`);
+    getSupplyAd: async ({ page = 1, limit = 10 } = {}) => { 
+        const response = await apiClient.get(`/api/supply-adequances/`,
+            { params: { page, limit } }
+        );
         return response.data;
     },
     getSupplyAdById: async (id) => { 

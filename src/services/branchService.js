@@ -1,9 +1,16 @@
 import apiClient from "./apiClient";
 
 const branchService = {
-  getBranches: async () => {
+  getBranches: async ({ page = 1, limit = 10 } = {}) => {
     try {
-      const response = await apiClient.get('/api/branches/');
+      const response = await apiClient.get('/api/branches/',
+        {
+          params: {
+            page,
+            limit
+          }
+        }
+      );
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar branches:', error);
