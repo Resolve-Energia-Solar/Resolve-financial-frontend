@@ -57,11 +57,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
 
   const id_sale = id;
 
-  console.log('ID Sale: ', id_sale);
-
   const { loading, error, saleData } = useSale(id);
-
-  console.log('Sale Data: ', saleData);
 
   const {
     formData,

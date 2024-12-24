@@ -54,7 +54,7 @@ function SchedulesInspections({ saleId, userId }) {
                 </Stack>
               </Stack>
 
-              <ListInspection projectId={project.id} product={project.product.id} customerId={userId} />
+              <ListInspection projectId={project?.id} product={project?.product?.id} customerId={customerId} />
             </CardContent>
           </Card>
         </Box>
