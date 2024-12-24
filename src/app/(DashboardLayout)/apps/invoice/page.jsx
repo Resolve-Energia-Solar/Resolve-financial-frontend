@@ -9,6 +9,7 @@ import { CardContent } from "@mui/material";
 import Details from "@/app/components/apps/invoice/Details";
 import SideDrawer from "@/app/components/shared/SideDrawer";
 import usePayment from "@/hooks/payments/usePayment";
+import BasicModal from "@/app/components/apps/modal/modal";
 
 const BCrumb = [
     {
@@ -22,7 +23,7 @@ const BCrumb = [
 
 const InvoiceListing = () => {
 
-    const { toggleOpenDrawerClosed, openDrawer, rowSelected, handleRowClick, editPaymentStatus } = usePayment()
+    const { toggleOpenDrawerClosed, openDrawer, rowSelected, handleRowClick, editPaymentStatus,openModal,setOpenModal,text, IconComponents } = usePayment()
 
     return (
         <InvoiceProvider>
@@ -34,6 +35,7 @@ const InvoiceListing = () => {
                         <SideDrawer title="Detalhes do Pagamento" open={openDrawer} onClose={toggleOpenDrawerClosed} >
                             <Details data={rowSelected}  handleInputChange={editPaymentStatus}/>
                         </SideDrawer>
+                        <BasicModal open={openModal} onClose={()=>setOpenModal(false)} title={text?.title} message={text?.message} IconComponent={IconComponents}/>
                     </CardContent>
                 </BlankCard>
             </PageContainer>
