@@ -55,8 +55,28 @@ export default function AutoCompleteUsers({ onChange, value = [], error, helperT
     []
   );
 
+  const fetchInitialUsers = useCallback(async () => {
+    setLoading(true);
+    try {
+      const users = await userService.getUser({ limit: 5, page: 1 }); // Busca inicial com limite
+      const formattedUsers = users.results.map(user => ({
+        id: user.id,
+        name: user.complete_name, // Formata conforme necessário
+      }));
+      setOptions(formattedUsers);
+    } catch (error) {
+      console.error('Erro ao buscar usuários iniciais:', error);
+    }
+    setLoading(false);
+  }, []);
+
+
   const handleOpen = () => {
+    console.log('handleOpen');
     setOpen(true);
+    if (options.length === 0) {
+      fetchInitialUsers(); // Busca inicial ao abrir
+    }
   };
 
   const handleClose = () => {

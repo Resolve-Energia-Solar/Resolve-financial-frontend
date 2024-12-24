@@ -1,9 +1,14 @@
 import apiClient from "./apiClient";
 
 const roleService = {
-  getRole: async () => {
+  getRole: async ({ page = 1, limit = 10 } = {}) => {
     try {
-      const response = await apiClient.get('/api/roles/');
+      const response = await apiClient.get('/api/roles/',
+        {params: {
+            page,
+            limit
+          }}
+      );
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar roles:', error);

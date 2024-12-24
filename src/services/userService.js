@@ -7,9 +7,14 @@ const formatTime = (time) => {
 };
 
 const userService = {
-  getUser: async () => {
+  getUser: async ({ page = 1, limit = 10 } = {}) => {
     try {
-      const response = await apiClient.get('/api/users/');
+      const response = await apiClient.get('/api/users/', { 
+        params: { 
+          page, 
+          limit 
+        },
+      });
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar usuários:', error);

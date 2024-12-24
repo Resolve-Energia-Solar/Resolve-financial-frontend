@@ -64,8 +64,27 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
     [],
   );
 
+  const fetchInitialAddresses = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await addressService.getAddresses({ limit: 5 });
+      const formattedAddresses = response.results.map((address) => ({
+        id: address.id,
+        name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
+      }));
+      setOptions(formattedAddresses);
+    } catch (error) {
+      console.error('Erro ao buscar endereços:', error);
+    }
+    setLoading(false);
+  }, []);
+
   const handleOpen = () => {
+    console.log('open');
     setOpen(true);
+    if (options.length === 0) {
+      fetchInitialAddresses()
+    }
   };
 
   const handleClose = () => {
