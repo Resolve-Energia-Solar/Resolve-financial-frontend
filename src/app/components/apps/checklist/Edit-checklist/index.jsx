@@ -80,67 +80,99 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = nu
               </Alert>
             )}
             <Grid container spacing={3}>
-              <Grid item xs={12} sm={12} lg={4}>
-                <CustomFormLabel htmlFor="account_number">Número do medidor</CustomFormLabel>
-                <CustomTextField
-                  fullWidth
-                  variant="outlined"
-                  value={formData.account_number}
-                  onChange={(e) => handleChange('account_number', e.target.value)}
-                  {...(formErrors.account_number && {
-                    error: true,
-                    helperText: formErrors.account_number,
-                  })}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} lg={4}>
-                <CustomFormLabel htmlFor="name">Nome</CustomFormLabel>
-                <CustomTextField
-                  fullWidth
-                  variant="outlined"
-                  value={formData.name}
-                  onChange={(e) => handleChange('name', e.target.value)}
-                  {...(formErrors.name && { error: true, helperText: formErrors.name })}
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={12} lg={4}>
-                <CustomFormLabel htmlFor="unit_percentage">Porcentagem de Rateio</CustomFormLabel>
-                <CustomTextField
-                  fullWidth
-                  variant="outlined"
-                  value={formData.unit_percentage}
-                  onChange={(e) => handleChange('unit_percentage', e.target.value)}
-                  {...(formErrors.unit_percentage && {
-                    error: true,
-                    helperText: formErrors.unit_percentage,
-                  })}
-                />
-              </Grid>
-
               <Grid item xs={12} sm={12} lg={6}>
-                <FormSelect
-                  label="Tipo de Fornecimento"
-                  options={statusOptions}
-                  onChange={(e) => handleChange('type', e.target.value)}
-                  value={formData.type}
-                  {...(formErrors.type && { error: true, helperText: formErrors.type })}
+                <CustomFormLabel>Nova U.C</CustomFormLabel>
+                <FormControlLabel
+                  control={
+                    <CustomSwitch
+                      checked={formData.new_contract_number}
+                      onChange={(e) => handleChange('new_contract_number', e.target.checked)}
+                    />
+                  }
+                  label={formData.new_contract_number ? 'Sim' : 'Não'}
                 />
               </Grid>
 
-              <Grid item xs={12} sm={12} lg={6}>
-                <CustomFormLabel htmlFor="unit_number">Conta contrato</CustomFormLabel>
-                <CustomTextField
-                  fullWidth
-                  variant="outlined"
-                  value={formData.unit_number}
-                  onChange={(e) => handleChange('unit_number', e.target.value)}
-                  {...(formErrors.unit_number && {
-                    error: true,
-                    helperText: formErrors.unit_number,
-                  })}
-                />
-              </Grid>
+              {!formData.new_contract_number && (
+                <>
+                  <Grid item xs={12} sm={12} lg={6}>
+                    <CustomFormLabel>Geradora</CustomFormLabel>
+                    <FormControlLabel
+                      control={
+                        <CustomSwitch
+                          checked={formData.main_unit}
+                          onChange={(e) => handleChange('main_unit', e.target.checked)}
+                        />
+                      }
+                      label={formData.main_unit ? 'Geradora' : 'Beneficiária'}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={12} lg={4}>
+                    <CustomFormLabel htmlFor="account_number">Número do medidor</CustomFormLabel>
+                    <CustomTextField
+                      fullWidth
+                      variant="outlined"
+                      value={formData.account_number}
+                      onChange={(e) => handleChange('account_number', e.target.value)}
+                      {...(formErrors.account_number && {
+                        error: true,
+                        helperText: formErrors.account_number,
+                      })}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12} lg={4}>
+                    <CustomFormLabel htmlFor="name">Nome</CustomFormLabel>
+                    <CustomTextField
+                      fullWidth
+                      variant="outlined"
+                      value={formData.name}
+                      onChange={(e) => handleChange('name', e.target.value)}
+                      {...(formErrors.name && { error: true, helperText: formErrors.name })}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={12} lg={4}>
+                    <CustomFormLabel htmlFor="unit_percentage">
+                      Porcentagem de Rateio
+                    </CustomFormLabel>
+                    <CustomTextField
+                      fullWidth
+                      variant="outlined"
+                      value={formData.unit_percentage}
+                      onChange={(e) => handleChange('unit_percentage', e.target.value)}
+                      {...(formErrors.unit_percentage && {
+                        error: true,
+                        helperText: formErrors.unit_percentage,
+                      })}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={12} lg={6}>
+                    <FormSelect
+                      label="Tipo de Fornecimento"
+                      options={statusOptions}
+                      onChange={(e) => handleChange('type', e.target.value)}
+                      value={formData.type}
+                      {...(formErrors.type && { error: true, helperText: formErrors.type })}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={12} lg={6}>
+                    <CustomFormLabel htmlFor="unit_number">Conta contrato</CustomFormLabel>
+                    <CustomTextField
+                      fullWidth
+                      variant="outlined"
+                      value={formData.unit_number}
+                      onChange={(e) => handleChange('unit_number', e.target.value)}
+                      {...(formErrors.unit_number && {
+                        error: true,
+                        helperText: formErrors.unit_number,
+                      })}
+                    />
+                  </Grid>
+                </>
+              )}
 
               <Grid item xs={12} sm={12} lg={6}>
                 <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
@@ -151,57 +183,48 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = nu
                 />
               </Grid>
 
-              <Grid item xs={12} sm={12} lg={6}>
-                <CustomFormLabel htmlFor="supply_adquance_ids">
-                  Adequação de Fornecimento
-                </CustomFormLabel>
-                <AutoCompleteSupplyAds
-                  onChange={(ids) => handleChange('supply_adquance_ids', ids)}
-                  value={formData.supply_adquance_ids}
-                  {...(formErrors.supply_adquance_ids && {
-                    error: true,
-                    helperText: formErrors.supply_adquance_ids,
-                  })}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <CustomFormLabel htmlFor="bill_file">Arquivo</CustomFormLabel>
-                <Box>
-                  <Typography variant="body1" color="textSecondary">
-                    Atualmente:{' '}
-                    <Link href={formData.bill_file} target="_blank" rel="noopener noreferrer">
-                      {formData.bill_file?.length > 30
-                        ? `${formData.bill_file.slice(0, 30)}...`
-                        : formData.bill_file}
-                    </Link>
-                  </Typography>
-                  <Box mt={1}>
-                    Modificar:
-                    <Input
-                      type="file"
-                      onChange={(e) => handleChange('bill_file', e.target.files[0])}
-                      {...(formErrors.bill_file && { error: true })}
+              {!formData.new_contract_number && (
+                <>
+                  <Grid item xs={12} sm={12} lg={6}>
+                    <CustomFormLabel htmlFor="supply_adquance_ids">
+                      Adequação de Fornecimento
+                    </CustomFormLabel>
+                    <AutoCompleteSupplyAds
+                      onChange={(ids) => handleChange('supply_adquance_ids', ids)}
+                      value={formData.supply_adquance_ids}
+                      {...(formErrors.supply_adquance_ids && {
+                        error: true,
+                        helperText: formErrors.supply_adquance_ids,
+                      })}
                     />
-                  </Box>
-                  <Typography variant="caption" color="error">
-                    {formErrors.bill_file && formErrors.bill_file}
-                  </Typography>
-                </Box>
-              </Grid>
+                  </Grid>
 
-              <Grid item xs={12} sm={12} lg={12}>
-                <CustomFormLabel>Geradora</CustomFormLabel>
-                <FormControlLabel
-                  control={
-                    <CustomSwitch
-                      checked={formData.main_unit}
-                      onChange={(e) => handleChange('main_unit', e.target.checked)}
-                    />
-                  }
-                  label={formData.main_unit ? 'Geradora' : 'Beneficiária'}
-                />
-              </Grid>
+                  <Grid item xs={12}>
+                    <CustomFormLabel htmlFor="bill_file">Arquivo</CustomFormLabel>
+                    <Box>
+                      <Typography variant="body1" color="textSecondary">
+                        Atualmente:{' '}
+                        <Link href={formData.bill_file} target="_blank" rel="noopener noreferrer">
+                          {formData.bill_file?.length > 30
+                            ? `${formData.bill_file.slice(0, 30)}...`
+                            : formData.bill_file}
+                        </Link>
+                      </Typography>
+                      <Box mt={1}>
+                        Modificar:
+                        <Input
+                          type="file"
+                          onChange={(e) => handleChange('bill_file', e.target.files[0])}
+                          {...(formErrors.bill_file && { error: true })}
+                        />
+                      </Box>
+                      <Typography variant="caption" color="error">
+                        {formErrors.bill_file && formErrors.bill_file}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                </>
+              )}
             </Grid>
           </>
 
