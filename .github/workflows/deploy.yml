@@ -23,14 +23,24 @@ jobs:
         uses: actions/checkout@v3
 
       # 2. Carregar variáveis do .env
-      - name: Load .env variables
-        uses: direnv/direnv-action@v1
-        with:
-          env_file: .env
+      - name: Set up environment variables
+        run: |
+          echo "GENERATE_SOURCEMAP=${{ secrets.GENERATE_SOURCEMAP }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID=${{ secrets.NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID=${{ secrets.NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_CLICKSIGN_TOKEN=${{ secrets.NEXT_PUBLIC_CLICKSIGN_TOKEN }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_URL=${{ secrets.NEXT_PUBLIC_API_BASE_CLICKSIGN_URL }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_CONTENT_TYPE_LEAD_ID=${{ secrets.NEXT_PUBLIC_CONTENT_TYPE_LEAD_ID }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID=${{ secrets.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_SERVICE_INSPECTION_ID=${{ secrets.NEXT_PUBLIC_SERVICE_INSPECTION_ID }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_SUPABASE_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_KEY }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_CONTENT_TYPE_SALE_ID=${{ secrets.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" >> $GITHUB_ENV
 
       # 3. Log in ao Azure Container Registry
       - name: Log in to Azure Container Registry
-        run: echo "${{ vars.AZURE_ACR_PASSWORD }}" | docker login resourceresolve.azurecr.io -u "${{ vars.AZURE_ACR_USERNAME }}" --password-stdin
+        run: echo "${{ secrets.AZURE_ACR_PASSWORD }}" | docker login resourceresolve.azurecr.io -u "${{ secrets.AZURE_ACR_USERNAME }}" --password-stdin
 
       # 4. Build e Push da Imagem Docker
       - name: Build and Push Docker Image
@@ -53,7 +63,7 @@ jobs:
 
       # 5. Log in ao Azure CLI
       - name: Log in to Azure CLI
-        run: az login --service-principal -u "${{ vars.AZURE_CLIENT_ID }}" -p "${{ vars.AZURE_CLIENT_SECRET }}" --tenant "${{ vars.AZURE_TENANT_ID }}"
+        run: az login --service-principal -u "${{ secrets.AZURE_CLIENT_ID }}" -p "${{ secrets.AZURE_CLIENT_SECRET }}" --tenant "${{ secrets.AZURE_TENANT_ID }}"
 
       # 6. Configurar Acesso ao Cluster AKS
       - name: Configure Access to AKS
