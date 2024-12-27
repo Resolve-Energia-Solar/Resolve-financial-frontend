@@ -132,6 +132,7 @@ const Menuitems = [
     title: 'Engenharia',
     icon: IconTools,
     href: '',
+    permissions: ['resolve_crm.view_project'],
     children: [
 
       {

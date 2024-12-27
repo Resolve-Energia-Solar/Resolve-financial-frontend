@@ -27,6 +27,7 @@ import projectService from '@/services/projectService';
 import DrawerFiltersProject from '../components/DrawerFilters/DrawerFiltersProject';
 import ActionFlash from '../components/flashAction/actionFlash';
 import StatusChip from '@/utils/status/ProjectStatusChip';
+import userService from '@/services/userService';
 
 const ProjectList = ({ onClick }) => {
   const [projectsList, setProjectsList] = useState([]);
@@ -42,18 +43,30 @@ const ProjectList = ({ onClick }) => {
       setLoading(true);
       try {
         const data = await projectService.getProjects({ page: page + 1, limit: rowsPerPage });
-        setProjectsList(data.results);
-        setTotalRows(data.count); // Certifique-se de que o total de itens vem como `count`
+        
+        // Para cada projeto, busque o usuário pelo ID.
+        const updatedResults = await Promise.all(
+          data.results.map(async (project) => {
+            if (project.sale?.customer) {
+              const userData = await userService.getUserById(project.sale.customer,'complete_name');
+              return { ...project, userData };
+            }
+            return project;
+          })
+        );
+  
+        setProjectsList(updatedResults);
+        setTotalRows(data.count);
       } catch (err) {
         setError('Erro ao carregar Projetos');
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchProjects();
   }, [page, rowsPerPage]);
-
+  
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
@@ -139,7 +152,7 @@ const ProjectList = ({ onClick }) => {
             <TableBody>
               {projectsList.map((item) => (
                 <TableRow key={item.id} hover onClick={() => onClick(item)}>
-                  <TableCell>{item.sale?.customer?.complete_name}</TableCell>
+                  <TableCell>{item.userData?.complete_name}</TableCell>
                   <TableCell>{item.sale?.contract_number}</TableCell>
                   <TableCell>
                     <StatusChip status={item.status} />

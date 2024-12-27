@@ -30,9 +30,13 @@ const userService = {
       throw error;
     }
   },
-  getUserById: async (id) => {
+  getUserById: async (id, fields) => {
     try {
-      const response = await apiClient.get(`/api/users/${id}/`);
+      const response = await apiClient.get(`/api/users/${id}/`, {
+        params: {
+          fields,
+        },
+      });
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar usuário com id ${id}:`, error);
