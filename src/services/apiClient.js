@@ -10,17 +10,26 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     const token = Cookies.get('access_token');
+    console.log('Request config:', config);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log('Token added to headers:', token);
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    console.error('Request error:', error);
+    return Promise.reject(error);
+  }
 );
 
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('Response:', response);
+    return response;
+  },
   (error) => {
+    console.error('Response error:', error);
     return Promise.reject(error);
   }
 );
