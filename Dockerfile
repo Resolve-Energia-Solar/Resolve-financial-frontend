@@ -1,25 +1,42 @@
-FROM node:20
+# Exemplo de Dockerfile
+FROM node:16
 
-# Instalação das dependências necessárias
-RUN apt-get update && apt-get install -y \
-    python3 \
-    make \
-    g++
-
-# Instalação do Husky (opcional)
-RUN npm install -g husky
-
-# Copia os arquivos do projeto e instala as dependências
+# Configura o diretório de trabalho
 WORKDIR /app
-COPY package.json package-lock.json ./
 
-RUN npm install --production --legacy-peer-deps
-
-# Copia o restante dos arquivos do projeto
+# Copia os arquivos do projeto
 COPY . .
 
-# Realiza o build da aplicação
+# Adiciona variáveis de ambiente ao arquivo .env
+ARG GENERATE_SOURCEMAP
+ARG NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID
+ARG NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID
+ARG NEXT_PUBLIC_CLICKSIGN_TOKEN
+ARG NEXT_PUBLIC_API_BASE_CLICKSIGN_URL
+ARG NEXT_PUBLIC_API_BASE_URL
+ARG NEXT_PUBLIC_CONTENT_TYPE_LEAD_ID
+ARG NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID
+ARG NEXT_PUBLIC_SERVICE_INSPECTION_ID
+ARG NEXT_PUBLIC_SUPABASE_KEY
+ARG NEXT_PUBLIC_CONTENT_TYPE_SALE_ID
+ARG NEXT_PUBLIC_SUPABASE_URL
+
+RUN echo "GENERATE_SOURCEMAP=$GENERATE_SOURCEMAP" >> .env && \
+    echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID=$NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID" >> .env && \
+    echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID=$NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID" >> .env && \
+    echo "NEXT_PUBLIC_CLICKSIGN_TOKEN=$NEXT_PUBLIC_CLICKSIGN_TOKEN" >> .env && \
+    echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_URL=$NEXT_PUBLIC_API_BASE_CLICKSIGN_URL" >> .env && \
+    echo "NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL" >> .env && \
+    echo "NEXT_PUBLIC_CONTENT_TYPE_LEAD_ID=$NEXT_PUBLIC_CONTENT_TYPE_LEAD_ID" >> .env && \
+    echo "NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID=$NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID" >> .env && \
+    echo "NEXT_PUBLIC_SERVICE_INSPECTION_ID=$NEXT_PUBLIC_SERVICE_INSPECTION_ID" >> .env && \
+    echo "NEXT_PUBLIC_SUPABASE_KEY=$NEXT_PUBLIC_SUPABASE_KEY" >> .env && \
+    echo "NEXT_PUBLIC_CONTENT_TYPE_SALE_ID=$NEXT_PUBLIC_CONTENT_TYPE_SALE_ID" >> .env && \
+    echo "NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL" >> .env
+
+# Instala as dependências e inicia o build da aplicação
+RUN npm install
 RUN npm run build
 
-# Inicia o servidor Next.js em produção
+# Inicia a aplicação
 CMD ["npm", "start"]
