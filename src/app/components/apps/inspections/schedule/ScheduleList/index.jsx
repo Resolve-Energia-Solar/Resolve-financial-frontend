@@ -144,6 +144,10 @@ const SchedulingList = () => {
     router.push(`/apps/inspections/schedule/${id}/update`);
   };
 
+  const handleViewClick = (id) => {
+    router.push(`/apps/inspections/schedule/${id}/maps`);
+  };
+
   const handleRowClick = (schedule) => {
     setSelectedSchedule(schedule);
     setDrawerOpen(true);
@@ -460,6 +464,7 @@ const SchedulingList = () => {
                       {schedule.going_to_location_at != null && schedule.execution_started_at == null && (
                         <MenuItem
                         onClick={() => {
+                          handleViewClick(schedule.id);
                           handleMenuClose();
                         }}
                       >
