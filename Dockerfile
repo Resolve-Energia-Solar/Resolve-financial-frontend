@@ -1,42 +1,18 @@
-# Exemplo de Dockerfile
-FROM node:16
+FROM node:20-alpine
 
-# Configura o diretório de trabalho
+# Diretório de trabalho
 WORKDIR /app
 
-# Copia os arquivos do projeto
+# Copia os arquivos essenciais e instala as dependências
+COPY package.json package-lock.json ./
+RUN npm install --legacy-peer-deps
+
+# Copia todo o projeto e realiza o build
 COPY . .
-
-# Adiciona variáveis de ambiente ao arquivo .env
-ARG GENERATE_SOURCEMAP
-ARG NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID
-ARG NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID
-ARG NEXT_PUBLIC_CLICKSIGN_TOKEN
-ARG NEXT_PUBLIC_API_BASE_CLICKSIGN_URL
-ARG NEXT_PUBLIC_API_BASE_URL
-ARG NEXT_PUBLIC_CONTENT_TYPE_LEAD_ID
-ARG NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID
-ARG NEXT_PUBLIC_SERVICE_INSPECTION_ID
-ARG NEXT_PUBLIC_SUPABASE_KEY
-ARG NEXT_PUBLIC_CONTENT_TYPE_SALE_ID
-ARG NEXT_PUBLIC_SUPABASE_URL
-
-RUN echo "GENERATE_SOURCEMAP=$GENERATE_SOURCEMAP" >> .env && \
-    echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID=$NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID" >> .env && \
-    echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID=$NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID" >> .env && \
-    echo "NEXT_PUBLIC_CLICKSIGN_TOKEN=$NEXT_PUBLIC_CLICKSIGN_TOKEN" >> .env && \
-    echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_URL=$NEXT_PUBLIC_API_BASE_CLICKSIGN_URL" >> .env && \
-    echo "NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL" >> .env && \
-    echo "NEXT_PUBLIC_CONTENT_TYPE_LEAD_ID=$NEXT_PUBLIC_CONTENT_TYPE_LEAD_ID" >> .env && \
-    echo "NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID=$NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID" >> .env && \
-    echo "NEXT_PUBLIC_SERVICE_INSPECTION_ID=$NEXT_PUBLIC_SERVICE_INSPECTION_ID" >> .env && \
-    echo "NEXT_PUBLIC_SUPABASE_KEY=$NEXT_PUBLIC_SUPABASE_KEY" >> .env && \
-    echo "NEXT_PUBLIC_CONTENT_TYPE_SALE_ID=$NEXT_PUBLIC_CONTENT_TYPE_SALE_ID" >> .env && \
-    echo "NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL" >> .env
-
-# Instala as dependências e inicia o build da aplicação
-RUN npm install
 RUN npm run build
 
-# Inicia a aplicação
-CMD ["npm", "start"]
+# Expose a porta padrão do Next.js
+EXPOSE 3000
+
+# Comando de inicialização
+CMD ["npm", "run", "start"]
