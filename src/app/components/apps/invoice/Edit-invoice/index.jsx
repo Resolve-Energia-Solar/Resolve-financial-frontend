@@ -80,6 +80,7 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
     { value: 'B', label: 'Boleto' },
     { value: 'F', label: 'Financiamento' },
     { value: 'PI', label: 'Parcelamento Interno' },
+    { value: 'P', label: 'Pix' },
   ];
 
   useEffect(() => {
