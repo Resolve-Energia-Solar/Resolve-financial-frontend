@@ -1,18 +1,23 @@
-FROM node:20-alpine
+FROM node:20
 
-# Diretório de trabalho
+# Instalação das dependências necessárias
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++
+
+# Instalação do Husky (opcional)
+RUN npm install -g husky
+
+# Copia os arquivos do projeto e instala as dependências
 WORKDIR /app
-
-# Copia os arquivos essenciais e instala as dependências
 COPY package.json package-lock.json ./
-RUN npm install --legacy-peer-deps
+
+RUN npm install --production --legacy-peer-deps
 
 # Copia todo o projeto e realiza o build
 COPY . .
 RUN npm run build
 
-# Expose a porta padrão do Next.js
-EXPOSE 3000
-
-# Comando de inicialização
-CMD ["npm", "run", "start"]
+# Inicia o servidor Next.js em produção
+CMD ["npm", "start"]
