@@ -26,7 +26,7 @@ jobs:
       - name: Log in to Azure Container Registry
         run: echo "${{ vars.AZURE_ACR_PASSWORD }}" | docker login resourceresolve.azurecr.io -u "${{ vars.AZURE_ACR_USERNAME }}" --password-stdin
 
-      # 6. Criar o arquivo .env com as variáveis do GitHub Secrets
+      # 3. Criar o arquivo .env com as variáveis do GitHub Secrets
       - name: Create .env File
         run: |
           echo "GENERATE_SOURCEMAP=${{ vars.GENERATE_SOURCEMAP }}" >> .env
@@ -42,35 +42,25 @@ jobs:
           echo "NEXT_PUBLIC_CONTENT_TYPE_SALE_ID=${{ vars.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID }}" >> .env
           echo "NEXT_PUBLIC_SUPABASE_URL=${{ vars.NEXT_PUBLIC_SUPABASE_URL }}" >> .env
 
-      # 3. Build e Push da Imagem Docker
+      # 4. Build e Push da Imagem Docker
       - name: Build and Push Docker Image
         run: |
           docker build --no-cache --build-arg ENV_FILE=.env -t "${DOCKER_IMAGE}:${{ github.sha }}" .
           docker push "${DOCKER_IMAGE}:${{ github.sha }}"
 
-      # 4. Log in ao Azure CLI
+      # 5. Log in ao Azure CLI
       - name: Log in to Azure CLI
         run: az login --service-principal -u "${{ vars.AZURE_CLIENT_ID }}" -p "${{ vars.AZURE_CLIENT_SECRET }}" --tenant "${{ vars.AZURE_TENANT_ID }}"
 
-      # 5. Configurar Acesso ao Cluster AKS
+      # 6. Configurar Acesso ao Cluster AKS
       - name: Configure Access to AKS
         run: az aks get-credentials --resource-group "$AKS_RESOURCE_GROUP" --name "$AKS_CLUSTER_NAME" --overwrite-existing
 
       
-
-      # 7. Criar ou Atualizar ConfigMap com o arquivo .env
-      - name: Create or Update ConfigMap from .env
-        run: |
-          kubectl create configmap resolve-frontend-env --from-file=.env -n "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
-
-      # 8. Atualizar a Imagem do Deployment no AKS
+      # 7. Atualizar a Imagem do Deployment no AKS
       - name: Update Deployment on AKS
         run: |
           kubectl set image deployment/$DEPLOYMENT_NAME resolve-erp-frontend="${DOCKER_IMAGE}:${{ github.sha }}" -n "$NAMESPACE"
           kubectl rollout status deployment/$DEPLOYMENT_NAME -n "$NAMESPACE"
 
-      # 9. Debug Deployment (Opcional)
-      #- name: Debug Deployment Logs
-      #  run: |
-      #    kubectl get pods -n "$NAMESPACE"
-      #    kubectl logs deployment/$DEPLOYMENT_NAME -n "$NAMESPACE"
+      
