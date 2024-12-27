@@ -76,9 +76,9 @@ const ScheduleView = () => {
                                         {scheduleData && (
                                             <>
                                                 <Box p={3} display="flex" flexDirection="column" gap="4px">
-                                                    <Typography variant="h6">Agendamento</Typography>
+                                                    <Typography variant="h6">Agente</Typography>
                                                     <Typography variant="body1">
-                                                        Agente de Campo: {scheduleData.schedule_agent?.complete_name}
+                                                        Nome: {scheduleData.schedule_agent?.complete_name}
                                                     </Typography>
                                                     <Typography variant="body1">
                                                         Serviço: {scheduleData.service?.name}

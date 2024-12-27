@@ -30,7 +30,7 @@ const ScheduleMap = ({ schedule }) => {
                 socket.onmessage = (event) => {
                     const data = JSON.parse(event.data);
                     console.log('Mensagem recebida:', data);
-                    if (data.type === 'location_update' && data.scheduleId === scheduleId) {
+                    if (data.type === 'location_update' && data.scheduleId === schedule.id) {
                         setCurrentPosition({ lat: data.latitude, lng: data.longitude });
                     }
                 };
@@ -49,23 +49,32 @@ const ScheduleMap = ({ schedule }) => {
 
             connectWebSocket();
         }
+
+        return () => {
+            if (ws) {
+                ws.close();
+                setWs(null);
+            }
+        }
     }, [ws]);
 
     return (
         <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
             <GoogleMap
                 mapContainerStyle={containerStyle}
-                center={currentPosition}
+                center={{ lat: Number(schedule?.latitude), lng: Number(schedule?.longitude) }}
                 zoom={14}
             >
-                <Marker
-                    position={currentPosition}
-                    title='Agente de Campo'
-                    clickable={true}
-                    icon={{
-                        url: '/images/maps/car.png', // URL do ícone do carro
-                    }}
-                />
+                {currentPosition.lat !== 0 && currentPosition.lng !== 0 && (
+                    <Marker
+                        position={currentPosition}
+                        title='Agente'
+                        clickable={true}
+                        icon={{
+                            url: '/images/maps/car.png', // URL do ícone do agente
+                        }}
+                    />
+                )}
                 <Marker
                     position={{ lat: Number(schedule?.latitude), lng: Number(schedule?.longitude) }}
                     title='Cliente'
