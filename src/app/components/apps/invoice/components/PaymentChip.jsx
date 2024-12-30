@@ -20,6 +20,8 @@ const PaymentChip = ({ paymentType }) => {
         return { label: 'Financiamento', color: 'success', icon: <AccountBalanceIcon /> };
       case 'PI':
         return { label: 'Parcelamento Interno', color: 'info', icon: <PaymentsIcon /> };
+      case 'P':
+        return { label: 'Pix', color: 'info', icon: <PaymentsIcon /> };
       default:
         return { label: paymentType };
     }
