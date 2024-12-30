@@ -59,15 +59,15 @@ function Commission({ data }) {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Nome cliente</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Unidade</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Especificação de pagamento</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Valor do projeto</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Diferença</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Percentual de repasse franquia</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Valor final</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Status de pagamento</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Ajustes</TableCell>
+                <TableCell align="left">Nome cliente</TableCell>
+                <TableCell align="left">Unidade</TableCell>
+                <TableCell align="left">Especificação de pagamento</TableCell>
+                <TableCell align="left">Valor do projeto</TableCell>
+                <TableCell align="left">Diferença</TableCell>
+                <TableCell align="left">Percentual de repasse franquia</TableCell>
+                <TableCell align="left">Valor final</TableCell>
+                <TableCell align="left">Status de pagamento</TableCell>
+                <TableCell align="left">Ajustes</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -78,17 +78,17 @@ function Commission({ data }) {
                   sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && 'primary.light' }}
                   onClick={() => handleClickRow(item)}
                 >
-                  <TableCell align="center">{item.sale.customer.complete_name}</TableCell>
-                  <TableCell align="center">{item.sale.branch?.name}</TableCell>
-                  <TableCell align="center">{item.status}</TableCell>
-                  <TableCell align="center">{''}</TableCell>
-                  <TableCell align="center">{item.difference_value}</TableCell>
-                  <TableCell align="center">{numeral(item.sale.transfer_percentage / 100).format('0,0%')}</TableCell>
-                  <TableCell align="center">{item.sale.total_value}</TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">{item.sale.customer.complete_name}</TableCell>
+                  <TableCell align="left">{item.sale.branch?.name}</TableCell>
+                  <TableCell align="left">{item.status}</TableCell>
+                  <TableCell align="left">{''}</TableCell>
+                  <TableCell align="left">{item.difference_value}</TableCell>
+                  <TableCell align="left">{numeral(item.sale.transfer_percentage / 100).format('0,0%')}</TableCell>
+                  <TableCell align="left">{item.sale.total_value}</TableCell>
+                  <TableCell align="left">
                   <PaymentStatusChip status={item.payment_status} />
                    </TableCell>
-                  <TableCell align="center">{''}</TableCell>
+                  <TableCell align="left">{''}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

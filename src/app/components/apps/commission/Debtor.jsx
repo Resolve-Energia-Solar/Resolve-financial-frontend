@@ -73,11 +73,11 @@ function Debtor({ data }) {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Unidade</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Valor</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Categoria</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Data de lançamento</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Status</TableCell>
+                                <TableCell align="left">Valor</TableCell>
+                                <TableCell align="left">Categoria</TableCell>
+                                <TableCell align="left">Data de lançamento</TableCell>
+                                <TableCell align="left">Status</TableCell>
+                                <TableCell align="left">Unidade</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -88,11 +88,11 @@ function Debtor({ data }) {
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && 'primary.light' }}
                                     onClick={() => handleClickRow(item)}
                                 >
-                                    <TableCell align="center">{item.unidade}</TableCell>
-                                    <TableCell align="center">{item.valprojeto}</TableCell>
-                                    <TableCell align="center">{item.categoria}</TableCell>
-                                    <TableCell align="center">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
-                                    <TableCell align="center">
+                                    <TableCell align="left">{item.unidade}</TableCell>
+                                    <TableCell align="left">{item.valprojeto}</TableCell>
+                                    <TableCell align="left">{item.categoria}</TableCell>
+                                    <TableCell align="left">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
+                                    <TableCell align="left">
                                         <PaymentStatusChip status={item.payment_status} />
                                     </TableCell>
                                 </TableRow>

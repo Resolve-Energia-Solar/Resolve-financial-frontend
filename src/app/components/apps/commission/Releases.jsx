@@ -74,13 +74,13 @@ console.log(data)
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>status</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Unidade</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Valor projeto</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>N° de parcelas</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Percentual de pagamentos</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Data de pagamento</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Reajuste</TableCell>
+                <TableCell align="left">status</TableCell>
+                <TableCell align="left">Unidade</TableCell>
+                <TableCell align="left">Valor projeto</TableCell>
+                <TableCell align="left">N° de parcelas</TableCell>
+                <TableCell align="left">Percentual de pagamentos</TableCell>
+                <TableCell align="left">Data de pagamento</TableCell>
+                <TableCell align="left">Reajuste</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -91,15 +91,15 @@ console.log(data)
                   sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && 'primary.light' }}
                   onClick={() => handleClickRow(item)}
                 >
-                  <TableCell align="center">
+                  <TableCell align="left">
                       <ReleaseStatus status={item.is_payment_released} />
                   </TableCell>
-                  <TableCell align="center">{item.sale.branch.name}</TableCell>
-                  <TableCell align="center">{item.total_value}</TableCell>
-                  <TableCell align="center">{item.installments_value}</TableCell>
-                  <TableCell align="center">{item.percentage}</TableCell>
-                  <TableCell align="center">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
-                  <TableCell align="center">{item.reajuste}</TableCell>
+                  <TableCell align="left">{item.sale.branch.name}</TableCell>
+                  <TableCell align="left">{item.total_value}</TableCell>
+                  <TableCell align="left">{item.installments_value}</TableCell>
+                  <TableCell align="left">{item.percentage}</TableCell>
+                  <TableCell align="left">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
+                  <TableCell align="left">{item.reajuste}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
