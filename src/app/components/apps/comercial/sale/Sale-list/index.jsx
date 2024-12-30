@@ -26,6 +26,7 @@ import {
   Box,
   Drawer,
   CardContent,
+  TablePagination,
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -67,8 +68,7 @@ const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(0);
   const [openCreateSale, setOpenCreateSale] = useState(false);
 
   const { handleRowClick, openDrawer, rowSelected, toggleDrawerClosed } = useSale();
@@ -111,11 +111,14 @@ const SaleList = () => {
 
   const [open, setOpen] = useState(false);
   const [saleToDelete, setSaleToDelete] = useState(null);
+
+  const [rowsPerPage, setRowsPerPage] = useState(5); // Itens por página
+  const [totalRows, setTotalRows] = useState(0); // Total de linhas retornadas pela API
+
   const router = useRouter();
 
   useEffect(() => {
-    setPage(1);
-    setHasMore(true);
+    setPage(0);
     setSalesList([]);
   }, [order, orderDirection, filters, refresh]);
 
@@ -124,28 +127,20 @@ const SaleList = () => {
       const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
       try {
         setLoading(true);
-        const queryParams = new URLSearchParams(filters[1]).toString();
+        const queryParams = new URLSearchParams({
+          ...filters[1],
+          ordering: orderingParam,
+        }).toString();
+  
         const data = await saleService.getSales({
           userRole: userRole,
-          ordering: orderingParam,
           params: queryParams,
-          nextPage: page,
+          limit: rowsPerPage,
+          page: page + 1,
         });
-        if (page === 1) {
-          setSalesList(data.results);
-        } else {
-          setSalesList((prevSalesList) => {
-            const newItems = data.results.filter(
-              (item) => !prevSalesList.some((existingItem) => existingItem.id === item.id),
-            );
-            return [...prevSalesList, ...newItems];
-          });
-        }
-        if (data.next) {
-          setHasMore(true);
-        } else {
-          setHasMore(false);
-        }
+  
+        setSalesList(data.results);
+        setTotalRows(data.count);
       } catch (err) {
         setError('Erro ao carregar Vendas');
         showAlert('Erro ao carregar Vendas', 'error');
@@ -153,9 +148,18 @@ const SaleList = () => {
         setLoading(false);
       }
     };
-
+  
     fetchSales();
-  }, [page, order, orderDirection, filters, refresh]);
+  }, [page, rowsPerPage, order, orderDirection, filters, refresh]);
+  
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage); // Define a nova página (base zero)
+  };
+  
+  const handleRowsPerPageChange = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10)); // Atualiza o número de linhas por página
+    setPage(0); // Reseta para a primeira página ao alterar o número de itens por página
+  };
 
   const showAlert = (message, type) => {
     setAlertMessage(message);
@@ -255,57 +259,9 @@ const SaleList = () => {
     }
   };
 
-  const handleScroll = (event) => {
-    const { scrollTop, scrollHeight, clientHeight } = event.target;
-    if (scrollTop + clientHeight >= scrollHeight - 5 && hasMore && !loading) {
-      setPage((prevPage) => prevPage + 1);
-    }
-  };
-
-  const cardsData = [
-    {
-      backgroundColor: 'primary.light',
-      iconColor: 'primary.main',
-      IconComponent: IconListDetails,
-      title: 'Em andamento',
-      count: '-',
-    },
-    {
-      backgroundColor: 'success.light',
-      iconColor: 'success.main',
-      IconComponent: IconListDetails,
-      title: 'Finalizado',
-      count: '-',
-    },
-    {
-      backgroundColor: 'secondary.light',
-      iconColor: 'secondary.main',
-      IconComponent: IconPaperclip,
-      title: 'Pendente',
-      count: '-',
-    },
-    {
-      backgroundColor: 'warning.light',
-      iconColor: 'warning.main',
-      IconComponent: IconSortAscending,
-      title: 'Cancelado',
-      count: '-',
-    },
-    {
-      backgroundColor: 'warning.light',
-      iconColor: 'warning.main',
-      IconComponent: IconSortAscending,
-      title: 'Distrato',
-      count: '-',
-    },
-  ];
-  
-
   return (
     <Box>
-      {/* <DashboardCards /> */}
-
-      <Accordion  sx={{marginBottom: 4}}>
+      <Accordion sx={{ marginBottom: 4 }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="sale-cards-content"
@@ -314,7 +270,45 @@ const SaleList = () => {
           <Typography variant="h6">Status</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <InforCards cardsData={cardsData} />
+          <InforCards
+            cardsData={[
+              {
+                backgroundColor: 'primary.light',
+                iconColor: 'primary.main',
+                IconComponent: IconListDetails,
+                title: 'Em andamento',
+                count: '-',
+              },
+              {
+                backgroundColor: 'success.light',
+                iconColor: 'success.main',
+                IconComponent: IconListDetails,
+                title: 'Finalizado',
+                count: '-',
+              },
+              {
+                backgroundColor: 'secondary.light',
+                iconColor: 'secondary.main',
+                IconComponent: IconPaperclip,
+                title: 'Pendente',
+                count: '-',
+              },
+              {
+                backgroundColor: 'warning.light',
+                iconColor: 'warning.main',
+                IconComponent: IconSortAscending,
+                title: 'Cancelado',
+                count: '-',
+              },
+              {
+                backgroundColor: 'warning.light',
+                iconColor: 'warning.main',
+                IconComponent: IconSortAscending,
+                title: 'Distrato',
+                count: '-',
+              },
+            ]}
+          />
         </AccordionDetails>
       </Accordion>
 
@@ -337,206 +331,222 @@ const SaleList = () => {
         </Box>
       </Box>
 
-      <TableContainer
-        component={Paper}
-        elevation={10}
-        sx={{ overflowX: 'auto', maxHeight: '50vh' }}
-        onScroll={handleScroll}
-      >
-        <Table stickyHeader aria-label="sales table">
-          <TableHead>
-            <TableRow>
-              <TableCell
-                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('customer.complete_name')}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  Nome contratante
-                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'customer.complete_name' &&
-                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                  </Box>
-                </Box>
-              </TableCell>
-
-              <TableCell
-                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('contract_number')}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  Número do Contrato
-                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'contract_number' &&
-                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                  </Box>
-                </Box>
-              </TableCell>
-
-              <TableCell
-                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('total_value')}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  Valor Total (R$)
-                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'total_value' &&
-                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                  </Box>
-                </Box>
-              </TableCell>
-
-              <TableCell
-                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('is_pre_sale')}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  Venda
-                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'is_pre_sale' &&
-                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                  </Box>
-                </Box>
-              </TableCell>
-
-              <TableCell
-                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('status')}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  Status
-                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'status' &&
-                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                  </Box>
-                </Box>
-              </TableCell>
-
-              <TableCell
-                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('document_completion_date')}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  Data de Conclusão
-                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'document_completion_date' &&
-                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                  </Box>
-                </Box>
-              </TableCell>
-
-              <TableCell>Unidade</TableCell>
-              <TableCell>Ações</TableCell>
-            </TableRow>
-          </TableHead>
-          {loading && page === 1 ? (
-            <TableSkeleton rows={5} columns={8} />
-          ) : error && page === 1 ? (
-            <Typography color="error">{error}</Typography>
-          ) : (
-            <TableBody>
-              {salesList.map((item) => (
-                <TableRow
-                  key={item.id}
-                  onClick={() => handleRowClick(item)}
-                  hover
-                  sx={{ backgroundColor: rowSelected?.id === item.id && '#ECF2FF' }}
+      <Box>
+        <TableContainer
+          component={Paper}
+          elevation={10}
+          sx={{ overflowX: 'auto' }}
+        >
+          <Table stickyHeader aria-label="sales table">
+            <TableHead>
+              <TableRow>
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('customer.complete_name')}
                 >
-                  <TableCell>{item.customer.complete_name}</TableCell>
-                  <TableCell>{item.contract_number}</TableCell>
-                  <TableCell>
-                    {Number(item.total_value).toLocaleString('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    <StatusPreSale status={item.is_pre_sale} />
-                  </TableCell>
-                  <TableCell>
-                    <StatusChip status={item.status} />
-                  </TableCell>
-                  <TableCell>
-                    {item?.document_completion_date &&
-                      new Date(item?.document_completion_date).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>{item.branch.name}</TableCell>
-                  <TableCell>
-                    <Tooltip title="Ações">
-                      <IconButton size="small" onClick={(event) => handleMenuClick(event, item.id)}>
-                        <MoreVertIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Menu
-                      anchorEl={menuAnchorEl}
-                      open={menuOpenRowId === item.id}
-                      onClose={handleMenuClose}
-                      anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                      }}
-                      transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                      }}
-                    >
-                      <MenuItem
-                        onClick={() => {
-                          handleEditClick(item.id);
-                          handleMenuClose();
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    Nome contratante
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'customer.complete_name' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    </Box>
+                  </Box>
+                </TableCell>
+
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('contract_number')}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    Número do Contrato
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'contract_number' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    </Box>
+                  </Box>
+                </TableCell>
+
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('total_value')}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    Valor Total (R$)
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'total_value' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    </Box>
+                  </Box>
+                </TableCell>
+
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('is_pre_sale')}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    Venda
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'is_pre_sale' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    </Box>
+                  </Box>
+                </TableCell>
+
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('status')}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    Status
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'status' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    </Box>
+                  </Box>
+                </TableCell>
+
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('document_completion_date')}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    Data de Conclusão
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'document_completion_date' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    </Box>
+                  </Box>
+                </TableCell>
+
+                <TableCell>Unidade</TableCell>
+                <TableCell>Ações</TableCell>
+              </TableRow>
+            </TableHead>
+            {loading && page === 1 ? (
+              <TableSkeleton rows={5} columns={8} />
+            ) : error && page === 1 ? (
+              <Typography color="error">{error}</Typography>
+            ) : (
+              <TableBody>
+                {salesList.map((item) => (
+                  <TableRow
+                    key={item.id}
+                    onClick={() => handleRowClick(item)}
+                    hover
+                    sx={{ backgroundColor: rowSelected?.id === item.id && '#ECF2FF' }}
+                  >
+                    <TableCell>{item.customer.complete_name}</TableCell>
+                    <TableCell>{item.contract_number}</TableCell>
+                    <TableCell>
+                      {Number(item.total_value).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      })}
+                    </TableCell>
+                    <TableCell>
+                      <StatusPreSale status={item.is_pre_sale} />
+                    </TableCell>
+                    <TableCell>
+                      <StatusChip status={item.status} />
+                    </TableCell>
+                    <TableCell>
+                      {item?.document_completion_date ? (
+                        new Date(item?.document_completion_date).toLocaleDateString()
+                      ) : (
+                        <Tooltip title="Não Concluído">
+                          <Typography color="error">Não Concluído</Typography>
+                        </Tooltip>
+                      )}
+                    </TableCell>
+                    <TableCell>{item.branch.name}</TableCell>
+                    <TableCell>
+                      <Tooltip title="Ações">
+                        <IconButton
+                          size="small"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleMenuClick(event, item.id);
+                          }}
+                        >
+                          <MoreVertIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Menu
+                        anchorEl={menuAnchorEl}
+                        open={menuOpenRowId === item.id}
+                        onClose={handleMenuClose}
+                        anchorOrigin={{
+                          vertical: 'top',
+                          horizontal: 'right',
+                        }}
+                        transformOrigin={{
+                          vertical: 'top',
+                          horizontal: 'right',
                         }}
                       >
-                        <EditIcon fontSize="small" sx={{ mr: 1 }} />
-                        Editar
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          handleViewClick(item.id);
-                          handleMenuClose();
-                        }}
-                      >
-                        <IconEyeglass fontSize="small" sx={{ mr: 1 }} />
-                        Visualizar
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          handleDeleteClick(item.id);
-                          handleMenuClose();
-                        }}
-                      >
-                        <DeleteIcon fontSize="small" sx={{ mr: 1 }} />
-                        Excluir
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          handleGenerateProposal(item);
-                          handleMenuClose();
-                        }}
-                      >
-                        <DescriptionIcon fontSize="small" sx={{ mr: 1 }} />
-                        Gerar Proposta
-                      </MenuItem>
-                    </Menu>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {loading && page > 1 && (
-                <TableRow>
-                  <TableCell colSpan={9} align="center">
-                    <CircularProgress />
-                  </TableCell>
-                </TableRow>
-              )}
-              {!hasMore && (
-                <TableRow>
-                  <TableCell colSpan={9} align="center">
-                    <Typography variant="body2">Você viu tudo!</Typography>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          )}
-        </Table>
-      </TableContainer>
+                        <MenuItem
+                          onClick={() => {
+                            handleEditClick(item.id);
+                            handleMenuClose();
+                          }}
+                        >
+                          <EditIcon fontSize="small" sx={{ mr: 1 }} />
+                          Editar
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            handleViewClick(item.id);
+                            handleMenuClose();
+                          }}
+                        >
+                          <IconEyeglass fontSize="small" sx={{ mr: 1 }} />
+                          Visualizar
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            handleDeleteClick(item.id);
+                            handleMenuClose();
+                          }}
+                        >
+                          <DeleteIcon fontSize="small" sx={{ mr: 1 }} />
+                          Excluir
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            handleGenerateProposal(item);
+                            handleMenuClose();
+                          }}
+                        >
+                          <DescriptionIcon fontSize="small" sx={{ mr: 1 }} />
+                          Gerar Proposta
+                        </MenuItem>
+                      </Menu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {loading && page > 1 && (
+                  <TableRow>
+                    <TableCell colSpan={9} align="center">
+                      <CircularProgress />
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            )}
+          </Table>
+        </TableContainer>
+
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={totalRows} // Total de linhas retornadas pela API
+          rowsPerPage={rowsPerPage} // Linhas por página
+          page={page} // Página atual (base zero)
+          onPageChange={handlePageChange} // Muda a página
+          onRowsPerPageChange={handleRowsPerPageChange} // Muda o número de linhas por página
+          labelRowsPerPage="Linhas por página"
+        />
+      </Box>
 
       <Dialog open={open} onClose={handleCloseModal}>
         <DialogTitle>Confirmar Exclusão</DialogTitle>
@@ -621,7 +631,7 @@ const SaleList = () => {
         </Typography>
       </Backdrop>
       <SideDrawer open={openDrawer} onClose={() => toggleDrawerClosed(false)} title="Detalhamento da Venda">
-        <EditSalePage saleId={rowSelected?.id} sx={{ maxWidth: '40vw', minWidth: '40vw' }} />
+        <EditSalePage saleId={rowSelected?.id} sx={{ maxWidth: '70vw', minWidth: '50vw' }} />
       </SideDrawer>
     </Box>
   );

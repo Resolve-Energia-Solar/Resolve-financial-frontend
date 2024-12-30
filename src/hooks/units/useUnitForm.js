@@ -9,6 +9,7 @@ const useUnitForm = (initialData, id) => {
     main_unit: false,
     unit_percentage: 0,
     type: '',
+    new_contract_number: '',
     unit_number: '',
     account_number: '',
     project_id: null,
@@ -29,6 +30,7 @@ const useUnitForm = (initialData, id) => {
         main_unit: initialData.main_unit || false,
         unit_percentage: initialData.unit_percentage || 0,
         type: initialData.type || '',
+        new_contract_number: initialData.new_contract_number || '',
         unit_number: initialData.unit_number || '',
         account_number: initialData.account_number || '',
         project_id: initialData.project || null,
@@ -52,6 +54,7 @@ const useUnitForm = (initialData, id) => {
     dataToSend.append('main_unit', formData.main_unit);
     dataToSend.append('unit_percentage', formData.unit_percentage);
     dataToSend.append('type', formData.type);
+    dataToSend.append('new_contract_number', formData.new_contract_number);
     dataToSend.append('unit_number', formData.unit_number);
     dataToSend.append('account_number', formData.account_number);
     dataToSend.append('project_id', formData.project_id);
