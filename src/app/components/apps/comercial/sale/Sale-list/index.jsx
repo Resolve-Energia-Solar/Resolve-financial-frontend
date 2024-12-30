@@ -118,7 +118,7 @@ const SaleList = () => {
   const router = useRouter();
 
   useEffect(() => {
-    setPage(1);
+    setPage(0);
     setSalesList([]);
   }, [order, orderDirection, filters, refresh]);
 
