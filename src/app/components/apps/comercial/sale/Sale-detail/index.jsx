@@ -118,7 +118,7 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null, refresh }) => {
         <Tab label="Pagamentos" />
         <Tab label="Checklist" />
         <Tab label="Histórico" />
-        {/* <Tab label="Envios" /> */}
+        <Tab label="Envios" />
       </Tabs>
       {loading ? (
         <FormPageSkeleton />
