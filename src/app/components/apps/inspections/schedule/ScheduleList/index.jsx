@@ -262,7 +262,7 @@ const SchedulingList = () => {
                 onClick={() => handleSort('status')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  Status
+                  Status Agendamento
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
                     {order === 'status' &&
                       (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
