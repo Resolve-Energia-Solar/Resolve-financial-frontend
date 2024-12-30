@@ -44,6 +44,14 @@ const ScheduleFormCreate = ({
     { value: 'Cancelado', label: 'Cancelado' },
   ];
 
+  const timeOptions = [
+    { value: '08:00:00', label: '08:00' },
+    { value: '09:30:00', label: '09:30' },
+    { value: '11:00:00', label: '11:00' },
+    { value: '13:30:00', label: '13:30' },
+    { value: '15:00:00', label: '15:00' },
+  ];
+
   console.log('formData', formData);
 
   useEffect(() => {
@@ -104,15 +112,15 @@ const ScheduleFormCreate = ({
 
         {/* Hora do Agendamento */}
         <Grid item xs={12} sm={12} lg={6}>
-          <FormTimePicker
-            label="Hora do agendamento"
-            name="schedule_start_time"
-            value={formData.schedule_start_time}
-            onChange={(newValue) => handleChange('schedule_start_time', newValue)}
+          <FormSelect
+            options={timeOptions}
+            onChange={(e) => handleChange('schedule_start_time', e.target.value)}
+            value={formData.schedule_start_time || ''}
             {...(formErrors.schedule_start_time && {
               error: true,
               helperText: formErrors.schedule_start_time,
             })}
+            label={'Hora do Agendamento'}
           />
         </Grid>
 
