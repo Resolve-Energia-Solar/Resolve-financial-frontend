@@ -77,6 +77,29 @@ const ScheduleFormCreateExternal = () => {
       }
     }
 
+    if (field === 'schedule_start_time') {
+      try {
+        const today = new Date();
+        const selectedTime = newValue;
+        const selectedDate = parseISO(formData.schedule_date);
+
+        if (selectedDate.getDate() === today.getDate()) {
+          const formattedTime = format(today, 'HH:mm:ss');
+
+          if (selectedTime < formattedTime) {
+            showAlert('O horário selecionado não pode ser anterior ao horário atual.', 'error');
+            handleChange(field, '');
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao processar o horário:', error);
+        showAlert('Por favor, insira um horário válido.', 'error');
+        handleChange(field, '');
+        return;
+      }
+    }
+
     handleChange(field, newValue);
   };
 
@@ -145,7 +168,8 @@ const ScheduleFormCreateExternal = () => {
         <Grid item xs={12} sm={12} lg={6}>
           <FormSelect
             options={timeOptions}
-            onChange={(e) => handleChange('schedule_start_time', e.target.value)}
+            onChange={(e) => validateChange('schedule_start_time', e.target.value)}
+            disabled={!formData.schedule_date}
             value={formData.schedule_start_time || ''}
             {...(formErrors.schedule_start_time && {
               error: true,
