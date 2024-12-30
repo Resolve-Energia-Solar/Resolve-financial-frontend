@@ -72,7 +72,7 @@ export default function ListPhones({ userId = null }) {
       <Table sx={{ width: '100%' }} aria-label="table of phones">
         <TableHead>
           <TableRow>
-            <TableCell>Código do País</TableCell>
+            <TableCell>Código de Área</TableCell>
             <TableCell>Telefone</TableCell>
             <TableCell align="right">Principal</TableCell>
             <TableCell align="right">Ações</TableCell>
@@ -93,7 +93,7 @@ export default function ListPhones({ userId = null }) {
             phones.map((row) => (
               <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell component="th" scope="row">
-                  +{row.country_code}
+                  {row.area_code}
                 </TableCell>
                 <TableCell align="left">{row.phone_number}</TableCell>
                 <TableCell align="right">{row.is_main ? 'Sim' : 'Não'}</TableCell>
