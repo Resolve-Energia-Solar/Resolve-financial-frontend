@@ -148,7 +148,7 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
                 </TableCell>
                 <TableCell align="center">
                   <Typography variant="h6" fontSize="14px">
-                    Status
+                    Status do Agendamento
                   </Typography>
                 </TableCell>
                 <TableCell align="center">
