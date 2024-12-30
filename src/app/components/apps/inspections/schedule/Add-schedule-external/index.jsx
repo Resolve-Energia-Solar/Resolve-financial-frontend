@@ -1,9 +1,10 @@
 'use client';
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { parseISO, format } from 'date-fns';
 
 /* material */
-import { Grid, Button, Stack } from '@mui/material';
+import { Grid, Button, Stack, Snackbar, Alert } from '@mui/material';
 
 /* components */
 import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
@@ -22,6 +23,10 @@ const ScheduleFormCreateExternal = () => {
   const router = useRouter();
 
   const { formData, handleChange, handleSave, formErrors, success } = useSheduleForm();
+
+  const [alertOpen, setAlertOpen] = React.useState(false);
+  const [alertMessage, setAlertMessage] = React.useState('');
+  const [alertType, setAlertType] = React.useState('success');
 
   const statusOptions = [
     { value: 'Pendente', label: 'Pendente' },
@@ -42,6 +47,38 @@ const ScheduleFormCreateExternal = () => {
       router.push('/apps/inspections/schedule');
     }
   }, [success, router]);
+
+  const showAlert = (message, type) => {
+    setAlertMessage(message);
+    setAlertType(type);
+    setAlertOpen(true);
+  };
+
+  const handleAlertClose = () => {
+    setAlertOpen(false);
+  };
+
+  const validateChange = (field, newValue) => {
+    if (field === 'schedule_date') {
+      try {
+        const today = new Date();
+        const selectedDate = parseISO(newValue);
+
+        if (selectedDate.getDate() < today.getDate()) {
+          showAlert('A data selecionada não pode ser anterior à data atual.', 'error');
+          handleChange(field, '');
+          return;
+        }
+      } catch (error) {
+        console.error('Erro ao processar a data:', error);
+        showAlert('Por favor, insira uma data válida.', 'error');
+        handleChange(field, '');
+        return;
+      }
+    }
+
+    handleChange(field, newValue);
+  };
 
   return (
     <>
@@ -96,7 +133,7 @@ const ScheduleFormCreateExternal = () => {
             label="Data do Agendamento"
             name="start_datetime"
             value={formData.schedule_date}
-            onChange={(newValue) => handleChange('schedule_date', newValue)}
+            onChange={(newValue) => validateChange('schedule_date', newValue)}
             {...(formErrors.schedule_date && {
               error: true,
               helperText: formErrors.schedule_date,
@@ -164,6 +201,18 @@ const ScheduleFormCreateExternal = () => {
           </Stack>
         </Grid>
       </Grid>
+
+      {/* Alerta */}
+      <Snackbar
+        open={alertOpen}
+        autoHideDuration={6000}
+        onClose={handleAlertClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleAlertClose} severity={alertType} sx={{ width: '100%' }}>
+          {alertMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };
