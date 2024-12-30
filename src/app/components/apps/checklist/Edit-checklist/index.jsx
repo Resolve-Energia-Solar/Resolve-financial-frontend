@@ -28,7 +28,9 @@ import useUnitForm from '@/hooks/units/useUnitForm';
 import AutoCompleteAddress from '../../comercial/sale/components/auto-complete/Auto-Input-Address';
 import AutoCompleteSupplyAds from '../components/auto-complete/Auto-Input-SupplyAds';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import supplyService from '@/services/supplyAdequanceService';
+
 
 const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = null }) => {
   const params = useParams();
@@ -36,6 +38,9 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = nu
   if (!unitId) id = params.id;
 
   const userPermissions = useSelector((state) => state.user.permissions);
+
+  const [fileLoading, setFileLoading] = useState(false);
+  
 
   const hasPermission = (permissions) => {
     if (!permissions) return true;
@@ -64,6 +69,38 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = nu
       onClosedModal();
     }
   }, [success]);
+
+  useEffect(() => {
+    if (formData.bill_file) {
+      setFileLoading(true);
+
+      const formDataToSend = new FormData();
+      formDataToSend.append('bill_file', formData.bill_file);
+
+      supplyService
+        .getFieldsDocuments(formDataToSend)
+        .then((response) => {
+          handleChange('name', response.name);
+          handleChange('account_number', response.account);
+          handleChange('unit_number', response.uc);
+
+          const typeInitial = response.type.toLowerCase().charAt(0);
+          const statusMap = {
+            m: 'M',
+            b: 'B',
+            t: 'T',
+          };
+
+          handleChange('type', statusMap[typeInitial] || 'Unknown');
+        })
+        .catch((error) => {
+          console.error('Error uploading file:', error);
+        })
+        .finally(() => {
+          setFileLoading(false);
+        });
+    }
+  }, [formData.bill_file]);
 
   return (
     <Box>
@@ -204,12 +241,31 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = nu
                     <Box>
                       <Typography variant="body1" color="textSecondary">
                         Atualmente:{' '}
-                        <Link href={formData.bill_file} target="_blank" rel="noopener noreferrer">
-                          {formData.bill_file?.length > 30
-                            ? `${formData.bill_file.slice(0, 30)}...`
-                            : formData.bill_file}
-                        </Link>
+                        {formData.bill_file ? (
+                          <Link
+                            href={URL.createObjectURL(formData.bill_file)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {formData.bill_file.name.length > 30
+                              ? `${formData.bill_file.name.slice(0, 30)}...`
+                              : formData.bill_file.name}
+                          </Link>
+                        ) : (
+                          'Nenhum arquivo selecionado'
+                        )}
                       </Typography>
+
+                      {/* Loading do arquivo */}
+                      {fileLoading && (
+                        <Box display="flex" alignItems="center" mt={1}>
+                          <CircularProgress size={20} color="inherit" />
+                          <Typography variant="caption" color="textSecondary" sx={{ ml: 1 }}>
+                            Carregando documento...
+                          </Typography>
+                        </Box>
+                      )}
+
                       <Box mt={1}>
                         Modificar:
                         <Input

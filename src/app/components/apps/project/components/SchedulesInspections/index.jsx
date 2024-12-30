@@ -27,10 +27,8 @@ function SchedulesInspections({ saleId, userId }) {
 
   useEffect(() => {
     if (projectsList.length > 0) {
-      setCustomerId(projectsList[0]?.sale?.customer);
-      
-      
-      console.log('Updated customerId:', projectsList[0]?.sale?.customer);
+      setCustomerId(projectsList[0]?.sale?.customer?.id);
+      console.log('Updated customerId:', projectsList[0]?.sale?.customer?.id);
     }
   }, [projectsList]);
   

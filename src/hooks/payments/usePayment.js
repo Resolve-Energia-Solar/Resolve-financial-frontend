@@ -29,12 +29,12 @@ const usePayment = (id) => {
     if (response) {
       setOpenModal(true)
       setIconComponents(CheckCircleIcon)
-      setText({title:'Sucesso', message:'O pagamento foi salvo com sucesso!'})
+      setText({title:'Sucesso', message:'Status Modificado com sucesso!'})
       setRowSelected({ ...rowSelected, sale: { ...rowSelected.sale, [name]: value } })
     } else {
       setOpenModal(true)
       setIconComponents(ErrorIcon)
-      setText({title:'Erro', message:'Erro ao salvar o pagamento!'})
+      setText({title:'Erro', message:'Erro ao salvar status de pagamento!'})
     }
   }
 

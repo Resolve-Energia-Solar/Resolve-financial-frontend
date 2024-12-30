@@ -2,6 +2,7 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import { motion } from 'framer-motion';
 
 const style = {
   position: 'absolute',
@@ -39,7 +40,15 @@ export default function BasicModal({ message, title, open, onClose, IconComponen
             {message}
           </Typography>
 
-          <IconComponent sx={{p: 2, fontSize: 150, color: 'success.main',  }}/>
+          <motion.div
+          initial={{ scale: 0, rotate: 0 }}
+          animate={{ scale: 1, rotate: 360 }}
+          transition={{ duration: 0.5 }}
+        >
+           <IconComponent sx={{p: 2, fontSize: 150, color: 'success.main',  }}/>
+        </motion.div>
+
+         
         </Box>
     </Modal>
     
