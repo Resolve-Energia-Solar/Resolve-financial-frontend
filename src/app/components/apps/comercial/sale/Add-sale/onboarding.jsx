@@ -23,10 +23,11 @@ import saleService from '@/services/saleService';
 import paymentService from '@/services/paymentService';
 import ChecklistSales from '../../../checklist/Checklist-list/ChecklistSales';
 import SchedulesInspections from '../../../project/components/SchedulesInspections';
+import { StepContent, useMediaQuery, useTheme } from '@mui/material';
 
 const steps = ['Dados do Cliente', 'Produtos', 'Financeiro', 'Documentos', 'Agendar Vistoria'];
 
-export default function OnboardingCreateSale({ onClose=null, onEdit=null }) {
+export default function OnboardingCreateSale({ onClose = null, onEdit = null }) {
   return (
     <OnboardingSaleContextProvider>
       <OnboardingCreateSaleContent onClose={onClose} onEdit={onEdit} />
@@ -34,7 +35,7 @@ export default function OnboardingCreateSale({ onClose=null, onEdit=null }) {
   );
 }
 
-function OnboardingCreateSaleContent({ onClose=null, onEdit=null }) {
+function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
   const [activeStep, setActiveStep] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDialogPaymentOpen, setIsDialogPaymentOpen] = useState(false);
@@ -142,8 +143,12 @@ function OnboardingCreateSaleContent({ onClose=null, onEdit=null }) {
   productIds ? (formData.productIds = productIds) : null;
   user?.user ? (formData.sellerId = user.user.id) : null;
 
-  user?.user?.employee?.user_manager ? (formData.salesSupervisorId = user?.user?.employee?.user_manager) : null;
-  user?.user?.employee?.user_manager ? (formData.salesManagerId = user?.user?.employee?.user_manager) : null;
+  user?.user?.employee?.user_manager
+    ? (formData.salesSupervisorId = user?.user?.employee?.user_manager)
+    : null;
+  user?.user?.employee?.user_manager
+    ? (formData.salesManagerId = user?.user?.employee?.user_manager)
+    : null;
 
   formData.status = 'P';
   user?.user?.employee?.branch ? (formData.branchId = user?.user?.employee?.branch?.id) : null;
@@ -182,42 +187,32 @@ function OnboardingCreateSaleContent({ onClose=null, onEdit=null }) {
       case 3:
         return <ChecklistSales saleId={saleId} />;
       case 4:
-        return <SchedulesInspections userId={customerId} saleId={saleId} />
+        return <SchedulesInspections userId={customerId} saleId={saleId} />;
 
       default:
         return <div>Parabéns, você finalizou o processo de venda!</div>;
     }
   };
 
-  return (
-    <Box
-      sx={{
-        width: '100%',
-        padding: 3,
-        height: { xs: '80vh', md: '70vh' },
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <Stepper activeStep={activeStep}>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-
-      <Box sx={{ flexGrow: 1, mt: 2, mb: 1 }}>{renderStepContent(activeStep)}</Box>
-
-      {activeStep === steps.length ? (
-        <Fragment>
+  const StepperButtons = ({
+    activeStep,
+    steps,
+    onEdit,
+    handleBack,
+    handleNext,
+    isDisabledNext,
+    saleId,
+  }) => {
+    const renderStepperButtons = () => {
+      if (activeStep === steps.length) {
+        return (
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Box sx={{ flex: '1 1 auto' }} />
             <Button onClick={() => onEdit(saleId)}>Finalizar</Button>
           </Box>
-        </Fragment>
-      ) : (
-        <Fragment>
+        );
+      } else {
+        return (
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"
@@ -232,7 +227,62 @@ function OnboardingCreateSaleContent({ onClose=null, onEdit=null }) {
               Próximo
             </Button>
           </Box>
-        </Fragment>
+        );
+      }
+    };
+
+    return <Fragment>{renderStepperButtons()}</Fragment>;
+  };
+
+  return (
+    <Box
+      sx={{
+        width: '100%',
+        padding: 3,
+        height: { xs: '80vh', md: '70vh' },
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <Stepper
+        activeStep={activeStep}
+        orientation={useMediaQuery(useTheme().breakpoints.down('md')) ? 'vertical' : 'horizontal'}
+      >
+        {steps.map((label) => (
+          <Step key={label}>
+            <StepLabel>{label}</StepLabel>
+            {useMediaQuery(useTheme().breakpoints.down('md')) && (
+              <StepContent>
+                <Box sx={{ flexGrow: 1, mt: 2, mb: 1 }}>{renderStepContent(activeStep)}</Box>
+
+                <StepperButtons
+                  activeStep={activeStep}
+                  steps={steps}
+                  onEdit={onEdit}
+                  handleBack={handleBack}
+                  handleNext={handleNext}
+                  isDisabledNext={isDisabledNext}
+                  saleId={saleId}
+                />
+              </StepContent>
+            )}
+          </Step>
+        ))}
+      </Stepper>
+
+      {useMediaQuery(useTheme().breakpoints.up('md')) && (
+        <>
+          <Box sx={{ flexGrow: 1, mt: 2, mb: 1 }}>{renderStepContent(activeStep)}</Box>
+          <StepperButtons
+            activeStep={activeStep}
+            steps={steps}
+            onEdit={onEdit}
+            handleBack={handleBack}
+            handleNext={handleNext}
+            isDisabledNext={isDisabledNext}
+            saleId={saleId}
+          />
+        </>
       )}
 
       <Dialog open={isDialogOpen} onClose={handleDialogClose}>
@@ -254,7 +304,19 @@ function OnboardingCreateSaleContent({ onClose=null, onEdit=null }) {
         <DialogTitle>Atenção</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Para finalizar esse processo, é necessário criar pagamentos que somem o valor total da venda, que é de <b>{Number(totalValue).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</b>. Atualmente, o valor total dos pagamentos criados é de <b>{Number(totalPayments).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</b>. Por favor, crie pagamentos suficientes para atingir o valor total da venda.
+            Para finalizar esse processo, é necessário criar pagamentos que somem o valor total da
+            venda, que é de{' '}
+            <b>
+              {Number(totalValue).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            </b>
+            . Atualmente, o valor total dos pagamentos criados é de{' '}
+            <b>
+              {Number(totalPayments).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              })}
+            </b>
+            . Por favor, crie pagamentos suficientes para atingir o valor total da venda.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -268,7 +330,8 @@ function OnboardingCreateSaleContent({ onClose=null, onEdit=null }) {
         <DialogTitle>Atenção</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Os dados do checklist de rateio não estão completos. Por favor, complete o checklist para continuar.
+            Os dados do checklist de rateio não estão completos. Por favor, complete o checklist
+            para continuar.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -277,7 +340,6 @@ function OnboardingCreateSaleContent({ onClose=null, onEdit=null }) {
           </Button>
         </DialogActions>
       </Dialog>
-
     </Box>
   );
 }
