@@ -36,6 +36,7 @@ import {
   AddBoxRounded,
   Delete as DeleteIcon,
   Edit as EditIcon,
+  Map as Mapsicon,
   MoreVert as MoreVertIcon,
   ArrowDropDown as ArrowDropDownIcon,
   ArrowDropUp as ArrowDropUpIcon,
@@ -141,6 +142,10 @@ const SchedulingList = () => {
 
   const handleEditClick = (id) => {
     router.push(`/apps/inspections/schedule/${id}/update`);
+  };
+
+  const handleViewClick = (id) => {
+    router.push(`/apps/inspections/schedule/${id}/maps`);
   };
 
   const handleRowClick = (schedule) => {
@@ -455,6 +460,18 @@ const SchedulingList = () => {
                         horizontal: 'right',
                       }}
                     >
+
+                      {schedule.going_to_location_at != null && schedule.execution_started_at == null && (
+                        <MenuItem
+                        onClick={() => {
+                          handleViewClick(schedule.id);
+                          handleMenuClose();
+                        }}
+                      >
+                        <Mapsicon fontSize="small" sx={{ mr: 1 }} />
+                        Acompanhar no mapa
+                      </MenuItem>)}
+                        
                       <MenuItem
                         onClick={() => {
                           handleEditClick(schedule.id);

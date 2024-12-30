@@ -111,7 +111,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
 
   return (
     <Box {...props}>
-      <Tabs value={value} onChange={handleChangeTab}>
+      <Tabs value={value} onChange={handleChangeTab} variant="scrollable" scrollButtons="auto">
         <Tab label="Cliente" />
         <Tab label="Vistoria" />
         <Tab label="Venda" />
