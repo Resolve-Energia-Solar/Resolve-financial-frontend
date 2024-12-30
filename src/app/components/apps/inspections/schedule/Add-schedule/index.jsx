@@ -40,7 +40,7 @@ const ScheduleFormCreate = ({
   
   const statusOptions = [
     { value: 'Pendente', label: 'Pendente' },
-    { value: 'Concluído', label: 'Concluído' },
+    { value: 'Confirmado', label: 'Confirmado' },
     { value: 'Cancelado', label: 'Cancelado' },
   ];
 
