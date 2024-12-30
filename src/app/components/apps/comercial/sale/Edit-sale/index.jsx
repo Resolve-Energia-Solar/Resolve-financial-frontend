@@ -330,6 +330,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
         open={openPreview}
         onClose={() => setOpenPreview(false)}
         userId={saleData?.customer?.id}
+        saleId={id_sale}
       />
     </Box>
   );

@@ -292,12 +292,13 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
                             onChange={(e) =>
                               handleInstallmentChange(index, 'is_paid', e.target.checked)
                             }
-                            ß
                           />
                         }
                         label={installment.is_paid ? 'Pago' : 'Pendente'}
                       />
                     </TableCell>
+                    { formData.payment_type === 'F' || formData.payment_type === 'P' && (
+
                     <TableCell>
                       <Tooltip title="Add Item">
                         <IconButton onClick={handleAddItem} color="primary">
@@ -310,6 +311,7 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
                         </IconButton>
                       </Tooltip>
                     </TableCell>
+                    )}
                   </TableRow>
                 ))
               )}

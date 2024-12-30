@@ -307,6 +307,7 @@ const EditDrawer = ({ saleId = null, onClosedModal = null, refresh }) => {
                         open={openPreview}
                         onClose={() => setOpenPreview(false)}
                         userId={saleData?.customer?.id}
+                        saleId={id_sale}
                     />
                 </Box>
             </CardContent>
