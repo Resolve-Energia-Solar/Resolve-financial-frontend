@@ -42,6 +42,7 @@ import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
 
 /* services */
 import deadlineService from '@/services/deadlineService';
+import DeadlineDrawerFilters from '../DeadlineDrawerFilters';
 
 const DeadlineList = () => {
   const router = useRouter();
@@ -180,7 +181,9 @@ const DeadlineList = () => {
         >
           Adicionar Prazo
         </Button>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}></Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <DeadlineDrawerFilters />
+        </Box>
       </Box>
 
       <TableContainer
