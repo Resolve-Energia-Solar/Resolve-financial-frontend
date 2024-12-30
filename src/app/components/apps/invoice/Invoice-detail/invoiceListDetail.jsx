@@ -127,7 +127,7 @@ const PaymentCardDetail = ({ sale = null }) => {
                       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Box>
                           <Typography fontSize="14px" color="text.secondary">
-                            {payment.installments.length}x parcelas
+                            {payment?.installments?.length}x parcelas
                           </Typography>
                           <Typography fontSize="14px">
                             {Number(payment?.value).toLocaleString('pt-BR', {
