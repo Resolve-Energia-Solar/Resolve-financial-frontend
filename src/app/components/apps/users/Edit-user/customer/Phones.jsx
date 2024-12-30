@@ -53,8 +53,8 @@ export default function ListPhones({ userId = null }) {
   }, [userId, refresh]);
 
   const handleEditClick = (phone) => {
-    setSelectedPhone(phone); // Define o telefone selecionado
-    setOpenEditModal(true); // Abre o modal de edição
+    setSelectedPhone(phone);
+    setOpenEditModal(true);
   };
 
   return (
