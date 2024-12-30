@@ -25,7 +25,6 @@ import {
 import { useRouter } from 'next/navigation';
 import projectService from '@/services/projectService';
 import DrawerFiltersProject from '../components/DrawerFilters/DrawerFiltersProject';
-import ActionFlash from '../components/flashAction/actionFlash';
 import StatusChip from '@/utils/status/ProjectStatusChip';
 
 const ProjectList = ({ onClick }) => {
@@ -43,7 +42,7 @@ const ProjectList = ({ onClick }) => {
       try {
         const data = await projectService.getProjects({ page: page + 1, limit: rowsPerPage });
         setProjectsList(data.results);
-        setTotalRows(data.count); // Certifique-se de que o total de itens vem como `count`
+        setTotalRows(data.count);
       } catch (err) {
         setError('Erro ao carregar Projetos');
       } finally {
@@ -60,7 +59,7 @@ const ProjectList = ({ onClick }) => {
 
   const handleRowsPerPageChange = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reinicia para a primeira página ao alterar o número de linhas
+    setPage(0);
   };
 
   return (
@@ -79,7 +78,6 @@ const ProjectList = ({ onClick }) => {
         </Button>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          {projectsList.length > 0 && <ActionFlash value={projectsList} />}
           <DrawerFiltersProject />
         </Box>
       </Box>
@@ -139,7 +137,6 @@ const ProjectList = ({ onClick }) => {
             <TableBody>
               {projectsList.map((item) => (
                 <TableRow key={item.id} hover onClick={() => onClick(item)}>
-                  <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                   <TableCell>{item.sale?.contract_number}</TableCell>
                   <TableCell>
                     <StatusChip status={item.status} />

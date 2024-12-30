@@ -74,11 +74,15 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
     { value: 'D', label: 'Débito' },
     { value: 'B', label: 'Boleto' },
     { value: 'F', label: 'Financiamento' },
-    { value: 'PI', label: 'Parcelamento Interno'},
+    { value: 'PI', label: 'Parcelamento Interno' },
     { value: 'P', label: 'Pix' },
   ];
 
   sale ? (formData.sale_id = sale) : null;
+
+  if (formData.payment_type !== 'F' && formData.payment_type !== 'C') {
+    formData.installments_number = 1;
+  }
 
   useEffect(() => {
     if (formData.payment_type !== 'F') formData.financier_id = null;
@@ -104,7 +108,7 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
             color="primary"
             onClick={handleSave}
             disabled={formLoading}
-            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null} // Ícone de loading
+            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
           >
             {formLoading ? 'Salvando...' : 'Salvar Alterações'}{' '}
           </Button>
@@ -183,34 +187,38 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
             {...(formErrors.due_date && { error: true, helperText: formErrors.due_date })}
           />
         </Grid>
-        {formData.create_installments && (
-          <Grid item xs={12} sm={12}>
-            <CustomFormLabel htmlFor="valor">Número de Parcelas</CustomFormLabel>
-            <CustomTextField
-              name="value"
-              placeholder="1"
-              variant="outlined"
-              fullWidth
-              value={formData.installments_number}
-              onChange={(e) => handleChange('installments_number', e.target.value)}
-              {...(formErrors.installments_number && {
-                error: true,
-                helperText: formErrors.installments_number,
-              })}
-            />
-          </Grid>
-        )}
-        <Grid item xs={12} sm={6}>
-          <FormControlLabel
-            control={
-              <CustomSwitch
-                checked={formData.create_installments}
-                onChange={(e) => handleChange('create_installments', e.target.checked)}
+        {(formData.payment_type === 'F' || formData.payment_type === 'C') && (
+          <>
+            {formData.create_installments && (
+              <Grid item xs={12} sm={12}>
+                <CustomFormLabel htmlFor="valor">Número de Parcelas</CustomFormLabel>
+                <CustomTextField
+                  name="value"
+                  placeholder="1"
+                  variant="outlined"
+                  fullWidth
+                  value={formData.installments_number}
+                  onChange={(e) => handleChange('installments_number', e.target.value)}
+                  {...(formErrors.installments_number && {
+                    error: true,
+                    helperText: formErrors.installments_number,
+                  })}
+                />
+              </Grid>
+            )}
+            <Grid item xs={12} sm={6}>
+              <FormControlLabel
+                control={
+                  <CustomSwitch
+                    checked={formData.create_installments}
+                    onChange={(e) => handleChange('create_installments', e.target.checked)}
+                  />
+                }
+                label={formData.create_installments ? 'Gerar parcelas' : 'Não gerar parcelas'}
               />
-            }
-            label={formData.create_installments ? 'Gerar parcelas' : 'Não gerar parcelas'}
-          />
-        </Grid>
+            </Grid>
+          </>
+        )}
       </Grid>
       {!formData.create_installments && (
         <Paper variant="outlined">
@@ -335,6 +343,7 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
           </TableContainer>
         </Paper>
       )}
+
       {/* <Box p={3} backgroundColor="primary.light" mt={3}>
         <Box display="flex" justifyContent="end" gap={3} mb={3}>
           <Typography variant="body1" fontWeight={600}>
