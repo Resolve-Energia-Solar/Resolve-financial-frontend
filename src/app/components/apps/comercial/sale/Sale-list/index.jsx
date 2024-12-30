@@ -631,7 +631,7 @@ const SaleList = () => {
         </Typography>
       </Backdrop>
       <SideDrawer open={openDrawer} onClose={() => toggleDrawerClosed(false)} title="Detalhamento da Venda">
-        <EditSalePage saleId={rowSelected?.id} sx={{ maxWidth: '70vw', minWidth: '50vw' }} />
+        <EditSalePage saleId={rowSelected?.id} />
       </SideDrawer>
     </Box>
   );
