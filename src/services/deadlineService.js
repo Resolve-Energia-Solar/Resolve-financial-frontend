@@ -1,9 +1,13 @@
 import apiClient from './apiClient';
 
 const deadlineService = {
-  getDeadlines: async () => {
+  getDeadlines: async ({ ordering, params, nextPage }) => {
     try {
-      const response = await apiClient.get('/api/deadlines/');
+      const urlParams = params ? `&${params}` : '';
+      const urlNextPage = nextPage ? `&page=${nextPage}` : '';
+      const response = await apiClient.get(
+        `/api/deadlines/?ordering=${ordering || ''}${urlParams}${urlNextPage}`,
+      );
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar prazos:', error);
