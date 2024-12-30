@@ -17,12 +17,6 @@ export default function CreateProject() {
 
   const router = useRouter();
 
-  const supply_type_options = [
-    { value: 'M', label: 'Monofásico' },
-    { value: 'B', label: 'Bifásico' },
-    { value: 'T', label: 'Trifásico' },
-  ];
-
   const status_options = [
     { value: 'P', label: 'Pendente' },
     { value: 'CO', label: 'Concluido' },
@@ -55,41 +49,11 @@ export default function CreateProject() {
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="name">Homologador</CustomFormLabel>
-          <AutoCompleteUser
-            onChange={(id) => handleChange('homologator_id', id)}
-            value={formData.homologator_id}
-            {...(formErrors.homologator_id && {
-              error: true,
-              helperText: formErrors.homologator_id,
-            })}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="valor">KWp</CustomFormLabel>
-          <CustomTextField
-            name="kwp"
-            variant="outlined"
-            fullWidth
-            value={formData.kwp}
-            onChange={(e) => handleChange('kwp', e.target.value)}
-            {...(formErrors.kwp && { error: true, helperText: formErrors.kwp })}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
           <FormSelect
             label="Status"
             options={status_options}
             value={formData.status}
             onChange={(e) => handleChange('status', e.target.value)}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <FormSelect
-            label="Tipo de Fornecimento"
-            options={supply_type_options}
-            value={formData.supply_type}
-            onChange={(e) => handleChange('supply_type', e.target.value)}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={4}>
@@ -108,14 +72,6 @@ export default function CreateProject() {
             value={formData.end_date}
             onChange={(newValue) => handleChange('end_date', newValue)}
             {...(formErrors.end_date && { error: true, helperText: formErrors.end_date })}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
-          <AutoCompleteAddresses
-            onChange={(id) => handleChange('addresses_ids', id)}
-            value={formData.addresses_ids}
-            {...(formErrors.addresses_ids && { error: true, helperText: formErrors.addresses_ids })}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={12}>
