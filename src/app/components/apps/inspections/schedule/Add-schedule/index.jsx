@@ -31,6 +31,10 @@ const ScheduleFormCreate = ({
 
   const { formData, handleChange, handleSave, formErrors, success } = useSheduleForm();
 
+  const [alertOpen, setAlertOpen] = React.useState(false);
+  const [alertMessage, setAlertMessage] = React.useState('');
+  const [alertType, setAlertType] = React.useState('success');
+
   serviceId ? (formData.service_id = serviceId) : null;
   projectId ? (formData.project_id = projectId) : null;
   customerId ? (formData.customer_id = customerId) : null;
