@@ -1,10 +1,17 @@
 import apiClient from './apiClient'
 
 const materialService = {
-  getMaterials: async () => {
+  getMaterials: async ({ page = 1, limit = 10 } = {}) => {
     try {
       const url = `/api/materials/`
-      const response = await apiClient.get(url)
+      const response = await apiClient.get(url,
+        {
+          params: {
+            page,
+            limit
+          }
+        }
+      )
       return response.data
     } catch (error) {
       console.error('Erro ao buscar materiais:', error)

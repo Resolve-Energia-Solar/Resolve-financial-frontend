@@ -111,14 +111,14 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null, refresh }) => {
 
   return (
     <Box>
-      <Tabs value={value} onChange={handleChangeTab}>
+      <Tabs value={value} onChange={handleChangeTab} variant="scrollable" scrollButtons="auto">
         <Tab label="Cliente" />
         <Tab label="Venda" />
         <Tab label="Anexos" />
         <Tab label="Pagamentos" />
         <Tab label="Checklist" />
         <Tab label="Histórico" />
-        {/* <Tab label="Envios" /> */}
+        <Tab label="Envios" />
       </Tabs>
       {loading ? (
         <FormPageSkeleton />

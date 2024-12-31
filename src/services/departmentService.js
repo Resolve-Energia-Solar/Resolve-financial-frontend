@@ -1,9 +1,14 @@
 import apiClient from "./apiClient";
 
 const departmentService = {
-  getDepartment: async () => {
+  getDepartment: async ({ page = 1, limit = 10 } = {}) => {
     try {
-      const response = await apiClient.get('/api/departments/');
+      const response = await apiClient.get('/api/departments/',
+        {params: {
+            page,
+            limit
+          }}
+      );
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar departamentos:', error);

@@ -57,11 +57,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
 
   const id_sale = id;
 
-  console.log('ID Sale: ', id_sale);
-
   const { loading, error, saleData } = useSale(id);
-
-  console.log('Sale Data: ', saleData);
 
   const {
     formData,
@@ -115,7 +111,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
 
   return (
     <Box {...props}>
-      <Tabs value={value} onChange={handleChangeTab}>
+      <Tabs value={value} onChange={handleChangeTab} variant="scrollable" scrollButtons="auto">
         <Tab label="Cliente" />
         <Tab label="Vistoria" />
         <Tab label="Venda" />
@@ -136,7 +132,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
             </Box>
           )}
 
-          {value === 1 && <SchedulesInspections userId={saleData.customer.id}saleId={id_sale} />}
+          {value === 1 && <SchedulesInspections userId={saleData.customer.id} saleId={id_sale} />}
 
           {value === 2 && (
             <>
@@ -334,6 +330,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
         open={openPreview}
         onClose={() => setOpenPreview(false)}
         userId={saleData?.customer?.id}
+        saleId={id_sale}
       />
     </Box>
   );

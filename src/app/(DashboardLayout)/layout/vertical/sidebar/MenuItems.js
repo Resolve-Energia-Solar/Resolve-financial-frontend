@@ -20,7 +20,9 @@ import {
   IconTools,
   IconHomeQuestion,
   IconMailFast,
-  IconUserDollar
+  IconUserDollar,
+  IconPoint,
+  IconUserPin
 } from '@tabler/icons-react';
 
 const Menuitems = [
@@ -32,25 +34,62 @@ const Menuitems = [
     id: uniqueId(),
     title: 'Quadros',
     icon: IconLayoutKanban,
-    href: '/apps/boards/crm',
+    href: '/',
+    children: [
+      { id: uniqueId(), title: 'CRM', icon: IconPoint, href: '/apps/boards/crm' },
+      { id: uniqueId(), title: 'Operação', icon: IconPoint, href: '/apps/boards/erp' }
+    ],
+
     chip: 'Novo',
     chipColor: 'secondary',
     permissions: ['core.view_board'],
   },
+
   {
     id: uniqueId(),
-    title: 'Quadro Op.',
-    icon: IconLayoutKanban,
-    href: '/apps/boards/erp',
-    chip: 'Novo',
-    chipColor: 'secondary',
-    permissions: ['resolve_crm.view_board'],
-  },
-  {
-    id: uniqueId(),
-    title: 'Agendamentos',
-    icon: IconCalendar,
-    href: '/apps/inspections/schedule',
+    title: 'Serviços de Campo',
+    icon: IconUserPin,
+    href: '/',
+    children: [
+      {
+        id: uniqueId(),
+        title: 'Ordem de Serviço',
+        icon: IconPoint,
+        href: '/apps/inspections/schedule'
+      },
+      {
+        id: uniqueId(),
+        title: 'Tipos de Serviços',
+        icon: IconPoint,
+        href: '/apps/inspections/service-catalog'
+      },
+      {
+        id: uniqueId(),
+        title: 'Categorias',
+        icon: IconPoint,
+        href: '/apps/inspections/category'
+      },
+      {
+        id: uniqueId(),
+        title: 'Contrato de Prazos',
+        icon: IconPoint,
+        href: '/apps/inspections/deadline'
+      },
+      {
+        id: uniqueId(),
+        title: 'Formulários',
+        icon: IconPoint,
+        href: '/apps/inspections/form-builder',
+        permissions: ['inspections.view_forms'],
+      },
+      {
+        id: uniqueId(),
+        title: 'TimeLine',
+        icon: IconChartLine,
+        href: '/apps/timeline',
+        permissions: ['inspections.view_schedule'],
+      }
+    ],
     permissions: ['inspections.view_schedule'],
   },
   {
@@ -62,10 +101,24 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Pagamentos',
+    title: 'Financeiro',
     icon: IconCurrencyDollar,
-    href: '/apps/invoice',
+    href: '/',
     permissions: ['financial.view_payment'],
+    children:[
+      {
+        id: uniqueId(),
+        title: 'Pagamentos',
+        icon: IconPoint,
+        href: '/apps/invoice',
+      },
+      {
+        id: uniqueId(),
+        title: 'Parcelas',
+        icon: IconPoint,
+        href: '/apps/invoice/installments',
+      }
+    ]
   },
   {
     id: uniqueId(),
@@ -76,48 +129,29 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Projetos',
+    title: 'Engenharia',
     icon: IconTools,
-    href: '/apps/project',
+    href: '',
     permissions: ['resolve_crm.view_project'],
-  },
-  {
-    id: uniqueId(),
-    title: 'Solicitações Conce.',
-    icon: IconMailFast,
-    href: '/apps/request',
-    permissions: ['resolve_crm.view_project'],
-  },
-  {
-    id: uniqueId(),
-    title: 'Campanhas',
-    icon: IconStar,
-    href: '/apps/campaign',
-    permissions: ['resolve_crm.view_marketingcampaign'],
-    title: 'Categorias',
-    icon: IconBox,
-    href: '/apps/inspections/category',
-  },
-  {
-    id: uniqueId(),
-    title: 'Prazos',
-    icon: IconClockQuestion,
-    href: '/apps/inspections/deadline',
-    permissions: ['inspections.view_deadline'],
-  },
-  {
-    id: uniqueId(),
-    title: 'Serviços',
-    icon: IconBoxMultiple,
-    href: '/apps/inspections/service-catalog',
-    permissions: ['inspections.view_service'],
-  },
-  {
-    id: uniqueId(),
-    title: 'Formulários',
-    icon: IconFileDescription,
-    href: '/apps/inspections/form-builder',
-    permissions: ['inspections.view_forms'],
+    children: [
+
+      {
+        id: uniqueId(),
+        title: 'Projetos',
+        icon: IconPoint,
+        href: '/apps/project',
+
+        permissions: ['resolve_crm.view_project'],
+      },
+      {
+        id: uniqueId(),
+        title: 'Solicitações Conce.',
+        icon: IconPoint,
+        href: '/apps/request',
+        permissions: ['resolve_crm.view_project'],
+      }
+    ],
+
   },
   {
     id: uniqueId(),
@@ -167,14 +201,8 @@ const Menuitems = [
     icon: IconFileDescription,
     href: '/apps/document-types',
     permissions: ['core.view_documenttype'],
-  },
-  {
-    id: uniqueId(),
-    title: 'TimeLine',
-    icon: IconChartLine,
-    href: '/apps/timeline',
-    permissions: ['inspections.view_schedule'],
   }
+
 ];
 
 export default Menuitems;

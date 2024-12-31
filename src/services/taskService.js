@@ -3,18 +3,18 @@ import apiClient from './apiClient';
 const DEFAULT_ROUTER = '/api/tasks'
 
 const taskService = {
-    index: async (queryString = '') => {
+    index: async (params = {}) => {
         try {
-            const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params: queryString });
+            const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params });
             return response.data;
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
             throw error;
         }
     },
-    find: async (id, queryString = '') => {
+    find: async (id, params={}) => {
         try {
-            const response = await apiClient.get(`${DEFAULT_ROUTER}/${id}/`,  { params: queryString });
+            const response = await apiClient.get(`${DEFAULT_ROUTER}/${id}/`, { params });
             return response.data;
         } catch (error) {
             console.error('Erro ao buscar dados:', error);

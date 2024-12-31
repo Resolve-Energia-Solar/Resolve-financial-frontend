@@ -1,81 +1,122 @@
 'use client';
-import { Grid, Button, Stack, FormControlLabel } from '@mui/material';
-import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
-import PageContainer from '@/app/components/container/PageContainer';
+import { Fragment, useCallback, useEffect, useState } from 'react';
+import Autocomplete from '@mui/material/Autocomplete';
+import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
-import useBranchForm from '@/hooks/branch/useBranchForm';
-import useBranch from '@/hooks/branch/useBranch';
-import ParentCard from '@/app/components/shared/ParentCard';
-import Alert from '@mui/material/Alert';
-import { useParams } from 'next/navigation';
-import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import AutoCompleteUsers from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Users';
+import userService from '@/services/userService';
+import { debounce } from 'lodash';
 
-export default function BranchForm() {
-  const params = useParams();
-  const { id } = params;
+export default function AutoCompleteUsers({ onChange, value = [], error, helperText }) {
+  const [open, setOpen] = useState(false);
+  const [options, setOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState([]);
 
-  const { loading, error, branchData } = useBranch(id); 
+  useEffect(() => {
+    const fetchDefaultUsers = async () => {
+      if (value.length > 0) {
+        try {
+          const users = await Promise.all(value.map(id => userService.getUserById(id)));
+          const formattedUsers = users.map(user => ({
+            id: user.id,
+            name: user.complete_name, // Ajuste conforme o campo do nome do usuário
+          }));
+          setSelectedUsers(formattedUsers);
+        } catch (error) {
+          console.error('Erro ao buscar usuários:', error);
+        }
+      }
+    };
 
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success
-  } = useBranchForm(branchData, id);
+    fetchDefaultUsers();
+  }, [value]);
 
-  if (loading) return <div>Carregando...</div>;
-  if (error) return <div>{error}</div>;
+  const handleChange = (event, newValue) => {
+    setSelectedUsers(newValue);
+    onChange(newValue.map(user => user.id)); // Envia uma lista de IDs
+  };
+
+  const fetchUsersByName = useCallback(
+    debounce(async (name) => {
+      setLoading(true);
+      try {
+        const users = await userService.getUserByName(name); // Chama o endpoint diretamente
+        const formattedUsers = users.results.map(user => ({
+          id: user.id,
+          name: user.complete_name, // Formata conforme necessário
+        }));
+        setOptions(formattedUsers);
+      } catch (error) {
+        console.error('Erro ao buscar usuários:', error);
+      }
+      setLoading(false);
+    }, 300),
+    []
+  );
+
+  const fetchInitialUsers = useCallback(async () => {
+    setLoading(true);
+    try {
+      const users = await userService.getUsers({ limit: 5 }); // Busca inicial com limite
+      const formattedUsers = users.results.map(user => ({
+        id: user.id,
+        name: user.complete_name, // Formata conforme necessário
+      }));
+      setOptions(formattedUsers);
+    } catch (error) {
+      console.error('Erro ao buscar usuários iniciais:', error);
+    }
+    setLoading(false);
+  }, []);
+
+  const handleOpen = () => {
+    setOpen(true);
+    if (options.length === 0) {
+      fetchInitialUsers(); // Busca inicial ao abrir
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setOptions([]);
+  };
 
   return (
-    <PageContainer title="Edição de Franquias" description="Editor de Franquias">
-      <Breadcrumb title="Editar Franquias" />
-      {success && <Alert severity="success" sx={{ marginBottom: 3 }}>A franquias foi atualizada com sucesso!</Alert>}
-      <ParentCard title="Franquias">
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={12} lg={6}>
-          <CustomFormLabel htmlFor="name">Franquia</CustomFormLabel>
-            <CustomTextField
-              name="name"
-              placeholder="Nome da Franquias"
-              fullWidth
-              value={formData.name}
-              onChange={(e) => handleChange('name', e.target.value)}
-              {...(formErrors.name && { error: true, helperText: formErrors.name })}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={12} lg={6}>
-            <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
-            <AutoCompleteAddress 
-              fullWidth
-              onChange={(id) => handleChange('address_id', id)}
-              value={formData.address_id} 
-              {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={12} lg={12}>
-            <CustomFormLabel htmlFor="name">Proprietários</CustomFormLabel>
-            <AutoCompleteUsers 
-              fullWidth
-              onChange={(ids) => handleChange('owners_ids', ids)}
-              value={formData.owners_ids} 
-              {...(formErrors.owners_ids && { error: true, helperText: formErrors.owners_ids })}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-              <Button variant="contained" color="primary" onClick={handleSave}>
-                Editar
-              </Button>
-            </Stack>
-          </Grid>
-        </Grid>
-      </ParentCard>
-    </PageContainer>
+    <div>
+      <Autocomplete
+        multiple
+        sx={{ width: '100%' }}
+        open={open}
+        onOpen={handleOpen}
+        onClose={handleClose}
+        isOptionEqualToValue={(option, value) => option.id === value.id} // Compara pelos IDs
+        getOptionLabel={(option) => option.name}
+        options={options}
+        loading={loading}
+        value={selectedUsers}
+        onInputChange={(event, newInputValue) => {
+          fetchUsersByName(newInputValue);
+        }}
+        onChange={handleChange}
+        renderInput={(params) => (
+          <CustomTextField
+            error={error}
+            helperText={helperText}
+            {...params}
+            size="small"
+            variant="outlined"
+            InputProps={{
+              ...params.InputProps,
+              endAdornment: (
+                <Fragment>
+                  {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                  {params.InputProps.endAdornment}
+                </Fragment>
+              ),
+            }}
+          />
+        )}
+      />
+    </div>
   );
 }

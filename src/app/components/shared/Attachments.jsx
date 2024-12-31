@@ -20,11 +20,18 @@ import attachmentService from '@/services/attachmentService';
 import { Image, UploadFile } from '@mui/icons-material';
 import AttachmentsSkeleton from './AttachmentsSkeleton';
 import useAttachmentForm from '@/hooks/attachments/useAttachmentsForm';
+import FormSelect from '../forms/form-custom/FormSelect';
 
 export default function Attachments({ objectId, contentType, documentTypes }) {
   const theme = useTheme();
   const [selectedAttachment, setSelectedAttachment] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const statusDoc = [
+    { value: 'EA', label: 'Em Análise' },
+    { value: 'A', label: 'Aprovado' },
+    { value: 'R', label: 'Reprovado' },
+  ];
 
   const {
     formData,
@@ -41,7 +48,7 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
     selectedAttachment?.object_id || objectId,
     selectedAttachment?.content_type?.id || parseInt(contentType),
   );
-
+  
   const [attachments, setAttachments] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -110,7 +117,7 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
           <Grid item xs={3} key={attachment.id}>
             <Box
               sx={{
-                border: `2px solid ${theme.palette.primary.main}`,
+                border: `2px solid ${theme.palette.success.main}`,
                 padding: 2,
                 textAlign: 'center',
                 borderRadius: 1,
@@ -210,6 +217,13 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
               <Typography>Clique para adicionar um arquivo</Typography>
               <input type="file" id="file-upload" hidden onChange={handleFileSelect} />
             </Box>
+
+            <FormSelect
+              label="Status do Documento"
+              options={statusDoc}
+              value={formData.status}
+              onChange={(e) => handleChange('status', e.target.value)}
+            />
 
             <CustomTextField
               label="Descrição"
