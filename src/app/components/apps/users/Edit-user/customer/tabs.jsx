@@ -62,11 +62,11 @@ export default function CustomerTabs({ userId = null }) {
         value={value}
         onChange={handleChange}
         aria-label="Vertical tabs example"
-        sx={{ borderRight: 1, borderColor: 'divider' }}
+        sx={{ borderRight: 1, borderColor: 'divider', minWidth: '50px' }}
       >
-        <Tab label={<PersonIcon />} sx={{ p: 0 }} {...a11yProps(0)} />
-        <Tab label={<HomeIcon />} sx={{ p: 0 }}  {...a11yProps(1)} />
-        <Tab label={<PhoneIcon />} sx={{ p: 0 }}   {...a11yProps(2)} />
+        <Tab label={<PersonIcon />} sx={{ p: 0, minWidth: '40px' }} {...a11yProps(0)} />
+        <Tab label={<HomeIcon />} sx={{ p: 0, minWidth: '40px' }}  {...a11yProps(1)} />
+        <Tab label={<PhoneIcon />} sx={{ p: 0, minWidth: '40px' }}   {...a11yProps(2)} />
       </Tabs>
       <TabPanel value={value} index={0}>
         <EditCustomer userId={userId} />

@@ -68,8 +68,27 @@ export default function AutoCompleteSupplyAds({
     [],
   );
 
+  const fetchInitialSupplies = useCallback(async () => {
+    setLoading(true);
+    try {
+      const supplies = await supplyService.getSupplyAd({ limit: 5 });
+      const formattedSupplies = supplies.results.map((supply) => ({
+        id: supply.id,
+        name: supply.name,
+      }));
+      setOptions(formattedSupplies);
+    } catch (error) {
+      console.error('Erro ao buscar adequações de fornecimento:', error);
+    }
+    setLoading(false);
+  }, []);
+
   const handleOpen = () => {
+    console.log('handleOpen');
     setOpen(true);
+    if (options.length === 0) {
+      fetchInitialSupplies();
+    }
   };
 
   const handleClose = () => {

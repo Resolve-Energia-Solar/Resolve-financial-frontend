@@ -1,9 +1,16 @@
 import apiClient from "./apiClient";
 
 const addressService = {
-  getAddresses: async () => {
+  getAddresses: async ({ page = 1, limit = 10 } = {}) => {
     try {
-      const response = await apiClient.get('/api/addresses/');
+      const response = await apiClient.get('/api/addresses/',
+        {
+          params: {
+            page,
+            limit
+          }
+        }
+      );
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar usuários:', error);

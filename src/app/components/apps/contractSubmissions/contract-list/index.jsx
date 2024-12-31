@@ -24,6 +24,7 @@ import axios from 'axios';
 import contractService from '@/services/contract-submissions';
 import ContractChip from '../components/contractChip';
 import EventsTimeline from '../components/EventsTimeline';
+import SendContractButton from '../Send-contract';
 
 function ContractSubmissions({ sale }) {
   const [loading, setLoading] = useState(true);
@@ -122,9 +123,13 @@ function ContractSubmissions({ sale }) {
   return (
     <Fade in={!loading}>
       <Box sx={{ p: 3 }}>
-        <Typography mb={5} variant="h4" gutterBottom>
-          Envios para Clicksign
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Typography variant="h4" gutterBottom>
+            Envios para Clicksign
+          </Typography>
+
+          <SendContractButton sale={sale.id} sx={{ mr: 2 }} />
+        </Box>
 
         {contracts.length === 0 ? (
           <Box textAlign="center" mt={10} mb={5}>
@@ -202,9 +207,7 @@ function ContractSubmissions({ sale }) {
 
         {/* Submenu */}
         <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
-          <MenuItem
-            onClick={() => openModalEvents(selectedContract?.document?.events || [])}
-          >
+          <MenuItem onClick={() => openModalEvents(selectedContract?.document?.events || [])}>
             Eventos
           </MenuItem>
         </Menu>

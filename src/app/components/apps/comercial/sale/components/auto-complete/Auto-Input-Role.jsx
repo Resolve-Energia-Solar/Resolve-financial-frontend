@@ -58,10 +58,29 @@ export default function AutoCompleteRole({ onChange, value, error, helperText })
     }, 300),
     []
   );
+
+  const fetchInitialRoles = useCallback(async () => {
+    setLoading(true);
+    try {
+      const roles = await roleService.getRole({ limit: 5 });
+      const formattedRoles = roles.results.map(role => ({
+        id: role.id,
+        name: role.name,
+      }));
+      setOptions(formattedRoles);
+    } catch (error) {
+      console.error('Erro ao buscar funções:', error);
+    }
+    setLoading(false);
+  }
+  , []);
   
 
   const handleOpen = () => {
     setOpen(true);
+    if (options.length === 0) {
+      fetchInitialRoles();
+    }
   };
 
   const handleClose = () => {

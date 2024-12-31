@@ -66,8 +66,26 @@ export default function AutoCompleteUserTest({ onChange, value }) {
     []
   );
 
+  const fetchInitialUsers = React.useCallback(async () => {
+    setLoading(true);
+    try {
+      const users = await userService.getUser({ limit: 5, page: 1 });
+      const formattedUsers = users.results.map(user => ({
+        id: user.id,
+        name: user.complete_name
+      }));
+      setOptions(formattedUsers);
+    } catch (error) {
+      console.error('Erro ao buscar usuários iniciais:', error);
+    }
+    setLoading(false);
+  }, []);
+
   const handleOpen = () => {
     setOpen(true);
+    if (options.length === 0) {
+      fetchInitialUsers();
+    }
   };
 
   const handleClose = () => {

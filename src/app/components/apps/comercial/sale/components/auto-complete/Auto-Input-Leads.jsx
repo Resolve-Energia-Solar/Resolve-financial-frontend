@@ -61,8 +61,25 @@ export default function AutoCompleteLead({ onChange, value, error, helperText, d
     []
   );
 
+  const fetchInitialLeads = useCallback(async () => {
+    setLoading(true);
+    try {
+      const leads = await leadService.getLeads();
+      const formattedLeads = leads.results.map((lead) => ({
+        id: lead.id,
+        name: lead.name,
+      }));
+      setOptions(formattedLeads);
+    } catch (error) {
+      console.error('Erro ao buscar leads:', error);
+    }
+  }, []);
+
   const handleOpen = () => {
     setOpen(true);
+    if (options.length === 0) {
+      fetchInitialLeads();
+    }
   };
 
   const handleClose = () => {

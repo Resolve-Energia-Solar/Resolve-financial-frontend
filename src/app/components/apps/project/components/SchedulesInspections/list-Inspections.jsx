@@ -17,14 +17,11 @@ import {
   DialogContent,
   DialogActions,
 } from '@mui/material';
-import { Edit } from '@mui/icons-material';
+import { Edit, KeyboardArrowRight } from '@mui/icons-material';
 import { IconTrash } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import unitService from '@/services/unitService';
 import scheduleService from '@/services/scheduleService';
-import EditChecklistPage from '../../../checklist/Edit-checklist';
 import SupplyChip from '../../../checklist/components/SupplyChip';
-import CreateChecklistPage from '../../../checklist/Add-checklist';
 import ScheduleFormCreate from '../../../inspections/schedule/Add-schedule';
 import ScheduleFormEdit from '../../../inspections/schedule/Edit-schedule';
 
@@ -34,9 +31,14 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedUnitId, setSelectedUnitId] = useState(null);
   const [AddModalOpen, setAddModalOpen] = useState(false);
+  const [openModelInspectionNotAssociated, setOpenModelInspectionNotAssociated] = useState(false);
   const [confirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [unitToDelete, setUnitToDelete] = useState(null);
+  const [confirmAssociateModalOpen, setConfirmAssociateModalOpen] = useState(false);
+
+  const [inspectionSelected, setInspectionSelected] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [inspectionsNotAssociated, setInspectionsNotAssociated] = useState([]);
 
   const [reload, setReload] = useState(false);
 
@@ -58,8 +60,25 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
     fetchUnits();
   }, [projectId, reload]);
 
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const response = await scheduleService.getAllSchedulesInspectionByCustomer(customerId);
+        const filteredResults = response.results.filter((item) => item.project?.sale_id === null);
+        setInspectionsNotAssociated(filteredResults);
+        console.log('--->', filteredResults);
+      } catch (error) {
+        console.error('Erro ao buscar agendamentos:', error);
+      }
+    };
+
+    if (customerId) {
+      fetch();
+    }
+  }, [customerId, reload]);
+
   const [units, setUnits] = useState([]);
-  console.log('product', product);  
+  console.log('product', product);
 
   const handleEdit = (unitId) => {
     setSelectedUnitId(unitId);
@@ -69,7 +88,6 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
   const handleAdd = () => {
     setAddModalOpen(true);
   };
-
 
   const handleDelete = async (unitId) => {
     try {
@@ -81,9 +99,25 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
     }
   };
 
+  const AssociateProject = async (inspectionId) => {
+    try {
+      await scheduleService.patchSchedule(inspectionId, { project_id: projectId });
+      reloadPage();
+      setConfirmAssociateModalOpen(false);
+      setOpenModelInspectionNotAssociated(false);
+    } catch (error) {
+      console.error('Erro ao associar a unidade', error);
+    }
+  };
+
   const openDeleteModal = (unitId) => {
-    setUnitToDelete(unitId);
+    setInspectionSelected(unitId);
     setConfirmDeleteModalOpen(true);
+  };
+
+  const openAssociateModal = (unitId) => {
+    setInspectionSelected(unitId);
+    setConfirmAssociateModalOpen(true);
   };
 
   if (loading) {
@@ -133,7 +167,7 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
               {units.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} align="center">
-                    <Typography variant="body2">Nenhuma unidade disponível</Typography>
+                    <Typography variant="body2">Nenhuma vistoria agendada</Typography>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -143,9 +177,7 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
                       <Typography variant="body2">{unit?.schedule_date}</Typography>
                     </TableCell>
                     <TableCell align="center">
-                        <Typography variant="body2">
-                          {unit?.schedule_start_time}
-                        </Typography>
+                      <Typography variant="body2">{unit?.schedule_start_time}</Typography>
                     </TableCell>
                     <TableCell align="center">
                       <Typography variant="body2">
@@ -158,7 +190,9 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
-                      <Typography variant="body2"><SupplyChip status={unit?.status} /></Typography>
+                      <Typography variant="body2">
+                        <SupplyChip status={unit?.status} />
+                      </Typography>
                     </TableCell>
                     <TableCell align="center">
                       <Tooltip title="Edit Item">
@@ -180,6 +214,17 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
                   <Button variant="contained" color="primary" onClick={() => handleAdd()}>
                     Agendar Vistoria
                   </Button>
+                  <Typography
+                    variant="body2"
+                    color="primary"
+                    component="a"
+                    display="block"
+                    mt={1}
+                    sx={{ cursor: 'pointer' }}
+                    onClick={() => setOpenModelInspectionNotAssociated(true)}
+                  >
+                    Adicionar uma vistoria já existente
+                  </Typography>
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -215,8 +260,91 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
         </DialogContent>
       </Dialog>
 
-      {/* Modal de Confirmação de Exclusão */}
-      <Dialog open={confirmDeleteModalOpen} onClose={() => setConfirmDeleteModalOpen(false)} maxWidth="xs" fullWidth>
+      <Dialog open={openModelInspectionNotAssociated} onClose={() => setOpenModelInspectionNotAssociated(false)} maxWidth="md" fullWidth>
+        <DialogTitle>Adicionar uma vistoria já existente</DialogTitle>
+        <DialogContent>
+          <TableContainer sx={{ whiteSpace: { xs: 'nowrap', md: 'unset' } }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">
+                    <Typography variant="h6" fontSize="14px">
+                      Data da Vistoria
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Typography variant="h6" fontSize="14px">
+                      Horário de Início
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Typography variant="h6" fontSize="14px">
+                      Horário de Término
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Typography variant="h6" fontSize="14px">
+                      Status
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Typography variant="h6" fontSize="14px">
+                      Ações
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {inspectionsNotAssociated.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} align="center">
+                      <Typography variant="body2">Nenhuma vistoria encontrada para este cliente</Typography>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  inspectionsNotAssociated.map((unit) => (
+                    <TableRow key={unit.id}>
+                      <TableCell align="center">
+                        <Typography variant="body2">{unit?.schedule_date}</Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography variant="body2">{unit?.schedule_start_time}</Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography variant="body2">{unit?.schedule_end_time}</Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography variant="body2">
+                          <SupplyChip status={unit?.status} />
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Tooltip title="Editar Item">
+                          <IconButton color="primary" onClick={() => handleEdit(unit.id)}>
+                            <Edit width={22} />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Associar Item">
+                          <IconButton color="success" onClick={() => openAssociateModal(unit.id)}>
+                            <KeyboardArrowRight width={22} />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={confirmDeleteModalOpen}
+        onClose={() => setConfirmDeleteModalOpen(false)}
+        maxWidth="xs"
+        fullWidth
+      >
         <DialogTitle>Confirmar Exclusão</DialogTitle>
         <DialogContent>
           <Typography variant="body2">
@@ -227,12 +355,33 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
           <Button onClick={() => setConfirmDeleteModalOpen(false)} color="primary">
             Cancelar
           </Button>
-          <Button onClick={() => handleDelete(unitToDelete)} color="error">
+          <Button onClick={() => handleDelete(inspectionSelected)} color="error">
             Excluir
           </Button>
         </DialogActions>
       </Dialog>
 
+      <Dialog
+        open={confirmAssociateModalOpen}
+        onClose={() => setConfirmAssociateModalOpen(false)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>Confirmar Associação</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2">
+            Tem certeza que deseja associar esta vistoria ao projeto? Esta ação não pode ser desfeita.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmAssociateModalOpen(false)} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={() => AssociateProject(inspectionSelected)} color="warning">
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
