@@ -184,6 +184,10 @@ const useScheduleForm = (initialData, id) => {
     }
   }, [formData.schedule_date, formData.schedule_start_time, serviceData]);
 
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, schedule_start_time: '' }));
+  }, [formData.schedule_date]);
+
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (
