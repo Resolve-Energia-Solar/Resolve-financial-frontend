@@ -128,7 +128,6 @@ const ProjectList = ({ onClick }) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Nome contratante</TableCell>
                 <TableCell>Número do Contrato</TableCell>
                 <TableCell>Status do Projeto</TableCell>
                 <TableCell>Ações</TableCell>

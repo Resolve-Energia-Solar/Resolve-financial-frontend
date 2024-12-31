@@ -65,8 +65,6 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
     handleDeleteItem,
   } = usePaymentForm(paymentData, id);
 
-  console.log('Payment Data: ', formData);
-
   useEffect(() => {
     if (success) {
       if (onClosedModal) {
