@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 /* material */
-import { Grid, Button, Stack, Tooltip } from '@mui/material';
+import { Grid, Button, Stack, Tooltip, Snackbar, Alert } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 
 /* components */
@@ -37,7 +37,7 @@ const ScheduleFormCreate = ({
   products.length > 0 ? (formData.products_ids = products) : null;
 
   console.log('customerId', customerId);
-  
+
   const statusOptions = [
     { value: 'Pendente', label: 'Pendente' },
     { value: 'Confirmado', label: 'Confirmado' },
@@ -64,6 +64,61 @@ const ScheduleFormCreate = ({
       }
     }
   }, [success]);
+
+  const showAlert = (message, type) => {
+    setAlertMessage(message);
+    setAlertType(type);
+    setAlertOpen(true);
+  };
+
+  const handleAlertClose = () => {
+    setAlertOpen(false);
+  };
+
+  const validateChange = (field, newValue) => {
+    if (field === 'schedule_date') {
+      try {
+        const today = new Date();
+        const selectedDate = parseISO(newValue);
+
+        if (selectedDate.getDate() < today.getDate()) {
+          showAlert('A data selecionada não pode ser anterior à data atual.', 'error');
+          handleChange(field, '');
+          return;
+        }
+      } catch (error) {
+        console.error('Erro ao processar a data:', error);
+        showAlert('Por favor, insira uma data válida.', 'error');
+        handleChange(field, '');
+        return;
+      }
+    }
+
+    if (field === 'schedule_start_time') {
+      try {
+        const today = new Date();
+        const selectedTime = newValue;
+        const selectedDate = parseISO(formData.schedule_date);
+
+        if (selectedDate.getDate() === today.getDate()) {
+          const formattedTime = format(today, 'HH:mm:ss');
+
+          if (selectedTime < formattedTime) {
+            showAlert('O horário selecionado não pode ser anterior ao horário atual.', 'error');
+            handleChange(field, '');
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao processar o horário:', error);
+        showAlert('Por favor, insira um horário válido.', 'error');
+        handleChange(field, '');
+        return;
+      }
+    }
+
+    handleChange(field, newValue);
+  };
 
   return (
     <>
@@ -102,7 +157,7 @@ const ScheduleFormCreate = ({
             label="Data do agendamento"
             name="start_datetime"
             value={formData.schedule_date}
-            onChange={(newValue) => handleChange('schedule_date', newValue)}
+            onChange={(newValue) => validateChange('schedule_date', newValue)}
             {...(formErrors.schedule_date && {
               error: true,
               helperText: formErrors.schedule_date,
@@ -114,7 +169,7 @@ const ScheduleFormCreate = ({
         <Grid item xs={12} sm={12} lg={6}>
           <FormSelect
             options={timeOptions}
-            onChange={(e) => handleChange('schedule_start_time', e.target.value)}
+            onChange={(e) => validateChange('schedule_start_time', e.target.value)}
             value={formData.schedule_start_time || ''}
             {...(formErrors.schedule_start_time && {
               error: true,
@@ -170,6 +225,18 @@ const ScheduleFormCreate = ({
           </Stack>
         </Grid>
       </Grid>
+
+      {/* Alerta */}
+      <Snackbar
+        open={alertOpen}
+        autoHideDuration={6000}
+        onClose={handleAlertClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleAlertClose} severity={alertType} sx={{ width: '100%' }}>
+          {alertMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };
