@@ -60,6 +60,8 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
   if (loading) return <div>Carregando...</div>;
   if (error) return <div>{error}</div>;
 
+  console.log('schedule_start_time', formData.schedule_start_time);
+
   return (
     <>
       <Grid container spacing={3}>
@@ -129,7 +131,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
           <FormSelect
             options={timeOptions}
             onChange={(e) => handleChange('schedule_start_time', e.target.value)}
-            value={formData.schedule_start_time || ''}
+            value={formData.schedule_start_time}
             {...(formErrors.schedule_start_time && {
               error: true,
               helperText: formErrors.schedule_start_time,
