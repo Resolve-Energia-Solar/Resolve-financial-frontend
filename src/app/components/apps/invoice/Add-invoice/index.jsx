@@ -23,6 +23,8 @@ import {
   FormControlLabel,
 } from '@mui/material';
 import { format, isValid } from 'date-fns';
+import { ptBR } from 'date-fns/locale'; 
+
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { IconSquareRoundedPlus, IconTrash } from '@tabler/icons-react';
@@ -36,6 +38,7 @@ import CustomFieldMoney from '../components/CustomFieldMoney';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
 import { useSelector } from 'react-redux';
+
 
 const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) => {
   const {
@@ -90,7 +93,7 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
 
   const orderDate = new Date();
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
-  const formattedOrderDate = format(parsedDate, 'EEEE, MMMM dd, yyyy');
+  const formattedOrderDate = format(parsedDate, 'EEEE, MMMM dd, yyyy', { locale: ptBR });
 
   return (
     <Box>
