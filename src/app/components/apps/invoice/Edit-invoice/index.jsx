@@ -21,6 +21,8 @@ import {
   Skeleton,
 } from '@mui/material';
 import { format, isValid } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { IconSquareRoundedPlus, IconTrash } from '@tabler/icons-react';
@@ -89,7 +91,7 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
 
   const orderDate = paymentData?.created_at;
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
-  const formattedOrderDate = format(parsedDate, 'EEEE, MMMM dd, yyyy');
+  const formattedOrderDate = format(parsedDate, 'EEEE, MMMM dd, yyyy', { locale: ptBR });
 
   if (loading) {
     return <EditInvoiceSkeleton />;
