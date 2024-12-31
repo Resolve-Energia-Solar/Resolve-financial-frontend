@@ -161,7 +161,9 @@ const useScheduleForm = (initialData, id) => {
 
       const totalHoursToAdd = (hours || 0) + (minutes || 0) / 60 + (seconds || 0) / 3600;
 
-      const [startHours, startMinutes, startSeconds] = formData.schedule_start_time.split(':').map(Number);
+      const [startHours, startMinutes, startSeconds] = formData.schedule_start_time
+        .split(':')
+        .map(Number);
 
       const startDate = new Date();
       startDate.setHours(startHours, startMinutes, startSeconds || 0);
@@ -171,7 +173,11 @@ const useScheduleForm = (initialData, id) => {
       if (!isNaN(updatedStartTime.getTime())) {
         setFormData((prev) => ({
           ...prev,
-          schedule_end_time: `${updatedStartTime.getHours().toString().padStart(2, '0')}:${updatedStartTime.getMinutes()
+          schedule_end_time: `${updatedStartTime
+            .getHours()
+            .toString()
+            .padStart(2, '0')}:${updatedStartTime
+            .getMinutes()
             .toString()
             .padStart(2, '0')}:${updatedStartTime.getSeconds().toString().padStart(2, '0')}`,
         }));
@@ -180,6 +186,10 @@ const useScheduleForm = (initialData, id) => {
       }
     }
   }, [formData.schedule_start_time, serviceData]);
+
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, schedule_start_time: '' }));
+  }, [formData.schedule_date]);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
