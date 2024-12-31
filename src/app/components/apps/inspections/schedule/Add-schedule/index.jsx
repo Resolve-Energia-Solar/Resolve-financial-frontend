@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { parseISO, format } from 'date-fns';
 
 /* material */
 import { Grid, Button, Stack, Tooltip, Snackbar, Alert } from '@mui/material';
@@ -174,6 +175,7 @@ const ScheduleFormCreate = ({
           <FormSelect
             options={timeOptions}
             onChange={(e) => validateChange('schedule_start_time', e.target.value)}
+            disabled={!formData.schedule_date}
             value={formData.schedule_start_time || ''}
             {...(formErrors.schedule_start_time && {
               error: true,
