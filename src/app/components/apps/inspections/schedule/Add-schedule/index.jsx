@@ -86,7 +86,9 @@ const ScheduleFormCreate = ({
         const today = new Date();
         const selectedDate = parseISO(newValue);
 
-        if (selectedDate.getDate() < today.getDate()) {
+        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+        if (selectedDate < todayStart) {
           showAlert('A data selecionada não pode ser anterior à data atual.', 'error');
           handleChange(field, '');
           return;
@@ -105,7 +107,9 @@ const ScheduleFormCreate = ({
         const selectedTime = newValue;
         const selectedDate = parseISO(formData.schedule_date);
 
-        if (selectedDate.getDate() === today.getDate()) {
+        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+        if (selectedDate.getTime() === todayStart.getTime()) {
           const formattedTime = format(today, 'HH:mm:ss');
 
           if (selectedTime < formattedTime) {
