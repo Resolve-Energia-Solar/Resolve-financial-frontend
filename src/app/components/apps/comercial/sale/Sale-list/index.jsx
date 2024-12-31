@@ -422,7 +422,7 @@ const SaleList = () => {
                 <TableCell>Ações</TableCell>
               </TableRow>
             </TableHead>
-            {loading && page === 1 ? (
+            {loading ? (
               <TableSkeleton rows={5} columns={8} />
             ) : error && page === 1 ? (
               <Typography color="error">{error}</Typography>
