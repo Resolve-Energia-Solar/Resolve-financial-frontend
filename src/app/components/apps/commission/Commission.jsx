@@ -15,10 +15,10 @@ import PaymentCommission from '@/hooks/commission/PaymentCommission';
 import numeral from 'numeral';
 import theme from '@/utils/theme';
 import PaymentStatusChip from '@/utils/status/PaymentStatusChip';
+import { formatToBRL } from '@/utils/currency';
 
-function Commission({ data }) {
+function Commission({ data }) { 
   console.log(data)
-
 
   const {
     toggleDrawer,
@@ -80,13 +80,13 @@ function Commission({ data }) {
                 >
                   <TableCell align="left">{item.sale.customer.complete_name}</TableCell>
                   <TableCell align="left">{item.sale.branch?.name}</TableCell>
-                  <TableCell align="left">{item.status}</TableCell>
                   <TableCell align="left">{''}</TableCell>
-                  <TableCell align="left">{item.difference_value}</TableCell>
-                  <TableCell align="left">{numeral(item.sale.transfer_percentage / 100).format('0,0%')}</TableCell>
-                  <TableCell align="left">{item.sale.total_value}</TableCell>
+                  <TableCell align="left">{formatToBRL('')}</TableCell>
+                  <TableCell align="left">{formatToBRL(item.difference_value)}</TableCell>
+                  <TableCell align="left">{numeral(item.transfer_percentage / 100).format('0,0%')}</TableCell>
+                  <TableCell align="left">{formatToBRL(item.sale.total_value)}</TableCell>
                   <TableCell align="left">
-                  <PaymentStatusChip status={item.payment_status} />
+                  <PaymentStatusChip status={item.sale.payment_status} />
                    </TableCell>
                   <TableCell align="left">{''}</TableCell>
                 </TableRow>
