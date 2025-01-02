@@ -158,26 +158,31 @@ const useScheduleForm = (initialData, id) => {
 
   useEffect(() => {
     if (formData.schedule_date && formData.schedule_start_time && serviceData?.deadline?.hours) {
-      const [startHours, startMinutes, startSeconds] = formData.schedule_start_time.split(':').map(Number);
-      const [durationHours, durationMinutes, durationSeconds] = serviceData.deadline.hours.split(':').map(Number);
-  
+      const [startHours, startMinutes, startSeconds] = formData.schedule_start_time
+        .split(':')
+        .map(Number);
+      const [durationHours, durationMinutes, durationSeconds] = serviceData.deadline.hours
+        .split(':')
+        .map(Number);
+
       // Cria uma data inicial com base na data do agendamento
       const [year, month, day] = formData.schedule_date.split('-').map(Number); // Assumindo formato YYYY-MM-DD
       const startDate = new Date(year, month - 1, day, startHours, startMinutes, startSeconds || 0);
-  
+
       // Converte o prazo para milissegundos
       const totalMilliseconds =
         (durationHours || 0) * 3600000 +
         (durationMinutes || 0) * 60000 +
         (durationSeconds || 0) * 1000;
-  
+
       // Calcula a data e horário finais
       const updatedDate = new Date(startDate.getTime() + totalMilliseconds);
-  
+
       setFormData((prev) => ({
         ...prev,
         schedule_end_date: updatedDate.toISOString().split('T')[0],
-        schedule_end_time: `${updatedDate.getHours().toString().padStart(2, '0')}:${updatedDate.getMinutes()
+        schedule_end_time: `${updatedDate.getHours().toString().padStart(2, '0')}:${updatedDate
+          .getMinutes()
           .toString()
           .padStart(2, '0')}:${updatedDate.getSeconds().toString().padStart(2, '0')}`,
       }));
@@ -185,6 +190,9 @@ const useScheduleForm = (initialData, id) => {
   }, [formData.schedule_date, formData.schedule_start_time, serviceData]);
 
   useEffect(() => {
+    if (initialData) {
+      return;
+    }
     setFormData((prev) => ({ ...prev, schedule_start_time: '' }));
   }, [formData.schedule_date]);
 
