@@ -50,8 +50,8 @@ const Sidebar = () => {
           <Drawer
             anchor="left"
             open
-            onMouseEnter={onHoverEnter}
-            onMouseLeave={onHoverLeave}
+            // onMouseEnter={onHoverEnter}
+            // onMouseLeave={onHoverLeave}
             variant="permanent"
             PaperProps={{
               sx: {

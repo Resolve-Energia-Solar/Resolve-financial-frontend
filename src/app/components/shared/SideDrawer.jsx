@@ -9,7 +9,7 @@ export default function SideDrawer({ title, children, open, onClose }) {
             <Box
                 sx={{
                     width: { xs: '100vw', sm: '100vw' },
-                    maxWidth: { md: '70vw' },
+                    maxWidth: { md: '50vw' },
                     height: '100vh',
                     position: 'relative'
                 }} >

@@ -13,7 +13,7 @@ export default function KanbanBoard({ columns, onClickCard }) {
     return (
 
 
-        <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', overflowX: 'auto', overflowY: 'hidden', boxShadow: '', maxHeight: 'calc(100vh - 100px)' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', overflowX: 'auto', overflowY: 'hidden', boxShadow: '',paddingBottom: 2 }}>
             {
                 columns?.map(
                     (column => (
