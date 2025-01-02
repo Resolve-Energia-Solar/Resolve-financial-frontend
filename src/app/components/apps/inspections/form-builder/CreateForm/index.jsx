@@ -142,6 +142,9 @@ const CreateForm = ({ onClosedModal = null, selectedFormId = null }) => {
                   {field.type === 'select' && (
                     <FBSelectType onChange={handleFieldChange} field={field} />
                   )}
+                  {field.type === 'file' && (
+                    <FBTextType onChange={handleFieldChange} field={field} />
+                  )}
                 </Grid>
                 <Grid item lg={6} md={12} sm={12}>
                   <Grid item xs={12}>
