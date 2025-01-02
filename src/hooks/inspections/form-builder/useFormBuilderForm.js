@@ -23,7 +23,7 @@ const useFormBuilderForm = (initialData, id) => {
         service_id: initialData.service?.id || null,
         service: initialData.service || null,
         form_name: initialData.name || '',
-        form_fields: JSON.parse(initialData.campos) || [],
+        form_fields: JSON.parse(initialData.fields) || [],
         created_at: initialData.created_at || '',
       });
     }
