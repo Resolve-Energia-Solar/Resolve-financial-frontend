@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { motion } from 'framer-motion';
-
+import CloseIcon from '@mui/icons-material/Close';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -29,9 +29,9 @@ export default function BasicModal({ message, title, open, onClose, IconComponen
     <Modal
       open={open}
       onClose={onClose}
-      sx={{ border: '1px solid ' + type ? '#FFC107' : '#D32F2F' }}
     >
       <Box sx={style}>
+
         <Typography id="modal-modal-title" variant="h3" component="h2" >
           {title}
         </Typography>
@@ -40,15 +40,17 @@ export default function BasicModal({ message, title, open, onClose, IconComponen
           {message}
         </Typography>
 
-        <motion.div
+        {/* <motion.div
           initial={{ scale: 0, rotate: 0 }}
           animate={{ scale: 1, rotate: 360 }}
           transition={{ duration: 0.5 }}
         >
-          <IconComponent sx={{ p: 2, fontSize: 150, color: 'success.main', }} />
-        </motion.div>
-
-
+          {
+            type ?
+              <IconComponent sx={{ p: 2, fontSize: 150, color: 'success.main', }} /> :
+              <IconComponent sx={{ p: 2, fontSize: 150, color: 'error.main', }} />
+          }
+        </motion.div> */}
       </Box>
     </Modal>
 

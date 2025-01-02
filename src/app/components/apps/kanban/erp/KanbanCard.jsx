@@ -18,7 +18,7 @@ export default function KanbanCard({ task, onClick }) {
 
         </Box>
         <Typography variant="h6">{task.title}</Typography>
-        <Typography variant="body2">{task.description}</Typography>
+        <Typography variant="body2">{task?.project.homologator?.complete_name}</Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Typography variant="body2">Inicio: {new Date(task?.start_date).toLocaleDateString()}</Typography>
           <Typography variant="body2">Vencimento: {new Date(task?.due_date).toLocaleDateString()}</Typography>
