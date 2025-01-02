@@ -43,7 +43,7 @@ const useFormBuilderForm = (initialData, id) => {
 
     const dataToSend = {
       name: formData.form_name,
-      campos: fieldsJSON,
+      fields: fieldsJSON,
     };
 
     console.log('dataToSend', dataToSend);
