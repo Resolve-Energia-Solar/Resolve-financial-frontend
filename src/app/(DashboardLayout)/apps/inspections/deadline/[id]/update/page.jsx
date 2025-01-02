@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 
 /* material */
-import { Grid, Button, Stack, Alert } from '@mui/material';
+import { Grid, Button, Stack, Alert, TextField } from '@mui/material';
 
 /* components */
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
@@ -16,6 +16,7 @@ import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
 import useDeadline from '@/hooks/inspections/deadline/useDeadline';
 import useDeadlineForm from '@/hooks/inspections/deadline/useDeadlineForm';
 import ParentCard from '@/app/components/shared/ParentCard';
+import ReactInputMask from 'react-input-mask';
 
 const DeadlineForm = () => {
   const params = useParams();
@@ -59,16 +60,23 @@ const DeadlineForm = () => {
 
           {/* Hours */}
           <Grid item xs={12} sm={12} lg={6}>
-            <FormTimePicker
-              label="Horas"
-              name="deadline_hours"
+            <CustomFormLabel htmlFor="hours">Horas</CustomFormLabel>
+            <ReactInputMask
+              mask={'99:99'}
               value={formData.deadline_hours}
-              onChange={(newValue) => handleChange('deadline_hours', newValue)}
-              {...(formErrors.deadline_hours && {
-                error: true,
-                helperText: formErrors.deadline_hours,
-              })}
-            />
+              onChange={(e) => handleChange('deadline_hours', e.target.value)}
+              maskChar="_"
+            >
+              {(inputProps) => (
+                <TextField
+                  {...inputProps}
+                  name="deadline_hours"
+                  error={!!formErrors.deadline_hours}
+                  helperText={formErrors.deadline_hours || 'Insira no formato HH:MM'}
+                  fullWidth
+                />
+              )}
+            </ReactInputMask>
           </Grid>
 
           {/* Observation */}

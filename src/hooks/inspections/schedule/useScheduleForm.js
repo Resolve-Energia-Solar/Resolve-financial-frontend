@@ -8,14 +8,6 @@ import axios from 'axios';
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
-const formatTime = (time) => {
-  if (!time) return null;
-  const date = new Date(time);
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  return `${hours}:${minutes}`;
-};
-
 const useScheduleForm = (initialData, id) => {
   const user = useSelector((state) => state.user);
   const [serviceData, setServiceData] = useState(null);
@@ -30,7 +22,8 @@ const useScheduleForm = (initialData, id) => {
     schedule_agent_id: null,
     products_ids: [],
     schedule_date: '',
-    schedule_start_time: '',
+    schedule_start_time: '', // Horário no formato HH:mm:ss vindo do <select>
+    schedule_end_date: '',
     schedule_end_time: '',
     address_id: null,
     latitude: null,
@@ -47,27 +40,16 @@ const useScheduleForm = (initialData, id) => {
 
   useEffect(() => {
     if (initialData) {
-      const initialStartTime = initialData.schedule_start_time;
-      const currentDate = new Date();
-      const [hours, minutes, seconds] = initialStartTime.split(':').map(Number);
-      const startTime = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
-        currentDate.getDate(),
-        hours,
-        minutes,
-        seconds,
-      );
-
       setFormData({
         schedule_creator: initialData.schedule_creator || null,
-        service_id: initialData.service.id || null,
+        service_id: initialData.service?.id || null,
         customer_id: initialData?.customer?.id || null,
         project_id: initialData.project?.id || null,
         schedule_agent_id: initialData.schedule_agent?.id || null,
         products_ids: initialData.products_ids || [],
         schedule_date: initialData.schedule_date || '',
-        schedule_start_time: startTime || '',
+        schedule_start_time: initialData.schedule_start_time || '', // Formato esperado já é HH:mm:ss
+        schedule_end_date: initialData.shedule_end_date || '',
         schedule_end_time: initialData.schedule_end_time || '',
         address_id: initialData?.address?.id || null,
         latitude: initialData.latitude || null,
@@ -175,34 +157,36 @@ const useScheduleForm = (initialData, id) => {
   }, [addressData]);
 
   useEffect(() => {
-    if (formData.schedule_start_time && serviceData) {
-      const hoursToAddString = serviceData.deadline?.hours || '00:00:00';
-      const [hours, minutes, seconds] = hoursToAddString.split(':').map(Number);
-
-      const totalHoursToAdd = (hours || 0) + (minutes || 0) / 60 + (seconds || 0) / 3600;
-
-      const startTimeString = formData.schedule_start_time;
-      let startTime;
-
-      try {
-        startTime = new Date(startTimeString);
-        if (isNaN(startTime.getTime())) {
-          throw new Error('Invalid date');
-        }
-      } catch (error) {
-        console.error('Erro ao criar a data de início:', error);
-        return;
-      }
-
-      const updatedStartTime = new Date(startTime.getTime() + totalHoursToAdd * 3600000);
-
-      if (!isNaN(updatedStartTime.getTime())) {
-        setFormData((prev) => ({ ...prev, schedule_end_time: updatedStartTime.toISOString() }));
-      } else {
-        console.error('Erro ao calcular a data final: resultado inválido');
-      }
+    if (formData.schedule_date && formData.schedule_start_time && serviceData?.deadline?.hours) {
+      const [startHours, startMinutes, startSeconds] = formData.schedule_start_time.split(':').map(Number);
+      const [durationHours, durationMinutes, durationSeconds] = serviceData.deadline.hours.split(':').map(Number);
+  
+      // Cria uma data inicial com base na data do agendamento
+      const [year, month, day] = formData.schedule_date.split('-').map(Number); // Assumindo formato YYYY-MM-DD
+      const startDate = new Date(year, month - 1, day, startHours, startMinutes, startSeconds || 0);
+  
+      // Converte o prazo para milissegundos
+      const totalMilliseconds =
+        (durationHours || 0) * 3600000 +
+        (durationMinutes || 0) * 60000 +
+        (durationSeconds || 0) * 1000;
+  
+      // Calcula a data e horário finais
+      const updatedDate = new Date(startDate.getTime() + totalMilliseconds);
+  
+      setFormData((prev) => ({
+        ...prev,
+        schedule_end_date: updatedDate.toISOString().split('T')[0],
+        schedule_end_time: `${updatedDate.getHours().toString().padStart(2, '0')}:${updatedDate.getMinutes()
+          .toString()
+          .padStart(2, '0')}:${updatedDate.getSeconds().toString().padStart(2, '0')}`,
+      }));
     }
-  }, [formData.schedule_start_time, serviceData]);
+  }, [formData.schedule_date, formData.schedule_start_time, serviceData]);
+
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, schedule_start_time: '' }));
+  }, [formData.schedule_date]);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -223,8 +207,9 @@ const useScheduleForm = (initialData, id) => {
       customer_id: formData.customer_id,
       products_ids: formData.products_ids,
       schedule_date: formData.schedule_date,
-      schedule_start_time: formatTime(formData.schedule_start_time),
-      schedule_end_time: formatTime(formData.schedule_end_time),
+      schedule_start_time: formData.schedule_start_time, // Já no formato HH:mm:ss
+      schedule_end_date: formData.schedule_end_date,
+      schedule_end_time: formData.schedule_end_time,
       address_id: formData.address_id,
       latitude: formData.latitude,
       longitude: formData.longitude,

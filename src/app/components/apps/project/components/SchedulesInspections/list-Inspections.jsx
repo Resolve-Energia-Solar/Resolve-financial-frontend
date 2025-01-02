@@ -143,12 +143,17 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
                 </TableCell>
                 <TableCell align="center">
                   <Typography variant="h6" fontSize="14px">
+                    Data de Término
+                  </Typography>
+                </TableCell>
+                <TableCell align="center">
+                  <Typography variant="h6" fontSize="14px">
                     Horário de Término
                   </Typography>
                 </TableCell>
                 <TableCell align="center">
                   <Typography variant="h6" fontSize="14px">
-                    Status
+                    Status do Agendamento
                   </Typography>
                 </TableCell>
                 <TableCell align="center">
@@ -175,7 +180,14 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
                       <Typography variant="body2">{unit?.schedule_start_time}</Typography>
                     </TableCell>
                     <TableCell align="center">
-                      <Typography variant="body2">{unit?.schedule_end_time}</Typography>
+                      <Typography variant="body2">
+                        {unit?.schedule_end_date}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Typography variant="body2">
+                        {unit?.schedule_end_time}
+                      </Typography>
                     </TableCell>
                     <TableCell align="center">
                       <Typography variant="body2">

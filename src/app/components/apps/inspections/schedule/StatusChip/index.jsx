@@ -8,8 +8,8 @@ import {
 const ScheduleStatusChip = ({ status }) => {
   const getChipProps = (status) => {
     switch (status) {
-      case 'Concluído':
-        return { label: 'Concluído', color: 'success', icon: <CheckCircleIcon /> };
+      case 'Confirmado':
+        return { label: 'Confirmado', color: 'success', icon: <CheckCircleIcon /> };
       case 'Pendente':
         return { label: 'Pendente', color: 'primary', icon: <HourglassEmptyIcon /> };
       case 'Cancelado':
