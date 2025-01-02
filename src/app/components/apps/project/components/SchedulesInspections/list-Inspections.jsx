@@ -188,6 +188,11 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
                     </TableCell>
                     <TableCell align="center">
                       <Typography variant="body2">
+                        {unit?.schedule_end_time}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Typography variant="body2">
                         <SupplyChip status={unit?.status} />
                       </Typography>
                     </TableCell>

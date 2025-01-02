@@ -182,7 +182,11 @@ const useScheduleForm = (initialData, id) => {
           .padStart(2, '0')}:${updatedDate.getSeconds().toString().padStart(2, '0')}`,
       }));
     }
-  }, [formData.schedule_start_time, serviceData]);
+  }, [formData.schedule_date, formData.schedule_start_time, serviceData]);
+
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, schedule_start_time: '' }));
+  }, [formData.schedule_date]);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
