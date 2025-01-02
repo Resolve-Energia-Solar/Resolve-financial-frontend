@@ -12,6 +12,8 @@ import Header from '@/app/components/apps/kanban/erp/Header';
 import TasksList from '@/app/components/apps/kanban/erp/TasksList';
 import DynamicComponent from '@/app/components/apps/kanban/erp/GeneralDetails/DynamicComponent';
 import SideDrawer from '@/app/components/shared/SideDrawer';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 export default function Kanban() {
 
   const {
@@ -95,7 +97,14 @@ export default function Kanban() {
             {isDrawerOpen && <DynamicComponent componentName={contentType} data={dataProject} />}
           </SideDrawer>
 
-          <BasicModal open={openModalMessage} onClose={setOpenModalMessage}  {...message} />
+          <BasicModal
+            open={openModalMessage}
+            onClose={() => setOpenModalMessage(false)}
+            {...message}
+            IconComponent={message.type ?
+              <CheckCircleIcon /> :
+              <CancelIcon />
+            } />
         </CardContent>
       </BlankCard>
     </PageContainer >

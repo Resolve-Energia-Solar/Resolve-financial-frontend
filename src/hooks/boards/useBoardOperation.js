@@ -2,7 +2,6 @@ import boardOperationService from "@/services/boardOperationService"
 import userService from "@/services/userService"
 import { useEffect, useState } from "react"
 import Cookies from 'js-cookie';
-import taskService from "@/services/taskService";
 
 export default function boardOperation() {
 
@@ -55,9 +54,7 @@ export default function boardOperation() {
         }
     }
 
-
     useEffect(() => {
-
         async function fetchData() {
             const boardsResponse = await boardOperationService.index({ fields: 'id,title,is_lead' })
             const BoardsFilter = boardsResponse.results.filter((board) => {
@@ -95,7 +92,6 @@ export default function boardOperation() {
     }
 
     const handleSearch = async (e) => {
-
 
     }
 
@@ -140,24 +136,19 @@ export default function boardOperation() {
                         "text": text
                     }
                 )
-            }) //response
+            }) 
             const data = await response.json()
-            console.log(data)
 
             if (response.ok) {
                 setText()
-                fetchComments()
+                fetchComments(cardSelected?.project?.id)
                 setMessage({ title: 'Salvo com Sucesso', message: 'O comentário foi salvo com sucesso!', type: true })
-                setInterval(() => {
-                    setOpenModalMessage(true)
-                }, 1000)
+                setOpenModalMessage(true)
             }
         } catch (error) {
             console.error('Error:', error);
             setMessage({ title: 'Erro ao Salvar', message: 'O comentário não foi salvo com sucesso!', type: true })
-            setInterval(() => {
-                setOpenModalMessage(false)
-            }, 1000)
+            setOpenModalMessage(true)
         }
     }
 
@@ -171,25 +162,17 @@ export default function boardOperation() {
                 },
                 method: 'GET',
 
-            }) //response
-            
+            })
 
-            setTimeout(async () => {
-                const data = await response.json()
-                if (response.ok) {
+            const data = await response.json()
+            if (response.ok) {
+                setComments(data.results)
+            }
 
-                    setComments(data.results)
-    
-    
-                }
-            }, 5000)
-           
         } catch (error) {
             console.error('Error:', error);
         }
     }
-
-
 
     return {
         boards,

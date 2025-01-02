@@ -8,14 +8,14 @@ const Logo = () => {
   const customizer = useSelector((state) => state.customizer);
   const LinkStyled = styled(Link)(() => ({
     height: customizer.TopbarHeight,
-    width: customizer.isCollapse ? "40px" : "180px",
+    width: customizer.isCollapse ? "180px" : "180px",
     overflow: "hidden",
     display: "block",
   }));
 
   if (customizer.activeDir === "ltr") {
     return (
-      <LinkStyled href="/">
+      <LinkStyled href="/" width={180}>
         {customizer.activeMode === "dark" ? (
           <Image
             src="/images/logos/resolve-logo.png"
@@ -38,7 +38,7 @@ const Logo = () => {
   }
 
   return (
-    <LinkStyled href="/">
+    <LinkStyled href="/" width={180}>
       {customizer.activeMode === "dark" ? (
         <Image
           src="/images/logos/dark-rtl-logo.svg"

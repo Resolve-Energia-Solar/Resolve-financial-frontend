@@ -177,7 +177,9 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
                       <Typography variant="body2">{unit?.schedule_date}</Typography>
                     </TableCell>
                     <TableCell align="center">
-                      <Typography variant="body2">{unit?.schedule_start_time}</Typography>
+                        <Typography variant="body2">
+                          {unit?.schedule_start_time}
+                        </Typography>
                     </TableCell>
                     <TableCell align="center">
                       <Typography variant="body2">

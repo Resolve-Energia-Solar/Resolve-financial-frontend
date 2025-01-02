@@ -92,7 +92,7 @@ export default function ModalCardDetail({ open, onClose, data, onClickActionActi
                         <Box display="flex" flexDirection="column" alignItems="flex-start" gap={1}>
                             <Typography variant="subtitle1">Data da Venda: 17 de nov. 2024</Typography>
                             <Typography variant="subtitle1">Data para Conclusão: 17 de fev. 2025</Typography>
-                            <Typography variant="subtitle1">Homologador: João Silva Vieigas Queiroz</Typography>
+                            <Typography variant="subtitle1">Homologador: {data?.project?.homologator?.complete_name}</Typography>
                         </Box>
                     </Box>
                 </Box>
@@ -134,7 +134,7 @@ export default function ModalCardDetail({ open, onClose, data, onClickActionActi
                                     placeholder="Escreva aqui..."
 
                                 />
-                                <Button onClick={handleText} disabled={!text || text === '<p><br></p>'} sx={{ marginBlock: 2 }}>
+                                <Button onClick={() => handleText(text)} disabled={!text || text === '<p><br></p>'} sx={{ marginBlock: 2 }}>
                                     Salvar
                                 </Button>
                             </Box>
@@ -190,7 +190,7 @@ export default function ModalCardDetail({ open, onClose, data, onClickActionActi
 
                             </List>
                             <Button variant="outlined" fullWidth size="small">
-                                Adicionar anexo s
+                                Adicionar anexos
                             </Button>
                         </Box>
                         <Box>
