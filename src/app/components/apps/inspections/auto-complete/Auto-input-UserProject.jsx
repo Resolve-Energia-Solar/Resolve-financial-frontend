@@ -30,6 +30,7 @@ export default function AutoCompleteUserProject({
             setSelectedProject({
               id: projectValue.id,
               project_number: projectValue.project_number,
+              sale: projectValue.sale,
             });
           }
         } catch (error) {
@@ -71,7 +72,13 @@ export default function AutoCompleteUserProject({
             });
           });
 
-          setOptions(allProjects);
+          console.log('allProjects', allProjects);
+
+          const formattedProjects = await Promise.all(
+            allProjects.map((project) => projectService.getProjectById(project.id)),
+          );
+
+          setOptions(formattedProjects);
         }
       } catch (error) {
         console.error('Erro ao buscar projetos:', error);
@@ -90,6 +97,8 @@ export default function AutoCompleteUserProject({
     setOptions([]);
   };
 
+  console.log('selectedClient', selectedClient);
+
   return (
     <Fragment>
       <Autocomplete
@@ -97,8 +106,12 @@ export default function AutoCompleteUserProject({
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.project_number === value.project_number}
-        getOptionLabel={(option) => option.project_number || ''}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+        getOptionLabel={(option) =>
+          `${option.project_number} | Valor total: ${
+            option.sale?.total_value || 'Sem valor Total'
+          } | Contrato: ${option.sale?.contract_number || 'Contrato não Disponível'}` || ''
+        }
         options={options}
         noOptionsText={noTextOptions}
         loading={loading}

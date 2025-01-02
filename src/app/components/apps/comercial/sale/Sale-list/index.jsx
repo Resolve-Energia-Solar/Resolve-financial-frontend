@@ -118,7 +118,7 @@ const SaleList = () => {
   const router = useRouter();
 
   useEffect(() => {
-    setPage(1);
+    setPage(0);
     setSalesList([]);
   }, [order, orderDirection, filters, refresh]);
 
@@ -422,7 +422,7 @@ const SaleList = () => {
                 <TableCell>Ações</TableCell>
               </TableRow>
             </TableHead>
-            {loading && page === 1 ? (
+            {loading ? (
               <TableSkeleton rows={5} columns={8} />
             ) : error && page === 1 ? (
               <Typography color="error">{error}</Typography>
@@ -631,7 +631,7 @@ const SaleList = () => {
         </Typography>
       </Backdrop>
       <SideDrawer open={openDrawer} onClose={() => toggleDrawerClosed(false)} title="Detalhamento da Venda">
-        <EditSalePage saleId={rowSelected?.id} sx={{ maxWidth: '70vw', minWidth: '50vw' }} />
+        <EditSalePage saleId={rowSelected?.id} />
       </SideDrawer>
     </Box>
   );

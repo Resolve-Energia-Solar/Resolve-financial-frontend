@@ -20,14 +20,14 @@ const paymentService = {
   },
   getAllPaymentsBySale: async (saleId) => {
     try {
-      const response = await apiClient.get(`/api/payments/?sale=${saleId}&fields=value`);
+      const response = await apiClient.get(`/api/payments/?sale=${saleId}`);
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar payments pelo ID da venda:', error);
       throw error;
     }
   },
-  getPaymentsBySale: async (saleId) => {
+  getPaymentsBySale: async (saleId, fields) => {
     try {
       const response = await apiClient.get(`/api/payments/?sale=${saleId}`);
       return response.data;

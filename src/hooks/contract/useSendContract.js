@@ -33,7 +33,7 @@ export default function useSendContract() {
       if (!fetchedSale?.customer?.email) missingFields.push('Email');
       if (!fetchedSale?.customer?.first_document) missingFields.push('Documento');
       if (!fetchedSale?.customer?.birth_date) missingFields.push('Data de Nascimento');
-      if (!fetchedSale?.customer?.phone_numbers?.[0]?.phone_number) missingFields.push('Telefone');
+      if (!fetchedSale?.customer?.phone_numbers?.[0]?.phone_number || !fetchedSale?.customer?.phone_numbers?.[0]?.area_code) missingFields.push('Telefone');
 
       if (missingFields.length > 0) {
         setSnackbarMessage(
@@ -46,7 +46,7 @@ export default function useSendContract() {
 
       const documentData = {
         Address: fetchedSale.customer_address || 'Endereço Fictício',
-        Phone: fetchedSale?.customer?.phone_numbers[0]?.phone_number || 'Telefone Fictício',
+        Phone: `${fetchedSale?.customer?.phone_numbers[0]?.area_code || ''}${fetchedSale?.customer?.phone_numbers[0]?.phone_number || 'Telefone Fictício'}`,
       };
       const path = `/Contratos/Contrato-${fetchedSale?.customer?.complete_name}.pdf`;
 
@@ -62,7 +62,7 @@ export default function useSendContract() {
       const signerResponse = await axios.post('/api/clicksign/createSigner', {
         documentation: fetchedSale?.customer?.first_document,
         birthday: fetchedSale?.customer?.birth_date,
-        phone_number: fetchedSale?.customer?.phone_numbers[0]?.phone_number,
+        phone_number: `${fetchedSale?.customer?.phone_numbers[0]?.area_code || ''}${fetchedSale?.customer?.phone_numbers[0]?.phone_number || ''}`,
         email: fetchedSale?.customer?.email,
         name: fetchedSale?.customer?.complete_name,
         auth: 'whatsapp',

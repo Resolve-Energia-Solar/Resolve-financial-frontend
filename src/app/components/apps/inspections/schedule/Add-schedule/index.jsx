@@ -1,9 +1,10 @@
 'use client';
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { parseISO, format } from 'date-fns';
 
 /* material */
-import { Grid, Button, Stack, Tooltip } from '@mui/material';
+import { Grid, Button, Stack, Tooltip, Snackbar, Alert } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 
 /* components */
@@ -31,17 +32,29 @@ const ScheduleFormCreate = ({
 
   const { formData, handleChange, handleSave, formErrors, success } = useSheduleForm();
 
+  const [alertOpen, setAlertOpen] = React.useState(false);
+  const [alertMessage, setAlertMessage] = React.useState('');
+  const [alertType, setAlertType] = React.useState('success');
+
   serviceId ? (formData.service_id = serviceId) : null;
   projectId ? (formData.project_id = projectId) : null;
   customerId ? (formData.customer_id = customerId) : null;
   products.length > 0 ? (formData.products_ids = products) : null;
 
   console.log('customerId', customerId);
-  
+
   const statusOptions = [
     { value: 'Pendente', label: 'Pendente' },
-    { value: 'Concluído', label: 'Concluído' },
+    { value: 'Confirmado', label: 'Confirmado' },
     { value: 'Cancelado', label: 'Cancelado' },
+  ];
+
+  const timeOptions = [
+    { value: '08:00:00', label: '08:00' },
+    { value: '09:30:00', label: '09:30' },
+    { value: '11:00:00', label: '11:00' },
+    { value: '13:30:00', label: '13:30' },
+    { value: '15:00:00', label: '15:00' },
   ];
 
   console.log('formData', formData);
@@ -56,6 +69,65 @@ const ScheduleFormCreate = ({
       }
     }
   }, [success]);
+
+  const showAlert = (message, type) => {
+    setAlertMessage(message);
+    setAlertType(type);
+    setAlertOpen(true);
+  };
+
+  const handleAlertClose = () => {
+    setAlertOpen(false);
+  };
+
+  const validateChange = (field, newValue) => {
+    if (field === 'schedule_date') {
+      try {
+        const today = new Date();
+        const selectedDate = parseISO(newValue);
+
+        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+        if (selectedDate < todayStart) {
+          showAlert('A data selecionada não pode ser anterior à data atual.', 'error');
+          handleChange(field, '');
+          return;
+        }
+      } catch (error) {
+        console.error('Erro ao processar a data:', error);
+        showAlert('Por favor, insira uma data válida.', 'error');
+        handleChange(field, '');
+        return;
+      }
+    }
+
+    if (field === 'schedule_start_time') {
+      try {
+        const today = new Date();
+        const selectedTime = newValue;
+        const selectedDate = parseISO(formData.schedule_date);
+
+        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+        if (selectedDate.getTime() === todayStart.getTime()) {
+          const formattedTime = format(today, 'HH:mm:ss');
+
+          if (selectedTime < formattedTime) {
+            showAlert('O horário selecionado não pode ser anterior ao horário atual.', 'error');
+            handleChange(field, '');
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao processar o horário:', error);
+        showAlert('Por favor, insira um horário válido.', 'error');
+        handleChange(field, '');
+        return;
+      }
+    }
+
+    handleChange(field, newValue);
+  };
 
   return (
     <>
@@ -94,7 +166,7 @@ const ScheduleFormCreate = ({
             label="Data do agendamento"
             name="start_datetime"
             value={formData.schedule_date}
-            onChange={(newValue) => handleChange('schedule_date', newValue)}
+            onChange={(newValue) => validateChange('schedule_date', newValue)}
             {...(formErrors.schedule_date && {
               error: true,
               helperText: formErrors.schedule_date,
@@ -104,15 +176,16 @@ const ScheduleFormCreate = ({
 
         {/* Hora do Agendamento */}
         <Grid item xs={12} sm={12} lg={6}>
-          <FormTimePicker
-            label="Hora do agendamento"
-            name="schedule_start_time"
-            value={formData.schedule_start_time}
-            onChange={(newValue) => handleChange('schedule_start_time', newValue)}
+          <FormSelect
+            options={timeOptions}
+            onChange={(e) => validateChange('schedule_start_time', e.target.value)}
+            disabled={!formData.schedule_date}
+            value={formData.schedule_start_time || ''}
             {...(formErrors.schedule_start_time && {
               error: true,
               helperText: formErrors.schedule_start_time,
             })}
+            label={'Hora do Agendamento'}
           />
         </Grid>
 
@@ -162,6 +235,18 @@ const ScheduleFormCreate = ({
           </Stack>
         </Grid>
       </Grid>
+
+      {/* Alerta */}
+      <Snackbar
+        open={alertOpen}
+        autoHideDuration={6000}
+        onClose={handleAlertClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleAlertClose} severity={alertType} sx={{ width: '100%' }}>
+          {alertMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

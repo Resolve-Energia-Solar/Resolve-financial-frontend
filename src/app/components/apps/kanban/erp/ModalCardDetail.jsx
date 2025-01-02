@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+'use client'
 import {
     Dialog,
     DialogTitle,
     DialogContent,
     IconButton,
-    TextField,
     Typography,
     Box,
     Avatar,
@@ -14,25 +13,31 @@ import {
     ListItemText,
     ListItemIcon,
     Divider,
-    styled
+    styled,
+    CircularProgress
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import SubjectIcon from '@mui/icons-material/Subject';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import InventoryIcon from '@mui/icons-material/Inventory';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import ShareIcon from '@mui/icons-material/Share';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import TodayIcon from '@mui/icons-material/Today';
+import { Task, Visibility } from '@mui/icons-material';
+import dynamic from 'next/dynamic';
+import 'react-quill/dist/quill.snow.css';
+
+import { format } from 'date-fns'
+import { useRef } from 'react';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialog-paper': {
-        width: '60%',
+        width: '70%',
         maxWidth: '90vw',
-        height: '80vh',
+        height: '90vh',
     },
 }));
 
@@ -43,62 +48,59 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
     marginBottom: theme.spacing(1),
 }));
 
-export default function ModalCardDetail({ open, onClose, data }) {
+const ReactQuill = dynamic(
+    async () => {
+        const { default: RQ } = await import('react-quill');
+        // eslint-disable-next-line react/display-name
+        return ({ ...props }) => <RQ {...props} />;
+    },
+    {
+        ssr: false,
+    },
+);
 
-    console.log(data)
+export default function ModalCardDetail({ open, onClose, data, onClickActionActivity, comments, handleText, setText, text }) {
+
+
+
+    const HtmlRenderer = ({ rawHtml }) => {
+        return (
+            <div
+                dangerouslySetInnerHTML={{ __html: rawHtml }}
+            />
+        );
+    };
+
+
 
     return (
-        <StyledDialog open={open} onClose={onClose}>
+        <StyledDialog open={open} onClose={onClose} >
             <DialogTitle>
-                <Box display="flex" alignItems="center" marginBottom={4}>
+                <Box display="flex" alignItems="center" marginBottom={2}>
                     <CreditCardIcon sx={{ mr: 1 }} />
-                    <TextField
-                        value={data?.title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        variant="standard"
-                        sx={{
-                            input: {
-                                fontSize: '1.25rem',
-                                fontWeight: 'bold',
-                                '&:focus': {
-                                    background: 'rgba(0, 0, 0, 0.05)',
-                                },
-                            }
-                        }}
-                        fullWidth
-                    />
+                    <Typography variant="h6">{data?.title}</Typography>
                 </Box>
+                <Box borderBottom={1} marginBottom={2} bgcolor="primary.main" />
                 <Box>
-                    <SectionTitle variant="title" fontWeight={'bold'}>
-                        <ChatBubbleOutlineIcon />
-                        Detalhamento
-                    </SectionTitle>
-                    <Box display={'flex'} gap={8}>
-                        <Box display="flex" flexDirection={'column'} alignItems="flex-start" mb={3} gap={1}>
-
-
+                    <Box display='flex' gap={8}>
+                        <Box display="flex" flexDirection="column" alignItems="flex-start" gap={1}>
                             <Typography variant="subtitle1" >Venda nº {data?.project.sale.contract_number}</Typography>
                             <Typography variant="subtitle1" >Projeto nº {data?.project.project_number}</Typography>
                             <Typography variant="subtitle1">Contratante: {data?.project.sale.customer.name}</Typography>
-                            <Typography variant="subtitle1">Homologador: João Silva Vieigas Queiroz</Typography>
 
                         </Box>
-                        <Box display="flex" flexDirection={'column'} alignItems="flex-start" mb={3} gap={1}>
-
-
+                        <Box display="flex" flexDirection="column" alignItems="flex-start" gap={1}>
                             <Typography variant="subtitle1">Data da Venda: 17 de nov. 2024</Typography>
                             <Typography variant="subtitle1">Data para Conclusão: 17 de fev. 2025</Typography>
-
+                            <Typography variant="subtitle1">Homologador: {data?.project?.homologator?.complete_name}</Typography>
                         </Box>
                     </Box>
-
                 </Box>
-
                 <IconButton
                     aria-label="close"
                     onClick={onClose}
                     sx={{
-                        position: 'absolute',
+                        position: "absolute",
                         right: 8,
                         top: 8,
                     }}
@@ -106,7 +108,7 @@ export default function ModalCardDetail({ open, onClose, data }) {
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
-            <DialogContent dividers>
+            <DialogContent dividers >
                 <Box display="flex" gap={2}>
                     <Box flex={1}>
                         <Box mb={3}>
@@ -114,14 +116,9 @@ export default function ModalCardDetail({ open, onClose, data }) {
                                 <SubjectIcon />
                                 Descrição
                             </SectionTitle>
-                            <TextField
-                                multiline
-                                rows={4}
-                                value={data?.description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                fullWidth
-                                variant="outlined"
-                            />
+                            <Typography marginLeft={4} marginBottom={4}>
+                                {data?.description}
+                            </Typography>
                         </Box>
 
                         <Box mb={3}>
@@ -129,25 +126,40 @@ export default function ModalCardDetail({ open, onClose, data }) {
                                 <ChatBubbleOutlineIcon />
                                 Atividades
                             </SectionTitle>
-                            <Box display="flex" alignItems="flex-start" mb={2}>
-                                <Avatar sx={{ width: 32, height: 32, mr: 1 }}>JS</Avatar>
-                                <Box>
-                                    <Typography variant="subtitle2" mb={0.5}>João Silva</Typography>
-                                    <Typography variant="body2">Ótimo progresso! Continuem assim.</Typography>
-                                    <Typography variant="caption">31 de jul. de 2024, 15:37</Typography>
-                                </Box>
+
+                            <Box>
+                                <ReactQuill
+                                    value={text}
+                                    onChange={(value) => setText(value)}
+                                    placeholder="Escreva aqui..."
+
+                                />
+                                <Button onClick={() => handleText(text)} disabled={!text || text === '<p><br></p>'} sx={{ marginBlock: 2 }}>
+                                    Salvar
+                                </Button>
                             </Box>
-                            <TextField
-                                placeholder="Adicione um comentário..."
-                                fullWidth
-                                variant="outlined"
-                                multiline
-                                rows={2}
-                            />
+
+                            <Box>
+                                {
+                                    comments ? comments.map((comment) => (
+                                        <Box display="flex" mb={2}>
+                                            <Avatar sx={{ width: 32, height: 32, mr: 1 }}>{comment.author.first_name}</Avatar>
+                                            <Box>
+                                                <Typography variant="subtitle2" mb={0.5}>{comment.author.complete_name}</Typography>
+                                                <Typography variant="body2" >
+                                                    <HtmlRenderer rawHtml={comment.text} />
+                                                </Typography>
+                                                <Typography variant="caption">{format(new Date(comment.created_at), 'dd MMMM yyyy, hh:mm:ss')}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                    )) : <Box fullWidth display="flex" justifyContent="center"><CircularProgress size={30} /></Box>
+                                }
+                            </Box>
                         </Box>
                     </Box>
                     <Divider orientation="vertical" flexItem />
-                    <Box width={200}>
+                    <Box width={250}>
                         <Box mb={3} display="flex" flexDirection="column" gap={0.5}>
                             <Typography variant="subtitle1" gutterBottom>Datas</Typography>
                             <Box display="flex" alignItems="center" gap={1}>
@@ -178,12 +190,19 @@ export default function ModalCardDetail({ open, onClose, data }) {
 
                             </List>
                             <Button variant="outlined" fullWidth size="small">
-                                Adicionar anexo s
+                                Adicionar anexos
                             </Button>
                         </Box>
                         <Box>
                             <Typography variant="subtitle1" gutterBottom>Acões</Typography>
-                            <Box display={'flex'} flexDirection={'column'} gap={1}>
+                            <Box display="flex" flexDirection={'column'} gap={1}>
+                                <Button variant="contained" size="medium" startIcon={data?.id_integration ? <Visibility /> : <Task />} onClick={onClickActionActivity} sx={{ justifyContent: 'start' }}>
+                                    {
+                                        data?.id_integration ?
+                                            'Visualizar Atividade' :
+                                            'Realizar Atividade'
+                                    }
+                                </Button>
                                 <Button variant="contained" size="medium" startIcon={<InventoryIcon />} sx={{ justifyContent: 'start' }}>Arquivar</Button>
                                 <Button variant="contained" size="medium" startIcon={<ShareIcon />} sx={{ justifyContent: 'start' }}>Compartilhar</Button>
                             </Box>
@@ -191,6 +210,6 @@ export default function ModalCardDetail({ open, onClose, data }) {
                     </Box>
                 </Box>
             </DialogContent>
-        </StyledDialog>
+        </StyledDialog >
     );
 }

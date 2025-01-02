@@ -21,6 +21,8 @@ import {
   Skeleton,
 } from '@mui/material';
 import { format, isValid } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { IconSquareRoundedPlus, IconTrash } from '@tabler/icons-react';
@@ -63,8 +65,6 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
     handleDeleteItem,
   } = usePaymentForm(paymentData, id);
 
-  console.log('Payment Data: ', formData);
-
   useEffect(() => {
     if (success) {
       if (onClosedModal) {
@@ -89,7 +89,7 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
 
   const orderDate = paymentData?.created_at;
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
-  const formattedOrderDate = format(parsedDate, 'EEEE, MMMM dd, yyyy');
+  const formattedOrderDate = format(parsedDate, 'EEEE, MMMM dd, yyyy', { locale: ptBR });
 
   if (loading) {
     return <EditInvoiceSkeleton />;
@@ -292,12 +292,13 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
                             onChange={(e) =>
                               handleInstallmentChange(index, 'is_paid', e.target.checked)
                             }
-                            ß
                           />
                         }
                         label={installment.is_paid ? 'Pago' : 'Pendente'}
                       />
                     </TableCell>
+                    { formData.payment_type === 'F' || formData.payment_type === 'P' && (
+
                     <TableCell>
                       <Tooltip title="Add Item">
                         <IconButton onClick={handleAddItem} color="primary">
@@ -310,6 +311,7 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
                         </IconButton>
                       </Tooltip>
                     </TableCell>
+                    )}
                   </TableRow>
                 ))
               )}
