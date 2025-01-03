@@ -158,36 +158,58 @@ const useScheduleForm = (initialData, id) => {
 
   useEffect(() => {
     if (formData.schedule_date && formData.schedule_start_time && serviceData?.deadline?.hours) {
-      const [startHours, startMinutes, startSeconds] = formData.schedule_start_time
-        .split(':')
-        .map(Number);
-      const [durationHours, durationMinutes, durationSeconds] = serviceData.deadline.hours
-        .split(':')
-        .map(Number);
-
-      // Cria uma data inicial com base na data do agendamento
-      const [year, month, day] = formData.schedule_date.split('-').map(Number); // Assumindo formato YYYY-MM-DD
-      const startDate = new Date(year, month - 1, day, startHours, startMinutes, startSeconds || 0);
-
-      // Converte o prazo para milissegundos
-      const totalMilliseconds =
-        (durationHours || 0) * 3600000 +
-        (durationMinutes || 0) * 60000 +
-        (durationSeconds || 0) * 1000;
-
-      // Calcula a data e horário finais
-      const updatedDate = new Date(startDate.getTime() + totalMilliseconds);
-
-      setFormData((prev) => ({
-        ...prev,
-        schedule_end_date: updatedDate.toISOString().split('T')[0],
-        schedule_end_time: `${updatedDate.getHours().toString().padStart(2, '0')}:${updatedDate
+      let normalizedTime;
+  
+      // Normaliza o formato de horário
+      if (typeof formData.schedule_start_time === 'string') {
+        // Se já for string no formato `hh:mm` ou `hh:mm:ss`, mantém
+        normalizedTime = formData.schedule_start_time.includes(':') 
+          ? formData.schedule_start_time 
+          : `${formData.schedule_start_time}:00`;
+      } else if (formData.schedule_start_time instanceof Date) {
+        // Converte Date para string no formato `hh:mm:ss`
+        normalizedTime = `${formData.schedule_start_time.getHours().toString().padStart(2, '0')}:${formData.schedule_start_time
           .getMinutes()
           .toString()
-          .padStart(2, '0')}:${updatedDate.getSeconds().toString().padStart(2, '0')}`,
-      }));
+          .padStart(2, '0')}:${formData.schedule_start_time
+          .getSeconds()
+          .toString()
+          .padStart(2, '0')}`;
+      }
+  
+      // Divide o horário em partes
+      const [startHours, startMinutes, startSeconds] = normalizedTime.split(':').map(Number);
+  
+      // Continua apenas se os valores forem válidos
+      if (startHours !== undefined && startMinutes !== undefined) {
+        // Extrai a data do agendamento
+        const [year, month, day] = formData.schedule_date.split('-').map(Number);
+        const startDate = new Date(year, month - 1, day, startHours, startMinutes, startSeconds || 0);
+  
+        // Converte o prazo em milissegundos
+        const [durationHours, durationMinutes, durationSeconds] = serviceData.deadline.hours
+          .split(':')
+          .map(Number);
+        const totalMilliseconds =
+          (durationHours || 0) * 3600000 +
+          (durationMinutes || 0) * 60000 +
+          (durationSeconds || 0) * 1000;
+  
+        // Calcula a data e horário finais
+        const updatedDate = new Date(startDate.getTime() + totalMilliseconds);
+  
+        setFormData((prev) => ({
+          ...prev,
+          schedule_end_date: updatedDate.toISOString().split('T')[0],
+          schedule_end_time: `${updatedDate.getHours().toString().padStart(2, '0')}:${updatedDate
+            .getMinutes()
+            .toString()
+            .padStart(2, '0')}:${updatedDate.getSeconds().toString().padStart(2, '0')}`,
+        }));
+      }
     }
   }, [formData.schedule_date, formData.schedule_start_time, serviceData]);
+  
 
   useEffect(() => {
     if (initialData) {
