@@ -6,24 +6,25 @@ import { Clear, Search, TableChart, Toc } from '@mui/icons-material';
 function KanbanHeader({ boards, boardSelected, onBoardChange, searchTerm, onSearchChange, viewMode, onClickViewMode }) {
 
   const [showClearIcon, setShowClearIcon] = useState("none");
+  console.log('asdasdasd', boardSelected)
 
   return (
 
     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: "center" }}>
       <Box>
-        {boards &&
-          <Select
-            sx={{ minWidth: 220 }}
-            value={boardSelected}
-            label="Quadro"
-            onChange={onBoardChange}
-          >
-            {boards?.map(
-              (board) => <MenuItem key={board.id} value={board.id}>{board.title}</MenuItem>
-            )}
 
-          </Select>
-        }
+        {boardSelected && <Select
+          sx={{ minWidth: 220 }}
+          value={boardSelected}
+          label="Quadro"
+          onChange={onBoardChange}
+        >
+          {boards && boards?.map(
+            (board) => <MenuItem key={board.id} value={board.id}>{board.title}</MenuItem>
+          )}
+
+        </Select>}
+
       </Box>
 
       <Box display="flex" gap={2} alignItems="center">

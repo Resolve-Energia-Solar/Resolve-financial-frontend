@@ -16,7 +16,7 @@ export default function Header({data}) {
             <Grid item xs={12} sm={12} lg={4}>
                 <Box>
                     <CustomFormLabel htmlFor="Nome Contrante" >Homologador</CustomFormLabel>
-                    <CustomTextField disabled value={data?.sale?.customer?.complete_name} />
+                    <CustomTextField disabled value={data?.homologator?.complete_name} />
                 </Box>
             </Grid>
             <Grid item xs={12} sm={12} lg={4}>

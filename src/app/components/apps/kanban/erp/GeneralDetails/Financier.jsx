@@ -1,3 +1,3 @@
 export default function Financier() {
-    return <div>RequestEnergyCompany</div>
+    return <div>Financeiro</div>
 }

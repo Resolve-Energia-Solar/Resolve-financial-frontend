@@ -3,7 +3,7 @@
 import KanbanBoard from '@/app/components/apps/kanban/erp/KanbanBoard';
 import PageContainer from '@/app/components/container/PageContainer';
 import BlankCard from '@/app/components/shared/BlankCard';
-import { CardContent, Divider } from '@mui/material';
+import { CardContent , Divider } from '@mui/material';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import boardOperation from '@/hooks/boards/useBoardOperation';
 import ModalCardDetail from '@/app/components/apps/kanban/erp/ModalCardDetail';
@@ -11,14 +11,16 @@ import BasicModal from '@/app/components/apps/modal/modal';
 import Header from '@/app/components/apps/kanban/erp/Header';
 import TasksList from '@/app/components/apps/kanban/erp/TasksList';
 import DynamicComponent from '@/app/components/apps/kanban/erp/GeneralDetails/DynamicComponent';
-import SideDrawer from '@/app/components/shared/SideDrawer';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
+import NewTask from '@/app/components/apps/kanban/erp/NewTask';
+import tasksTemplates from '@/hooks/taskTemplates/useTasksTemplates';
+import SideDrawer from '@/app/components/apps/kanban/erp/SideDrawer';
 export default function Kanban() {
 
   const {
     data,
-    contentType,
+    componentName,
     board,
     boards,
     isModalOpen,
@@ -94,7 +96,7 @@ export default function Kanban() {
 
 
           <SideDrawer open={isDrawerOpen} onClose={handleDrawerClose} title={'Detalhamento'}>
-            {isDrawerOpen && <DynamicComponent componentName={contentType} data={dataProject} />}
+            {isDrawerOpen && <DynamicComponent componentName={componentName} data={dataProject} />}
           </SideDrawer>
 
           <BasicModal
@@ -105,6 +107,8 @@ export default function Kanban() {
               <CheckCircleIcon /> :
               <CancelIcon />
             } />
+
+            {/* <NewTask  tasksTemplate={taskTemplates} /> */}
         </CardContent>
       </BlankCard>
     </PageContainer >

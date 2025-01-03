@@ -25,6 +25,7 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import ShareIcon from '@mui/icons-material/Share';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import ScheduleIcon from '@mui/icons-material/Schedule';
+import EventBusyIcon from '@mui/icons-material/EventBusy';
 import TodayIcon from '@mui/icons-material/Today';
 import { Task, Visibility } from '@mui/icons-material';
 import dynamic from 'next/dynamic';
@@ -59,10 +60,7 @@ const ReactQuill = dynamic(
     },
 );
 
-export default function ModalCardDetail({ open, onClose, data, onClickActionActivity, comments, handleText, setText, text }) {
-
-
-
+export default function ModalCardDetail({ open, onClose, data, onClickActionActivity, comments, handleText, setText, text, newTask }) {
     const HtmlRenderer = ({ rawHtml }) => {
         return (
             <div
@@ -70,9 +68,7 @@ export default function ModalCardDetail({ open, onClose, data, onClickActionActi
             />
         );
     };
-
-
-
+    console.log('Taskasdasd', data);
     return (
         <StyledDialog open={open} onClose={onClose} >
             <DialogTitle>
@@ -84,9 +80,9 @@ export default function ModalCardDetail({ open, onClose, data, onClickActionActi
                 <Box>
                     <Box display='flex' gap={8}>
                         <Box display="flex" flexDirection="column" alignItems="flex-start" gap={1}>
-                            <Typography variant="subtitle1" >Venda nº {data?.project.sale.contract_number}</Typography>
+                            <Typography variant="subtitle1" >Venda nº {data?.project?.sale.contract_number}</Typography>
                             <Typography variant="subtitle1" >Projeto nº {data?.project.project_number}</Typography>
-                            <Typography variant="subtitle1">Contratante: {data?.project.sale.customer.name}</Typography>
+                            <Typography variant="subtitle1">Contratante: {data?.project?.sale.customer.name}</Typography>
 
                         </Box>
                         <Box display="flex" flexDirection="column" alignItems="flex-start" gap={1}>
@@ -162,24 +158,29 @@ export default function ModalCardDetail({ open, onClose, data, onClickActionActi
                     <Box width={250}>
                         <Box mb={3} display="flex" flexDirection="column" gap={0.5}>
                             <Typography variant="subtitle1" gutterBottom>Datas</Typography>
-                            <Box display="flex" alignItems="center" gap={1}>
+                            {/* <Box display="flex" alignItems="center" gap={1}>
                                 <TodayIcon fontSize="small" />
-                                <Typography variant="body2">Criação: 15/08/2023</Typography>
-                            </Box>
+                                <Typography variant="body2">Início: {format(new Date(data?.start_date), 'dd/MM/yyyy')}</Typography>
+                            </Box> */}
                             <Box display="flex" alignItems="center" gap={1}>
-                                <ScheduleIcon fontSize="small" />
-                                <Typography variant="body2">Prazo: 15/08/2023</Typography>
+                                <EventBusyIcon fontSize="small" />
+
+                                <Typography variant="body2">Prazo:  {data && format(new Date(data?.due_date), 'dd/MM/yyyy')}</Typography>
                             </Box>
                             <Box display="flex" alignItems="center" gap={1}>
                                 <EventAvailableIcon fontSize="small" />
                                 <Typography variant="body2">Conclusão: 15/08/2023</Typography>
+                            </Box>
+                            <Box display="flex" alignItems="center" gap={1}>
+                                <ScheduleIcon fontSize="small" />
+                                <Typography variant="body2">Tempo Total:</Typography>
                             </Box>
                         </Box>
                         <Box>
                             <Typography variant="subtitle1" gutterBottom>Anexos</Typography>
                             <List dense sx={{ maxHeight: '150px', overflowY: 'auto' }}>
 
-                                {data?.project.attachments.map((attachment) => {
+                                {data?.project?.attachments.map((attachment) => {
                                     <ListItem>
                                         <ListItemIcon>
                                             <AttachFileIcon fontSize="small" />
@@ -189,22 +190,20 @@ export default function ModalCardDetail({ open, onClose, data, onClickActionActi
                                 })}
 
                             </List>
-                            <Button variant="outlined" fullWidth size="small">
-                                Adicionar anexos
-                            </Button>
+
                         </Box>
                         <Box>
                             <Typography variant="subtitle1" gutterBottom>Acões</Typography>
                             <Box display="flex" flexDirection={'column'} gap={1}>
-                                <Button variant="contained" size="medium" startIcon={data?.id_integration ? <Visibility /> : <Task />} onClick={onClickActionActivity} sx={{ justifyContent: 'start' }}>
+                                {data?.task_template.component && <Button variant="contained" size="medium" startIcon={data?.id_integration ? <Visibility /> : <Task />} onClick={() => onClickActionActivity(data?.task_template.component)} sx={{ justifyContent: 'start' }}>
                                     {
                                         data?.id_integration ?
                                             'Visualizar Atividade' :
                                             'Realizar Atividade'
                                     }
-                                </Button>
-                                <Button variant="contained" size="medium" startIcon={<InventoryIcon />} sx={{ justifyContent: 'start' }}>Arquivar</Button>
-                                <Button variant="contained" size="medium" startIcon={<ShareIcon />} sx={{ justifyContent: 'start' }}>Compartilhar</Button>
+                                </Button>}
+                                <Button variant="contained" size="medium" startIcon={<ShareIcon />} sx={{ justifyContent: 'start' }}
+                                    onClick={() => newTask(data)}>Criar Tarefa</Button>
                             </Box>
                         </Box>
                     </Box>
