@@ -120,7 +120,7 @@ export default function AutoCompleteUserProject({
           date.setDate(date.getDate() + 1);
           const formattedDate = date.toLocaleDateString();
           return `${option.project_number} | Valor total: ${option.sale?.total_value || 'Sem valor Total'
-          } | Contrato: ${option.sale?.contract_number || 'Contrato não Disponível'} | Homologador: ${option.homologator?.complete_name || 'Homologador não Disponível'} | Data de Início: ${formattedDate || 'Data de Início não Disponível'}` || ''
+          } | Contrato: ${option.sale?.contract_number || 'Contrato não Disponível'} | Homologador: ${option.homologator?.complete_name || 'Homologador não Disponível'} | Data de Contrato: ${formattedDate || 'Data de Contrato não Disponível'}` || ''
         }
         }
         options={options}
