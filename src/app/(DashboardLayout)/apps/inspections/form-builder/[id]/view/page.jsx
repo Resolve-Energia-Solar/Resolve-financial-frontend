@@ -1,23 +1,35 @@
 'use client';
-import React, { useState } from "react";
-import { useParams } from "next/navigation";
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 
-import { Box, Button, Chip, Divider, FormControl, Grid, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  Divider,
+  FormControl,
+  Grid,
+  MenuItem,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 
-import Breadcrumb from "@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb";
-import fbOptions from "@/app/components/apps/inspections/form-builder/fbOptions";
-import PageContainer from "@/app/components/container/PageContainer";
+import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
+import PageContainer from '@/app/components/container/PageContainer';
 
 /* hooks */
-import useFormBuilder from "@/hooks/inspections/form-builder/useFormBuilder";
-import useFormBuilderForm from "@/hooks/inspections/form-builder/useFormBuilderForm";
-import ParentCard from "@/app/components/shared/ParentCard";
-import { formatDateTime } from "@/utils/inspectionFormatDate";
-import Logo from "@/app/(DashboardLayout)/layout/shared/logo/Logo";
-import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
-import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
-import FormDateTime from "@/app/components/forms/form-custom/FormDateTime";
-import FormTimePicker from "@/app/components/forms/form-custom/FormTimePicker";
+import useFormBuilder from '@/hooks/inspections/form-builder/useFormBuilder';
+import useFormBuilderForm from '@/hooks/inspections/form-builder/useFormBuilderForm';
+import ParentCard from '@/app/components/shared/ParentCard';
+import { formatDateTime } from '@/utils/inspectionFormatDate';
+import Logo from '@/app/(DashboardLayout)/layout/shared/logo/Logo';
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
+import FormDateTime from '@/app/components/forms/form-custom/FormDateTime';
+import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
+import serviceOpinionsService from '@/services/serviceOpinionsService';
 
 const FormBuilderView = () => {
   const params = useParams();
@@ -25,14 +37,11 @@ const FormBuilderView = () => {
 
   const { loading, error, formBuilderData } = useFormBuilder(id);
 
-  const {
-    formData,
-  } = useFormBuilderForm(formBuilderData, id);
-
-
-  const optionsFB = fbOptions;
-
+  const { formData } = useFormBuilderForm(formBuilderData, id);
   const [formDataSend, setFormDataSend] = useState({});
+
+  const [serviceOpinions, setServiceOpinions] = useState([]);
+  const [loadingServiceOpinions, setLoadingServiceOpinions] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -61,21 +70,54 @@ const FormBuilderView = () => {
     },
   ];
 
+  const formattedServiceOpinions = (opinions) => {
+    const formattedOpinions = [];
+
+    opinions.forEach((opinion) => {
+      formattedOpinions.push({
+        value: opinion.id,
+        label: opinion.name,
+      });
+    });
+
+    return formattedOpinions;
+  };
+
+  useEffect(() => {
+    const fetchServiceOpinions = async () => {
+      try {
+        setLoadingServiceOpinions(true);
+        const response = await serviceOpinionsService.getServiceOpinionsByService(
+          formData.service_id,
+        );
+
+        setServiceOpinions(formattedServiceOpinions(response.results));
+      } catch (error) {
+        console.error('Error fetching service opinions:', error);
+      } finally {
+        setLoadingServiceOpinions(false);
+      }
+    };
+
+    if (formData.service_id !== null) {
+      fetchServiceOpinions();
+    }
+  }, [formData]);
+
   if (loading) return <div>Carregando...</div>;
   if (error) return <div>{error}</div>;
 
   return (
-    <PageContainer title="Visualização de Formulário" description="Página de visualização de formulários">
+    <PageContainer
+      title="Visualização de Formulário"
+      description="Página de visualização de formulários"
+    >
       <Breadcrumb title="Formulário" items={BCrumb} />
       <ParentCard
         title="Visualização de Formulário"
         footer={
           <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSubmit}
-            >
+            <Button variant="contained" color="primary" onClick={handleSubmit}>
               Salvar
             </Button>
           </Box>
@@ -83,25 +125,27 @@ const FormBuilderView = () => {
       >
         <Box sx={{ padding: 3 }}>
           <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              alignItems="center"
-              justifyContent="space-between"
-              mb={2}
+            direction={{ xs: 'column', sm: 'row' }}
+            alignItems="center"
+            justifyContent="space-between"
+            mb={2}
           >
-            <Box sx={{
+            <Box
+              sx={{
                 textAlign: {
-                    xs: "center",
-                    sm: "left"
-                }
-            }}>
+                  xs: 'center',
+                  sm: 'left',
+                },
+              }}
+            >
               <Typography variant="h5"># {id}</Typography>
               <Box mt={1}>
-                  <Chip
-                      size="small"
-                      color="secondary"
-                      variant="outlined"
-                      label={formatDateTime(formData.created_at)}
-                  ></Chip>
+                <Chip
+                  size="small"
+                  color="secondary"
+                  variant="outlined"
+                  label={formatDateTime(formData.created_at)}
+                ></Chip>
               </Box>
             </Box>
             <Logo />
@@ -115,13 +159,13 @@ const FormBuilderView = () => {
                     {formData.form_name}
                   </Typography>
                   <Typography variant="body1">
-                      Serviço: { formData.service?.name || 'Serviço não disponível' }
+                    Serviço: {formData.service?.name || 'Serviço não disponível'}
                   </Typography>
                   <Typography variant="body1">
-                      Categoria: { formData.service?.category?.name || 'Categoria não disponível' }
+                    Categoria: {formData.service?.category?.name || 'Categoria não disponível'}
                   </Typography>
                   <Typography variant="body1">
-                      Prazo: { formData.service?.deadline?.name || 'Prazo não disponível' }
+                    Prazo: {formData.service?.deadline?.name || 'Prazo não disponível'}
                   </Typography>
                 </Box>
               </Paper>
@@ -138,7 +182,9 @@ const FormBuilderView = () => {
                   case 'number':
                     return (
                       <Grid item xs={12} sm={12} lg={6} key={campo.id}>
-                        <CustomFormLabel htmlFor={`${campo.type}-${campo.id}`}>{campo.label}</CustomFormLabel>
+                        <CustomFormLabel htmlFor={`${campo.type}-${campo.id}`}>
+                          {campo.label}
+                        </CustomFormLabel>
                         <TextField
                           id={`${campo.type}-${campo.id}`}
                           name={`${campo.type}-${campo.id}`}
@@ -174,7 +220,7 @@ const FormBuilderView = () => {
                               onChange={handleChange}
                               multiple
                             >
-                              {campo.options.map(option => (
+                              {campo.options.map((option) => (
                                 <MenuItem key={option.id} value={option.value}>
                                   {option.label}
                                 </MenuItem>
@@ -197,7 +243,7 @@ const FormBuilderView = () => {
                             value={formDataSend[`${campo.type}-${campo.id}`] || ''}
                             onChange={handleChange}
                           >
-                            {campo.options.map(option => (
+                            {campo.options.map((option) => (
                               <MenuItem key={option.id} value={option.value}>
                                 {option.label}
                               </MenuItem>
@@ -213,7 +259,12 @@ const FormBuilderView = () => {
                           label={campo.label}
                           name={`${campo.type}-${campo.id}`}
                           value={formDataSend[`${campo.type}-${campo.id}`] || null}
-                          onChange={(time) => setFormDataSend((prev) => ({ ...prev, [`${campo.type}-${campo.id}`]: time }))}
+                          onChange={(time) =>
+                            setFormDataSend((prev) => ({
+                              ...prev,
+                              [`${campo.type}-${campo.id}`]: time,
+                            }))
+                          }
                         />
                       </Grid>
                     );
@@ -225,15 +276,27 @@ const FormBuilderView = () => {
                           name={`${campo.type}-${campo.id}`}
                           helperText={campo.description}
                           value={formDataSend[`${campo.type}-${campo.id}`] || null}
-                          onChange={(time) => setFormDataSend((prev) => ({ ...prev, [`${campo.type}-${campo.id}`]: time }))}
+                          onChange={(time) =>
+                            setFormDataSend((prev) => ({
+                              ...prev,
+                              [`${campo.type}-${campo.id}`]: time,
+                            }))
+                          }
                         />
                       </Grid>
                     );
                   case 'file':
                     return (
                       <Grid item xs={12} sm={12} lg={6} key={campo.id}>
-                        <CustomFormLabel htmlFor={`${campo.type}-${campo.id}`}>{campo.label}</CustomFormLabel>
-                        <Stack direction="row" spacing={2} alignItems="center" sx={{ border: '1px solid #ccc', borderRadius: '4px', padding: '10px' }}>
+                        <CustomFormLabel htmlFor={`${campo.type}-${campo.id}`}>
+                          {campo.label}
+                        </CustomFormLabel>
+                        <Stack
+                          direction="row"
+                          spacing={2}
+                          alignItems="center"
+                          sx={{ border: '1px solid #ccc', borderRadius: '4px', padding: '10px' }}
+                        >
                           <Button
                             variant="contained"
                             component="label"
@@ -245,12 +308,22 @@ const FormBuilderView = () => {
                               type="file"
                               onChange={(event) => {
                                 const file = event.target.files[0];
-                                setFormDataSend((prev) => ({ ...prev, [`${campo.type}-${campo.id}`]: file }));
+                                setFormDataSend((prev) => ({
+                                  ...prev,
+                                  [`${campo.type}-${campo.id}`]: file,
+                                }));
                               }}
                               hidden
                             />
                           </Button>
-                          <div style={{ flexGrow: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                          <div
+                            style={{
+                              flexGrow: 1,
+                              overflow: 'hidden',
+                              whiteSpace: 'nowrap',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
                             {formDataSend[`${campo.type}-${campo.id}`] ? (
                               <strong>{formDataSend[`${campo.type}-${campo.id}`].name}</strong>
                             ) : (
@@ -264,6 +337,28 @@ const FormBuilderView = () => {
                     return null;
                 }
               })}
+              {serviceOpinions.length > 0 && !loadingServiceOpinions && (
+                <Grid item xs={12} sm={12} lg={6} key="service-opinion" mt={3}>
+                  <FormControl fullWidth required variant="outlined">
+                    <CustomFormLabel htmlFor={`service-opinion`} sx={{ mt: 0 }}>
+                      Parecer do Serviço
+                    </CustomFormLabel>
+                    <CustomSelect
+                      id={`service-opinion-select`}
+                      name={`service-opinions`}
+                      variant="outlined"
+                      value={formDataSend[`service-opinions`] || ''}
+                      onChange={handleChange}
+                    >
+                      {serviceOpinions.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </CustomSelect>
+                  </FormControl>
+                </Grid>
+              )}
             </form>
           </Box>
         </Box>
