@@ -19,6 +19,11 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
 import {
   AddBoxRounded,
@@ -27,13 +32,13 @@ import {
   ArrowDropDown as ArrowDropDownIcon,
   ArrowDropUp as ArrowDropUpIcon,
 } from '@mui/icons-material';
+import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
+//import ServiceOpinionsDrawerFilters from '../ServiceOpinionsDrawerFilters';
 
 // Services and utils
 import serviceOpinionsService from '@/services/serviceOpinionsService';
 import { ServiceOpinionsContext } from '@/app/context/Inspection/ServiceOpinionsContext';
-//import ServiceOpinionsDrawerFilters from '../ServiceOpinionsDrawerFilters'; // Altere para o novo componente
-import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
-import { forEach } from 'lodash';
+
 const ServiceOpinionsList = () => {
   const router = useRouter();
 
@@ -283,6 +288,28 @@ const ServiceOpinionsList = () => {
           </Table>
         </TableContainer>
       </Box>
+      {/* Modal de confirmação de exclusão */}
+      <Dialog
+        open={isDialogOpen}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        onClose={handleCloseModal}
+      >
+        <DialogTitle id="alert-dialog-title">Confirmar Exclusão</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Tem certeza de que deseja excluir este parecer? Esta ação não pode ser desfeita.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button color="primary" onClick={handleCloseModal}>
+            Cancelar
+          </Button>
+          <Button color="error" onClick={handleConfirmDelete}>
+            Excluir
+          </Button>
+        </DialogActions>
+      </Dialog>
       {/* Alerta */}
       <Snackbar
         open={alertOpen}
