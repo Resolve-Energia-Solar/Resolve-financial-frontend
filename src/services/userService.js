@@ -9,10 +9,10 @@ const formatTime = (time) => {
 const userService = {
   getUser: async ({ page = 1, limit = 10 } = {}) => {
     try {
-      const response = await apiClient.get('/api/users/', { 
-        params: { 
-          page, 
-          limit 
+      const response = await apiClient.get('/api/users/', {
+        params: {
+          page,
+          limit,
         },
       });
       return response.data;
@@ -92,8 +92,8 @@ const userService = {
         params: {
           category: query.category,
           date: query.scheduleDate,
-          start_time: formatTime(query.scheduleStartTime),
-          end_time: formatTime(query.scheduleEndTime),
+          start_time: query.scheduleStartTime,
+          end_time: query.scheduleEndTime,
           latitude: query.scheduleLatitude,
           longitude: query.scheduleLongitude,
         },

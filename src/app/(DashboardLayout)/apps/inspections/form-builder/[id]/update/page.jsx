@@ -1,36 +1,26 @@
 'use client';
-import React, {
-  useState,
-  useEffect,
-} from "react";
-import { useParams } from "next/navigation";
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 
 /* material */
-import {
-  Grid,
-  Button,
-  Stack,
-  Alert,
-  MenuItem,
-  Typography
-} from "@mui/material";
+import { Grid, Button, Stack, Alert, MenuItem, Typography } from '@mui/material';
 
 /* components */
-import AutoCompleteServiceCatalog from "@/app/components/apps/inspections/auto-complete/Auto-input-Service";
-import Breadcrumb from "@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb";
-import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
-import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
-import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
-import PageContainer from "@/app/components/container/PageContainer";
-import ParentCard from "@/app/components/shared/ParentCard";
-import fbOptions from "@/app/components/apps/inspections/form-builder/fbOptions";
-import FBTextType from "@/app/components/apps/inspections/form-builder/FBTextType";
-import FBSelectType from "@/app/components/apps/inspections/form-builder/FBSelectType";
+import AutoCompleteServiceCatalog from '@/app/components/apps/inspections/auto-complete/Auto-input-Service';
+import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
+import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
+import PageContainer from '@/app/components/container/PageContainer';
+import ParentCard from '@/app/components/shared/ParentCard';
+import fbOptions from '@/app/components/apps/inspections/form-builder/fbOptions';
+import FBTextType from '@/app/components/apps/inspections/form-builder/FBTextType';
+import FBSelectType from '@/app/components/apps/inspections/form-builder/FBSelectType';
 
 /* hooks */
-import useFormBuilder from "@/hooks/inspections/form-builder/useFormBuilder";
-import useFormBuilderForm from "@/hooks/inspections/form-builder/useFormBuilderForm";
+import useFormBuilder from '@/hooks/inspections/form-builder/useFormBuilder';
+import useFormBuilderForm from '@/hooks/inspections/form-builder/useFormBuilderForm';
 
 const FormBuilderForm = () => {
   const params = useParams();
@@ -40,59 +30,53 @@ const FormBuilderForm = () => {
 
   const optionsFB = fbOptions;
 
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success,
-  } = useFormBuilderForm(formBuilderData, id);
+  const { formData, handleChange, handleSave, formErrors, success } = useFormBuilderForm(
+    formBuilderData,
+    id,
+  );
 
   if (loading) return <div>Carregando...</div>;
   if (error) return <div>{error}</div>;
 
   const handleClearFields = () => {
-    handleChange("form_fields", []);
+    handleChange('form_fields', []);
   };
 
   const addField = () => {
     const newField = {
       id: uuidv4(),
-      label: "",
-      description: "",
-      type: "text",
+      label: '',
+      description: '',
+      type: 'text',
       required: false,
       options: [],
     };
 
-    handleChange("form_fields", [...formData.form_fields, newField]);
+    handleChange('form_fields', [...formData.form_fields, newField]);
   };
 
   const removeField = (id) => {
-    const updatedFields = formData.form_fields.filter(field => field.id !== id);
-    handleChange("form_fields", updatedFields);
+    const updatedFields = formData.form_fields.filter((field) => field.id !== id);
+    handleChange('form_fields', updatedFields);
   };
 
   const handleFieldChange = (id, event) => {
     const { name, value } = event.target;
-    const updatedFields = formData.form_fields.map(field => 
-      field.id === id ? { ...field, [name]: value } : field
+    const updatedFields = formData.form_fields.map((field) =>
+      field.id === id ? { ...field, [name]: value } : field,
     );
-    handleChange("form_fields", updatedFields);
+    handleChange('form_fields', updatedFields);
   };
 
   return (
-    <PageContainer
-      title={"Edição de Formulário"}
-      description={"Editor de Formulário"}
-    >
-      <Breadcrumb title={"Editar Formulário"} />
+    <PageContainer title={'Edição de Formulário'} description={'Editor de Formulário'}>
+      <Breadcrumb title={'Editar Formulário'} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           Formulário atualizado com sucesso!
         </Alert>
       )}
-      <ParentCard 
+      <ParentCard
         title="Formulário"
         footer={
           <Stack direction="row" spacing={2} justifyContent="flex-end">
@@ -106,11 +90,7 @@ const FormBuilderForm = () => {
             >
               Limpar Campos
             </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSave}
-            >
+            <Button variant="contained" color="primary" onClick={handleSave}>
               Salvar
             </Button>
           </Stack>
@@ -119,11 +99,7 @@ const FormBuilderForm = () => {
         <Grid container spacing={3}>
           {/* Name */}
           <Grid item xs={12} sm={12} lg={6}>
-            <CustomFormLabel
-              htmlFor="form_name"
-            >
-              Nome
-            </CustomFormLabel>
+            <CustomFormLabel htmlFor="form_name">Nome</CustomFormLabel>
             <CustomTextField
               name="form_name"
               variant="outlined"
@@ -147,38 +123,46 @@ const FormBuilderForm = () => {
           {/* Add Field Button */}
           <Grid item xs={12} sm={12} lg={12} justifyContent="center" mt={2}>
             <Stack direction="row" spacing={2} justifyContent="center">
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={addField}
-              >
+              <Button variant="contained" color="primary" onClick={addField}>
                 Adicionar Novo Campo
               </Button>
             </Stack>
           </Grid>
 
           <Grid item xs={12} sm={12} lg={12}>
-            <Alert severity="info">
-              Pré visualização do Formulário
-            </Alert>
+            <Alert severity="info">Pré visualização do Formulário</Alert>
           </Grid>
 
           {/* Fields Preview */}
           <Grid item xs={12} sm={12} lg={12}>
             {formData.form_fields.map((field) => (
-              <ParentCard
-                title={`Novo Campo`}
-                key={field.id}
-              >
+              <ParentCard title={`Novo Campo`} key={field.id}>
                 <Grid container spacing={3} mb={3}>
                   <Grid item lg={6} md={12} sm={12}>
-                    {field.type === 'text' && ( <FBTextType onChange={handleFieldChange} field={field} /> )}
-                    {field.type === 'ariaText' && ( <FBTextType onChange={handleFieldChange} field={field} /> )}
-                    {field.type === 'number' && ( <FBTextType onChange={handleFieldChange} field={field} /> )}
-                    {field.type === 'email' && ( <FBTextType onChange={handleFieldChange} field={field} /> )}
-                    {field.type === 'date' && ( <FBTextType onChange={handleFieldChange} field={field} /> )}
-                    {field.type === 'time' && ( <FBTextType onChange={handleFieldChange} field={field} /> )}
-                    {field.type === 'select' && ( <FBSelectType onChange={handleFieldChange} field={field} /> )}
+                    {field.type === 'text' && (
+                      <FBTextType onChange={handleFieldChange} field={field} />
+                    )}
+                    {field.type === 'ariaText' && (
+                      <FBTextType onChange={handleFieldChange} field={field} />
+                    )}
+                    {field.type === 'number' && (
+                      <FBTextType onChange={handleFieldChange} field={field} />
+                    )}
+                    {field.type === 'email' && (
+                      <FBTextType onChange={handleFieldChange} field={field} />
+                    )}
+                    {field.type === 'date' && (
+                      <FBTextType onChange={handleFieldChange} field={field} />
+                    )}
+                    {field.type === 'time' && (
+                      <FBTextType onChange={handleFieldChange} field={field} />
+                    )}
+                    {field.type === 'select' && (
+                      <FBSelectType onChange={handleFieldChange} field={field} />
+                    )}
+                    {field.type === 'file' && (
+                      <FBTextType onChange={handleFieldChange} field={field} />
+                    )}
                   </Grid>
                   <Grid item lg={6} md={12} sm={12}>
                     <Grid item xs={12}>
@@ -232,11 +216,7 @@ const FormBuilderForm = () => {
         {/* Add Field Button */}
         <Grid item xs={12} sm={12} lg={12} justifyContent="center" mt={2}>
           <Stack direction="row" spacing={2} justifyContent="center">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={addField}
-            >
+            <Button variant="contained" color="primary" onClick={addField}>
               Adicionar Novo Campo
             </Button>
           </Stack>
