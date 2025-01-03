@@ -54,14 +54,14 @@ function Sale({ data }) {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>Nome</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>Data Contrato</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>Status vistoria</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>Status documentação</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>Status financeiro</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>Unidade</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>Especificação de pagamento</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>Valor do projeto </TableCell>
+                  <TableCell align="left">Nome</TableCell>
+                  <TableCell align="left">Data Contrato</TableCell>
+                  <TableCell align="left">Status vistoria</TableCell>
+                  <TableCell align="left">Status documentação</TableCell>
+                  <TableCell align="left">Status financeiro</TableCell>
+                  <TableCell align="left">Unidade</TableCell>
+                  <TableCell align="left">Especificação de pagamento</TableCell>
+                  <TableCell align="left">Valor do projeto </TableCell>
 
                 </TableRow>
               </TableHead>
@@ -73,21 +73,21 @@ function Sale({ data }) {
                     sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && 'primary.light' }}
                     onClick={() => handleClickRow(item)}
                   >
-                    <TableCell align="center">{item.customer.complete_name}</TableCell>
-                    <TableCell align="center">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
-                    <TableCell align="center">
+                    <TableCell align="left">{item.customer.complete_name}</TableCell>
+                    <TableCell align="left">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
+                    <TableCell align="left">
                       {item.projects.map((item) => <InspecStatusChip key={item.id} status={item.projects?.inspection.status} />)}
                     </TableCell>
-                    <TableCell align="center">
+                    <TableCell align="left">
                       {item.projects.map((item) => <DocumentStatusIcon key={item.id} status={item.is_documentation_completed} />)}
                     </TableCell>
-                    <TableCell align="center">
+                    <TableCell align="left">
                       <FinancialChip status={item.payment_status} />
                     </TableCell>
 
-                    <TableCell align="center">{item.branch.name}</TableCell>
-                    <TableCell align="center">{item.especpagam}</TableCell>
-                    <TableCell align="center">{item.total_value}</TableCell>
+                    <TableCell align="left">{item.branch.name}</TableCell>
+                    <TableCell align="left">{item.especpagam}</TableCell>
+                    <TableCell align="left">{item.total_value}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

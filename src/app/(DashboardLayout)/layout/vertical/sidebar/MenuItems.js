@@ -1,7 +1,6 @@
 import { uniqueId } from 'lodash';
 
 import {
-
   IconBoxMultiple,
   IconCalendar,
   IconClockQuestion,
@@ -22,7 +21,7 @@ import {
   IconMailFast,
   IconUserDollar,
   IconPoint,
-  IconUserPin
+  IconUserPin,
 } from '@tabler/icons-react';
 
 const Menuitems = [
@@ -37,7 +36,7 @@ const Menuitems = [
     href: '/',
     children: [
       { id: uniqueId(), title: 'CRM', icon: IconPoint, href: '/apps/boards/crm' },
-      { id: uniqueId(), title: 'Operação', icon: IconPoint, href: '/apps/boards/erp' }
+      { id: uniqueId(), title: 'Operação', icon: IconPoint, href: '/apps/boards/erp' },
     ],
 
     chip: 'Novo',
@@ -55,42 +54,48 @@ const Menuitems = [
         id: uniqueId(),
         title: 'Ordem de Serviço',
         icon: IconPoint,
-        href: '/apps/inspections/schedule'
+        href: '/apps/inspections/schedule',
       },
       {
         id: uniqueId(),
         title: 'Tipos de Serviços',
         icon: IconPoint,
-        href: '/apps/inspections/service-catalog'
+        href: '/apps/inspections/service-catalog',
+      },
+      {
+        id: uniqueId(),
+        title: 'Parecer do Serviço',
+        icon: IconPoint,
+        href: '/apps/inspections/service-opinions',
       },
       {
         id: uniqueId(),
         title: 'Categorias',
         icon: IconPoint,
-        href: '/apps/inspections/category'
+        href: '/apps/inspections/category',
       },
       {
         id: uniqueId(),
         title: 'Contrato de Prazos',
         icon: IconPoint,
-        href: '/apps/inspections/deadline'
+        href: '/apps/inspections/deadline',
       },
       {
         id: uniqueId(),
         title: 'Formulários',
         icon: IconPoint,
         href: '/apps/inspections/form-builder',
-        permissions: ['inspections.view_forms'],
+        permissions: ['field_services.view_forms'],
       },
       {
         id: uniqueId(),
         title: 'TimeLine',
         icon: IconChartLine,
         href: '/apps/timeline',
-        permissions: ['inspections.view_schedule'],
-      }
+        permissions: ['field_services.view_schedule'],
+      },
     ],
-    permissions: ['inspections.view_schedule'],
+    permissions: ['field_services.view_schedule'],
   },
   {
     id: uniqueId(),
@@ -105,7 +110,7 @@ const Menuitems = [
     icon: IconCurrencyDollar,
     href: '/',
     permissions: ['financial.view_payment'],
-    children:[
+    children: [
       {
         id: uniqueId(),
         title: 'Pagamentos',
@@ -117,8 +122,8 @@ const Menuitems = [
         title: 'Parcelas',
         icon: IconPoint,
         href: '/apps/invoice/installments',
-      }
-    ]
+      },
+    ],
   },
   {
     id: uniqueId(),
@@ -134,7 +139,6 @@ const Menuitems = [
     href: '',
     permissions: ['resolve_crm.view_project'],
     children: [
-
       {
         id: uniqueId(),
         title: 'Projetos',
@@ -149,9 +153,8 @@ const Menuitems = [
         icon: IconPoint,
         href: '/apps/request',
         permissions: ['resolve_crm.view_project'],
-      }
+      },
     ],
-
   },
   {
     id: uniqueId(),
@@ -201,8 +204,7 @@ const Menuitems = [
     icon: IconFileDescription,
     href: '/apps/document-types',
     permissions: ['core.view_documenttype'],
-  }
-
+  },
 ];
 
 export default Menuitems;

@@ -1,8 +1,8 @@
 import apiClient from './apiClient';
 
-const DEFAULT_ROUTER = '/api/boards'
+const DEFAULT_ROUTER = '/api/task-templates'
 
-const boardOperationService = {
+const taskTemplateService = {
     index: async (params = {}) => {
         try {
             const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params });
@@ -12,7 +12,7 @@ const boardOperationService = {
             throw error;
         }
     },
-    find: async (id, params = {}) => {
+    find: async (id, params={}) => {
         try {
             const response = await apiClient.get(`${DEFAULT_ROUTER}/${id}/`, { params });
             return response.data;
@@ -50,4 +50,4 @@ const boardOperationService = {
     },
 };
 
-export default boardOperationService;
+export default taskTemplateService;

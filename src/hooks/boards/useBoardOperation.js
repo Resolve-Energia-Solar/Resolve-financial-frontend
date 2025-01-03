@@ -2,6 +2,7 @@ import boardOperationService from "@/services/boardOperationService"
 import userService from "@/services/userService"
 import { useEffect, useState } from "react"
 import Cookies from 'js-cookie';
+import taskTemplateService from "@/services/taskTemplateService";
 
 export default function boardOperation() {
 
@@ -19,16 +20,17 @@ export default function boardOperation() {
     const [message, setMessage] = useState({})
     const [viewMode, setViewMode] = useState('kanban')
     const [tasks, setTasks] = useState()
+    const [componentName, setComponentName] = useState()
 
     const handleCardClick = async (item) => {
         setIsModalOpen(true)
         setCardSelected(item)
         fetchComments(item.project.id)
         console.log('comentarios item', item)
-
         const userData = await userService.getUserById(item?.project?.sale?.customer);
-
-
+        const taskTemplateData = await taskTemplateService.find(item.task_template);
+        console.log('taskTemplateData', { ...item, task_template: { ...taskTemplateData } })
+        setCardSelected({ ...item, task_template: { ...taskTemplateData } })
         setDataProject(
             {
                 ...item?.project, sale:
@@ -80,9 +82,8 @@ export default function boardOperation() {
     const fetchDataBoard = async (id) => {
         const boardResponse = await boardOperationService.find(id)
         const tasks = boardResponse?.columns.flatMap((column) => column.task) || [];
-        setBoard(boardResponse)
+        setBoard(boardResponse);
         setTasks(tasks);
-
     }
 
     const handleChangeBoard = (e) => {
@@ -95,7 +96,8 @@ export default function boardOperation() {
 
     }
 
-    const handleDrawerOpen = (e) => {
+    const handleDrawerOpen = (componentName) => {
+        setComponentName(componentName)
         setIsDrawerOpen(!isDrawerOpen)
     }
     const handleDrawerClose = () => {
@@ -136,7 +138,7 @@ export default function boardOperation() {
                         "text": text
                     }
                 )
-            }) 
+            })
             const data = await response.json()
 
             if (response.ok) {
@@ -199,7 +201,8 @@ export default function boardOperation() {
         message,
         viewMode,
         onClickViewMode,
-        tasks
+        tasks,
+        componentName
     }
 
 }

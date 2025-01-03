@@ -1,3 +1,9 @@
+import Header from "./Header";
+
 export default function Contract({ data }) {
-    return <div>RequestEnergyCompany</div>
+    
+    console.log('skdgfaskdhfj',data)
+    return <div>
+        <Header data={data}/>
+    </div>
 }

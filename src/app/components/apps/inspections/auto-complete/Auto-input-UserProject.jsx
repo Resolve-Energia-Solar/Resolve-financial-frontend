@@ -21,6 +21,12 @@ export default function AutoCompleteUserProject({
   const [loading, setLoading] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
 
+  function formatDate(date) {
+    const dateObj = new Date(date);
+    dateObj.setDate(dateObj.getDate() + 1);
+    return dateObj.toLocaleDateString();
+  }
+
   useEffect(() => {
     const fetchDefaultProject = async () => {
       if (value) {
@@ -31,6 +37,8 @@ export default function AutoCompleteUserProject({
               id: projectValue.id,
               project_number: projectValue.project_number,
               sale: projectValue.sale,
+              homologator: projectValue.homologator,
+              start_date:projectValue.start_date,
             });
           }
         } catch (error) {
@@ -107,10 +115,13 @@ export default function AutoCompleteUserProject({
         onOpen={handleOpen}
         onClose={handleClose}
         isOptionEqualToValue={(option, value) => option.id === value.id}
-        getOptionLabel={(option) =>
-          `${option.project_number} | Valor total: ${
-            option.sale?.total_value || 'Sem valor Total'
-          } | Contrato: ${option.sale?.contract_number || 'Contrato não Disponível'}` || ''
+        getOptionLabel={(option) => {
+          const date = new Date(option.start_date);
+          date.setDate(date.getDate() + 1);
+          const formattedDate = date.toLocaleDateString();
+          return `${option.project_number} | Valor total: ${option.sale?.total_value || 'Sem valor Total'
+          } | Contrato: ${option.sale?.contract_number || 'Contrato não Disponível'} | Homologador: ${option.homologator?.complete_name || 'Homologador não Disponível'} | Data de Contrato: ${formattedDate || 'Data de Contrato não Disponível'}` || ''
+        }
         }
         options={options}
         noOptionsText={noTextOptions}

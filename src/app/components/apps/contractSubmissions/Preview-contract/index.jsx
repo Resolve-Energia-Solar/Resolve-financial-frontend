@@ -32,6 +32,40 @@ export default function PreviewContractDialog({ open, onClose, userId, saleId })
   );
 
 // Exemplo seguro para não quebrar caso saleData ou sale_products estejam ausentes:
+  // Módulos
+  const modulesString = saleData?.sale_products
+  ?.map((sp, index) => {
+    const moduleItems = sp?.product?.materials?.filter(item =>
+      item?.material?.attributes?.some(attr => attr.key === 'Modulo' && attr.value === 'True')
+    ) || [];
+    return moduleItems
+      .map(m => {
+        const quantity = Math.floor(m.amount);
+        const label = quantity === 1 ? 'Módulo' : 'Módulos';
+        return `${quantity} ${label} ${m.material.name.toUpperCase()} (Projeto ${index + 1})`;
+      })
+      .join(', ');
+  })
+  .filter(Boolean)
+  .join(', ');
+
+  // Inversores
+  const inversorsString = saleData?.sale_products
+  ?.map((sp, index) => {
+    const inversorItems = sp?.product?.materials?.filter(item =>
+      item?.material?.attributes?.some(attr => attr.key === 'Inversor' && attr.value === 'True')
+    ) || [];
+    return inversorItems
+      .map(i => {
+        const quantity = Math.floor(i.amount);
+        const label = quantity === 1 ? 'Inversor' : 'Inversores';
+        return `${quantity} ${label} ${i.material.name.toUpperCase()} (Projeto ${index + 1})`;
+      })
+      .join(', ');
+  })
+  .filter(Boolean)
+  .join(', ');
+
   const modules = saleData?.sale_products?.flatMap(sp =>
     sp?.product?.materials?.filter(item =>
       item?.material?.attributes?.some(attr => attr.key === 'Modulo' && attr.value === 'True')
@@ -60,20 +94,18 @@ export default function PreviewContractDialog({ open, onClose, userId, saleId })
     const fetchPayments = async () => {
       try {
         const paymentData = await paymentService.getPaymentsBySale(saleId, 'payment_type');
-        setPayments(paymentData);
+        // Aqui salvamos apenas o array results em vez do objeto inteiro
+        setPayments(paymentData.results);
       } catch (error) {
         console.error('Erro ao buscar pagamentos:', error);
       }
     };
-
+  
     if (saleId) {
       fetchPayments();
     }
   }, [saleId]);
-
-  console.log('payments', payments);
-
-  const paymentMethods = Array.isArray(payments) ? payments.map((pm) => getPaymentLabel(pm.payment_type)).join(', ') : '';
+  
 
 
   const { handleFileUpload, generatePreview, loading, error } = useDocxTemplate({
@@ -89,18 +121,18 @@ export default function PreviewContractDialog({ open, onClose, userId, saleId })
       year: 'numeric',
     }),
     //Infomacoes do produto
-    total_paid: saleData?.total_paid?.toFixed(2),
+    total_paid: saleData?.total_value,
 
     //Modulos
-    modules: modules.map((m) => m.material.name.toUpperCase()).join(', '),
-    modules_quantity: modules.map((m) => Math.floor(m.amount)).join(', '),
+    modules: modulesString,
+    // modules_quantity: modules.map((m) => Math.floor(m.amount)).join(', '),
     //Inversores
-    inversors: inversors.map((m) => m.material.name.toUpperCase()).join(', '),
-    inversors_quantity: inversors.map((m) => Math.floor(m.amount)).join(', '),
+    inversors: inversorsString,
+    // inversors_quantity: inversors.map((m) => Math.floor(m.amount)).join(', '),
     inversors_kwp: inversors.map((m) => m.material.attributes.find(attr => attr.key === 'kwp').value).join(', '),
 
     //Informacoes da venda
-    payments_methods: paymentMethods,
+    payments_methods: payments.map((pm) => paymentTypes.find(pt => pt.code === pm.payment_type).label).join(', '),
 
     // payment_methods: saleData?.payment_methods?.map((pm) => pm.name).join(', '),
   });
