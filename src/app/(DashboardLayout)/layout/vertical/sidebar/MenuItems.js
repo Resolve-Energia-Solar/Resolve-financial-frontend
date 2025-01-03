@@ -64,6 +64,12 @@ const Menuitems = [
       },
       {
         id: uniqueId(),
+        title: 'Parecer do Serviço',
+        icon: IconPoint,
+        href: '/apps/inspections/service-opinions',
+      },
+      {
+        id: uniqueId(),
         title: 'Categorias',
         icon: IconPoint,
         href: '/apps/inspections/category',
