@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { use, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import {
@@ -24,9 +24,14 @@ import AutoCompleteServiceCatalogFilter from '../../auto-complete/Auto-Input-Ser
 import scheduleService from '@/services/scheduleService';
 import Logo from '@/app/(DashboardLayout)/layout/shared/logo/Logo';
 import ScheduleStatusChip from '../StatusChip';
+import answerService from '@/services/answerService';
+import AnswerForm from '../../form-builder/AnswerForm';
 
 export default function ScheduleView({ open, onClose, selectedSchedule }) {
   const router = useRouter();
+
+  const [answerData, setAnswerData] = useState(null);
+  const [loadingAnswer, setLoadingAnswer] = useState(true);
 
   const formatDate = (dateString) => {
     const [year, month, day] = dateString.split('-');
@@ -41,6 +46,24 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
   const handleEditClick = (id) => {
     router.push(`/apps/inspections/schedule/${id}/update`);
   };
+
+  useEffect(() => {
+    const fetchAnswer = async () => {
+      setLoadingAnswer(true);
+      try {
+        const data = await answerService.getAnswerBySchedule(selectedSchedule.id);
+        setAnswerData(data);
+      } catch (err) {
+        setError('Erro ao carregar a resposta');
+      } finally {
+        setLoadingAnswer(false);
+      }
+    };
+
+    if (selectedSchedule) {
+      fetchAnswer();
+    }
+  }, [selectedSchedule]);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -138,6 +161,9 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                     </Box>
                   </Box>
                 </Paper>
+                {answerData?.results?.length > 0 && !loadingAnswer && (
+                  <AnswerForm answerData={answerData} />
+                )}
               </>
             )}
             {/* Botão de Ação */}
