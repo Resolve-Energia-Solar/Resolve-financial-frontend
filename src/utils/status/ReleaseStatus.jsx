@@ -11,7 +11,7 @@ const ReleaseStatus = ({ status }) => {
     if (status == true) {
       return { label: 'Liberado', color: theme.palette.success.light, icon: <CheckCircleIcon /> };
     } else {
-      return { label: 'Bloqueado', color: theme.palette.warning.main, icon: <CancelIcon /> };
+      return { label: 'Bloqueado', color: theme.palette.secondary.light, icon: <CancelIcon /> };
     }
   };
 

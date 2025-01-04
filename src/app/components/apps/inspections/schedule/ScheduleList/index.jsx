@@ -270,6 +270,19 @@ const SchedulingList = () => {
                 </Box>
               </TableCell>
 
+              <TableCell
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                onClick={() => handleSort('status')}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  Parecer do Serviço
+                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                    {order === 'service_opinion' &&
+                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                  </Box>
+                </Box>
+              </TableCell>
+
               {/* Data do Agendamento */}
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
@@ -374,6 +387,9 @@ const SchedulingList = () => {
                 <TableRow key={schedule.id} hover>
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     <ScheduleStatusChip status={schedule.status} />
+                  </TableCell>
+                  <TableCell onClick={() => handleRowClick(schedule)}>
+                    {schedule.service_opinion?.name || 'Sem parecer associado'}
                   </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     {formatDate(schedule.schedule_date)}

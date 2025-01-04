@@ -87,14 +87,14 @@ function Debtor({ data }) {
                                     key={item.id}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && 'primary.light' }}
                                     onClick={() => handleClickRow(item)}
-                                >
-                                    <TableCell align="left">{item.unidade}</TableCell>
+                                    >
                                     <TableCell align="left">{item.valprojeto}</TableCell>
                                     <TableCell align="left">{item.categoria}</TableCell>
                                     <TableCell align="left">{item.signature_date && format(new Date(item.signature_date), 'dd/MM/yyyy')}</TableCell>
                                     <TableCell align="left">
                                         <PaymentStatusChip status={item.payment_status} />
                                     </TableCell>
+                                    <TableCell align="left">{item.unidade}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

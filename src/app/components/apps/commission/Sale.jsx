@@ -13,6 +13,7 @@ import { getStatusChip } from '@/utils/status';
 import DocumentStatusIcon from '../../../../utils/status/DocumentStatusIcon';
 import FinancialChip from '../../../../utils/status/FinancialChip';
 import InspecStatusChip from '../../../../utils/status/InspecStatusChip'
+import { formatToBRL } from '@/utils/currency';
 
 
 
@@ -87,7 +88,7 @@ function Sale({ data }) {
 
                     <TableCell align="left">{item.branch.name}</TableCell>
                     <TableCell align="left">{item.especpagam}</TableCell>
-                    <TableCell align="left">{item.total_value}</TableCell>
+                    <TableCell align="left">{formatToBRL(item.total_value)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -103,4 +104,4 @@ function Sale({ data }) {
       )
 }
 
-      export default Sale;
+export default Sale;
