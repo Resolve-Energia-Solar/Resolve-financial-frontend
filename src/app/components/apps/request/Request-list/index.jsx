@@ -209,7 +209,7 @@ const RequestList = ({ projectId = null }) => {
         <DialogContent>
           <AddRequestCompany
             projectId={projectId}
-            onClosedModal={handleCloseEditDialog}
+            onClosedModal={() => setOpenAddDialog(false)}
             onRefresh={refreshData}
           />
         </DialogContent>

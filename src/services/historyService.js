@@ -1,22 +1,28 @@
 import apiClient from './apiClient';
 
 const HistoryService = {
-  getHistory: async (contentType, objectId, token) => {
+  getHistory: async (contentType, objectId, token, get_related) => {
     if (!token) {
       console.error('Erro: Token não fornecido.');
       throw new Error('Token não fornecido.');
     }
 
     try {
+      const params = {
+        content_type: contentType,
+        object_id: objectId,
+      };
+
+      if (get_related) {
+        params.get_related = true;
+      }
+
       const response = await apiClient.get('/api/history/', {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        params: {
-          content_type: contentType,
-          object_id: objectId,
-        },
+        params: params,
       });
 
       console.log('Histórico:', response.data);
@@ -37,4 +43,3 @@ const HistoryService = {
 };
 
 export default HistoryService;
-
