@@ -31,7 +31,6 @@ import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import { useEffect, useState } from 'react';
 import supplyService from '@/services/supplyAdequanceService';
 
-
 const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = null }) => {
   const params = useParams();
   let id = unitId;
@@ -40,7 +39,6 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = nu
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const [fileLoading, setFileLoading] = useState(false);
-  
 
   const hasPermission = (permissions) => {
     if (!permissions) return true;
@@ -243,13 +241,13 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = nu
                         Atualmente:{' '}
                         {formData.bill_file ? (
                           <Link
-                            href={URL.createObjectURL(formData.bill_file)}
+                            href={formData?.bill_file}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            {formData.bill_file.name.length > 30
-                              ? `${formData.bill_file.name.slice(0, 30)}...`
-                              : formData.bill_file.name}
+                            {formData.bill_file && formData.bill_file.length > 30
+                              ? `${formData?.bill_file.slice(0, 30)}...`
+                              : formData?.bill_file}
                           </Link>
                         ) : (
                           'Nenhum arquivo selecionado'

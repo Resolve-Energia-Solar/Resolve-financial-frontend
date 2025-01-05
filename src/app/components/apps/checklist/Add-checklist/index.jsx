@@ -228,7 +228,7 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
                       Atualmente:{' '}
                       {formData.bill_file ? (
                         <Link
-                          href={URL.createObjectURL(formData.bill_file)}
+                          href={URL.createObjectURL(formData?.bill_file)}
                           target="_blank"
                           rel="noopener noreferrer"
                         >

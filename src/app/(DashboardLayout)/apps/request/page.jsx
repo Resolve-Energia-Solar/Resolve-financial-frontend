@@ -19,6 +19,7 @@ import {
   AccordionDetails,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import RequestList from "@/app/components/apps/request/Request-list";
 const BCrumb = [
   {
     to: "/",
@@ -93,41 +94,10 @@ const RequestCE = () => {
           <CardContent>
             <Box sx={{ display: 'flex' }}>
             </Box>
-            {
-              (load) ? <ListRequest data={requestData} onClick={handleRowClick} /> :
-                < Loading />
-            }
+            <RequestList />
           </CardContent>
         </BlankCard>
       </PageContainer>
-      {/* Drawer para o painel de detalhes */}
-      <SideDrawer title="Detalhes do Solicitação" open={openDrawer} onClose={toggleDrawerClosed}>
-        {selectedItem && situationOptions.length > 0 &&
-          <LateralForm
-            handleChangeSituation={handleChangeSituation}
-            isEditing={isEditing} formData={formData}
-            due_date={due_date}
-            handleInputChange={handleInputChange}
-            options={situationOptions}
-            multiSelectValues={selectedValues}
-            handleEditToggle={handleEditToggle}
-            handleSave={handleSave}
-          />
-        }
-      </SideDrawer>
-      {/* Criação de Nova Solicitação */}
-      <SideDrawer title="Detalhes do Solicitação" open={openDrawerCreate} onClose={toggleDrawerCreateClosed}>
-
-        <SendingForm handleChangeSituation={handleChangeSituation}
-          isEditing={isEditing} formData={formData}
-          due_date={due_date}
-          handleInputChange={handleInputChange}
-          options={situationOptions}
-          multiSelectValues={selectedValues}
-          handleEditToggle={handleEditToggle}
-          handleSave={handleSave} />
-
-      </SideDrawer>
     </div>
   );
 };

@@ -1,12 +1,13 @@
 import apiClient from './apiClient';
 
 const projectService = {
-    getProjects: async ({ page = 1, limit = 10 } = {}) => { 
+    getProjects: async ({ page = 1, limit = 10, expand } = {}) => { 
         const response = await apiClient.get(`/api/projects/?expand=units`,
             {
                 params: { 
                     page, 
-                    limit 
+                    limit,
+                    expand
                 },
             }
         );

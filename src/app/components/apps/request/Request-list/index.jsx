@@ -16,15 +16,19 @@ import {
   Box,
   CircularProgress,
   Skeleton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon, AddBoxRounded } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
-import projectService from '@/services/projectService';
-import DrawerFiltersProject from '../components/DrawerFilters/DrawerFiltersProject';
-import StatusChip from '@/utils/status/ProjectStatusChip';
-import { default as DocumentStatusChip } from '@/utils/status/DocumentStatusIcon';
+import requestConcessionaireService from '@/services/requestConcessionaireService';
+import { format } from 'date-fns';
+import ChipRequest from '../components/ChipRequest';
+import EditRequestCompany from '../Edit-request';
+import AddRequestCompany from '../Add-request';
 
-const ProjectList = ({ onClick }) => {
+const RequestList = ({ projectId = null }) => {
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,22 +37,47 @@ const ProjectList = ({ onClick }) => {
   const [totalRows, setTotalRows] = useState(0);
   const router = useRouter();
 
+  const [requestIdSelected, setRequestIdSelected] = useState(null);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openAddDialog, setOpenAddDialog] = useState(false);
+
+  const [refresh, setRefresh] = useState(false);
+
+  const refreshData = () => {
+    setRefresh(!refresh);
+  };
+
+  const handleEdit = (requestId) => {
+    setRequestIdSelected(requestId);
+    setOpenEditDialog(true);
+  };
+
+  const handleCloseEditDialog = () => {
+    setOpenEditDialog(false);
+    setRequestIdSelected(null);
+  };
+
   useEffect(() => {
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        const data = await projectService.getProjects({ page: page + 1, limit: rowsPerPage, expand: 'sale.customer' });
+        const data = await requestConcessionaireService.getAllByProject({
+          page: page + 1,
+          limit: rowsPerPage,
+          projectId,
+        });
         setProjectsList(data.results);
         setTotalRows(data.count);
+        console.log('Data: ', data);
       } catch (err) {
-        setError('Erro ao carregar Projetos');
+        setError('Erro ao carregar Solicitacoes');
       } finally {
         setLoading(false);
       }
     };
 
     fetchProjects();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, refresh]);
 
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
@@ -61,22 +90,15 @@ const ProjectList = ({ onClick }) => {
 
   return (
     <>
-      <Typography variant="h6" gutterBottom>
-        Lista de Projetos
-      </Typography>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Button
           variant="outlined"
           startIcon={<AddBoxRounded />}
-          onClick={() => router.push('/apps/project/create')}
+          onClick={() => setOpenAddDialog(true)}
           sx={{ marginTop: 1, marginBottom: 2 }}
         >
-          Criar Projeto
+          Nova Solicitação
         </Button>
-
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <DrawerFiltersProject />
-        </Box>
       </Box>
 
       {loading ? (
@@ -125,51 +147,32 @@ const ProjectList = ({ onClick }) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Cliente</TableCell>
-                <TableCell>Projeto</TableCell>
-                <TableCell>Produto</TableCell>
-                <TableCell>Status do Projeto</TableCell>
-                <TableCell>Status do Contrato</TableCell>
-                <TableCell>Ações</TableCell>
+                <TableCell>Tipo Solicitação</TableCell>
+                <TableCell>Protoc. Provisório</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Data da Solicitação</TableCell>
+                <TableCell>Data de Conclusão</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {projectsList.map((item) => (
-                <TableRow key={item.id} hover onClick={() => onClick(item)}>
-                  <TableCell>{item.sale?.customer?.complete_name}</TableCell>
-                  <TableCell>{item?.project_number}</TableCell>
-                  <TableCell>{item.product?.name}</TableCell>
+                <TableRow
+                  key={item.id}
+                  sx={{ cursor: 'pointer' }}
+                  onClick={() => handleEdit(item.id)}
+                >
+                  <TableCell>{item?.type?.name}</TableCell>
+                  <TableCell>{item?.interim_protocol || '-'}</TableCell>
                   <TableCell>
-                    <StatusChip status={item.status} />
+                    <ChipRequest status={item.status} />
                   </TableCell>
                   <TableCell>
-                    <DocumentStatusChip status={item?.sale?.status} />
+                    {item.request_date ? format(new Date(item.request_date), 'dd/MM/yyyy') : '-'}
                   </TableCell>
                   <TableCell>
-                    <Tooltip title="Editar">
-                      <IconButton
-                        color="primary"
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          router.push(`/apps/project/${item.id}/update`);
-                        }}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    </Tooltip>
-                    {/* <Tooltip title="Excluir">
-                      <IconButton
-                        color="error"
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // Lógica para excluir
-                        }}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Tooltip> */}
+                    {item.conclusion_date
+                      ? format(new Date(item.conclusion_date), 'dd/MM/yyyy')
+                      : '-'}
                   </TableCell>
                 </TableRow>
               ))}
@@ -187,8 +190,32 @@ const ProjectList = ({ onClick }) => {
           />
         </TableContainer>
       )}
+
+      <Dialog open={openEditDialog} onClose={handleCloseEditDialog} fullWidth maxWidth="lg">
+        <DialogTitle>Editar Solicitação</DialogTitle>
+
+        <DialogContent>
+          <EditRequestCompany
+            requestId={requestIdSelected}
+            onClosedModal={handleCloseEditDialog}
+            onRefresh={refreshData}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)} fullWidth maxWidth="lg">
+        <DialogTitle>Criar Solicitação</DialogTitle>
+
+        <DialogContent>
+          <AddRequestCompany
+            projectId={projectId}
+            onClosedModal={handleCloseEditDialog}
+            onRefresh={refreshData}
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
 
-export default ProjectList;
+export default RequestList;

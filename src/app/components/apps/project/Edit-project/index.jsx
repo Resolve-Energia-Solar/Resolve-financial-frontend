@@ -11,19 +11,22 @@ import projectService from '@/services/projectService';
 import RequestEnergyCompany from '@/hooks/requestEnergyCompany/Request';
 import LateralForm from '../../request/LateralForm';
 import History from '@/app/components/apps/history';
+import SchedulesInspections from '../components/SchedulesInspections';
+import ListInspection from '../components/SchedulesInspections/list-Inspections';
+import RequestList from '../../request/Request-list';
 
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
 export default function EditProject({ projectId = null }) {
-  const { selectedItem, isDrawerOpen, isEditing, formData, selectedValues, situationOptions, handleChangeSituation, requestData, load, due_date, handleSave, handleCloseDrawer, handleRowClick, handleEditToggle, handleInputChange } = RequestEnergyCompany()
-
   const params = useParams();
   let id = projectId;
   if (!projectId) id = params.id;
 
+  console.log('ID: ', id);
+
   const [value, setValue] = useState(0);
   const [documentTypes, setDocumentTypes] = useState([]);
-  const [projectData, setProjectData] = useState([]);
+  const [projectData, setProjectData] = useState(null);
 
   const handleChangeTab = (event, newValue) => {
     setValue(newValue);
@@ -40,9 +43,8 @@ export default function EditProject({ projectId = null }) {
       }
     };
     fetchData();
-    fetchProject()
+    fetchProject();
   }, []);
-
 
   async function fetchProject() {
     try {
@@ -54,77 +56,11 @@ export default function EditProject({ projectId = null }) {
     }
   }
 
-  function daysToMilliseconds(days) {
-    return days * 24 * 60 * 60 * 1000;
-  }
-
-  function daysToMilliseconds(days) {
-    return days * 24 * 60 * 60 * 1000;
-  }
-  
-  const columns = [
-    { type: "string", label: "Task ID" },
-    { type: "string", label: "Task Name" },
-    { type: "date", label: "Start Date" },
-    { type: "date", label: "End Date" },
-    { type: "number", label: "Duration" },
-    { type: "number", label: "Percent Complete" },
-    { type: "string", label: "Dependencies" },
-  ];
-  
-  const rows = [
-    [
-      "Research",
-      "Contrato",
-      new Date(2015, 0, 1),
-      new Date(2015, 0, 5),
-      null,
-      100,
-      null,
-    ],
-    [
-      "Write",
-      "Write paper",
-      null,
-      new Date(2015, 0, 9),
-      daysToMilliseconds(3),
-      25,
-      "Research,Outline",
-    ],
-    [
-      "Cite",
-      "Create bibliography",
-      null,
-      new Date(2015, 0, 7),
-      daysToMilliseconds(1),
-      20,
-      "Research",
-    ],
-    [
-      "Complete",
-      "Hand in paper",
-      null,
-      new Date(2015, 0, 10),
-      daysToMilliseconds(1),
-      0,
-      "Cite,Write",
-    ],
-    [
-      "Outline",
-      "Outline paper",
-      null,
-      new Date(2015, 0, 6),
-      daysToMilliseconds(1),
-      100,
-      "Research",
-    ],
-  ];
-  
-  const data = [columns, ...rows];
   return (
     <>
-      <Tabs value={value} onChange={handleChangeTab}>
+      <Tabs value={value} onChange={handleChangeTab} variant="scrollable" scrollButtons="auto">
         <Tab label="Informações Adicionais" />
+        <Tab label="Vistoria" />
         <Tab label="Checklist Rateio" />
         <Tab label="Anexos" />
         <Tab label="Solicitações" />
@@ -135,49 +71,39 @@ export default function EditProject({ projectId = null }) {
 
       {value === 1 && (
         <Box mt={2}>
-          <CheckListRateio projectId={id} />
+          <ListInspection
+            projectId={id}
+            product={projectData?.product?.id}
+            customerId={projectData?.sale?.customer?.id}
+          />
         </Box>
       )}
 
       {value === 2 && (
+        <Box mt={2}>
+          <CheckListRateio projectId={id} />
+        </Box>
+      )}
+
+      {value === 3 && (
         <Attachments
           contentType={CONTENT_TYPE_PROJECT_ID}
           objectId={id}
           documentTypes={documentTypes}
         />
       )}
-      {value === 3 &&
-        <div>
-          {
-            (load) ? <ListRequest data={requestData} onClick={handleRowClick} /> :
-              < Loading />
-          }
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBlock: '12px' }}>
-            <Button>Novo</Button>
-          </div>
-          <Drawer anchor="right" open={isDrawerOpen} onClose={handleCloseDrawer}>
-            {selectedItem && situationOptions.length > 0 &&
-              <LateralForm
-                handleChangeSituation={handleChangeSituation}
-                isEditing={isEditing} formData={formData}
-                due_date={due_date}
-                handleInputChange={handleInputChange}
-                options={situationOptions}
-                multiSelectValues={selectedValues}
-                handleEditToggle={handleEditToggle}
-                handleSave={handleSave}
-              />
-            }
-          </Drawer>
-      </div>}
-        
+      
       {value === 4 && (
+        <Box mt={2}>
+          <RequestList projectId={id} />
+        </Box>
+      )}
+
+      {value === 5 && (
         <div>
           <History contentType={CONTENT_TYPE_PROJECT_ID} objectId={id} />
         </div>
       )}
-
     </>
-
   );
 }

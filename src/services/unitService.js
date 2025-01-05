@@ -1,9 +1,23 @@
 import apiClient from './apiClient';
 
 const unitService = {
-  getUnits: async () => {
+  getUnits: async ({ page = 1, limit = 10 } = {}) => {
     try {
-      const response = await apiClient.get('/api/units/');
+      const response = await apiClient.get('/api/units/',
+        {params: {
+            page,
+            limit
+          }}
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar units:', error);
+      throw error;
+    }
+  },
+  getUnitsByName: async (name) => {
+    try {
+      const response = await apiClient.get(`/api/units/?name__icontains=${name}`);
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar units:', error);

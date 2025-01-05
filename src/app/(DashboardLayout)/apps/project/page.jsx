@@ -10,6 +10,7 @@ import ProjectList from '@/app/components/apps/project/Project-list';
 import Details from '@/app/components/apps/project/Details';
 import useProject from '@/hooks/projects/useProject';
 import SideDrawer from '@/app/components/shared/SideDrawer';
+import EditProject from '@/app/components/apps/project/Edit-project';
 
 const ProjectListing = () => {
 
@@ -33,7 +34,7 @@ const ProjectListing = () => {
           <CardContent>
             <ProjectList onClick={handleRowClick} />
             <SideDrawer open={openDrawer} onClose={toggleDrawerClosed} title="Detalhes do Projeto" >
-              <Details id={rowSelected?.id} data={rowSelected} />
+              <EditProject projectId={rowSelected?.id} data={rowSelected} />
             </SideDrawer>
           </CardContent>
         </BlankCard>
