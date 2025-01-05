@@ -2,6 +2,7 @@ import { Chip } from '@mui/material';
 import {
   CheckCircle as CheckCircleIcon,
   HourglassEmpty as HourglassEmptyIcon,
+  Error as ErrorIcon,
 } from '@mui/icons-material';
 
 const ChipRequest = ({ status }) => {
@@ -10,7 +11,7 @@ const ChipRequest = ({ status }) => {
       case 'S':
         return { label: 'Solicitada', color: 'warning', icon: <HourglassEmptyIcon /> };
       case 'I':
-        return { label: 'Indeferida', color: 'primary', icon: <HourglassEmptyIcon /> };
+        return { label: 'Indeferida', color: 'error', icon: <ErrorIcon /> };
         case 'D':
         return { label: 'Deferida', color: 'success', icon: <CheckCircleIcon /> };
       default:

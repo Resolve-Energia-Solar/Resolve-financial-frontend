@@ -166,7 +166,7 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
             <TableBody>
               {units.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} align="center">
+                  <TableCell colSpan={6} align="center">
                     <Typography variant="body2">Nenhuma vistoria agendada</Typography>
                   </TableCell>
                 </TableRow>
@@ -212,7 +212,7 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
                 ))
               )}
               <TableRow>
-                <TableCell colSpan={5} align="center">
+                <TableCell colSpan={6} align="center">
                   <Button variant="contained" color="primary" onClick={() => handleAdd()}>
                     Agendar Vistoria
                   </Button>

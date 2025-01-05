@@ -38,6 +38,8 @@ import HasPermission from '@/app/components/permissions/HasPermissions';
 import SendContractButton from '../../../contractSubmissions/Send-contract';
 import ContractSubmissions from '../../../contractSubmissions/contract-list';
 import SchedulesInspections from '../../../project/components/SchedulesInspections';
+import History from '@/app/components/apps/history';
+
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -119,6 +121,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
         <Tab label="Pagamentos" />
         <Tab label="Checklist" />
         <Tab label="Envios" />
+        <Tab label="Histórico" />
       </Tabs>
       {loading ? (
         <FormPageSkeleton />
@@ -263,6 +266,8 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
 
           {value === 5 && <ChecklistSales saleId={id_sale} />}
           {value === 6 && <ContractSubmissions sale={saleData} />}
+
+          {value === 7 && <History contentType={CONTEXT_TYPE_SALE_ID} objectId={id_sale} /> }
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             {onClosedModal && (

@@ -10,7 +10,6 @@ const situationEnergyService = {
       throw error;
     }
   },
-
   findOne: async (id) => {
     try {
       const response = await apiClient.get(`/api/situation-energy-companies/${id}/`);

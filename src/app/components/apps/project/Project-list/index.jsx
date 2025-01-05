@@ -17,15 +17,12 @@ import {
   CircularProgress,
   Skeleton,
 } from '@mui/material';
-import {
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  AddBoxRounded,
-} from '@mui/icons-material';
+import { Edit as EditIcon, Delete as DeleteIcon, AddBoxRounded } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import projectService from '@/services/projectService';
 import DrawerFiltersProject from '../components/DrawerFilters/DrawerFiltersProject';
 import StatusChip from '@/utils/status/ProjectStatusChip';
+import { default as DocumentStatusChip } from '@/utils/status/DocumentStatusIcon';
 
 const ProjectList = ({ onClick }) => {
   const [projectsList, setProjectsList] = useState([]);
@@ -40,7 +37,7 @@ const ProjectList = ({ onClick }) => {
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        const data = await projectService.getProjects({ page: page + 1, limit: rowsPerPage });
+        const data = await projectService.getProjects({ page: page + 1, limit: rowsPerPage, expand: 'sale.customer' });
         setProjectsList(data.results);
         setTotalRows(data.count);
       } catch (err) {
@@ -81,46 +78,46 @@ const ProjectList = ({ onClick }) => {
           <DrawerFiltersProject />
         </Box>
       </Box>
-      
+
       {loading ? (
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-        <TableCell>
-          <Skeleton variant="text" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" />
-        </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {Array.from(new Array(rowsPerPage)).map((_, index) => (
-        <TableRow key={index}>
-          <TableCell>
-            <Skeleton variant="text" />
-          </TableCell>
-          <TableCell>
-            <Skeleton variant="text" />
-          </TableCell>
-          <TableCell>
-            <Skeleton variant="text" />
-          </TableCell>
-          <TableCell>
-            <Skeleton variant="text" />
-          </TableCell>
-        </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <Skeleton variant="text" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton variant="text" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton variant="text" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton variant="text" />
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {Array.from(new Array(rowsPerPage)).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <Skeleton variant="text" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       ) : error ? (
         <Typography color="error">{error}</Typography>
       ) : (
@@ -128,17 +125,25 @@ const ProjectList = ({ onClick }) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Número do Contrato</TableCell>
+                <TableCell>Cliente</TableCell>
+                <TableCell>Projeto</TableCell>
+                <TableCell>Produto</TableCell>
                 <TableCell>Status do Projeto</TableCell>
+                <TableCell>Status do Contrato</TableCell>
                 <TableCell>Ações</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {projectsList.map((item) => (
                 <TableRow key={item.id} hover onClick={() => onClick(item)}>
-                  <TableCell>{item.sale?.contract_number}</TableCell>
+                  <TableCell>{item.sale?.customer?.complete_name}</TableCell>
+                  <TableCell>{item?.project_number}</TableCell>
+                  <TableCell>{item.product?.name}</TableCell>
                   <TableCell>
                     <StatusChip status={item.status} />
+                  </TableCell>
+                  <TableCell>
+                    <DocumentStatusChip status={item?.sale?.status} />
                   </TableCell>
                   <TableCell>
                     <Tooltip title="Editar">
