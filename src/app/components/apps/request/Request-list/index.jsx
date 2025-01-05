@@ -70,7 +70,7 @@ const RequestList = ({ projectId = null }) => {
         setTotalRows(data.count);
         console.log('Data: ', data);
       } catch (err) {
-        setError('Erro ao carregar Projetos');
+        setError('Erro ao carregar Solicitacoes');
       } finally {
         setLoading(false);
       }
