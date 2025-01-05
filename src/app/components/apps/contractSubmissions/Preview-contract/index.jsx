@@ -31,63 +31,77 @@ export default function PreviewContractDialog({ open, onClose, userId, saleId })
     '$1.$2.$3-$4',
   );
 
-// Exemplo seguro para não quebrar caso saleData ou sale_products estejam ausentes:
+  // Exemplo seguro para não quebrar caso saleData ou sale_products estejam ausentes:
   // Módulos
   const modulesString = saleData?.sale_products
-  ?.map((sp, index) => {
-    const moduleItems = sp?.product?.materials?.filter(item =>
-      item?.material?.attributes?.some(attr => attr.key === 'Modulo' && attr.value === 'True')
-    ) || [];
-    return moduleItems
-      .map(m => {
-        const quantity = Math.floor(m.amount);
-        const label = quantity === 1 ? 'Módulo' : 'Módulos';
-        return `${quantity} ${label} ${m.material.name.toUpperCase()} (Projeto ${index + 1})`;
-      })
-      .join(', ');
-  })
-  .filter(Boolean)
-  .join(', ');
+    ?.map((sp, index) => {
+      const moduleItems =
+        sp?.product?.materials?.filter((item) =>
+          item?.material?.attributes?.some(
+            (attr) => attr.key === 'Modulo' && attr.value === 'True',
+          ),
+        ) || [];
+      return moduleItems
+        .map((m) => {
+          const quantity = Math.floor(m.amount);
+          const label = quantity === 1 ? 'Módulo' : 'Módulos';
+          return `${quantity} ${label} ${m.material.name.toUpperCase()} (Projeto ${index + 1})`;
+        })
+        .join(', ');
+    })
+    .filter(Boolean)
+    .join(', ');
 
   // Inversores
   const inversorsString = saleData?.sale_products
-  ?.map((sp, index) => {
-    const inversorItems = sp?.product?.materials?.filter(item =>
-      item?.material?.attributes?.some(attr => attr.key === 'Inversor' && attr.value === 'True')
-    ) || [];
-    return inversorItems
-      .map(i => {
-        const quantity = Math.floor(i.amount);
-        const label = quantity === 1 ? 'Inversor' : 'Inversores';
-        return `${quantity} ${label} ${i.material.name.toUpperCase()} (Projeto ${index + 1})`;
-      })
-      .join(', ');
-  })
-  .filter(Boolean)
-  .join(', ');
+    ?.map((sp, index) => {
+      const inversorItems =
+        sp?.product?.materials?.filter((item) =>
+          item?.material?.attributes?.some(
+            (attr) => attr.key === 'Inversor' && attr.value === 'True',
+          ),
+        ) || [];
+      return inversorItems
+        .map((i) => {
+          const quantity = Math.floor(i.amount);
+          const label = quantity === 1 ? 'Inversor' : 'Inversores';
+          return `${quantity} ${label} ${i.material.name.toUpperCase()} (Projeto ${index + 1})`;
+        })
+        .join(', ');
+    })
+    .filter(Boolean)
+    .join(', ');
 
-  const modules = saleData?.sale_products?.flatMap(sp =>
-    sp?.product?.materials?.filter(item =>
-      item?.material?.attributes?.some(attr => attr.key === 'Modulo' && attr.value === 'True')
-    ) || []
-  ) || []; // se não houver sale_products, retorna array vazio
+  const modules =
+    saleData?.sale_products?.flatMap(
+      (sp) =>
+        sp?.product?.materials?.filter((item) =>
+          item?.material?.attributes?.some(
+            (attr) => attr.key === 'Modulo' && attr.value === 'True',
+          ),
+        ) || [],
+    ) || []; // se não houver sale_products, retorna array vazio
 
-  const inversors = saleData?.sale_products?.flatMap(sp =>
-    sp?.product?.materials?.filter(item =>
-      item?.material?.attributes?.some(attr => attr.key === 'Inversor' && attr.value === 'True')
-    ) || []
-  ) || []; // se não houver sale_products, retorna array vazio
+  const inversors =
+    saleData?.sale_products?.flatMap(
+      (sp) =>
+        sp?.product?.materials?.filter((item) =>
+          item?.material?.attributes?.some(
+            (attr) => attr.key === 'Inversor' && attr.value === 'True',
+          ),
+        ) || [],
+    ) || []; // se não houver sale_products, retorna array vazio
 
   console.log('modules', modules);
   console.log('inversors', inversors);
 
   const paymentTypes = [
-    { code: "C", label: "Crédito" },
-    { code: "D", label: "Débito" },
-    { code: "B", label: "Boleto" },
-    { code: "F", label: "Financiamento" },
-    { code: "PI", label: "Parcelamento interno" },
-    { code: "P", label: "Pix" },
+    { code: 'C', label: 'Crédito' },
+    { code: 'D', label: 'Débito' },
+    { code: 'B', label: 'Boleto' },
+    { code: 'F', label: 'Financiamento' },
+    { code: 'PI', label: 'Parcelamento interno' },
+    { code: 'P', label: 'Pix' },
   ];
 
   useEffect(() => {
@@ -100,13 +114,11 @@ export default function PreviewContractDialog({ open, onClose, userId, saleId })
         console.error('Erro ao buscar pagamentos:', error);
       }
     };
-  
+
     if (saleId) {
       fetchPayments();
     }
   }, [saleId]);
-  
-
 
   const { handleFileUpload, generatePreview, loading, error } = useDocxTemplate({
     cpf: cpf_format,
@@ -129,10 +141,17 @@ export default function PreviewContractDialog({ open, onClose, userId, saleId })
     //Inversores
     inversors: inversorsString,
     // inversors_quantity: inversors.map((m) => Math.floor(m.amount)).join(', '),
-    inversors_kwp: inversors.map((m) => m.material.attributes.find(attr => attr.key === 'kwp').value).join(', '),
+    inversors_kwp: inversors
+      .map((m) => {
+        const kwpAttr = m.material.attributes.find((attr) => attr.key === 'kwp');
+        return kwpAttr ? kwpAttr.value : 'Valor não encontrado';
+      })
+      .join(', '),
 
     //Informacoes da venda
-    payments_methods: payments.map((pm) => paymentTypes.find(pt => pt.code === pm.payment_type).label).join(', '),
+    payments_methods: payments
+      .map((pm) => paymentTypes.find((pt) => pt.code === pm.payment_type).label)
+      .join(', '),
 
     // payment_methods: saleData?.payment_methods?.map((pm) => pm.name).join(', '),
   });
