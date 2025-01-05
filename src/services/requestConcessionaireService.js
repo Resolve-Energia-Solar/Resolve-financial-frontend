@@ -10,7 +10,20 @@ const requestConcessionaireService = {
       throw error;
     }
   },
-
+  getAllByProject: async ({ page = 1, limit = 10, projectId } = {}) => {
+    try {
+      const response = await apiClient.get(`/api/requests-energy-companies/?project=${projectId}`, {
+        params: { 
+            page, 
+            limit 
+        },
+    });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar solicitação:', error);
+      throw error
+    }
+  },
   find: async (id) => {
     try {
       const response = await apiClient.get(`/api/requests-energy-companies/${id}/`);
