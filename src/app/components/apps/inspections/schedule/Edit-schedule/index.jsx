@@ -162,8 +162,6 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     handleChange(field, newValue);
   };
 
-  console.log('formData', formData);
-
   return (
     <>
       <Grid container spacing={3}>
