@@ -6,11 +6,13 @@ const useProjectForm = (initialData, id) => {
   const [formData, setFormData] = useState({
     sale_id: null,
     designer_id: null,
+    homologator_id: null,
     project_number: '',
     start_date: null,
     end_date: null,
     is_completed: false,
     status: '',
+    designer_status: '',
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -27,9 +29,7 @@ const useProjectForm = (initialData, id) => {
         end_date: initialData.end_date ? initialData.end_date : null,
         is_completed: initialData.is_completed || false,
         status: initialData.status || '',
-        registered_circuit_breaker: initialData.registered_circuit_breaker || '',
-        instaled_circuit_breaker: initialData.instaled_circuit_breaker || '',
-        project_circuit_breaker: initialData.project_circuit_breaker || '',
+        designer_status: initialData.designer_status || '',
       });
     }
   }, [initialData]);
@@ -48,10 +48,7 @@ const useProjectForm = (initialData, id) => {
       end_date: formData.end_date ? formatDate(formData.end_date) : null,
       is_completed: formData.is_completed,
       status: formData.status,
-      supply_type: formData.supply_type,
-      registered_circuit_breaker: formData.registered_circuit_breaker,
-      instaled_circuit_breaker: formData.instaled_circuit_breaker,
-      project_circuit_breaker: formData.project_circuit_breaker,
+      designer_status: formData.designer_status,
     };
     console.log('dataToSend', dataToSend);
     try {
