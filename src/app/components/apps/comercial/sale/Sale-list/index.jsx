@@ -40,7 +40,6 @@ import {
 } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import saleService from '@/services/saleService';
-import StatusChip from '../../../../../../utils/status/DocumentStatusIcon';
 import useSendContract from '@/hooks/clicksign/useClickSign';
 import TableSkeleton from '../components/TableSkeleton';
 import DrawerFilters from '../components/DrawerFilters/DrawerFilters';
@@ -63,6 +62,7 @@ import {
   AccordionDetails,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import StatusChip from '@/utils/status/DocumentStatusIcon';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);

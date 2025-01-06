@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   TablePagination,
   Table,
@@ -23,6 +23,7 @@ import projectService from '@/services/projectService';
 import DrawerFiltersProject from '../components/DrawerFilters/DrawerFiltersProject';
 import StatusChip from '@/utils/status/ProjectStatusChip';
 import { default as DocumentStatusChip } from '@/utils/status/DocumentStatusIcon';
+import { ProjectDataContext } from '@/app/context/ProjectContext';
 
 const ProjectList = ({ onClick }) => {
   const [projectsList, setProjectsList] = useState([]);
@@ -33,11 +34,19 @@ const ProjectList = ({ onClick }) => {
   const [totalRows, setTotalRows] = useState(0);
   const router = useRouter();
 
+  const { filters, refresh } = useContext(ProjectDataContext);
+
   useEffect(() => {
+    console.log('filters', filters);
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        const data = await projectService.getProjects({ page: page + 1, limit: rowsPerPage, expand: 'sale.customer' });
+        const data = await projectService.getProjects({
+          page: page + 1,
+          limit: rowsPerPage,
+          expand: 'sale.customer',
+          ...filters,
+        });
         setProjectsList(data.results);
         setTotalRows(data.count);
       } catch (err) {
@@ -48,7 +57,7 @@ const ProjectList = ({ onClick }) => {
     };
 
     fetchProjects();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, filters, refresh]);
 
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
@@ -135,7 +144,15 @@ const ProjectList = ({ onClick }) => {
             </TableHead>
             <TableBody>
               {projectsList.map((item) => (
-                <TableRow key={item.id} hover onClick={() => onClick(item)}>
+                <TableRow
+                  key={item.id}
+                  hover={item?.sale?.status === 'F'}
+                  onClick={() => item?.sale?.status === 'F' && onClick(item)}
+                  sx={{
+                    opacity: item?.sale?.status === 'F' ? 1 : 0.5,
+                    pointerEvents: item?.sale?.status === 'F' ? 'auto' : 'none',
+                  }}
+                >
                   <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                   <TableCell>{item?.project_number}</TableCell>
                   <TableCell>{item.product?.name}</TableCell>

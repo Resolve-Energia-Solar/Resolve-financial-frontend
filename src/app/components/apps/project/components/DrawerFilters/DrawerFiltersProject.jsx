@@ -3,23 +3,23 @@ import { Box, Drawer, Button, CardContent, Typography, Grid } from '@mui/materia
 import { FilterAlt } from '@mui/icons-material';
 import CheckboxesTags from './CheckboxesTags';
 import FormDateRange from './DateRangePicker';
-import { SaleDataContext } from '@/app/context/SaleContext';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
+import { ProjectDataContext } from '@/app/context/ProjectContext';
 
 export default function DrawerFiltersProject() {
   const [open, setOpen] = useState(false);
-  const { filters, setFilters } = useContext(SaleDataContext);
+  const { filters, setFilters } = useContext(ProjectDataContext);
 
   const [tempFilters, setTempFilters] = useState({
     documentCompletionDate: filters.documentCompletionDate,
-    statusDocument: filters.statusDocument,
+    status: filters.status,
     customer: filters.customer,
-    isPreSale: filters.isPreSale,
+    designer_status: filters.designer_status,
   });
 
   const createFilterParams = (filters) => {
-    const params = new URLSearchParams();
+    const params = {};
 
     if (
       filters.documentCompletionDate &&
@@ -28,24 +28,20 @@ export default function DrawerFiltersProject() {
     ) {
       const startDate = filters.documentCompletionDate[0].toISOString().split('T')[0];
       const endDate = filters.documentCompletionDate[1].toISOString().split('T')[0];
-      params.append('document_completion_date__range', `${startDate},${endDate}`);
+      params.end_date__range = `${startDate},${endDate}`;
     }
 
-    if (filters.statusDocument && filters.statusDocument.length > 0) {
-      const statusValues = filters.statusDocument.map((status) => status.value);
-      params.append('status__in', statusValues.join(','));
+    if (filters.status && filters.status.length > 0) {
+      const statusValues = filters.status.map((status) => status.value);
+      params.status__in = statusValues.join(',');
     }
 
-    if (filters.customer) {
-      params.append('customer', filters.customer);
+    if (filters.designer_status && filters.designer_status.length > 0) {
+      const statusValues = filters.designer_status.map((status) => status.value);
+      params.designer_status__in = statusValues.join(',');
     }
 
-    if (filters.isPreSale) {
-      const preSaleValues = filters.isPreSale.map((option) => option.value);
-      params.append('is_pre_sale', preSaleValues.join(','));
-    }
-
-    return params.toString();
+    return params;
   };
 
   const handleDateChange = (newValue) => {
@@ -53,23 +49,19 @@ export default function DrawerFiltersProject() {
   };
 
   const handleStatusChange = (event, value) => {
-    setTempFilters((prev) => ({ ...prev, statusDocument: value }));
+    setTempFilters((prev) => ({ ...prev, status: value }));
   };
 
-  const handleCustomerChange = (event, value) => {
-    setTempFilters((prev) => ({ ...prev, customer: value ? value.id : null }));
-  };
-
-  const handleIsPreSaleChange = (event, value) => {
-    setTempFilters((prev) => ({ ...prev, isPreSale: value }));
+  const handleDesignerStatusChange = (event, value) => {
+    setTempFilters((prev) => ({ ...prev, designer_status: value }));
   };
 
   const clearFilters = () => {
-    setTempFilters({ documentCompletionDate: [null, null], statusDocument: [], isPreSale: [] });
+    setTempFilters({ documentCompletionDate: [null, null], status: [], designer_status: [] });
   };
 
   const applyFilters = () => {
-    setFilters([tempFilters, decodeURIComponent(createFilterParams(tempFilters))]);
+    setFilters(createFilterParams(tempFilters));
     setOpen(false);
   };
 
@@ -79,19 +71,6 @@ export default function DrawerFiltersProject() {
     }
     setOpen(inOpen);
   };
-
-  const StatusDocument = [
-    { value: 'F', label: 'Finalizado' },
-    { value: 'EA', label: 'Em Andamento' },
-    { value: 'C', label: 'Cancelado' },
-    { value: 'D', label: 'Distrato' },
-  ];
-
-  const DesignerStatus = [
-    { value: 'F', label: 'Finalizado' },
-    { value: 'EA', label: 'Em Andamento' },
-    { value: 'P', label: 'Pendente' },
-  ];
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -123,21 +102,34 @@ export default function DrawerFiltersProject() {
           >
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <CustomFormLabel htmlFor="statusDocument">Status do Projeto</CustomFormLabel>
+                <CustomFormLabel htmlFor="Status">Status do Projeto</CustomFormLabel>
                 <CheckboxesTags
-                  options={StatusDocument}
+                  options={[
+                    { value: 'P', label: 'Pendente' },
+                    { value: 'CO', label: 'Concluído' },
+                    { value: 'EA', label: 'Em Andamento' },
+                    { value: 'C', label: 'Cancelado' },
+                    { value: 'D', label: 'Distrato' },
+                  ]}
                   placeholder="Selecione o status"
-                  value={tempFilters.statusDocument}
+                  value={tempFilters.status}
                   onChange={handleStatusChange}
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <CustomFormLabel htmlFor="isPreSale">Status do Projetista</CustomFormLabel>
                 <CheckboxesTags
-                  options={DesignerStatus}
+                  options={[
+                    { value: 'P', label: 'Pendente' },
+                    { value: 'CO', label: 'Concluído' },
+                    { value: 'EA', label: 'Em Andamento' },
+                    { value: 'C', label: 'Cancelado' },
+                    { value: 'D', label: 'Distrato' },
+                  ]}
                   placeholder="Selecione o Status do Projetist"
-                  value={tempFilters.isPreSale}
-                  onChange={handleIsPreSaleChange}
+                  value={tempFilters.designer_status}
+                  onChange={handleDesignerStatusChange}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -147,13 +139,6 @@ export default function DrawerFiltersProject() {
                   onChange={handleDateChange}
                   error={false}
                   helperText=""
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <CustomFormLabel htmlFor="customer">Cliente</CustomFormLabel>
-                <AutoCompleteUser
-                  value={tempFilters.customer}
-                  onChange={(id) => handleCustomerChange(null, { id })}
                 />
               </Grid>
             </Grid>

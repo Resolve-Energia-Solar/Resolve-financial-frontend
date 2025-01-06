@@ -26,14 +26,18 @@ export default function History({ contentType, objectId }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  console.log('contentType: ', contentType);
+  console.log('objectId: ', objectId);
+  console.log('activities: ', activities);
+
   useEffect(() => {
     const fetchHistory = async () => {
       try {
         const token = Cookies.get('access_token');
         if (!token) throw new Error('Token não encontrado.');
 
-        const data = await HistoryService.getHistory(contentType, objectId, token);
-        setActivities(data.changes || []);
+        const data = await HistoryService.getHistory(contentType, objectId, token, true);
+        setActivities(data.history || []);
       } catch (err) {
         setError(err.message || 'Erro ao carregar atividades.');
       } finally {
