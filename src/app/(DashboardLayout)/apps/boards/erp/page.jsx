@@ -3,7 +3,7 @@
 import KanbanBoard from '@/app/components/apps/kanban/erp/KanbanBoard';
 import PageContainer from '@/app/components/container/PageContainer';
 import BlankCard from '@/app/components/shared/BlankCard';
-import { CardContent , Divider } from '@mui/material';
+import { CardContent, Divider } from '@mui/material';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import boardOperation from '@/hooks/boards/useBoardOperation';
 import ModalCardDetail from '@/app/components/apps/kanban/erp/ModalCardDetail';
@@ -16,15 +16,15 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import NewTask from '@/app/components/apps/kanban/erp/NewTask';
 import tasksTemplates from '@/hooks/taskTemplates/useTasksTemplates';
 import SideDrawer from '@/app/components/apps/kanban/erp/SideDrawer';
+import Footer from '@/app/components/apps/kanban/erp/GeneralDetails/Footer';
+import EditProject from '@/app/components/apps/project/Edit-project';
+import useProject from '@/hooks/projects/useProject';
 export default function Kanban() {
 
   const {
-    data,
-    componentName,
     board,
     boards,
     isModalOpen,
-    dataProject,
     cardSelected,
     handleSearch,
     handleCardClick,
@@ -43,8 +43,17 @@ export default function Kanban() {
     onClickViewMode,
     viewMode,
     searchTerm,
-    tasks
+    tasks,
+    optionsFooter,
+    onClickFooter,
+    tasksTemplate,
+    openNewTask,
+    setOpenNewTask,
+    saveNewTask,
   } = boardOperation()
+
+
+
 
   const BCrumb = [
     {
@@ -95,8 +104,13 @@ export default function Kanban() {
           {/* Detalhamento Lateral Condicional */}
 
 
-          <SideDrawer open={isDrawerOpen} onClose={handleDrawerClose} title={'Detalhamento'}>
-            {isDrawerOpen && <DynamicComponent componentName={componentName} data={dataProject} />}
+          <SideDrawer open={isDrawerOpen} onClose={handleDrawerClose} title={'Detalhamento'} footer={
+            cardSelected?.column?.name != 'Feito' && <Footer options={optionsFooter} onClick={onClickFooter} />
+          }>
+            {isDrawerOpen &&
+              <EditProject projectId={cardSelected?.project?.id} data={cardSelected?.project} />
+            }
+
           </SideDrawer>
 
           <BasicModal
@@ -107,8 +121,7 @@ export default function Kanban() {
               <CheckCircleIcon /> :
               <CancelIcon />
             } />
-
-            {/* <NewTask  tasksTemplate={taskTemplates} /> */}
+          <NewTask tasksTemplate={tasksTemplate} open={openNewTask} onClose={() => setOpenNewTask(false)} saveTask={saveNewTask}  />
         </CardContent>
       </BlankCard>
     </PageContainer >

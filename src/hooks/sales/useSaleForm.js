@@ -36,7 +36,7 @@ const useSaleForm = (initialData, id) => {
         salesManagerId: initialData.sales_manager?.id || null,
         branchId: initialData.branch?.id || '',
         marketingCampaignId: initialData.marketing_campaign?.id || null,
-        productIds: initialData.products?.map((product) => product.id) || [],
+        productIds: initialData.products?.map((product) => product) || [],
         isSale: initialData.is_pre_sale || false,
         totalValue: initialData.total_value || '',
         status: initialData.status || '',

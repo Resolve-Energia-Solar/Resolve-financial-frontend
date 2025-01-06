@@ -128,7 +128,7 @@ function ContractSubmissions({ sale }) {
             Envios para Clicksign
           </Typography>
 
-          <SendContractButton sale={sale.id} sx={{ mr: 2 }} />
+          {/* <SendContractButton sale={sale.id} sx={{ mr: 2 }} /> */}
         </Box>
 
         {contracts.length === 0 ? (

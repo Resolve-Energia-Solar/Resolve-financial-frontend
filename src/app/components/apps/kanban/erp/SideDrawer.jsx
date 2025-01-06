@@ -3,11 +3,11 @@ import CloseIcon from '@mui/icons-material/Close';
 import ParentCard from "@/app/components/shared/ParentCard";
 
 
-export default function SideDrawer({ title, children, open, onClose }) {
+export default function SideDrawer({ title, children, open, onClose, footer }) {
 
     return (
-        <Drawer anchor='right' open={open} onClose={onClose} sx={{ zIndex: 9999 }} >
-            <Box maxWidth='50vw' minWidth='50vw'>
+        <Drawer anchor='right' open={open} onClose={onClose} sx={{ zIndex: 1300 }} >
+            <Box maxWidth='50vw' minWidth='50vw'   >
                 <IconButton
                     onClick={onClose}
                     sx={{
@@ -18,9 +18,11 @@ export default function SideDrawer({ title, children, open, onClose }) {
                 >
                     <CloseIcon />
                 </IconButton>
-                <ParentCard title={title}  >
-                    <CardContent>
-                        {children}
+                <ParentCard title={title} footer={footer} >
+                    <CardContent >
+                        <Box minHeight={'74.4vh'} >
+                            {children}
+                        </Box>
                     </CardContent>
                 </ParentCard>
             </Box>

@@ -10,19 +10,23 @@ const usePhoneNumberForm = (initialData, id) => {
     user_id: '',
   });
 
+  const [dataReceived, setDataReceived] = useState(null);
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (initialData) {
-      setFormData({
+      const receivedData = {
         country_code: initialData.country_code || '',
         area_code: initialData.area_code || '',
         phone_number: initialData.phone_number || '',
         is_main: initialData.is_main || false,
-        user_id: initialData.user.id || '',
-      });
+        user_id: initialData.user?.id || '',
+      };
+
+      setFormData(receivedData);
+      setDataReceived(receivedData);
     }
   }, [initialData]);
 
@@ -60,6 +64,7 @@ const usePhoneNumberForm = (initialData, id) => {
 
   return {
     formData,
+    dataReceived,
     handleChange,
     handleSave,
     formErrors,
@@ -69,4 +74,3 @@ const usePhoneNumberForm = (initialData, id) => {
 };
 
 export default usePhoneNumberForm;
-

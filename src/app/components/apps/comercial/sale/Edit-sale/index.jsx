@@ -61,6 +61,8 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
 
   const { loading, error, saleData } = useSale(id);
 
+  console.log('Sale Data: ', saleData);
+
   const {
     formData,
     handleChange,
@@ -70,6 +72,8 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
     loading: formLoading,
     success,
   } = useSaleForm(saleData, id);
+
+  console.log('Form Data: ', formData);
 
   const [documentTypes, setDocumentTypes] = useState([]);
 
@@ -298,7 +302,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
                   disabled={formLoading}
                   endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
                 >
-                  {formLoading ? 'Salvando...' : 'Salvar Alteraçõess'}
+                  {formLoading ? 'Salvando...' : 'Salvar Alterações'}
                 </Button>
               </Box>
             )}

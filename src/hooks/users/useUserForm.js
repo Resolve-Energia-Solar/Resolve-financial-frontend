@@ -28,7 +28,7 @@ const useUserForm = (initialData, id) => {
     resignation_date: null,
     person_type: '',
     second_document: '',
-    phone: ''
+    phone_numbers_ids: [],
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -63,7 +63,7 @@ const useUserForm = (initialData, id) => {
         resignation_date: initialData.resignation_date || null,
         person_type: initialData.person_type || '',
         second_document: initialData.second_document || '',
-        phone: initialData.phone || ''
+        phone_numbers_ids: initialData.phone_numbers?.map((item) => item.id) || [],
       });
     }
   }, [initialData]);
@@ -99,8 +99,7 @@ const useUserForm = (initialData, id) => {
       resignation_date: formData.resignation_date ? formatDate(formData.resignation_date) : null,
       person_type: formData.person_type,
       second_document: formData.second_document,
-      phone: formData.phone,
-      phone_numbers_ids: [8]
+      phone_numbers_ids: [formData.phone_numbers_ids],
     };
 
     console.log('dataToSend', dataToSend);

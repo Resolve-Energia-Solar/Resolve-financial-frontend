@@ -1,9 +1,16 @@
 import apiClient from "./apiClient";
 
 const phoneNumberService = {
-  getPhoneNumbers: async () => {
+  getPhoneNumbers: async ({ page = 1, limit = 10 } = {}) => {
     try {
-      const response = await apiClient.get('/api/phone_numbers/');
+      const response = await apiClient.get('/api/phone_numbers/',
+        {
+          params: {
+            page,
+            limit
+          }
+        }
+      );
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar telefones:', error);
@@ -18,6 +25,15 @@ const phoneNumberService = {
     } catch (error) {
       console.error(`Erro ao buscar telefone com id ${id}:`, error);
       throw error;
+    }
+  },
+  getPhoneNumbersByQuery: async (query) => {
+    try {
+      const response = await apiClient.get(`/api/phone_numbers/?phone_number__icontains=${query}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar telefone com query ${query}:`, error);
+      throw error
     }
   },
   getPhoneNumberByFullAddress: async (fullAddress) => {

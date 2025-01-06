@@ -194,16 +194,17 @@ export default function ModalCardDetail({ open, onClose, data, onClickActionActi
                         </Box>
                         <Box>
                             <Typography variant="subtitle1" gutterBottom>Acões</Typography>
-                            <Box display="flex" flexDirection={'column'} gap={1}>
-                                {data?.task_template.component && <Button variant="contained" size="medium" startIcon={data?.id_integration ? <Visibility /> : <Task />} onClick={() => onClickActionActivity(data?.task_template.component)} sx={{ justifyContent: 'start' }}>
+                            <Box display="flex" flexDirection='column' gap={1}>
+                                {<Button variant="contained" size="medium" startIcon={data?.column.name == 'feito' ? <Visibility /> : <Task />} onClick={onClickActionActivity} sx={{ justifyContent: 'start' }}>
                                     {
                                         data?.id_integration ?
                                             'Visualizar Atividade' :
                                             'Realizar Atividade'
                                     }
                                 </Button>}
-                                <Button variant="contained" size="medium" startIcon={<ShareIcon />} sx={{ justifyContent: 'start' }}
-                                    onClick={() => newTask(data)}>Criar Tarefa</Button>
+                                {/* <Button variant="contained" size="medium" startIcon={<ShareIcon />} sx={{ justifyContent: 'start' }}
+                                    onClick={() => newTask(data)}>Criar Tarefa
+                                </Button> */}
                             </Box>
                         </Box>
                     </Box>
