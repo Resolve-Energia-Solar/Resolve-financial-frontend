@@ -36,13 +36,17 @@ const ProjectList = ({ onClick }) => {
 
   const { filters, refresh } = useContext(ProjectDataContext);
 
-
   useEffect(() => {
     console.log('filters', filters);
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        const data = await projectService.getProjects({ page: page + 1, limit: rowsPerPage, expand: 'sale.customer', ...filters });
+        const data = await projectService.getProjects({
+          page: page + 1,
+          limit: rowsPerPage,
+          expand: 'sale.customer',
+          ...filters,
+        });
         setProjectsList(data.results);
         setTotalRows(data.count);
       } catch (err) {
@@ -140,7 +144,15 @@ const ProjectList = ({ onClick }) => {
             </TableHead>
             <TableBody>
               {projectsList.map((item) => (
-                <TableRow key={item.id} hover onClick={() => onClick(item)}>
+                <TableRow
+                  key={item.id}
+                  hover={item?.sale?.status === 'F'}
+                  onClick={() => item?.sale?.status === 'F' && onClick(item)}
+                  sx={{
+                    opacity: item?.sale?.status === 'F' ? 1 : 0.5,
+                    pointerEvents: item?.sale?.status === 'F' ? 'auto' : 'none',
+                  }}
+                >
                   <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                   <TableCell>{item?.project_number}</TableCell>
                   <TableCell>{item.product?.name}</TableCell>
