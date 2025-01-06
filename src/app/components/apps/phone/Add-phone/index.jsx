@@ -9,11 +9,12 @@ import usePhoneNumberForm from '@/hooks/phone_numbers/usePhoneNumbersForm';
 import { useEffect } from 'react';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 
-const CreatePhonePage = ({ userId = null, onClosedModal = null, onRefresh = null }) => {
+const CreatePhonePage = ({ userId = null, onClosedModal = null, onRefresh = null, selectedPhoneNumberId = null }) => {
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const {
     formData,
+    dataReceived,
     handleChange,
     handleSave,
     formErrors,
@@ -32,6 +33,10 @@ const CreatePhonePage = ({ userId = null, onClosedModal = null, onRefresh = null
       if (onClosedModal) {
         onClosedModal();
         onRefresh();
+      }
+
+      if (selectedPhoneNumberId) {
+        selectedPhoneNumberId(dataReceived.id);
       }
     }
   }, [success]);

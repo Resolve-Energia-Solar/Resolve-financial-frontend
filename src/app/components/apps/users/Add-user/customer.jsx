@@ -15,6 +15,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import useUserForm from '@/hooks/users/useUserForm';
+import AutoCompletePhoneNumbers from '../../comercial/sale/components/auto-complete/Auto-Input-PhoneNumbers';
+import AutoCompletePhoneNumber from '../../comercial/sale/components/auto-complete/AutoCompletePhoneNumber';
 
 export default function CreateCustomer({ onClosedModal = null, selectedUserId = null }) {
   const { formData, handleChange, handleSave, formErrors, success, dataReceived } = useUserForm();
@@ -133,14 +135,14 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
         />
       </Grid>
       <Grid item xs={12} sm={12} lg={4}>
-        <CustomFormLabel htmlFor="phone">Telefone</CustomFormLabel>
-        <CustomTextField
-          name="phone"
-          variant="outlined"
-          fullWidth
-          value={formData.phone}
-          onChange={(e) => handleChange('phone', e.target.value)}
-          {...(formErrors.phone && { error: true, helperText: formErrors.phone })}
+        <CustomFormLabel htmlFor="name">Número</CustomFormLabel>
+        <AutoCompletePhoneNumber
+          onChange={(id) => handleChange('phone_numbers_ids', id)}
+          value={formData.phone_numbers_ids}
+          {...(formErrors.phone_numbers_ids && {
+            error: true,
+            helperText: formErrors.phone_numbers_ids,
+          })}
         />
       </Grid>
       <Grid item xs={12} sm={12} lg={4}>

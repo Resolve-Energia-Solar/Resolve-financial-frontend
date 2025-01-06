@@ -18,8 +18,6 @@ export default function EditCustomer({ userId = null }) {
 
   const { loading, error, userData } = useUser(id);
 
-  console.log('userData', userData);
-
   const {
     formData,
     handleChange,
@@ -28,8 +26,6 @@ export default function EditCustomer({ userId = null }) {
     loading: formLoading,
     success,
   } = useUserForm(userData, id);
-
-  console.log('formData', formData);
 
   const gender_options = [
     { value: 'M', label: 'Masculino' },
