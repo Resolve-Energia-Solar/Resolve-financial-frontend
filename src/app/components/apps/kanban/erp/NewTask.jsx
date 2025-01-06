@@ -1,6 +1,7 @@
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
 import { Box, Button, Dialog, DialogContent, DialogTitle, MenuItem, Select, styled, Typography } from "@mui/material";
-
+import CloseIcon from '@mui/icons-material/Close';
+import { useState } from "react";
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialog-paper': {
@@ -12,14 +13,23 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 
 export default function NewTask({ saveTask, project, open, onClose, tasksTemplate }) {
 
-    console.log(tasksTemplate);
+    const [item, setItem] = useState();
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setItem( value );
+    }
 
     return (
         <StyledDialog open={open} onClose={onClose} >
             <DialogTitle>
-                <Typography variant="h6">
-                    Nova Tarefa
-                </Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="h6">
+                        Nova Tarefa
+                    </Typography>
+                    <Box>
+                        <CloseIcon onClick={onClose} />
+                    </Box>
+                </Box>
             </DialogTitle>
             <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }} >
                 <Box>
@@ -28,12 +38,14 @@ export default function NewTask({ saveTask, project, open, onClose, tasksTemplat
                     </Typography>
                     <Box>
                         <CustomFormLabel>Tarefa</CustomFormLabel>
-                        <Select sx={{ width: 200 }}>
-                            <MenuItem >
-                                {'Escolha um opção'}
-                            </MenuItem>
+                        <Select sx={{ width: 200 }}
+                            name={'taskTemplate'}
+
+                            onChange={handleChange}
+                        >
+
                             {tasksTemplate?.map((item) => (
-                                <MenuItem value={item.id} key={item.id}>
+                                <MenuItem value={item} key={item.id}>
                                     {item.title}
                                 </MenuItem>
                             ))}
@@ -41,7 +53,7 @@ export default function NewTask({ saveTask, project, open, onClose, tasksTemplat
                     </Box>
                 </Box>
                 <Box display='flex' justifyContent='flex-end' width={'100%'} >
-                    <Button onClick={saveTask}>Salvar</Button>
+                    <Button onClick={() => saveTask(item)}>Salvar</Button>
                 </Box>
             </DialogContent>
         </StyledDialog >

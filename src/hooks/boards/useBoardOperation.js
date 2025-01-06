@@ -50,12 +50,14 @@ export default function boardOperation() {
     const [optionsFooter, setOptionsFooter] = useState()
     const [textFooter, setTextFooter] = useState()
     const [openNewTask, setOpenNewTask] = useState()
+    const [tasksTemplate, setTasksTemplate] = useState()
+    const [taskTemplateSelected, setTaskTemplateSelected] = useState([])
 
     const handleCardClick = async (item) => {
         setIsModalOpen(true)
         setCardSelected(item)
         fetchComments(item.project.id)
-
+        fetchTasksTemplate()
         const userData = await userService.getUserById(item?.project?.sale?.customer);
         const taskTemplateData = await taskTemplateService.find(item.task_template);
         setComponentName(taskTemplateData.component)
@@ -72,6 +74,25 @@ export default function boardOperation() {
                 }
             }
         )
+    }
+
+    const fetchTasksTemplate = async () => {
+        try {
+            const response = await taskTemplateService.index()
+            console.log('oasdasdasdi1', response)
+
+            const tasksTemplateResult = response.results.filter((item) => {
+                return item.auto_create == false
+            }
+            )
+            console.log('oasdasdasdi', tasksTemplateResult)
+
+            setTasksTemplate(tasksTemplateResult)
+        } catch (error) {
+            console.log('Error: ', error)
+        }
+
+
     }
     const handleModalClosed = () => {
         setIsModalOpen(false)
@@ -280,6 +301,35 @@ export default function boardOperation() {
     }
 
 
+
+
+
+    const saveNewTask = async (item) => {
+
+        console.log('oasdasdasdi', item)
+
+
+        try {
+            const response = await taskService.create({
+                column_id: item.column,
+                title: item.title,
+                due_date: new Date(),
+
+            })
+            if (response) {
+                setOpenNewTask(false)
+                fetchDataBoard(board.id)
+                setMessage({ title: 'Salvo com Sucesso', message: 'A tarefa foi salva com sucesso!', type: true })
+                setOpenModalMessage(true)
+            }
+        } catch (err) {
+            console.error('Error:', err);
+            setMessage({ title: 'Erro ao Salvar', message: 'A tarefa não foi salva com sucesso!', type: false })
+        }
+
+    }
+
+
     return {
         boards,
         setBoard,
@@ -314,7 +364,10 @@ export default function boardOperation() {
         setComponentName,
         FooterDefiner,
         onClickFooter,
-        setOpenNewTask
+        tasksTemplate,
+        openNewTask,
+        setOpenNewTask,
+        saveNewTask,
     }
 
 }

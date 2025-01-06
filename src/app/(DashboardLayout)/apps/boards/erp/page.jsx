@@ -46,14 +46,14 @@ export default function Kanban() {
     tasks,
     optionsFooter,
     onClickFooter,
-    done,
-    inProgress,
-    taskTemplates
-
+    tasksTemplate,
+    openNewTask,
+    setOpenNewTask,
+    saveNewTask,
   } = boardOperation()
 
 
-  
+
 
   const BCrumb = [
     {
@@ -105,7 +105,7 @@ export default function Kanban() {
 
 
           <SideDrawer open={isDrawerOpen} onClose={handleDrawerClose} title={'Detalhamento'} footer={
-            cardSelected?.column?.name !='Feito' && <Footer options={optionsFooter} onClick={onClickFooter} />
+            cardSelected?.column?.name != 'Feito' && <Footer options={optionsFooter} onClick={onClickFooter} />
           }>
             {isDrawerOpen &&
               <EditProject projectId={cardSelected?.project?.id} data={cardSelected?.project} />
@@ -121,7 +121,7 @@ export default function Kanban() {
               <CheckCircleIcon /> :
               <CancelIcon />
             } />
-          <NewTask  tasksTemplate={taskTemplates} />
+          <NewTask tasksTemplate={tasksTemplate} open={openNewTask} onClose={() => setOpenNewTask(false)} saveTask={saveNewTask}  />
         </CardContent>
       </BlankCard>
     </PageContainer >
