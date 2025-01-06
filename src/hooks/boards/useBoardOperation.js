@@ -3,8 +3,34 @@ import userService from "@/services/userService"
 import { useEffect, useState } from "react"
 import Cookies from 'js-cookie';
 import taskTemplateService from "@/services/taskTemplateService";
+import taskService from "@/services/taskService";
 
 export default function boardOperation() {
+
+    const documentStatus = [
+        { label: 'Pendente', value: 1, bgcolor: '#ff0000' },
+        { label: 'Em andamento', value: 2, bgcolor: '#00ff00' },
+        { label: 'Concluído', value: 3, bgcolor: '#c7e3b1' }
+    ]
+
+    const designerStatus = [
+        { label: 'Revisión', value: 1 },
+        { label: 'Diseño', value: 2 },
+        { label: 'Desarrollo', value: 3 }
+    ]
+
+    const financierStatus = [
+        { label: 'Revisión', value: 1 },
+        { label: 'Diseño', value: 2 },
+        { label: 'Desarrollo', value: 3 }
+    ]
+
+    const requestStatus = [
+        { label: 'Pendiente', value: 1 },
+        { label: 'En Progreso', value: 2 },
+        { label: 'En Revisión', value: 3 },
+        { label: 'Cerrado', value: 4 }
+    ]
 
     const [boards, setBoards] = useState()
     const [board, setBoard] = useState()
@@ -21,15 +47,21 @@ export default function boardOperation() {
     const [viewMode, setViewMode] = useState('kanban')
     const [tasks, setTasks] = useState()
     const [componentName, setComponentName] = useState()
+    const [optionsFooter, setOptionsFooter] = useState()
+    const [textFooter, setTextFooter] = useState()
+    const [openNewTask, setOpenNewTask] = useState()
 
     const handleCardClick = async (item) => {
         setIsModalOpen(true)
         setCardSelected(item)
         fetchComments(item.project.id)
-        console.log('comentarios item', item)
+
         const userData = await userService.getUserById(item?.project?.sale?.customer);
         const taskTemplateData = await taskTemplateService.find(item.task_template);
-        console.log('taskTemplateData', { ...item, task_template: { ...taskTemplateData } })
+        setComponentName(taskTemplateData.component)
+        FooterDefiner(taskTemplateData.component)
+
+
         setCardSelected({ ...item, task_template: { ...taskTemplateData } })
         setDataProject(
             {
@@ -96,8 +128,8 @@ export default function boardOperation() {
 
     }
 
-    const handleDrawerOpen = (componentName) => {
-        setComponentName(componentName)
+    const handleDrawerOpen = () => {
+
         setIsDrawerOpen(!isDrawerOpen)
     }
     const handleDrawerClose = () => {
@@ -176,6 +208,78 @@ export default function boardOperation() {
         }
     }
 
+    function FooterDefiner(componentName) {
+
+        console.log('oioioi ', componentName)
+        if (componentName == 'project') {
+            setOptionsFooter(designerStatus);
+            setTextFooter('Status do Projeto');
+        } else if (componentName == 'Contract') {
+            setOptionsFooter(documentStatus);
+            setTextFooter('Status da Documentação');
+
+        } else if (componentName == 'requestEnergyCompany') {
+            setOptionsFooter(requestStatus);
+            setTextFooter('Status da Solicitação da C.');
+
+        } else if (componentName == 'Financier') {
+            setOptionsFooter(financierStatus);
+            setTextFooter('Status do Financeiro');
+        }
+    }
+
+
+    const onClickFooter = async (value) => {
+
+
+        const Done = board.columns.filter(board => board.column_type == 'D');
+        const inProgress = board.columns.filter(board => board.column_type == 'I');
+
+        const IdColumnDone = Done[0].id
+        const IdColumnInProgress = inProgress[0].id
+
+        if (value == 'done') {
+            try {
+                const response = await taskService.update(cardSelected?.id, {
+                    column_id: IdColumnDone
+                })
+
+
+
+                fetchDataBoard(board.id)
+                setMessage({ title: 'Alterado com Sucesso', message: 'O status foi alterado com sucesso!', type: true })
+                setOpenModalMessage(true)
+
+            } catch (err) {
+                console.error('Error:', err);
+                setMessage({ title: 'Erro ao Alterar Status', message: 'O status não foi alterado com sucesso!', type: false })
+            }
+        }
+
+        if (value == 'inProgress') {
+            try {
+                const response = taskService.update(cardSelected?.id, {
+                    column_id: IdColumnInProgress
+                })
+
+                if (response.ok) {
+                    fetchDataBoard(board.id)
+                    setMessage({ title: 'Alterado com Sucesso', message: 'O status foi alterado com sucesso!', type: true })
+                    setOpenModalMessage(true)
+                }
+
+            } catch (err) {
+                console.error('Error:', err);
+                setMessage({ title: 'Erro ao Alterar Status', message: 'O status não foi alterado com sucesso!', type: false })
+            }
+        }
+
+        if (value == 'prevented') {
+            setOpenNewTask(true)
+        }
+    }
+
+
     return {
         boards,
         setBoard,
@@ -202,7 +306,15 @@ export default function boardOperation() {
         viewMode,
         onClickViewMode,
         tasks,
-        componentName
+        optionsFooter,
+        componentName,
+        textFooter,
+        setTextFooter,
+        setTasks,
+        setComponentName,
+        FooterDefiner,
+        onClickFooter,
+        setOpenNewTask
     }
 
 }

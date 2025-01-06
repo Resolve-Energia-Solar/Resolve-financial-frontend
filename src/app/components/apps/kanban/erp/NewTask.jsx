@@ -12,7 +12,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 
 export default function NewTask({ saveTask, project, open, onClose, tasksTemplate }) {
 
-     console.log(tasksTemplate);
+    console.log(tasksTemplate);
 
     return (
         <StyledDialog open={open} onClose={onClose} >
