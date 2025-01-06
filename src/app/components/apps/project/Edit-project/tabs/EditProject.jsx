@@ -29,7 +29,7 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
 
   const status_options = [
     { value: 'P', label: 'Pendente' },
-    { value: 'F', label: 'Finalizado' },
+    { value: 'CO', label: 'Concluído' },
     { value: 'EA', label: 'Em Andamento' },
     { value: 'C', label: 'Cancelado' },
     { value: 'D', label: 'Distrato' },
@@ -146,6 +146,15 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
             options={status_options}
             value={formData.status}
             onChange={(e) => handleChange('status', e.target.value)}
+            disabled={detail}
+          />
+        </Grid>
+        <Grid item xs={12} sm={12} lg={4}>
+          <FormSelect
+            label="Status Projetista"
+            options={status_options}
+            value={formData.designer_status}
+            onChange={(e) => handleChange('designer_status', e.target.value)}
             disabled={detail}
           />
         </Grid>

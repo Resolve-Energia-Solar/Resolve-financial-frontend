@@ -3,18 +3,28 @@ import {
   CheckCircle as CheckCircleIcon,
   HourglassEmpty as HourglassEmptyIcon,
   Cancel as CancelIcon,
+  HourglassFull as HourglassFullIcon,
+  RemoveCircle as RemoveCircleIcon,
 } from '@mui/icons-material';
 import theme from '@/utils/theme';
 
 
 const StatusChip = ({ status }) => {
   const getChipProps = (status) => {
-    if (status == true) {
-      return { label: 'Concluido', color: theme.palette.success.light, icon: <CheckCircleIcon /> };
-    } else {
-      return { label: 'Não Concluido', color: theme.palette.secondary.light, icon: <CancelIcon /> };
+    switch (status) {
+      case 'P':
+        return { label: 'Pendente', color: theme.palette.warning.light, icon: <HourglassEmptyIcon sx={{ color: '#fff' }} /> };
+      case 'F':
+        return { label: 'Finalizado', color: theme.palette.success.light, icon: <CheckCircleIcon sx={{ color: '#fff' }} /> };
+      case 'EA':
+        return { label: 'Em Andamento', color: theme.palette.info.light, icon: <HourglassFullIcon sx={{ color: '#fff' }} /> };
+      case 'C':
+        return { label: 'Cancelado', color: theme.palette.error.light, icon: <CancelIcon sx={{ color: '#fff' }} /> };
+      case 'D':
+        return { label: 'Distrato', color: theme.palette.secondary.light, icon: <RemoveCircleIcon sx={{ color: '#fff' }} /> };
+      default:
+        return { label: 'Desconhecido', color: theme.palette.grey.light, icon: <CancelIcon sx={{ color: '#fff' }} /> };
     }
-  
   };
   const { label, color, icon } = getChipProps(status);
   
