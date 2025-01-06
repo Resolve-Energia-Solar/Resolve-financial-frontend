@@ -57,7 +57,7 @@ export default function DrawerFiltersProject() {
   };
 
   const clearFilters = () => {
-    setTempFilters({ documentCompletionDate: [null, null], status: [] });
+    setTempFilters({ documentCompletionDate: [null, null], status: [], designer_status: [] });
   };
 
   const applyFilters = () => {
