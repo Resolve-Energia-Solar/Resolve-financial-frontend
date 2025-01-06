@@ -33,6 +33,8 @@ const useScheduleForm = (initialData, id) => {
     going_to_location_at: null,
     execution_started_at: null,
     execution_finished_at: null,
+    service_opinion: null,
+    final_service_opinion_id: null,
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -49,7 +51,7 @@ const useScheduleForm = (initialData, id) => {
         products_ids: initialData.products_ids || [],
         schedule_date: initialData.schedule_date || '',
         schedule_start_time: initialData.schedule_start_time || '', // Formato esperado já é HH:mm:ss
-        schedule_end_date: initialData.shedule_end_date || '',
+        schedule_end_date: initialData.schedule_end_date || '',
         schedule_end_time: initialData.schedule_end_time || '',
         address_id: initialData?.address?.id || null,
         latitude: initialData.latitude || null,
@@ -59,6 +61,9 @@ const useScheduleForm = (initialData, id) => {
         going_to_location_at: initialData.going_to_location_at || null,
         execution_started_at: initialData.execution_started_at || null,
         execution_finished_at: initialData.execution_finished_at || null,
+        service_opinion: initialData.service_opinion || null,
+        final_service_opinion_id:
+          initialData.final_service_opinion?.id || initialData.service_opinion?.id || null,
       });
       setAddressData(initialData.address || null);
     }
@@ -159,16 +164,19 @@ const useScheduleForm = (initialData, id) => {
   useEffect(() => {
     if (formData.schedule_date && formData.schedule_start_time && serviceData?.deadline?.hours) {
       let normalizedTime;
-  
+
       // Normaliza o formato de horário
       if (typeof formData.schedule_start_time === 'string') {
         // Se já for string no formato `hh:mm` ou `hh:mm:ss`, mantém
-        normalizedTime = formData.schedule_start_time.includes(':') 
-          ? formData.schedule_start_time 
+        normalizedTime = formData.schedule_start_time.includes(':')
+          ? formData.schedule_start_time
           : `${formData.schedule_start_time}:00`;
       } else if (formData.schedule_start_time instanceof Date) {
         // Converte Date para string no formato `hh:mm:ss`
-        normalizedTime = `${formData.schedule_start_time.getHours().toString().padStart(2, '0')}:${formData.schedule_start_time
+        normalizedTime = `${formData.schedule_start_time
+          .getHours()
+          .toString()
+          .padStart(2, '0')}:${formData.schedule_start_time
           .getMinutes()
           .toString()
           .padStart(2, '0')}:${formData.schedule_start_time
@@ -176,16 +184,23 @@ const useScheduleForm = (initialData, id) => {
           .toString()
           .padStart(2, '0')}`;
       }
-  
+
       // Divide o horário em partes
       const [startHours, startMinutes, startSeconds] = normalizedTime.split(':').map(Number);
-  
+
       // Continua apenas se os valores forem válidos
       if (startHours !== undefined && startMinutes !== undefined) {
         // Extrai a data do agendamento
         const [year, month, day] = formData.schedule_date.split('-').map(Number);
-        const startDate = new Date(year, month - 1, day, startHours, startMinutes, startSeconds || 0);
-  
+        const startDate = new Date(
+          year,
+          month - 1,
+          day,
+          startHours,
+          startMinutes,
+          startSeconds || 0,
+        );
+
         // Converte o prazo em milissegundos
         const [durationHours, durationMinutes, durationSeconds] = serviceData.deadline.hours
           .split(':')
@@ -194,10 +209,10 @@ const useScheduleForm = (initialData, id) => {
           (durationHours || 0) * 3600000 +
           (durationMinutes || 0) * 60000 +
           (durationSeconds || 0) * 1000;
-  
+
         // Calcula a data e horário finais
         const updatedDate = new Date(startDate.getTime() + totalMilliseconds);
-  
+
         setFormData((prev) => ({
           ...prev,
           schedule_end_date: updatedDate.toISOString().split('T')[0],
@@ -209,7 +224,6 @@ const useScheduleForm = (initialData, id) => {
       }
     }
   }, [formData.schedule_date, formData.schedule_start_time, serviceData]);
-  
 
   useEffect(() => {
     if (initialData) {
@@ -256,6 +270,14 @@ const useScheduleForm = (initialData, id) => {
 
     if (formData.schedule_agent_id !== null) {
       dataToSend.schedule_agent_id = formData.schedule_agent_id;
+    }
+
+    if (
+      formData.final_service_opinion_id !== null &&
+      formData.service_opinion?.id !== formData.final_service_opinion_id
+    ) {
+      dataToSend.service_opinion_id = formData.final_service_opinion_id;
+      dataToSend.final_service_opinion_id = formData.final_service_opinion_id;
     }
 
     console.log('Data to send: ', dataToSend);

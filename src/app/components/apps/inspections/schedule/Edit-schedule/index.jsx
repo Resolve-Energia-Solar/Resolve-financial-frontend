@@ -1,10 +1,10 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { parseISO, format } from 'date-fns';
 
 /* material */
-import { Grid, Button, Stack, Alert, Icon, Tooltip, Snackbar } from '@mui/material';
+import { Grid, Button, Stack, Alert, Tooltip, Snackbar, Chip } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 
 /* components */
@@ -22,6 +22,7 @@ import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/A
 import AutoCompleteUserProject from '../../auto-complete/Auto-input-UserProject';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
+import serviceOpinionsService from '@/services/serviceOpinionsService';
 
 const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh = null }) => {
   const router = useRouter();
@@ -54,12 +55,49 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     { value: '15:00:00', label: '15:00' },
   ];
 
+  const [serviceOpinions, setServiceOpinions] = useState([]);
+  const [loadingServiceOpinions, setLoadingServiceOpinions] = useState(false);
+
+  const formattedServiceOpinions = (opinions) => {
+    const formattedOpinions = [];
+
+    opinions.forEach((opinion) => {
+      formattedOpinions.push({
+        value: opinion.id,
+        label: opinion.name,
+      });
+    });
+
+    return formattedOpinions;
+  };
+
   useEffect(() => {
     if (success) {
       showAlert('Ordem de serviço editada com sucesso', 'success');
       router.push('/apps/inspections/schedule');
     }
   }, [success, router]);
+
+  useEffect(() => {
+    const fetchServiceOpinions = async () => {
+      try {
+        setLoadingServiceOpinions(true);
+        const response = await serviceOpinionsService.getServiceOpinionsByService(
+          formData.service_id,
+        );
+
+        setServiceOpinions(formattedServiceOpinions(response.results));
+      } catch (error) {
+        console.error('Error fetching service opinions:', error);
+      } finally {
+        setLoadingServiceOpinions(false);
+      }
+    };
+
+    if (formData.service_id !== null) {
+      fetchServiceOpinions();
+    }
+  }, [formData]);
 
   if (loading) return <div>Carregando...</div>;
   if (error) return <div>{error}</div>;
@@ -189,49 +227,53 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         </Grid>
 
         {/* Hora do Agendamento */}
-        {
-          formData.service_id == SERVICE_INSPECTION_ID ?
-            (
-              <Grid item xs={12} sm={12} lg={6}>
-                <FormSelect
-                  options={timeOptions}
-                  onChange={(e) => {
-                    const timeValue = e.target.value.includes(':') ? e.target.value : `${e.target.value}:00`;
-                    validateChange('schedule_start_time', timeValue);
-                  }}
-                  disabled={!formData.schedule_date}
-                  value={formData.schedule_start_time || ''}
-                  {...(formErrors.schedule_start_time && {
-                    error: true,
-                    helperText: formErrors.schedule_start_time,
-                  })}
-                  label={'Hora do Agendamento'}
-                />
-              </Grid>
-            ) :
-            (
-              <Grid item xs={12} sm={12} lg={6}>
-                <FormTimePicker
-                  label="Hora do Agendamento"
-                  value={formData.schedule_start_time ? new Date(`1970-01-01T${formData.schedule_start_time}`) : null}
-                  onChange={(newValue) => {
-                    if (newValue instanceof Date) {
-                      const formattedTime = `${newValue.getHours().toString().padStart(2, '0')}:${newValue
-                        .getMinutes()
-                        .toString()
-                        .padStart(2, '0')}:${newValue.getSeconds().toString().padStart(2, '0')}`;
-                      validateChange('schedule_start_time', formattedTime);
-                    }
-                  }}
-                  {...(formErrors.schedule_start_time && {
-                    error: true,
-                    helperText: formErrors.schedule_start_time,
-                  })}
-                />
-              </Grid>
-            )
-
-        }
+        {formData.service_id == SERVICE_INSPECTION_ID ? (
+          <Grid item xs={12} sm={12} lg={6}>
+            <FormSelect
+              options={timeOptions}
+              onChange={(e) => {
+                const timeValue = e.target.value.includes(':')
+                  ? e.target.value
+                  : `${e.target.value}:00`;
+                validateChange('schedule_start_time', timeValue);
+              }}
+              disabled={!formData.schedule_date}
+              value={formData.schedule_start_time || ''}
+              {...(formErrors.schedule_start_time && {
+                error: true,
+                helperText: formErrors.schedule_start_time,
+              })}
+              label={'Hora do Agendamento'}
+            />
+          </Grid>
+        ) : (
+          <Grid item xs={12} sm={12} lg={6}>
+            <FormTimePicker
+              label="Hora do Agendamento"
+              value={
+                formData.schedule_start_time
+                  ? new Date(`1970-01-01T${formData.schedule_start_time}`)
+                  : null
+              }
+              onChange={(newValue) => {
+                if (newValue instanceof Date) {
+                  const formattedTime = `${newValue
+                    .getHours()
+                    .toString()
+                    .padStart(2, '0')}:${newValue
+                    .getMinutes()
+                    .toString()
+                    .padStart(2, '0')}:${newValue.getSeconds().toString().padStart(2, '0')}`;
+                  validateChange('schedule_start_time', formattedTime);
+                }
+              }}
+              {...(formErrors.schedule_start_time && {
+                error: true,
+                helperText: formErrors.schedule_start_time,
+              })}
+            />
+          </Grid>
+        )}
 
         {/* Endereço */}
         <Grid item xs={12} sm={12} lg={6}>
@@ -297,6 +339,35 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
             value={formData.observation}
             onChange={(e) => handleChange('observation', e.target.value)}
             {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
+          />
+        </Grid>
+
+        {/* Parecer de Serviço */}
+        <Grid item xs={12} sm={6} lg={6}>
+          <CustomFormLabel htmlFor="service_opinion_id">Parecer de serviço</CustomFormLabel>
+          <Chip
+            label={
+              formData.service_opinion
+                ? formData.service_opinion.name
+                : 'Sem Parecer de serviço no momento'
+            }
+            color="primary"
+          />
+        </Grid>
+
+        {/* Parecer final de Serviço */}
+        <Grid item xs={12} sm={6} lg={6}>
+          <FormSelect
+            label={'Parecer final de serviço'}
+            options={serviceOpinions}
+            onChange={(e) => handleChange('final_service_opinion_id', e.target.value)}
+            value={formData.final_service_opinion_id || ''}
+            {...(formErrors.final_service_opinion_id && {
+              error: true,
+              helperText: formErrors.final_service_opinion_id,
+            })}
+            disabled={loadingServiceOpinions || formData.service_opinion === null}
+            noOptionsText={'Nenhuma opinião final de serviço encontrada'}
           />
         </Grid>
 

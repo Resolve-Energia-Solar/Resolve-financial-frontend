@@ -219,7 +219,7 @@ const SchedulingList = () => {
   };
 
   return (
-    <Box > 
+    <Box>
       <Typography variant="h6" gutterBottom>
         Lista de Agendamentos
       </Typography>
@@ -272,12 +272,25 @@ const SchedulingList = () => {
 
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('status')}
+                onClick={() => handleSort('service_opinion')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   Parecer do Serviço
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
                     {order === 'service_opinion' &&
+                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                  </Box>
+                </Box>
+              </TableCell>
+
+              <TableCell
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                onClick={() => handleSort('final_service_opinion')}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  Parecer Final do Serviço
+                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                    {order === 'final_service_opinion' &&
                       (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                   </Box>
                 </Box>
@@ -389,7 +402,36 @@ const SchedulingList = () => {
                     <ScheduleStatusChip status={schedule.status} />
                   </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
-                    {schedule.service_opinion?.name || 'Sem parecer associado'}
+                    {schedule.service_opinion ? (
+                      schedule.service_opinion.name
+                    ) : (
+                      <Box
+                        sx={{
+                          backgroundColor: 'error.light',
+                          color: 'error.main',
+                          padding: 1,
+                          textAlign: 'center',
+                        }}
+                      >
+                        Sem parecer associado
+                      </Box>
+                    )}
+                  </TableCell>
+                  <TableCell onClick={() => handleRowClick(schedule)}>
+                    {schedule.final_service_opinion ? (
+                      schedule.final_service_opinion.name
+                    ) : (
+                      <Box
+                        sx={{
+                          backgroundColor: 'error.light',
+                          color: 'error.main',
+                          padding: 1,
+                          textAlign: 'center',
+                        }}
+                      >
+                        Sem parecer final associado
+                      </Box>
+                    )}
                   </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     {formatDate(schedule.schedule_date)}
@@ -476,18 +518,19 @@ const SchedulingList = () => {
                         horizontal: 'right',
                       }}
                     >
+                      {schedule.going_to_location_at != null &&
+                        schedule.execution_started_at == null && (
+                          <MenuItem
+                            onClick={() => {
+                              handleViewClick(schedule.id);
+                              handleMenuClose();
+                            }}
+                          >
+                            <Mapsicon fontSize="small" sx={{ mr: 1 }} />
+                            Acompanhar no mapa
+                          </MenuItem>
+                        )}
 
-                      {schedule.going_to_location_at != null && schedule.execution_started_at == null && (
-                        <MenuItem
-                        onClick={() => {
-                          handleViewClick(schedule.id);
-                          handleMenuClose();
-                        }}
-                      >
-                        <Mapsicon fontSize="small" sx={{ mr: 1 }} />
-                        Acompanhar no mapa
-                      </MenuItem>)}
-                        
                       <MenuItem
                         onClick={() => {
                           handleEditClick(schedule.id);
