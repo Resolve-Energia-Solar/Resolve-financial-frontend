@@ -13,6 +13,10 @@ const BCrumb = [
     title: 'Home',
   },
   {
+    to: '/apps/inspections/schedule',
+    title: 'Agendamentos',
+  },
+  {
     title: 'Editar de Agendamento',
   },
 ];
