@@ -95,7 +95,6 @@ const useScheduleForm = (initialData, id) => {
       if (formData.customer_id) {
         try {
           const customerInfo = await userService.getUserById(formData.customer_id);
-          console.log('CustomerInfo: ', customerInfo);
 
           if (customerInfo?.addresses?.length > 0 && !formData.address_id) {
             setFormData((prev) => ({
@@ -147,8 +146,6 @@ const useScheduleForm = (initialData, id) => {
               latitude: location.lat,
               longitude: location.lng,
             }));
-
-            console.log('location: ', location);
           } else {
             console.error('Erro ao obter coordenadas:', response.data.status);
           }
@@ -272,15 +269,13 @@ const useScheduleForm = (initialData, id) => {
       dataToSend.schedule_agent_id = formData.schedule_agent_id;
     }
 
-    if (
-      formData.final_service_opinion_id !== null &&
-      formData.service_opinion?.id !== formData.final_service_opinion_id
-    ) {
-      dataToSend.service_opinion_id = formData.final_service_opinion_id;
-      dataToSend.final_service_opinion_id = formData.final_service_opinion_id;
+    if (formData.service_opinion) {
+      dataToSend.service_opinion_id = formData.service_opinion.id;
     }
 
-    console.log('Data to send: ', dataToSend);
+    if (formData.final_service_opinion_id) {
+      dataToSend.final_service_opinion_id = formData.final_service_opinion_id;
+    }
 
     try {
       if (id) {
