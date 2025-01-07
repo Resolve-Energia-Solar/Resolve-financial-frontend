@@ -3,12 +3,12 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Logo from '@/app/(DashboardLayout)/layout/shared/logo/Logo';
 import PageContainer from '@/app/components/container/PageContainer';
-import AuthForgotPassword from '../authForms/AuthForgotPassword';
 import Image from 'next/image';
+import AuthPasswordReset from '../authForms/AuthPasswordReset';
 
-export default function ForgotPassword() {
+export default function FirstLoginPasswordChange() {
   return (
-    <PageContainer title="Página de Esqueci a Senha" description="esta é uma página de exemplo">
+    <PageContainer title="First Login Password Change" description="Page for changing password on first login">
       <Grid container justifyContent="center" spacing={0} sx={{ overflowX: 'hidden' }}>
         <Grid
           item
@@ -47,10 +47,13 @@ export default function ForgotPassword() {
             >
               <Image
                 src={"/images/backgrounds/login-bg.svg"}
-                alt="bg" width={500} height={500}
+                alt="bg"
+                width={500}
+                height={500}
                 style={{
                   width: '100%',
-                  maxWidth: '500px', maxHeight: '500px',
+                  maxWidth: '500px',
+                  maxHeight: '500px',
                 }}
               />
             </Box>
@@ -68,17 +71,16 @@ export default function ForgotPassword() {
         >
           <Box p={4}>
             <Typography variant="h4" fontWeight="700">
-              Esqueceu sua senha?
+              Alteração de senha para primeiro acesso
             </Typography>
 
             <Typography color="textSecondary" variant="subtitle2" fontWeight="400" mt={2}>
-              Por favor, insira o endereço de e-mail associado à sua conta e enviaremos um link para
-              redefinir sua senha.
+              Por favor, insira sua nova senha e confirme-a para concluir o processo de primeiro acesso.
             </Typography>
-            <AuthForgotPassword />
+            <AuthPasswordReset />
           </Box>
         </Grid>
       </Grid>
     </PageContainer>
-  )
-};
+  );
+}
