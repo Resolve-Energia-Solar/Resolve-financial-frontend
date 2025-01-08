@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { Box, Drawer, Button, CardContent, Typography, Grid } from '@mui/material';
+import React, { useState, useContext } from 'react';
+import { Box, Drawer, Button, Typography, Grid } from '@mui/material';
 import { FilterAlt } from '@mui/icons-material';
 import CheckboxesTags from './CheckboxesTags';
 import FormDateRange from './DateRangePicker';
-import { SaleDataContext } from '@/app/context/SaleContext';
-import AutoCompleteBranch from '../auto-complete/Auto-Input-Branch';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import AutoCompleteBranch from '../auto-complete/Auto-Input-Branch';
 import AutoCompleteUser from '../auto-complete/Auto-Input-User';
+import { SaleDataContext } from '@/app/context/SaleContext';
 
 export default function DrawerFilters() {
   const [open, setOpen] = useState(false);
@@ -21,7 +21,7 @@ export default function DrawerFilters() {
   });
 
   const createFilterParams = (filters) => {
-    const params = new URLSearchParams();
+    const params = {};
 
     if (
       filters.documentCompletionDate &&
@@ -30,28 +30,28 @@ export default function DrawerFilters() {
     ) {
       const startDate = filters.documentCompletionDate[0].toISOString().split('T')[0];
       const endDate = filters.documentCompletionDate[1].toISOString().split('T')[0];
-      params.append('document_completion_date__range', `${startDate},${endDate}`);
+      params.document_completion_date__range = `${startDate},${endDate}`;
     }
 
     if (filters.statusDocument && filters.statusDocument.length > 0) {
       const statusValues = filters.statusDocument.map((status) => status.value);
-      params.append('status__in', statusValues.join(','));
+      params.status__in = statusValues.join(',');
     }
 
     if (filters.branch) {
-      params.append('branch', filters.branch);
+      params.branch = filters.branch;
     }
 
     if (filters.customer) {
-      params.append('customer', filters.customer);
+      params.customer = filters.customer;
     }
 
-    if (filters.isPreSale) {
+    if (filters.isPreSale && filters.isPreSale.length > 0) {
       const preSaleValues = filters.isPreSale.map((option) => option.value);
-      params.append('is_pre_sale', preSaleValues.join(','));
+      params.is_pre_sale = preSaleValues.join(',');
     }
 
-    return params.toString();
+    return params;
   };
 
   const handleDateChange = (newValue) => {
@@ -75,11 +75,17 @@ export default function DrawerFilters() {
   };
 
   const clearFilters = () => {
-    setTempFilters({ documentCompletionDate: [null, null], statusDocument: [], branch: null, isPreSale: [] });
+    setTempFilters({
+      documentCompletionDate: [null, null],
+      statusDocument: [],
+      branch: null,
+      customer: null,
+      isPreSale: [],
+    });
   };
 
   const applyFilters = () => {
-    setFilters([tempFilters, decodeURIComponent(createFilterParams(tempFilters))]);
+    setFilters(createFilterParams(tempFilters));
     setOpen(false);
   };
 
@@ -97,7 +103,7 @@ export default function DrawerFilters() {
     { value: 'D', label: 'Distrato' },
   ];
 
-  const isPreSale = [
+  const isPreSaleOptions = [
     { value: 'true', label: 'Pré-Venda' },
     { value: 'false', label: 'Venda' },
   ];
@@ -140,15 +146,17 @@ export default function DrawerFilters() {
                   onChange={handleStatusChange}
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <CustomFormLabel htmlFor="isPreSale">Tipo de Venda</CustomFormLabel>
                 <CheckboxesTags
-                  options={isPreSale}
-                  placeholder="Selecione o tipo de venda"
+                  options={isPreSaleOptions}
+                  placeholder="Selecione o tipo"
                   value={tempFilters.isPreSale}
                   onChange={handleIsPreSaleChange}
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <FormDateRange
                   label="Selecione a Data de Conclusão"
@@ -158,29 +166,28 @@ export default function DrawerFilters() {
                   helperText=""
                 />
               </Grid>
+
               <Grid item xs={12}>
-                <CustomFormLabel htmlFor="branch">Franquia</CustomFormLabel>
+                <CustomFormLabel htmlFor="branch">Filial</CustomFormLabel>
                 <AutoCompleteBranch
+                  placeholder="Selecione a filial"
                   value={tempFilters.branch}
-                  onChange={(id) => handleBranchChange(null, { id })}
+                  onChange={handleBranchChange}
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <CustomFormLabel htmlFor="customer">Cliente</CustomFormLabel>
                 <AutoCompleteUser
+                  placeholder="Selecione o cliente"
                   value={tempFilters.customer}
-                  onChange={(id) => handleCustomerChange(null, { id })}
+                  onChange={handleCustomerChange}
                 />
               </Grid>
             </Grid>
           </Box>
 
-          {/* Botões fixos no rodapé */}
-          <Box
-            sx={{
-              flexShrink: 0,
-            }}
-          >
+          <Box sx={{ flexShrink: 0 }}>
             <Grid container spacing={1}>
               <Grid item xs={6}>
                 <Button variant="outlined" fullWidth onClick={clearFilters}>
