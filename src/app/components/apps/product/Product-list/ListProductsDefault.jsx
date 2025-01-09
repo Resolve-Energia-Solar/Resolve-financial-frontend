@@ -28,6 +28,7 @@ import ProductChip from '@/app/components/apps/product/components/ProductChip';
 import productService from '@/services/productsService';
 import DetailProduct from '../Product-detail';
 import { OnboardingSaleContext } from '@/app/context/OnboardingCreateSale';
+import SearchInput from '@/app/components/forms/theme-elements/SearchInput';
 
 const ListProductsDefault = () => {
   const theme = useTheme();
@@ -39,28 +40,31 @@ const ListProductsDefault = () => {
   const [selectedProductDetail, setSelectedProductDetail] = useState(null);
   const [allowMultipleSelection, setAllowMultipleSelection] = useState(false);
 
+  const [kwpValue, setKwpValue] = useState('');
+  const [kwpRange, setKwpRange] = useState([]);
+  const [errorKwp, setErrorKwp] = useState('');
+
+  const handleSearchSubmit = (value) => {
+    if (value.trim() === '') {
+      setErrorKwp('');
+      setKwpRange([]);
+      return;
+    }
+
+    const kwpNumber = parseFloat(value);
+
+    if (!isNaN(kwpNumber)) {
+      setErrorKwp('');
+      const delta = 20;
+      const generatedRange = [kwpNumber - delta, kwpNumber + delta];
+      setKwpRange(generatedRange);
+      console.log('Intervalo de Kwp:', generatedRange);
+    } else {
+      setErrorKwp('Por favor, insira um número válido para Kwp.');
+    }
+  };
+
   const { productIds, setProductIds, setTotalValue } = useContext(OnboardingSaleContext);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const responseDefault = await productService.getProductsDefault();
-        setProductsList((prevProducts) => [
-          ...prevProducts,
-          ...responseDefault.results.filter(
-            (product) => !prevProducts.map((item) => item.id).includes(product.id),
-          ),
-        ]);
-      } catch (error) {
-        console.log('Error: ', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const handleCheckboxChange = (id) => {
     setProductIds((prevProductIds) => {
@@ -68,7 +72,6 @@ const ListProductsDefault = () => {
         ? prevProductIds.filter((productId) => productId !== id)
         : [...prevProductIds, id];
   
-      // Atualiza o valor total
       const totalValue = newProductIds.reduce((acc, productId) => {
         const product = productList.find((p) => p.id === productId);
         return acc + (Number(product?.product_value) || 0);
@@ -79,7 +82,27 @@ const ListProductsDefault = () => {
     });
   };
 
-  // Menu actions
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const responseDefault = await productService.getProducts({
+          default__in: 'S',
+          kwp_in: kwpRange.join(','),
+          limit: 6,
+        });
+        setProductsList(responseDefault.results);
+        console.log('Products: ', responseDefault);
+      } catch (error) {
+        console.log('Error: ', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [kwpRange]);
+
   const handleMenuClick = (event, id) => {
     setMenuAnchorEl(event.currentTarget);
     setMenuOpenRowId(id);
@@ -101,17 +124,28 @@ const ListProductsDefault = () => {
         <Typography variant="subtitle1">Selecione um ou mais produtos</Typography>
       </Alert>
 
-      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={allowMultipleSelection}
-              onChange={(e) => setAllowMultipleSelection(e.target.checked)}
-            />
-          }
-          label="Permitir seleção múltipla"
-        />
-      </Box>
+      <Grid container spacing={2} sx={{ mb: 2 }}>
+        <Grid item xs={12} md={6}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={allowMultipleSelection}
+                onChange={(e) => setAllowMultipleSelection(e.target.checked)}
+              />
+            }
+            label="Permitir seleção múltipla"
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <SearchInput
+            value={kwpValue}
+            onChange={setKwpValue}
+            onSubmit={handleSearchSubmit}
+            placeholder="Digite o valor de Kwp"
+            errorMessage={errorKwp}
+          />
+        </Grid>
+      </Grid>
 
       <Grid container spacing={3}>
         {loading
@@ -155,7 +189,9 @@ const ListProductsDefault = () => {
                     <CustomCheckbox
                       disabled={
                         product.default === 'N' ||
-                        (!allowMultipleSelection && productIds.length > 0 && !productIds.includes(product.id))
+                        (!allowMultipleSelection &&
+                          productIds.length > 0 &&
+                          !productIds.includes(product.id))
                       }
                       checked={productIds.includes(product.id)}
                       onChange={() => handleCheckboxChange(product.id)}
