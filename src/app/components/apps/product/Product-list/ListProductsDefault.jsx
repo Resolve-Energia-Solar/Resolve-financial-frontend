@@ -48,7 +48,6 @@ const ListProductsDefault = () => {
     if (value.trim() === '') {
       setErrorKwp('');
       setKwpRange([]);
-      console.log('Campo vazio. Nenhum intervalo gerado.');
       return;
     }
 
@@ -66,6 +65,22 @@ const ListProductsDefault = () => {
   };
 
   const { productIds, setProductIds, setTotalValue } = useContext(OnboardingSaleContext);
+
+  const handleCheckboxChange = (id) => {
+    setProductIds((prevProductIds) => {
+      const newProductIds = prevProductIds.includes(id)
+        ? prevProductIds.filter((productId) => productId !== id)
+        : [...prevProductIds, id];
+  
+      const totalValue = newProductIds.reduce((acc, productId) => {
+        const product = productList.find((p) => p.id === productId);
+        return acc + (Number(product?.product_value) || 0);
+      }, 0);
+      setTotalValue(totalValue);
+  
+      return newProductIds;
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {

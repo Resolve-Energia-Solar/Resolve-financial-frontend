@@ -22,9 +22,9 @@ export default function SearchInput({
           alignItems: 'center',
           width: "100%",
           boxShadow: errorMessage
-            ? '0 0 5px 1px rgba(255, 0, 0, 0.3)' // Sombra vermelha discreta
-            : '0 1px 3px rgba(0, 0, 0, 0.2)', // Sombra padrão
-          border: errorMessage ? '1px solid rgba(255, 0, 0, 0.4)' : 'none', // Borda sutil para erro
+            ? '0 0 5px 1px rgba(255, 0, 0, 0.3)'
+            : '0 1px 3px rgba(0, 0, 0, 0.2)',
+          border: errorMessage ? '1px solid rgba(255, 0, 0, 0.4)' : 'none',
         }}
         onSubmit={(e) => {
           e.preventDefault();
