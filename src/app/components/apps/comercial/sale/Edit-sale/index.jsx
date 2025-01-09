@@ -10,6 +10,7 @@ import {
   Typography,
   CircularProgress,
   Alert,
+  Snackbar,
 } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
@@ -31,7 +32,7 @@ import PaymentCard from '@/app/components/apps/invoice/components/paymentList/ca
 import documentTypeService from '@/services/documentTypeService';
 import Attachments from '@/app/components/shared/Attachments';
 import CustomerTabs from '@/app/components/apps/users/Edit-user/customer/tabs';
-import { Preview } from '@mui/icons-material';
+import { CheckCircle, Error, Preview } from '@mui/icons-material';
 import PreviewContractModal from '@/app/components/apps/contractSubmissions/Preview-contract';
 import ChecklistSales from '../../../checklist/Checklist-list/ChecklistSales';
 import HasPermission from '@/app/components/permissions/HasPermissions';
@@ -39,14 +40,36 @@ import SendContractButton from '../../../contractSubmissions/Send-contract';
 import ContractSubmissions from '../../../contractSubmissions/contract-list';
 import SchedulesInspections from '../../../project/components/SchedulesInspections';
 import History from '@/app/components/apps/history';
-
+import EditSale from './tabs/sale';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
-const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...props }) => {
+const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...props }) => {
   const params = useParams();
   let id = saleId;
   if (!saleId) id = params.id;
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const formatFieldName = (fieldName) => {
+    const fieldLabels = {
+      customer_id: 'Cliente',
+      seller_id: 'Vendedor',
+      sales_supervisor_id: 'Supervisor de Vendas',
+      sales_manager_id: 'Gerente de Vendas',
+      branch_id: 'Franquia',
+    };
+
+    return fieldLabels[fieldName] || fieldName;
+  };
+
+  const MyComponent = () => {
+    // Código do componente
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const userPermissions = useSelector((state) => state.user.permissions);
 
@@ -138,7 +161,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
           {value === 1 && <SchedulesInspections userId={saleData.customer.id} saleId={id_sale} />}
 
           {value === 2 && (
-            <>
+            <Box {...props}>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="name">Cliente</CustomFormLabel>
@@ -248,7 +271,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
                   </Grid>
                 </HasPermission>
               </Grid>
-            </>
+            </Box>
           )}
 
           {value === 3 && (
@@ -267,7 +290,7 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
           {value === 5 && <ChecklistSales saleId={id_sale} />}
           {value === 6 && <ContractSubmissions sale={saleData} />}
 
-          {value === 7 && <History contentType={CONTEXT_TYPE_SALE_ID} objectId={id_sale} /> }
+          {value === 7 && <History contentType={CONTEXT_TYPE_SALE_ID} objectId={id_sale} />}
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             {onClosedModal && (
@@ -276,31 +299,35 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
               </Button>
             )}
             {value === 2 && (
-              <Box>
-                <SendContractButton sale={saleData} sx={{ mr: 2 }} />
-
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => setOpenPreview(true)}
-                  startIcon={<Preview />}
-                  sx={{
-                    paddingX: 3,
-                    mr: 2,
-                  }}
-                >
-                  Preview do Contrato
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSave}
-                  disabled={formLoading}
-                  endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-                >
-                  {formLoading ? 'Salvando...' : 'Salvar Alterações'}
-                </Button>
-              </Box>
+              <Grid container spacing={2}>
+                <Grid item>
+                  <SendContractButton sale={saleData} />
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => setOpenPreview(true)}
+                    startIcon={<Preview />}
+                  >
+                    Preview do Contrato
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={async () => {
+                      await handleSave();
+                      setSnackbarOpen(true);
+                    }}
+                    disabled={formLoading}
+                    endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                  >
+                    {formLoading ? 'Salvando...' : 'Salvar Alterações'}
+                  </Button>
+                </Grid>
+              </Grid>
             )}
           </Stack>
         </Box>
@@ -337,8 +364,48 @@ const EditSalePage = ({ saleId = null, onClosedModal = null, refresh = null, ...
         userId={saleData?.customer?.id}
         saleId={id_sale}
       />
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={formErrors && Object.keys(formErrors).length > 0 ? 'error' : 'success'}
+          sx={{ width: '100%', display: 'flex', alignItems: 'center' }}
+          iconMapping={{
+            error: <Error style={{ verticalAlign: 'middle' }} />,
+            success: <CheckCircle style={{ verticalAlign: 'middle' }} />,
+          }}
+        >
+          {formErrors && Object.keys(formErrors).length > 0 ? (
+            <ul
+              style={{
+                margin: '10px 0',
+                paddingLeft: '20px',
+                listStyleType: 'disc',
+              }}
+            >
+              {Object.entries(formErrors).map(([field, messages]) => (
+                <li
+                  key={field}
+                  style={{
+                    marginBottom: '8px',
+                  }}
+                >
+                  {`${formatFieldName(field)}: ${messages.join(', ')}`}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            'Alterações salvas com sucesso!'
+          )}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
 
-export default EditSalePage;
+export default EditSaleTabs;

@@ -27,7 +27,7 @@ import PreviewIcon from '@mui/icons-material/Preview';
 import SendIcon from '@mui/icons-material/Send';
 import StatusChip from '../../../../../../../utils/status/DocumentStatusIcon';
 import saleService from '@/services/saleService';
-import EditSalePage from '../../Edit-sale';
+import EditSaleTabs from '../../Edit-sale';
 import SaleDetailPage from '../../Sale-detail';
 import CreateSale from '../../Add-sale';
 import { KanbanDataContext } from '@/app/context/kanbancontext';
@@ -378,7 +378,7 @@ const SaleListCards = ({ leadId, lead }) => {
             overflowY: 'auto',
           }}
         >
-          <EditSalePage
+          <EditSaleTabs
             saleId={selectedSaleId}
             onClosedModal={() => setEditModalOpen(false)}
             refresh={handleRefresh}

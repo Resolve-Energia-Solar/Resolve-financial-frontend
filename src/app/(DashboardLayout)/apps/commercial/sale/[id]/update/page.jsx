@@ -4,7 +4,7 @@ import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcr
 import PageContainer from '@/app/components/container/PageContainer';
 import ParentCard from '@/app/components/shared/ParentCard';
 
-import EditSalePage from "@/app/components/apps/comercial/sale/Edit-sale";
+import EditSaleTabs from "@/app/components/apps/comercial/sale/Edit-sale";
 
 
 const EditSale = () => {
@@ -24,7 +24,7 @@ const EditSale = () => {
 
       <ParentCard title="Venda">
         <CardContent>
-          <EditSalePage />
+          <EditSaleTabs />
         </CardContent>
       </ParentCard>
     </PageContainer>
