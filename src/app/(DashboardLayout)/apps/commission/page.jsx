@@ -83,14 +83,14 @@ function commission() {
         <Commission data={comissions} />
       </TabPanel>
 
-      <TabPanel value={value} index={2} >
+      {/* <TabPanel value={value} index={2} >
         <Releases data={comissions} />
       </TabPanel>
 
       <TabPanel value={value} index={3} >
         <Debtor data={rows} />
 
-      </TabPanel>
+      </TabPanel> */}
     </Box>
 
   )
