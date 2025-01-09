@@ -7,54 +7,26 @@ const TEMPLATE_PRE_ID = process.env.NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_
 
 const ClickSignService = {
   v1: {
-    createDocumentModel: async (data, path, usePreTemplate = false) => {
+    createDocument: async (path, content_base64) => {
+      console.log('gege', path, content_base64, API_TOKEN)
       try {
-        const templateKey = usePreTemplate ? TEMPLATE_PRE_ID : TEMPLATE_ID
-
         const response = await axios.post(
-          `${API_DOCUMENT_BASE_URL}/api/v1/templates/${templateKey}/documents?access_token=${API_TOKEN}`,
+          `${API_DOCUMENT_BASE_URL}/api/v1/documents?access_token=b6c16e80-4442-4a0f-8aad-f5e976b51023`,
           {
             document: {
               path: path,
-              template: {
-                ...data,
-              },
+              content_base64: `data:application/pdf;base64,${content_base64}`,
+              auto_close: true,
+              locale: 'pt-BR',
+              sequence_enabled: false,
+              block_after_refusal: true,
             },
           },
+
           {
             headers: {
               'Content-Type': 'application/json',
-              Accept: 'application/json',
-            },
-          },
-        )
-
-        return response.data
-      } catch (error) {
-        console.error(
-          `Erro ao criar documento via modelo: ${error.response?.data?.message || error.message}`,
-        )
-        throw error
-      }
-    },
-
-    createDocument: async (fileName, fileBase64, path) => {
-      try {
-        const response = await axios.post(
-          `${API_DOCUMENT_BASE_URL}/api/v1/documents?access_token=${API_TOKEN}`,
-          {
-            document: {
-              path: path,
-              file: {
-                name: fileName,
-                content_base64: fileBase64,
-              },
-            },
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
+              'Accept': 'application/json',
             },
           },
         )
