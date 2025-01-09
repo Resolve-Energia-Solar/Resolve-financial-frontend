@@ -95,21 +95,21 @@ const SaleListCards = ({ leadId, lead }) => {
     setOpen(false);
   };
 
-  const handleSendContract = async (saleId) => {
+  const handleSendContract = async (saleId, file) => {
     setSendingContractId(saleId);
     setIsSendingContract(true);
-
+  
     try {
       const sale = await saleService.getSaleById(saleId);
       console.log('Dados da venda:', sale);
-
+  
       const missingFields = [];
       if (!sale?.customer?.complete_name) missingFields.push('Nome Completo');
       if (!sale?.customer?.email) missingFields.push('Email');
       if (!sale?.customer?.first_document) missingFields.push('Documento');
       if (!sale?.customer?.birth_date) missingFields.push('Data de Nascimento');
       if (!sale?.customer?.phone_numbers?.[0]?.phone_number) missingFields.push('Telefone');
-
+  
       if (missingFields.length > 0) {
         setSnackbarMessage(
           `Os seguintes campos obrigatórios estão faltando: ${missingFields.join(', ')}`,
@@ -118,25 +118,56 @@ const SaleListCards = ({ leadId, lead }) => {
         setSnackbarOpen(true);
         return;
       }
-
-      const documentData = {
-        Address: sale.customer_address || 'Endereço Fictício',
-        Phone: sale?.customer?.phone_numbers[0]?.phone_number || 'Telefone Fictício',
+  
+      const data = {
+        id_customer: "João Silva",
+        id_first_document: "123.456.789-00",
+        id_second_document: "MG-12.345.678",
+        id_customer_address: "Rua das Flores",
+        id_customer_house: "123",
+        id_customer_zip: "12345-678",
+        id_customer_city: "Bairro das Rosas",
+        id_customer_locality: "Belo Horizonte",
+        id_customer_state: "MG",
+        quantity_material_3: "20",
+        id_material_3: "Painéis Solares XYZ",
+        id_material_1: "Inversor Solar ABC",
+        id_material_2: "Estrutura de Suporte",
+        watt_pico: "5.0",
+        project_value_format: "25.000,00",
+        id_payment_method: "Boleto",
+        id_payment_detail: "À vista",
+        observation_payment: "Com desconto de 10%",
+        dia: "09",
+        mes: "Janeiro",
+        ano: "2025",
       };
-      const path = `/Contratos/Contrato-${sale?.customer?.complete_name}.pdf`;
-
-      const documentResponse = await axios.post('/api/clicksign/createDocument', {
-        data: documentData,
-        path: path,
-        usePreTemplate: false,
+  
+      const base64Response = await axios.post('/api/document/base64', data, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
-
+  
+      const base64File = base64Response.data?.base64;
+      if (!base64File) {
+        throw new Error('Falha na conversão do arquivo em Base64');
+      }
+      console.log('Arquivo convertido para Base64');
+  
+      const path = `/Contratos/Contrato-${sale?.customer?.complete_name}.pdf`;
+  
+      const documentResponse = await axios.post('/api/clicksign/uploadDocument', {
+        content_base64: base64File,
+        path: path,
+        name: `Contrato de ${sale?.customer?.complete_name}`,
+      });
+  
       const documentKey = documentResponse.data?.document?.key;
       if (!documentKey) {
-        throw new Error('Falha na criação do documento');
+        throw new Error('Falha no upload do documento');
       }
-      console.log('Documento criado com sucesso:', documentKey);
-
+      console.log('Documento enviado com sucesso:', documentKey);
+  
+      // Criação do signatário
       const signerResponse = await axios.post('/api/clicksign/createSigner', {
         documentation: sale?.customer?.first_document,
         birthday: sale?.customer?.birth_date,
@@ -146,36 +177,38 @@ const SaleListCards = ({ leadId, lead }) => {
         auth: 'whatsapp',
         methods: { selfie_enabled: false, handwritten_enabled: false },
       });
-
+  
       const signerKey = signerResponse.data?.signer?.key;
       if (!signerKey) {
         throw new Error('Falha na criação do signatário');
       }
       console.log('Signatário criado:', signerKey);
-
+  
+      // Adiciona o signatário ao documento
       const addSignerResponse = await axios.post('/api/clicksign/addSignerDocument', {
         signerKey: signerKey,
         documentKey: documentKey,
         signAs: 'contractor',
       });
-
+  
       const requestSignatureKey = addSignerResponse.data?.list?.request_signature_key;
       if (!requestSignatureKey) {
         throw new Error('Falha ao adicionar o signatário ao documento');
       }
       console.log('Signatário adicionado ao documento:', requestSignatureKey);
-
+  
+      // Envia notificações
       await axios.post('/api/clicksign/notification/email', {
         request_signature_key: requestSignatureKey,
         message: 'Por favor, assine o contrato.',
       });
       console.log('Notificação por e-mail enviada');
-
+  
       await axios.post('/api/clicksign/notification/whatsapp', {
         request_signature_key: requestSignatureKey,
       });
       console.log('Notificação por WhatsApp enviada');
-
+  
       setSnackbarMessage('Contrato enviado com sucesso!');
       setSnackbarSeverity('success');
     } catch (error) {
@@ -188,6 +221,7 @@ const SaleListCards = ({ leadId, lead }) => {
       setSendingContractId(null);
     }
   };
+  
 
   useEffect(() => {
     if (idSaleSuccess !== null) {
