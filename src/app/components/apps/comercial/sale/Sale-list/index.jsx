@@ -51,7 +51,7 @@ import OnboardingCreateSale from '../Add-sale/onboarding';
 import { useSelector } from 'react-redux';
 import useSale from '@/hooks/sales/useSale';
 import EditDrawer from '../../Drawer/Form';
-import EditSalePage from '../Edit-sale';
+import EditSaleTabs from '../Edit-sale';
 import ParentCard from '@/app/components/shared/ParentCard';
 import SideDrawer from '@/app/components/shared/SideDrawer';
 import InforCards from '../../../inforCards/InforCards';
@@ -127,16 +127,13 @@ const SaleList = () => {
       const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
       try {
         setLoading(true);
-        const queryParams = new URLSearchParams({
-          ...filters[1],
-          ordering: orderingParam,
-        }).toString();
   
         const data = await saleService.getSales({
           userRole: userRole,
-          params: queryParams,
+          ordering: orderingParam,
           limit: rowsPerPage,
           page: page + 1,
+          ...filters,
         });
   
         setSalesList(data.results);
@@ -631,7 +628,7 @@ const SaleList = () => {
         </Typography>
       </Backdrop>
       <SideDrawer open={openDrawer} onClose={() => toggleDrawerClosed(false)} title="Detalhamento da Venda">
-        <EditSalePage saleId={rowSelected?.id} />
+        <EditSaleTabs saleId={rowSelected?.id} />
       </SideDrawer>
     </Box>
   );

@@ -116,7 +116,7 @@ export default function EditCustomer({ userId = null }) {
             {...(formErrors.gender && { error: true, helperText: formErrors.gender })}
           />
         </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
+        {/* <Grid item xs={12} sm={12} lg={4}>
           <FormSelect
             label="Status"
             options={status_options}
@@ -124,7 +124,7 @@ export default function EditCustomer({ userId = null }) {
             onChange={(e) => handleChange('is_active', e.target.value)}
             {...(formErrors.is_active && { error: true, helperText: formErrors.is_active })}
           />
-        </Grid>
+        </Grid> */}
         <Grid item xs={12} sm={12} lg={4}>
           <FormDate
             label="Data de Nascimento"

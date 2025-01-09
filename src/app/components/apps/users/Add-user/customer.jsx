@@ -21,6 +21,8 @@ import AutoCompletePhoneNumber from '../../comercial/sale/components/auto-comple
 export default function CreateCustomer({ onClosedModal = null, selectedUserId = null }) {
   const { formData, handleChange, handleSave, formErrors, success, dataReceived } = useUserForm();
 
+  formData.is_active = true;
+
   const router = useRouter();
 
   const gender_options = [
@@ -116,7 +118,7 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
           {...(formErrors.gender && { error: true, helperText: formErrors.gender })}
         />
       </Grid>
-      <Grid item xs={12} sm={12} lg={4}>
+      {/* <Grid item xs={12} sm={12} lg={4}>
         <FormSelect
           label="Status"
           options={status_options}
@@ -124,7 +126,7 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
           onChange={(e) => handleChange('is_active', e.target.value)}
           {...(formErrors.is_active && { error: true, helperText: formErrors.is_active })}
         />
-      </Grid>
+      </Grid> */}
       <Grid item xs={12} sm={12} lg={4}>
         <FormDate
           label="Data de Nascimento"
