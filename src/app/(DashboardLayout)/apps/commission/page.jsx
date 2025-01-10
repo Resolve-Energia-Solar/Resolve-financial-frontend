@@ -45,7 +45,14 @@ function commission() {
   useEffect(() => {
 
     const fectchSaleAll = async () => {
-      const saleData = await saleService.getSales({ ordering: 'asc' })
+      const saleData = await saleService.getSales({
+        ordering: 'asc',
+        nextPage: 1,
+        userRole: 'admin',
+        limit: 10,
+        page: 1,
+        expand: 'payments'
+      })
       setSale(saleData.results)
     }
 
@@ -64,9 +71,9 @@ function commission() {
 
   return (
 
-    <Box sx={{ p: 2}}>
+    <Box sx={{ p: 2 }}>
 
-      <Box sx={{ p: 2, boxShadow: 2, borderRadius: '10px', backgroundColor: theme.palette.secondary.main, padding: '25px', width: '96%', margin: 'auto'}}>
+      <Box sx={{ p: 2, boxShadow: 2, borderRadius: '10px', backgroundColor: theme.palette.secondary.main, padding: '25px', width: '96%', margin: 'auto' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
           <Tab sx={{ color: theme.palette.secondary.contrastText }} label="Vendas"  {...a11yProps(0)} />
           <Tab sx={{ color: theme.palette.secondary.contrastText }} label="Comissão"{...a11yProps(1)} />

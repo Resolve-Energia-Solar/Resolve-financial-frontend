@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import { Drawer } from '@mui/material';
 import DebtorForm from './forms/DebtorForm';
 import { Chip, CircularProgress, Typography } from '@mui/material';
-import PaymentCommission from '@/hooks/commission/PaymentCommission';
+import PaymentCommission from '@/hooks/commission/usePaymentCommission';
 import theme from '@/utils/theme';
 import PaymentStatusChip from '@/utils/status/PaymentStatusChip';
 function Debtor({ data }) {

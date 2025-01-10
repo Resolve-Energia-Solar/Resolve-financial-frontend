@@ -11,7 +11,7 @@ import CommissionForm from './forms/CommissionForm';
 import { Drawer } from '@mui/material';
 import { Chip, CircularProgress, Typography } from '@mui/material';
 import CommissionDetails from './forms/CommissionDetails';
-import PaymentCommission from '@/hooks/commission/PaymentCommission';
+import PaymentCommission from '@/hooks/commission/usePaymentCommission';
 import numeral from 'numeral';
 import theme from '@/utils/theme';
 import PaymentStatusChip from '@/utils/status/PaymentStatusChip';
@@ -62,12 +62,11 @@ function Commission({ data }) {
                 <TableCell align="left">Nome cliente</TableCell>
                 <TableCell align="left">Unidade</TableCell>
                 <TableCell align="left">Especificação de pagamento</TableCell>
-                <TableCell align="left">Valor do projeto</TableCell>
+                <TableCell align="left">Valor do Venda</TableCell>
                 <TableCell align="left">Diferença</TableCell>
                 <TableCell align="left">Percentual de repasse franquia</TableCell>
                 <TableCell align="left">Valor final</TableCell>
                 <TableCell align="left">Status de pagamento</TableCell>
-                <TableCell align="left">Ajustes</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -80,7 +79,7 @@ function Commission({ data }) {
                 >
                   <TableCell align="left">{item.sale.customer.complete_name}</TableCell>
                   <TableCell align="left">{item.sale.branch?.name}</TableCell>
-                  <TableCell align="left">{''}</TableCell>
+                  <TableCell align="left">{'Sol Agora'}</TableCell>
                   <TableCell align="left">{formatToBRL('')}</TableCell>
                   <TableCell align="left">{formatToBRL(item.difference_value)}</TableCell>
                   <TableCell align="left">{numeral(item.transfer_percentage / 100).format('0,0%')}</TableCell>
@@ -88,7 +87,6 @@ function Commission({ data }) {
                   <TableCell align="left">
                   <PaymentStatusChip status={item.sale.payment_status} />
                    </TableCell>
-                  <TableCell align="left">{''}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
