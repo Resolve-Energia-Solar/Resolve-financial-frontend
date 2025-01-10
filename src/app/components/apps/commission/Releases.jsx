@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import ReleasesForm from './forms/ReleasesForm';
 import { Chip, CircularProgress, Typography } from '@mui/material';
 import { Drawer } from '@mui/material';
-import PaymentCommission from '@/hooks/commission/PaymentCommission';
+import PaymentCommission from '@/hooks/commission/usePaymentCommission';
 import { useTheme } from '@mui/material/styles';
 import theme from '@/utils/theme';
 import ReleaseStatus from '@/utils/status/ReleaseStatus';

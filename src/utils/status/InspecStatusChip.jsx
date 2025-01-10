@@ -15,6 +15,8 @@ const StatusInspectionChip = ({ status }) => {
         return { label: 'Pago', color: theme.palette.success.main, icon: <HourglassEmptyIcon /> };
       case 'Cancelado':
         return { label: 'Cancelado', color: theme.palette.warning.main, icon: <HourglassEmptyIcon /> };
+      case 'NV':
+        return { label: 'Não vinculado', color: '#fff', icon: <CancelIcon /> };
       default:
         return { label: status };
     }
