@@ -39,6 +39,7 @@ const ListProductsDefault = () => {
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedProductDetail, setSelectedProductDetail] = useState(null);
   const [allowMultipleSelection, setAllowMultipleSelection] = useState(false);
+  const { productIds, setProductIds, setTotalValue } = useContext(OnboardingSaleContext);
 
   const [kwpValue, setKwpValue] = useState('');
   const [kwpRange, setKwpRange] = useState([]);
@@ -59,12 +60,15 @@ const ListProductsDefault = () => {
       const generatedRange = [kwpNumber - delta, kwpNumber + delta];
       setKwpRange(generatedRange);
       console.log('Intervalo de Kwp:', generatedRange);
+      if(!allowMultipleSelection){
+        setProductIds([]);
+        setTotalValue(0);
+      }
     } else {
       setErrorKwp('Por favor, insira um número válido para Kwp.');
     }
   };
 
-  const { productIds, setProductIds, setTotalValue } = useContext(OnboardingSaleContext);
 
   const handleCheckboxChange = (id) => {
     setProductIds((prevProductIds) => {

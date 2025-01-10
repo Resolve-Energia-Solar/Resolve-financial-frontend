@@ -23,7 +23,8 @@ import saleService from '@/services/saleService';
 import paymentService from '@/services/paymentService';
 import ChecklistSales from '../../../checklist/Checklist-list/ChecklistSales';
 import SchedulesInspections from '../../../project/components/SchedulesInspections';
-import { StepContent, useMediaQuery, useTheme } from '@mui/material';
+import { CircularProgress, StepContent, useMediaQuery, useTheme } from '@mui/material';
+import { t } from 'i18next';
 
 const steps = ['Dados do Cliente', 'Produtos', 'Financeiro', 'Documentos', 'Agendar Vistoria'];
 
@@ -41,7 +42,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
   const [isDialogPaymentOpen, setIsDialogPaymentOpen] = useState(false);
   const [isDialogDocumentOpen, setIsDialogDocumentOpen] = useState(false);
   const [totalPayments, setTotalPayments] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const user = useSelector((state) => state.user);
 
@@ -123,6 +124,14 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
         setIsDialogDocumentOpen(true);
         return;
       }
+    }
+
+    if (activeStep === steps.length - 1) {
+      setLoading(true);
+      if (onEdit) {
+        onEdit(saleId);
+      }
+      return;
     }
 
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -223,8 +232,8 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
               Voltar
             </Button>
             <Box sx={{ flex: '1 1 auto' }} />
-            <Button onClick={handleNext} disabled={isDisabledNext}>
-              Próximo
+            <Button onClick={handleNext} disabled={isDisabledNext || loading || saleLoading}>
+              {loading || saleLoading ? <CircularProgress size={20} /> : 'Próximo'}
             </Button>
           </Box>
         );
@@ -272,7 +281,17 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
 
       {useMediaQuery(useTheme().breakpoints.up('md')) && (
         <>
-          <Box sx={{ flexGrow: 1, mt: 2, mb: 1 }}>{renderStepContent(activeStep)}</Box>
+          <Box
+            sx={{
+              flexGrow: 1,
+              mt: 2,
+              paddingBottom: 5,
+              maxHeight: '70vh',
+              overflow: 'auto',
+            }}
+          >
+            {renderStepContent(activeStep)}
+          </Box>
           <StepperButtons
             activeStep={activeStep}
             steps={steps}
