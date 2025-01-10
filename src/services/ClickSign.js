@@ -2,13 +2,10 @@ import axios from 'axios'
 
 const API_DOCUMENT_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_CLICKSIGN_URL
 const API_TOKEN = process.env.NEXT_PUBLIC_CLICKSIGN_TOKEN
-const TEMPLATE_ID = process.env.NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID
-const TEMPLATE_PRE_ID = process.env.NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID
 
 const ClickSignService = {
   v1: {
     createDocument: async (path, content_base64) => {
-      console.log('gege', path, content_base64, API_TOKEN)
       try {
         const response = await axios.post(
           `${API_DOCUMENT_BASE_URL}/api/v1/documents?access_token=b6c16e80-4442-4a0f-8aad-f5e976b51023`,

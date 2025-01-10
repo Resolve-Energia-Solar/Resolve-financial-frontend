@@ -4,6 +4,8 @@ import { useState } from 'react'
 import saleService from '@/services/saleService'
 import axios from 'axios'
 import contractService from '@/services/contract-submissions'
+import unitService from '@/services/unitService'
+import paymentService from '@/services/paymentService'
 
 export default function useSendContract () {
   const [sendingContractId, setSendingContractId] = useState(null)
@@ -29,6 +31,133 @@ export default function useSendContract () {
       const fetchedSale = await saleService.getSaleById(sale.id)
       console.log('Dados da venda:', fetchedSale)
 
+      const projectData = fetchedSale?.projects
+
+      function formatToBRL (value) {
+        return new Intl.NumberFormat('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+        }).format(parseFloat(value))
+      }
+
+      function fillDateFields () {
+        const today = new Date()
+        return {
+          dia: String(today.getDate()).padStart(2, '0'),
+          mes: String(today.getMonth() + 1).padStart(2, '0'),
+          ano: String(today.getFullYear()),
+        }
+      }
+
+      const dateFields = fillDateFields()
+      const data = {
+        id_customer: fetchedSale?.customer?.complete_name || '',
+        id_first_document: fetchedSale?.customer?.first_document || '',
+        id_second_document: '',
+        id_customer_address: '',
+        id_customer_house: '',
+        id_customer_zip: '',
+        id_customer_city: '',
+        id_customer_locality: '',
+        id_customer_state: '',
+        quantity_material_1: '',
+        quantity_material_2: '',
+        quantity_material_3: '',
+        id_material_3: '',
+        id_material_1: '',
+        id_material_2: '',
+        watt_pico: '',
+        project_value_format: formatToBRL(fetchedSale?.total_value) || '',
+        id_payment: '',
+        observation_payment: '',
+        dia: dateFields.dia,
+        mes: dateFields.mes,
+        ano: dateFields.ano,
+      }
+
+      console.log('Dados preenchidos:', data)
+
+      if (projectData && Array.isArray(projectData)) {
+        const projectDetails = projectData.map(project => {
+          return {
+            projectId: project.id,
+            productName: project.product?.name || 'Sem nome do produto',
+            description: project.product?.description || 'Sem descrição',
+            materials:
+              project.product?.materials?.map(material => ({
+                materialId: material.material?.id || '',
+                name: material.material?.name || 'Nome não especificado',
+                amount: material.amount || '',
+                price: material.material?.price || '',
+              })) || [],
+          }
+        })
+
+        const fetchedProjectUnit = await unitService.getUnitsByProject(projectDetails[0].projectId)
+
+        console.log('Detalhes do endereço do projeto:', fetchedProjectUnit)
+
+        if (fetchedProjectUnit?.results?.length > 0) {
+          const address = fetchedProjectUnit.results[0].address
+
+          data.id_customer_address = address?.street || ''
+          data.id_customer_house = address?.number || ''
+          data.id_customer_zip = address?.zip_code || ''
+          data.id_customer_city = address?.city || ''
+          data.id_customer_locality = address?.neighborhood || ''
+          data.id_customer_state = address?.state || ''
+        }
+
+        console.log('Dados atualizados:', data)
+        function formatAmount (amount) {
+          return parseFloat(amount).toFixed(0)
+        }
+        const firstProjectMaterials = projectDetails[0]?.materials || []
+
+        data.quantity_material_1 = formatAmount(firstProjectMaterials[0]?.amount || '0')
+        data.id_material_1 = firstProjectMaterials[0]?.name || ''
+
+        data.quantity_material_2 = formatAmount(firstProjectMaterials[1]?.amount || '0')
+        data.id_material_2 = firstProjectMaterials[1]?.name || ''
+
+        data.quantity_material_3 = formatAmount(firstProjectMaterials[2]?.amount || '0')
+        data.id_material_3 = firstProjectMaterials[2]?.name || ''
+
+        console.log('Dados atualizados:', data)
+      } else {
+        console.log('Nenhum dado disponível em projects.')
+      }
+
+      const TYPE_CHOICES = [
+        ["C", "Crédito"],
+        ["D", "Débito"],
+        ["B", "Boleto"],
+        ["F", "Financiamento"],
+        ["PI", "Parcelamento interno"],
+        ["P", "Pix"],
+      ];
+      
+
+      const fetchedPayment = await paymentService.getAllPaymentsBySale(sale.id)
+      console.log('Dados de pagamento:', fetchedPayment)
+
+      if (fetchedPayment?.results?.length > 0) {
+        const paymentDetails = fetchedPayment.results.map(payment => ({
+          type:
+            TYPE_CHOICES.find(choice => choice[0] === payment.payment_type)?.[1] ||
+            'Tipo não especificado',
+          value: formatToBRL(payment.value),
+        }))
+
+        data.observation_payment = paymentDetails
+          .map(payment => `${payment.type}: ${payment.value}`)
+          .join(' | ')
+
+        console.log('Detalhes dos pagamentos mapeados:', paymentDetails)
+      }
+
+      console.log('Dados atualizados:', data)
+
       const missingFields = []
       if (!fetchedSale?.customer?.complete_name) missingFields.push('Nome Completo')
       if (!fetchedSale?.customer?.email) missingFields.push('Email')
@@ -47,30 +176,6 @@ export default function useSendContract () {
         setSnackbarSeverity('warning')
         setSnackbarOpen(true)
         return
-      }
-
-      const data = {
-        id_customer: fetchedSale?.customer?.complete_name,
-        id_first_document: fetchedSale?.customer?.first_document,
-        id_second_document: '',
-        id_customer_address: '',
-        id_customer_house: '',
-        id_customer_zip: '',
-        id_customer_city: '',
-        id_customer_locality: '',
-        id_customer_state: '',
-        quantity_material_3: '',
-        id_material_3: '',
-        id_material_1: '',
-        id_material_2: '',
-        watt_pico: '',
-        project_value_format: fetchedSale.total_value,
-        id_payment_method: '',
-        id_payment_detail: '',
-        observation_payment: '',
-        dia: '',
-        mes: '',
-        ano: '',
       }
 
       const base64Response = await axios.post('/api/document/base64', data)
