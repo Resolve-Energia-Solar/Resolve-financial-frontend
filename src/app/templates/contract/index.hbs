@@ -713,10 +713,12 @@
       <span class="c9 c6">{{id_customer}}</span
       ><span class="c2 c6">, portador(a) do CPF n&ordm;</span
       ><span class="c9 c6"
-        >{{id_first_document}}</span
-      ><span class="c2 c6">, e da Carteira de Identidade n&ordm; </span
-      ><span class="c9 c6">{{id_second_document}}</span
-      ><span class="c2 c6">, residente e domiciliado(a) na </span
+      > {{id_first_document}}</span>
+      {{#if id_second_document}}
+      <span class="c2 c6">,e da Carteira de Identidade n&ordm; </span
+      ><span class="c9 c6">{{id_second_document}}</span>
+      {{/if}}
+      <span class="c2 c6">,residente e domiciliado(a) na </span
       ><span class="c9 c6"
         >{{id_customer_address}},
         {{id_customer_house}}</span
@@ -725,10 +727,10 @@
       >{{id_customer_zip}}</span
       ><span class="c2 c6">, bairro: </span
       ><span class="c9 c6"
-        >{{id_customer_city}}</span
+        >{{id_customer_locality}}</span
       ><span class="c2 c6">, cidade: </span
       ><span class="c9 c6"
-        >{{id_customer_locality}}/{{id_customer_state}} </span
+        >{{id_customer_city}}/{{id_customer_state}} </span
       ><span class="c2 c6"
         >neste ato denominada(o) CONTRATANTE e do outro lado;</span
       >
@@ -803,23 +805,33 @@
         (monof&aacute;sico para bif&aacute;sico);</span
       >
     </p>
-    <p class="c5 c13">
-      <span class="c2">&#65518; &nbsp;Fornecimento de </span
-      ><span class="c9">{{quantity_material_3}} </span
-      ><span class="c9"> m&oacute;dulos solares </span
-      ><span class="c9">{{id_material_3}}</span
-      ><span class="c1">;</span>
-    </p>
-    <p class="c5 c13">
-      <span class="c1">{{#if id_material_1}}
-        <li>1 {{id_material_1}}</li></span>
-        {{/if}}
-    </p>
-    <p class="c5 c13">
-      <span class="c1">{{#if id_material_2}}
-        <li>1 {{id_material_2}}</li></span>
-        {{/if}}
-    </p>
+ <p class="c5 c13">
+  <span class="c2">&#65518; &nbsp;Fornecimento de :</span>
+</p>
+
+{{#if id_material_1}}
+<p class="c5 c13">
+  <span class="c1">
+    <li>{{quantity_material_1}} {{id_material_1}}</li>
+  </span>
+</p>
+{{/if}}
+
+{{#if id_material_2}}
+<p class="c5 c13">
+  <span class="c1">
+    <li>{{quantity_material_2}} {{id_material_2}}</li>
+  </span>
+</p>
+{{/if}}
+{{#if id_material_3}}
+<p class="c5 c13">
+  <span class="c1">
+    <li>{{quantity_material_3}} {{id_material_3}}</li>
+  </span>
+</p>
+{{/if}}
+
     <p class="c5 c13 c24"><span class="c1"></span></p>
     <hr style="page-break-before: always; display: none" />
     <p class="c5 c13 c24"><span class="c1"></span></p>
@@ -910,18 +922,12 @@
       <span class="c2"
         >&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 6.1. Pagamento de 100% do
         valor do projeto no valor de </span
-      ><span class="c9">R$</span><span class="c2">&nbsp;</span
+      ><span class="c9"></span><span class="c2">&nbsp;</span
       ><span class="c9 c6">{{project_value_format}}</span>
     </p>
     <p class="c3">
-      <span class="c2">6.2.</span
-      ><span class="c9 c6"
-        >{{id_payment_method}},</span
-      ><span class="c2">&nbsp;</span
-      ><span class="c6 c9"
-        >{{id_payment_detail}} ,
-        {{observation_payment}}</span
-      ><span class="c1">.</span>
+      <span class="c2">6.2.</span>
+      <span class="c2">{{observation_payment}}</span>
     </p>
     <p class="c4">
       <span class="c2"

@@ -41,6 +41,7 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
     formErrors,
     setFormErrors,
     success,
+    loading: formLoading,
     refreshSuccess,
   } = useAttachmentForm(
     selectedAttachment || null,
@@ -285,15 +286,15 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
               onClick={handleSave}
               sx={{ marginTop: 2 }}
               variant="contained"
-              disabled={loading}
+              disabled={formLoading}
             >
-              {loading ? <CircularProgress size={24} /> : 'Enviar'}
+              {formLoading ? <CircularProgress size={24} /> : 'Enviar'}
             </Button>
             <Button
               onClick={handleCloseModal}
               sx={{ marginTop: 2, marginLeft: 1 }}
               variant="outlined"
-              disabled={loading}
+              disabled={formLoading}
             >
               Fechar
             </Button>

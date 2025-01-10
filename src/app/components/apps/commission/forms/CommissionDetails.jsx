@@ -76,7 +76,7 @@ export default function CommissionDetails({ data, onChange, edit, setEdit }) {
             </TableHead>
             <TableBody>
               <TableRow>
-                <TableCell>Valor projeto</TableCell>
+                <TableCell>Valor venda</TableCell>
                 <TableCell align="right">-</TableCell>
                 <TableCell align="right">-</TableCell>
               </TableRow>
