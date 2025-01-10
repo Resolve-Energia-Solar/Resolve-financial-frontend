@@ -29,7 +29,7 @@ const useEnergyCompanyForm = (initialData, id) => {
         project_id: initialData.project?.id || null,
         type_id: initialData.type.id || '',
         unit_id: initialData.unit?.id || null,
-        situation_ids: initialData.situation_ids || [],
+        situation_ids: initialData.situation?.map((situation) => situation.id) || [],
         requested_by_id: initialData.requested_by?.id || null,
         request_date: initialData.request_date ? initialData.request_date : null,
         status: initialData.status || '',
