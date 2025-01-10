@@ -27,6 +27,7 @@ export default function useSendContract () {
 
     try {
       const fetchedSale = await saleService.getSaleById(sale.id)
+      console.log('Dados da venda:', fetchedSale)
 
       const missingFields = []
       if (!fetchedSale?.customer?.complete_name) missingFields.push('Nome Completo')
@@ -49,27 +50,27 @@ export default function useSendContract () {
       }
 
       const data = {
-        id_customer: 'João Silva',
-        id_first_document: '123.456.789-00',
-        id_second_document: 'MG-12.345.678',
-        id_customer_address: 'Rua das Flores',
-        id_customer_house: '123',
-        id_customer_zip: '12345-678',
-        id_customer_city: 'Bairro das Rosas',
-        id_customer_locality: 'Belo Horizonte',
-        id_customer_state: 'MG',
-        quantity_material_3: '20',
-        id_material_3: 'Painéis Solares XYZ',
-        id_material_1: 'Inversor Solar ABC',
-        id_material_2: 'Estrutura de Suporte',
-        watt_pico: '5.0',
-        project_value_format: '25.000,00',
-        id_payment_method: 'Boleto',
-        id_payment_detail: 'À vista',
-        observation_payment: 'Com desconto de 10%',
-        dia: '09',
-        mes: 'Janeiro',
-        ano: '2025',
+        id_customer: fetchedSale?.customer?.complete_name,
+        id_first_document: fetchedSale?.customer?.first_document,
+        id_second_document: '',
+        id_customer_address: '',
+        id_customer_house: '',
+        id_customer_zip: '',
+        id_customer_city: '',
+        id_customer_locality: '',
+        id_customer_state: '',
+        quantity_material_3: '',
+        id_material_3: '',
+        id_material_1: '',
+        id_material_2: '',
+        watt_pico: '',
+        project_value_format: fetchedSale.total_value,
+        id_payment_method: '',
+        id_payment_detail: '',
+        observation_payment: '',
+        dia: '',
+        mes: '',
+        ano: '',
       }
 
       const base64Response = await axios.post('/api/document/base64', data)
