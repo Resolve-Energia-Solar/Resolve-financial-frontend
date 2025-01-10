@@ -58,6 +58,36 @@ const saleService = {
         return response.data;
     },
 
+    updateSaleValue: async (id, baseValue, majoracao = 0, desconto = 0) => {
+        const numericBaseValue = Number(baseValue) || 0;
+
+        const newTotalValue = (
+          numericBaseValue *
+          (1 + majoracao / 100 - desconto / 100)
+        ).toFixed(2);
+      
+        console.log(
+          'updateSaleValue -> Sale ID:',
+          id,
+          'Base Value:',
+          numericBaseValue,
+          'Majoração:',
+          majoracao,
+          'Desconto:',
+          desconto,
+          'New Value:',
+          newTotalValue
+        );
+      
+        const response = await apiClient.patch(`/api/sales/${id}/`, {
+          total_value: newTotalValue,
+        });
+      
+        return response.data;
+      },
+      
+      
+
     patchSaleProduct: async (id, ids) => {
         const response = await apiClient.patch(`/api/sales/${id}/`, { products_ids: ids });
         return response.data;

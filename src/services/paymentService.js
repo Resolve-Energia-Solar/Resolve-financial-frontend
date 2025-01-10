@@ -27,6 +27,15 @@ const paymentService = {
       throw error;
     }
   },
+  getPaymentsBySale: async (saleId, fields) => {
+    try {
+      const response = await apiClient.get(`/api/payments/?sale=${saleId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar payments pelo ID da venda:', error);
+      throw error;
+    }
+  },
   getPaymentById: async (id) => {
     try {
       const response = await apiClient.get(`/api/payments/${id}/`);
