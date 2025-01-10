@@ -60,7 +60,7 @@ export default function EditCustomer({ userId = null }) {
             {...(formErrors.username && { error: true, helperText: formErrors.username })}
           />
         </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
+        {/* <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="first_name">Nome</CustomFormLabel>
           <CustomTextField
             name="first_name"
@@ -70,7 +70,7 @@ export default function EditCustomer({ userId = null }) {
             onChange={(e) => handleChange('first_name', e.target.value)}
             {...(formErrors.first_name && { error: true, helperText: formErrors.first_name })}
           />
-        </Grid>
+        </Grid> */}
         <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="email">Email</CustomFormLabel>
           <CustomTextField
