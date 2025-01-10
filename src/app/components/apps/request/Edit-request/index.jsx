@@ -140,7 +140,7 @@ export default function EditRequestCompany({
         </Grid>
 
         <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="situation_ids">Situação - {formData.situation_ids}</CustomFormLabel>
+          <CustomFormLabel htmlFor="situation_ids">Situação</CustomFormLabel>
           <AutoCompleteSituation
             onChange={(id) => handleChange('situation_ids', id)}
             value={formData.situation_ids}
