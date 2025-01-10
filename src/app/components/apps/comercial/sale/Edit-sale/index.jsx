@@ -63,10 +63,6 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
     return fieldLabels[fieldName] || fieldName;
   };
 
-  const MyComponent = () => {
-    // Código do componente
-  };
-
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };

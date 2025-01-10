@@ -17,6 +17,7 @@ const useProjectForm = (initialData, id) => {
 
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -50,7 +51,9 @@ const useProjectForm = (initialData, id) => {
       status: formData.status,
       designer_status: formData.designer_status,
     };
-    console.log('dataToSend', dataToSend);
+
+    setLoading(true);
+
     try {
       if (id) {
         await projectService.updateProject(id, dataToSend);
@@ -63,6 +66,8 @@ const useProjectForm = (initialData, id) => {
       setSuccess(false);
       setFormErrors(err.response?.data || {});
       console.log(err.response?.data || err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,6 +77,7 @@ const useProjectForm = (initialData, id) => {
     handleSave,
     formErrors,
     success,
+    loading,
   };
 };
 

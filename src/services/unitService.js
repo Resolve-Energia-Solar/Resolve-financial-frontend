@@ -24,6 +24,15 @@ const unitService = {
       throw error;
     }
   },
+  getUnitsByProject: async (projectID) => {
+    try {
+      const response = await apiClient.get(`/api/units/?project=${projectID}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar units:', error);
+      throw error;
+    }
+  },
   createUnit: async (data) => {
     const response = await apiClient.post('/api/units/', data);
     return response.data;

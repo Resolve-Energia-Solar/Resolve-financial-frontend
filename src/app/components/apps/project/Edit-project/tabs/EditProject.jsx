@@ -1,5 +1,22 @@
 'use client';
-import { Grid, Button, Stack, Box, Card, CardContent, Typography, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+import {
+  Grid,
+  Button,
+  Stack,
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Snackbar,
+  Alert,
+  CircularProgress,
+} from '@mui/material';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import { useParams } from 'next/navigation';
 
@@ -12,17 +29,40 @@ import useProject from '@/hooks/projects/useProject';
 import useProjectForm from '@/hooks/projects/useProjectForm';
 import FormPageSkeleton from '../../../comercial/sale/components/FormPageSkeleton';
 import ProductChip from '../../../product/components/ProductChip';
+import { CheckCircle, Error } from '@mui/icons-material';
+import { useState } from 'react';
 
 export default function EditProjectTab({ projectId = null, detail = false }) {
   const params = useParams();
   let id = projectId;
   if (!projectId) id = params.id;
 
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const formatFieldName = (fieldName) => {
+    const fieldLabels = {
+      designer_id: 'Projetista',
+      sale_id: 'Venda',
+      homologator_id: 'Homologador',
+      project_number: 'Número do Projeto',
+      start_date: 'Data de Início',
+      end_date: 'Data de Término',
+      status: 'Status',
+      designer_status: 'Status Projetista',
+    };
+
+    return fieldLabels[fieldName] || fieldName;
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
   const { loading, error, projectData } = useProject(id);
 
   console.log('produtos/materiais', projectData?.product?.materials);
 
-  const { formData, handleChange, handleSave, formErrors, success } = useProjectForm(
+  const { formData, handleChange, handleSave, formErrors, success, loading: formLoading } = useProjectForm(
     projectData,
     id,
   );
@@ -42,70 +82,66 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
     <>
       <Box mt={3}>
         {projectData?.product && (
-        <Card elevation={10}>
-          <CardContent>
-            <Stack spacing={1} mb={2}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Typography variant="subtitle1">{projectData.product?.name}</Typography>
-                <ProductChip status={projectData.product?.default} />
+          <Card elevation={10}>
+            <CardContent>
+              <Stack spacing={1} mb={2}>
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                  <Typography variant="subtitle1">{projectData.product?.name}</Typography>
+                  <ProductChip status={projectData.product?.default} />
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Typography variant="caption" color="text.secondary">
+                    Valor do Produto
+                  </Typography>
+                  <Typography variant="subtitle1" fontWeight={600}>
+                    {Number(projectData.product?.product_value).toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    })}
+                  </Typography>
+                </Stack>
               </Stack>
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <Typography variant="caption" color="text.secondary">
-                  Valor do Produto
-                </Typography>
-                <Typography variant="subtitle1" fontWeight={600}>
-                  {Number(projectData.product?.product_value).toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  })}
-                </Typography>
-              </Stack>
-            </Stack>
 
-
-
-            <TableContainer sx={{ whiteSpace: { xs: 'nowrap', md: 'unset' } }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="center">
-                      <Typography variant="h6" fontSize="14px">
-                        Material
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Typography variant="h6" fontSize="14px">
-                        Quantidade
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {projectData?.product?.materials.length === 0 ? (
+              <TableContainer sx={{ whiteSpace: { xs: 'nowrap', md: 'unset' } }}>
+                <Table>
+                  <TableHead>
                     <TableRow>
-                      <TableCell colSpan={2} align="center">
-                        <Typography variant="body2">Nenhuma vistoria agendada</Typography>
+                      <TableCell align="center">
+                        <Typography variant="h6" fontSize="14px">
+                          Material
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography variant="h6" fontSize="14px">
+                          Quantidade
+                        </Typography>
                       </TableCell>
                     </TableRow>
-                  ) : (
-                    projectData?.product?.materials.map((material) => (
-                      <TableRow key={material.id}>
-                        <TableCell align="center">
-                          <Typography variant="body2">{material?.material?.name}</Typography>
-                        </TableCell>
-                        <TableCell align="center">
-                          <Typography variant="body2">{Math.trunc(material?.amount)}</Typography>
+                  </TableHead>
+                  <TableBody>
+                    {projectData?.product?.materials.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={2} align="center">
+                          <Typography variant="body2">Nenhuma vistoria agendada</Typography>
                         </TableCell>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-
-
-          </CardContent>
-        </Card>
+                    ) : (
+                      projectData?.product?.materials.map((material) => (
+                        <TableRow key={material.id}>
+                          <TableCell align="center">
+                            <Typography variant="body2">{material?.material?.name}</Typography>
+                          </TableCell>
+                          <TableCell align="center">
+                            <Typography variant="body2">{Math.trunc(material?.amount)}</Typography>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </CardContent>
+          </Card>
         )}
       </Box>
 
@@ -181,13 +217,62 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
         <Grid item xs={12} sm={12} lg={12}>
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             {!detail && (
-              <Button variant="contained" color="primary" onClick={handleSave}>
-                Salvar alterações
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={async () => {
+                  await handleSave();
+                  setSnackbarOpen(true);
+                }}
+                disabled={formLoading}
+                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+              >
+                {formLoading ? 'Salvando...' : 'Salvar Alterações'}
               </Button>
             )}
           </Stack>
         </Grid>
       </Grid>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={formErrors && Object.keys(formErrors).length > 0 ? 'error' : 'success'}
+          sx={{ width: '100%', display: 'flex', alignItems: 'center' }}
+          iconMapping={{
+            error: <Error style={{ verticalAlign: 'middle' }} />,
+            success: <CheckCircle style={{ verticalAlign: 'middle' }} />,
+          }}
+        >
+          {formErrors && Object.keys(formErrors).length > 0 ? (
+            <ul
+              style={{
+                margin: '10px 0',
+                paddingLeft: '20px',
+                listStyleType: 'disc',
+              }}
+            >
+              {Object.entries(formErrors).map(([field, messages]) => (
+                <li
+                  key={field}
+                  style={{
+                    marginBottom: '8px',
+                  }}
+                >
+                  {`${formatFieldName(field)}: ${messages.join(', ')}`}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            'Alterações salvas com sucesso!'
+          )}
+        </Alert>
+      </Snackbar>
     </>
   );
 }
