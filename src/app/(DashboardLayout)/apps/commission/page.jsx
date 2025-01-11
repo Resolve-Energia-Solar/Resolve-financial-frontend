@@ -29,12 +29,6 @@ const rows = [
   createData(7, 'Finalizado', 'Zeta', '10/02/2024', 'Aprovado', 'Finalizado', 'Liquidado', 'Marabá', 'Sol Agora', 25340.00),
 ];
 
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
 
 function commission() {
 
@@ -58,6 +52,8 @@ function commission() {
 
     const fectchComissionAll = async () => {
       const commissionData = await commissionService.getCommissiomAll()
+
+      
       setComissions(commissionData.results)
     }
 
@@ -72,13 +68,20 @@ function commission() {
   return (
 
     <Box sx={{ p: 2 }}>
+      <Box sx={{ p: 2, 
+        boxShadow: 2, 
+        borderRadius: '10px', 
+        backgroundColor: theme.palette.secondary.main, 
+        padding: '25px', 
+        width: '96%', 
+        margin: 'auto' 
+      }}>
 
-      <Box sx={{ p: 2, boxShadow: 2, borderRadius: '10px', backgroundColor: theme.palette.secondary.main, padding: '25px', width: '96%', margin: 'auto' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
-          <Tab sx={{ color: theme.palette.secondary.contrastText }} label="Vendas"  {...a11yProps(0)} />
-          <Tab sx={{ color: theme.palette.secondary.contrastText }} label="Comissão"{...a11yProps(1)} />
-          {/* <Tab sx={{ color: theme.palette.secondary.contrastText }} label="Lançamentos" {...a11yProps(2)} /> */}
-          <Tab sx={{ color: theme.palette.secondary.contrastText }} label="Saldo devedor" {...a11yProps(3)} />
+          <Tab sx={{ color: theme.palette.secondary.contrastText }} label="Vendas" />
+          <Tab sx={{ color: theme.palette.secondary.contrastText }} label="Comissão" />
+          {/* <Tab sx={{ color: theme.palette.secondary.contrastText }} label="Lançamentos"  /> */}
+          <Tab sx={{ color: theme.palette.secondary.contrastText }} label="Saldo devedor" />
         </Tabs>
       </Box>
 
@@ -93,11 +96,11 @@ function commission() {
       {/* <TabPanel value={value} index={2} >
         <Releases data={comissions} />
       </TabPanel>
-
+ */}
       <TabPanel value={value} index={3} >
         <Debtor data={rows} />
 
-      </TabPanel> */}
+      </TabPanel>
     </Box>
 
   )

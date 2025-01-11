@@ -1,6 +1,8 @@
+import { formatToBRL } from '@/utils/currency';
 import { Box, Typography, Select, MenuItem, TextField, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 
-export default function CommissionForm() {
+export default function CommissionForm({ data}) {
+  console.log(data);
   return (
     <Box sx={{ display: 'flex', gap: 4, p: 3, bgcolor: 'background.paper' }}>
       {/* Left side - Form inputs */}
@@ -8,7 +10,7 @@ export default function CommissionForm() {
         <Typography variant="h6" gutterBottom>
           Comissão
         </Typography>
-        
+
         <Box sx={{ mb: 3 }}>
           <Typography variant="subtitle2" gutterBottom>
             Status de pagamento
@@ -24,7 +26,12 @@ export default function CommissionForm() {
             Nome franquia
           </Typography>
           <Select fullWidth size="small">
-            <MenuItem value="">Selecione uma franquia</MenuItem>
+            <MenuItem value="2">Matriz</MenuItem>
+            <MenuItem value="3">Marambaia</MenuItem>
+            <MenuItem value="4">Cidade Nova</MenuItem>
+            <MenuItem value="5">Umarizal</MenuItem>
+            <MenuItem value="6">Augusto Montenegro</MenuItem>
+            <MenuItem value="7">Duque</MenuItem>
           </Select>
         </Box>
 
@@ -36,12 +43,12 @@ export default function CommissionForm() {
         </Box>
 
         <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-          <Box sx={{ flex: 1 }}>
+          {/* <Box sx={{ flex: 1 }}>
             <Typography variant="subtitle2" gutterBottom>
               Ajuste
             </Typography>
             <TextField fullWidth size="small"  />
-          </Box>
+          </Box> */}
           <Box sx={{ flex: 1 }}>
             <Typography variant="subtitle2" gutterBottom>
               Valor
@@ -67,35 +74,35 @@ export default function CommissionForm() {
             <TableHead>
               <TableRow>
                 <TableCell>KPI</TableCell>
-                <TableCell align="right">Pré-análise</TableCell>
-                <TableCell align="right">Pós-análise</TableCell>
+                <TableCell align="right">Análise</TableCell>
+
               </TableRow>
             </TableHead>
             <TableBody>
               <TableRow>
-                <TableCell>Valor projeto</TableCell>
+                <TableCell>Valor venda</TableCell>
                 <TableCell align="right">-</TableCell>
-                <TableCell align="right">-</TableCell>
+
               </TableRow>
               <TableRow>
                 <TableCell>Valor de referência</TableCell>
                 <TableCell align="right">-</TableCell>
-                <TableCell align="right">-</TableCell>
+
               </TableRow>
               <TableRow>
                 <TableCell>Diferença</TableCell>
                 <TableCell align="right">-</TableCell>
-                <TableCell align="right">-</TableCell>
+
               </TableRow>
               <TableRow>
                 <TableCell>Desconto</TableCell>
                 <TableCell align="right">-</TableCell>
-                <TableCell align="right">-</TableCell>
+
               </TableRow>
               <TableRow>
                 <TableCell>7% margem</TableCell>
                 <TableCell align="right">-</TableCell>
-                <TableCell align="right">-</TableCell>
+
               </TableRow>
             </TableBody>
           </Table>
