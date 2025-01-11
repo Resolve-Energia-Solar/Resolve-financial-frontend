@@ -17,9 +17,11 @@ import {
   Box,
   Skeleton,
   useTheme,
+  Select,
+  InputLabel,
+  FormControl,
 } from '@mui/material';
 import { MoreVert, Edit, Delete, Visibility, Add } from '@mui/icons-material';
-import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import PaymentChip from '../PaymentChip';
 import paymentService from '@/services/paymentService';
 import { useRouter } from 'next/navigation';
@@ -44,47 +46,77 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 
 const PaymentCard = ({ sale = null }) => {
   const theme = useTheme();
+  const router = useRouter();
+
   const [paymentsList, setPaymentsList] = useState([]);
+  const [saleData, setSaleData] = useState(null);
+  const [originalTotalValue, setOriginalTotalValue] = useState(0);
+
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [menuOpenRowId, setMenuOpenRowId] = useState(null);
   const [open, setOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [saleData, setSaleData] = useState(null);
-
-  const [error, setError] = useState(null);
-
-  const [refresh, setRefresh] = useState(false);
-
   const [invoiceToEdit, setInvoiceToEdit] = useState(null);
   const [invoiceToView, setInvoiceToView] = useState(null);
   const [invoiceToDelete, setInvoiceToDelete] = useState(null);
+
+  const [refresh, setRefresh] = useState(false);
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+
+  const [majoracao, setMajoracao] = useState(0);
+  const [desconto, setDesconto] = useState(0);
+
+  const [isMajoracaoDisabled, setIsMajoracaoDisabled] = useState(false);
+  const [isDescontoDisabled, setIsDescontoDisabled] = useState(false);
 
   const handleRefresh = () => {
     setRefresh(!refresh);
   };
 
+  const handleAtualizarValor = async () => {
+    try {
+      const baseValue = originalTotalValue;
+
+      await saleService.updateSaleValue(sale, baseValue, majoracao, desconto);
+
+      const data = await saleService.getTotalPaidSales(sale);
+      setSaleData(data);
+
+      const numericValue = Number(data.total_value || 0);
+      setOriginalTotalValue(numericValue);
+
+      setMajoracao(0);
+      setDesconto(0);
+      setIsMajoracaoDisabled(false);
+      setIsDescontoDisabled(false);
+
+      handleRefresh();
+    } catch (err) {
+      console.log('Erro ao atualizar o valor da venda: ', err);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchPayments = async () => {
       try {
         const response = await paymentService.getPaymentsBySale(sale);
         setPaymentsList(response.results);
-      } catch (error) {
-        console.log('Error: ', error);
+      } catch (err) {
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-    const fetchSale = async () => {
+    const fetchSaleData = async () => {
       try {
         const data = await saleService.getTotalPaidSales(sale);
-        console.log(data);
         setSaleData(data);
+        const numericValue = Number(data.total_value || 0);
+        setOriginalTotalValue(numericValue);
       } catch (err) {
         setError('Erro ao carregar a venda');
       } finally {
@@ -92,12 +124,18 @@ const PaymentCard = ({ sale = null }) => {
       }
     };
 
-    fetchSale();
+    if (sale) {
+      fetchPayments();
+      fetchSaleData();
+    }
   }, [sale, refresh]);
+
+  const valorMajoracao = originalTotalValue * (majoracao / 100);
+  const valorDesconto = originalTotalValue * (desconto / 100);
+  const totalCalculado = originalTotalValue + valorMajoracao - valorDesconto;
 
   const handleAddPayment = () => {
     setCreateModalOpen(true);
-    console.log('Adicionar novo pagamento');
   };
 
   const handleMenuClick = (event, id) => {
@@ -142,6 +180,48 @@ const PaymentCard = ({ sale = null }) => {
 
   return (
     <>
+      <Box mb={2} display="flex" gap={3}>
+        <FormControl sx={{ minWidth: 120 }}>
+          <InputLabel id="majoracao-label">Majoração</InputLabel>
+          <Select
+            labelId="majoracao-label"
+            value={majoracao}
+            label="Majoração"
+            onChange={(e) => setMajoracao(e.target.value)}
+            disabled={isMajoracaoDisabled}
+          >
+            {Array.from({ length: 21 }, (_, i) => i).map((val) => (
+              <MenuItem key={val} value={val}>
+                {val}%
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl sx={{ minWidth: 120 }}>
+          <InputLabel id="desconto-label">Desconto</InputLabel>
+          <Select
+            labelId="desconto-label"
+            value={desconto}
+            label="Desconto"
+            onChange={(e) => setDesconto(e.target.value)}
+            disabled={isDescontoDisabled}
+          >
+            {Array.from({ length: 21 }, (_, i) => i).map((val) => (
+              <MenuItem key={val} value={val}>
+                {val}%
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <Box alignSelf="flex-end">
+          <Button variant="contained" onClick={handleAtualizarValor}>
+            Atualizar Valor
+          </Button>
+        </Box>
+      </Box>
+
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6} md={4}>
           <Card
@@ -213,7 +293,6 @@ const PaymentCard = ({ sale = null }) => {
                       </Box>
                     </CardContent>
                     <CardActions disableSpacing>
-                      {/* <CustomCheckbox /> */}
                       <Tooltip title="Ações">
                         <IconButton
                           size="small"
@@ -263,34 +342,61 @@ const PaymentCard = ({ sale = null }) => {
               );
             })}
       </Grid>
-          
 
       {sale && (
         <Box p={3} backgroundColor="primary.light" mt={3}>
-          <Box display="flex" justifyContent="end" gap={3} mb={3}>
-            <Typography variant="body1" fontWeight={600}>
-              Pago:
-            </Typography>
-            <Typography variant="body1" fontWeight={600}>
-              {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-                saleData?.total_paid || 0,
-              )}
-            </Typography>
-          </Box>
-          <Box display="flex" justifyContent="end" gap={3}>
-            <Typography variant="body1" fontWeight={600}>
-              Total a Pagar:
-            </Typography>
-            <Typography variant="body1" fontWeight={600}>
-              {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-                saleData?.total_value || 0,
-              )}
-            </Typography>
+          <Box display="flex" justifyContent="flex-end" flexDirection="column" gap={1}>
+            <Box display="flex" justifyContent="end" gap={2}>
+              <Typography variant="body1" fontWeight={600}>
+                Pago:
+              </Typography>
+              <Typography variant="body1" fontWeight={600}>
+                {Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                }).format(saleData?.total_paid || 0)}
+              </Typography>
+            </Box>
+
+            <Box display="flex" justifyContent="end" gap={2}>
+              <Typography variant="body1" fontWeight={600}>
+                Valor da Majoração:
+              </Typography>
+              <Typography variant="body1" fontWeight={600}>
+                {Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                }).format(valorMajoracao)}
+              </Typography>
+            </Box>
+
+            <Box display="flex" justifyContent="end" gap={2}>
+              <Typography variant="body1" fontWeight={600}>
+                Valor do Desconto:
+              </Typography>
+              <Typography variant="body1" fontWeight={600} color="error">
+                {Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                }).format(valorDesconto)}
+              </Typography>
+            </Box>
+
+            <Box display="flex" justifyContent="end" gap={2}>
+              <Typography variant="body1" fontWeight={600}>
+                Total a Pagar:
+              </Typography>
+              <Typography variant="body1" fontWeight={600}>
+                {Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                }).format(totalCalculado)}
+              </Typography>
+            </Box>
           </Box>
         </Box>
       )}
 
-      {/* Modal de Adicionar Pagamento */}
       <Dialog
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
@@ -312,7 +418,7 @@ const PaymentCard = ({ sale = null }) => {
         </DialogActions>
       </Dialog>
 
-      {/* Modal de Confirmação de Exclusão */}
+      {/* Modal de Excluir */}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Confirmação de Exclusão</DialogTitle>
         <DialogContent>
@@ -328,8 +434,12 @@ const PaymentCard = ({ sale = null }) => {
         </DialogActions>
       </Dialog>
 
-      {/* Modal de Edição */}
-      <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>Editar Fatura</DialogTitle>
         <DialogContent>
           <EditInvoicePage
@@ -345,7 +455,6 @@ const PaymentCard = ({ sale = null }) => {
         </DialogActions>
       </Dialog>
 
-      {/* Modal de Detalhes */}
       <Dialog
         open={detailModalOpen}
         onClose={() => setDetailModalOpen(false)}

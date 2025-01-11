@@ -15,6 +15,7 @@ import FormDate from '@/app/components/forms/form-custom/FormDate';
 import AutoCompleteUnits from '../components/AutoCompleteUnits';
 import AutoCompleteUserProject from '../../inspections/auto-complete/Auto-input-UserProject';
 import AutoCompleteProject from '../../inspections/auto-complete/Auto-input-Project';
+import AutoCompleteSituation from '../../comercial/sale/components/auto-complete/Auto-Input-Situation';
 
 export default function AddRequestCompany({
   onClosedModal = null,
@@ -37,12 +38,15 @@ export default function AddRequestCompany({
   formData.status ? formData.status : (formData.status = 'S');
 
   const today = new Date();
-  const formattedDate = today.getFullYear() + '-' + 
-                        (today.getMonth() + 1).toString().padStart(2, '0') + '-' + 
-                        today.getDate().toString().padStart(2, '0');
-  
+  const formattedDate =
+    today.getFullYear() +
+    '-' +
+    (today.getMonth() + 1).toString().padStart(2, '0') +
+    '-' +
+    today.getDate().toString().padStart(2, '0');
+
   formData.request_date = formattedDate;
-  
+
   console.log('formData', formData);
 
   useEffect(() => {
@@ -66,15 +70,15 @@ export default function AddRequestCompany({
           />
         </Grid>
 
-        { formData.project_id ? null : (
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="name">Projeto</CustomFormLabel>
-          <AutoCompleteProject
-            onChange={(id) => handleChange('project_id', id)}
-            value={formData.project_id}
-            {...(formErrors.project_id && { error: true, helperText: formErrors.project_id })}
-          />
-        </Grid>
+        {formData.project_id ? null : (
+          <Grid item xs={12} sm={12} lg={4}>
+            <CustomFormLabel htmlFor="name">Projeto</CustomFormLabel>
+            <AutoCompleteProject
+              onChange={(id) => handleChange('project_id', id)}
+              value={formData.project_id}
+              {...(formErrors.project_id && { error: true, helperText: formErrors.project_id })}
+            />
+          </Grid>
         )}
 
         <Grid item xs={12} sm={12} lg={4}>
@@ -135,6 +139,15 @@ export default function AddRequestCompany({
               error: true,
               helperText: formErrors.final_protocol,
             })}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={12} lg={4}>
+          <CustomFormLabel htmlFor="situation_ids">Situação</CustomFormLabel>
+          <AutoCompleteSituation
+            onChange={(id) => handleChange('situation_ids', id)}
+            value={formData.situation_ids}
+            {...(formErrors.situation_ids && { error: true, helperText: formErrors.situation_ids })}
           />
         </Grid>
 
