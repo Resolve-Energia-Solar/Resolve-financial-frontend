@@ -172,7 +172,7 @@ export default function boardOperation () {
     const token = Cookies.get('access_token')
 
     try {
-      const response = await fetch('https://crm.resolvenergiasolar.com/api/comments/', {
+      const response = await fetch('https://api.resolvenergiasolar.com/api/comments/', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -212,7 +212,7 @@ export default function boardOperation () {
     const token = Cookies.get('access_token')
     try {
       const response = await fetch(
-        `https://crm.resolvenergiasolar.com/api/comments/?object_id=${object_id}`,
+        `https://api.resolvenergiasolar.com/api/comments/?object_id=${object_id}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -232,7 +232,6 @@ export default function boardOperation () {
   }
 
   function FooterDefiner (componentName) {
-    console.log('oioioi ', componentName)
     if (componentName == 'project') {
       setOptionsFooter(designerStatus)
       setTextFooter('Status do Projeto')
