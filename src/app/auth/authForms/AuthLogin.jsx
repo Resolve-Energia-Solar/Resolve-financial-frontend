@@ -17,7 +17,7 @@ import Alert from '@mui/material/Alert';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import AuthSocialButtons from './AuthSocialButtons';
+// import AuthSocialButtons from './AuthSocialButtons';
 import useLoginForm from '@/hooks/users/useLoginForm';
 import Cookies from 'js-cookie';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -31,7 +31,11 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
 
   useEffect(() => {
     if (success) {
-      router.push('/');
+      const timer = setTimeout(() => {
+        router.push('/');
+      }, 2000);
+
+      return () => clearTimeout(timer);
     }
   }, [success, router]);
 
@@ -48,22 +52,6 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
         </Typography>
       )}
       {subtext}
-
-      {/* <AuthSocialButtons title="Logar com" /> */}
-      {/* <Box mt={3}>
-        <Divider>
-          <Typography
-            component="span"
-            color="textSecondary"
-            variant="h6"
-            fontWeight="400"
-            position="relative"
-            px={2}
-          >
-            ou logar com
-          </Typography>
-        </Divider>
-      </Box> */}
 
       <Stack>
         <Box>
@@ -109,10 +97,11 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
               color: 'primary.main',
             }}
           >
-            Mudar senha ?
+            Mudar senha?
           </Typography>
         </Stack>
       </Stack>
+
       <Box>
         <Button
           color="primary"
@@ -126,6 +115,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           {loading ? <CircularProgress size={24} color="inherit" /> : 'Entrar'}
         </Button>
       </Box>
+
       {subtitle}
       {error && <Typography color="error">{error}</Typography>}
 
@@ -152,6 +142,30 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           Falha no login. Verifique suas credenciais e tente novamente.
         </Alert>
       </Snackbar>
+
+     
+      {success && (
+        <Box
+          position="fixed"
+          top={0}
+          left={0}
+          width="100%"
+          height="100%"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          bgcolor="rgba(255, 255, 255, 0.7)"
+          zIndex={9999}
+        >
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <CheckCircleIcon color="success" sx={{ fontSize: 64, mb: 2 }} />
+            <Typography variant="h6" color="success.main" mb={2}>
+              Autenticado com sucesso! Redirecionando...
+            </Typography>
+            <CircularProgress color="success" size={48} />
+          </Box>
+        </Box>
+      )}
     </>
   );
 };
