@@ -9,7 +9,14 @@ import { IconButton, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
 
-export default function AutoCompleteAddress({ onChange, value, error, helperText, ...props }) {
+export default function AutoCompleteAddress({ 
+  onChange, 
+  value, 
+  error, 
+  helperText, 
+  disableSuggestions = true,
+  ...props 
+}) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -47,7 +54,7 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
 
   const fetchAddressesByName = useCallback(
     debounce(async (name) => {
-      if (!name) return;
+      if (!name || disableSuggestions) return; // Verifica a prop para desabilitar as sugestões
       setLoading(true);
       try {
         const response = await addressService.getAddressByFullAddress(name);
@@ -61,10 +68,11 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
       }
       setLoading(false);
     }, 300),
-    [],
+    [disableSuggestions], // Dependência da prop disableSuggestions
   );
 
   const fetchInitialAddresses = useCallback(async () => {
+    if (disableSuggestions) return; // Não busca sugestões se a prop estiver ativada
     setLoading(true);
     try {
       const response = await addressService.getAddresses({ limit: 5 });
@@ -77,13 +85,13 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
       console.error('Erro ao buscar endereços:', error);
     }
     setLoading(false);
-  }, []);
+  }, [disableSuggestions]);
 
   const handleOpen = () => {
     console.log('open');
     setOpen(true);
-    if (options.length === 0) {
-      fetchInitialAddresses()
+    if (options.length === 0 && !disableSuggestions) {
+      fetchInitialAddresses();
     }
   };
 
@@ -114,7 +122,7 @@ export default function AutoCompleteAddress({ onChange, value, error, helperText
         value={selectedAddress}
         {...props}
         onInputChange={(event, newInputValue) => {
-          fetchAddressesByName(newInputValue);
+          if (!disableSuggestions) fetchAddressesByName(newInputValue); // Chama a função de busca apenas se sugestões não estiverem desativadas
         }}
         onChange={handleChange}
         renderInput={(params) => (
