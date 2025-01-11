@@ -9,7 +9,14 @@ import { IconButton, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CreatePhonePage from '@/app/components/apps/phone/Add-phone';
 
-export default function AutoCompletePhoneNumber({ onChange, value, error, helperText, ...props }) {
+export default function AutoCompletePhoneNumber({
+  onChange,
+  value,
+  error,
+  helperText,
+  disableSuggestions=true,
+  ...props
+}) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -18,10 +25,8 @@ export default function AutoCompletePhoneNumber({ onChange, value, error, helper
 
   const fetchDefaultPhone = async (phoneId) => {
     if (phoneId) {
-      console.log('phoneId', phoneId);
       try {
         const phone = await phoneNumberService.getPhoneNumberById(phoneId);
-        console.log('phone', phone);
         if (phone) {
           setSelectedPhone({
             id: phone.id,
@@ -46,7 +51,7 @@ export default function AutoCompletePhoneNumber({ onChange, value, error, helper
 
   const fetchPhonesByQuery = useCallback(
     debounce(async (query) => {
-      if (!query || query.trim() === '') {
+      if (disableSuggestions || !query || query.trim() === '') {
         setOptions([]);
         return;
       }
@@ -63,11 +68,14 @@ export default function AutoCompletePhoneNumber({ onChange, value, error, helper
       }
       setLoading(false);
     }, 300),
-    []
+    [disableSuggestions]
   );
-  
 
   const fetchInitialPhones = useCallback(async () => {
+    if (disableSuggestions) {
+      setOptions([]);
+      return;
+    }
     setLoading(true);
     try {
       const response = await phoneNumberService.getPhoneNumbers({ limit: 5 });
@@ -80,11 +88,11 @@ export default function AutoCompletePhoneNumber({ onChange, value, error, helper
       console.error('Erro ao buscar telefones:', error);
     }
     setLoading(false);
-  }, []);
+  }, [disableSuggestions]);
 
   const handleOpen = () => {
     setOpen(true);
-    if (options.length === 0) {
+    if (!disableSuggestions && options.length === 0) {
       fetchInitialPhones();
     }
   };
@@ -116,7 +124,9 @@ export default function AutoCompletePhoneNumber({ onChange, value, error, helper
         value={selectedPhone}
         {...props}
         onInputChange={(event, newInputValue) => {
-          fetchPhonesByQuery(newInputValue);
+          if (!disableSuggestions) {
+            fetchPhonesByQuery(newInputValue);
+          }
         }}
         onChange={handleChange}
         renderInput={(params) => (
@@ -148,7 +158,6 @@ export default function AutoCompletePhoneNumber({ onChange, value, error, helper
         )}
       />
 
-      {/* Modal para adicionar telefone */}
       <Dialog open={openModal} onClose={handleCloseModal} maxWidth="lg">
         <DialogTitle>Adicionar Novo Número de Telefone</DialogTitle>
         <DialogContent>

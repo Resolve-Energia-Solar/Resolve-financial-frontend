@@ -16,6 +16,7 @@ export default function AutoCompleteAddresses({
   helperText,
   labeltitle,
   disabled,
+  disableSuggestions = true, 
 }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
@@ -45,14 +46,11 @@ export default function AutoCompleteAddresses({
           const addresses = await Promise.all(
             valuesDefault.map((id) => addressService.getAddressById(id)),
           );
-          console.log('Addresses:', addresses);
           const formattedAddresses = addresses.map((address) => ({
             id: address.id,
             name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
           }));
-          console.log('Formatted Addresses:', formattedAddresses);
           setSelectedAddresses(formattedAddresses);
-          console.log('Selected Addresses:', selectedAddresses);
         } catch (error) {
           console.error('Erro ao buscar endereços:', error);
         }
@@ -78,7 +76,7 @@ export default function AutoCompleteAddresses({
 
   const fetchAddressesByName = useCallback(
     debounce(async (name) => {
-      if (!name) {
+      if (disableSuggestions || !name) {
         setOptions([]);
         return;
       }
@@ -97,10 +95,14 @@ export default function AutoCompleteAddresses({
       }
       setLoading(false);
     }, 300),
-    [],
+    [disableSuggestions]
   );
 
   const fetchInitialAddresses = useCallback(async () => {
+    if (disableSuggestions) {
+      setOptions([]);
+      return;
+    }
     setLoading(true);
     try {
       const addresses = await addressService.getAddresses({ limit: 5 });
@@ -113,12 +115,11 @@ export default function AutoCompleteAddresses({
       console.error('Erro ao buscar endereços:', error);
     }
     setLoading(false);
-  }, []);
-
+  }, [disableSuggestions]);
 
   const handleOpen = () => {
     setOpen(true);
-    if (options.length === 0) {
+    if (options.length === 0 && !disableSuggestions) {
       fetchInitialAddresses();
     }
   };
@@ -142,7 +143,9 @@ export default function AutoCompleteAddresses({
         loading={loading}
         value={selectedAddresses}
         onInputChange={(event, newInputValue) => {
-          fetchAddressesByName(newInputValue);
+          if (!disableSuggestions) {
+            fetchAddressesByName(newInputValue);
+          }
         }}
         onChange={handleChange}
         renderInput={(params) => (
