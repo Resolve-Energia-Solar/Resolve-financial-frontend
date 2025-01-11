@@ -32,7 +32,11 @@ const CreatePhonePage = ({ userId = null, onClosedModal = null, onRefresh = null
     if (success) {
       if (onClosedModal) {
         onClosedModal();
-        onRefresh();
+        selectedPhoneNumberId(dataReceived?.id);
+        if (onRefresh){
+          onRefresh();
+
+        }
       }
 
       if (selectedPhoneNumberId) {

@@ -19,9 +19,13 @@ import {
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import useProduct from '@/hooks/products/useProduct';
 import FormPageSkeleton from '../../comercial/sale/components/FormPageSkeleton';
+import HasPermission from '@/app/components/permissions/HasPermissions';
+import { useSelector } from 'react-redux';
 
 const DetailProduct = ({ productId = null }) => {
   const { loading, error, productData } = useProduct(productId);
+  const userPermissions = useSelector((state) => state.user.permissions);
+
 
   console.log('productData', productData);
 
@@ -90,18 +94,23 @@ const DetailProduct = ({ productId = null }) => {
             {formatCurrency(productData?.reference_value)}
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <CustomFormLabel>Valor de Custo</CustomFormLabel>
-          <Typography
-            sx={{
-              fontStyle: 'italic',
-              fontWeight: 'light',
-              borderBottom: `1px dashed`,
-            }}
-          >
-            {formatCurrency(productData?.cost_value)}
-          </Typography>
-        </Grid>
+        <HasPermission
+          permissions={['logistics.view_product_cost_value']}
+          userPermissions={userPermissions}
+        >
+          <Grid item xs={12} sm={6}>
+            <CustomFormLabel>Valor de Custo</CustomFormLabel>
+            <Typography
+              sx={{
+                fontStyle: 'italic',
+                fontWeight: 'light',
+                borderBottom: `1px dashed`,
+              }}
+            >
+              {formatCurrency(productData?.cost_value)}
+            </Typography>
+          </Grid>
+        </HasPermission>
         <Grid item xs={12} sm={6}>
           <CustomFormLabel>Filial</CustomFormLabel>
           <Typography
@@ -173,4 +182,3 @@ const DetailProduct = ({ productId = null }) => {
 };
 
 export default DetailProduct;
-

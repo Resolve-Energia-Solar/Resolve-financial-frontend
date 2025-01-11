@@ -94,9 +94,9 @@ const ListProductsDefault = () => {
           default__in: 'S',
           kwp_in: kwpRange.join(','),
           limit: 6,
+          ordering: 'product_value',
         });
         setProductsList(responseDefault.results);
-        console.log('Products: ', responseDefault);
       } catch (error) {
         console.log('Error: ', error);
       } finally {

@@ -20,7 +20,7 @@ const phoneNumberService = {
 
   getPhoneNumberById: async (id) => {
     try {
-      const response = await apiClient.get(`/api/phone_numbers/${id}/`);
+      const response = await apiClient.get(`/api/phone_numbers/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar telefone com id ${id}:`, error);

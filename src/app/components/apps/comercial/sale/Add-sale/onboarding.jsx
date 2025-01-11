@@ -227,7 +227,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
               color="inherit"
               disabled={activeStep === 0 || activeStep > 1}
               onClick={handleBack}
-              sx={{ mr: 1 }}
+              sx={{ mr: 1 }} 
             >
               Voltar
             </Button>
