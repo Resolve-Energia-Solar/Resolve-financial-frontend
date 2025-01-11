@@ -56,19 +56,46 @@ function Sale({ data }) {
       <Box sx={{ padding: '22px', border: '1px solid #E0E0E0', borderRadius: '8px' }} >
 
         <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', marginBottom: '15px', padding: '0px' }}>
-          <Box sx={{ width: '30%', p: 2, backgroundColor: 'secondary.main', boxShadow: '2', height: '100px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <Box sx={{
+            width: '30%',
+            p: 2,
+            backgroundColor: 'secondary.main',
+            boxShadow: '2',
+            height: '100px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center'
+          }}>
             <Typography variant='caption' color='#FFFFFF'>Bloqueado</Typography>
-            <Typography variant='h5' color='#FFFFFF'>R$ 157.000,00</Typography>
+            <Typography variant='h5' color='#FFFFFF'>-</Typography>
           </Box>
 
-          <Box sx={{ width: '30%', p: 2, backgroundColor: 'secondary.main', boxShadow: '2', height: '100px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <Box sx={{
+            width: '30%',
+            p: 2,
+            backgroundColor: 'secondary.main',
+            boxShadow: '2',
+            height: '100px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center'
+          }}>
             <Typography variant='caption' color='#FFFFFF'>Liberado</Typography>
-            <Typography variant='h5' color='#FFFFFF'>R$ 7.000.00,00</Typography>
+            <Typography variant='h5' color='#FFFFFF'>-</Typography>
           </Box>
 
-          <Box sx={{ width: '30%', p: 2, backgroundColor: 'secondary.main', boxShadow: '2', height: '100px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <Box sx={{
+            width: '30%',
+            p: 2,
+            backgroundColor: 'secondary.main',
+            boxShadow: '2',
+            height: '100px',
+            display: 'flex',
+            flexDirection: 'column',
+            jFustifyContent: 'center'
+          }}>
             <Typography variant='caption' color='#FFFFFF'>Saldo devedor</Typography>
-            <Typography variant='h5' color='#FFFFFF'>R$ 253.010,00</Typography>
+            <Typography variant='h5' color='#FFFFFF'>-</Typography>
           </Box>
         </Box>
 
@@ -83,7 +110,7 @@ function Sale({ data }) {
                 <TableCell align="left">Status documentação</TableCell>
                 <TableCell align="left">Status financeiro</TableCell>
                 <TableCell align="left">Unidade</TableCell>
-                <TableCell align="left">Especificação de pagamento</TableCell>
+                <TableCell align="left">Forma de pagamento</TableCell>
                 <TableCell align="left">Valor de Venda </TableCell>
 
               </TableRow>
@@ -93,7 +120,8 @@ function Sale({ data }) {
                 <TableRow
                   hover
                   key={item.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: row === item.id && 'primary.light' }}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, 
+                  backgroundColor: row === item.id && 'primary.light' }}
                   onClick={() => handleClickRow(item)}
                 >
                   <TableCell align="left">{item.customer.complete_name}</TableCell>
@@ -102,15 +130,19 @@ function Sale({ data }) {
                   <TableCell align="left">
                     {item.projects.map((item) => <InspecStatusChip key={item.id} status={item.projects?.inspection.status ? item.projects?.inspection.status : 'NV'} />)}
                   </TableCell>
+
                   <TableCell align="left">
                     {item.projects.map((item) => <DocumentStatusIcon key={item.id} status={item.is_documentation_completed} />)}
                   </TableCell>
+
                   <TableCell align="left">
                     <FinancialChip status={item.payment_status} />
                   </TableCell>
 
                   <TableCell align="left">{item.branch.name}</TableCell>
-                  <TableCell align="left">{paymentType(maxValueArray(item.payments).payment_type)}</TableCell>
+                  <TableCell align="left">{item.payments.length > 0 ? paymentType(maxValueArray(item.payments).payment_type) : 0}
+                  </TableCell>
+
                   <TableCell align="left">{formatToBRL(item.total_value)}</TableCell>
                 </TableRow>
               ))}

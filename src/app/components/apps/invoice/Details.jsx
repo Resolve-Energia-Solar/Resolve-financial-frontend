@@ -7,7 +7,7 @@ import CustomSelect from "../../forms/theme-elements/CustomSelect";
 import StatusInspectionChip from "@/utils/status/InspecStatusChip";
 
 export default function Details({ data, handleInputChange }) {
-
+  console.log('dados detail:', data);
   return (
     <Box>
       <Grid container spacing={3}>
@@ -43,7 +43,6 @@ export default function Details({ data, handleInputChange }) {
             name="interim_protocol"
             type="text"
             value={''}
-
             fullWidth
             margin="normal"
             disabled
@@ -77,7 +76,7 @@ export default function Details({ data, handleInputChange }) {
         <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="address">Status da vistoria</CustomFormLabel>
           <Box p={1.4} />
-          <StatusInspectionChip data />
+          <StatusInspectionChip status={data.sale.inspection?.service_opinion || 'Não possui vistoria'} />
         </Grid>
         <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="address">Status do pagamento</CustomFormLabel>

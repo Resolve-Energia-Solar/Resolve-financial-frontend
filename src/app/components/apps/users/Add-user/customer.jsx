@@ -54,7 +54,7 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
 
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} sm={12} lg={4}>
+      {/* <Grid item xs={12} sm={12} lg={4}>
         <CustomFormLabel htmlFor="username">Usuário</CustomFormLabel>
         <CustomTextField
           name="username"
@@ -64,8 +64,8 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
           onChange={(e) => handleChange('username', e.target.value)}
           {...(formErrors.username && { error: true, helperText: formErrors.username })}
         />
-      </Grid>
-      <Grid item xs={12} sm={12} lg={4}>
+      </Grid> */}
+      {/* <Grid item xs={12} sm={12} lg={4}>
         <CustomFormLabel htmlFor="first_name">Nome</CustomFormLabel>
         <CustomTextField
           name="first_name"
@@ -75,7 +75,7 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
           onChange={(e) => handleChange('first_name', e.target.value)}
           {...(formErrors.first_name && { error: true, helperText: formErrors.first_name })}
         />
-      </Grid>
+      </Grid> */}
       <Grid item xs={12} sm={12} lg={4}>
         <CustomFormLabel htmlFor="email">Email</CustomFormLabel>
         <CustomTextField
@@ -140,7 +140,7 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
         <CustomFormLabel htmlFor="name">Número</CustomFormLabel>
         <AutoCompletePhoneNumber
           onChange={(id) => handleChange('phone_numbers_ids', id)}
-          value={formData.phone_numbers_ids}
+          value={formData.phone_numbers_ids ? formData.phone_numbers_ids[0] : null}
           {...(formErrors.phone_numbers_ids && {
             error: true,
             helperText: formErrors.phone_numbers_ids,

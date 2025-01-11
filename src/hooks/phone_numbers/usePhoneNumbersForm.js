@@ -26,7 +26,6 @@ const usePhoneNumberForm = (initialData, id) => {
       };
 
       setFormData(receivedData);
-      setDataReceived(receivedData);
     }
   }, [initialData]);
 
@@ -41,18 +40,20 @@ const usePhoneNumberForm = (initialData, id) => {
       area_code: formData.area_code,
       phone_number: formData.phone_number,
       is_main: formData.is_main,
-      user_id: formData.user_id,
+      user_id: formData.user_id ? formData.user_id : undefined,
     };
 
     console.log('dataToSend', dataToSend);
     try {
+      let response;
       if (id) {
-        await phoneNumberService.updatePhoneNumber(id, dataToSend);
+        response = await phoneNumberService.updatePhoneNumber(id, dataToSend);
       } else {
-        await phoneNumberService.createPhoneNumber(dataToSend);
+        response = await phoneNumberService.createPhoneNumber(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);
+      setDataReceived(response);
     } catch (err) {
       setSuccess(false);
       setFormErrors(err.response?.data || {});

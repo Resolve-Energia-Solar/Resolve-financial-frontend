@@ -5,86 +5,94 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import phoneNumberService from '@/services/phoneNumberService';
 import { debounce } from 'lodash';
+import { IconButton, Dialog, DialogTitle, DialogContent } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import CreatePhonePage from '@/app/components/apps/phone/Add-phone';
 
-export default function AutoCompletePhoneNumber({ onChange, value, error, helperText, ...rest }) {
+export default function AutoCompletePhoneNumber({
+  onChange,
+  value,
+  error,
+  helperText,
+  disableSuggestions=true,
+  ...props
+}) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedPhone, setSelectedPhone] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+
+  const fetchDefaultPhone = async (phoneId) => {
+    if (phoneId) {
+      try {
+        const phone = await phoneNumberService.getPhoneNumberById(phoneId);
+        if (phone) {
+          setSelectedPhone({
+            id: phone.id,
+            label: `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`,
+          });
+          if (!value) onChange(phone.id);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar telefone:', error);
+      }
+    }
+  };
 
   useEffect(() => {
-    const fetchDefaultPhone = async () => {
-      if (value && value.length > 0) {
-        try {
-          const phone = await phoneNumberService.getPhoneNumberById(value);
-          if (phone) {
-            setSelectedPhone({
-              id: phone.id,
-              label: `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`,
-            });
-          }
-        } catch (error) {
-          console.error('Erro ao buscar telefone:', error);
-        }
-      }
-    };
-
-    fetchDefaultPhone();
+    fetchDefaultPhone(value);
   }, [value]);
 
   const handleChange = (event, newValue) => {
     setSelectedPhone(newValue);
-    if (newValue) {
-      onChange(newValue.id);
-    } else {
-      onChange(null);
-    }
+    onChange(newValue ? newValue.id : null);
   };
 
-  const fetchPhonesByUser = useCallback(
+  const fetchPhonesByQuery = useCallback(
     debounce(async (query) => {
-      if (!query) {
+      if (disableSuggestions || !query || query.trim() === '') {
         setOptions([]);
         return;
       }
       setLoading(true);
       try {
-        const phones = await phoneNumberService.getPhoneNumbersByQuery(query);
-        if (phones && phones.results) {
-          const formattedPhones = phones.results.map((phone) => ({
-            id: phone.id,
-            label: `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`,
-          }));
-          setOptions(formattedPhones);
-        }
+        const response = await phoneNumberService.getPhoneNumbersByQuery(query);
+        const formattedPhones = response.results.map((phone) => ({
+          id: phone.id,
+          label: `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`,
+        }));
+        setOptions(formattedPhones);
       } catch (error) {
         console.error('Erro ao buscar telefones:', error);
       }
       setLoading(false);
     }, 300),
-    []
+    [disableSuggestions]
   );
 
   const fetchInitialPhones = useCallback(async () => {
+    if (disableSuggestions) {
+      setOptions([]);
+      return;
+    }
     setLoading(true);
     try {
-      const phones = await phoneNumberService.getPhoneNumbers({ limit: 5, page: 1 });
-      if (phones && phones.results) {
-        const formattedPhones = phones.results.map((phone) => ({
-          id: phone.id,
-          label: `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`,
-        }));
-        setOptions(formattedPhones);
-      }
+      const response = await phoneNumberService.getPhoneNumbers({ limit: 5 });
+      const formattedPhones = response.results.map((phone) => ({
+        id: phone.id,
+        label: `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`,
+      }));
+      setOptions(formattedPhones);
     } catch (error) {
       console.error('Erro ao buscar telefones:', error);
     }
     setLoading(false);
-  }, []);
+  }, [disableSuggestions]);
 
   const handleOpen = () => {
     setOpen(true);
-    if (options.length === 0) {
+    if (!disableSuggestions && options.length === 0) {
       fetchInitialPhones();
     }
   };
@@ -94,6 +102,14 @@ export default function AutoCompletePhoneNumber({ onChange, value, error, helper
     setOptions([]);
   };
 
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
   return (
     <div>
       <Autocomplete
@@ -101,14 +117,16 @@ export default function AutoCompletePhoneNumber({ onChange, value, error, helper
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.id === value.id}
-        getOptionLabel={(option) => option.label}
+        isOptionEqualToValue={(option, value) => option.label === value.label}
+        getOptionLabel={(option) => option.label || ''}
         options={options}
         loading={loading}
         value={selectedPhone}
-        {...rest}
+        {...props}
         onInputChange={(event, newInputValue) => {
-          fetchPhonesByUser(newInputValue);
+          if (!disableSuggestions) {
+            fetchPhonesByQuery(newInputValue);
+          }
         }}
         onChange={handleChange}
         renderInput={(params) => (
@@ -118,19 +136,34 @@ export default function AutoCompletePhoneNumber({ onChange, value, error, helper
             {...params}
             size="small"
             variant="outlined"
-            {...rest}
             InputProps={{
               ...params.InputProps,
               endAdornment: (
                 <Fragment>
                   {loading ? <CircularProgress color="inherit" size={20} /> : null}
                   {params.InputProps.endAdornment}
+                  <IconButton
+                    onClick={handleOpenModal}
+                    aria-label="Adicionar telefone"
+                    edge="end"
+                    size="small"
+                    sx={{ padding: '4px' }}
+                  >
+                    <AddIcon fontSize="small" />
+                  </IconButton>
                 </Fragment>
               ),
             }}
           />
         )}
       />
+
+      <Dialog open={openModal} onClose={handleCloseModal} maxWidth="lg">
+        <DialogTitle>Adicionar Novo Número de Telefone</DialogTitle>
+        <DialogContent>
+          <CreatePhonePage onClosedModal={handleCloseModal} selectedPhoneNumberId={fetchDefaultPhone} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
