@@ -17,11 +17,11 @@ export default function AutoCompletePhoneNumber({ onChange, value, error, helper
   const [openModal, setOpenModal] = useState(false);
 
   const fetchDefaultPhone = async (phoneId) => {
-    phoneId = parseInt(13304);
-    if (phoneId && Array.isArray(phoneId) && phoneId.length > 0) {
-      console.log('phoneId:', phoneId);
+    if (phoneId) {
+      console.log('phoneId', phoneId);
       try {
         const phone = await phoneNumberService.getPhoneNumberById(phoneId);
+        console.log('phone', phone);
         if (phone) {
           setSelectedPhone({
             id: phone.id,

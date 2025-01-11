@@ -45,14 +45,15 @@ const usePhoneNumberForm = (initialData, id) => {
 
     console.log('dataToSend', dataToSend);
     try {
+      let response;
       if (id) {
-        await phoneNumberService.updatePhoneNumber(id, dataToSend);
+        response = await phoneNumberService.updatePhoneNumber(id, dataToSend);
       } else {
-        await phoneNumberService.createPhoneNumber(dataToSend);
+        response = await phoneNumberService.createPhoneNumber(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);
-      setDataReceived(dataToSend);
+      setDataReceived(response);
     } catch (err) {
       setSuccess(false);
       setFormErrors(err.response?.data || {});

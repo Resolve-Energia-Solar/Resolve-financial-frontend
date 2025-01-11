@@ -140,7 +140,7 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
         <CustomFormLabel htmlFor="name">Número</CustomFormLabel>
         <AutoCompletePhoneNumber
           onChange={(id) => handleChange('phone_numbers_ids', id)}
-          value={formData.phone_numbers_ids}
+          value={formData.phone_numbers_ids ? formData.phone_numbers_ids[0] : null}
           {...(formErrors.phone_numbers_ids && {
             error: true,
             helperText: formErrors.phone_numbers_ids,
