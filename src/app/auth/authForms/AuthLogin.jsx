@@ -1,11 +1,9 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
-import { useRouter } from 'next/navigation';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Stack from '@mui/material/Stack';
@@ -17,23 +15,15 @@ import Alert from '@mui/material/Alert';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import AuthSocialButtons from './AuthSocialButtons';
 import useLoginForm from '@/hooks/users/useLoginForm';
 import Cookies from 'js-cookie';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const AuthLogin = ({ title, subtitle, subtext }) => {
   const dispatch = useDispatch();
-  const router = useRouter();
 
   const { formData, formErrors, success, loading, error, handleInputChange, handleSubmit } =
     useLoginForm();
-
-  useEffect(() => {
-    if (success) {
-      router.push('/');
-    }
-  }, [success, router]);
 
   const handleFormSubmit = async (event) => {
     console.log('handleFormSubmit', event, dispatch, Cookies);
