@@ -81,7 +81,7 @@ export default function ModalCardDetail({ open, onClose, data, onClickActionActi
                     <Box display='flex' gap={8}>
                         <Box display="flex" flexDirection="column" alignItems="flex-start" gap={1}>
                             <Typography variant="subtitle1" >Venda nº {data?.project?.sale.contract_number}</Typography>
-                            <Typography variant="subtitle1" >Projeto nº {data?.project.project_number}</Typography>
+                            <Typography variant="subtitle1" >Projeto nº {data?.project?.project_number}</Typography>
                             <Typography variant="subtitle1">Contratante: {data?.project?.sale.customer.name}</Typography>
 
                         </Box>
@@ -139,13 +139,13 @@ export default function ModalCardDetail({ open, onClose, data, onClickActionActi
                                 {
                                     comments ? comments.map((comment) => (
                                         <Box display="flex" mb={2}>
-                                            <Avatar sx={{ width: 32, height: 32, mr: 1 }}>{comment.author.first_name}</Avatar>
+                                            <Avatar sx={{ width: 32, height: 32, mr: 1 }}>{comment?.author?.first_name}</Avatar>
                                             <Box>
-                                                <Typography variant="subtitle2" mb={0.5}>{comment.author.complete_name}</Typography>
+                                                <Typography variant="subtitle2" mb={0.5}>{comment?.author?.complete_name}</Typography>
                                                 <Typography variant="body2" >
-                                                    <HtmlRenderer rawHtml={comment.text} />
+                                                    <HtmlRenderer rawHtml={comment?.text} />
                                                 </Typography>
-                                                <Typography variant="caption">{format(new Date(comment.created_at), 'dd MMMM yyyy, hh:mm:ss')}
+                                                <Typography variant="caption">{format(new Date(comment?.created_at), 'dd MMMM yyyy, hh:mm:ss')}
                                                 </Typography>
                                             </Box>
                                         </Box>
