@@ -25,6 +25,17 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
   const [creator, setCreator] = useState(null);
   const [answerData, setAnswerData] = useState(null);
   const [loadingAnswer, setLoadingAnswer] = useState(true);
+  const formatDateTime = (dateString) => {
+    if (!dateString) return 'Não identificado';
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date);
+  };
 
   useEffect(() => {
     async function fetchCreator() {
@@ -79,7 +90,9 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
           }}
         >
           <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+            <Box
+              sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}
+            >
               <Typography variant="h5">Detalhes do Agendamento</Typography>
               <Close onClick={onClose} sx={{ cursor: 'pointer' }} />
             </Box>
@@ -130,7 +143,8 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                   </Typography>
                   <Typography variant="body1">
                     <strong>Vendedor:</strong>{' '}
-                    {selectedSchedule.project?.sale?.seller?.complete_name || 'Sem vendedor associado'}
+                    {selectedSchedule.project?.sale?.seller?.complete_name ||
+                      'Sem vendedor associado'}
                   </Typography>
                   <Typography variant="body1">
                     <strong>Unidade:</strong>{' '}
@@ -144,6 +158,11 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                   </Typography>
                   <Typography variant="body1">
                     <strong>Agendado por:</strong> {creator?.complete_name || 'Não identificado'}
+                  </Typography>
+                  <Typography variant="body1">
+                    <Typography variant="body1">
+                      <strong>Criado em:</strong> {formatDateTime(selectedSchedule?.created_at)}
+                    </Typography>{' '}
                   </Typography>
                 </Paper>
 
