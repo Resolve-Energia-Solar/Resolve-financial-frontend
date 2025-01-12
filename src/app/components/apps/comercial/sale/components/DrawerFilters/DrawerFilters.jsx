@@ -54,24 +54,8 @@ export default function DrawerFilters() {
     return params;
   };
 
-  const handleDateChange = (newValue) => {
-    setTempFilters((prev) => ({ ...prev, documentCompletionDate: newValue }));
-  };
-
-  const handleStatusChange = (event, value) => {
-    setTempFilters((prev) => ({ ...prev, statusDocument: value }));
-  };
-
-  const handleBranchChange = (event, value) => {
-    setTempFilters((prev) => ({ ...prev, branch: value ? value.id : null }));
-  };
-
-  const handleCustomerChange = (event, value) => {
-    setTempFilters((prev) => ({ ...prev, customer: value ? value.id : null }));
-  };
-
-  const handleIsPreSaleChange = (event, value) => {
-    setTempFilters((prev) => ({ ...prev, isPreSale: value }));
+  const handleChange = (key, value) => {
+    setTempFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   const clearFilters = () => {
@@ -143,7 +127,7 @@ export default function DrawerFilters() {
                   options={StatusDocument}
                   placeholder="Selecione o status"
                   value={tempFilters.statusDocument}
-                  onChange={handleStatusChange}
+                  onChange={(event, value) => handleChange('statusDocument', value)}
                 />
               </Grid>
 
@@ -153,7 +137,7 @@ export default function DrawerFilters() {
                   options={isPreSaleOptions}
                   placeholder="Selecione o tipo"
                   value={tempFilters.isPreSale}
-                  onChange={handleIsPreSaleChange}
+                  onChange={(event, value) => handleChange('isPreSale', value)}
                 />
               </Grid>
 
@@ -161,7 +145,7 @@ export default function DrawerFilters() {
                 <FormDateRange
                   label="Selecione a Data de Conclusão"
                   value={tempFilters.documentCompletionDate}
-                  onChange={handleDateChange}
+                  onChange={(newValue) => handleChange('documentCompletionDate', newValue)}
                   error={false}
                   helperText=""
                 />
@@ -172,7 +156,7 @@ export default function DrawerFilters() {
                 <AutoCompleteBranch
                   placeholder="Selecione a filial"
                   value={tempFilters.branch}
-                  onChange={handleBranchChange}
+                  onChange={(id) => handleChange('branch', id)}
                 />
               </Grid>
 
@@ -181,7 +165,7 @@ export default function DrawerFilters() {
                 <AutoCompleteUser
                   placeholder="Selecione o cliente"
                   value={tempFilters.customer}
-                  onChange={handleCustomerChange}
+                  onChange={(id) => handleChange('customer', id)}
                 />
               </Grid>
             </Grid>
