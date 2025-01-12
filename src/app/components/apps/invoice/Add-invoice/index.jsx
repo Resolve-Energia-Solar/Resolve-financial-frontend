@@ -23,7 +23,7 @@ import {
   FormControlLabel,
 } from '@mui/material';
 import { format, isValid } from 'date-fns';
-import { ptBR } from 'date-fns/locale'; 
+import { ptBR } from 'date-fns/locale';
 
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
@@ -38,7 +38,6 @@ import CustomFieldMoney from '../components/CustomFieldMoney';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
 import { useSelector } from 'react-redux';
-
 
 const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) => {
   const {
@@ -201,7 +200,12 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
                   variant="outlined"
                   fullWidth
                   value={formData.installments_number}
-                  onChange={(e) => handleChange('installments_number', e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (!isNaN(value) && value <= 64) {
+                      handleChange('installments_number', value);
+                    }
+                  }}
                   {...(formErrors.installments_number && {
                     error: true,
                     helperText: formErrors.installments_number,
@@ -209,7 +213,7 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
                 />
               </Grid>
             )}
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
               <FormControlLabel
                 control={
                   <CustomSwitch
@@ -346,33 +350,6 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
           </TableContainer>
         </Paper>
       )}
-
-      {/* <Box p={3} backgroundColor="primary.light" mt={3}>
-        <Box display="flex" justifyContent="end" gap={3} mb={3}>
-          <Typography variant="body1" fontWeight={600}>
-            Sub Total:
-          </Typography>
-          <Typography variant="body1" fontWeight={600}>
-            0
-          </Typography>
-        </Box>
-        <Box display="flex" justifyContent="end" gap={3} mb={3}>
-          <Typography variant="body1" fontWeight={600}>
-            VAT:
-          </Typography>
-          <Typography variant="body1" fontWeight={600}>
-            0
-          </Typography>
-        </Box>
-        <Box display="flex" justifyContent="end" gap={3}>
-          <Typography variant="body1" fontWeight={600}>
-            Grand Total:
-          </Typography>
-          <Typography variant="body1" fontWeight={600}>
-            0
-          </Typography>
-        </Box>
-      </Box> */}
     </Box>
   );
 };

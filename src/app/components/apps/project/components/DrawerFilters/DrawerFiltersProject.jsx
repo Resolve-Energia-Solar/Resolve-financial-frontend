@@ -141,7 +141,6 @@ export default function DrawerFiltersProject() {
             </Grid>
           </Box>
 
-          {/* Botões fixos no rodapé */}
           <Box
             sx={{
               flexShrink: 0,
