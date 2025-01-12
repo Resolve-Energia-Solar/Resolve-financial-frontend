@@ -5,6 +5,8 @@ import Cookies from 'js-cookie';
 import taskTemplateService from "@/services/taskTemplateService";
 import taskService from "@/services/taskService";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export default function boardOperation() {
 
     const documentStatus = [
@@ -177,7 +179,7 @@ export default function boardOperation() {
         const token = Cookies.get('access_token');
 
         try {
-            const response = await fetch('https://crm.resolvenergiasolar.com/api/comments/', {
+            const response = await fetch(`${API_BASE_URL}/api/comments/`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -210,7 +212,7 @@ export default function boardOperation() {
     async function fetchComments(object_id) {
         const token = Cookies.get('access_token');
         try {
-            const response = await fetch(`https://crm.resolvenergiasolar.com/api/comments/?object_id=${object_id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/comments/?object_id=${object_id}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
