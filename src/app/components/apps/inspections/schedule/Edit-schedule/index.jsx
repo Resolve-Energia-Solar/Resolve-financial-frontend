@@ -23,6 +23,8 @@ import AutoCompleteUserProject from '../../auto-complete/Auto-input-UserProject'
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
 import serviceOpinionsService from '@/services/serviceOpinionsService';
+import HasPermission from '@/app/components/permissions/HasPermissions';
+import { useSelector } from 'react-redux';
 
 const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh = null }) => {
   const router = useRouter();
@@ -31,6 +33,9 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
   if (!scheduleId) id = params.id;
   const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
   const { loading, error, scheduleData } = useSchedule(id);
+
+  const userPermissions = useSelector((state) => state.user.permissions);
+
 
   const { formData, handleChange, handleSave, formErrors, success } = useScheduleForm(
     scheduleData,
@@ -286,15 +291,20 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         </Grid>
 
         {/* Status do Agendamento */}
-        <Grid item xs={12} sm={12} lg={6}>
-          <FormSelect
-            label="Status do Agendamento"
-            options={statusOptions}
-            onChange={(e) => handleChange('status', e.target.value)}
-            value={formData.status || ''}
-            {...(formErrors.status && { error: true, helperText: formErrors.status })}
-          />
-        </Grid>
+        <HasPermission
+          permissions={['field_services.change_status_schedule_field']}
+          userPermissions={userPermissions}
+        >
+          <Grid item xs={12} sm={12} lg={6}>
+            <FormSelect
+              label="Status do Agendamento"
+              options={statusOptions}
+              onChange={(e) => handleChange('status', e.target.value)}
+              value={formData.status || ''}
+              {...(formErrors.status && { error: true, helperText: formErrors.status })}
+            />
+          </Grid>
+        </HasPermission>
 
         {/* Agente de Campo */}
         <Grid item xs={12} sm={12} lg={12}>

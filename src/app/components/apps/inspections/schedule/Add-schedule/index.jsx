@@ -19,6 +19,7 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import AutoCompleteProject from '../../auto-complete/Auto-input-Project';
+import { useSelector } from 'react-redux';
 
 const ScheduleFormCreate = ({
   serviceId = null,
@@ -31,6 +32,9 @@ const ScheduleFormCreate = ({
   const router = useRouter();
 
   const { formData, handleChange, handleSave, formErrors, success } = useSheduleForm();
+
+  const userPermissions = useSelector((state) => state.user.permissions);
+
 
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
@@ -200,16 +204,20 @@ const ScheduleFormCreate = ({
         </Grid>
 
         {/* Status do Agendamento */}
-        <Grid item xs={12} sm={12} lg={6}>
-          <FormSelect
-            label="Status do Agendamento"
-            options={statusOptions}
-            onChange={(e) => handleChange('status', e.target.value)}
-            value={formData.status || ''}
-            {...(formErrors.status && { error: true, helperText: formErrors.status })}
-          />
-        </Grid>
-
+        <HasPermission
+          permissions={['field_services.change_status_schedule_field']}
+          userPermissions={userPermissions}
+        >
+          <Grid item xs={12} sm={12} lg={6}>
+            <FormSelect
+              label="Status do Agendamento"
+              options={statusOptions}
+              onChange={(e) => handleChange('status', e.target.value)}
+              value={formData.status || ''}
+              {...(formErrors.status && { error: true, helperText: formErrors.status })}
+            />
+          </Grid>
+        </HasPermission>
         {/* Observação */}
         <Grid item xs={12} sm={12} lg={12}>
           <CustomFormLabel htmlFor="name">Observação</CustomFormLabel>
