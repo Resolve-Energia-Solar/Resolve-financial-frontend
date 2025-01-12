@@ -25,6 +25,7 @@ import AutoCompleteSupplyAds from '../components/auto-complete/Auto-Input-Supply
 import supplyService from '@/services/supplyAdequanceService';
 import { useEffect, useState } from 'react';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
+import HasPermission from '@/app/components/permissions/HasPermissions';
 
 const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh = null }) => {
   const userPermissions = useSelector((state) => state.user.permissions);
@@ -116,7 +117,7 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
                 label={formData.new_contract_number ? 'Sim' : 'Não'}
               />
             </Grid>
-            
+
             {!formData.new_contract_number && (
               <>
                 <Grid item xs={12} sm={12} lg={6}>
@@ -207,19 +208,24 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
 
             {!formData.new_contract_number && (
               <>
-                <Grid item xs={12} sm={12} lg={6}>
-                  <CustomFormLabel htmlFor="supply_adquance_ids">
-                    Adequação de Fornecimento
-                  </CustomFormLabel>
-                  <AutoCompleteSupplyAds
-                    onChange={(ids) => handleChange('supply_adquance_ids', ids)}
-                    value={formData.supply_adquance_ids}
-                    {...(formErrors.supply_adquance_ids && {
-                      error: true,
-                      helperText: formErrors.supply_adquance_ids,
-                    })}
-                  />
-                </Grid>
+                <HasPermission
+                  permissions={['engineering.change_status_supply_adequances_field']}
+                  userPermissions={userPermissions}
+                >
+                  <Grid item xs={12} sm={12} lg={6}>
+                    <CustomFormLabel htmlFor="supply_adquance_ids">
+                      Adequação de Fornecimento
+                    </CustomFormLabel>
+                    <AutoCompleteSupplyAds
+                      onChange={(ids) => handleChange('supply_adquance_ids', ids)}
+                      value={formData.supply_adquance_ids}
+                      {...(formErrors.supply_adquance_ids && {
+                        error: true,
+                        helperText: formErrors.supply_adquance_ids,
+                      })}
+                    />
+                  </Grid>
+                </HasPermission>
 
                 <Grid item xs={12}>
                   <CustomFormLabel htmlFor="bill_file">Arquivo</CustomFormLabel>
