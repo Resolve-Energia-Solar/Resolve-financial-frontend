@@ -23,8 +23,9 @@ import saleService from '@/services/saleService';
 import paymentService from '@/services/paymentService';
 import ChecklistSales from '../../../checklist/Checklist-list/ChecklistSales';
 import SchedulesInspections from '../../../project/components/SchedulesInspections';
-import { CircularProgress, StepContent, useMediaQuery, useTheme } from '@mui/material';
+import { Alert, CircularProgress, Snackbar, StepContent, useMediaQuery, useTheme } from '@mui/material';
 import { t } from 'i18next';
+import { CheckCircle, Error } from '@mui/icons-material';
 
 const steps = ['Dados do Cliente', 'Produtos', 'Financeiro', 'Documentos', 'Agendar Vistoria'];
 
@@ -43,6 +44,24 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
   const [isDialogDocumentOpen, setIsDialogDocumentOpen] = useState(false);
   const [totalPayments, setTotalPayments] = useState(0);
   const [loading, setLoading] = useState(false);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const formatFieldName = (fieldName) => {
+    const fieldLabels = {
+      customer_id: 'Cliente',
+      seller_id: 'Vendedor',
+      sales_supervisor_id: 'Supervisor de Vendas',
+      sales_manager_id: 'Gerente de Vendas',
+      branch_id: 'Franquia',
+    };
+
+    return fieldLabels[fieldName] || fieldName;
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const user = useSelector((state) => state.user);
 
@@ -183,6 +202,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
   const handleDialogContinue = async () => {
     setIsDialogOpen(false);
     await handleSave();
+    setSnackbarOpen(true);
   };
 
   const renderStepContent = (step) => {
@@ -227,7 +247,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
               color="inherit"
               disabled={activeStep === 0 || activeStep > 1}
               onClick={handleBack}
-              sx={{ mr: 1 }} 
+              sx={{ mr: 1 }}
             >
               Voltar
             </Button>
@@ -359,6 +379,46 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={formErrors && Object.keys(formErrors).length > 0 ? 'error' : 'success'}
+          sx={{ width: '100%', display: 'flex', alignItems: 'center' }}
+          iconMapping={{
+            error: <Error style={{ verticalAlign: 'middle' }} />,
+            success: <CheckCircle style={{ verticalAlign: 'middle' }} />,
+          }}
+        >
+          {formErrors && Object.keys(formErrors).length > 0 ? (
+            <ul
+              style={{
+                margin: '10px 0',
+                paddingLeft: '20px',
+                listStyleType: 'disc',
+              }}
+            >
+              {Object.entries(formErrors).map(([field, messages]) => (
+                <li
+                  key={field}
+                  style={{
+                    marginBottom: '8px',
+                  }}
+                >
+                  {`${formatFieldName(field)}: ${messages.join(', ')}`}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            'Alterações salvas com sucesso!'
+          )}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
