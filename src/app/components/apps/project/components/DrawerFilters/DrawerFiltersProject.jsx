@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { Box, Drawer, Button, CardContent, Typography, Grid } from '@mui/material';
+import React, { useState, useContext } from 'react';
+import { Box, Drawer, Button, Typography, Grid } from '@mui/material';
 import { FilterAlt } from '@mui/icons-material';
 import CheckboxesTags from './CheckboxesTags';
 import FormDateRange from './DateRangePicker';
@@ -44,20 +44,16 @@ export default function DrawerFiltersProject() {
     return params;
   };
 
-  const handleDateChange = (newValue) => {
-    setTempFilters((prev) => ({ ...prev, documentCompletionDate: newValue }));
-  };
-
-  const handleStatusChange = (event, value) => {
-    setTempFilters((prev) => ({ ...prev, status: value }));
-  };
-
-  const handleDesignerStatusChange = (event, value) => {
-    setTempFilters((prev) => ({ ...prev, designer_status: value }));
+  const handleChange = (key, value) => {
+    setTempFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   const clearFilters = () => {
-    setTempFilters({ documentCompletionDate: [null, null], status: [], designer_status: [] });
+    setTempFilters({
+      documentCompletionDate: [null, null],
+      status: [],
+      designer_status: [],
+    });
   };
 
   const applyFilters = () => {
@@ -113,7 +109,7 @@ export default function DrawerFiltersProject() {
                   ]}
                   placeholder="Selecione o status"
                   value={tempFilters.status}
-                  onChange={handleStatusChange}
+                  onChange={(event, value) => handleChange('status', value)}
                 />
               </Grid>
 
@@ -129,14 +125,15 @@ export default function DrawerFiltersProject() {
                   ]}
                   placeholder="Selecione o Status do Projetist"
                   value={tempFilters.designer_status}
-                  onChange={handleDesignerStatusChange}
+                  onChange={(event, value) => handleChange('designer_status', value)}
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <FormDateRange
                   label="Selecione a Data de Conclusão"
                   value={tempFilters.documentCompletionDate}
-                  onChange={handleDateChange}
+                  onChange={(newValue) => handleChange('documentCompletionDate', newValue)}
                   error={false}
                   helperText=""
                 />
