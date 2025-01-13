@@ -15,7 +15,7 @@ function SchedulesInspections({ saleId, userId }) {
     const fetchData = async () => {
       try {
         const response = await projectService.getProjectBySale(saleId);
-        setProjectsList(response.results);
+        setProjectsList(response.results.results);
       } catch (error) {
         console.log('Error: ', error);
       } finally {
