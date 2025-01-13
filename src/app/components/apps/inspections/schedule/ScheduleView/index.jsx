@@ -37,6 +37,8 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
     }).format(date);
   };
 
+  console.log('selectedSchedule', selectedSchedule);
+
   useEffect(() => {
     async function fetchCreator() {
       if (selectedSchedule?.schedule_creator) {

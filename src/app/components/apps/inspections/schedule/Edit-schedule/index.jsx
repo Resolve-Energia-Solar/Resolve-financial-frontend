@@ -25,6 +25,7 @@ import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
 import serviceOpinionsService from '@/services/serviceOpinionsService';
 import HasPermission from '@/app/components/permissions/HasPermissions';
 import { useSelector } from 'react-redux';
+import AutoCompleteProduct from '../../auto-complete/Auto-input-product';
 
 const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh = null }) => {
   const router = useRouter();
@@ -35,7 +36,6 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
   const { loading, error, scheduleData } = useSchedule(id);
 
   const userPermissions = useSelector((state) => state.user.permissions);
-
 
   const { formData, handleChange, handleSave, formErrors, success } = useScheduleForm(
     scheduleData,
@@ -197,6 +197,21 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
                 })}
               />
             </Grid>
+
+            {formData.products && (
+              <Grid item xs={12} sm={12} lg={6}>
+                <CustomFormLabel htmlFor="products">Produtos</CustomFormLabel>
+                <AutoCompleteProduct
+                  onChange={(id) => handleChange('products', id)}
+                  value={formData.products}
+                  {...(formErrors.products && {
+                    error: true,
+                    helperText: formErrors.products,
+                  })}
+                  noOptionsText={'Nenhum produto encontrado'}
+                />
+              </Grid>
+            )}
 
             {/* Projeto */}
             {formData.customer_id && (

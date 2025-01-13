@@ -100,6 +100,7 @@ const SchedulingList = () => {
         });
         if (page === 1) {
           setScheduleList(data.results);
+          console.log('data.results:', data.results);
         } else {
           setScheduleList((prevScheduleList) => {
             const newItems = data.results.filter(

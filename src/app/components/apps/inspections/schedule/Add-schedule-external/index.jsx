@@ -20,6 +20,7 @@ import AutoCompleteUserProject from '../../auto-complete/Auto-input-UserProject'
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { TimePicker } from '@mui/x-date-pickers';
 import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
+import AutoCompleteProduct from '../../auto-complete/Auto-input-product';
 
 const ScheduleFormCreateExternal = () => {
   const router = useRouter();
@@ -87,7 +88,6 @@ const ScheduleFormCreateExternal = () => {
         const selectedTime = newValue;
         const selectedDate = parseISO(formData.schedule_date);
 
-        // Define a data atual sem horas, minutos e segundos
         const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
         if (selectedDate.getTime() === todayStart.getTime()) {
@@ -124,6 +124,20 @@ const ScheduleFormCreateExternal = () => {
               helperText: formErrors.service_id,
             })}
             noOptionsText={'Nenhum serviço encontrado'}
+          />
+        </Grid>
+
+        {/* Produtos */}
+        <Grid item xs={12} sm={12} lg={6}>
+          <CustomFormLabel htmlFor="products">Produtos</CustomFormLabel>
+          <AutoCompleteProduct
+            onChange={(id) => handleChange('products', id)}
+            value={formData.products}
+            {...(formErrors.products && {
+              error: true,
+              helperText: formErrors.products,
+            })}
+            noOptionsText={'Nenhum produto encontrado'}
           />
         </Grid>
 
@@ -172,49 +186,53 @@ const ScheduleFormCreateExternal = () => {
         </Grid>
 
         {/* Hora do Agendamento */}
-        {
-          formData.service_id == SERVICE_INSPECTION_ID ?
-            (
-              <Grid item xs={12} sm={12} lg={6}>
-                <FormSelect
-                  options={timeOptions}
-                  onChange={(e) => {
-                    const timeValue = e.target.value.includes(':') ? e.target.value : `${e.target.value}:00`;
-                    validateChange('schedule_start_time', timeValue);
-                  }}
-                  disabled={!formData.schedule_date}
-                  value={formData.schedule_start_time || ''}
-                  {...(formErrors.schedule_start_time && {
-                    error: true,
-                    helperText: formErrors.schedule_start_time,
-                  })}
-                  label={'Hora do Agendamento'}
-                />
-              </Grid>
-            ) :
-            (
-              <Grid item xs={12} sm={12} lg={6}>
-                <FormTimePicker
-                  label="Hora do Agendamento"
-                  value={formData.schedule_start_time ? new Date(`1970-01-01T${formData.schedule_start_time}`) : null}
-                  onChange={(newValue) => {
-                    if (newValue instanceof Date) {
-                      const formattedTime = `${newValue.getHours().toString().padStart(2, '0')}:${newValue
-                        .getMinutes()
-                        .toString()
-                        .padStart(2, '0')}:${newValue.getSeconds().toString().padStart(2, '0')}`;
-                      validateChange('schedule_start_time', formattedTime);
-                    }
-                  }}
-                  {...(formErrors.schedule_start_time && {
-                    error: true,
-                    helperText: formErrors.schedule_start_time,
-                  })}
-                />
-              </Grid>
-            )
-
-        }
+        {formData.service_id == SERVICE_INSPECTION_ID ? (
+          <Grid item xs={12} sm={12} lg={6}>
+            <FormSelect
+              options={timeOptions}
+              onChange={(e) => {
+                const timeValue = e.target.value.includes(':')
+                  ? e.target.value
+                  : `${e.target.value}:00`;
+                validateChange('schedule_start_time', timeValue);
+              }}
+              disabled={!formData.schedule_date}
+              value={formData.schedule_start_time || ''}
+              {...(formErrors.schedule_start_time && {
+                error: true,
+                helperText: formErrors.schedule_start_time,
+              })}
+              label={'Hora do Agendamento'}
+            />
+          </Grid>
+        ) : (
+          <Grid item xs={12} sm={12} lg={6}>
+            <FormTimePicker
+              label="Hora do Agendamento"
+              value={
+                formData.schedule_start_time
+                  ? new Date(`1970-01-01T${formData.schedule_start_time}`)
+                  : null
+              }
+              onChange={(newValue) => {
+                if (newValue instanceof Date) {
+                  const formattedTime = `${newValue
+                    .getHours()
+                    .toString()
+                    .padStart(2, '0')}:${newValue
+                    .getMinutes()
+                    .toString()
+                    .padStart(2, '0')}:${newValue.getSeconds().toString().padStart(2, '0')}`;
+                  validateChange('schedule_start_time', formattedTime);
+                }
+              }}
+              {...(formErrors.schedule_start_time && {
+                error: true,
+                helperText: formErrors.schedule_start_time,
+              })}
+            />
+          </Grid>
+        )}
 
         {/* Endereço */}
         <Grid item xs={12} sm={12} lg={6}>

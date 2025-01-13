@@ -1,17 +1,17 @@
-import { useState, useEffect } from 'react';
-import scheduleService from '@/services/scheduleService';
-import serviceCatalogService from '@/services/serviceCatalogService';
-import addressService from '@/services/addressService';
-import userService from '@/services/userService';
-import { useSelector } from 'react-redux';
-import axios from 'axios';
+import { useState, useEffect } from 'react'
+import scheduleService from '@/services/scheduleService'
+import serviceCatalogService from '@/services/serviceCatalogService'
+import addressService from '@/services/addressService'
+import userService from '@/services/userService'
+import { useSelector } from 'react-redux'
+import axios from 'axios'
 
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
 const useScheduleForm = (initialData, id) => {
-  const user = useSelector((state) => state.user);
-  const [serviceData, setServiceData] = useState(null);
-  const [addressData, setAddressData] = useState(null);
+  const user = useSelector(state => state.user)
+  const [serviceData, setServiceData] = useState(null)
+  const [addressData, setAddressData] = useState(null)
 
   const [formData, setFormData] = useState({
     schedule_creator: user?.user?.id,
@@ -20,9 +20,9 @@ const useScheduleForm = (initialData, id) => {
     customer_id: null,
     project_id: null,
     schedule_agent_id: null,
-    products_ids: [],
+    products: [],
     schedule_date: '',
-    schedule_start_time: '', // Horário no formato HH:mm:ss vindo do <select>
+    schedule_start_time: '',
     schedule_end_date: '',
     schedule_end_time: '',
     address_id: null,
@@ -35,10 +35,10 @@ const useScheduleForm = (initialData, id) => {
     execution_finished_at: null,
     service_opinion: null,
     final_service_opinion_id: null,
-  });
+  })
 
-  const [formErrors, setFormErrors] = useState({});
-  const [success, setSuccess] = useState(false);
+  const [formErrors, setFormErrors] = useState({})
+  const [success, setSuccess] = useState(false)
 
   useEffect(() => {
     if (initialData) {
@@ -48,9 +48,9 @@ const useScheduleForm = (initialData, id) => {
         customer_id: initialData?.customer?.id || null,
         project_id: initialData.project?.id || null,
         schedule_agent_id: initialData.schedule_agent?.id || null,
-        products_ids: initialData.products_ids || [],
+        products: initialData.products || [],
         schedule_date: initialData.schedule_date || '',
-        schedule_start_time: initialData.schedule_start_time || '', // Formato esperado já é HH:mm:ss
+        schedule_start_time: initialData.schedule_start_time || '',
         schedule_end_date: initialData.schedule_end_date || '',
         schedule_end_time: initialData.schedule_end_time || '',
         address_id: initialData?.address?.id || null,
@@ -64,72 +64,70 @@ const useScheduleForm = (initialData, id) => {
         service_opinion: initialData.service_opinion || null,
         final_service_opinion_id:
           initialData.final_service_opinion?.id || initialData.service_opinion?.id || null,
-      });
-      setAddressData(initialData.address || null);
+      })
+      setAddressData(initialData.address || null)
     }
-  }, [initialData]);
+  }, [initialData])
 
   useEffect(() => {
     const fetchServiceDetails = async () => {
       if (formData.service_id) {
         try {
-          const serviceInfo = await serviceCatalogService.getServiceCatalogById(
-            formData.service_id,
-          );
-          setServiceData(serviceInfo);
-          setFormData((prev) => ({
+          const serviceInfo = await serviceCatalogService.getServiceCatalogById(formData.service_id)
+          setServiceData(serviceInfo)
+          setFormData(prev => ({
             ...prev,
             category_id: serviceInfo.category.id,
-          }));
+          }))
         } catch (error) {
-          console.error(`Erro ao buscar serviço com id ${formData.service_id}:`, error);
+          console.error(`Erro ao buscar serviço com id ${formData.service_id}:`, error)
         }
       }
-    };
+    }
 
-    fetchServiceDetails();
-  }, [formData.service_id]);
+    fetchServiceDetails()
+  }, [formData.service_id])
 
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       if (formData.customer_id) {
         try {
-          const customerInfo = await userService.getUserById(formData.customer_id);
+          const customerInfo = await userService.getUserById(formData.customer_id)
 
           if (customerInfo?.addresses?.length > 0 && !formData.address_id) {
-            setFormData((prev) => ({
+            setFormData(prev => ({
               ...prev,
               address_id: customerInfo.addresses[0]?.id,
-            }));
+            }))
           }
         } catch (error) {
-          console.error(`Erro ao buscar cliente com id ${formData.customer_id}:`, error);
+          console.error(`Erro ao buscar cliente com id ${formData.customer_id}:`, error)
         }
       }
-    };
+    }
 
-    fetchCustomerDetails();
-  }, [formData.customer_id]);
+    fetchCustomerDetails()
+  }, [formData.customer_id])
 
   useEffect(() => {
     const fetchAddressDetails = async () => {
       if (formData.address_id) {
         try {
-          const addressInfo = await addressService.getAddressById(formData.address_id);
-          setAddressData(addressInfo);
+          const addressInfo = await addressService.getAddressById(formData.address_id)
+          setAddressData(addressInfo)
         } catch (error) {
-          console.error(`Erro ao buscar endereço com id ${formData.address_id}:`, error);
+          console.error(`Erro ao buscar endereço com id ${formData.address_id}:`, error)
         }
       }
-    };
+    }
 
-    fetchAddressDetails();
-  }, [formData.address_id]);
+    fetchAddressDetails()
+  }, [formData.address_id])
 
   useEffect(() => {
     const fetchCoordinates = async () => {
       if (addressData) {
-        const addressString = `${addressData.street}, ${addressData.number}, ${addressData.neighborhood}, ${addressData.city}, ${addressData.state}, ${addressData.country}`;
+        const addressString = `${addressData.street}, ${addressData.number}, ${addressData.neighborhood}, ${addressData.city}, ${addressData.state}, ${addressData.country}`
 
         try {
           const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
@@ -137,58 +135,70 @@ const useScheduleForm = (initialData, id) => {
               address: addressString,
               key: GOOGLE_MAPS_API_KEY,
             },
-          });
+          })
 
           if (response.data.status === 'OK') {
-            const location = response.data.results[0].geometry.location;
-            setFormData((prev) => ({
+            const location = response.data.results[0].geometry.location
+            setFormData(prev => ({
               ...prev,
               latitude: location.lat,
               longitude: location.lng,
-            }));
+            }))
           } else {
-            console.error('Erro ao obter coordenadas:', response.data.status);
+            console.error('Erro ao obter coordenadas:', response.data.status)
           }
         } catch (error) {
-          console.error('Erro ao buscar coordenadas:', error);
+          console.error('Erro ao buscar coordenadas:', error)
         }
       }
-    };
+    }
 
-    fetchCoordinates();
-  }, [addressData]);
+    fetchCoordinates()
+  }, [addressData])
 
   useEffect(() => {
     if (formData.schedule_date && formData.schedule_start_time && serviceData?.deadline?.hours) {
-      let normalizedTime;
+      try {
+        let normalizedTime
 
-      // Normaliza o formato de horário
-      if (typeof formData.schedule_start_time === 'string') {
-        // Se já for string no formato `hh:mm` ou `hh:mm:ss`, mantém
-        normalizedTime = formData.schedule_start_time.includes(':')
-          ? formData.schedule_start_time
-          : `${formData.schedule_start_time}:00`;
-      } else if (formData.schedule_start_time instanceof Date) {
-        // Converte Date para string no formato `hh:mm:ss`
-        normalizedTime = `${formData.schedule_start_time
-          .getHours()
-          .toString()
-          .padStart(2, '0')}:${formData.schedule_start_time
-          .getMinutes()
-          .toString()
-          .padStart(2, '0')}:${formData.schedule_start_time
-          .getSeconds()
-          .toString()
-          .padStart(2, '0')}`;
-      }
+        // Normaliza o formato de horário
+        if (typeof formData.schedule_start_time === 'string') {
+          // Se já for string no formato `hh:mm` ou `hh:mm:ss`, mantém
+          normalizedTime = formData.schedule_start_time.includes(':')
+            ? formData.schedule_start_time
+            : `${formData.schedule_start_time}:00`
+        } else if (formData.schedule_start_time instanceof Date) {
+          // Converte Date para string no formato `hh:mm:ss`
+          normalizedTime = `${formData.schedule_start_time
+            .getHours()
+            .toString()
+            .padStart(2, '0')}:${formData.schedule_start_time
+            .getMinutes()
+            .toString()
+            .padStart(2, '0')}:${formData.schedule_start_time
+            .getSeconds()
+            .toString()
+            .padStart(2, '0')}`
+        } else {
+          throw new Error('Formato inválido de schedule_start_time')
+        }
 
-      // Divide o horário em partes
-      const [startHours, startMinutes, startSeconds] = normalizedTime.split(':').map(Number);
+        // Divide o horário em partes
+        const [startHours, startMinutes, startSeconds] = normalizedTime.split(':').map(Number)
 
-      // Continua apenas se os valores forem válidos
-      if (startHours !== undefined && startMinutes !== undefined) {
+        // Verifica se os valores extraídos são válidos
+        if (isNaN(startHours) || isNaN(startMinutes)) {
+          throw new Error('Horário inicial inválido')
+        }
+
         // Extrai a data do agendamento
-        const [year, month, day] = formData.schedule_date.split('-').map(Number);
+        const [year, month, day] = formData.schedule_date.split('-').map(Number)
+
+        // Verifica se a data extraída é válida
+        if (isNaN(year) || isNaN(month) || isNaN(day)) {
+          throw new Error('Data de agendamento inválida')
+        }
+
         const startDate = new Date(
           year,
           month - 1,
@@ -196,59 +206,80 @@ const useScheduleForm = (initialData, id) => {
           startHours,
           startMinutes,
           startSeconds || 0,
-        );
+        )
+
+        // Verifica se o objeto Date é válido
+        if (isNaN(startDate.getTime())) {
+          throw new Error('Data inicial inválida')
+        }
 
         // Converte o prazo em milissegundos
         const [durationHours, durationMinutes, durationSeconds] = serviceData.deadline.hours
           .split(':')
-          .map(Number);
+          .map(Number)
+
+        // Verifica se os valores do prazo são válidos
+        if (isNaN(durationHours) || isNaN(durationMinutes)) {
+          throw new Error('Prazo inválido')
+        }
+
         const totalMilliseconds =
           (durationHours || 0) * 3600000 +
           (durationMinutes || 0) * 60000 +
-          (durationSeconds || 0) * 1000;
+          (durationSeconds || 0) * 1000
 
         // Calcula a data e horário finais
-        const updatedDate = new Date(startDate.getTime() + totalMilliseconds);
+        const updatedDate = new Date(startDate.getTime() + totalMilliseconds)
 
-        setFormData((prev) => ({
+        // Verifica se a data final é válida
+        if (isNaN(updatedDate.getTime())) {
+          throw new Error('Data final inválida')
+        }
+
+        // Atualiza o estado com as datas calculadas
+        setFormData(prev => ({
           ...prev,
           schedule_end_date: updatedDate.toISOString().split('T')[0],
           schedule_end_time: `${updatedDate.getHours().toString().padStart(2, '0')}:${updatedDate
             .getMinutes()
             .toString()
             .padStart(2, '0')}:${updatedDate.getSeconds().toString().padStart(2, '0')}`,
-        }));
+        }))
+      } catch (error) {
+        console.error('Erro ao calcular a data de agendamento:', error.message)
       }
     }
-  }, [formData.schedule_date, formData.schedule_start_time, serviceData]);
+  }, [formData.schedule_date, formData.schedule_start_time, serviceData])
 
   useEffect(() => {
     if (initialData) {
-      return;
+      return
     }
-    setFormData((prev) => ({ ...prev, schedule_start_time: '' }));
-  }, [formData.schedule_date]);
+    setFormData(prev => ({ ...prev, schedule_start_time: '' }))
+  }, [formData.schedule_date])
 
   const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ ...prev, [field]: value }))
     if (
       field === 'service_id' ||
       field === 'schedule_start_time' ||
       field === 'schedule_date' ||
       field === 'address_id'
     ) {
-      setFormData((prev) => ({ ...prev, schedule_agent_id: null }));
+      setFormData(prev => ({ ...prev, schedule_agent_id: null }))
     }
-  };
+  }
 
   const handleSave = async () => {
+    const normalizedProductsIds = Array.isArray(formData.products) ? formData.products : [formData.products];
+  
     const dataToSend = {
       schedule_creator: formData.schedule_creator,
       service_id: formData.service_id,
       customer_id: formData.customer_id,
-      products_ids: formData.products_ids,
+      products: normalizedProductsIds, 
       schedule_date: formData.schedule_date,
-      schedule_start_time: formData.schedule_start_time, // Já no formato HH:mm:ss
+      schedule_start_time: formData.schedule_start_time,
       schedule_end_date: formData.schedule_end_date,
       schedule_end_time: formData.schedule_end_time,
       address_id: formData.address_id,
@@ -259,38 +290,25 @@ const useScheduleForm = (initialData, id) => {
       going_to_location_at: formData.going_to_location_at,
       execution_started_at: formData.execution_started_at,
       execution_finished_at: formData.execution_finished_at,
-    };
-
-    if (formData.project_id) {
-      dataToSend.project_id = formData.project_id;
     }
-
-    if (formData.schedule_agent_id !== null) {
-      dataToSend.schedule_agent_id = formData.schedule_agent_id;
-    }
-
-    if (formData.service_opinion) {
-      dataToSend.service_opinion_id = formData.service_opinion.id;
-    }
-
-    if (formData.final_service_opinion_id) {
-      dataToSend.final_service_opinion_id = formData.final_service_opinion_id;
-    }
-
+  
+    console.log('Dados a serem enviados:', dataToSend)
+  
     try {
       if (id) {
-        await scheduleService.updateSchedule(id, dataToSend);
+        await scheduleService.updateSchedule(id, dataToSend)
       } else {
-        await scheduleService.createSchedule(dataToSend);
+        await scheduleService.createSchedule(dataToSend)
       }
-      setFormErrors({});
-      setSuccess(true);
+      setFormErrors({})
+      setSuccess(true)
     } catch (err) {
-      setSuccess(false);
-      setFormErrors(err.response?.data || {});
-      console.error(err.response?.data || err);
+      setSuccess(false)
+      setFormErrors(err.response?.data || {})
+      console.error(err.response?.data || err)
     }
-  };
+  }
+  
 
   return {
     formData,
@@ -298,7 +316,7 @@ const useScheduleForm = (initialData, id) => {
     handleSave,
     formErrors,
     success,
-  };
-};
+  }
+}
 
-export default useScheduleForm;
+export default useScheduleForm
