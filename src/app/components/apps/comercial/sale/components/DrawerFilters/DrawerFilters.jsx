@@ -21,6 +21,8 @@ export default function DrawerFilters() {
     seller: filters.seller,
   });
 
+  console.log('tempFilters', tempFilters);
+
   const createFilterParams = (filters) => {
     const params = {};
 

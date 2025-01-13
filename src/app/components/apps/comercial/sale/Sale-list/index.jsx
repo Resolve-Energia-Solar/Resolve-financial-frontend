@@ -54,11 +54,7 @@ import EditSaleTabs from '../Edit-sale';
 import SideDrawer from '@/app/components/shared/SideDrawer';
 import InforCards from '../../../inforCards/InforCards';
 import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
-import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import StatusChip from '@/utils/status/DocumentStatusIcon';
 
@@ -72,7 +68,7 @@ const SaleList = () => {
 
   const { handleRowClick, openDrawer, rowSelected, toggleDrawerClosed } = useSale();
 
-  const { filters, refresh } = useContext(SaleDataContext);
+  const { filters, setFilters, refresh } = useContext(SaleDataContext);
 
   const user = useSelector((state) => state?.user?.user);
 
@@ -125,7 +121,7 @@ const SaleList = () => {
       const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
       try {
         setLoading(true);
-  
+
         const data = await saleService.getSales({
           userRole: userRole,
           ordering: orderingParam,
@@ -133,7 +129,7 @@ const SaleList = () => {
           page: page + 1,
           ...filters,
         });
-        
+
         console.log('data?.results?.indicators', data?.results?.indicators);
         setIndicators(data?.results?.indicators);
         setSalesList(data.results.results);
@@ -145,14 +141,14 @@ const SaleList = () => {
         setLoading(false);
       }
     };
-  
+
     fetchSales();
   }, [page, rowsPerPage, order, orderDirection, filters, refresh]);
-  
+
   const handlePageChange = (event, newPage) => {
     setPage(newPage); // Define a nova página (base zero)
   };
-  
+
   const handleRowsPerPageChange = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10)); // Atualiza o número de linhas por página
     setPage(0); // Reseta para a primeira página ao alterar o número de itens por página
@@ -274,6 +270,7 @@ const SaleList = () => {
                 iconColor: 'primary.main',
                 IconComponent: IconListDetails,
                 title: 'Em andamento',
+                onClick: () => setFilters({ status__in: 'EA' }),
                 count: indicators?.in_progress_count || '-',
               },
               {
@@ -281,6 +278,7 @@ const SaleList = () => {
                 iconColor: 'success.main',
                 IconComponent: IconListDetails,
                 title: 'Finalizado',
+                onClick: () => setFilters({ status__in: 'F' }),
                 count: indicators?.finalized_count || '-',
               },
               {
@@ -288,6 +286,7 @@ const SaleList = () => {
                 iconColor: 'secondary.main',
                 IconComponent: IconPaperclip,
                 title: 'Pendente',
+                onClick: () => setFilters({ status__in: 'P' }),
                 count: indicators?.pending_count || '-',
               },
               {
@@ -295,6 +294,7 @@ const SaleList = () => {
                 iconColor: 'warning.main',
                 IconComponent: IconSortAscending,
                 title: 'Cancelado',
+                onClick: () => setFilters({ status__in: 'C' }),
                 count: indicators?.canceled_count || '-',
               },
               {
@@ -302,6 +302,7 @@ const SaleList = () => {
                 iconColor: 'warning.main',
                 IconComponent: IconSortAscending,
                 title: 'Distrato',
+                onClick: () => setFilters({ status__in: 'D' }),
                 count: indicators?.distracted_count || '-',
               },
             ]}
@@ -329,11 +330,7 @@ const SaleList = () => {
       </Box>
 
       <Box>
-        <TableContainer
-          component={Paper}
-          elevation={10}
-          sx={{ overflowX: 'auto' }}
-        >
+        <TableContainer component={Paper} elevation={10} sx={{ overflowX: 'auto' }}>
           <Table stickyHeader aria-label="sales table">
             <TableHead>
               <TableRow>
@@ -627,7 +624,11 @@ const SaleList = () => {
           Enviando Contrato...
         </Typography>
       </Backdrop>
-      <SideDrawer open={openDrawer} onClose={() => toggleDrawerClosed(false)} title="Detalhamento da Venda">
+      <SideDrawer
+        open={openDrawer}
+        onClose={() => toggleDrawerClosed(false)}
+        title="Detalhamento da Venda"
+      >
         <EditSaleTabs saleId={rowSelected?.id} />
       </SideDrawer>
     </Box>
