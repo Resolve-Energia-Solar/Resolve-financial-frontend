@@ -21,11 +21,16 @@ import { Image, UploadFile } from '@mui/icons-material';
 import AttachmentsSkeleton from './AttachmentsSkeleton';
 import useAttachmentForm from '@/hooks/attachments/useAttachmentsForm';
 import FormSelect from '../forms/form-custom/FormSelect';
+import HasPermission from '../permissions/HasPermissions';
+import { useSelector } from 'react-redux';
 
 export default function Attachments({ objectId, contentType, documentTypes }) {
   const theme = useTheme();
   const [selectedAttachment, setSelectedAttachment] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const userPermissions = useSelector((state) => state.user.permissions);
+
 
   const statusDoc = [
     { value: 'EA', label: 'Em Análise' },
@@ -49,7 +54,9 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
     selectedAttachment?.object_id || objectId,
     selectedAttachment?.content_type?.id || parseInt(contentType),
   );
-  
+
+  formData.status ? formData.status : (formData.status = 'EA');
+
   const [attachments, setAttachments] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -219,12 +226,17 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
               <input type="file" id="file-upload" hidden onChange={handleFileSelect} />
             </Box>
 
-            <FormSelect
-              label="Status do Documento"
-              options={statusDoc}
-              value={formData.status}
-              onChange={(e) => handleChange('status', e.target.value)}
-            />
+            <HasPermission
+              permissions={['core.change_status_attachment_field']}
+              userPermissions={userPermissions}
+            >
+              <FormSelect
+                label="Status do Documento"
+                options={statusDoc}
+                value={formData.status}
+                onChange={(e) => handleChange('status', e.target.value)}
+              />
+            </HasPermission>
 
             <CustomTextField
               label="Descrição"

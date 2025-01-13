@@ -1,9 +1,15 @@
 import React from 'react';
 import { Grid, Box, Stack, Typography } from '@mui/material';
 
-const InfoCard = ({ backgroundColor, iconColor,  IconComponent, title, count }) => (
+// Componente InfoCard
+const InfoCard = ({ backgroundColor, iconColor, IconComponent, title, count, onClick }) => (
   <Grid item xs={12} sm={6} lg={2.4}>
-    <Box bgcolor={backgroundColor} p={1} sx={{ cursor: 'pointer' }}>
+    <Box
+      bgcolor={backgroundColor}
+      p={1}
+      sx={{ cursor: 'pointer' }}
+      onClick={onClick} // Evento de clique aplicado aqui
+    >
       <Stack direction="row" gap={2} alignItems="center">
         <Box
           width={35}
@@ -34,6 +40,7 @@ const SaleCards = ({ cardsData }) => (
         IconComponent={card.IconComponent}
         title={card.title}
         count={card.count}
+        onClick={card.onClick}
       />
     ))}
   </Grid>
