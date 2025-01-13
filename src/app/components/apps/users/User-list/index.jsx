@@ -19,6 +19,7 @@ import {
   DialogContentText,
   DialogTitle,
   Button,
+  TablePagination,
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon, AddBoxRounded } from '@mui/icons-material';
 
@@ -33,13 +34,14 @@ const UserList = () => {
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const router = useRouter();
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const data = await userService.getUser();
-        console.log(data);
         setUserList(data.results);
       } catch (err) {
         setError('Erro ao carregar Usuários');
@@ -73,13 +75,20 @@ const UserList = () => {
     try {
       await userService.deleteUser(userToDelete);
       setUserList(userList.filter((item) => item.id !== userToDelete));
-      console.log('Usuário excluído com sucesso');
     } catch (err) {
       setError('Erro ao excluir o usuário');
-      console.error('Erro ao excluir o usuário', err);
     } finally {
       handleCloseModal();
     }
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   return (
@@ -97,53 +106,64 @@ const UserList = () => {
       ) : error ? (
         <Typography color="error">{error}</Typography>
       ) : (
-        <TableContainer component={Paper} elevation={3}>
-          <Table aria-label="table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Usuário</TableCell>
-                <TableCell>E-mail</TableCell>
-                <TableCell>Departamento</TableCell>
-                <TableCell>Função</TableCell>
-                <TableCell>Permissões</TableCell>
-                <TableCell>Ações</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {userList.map((item, index) => (
-                <TableRow key={index} hover>
-                  <TableCell>{item?.username}</TableCell>
-                  <TableCell>{item?.email}</TableCell>
-                  <TableCell>{item?.department?.name || 'N/A'}</TableCell>
-                  <TableCell>{item?.role?.name || 'N/A'}</TableCell>
-                  <TableCell>
-                    <Chip label={`${item?.user_permissions?.length} permissões`} />
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip title="Editar">
-                      <IconButton
-                        color="primary"
-                        size="small"
-                        onClick={() => handleEditClick(item?.id)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Excluir">
-                      <IconButton
-                        color="error"
-                        size="small"
-                        onClick={() => handleDeleteClick(item?.id)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
+        <>
+          <TableContainer component={Paper} elevation={3}>
+            <Table aria-label="table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Usuário</TableCell>
+                  <TableCell>E-mail</TableCell>
+                  <TableCell>Departamento</TableCell>
+                  <TableCell>Função</TableCell>
+                  <TableCell>Permissões</TableCell>
+                  <TableCell>Ações</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {userList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
+                  <TableRow key={index} hover>
+                    <TableCell>{item?.username}</TableCell>
+                    <TableCell>{item?.email}</TableCell>
+                    <TableCell>{item?.department?.name || 'N/A'}</TableCell>
+                    <TableCell>{item?.role?.name || 'N/A'}</TableCell>
+                    <TableCell>
+                      <Chip label={`${item?.user_permissions?.length} permissões`} />
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip title="Editar">
+                        <IconButton
+                          color="primary"
+                          size="small"
+                          onClick={() => handleEditClick(item?.id)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Excluir">
+                        <IconButton
+                          color="error"
+                          size="small"
+                          onClick={() => handleDeleteClick(item?.id)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 15]}
+            component="div"
+            count={userList.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </>
       )}
 
       <Dialog open={open} onClose={handleCloseModal}>
