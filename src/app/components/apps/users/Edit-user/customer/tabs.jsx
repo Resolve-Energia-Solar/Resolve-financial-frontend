@@ -1,3 +1,4 @@
+"use client";
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
@@ -10,6 +11,7 @@ import ListPhones from '@/app/components/apps/users/Edit-user/customer/Phones';
 import PersonIcon from '@mui/icons-material/Person';
 import HomeIcon from '@mui/icons-material/Home';
 import PhoneIcon from '@mui/icons-material/Phone';
+import { useParams } from 'next/navigation';
 
 
 function TabPanel(props) {
@@ -47,6 +49,10 @@ function a11yProps(index) {
 }
 
 export default function CustomerTabs({ userId = null }) {
+  const params = useParams();
+  let id = userId;
+  if (!userId) id = params.id;
+
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -69,13 +75,13 @@ export default function CustomerTabs({ userId = null }) {
         <Tab label={<PhoneIcon />} sx={{ p: 0, minWidth: '40px' }}   {...a11yProps(2)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-        <EditCustomer userId={userId} />
+        <EditCustomer userId={id} />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <ListAddresses userId={userId} />
+        <ListAddresses userId={id} />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <ListPhones userId={userId} />
+        <ListPhones userId={id} />
       </TabPanel>
     </Box>
   );

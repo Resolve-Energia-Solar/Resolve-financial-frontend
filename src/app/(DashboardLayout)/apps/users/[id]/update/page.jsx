@@ -5,6 +5,7 @@ import PageContainer from '@/app/components/container/PageContainer';
 import ParentCard from '@/app/components/shared/ParentCard';
 
 import EditUserPage from "@/app/components/apps/users/Edit-user";
+import CustomerTabs from "@/app/components/apps/users/Edit-user/customer/tabs";
 
 
 const EditUser = () => {
@@ -24,7 +25,7 @@ const EditUser = () => {
 
       <ParentCard title="Usuário">
         <CardContent>
-          <EditUserPage />
+          <CustomerTabs />
         </CardContent>
       </ParentCard>
     </PageContainer>
