@@ -1,5 +1,5 @@
 'use client';
-import { Grid, Button, Stack, FormControlLabel } from '@mui/material';
+import { Grid, Button, Stack, FormControlLabel, CircularProgress } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 
@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 
 import useUserForm from '@/hooks/users/useUserForm';
 import AutoCompletePhoneNumber from '../../comercial/sale/components/auto-complete/AutoCompletePhoneNumber';
+import { IconDeviceFloppy } from '@tabler/icons-react';
 
 export default function CreateCustomer({ onClosedModal = null, selectedUserId = null }) {
   const { formData, handleChange, handleSave, formErrors, success, dataReceived } = useUserForm();
@@ -153,7 +154,15 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
 
       <Grid item xs={12} sm={12} lg={12}>
         <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-          <Button variant="contained" color="primary" onClick={handleSave}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSave}
+            disabled={formLoading}
+            startIcon={
+              formLoading ? <CircularProgress size={20} color="inherit" /> : <IconDeviceFloppy />
+            }
+          >
             Criar
           </Button>
         </Stack>

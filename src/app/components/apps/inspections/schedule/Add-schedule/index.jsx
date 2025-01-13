@@ -20,6 +20,7 @@ import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import AutoCompleteProject from '../../auto-complete/Auto-input-Project';
 import { useSelector } from 'react-redux';
+import HasPermission from '@/app/components/permissions/HasPermissions';
 
 const ScheduleFormCreate = ({
   serviceId = null,

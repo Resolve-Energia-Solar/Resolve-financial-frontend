@@ -1,5 +1,5 @@
 'use client';
-import { Grid, Button, Stack, FormControlLabel } from '@mui/material';
+import { Grid, Button, Stack, FormControlLabel, CircularProgress } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import { useParams } from 'next/navigation';
@@ -14,6 +14,7 @@ import FormDate from '@/app/components/forms/form-custom/FormDate';
 
 import useUser from '@/hooks/users/useUser';
 import useUserForm from '@/hooks/users/useUserForm';
+import { IconDeviceFloppy } from '@tabler/icons-react';
 
 export default function EditUser({ userId = null }) {
   const params = useParams();
@@ -24,7 +25,7 @@ export default function EditUser({ userId = null }) {
 
   console.log('userData', userData);
 
-  const { formData, handleChange, handleSave, formErrors, success } = useUserForm(userData, id);
+  const { formData, handleChange, handleSave, formErrors, success, loading: formLoading } = useUserForm(userData, id);
 
   console.log('formData', formData);
 
@@ -161,7 +162,15 @@ export default function EditUser({ userId = null }) {
 
       <Grid item xs={12} sm={12} lg={12}>
         <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-          <Button variant="contained" color="primary" onClick={handleSave}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSave}
+            disabled={formLoading}
+            startIcon={
+              formLoading ? <CircularProgress size={20} color="inherit" /> : <IconDeviceFloppy />
+            }
+          >
             Editar
           </Button>
         </Stack>
