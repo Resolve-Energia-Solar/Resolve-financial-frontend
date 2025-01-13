@@ -416,11 +416,11 @@ const SaleList = () => {
                 </TableCell>
 
                 <TableCell>Unidade</TableCell>
-                <TableCell>Ações</TableCell>
+                {/* <TableCell>Ações</TableCell> */}
               </TableRow>
             </TableHead>
             {loading ? (
-              <TableSkeleton rows={5} columns={8} />
+              <TableSkeleton rows={5} columns={7} />
             ) : error && page === 1 ? (
               <Typography color="error">{error}</Typography>
             ) : (
@@ -456,7 +456,7 @@ const SaleList = () => {
                       )}
                     </TableCell>
                     <TableCell>{item.branch.name}</TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       <Tooltip title="Ações">
                         <IconButton
                           size="small"
@@ -518,7 +518,7 @@ const SaleList = () => {
                           Gerar Proposta
                         </MenuItem>
                       </Menu>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))}
                 {loading && page > 1 && (
