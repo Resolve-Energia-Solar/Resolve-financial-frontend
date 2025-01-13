@@ -15,7 +15,7 @@ import AutoCompletePhoneNumber from '../../comercial/sale/components/auto-comple
 import { IconDeviceFloppy } from '@tabler/icons-react';
 
 export default function CreateCustomer({ onClosedModal = null, selectedUserId = null }) {
-  const { formData, handleChange, handleSave, formErrors, success, dataReceived } = useUserForm();
+  const { formData, handleChange, handleSave, formErrors, success, dataReceived, loading: formLoading } = useUserForm();
 
   formData.is_active = true;
 
