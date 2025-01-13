@@ -4,18 +4,13 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-User';
-import AutoCompleteBranch from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Branch';
 import AutoCompleteAddresses from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Addresses';
-import AutoCompleteDepartament from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Departament';
-import AutoCompleteRole from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Role';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import { useRouter } from 'next/navigation';
 
 import { useEffect } from 'react';
 
 import useUserForm from '@/hooks/users/useUserForm';
-import AutoCompletePhoneNumbers from '../../comercial/sale/components/auto-complete/Auto-Input-PhoneNumbers';
 import AutoCompletePhoneNumber from '../../comercial/sale/components/auto-complete/AutoCompletePhoneNumber';
 
 export default function CreateCustomer({ onClosedModal = null, selectedUserId = null }) {

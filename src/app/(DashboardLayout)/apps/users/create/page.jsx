@@ -4,7 +4,7 @@ import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcr
 import PageContainer from '@/app/components/container/PageContainer';
 import ParentCard from '@/app/components/shared/ParentCard';
 import { CardContent } from '@mui/material';
-import CreateUserPage from '@/app/components/apps/users/Add-user';
+import CreateCustomer from '@/app/components/apps/users/Add-user/customer';
 
 const CreateUser = () => {
   return (
@@ -12,7 +12,7 @@ const CreateUser = () => {
       <Breadcrumb title="Criar usuário" />
       <ParentCard title="Usuário">
         <CardContent>
-          <CreateUserPage />
+          <CreateCustomer />
         </CardContent>
       </ParentCard>
     </PageContainer>
