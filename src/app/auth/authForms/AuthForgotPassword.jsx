@@ -36,7 +36,7 @@ export default function AuthForgotPassword() {
     try {
       setIsSubmitting(true);
       await PasswordService.sendPasswordResetEmail({ email });
-      setSuccessMessage('E-mail de reset de senha enviado com sucesso!');
+      setSuccessMessage('Se o e-mail informado estiver correto você receberá uma mensagem com as instruções para redefinir sua senha.');
       setSnackbarOpen(true);
     } catch (error) {
       console.error('Erro ao enviar o e-mail:', error);

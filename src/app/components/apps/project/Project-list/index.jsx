@@ -146,12 +146,12 @@ const ProjectList = ({ onClick }) => {
               {projectsList.map((item) => (
                 <TableRow
                   key={item.id}
-                  hover={item?.sale?.status === 'F'}
-                  onClick={() => item?.sale?.status === 'F' && onClick(item)}
-                  sx={{
-                    opacity: item?.sale?.status === 'F' ? 1 : 0.5,
-                    pointerEvents: item?.sale?.status === 'F' ? 'auto' : 'none',
-                  }}
+                  // hover={item?.sale?.status === 'F'}
+                  onClick={() => onClick(item)}
+                  // sx={{
+                  //   opacity: item?.sale?.status === 'F' ? 1 : 0.5,
+                  //   pointerEvents: item?.sale?.status === 'F' ? 'auto' : 'none',
+                  // }}
                 >
                   <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                   <TableCell>{item?.project_number}</TableCell>

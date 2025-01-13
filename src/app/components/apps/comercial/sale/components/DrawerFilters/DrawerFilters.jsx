@@ -18,6 +18,7 @@ export default function DrawerFilters() {
     branch: filters.branch,
     customer: filters.customer,
     isPreSale: filters.isPreSale,
+    seller: filters.seller,
   });
 
   const createFilterParams = (filters) => {
@@ -51,6 +52,10 @@ export default function DrawerFilters() {
       params.is_pre_sale = preSaleValues.join(',');
     }
 
+    if (filters.seller) {
+      params.seller = filters.seller;
+    }
+
     return params;
   };
 
@@ -65,6 +70,7 @@ export default function DrawerFilters() {
       branch: null,
       customer: null,
       isPreSale: [],
+      seller: null,
     });
   };
 
@@ -166,6 +172,15 @@ export default function DrawerFilters() {
                   placeholder="Selecione o cliente"
                   value={tempFilters.customer}
                   onChange={(id) => handleChange('customer', id)}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="customer">Vendedor</CustomFormLabel>
+                <AutoCompleteUser
+                  placeholder="Selecione o cliente"
+                  value={tempFilters.seller}
+                  onChange={(id) => handleChange('seller', id)}
                 />
               </Grid>
             </Grid>

@@ -50,9 +50,7 @@ import { IconEyeglass } from '@tabler/icons-react';
 import OnboardingCreateSale from '../Add-sale/onboarding';
 import { useSelector } from 'react-redux';
 import useSale from '@/hooks/sales/useSale';
-import EditDrawer from '../../Drawer/Form';
 import EditSaleTabs from '../Edit-sale';
-import ParentCard from '@/app/components/shared/ParentCard';
 import SideDrawer from '@/app/components/shared/SideDrawer';
 import InforCards from '../../../inforCards/InforCards';
 import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
@@ -70,6 +68,7 @@ const SaleList = () => {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
   const [openCreateSale, setOpenCreateSale] = useState(false);
+  const [indicators, setIndicators] = useState({});
 
   const { handleRowClick, openDrawer, rowSelected, toggleDrawerClosed } = useSale();
 
@@ -80,9 +79,8 @@ const SaleList = () => {
   const userRole = {
     user: user?.id,
     role: user?.is_superuser ? 'Superuser' : user?.employee?.role?.name,
+    branch: user?.employee?.branch?.id,
   };
-
-  console.log('userRole', userRole);
 
   const {
     isSendingContract,
@@ -112,8 +110,8 @@ const SaleList = () => {
   const [open, setOpen] = useState(false);
   const [saleToDelete, setSaleToDelete] = useState(null);
 
-  const [rowsPerPage, setRowsPerPage] = useState(5); // Itens por página
-  const [totalRows, setTotalRows] = useState(0); // Total de linhas retornadas pela API
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [totalRows, setTotalRows] = useState(0);
 
   const router = useRouter();
 
@@ -135,8 +133,10 @@ const SaleList = () => {
           page: page + 1,
           ...filters,
         });
-  
-        setSalesList(data.results);
+        
+        console.log('data?.results?.indicators', data?.results?.indicators);
+        setIndicators(data?.results?.indicators);
+        setSalesList(data.results.results);
         setTotalRows(data.count);
       } catch (err) {
         setError('Erro ao carregar Vendas');
@@ -274,35 +274,35 @@ const SaleList = () => {
                 iconColor: 'primary.main',
                 IconComponent: IconListDetails,
                 title: 'Em andamento',
-                count: '-',
+                count: indicators?.in_progress_count || '-',
               },
               {
                 backgroundColor: 'success.light',
                 iconColor: 'success.main',
                 IconComponent: IconListDetails,
                 title: 'Finalizado',
-                count: '-',
+                count: indicators?.finalized_count || '-',
               },
               {
                 backgroundColor: 'secondary.light',
                 iconColor: 'secondary.main',
                 IconComponent: IconPaperclip,
                 title: 'Pendente',
-                count: '-',
+                count: indicators?.pending_count || '-',
               },
               {
                 backgroundColor: 'warning.light',
                 iconColor: 'warning.main',
                 IconComponent: IconSortAscending,
                 title: 'Cancelado',
-                count: '-',
+                count: indicators?.canceled_count || '-',
               },
               {
                 backgroundColor: 'warning.light',
                 iconColor: 'warning.main',
                 IconComponent: IconSortAscending,
                 title: 'Distrato',
-                count: '-',
+                count: indicators?.distracted_count || '-',
               },
             ]}
           />
