@@ -33,6 +33,7 @@ const ProjectList = ({ onClick }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalRows, setTotalRows] = useState(0);
   const router = useRouter();
+  const [indicators, setIndicators] = useState([]);
 
   const { filters, refresh } = useContext(ProjectDataContext);
 
@@ -47,7 +48,12 @@ const ProjectList = ({ onClick }) => {
           expand: 'sale.customer',
           ...filters,
         });
-        setProjectsList(data.results);
+
+        console.log('data.results', data.results);
+        console.log('indicators', indicators);
+
+        setIndicators(data?.results?.indicators);
+        setProjectsList(data.results.results);
         setTotalRows(data.count);
       } catch (err) {
         setError('Erro ao carregar Projetos');
