@@ -179,15 +179,23 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                     {...(formErrors.branch_id && { error: true, helperText: formErrors.branch_id })}
                   />
                 </Grid>
-                <Grid item xs={12} sm={12} lg={4}>
-                  <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
-                  <AutoCompleteUser
-                    onChange={(id) => handleChange('sellerId', id)}
-                    value={formData.sellerId}
-                    disabled={!hasPermission(['accounts.change_seller_field'])}
-                    {...(formErrors.seller_id && { error: true, helperText: formErrors.seller_id })}
-                  />
-                </Grid>
+                <HasPermission
+                  permissions={['accounts.change_seller_field']}
+                  userPermissions={userPermissions}
+                >
+                  <Grid item xs={12} sm={12} lg={4}>
+                    <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
+                    <AutoCompleteUser
+                      onChange={(id) => handleChange('sellerId', id)}
+                      value={formData.sellerId}
+                      disabled={!hasPermission(['accounts.change_seller_field'])}
+                      {...(formErrors.seller_id && {
+                        error: true,
+                        helperText: formErrors.seller_id,
+                      })}
+                    />
+                  </Grid>
+                </HasPermission>
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="name">Supervisor de Vendas</CustomFormLabel>
                   <AutoCompleteUser
