@@ -1,6 +1,5 @@
-import { use, useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-
 import {
   Box,
   Button,
@@ -13,39 +12,47 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { FilterAlt, Close } from '@mui/icons-material';
+import { Close } from '@mui/icons-material';
 
-import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import { ScheduleDataContext } from '@/app/context/Inspection/ScheduleContext';
-import FormDateRange from '../../../comercial/sale/components/DrawerFilters/DateRangePicker';
-import CheckboxesTags from '../../../comercial/sale/components/DrawerFilters/CheckboxesTags';
-import AutoCompleteUserFilter from '../../auto-complete/Auto-Input-UserFilter';
-import AutoCompleteServiceCatalogFilter from '../../auto-complete/Auto-Input-ServiceFilter';
-import scheduleService from '@/services/scheduleService';
 import Logo from '@/app/(DashboardLayout)/layout/shared/logo/Logo';
 import ScheduleStatusChip from '../StatusChip';
 import answerService from '@/services/answerService';
+import userService from '@/services/userService';
 import AnswerForm from '../../form-builder/AnswerForm';
 
 export default function ScheduleView({ open, onClose, selectedSchedule }) {
   const router = useRouter();
-
+  const [creator, setCreator] = useState(null);
   const [answerData, setAnswerData] = useState(null);
   const [loadingAnswer, setLoadingAnswer] = useState(true);
-
-  const formatDate = (dateString) => {
-    const [year, month, day] = dateString.split('-');
-    return `${day}/${month}/${year}`;
+  const formatDateTime = (dateString) => {
+    if (!dateString) return 'Não identificado';
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date);
   };
 
-  const formatTime = (timeString) => {
-    const [hours, minutes] = timeString.split(':');
-    return `${hours}:${minutes}`;
-  };
+  console.log('selectedSchedule', selectedSchedule);
 
-  const handleEditClick = (id) => {
-    router.push(`/apps/inspections/schedule/${id}/update`);
-  };
+  useEffect(() => {
+    async function fetchCreator() {
+      if (selectedSchedule?.schedule_creator) {
+        try {
+          const creatorData = await userService.getUserById(selectedSchedule.schedule_creator);
+          setCreator(creatorData);
+        } catch (error) {
+          console.error('Error fetching creator:', error);
+        }
+      }
+    }
+
+    fetchCreator();
+  }, [selectedSchedule]);
 
   useEffect(() => {
     const fetchAnswer = async () => {
@@ -54,7 +61,7 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
         const data = await answerService.getAnswerBySchedule(selectedSchedule.id);
         setAnswerData(data);
       } catch (err) {
-        setError('Erro ao carregar a resposta');
+        console.error('Erro ao carregar a resposta:', err);
       } finally {
         setLoadingAnswer(false);
       }
@@ -65,119 +72,117 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
     }
   }, [selectedSchedule]);
 
+  const handleEditClick = (id) => {
+    router.push(`/apps/inspections/schedule/${id}/update`);
+  };
+
+  const formatDate = (dateString) => {
+    const [year, month, day] = dateString.split('-');
+    return `${day}/${month}/${year}`;
+  };
+
   return (
     <Box sx={{ display: 'flex' }}>
       <Drawer anchor="right" open={open} onClose={onClose}>
         <Box
           role="presentation"
           sx={{
-            minWidth: {
-              xs: '100vw',
-              sm: '50vw',
-              md: '40vw',
-            },
-            padding: 2,
+            minWidth: { xs: '100vw', sm: '50vw', md: '40vw' },
+            padding: 3,
           }}
         >
           <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
-              <Typography variant="h5" sx={{ marginBottom: '25px' }}>
-                Detalhes do Agendamento
-              </Typography>
-              <Close onClick={onClose} />
+            <Box
+              sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}
+            >
+              <Typography variant="h5">Detalhes do Agendamento</Typography>
+              <Close onClick={onClose} sx={{ cursor: 'pointer' }} />
             </Box>
+
             {selectedSchedule && (
               <>
-                <Stack
-                  direction={{ xs: 'column', sm: 'row' }}
-                  alignItems="center"
-                  justifyContent="space-between"
-                  mb={2}
-                >
-                  <Box
-                    sx={{
-                      textAlign: {
-                        xs: 'center',
-                        sm: 'left',
-                      },
-                    }}
-                  >
-                    <Typography variant="h3"># {selectedSchedule.id}</Typography>
-                    <Box mt={1}>
-                      <Chip
-                        size="small"
-                        color="secondary"
-                        variant="outlined"
-                        label={formatDate(selectedSchedule.schedule_date)}
-                      ></Chip>
-                    </Box>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+                  <Box>
+                    <Typography variant="h4">#{selectedSchedule.id}</Typography>
+                    <Chip
+                      size="small"
+                      color="secondary"
+                      variant="outlined"
+                      label={formatDate(selectedSchedule.schedule_date)}
+                      sx={{ mt: 1 }}
+                    />
                   </Box>
                   <Logo />
                   <ScheduleStatusChip status={selectedSchedule.status} />
                 </Stack>
                 <Divider />
 
-                <Paper variant="outlined" sx={{ marginTop: 2 }}>
-                  <Box p={3} display="flex" flexDirection="column" gap="4px">
-                    <Typography variant="h4" sx={{ marginBottom: '15px' }}>
-                      <strong>Cliente contratante:</strong>{' '}
-                      {selectedSchedule.customer.complete_name}
-                    </Typography>
+                <Paper variant="outlined" sx={{ mt: 3, p: 2 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Cliente Contratante
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Nome:</strong> {selectedSchedule.customer.complete_name}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Endereço:</strong>{' '}
+                    {`${selectedSchedule.address.street}, ${selectedSchedule.address.number}, ${selectedSchedule.address.neighborhood}, ${selectedSchedule.address.city} - ${selectedSchedule.address.state}`}
+                  </Typography>
+                </Paper>
 
-                    <Divider />
-                    <Box mt={2}>
-                      <Typography variant="body1">
-                        <strong>Endereço:</strong>{' '}
-                        {`${selectedSchedule.address.street}, ${selectedSchedule.address.number}, ${selectedSchedule.address.neighborhood}, ${selectedSchedule.address.city} - ${selectedSchedule.address.state}`}
-                      </Typography>
-                    </Box>
-                  </Box>
+                <Paper variant="outlined" sx={{ mt: 3, p: 2 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Detalhes do Serviço
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Serviço:</strong> {selectedSchedule.service.name}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Agente:</strong>{' '}
+                    {selectedSchedule.schedule_agent
+                      ? selectedSchedule.schedule_agent.complete_name
+                      : 'Sem agente associado'}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Vendedor:</strong>{' '}
+                    {selectedSchedule.project?.sale?.seller?.complete_name ||
+                      'Sem vendedor associado'}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Unidade:</strong>{' '}
+                    {selectedSchedule.project?.sale?.branch?.name || 'Sem unidade associada'}
+                  </Typography>
                 </Paper>
-                <Paper variant="outlined" sx={{ marginTop: 2 }}>
-                  <Box p={3} display="flex" flexDirection="column" gap="4px">
-                    <Typography variant="h4" sx={{ marginBottom: '15px' }}>
-                      <strong>Serviço:</strong> {selectedSchedule.service.name}
-                    </Typography>
-                    <Divider />
-                    <Box mt={2}>
-                      <Typography variant="body1">
-                        <strong>Agente:</strong>{' '}
-                        {selectedSchedule.schedule_agent
-                          ? selectedSchedule.schedule_agent.complete_name
-                          : 'Sem agente associado'}
-                      </Typography>
-                      <Typography variant="body1">
-                        <strong>Vendedor:</strong>{' '}
-                        {selectedSchedule.project.id
-                          ? selectedSchedule.project.sale.seller.complete_name
-                          : 'Sem projeto associado'}
-                      </Typography>
-                      <Typography variant="body1">
-                        <strong>Unidade:</strong>{' '}
-                        {selectedSchedule.project.id
-                          ? selectedSchedule.project.sale.branch.name
-                          : 'Sem projeto associado'}
-                      </Typography>
-                    </Box>
-                  </Box>
+
+                <Paper variant="outlined" sx={{ mt: 3, p: 2 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Informações do Agendamento
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Agendado por:</strong> {creator?.complete_name || 'Não identificado'}
+                  </Typography>
+                  <Typography variant="body1">
+                    <Typography variant="body1">
+                      <strong>Criado em:</strong> {formatDateTime(selectedSchedule?.created_at)}
+                    </Typography>{' '}
+                  </Typography>
                 </Paper>
+
                 {answerData?.results?.length > 0 && !loadingAnswer && (
                   <AnswerForm answerData={answerData} />
                 )}
+
+                <Stack direction="row" spacing={2} justifyContent="flex-end" mt={3}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleEditClick(selectedSchedule.id)}
+                  >
+                    Editar Agendamento
+                  </Button>
+                </Stack>
               </>
             )}
-            {/* Botão de Ação */}
-            <Grid item xs={12} sm={12} lg={12}>
-              <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleEditClick(selectedSchedule.id)}
-                >
-                  Editar Agendamento
-                </Button>
-              </Stack>
-            </Grid>
           </CardContent>
         </Box>
       </Drawer>
