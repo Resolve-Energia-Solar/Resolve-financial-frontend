@@ -16,7 +16,13 @@ import {
   Box,
   CircularProgress,
   Skeleton,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material';
+import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
+import InforCards from '@/app/components/apps/inforCards/InforCards';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Edit as EditIcon, Delete as DeleteIcon, AddBoxRounded } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import projectService from '@/services/projectService';
@@ -33,7 +39,7 @@ const ProjectList = ({ onClick }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalRows, setTotalRows] = useState(0);
   const router = useRouter();
-  const [indicators, setIndicators] = useState([]);
+  const [indicators, setIndicators] = useState({});
 
   const { filters, refresh } = useContext(ProjectDataContext);
 
@@ -50,7 +56,7 @@ const ProjectList = ({ onClick }) => {
         });
 
         console.log('data.results', data.results);
-        console.log('indicators', indicators);
+        console.log('indicators', data.results.indicators);
 
         setIndicators(data?.results?.indicators);
         setProjectsList(data.results.results);
@@ -76,22 +82,72 @@ const ProjectList = ({ onClick }) => {
 
   return (
     <>
+      <Accordion sx={{ marginBottom: 4 }}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="sale-cards-content"
+          id="sale-cards-header"
+        >
+          <Typography variant="h6">Status do Projeto (Engenharia)</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <InforCards
+            cardsData={[
+              {
+                backgroundColor: 'primary.light',
+                iconColor: 'primary.main',
+                IconComponent: IconListDetails,
+                title: 'Em andamento',
+                count: indicators?.designer_in_progress_count || '-',
+              },
+              {
+                backgroundColor: 'success.light',
+                iconColor: 'success.main',
+                IconComponent: IconListDetails,
+                title: 'Finalizado',
+                count: indicators?.designer_complete_count || '-',
+              },
+              {
+                backgroundColor: 'secondary.light',
+                iconColor: 'secondary.main',
+                IconComponent: IconPaperclip,
+                title: 'Pendente',
+                count: indicators?.designer_pending_count || '-',
+              },
+              {
+                backgroundColor: 'warning.light',
+                iconColor: 'warning.main',
+                IconComponent: IconSortAscending,
+                title: 'Cancelado',
+                count: indicators?.designer_canceled_count || '-',
+              },
+              {
+                backgroundColor: 'warning.light',
+                iconColor: 'warning.main',
+                IconComponent: IconSortAscending,
+                title: 'Distrato',
+                count: indicators?.designer_termination_count || '-',
+              },
+            ]}
+          />
+        </AccordionDetails>
+      </Accordion>
+
       <Typography variant="h6" gutterBottom>
         Lista de Projetos
       </Typography>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
         <Button
           variant="outlined"
           startIcon={<AddBoxRounded />}
           onClick={() => router.push('/apps/project/create')}
-          sx={{ marginTop: 1, marginBottom: 2 }}
+          sx={{ marginBottom: 2 }}
         >
           Criar Projeto
         </Button>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <DrawerFiltersProject />
-        </Box>
+        <DrawerFiltersProject />
       </Box>
 
       {loading ? (
@@ -152,12 +208,7 @@ const ProjectList = ({ onClick }) => {
               {projectsList.map((item) => (
                 <TableRow
                   key={item.id}
-                  // hover={item?.sale?.status === 'F'}
                   onClick={() => onClick(item)}
-                  // sx={{
-                  //   opacity: item?.sale?.status === 'F' ? 1 : 0.5,
-                  //   pointerEvents: item?.sale?.status === 'F' ? 'auto' : 'none',
-                  // }}
                 >
                   <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                   <TableCell>{item?.project_number}</TableCell>
@@ -181,18 +232,6 @@ const ProjectList = ({ onClick }) => {
                         <EditIcon />
                       </IconButton>
                     </Tooltip>
-                    {/* <Tooltip title="Excluir">
-                      <IconButton
-                        color="error"
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // Lógica para excluir
-                        }}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Tooltip> */}
                   </TableCell>
                 </TableRow>
               ))}
@@ -210,6 +249,19 @@ const ProjectList = ({ onClick }) => {
           />
         </TableContainer>
       )}
+
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
+        <Button
+          variant="outlined"
+          startIcon={<AddBoxRounded />}
+          onClick={() => router.push('/apps/project/create')}
+          sx={{ marginBottom: 2 }}
+        >
+          Criar Projeto
+        </Button>
+
+        <DrawerFiltersProject />
+      </Box>
     </>
   );
 };
