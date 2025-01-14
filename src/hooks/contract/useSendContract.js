@@ -6,6 +6,9 @@ import unitService from '@/services/unitService'
 import paymentService from '@/services/paymentService'
 import Cookies from 'js-cookie'
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://crm.resolvenergiasolar.com'
+
+
 export default function useSendContract () {
   const [sendingContractId, setSendingContractId] = useState(null)
   const [isSendingContract, setIsSendingContract] = useState(false)
@@ -141,7 +144,7 @@ export default function useSendContract () {
       const accessToken = Cookies.get('access_token')
 
       const response = await fetch(
-        'https://crm.resolvenergiasolar.com/api/generate-contract/',
+        `${API_BASE_URL}/api/generate-contract/`,
         {
           method: 'POST',
           headers: {
