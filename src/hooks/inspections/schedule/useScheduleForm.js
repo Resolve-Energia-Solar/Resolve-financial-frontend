@@ -277,6 +277,7 @@ const useScheduleForm = (initialData, id) => {
       schedule_creator: formData.schedule_creator,
       service_id: formData.service_id,
       customer_id: formData.customer_id,
+      project_id: formData.project_id,
       products: normalizedProductsIds, 
       schedule_date: formData.schedule_date,
       schedule_start_time: formData.schedule_start_time,

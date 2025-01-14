@@ -77,21 +77,19 @@ export async function POST(req) {
         '--disable-accelerated-2d-canvas',
         '--no-zygote',
         '--single-process',
-        '--disable-background-timer-throttling', // Evita atrasos em timers
-        '--disable-renderer-backgrounding', // Garante que renderizações não sejam pausadas
+        '--disable-background-timer-throttling', 
+        '--disable-renderer-backgrounding', 
       ],
-      timeout: 60000, // 60 segundos de timeout
+      timeout: 60000, 
     });
 
     const page = await browser.newPage();
 
-    // Define timeout para o carregamento do conteúdo
     await page.setContent(html, {
       waitUntil: 'networkidle0',
-      timeout: 60000, // 60 segundos de timeout
+      timeout: 60000, 
     });
 
-    // Configura tamanho da página e gera o PDF
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
@@ -100,7 +98,6 @@ export async function POST(req) {
 
     await browser.close();
 
-    // Converte o PDF gerado para Base64
     const pdfBase64 = Buffer.from(pdfBuffer).toString('base64');
 
     return new Response(
