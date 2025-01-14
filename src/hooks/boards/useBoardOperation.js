@@ -56,6 +56,8 @@ export default function boardOperation() {
   const [taskTemplateSelected, setTaskTemplateSelected] = useState([])
   const user = useSelector(state => state.user?.user)
 
+  console.log('user', user.id)
+
   const handleCardClick = async item => {
     setIsModalOpen(true)
     setCardSelected(item)
@@ -79,12 +81,10 @@ export default function boardOperation() {
   const fetchTasksTemplate = async () => {
     try {
       const response = await taskTemplateService.index()
-      console.log('oasdasdasdi1', response)
 
       const tasksTemplateResult = response.results.filter(item => {
         return item.auto_create == false
       })
-      console.log('oasdasdasdi', tasksTemplateResult)
 
       setTasksTemplate(tasksTemplateResult)
     } catch (error) {

@@ -35,6 +35,7 @@ const projectService = {
     return response.data
   },
   insertMaterial: async (data, onUploadProgress) => {
+    console.log('insertMaterial - Enviando FormData:', data)
     try {
       console.log('insertMaterial - Recebido FormData:')
       for (let pair of data.entries()) {

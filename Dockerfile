@@ -3,7 +3,15 @@ FROM node:20-alpine
 WORKDIR /app
 
 RUN apk add --no-cache \
-    chromium
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont \
+    font-noto-cjk \
+    libstdc++ \
+    && echo "Chromium setup completed"
 
 COPY package.json package-lock.json ./
 RUN npm install --legacy-peer-deps
@@ -14,6 +22,6 @@ RUN npm run build
 EXPOSE 3000
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    CHROMIUM_PATH=/usr/bin/chromium-browser
+    CHROMIUM_PATH=/usr/bin/chromium
 
 CMD ["npm", "run", "start"]
