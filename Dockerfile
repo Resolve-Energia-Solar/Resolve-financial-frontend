@@ -1,18 +1,19 @@
 FROM node:20-alpine
 
-# Diretório de trabalho
 WORKDIR /app
 
-# Copia os arquivos essenciais e instala as dependências
+RUN apk add --no-cache \
+    chromium
+
 COPY package.json package-lock.json ./
 RUN npm install --legacy-peer-deps
 
-# Copia todo o projeto e realiza o build
 COPY . .
 RUN npm run build
 
-# Expose a porta padrão do Next.js
 EXPOSE 3000
 
-# Comando de inicialização
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    CHROMIUM_PATH=/usr/bin/chromium-browser
+
 CMD ["npm", "run", "start"]

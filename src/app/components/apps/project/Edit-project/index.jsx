@@ -14,6 +14,7 @@ import History from '@/app/components/apps/history';
 import SchedulesInspections from '../components/SchedulesInspections';
 import ListInspection from '../components/SchedulesInspections/list-Inspections';
 import RequestList from '../../request/Request-list';
+import UploadDocument from '../UploadDocument';
 
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
@@ -64,6 +65,7 @@ export default function EditProject({ projectId = null }) {
         <Tab label="Checklist Rateio" />
         <Tab label="Anexos" />
         <Tab label="Solicitações" />
+        <Tab label="Lista de materiais" />
         <Tab label="Histórico" />
       </Tabs>
 
@@ -92,7 +94,7 @@ export default function EditProject({ projectId = null }) {
           documentTypes={documentTypes}
         />
       )}
-      
+
       {value === 4 && (
         <Box mt={2}>
           <RequestList projectId={id} />
@@ -100,6 +102,11 @@ export default function EditProject({ projectId = null }) {
       )}
 
       {value === 5 && (
+        <div>
+          <UploadDocument projectId={id} />
+        </div>
+      )}
+      {value === 6 && (
         <div>
           <History contentType={CONTENT_TYPE_PROJECT_ID} objectId={id} />
         </div>
