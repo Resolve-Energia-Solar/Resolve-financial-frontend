@@ -307,7 +307,7 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                 <Grid item>
                   <SendContractButton sale={saleData} />
                 </Grid>
-                <Grid item>
+               {/*  <Grid item>
                   <Button
                     variant="contained"
                     color="primary"
@@ -316,7 +316,7 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                   >
                     Preview do Contrato
                   </Button>
-                </Grid>
+                </Grid> */}
                 <Grid item>
                   <Button
                     variant="contained"
