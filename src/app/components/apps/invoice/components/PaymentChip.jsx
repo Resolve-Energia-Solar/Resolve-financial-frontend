@@ -22,6 +22,8 @@ const PaymentChip = ({ paymentType }) => {
         return { label: 'Parcelamento Interno', color: 'info', icon: <PaymentsIcon /> };
       case 'P':
         return { label: 'Pix', color: 'info', icon: <PaymentsIcon /> };
+      case 'T':
+        return { label: 'Transferência', color: 'info', icon: <PaymentsIcon /> };
       default:
         return { label: paymentType };
     }
