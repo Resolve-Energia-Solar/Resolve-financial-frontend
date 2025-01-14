@@ -14,7 +14,7 @@ export default function AutoCompleteAddress({
   value, 
   error, 
   helperText, 
-  disableSuggestions = true,
+  disableSuggestions = false,
   ...props 
 }) {
   const [open, setOpen] = useState(false);

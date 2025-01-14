@@ -102,6 +102,7 @@ export default function PreviewContractDialog({ open, onClose, userId, saleId })
     { code: 'F', label: 'Financiamento' },
     { code: 'PI', label: 'Parcelamento interno' },
     { code: 'P', label: 'Pix' },
+    { code: 'T', label: 'Transferência' },
   ];
 
   useEffect(() => {
