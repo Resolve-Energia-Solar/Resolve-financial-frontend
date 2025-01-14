@@ -25,12 +25,23 @@ RUN apk add --no-cache \
     libx11 \
     libxcb \
     libxext \
-    libxrender
+    libxrender \
+    libxrandr \
+    libatk-bridge2.0 \
+    libgdk-pixbuf \
+    libcups \
+    libdbus \
+    libglib \
+    libxshmfence \
+    libdrm \
+    libgbm \
+    icu-libs
 
 COPY package.json package-lock.json ./
 RUN npm install --legacy-peer-deps
 
 COPY . .
+
 RUN npm run build
 
 EXPOSE 3000
