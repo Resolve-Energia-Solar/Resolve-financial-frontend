@@ -11,7 +11,27 @@ RUN apk add --no-cache \
     ttf-freefont \
     font-noto-cjk \
     libstdc++ \
+    nspr \
+    alsa-lib \
+    libc6-compat \
+    libxcomposite \
+    libxrandr \
+    libxdamage \
+    libxi \
+    libxtst \
+    libjpeg-turbo \
+    libwebp \
+    libpng \
+    libgdk-pixbuf \
+    libxinerama \
+    libfontconfig \
+    libfreetype \
+    libx11 \
+    libxcb \
+    libxext \
+    libxrender \
     && echo "Chromium setup completed"
+
 
 COPY package.json package-lock.json ./
 RUN npm install --legacy-peer-deps
