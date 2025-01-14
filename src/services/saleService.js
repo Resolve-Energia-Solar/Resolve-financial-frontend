@@ -17,6 +17,10 @@ const saleService = {
             // params.branch = userRole.branch;
         }
 
+        if (userRole?.role === 'Assistente administrativo') {
+            params.branch = userRole.branch;
+        }
+
         const response = await apiClient.get('/api/sales/', { params });
         return response.data;
     },
