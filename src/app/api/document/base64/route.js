@@ -77,20 +77,30 @@ export async function POST(req) {
         '--disable-accelerated-2d-canvas',
         '--no-zygote',
         '--single-process',
+        '--disable-background-timer-throttling', // Evita atrasos em timers
+        '--disable-renderer-backgrounding', // Garante que renderizações não sejam pausadas
       ],
+      timeout: 60000, // 60 segundos de timeout
     });
 
     const page = await browser.newPage();
 
-    await page.setContent(html, { waitUntil: 'networkidle0' });
+    // Define timeout para o carregamento do conteúdo
+    await page.setContent(html, {
+      waitUntil: 'networkidle0',
+      timeout: 60000, // 60 segundos de timeout
+    });
 
+    // Configura tamanho da página e gera o PDF
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
+      margin: { top: '10mm', bottom: '10mm', left: '10mm', right: '10mm' },
     });
 
     await browser.close();
 
+    // Converte o PDF gerado para Base64
     const pdfBase64 = Buffer.from(pdfBuffer).toString('base64');
 
     return new Response(
@@ -101,10 +111,16 @@ export async function POST(req) {
       }
     );
   } catch (error) {
-    console.error('Erro ao gerar o PDF:', error.message);
+    console.error('Erro ao gerar o PDF:', {
+      message: error.message,
+      stack: error.stack,
+    });
 
     return new Response(
-      JSON.stringify({ error: 'Erro ao gerar o PDF', details: error.message }),
+      JSON.stringify({
+        error: 'Erro ao gerar o PDF',
+        details: error.message,
+      }),
       {
         headers: { 'Content-Type': 'application/json' },
         status: 500,
