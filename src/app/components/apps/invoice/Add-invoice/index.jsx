@@ -203,7 +203,7 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
                   value={formData.installments_number}
                   onChange={(e) => {
                     const value = e.target.value;
-                    if (!isNaN(value) && value <= 64) {
+                    if (!isNaN(value) && value <= 100) {
                       handleChange('installments_number', value);
                     }
                   }}
