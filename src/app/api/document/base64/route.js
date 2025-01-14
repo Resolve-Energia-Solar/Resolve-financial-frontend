@@ -76,7 +76,7 @@ export async function POST(req) {
         '--disable-dev-shm-usage',
         '--disable-accelerated-2d-canvas',
         '--no-zygote',
-        '--single-process',
+        //'--single-process',
         '--disable-background-timer-throttling', 
         '--disable-renderer-backgrounding', 
       ],
