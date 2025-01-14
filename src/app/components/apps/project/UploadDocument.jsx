@@ -19,7 +19,7 @@ import projectService from '@/services/projectService';
 const UploadDocument = ({ projectId }) => {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
-  const [uploadStatus, setUploadStatus] = useState(null); 
+  const [uploadStatus, setUploadStatus] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -28,8 +28,8 @@ const UploadDocument = ({ projectId }) => {
   const handleUpload = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
-      const allowedTypes = ['application/pdf', 'text/csv'];
-      const maxSize = 20 * 1024 * 1024; // 20MB
+      const allowedTypes = ['text/csv'];
+      const maxSize = 20 * 1024 * 1024;
 
       if (!allowedTypes.includes(selectedFile.type)) {
         setUploadStatus('error');
@@ -68,7 +68,7 @@ const UploadDocument = ({ projectId }) => {
     const formData = new FormData();
 
     if (typeof projectId === 'object' && projectId !== null) {
-      formData.append('project_id', projectId.id); 
+      formData.append('project_id', projectId.id);
     } else {
       formData.append('project_id', projectId);
     }
@@ -149,12 +149,12 @@ const UploadDocument = ({ projectId }) => {
         >
           <CloudUploadIcon color="action" sx={{ fontSize: 40 }} />
           <Typography variant="body1" color="textSecondary">
-            Arraste e solte um arquivo CSV ou PDF aqui, ou clique para selecionar
+            Arraste e solte um arquivo CSV aqui, ou clique para selecionar
           </Typography>
         </Box>
 
         <input
-          accept=".csv,.pdf"
+          accept=".csv"
           style={{ display: 'none' }}
           id="upload-button-file"
           type="file"
@@ -206,7 +206,7 @@ const UploadDocument = ({ projectId }) => {
         open={openSnackbar}
         autoHideDuration={3000}
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         {uploadStatus === 'success' ? (
           <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
