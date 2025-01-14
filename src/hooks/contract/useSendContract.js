@@ -2,10 +2,9 @@
 
 import { useState } from 'react'
 import saleService from '@/services/saleService'
-import axios from 'axios'
-import contractService from '@/services/contract-submissions'
 import unitService from '@/services/unitService'
 import paymentService from '@/services/paymentService'
+import Cookies from 'js-cookie'
 
 export default function useSendContract () {
   const [sendingContractId, setSendingContractId] = useState(null)
@@ -135,71 +134,36 @@ export default function useSendContract () {
           .join(' | ')
       }
 
-      const base64Response = await axios.post('/api/document/base64', data)
-      const base64File = base64Response.data?.pdfBase64
-      if (!base64File) throw new Error('Falha na conversão do arquivo em Base64')
-
-      const path = `/Contratos/Contrato-${fetchedSale.customer.complete_name}.pdf`
-      const documentResponse = await axios.post('/api/clicksign/createDocument', {
-        content_base64: base64File,
-        path,
-      })
-
-      const documentKey = documentResponse.data?.document?.key
-      if (!documentKey) throw new Error('Falha na criação do documento')
-
-      const signerResponse = await axios.post('/api/clicksign/createSigner', {
-        documentation: fetchedSale.customer.first_document,
-        birthday: fetchedSale.customer.birth_date,
-        phone_number: `${fetchedSale.customer.phone_numbers[0]?.area_code || ''}${
-          fetchedSale.customer.phone_numbers[0]?.phone_number || ''
-        }`,
-        email: fetchedSale.customer.email,
-        name: fetchedSale.customer.complete_name,
-        auth: 'whatsapp',
-        methods: { selfie_enabled: false, handwritten_enabled: false },
-      })
-
-      const signerKey = signerResponse.data?.signer?.key
-      if (!signerKey) throw new Error('Falha na criação do signatário')
-
-      const addSignerResponse = await axios.post('/api/clicksign/addSignerDocument', {
-        signerKey,
-        documentKey,
-        signAs: 'contractor',
-      })
-
-      const requestSignatureKey = addSignerResponse.data?.list?.request_signature_key
-      if (!requestSignatureKey) throw new Error('Falha ao adicionar o signatário ao documento')
-
-      await contractService.createContract({
+      const requestBody = {
         sale_id: sale.id,
-        submit_datetime: new Date().toISOString(),
-        status: 'P',
-        due_date: new Date(new Date().setDate(new Date().getDate() + 7))
-          .toISOString()
-          .split('T')[0],
-        key_number: documentKey,
-        request_signature_key: requestSignatureKey,
-        link: `https://clicksign.com/documents/${documentKey}`,
-      })
+        contract_data: data,
+      }
+      const accessToken = Cookies.get('access_token')
 
-      await axios.post('/api/clicksign/notification/email', {
-        request_signature_key: requestSignatureKey,
-        message: 'Por favor, assine o contrato.',
-      })
+      const response = await fetch(
+        'https://crm.resolvenergiasolar.com/api/generate-contract/',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify(requestBody),
+        },
+      )
 
-      await axios.post('/api/clicksign/notification/whatsapp', {
-        request_signature_key: requestSignatureKey,
-      })
-
+      if (!response.ok) {
+        throw new Error('Erro ao enviar o contrato. Por favor, tente novamente.')
+      }
       setSnackbarMessage('Contrato enviado com sucesso!')
       setSnackbarSeverity('success')
-    } catch (error) {
-      setSnackbarMessage(`Erro ao enviar contrato: ${error.message}`)
-      setSnackbarSeverity('error')
-    } finally {
       setSnackbarOpen(true)
+    } catch (error) {
+      console.log('Error: ', error)
+      setSnackbarMessage(error.message || 'Erro ao enviar o contrato.')
+      setSnackbarSeverity('error')
+      setSnackbarOpen(true)
+    } finally {
       setIsSendingContract(false)
       setSendingContractId(null)
     }
