@@ -29,7 +29,7 @@ const branchService = {
   },
   getBranchByName: async (name) => {
     try {
-      const response = await apiClient.get(`/api/branches/?name=${name}`);
+      const response = await apiClient.get(`/api/branches/?name__icontains=${name}`);
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar branch com id ${name}:`, error);
