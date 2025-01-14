@@ -17,7 +17,7 @@ const saleService = {
             // params.branch = userRole.branch;
         }
 
-        if (userRole?.role === 'Assistente administrativo') {
+        if (userRole?.role === 'Assistente administrativo' || userRole?.role === 'Gerente comercial') {
             params.branch = userRole.branch;
         }
 
