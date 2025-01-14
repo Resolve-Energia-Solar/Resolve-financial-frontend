@@ -56,7 +56,7 @@ const ListProductsDefault = () => {
 
     if (!isNaN(kwpNumber)) {
       setErrorKwp('');
-      const delta = 20;
+      const delta = 0.5;
       const generatedRange = [kwpNumber - delta, kwpNumber + delta];
       setKwpRange(generatedRange);
       console.log('Intervalo de Kwp:', generatedRange);
@@ -93,7 +93,7 @@ const ListProductsDefault = () => {
         const responseDefault = await productService.getProducts({
           default__in: 'S',
           kwp_in: kwpRange.join(','),
-          limit: 6,
+          limit: 9,
           ordering: 'product_value',
         });
         setProductsList(responseDefault.results);
