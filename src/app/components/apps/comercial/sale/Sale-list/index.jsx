@@ -118,6 +118,8 @@ const SaleList = () => {
     setSalesList([]);
   }, [order, orderDirection, filters, refresh]);
 
+  console.log('filters', filters);
+
   useEffect(() => {
     const fetchSales = async () => {
       const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
@@ -132,9 +134,8 @@ const SaleList = () => {
           ...filters,
         });
 
-        console.log('data?.results?.indicators', data?.results?.indicators);
         setIndicators(data?.results?.indicators);
-        setSalesList(data.results.results);
+        setSalesList(data?.results?.results);
         setTotalRows(data.count);
       } catch (err) {
         setError('Erro ao carregar Vendas');
