@@ -22,8 +22,18 @@ export async function POST(req) {
     const html = template(data);
 
     const browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      headless: true,
+      executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium',
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-zygote',
+        '--single-process',
+      ],
     });
+    
     const page = await browser.newPage();
 
     await page.setContent(html, { waitUntil: 'networkidle0' });
