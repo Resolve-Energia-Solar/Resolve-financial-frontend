@@ -4,7 +4,6 @@ import { useState } from 'react'
 import saleService from '@/services/saleService'
 import unitService from '@/services/unitService'
 import paymentService from '@/services/paymentService'
-import { request } from 'http'
 import Cookies from 'js-cookie'
 
 export default function useSendContract () {
@@ -166,6 +165,7 @@ export default function useSendContract () {
       setSnackbarOpen(true)
     } finally {
       setIsSendingContract(false)
+      setSendingContractId(null)
     }
   }
 
