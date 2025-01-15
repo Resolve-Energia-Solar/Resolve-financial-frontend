@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import saleService from '@/services/saleService'
 import unitService from '@/services/unitService'
-import paymentService from '@/services/paymentService'
 import Cookies from 'js-cookie'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://crm.resolvenergiasolar.com'
@@ -16,15 +15,6 @@ export default function useSendContract () {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
 
   const handleCloseSnackbar = () => setSnackbarOpen(false)
-
-  const TYPE_CHOICES = [
-    ['C', 'Crédito'],
-    ['D', 'Débito'],
-    ['B', 'Boleto'],
-    ['F', 'Financiamento'],
-    ['PI', 'Parcelamento interno'],
-    ['P', 'Pix'],
-  ]
 
   const formatToBRL = value =>
     new Intl.NumberFormat('pt-BR', {
@@ -126,30 +116,8 @@ export default function useSendContract () {
           id_customer_state: address.state || '',
         })
 
-        const materials = project.product?.materials || []
         const ProductKWP = project.product?.params
         data.watt_pico = ProductKWP || ''
-
-        if (materials.length > 0) {
-          materials.forEach((material, index) => {
-            data[`quantity_material_${index + 1}`] = parseFloat(material.amount).toFixed(0) || ''
-            data[`id_material_${index + 1}`] = material.material?.name || ''
-          })
-        }
-      }
-
-      const fetchedPayment = await paymentService.getAllPaymentsBySale(sale.id)
-      if (fetchedPayment?.results?.length > 0) {
-        const paymentDetails = fetchedPayment.results.map(payment => ({
-          type:
-            TYPE_CHOICES.find(choice => choice[0] === payment.payment_type)?.[1] ||
-            'Tipo não especificado',
-          value: formatToBRL(payment.value),
-        }))
-
-        data.observation_payment = paymentDetails
-          .map(payment => `${payment.type}: ${payment.value}`)
-          .join(' | ')
       }
 
       const requestBody = {
