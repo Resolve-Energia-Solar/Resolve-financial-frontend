@@ -20,8 +20,11 @@ import {
   FormControl,
   TextField,
   CircularProgress,
+  Stack,
+  Snackbar,
+  Alert,
 } from '@mui/material';
-import { MoreVert, Edit, Delete, Visibility, Add } from '@mui/icons-material';
+import { MoreVert, Edit, Delete, Visibility, Add, Error, CheckCircle } from '@mui/icons-material';
 import PaymentChip from '../PaymentChip';
 import paymentService from '@/services/paymentService';
 import { useRouter } from 'next/navigation';
@@ -31,6 +34,9 @@ import EditInvoicePage from '../../Edit-invoice';
 import DetailInvoicePage from '../../Invoice-detail';
 import CreateInvoice from '../../Add-invoice';
 import saleService from '@/services/saleService';
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import CustomFieldMoney from '../CustomFieldMoney';
+import { IconDeviceFloppy } from '@tabler/icons-react';
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -50,7 +56,6 @@ const PaymentCard = ({ sale = null }) => {
 
   const [paymentsList, setPaymentsList] = useState([]);
   const [saleData, setSaleData] = useState(null);
-  const [originalTotalValue, setOriginalTotalValue] = useState(0);
 
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [menuOpenRowId, setMenuOpenRowId] = useState(null);
@@ -66,44 +71,17 @@ const PaymentCard = ({ sale = null }) => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const [majoracao, setMajoracao] = useState(0);
-  const [desconto, setDesconto] = useState(0);
-
-  const [isMajoracaoDisabled, setIsMajoracaoDisabled] = useState(false);
-  const [isDescontoDisabled, setIsDescontoDisabled] = useState(false);
+  const [productValue, setProductValue] = useState(0);
+  const [totalValue, setTotalValue] = useState(0);
+  const [errorValue, setErrorValue] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleRefresh = () => {
     setRefresh(!refresh);
   };
 
-  const handleUpdateSaleValue = async () => {
-    try {
-      const baseValue = originalTotalValue;
-
-      console.log('Updating sale value with:', {
-        baseValue,
-        majoracao,
-        desconto,
-      });
-
-      // Passa o valor de majoracao diretamente (sem a necessidade de %)
-      await saleService.updateSaleValue(sale, baseValue, majoracao, desconto);
-
-      const data = await saleService.getTotalPaidSales(sale);
-      setSaleData(data);
-
-      const numericValue = Number(data.total_value || 0);
-      setOriginalTotalValue(numericValue);
-
-      setMajoracao(0); // Resetar o valor da majoração após a atualização
-      setDesconto(0); // Resetar o valor do desconto após a atualização
-      setIsMajoracaoDisabled(false);
-      setIsDescontoDisabled(false);
-
-      handleRefresh();
-    } catch (err) {
-      console.log('Erro ao atualizar o valor da venda: ', err);
-    }
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   useEffect(() => {
@@ -120,10 +98,16 @@ const PaymentCard = ({ sale = null }) => {
 
     const fetchSaleData = async () => {
       try {
-        const data = await saleService.getTotalPaidSales(sale);
+        const data = await saleService.getSaleById(sale);
         setSaleData(data);
-        const numericValue = Number(data.total_value || 0);
-        setOriginalTotalValue(numericValue);
+
+        const calculatedValue = data.sale_products
+          .map((product) => parseFloat(product.value))
+          .reduce((a, b) => a + b, 0);
+
+        console.log('calculatedValue', calculatedValue);
+        setProductValue(calculatedValue);
+        setTotalValue(data.total_value);
       } catch (err) {
         setError('Erro ao carregar a venda');
       } finally {
@@ -136,10 +120,6 @@ const PaymentCard = ({ sale = null }) => {
       fetchSaleData();
     }
   }, [sale, refresh]);
-
-  const valorMajoracao = majoracao;
-  const valorDesconto = desconto;
-  const totalCalculado = originalTotalValue + valorMajoracao - valorDesconto;
 
   const handleAddPayment = () => {
     setCreateModalOpen(true);
@@ -174,6 +154,22 @@ const PaymentCard = ({ sale = null }) => {
     setOpen(true);
   };
 
+  const saveSaleTotalValue = async () => {
+    setErrorValue(null);
+    try {
+      await saleService.updateSalePartial(sale, {
+        total_value: totalValue,
+        transfer_percentage: 0.2,
+      });
+      handleRefresh();
+    } catch (error) {
+      setErrorValue('Erro ao atualizar o valor da venda');
+      console.log('Error: ', error);
+    }
+  };
+
+  console.log('totalValue', totalValue);
+
   const handleConfirmDelete = async () => {
     try {
       await paymentService.deletePayment(invoiceToDelete);
@@ -187,118 +183,51 @@ const PaymentCard = ({ sale = null }) => {
 
   return (
     <>
-      <Box
-        mb={4}
-        mt={8}
-        display="flex"
-        flexDirection="row"
-        gap={3}
-       
-        alignItems="center"
-       
-      >
-        <FormControl sx={{ minWidth: 120 }}>
-          <TextField
-            id="majoracao"
-            label="Majoração"
-            type="number"
-            value={majoracao}
-            onChange={(e) => setMajoracao(Number(e.target.value) || 0)}
-            disabled={isMajoracaoDisabled}
-            inputProps={{ min: 0 }}
-            variant="outlined"
-            fullWidth
-            sx={{
-              backgroundColor: '#f8f8f8',
-              borderRadius: '8px',
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '8px',
-              },
-            }}
-            helperText={
-              majoracao
-                ? Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-                    majoracao,
-                  )
-                : ''
-            }
-          />
-        </FormControl>
-
-        <FormControl sx={{ minWidth: 120 }}>
-          <TextField
-            id="desconto"
-            label="Desconto"
-            type="number"
-            value={desconto}
-            onChange={(e) => setDesconto(Number(e.target.value) || 0)}
-            disabled={isDescontoDisabled}
-            inputProps={{ min: 0 }}
-            variant="outlined"
-            fullWidth
-            sx={{
-              backgroundColor: '#f8f8f8',
-              borderRadius: '8px',
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '8px',
-              },
-            }}
-            helperText={
-              desconto
-                ? Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-                    desconto,
-                  )
-                : ''
-            }
-          />
-        </FormControl>
-
-        <Box alignSelf="center">
-          <Button
-            variant="contained"
-            onClick={handleUpdateSaleValue}
-            sx={{
-              backgroundColor: '#1a90ff',
-              color: '#fff',
-              '&:hover': {
-                backgroundColor: '#1573e6',
-              },
-              borderRadius: '8px',
-              padding: '12px 25px',
-              fontWeight: '600',
-              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-            }}
-            disabled={loading}
-          >
-            {loading ? <CircularProgress size={15} sx={{ color: '#fff' }} /> : 'Atualizar Valor'}
-          </Button>
-        </Box>
-      </Box>
-
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6} md={4}>
-          <Card
-            elevation={10}
-            onClick={handleCreateClick}
-            sx={{
-              cursor: 'pointer',
-              textAlign: 'center',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <CardContent>
-              <Add fontSize="large" color="primary" />
-              <Typography variant="subtitle1" color="text.secondary">
-                Adicionar Pagamento
-              </Typography>
-            </CardContent>
-          </Card>
+          {saleData && saleData.is_pre_sale && (
+            <Box sx={{ width: '100%', mb: 2 }}>
+              <CustomFormLabel htmlFor="valor">Valor da Venda</CustomFormLabel>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <CustomFieldMoney
+                  value={totalValue}
+                  onChange={(value) => setTotalValue(value)}
+                  {...(errorValue && { error: true, helperText: errorValue })}
+                />
+                <Button
+                  variant="contained"
+                  endIcon={<IconDeviceFloppy />}
+                  onClick={async () => {
+                    await saveSaleTotalValue();
+                    setSnackbarOpen(true);
+                  }}
+                >
+                  Atualizar
+                </Button>
+              </Stack>
+            </Box>
+          )}
+          <Box>
+            <Card
+              elevation={10}
+              onClick={handleCreateClick}
+              sx={{
+                cursor: 'pointer',
+                textAlign: 'center',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <CardContent>
+                <Add fontSize="large" color="primary" />
+                <Typography variant="subtitle1" color="text.secondary">
+                  Adicionar Pagamento
+                </Typography>
+              </CardContent>
+            </Card>
+          </Box>
         </Grid>
 
         {loading
@@ -404,49 +333,67 @@ const PaymentCard = ({ sale = null }) => {
           <Box display="flex" justifyContent="flex-end" flexDirection="column" gap={1}>
             <Box display="flex" justifyContent="end" gap={2}>
               <Typography variant="body1" fontWeight={600}>
-                Pago:
+                Valor do produto:
               </Typography>
               <Typography variant="body1" fontWeight={600}>
                 {Intl.NumberFormat('pt-BR', {
                   style: 'currency',
                   currency: 'BRL',
-                }).format(saleData?.total_paid || 0)}
+                }).format(productValue)}
               </Typography>
             </Box>
+          </Box>
 
+          <Box display="flex" justifyContent="flex-end" flexDirection="column" gap={1}>
             <Box display="flex" justifyContent="end" gap={2}>
               <Typography variant="body1" fontWeight={600}>
-                Valor da Majoração:
+                Majoração:
               </Typography>
-              <Typography variant="body1" fontWeight={600}>
-                {Intl.NumberFormat('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                }).format(valorMajoracao)}
+              <Typography
+                variant="body1"
+                fontWeight={600}
+                color={saleData?.total_value > productValue ? 'success.main' : 'inherit'}
+              >
+                {saleData?.total_value > productValue
+                  ? `+ ${Intl.NumberFormat('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    }).format(saleData?.total_value - productValue)}`
+                  : '-'}
               </Typography>
             </Box>
+          </Box>
 
+          <Box display="flex" justifyContent="flex-end" flexDirection="column" gap={1}>
             <Box display="flex" justifyContent="end" gap={2}>
               <Typography variant="body1" fontWeight={600}>
-                Valor do Desconto:
+                Desconto:
               </Typography>
-              <Typography variant="body1" fontWeight={600} color="error">
-                {Intl.NumberFormat('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                }).format(valorDesconto)}
+              <Typography
+                variant="body1"
+                fontWeight={600}
+                color={saleData?.total_value < productValue ? 'error.main' : 'inherit'}
+              >
+                {saleData?.total_value < productValue
+                  ? `- ${Intl.NumberFormat('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    }).format(productValue - (saleData?.total_value || 0))}`
+                  : '-'}
               </Typography>
             </Box>
+          </Box>
 
+          <Box display="flex" justifyContent="flex-end" flexDirection="column" gap={1}>
             <Box display="flex" justifyContent="end" gap={2}>
               <Typography variant="body1" fontWeight={600}>
-                Total a Pagar:
+                Valor da venda:
               </Typography>
               <Typography variant="body1" fontWeight={600}>
                 {Intl.NumberFormat('pt-BR', {
                   style: 'currency',
                   currency: 'BRL',
-                }).format(totalCalculado)}
+                }).format(saleData?.total_value)}
               </Typography>
             </Box>
           </Box>
@@ -521,6 +468,29 @@ const PaymentCard = ({ sale = null }) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={errorValue && Object.keys(errorValue).length > 0 ? 'error' : 'success'}
+          sx={{ width: '100%', display: 'flex', alignItems: 'center' }}
+          iconMapping={{
+            error: <Error style={{ verticalAlign: 'middle' }} />,
+            success: <CheckCircle style={{ verticalAlign: 'middle' }} />,
+          }}
+        >
+          {errorValue ? (
+            <span>Ocorreu um erro ao atualizar o valor da venda. Por favor, tente novamente.</span>
+          ) : (
+            'O valor da venda foi atualizado com sucesso!'
+          )}
+        </Alert>
+      </Snackbar>
     </>
   );
 };
