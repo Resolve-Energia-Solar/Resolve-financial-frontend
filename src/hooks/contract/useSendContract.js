@@ -8,7 +8,6 @@ import Cookies from 'js-cookie'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://crm.resolvenergiasolar.com'
 
-
 export default function useSendContract () {
   const [sendingContractId, setSendingContractId] = useState(null)
   const [isSendingContract, setIsSendingContract] = useState(false)
@@ -35,9 +34,24 @@ export default function useSendContract () {
 
   const fillDateFields = () => {
     const today = new Date()
+    const months = [
+      'janeiro',
+      'fevereiro',
+      'março',
+      'abril',
+      'maio',
+      'junho',
+      'julho',
+      'agosto',
+      'setembro',
+      'outubro',
+      'novembro',
+      'dezembro',
+    ]
+
     return {
       dia: String(today.getDate()).padStart(2, '0'),
-      mes: String(today.getMonth() + 1).padStart(2, '0'),
+      mes: months[today.getMonth()],
       ano: String(today.getFullYear()),
     }
   }
@@ -84,6 +98,7 @@ export default function useSendContract () {
 
       const dateFields = fillDateFields()
       const data = {
+        document_type_id: 10,
         id_customer: fetchedSale.customer.complete_name,
         id_first_document: fetchedSale.customer.first_document,
         project_value_format: formatToBRL(fetchedSale.total_value),
@@ -113,7 +128,7 @@ export default function useSendContract () {
 
         const materials = project.product?.materials || []
         const ProductKWP = project.product?.params
-        data.id_product_kwp = ProductKWP || ''
+        data.watt_pico = ProductKWP || ''
 
         if (materials.length > 0) {
           materials.forEach((material, index) => {
@@ -141,19 +156,18 @@ export default function useSendContract () {
         sale_id: sale.id,
         contract_data: data,
       }
+
+      console.log('Request Body:', requestBody)
       const accessToken = Cookies.get('access_token')
 
-      const response = await fetch(
-        `${API_BASE_URL}/api/generate-contract/`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify(requestBody),
+      const response = await fetch(`${API_BASE_URL}/api/generate-contract/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
         },
-      )
+        body: JSON.stringify(requestBody),
+      })
 
       if (!response.ok) {
         throw new Error('Erro ao enviar o contrato. Por favor, tente novamente.')
