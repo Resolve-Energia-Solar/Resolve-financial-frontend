@@ -98,7 +98,7 @@ const Profile = () => {
           </Box>
         </Stack>
         <Divider />
-        {dropdownData.profile.map((profile) => (
+       {/*  {dropdownData.profile.map((profile) => (
           <Box key={profile.title}>
             <Box sx={{ py: 2, px: 0 }} className="hover-text-primary">
               <Link href={profile.href}>
@@ -150,7 +150,7 @@ const Profile = () => {
               </Link>
             </Box>
           </Box>
-        ))}
+        ))} */}
         <Box mt={2}>
           <Button onClick={requestLogout} variant="outlined" color="primary" fullWidth>
             {loading ? <CircularProgress size={20} /> : 'Sair'}
