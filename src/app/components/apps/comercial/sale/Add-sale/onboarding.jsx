@@ -126,7 +126,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
     }
 
     if (activeStep === 2) {
-      const isFinancialComplete = await isCompleteFinancial(saleId);
+      const isFinancialComplete = true;
 
       if (!isFinancialComplete) {
         setIsDialogPaymentOpen(true);

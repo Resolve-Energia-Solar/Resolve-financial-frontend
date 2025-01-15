@@ -1,16 +1,46 @@
 'use client';
 
-import { Grid, Button, Stack, Alert, CircularProgress, Box, FormControlLabel } from '@mui/material';
+import {
+  Grid,
+  Button,
+  Stack,
+  Alert,
+  CircularProgress,
+  Box,
+  FormControlLabel,
+  Snackbar,
+} from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import { useSelector } from 'react-redux';
 import usePhoneNumbers from '@/hooks/phone_numbers/usePhoneNumbers';
 import usePhoneNumberForm from '@/hooks/phone_numbers/usePhoneNumbersForm';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
+import { CheckCircle, Error } from '@mui/icons-material';
 
-const CreatePhonePage = ({ userId = null, onClosedModal = null, onRefresh = null, selectedPhoneNumberId = null }) => {
+const CreatePhonePage = ({
+  userId = null,
+  onClosedModal = null,
+  onRefresh = null,
+  selectedPhoneNumberId = null,
+}) => {
   const userPermissions = useSelector((state) => state.user.permissions);
+
+  const formatFieldName = (fieldName) => {
+    const fieldLabels = {
+      area_code: 'Código de Área',
+      phone_number: 'Telefone',
+    };
+
+    return fieldLabels[fieldName] || fieldName;
+  };
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const {
     formData,
@@ -32,9 +62,8 @@ const CreatePhonePage = ({ userId = null, onClosedModal = null, onRefresh = null
     if (success) {
       if (onClosedModal) {
         onClosedModal();
-        if (onRefresh){
+        if (onRefresh) {
           onRefresh();
-
         }
       }
 
@@ -99,13 +128,56 @@ const CreatePhonePage = ({ userId = null, onClosedModal = null, onRefresh = null
         <Button
           variant="contained"
           color="primary"
-          onClick={handleSave}
+          onClick={async () => {
+            await handleSave();
+            setSnackbarOpen(true);
+          }}
           disabled={formLoading}
           endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
         >
           {formLoading ? 'Salvando...' : 'Criar'}
         </Button>
       </Stack>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={formErrors && Object.keys(formErrors).length > 0 ? 'error' : 'success'}
+          sx={{ width: '100%', display: 'flex', alignItems: 'center' }}
+          iconMapping={{
+            error: <Error style={{ verticalAlign: 'middle' }} />,
+            success: <CheckCircle style={{ verticalAlign: 'middle' }} />,
+          }}
+        >
+          {formErrors && Object.keys(formErrors).length > 0 ? (
+            <ul
+              style={{
+                margin: '10px 0',
+                paddingLeft: '20px',
+                listStyleType: 'disc',
+              }}
+            >
+              {Object.entries(formErrors).map(([field, messages]) => (
+                <li
+                  key={field}
+                  style={{
+                    marginBottom: '8px',
+                  }}
+                >
+                  {`${formatFieldName(field)}: ${messages.join(', ')}`}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            'Adicionado com sucesso!'
+          )}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
