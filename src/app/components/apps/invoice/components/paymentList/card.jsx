@@ -74,6 +74,7 @@ const PaymentCard = ({ sale = null }) => {
   const [productValue, setProductValue] = useState(0);
   const [totalValue, setTotalValue] = useState(0);
   const [errorValue, setErrorValue] = useState(null);
+  const [loadingValue, setLoadingValue] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleRefresh = () => {
@@ -156,6 +157,7 @@ const PaymentCard = ({ sale = null }) => {
 
   const saveSaleTotalValue = async () => {
     setErrorValue(null);
+    setLoadingValue(true);
     try {
       await saleService.updateSalePartial(sale, {
         total_value: totalValue,
@@ -165,6 +167,8 @@ const PaymentCard = ({ sale = null }) => {
     } catch (error) {
       setErrorValue('Erro ao atualizar o valor da venda');
       console.log('Error: ', error);
+    } finally {
+      setLoadingValue(false);
     }
   };
 
@@ -183,31 +187,32 @@ const PaymentCard = ({ sale = null }) => {
 
   return (
     <>
+      {saleData && saleData.is_pre_sale && (
+        <Box sx={{ width: '100%', mb: 2 }}>
+          <CustomFormLabel htmlFor="valor">Valor da Venda</CustomFormLabel>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <CustomFieldMoney
+              value={totalValue}
+              onChange={(value) => setTotalValue(value)}
+              {...(errorValue && { error: true, helperText: errorValue })}
+            />
+            <Button
+              variant="contained"
+              onClick={async () => {
+                await saveSaleTotalValue();
+                setSnackbarOpen(true);
+              }}
+              disabled={loadingValue}
+              endIcon={loadingValue ? <CircularProgress size={20} color="inherit" /> : null}
+            >
+              {loadingValue ? 'Atualizando' : 'Atualizar'}
+            </Button>
+          </Stack>
+        </Box>
+      )}
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6} md={4}>
-          {saleData && saleData.is_pre_sale && (
-            <Box sx={{ width: '100%', mb: 2 }}>
-              <CustomFormLabel htmlFor="valor">Valor da Venda</CustomFormLabel>
-              <Stack direction="row" spacing={2} alignItems="center">
-                <CustomFieldMoney
-                  value={totalValue}
-                  onChange={(value) => setTotalValue(value)}
-                  {...(errorValue && { error: true, helperText: errorValue })}
-                />
-                <Button
-                  variant="contained"
-                  endIcon={<IconDeviceFloppy />}
-                  onClick={async () => {
-                    await saveSaleTotalValue();
-                    setSnackbarOpen(true);
-                  }}
-                >
-                  Atualizar
-                </Button>
-              </Stack>
-            </Box>
-          )}
-          <Box>
+          <Box sx={{ height: '100%' }}>
             <Card
               elevation={10}
               onClick={handleCreateClick}
