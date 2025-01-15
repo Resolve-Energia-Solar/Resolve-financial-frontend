@@ -40,7 +40,7 @@ import SendContractButton from '../../../contractSubmissions/Send-contract';
 import ContractSubmissions from '../../../contractSubmissions/contract-list';
 import SchedulesInspections from '../../../project/components/SchedulesInspections';
 import History from '@/app/components/apps/history';
-import EditSale from './tabs/sale';
+import useSendContract from '@/hooks/contract/useSendContract';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -305,9 +305,9 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
             {value === 2 && (
               <Grid container spacing={2}>
                 <Grid item>
-                  <SendContractButton sale={saleData} />
+                  <SendContractButton saleId={saleData.id} />
                 </Grid>
-               {/*  <Grid item>
+                {/*  <Grid item>
                   <Button
                     variant="contained"
                     color="primary"
@@ -362,12 +362,9 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
           <SendContractButton sale={saleData} />
         </Stack>
       </Box> */}
-      <PreviewContractModal
-        open={openPreview}
-        onClose={() => setOpenPreview(false)}
-        userId={saleData?.customer?.id}
+      {/* <PreviewContractModal
         saleId={id_sale}
-      />
+      /> */}
 
       <Snackbar
         open={snackbarOpen}

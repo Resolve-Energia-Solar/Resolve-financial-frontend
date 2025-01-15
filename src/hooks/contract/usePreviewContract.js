@@ -3,11 +3,11 @@ import contractService from '@/services/contractService';
 import userService from '@/services/userService';
 import saleService from '@/services/saleService';
 
-export default function useSendContract(saleId) {
+export default function usePreviewContract(saleId) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  const [contract, setContract] = useState(null);
+  const [contractPDF, setContractPDF] = useState(null);
   const [sale, setSale] = useState(null);
   const [user, setUser] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
@@ -16,11 +16,9 @@ export default function useSendContract(saleId) {
     const fetchSaleAndUser = async () => {
       setError(null);
       try {
-        // Primeiro, carrega os dados da venda
         const saleResponse = await saleService.getSaleById(saleId);
         setSale(saleResponse);
 
-        // Após carregar a venda, busca o usuário relacionado
         if (saleResponse?.customer?.id) {
           const userResponse = await userService.getUserById(saleResponse.customer.id);
           setUser(userResponse);
@@ -42,7 +40,7 @@ export default function useSendContract(saleId) {
     }
   }, [saleId]);
 
-  const sendContract = async () => {
+  const previewContract = async () => {
     if (!sale || !user) {
       setError('Dados de venda ou usuário não carregados.');
       setSnackbar({
@@ -52,18 +50,18 @@ export default function useSendContract(saleId) {
       });
       return;
     }
-
+  
     setError(null);
     setSuccess(false);
     setLoading(true);
-
+  
     try {
       const today = new Date();
       const dia = today.getDate();
       const mes = today.getMonth() + 1;
       const ano = today.getFullYear();
-
-      const response = await contractService.sendContract({
+  
+      const response = await contractService.previewContract({
         sale_id: sale.id,
         contract_data: {
           id_customer: sale.customer.complete_name,
@@ -82,25 +80,33 @@ export default function useSendContract(saleId) {
           ano,
         },
       });
-
-      setContract(response);
+  
+      // Converte o base64 para Blob
+  
+      // Cria uma URL a partir do Blob
+      const blobUrl = URL.createObjectURL(response);
+      
+      // Define a URL do contrato
+      setContractPDF(blobUrl);
+  
       setSuccess(true);
       setSnackbar({
         open: true,
-        message: 'Contrato enviado com sucesso!',
+        message: 'Pré-visualização do contrato gerada com sucesso!',
         severity: 'success',
       });
     } catch (err) {
-      setError(`Erro ao enviar contrato: ${err.message}`);
+      setError(`Erro ao gerar pré-visualização do contrato: ${err.message}`);
       setSnackbar({
         open: true,
-        message: `Erro ao enviar contrato: ${err.message}`,
+        message: `Erro ao gerar pré-visualização do contrato: ${err.message}`,
         severity: 'error',
       });
     } finally {
       setLoading(false);
     }
   };
+  
 
   const handleCloseSnackbar = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
@@ -110,8 +116,8 @@ export default function useSendContract(saleId) {
     loading,
     error,
     success,
-    contract,
-    sendContract,
+    contractPDF,
+    previewContract,
     snackbar,
     handleCloseSnackbar,
   };
