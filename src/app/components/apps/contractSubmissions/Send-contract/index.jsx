@@ -1,82 +1,71 @@
-'use client';
-
-import React, { useState } from 'react';
-import { Button, CircularProgress, Snackbar, Alert, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
+import { useState } from 'react';
 import useSendContract from '@/hooks/contract/useSendContract';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
-export default function SendContractButton({ sale, ...props }) {
-  const {
-    sendContract,
-    sendingContractId,
-    snackbarMessage,
-    snackbarSeverity,
-    snackbarOpen,
-    handleCloseSnackbar,
-  } = useSendContract();
-
+export default function SendContractButton({ saleId }) {
+  const { loading, snackbar, sendContract, handleCloseSnackbar } = useSendContract(saleId);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const handleOpenDialog = () => setDialogOpen(true);
-  const handleCloseDialog = () => setDialogOpen(false);
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
 
   const handleConfirmSend = () => {
-    sendContract(sale);
-    handleCloseDialog();
+    handleDialogClose();
+    sendContract();
   };
 
   return (
     <>
+      {/* Botão principal */}
       <Button
         variant="contained"
         color="secondary"
-        onClick={handleOpenDialog}
-        startIcon={sendingContractId === sale?.id ? <CircularProgress size={20} /> : <SendIcon />}
-        disabled={sendingContractId === sale?.id}
-        {...props}
+        onClick={handleDialogOpen}
+        disabled={loading}
+        endIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
       >
-        Enviar Contrato
+        {loading ? 'Enviando...' : 'Enviar Contrato'}
       </Button>
 
+      {/* Dialog de confirmação */}
       <Dialog
         open={dialogOpen}
-        onClose={handleCloseDialog}
-        aria-labelledby="confirm-send-contract-title"
-        aria-describedby="confirm-send-contract-description"
+        onClose={handleDialogClose}
+        aria-labelledby="confirm-dialog-title"
+        aria-describedby="confirm-dialog-description"
       >
-        <DialogTitle id="confirm-send-contract-title">
-          Confirmar envio de contrato
-        </DialogTitle>
+        <DialogTitle id="confirm-dialog-title">Confirmar Envio</DialogTitle>
         <DialogContent>
-          <DialogContentText id="confirm-send-contract-description">
-            Você tem certeza de que deseja enviar o contrato para {sale?.customer?.complete_name || 'este cliente'}? 
-            Esta ação não pode ser desfeita.
+          <DialogContentText id="confirm-dialog-description">
+            Tem certeza de que deseja enviar o contrato? Essa ação não pode ser desfeita.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
+          <Button onClick={handleDialogClose} color="secondary">
             Cancelar
           </Button>
-          <Button
-            onClick={handleConfirmSend}
-            color="secondary"
-            autoFocus
-            disabled={sendingContractId === sale?.id}
-            startIcon={sendingContractId === sale?.id ? <CircularProgress size={20} /> : null}
-          >
+          <Button onClick={handleConfirmSend} color="primary" autoFocus>
             Confirmar
           </Button>
         </DialogActions>
       </Dialog>
 
+      {/* Snackbar para feedback */}
       <Snackbar
-        open={snackbarOpen}
+        open={snackbar.open}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
-          {snackbarMessage}
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
         </Alert>
       </Snackbar>
     </>
