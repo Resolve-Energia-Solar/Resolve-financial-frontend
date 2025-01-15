@@ -1,24 +1,20 @@
 'use client';
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { parseISO, format } from 'date-fns';
+import { parseISO, isBefore, format } from 'date-fns';
 
-/* material */
 import { Grid, Button, Stack, Snackbar, Alert } from '@mui/material';
 
-/* components */
 import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
 import AutoCompleteServiceCatalog from '@/app/components/apps/inspections/auto-complete/Auto-input-Service';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 
-/* hooks */
 import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
 import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
 import AutoCompleteUserProject from '../../auto-complete/Auto-input-UserProject';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import { TimePicker } from '@mui/x-date-pickers';
 import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
 import AutoCompleteProduct from '../../auto-complete/Auto-input-product';
 
@@ -30,6 +26,8 @@ const ScheduleFormCreateExternal = () => {
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
   const [alertType, setAlertType] = React.useState('success');
+
+  const MIN_SCHEDULE_DATE = '2025-01-17';
 
   const statusOptions = [
     { value: 'Pendente', label: 'Pendente' },
@@ -64,14 +62,12 @@ const ScheduleFormCreateExternal = () => {
   const validateChange = (field, newValue) => {
     if (field === 'schedule_date') {
       try {
-        const today = new Date();
         const selectedDate = parseISO(newValue);
+        const minDate = parseISO(MIN_SCHEDULE_DATE);
 
-        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
-        if (selectedDate < todayStart) {
-          showAlert('A data selecionada não pode ser anterior à data atual.', 'error');
-          handleChange(field, '');
+        if (isBefore(selectedDate, minDate)) {
+          showAlert('A data selecionada não pode ser anterior a 17/01.', 'error');
+          handleChange(field, ''); 
           return;
         }
       } catch (error) {
@@ -113,7 +109,6 @@ const ScheduleFormCreateExternal = () => {
   return (
     <>
       <Grid container spacing={3}>
-        {/* Serviço */}
         <Grid item xs={12} sm={12} lg={6}>
           <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
           <AutoCompleteServiceCatalog
@@ -127,7 +122,6 @@ const ScheduleFormCreateExternal = () => {
           />
         </Grid>
 
-        {/* Produtos */}
         <Grid item xs={12} sm={12} lg={6}>
           <CustomFormLabel htmlFor="products">Produtos</CustomFormLabel>
           <AutoCompleteProduct
@@ -141,7 +135,6 @@ const ScheduleFormCreateExternal = () => {
           />
         </Grid>
 
-        {/* Cliente */}
         <Grid item xs={12} sm={12} lg={6}>
           <CustomFormLabel htmlFor="client">Cliente</CustomFormLabel>
           <AutoCompleteUser
@@ -154,7 +147,6 @@ const ScheduleFormCreateExternal = () => {
           />
         </Grid>
 
-        {/* Projeto */}
         {formData.customer_id && (
           <Grid item xs={12} sm={12} lg={12}>
             <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
@@ -171,7 +163,6 @@ const ScheduleFormCreateExternal = () => {
           </Grid>
         )}
 
-        {/* Data do Agendamento */}
         <Grid item xs={12} sm={12} lg={6}>
           <FormDate
             label="Data do Agendamento"
@@ -185,7 +176,6 @@ const ScheduleFormCreateExternal = () => {
           />
         </Grid>
 
-        {/* Hora do Agendamento */}
         {formData.service_id == SERVICE_INSPECTION_ID ? (
           <Grid item xs={12} sm={12} lg={6}>
             <FormSelect
@@ -234,7 +224,6 @@ const ScheduleFormCreateExternal = () => {
           </Grid>
         )}
 
-        {/* Endereço */}
         <Grid item xs={12} sm={12} lg={6}>
           <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
           <AutoCompleteAddress
@@ -244,7 +233,6 @@ const ScheduleFormCreateExternal = () => {
           />
         </Grid>
 
-        {/* Status do Agendamento */}
         <Grid item xs={12} sm={12} lg={6}>
           <FormSelect
             label="Status do Agendamento"
@@ -255,7 +243,6 @@ const ScheduleFormCreateExternal = () => {
           />
         </Grid>
 
-        {/* Observação */}
         <Grid item xs={12} sm={12} lg={12}>
           <CustomFormLabel htmlFor="name">Observação</CustomFormLabel>
           <CustomTextField
@@ -271,7 +258,6 @@ const ScheduleFormCreateExternal = () => {
           />
         </Grid>
 
-        {/* Botão de Ação*/}
         <Grid item xs={12} sm={12} lg={12}>
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             <Button variant="contained" color="primary" onClick={handleSave}>
@@ -281,7 +267,6 @@ const ScheduleFormCreateExternal = () => {
         </Grid>
       </Grid>
 
-      {/* Alerta */}
       <Snackbar
         open={alertOpen}
         autoHideDuration={6000}
