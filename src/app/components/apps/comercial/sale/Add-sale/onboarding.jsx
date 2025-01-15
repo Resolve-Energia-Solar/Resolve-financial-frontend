@@ -410,7 +410,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
                     marginBottom: '8px',
                   }}
                 >
-                  {`${formatFieldName(field)}: ${messages.join(', ')}`}
+                  {`${formatFieldName(field)}: ${messages?.join(', ')}`}
                 </li>
               ))}
             </ul>

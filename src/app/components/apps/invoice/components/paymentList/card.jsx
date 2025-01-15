@@ -17,9 +17,9 @@ import {
   Box,
   Skeleton,
   useTheme,
-  Select,
-  InputLabel,
   FormControl,
+  TextField,
+  CircularProgress,
 } from '@mui/material';
 import { MoreVert, Edit, Delete, Visibility, Add } from '@mui/icons-material';
 import PaymentChip from '../PaymentChip';
@@ -76,10 +76,17 @@ const PaymentCard = ({ sale = null }) => {
     setRefresh(!refresh);
   };
 
-  const handleAtualizarValor = async () => {
+  const handleUpdateSaleValue = async () => {
     try {
       const baseValue = originalTotalValue;
 
+      console.log('Updating sale value with:', {
+        baseValue,
+        majoracao,
+        desconto,
+      });
+
+      // Passa o valor de majoracao diretamente (sem a necessidade de %)
       await saleService.updateSaleValue(sale, baseValue, majoracao, desconto);
 
       const data = await saleService.getTotalPaidSales(sale);
@@ -88,8 +95,8 @@ const PaymentCard = ({ sale = null }) => {
       const numericValue = Number(data.total_value || 0);
       setOriginalTotalValue(numericValue);
 
-      setMajoracao(0);
-      setDesconto(0);
+      setMajoracao(0); // Resetar o valor da majoração após a atualização
+      setDesconto(0); // Resetar o valor do desconto após a atualização
       setIsMajoracaoDisabled(false);
       setIsDescontoDisabled(false);
 
@@ -130,8 +137,8 @@ const PaymentCard = ({ sale = null }) => {
     }
   }, [sale, refresh]);
 
-  const valorMajoracao = originalTotalValue * (majoracao / 100);
-  const valorDesconto = originalTotalValue * (desconto / 100);
+  const valorMajoracao = majoracao;
+  const valorDesconto = desconto;
   const totalCalculado = originalTotalValue + valorMajoracao - valorDesconto;
 
   const handleAddPayment = () => {
@@ -180,44 +187,93 @@ const PaymentCard = ({ sale = null }) => {
 
   return (
     <>
-      <Box mb={2} display="flex" gap={3}>
+      <Box
+        mb={4}
+        mt={8}
+        display="flex"
+        flexDirection="row"
+        gap={3}
+       
+        alignItems="center"
+       
+      >
         <FormControl sx={{ minWidth: 120 }}>
-          <InputLabel id="majoracao-label">Majoração</InputLabel>
-          <Select
-            labelId="majoracao-label"
-            value={majoracao}
+          <TextField
+            id="majoracao"
             label="Majoração"
-            onChange={(e) => setMajoracao(e.target.value)}
+            type="number"
+            value={majoracao}
+            onChange={(e) => setMajoracao(Number(e.target.value) || 0)}
             disabled={isMajoracaoDisabled}
-          >
-            {Array.from({ length: 21 }, (_, i) => i).map((val) => (
-              <MenuItem key={val} value={val}>
-                {val}%
-              </MenuItem>
-            ))}
-          </Select>
+            inputProps={{ min: 0 }}
+            variant="outlined"
+            fullWidth
+            sx={{
+              backgroundColor: '#f8f8f8',
+              borderRadius: '8px',
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '8px',
+              },
+            }}
+            helperText={
+              majoracao
+                ? Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                    majoracao,
+                  )
+                : ''
+            }
+          />
         </FormControl>
 
         <FormControl sx={{ minWidth: 120 }}>
-          <InputLabel id="desconto-label">Desconto</InputLabel>
-          <Select
-            labelId="desconto-label"
-            value={desconto}
+          <TextField
+            id="desconto"
             label="Desconto"
-            onChange={(e) => setDesconto(e.target.value)}
+            type="number"
+            value={desconto}
+            onChange={(e) => setDesconto(Number(e.target.value) || 0)}
             disabled={isDescontoDisabled}
-          >
-            {Array.from({ length: 21 }, (_, i) => i).map((val) => (
-              <MenuItem key={val} value={val}>
-                {val}%
-              </MenuItem>
-            ))}
-          </Select>
+            inputProps={{ min: 0 }}
+            variant="outlined"
+            fullWidth
+            sx={{
+              backgroundColor: '#f8f8f8',
+              borderRadius: '8px',
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '8px',
+              },
+            }}
+            helperText={
+              desconto
+                ? Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                    desconto,
+                  )
+                : ''
+            }
+          />
         </FormControl>
 
-        <Box alignSelf="flex-end">
-          <Button variant="contained" onClick={handleAtualizarValor}>
-            Atualizar Valor
+        <Box alignSelf="center">
+          <Button
+            variant="contained"
+            onClick={handleUpdateSaleValue}
+            sx={{
+              backgroundColor: '#1a90ff',
+              color: '#fff',
+              '&:hover': {
+                backgroundColor: '#1573e6',
+              },
+              borderRadius: '8px',
+              padding: '12px 25px',
+              fontWeight: '600',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+            }}
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={15} sx={{ color: '#fff' }} /> : 'Atualizar Valor'}
           </Button>
         </Box>
       </Box>
@@ -434,12 +490,7 @@ const PaymentCard = ({ sale = null }) => {
         </DialogActions>
       </Dialog>
 
-      <Dialog
-        open={editModalOpen}
-        onClose={() => setEditModalOpen(false)}
-        maxWidth="md"
-        fullWidth
-      >
+      <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle>Editar Fatura</DialogTitle>
         <DialogContent>
           <EditInvoicePage
