@@ -305,7 +305,7 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
             {value === 2 && (
               <Grid container spacing={2}>
                 <Grid item>
-                  <SendContractButton saleId={saleData.id} />
+                  <SendContractButton sale={saleData} />
                 </Grid>
                 {/*  <Grid item>
                   <Button
