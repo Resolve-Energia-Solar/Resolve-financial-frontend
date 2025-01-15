@@ -88,7 +88,6 @@ export default function useSendContract () {
 
       const dateFields = fillDateFields()
       const data = {
-        document_type_id: 10,
         id_customer: fetchedSale.customer.complete_name,
         id_first_document: fetchedSale.customer.first_document,
         project_value_format: formatToBRL(fetchedSale.total_value),
@@ -123,6 +122,7 @@ export default function useSendContract () {
       const requestBody = {
         sale_id: sale.id,
         contract_data: data,
+        document_type_id: 10
       }
 
       console.log('Request Body:', requestBody)
