@@ -161,7 +161,6 @@ const PaymentCard = ({ sale = null }) => {
     try {
       await saleService.updateSalePartial(sale, {
         total_value: totalValue,
-        transfer_percentage: 0.2,
       });
       handleRefresh();
     } catch (error) {
