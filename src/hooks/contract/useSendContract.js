@@ -1,118 +1,184 @@
-import { useEffect, useState } from 'react';
-import contractService from '@/services/contractService';
-import userService from '@/services/userService';
-import saleService from '@/services/saleService';
+'use client'
 
-export default function useSendContract(saleId) {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
-  const [contract, setContract] = useState(null);
-  const [sale, setSale] = useState(null);
-  const [user, setUser] = useState(null);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+import { useState } from 'react'
+import saleService from '@/services/saleService'
+import unitService from '@/services/unitService'
+import paymentService from '@/services/paymentService'
+import Cookies from 'js-cookie'
 
-  useEffect(() => {
-    const fetchSaleAndUser = async () => {
-      setError(null);
-      try {
-        // Primeiro, carrega os dados da venda
-        const saleResponse = await saleService.getSaleById(saleId);
-        setSale(saleResponse);
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://crm.resolvenergiasolar.com'
 
-        // Após carregar a venda, busca o usuário relacionado
-        if (saleResponse?.customer?.id) {
-          const userResponse = await userService.getUserById(saleResponse.customer.id);
-          setUser(userResponse);
-        } else {
-          throw new Error('Cliente associado à venda não encontrado.');
-        }
-      } catch (err) {
-        setError(`Erro ao carregar dados: ${err.message}`);
-        setSnackbar({
-          open: true,
-          message: `Erro ao carregar dados: ${err.message}`,
-          severity: 'error',
-        });
-      }
-    };
 
-    if (saleId) {
-      fetchSaleAndUser();
+export default function useSendContract () {
+  const [sendingContractId, setSendingContractId] = useState(null)
+  const [isSendingContract, setIsSendingContract] = useState(false)
+  const [snackbarMessage, setSnackbarMessage] = useState('')
+  const [snackbarSeverity, setSnackbarSeverity] = useState('info')
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
+
+  const handleCloseSnackbar = () => setSnackbarOpen(false)
+
+  const TYPE_CHOICES = [
+    ['C', 'Crédito'],
+    ['D', 'Débito'],
+    ['B', 'Boleto'],
+    ['F', 'Financiamento'],
+    ['PI', 'Parcelamento interno'],
+    ['P', 'Pix'],
+  ]
+
+  const formatToBRL = value =>
+    new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(parseFloat(value))
+
+  const fillDateFields = () => {
+    const today = new Date()
+    return {
+      dia: String(today.getDate()).padStart(2, '0'),
+      mes: String(today.getMonth() + 1).padStart(2, '0'),
+      ano: String(today.getFullYear()),
     }
-  }, [saleId]);
+  }
 
-  const sendContract = async () => {
-    if (!sale || !user) {
-      setError('Dados de venda ou usuário não carregados.');
-      setSnackbar({
-        open: true,
-        message: 'Dados de venda ou usuário não carregados.',
-        severity: 'error',
-      });
-      return;
+  const validateSaleData = sale => {
+    const missingFields = []
+    if (!sale?.customer?.complete_name) missingFields.push('Nome Completo')
+    if (!sale?.customer?.email) missingFields.push('Email')
+    if (!sale?.customer?.first_document) missingFields.push('Documento')
+    if (!sale?.customer?.birth_date) missingFields.push('Data de Nascimento')
+    if (
+      !sale?.customer?.phone_numbers?.[0]?.phone_number ||
+      !sale?.customer?.phone_numbers?.[0]?.area_code
+    ) {
+      missingFields.push('Telefone')
+    }
+    return missingFields
+  }
+
+  const sendContract = async sale => {
+    if (!sale?.id) {
+      setSnackbarMessage('ID da venda não encontrado.')
+      setSnackbarSeverity('error')
+      setSnackbarOpen(true)
+      return
     }
 
-    setError(null);
-    setSuccess(false);
-    setLoading(true);
+    setSendingContractId(sale.id)
+    setIsSendingContract(true)
 
     try {
-      const today = new Date();
-      const dia = today.getDate();
-      const mes = today.getMonth() + 1;
-      const ano = today.getFullYear();
+      const fetchedSale = await saleService.getSaleById(sale.id)
+      console.log('Dados da venda:', fetchedSale)
 
-      const response = await contractService.sendContract({
+      const missingFields = validateSaleData(fetchedSale)
+      if (missingFields.length > 0) {
+        setSnackbarMessage(
+          `Os seguintes campos obrigatórios estão faltando: ${missingFields.join(', ')}`,
+        )
+        setSnackbarSeverity('warning')
+        setSnackbarOpen(true)
+        return
+      }
+
+      const dateFields = fillDateFields()
+      const data = {
+        id_customer: fetchedSale.customer.complete_name,
+        id_first_document: fetchedSale.customer.first_document,
+        project_value_format: formatToBRL(fetchedSale.total_value),
+        observation_payment: '',
+        dia: dateFields.dia,
+        mes: dateFields.mes,
+        ano: dateFields.ano,
+      }
+
+      const projectData = fetchedSale?.projects || []
+
+      if (projectData.length > 0) {
+        const project = projectData[0]
+
+        const fetchedProjectUnit = await unitService.getUnitsByProject(project.id)
+
+        const address = fetchedProjectUnit?.results?.[0]?.address || {}
+
+        Object.assign(data, {
+          id_customer_address: address.street || '',
+          id_customer_house: address.number || '',
+          id_customer_zip: address.zip_code || '',
+          id_customer_city: address.city || '',
+          id_customer_locality: address.neighborhood || '',
+          id_customer_state: address.state || '',
+        })
+
+        const materials = project.product?.materials || []
+        const ProductKWP = project.product?.params
+        data.id_product_kwp = ProductKWP || ''
+
+        if (materials.length > 0) {
+          materials.forEach((material, index) => {
+            data[`quantity_material_${index + 1}`] = parseFloat(material.amount).toFixed(0) || ''
+            data[`id_material_${index + 1}`] = material.material?.name || ''
+          })
+        }
+      }
+
+      const fetchedPayment = await paymentService.getAllPaymentsBySale(sale.id)
+      if (fetchedPayment?.results?.length > 0) {
+        const paymentDetails = fetchedPayment.results.map(payment => ({
+          type:
+            TYPE_CHOICES.find(choice => choice[0] === payment.payment_type)?.[1] ||
+            'Tipo não especificado',
+          value: formatToBRL(payment.value),
+        }))
+
+        data.observation_payment = paymentDetails
+          .map(payment => `${payment.type}: ${payment.value}`)
+          .join(' | ')
+      }
+
+      const requestBody = {
         sale_id: sale.id,
-        contract_data: {
-          id_customer: sale.customer.complete_name,
-          id_first_document: sale.customer.first_document,
-          id_second_document: sale.customer.second_document,
-          id_customer_address: user?.addresses?.[0]?.street || 'Endereço não informado',
-          id_customer_house: user?.addresses?.[0]?.number || 'S/N',
-          id_customer_zip: user?.addresses?.[0]?.zip_code || 'CEP não informado',
-          id_customer_city: user?.addresses?.[0]?.city || 'Cidade não informada',
-          id_customer_locality: user?.addresses?.[0]?.neighborhood || 'Bairro não informado',
-          id_customer_state: user?.addresses?.[0]?.state || 'Estado não informado',
-          watt_pico: sale?.sale_products?.[0]?.product?.params || 'Não informado',
-          project_value_format: sale.total_value,
-          dia,
-          mes,
-          ano,
+        contract_data: data,
+      }
+      const accessToken = Cookies.get('access_token')
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/generate-contract/`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify(requestBody),
         },
-      });
+      )
 
-      setContract(response);
-      setSuccess(true);
-      setSnackbar({
-        open: true,
-        message: 'Contrato enviado com sucesso!',
-        severity: 'success',
-      });
-    } catch (err) {
-      setError(`Erro ao enviar contrato: ${err.message}`);
-      setSnackbar({
-        open: true,
-        message: `Erro ao enviar contrato: ${err.message}`,
-        severity: 'error',
-      });
+      if (!response.ok) {
+        throw new Error('Erro ao enviar o contrato. Por favor, tente novamente.')
+      }
+      setSnackbarMessage('Contrato enviado com sucesso!')
+      setSnackbarSeverity('success')
+      setSnackbarOpen(true)
+    } catch (error) {
+      console.log('Error: ', error)
+      setSnackbarMessage(error.message || 'Erro ao enviar o contrato.')
+      setSnackbarSeverity('error')
+      setSnackbarOpen(true)
     } finally {
-      setLoading(false);
+      setIsSendingContract(false)
+      setSendingContractId(null)
     }
-  };
-
-  const handleCloseSnackbar = () => {
-    setSnackbar((prev) => ({ ...prev, open: false }));
-  };
+  }
 
   return {
-    loading,
-    error,
-    success,
-    contract,
     sendContract,
-    snackbar,
+    isSendingContract,
+    sendingContractId,
+    snackbarMessage,
+    snackbarSeverity,
+    snackbarOpen,
     handleCloseSnackbar,
-  };
+  }
 }
