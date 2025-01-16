@@ -49,7 +49,7 @@ export default function EditCustomer({ userId = null }) {
         </Alert>
       )}
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={12} lg={4}>
+        {/* <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="username">Usuário</CustomFormLabel>
           <CustomTextField
             name="username"
@@ -59,7 +59,7 @@ export default function EditCustomer({ userId = null }) {
             onChange={(e) => handleChange('username', e.target.value)}
             {...(formErrors.username && { error: true, helperText: formErrors.username })}
           />
-        </Grid>
+        </Grid> */}
         {/* <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="first_name">Nome</CustomFormLabel>
           <CustomTextField
