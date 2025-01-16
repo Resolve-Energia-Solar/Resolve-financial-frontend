@@ -44,6 +44,8 @@ const CreateProduct = ({ sale = null, onClosedModal = null, onRefresh = null, on
     handleDeleteMaterial,
   } = useProductForm();
 
+  console.log('formData', formData);
+
   useEffect(() => {
     if (success) {
       if (onAddProduct) {
@@ -137,15 +139,15 @@ const CreateProduct = ({ sale = null, onClosedModal = null, onRefresh = null, on
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={6}>
-          <CustomFormLabel htmlFor="branch_id">Filial</CustomFormLabel>
+          <CustomFormLabel htmlFor="branches_ids">Filial</CustomFormLabel>
           <AutoCompleteBranch
-            name="branch_id"
-            value={formData.branch_id}
-            onChange={(value) => handleChange('branch_id', value)}
+            name="branches_ids"
+            value={formData.branches_ids}
+            onChange={(value) => handleChange('branches_ids', value)}
             placeholder="Selecione a Filial"
             variant="outlined"
             fullWidth
-            {...(formErrors.branch_id && { error: true, helperText: formErrors.branch_id })}
+            {...(formErrors.branches_ids && { error: true, helperText: formErrors.branches_ids })}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={6}>

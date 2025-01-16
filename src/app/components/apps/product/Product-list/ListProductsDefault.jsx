@@ -29,6 +29,9 @@ import productService from '@/services/productsService';
 import DetailProduct from '../Product-detail';
 import { OnboardingSaleContext } from '@/app/context/OnboardingCreateSale';
 import SearchInput from '@/app/components/forms/theme-elements/SearchInput';
+import CreateProduct from '../Add-product';
+import HasPermission from '@/app/components/permissions/HasPermissions';
+import { useSelector } from 'react-redux';
 
 const ListProductsDefault = () => {
   const theme = useTheme();
@@ -40,6 +43,16 @@ const ListProductsDefault = () => {
   const [selectedProductDetail, setSelectedProductDetail] = useState(null);
   const [allowMultipleSelection, setAllowMultipleSelection] = useState(false);
   const { productIds, setProductIds, setTotalValue } = useContext(OnboardingSaleContext);
+
+  const [customProducts, setCustomProductIds] = useState([]);
+
+  const userPermissions = useSelector((state) => state.user.permissions);
+
+  const addCustomProduct = (product) => {
+    setCustomProductIds((prevCustomProductIds) => [...prevCustomProductIds, product]);
+  };
+
+  const [dialogProductOpen, setDialogProductOpen] = useState(false);
 
   const [kwpValue, setKwpValue] = useState('');
   const [kwpRange, setKwpRange] = useState([]);
@@ -56,11 +69,11 @@ const ListProductsDefault = () => {
 
     if (!isNaN(kwpNumber)) {
       setErrorKwp('');
-      const delta = 0.7;
+      const delta = 0.2;
       const generatedRange = [kwpNumber - delta, kwpNumber + delta];
       setKwpRange(generatedRange);
       console.log('Intervalo de Kwp:', generatedRange);
-      if(!allowMultipleSelection){
+      if (!allowMultipleSelection) {
         setProductIds([]);
         setTotalValue(0);
       }
@@ -69,19 +82,18 @@ const ListProductsDefault = () => {
     }
   };
 
-
   const handleCheckboxChange = (id) => {
     setProductIds((prevProductIds) => {
       const newProductIds = prevProductIds.includes(id)
         ? prevProductIds.filter((productId) => productId !== id)
         : [...prevProductIds, id];
-  
+
       const totalValue = newProductIds.reduce((acc, productId) => {
         const product = productList.find((p) => p.id === productId);
         return acc + (Number(product?.product_value) || 0);
       }, 0);
       setTotalValue(totalValue);
-  
+
       return newProductIds;
     });
   };
@@ -92,11 +104,13 @@ const ListProductsDefault = () => {
       try {
         const responseDefault = await productService.getProducts({
           default__in: 'S',
+          is_default: true,
+          is_deleted: false,
           kwp_in: kwpRange.join(','),
-          limit: 9
+          limit: 9,
           // ordering: 'product_value',
         });
-        setProductsList(responseDefault.results);
+        setProductsList([...customProducts, ...responseDefault.results]);
       } catch (error) {
         console.log('Error: ', error);
       } finally {
@@ -105,7 +119,7 @@ const ListProductsDefault = () => {
     };
 
     fetchData();
-  }, [kwpRange]);
+  }, [kwpRange, customProducts]);
 
   const handleMenuClick = (event, id) => {
     setMenuAnchorEl(event.currentTarget);
@@ -140,14 +154,34 @@ const ListProductsDefault = () => {
             label="Permitir seleção múltipla"
           />
         </Grid>
-        <Grid item xs={12} md={6}>
-          <SearchInput
-            value={kwpValue}
-            onChange={setKwpValue}
-            onSubmit={handleSearchSubmit}
-            placeholder="Digite o valor de Kwp"
-            errorMessage={errorKwp}
-          />
+        <Grid item xs={12} md={6} container spacing={1}>
+          <HasPermission
+            permissions={['logistics.add_custom_products']}
+            userPermissions={userPermissions}
+          >
+            <Grid item xs={4}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setDialogProductOpen(true)}
+                fullWidth
+                sx={{ height: '100%' }}
+              >
+                Criar Produto
+              </Button>
+            </Grid>
+          </HasPermission>
+          <Grid item xs={12} md={userPermissions.includes('logistics.add_custom_products') ? 8 : 12}>
+            <SearchInput
+              value={kwpValue}
+              onChange={setKwpValue}
+              onSubmit={handleSearchSubmit}
+              placeholder="Digite o valor de Kwp"
+              errorMessage={errorKwp}
+              sx={{ height: '100%' }}
+              fullWidth
+            />
+          </Grid>
         </Grid>
       </Grid>
 
@@ -191,12 +225,6 @@ const ListProductsDefault = () => {
                   </CardContent>
                   <CardActions disableSpacing>
                     <CustomCheckbox
-                      disabled={
-                        product.default === 'N' ||
-                        (!allowMultipleSelection &&
-                          productIds.length > 0 &&
-                          !productIds.includes(product.id))
-                      }
                       checked={productIds.includes(product.id)}
                       onChange={() => handleCheckboxChange(product.id)}
                     />
@@ -245,6 +273,20 @@ const ListProductsDefault = () => {
             Fechar
           </Button>
         </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={dialogProductOpen}
+        onClose={() => setDialogProductOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogContent>
+          <CreateProduct
+            onAddProduct={addCustomProduct}
+            onClosedModal={() => setDialogProductOpen(false)}
+          />
+        </DialogContent>
       </Dialog>
     </>
   );
