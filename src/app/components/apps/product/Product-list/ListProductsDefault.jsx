@@ -65,7 +65,7 @@ const ListProductsDefault = () => {
       return;
     }
 
-    const kwpNumber = parseFloat(value);
+    let kwpNumber = parseFloat(value.replace(',', '.'));
 
     if (!isNaN(kwpNumber)) {
       setErrorKwp('');
