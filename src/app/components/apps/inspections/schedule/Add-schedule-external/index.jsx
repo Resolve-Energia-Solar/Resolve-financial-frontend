@@ -27,7 +27,7 @@ const ScheduleFormCreateExternal = () => {
   const [alertMessage, setAlertMessage] = React.useState('');
   const [alertType, setAlertType] = React.useState('success');
 
-  const MIN_SCHEDULE_DATE = '2025-01-17';
+  const MIN_SCHEDULE_DATE = '';
 
   const statusOptions = [
     { value: 'Pendente', label: 'Pendente' },
