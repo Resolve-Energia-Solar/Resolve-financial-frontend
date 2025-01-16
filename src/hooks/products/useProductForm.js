@@ -4,7 +4,7 @@ import productService from '@/services/productsService';
 
 const useProductForm = (initialData, id) => {
   const [formData, setFormData] = useState({
-    branch_id: null,
+    branches_ids: null,
     roof_type_id: null,
     materials_ids: [],
     sale_id: null,
@@ -25,7 +25,7 @@ const useProductForm = (initialData, id) => {
     if (initialData) {
       setFormData({
         sale_id: initialData.sale?.id || null,
-        branch_id: initialData.branch.id || null,
+        branches_ids: initialData.branch.id || null,
         roof_type_id: initialData.roof_type.id || null,
         name: initialData.name || '',
         description: initialData.description || '',
@@ -80,7 +80,7 @@ const useProductForm = (initialData, id) => {
     setLoading(true);
     let dataToSend = {
       sale_id: formData.sale_id,
-      branch_id: formData.branch_id,
+      branches_ids: formData.branches_ids ? [formData.branches_ids] : undefined,
       roof_type_id: formData.roof_type_id,
       name: formData.name,
       description: formData.description,
