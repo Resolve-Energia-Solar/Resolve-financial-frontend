@@ -25,7 +25,7 @@ const useProductForm = (initialData, id) => {
     if (initialData) {
       setFormData({
         sale_id: initialData.sale?.id || null,
-        branches_ids: initialData.branch.id || null,
+        branches_ids: initialData.branch ? [initialData?.branch?.id] : [],
         roof_type_id: initialData.roof_type.id || null,
         name: initialData.name || '',
         description: initialData.description || '',

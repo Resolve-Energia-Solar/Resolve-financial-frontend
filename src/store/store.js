@@ -12,11 +12,13 @@ import EcommerceReducer from './apps/eCommerce/EcommerceSlice';
 import UserProfileReducer from './apps/userProfile/UserProfileSlice';
 import BlogReducer from './apps/blog/BlogSlice';
 import userReducer from './user/userSlice';
+import customProductsReducer from './products/customProducts';
 
 const persistConfig = {
   key: 'root',
   storage,
 };
+
 export const store = configureStore({
   reducer: {
     user: persistReducer(persistConfig, userReducer),
@@ -30,6 +32,7 @@ export const store = configureStore({
     ticketReducer: TicketReducer,
     userpostsReducer: UserProfileReducer,
     blogReducer: BlogReducer,
+    customProducts: persistReducer(persistConfig, customProductsReducer), 
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>

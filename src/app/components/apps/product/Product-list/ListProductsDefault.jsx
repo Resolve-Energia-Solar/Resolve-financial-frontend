@@ -21,8 +21,9 @@ import {
   Button,
   Switch,
   FormControlLabel,
+  DialogTitle,
 } from '@mui/material';
-import { MoreVert, Visibility } from '@mui/icons-material';
+import { Edit, MoreVert, Visibility } from '@mui/icons-material';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import ProductChip from '@/app/components/apps/product/components/ProductChip';
 import productService from '@/services/productsService';
@@ -31,9 +32,14 @@ import { OnboardingSaleContext } from '@/app/context/OnboardingCreateSale';
 import SearchInput from '@/app/components/forms/theme-elements/SearchInput';
 import CreateProduct from '../Add-product';
 import HasPermission from '@/app/components/permissions/HasPermissions';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { addProduct, removeProductsByIds, selectProducts } from '@/store/products/customProducts';
+import EditProduct from '../Edit-product';
+import { IconTrash } from '@tabler/icons-react';
+import ProductService from '@/services/productsService';
 
 const ListProductsDefault = () => {
+  const dispatch = useDispatch();
   const theme = useTheme();
   const [productList, setProductsList] = useState([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
@@ -43,16 +49,23 @@ const ListProductsDefault = () => {
   const [selectedProductDetail, setSelectedProductDetail] = useState(null);
   const [allowMultipleSelection, setAllowMultipleSelection] = useState(false);
   const { productIds, setProductIds, setTotalValue } = useContext(OnboardingSaleContext);
+  const [refreshList, setRefreshList] = useState(false);
 
-  const [customProducts, setCustomProductIds] = useState([]);
+  const customProducts = useSelector(selectProducts);
 
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const addCustomProduct = (product) => {
-    setCustomProductIds((prevCustomProductIds) => [...prevCustomProductIds, product]);
+    dispatch(addProduct(product));
+  };
+
+  const handleRefreshList = () => {
+    setRefreshList((prev) => !prev);
   };
 
   const [dialogProductOpen, setDialogProductOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const [kwpValue, setKwpValue] = useState('');
   const [kwpRange, setKwpRange] = useState([]);
@@ -98,6 +111,16 @@ const ListProductsDefault = () => {
     });
   };
 
+  const confirmDelete = async () => {
+    try {
+      await ProductService.deleteProduct(selectedProductDetail);
+      dispatch(removeProductsByIds([selectedProductDetail]));
+      setDeleteModalOpen(false);
+    } catch (error) {
+      console.log('Error: ', error);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -119,7 +142,7 @@ const ListProductsDefault = () => {
     };
 
     fetchData();
-  }, [kwpRange, customProducts]);
+  }, [kwpRange, customProducts, refreshList]);
 
   const handleMenuClick = (event, id) => {
     setMenuAnchorEl(event.currentTarget);
@@ -133,6 +156,16 @@ const ListProductsDefault = () => {
 
   const handleDetailClick = (id) => {
     setDetailModalOpen(true);
+    setSelectedProductDetail(id);
+  };
+
+  const handleEditClick = (id) => {
+    setEditModalOpen(true);
+    setSelectedProductDetail(id);
+  };
+
+  const handleDeleteClick = (id) => {
+    setDeleteModalOpen(true);
     setSelectedProductDetail(id);
   };
 
@@ -171,7 +204,11 @@ const ListProductsDefault = () => {
               </Button>
             </Grid>
           </HasPermission>
-          <Grid item xs={12} md={userPermissions.includes('logistics.add_custom_products') ? 8 : 12}>
+          <Grid
+            item
+            xs={12}
+            md={userPermissions.includes('logistics.add_custom_products') ? 8 : 12}
+          >
             <SearchInput
               value={kwpValue}
               onChange={setKwpValue}
@@ -252,6 +289,30 @@ const ListProductsDefault = () => {
                         <Visibility fontSize="small" sx={{ mr: 1 }} />
                         Visualizar
                       </MenuItem>
+
+                      {/* {product.default === 'N' && (
+                        <MenuItem
+                          onClick={() => {
+                            handleEditClick(product.id);
+                            handleMenuClose();
+                          }}
+                        >
+                          <Edit fontSize="small" sx={{ mr: 1 }} />
+                          Editar
+                        </MenuItem>
+                      )} */}
+
+                      {product.default === 'N' && (
+                        <MenuItem
+                          onClick={() => {
+                            handleDeleteClick(product.id);
+                            handleMenuClose();
+                          }}
+                        >
+                          <IconTrash fontSize="small" sx={{ mr: 1 }} />
+                          Excluir
+                        </MenuItem>
+                      )}
                     </Menu>
                   </CardActions>
                 </Card>
@@ -287,6 +348,43 @@ const ListProductsDefault = () => {
             onClosedModal={() => setDialogProductOpen(false)}
           />
         </DialogContent>
+      </Dialog>
+
+      <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="md" fullWidth>
+        <DialogContent>
+          <EditProduct
+            productId={selectedProductDetail}
+            onClosedModal={() => setEditModalOpen(false)}
+            onRefresh={handleRefreshList}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEditModalOpen(false)} color="primary">
+            Cancelar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Confirmar Exclusão</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Tem certeza de que deseja excluir este produto? Esta ação não pode ser desfeita.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteModalOpen(false)} color="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={confirmDelete} color="error" variant="contained">
+            Excluir
+          </Button>
+        </DialogActions>
       </Dialog>
     </>
   );

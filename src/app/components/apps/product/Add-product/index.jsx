@@ -29,8 +29,15 @@ import AutoCompleteBranch from '../../comercial/sale/components/auto-complete/Au
 import AutoCompleteRoofType from '../../roof/autoCompleteRoof';
 import AutoCompleteMaterial from '../../comercial/sale/components/auto-complete/Auto-Input-Material';
 import CustomFieldMoney from '../../invoice/components/CustomFieldMoney';
+import HasPermission from '@/app/components/permissions/HasPermissions';
+import { useSelector } from 'react-redux';
 
-const CreateProduct = ({ sale = null, onClosedModal = null, onRefresh = null, onAddProduct = null }) => {
+const CreateProduct = ({
+  sale = null,
+  onClosedModal = null,
+  onRefresh = null,
+  onAddProduct = null,
+}) => {
   const {
     formData,
     handleChange,
@@ -44,7 +51,7 @@ const CreateProduct = ({ sale = null, onClosedModal = null, onRefresh = null, on
     handleDeleteMaterial,
   } = useProductForm();
 
-  console.log('formData', formData);
+  const userPermissions = useSelector((state) => state.user.permissions);
 
   useEffect(() => {
     if (success) {
@@ -126,18 +133,23 @@ const CreateProduct = ({ sale = null, onClosedModal = null, onRefresh = null, on
             })}
           />
         </Grid>
-        <Grid item xs={12} sm={12} lg={6}>
-          <CustomFormLabel htmlFor="cost_value">Valor de Custo</CustomFormLabel>
-          <CustomFieldMoney
-            name="cost_value"
-            value={formData.cost_value}
-            onChange={(value) => handleChange('cost_value', value)}
-            placeholder="R$ 10.000,00"
-            variant="outlined"
-            fullWidth
-            {...(formErrors.cost_value && { error: true, helperText: formErrors.cost_value })}
-          />
-        </Grid>
+        <HasPermission
+          permissions={['logistics.view_product_cost_value']}
+          userPermissions={userPermissions}
+        >
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel htmlFor="cost_value">Valor de Custo</CustomFormLabel>
+            <CustomFieldMoney
+              name="cost_value"
+              value={formData.cost_value}
+              onChange={(value) => handleChange('cost_value', value)}
+              placeholder="R$ 10.000,00"
+              variant="outlined"
+              fullWidth
+              {...(formErrors.cost_value && { error: true, helperText: formErrors.cost_value })}
+            />
+          </Grid>
+        </HasPermission>
         <Grid item xs={12} sm={12} lg={6}>
           <CustomFormLabel htmlFor="branches_ids">Filial</CustomFormLabel>
           <AutoCompleteBranch
