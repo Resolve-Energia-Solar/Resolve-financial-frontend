@@ -289,6 +289,7 @@ const useScheduleForm = (initialData, id) => {
       longitude: formData.longitude,
       status: formData.status,
       observation: formData.observation,
+      final_service_opinion_id: formData.final_service_opinion_id,
       going_to_location_at: formData.going_to_location_at,
       execution_started_at: formData.execution_started_at,
       execution_finished_at: formData.execution_finished_at,

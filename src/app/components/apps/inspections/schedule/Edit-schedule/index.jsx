@@ -26,6 +26,7 @@ import serviceOpinionsService from '@/services/serviceOpinionsService';
 import HasPermission from '@/app/components/permissions/HasPermissions';
 import { useSelector } from 'react-redux';
 import AutoCompleteProduct from '../../auto-complete/Auto-input-product';
+import AutoInputStatusSchedule from '../../auto-complete/Auto-Input-StatusInspection';
 
 const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh = null }) => {
   const router = useRouter();
@@ -381,20 +382,27 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         </Grid>
 
         {/* Parecer final de Serviço */}
-        <Grid item xs={12} sm={6} lg={6}>
-          <FormSelect
-            label={'Parecer final de serviço'}
-            options={serviceOpinions}
-            onChange={(e) => handleChange('final_service_opinion_id', e.target.value)}
-            value={formData.final_service_opinion_id || ''}
-            {...(formErrors.final_service_opinion_id && {
-              error: true,
-              helperText: formErrors.final_service_opinion_id,
-            })}
-            disabled={loadingServiceOpinions || formData.service_opinion === null}
-            noOptionsText={'Nenhuma opinião final de serviço encontrada'}
-          />
-        </Grid>
+        <HasPermission
+          permissions={['field_services.change_final_service_opinion']}
+          userPermissions={userPermissions}
+        >
+          <Grid item xs={12} sm={6} lg={6}>
+            <CustomFormLabel htmlFor="final_service_opinion_id">
+              Parecer final de serviço
+            </CustomFormLabel>
+            <AutoInputStatusSchedule
+              onChange={(id) => handleChange('final_service_opinion_id', id)}
+              value={formData.final_service_opinion_id}
+              {...(formErrors.final_service_opinion_id && {
+                error: true,
+                helperText: formErrors.final_service_opinion_id,
+              })}
+              isFinalOpinion={true}
+              serviceId={formData.service_id}
+              // disabled={loadingServiceOpinions || formData.service_id === null}
+            />
+          </Grid>
+        </HasPermission>
 
         {/* Botão de Ação */}
         <Grid item xs={12} sm={12} lg={12}>

@@ -1,18 +1,17 @@
 import apiClient from './apiClient';
 
 const serviceOpinionsService = {
-  getServiceOpinions: async ({ ordering, params, nextPage }) => {
-    try {
-      const urlParams = params ? `&${params}` : '';
-      const urlNextPage = nextPage ? `&page=${nextPage}` : '';
-      const response = await apiClient.get(
-        `/api/service-opinions/?ordering=${ordering || ''}${urlParams}${urlNextPage}`,
-      );
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao buscar pareceres:', error);
-      throw error;
+  getServiceOpinions: async ({ ordering, nextPage, limit = 5, page = 1, ...rest }) => {
+
+
+    const params = {
+      ordering: ordering || '',
+      page: nextPage || page,
+      ...rest
     }
+
+    const response = await apiClient.get(`/api/service-opinions/`, { params });
+    return response.data;
   },
 
   getServiceOpinionsById: async (id) => {
@@ -21,6 +20,15 @@ const serviceOpinionsService = {
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar parecer com id ${id}:`, error);
+      throw error;
+    }
+  },
+  getServiceOpinionsByName: async (name) => {
+    try {
+      const response = await apiClient.get(`/api/service-opinions/?name=${name}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar parecer com id ${name}:`, error);
       throw error;
     }
   },
