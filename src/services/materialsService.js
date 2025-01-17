@@ -31,7 +31,7 @@ const materialService = {
 
   getMaterialByName: async name => {
     try {
-      const response = await apiClient.get(`/api/materials/?description__icontains=${name}`)
+      const response = await apiClient.get(`/api/materials/?name__icontains=${name}`)
       return response.data
     } catch (error) {
       console.error(`Erro ao buscar material com nome: ${name}`, error)
