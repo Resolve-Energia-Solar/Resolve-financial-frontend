@@ -18,14 +18,21 @@ import {
 import ListProductsDefault from '../../../product/Product-list/ListProductsDefault';
 import PaymentCard from '../../../invoice/components/paymentList/card';
 import useSaleForm from '@/hooks/sales/useSaleForm';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import saleService from '@/services/saleService';
 import paymentService from '@/services/paymentService';
 import ChecklistSales from '../../../checklist/Checklist-list/ChecklistSales';
 import SchedulesInspections from '../../../project/components/SchedulesInspections';
-import { Alert, CircularProgress, Snackbar, StepContent, useMediaQuery, useTheme } from '@mui/material';
-import { t } from 'i18next';
+import {
+  Alert,
+  CircularProgress,
+  Snackbar,
+  StepContent,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import { CheckCircle, Error } from '@mui/icons-material';
+import { removeProductsByIds } from '@/store/products/customProducts';
 
 const steps = ['Dados do Cliente', 'Produtos', 'Financeiro', 'Documentos', 'Agendar Vistoria'];
 
@@ -38,6 +45,7 @@ export default function OnboardingCreateSale({ onClose = null, onEdit = null }) 
 }
 
 function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
+  const dispatch = useDispatch();
   const [activeStep, setActiveStep] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDialogPaymentOpen, setIsDialogPaymentOpen] = useState(false);
@@ -165,6 +173,13 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
     success,
     successData,
   } = useSaleForm();
+
+  useEffect(() => {
+    if (success && successData) {
+      const product_ids = successData.sale_products.map((item) => item.product.id);
+      dispatch(removeProductsByIds(product_ids));
+    }
+  }, [success, successData]);
 
   customerId ? (formData.customerId = customerId) : null;
   totalValue ? (formData.totalValue = totalValue) : null;
