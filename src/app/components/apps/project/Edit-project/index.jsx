@@ -6,12 +6,9 @@ import { useParams } from 'next/navigation';
 import CheckListRateio from '@/app/components/apps/checklist/Checklist-list';
 import Attachments from '@/app/components/shared/Attachments';
 import documentTypeService from '@/services/documentTypeService';
-import ListRequest from '../../request/ListRequest';
 import projectService from '@/services/projectService';
-import RequestEnergyCompany from '@/hooks/requestEnergyCompany/Request';
-import LateralForm from '../../request/LateralForm';
+
 import History from '@/app/components/apps/history';
-import SchedulesInspections from '../components/SchedulesInspections';
 import ListInspection from '../components/SchedulesInspections/list-Inspections';
 import RequestList from '../../request/Request-list';
 import UploadDocument from '../UploadDocument';
@@ -103,7 +100,7 @@ export default function EditProject({ projectId = null }) {
 
       {value === 5 && (
         <div>
-          <UploadDocument projectId={id} />
+          <UploadDocument project={projectData} />
         </div>
       )}
       {value === 6 && (

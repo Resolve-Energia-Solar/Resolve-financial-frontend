@@ -1,4 +1,3 @@
-// UploadDocument.jsx
 import React, { useState } from 'react';
 import {
   Box,
@@ -10,13 +9,32 @@ import {
   Alert,
   CircularProgress,
   LinearProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  IconButton,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SaveIcon from '@mui/icons-material/Save';
 import projectService from '@/services/projectService';
 
-const UploadDocument = ({ projectId }) => {
+const UploadDocument = ({ project }) => {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
   const [uploadStatus, setUploadStatus] = useState(null);
@@ -24,6 +42,12 @@ const UploadDocument = ({ projectId }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
+  const [openDialog, setOpenDialog] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editedAmount, setEditedAmount] = useState('');
+  const [materials, setMaterials] = useState(project.materials || []);
+
+  console.log('Materiais:', materials);
 
   const handleUpload = (event) => {
     const selectedFile = event.target.files[0];
@@ -33,7 +57,7 @@ const UploadDocument = ({ projectId }) => {
 
       if (!allowedTypes.includes(selectedFile.type)) {
         setUploadStatus('error');
-        setErrorMessage('Tipo de arquivo não permitido. Apenas arquivos PDF e CSV são permitidos.');
+        setErrorMessage('Tipo de arquivo não permitido. Apenas arquivos CSV são permitidos.');
         setOpenSnackbar(true);
         return;
       }
@@ -53,11 +77,18 @@ const UploadDocument = ({ projectId }) => {
       setErrorMessage('');
       setOpenSnackbar(false);
       setUploadProgress(0);
-      console.log('Arquivo selecionado:', selectedFile);
+
+      if (project.materials && project.materials.length > 0) {
+        setOpenDialog(true);
+      } else {
+        handleFileUpload();
+      }
     }
   };
 
   const handleFileUpload = async () => {
+    setOpenDialog(false);
+
     if (!file) return;
 
     setIsUploading(true);
@@ -67,20 +98,10 @@ const UploadDocument = ({ projectId }) => {
 
     const formData = new FormData();
 
-    if (typeof projectId === 'object' && projectId !== null) {
-      formData.append('project_id', projectId.id);
-    } else {
-      formData.append('project_id', projectId);
-    }
-
+    formData.append('project_id', project.id);
     formData.append('file', file);
 
     try {
-      console.log('Conteúdo do FormData:');
-      for (let pair of formData.entries()) {
-        console.log(`${pair[0]}: ${pair[1]}`);
-      }
-
       const response = await projectService.insertMaterial(formData, (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
         setUploadProgress(percentCompleted);
@@ -95,13 +116,8 @@ const UploadDocument = ({ projectId }) => {
       setUploadProgress(0);
     } catch (error) {
       setUploadStatus('error');
-      if (error.response && error.response.data && error.response.data.error) {
-        setErrorMessage(error.response.data.error);
-      } else {
-        setErrorMessage('Ocorreu um erro no upload do arquivo.');
-      }
+      setErrorMessage(error.response?.data?.error || 'Ocorreu um erro no upload do arquivo.');
       setOpenSnackbar(true);
-      console.error('Erro ao enviar o arquivo:', error);
     } finally {
       setIsUploading(false);
     }
@@ -109,6 +125,45 @@ const UploadDocument = ({ projectId }) => {
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(value);
+  };
+
+  const handleEditStart = (id, currentAmount) => {
+    setEditingId(id);
+    setEditedAmount(currentAmount);
+  };
+
+  const handleEditSave = async (id) => {
+    try {
+      await projectService.partialUpdateProject(project.id, editedAmount);
+      const updatedMaterials = materials.map((item) =>
+        item.material.id === id ? { ...item, amount: editedAmount } : item,
+      );
+      setMaterials(updatedMaterials);
+      setEditingId(null);
+    } catch (error) {
+      console.error('Erro ao atualizar quantidade:', error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await projectService.deleteMaterial(id);
+      const updatedMaterials = materials.filter((item) => item.material.id !== id);
+      setMaterials(updatedMaterials);
+    } catch (error) {
+      console.error('Erro ao apagar material:', error);
+    }
   };
 
   return (
@@ -129,11 +184,6 @@ const UploadDocument = ({ projectId }) => {
           tabIndex={0}
           aria-label="Upload de arquivo"
           onClick={() => document.getElementById('upload-button-file').click()}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              document.getElementById('upload-button-file').click();
-            }
-          }}
           sx={{
             width: '100%',
             padding: 2,
@@ -202,6 +252,79 @@ const UploadDocument = ({ projectId }) => {
         )}
       </Stack>
 
+      {materials.length > 0 && (
+        <TableContainer component={Paper} sx={{ marginTop: 4, maxHeight: 400, overflow: 'auto' }}>
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow>
+                <TableCell>Nome do Material</TableCell>
+                <TableCell>Quantidade</TableCell>
+                <TableCell>Preço</TableCell>
+                <TableCell>Status</TableCell>
+{/*                 <TableCell>Ações</TableCell>
+ */}              </TableRow>
+            </TableHead>
+            <TableBody>
+              {materials.map((item) => (
+                <TableRow key={item.material.id}>
+                  <TableCell>
+                    <InventoryIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
+                    {item.material.name}
+                  </TableCell>
+                  <TableCell>
+                    {editingId === item.material.id ? (
+                      <TextField
+                        value={editedAmount}
+                        onChange={(e) => setEditedAmount(e.target.value)}
+                        type="number"
+                        size="small"
+                      />
+                    ) : (
+                      parseFloat(item.amount).toLocaleString()
+                    )}
+                  </TableCell>
+                  <TableCell>{formatCurrency(item.material.price)}</TableCell>
+                  <TableCell>
+                    {item.is_exit ? (
+                      <CheckIcon sx={{ color: 'green' }} />
+                    ) : (
+                      <CloseIcon sx={{ color: 'red' }} />
+                    )}
+                  </TableCell>
+                 {/*  <TableCell>
+                    {editingId === item.material.id ? (
+                      <>
+                        <IconButton
+                          onClick={() => handleEditSave(item.material.id)}
+                          color="primary"
+                        >
+                          <SaveIcon />
+                        </IconButton>
+                        <IconButton onClick={() => setEditingId(null)} color="secondary">
+                          <CloseIcon />
+                        </IconButton>
+                      </>
+                    ) : (
+                      <>
+                        <IconButton
+                          onClick={() => handleEditStart(item.material.id, item.amount)}
+                          color="primary"
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton onClick={() => handleDelete(item.material.id)} color="error">
+                          <DeleteIcon />
+                        </IconButton>
+                      </>
+                    )}
+                  </TableCell> */}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}
@@ -218,6 +341,23 @@ const UploadDocument = ({ projectId }) => {
           </Alert>
         ) : null}
       </Snackbar>
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Confirmação</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Já existem materiais adicionados. Deseja adicionar mais materiais?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleFileUpload} color="secondary" autoFocus>
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 };

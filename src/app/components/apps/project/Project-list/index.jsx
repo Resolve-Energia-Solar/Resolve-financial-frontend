@@ -249,19 +249,6 @@ const ProjectList = ({ onClick }) => {
           />
         </TableContainer>
       )}
-
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
-        <Button
-          variant="outlined"
-          startIcon={<AddBoxRounded />}
-          onClick={() => router.push('/apps/project/create')}
-          sx={{ marginBottom: 2 }}
-        >
-          Criar Projeto
-        </Button>
-
-        <DrawerFiltersProject />
-      </Box>
     </>
   );
 };
