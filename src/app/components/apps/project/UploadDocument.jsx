@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -32,9 +32,10 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
+import projectMaterialsService from '@/services/projectMaterialService';
 import projectService from '@/services/projectService';
 
-const UploadDocument = ({ project }) => {
+const UploadDocument = ({ projectId }) => {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
   const [uploadStatus, setUploadStatus] = useState(null);
@@ -45,9 +46,24 @@ const UploadDocument = ({ project }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editedAmount, setEditedAmount] = useState('');
-  const [materials, setMaterials] = useState(project.materials || []);
+  const [materials, setMaterials] = useState([]);
+  const [project, setProject] = useState(null);
 
   console.log('Materiais:', materials);
+
+  const fetchProject = async () => {
+    try {
+      const response = await projectService.getProjectById(projectId);
+      setProject(response);
+      setMaterials(response.materials || []);
+    } catch (error) {
+      console.log('Erro ao carregar projeto:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProject();
+  }, [projectId]);
 
   const handleUpload = (event) => {
     const selectedFile = event.target.files[0];
@@ -145,10 +161,12 @@ const UploadDocument = ({ project }) => {
 
   const handleEditSave = async (id) => {
     try {
-      await projectService.partialUpdateProject(project.id, editedAmount);
+      await projectMaterialsService.partialUpdateProjectMaterial(id, { amount: editedAmount });
       const updatedMaterials = materials.map((item) =>
         item.material.id === id ? { ...item, amount: editedAmount } : item,
       );
+
+      fetchProject();
       setMaterials(updatedMaterials);
       setEditingId(null);
     } catch (error) {
@@ -156,10 +174,18 @@ const UploadDocument = ({ project }) => {
     }
   };
 
+  /*************  ✨ Codeium Command ⭐  *************/
+  /**
+   * Delete a material from the project.
+   * @param {number} id The material id to be deleted.
+   * @returns {Promise<void>}
+   */
+  /******  097f8740-3680-4052-b8be-15ac2860cf76  *******/
   const handleDelete = async (id) => {
     try {
-      await projectService.deleteMaterial(id);
+      await projectMaterialsService.deleteProjectMaterial(id);
       const updatedMaterials = materials.filter((item) => item.material.id !== id);
+      fetchProject();
       setMaterials(updatedMaterials);
     } catch (error) {
       console.error('Erro ao apagar material:', error);
@@ -261,8 +287,8 @@ const UploadDocument = ({ project }) => {
                 <TableCell>Quantidade</TableCell>
                 <TableCell>Preço</TableCell>
                 <TableCell>Status</TableCell>
-{/*                 <TableCell>Ações</TableCell>
- */}              </TableRow>
+                <TableCell>Ações</TableCell>
+              </TableRow>
             </TableHead>
             <TableBody>
               {materials.map((item) => (
@@ -291,13 +317,10 @@ const UploadDocument = ({ project }) => {
                       <CloseIcon sx={{ color: 'red' }} />
                     )}
                   </TableCell>
-                 {/*  <TableCell>
+                  <TableCell>
                     {editingId === item.material.id ? (
                       <>
-                        <IconButton
-                          onClick={() => handleEditSave(item.material.id)}
-                          color="primary"
-                        >
+                        <IconButton onClick={() => handleEditSave(item.id)} color="primary">
                           <SaveIcon />
                         </IconButton>
                         <IconButton onClick={() => setEditingId(null)} color="secondary">
@@ -317,7 +340,7 @@ const UploadDocument = ({ project }) => {
                         </IconButton>
                       </>
                     )}
-                  </TableCell> */}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

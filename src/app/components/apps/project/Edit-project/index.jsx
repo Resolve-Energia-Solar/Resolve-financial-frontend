@@ -30,6 +30,8 @@ export default function EditProject({ projectId = null }) {
     setValue(newValue);
   };
 
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -100,7 +102,7 @@ export default function EditProject({ projectId = null }) {
 
       {value === 5 && (
         <div>
-          <UploadDocument project={projectData} />
+          <UploadDocument projectId={id} project={projectData} />
         </div>
       )}
       {value === 6 && (
