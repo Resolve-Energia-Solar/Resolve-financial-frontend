@@ -1,8 +1,8 @@
 import React from 'react';
-import { Grid, Box, Stack, Typography } from '@mui/material';
+import { Grid, Box, Stack, Typography, Chip } from '@mui/material';
 
 // Componente InfoCard
-const InfoCard = ({ backgroundColor, iconColor, IconComponent, title, count, onClick }) => (
+const InfoCard = ({ backgroundColor, iconColor, IconComponent, title, value, count, onClick }) => (
   <Grid item xs={12} sm={6} lg={2.4}>
     <Box
       bgcolor={backgroundColor}
@@ -23,7 +23,8 @@ const InfoCard = ({ backgroundColor, iconColor, IconComponent, title, count, onC
         </Box>
         <Box>
           <Typography>{title}</Typography>
-          <Typography fontWeight={500}>{count}</Typography>
+          <Typography fontWeight={200} fontSize={15}>{value}</Typography>
+          <Chip label={`Quantidade: ${count}`} size="small" sx={{ mt: 0.6 }} />
         </Box>
       </Stack>
     </Box>
@@ -39,6 +40,7 @@ const SaleCards = ({ cardsData }) => (
         iconColor={card.iconColor}
         IconComponent={card.IconComponent}
         title={card.title}
+        value={Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(card.value || 0)}
         count={card.count}
         onClick={card.onClick}
       />

@@ -27,6 +27,7 @@ import {
   Drawer,
   CardContent,
   TablePagination,
+  Chip,
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -263,7 +264,19 @@ const SaleList = () => {
           aria-controls="sale-cards-content"
           id="sale-cards-header"
         >
-          <Typography variant="h6">Status</Typography>
+          <Typography variant="h6">
+            Status
+            <Chip
+              sx={{ marginLeft: 1 }}
+              label={
+                Number(indicators?.total_value_sum || 0).toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                })
+              }
+            />
+            
+          </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <InforCards
@@ -274,7 +287,8 @@ const SaleList = () => {
                 IconComponent: IconListDetails,
                 title: 'Em andamento',
                 onClick: () => setFilters({ status__in: 'EA' }),
-                count: indicators?.in_progress_count || '-',
+                value: indicators?.in_progress?.total_value || 0,
+                count: indicators?.in_progress?.count || '-',
               },
               {
                 backgroundColor: 'success.light',
@@ -282,7 +296,8 @@ const SaleList = () => {
                 IconComponent: IconListDetails,
                 title: 'Finalizado',
                 onClick: () => setFilters({ status__in: 'F' }),
-                count: indicators?.finalized_count || '-',
+                value: indicators?.finalized?.total_value || 0,
+                count: indicators?.finalized?.count || '-',
               },
               {
                 backgroundColor: 'secondary.light',
@@ -290,7 +305,8 @@ const SaleList = () => {
                 IconComponent: IconPaperclip,
                 title: 'Pendente',
                 onClick: () => setFilters({ status__in: 'P' }),
-                count: indicators?.pending_count || '-',
+                value: indicators?.pending?.total_value || 0,
+                count: indicators?.pending?.count || '-',
               },
               {
                 backgroundColor: 'warning.light',
@@ -298,7 +314,8 @@ const SaleList = () => {
                 IconComponent: IconSortAscending,
                 title: 'Cancelado',
                 onClick: () => setFilters({ status__in: 'C' }),
-                count: indicators?.canceled_count || '-',
+                value: indicators?.canceled?.total_value || 0,
+                count: indicators?.canceled?.count || '-',
               },
               {
                 backgroundColor: 'warning.light',
@@ -306,7 +323,8 @@ const SaleList = () => {
                 IconComponent: IconSortAscending,
                 title: 'Distrato',
                 onClick: () => setFilters({ status__in: 'D' }),
-                count: indicators?.distracted_count || '-',
+                value: indicators?.terminated?.total_value || 0,
+                count: indicators?.terminated?.count || '-',
               },
             ]}
           />

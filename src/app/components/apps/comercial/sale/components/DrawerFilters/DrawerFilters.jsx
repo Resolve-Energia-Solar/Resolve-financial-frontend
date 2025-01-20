@@ -8,7 +8,6 @@ import AutoCompleteBranch from '../auto-complete/Auto-Input-Branch';
 import AutoCompleteUser from '../auto-complete/Auto-Input-User';
 import { SaleDataContext } from '@/app/context/SaleContext';
 import AutoCompleteCampaign from '../auto-complete/Auto-Input-Campaign';
-import { ca } from 'date-fns/locale';
 
 export default function DrawerFilters() {
   const [open, setOpen] = useState(false);
