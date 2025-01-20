@@ -422,12 +422,12 @@ const SaleList = () => {
 
                 <TableCell
                   sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('document_completion_date')}
+                  onClick={() => handleSort('created_at')}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Data de Criação
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                      {order === 'document_completion_date' &&
+                      {order === 'created_at' &&
                         (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                     </Box>
                   </Box>
