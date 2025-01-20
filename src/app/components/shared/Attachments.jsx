@@ -125,7 +125,9 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
           <Grid item xs={3} key={attachment.id}>
             <Box
               sx={{
-                border: `2px solid ${statusDoc.find((s) => s.value === attachment.status)?.color}`,
+                border: `2px solid ${statusDoc?.find((s) => s.value === attachment.status)?.color ||
+                  statusDoc?.find((s) => s.value === 'EA')?.color ||
+                  theme.palette.primary.main}`,
                 padding: 2,
                 textAlign: 'center',
                 borderRadius: 1,
@@ -144,7 +146,13 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
                 {attachment?.document_type?.name}
               </Typography>
               <Typography variant="caption" sx={{ marginTop: 0.3 }}>
-                <Chip label={statusDoc.find((s) => s.value === attachment?.status)?.label} />
+                <Chip
+                  label={
+                    statusDoc?.find((s) => s.value === attachment?.status)
+                      ? statusDoc?.find((s) => s.value === attachment?.status)?.label
+                      : statusDoc?.find((s) => s.value === 'EA')?.label || 'EA'
+                  }
+                />
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginBottom: 1 }}></Box>
             </Box>
