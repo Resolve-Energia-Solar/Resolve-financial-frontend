@@ -21,6 +21,7 @@ export default function DrawerFilters() {
     isPreSale: filters.isPreSale,
     seller: filters.seller,
     marketing_campaign: filters.marketing_campaign,
+    created_at: filters.created_at,
   });
 
   console.log('tempFilters', tempFilters);
@@ -62,6 +63,12 @@ export default function DrawerFilters() {
 
     if (filters.seller) {
       params.seller = filters.seller;
+    }
+
+    if (filters.created_at && filters.created_at[0] && filters.created_at[1]) {
+      const startDate = filters.created_at[0].toISOString().split('T')[0];
+      const endDate = filters.created_at[1].toISOString().split('T')[0];
+      params.created_at__range = `${startDate},${endDate}`;
     }
 
     return params;
@@ -157,9 +164,19 @@ export default function DrawerFilters() {
 
               <Grid item xs={12}>
                 <FormDateRange
-                  label="Selecione a Data de Conclusão"
+                  label="Data de Conclusão"
                   value={tempFilters.documentCompletionDate}
                   onChange={(newValue) => handleChange('documentCompletionDate', newValue)}
+                  error={false}
+                  helperText=""
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <FormDateRange
+                  label="Data de Criação"
+                  value={tempFilters.created_at}
+                  onChange={(newValue) => handleChange('created_at', newValue)}
                   error={false}
                   helperText=""
                 />
