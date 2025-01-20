@@ -425,7 +425,7 @@ const SaleList = () => {
                   onClick={() => handleSort('document_completion_date')}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    Data de Conclusão
+                    Data de Criação
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
                       {order === 'document_completion_date' &&
                         (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
@@ -465,13 +465,7 @@ const SaleList = () => {
                       <StatusChip status={item.status} />
                     </TableCell>
                     <TableCell>
-                      {item?.document_completion_date ? (
-                        new Date(item?.document_completion_date).toLocaleDateString()
-                      ) : (
-                        <Tooltip title="Não Concluído">
-                          <Typography color="error">Não Concluído</Typography>
-                        </Tooltip>
-                      )}
+                      {item?.created_at ? new Date(item.created_at).toLocaleDateString() : '-'}
                     </TableCell>
                     <TableCell>{item.branch.name}</TableCell>
                     {/* <TableCell>
