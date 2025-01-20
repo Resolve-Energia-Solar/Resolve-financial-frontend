@@ -92,6 +92,9 @@ export default function DrawerFilters() {
       customer: null,
       isPreSale: [],
       seller: null,
+      marketing_campaign: null,
+      created_at: [null, null],
+      is_signed: [],
     });
   };
 
