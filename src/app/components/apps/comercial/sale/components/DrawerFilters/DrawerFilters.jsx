@@ -7,6 +7,7 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import AutoCompleteBranch from '../auto-complete/Auto-Input-Branch';
 import AutoCompleteUser from '../auto-complete/Auto-Input-User';
 import { SaleDataContext } from '@/app/context/SaleContext';
+import AutoCompleteCampaign from '../auto-complete/Auto-Input-Campaign';
 
 export default function DrawerFilters() {
   const [open, setOpen] = useState(false);
@@ -19,6 +20,7 @@ export default function DrawerFilters() {
     customer: filters.customer,
     isPreSale: filters.isPreSale,
     seller: filters.seller,
+    marketing_campaign: filters.marketing_campaign,
   });
 
   console.log('tempFilters', tempFilters);
@@ -43,6 +45,10 @@ export default function DrawerFilters() {
 
     if (filters.branch) {
       params.branch = filters.branch;
+    }
+
+    if (filters.marketing_campaign) {
+      params.marketing_campaign = filters.marketing_campaign;
     }
 
     if (filters.customer) {
@@ -165,6 +171,15 @@ export default function DrawerFilters() {
                   placeholder="Selecione a filial"
                   value={tempFilters.branch}
                   onChange={(id) => handleChange('branch', id)}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="marketing_campaign">Campanha</CustomFormLabel>
+                <AutoCompleteCampaign
+                  placeholder="Selecione a campanha"
+                  value={tempFilters.marketing_campaign}
+                  onChange={(id) => handleChange('marketing_campaign', id)}
                 />
               </Grid>
 
