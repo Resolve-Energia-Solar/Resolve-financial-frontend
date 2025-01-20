@@ -11,6 +11,7 @@ import {
   Link,
   Box,
   Modal,
+  Chip,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
@@ -31,11 +32,10 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
 
   const userPermissions = useSelector((state) => state.user.permissions);
 
-
   const statusDoc = [
-    { value: 'EA', label: 'Em Análise' },
-    { value: 'A', label: 'Aprovado' },
-    { value: 'R', label: 'Reprovado' },
+    { value: 'EA', label: 'Em Análise', color: theme.palette.info.main },
+    { value: 'A', label: 'Aprovado', color: theme.palette.success.main },
+    { value: 'R', label: 'Reprovado', color: theme.palette.error.main },
   ];
 
   const {
@@ -125,7 +125,7 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
           <Grid item xs={3} key={attachment.id}>
             <Box
               sx={{
-                border: `2px solid ${theme.palette.success.main}`,
+                border: `2px solid ${statusDoc.find((s) => s.value === attachment.status)?.color}`,
                 padding: 2,
                 textAlign: 'center',
                 borderRadius: 1,
@@ -142,6 +142,9 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
               {getFileIcon(attachment.file)}
               <Typography variant="caption" sx={{ marginTop: 1 }}>
                 {attachment?.document_type?.name}
+              </Typography>
+              <Typography variant="caption" sx={{ marginTop: 0.3 }}>
+                <Chip label={statusDoc.find((s) => s.value === attachment?.status)?.label} />
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginBottom: 1 }}></Box>
             </Box>
