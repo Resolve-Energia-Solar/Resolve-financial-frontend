@@ -22,6 +22,7 @@ export default function DrawerFilters() {
     seller: filters.seller,
     marketing_campaign: filters.marketing_campaign,
     created_at: filters.created_at,
+    is_signed: filters.is_signed,
   });
 
   console.log('tempFilters', tempFilters);
@@ -69,6 +70,11 @@ export default function DrawerFilters() {
       const startDate = filters.created_at[0].toISOString().split('T')[0];
       const endDate = filters.created_at[1].toISOString().split('T')[0];
       params.created_at__range = `${startDate},${endDate}`;
+    }
+
+    if (filters.is_signed && filters.is_signed.length > 0) {
+      const signedValues = filters.is_signed.map((option) => option.value);
+      params.is_signed = signedValues.join(',');
     }
 
     return params;
@@ -159,6 +165,17 @@ export default function DrawerFilters() {
                   placeholder="Selecione o tipo"
                   value={tempFilters.isPreSale}
                   onChange={(event, value) => handleChange('isPreSale', value)}
+                />
+              </Grid>
+
+
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="is_signed">Assinatura</CustomFormLabel>
+                <CheckboxesTags
+                  options={[{ value: true, label: 'Assinado' }, { value: false, label: 'Não Assinado' }]}
+                  placeholder="Assinatura"
+                  value={tempFilters.is_signed}
+                  onChange={(event, value) => handleChange('is_signed', value)}
                 />
               </Grid>
 

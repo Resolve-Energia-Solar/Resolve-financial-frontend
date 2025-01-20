@@ -58,6 +58,7 @@ import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import StatusChip from '@/utils/status/DocumentStatusIcon';
+import ChipSigned from '@/utils/status/ChipSigned';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -258,7 +259,7 @@ const SaleList = () => {
 
   return (
     <Box>
-      <Accordion sx={{ marginBottom: 4 }}>
+      <Accordion defaultExpanded sx={{ marginBottom: 4 }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="sale-cards-content"
@@ -393,6 +394,19 @@ const SaleList = () => {
                     </Box>
                   </Box>
                 </TableCell>
+                
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('signature_date')}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    Assinatura
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'signature_date' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    </Box>
+                  </Box>
+                </TableCell>
 
                 <TableCell
                   sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
@@ -422,12 +436,12 @@ const SaleList = () => {
 
                 <TableCell
                   sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('document_completion_date')}
+                  onClick={() => handleSort('created_at')}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Data de Criação
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                      {order === 'document_completion_date' &&
+                      {order === 'created_at' &&
                         (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                     </Box>
                   </Box>
@@ -438,7 +452,7 @@ const SaleList = () => {
               </TableRow>
             </TableHead>
             {loading ? (
-              <TableSkeleton rows={5} columns={7} />
+              <TableSkeleton rows={5} columns={8} />
             ) : error && page === 1 ? (
               <Typography color="error">{error}</Typography>
             ) : (
@@ -457,6 +471,9 @@ const SaleList = () => {
                         style: 'currency',
                         currency: 'BRL',
                       })}
+                    </TableCell>
+                    <TableCell>
+                      {<ChipSigned status={item?.signature_date ? true : false} />}
                     </TableCell>
                     <TableCell>
                       <StatusPreSale status={item.is_pre_sale} />
