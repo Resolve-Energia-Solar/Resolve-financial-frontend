@@ -79,6 +79,14 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
     { value: 'PI', label: 'Parcelamento Interno' },
     { value: 'P', label: 'Pix' },
     { value: 'T', label: 'Transferência' },
+    { value: 'D', label: 'Dinheiro' },
+  ];
+
+  const invoiceStatus = [
+    { value: 'E', label: 'Emitida' },
+    { value: 'L', label: 'Liberada' },
+    { value: 'P', label: 'Pendente' },
+    { value: 'C', label: 'Cancelada' },
   ];
 
   sale ? (formData.sale_id = sale) : null;
