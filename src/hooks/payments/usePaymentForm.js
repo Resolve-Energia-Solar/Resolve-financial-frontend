@@ -12,8 +12,7 @@ const usePaymentForm = (initialData, id) => {
     installments_number: '',
     due_date: null,
     installments: [],
-    create_installments: true,
-    invoice_status: '',
+    create_installments: true
   });
 
   const [formErrors, setFormErrors] = useState({});
