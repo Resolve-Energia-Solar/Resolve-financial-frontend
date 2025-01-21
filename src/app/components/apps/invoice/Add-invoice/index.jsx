@@ -91,6 +91,8 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
 
   sale ? (formData.sale_id = sale) : null;
 
+  formData.invoice_status ? null : (formData.invoice_status = 'P');
+
   if (formData.payment_type !== 'F' && formData.payment_type !== 'C') {
     formData.installments_number = 1;
   }
