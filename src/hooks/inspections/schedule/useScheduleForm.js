@@ -17,6 +17,7 @@ const useScheduleForm = (initialData, id) => {
     schedule_creator: user?.user?.id,
     category_id: null,
     service_id: null,
+    parent_schedules_id	: [],
     customer_id: null,
     project_id: null,
     schedule_agent_id: null,
@@ -45,6 +46,7 @@ const useScheduleForm = (initialData, id) => {
       setFormData({
         schedule_creator: initialData.schedule_creator || null,
         service_id: initialData.service?.id || null,
+        parent_schedules_id: initialData.parent_schedules?.map(schedule => schedule.id) || [],
         customer_id: initialData?.customer?.id || null,
         project_id: initialData.project?.id || null,
         schedule_agent_id: initialData.schedule_agent?.id || null,
@@ -276,6 +278,7 @@ const useScheduleForm = (initialData, id) => {
     const dataToSend = {
       schedule_creator: formData.schedule_creator,
       service_id: formData.service_id,
+      parent_schedules_id: formData.parent_schedules_id,
       customer_id: formData.customer_id,
       project_id: formData.project_id,
       products: normalizedProductsIds,
