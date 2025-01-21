@@ -23,6 +23,7 @@ export default function DrawerFilters() {
     marketing_campaign: filters.marketing_campaign,
     created_at: filters.created_at,
     is_signed: filters.is_signed,
+    signature_date: filters.signature_date,
   });
 
   console.log('tempFilters', tempFilters);
@@ -75,6 +76,12 @@ export default function DrawerFilters() {
     if (filters.is_signed && filters.is_signed.length > 0) {
       const signedValues = filters.is_signed.map((option) => option.value);
       params.is_signed = signedValues.join(',');
+    }
+
+    if (filters.signature_date && filters.signature_date[0] && filters.signature_date[1]) {
+      const startDate = filters.signature_date[0].toISOString().split('T')[0];
+      const endDate = filters.signature_date[1].toISOString().split('T')[0];
+      params.signature_date__range = `${startDate},${endDate}`;
     }
 
     return params;
@@ -171,14 +178,26 @@ export default function DrawerFilters() {
                 />
               </Grid>
 
-
               <Grid item xs={12}>
                 <CustomFormLabel htmlFor="is_signed">Assinatura</CustomFormLabel>
                 <CheckboxesTags
-                  options={[{ value: true, label: 'Assinado' }, { value: false, label: 'Não Assinado' }]}
+                  options={[
+                    { value: true, label: 'Assinado' },
+                    { value: false, label: 'Não Assinado' },
+                  ]}
                   placeholder="Assinatura"
                   value={tempFilters.is_signed}
                   onChange={(event, value) => handleChange('is_signed', value)}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <FormDateRange
+                  label="Data de Contrato"
+                  value={tempFilters.signature_date}
+                  onChange={(newValue) => handleChange('signature_date', newValue)}
+                  error={false}
+                  helperText=""
                 />
               </Grid>
 

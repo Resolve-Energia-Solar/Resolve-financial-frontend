@@ -27,6 +27,7 @@ import HasPermission from '@/app/components/permissions/HasPermissions';
 import { useSelector } from 'react-redux';
 import AutoCompleteProduct from '../../auto-complete/Auto-input-product';
 import AutoInputStatusSchedule from '../../auto-complete/Auto-Input-StatusInspection';
+import AutoCompleteParentSchedule from '../../auto-complete/Auto-Input-parentSchedule';
 
 const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh = null }) => {
   const router = useRouter();
@@ -91,6 +92,8 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         const response = await serviceOpinionsService.getServiceOpinionsByService(
           formData.service_id,
         );
+
+        console.log('Service Opinions:', response.results);
 
         setServiceOpinions(formattedServiceOpinions(response.results));
       } catch (error) {
@@ -182,6 +185,18 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
                 {...(formErrors.service_id && {
                   error: true,
                   helperText: formErrors.service_id,
+                })}
+                noOptionsText={'Nenhum serviço encontrado'}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} lg={6}>
+              <CustomFormLabel htmlFor="service">Serviços relacionados</CustomFormLabel>
+              <AutoCompleteParentSchedule
+                onChange={(id) => handleChange('parent_schedules_id', id)}
+                value={formData.parent_schedules_id}
+                {...(formErrors.parent_schedules_id && {
+                  error: true,
+                  helperText: formErrors.parent_schedules_id,
                 })}
                 noOptionsText={'Nenhum serviço encontrado'}
               />

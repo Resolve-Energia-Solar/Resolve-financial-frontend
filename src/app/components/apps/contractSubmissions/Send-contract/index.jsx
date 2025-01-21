@@ -1,29 +1,46 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, CircularProgress, Snackbar, Alert, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
+import {
+  Button,
+  CircularProgress,
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from '@mui/material';
 import useSendContract from '@/hooks/contract/useSendContract';
+import { CheckCircle, Error } from '@mui/icons-material';
 
-export default function SendContractButton({ sale, ...props }) {
-  console.log(sale);
-  const {
-    sendContract,
-    sendingContractId,
-    snackbarMessage,
-    snackbarSeverity,
-    snackbarOpen,
-    handleCloseSnackbar,
-  } = useSendContract();
+export default function SendContractButton({ sale }) {
+  const { sendContract, error: formErrors, loading } = useSendContract(sale?.id);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const formatFieldName = (fieldName) => {
+    const fieldLabels = {
+      detail: 'Detalhes',
+      message: 'Detalhes',
+    };
+
+    return fieldLabels[fieldName] || fieldName;
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleOpenDialog = () => setDialogOpen(true);
   const handleCloseDialog = () => setDialogOpen(false);
 
-  const handleConfirmSend = () => {
-    sendContract(sale);
+  const handleConfirmSend = async () => {
     handleCloseDialog();
+    await sendContract();
+    setSnackbarOpen(true);
   };
 
   return (
@@ -32,9 +49,8 @@ export default function SendContractButton({ sale, ...props }) {
         variant="contained"
         color="secondary"
         onClick={handleOpenDialog}
-        startIcon={sendingContractId === sale?.id ? <CircularProgress size={20} /> : <SendIcon />}
-        disabled={sendingContractId === sale?.id}
-        {...props}
+        disabled={loading}
+        endIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
       >
         Enviar Contrato
       </Button>
@@ -45,13 +61,11 @@ export default function SendContractButton({ sale, ...props }) {
         aria-labelledby="confirm-send-contract-title"
         aria-describedby="confirm-send-contract-description"
       >
-        <DialogTitle id="confirm-send-contract-title">
-          Confirmar envio de contrato
-        </DialogTitle>
+        <DialogTitle id="confirm-send-contract-title">Confirmar envio de contrato</DialogTitle>
         <DialogContent>
           <DialogContentText id="confirm-send-contract-description">
-            Você tem certeza de que deseja enviar o contrato para {sale?.customer?.complete_name || 'este cliente'}? 
-            Esta ação não pode ser desfeita.
+            Você tem certeza de que deseja enviar o contrato para{' '}
+            {sale?.customer?.complete_name || 'este cliente'}? Esta ação não pode ser desfeita.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -62,8 +76,8 @@ export default function SendContractButton({ sale, ...props }) {
             onClick={handleConfirmSend}
             color="secondary"
             autoFocus
-            disabled={sendingContractId === sale?.id}
-            startIcon={sendingContractId === sale?.id ? <CircularProgress size={20} /> : null}
+            disabled={loading}
+            endIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
           >
             Confirmar
           </Button>
@@ -73,11 +87,40 @@ export default function SendContractButton({ sale, ...props }) {
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
+        onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
-          {snackbarMessage}
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={formErrors && Object.keys(formErrors).length > 0 ? 'error' : 'success'}
+          sx={{ width: '100%', display: 'flex', alignItems: 'center' }}
+          iconMapping={{
+            error: <Error style={{ verticalAlign: 'middle' }} />,
+            success: <CheckCircle style={{ verticalAlign: 'middle' }} />,
+          }}
+        >
+          {formErrors && Object.keys(formErrors).length > 0 ? (
+            <ul
+              style={{
+                margin: '10px 0',
+                paddingLeft: '20px',
+                listStyleType: 'disc',
+              }}
+            >
+              {Object.entries(formErrors).map(([field, messages]) => {
+                console.log('Field:', field, 'Messages:', messages);
+                return (
+                  <li key={field} style={{ marginBottom: '8px' }}>
+                    {`${formatFieldName(field)}: ${
+                      Array.isArray(messages) ? messages.join(', ') : messages
+                    }`}
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            'Contrato enviado com sucesso!'
+          )}
         </Alert>
       </Snackbar>
     </>

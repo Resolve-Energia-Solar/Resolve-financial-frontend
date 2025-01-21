@@ -269,14 +269,11 @@ const SaleList = () => {
             Status
             <Chip
               sx={{ marginLeft: 1 }}
-              label={
-                Number(indicators?.total_value_sum || 0).toLocaleString('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                })
-              }
+              label={Number(indicators?.total_value_sum || 0).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              })}
             />
-            
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -371,12 +368,12 @@ const SaleList = () => {
 
                 <TableCell
                   sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('contract_number')}
+                  onClick={() => handleSort('signature_date')}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    Número do Contrato
+                    Data de Contrato
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                      {order === 'contract_number' &&
+                      {order === 'signature_date' &&
                         (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                     </Box>
                   </Box>
@@ -394,7 +391,7 @@ const SaleList = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                
+
                 <TableCell
                   sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                   onClick={() => handleSort('signature_date')}
@@ -465,7 +462,11 @@ const SaleList = () => {
                     sx={{ backgroundColor: rowSelected?.id === item.id && '#ECF2FF' }}
                   >
                     <TableCell>{item.customer.complete_name}</TableCell>
-                    <TableCell>{item.contract_number}</TableCell>
+                    <TableCell>
+                      {item?.signature_date
+                        ? new Date(item.signature_date).toLocaleDateString()
+                        : '\u2014'}
+                    </TableCell>
                     <TableCell>
                       {Number(item.total_value).toLocaleString('pt-BR', {
                         style: 'currency',
