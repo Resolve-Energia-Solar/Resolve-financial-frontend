@@ -82,6 +82,14 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
     { value: 'PI', label: 'Parcelamento Interno' },
     { value: 'P', label: 'Pix' },
     { value: 'T', label: 'Transferência' },
+    { value: 'D', label: 'Dinheiro' },
+  ];
+
+  const invoiceStatus = [
+    { value: 'E', label: 'Emitida' },
+    { value: 'L', label: 'Liberada' },
+    { value: 'P', label: 'Pendente' },
+    { value: 'C', label: 'Cancelada' },
   ];
 
   useEffect(() => {
@@ -194,6 +202,16 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
             {...(formErrors.due_date && { error: true, helperText: formErrors.due_date })}
           />
         </Grid>
+        <Grid item xs={12} sm={6}>
+          <FormSelect
+            label="Nota Fiscal"
+            options={invoiceStatus}
+            disabled={!hasPermission(['financial.change_invoice_status'])}
+            value={formData.invoice_status}
+            onChange={(e) => handleChange('invoice_status', e.target.value)}
+            {...(formErrors.invoice_status && { error: true, helperText: formErrors.invoice_status })}
+          />
+        </Grid>
       </Grid>
 
       <Paper variant="outlined">
@@ -298,21 +316,21 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
                         label={installment.is_paid ? 'Pago' : 'Pendente'}
                       />
                     </TableCell>
-                    { formData.payment_type === 'F' || formData.payment_type === 'P' && (
-
-                    <TableCell>
-                      <Tooltip title="Add Item">
-                        <IconButton onClick={handleAddItem} color="primary">
-                          <IconSquareRoundedPlus width={22} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete Item">
-                        <IconButton color="error" onClick={() => handleDeleteItem(index)}>
-                          <IconTrash width={22} />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                    )}
+                    {formData.payment_type === 'F' ||
+                      (formData.payment_type === 'P' && (
+                        <TableCell>
+                          <Tooltip title="Add Item">
+                            <IconButton onClick={handleAddItem} color="primary">
+                              <IconSquareRoundedPlus width={22} />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Delete Item">
+                            <IconButton color="error" onClick={() => handleDeleteItem(index)}>
+                              <IconTrash width={22} />
+                            </IconButton>
+                          </Tooltip>
+                        </TableCell>
+                      ))}
                   </TableRow>
                 ))
               )}

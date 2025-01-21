@@ -39,6 +39,16 @@ const DetailInvoicePage = ({ payment_id = null }) => {
     B: 'Boleto',
     F: 'Financiamento',
     PI: 'Parcelamento Interno',
+    P: 'Pix',
+    T: 'Transferência',
+    D: 'Dinheiro',
+  };
+
+  const invoiceStatus = {
+    E: 'Emitida',
+    L: 'Liquidada',
+    P: 'Pendente',
+    C: 'Cancelada',
   };
 
   const orderDate = paymentData?.created_at;
@@ -86,7 +96,7 @@ const DetailInvoicePage = ({ payment_id = null }) => {
       <Divider />
 
       <Grid container spacing={3} mb={4}>
-      <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={6}>
           <CustomFormLabel>Venda</CustomFormLabel>
           <Typography
             sx={{
@@ -145,6 +155,10 @@ const DetailInvoicePage = ({ payment_id = null }) => {
           >
             {format(new Date(paymentData?.due_date), 'dd/MM/yyyy')}
           </Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Typography variant="subtitle1">Nota Fiscal</Typography>
+          <Typography>{invoiceStatus[paymentData?.invoice_status] || 'Desconhecido'}</Typography>
         </Grid>
       </Grid>
 
