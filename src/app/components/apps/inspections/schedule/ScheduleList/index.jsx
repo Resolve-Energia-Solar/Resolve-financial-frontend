@@ -355,12 +355,24 @@ const SchedulingList = () => {
                   </Box>
                 </Box>
               </TableCell>
+
+              {/* Endereço */}
+              <TableCell
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                onClick={() => handleSort('address.street')}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  Endereço
+                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                    {order === 'address.street' &&
+                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                  </Box>
+                </Box>
+              </TableCell>
             </TableRow>
           </TableHead>
           {loading ? (
-            <TableSkeleton 
-              rows={rowsPerPage}
-              columns={8} />
+            <TableSkeleton rows={rowsPerPage} columns={9} />
           ) : error ? (
             <Typography color="error">{error}</Typography>
           ) : (
@@ -402,6 +414,9 @@ const SchedulingList = () => {
                     ) : (
                       <Chip label="Sem Agente" color="error" />
                     )}
+                  </TableCell>
+                  <TableCell onClick={() => handleRowClick(schedule)}>
+                    {`${schedule.address.street}, ${schedule.address.number}, ${schedule.address.neighborhood}, ${schedule.address.city} - ${schedule.address.state}`}
                   </TableCell>
                 </TableRow>
               ))}
