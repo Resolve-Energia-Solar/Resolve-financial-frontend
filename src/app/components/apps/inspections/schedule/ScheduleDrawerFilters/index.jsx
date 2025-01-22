@@ -132,6 +132,15 @@ export default function ScheduleDrawerFilters() {
             </Grid>
 
             <Grid item xs={12}>
+              <CustomFormLabel>Serviço</CustomFormLabel>
+              <AutoCompleteServiceCatalogFilter
+                value={tempFilters.scheduleService}
+                onChange={(id) => handleChange('scheduleService', id)}
+                noOptionsText="Nenhum serviço encontrado"
+              />
+            </Grid>
+
+            <Grid item xs={12}>
               <CustomFormLabel htmlFor="final_service_opinion">
                 Parecer final de serviço
               </CustomFormLabel>
@@ -140,14 +149,8 @@ export default function ScheduleDrawerFilters() {
                 value={tempFilters.final_service_opinion}
                 isFinalOpinion={true}
                 serviceId={tempFilters.scheduleService}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <CustomFormLabel>Serviço</CustomFormLabel>
-              <AutoCompleteServiceCatalogFilter
-                value={tempFilters.scheduleService}
-                onChange={(id) => handleChange('scheduleService', id)}
-                noOptionsText="Nenhum serviço encontrado"
+                disabled={!tempFilters.scheduleService}
+                helperText={"Para filtrar por parecer final de serviço, selecione um serviço."}
               />
             </Grid>
           </Grid>
