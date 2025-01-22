@@ -1,77 +1,69 @@
-import { useContext, useState } from 'react';
-
-import { Box, Button, CardContent, Drawer, Grid, Typography } from '@mui/material';
+import React, { useState, useContext } from 'react';
+import { Box, Drawer, Button, Typography, Grid } from '@mui/material';
 import { FilterAlt, Close } from '@mui/icons-material';
-
-import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import { ScheduleDataContext } from '@/app/context/Inspection/ScheduleContext';
-import FormDateRange from '../../../comercial/sale/components/DrawerFilters/DateRangePicker';
 import CheckboxesTags from '../../../comercial/sale/components/DrawerFilters/CheckboxesTags';
+import FormDateRange from '../../../comercial/sale/components/DrawerFilters/DateRangePicker';
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AutoCompleteUserFilter from '../../auto-complete/Auto-Input-UserFilter';
 import AutoCompleteServiceCatalogFilter from '../../auto-complete/Auto-Input-ServiceFilter';
+import { ScheduleDataContext } from '@/app/context/Inspection/ScheduleContext';
+import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
 
 export default function ScheduleDrawerFilters() {
   const [open, setOpen] = useState(false);
   const { filters, setFilters } = useContext(ScheduleDataContext);
 
   const [tempFilters, setTempFilters] = useState({
-    status: filters.status || [],
     rangeDate: filters.rangeDate || [null, null],
-    hora: filters.hora || null,
-    customer: filters.customer || null,
-    address: filters.address || null,
+    status: filters.status || [],
     scheduleAgent: filters.scheduleAgent || null,
-    scheduleService: filters.ScheduleService || null,
+    scheduleService: filters.scheduleService || null,
+    customer: filters.customer || null,
   });
 
   const createFilterParams = (filters) => {
-    const params = new URLSearchParams();
+    const params = {};
 
     if (filters.rangeDate && filters.rangeDate[0] && filters.rangeDate[1]) {
       const startDate = filters.rangeDate[0].toISOString().split('T')[0];
       const endDate = filters.rangeDate[1].toISOString().split('T')[0];
-      params.append('schedule_date__range', `${startDate},${endDate}`);
+      params.schedule_date__range = `${startDate},${endDate}`;
     }
 
     if (filters.status && filters.status.length > 0) {
-      const statusValues = filters.status.map((status) => status.value);
-      params.append('status__in', statusValues.join(','));
+      params.status__in = filters.status.map((status) => status.value).join(',');
     }
 
     if (filters.scheduleAgent) {
-      params.append('schedule_agent', filters.scheduleAgent);
+      params.schedule_agent = filters.scheduleAgent;
     }
 
     if (filters.scheduleService) {
-      params.append('service', filters.scheduleService);
+      params.service = filters.scheduleService;
     }
 
-    return params.toString();
+    if (filters.customer) {
+      params.customer = filters.customer;
+    }
+
+    return params;
   };
 
-  const handleStatusChange = (event, value) => {
-    setTempFilters((prev) => ({ ...prev, status: value }));
-  };
-
-  const handleDateChange = (newValue) => {
-    setTempFilters((prev) => ({ ...prev, rangeDate: newValue }));
-  };
-
-  const handleScheduleAgentChange = (event, value) => {
-    setTempFilters((prev) => ({ ...prev, scheduleAgent: value ? value.id : null }));
-  };
-
-  const handleScheduleServiceChange = (event, value) => {
-    setTempFilters((prev) => ({ ...prev, scheduleService: value ? value.id : null }));
+  const handleChange = (key, value) => {
+    setTempFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   const clearFilters = () => {
-    setTempFilters({ rangeDate: [null, null], name: '', status: [] });
+    setTempFilters({
+      rangeDate: [null, null],
+      status: [],
+      scheduleAgent: null,
+      scheduleService: null,
+    });
   };
 
   const applyFilters = () => {
-    setFilters([tempFilters, decodeURIComponent(createFilterParams(tempFilters))]);
-    console.log('Filtros aplicados:', tempFilters);
+    setFilters(createFilterParams(tempFilters));
     setOpen(false);
   };
 
@@ -95,80 +87,60 @@ export default function ScheduleDrawerFilters() {
       </Button>
       <Drawer open={open} onClose={toggleDrawer(false)} anchor="right">
         <Box role="presentation" sx={{ padding: 2, maxWidth: '600px' }}>
-          <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
-              <Typography variant="h5" sx={{ marginBottom: '25px' }}>
-                Filtros
-              </Typography>
-              <Close onClick={toggleDrawer(false)} />
-            </Box>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <CustomFormLabel htmlFor="status">Status do Agendamento</CustomFormLabel>
-                <CheckboxesTags
-                  options={StatusSchedule}
-                  placeholder="Selecione o status"
-                  value={tempFilters.status}
-                  onChange={handleStatusChange}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <FormDateRange
-                  label="Data do Agendamento"
-                  value={tempFilters.rangeDate}
-                  onChange={handleDateChange}
-                  error={false}
-                  helperText=""
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <CustomFormLabel htmlFor="agentName">Agente de Campo</CustomFormLabel>
-                <AutoCompleteUserFilter
-                  value={tempFilters.scheduleAgent}
-                  onChange={(id) => handleScheduleAgentChange(null, { id })}
-                  noOptionsText={'Nenhum agente encontrado'}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <CustomFormLabel htmlFor="serviceName">Serviço</CustomFormLabel>
-                <AutoCompleteServiceCatalogFilter
-                  value={tempFilters.scheduleService}
-                  onChange={(id) => handleScheduleServiceChange(null, { id })}
-                  noOptionsText={'Nenhum serviço encontrado'}
-                />
-              </Grid>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
+            <Typography variant="h5">Filtros</Typography>
+            <Close onClick={toggleDrawer(false)} sx={{ cursor: 'pointer' }} />
+          </Box>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <CustomFormLabel>Status do Agendamento</CustomFormLabel>
+              <CheckboxesTags
+                options={StatusSchedule}
+                placeholder="Selecione o status"
+                value={tempFilters.status}
+                onChange={(event, value) => handleChange('status', value)}
+              />
             </Grid>
-          </CardContent>
-          <CardContent>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginTop: 2,
-                minWidth: {
-                  xs: '200px',
-                  sm: '300px',
-                  md: '500px',
-                },
-              }}
-            >
-              <Grid container spacing={1}>
-                <Grid item xs={12} sm={6}>
-                  <Button variant="outlined" fullWidth onClick={clearFilters}>
-                    Limpar Filtros
-                  </Button>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Button variant="contained" fullWidth onClick={applyFilters}>
-                    Aplicar Filtros
-                  </Button>
-                </Grid>
-              </Grid>
-            </Box>
-          </CardContent>
+            <Grid item xs={12}>
+              <FormDateRange
+                label="Data do Agendamento"
+                value={tempFilters.rangeDate}
+                onChange={(newValue) => handleChange('rangeDate', newValue)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomFormLabel htmlFor="customer">Cliente</CustomFormLabel>
+              <AutoCompleteUser
+                placeholder="Selecione o cliente"
+                value={tempFilters.customer}
+                onChange={(id) => handleChange('customer', id)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomFormLabel>Agente de Campo</CustomFormLabel>
+              <AutoCompleteUserFilter
+                value={tempFilters.scheduleAgent}
+                onChange={(id) => handleChange('scheduleAgent', id)}
+                noOptionsText="Nenhum agente encontrado"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomFormLabel>Serviço</CustomFormLabel>
+              <AutoCompleteServiceCatalogFilter
+                value={tempFilters.scheduleService}
+                onChange={(id) => handleChange('scheduleService', id)}
+                noOptionsText="Nenhum serviço encontrado"
+              />
+            </Grid>
+          </Grid>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+            <Button variant="outlined" onClick={clearFilters} fullWidth sx={{ marginRight: 1 }}>
+              Limpar Filtros
+            </Button>
+            <Button variant="contained" onClick={applyFilters} fullWidth>
+              Aplicar Filtros
+            </Button>
+          </Box>
         </Box>
       </Drawer>
     </Box>
