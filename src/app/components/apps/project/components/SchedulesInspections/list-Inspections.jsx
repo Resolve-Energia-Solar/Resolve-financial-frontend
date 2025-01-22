@@ -16,6 +16,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Chip,
 } from '@mui/material';
 import { Edit, KeyboardArrowRight } from '@mui/icons-material';
 import { IconTrash } from '@tabler/icons-react';
@@ -66,7 +67,6 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
         const response = await scheduleService.getAllSchedulesInspectionByCustomer(customerId);
         const filteredResults = response.results.filter((item) => item.project?.sale_id === null);
         setInspectionsNotAssociated(filteredResults);
-        console.log('--->', filteredResults);
       } catch (error) {
         console.error('Erro ao buscar agendamentos:', error);
       }
@@ -78,7 +78,6 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
   }, [customerId, reload]);
 
   const [units, setUnits] = useState([]);
-  console.log('product', product);
 
   const handleEdit = (unitId) => {
     setSelectedUnitId(unitId);
@@ -143,17 +142,12 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
                 </TableCell>
                 <TableCell align="center">
                   <Typography variant="h6" fontSize="14px">
-                    Data de Término
-                  </Typography>
-                </TableCell>
-                <TableCell align="center">
-                  <Typography variant="h6" fontSize="14px">
-                    Horário de Término
-                  </Typography>
-                </TableCell>
-                <TableCell align="center">
-                  <Typography variant="h6" fontSize="14px">
                     Status do Agendamento
+                  </Typography>
+                </TableCell>
+                <TableCell align="center">
+                  <Typography variant="h6" fontSize="14px">
+                    Parecer Final
                   </Typography>
                 </TableCell>
                 <TableCell align="center">
@@ -183,17 +177,16 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
                     </TableCell>
                     <TableCell align="center">
                       <Typography variant="body2">
-                        {unit?.schedule_end_date}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Typography variant="body2">
-                        {unit?.schedule_end_time}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Typography variant="body2">
                         <SupplyChip status={unit?.status} />
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Typography variant="body2">
+                        {unit?.final_service_opinion?.name ? (
+                          <Chip label={unit?.final_service_opinion?.name} />
+                        ) : (
+                          <Chip label="Em Análise" color="info" />
+                        )}
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
