@@ -31,6 +31,7 @@ import {
   MenuItem,
   CircularProgress,
   Drawer,
+  Chip,
 } from '@mui/material';
 import {
   AddBoxRounded,
@@ -84,19 +85,18 @@ const SchedulingList = () => {
     setScheduleList([]);
   }, [order, orderDirection, filters, refresh]);
 
+  console.log('filters:', filters);
+
   useEffect(() => {
     const fetchSchedules = async () => {
       setLoading(true);
       setError(null);
       const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
       try {
-        const queryParams = new URLSearchParams(filters[1]).toString();
-        console.log('queryParams:', queryParams);
-        console.log('page:', page);
         const data = await scheduleService.getSchedules({
           ordering: orderingParam,
-          params: queryParams,
           nextPage: page,
+          ...filters,
         });
         if (page === 1) {
           setScheduleList(data.results);
@@ -257,6 +257,19 @@ const SchedulingList = () => {
         <Table stickyHeader aria-label="schedule table">
           <TableHead>
             <TableRow>
+              {/* Contratante */}
+              <TableCell
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                onClick={() => handleSort('customer.complete_name')}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  Contratante
+                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                    {order === 'customer.complete_name' &&
+                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                  </Box>
+                </Box>
+              </TableCell>
               {/* Status */}
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
@@ -325,34 +338,6 @@ const SchedulingList = () => {
                 </Box>
               </TableCell>
 
-              {/* Contratante */}
-              <TableCell
-                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('customer.complete_name')}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  Contratante
-                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'customer.complete_name' &&
-                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                  </Box>
-                </Box>
-              </TableCell>
-
-              {/* Endereço */}
-              <TableCell
-                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('address.street')}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  Endereço
-                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'address.street' &&
-                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                  </Box>
-                </Box>
-              </TableCell>
-
               {/* Serviço */}
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
@@ -380,25 +365,21 @@ const SchedulingList = () => {
                   </Box>
                 </Box>
               </TableCell>
-
-              {/* Vendedor */}
-              <TableCell>Vendedor</TableCell>
-
-              {/* Unidade */}
-              <TableCell>Unidade</TableCell>
-
               {/* Actions */}
               <TableCell align="right">Ações</TableCell>
             </TableRow>
           </TableHead>
           {loading && page === 1 ? (
-            <TableSkeleton rows={5} columns={10} />
+            <TableSkeleton rows={5} columns={9} />
           ) : error && page === 1 ? (
             <Typography color="error">{error}</Typography>
           ) : (
             <TableBody>
               {scheduleList.map((schedule) => (
                 <TableRow key={schedule.id} hover>
+                                    <TableCell onClick={() => handleRowClick(schedule)}>
+                    {schedule?.customer?.complete_name}
+                  </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     <ScheduleStatusChip status={schedule.status} />
                   </TableCell>
@@ -406,32 +387,14 @@ const SchedulingList = () => {
                     {schedule.service_opinion ? (
                       schedule.service_opinion.name
                     ) : (
-                      <Box
-                        sx={{
-                          backgroundColor: 'error.light',
-                          color: 'error.main',
-                          padding: 1,
-                          textAlign: 'center',
-                        }}
-                      >
-                        Sem parecer associado
-                      </Box>
+                      <Chip label="Sem parecer" color="error" />
                     )}
                   </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     {schedule.final_service_opinion ? (
                       schedule.final_service_opinion.name
                     ) : (
-                      <Box
-                        sx={{
-                          backgroundColor: 'error.light',
-                          color: 'error.main',
-                          padding: 1,
-                          textAlign: 'center',
-                        }}
-                      >
-                        Sem parecer final associado
-                      </Box>
+                      <Chip label="Em análise" color="warning" />
                     )}
                   </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
@@ -441,60 +404,13 @@ const SchedulingList = () => {
                     {formatTime(schedule.schedule_start_time)}
                   </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
-                    {schedule?.customer?.complete_name}
-                  </TableCell>
-                  <TableCell onClick={() => handleRowClick(schedule)}>
-                    {`${schedule.address.street}, ${schedule.address.number}, ${schedule.address.neighborhood}, ${schedule.address.city} - ${schedule.address.state}`}
-                  </TableCell>
-                  <TableCell onClick={() => handleRowClick(schedule)}>
                     {schedule.service.name}
                   </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     {schedule.schedule_agent ? (
                       schedule.schedule_agent.complete_name
                     ) : (
-                      <Box
-                        sx={{
-                          backgroundColor: 'error.light',
-                          color: 'error.main',
-                          padding: 1,
-                          textAlign: 'center',
-                        }}
-                      >
-                        Sem agente associado
-                      </Box>
-                    )}
-                  </TableCell>
-                  <TableCell onClick={() => handleRowClick(schedule)}>
-                    {schedule.project.id ? (
-                      schedule.project.sale.seller.complete_name
-                    ) : (
-                      <Box
-                        sx={{
-                          backgroundColor: 'error.light',
-                          color: 'error.main',
-                          padding: 1,
-                          textAlign: 'center',
-                        }}
-                      >
-                        Sem projeto associado
-                      </Box>
-                    )}
-                  </TableCell>
-                  <TableCell onClick={() => handleRowClick(schedule)}>
-                    {schedule.project.id ? (
-                      schedule.project.sale.branch.name
-                    ) : (
-                      <Box
-                        sx={{
-                          backgroundColor: 'error.light',
-                          color: 'error.main',
-                          padding: 1,
-                          textAlign: 'center',
-                        }}
-                      >
-                        Sem projeto associado
-                      </Box>
+                      <Chip label="Sem agente" color="error" />
                     )}
                   </TableCell>
                   <TableCell align="right">
