@@ -56,6 +56,8 @@ const SchedulingList = () => {
   const router = useRouter();
 
   const [scheduleList, setScheduleList] = useState([]);
+
+  console.log('scheduleList:', scheduleList);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
