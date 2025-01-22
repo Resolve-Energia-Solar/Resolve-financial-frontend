@@ -20,6 +20,7 @@ export default function ScheduleDrawerFilters() {
     scheduleAgent: filters.scheduleAgent || null,
     scheduleService: filters.scheduleService || null,
     customer: filters.customer || null,
+    service_opinion: filters.service_opinion || null,
     final_service_opinion: filters.final_service_opinion || null,
   });
 
@@ -46,6 +47,10 @@ export default function ScheduleDrawerFilters() {
 
     if (filters.customer) {
       params.customer = filters.customer;
+    }
+
+    if (filters.service_opinion) {
+      params.service_opinion = filters.service_opinion;
     }
 
     if (filters.final_service_opinion) {
@@ -137,6 +142,20 @@ export default function ScheduleDrawerFilters() {
                 value={tempFilters.scheduleService}
                 onChange={(id) => handleChange('scheduleService', id)}
                 noOptionsText="Nenhum serviço encontrado"
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <CustomFormLabel htmlFor="service_opinion">
+                Parecer de serviço
+              </CustomFormLabel>
+              <AutoInputStatusSchedule
+                onChange={(id) => handleChange('service_opinion', id)}
+                value={tempFilters.service_opinion}
+                isFinalOpinion={false}
+                serviceId={tempFilters.scheduleService}
+                disabled={!tempFilters.scheduleService}
+                helperText={"Para filtrar por parecer de serviço, selecione um serviço."}
               />
             </Grid>
 
