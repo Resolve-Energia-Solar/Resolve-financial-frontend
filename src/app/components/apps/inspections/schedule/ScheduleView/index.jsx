@@ -19,12 +19,15 @@ import ScheduleStatusChip from '../StatusChip';
 import answerService from '@/services/answerService';
 import userService from '@/services/userService';
 import AnswerForm from '../../form-builder/AnswerForm';
+import saleService from '@/services/saleService';
 
 export default function ScheduleView({ open, onClose, selectedSchedule }) {
   const router = useRouter();
   const [creator, setCreator] = useState(null);
   const [answerData, setAnswerData] = useState(null);
   const [loadingAnswer, setLoadingAnswer] = useState(true);
+  const [seller, setSeller] = useState(null);
+
   const formatDateTime = (dateString) => {
     if (!dateString) return 'Não identificado';
     const date = new Date(dateString);
@@ -36,8 +39,6 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
       minute: '2-digit',
     }).format(date);
   };
-
-  console.log('selectedSchedule', selectedSchedule);
 
   useEffect(() => {
     async function fetchCreator() {
@@ -70,6 +71,20 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
     if (selectedSchedule) {
       fetchAnswer();
     }
+
+    const fetchSeller = async () => {
+      if (selectedSchedule?.project?.sale?.seller) {
+        try {
+          const data = await userService.getUserById(selectedSchedule?.project?.sale?.seller);
+          setSeller(data);
+          console.log('Vendedor:', data);
+        } catch (err) {
+          console.error('Erro ao carregar as vendas:', err);
+        }
+      }
+    };
+
+    fetchSeller();
   }, [selectedSchedule]);
 
   const handleEditClick = (id) => {
@@ -145,12 +160,19 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                   </Typography>
                   <Typography variant="body1">
                     <strong>Vendedor:</strong>{' '}
-                    {selectedSchedule.project?.sale?.seller?.complete_name ||
-                      'Sem vendedor associado'}
+                    {seller?.complete_name || 'Sem vendedor associado'}
                   </Typography>
                   <Typography variant="body1">
                     <strong>Unidade:</strong>{' '}
-                    {selectedSchedule.project?.sale?.branch?.name || 'Sem unidade associada'}
+                    {seller?.employee?.branch?.name || 'Sem unidade associada'}
+                  </Typography>
+
+                  <Typography variant="body1">
+                    <strong>Telefone:</strong>{' '}
+                    {seller?.phone_numbers[0] ? 
+                      `(${seller?.phone_numbers[0]?.area_code}) ${seller?.phone_numbers[0]?.phone_number}` 
+                      : 'Sem telefone associado'
+                    }
                   </Typography>
                 </Paper>
 

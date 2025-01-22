@@ -9,11 +9,8 @@ const saleService = {
       ...filters,
     }
 
-    console.log('getSales -> userRole', userRole)
-
     if (userRole?.role === 'Vendedor') {
       params.seller = userRole.user
-      // params.branch = userRole.branch;
     }
 
     const response = await apiClient.get('/api/sales/', { params })
