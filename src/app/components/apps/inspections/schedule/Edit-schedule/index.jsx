@@ -4,7 +4,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { parseISO, format } from 'date-fns';
 
 /* material */
-import { Grid, Button, Stack, Alert, Tooltip, Snackbar, Chip } from '@mui/material';
+import { Grid, Button, Stack, Alert, Tooltip, Snackbar, Chip, CircularProgress } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 
 /* components */
@@ -39,10 +39,14 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
 
   const userPermissions = useSelector((state) => state.user.permissions);
 
-  const { formData, handleChange, handleSave, formErrors, success } = useScheduleForm(
-    scheduleData,
-    id,
-  );
+  const {
+    formData,
+    handleChange,
+    handleSave,
+    loading: formLoading,
+    formErrors,
+    success,
+  } = useScheduleForm(scheduleData, id);
 
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
@@ -65,6 +69,13 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
   const [serviceOpinions, setServiceOpinions] = useState([]);
   const [loadingServiceOpinions, setLoadingServiceOpinions] = useState(false);
 
+  const handleSaveSchedule = async () => {
+    await handleSave();
+    if (success && Object.keys(formErrors).length == 0) {
+      showAlert('Ordem de serviço editada com sucesso', 'success');
+    }
+  };
+
   const formattedServiceOpinions = (opinions) => {
     const formattedOpinions = [];
 
@@ -78,12 +89,6 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     return formattedOpinions;
   };
 
-  useEffect(() => {
-    if (success) {
-      showAlert('Ordem de serviço editada com sucesso', 'success');
-      router.push('/apps/inspections/schedule');
-    }
-  }, [success, router]);
 
   useEffect(() => {
     const fetchServiceOpinions = async () => {
@@ -178,18 +183,6 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         {!onClosedModal && (
           <>
             <Grid item xs={12} sm={12} lg={6}>
-              <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
-              <AutoCompleteServiceCatalog
-                onChange={(id) => handleChange('service_id', id)}
-                value={formData.service_id}
-                {...(formErrors.service_id && {
-                  error: true,
-                  helperText: formErrors.service_id,
-                })}
-                noOptionsText={'Nenhum serviço encontrado'}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} lg={6}>
               <CustomFormLabel htmlFor="service">Serviços relacionados</CustomFormLabel>
               <AutoCompleteParentSchedule
                 onChange={(id) => handleChange('parent_schedules_id', id)}
@@ -213,38 +206,6 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
                 })}
               />
             </Grid>
-
-            {formData.products && (
-              <Grid item xs={12} sm={12} lg={6}>
-                <CustomFormLabel htmlFor="products">Produtos</CustomFormLabel>
-                <AutoCompleteProduct
-                  onChange={(id) => handleChange('products', id)}
-                  value={formData.products}
-                  {...(formErrors.products && {
-                    error: true,
-                    helperText: formErrors.products,
-                  })}
-                  noOptionsText={'Nenhum produto encontrado'}
-                />
-              </Grid>
-            )}
-
-            {/* Projeto */}
-            {formData.customer_id && (
-              <Grid item xs={12} sm={12} lg={12}>
-                <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
-                <AutoCompleteUserProject
-                  onChange={(id) => handleChange('project_id', id)}
-                  value={formData.project_id}
-                  selectedClient={formData.customer_id}
-                  noTextOptions={'O cliente não possui projetos atualmente'}
-                  {...(formErrors.project_id && {
-                    error: true,
-                    helperText: formErrors.project_id,
-                  })}
-                />
-              </Grid>
-            )}
           </>
         )}
 
@@ -338,7 +299,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         </HasPermission>
 
         {/* Agente de Campo */}
-        <Grid item xs={12} sm={12} lg={12}>
+        <Grid item xs={12} sm={6} lg={6}>
           <CustomFormLabel htmlFor="field_agent">
             Agentes Disponíveis{' '}
             <Tooltip
@@ -366,6 +327,29 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
             })}
           />
         </Grid>
+
+        {/* Parecer final de Serviço */}
+        <HasPermission
+          permissions={['field_services.change_final_service_opinion']}
+          userPermissions={userPermissions}
+        >
+          <Grid item xs={12} sm={6} lg={6}>
+            <CustomFormLabel htmlFor="final_service_opinion_id">
+              Parecer final de serviço
+            </CustomFormLabel>
+            <AutoInputStatusSchedule
+              onChange={(id) => handleChange('final_service_opinion_id', id)}
+              value={formData.final_service_opinion_id}
+              {...(formErrors.final_service_opinion_id && {
+                error: true,
+                helperText: formErrors.final_service_opinion_id,
+              })}
+              isFinalOpinion={true}
+              serviceId={formData.service_id}
+              // disabled={loadingServiceOpinions || formData.service_id === null}
+            />
+          </Grid>
+        </HasPermission>
 
         {/* Observação */}
         <Grid item xs={12} sm={12} lg={12}>
@@ -396,34 +380,17 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
           />
         </Grid>
 
-        {/* Parecer final de Serviço */}
-        <HasPermission
-          permissions={['field_services.change_final_service_opinion']}
-          userPermissions={userPermissions}
-        >
-          <Grid item xs={12} sm={6} lg={6}>
-            <CustomFormLabel htmlFor="final_service_opinion_id">
-              Parecer final de serviço
-            </CustomFormLabel>
-            <AutoInputStatusSchedule
-              onChange={(id) => handleChange('final_service_opinion_id', id)}
-              value={formData.final_service_opinion_id}
-              {...(formErrors.final_service_opinion_id && {
-                error: true,
-                helperText: formErrors.final_service_opinion_id,
-              })}
-              isFinalOpinion={true}
-              serviceId={formData.service_id}
-              // disabled={loadingServiceOpinions || formData.service_id === null}
-            />
-          </Grid>
-        </HasPermission>
-
         {/* Botão de Ação */}
         <Grid item xs={12} sm={12} lg={12}>
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-            <Button variant="contained" color="primary" onClick={handleSave}>
-              Salvar
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSaveSchedule}
+              disabled={formLoading}
+              endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+            >
+              Salvar Alterações
             </Button>
           </Stack>
         </Grid>
