@@ -97,83 +97,112 @@ export default function ScheduleDrawerFilters() {
         Filtros
       </Button>
       <Drawer open={open} onClose={toggleDrawer(false)} anchor="right">
-        <Box role="presentation" sx={{ padding: 2, maxWidth: '600px' }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
-            <Typography variant="h5">Filtros</Typography>
-            <Close onClick={toggleDrawer(false)} sx={{ cursor: 'pointer' }} />
+        <Box
+          role="presentation"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            maxWidth: '600px',
+          }}
+        >
+          <Box sx={{ padding: 2, flex: '0 0 auto' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
+              <Typography variant="h5">Filtros</Typography>
+              <Close onClick={toggleDrawer(false)} sx={{ cursor: 'pointer' }} />
+            </Box>
           </Box>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <CustomFormLabel>Status do Agendamento</CustomFormLabel>
-              <CheckboxesTags
-                options={StatusSchedule}
-                placeholder="Selecione o status"
-                value={tempFilters.status}
-                onChange={(event, value) => handleChange('status', value)}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormDateRange
-                label="Data do Agendamento"
-                value={tempFilters.rangeDate}
-                onChange={(newValue) => handleChange('rangeDate', newValue)}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <CustomFormLabel htmlFor="customer">Cliente</CustomFormLabel>
-              <AutoCompleteUser
-                placeholder="Selecione o cliente"
-                value={tempFilters.customer}
-                onChange={(id) => handleChange('customer', id)}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <CustomFormLabel>Agente de Campo</CustomFormLabel>
-              <AutoCompleteUserFilter
-                value={tempFilters.scheduleAgent}
-                onChange={(id) => handleChange('scheduleAgent', id)}
-                noOptionsText="Nenhum agente encontrado"
-              />
-            </Grid>
 
-            <Grid item xs={12}>
-              <CustomFormLabel>Serviço</CustomFormLabel>
-              <AutoCompleteServiceCatalogFilter
-                value={tempFilters.scheduleService}
-                onChange={(id) => handleChange('scheduleService', id)}
-                noOptionsText="Nenhum serviço encontrado"
-              />
-            </Grid>
+          {/* Conteúdo dos filtros com rolagem */}
+          <Box
+            sx={{
+              flex: '1 1 auto',
+              overflowY: 'auto',
+              paddingX: 2,
+              paddingBottom: 2,
+            }}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <CustomFormLabel>Status do Agendamento</CustomFormLabel>
+                <CheckboxesTags
+                  options={StatusSchedule}
+                  placeholder="Selecione o status"
+                  value={tempFilters.status}
+                  onChange={(event, value) => handleChange('status', value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FormDateRange
+                  label="Data do Agendamento"
+                  value={tempFilters.rangeDate}
+                  onChange={(newValue) => handleChange('rangeDate', newValue)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="customer">Cliente</CustomFormLabel>
+                <AutoCompleteUser
+                  placeholder="Selecione o cliente"
+                  value={tempFilters.customer}
+                  onChange={(id) => handleChange('customer', id)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <CustomFormLabel>Agente de Campo</CustomFormLabel>
+                <AutoCompleteUserFilter
+                  value={tempFilters.scheduleAgent}
+                  onChange={(id) => handleChange('scheduleAgent', id)}
+                  noOptionsText="Nenhum agente encontrado"
+                />
+              </Grid>
 
-            <Grid item xs={12}>
-              <CustomFormLabel htmlFor="service_opinion">
-                Parecer de serviço
-              </CustomFormLabel>
-              <AutoInputStatusSchedule
-                onChange={(id) => handleChange('service_opinion', id)}
-                value={tempFilters.service_opinion}
-                isFinalOpinion={false}
-                serviceId={tempFilters.scheduleService}
-                disabled={!tempFilters.scheduleService}
-                helperText={"Para filtrar por parecer de serviço, selecione um serviço."}
-              />
-            </Grid>
+              <Grid item xs={12}>
+                <CustomFormLabel>Serviço</CustomFormLabel>
+                <AutoCompleteServiceCatalogFilter
+                  value={tempFilters.scheduleService}
+                  onChange={(id) => handleChange('scheduleService', id)}
+                  noOptionsText="Nenhum serviço encontrado"
+                />
+              </Grid>
 
-            <Grid item xs={12}>
-              <CustomFormLabel htmlFor="final_service_opinion">
-                Parecer final de serviço
-              </CustomFormLabel>
-              <AutoInputStatusSchedule
-                onChange={(id) => handleChange('final_service_opinion', id)}
-                value={tempFilters.final_service_opinion}
-                isFinalOpinion={true}
-                serviceId={tempFilters.scheduleService}
-                disabled={!tempFilters.scheduleService}
-                helperText={"Para filtrar por parecer final de serviço, selecione um serviço."}
-              />
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="service_opinion">Parecer de serviço</CustomFormLabel>
+                <AutoInputStatusSchedule
+                  onChange={(id) => handleChange('service_opinion', id)}
+                  value={tempFilters.service_opinion}
+                  isFinalOpinion={false}
+                  serviceId={tempFilters.scheduleService}
+                  disabled={!tempFilters.scheduleService}
+                  helperText={'Para filtrar por parecer de serviço, selecione um serviço.'}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="final_service_opinion">
+                  Parecer final de serviço
+                </CustomFormLabel>
+                <AutoInputStatusSchedule
+                  onChange={(id) => handleChange('final_service_opinion', id)}
+                  value={tempFilters.final_service_opinion}
+                  isFinalOpinion={true}
+                  serviceId={tempFilters.scheduleService}
+                  disabled={!tempFilters.scheduleService}
+                  helperText={'Para filtrar por parecer final de serviço, selecione um serviço.'}
+                />
+              </Grid>
             </Grid>
-          </Grid>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+          </Box>
+
+          {/* Botões fixos no rodapé */}
+          <Box
+            sx={{
+              flex: '0 0 auto',
+              padding: 2,
+              borderTop: '1px solid #e0e0e0',
+              display: 'flex',
+              justifyContent: 'space-between',
+            }}
+          >
             <Button variant="outlined" onClick={clearFilters} fullWidth sx={{ marginRight: 1 }}>
               Limpar Filtros
             </Button>
