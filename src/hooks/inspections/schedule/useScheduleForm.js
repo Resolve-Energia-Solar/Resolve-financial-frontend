@@ -40,6 +40,7 @@ const useScheduleForm = (initialData, id) => {
 
   const [formErrors, setFormErrors] = useState({})
   const [success, setSuccess] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (initialData) {
@@ -273,6 +274,7 @@ const useScheduleForm = (initialData, id) => {
   }
 
   const handleSave = async () => {
+    setLoading(true)
     const normalizedProductsIds = Array.isArray(formData.products) ? formData.products : [formData.products];
   
     const dataToSend = {
@@ -312,6 +314,8 @@ const useScheduleForm = (initialData, id) => {
       setSuccess(false)
       setFormErrors(err.response?.data || {})
       console.error(err.response?.data || err)
+    } finally {
+      setLoading(false)
     }
   }
   
@@ -320,6 +324,7 @@ const useScheduleForm = (initialData, id) => {
     formData,
     handleChange,
     handleSave,
+    loading,
     formErrors,
     success,
   }

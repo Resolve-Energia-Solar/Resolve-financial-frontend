@@ -353,14 +353,12 @@ const SchedulingList = () => {
                   </Box>
                 </Box>
               </TableCell>
-              {/* Actions */}
-              <TableCell align="right">Ações</TableCell>
             </TableRow>
           </TableHead>
           {loading ? (
             <TableSkeleton 
               rows={rowsPerPage}
-              columns={9} />
+              columns={8} />
           ) : error ? (
             <Typography color="error">{error}</Typography>
           ) : (
@@ -402,61 +400,6 @@ const SchedulingList = () => {
                     ) : (
                       <Chip label="Sem Agente" color="error" />
                     )}
-                  </TableCell>
-                  <TableCell align="right">
-                    <Tooltip title="Ações">
-                      <IconButton
-                        size="small"
-                        onClick={(event) => handleMenuClick(event, schedule.id)}
-                      >
-                        <MoreVertIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Menu
-                      anchorEl={menuAnchorEl}
-                      open={menuOpenRowId === schedule.id}
-                      onClose={handleMenuClose}
-                      anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                      }}
-                      transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                      }}
-                    >
-                      {schedule.going_to_location_at != null &&
-                        schedule.execution_started_at == null && (
-                          <MenuItem
-                            onClick={() => {
-                              handleViewClick(schedule.id);
-                              handleMenuClose();
-                            }}
-                          >
-                            <Mapsicon fontSize="small" sx={{ mr: 1 }} />
-                            Acompanhar no mapa
-                          </MenuItem>
-                        )}
-
-                      <MenuItem
-                        onClick={() => {
-                          handleEditClick(schedule.id);
-                          handleMenuClose();
-                        }}
-                      >
-                        <EditIcon fontSize="small" sx={{ mr: 1 }} />
-                        Editar
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          handleDeleteClick(schedule.id);
-                          handleMenuClose();
-                        }}
-                      >
-                        <DeleteIcon fontSize="small" sx={{ mr: 1 }} />
-                        Excluir
-                      </MenuItem>
-                    </Menu>
                   </TableCell>
                 </TableRow>
               ))}
