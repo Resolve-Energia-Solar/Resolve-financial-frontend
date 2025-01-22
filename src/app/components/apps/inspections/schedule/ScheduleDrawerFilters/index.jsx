@@ -8,6 +8,7 @@ import AutoCompleteUserFilter from '../../auto-complete/Auto-Input-UserFilter';
 import AutoCompleteServiceCatalogFilter from '../../auto-complete/Auto-Input-ServiceFilter';
 import { ScheduleDataContext } from '@/app/context/Inspection/ScheduleContext';
 import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
+import AutoInputStatusSchedule from '../../auto-complete/Auto-Input-StatusInspection';
 
 export default function ScheduleDrawerFilters() {
   const [open, setOpen] = useState(false);
@@ -19,6 +20,7 @@ export default function ScheduleDrawerFilters() {
     scheduleAgent: filters.scheduleAgent || null,
     scheduleService: filters.scheduleService || null,
     customer: filters.customer || null,
+    final_service_opinion: filters.final_service_opinion || null,
   });
 
   const createFilterParams = (filters) => {
@@ -44,6 +46,10 @@ export default function ScheduleDrawerFilters() {
 
     if (filters.customer) {
       params.customer = filters.customer;
+    }
+
+    if (filters.final_service_opinion) {
+      params.final_service_opinion = filters.final_service_opinion;
     }
 
     return params;
@@ -122,6 +128,18 @@ export default function ScheduleDrawerFilters() {
                 value={tempFilters.scheduleAgent}
                 onChange={(id) => handleChange('scheduleAgent', id)}
                 noOptionsText="Nenhum agente encontrado"
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <CustomFormLabel htmlFor="final_service_opinion">
+                Parecer final de serviço
+              </CustomFormLabel>
+              <AutoInputStatusSchedule
+                onChange={(id) => handleChange('final_service_opinion', id)}
+                value={tempFilters.final_service_opinion}
+                isFinalOpinion={true}
+                serviceId={tempFilters.scheduleService}
               />
             </Grid>
             <Grid item xs={12}>

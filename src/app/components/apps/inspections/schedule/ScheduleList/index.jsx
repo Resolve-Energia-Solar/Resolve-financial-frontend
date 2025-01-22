@@ -387,14 +387,14 @@ const SchedulingList = () => {
                     {schedule.service_opinion ? (
                       schedule.service_opinion.name
                     ) : (
-                      <Chip label="Sem parecer" color="error" />
+                      <Chip label="Sem Parecer" color="error" />
                     )}
                   </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     {schedule.final_service_opinion ? (
                       schedule.final_service_opinion.name
                     ) : (
-                      <Chip label="Em análise" color="warning" />
+                      <Chip label="Em Análise" color="warning" />
                     )}
                   </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
@@ -410,7 +410,7 @@ const SchedulingList = () => {
                     {schedule.schedule_agent ? (
                       schedule.schedule_agent.complete_name
                     ) : (
-                      <Chip label="Sem agente" color="error" />
+                      <Chip label="Sem Agente" color="error" />
                     )}
                   </TableCell>
                   <TableCell align="right">
