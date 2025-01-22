@@ -59,7 +59,6 @@ const SchedulingList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
 
   const { filters, refresh } = useContext(ScheduleDataContext);
   const [order, setOrder] = useState('asc');
@@ -68,6 +67,19 @@ const SchedulingList = () => {
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('success');
   const [alertOpen, setAlertOpen] = useState(false);
+
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [totalRows, setTotalRows] = useState(0);
+
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleRowsPerPageChange = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [menuOpenRowId, setMenuOpenRowId] = useState(null);
@@ -81,7 +93,6 @@ const SchedulingList = () => {
 
   useEffect(() => {
     setPage(1);
-    setHasMore(true);
     setScheduleList([]);
   }, [order, orderDirection, filters, refresh]);
 
@@ -96,24 +107,12 @@ const SchedulingList = () => {
         const data = await scheduleService.getSchedules({
           ordering: orderingParam,
           nextPage: page,
+          limit: rowsPerPage,
+          page: page + 1,
           ...filters,
         });
-        if (page === 1) {
-          setScheduleList(data.results);
-          console.log('data.results:', data.results);
-        } else {
-          setScheduleList((prevScheduleList) => {
-            const newItems = data.results.filter(
-              (item) => !prevScheduleList.some((existingItem) => existingItem.id === item.id),
-            );
-            return [...prevScheduleList, ...newItems];
-          });
-        }
-        if (data.next) {
-          setHasMore(true);
-        } else {
-          setHasMore(false);
-        }
+        setScheduleList(data.results);
+        setTotalRows(data.count);
       } catch (err) {
         setError('Erro ao carregar agendamentos', err);
         showAlert('Erro ao carregar Categorias', 'error');
@@ -122,10 +121,8 @@ const SchedulingList = () => {
       }
     };
 
-    if (page === 1 || hasMore) {
-      fetchSchedules();
-    }
-  }, [page, order, orderDirection, filters, refresh]);
+    fetchSchedules();
+  }, [page, rowsPerPage, order, orderDirection, filters, refresh]);
 
   const showAlert = (message, type) => {
     setAlertMessage(message);
@@ -202,13 +199,6 @@ const SchedulingList = () => {
     }
   };
 
-  const handleScroll = (event) => {
-    const { scrollTop, scrollHeight, clientHeight } = event.target;
-    if (scrollTop + clientHeight >= scrollHeight - 5 && hasMore && !loading) {
-      setPage((prevPage) => prevPage + 1);
-    }
-  };
-
   const formatDate = (dateString) => {
     const [year, month, day] = dateString.split('-');
     return `${day}/${month}/${year}`;
@@ -243,7 +233,6 @@ const SchedulingList = () => {
         elevation={10}
         sx={{
           overflowX: 'auto',
-          maxHeight: '50vh',
           scrollbarWidth: 'none',
           '&::-webkit-scrollbar': {
             display: 'none',
@@ -252,7 +241,6 @@ const SchedulingList = () => {
             display: 'none',
           },
         }}
-        onScroll={handleScroll}
       >
         <Table stickyHeader aria-label="schedule table">
           <TableHead>
@@ -369,15 +357,17 @@ const SchedulingList = () => {
               <TableCell align="right">Ações</TableCell>
             </TableRow>
           </TableHead>
-          {loading && page === 1 ? (
-            <TableSkeleton rows={5} columns={9} />
-          ) : error && page === 1 ? (
+          {loading ? (
+            <TableSkeleton 
+              rows={rowsPerPage}
+              columns={9} />
+          ) : error ? (
             <Typography color="error">{error}</Typography>
           ) : (
             <TableBody>
               {scheduleList.map((schedule) => (
                 <TableRow key={schedule.id} hover>
-                                    <TableCell onClick={() => handleRowClick(schedule)}>
+                  <TableCell onClick={() => handleRowClick(schedule)}>
                     {schedule?.customer?.complete_name}
                   </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
@@ -387,14 +377,14 @@ const SchedulingList = () => {
                     {schedule.service_opinion ? (
                       schedule.service_opinion.name
                     ) : (
-                      <Chip label="Sem parecer" color="error" />
+                      <Chip label="Sem Parecer" color="error" />
                     )}
                   </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     {schedule.final_service_opinion ? (
                       schedule.final_service_opinion.name
                     ) : (
-                      <Chip label="Em análise" color="warning" />
+                      <Chip label="Em Análise" color="warning" />
                     )}
                   </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
@@ -410,7 +400,7 @@ const SchedulingList = () => {
                     {schedule.schedule_agent ? (
                       schedule.schedule_agent.complete_name
                     ) : (
-                      <Chip label="Sem agente" color="error" />
+                      <Chip label="Sem Agente" color="error" />
                     )}
                   </TableCell>
                   <TableCell align="right">
@@ -477,17 +467,21 @@ const SchedulingList = () => {
                   </TableCell>
                 </TableRow>
               )}
-              {!hasMore && (
-                <TableRow>
-                  <TableCell colSpan={10} align="center">
-                    <Typography variant="body2">Você viu tudo!</Typography>
-                  </TableCell>
-                </TableRow>
-              )}
             </TableBody>
           )}
         </Table>
       </TableContainer>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={totalRows}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handleRowsPerPageChange}
+        labelRowsPerPage="Linhas por página"
+      />
       {/* Modal de confirmação de exclusão */}
       <Dialog
         open={isDialogOpen}
