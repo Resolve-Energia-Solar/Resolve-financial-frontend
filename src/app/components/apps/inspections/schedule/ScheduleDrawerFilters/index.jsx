@@ -87,7 +87,7 @@ export default function ScheduleDrawerFilters() {
 
   const StatusSchedule = [
     { value: 'Pendente', label: 'Pendente' },
-    { value: 'Concluído', label: 'Concluído' },
+    { value: 'Confirmado', label: 'Confirmado' },
     { value: 'Cancelado', label: 'Cancelado' },
   ];
 
