@@ -120,6 +120,7 @@ export default function DrawerFilters() {
   const StatusDocument = [
     { value: 'F', label: 'Finalizado' },
     { value: 'EA', label: 'Em Andamento' },
+    { value: 'P', label: 'Pendente' },
     { value: 'C', label: 'Cancelado' },
     { value: 'D', label: 'Distrato' },
   ];
