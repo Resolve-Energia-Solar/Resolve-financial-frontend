@@ -43,7 +43,6 @@ const Menuitems = [
     chipColor: 'secondary',
     permissions: ['core.view_board'],
   },
-
   {
     id: uniqueId(),
     title: 'Serviços de Campo',
@@ -55,45 +54,7 @@ const Menuitems = [
         title: 'Ordem de Serviço',
         icon: IconPoint,
         href: '/apps/inspections/schedule',
-      // },
-      // {
-      //   id: uniqueId(),
-      //   title: 'Tipos de Serviços',
-      //   icon: IconPoint,
-      //   href: '/apps/inspections/service-catalog',
-      // },
-      // {
-      //   id: uniqueId(),
-      //   title: 'Parecer do Serviço',
-      //   icon: IconPoint,
-      //   href: '/apps/inspections/service-opinions',
-      // },
-      // {
-      //   id: uniqueId(),
-      //   title: 'Categorias',
-      //   icon: IconPoint,
-      //   href: '/apps/inspections/category',
-      // },
-      // {
-      //   id: uniqueId(),
-      //   title: 'Contrato de Prazos',
-      //   icon: IconPoint,
-      //   href: '/apps/inspections/deadline',
-      // },
-      // {
-      //   id: uniqueId(),
-      //   title: 'Formulários',
-      //   icon: IconPoint,
-      //   href: '/apps/inspections/form-builder',
-      //   permissions: ['field_services.view_forms'],
-      // },
-      // {
-      //   id: uniqueId(),
-      //   title: 'TimeLine',
-      //   icon: IconChartLine,
-      //   href: '/apps/timeline',
-      //   permissions: ['field_services.view_schedule'],
-      },
+      }
     ],
     permissions: ['field_services.view_schedule'],
   },
