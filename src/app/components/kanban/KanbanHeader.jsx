@@ -35,7 +35,7 @@ function KanbanHeader() {
           }
   
       } catch (error) {
-        handleError(error.message);
+        console.error('Error:', error);
       }
     };
     fetchData();

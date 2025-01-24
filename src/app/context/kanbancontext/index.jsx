@@ -18,6 +18,7 @@ export const KanbanDataContextProvider = ({ children }) => {
   const [boardId, setBoardId] = useState(null);
   const [loadingLeadsIds, setLoadingLeadsIds] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
+  console.log('todoCategories', todoCategories);
 
   // Fetch todo data from the API
   useEffect(() => {
@@ -47,13 +48,11 @@ export const KanbanDataContextProvider = ({ children }) => {
     sourceIndex,
     destinationIndex,
   ) => {
-    // Colocar o ID da tarefa em loading
     setLoadingLeadsIds((prev) => [...prev, taskId]);
 
     let originalState;
 
     setTodoCategories((prevCategories) => {
-      // Encontrar as categorias de origem e destino
       const sourceCategoryIndex = prevCategories.findIndex(
         (cat) => cat.id.toString() === sourceCategoryId,
       );
@@ -62,24 +61,19 @@ export const KanbanDataContextProvider = ({ children }) => {
       );
 
       if (sourceCategoryIndex === -1 || destinationCategoryIndex === -1) {
-        return prevCategories; // Retornar o estado anterior se as categorias não forem encontradas
+        return prevCategories;
       }
 
-      // Clonar as categorias (evitar mutação direta)
       const updatedCategories = [...prevCategories];
       const sourceCategory = { ...updatedCategories[sourceCategoryIndex] };
       const destinationCategory = { ...updatedCategories[destinationCategoryIndex] };
 
-      // Salvar estado original para revertê-lo em caso de erro
       originalState = JSON.parse(JSON.stringify(updatedCategories));
 
-      // Remover a tarefa da categoria de origem
       const taskToMove = sourceCategory.child.splice(sourceIndex, 1)[0];
 
-      // Inserir a tarefa na categoria de destino na posição especificada
       destinationCategory.child.splice(destinationIndex, 0, taskToMove);
 
-      // Atualizar as categorias no estado
       updatedCategories[sourceCategoryIndex] = sourceCategory;
       updatedCategories[destinationCategoryIndex] = destinationCategory;
 
@@ -96,6 +90,19 @@ export const KanbanDataContextProvider = ({ children }) => {
     } finally {
       setLoadingLeadsIds((prev) => prev.filter((id) => id !== taskId));
     }
+  };
+
+  const updateTask = (taskId, data) => {
+    setTodoCategories((prevCategories) => {
+      return prevCategories.map((category) => {
+        return {
+          ...category,
+          child: category.child.map((task) =>
+            task.id === taskId ? { ...task, ...data } : task
+          ),
+        };
+      });
+    });
   };
 
   // Function to handle errors
@@ -149,6 +156,8 @@ export const KanbanDataContextProvider = ({ children }) => {
         loadingCategories,
         boardId,
         loadingLeadsIds,
+        setLoadingLeadsIds,
+        updateTask,
         setBoardId,
         setTodoCategories,
         addCategory,

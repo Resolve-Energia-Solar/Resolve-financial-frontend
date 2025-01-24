@@ -38,54 +38,28 @@ import {
   WbSunny,
 } from '@mui/icons-material';
 import ChipDeadLine from './components/Chipdead-line';
+import leadService from '@/services/leadService';
 
 const TaskData = ({ task, onDeleteTask, index }) => {
   const theme = useTheme();
-  const { setError, loadingLeadsIds } = useContext(KanbanDataContext);
+  const { setError, setLoadingLeadsIds, loadingLeadsIds, updateTask } = useContext(KanbanDataContext);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editedTask, setEditedTask] = useState(task);
   const [anchorEl, setAnchorEl] = useState(null);
   const taskId = task.id ? task.id.toString() : task.task;
 
-  const handleShowEditModal = () => {
-    setShowEditModal(true);
-    handleClose();
-  };
-  const handleCloseEditModal = () => setShowEditModal(false);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleDeleteClick = () => onDeleteTask(task.id);
-
-  const handleSaveEditedTask = async (editedTaskData) => {
+  const changeQualification = async (event, newValue) => {
     try {
-      const response = await axios.put('/api/TodoData/editTask', {
-        taskId: editedTaskData.id,
-        newData: editedTaskData,
-      });
-      if (response.status === 200) {
-        setEditedTask(editedTaskData);
-      } else {
-        throw new Error('Failed to edit task');
-      }
+      setLoadingLeadsIds((prev) => [...prev, taskId]);
+      const response = await leadService.patchLead(taskId, { qualification: newValue });
+      updateTask(task.id, response);
+      setEditedTask(response);
     } catch (error) {
       setError(error.message);
+    } finally {
+      setLoadingLeadsIds((prev) => prev.filter((id) => id !== taskId));
     }
-  };
-
-  const formatDate = (selectedDate) => {
-    if (!selectedDate) return '';
-    const dateObj = new Date(selectedDate);
-    const day = dateObj.getDate();
-    const month = dateObj.toLocaleString('default', { month: 'long' });
-    const year = dateObj.getFullYear();
-    return `${day} ${month} ${year}`;
   };
 
   return (
@@ -132,10 +106,10 @@ const TaskData = ({ task, onDeleteTask, index }) => {
                 <Box display="flex" justifyContent="flex-end">
                   <Rating
                     name="qualification"
-                    value={0}
+                    value={editedTask.qualification}
                     max={5}
                     size="small"
-                    readOnly
+                    onChange={changeQualification}
                     sx={{ ml: 1 }}
                     icon={<WbSunny fontSize="inherit" sx={{ color: theme.palette.warning.main }} />}
                     emptyIcon={
