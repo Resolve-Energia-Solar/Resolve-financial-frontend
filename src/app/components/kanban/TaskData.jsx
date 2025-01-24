@@ -1,6 +1,12 @@
 'use client';
 import React, { useContext, useState } from 'react';
-import { IconPencil, IconDotsVertical, IconTrash, IconCalendar } from '@tabler/icons-react';
+import {
+  IconPencil,
+  IconDotsVertical,
+  IconTrash,
+  IconCalendar,
+  IconClock,
+} from '@tabler/icons-react';
 import EditTaskModal from './TaskModal/EditTaskModal';
 import { KanbanDataContext } from '@/app/context/kanbancontext/index';
 import { Draggable } from 'react-beautiful-dnd';
@@ -8,18 +14,23 @@ import axios from '@/utils/axios';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import {
+  Avatar,
   Box,
   Card,
   Chip,
   IconButton,
   ListItemIcon,
   ListItemText,
+  Rating,
   Stack,
   Typography,
+  useTheme,
 } from '@mui/material';
 import BlankCard from '../shared/BlankCard';
+import { AccessTime, PunchClock, PunchClockSharp, WbSunny } from '@mui/icons-material';
 
 const TaskData = ({ task, onDeleteTask, index }) => {
+  const theme = useTheme();
   const { setError } = useContext(KanbanDataContext);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editedTask, setEditedTask] = useState(task);
@@ -95,44 +106,46 @@ const TaskData = ({ task, onDeleteTask, index }) => {
         >
           <BlankCard>
             <Box px={2} py={1} display="flex" alignItems="center" justifyContent="space-between">
-              <Typography fontSize="14px" variant="h6">
-                {editedTask.name}
-              </Typography>
+              <Box display="flex" alignItems="center" sx={{ color: 'text.secondary' }}>
+                <AccessTime fontSize="10" />
+                <Typography variant="body2" sx={{ ml: 0.5, fontSize: 11 }}>
+                  {new Intl.DateTimeFormat('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: '2-digit',
+                  }).format(new Date(editedTask.created_at))}
+                </Typography>
+              </Box>
+
               <Box>
-                <IconButton
-                  aria-label="more"
-                  aria-controls="long-menu"
-                  aria-haspopup="true"
-                  onClick={handleClick}
-                >
-                  <IconDotsVertical size="1rem" />
-                </IconButton>
-                <Menu
-                  id="long-menu"
-                  anchorEl={anchorEl}
-                  keepMounted
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                >
-                  <MenuItem onClick={handleShowEditModal}>
-                    <ListItemIcon>
-                      <IconPencil size="1.2rem" />
-                    </ListItemIcon>
-                    <ListItemText> Edit</ListItemText>
-                  </MenuItem>
-                  <MenuItem onClick={handleDeleteClick}>
-                    <ListItemIcon>
-                      <IconTrash size="1.2rem" />{' '}
-                    </ListItemIcon>
-                    <ListItemText> Delete</ListItemText>
-                  </MenuItem>
-                </Menu>
-                <EditTaskModal
-                  show={showEditModal}
-                  onHide={handleCloseEditModal}
-                  task={task}
-                  editedTask={editedTask}
-                  onSave={handleSaveEditedTask}
+                <Box display="flex" justifyContent="flex-end">
+                  <Rating
+                    name="qualification"
+                    value={0}
+                    max={5}
+                    size="small"
+                    readOnly
+                    sx={{ ml: 1 }}
+                    icon={<WbSunny fontSize="inherit" sx={{ color: theme.palette.warning.main }} />}
+                    emptyIcon={
+                      <WbSunny fontSize="inherit" sx={{ color: theme.palette.action.disabled }} />
+                    }
+                  />
+                </Box>
+              </Box>
+            </Box>
+            <Box px={2} py={0} display="flex" alignItems="center" justifyContent="space-between">
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Typography fontSize="14px" variant="h6">
+                  {editedTask.name} teste
+                </Typography>
+              </Box>
+
+              <Box>
+                <Avatar
+                  src={'/images/profile/user-1.jpg'}
+                  alt={'ImagemPerfil'}
+                  sx={{ borderRadius: '100%', width: 35, height: 35 }}
                 />
               </Box>
             </Box>

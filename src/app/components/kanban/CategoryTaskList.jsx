@@ -170,7 +170,7 @@ function CategoryTaskList({ id }) {
 
   return (
     <>
-      <Box width="265px" flexShrink="0px">
+      <Box width="340px" flexShrink="0px">
         {showContainer && category && (
           <Box px={3} py={2} sx={{ backgroundColor }}>
             <Box
