@@ -19,6 +19,7 @@ import {
   Card,
   Chip,
   IconButton,
+  LinearProgress,
   ListItemIcon,
   ListItemText,
   Rating,
@@ -27,12 +28,20 @@ import {
   useTheme,
 } from '@mui/material';
 import BlankCard from '../shared/BlankCard';
-import { AccessTime, LocalPhone, PersonOutline, PunchClock, PunchClockSharp, Start, WbSunny } from '@mui/icons-material';
+import {
+  AccessTime,
+  LocalPhone,
+  PersonOutline,
+  PunchClock,
+  PunchClockSharp,
+  Start,
+  WbSunny,
+} from '@mui/icons-material';
 import ChipDeadLine from './components/Chipdead-line';
 
 const TaskData = ({ task, onDeleteTask, index }) => {
   const theme = useTheme();
-  const { setError } = useContext(KanbanDataContext);
+  const { setError, loadingLeadsIds } = useContext(KanbanDataContext);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editedTask, setEditedTask] = useState(task);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -89,6 +98,11 @@ const TaskData = ({ task, onDeleteTask, index }) => {
           ref={provided.innerRef}
         >
           <BlankCard>
+            {loadingLeadsIds.includes(taskId) && (
+              <Box sx={{ width: '100%' }}>
+                <LinearProgress />
+              </Box>
+            )}
             <Box
               mt={1}
               px={2}

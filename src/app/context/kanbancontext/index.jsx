@@ -2,6 +2,7 @@
 import { createContext, useState, useEffect } from 'react';
 import axios from '@/utils/axios';
 import columnService from '@/services/boardColumnService';
+import leadService from '@/services/leadService';
 
 export const KanbanDataContext = createContext();
 const config = {
@@ -14,15 +15,16 @@ export const KanbanDataContextProvider = ({ children }) => {
   const [error, setError] = useState(config.error);
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [boardId, setBoardId] = useState(null);
-
-  console.log('boardId Context', boardId);
+  const [loadingLeadsIds, setLoadingLeadsIds] = useState([]);
 
   // Fetch todo data from the API
   useEffect(() => {
     const fetchData = async () => {
       setLoadingCategories(true);
       try {
-        const response = await columnService.getColumns({ params: { fields: 'id,name', board: boardId } });
+        const response = await columnService.getColumns({
+          params: { fields: 'id,name', board: boardId },
+        });
         setTodoCategories(response || []);
         setError(null);
       } catch (error) {
@@ -36,47 +38,62 @@ export const KanbanDataContextProvider = ({ children }) => {
     }
   }, [boardId]);
 
-  const moveTask = (
+  const moveTask = async (
     taskId,
     sourceCategoryId,
     destinationCategoryId,
     sourceIndex,
     destinationIndex,
   ) => {
+    // Colocar o ID da tarefa em loading
+    setLoadingLeadsIds((prev) => [...prev, taskId]);
+
+    // Variáveis auxiliares para reverter a posição em caso de falha
+    let originalState;
+
     setTodoCategories((prevCategories) => {
-      console.log('prevCategories', prevCategories);
-      // Find the source and destination categories
+      // Encontrar as categorias de origem e destino
       const sourceCategoryIndex = prevCategories.findIndex(
         (cat) => cat.id.toString() === sourceCategoryId,
       );
-      console.log('sourceCategoryIndex', sourceCategoryIndex);
       const destinationCategoryIndex = prevCategories.findIndex(
         (cat) => cat.id.toString() === destinationCategoryId,
       );
-      console.log('destinationCategoryIndex', destinationCategoryIndex);
 
       if (sourceCategoryIndex === -1 || destinationCategoryIndex === -1) {
-        return prevCategories; // Return previous state if categories are not found
+        return prevCategories; // Retornar o estado anterior se as categorias não forem encontradas
       }
-      // Clone the source and destination categories
+
+      // Clonar as categorias (evitar mutação direta)
       const updatedCategories = [...prevCategories];
-      console.log('updatedCategories', updatedCategories);
       const sourceCategory = { ...updatedCategories[sourceCategoryIndex] };
-      console.log('sourceCategory', sourceCategory);
       const destinationCategory = { ...updatedCategories[destinationCategoryIndex] };
 
-      // Remove the task from the source category
+      // Salvar estado original para revertê-lo em caso de erro
+      originalState = JSON.parse(JSON.stringify(updatedCategories));
+
+      // Remover a tarefa da categoria de origem
       const taskToMove = sourceCategory.child.splice(sourceIndex, 1)[0];
 
-      // Insert the task into the destination category at the specified index
+      // Inserir a tarefa na categoria de destino na posição especificada
       destinationCategory.child.splice(destinationIndex, 0, taskToMove);
 
-      // Update the categories in the state
+      // Atualizar as categorias no estado
       updatedCategories[sourceCategoryIndex] = sourceCategory;
       updatedCategories[destinationCategoryIndex] = destinationCategory;
 
       return updatedCategories;
     });
+
+    try {
+      await leadService.patchLead(taskId, { column_id: destinationCategoryId });
+    } catch (error) {
+      console.error('Erro ao mover tarefa:', error.message);
+
+      setTodoCategories(originalState);
+    } finally {
+      setLoadingLeadsIds((prev) => prev.filter((id) => id !== taskId));
+    }
   };
 
   // Function to handle errors
@@ -129,6 +146,7 @@ export const KanbanDataContextProvider = ({ children }) => {
         todoCategories,
         loadingCategories,
         boardId,
+        loadingLeadsIds,
         setBoardId,
         setTodoCategories,
         addCategory,

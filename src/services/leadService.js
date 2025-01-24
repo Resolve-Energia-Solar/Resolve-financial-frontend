@@ -3,7 +3,7 @@ import apiClient from './apiClient'
 const leadService = {
   getLeads: async (params = {}) => {
     try {
-      const response = await apiClient.get('/api/leads/', { params });
+      const response = await apiClient.get('/api/leads/', { ...params });
       return response.data
     } catch (error) {
       console.error('Erro ao buscar leads:', error)
@@ -45,7 +45,6 @@ const leadService = {
   patchLead: async (id, data) => {
     try {
       const response = await apiClient.patch(`/api/leads/${id}/`, data)
-      console.log('patchLead response:', response)
       return response.data
     } catch (error) {
       console.error('Erro na requisição de atualização do lead:', error)
