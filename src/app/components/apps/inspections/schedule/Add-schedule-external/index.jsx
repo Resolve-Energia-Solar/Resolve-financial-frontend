@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { parseISO, isBefore, format } from 'date-fns';
 
-import { Grid, Button, Stack, Snackbar, Alert } from '@mui/material';
+import { Grid, Button, Stack, Snackbar, Alert, CircularProgress } from '@mui/material';
 
 import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
 import AutoCompleteServiceCatalog from '@/app/components/apps/inspections/auto-complete/Auto-input-Service';
@@ -21,7 +21,7 @@ import AutoCompleteProduct from '../../auto-complete/Auto-input-product';
 const ScheduleFormCreateExternal = () => {
   const router = useRouter();
 
-  const { formData, handleChange, handleSave, formErrors, success } = useSheduleForm();
+  const { formData, handleChange, handleSave, loading: formLoading, formErrors, success } = useSheduleForm();
   const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
@@ -67,7 +67,7 @@ const ScheduleFormCreateExternal = () => {
 
         if (isBefore(selectedDate, minDate)) {
           showAlert('A data selecionada não pode ser anterior a 17/01.', 'error');
-          handleChange(field, ''); 
+          handleChange(field, '');
           return;
         }
       } catch (error) {
@@ -260,7 +260,13 @@ const ScheduleFormCreateExternal = () => {
 
         <Grid item xs={12} sm={12} lg={12}>
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-            <Button variant="contained" color="primary" onClick={handleSave}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSave}
+              disabled={formLoading}
+              endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+            >
               Salvar
             </Button>
           </Stack>

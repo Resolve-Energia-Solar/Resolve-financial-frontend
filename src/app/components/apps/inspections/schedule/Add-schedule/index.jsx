@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { parseISO, format } from 'date-fns';
 
 /* material */
-import { Grid, Button, Stack, Tooltip, Snackbar, Alert } from '@mui/material';
+import { Grid, Button, Stack, Tooltip, Snackbar, Alert, CircularProgress } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 
 /* components */
@@ -32,10 +32,9 @@ const ScheduleFormCreate = ({
 }) => {
   const router = useRouter();
 
-  const { formData, handleChange, handleSave, formErrors, success } = useSheduleForm();
+  const { formData, handleChange, handleSave, loading: formLoading, formErrors, success } = useSheduleForm();
 
   const userPermissions = useSelector((state) => state.user.permissions);
-
 
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
@@ -238,7 +237,13 @@ const ScheduleFormCreate = ({
         {/* Botão de Ação*/}
         <Grid item xs={12} sm={12} lg={12}>
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-            <Button variant="contained" color="primary" onClick={handleSave}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSave}
+              disabled={formLoading}
+              endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+            >
               Salvar
             </Button>
           </Stack>
