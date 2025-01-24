@@ -41,8 +41,8 @@ const TaskDataSkeleton = () => {
           </Box>
         </Box>
 
-        <Box>
-          <Skeleton variant="rectangular" width="100%" height={106} />
+        <Box py={1} px={2} display="flex" alignItems="center" gap={0.5}>
+          <Skeleton variant="rectangular" width="100%" height={50} />
         </Box>
 
         <Box px={2} py={0} display="flex" alignItems="center" gap={0.5}>

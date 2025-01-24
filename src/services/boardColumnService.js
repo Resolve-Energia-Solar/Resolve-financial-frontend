@@ -3,7 +3,7 @@ import apiClient from './apiClient';
 const columnService = {
   getColumns: async (params = {}) => {
     try {
-      const response = await apiClient.get('/api/columns/', { params });
+      const response = await apiClient.get('/api/columns/', { ...params });
       return response.data.results;
     } catch (error) {
       console.error('Erro ao buscar colunas:', error);
