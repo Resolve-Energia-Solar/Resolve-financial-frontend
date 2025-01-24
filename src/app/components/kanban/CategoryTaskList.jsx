@@ -154,25 +154,11 @@ function CategoryTaskList({ id }) {
     deleteCategory(id);
   };
 
-
-
-  const backgroundColor = category
-    ? category.name === "Todo"
-      ? "primary.light"
-      : category.name === "Progress"
-        ? "secondary.light"
-        : category.name === "Pending"
-          ? "warning.light"
-          : category.name === "Done"
-            ? "success.light"
-            : "primary.light"
-    : "primary.light";
-
   return (
     <>
       <Box width="340px" flexShrink="0px">
         {showContainer && category && (
-          <Box px={3} py={2} sx={{ backgroundColor }}>
+          <Box px={3} py={2} sx={{ backgroundColor: "primary.light" }}>
             <Box
               display="flex"
               justifyContent="space-between"

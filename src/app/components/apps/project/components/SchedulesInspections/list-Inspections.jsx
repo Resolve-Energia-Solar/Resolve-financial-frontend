@@ -17,6 +17,7 @@ import {
   DialogContent,
   DialogActions,
   Chip,
+  Grid,
 } from '@mui/material';
 import { Edit, KeyboardArrowRight } from '@mui/icons-material';
 import { IconTrash } from '@tabler/icons-react';
@@ -25,16 +26,25 @@ import scheduleService from '@/services/scheduleService';
 import SupplyChip from '../../../checklist/components/SupplyChip';
 import ScheduleFormCreate from '../../../inspections/schedule/Add-schedule';
 import ScheduleFormEdit from '../../../inspections/schedule/Edit-schedule';
+import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
 
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
 
-const ListInspection = ({ projectId = null, product = [], customerId = null }) => {
+const ListInspection = ({ projectId = null, product = [], customerId }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedUnitId, setSelectedUnitId] = useState(null);
   const [AddModalOpen, setAddModalOpen] = useState(false);
   const [openModelInspectionNotAssociated, setOpenModelInspectionNotAssociated] = useState(false);
   const [confirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [confirmAssociateModalOpen, setConfirmAssociateModalOpen] = useState(false);
+  const [customer, setCustomer] = useState(null);
+  const [loadingInspections, setLoadingInspections] = useState(true);
+
+  useEffect(() => {
+    setCustomer(customerId);
+  }, [customerId]);
 
   const [inspectionSelected, setInspectionSelected] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -63,19 +73,22 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
 
   useEffect(() => {
     const fetch = async () => {
+      setLoadingInspections(true);
       try {
-        const response = await scheduleService.getAllSchedulesInspectionByCustomer(customerId);
+        const response = await scheduleService.getAllSchedulesInspectionByCustomer(customer);
         const filteredResults = response.results.filter((item) => item.project?.sale_id === null);
         setInspectionsNotAssociated(filteredResults);
       } catch (error) {
         console.error('Erro ao buscar agendamentos:', error);
+      } finally {
+        setLoadingInspections(false);
       }
     };
 
-    if (customerId) {
+    if (customer) {
       fetch();
     }
-  }, [customerId, reload]);
+  }, [customer, reload]);
 
   const [units, setUnits] = useState([]);
 
@@ -171,9 +184,7 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
                       <Typography variant="body2">{unit?.schedule_date}</Typography>
                     </TableCell>
                     <TableCell align="center">
-                        <Typography variant="body2">
-                          {unit?.schedule_start_time}
-                        </Typography>
+                      <Typography variant="body2">{unit?.schedule_start_time}</Typography>
                     </TableCell>
                     <TableCell align="center">
                       <Typography variant="body2">
@@ -255,10 +266,19 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
         </DialogContent>
       </Dialog>
 
-      <Dialog open={openModelInspectionNotAssociated} onClose={() => setOpenModelInspectionNotAssociated(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={openModelInspectionNotAssociated}
+        onClose={() => setOpenModelInspectionNotAssociated(false)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>Adicionar uma vistoria já existente</DialogTitle>
         <DialogContent>
           <TableContainer sx={{ whiteSpace: { xs: 'nowrap', md: 'unset' } }}>
+            <Grid item xs={12} sm={6} style={{ marginBottom: '10px' }}>
+              <CustomFormLabel htmlFor="name">Buscar por cliente</CustomFormLabel>
+              <AutoCompleteUser fullWidth value={customer} onChange={(id) => setCustomer(id)} />
+            </Grid>
             <Table>
               <TableHead>
                 <TableRow>
@@ -289,46 +309,52 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
                   </TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
-                {inspectionsNotAssociated.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} align="center">
-                      <Typography variant="body2">Nenhuma vistoria encontrada para este cliente</Typography>
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  inspectionsNotAssociated.map((unit) => (
-                    <TableRow key={unit.id}>
-                      <TableCell align="center">
-                        <Typography variant="body2">{unit?.schedule_date}</Typography>
-                      </TableCell>
-                      <TableCell align="center">
-                        <Typography variant="body2">{unit?.schedule_start_time}</Typography>
-                      </TableCell>
-                      <TableCell align="center">
-                        <Typography variant="body2">{unit?.schedule_end_time}</Typography>
-                      </TableCell>
-                      <TableCell align="center">
-                        <Typography variant="body2">
-                          <SupplyChip status={unit?.status} />
-                        </Typography>
-                      </TableCell>
-                      <TableCell align="center">
-                        <Tooltip title="Editar Item">
-                          <IconButton color="primary" onClick={() => handleEdit(unit.id)}>
-                            <Edit width={22} />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Associar Item">
-                          <IconButton color="success" onClick={() => openAssociateModal(unit.id)}>
-                            <KeyboardArrowRight width={22} />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
+      {loadingInspections ? (
+        <TableSkeleton rows={5} columns={5} />
+      ) : (
+        <TableBody>
+          {inspectionsNotAssociated.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} align="center">
+                <Typography variant="body2">
+                  Nenhuma vistoria encontrada para este cliente
+                </Typography>
+              </TableCell>
+            </TableRow>
+          ) : (
+            inspectionsNotAssociated.map((unit) => (
+              <TableRow key={unit.id}>
+                <TableCell align="center">
+                  <Typography variant="body2">{unit?.schedule_date}</Typography>
+                </TableCell>
+                <TableCell align="center">
+                  <Typography variant="body2">{unit?.schedule_start_time}</Typography>
+                </TableCell>
+                <TableCell align="center">
+                  <Typography variant="body2">{unit?.schedule_end_time}</Typography>
+                </TableCell>
+                <TableCell align="center">
+                  <Typography variant="body2">
+                    <SupplyChip status={unit?.status} />
+                  </Typography>
+                </TableCell>
+                <TableCell align="center">
+                  <Tooltip title="Editar Item">
+                    <IconButton color="primary" onClick={() => handleEdit(unit.id)}>
+                      <Edit width={22} />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Associar Item">
+                    <IconButton color="success" onClick={() => openAssociateModal(unit.id)}>
+                      <KeyboardArrowRight width={22} />
+                    </IconButton>
+                  </Tooltip>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      )}
             </Table>
           </TableContainer>
         </DialogContent>
@@ -365,7 +391,8 @@ const ListInspection = ({ projectId = null, product = [], customerId = null }) =
         <DialogTitle>Confirmar Associação</DialogTitle>
         <DialogContent>
           <Typography variant="body2">
-            Tem certeza que deseja associar esta vistoria ao projeto? Esta ação não pode ser desfeita.
+            Tem certeza que deseja associar esta vistoria ao projeto? Esta ação não pode ser
+            desfeita.
           </Typography>
         </DialogContent>
         <DialogActions>
