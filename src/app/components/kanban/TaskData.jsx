@@ -27,7 +27,8 @@ import {
   useTheme,
 } from '@mui/material';
 import BlankCard from '../shared/BlankCard';
-import { AccessTime, PunchClock, PunchClockSharp, WbSunny } from '@mui/icons-material';
+import { AccessTime, LocalPhone, PersonOutline, PunchClock, PunchClockSharp, Start, WbSunny } from '@mui/icons-material';
+import ChipDeadLine from './components/ChipDeadline';
 
 const TaskData = ({ task, onDeleteTask, index }) => {
   const theme = useTheme();
@@ -105,17 +106,30 @@ const TaskData = ({ task, onDeleteTask, index }) => {
           ref={provided.innerRef}
         >
           <BlankCard>
-            <Box px={2} py={1} display="flex" alignItems="center" justifyContent="space-between">
-              <Box display="flex" alignItems="center" sx={{ color: 'text.secondary' }}>
+            <Box
+              mt={1}
+              px={2}
+              py={1}
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Stack
+                direction="row"
+                alignItems="center"
+                spacing={1}
+                sx={{ color: 'text.secondary' }}
+              >
+                <ChipDeadLine status={'A'} />
                 <AccessTime fontSize="10" />
-                <Typography variant="body2" sx={{ ml: 0.5, fontSize: 11 }}>
+                <Typography variant="body2" sx={{ fontSize: 11 }}>
                   {new Intl.DateTimeFormat('pt-BR', {
                     day: '2-digit',
                     month: '2-digit',
                     year: '2-digit',
                   }).format(new Date(editedTask.created_at))}
                 </Typography>
-              </Box>
+              </Stack>
 
               <Box>
                 <Box display="flex" justifyContent="flex-end">
@@ -137,7 +151,7 @@ const TaskData = ({ task, onDeleteTask, index }) => {
             <Box px={2} py={0} display="flex" alignItems="center" justifyContent="space-between">
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Typography fontSize="14px" variant="h6">
-                  {editedTask.name} teste
+                  {editedTask.name}
                 </Typography>
               </Box>
 
@@ -159,29 +173,30 @@ const TaskData = ({ task, onDeleteTask, index }) => {
                 />
               )}
             </Box>
-            {editedTask.taskText && (
-              <Box px={2} py={1}>
-                <Typography variant="body2">{editedTask.taskText}</Typography>
+            {editedTask?.origin && (
+              <Box px={2} py={0} display="flex" alignItems="center" gap={0.5}>
+                <Start fontSize="10" />
+                <Typography variant="body2">Origem: {editedTask?.origin?.name}</Typography>
               </Box>
             )}
-            <Box display="flex" alignItems="center" justifyContent="space-between" px={2} py={1}>
-              <Stack direction="row" gap={1}>
-                <IconCalendar size="1rem" />
-                <Typography variant="body2">{formatDate(editedTask.date)}</Typography>
-              </Stack>
-              <Box>
-                <Chip
-                  size="small"
-                  label={editedTask.taskProperty}
-                  sx={{
-                    backgroundColor,
-                    color: 'white',
-                    borderRadius: '8px',
-                    fontSize: '11px',
-                    fontWeight: 400,
-                  }}
-                />
+            {editedTask?.phone && (
+              <Box px={2} py={0.5} display="flex" alignItems="center" gap={0.5}>
+                <LocalPhone fontSize="10" />
+                <Typography variant="body2">{editedTask?.phone}</Typography>
               </Box>
+            )}
+            <Box
+              display="flex"
+              alignItems="center"
+              px={2}
+              py={1}
+              mt={1}
+              sx={{ backgroundColor: 'grey.100', gap: 0.5 }}
+            >
+              <PersonOutline fontSize="8" />
+              <Typography variant="body2" fontSize="10px">
+                <strong>Responsável:</strong> {editedTask?.seller?.complete_name}
+              </Typography>
             </Box>
           </BlankCard>
         </Box>

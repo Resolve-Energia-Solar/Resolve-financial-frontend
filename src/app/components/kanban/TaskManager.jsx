@@ -40,7 +40,7 @@ function TaskManager() {
       <SimpleBar>
         <DragDropContext onDragEnd={onDragEnd}>
 
-          <Box display="flex" gap={2}>
+          <Box display="flex" gap={2} p={2}>
             {todoCategories.map((category) => (
               <Droppable droppableId={category.id.toString()} key={category.id}>
                 {(provided) => (
