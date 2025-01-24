@@ -53,6 +53,7 @@
     "modernize-main": "file:",
     "moment": "^2.29.4",
     "next": "^14.2.7",
+    "notistack": "^3.0.2",
     "numeral": "^2.0.6",
     "pizzip": "^3.1.7",
     "prop-types": "^15.7.2",

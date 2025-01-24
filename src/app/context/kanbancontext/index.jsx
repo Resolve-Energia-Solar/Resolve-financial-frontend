@@ -3,6 +3,7 @@ import { createContext, useState, useEffect } from 'react';
 import axios from '@/utils/axios';
 import columnService from '@/services/boardColumnService';
 import leadService from '@/services/leadService';
+import { useSnackbar } from 'notistack';
 
 export const KanbanDataContext = createContext();
 const config = {
@@ -16,6 +17,7 @@ export const KanbanDataContextProvider = ({ children }) => {
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [boardId, setBoardId] = useState(null);
   const [loadingLeadsIds, setLoadingLeadsIds] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
 
   // Fetch todo data from the API
   useEffect(() => {
@@ -48,7 +50,6 @@ export const KanbanDataContextProvider = ({ children }) => {
     // Colocar o ID da tarefa em loading
     setLoadingLeadsIds((prev) => [...prev, taskId]);
 
-    // Variáveis auxiliares para reverter a posição em caso de falha
     let originalState;
 
     setTodoCategories((prevCategories) => {
@@ -87,9 +88,10 @@ export const KanbanDataContextProvider = ({ children }) => {
 
     try {
       await leadService.patchLead(taskId, { column_id: destinationCategoryId });
+      enqueueSnackbar('Tarefa movida com sucesso', { variant: 'success' });
     } catch (error) {
       console.error('Erro ao mover tarefa:', error.message);
-
+      enqueueSnackbar('Erro ao mover tarefa', { variant: 'error' });
       setTodoCategories(originalState);
     } finally {
       setLoadingLeadsIds((prev) => prev.filter((id) => id !== taskId));
