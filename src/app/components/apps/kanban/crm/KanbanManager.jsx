@@ -24,12 +24,12 @@ import useLeadManager from '@/hooks/boards/useKanbanForm';
 import EditLeadPage from '../../leads/Edit-lead';
 import ProposalManager from '../../proposal';
 import SaleListCards from '../../comercial/sale/components/salesList/cards';
-import { KanbanDataContext } from '@/app/context/kanbancontext';
+import { KanbanDataContext } from '@/app/context/kanbanCRMcontext';
 import ClicksignLogsPage from '../../notifications/clicksign';
 import leadService from '@/services/leadService';
 import LeadDialog from '../../leads/LeadDialog/LeadDialog';
 import ColumnWithActions from './ColumnHeader';
-import columnService from '@/services/boardCollunService';
+import columnService from '@/services/boardColumnService';
 import Activities from '../../activities';
 
 const KanbanManager = ({

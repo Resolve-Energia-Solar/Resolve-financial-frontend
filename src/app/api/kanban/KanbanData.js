@@ -5,35 +5,35 @@ const KanbanData = [
   {
     id: '1',
     name: 'Novo lead',
-    child: [
-      {
-        id: '101',
-        task: 'This is first task',
-        taskImage: '/images/kanban/kanban-img-1.jpg',
-        taskText: '',
-        date: '24 july',
-        taskProperty: 'Design',
+    // child: [
+    //   {
+    //     id: '101',
+    //     task: 'This is first task',
+    //     taskImage: '/images/kanban/kanban-img-1.jpg',
+    //     taskText: '',
+    //     date: '24 july',
+    //     taskProperty: 'Design',
 
-      },
-      {
-        id: '102',
-        task: 'lets do some task on pd',
-        taskImage: '',
-        taskText: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, o eiusmod tempor incid.',
-        date: '24 july',
-        taskProperty: 'Mobile',
+    //   },
+    //   {
+    //     id: '102',
+    //     task: 'lets do some task on pd',
+    //     taskImage: '',
+    //     taskText: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, o eiusmod tempor incid.',
+    //     date: '24 july',
+    //     taskProperty: 'Mobile',
 
-      },
-      {
-        id: '103',
-        task: 'Do some projects on React Native with Flutter',
-        taskImage: '',
-        taskText: '',
-        date: '24 july',
-        taskProperty: 'Mobile',
+    //   },
+    //   {
+    //     id: '103',
+    //     task: 'Do some projects on React Native with Flutter',
+    //     taskImage: '',
+    //     taskText: '',
+    //     date: '24 july',
+    //     taskProperty: 'Mobile',
 
-      },
-    ],
+    //   },
+    // ],
   },
   {
     id: '2',
@@ -140,8 +140,13 @@ const KanbanData = [
 
 // Extracting unique task properties from TodoData
 export const TaskProperties = [
-  ...new Set(KanbanData.flatMap((category) => category.child.map((task) => task.taskProperty))),
+  ...new Set(
+    KanbanData.flatMap((category) => 
+      Array.isArray(category.child) ? category.child.map((task) => task.taskProperty) : []
+    )
+  ),
 ];
+
 
 
 // Mock API endpoint to fetch TodoData

@@ -19,7 +19,7 @@ import { useState, useContext } from 'react';
 import saleService from '@/services/saleService';
 import ProposalService from '@/services/proposalService';
 import LeadDetails from '../../../leads/leadDetails/LeadDetails';
-import { KanbanDataContext } from '@/app/context/kanbancontext';
+import { KanbanDataContext } from '@/app/context/kanbanCRMcontext';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;

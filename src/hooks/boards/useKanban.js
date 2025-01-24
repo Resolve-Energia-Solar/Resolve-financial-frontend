@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import boardService from '@/services/boardService'
 import leadService from '@/services/leadService'
-import columnService from '@/services/boardCollunService'
+import columnService from '@/services/boardColumnService'
 
 const useKanban = () => {
   const [boards, setBoards] = useState([]);

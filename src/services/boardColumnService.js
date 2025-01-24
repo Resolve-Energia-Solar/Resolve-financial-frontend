@@ -1,16 +1,15 @@
 import apiClient from './apiClient';
 
 const columnService = {
-  getColumns: async () => {
+  getColumns: async (params = {}) => {
     try {
-      const response = await apiClient.get('/api/columns/');
+      const response = await apiClient.get('/api/columns/', { params });
       return response.data.results;
     } catch (error) {
       console.error('Erro ao buscar colunas:', error);
       throw error;
     }
   },
-
   getColumnById: async (id) => {
     try {
       const response = await apiClient.get(`/api/columns/${id}/`);
