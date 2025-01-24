@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Stack, Skeleton, Typography } from '@mui/material';
+import TaskDataSkeleton from './TaskDataSkeleton';
 
 function CategoryTaskListSkeleton() {
   return (
@@ -15,11 +16,13 @@ function CategoryTaskListSkeleton() {
           <Skeleton variant="circular" width={32} height={32} />
         </Stack>
       </Box>
-      
+
       <Stack spacing={2}>
-        {Array.from({ length: 5 }).map((_, index) => (
-          <Skeleton key={index} variant="rectangular" width="100%" height={50} />
-        ))}
+        <Stack spacing={2}>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <TaskDataSkeleton key={i} />
+          ))}
+        </Stack>
       </Stack>
     </Box>
   );
