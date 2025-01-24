@@ -4,7 +4,7 @@ import { Box, CardContent, CircularProgress, Typography, Snackbar, Alert } from 
 import BlankCard from '@/app/components/shared/BlankCard';
 import KanbanHeader from '@/app/components/apps/kanban/crm/KanbanHeader';
 import useKanban from '@/hooks/boards/useKanban';
-import { KanbanDataContextProvider } from '@/app/context/kanbancontext';
+import { KanbanDataContextProvider } from '@/app/context/kanbanCRMcontext';
 import KanbanManager from '@/app/components/apps/kanban/crm/KanbanManager';
 
 function KanbanPage() {

@@ -30,7 +30,7 @@ import saleService from '@/services/saleService';
 import EditSaleTabs from '../../Edit-sale';
 import SaleDetailPage from '../../Sale-detail';
 import CreateSale from '../../Add-sale';
-import { KanbanDataContext } from '@/app/context/kanbancontext';
+import { KanbanDataContext } from '@/app/context/kanbanCRMcontext';
 import SkeletonCard from '@/app/components/apps/project/components/SkeletonCard';
 import Contract from '@/app/components/templates/ContractPreview';
 import axios from 'axios';
