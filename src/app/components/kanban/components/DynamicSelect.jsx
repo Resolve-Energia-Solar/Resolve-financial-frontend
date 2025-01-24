@@ -3,17 +3,17 @@ import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
 
-export default function DynamicSelect({ options, onChange }) {
+export default function DynamicSelect({ options, onChange, value }) {
   return (
     <Box sx={{ minWidth: 120 }}>
       <FormControl fullWidth>
         <NativeSelect
-          defaultValue=""
+          value={value}
           inputProps={{
             name: 'dynamic-options',
             id: 'dynamic-native-select',
           }}
-          onChange={(e) => onChange(e.target.value)} // Dispara o callback com o valor selecionado
+          onChange={(e) => onChange(e.target.value)}
           sx={{
             '&::before': {
               borderBottom: 'none',

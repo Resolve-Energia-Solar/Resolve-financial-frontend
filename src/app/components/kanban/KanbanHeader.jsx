@@ -18,7 +18,7 @@ import DynamicSelect from './components/DynamicSelect';
 import boardService from '@/services/boardService';
 
 function KanbanHeader() {
-  const { addCategory, setBoardId, setError } = useContext(KanbanDataContext);
+  const { addCategory, boardId, setBoardId, setError } = useContext(KanbanDataContext);
   const [show, setShow] = useState(false);
   const [listName, setListName] = useState('');
   const [boards, setBoards] = useState([]);
@@ -30,6 +30,10 @@ function KanbanHeader() {
         console.log(response);
         const boards = response.results.map((board) => ({ value: board.id, label: board.title }));
         setBoards(boards);
+        if (boards.length > 0) {
+            setBoardId(boards[0].value);
+          }
+  
       } catch (error) {
         handleError(error.message);
       }
@@ -55,16 +59,10 @@ function KanbanHeader() {
   };
   const isAddButtonDisabled = listName.trim().length === 0;
 
-  // const options = [
-  //     { value: 10, label: 'Ten' },
-  //     { value: 20, label: 'Twenty' },
-  //     { value: 30, label: 'Thirty' },
-  //   ];
-
   return (
     <>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-        <DynamicSelect options={boards}  onChange={(selectedOption) => setBoardId(selectedOption)}  />
+        <DynamicSelect options={boards} value={boardId} onChange={(selectedOption) => setBoardId(selectedOption)}  />
         <Button variant="contained" onClick={handleShow}>
           Add List
         </Button>

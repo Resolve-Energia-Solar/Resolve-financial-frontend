@@ -128,6 +128,7 @@ export const KanbanDataContextProvider = ({ children }) => {
       value={{
         todoCategories,
         loadingCategories,
+        boardId,
         setBoardId,
         setTodoCategories,
         addCategory,
