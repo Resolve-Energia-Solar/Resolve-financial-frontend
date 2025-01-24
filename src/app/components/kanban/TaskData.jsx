@@ -79,23 +79,6 @@ const TaskData = ({ task, onDeleteTask, index }) => {
     return `${day} ${month} ${year}`;
   };
 
-  const backgroundColor =
-    editedTask.taskProperty === 'Design'
-      ? 'success.main'
-      : editedTask.taskProperty === 'Development'
-      ? 'warning.main'
-      : editedTask.taskProperty === 'Mobile'
-      ? 'primary.main'
-      : editedTask.taskProperty === 'UX Stage'
-      ? 'warning.main'
-      : editedTask.taskProperty === 'Research'
-      ? 'secondary.main'
-      : editedTask.taskProperty === 'Data Science'
-      ? 'error.main'
-      : editedTask.taskProperty === 'Branding'
-      ? 'success.main'
-      : 'primary.contrastText';
-
   return (
     <Draggable draggableId={taskId} index={index}>
       {(provided) => (

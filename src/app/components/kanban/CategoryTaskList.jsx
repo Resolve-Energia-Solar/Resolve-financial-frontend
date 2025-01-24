@@ -13,6 +13,7 @@ import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 
 import leadService from '@/services/leadService';
 import { Add } from '@mui/icons-material';
+import TaskDataSkeleton from './components/TaskDataSkeleton';
 
 function CategoryTaskList({ id }) {
   const { todoCategories, setTodoCategories, deleteCategory, clearAllTasks, deleteTodo } =
@@ -26,6 +27,7 @@ function CategoryTaskList({ id }) {
   const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
   const [showContainer, setShowContainer] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -36,6 +38,7 @@ function CategoryTaskList({ id }) {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await leadService.getLeadByColumnId(id);
         if (!response) {
@@ -52,6 +55,8 @@ function CategoryTaskList({ id }) {
         });
       } catch (error) {
         console.error('Error fetching leads:', error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -212,7 +217,13 @@ function CategoryTaskList({ id }) {
                 </Menu>
               </Stack>
             </Box>
-            {allTasks &&
+            {loading ? (
+              <Stack spacing={2}>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <TaskDataSkeleton key={i} />
+                ))}
+              </Stack>
+            ) : allTasks && allTasks.length > 0 ? (
               allTasks.map((task, index) => (
                 <TaskData
                   key={task.id}
@@ -220,7 +231,12 @@ function CategoryTaskList({ id }) {
                   onDeleteTask={() => handleDeleteTask(task.id)}
                   index={index}
                 />
-              ))}
+              ))
+            ) : (
+              <Typography variant="body2" color="text.secondary" align="center" mt={5}>
+                Não há leads nesta etapa.
+              </Typography>
+            )}
           </Box>
         )}
       </Box>
