@@ -28,7 +28,7 @@ import {
 } from '@mui/material';
 import BlankCard from '../shared/BlankCard';
 import { AccessTime, LocalPhone, PersonOutline, PunchClock, PunchClockSharp, Start, WbSunny } from '@mui/icons-material';
-import ChipDeadLine from './components/ChipDeadline';
+import ChipDeadLine from './components/Chipdead-line';
 
 const TaskData = ({ task, onDeleteTask, index }) => {
   const theme = useTheme();
