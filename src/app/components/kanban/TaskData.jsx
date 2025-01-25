@@ -39,15 +39,15 @@ import {
 } from '@mui/icons-material';
 import ChipDeadLine from './components/Chipdead-line';
 import leadService from '@/services/leadService';
+import { useSnackbar } from 'notistack';
 
 const TaskData = ({ task, onDeleteTask, index }) => {
   const theme = useTheme();
-  const { setError, setLoadingLeadsIds, loadingLeadsIds, updateTask } = useContext(KanbanDataContext);
-  const [showEditModal, setShowEditModal] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
+  const { setError, setLoadingLeadsIds, loadingLeadsIds, updateTask } =
+    useContext(KanbanDataContext);
   const [editedTask, setEditedTask] = useState(task);
-  const [anchorEl, setAnchorEl] = useState(null);
   const taskId = task.id ? task.id.toString() : task.task;
-
 
   const changeQualification = async (event, newValue) => {
     try {
@@ -55,8 +55,10 @@ const TaskData = ({ task, onDeleteTask, index }) => {
       const response = await leadService.patchLead(taskId, { qualification: newValue });
       updateTask(task.id, response);
       setEditedTask(response);
+      enqueueSnackbar(`Qualificação do lead "${editedTask.name}" foi alterada para: ${newValue}`, { variant: 'success' });
     } catch (error) {
       setError(error.message);
+      enqueueSnackbar('Ocorreu um erro ao alterar a qualificação do lead', { variant: 'error' });
     } finally {
       setLoadingLeadsIds((prev) => prev.filter((id) => id !== taskId));
     }
@@ -94,11 +96,13 @@ const TaskData = ({ task, onDeleteTask, index }) => {
                 <ChipDeadLine status={'A'} />
                 <AccessTime fontSize="10" />
                 <Typography variant="body2" sx={{ fontSize: 11 }}>
-                  {new Intl.DateTimeFormat('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: '2-digit',
-                  }).format(new Date(editedTask.created_at))}
+                  {editedTask.created_at
+                    ? new Intl.DateTimeFormat('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: '2-digit',
+                      }).format(new Date(editedTask.created_at))
+                    : '-'}
                 </Typography>
               </Stack>
 

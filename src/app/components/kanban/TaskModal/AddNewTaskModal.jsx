@@ -1,9 +1,5 @@
-"use client";
-import React from "react";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { TaskProperties } from "@/app/api/kanban/KanbanData";
+'use client';
+import React, { useContext, useEffect } from 'react';
 import {
   Button,
   MenuItem,
@@ -12,171 +8,109 @@ import {
   DialogContent,
   DialogActions,
   Grid,
-} from "@mui/material";
-import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
-import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
-import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
+  CircularProgress,
+} from '@mui/material';
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
+import useLeadForm from '@/hooks/leads/useLeadtForm';
+import AutoCompleteOrigin from '../../apps/leads/auto-input-origin';
+import { KanbanDataContext } from '@/app/context/kanbancontext/index';
 
-function AddNewList({
-  show,
-  onHide,
-  onSave,
-  newTaskData,
-  setNewTaskData,
-  updateTasks,
-}) {
-  const { task, taskText, taskProperty, date, taskImage } = newTaskData;
+function AddNewList({ show, onHide, columnId }) {
+  const { addTask } =
+    useContext(KanbanDataContext);
 
+  const {
+    formData,
+    handleChange,
+    handleSave,
+    loading: formLoading,
+    dataReceived,
+    formErrors,
+    success,
+  } = useLeadForm();
 
-  // Set default date to today if no date is provided
-  const defaultDate = date || new Date();
+  formData.column_id = columnId;
 
-  // Handle date change
-  const handleDateChange = (newDate) => {
-    setNewTaskData({ ...newTaskData, date: newDate });
-  };
-
-  // Function to handle saving changes and updating tasks
-  const handleSave = () => {
-
-    const updatedDate = date || new Date();
-    // Update the task data with the default date if needed
-    setNewTaskData({ ...newTaskData, date: updatedDate });
-
-    onSave();
-    updateTasks();
-  };
-
-  const isFormValid = () => {
-    return task && taskText && taskProperty && date && taskImage;
-  };
-
+  useEffect(() => {
+    if (success && !Object.keys(formErrors).length) {
+      addTask(columnId, dataReceived);
+      onHide();
+    }
+  }, [success, formErrors]);
 
   return (
     <Dialog
       open={show}
       onClose={onHide}
       PaperProps={{
-        component: "form",
+        component: 'form',
       }}
     >
-      <DialogTitle>Add Task</DialogTitle>
+      <DialogTitle>Adicionar Lead</DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
-            {/* task title */}
-            <CustomFormLabel
-              sx={{
-                mt: 0,
-              }}
-              htmlFor="task"
-            >
-              Task Title *
-            </CustomFormLabel>
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel htmlFor="name">Nome</CustomFormLabel>
             <CustomTextField
-              id="task"
+              name="name"
+              placeholder="Nome"
               variant="outlined"
               fullWidth
-              value={task}
-              onChange={(e) =>
-                setNewTaskData({ ...newTaskData, task: e.target.value })
-              }
+              value={formData.name}
+              onChange={(e) => handleChange('name', e.target.value)}
+              {...(formErrors.name && { error: true, helperText: formErrors.name })}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            {/* task text */}
-            <CustomFormLabel
-              htmlFor="taskText"
-              sx={{
-                mt: 0,
-              }}
-            >
-              Text*
-            </CustomFormLabel>
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel htmlFor="name">Telefone</CustomFormLabel>
             <CustomTextField
-              id="taskText"
+              name="phone"
+              placeholder="Telefone"
               variant="outlined"
               fullWidth
-              value={taskText}
-              onChange={(e) =>
-                setNewTaskData({ ...newTaskData, taskText: e.target.value })
-              }
+              value={formData.phone}
+              onChange={(e) => handleChange('phone', e.target.value)}
+              {...(formErrors.phone && { error: true, helperText: formErrors.phone })}
             />
           </Grid>
-          <Grid item xs={12}>
-            {/* task image */}
-            <CustomFormLabel
-              htmlFor="taskImage"
-              sx={{
-                mt: 0,
-              }}
-            >
-              Image URL*
-            </CustomFormLabel>
-            <CustomTextField
-              id="taskImage"
-              variant="outlined"
-              fullWidth
-              value={taskImage}
-              onChange={(e) =>
-                setNewTaskData({ ...newTaskData, taskImage: e.target.value })
-              }
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel htmlFor="branch">Origem</CustomFormLabel>
+            <AutoCompleteOrigin
+              onChange={(id) => handleChange('origin_id', id)}
+              value={formData.origin_id}
+              {...(formErrors.origin_id && { error: true, helperText: formErrors.origin_id })}
             />
-            {taskImage !== undefined && (
-              <img
-                width={200}
-                height={200}
-                src={taskImage}
-                alt="Selected"
-                style={{ marginTop: "8px" }}
-              />
-            )}
           </Grid>
-          <Grid item xs={12} sm={6}>
-            {/* task image */}
-            <CustomFormLabel
-              htmlFor="taskProperty"
-              sx={{
-                mt: 0,
-              }}
-            >
-              Task Property *
-            </CustomFormLabel>
-            <CustomSelect
-              fullWidth
-              id="taskProperty"
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel htmlFor="name">CPF/CNPJ</CustomFormLabel>
+            <CustomTextField
+              name="first_document"
+              placeholder="CPF/CNPJ"
               variant="outlined"
-              value={taskProperty}
-              onChange={(e) =>
-                setNewTaskData({ ...newTaskData, taskProperty: e.target.value })
-              }
-            >
-              <MenuItem value="">Select Task Property</MenuItem>
-              {TaskProperties.map((property) => (
-                <MenuItem key={property} value={property}>
-                  {property}
-                </MenuItem>
-              ))}
-            </CustomSelect>
+              fullWidth
+              value={formData.first_document}
+              onChange={(e) => handleChange('first_document', e.target.value)}
+              {...(formErrors.first_document && {
+                error: true,
+                helperText: formErrors.first_document,
+              })}
+            />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            {/* dua date */}
-            <CustomFormLabel
-              sx={{
-                mt: 0,
-              }}
-            >
-              Due Date *
-            </CustomFormLabel>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                value={date || defaultDate}
-                onChange={handleDateChange}
-                renderInput={(params) => (
-                  <CustomTextField {...params} fullWidth />
-                )}
-              />
-            </LocalizationProvider>
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel htmlFor="name">E-mail</CustomFormLabel>
+            <CustomTextField
+              name="contact_email"
+              placeholder="E-mail"
+              variant="outlined"
+              fullWidth
+              value={formData.contact_email}
+              onChange={(e) => handleChange('contact_email', e.target.value)}
+              {...(formErrors.contact_email && {
+                error: true,
+                helperText: formErrors.contact_email,
+              })}
+            />
           </Grid>
         </Grid>
       </DialogContent>
@@ -186,10 +120,12 @@ function AddNewList({
         </Button>
         <Button
           variant="contained"
+          color="primary"
           onClick={handleSave}
-          disabled={!isFormValid()}
+          disabled={formLoading}
+          endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
         >
-          Add Task
+          {formLoading ? 'Adicionando...' : 'Adicionar'}{' '}
         </Button>
       </DialogActions>
     </Dialog>

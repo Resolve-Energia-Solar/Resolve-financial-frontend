@@ -26,6 +26,7 @@ const useLeadForm = (initialData, id) => {
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [dataReceived, setDataReceived] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -73,18 +74,20 @@ const useLeadForm = (initialData, id) => {
       gender: formData.gender,
       contact_email: formData.contact_email,
       phone: formData.phone,
-      origin: formData.origin,
+      origin: formData.origin ? formData.origin : undefined,
       funnel: formData.funnel,
       qualification: formData.qualification !== '' ? Number(formData.qualification) : null,
       kwp: formData.kwp !== '' ? parseFloat(formData.kwp) : null,
     };
 
     try {
+      let response;
       if (id) {
-        await leadService.updateLead(id, dataToSend);
+        response = await leadService.updateLead(id, dataToSend);
       } else {
-        await leadService.createLead(dataToSend);
+        response = await leadService.createLead(dataToSend);
       }
+      setDataReceived(response);
       setFormErrors({});
       setSuccess(true);
     } catch (err) {
@@ -100,6 +103,7 @@ const useLeadForm = (initialData, id) => {
     formData,
     handleChange,
     handleSave,
+    dataReceived,
     formErrors,
     success,
     loading,

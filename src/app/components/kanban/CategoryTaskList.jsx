@@ -70,14 +70,6 @@ function CategoryTaskList({ id }) {
     }
   }, [todoCategories, id]);
 
-  const [newTaskData, setNewTaskData] = useState({
-    task: '',
-    taskText: '',
-    taskProperty: '',
-    date: new Date().toISOString().split('T')[0],
-    imageURL: null,
-  });
-
   //Shows the modal for adding a new task.
   const handleShowModal = () => {
     setShowModal(true);
@@ -108,34 +100,6 @@ function CategoryTaskList({ id }) {
       }
     } catch (error) {
       console.error('Error updating category:', error);
-    }
-  };
-  //Adds a new task to the category.
-  const handleAddTask = async () => {
-    try {
-      const response = await axios.post('/api/TodoData/addTask', {
-        categoryId: id,
-        newTaskData: {
-          ...newTaskData,
-          id: Math.random(),
-          taskImage: newTaskData.imageURL,
-        },
-      });
-      if (response.status === 200) {
-        setNewTaskData({
-          taskText: '',
-          taskProperty: '',
-          date: newTaskData.date,
-          imageURL: '',
-        });
-        handleCloseModal();
-        setNewTaskData('Task added successfully');
-        console.log('Task added successfully:', response.data);
-      } else {
-        throw new Error('Failed to add task');
-      }
-    } catch (error) {
-      console.error('Error adding task:', error);
     }
   };
 
@@ -170,26 +134,20 @@ function CategoryTaskList({ id }) {
                 </Typography>
               </Stack>
 
-
               <Stack direction="row">
                 <Box>
-                  {category.name === 'Todo' && (
-                    <>
-                      <Tooltip title="Add Task">
-                        <IconButton onClick={handleShowModal}>
-                          <IconPlus size="1rem" />
-                        </IconButton>
-                      </Tooltip>
-                      <AddNewTaskModal
-                        show={showModal}
-                        onHide={handleCloseModal}
-                        onSave={handleAddTask}
-                        newTaskData={newTaskData}
-                        setNewTaskData={setNewTaskData}
-                        updateTasks={() => setAllTasks([...allTasks, newTaskData])}
-                      />
-                    </>
-                  )}
+                  <>
+                    <Tooltip title="Add Task">
+                      <IconButton onClick={handleShowModal}>
+                        <IconPlus size="1rem" />
+                      </IconButton>
+                    </Tooltip>
+                    <AddNewTaskModal
+                      show={showModal}
+                      onHide={handleCloseModal}
+                      columnId={id}
+                    />
+                  </>
                   <EditCategoryModal
                     showModal={showEditCategoryModal}
                     handleCloseModal={handleCloseEditCategoryModal}
@@ -199,11 +157,6 @@ function CategoryTaskList({ id }) {
                 </Box>
 
                 <Stack direction="row" spacing={0}>
-                  <Tooltip title="Add Task">
-                    <IconButton onClick={handleShowModal}>
-                      <Add fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
                   <Tooltip title="Menu">
                     <IconButton onClick={handleClick}>
                       <IconDotsVertical size="1rem" />

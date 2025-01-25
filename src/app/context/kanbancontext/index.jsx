@@ -18,7 +18,8 @@ export const KanbanDataContextProvider = ({ children }) => {
   const [boardId, setBoardId] = useState(null);
   const [loadingLeadsIds, setLoadingLeadsIds] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
-  console.log('todoCategories', todoCategories);
+
+  console.log('todoCategories', todoCategories)
 
   // Fetch todo data from the API
   useEffect(() => {
@@ -82,10 +83,10 @@ export const KanbanDataContextProvider = ({ children }) => {
 
     try {
       await leadService.patchLead(taskId, { column_id: destinationCategoryId });
-      enqueueSnackbar('Tarefa movida com sucesso', { variant: 'success' });
+      enqueueSnackbar('Lead movido com sucesso', { variant: 'success' });
     } catch (error) {
-      console.error('Erro ao mover tarefa:', error.message);
-      enqueueSnackbar('Erro ao mover tarefa', { variant: 'error' });
+      console.error('Erro ao mover o lead:', error.message);
+      enqueueSnackbar('Erro ao mover o lead', { variant: 'error' });
       setTodoCategories(originalState);
     } finally {
       setLoadingLeadsIds((prev) => prev.filter((id) => id !== taskId));
@@ -104,6 +105,22 @@ export const KanbanDataContextProvider = ({ children }) => {
       });
     });
   };
+
+  const addTask = (categoryId, newTask) => {
+    setTodoCategories((prevCategories) => {
+      return prevCategories.map((category) => {
+        if (category.id === categoryId) {
+          return {
+            ...category,
+            child: [newTask, ...category.child],
+          };
+        }
+        return category;
+      });
+    });
+  };
+  
+
 
   // Function to handle errors
   const handleError = (errorMessage) => {
@@ -158,6 +175,7 @@ export const KanbanDataContextProvider = ({ children }) => {
         loadingLeadsIds,
         setLoadingLeadsIds,
         updateTask,
+        addTask,
         setBoardId,
         setTodoCategories,
         addCategory,
