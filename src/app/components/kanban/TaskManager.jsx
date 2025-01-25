@@ -40,7 +40,7 @@ function TaskManager() {
               : todoCategories.map((category) => (
                   <Droppable droppableId={category.id.toString()} key={category.id}>
                     {(provided) => (
-                      <div ref={provided.innerRef} {...provided.droppableProps}>
+                      <div ref={provided.innerRef} {...provided.droppableProps} style={{ flex: 1 }}>
                         <CategoryTaskList id={category.id} />
                         {provided.placeholder}
                       </div>

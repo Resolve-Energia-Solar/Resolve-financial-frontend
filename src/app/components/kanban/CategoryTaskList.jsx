@@ -21,7 +21,6 @@ function CategoryTaskList({ id }) {
   const [allTasks, setAllTasks] = useState(category ? category.child : []);
   const [showModal, setShowModal] = useState(false);
   const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
-  const [showContainer, setShowContainer] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -44,7 +43,7 @@ function CategoryTaskList({ id }) {
           const category = prevCategories.find((cat) => cat.id === id);
           if (category) {
             return prevCategories.map((cat) =>
-              cat.id === id ? { ...cat, child: response.results || [] } : cat,
+              cat.id === id ? { ...cat, child: response.results || [] } : cat
             );
           }
           return prevCategories;
@@ -58,7 +57,6 @@ function CategoryTaskList({ id }) {
     fetchData();
   }, []);
 
-  // Find the category and update tasks
   useEffect(() => {
     const category = todoCategories.find((cat) => cat.id === id);
     if (category) {
@@ -66,20 +64,19 @@ function CategoryTaskList({ id }) {
     }
   }, [todoCategories, id]);
 
-  //Shows the modal for adding a new task.
   const handleShowModal = () => {
     setShowModal(true);
   };
-  // Closes the modal
+
   const handleCloseModal = () => {
     setShowModal(false);
   };
-  //  Shows the modal for editing a category.
+
   const handleShowEditCategoryModal = () => {
     setShowEditCategoryModal(true);
     handleClose();
   };
-  //Closes the modal for editing a category.
+
   const handleCloseEditCategoryModal = () => setShowEditCategoryModal(false);
 
   return (
@@ -87,75 +84,97 @@ function CategoryTaskList({ id }) {
       <Box
         width="350px"
         boxShadow={4}
+        display="flex"
+        flexDirection="column"
         sx={{
-          borderTop: (theme) => `7px solid ${category.color}`,
+          borderTop: (theme) => `7px solid ${category?.color}`,
+          maxHeight: '100%',
+          minHeight: allTasks?.length === 0 ? '150px' : undefined,
         }}
       >
-        {showContainer && category && (
-          <Box px={3} py={2}>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-              <Stack direction="column" spacing={0.5}>
-                <Typography variant="caption" className="fw-semibold">
-                  Etapa
-                </Typography>
-                <Typography variant="h6" className="fw-semibold">
-                  {category.name}
-                </Typography>
-              </Stack>
+        {category && (
+          <>
+            {/* Header fixo */}
+            <Box
+              px={3}
+              py={2}
+              position="sticky"
+              top={0}
+              zIndex={1}
+            >
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Stack direction="column" spacing={0.5}>
+                  <Typography variant="caption" className="fw-semibold">
+                    Etapa
+                  </Typography>
+                  <Typography variant="h6" className="fw-semibold">
+                    {category.name}
+                  </Typography>
+                </Stack>
 
-              <Stack direction="row">
-                <Box>
-                  <>
-                    <Tooltip title="Add Task">
-                      <IconButton onClick={handleShowModal}>
-                        <IconPlus size="1rem" />
-                      </IconButton>
-                    </Tooltip>
-                    <AddNewTaskModal show={showModal} onHide={handleCloseModal} columnId={id} />
-                  </>
-                  <EditCategoryModal
-                    showModal={showEditCategoryModal}
-                    handleCloseModal={handleCloseEditCategoryModal}
-                    column={category}
-                  />
-                </Box>
+                <Stack direction="row">
+                  <Box>
+                    <>
+                      <Tooltip title="Add Task">
+                        <IconButton onClick={handleShowModal}>
+                          <IconPlus size="1rem" />
+                        </IconButton>
+                      </Tooltip>
+                      <AddNewTaskModal show={showModal} onHide={handleCloseModal} columnId={id} />
+                    </>
+                    <EditCategoryModal
+                      showModal={showEditCategoryModal}
+                      handleCloseModal={handleCloseEditCategoryModal}
+                      column={category}
+                    />
+                  </Box>
 
-                <Stack direction="row" spacing={0}>
                   <Tooltip title="Menu">
                     <IconButton onClick={handleClick}>
                       <IconDotsVertical size="1rem" />
                     </IconButton>
                   </Tooltip>
+                  <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+                    <MenuItem onClick={handleShowEditCategoryModal}>Editar</MenuItem>
+                  </Menu>
                 </Stack>
-                <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-                  <MenuItem onClick={handleShowEditCategoryModal}>Editar</MenuItem>
-                </Menu>
-              </Stack>
+              </Box>
             </Box>
-            {loading ? (
-              <Stack spacing={2}>
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <TaskDataSkeleton key={i} />
-                ))}
-              </Stack>
-            ) : allTasks && allTasks.length > 0 ? (
-              allTasks.map((task, index) => (
-                <TaskData
-                  key={task.id}
-                  task={task}
-                  onDeleteTask={() => handleDeleteTask(task.id)}
-                  index={index}
-                />
-              ))
-            ) : !loading ? (
-              <Typography variant="body2" color="text.secondary" align="center" mt={5}>
-                Não há leads nesta etapa.
-              </Typography>
-            ) : null}
-          </Box>
+
+            {/* Conteúdo com scroll */}
+            <Box
+              flex={1}
+              overflow="auto"
+              px={3}
+              py={2}
+              maxHeight="calc(100vh - 160px)"
+            >
+              {loading ? (
+                <Stack spacing={2}>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <TaskDataSkeleton key={i} />
+                  ))}
+                </Stack>
+              ) : allTasks && allTasks.length > 0 ? (
+                allTasks.map((task, index) => (
+                  <TaskData
+                    key={task.id}
+                    task={task}
+                    onDeleteTask={() => handleDeleteTask(task.id)}
+                    index={index}
+                  />
+                ))
+              ) : (
+                <Typography variant="body2" color="text.secondary" align="center" mt={5}>
+                  Não há leads nesta etapa.
+                </Typography>
+              )}
+            </Box>
+          </>
         )}
       </Box>
     </>
   );
 }
+
 export default CategoryTaskList;
