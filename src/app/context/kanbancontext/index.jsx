@@ -17,20 +17,18 @@ export const KanbanDataContextProvider = ({ children }) => {
   const [boardId, setBoardId] = useState(null);
   const [loadingLeadsIds, setLoadingLeadsIds] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
+  const [reload, setReload] = useState(false);
 
-  console.log('todoCategories', todoCategories)
-
-  // Fetch todo data from the API
   useEffect(() => {
     const fetchData = async () => {
       setLoadingCategories(true);
       try {
         const response = await columnService.getColumns({
-          params: { fields: 'id,name', board: boardId },
+          params: { fields: 'id,name,color', board: boardId },
         });
         setTodoCategories(response || []);
       } catch (error) {
-        handleError(error.message);
+        console.log(error?.message)
       } finally {
         setLoadingCategories(false);
       }
@@ -38,7 +36,11 @@ export const KanbanDataContextProvider = ({ children }) => {
     if (boardId) {
       fetchData();
     }
-  }, [boardId]);
+  }, [boardId, reload]);
+
+  const refresh = () => {
+    setReload((prev) => !prev);
+  };
 
   const moveTask = async (
     taskId,
@@ -128,6 +130,7 @@ export const KanbanDataContextProvider = ({ children }) => {
         setLoadingLeadsIds,
         updateTask,
         addTask,
+        refresh,
         setBoardId,
         setTodoCategories,
         moveTask,

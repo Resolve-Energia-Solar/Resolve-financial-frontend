@@ -17,8 +17,7 @@ import AutoCompleteOrigin from '../../apps/leads/auto-input-origin';
 import { KanbanDataContext } from '@/app/context/kanbancontext/index';
 
 function AddNewList({ show, onHide, columnId }) {
-  const { addTask } =
-    useContext(KanbanDataContext);
+  const { addTask } = useContext(KanbanDataContext);
 
   const {
     formData,

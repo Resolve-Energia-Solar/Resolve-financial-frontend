@@ -8,7 +8,6 @@ import AddNewTaskModal from './TaskModal/AddNewTaskModal';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { KanbanDataContext } from '@/app/context/kanbancontext/index';
-import axios from '@/utils/axios';
 import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 
 import leadService from '@/services/leadService';
@@ -21,7 +20,6 @@ function CategoryTaskList({ id }) {
 
   const [allTasks, setAllTasks] = useState(category ? category.child : []);
   const [showModal, setShowModal] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState(category.name);
   const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
   const [showContainer, setShowContainer] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -86,7 +84,13 @@ function CategoryTaskList({ id }) {
 
   return (
     <>
-      <Box width="350px" boxShadow={4}>
+      <Box
+        width="350px"
+        boxShadow={4}
+        sx={{
+          borderTop: (theme) => `7px solid ${category.color}`,
+        }}
+      >
         {showContainer && category && (
           <Box px={3} py={2}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -95,7 +99,7 @@ function CategoryTaskList({ id }) {
                   Etapa
                 </Typography>
                 <Typography variant="h6" className="fw-semibold">
-                  {newCategoryName}
+                  {category.name}
                 </Typography>
               </Stack>
 
@@ -112,7 +116,7 @@ function CategoryTaskList({ id }) {
                   <EditCategoryModal
                     showModal={showEditCategoryModal}
                     handleCloseModal={handleCloseEditCategoryModal}
-                    initialCategoryName={newCategoryName}
+                    column={category}
                   />
                 </Box>
 
@@ -124,7 +128,7 @@ function CategoryTaskList({ id }) {
                   </Tooltip>
                 </Stack>
                 <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-                  <MenuItem onClick={handleShowEditCategoryModal}>Edit</MenuItem>
+                  <MenuItem onClick={handleShowEditCategoryModal}>Editar</MenuItem>
                 </Menu>
               </Stack>
             </Box>
@@ -143,11 +147,11 @@ function CategoryTaskList({ id }) {
                   index={index}
                 />
               ))
-            ) : (
+            ) : !loading ? (
               <Typography variant="body2" color="text.secondary" align="center" mt={5}>
                 Não há leads nesta etapa.
               </Typography>
-            )}
+            ) : null}
           </Box>
         )}
       </Box>
