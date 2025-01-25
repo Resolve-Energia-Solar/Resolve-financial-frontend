@@ -26,6 +26,7 @@ function AddNewList({ show, onHide, columnId }) {
     handleSave,
     loading: formLoading,
     dataReceived,
+    resetForm,
     formErrors,
     success,
   } = useLeadForm();
@@ -36,6 +37,7 @@ function AddNewList({ show, onHide, columnId }) {
     if (success && !Object.keys(formErrors).length) {
       addTask(columnId, dataReceived);
       onHide();
+      resetForm();
     }
   }, [success, formErrors]);
 

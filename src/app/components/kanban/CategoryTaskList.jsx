@@ -12,12 +12,10 @@ import axios from '@/utils/axios';
 import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 
 import leadService from '@/services/leadService';
-import { Add } from '@mui/icons-material';
 import TaskDataSkeleton from './components/TaskDataSkeleton';
 
 function CategoryTaskList({ id }) {
-  const { todoCategories, setTodoCategories, deleteCategory, clearAllTasks, deleteTodo } =
-    useContext(KanbanDataContext);
+  const { todoCategories, setTodoCategories } = useContext(KanbanDataContext);
 
   const category = todoCategories.find((cat) => cat.id === id);
 
@@ -86,39 +84,6 @@ function CategoryTaskList({ id }) {
   //Closes the modal for editing a category.
   const handleCloseEditCategoryModal = () => setShowEditCategoryModal(false);
 
-  //Updates the category name
-  const handleUpdateCategory = async (updatedName) => {
-    try {
-      const response = await axios.post('/api/TodoData/updateCategory', {
-        categoryId: id,
-        categoryName: updatedName,
-      });
-      if (response.status === 200) {
-        setNewCategoryName(updatedName);
-      } else {
-        throw new Error('Failed to update category');
-      }
-    } catch (error) {
-      console.error('Error updating category:', error);
-    }
-  };
-
-  // Clears all tasks from the current category.
-  const handleClearAll = () => {
-    clearAllTasks(id);
-    setAllTasks([]);
-  };
-  // Deletes a specific task.
-  const handleDeleteTask = (taskId) => {
-    deleteTodo(taskId);
-    setAllTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
-  };
-  //Handles the deletion of the current category.
-  const handleDeleteClick = () => {
-    setShowContainer(false);
-    deleteCategory(id);
-  };
-
   return (
     <>
       <Box width="350px" boxShadow={4}>
@@ -142,17 +107,12 @@ function CategoryTaskList({ id }) {
                         <IconPlus size="1rem" />
                       </IconButton>
                     </Tooltip>
-                    <AddNewTaskModal
-                      show={showModal}
-                      onHide={handleCloseModal}
-                      columnId={id}
-                    />
+                    <AddNewTaskModal show={showModal} onHide={handleCloseModal} columnId={id} />
                   </>
                   <EditCategoryModal
                     showModal={showEditCategoryModal}
                     handleCloseModal={handleCloseEditCategoryModal}
                     initialCategoryName={newCategoryName}
-                    handleUpdateCategory={handleUpdateCategory}
                   />
                 </Box>
 
@@ -165,8 +125,6 @@ function CategoryTaskList({ id }) {
                 </Stack>
                 <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
                   <MenuItem onClick={handleShowEditCategoryModal}>Edit</MenuItem>
-                  <MenuItem onClick={handleDeleteClick}>Delete</MenuItem>
-                  <MenuItem onClick={handleClearAll}>Clear All</MenuItem>
                 </Menu>
               </Stack>
             </Box>

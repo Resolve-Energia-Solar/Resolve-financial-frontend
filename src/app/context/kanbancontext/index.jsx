@@ -13,7 +13,6 @@ const config = {
 
 export const KanbanDataContextProvider = ({ children }) => {
   const [todoCategories, setTodoCategories] = useState([]);
-  const [error, setError] = useState(config.error);
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [boardId, setBoardId] = useState(null);
   const [loadingLeadsIds, setLoadingLeadsIds] = useState([]);
@@ -30,7 +29,6 @@ export const KanbanDataContextProvider = ({ children }) => {
           params: { fields: 'id,name', board: boardId },
         });
         setTodoCategories(response || []);
-        setError(null);
       } catch (error) {
         handleError(error.message);
       } finally {
@@ -120,52 +118,6 @@ export const KanbanDataContextProvider = ({ children }) => {
     });
   };
   
-
-
-  // Function to handle errors
-  const handleError = (errorMessage) => {
-    setError(errorMessage);
-  };
-  // Function to delete a category
-  const deleteCategory = async (categoryId, setTodoCategories) => {
-    try {
-      const response = await axios.delete('/api/TodoData', { data: { id: categoryId } });
-      setTodoCategories(response.data);
-      setError(null);
-    } catch (error) {
-      handleError(error.message);
-    }
-  };
-  // Function to clear all tasks in a category
-  const clearAllTasks = async (categoryId) => {
-    try {
-      const response = await axios.delete('/api/TodoData/clearTasks', { data: { categoryId } });
-      const updatedTodoData = response.data;
-      setTodoCategories(updatedTodoData);
-      setError(null);
-    } catch (error) {
-      handleError(error.message);
-    }
-  };
-  // Function to add a new category
-  const addCategory = async (categoryName) => {
-    try {
-      const response = await axios.post('/api/TodoData/addCategory', { categoryName });
-      setTodoCategories((prevCategories) => [...prevCategories, response.data]);
-      setError(null);
-    } catch (error) {
-      handleError(error.message);
-    }
-  };
-  // Function to delete a todo task
-  const deleteTodo = async (taskId, setTodoCategories) => {
-    try {
-      const response = await axios.delete('/api/TodoData/deleteTask', { data: { taskId } });
-      setTodoCategories(response.data);
-    } catch (error) {
-      handleError(error.message);
-    }
-  };
   return (
     <KanbanDataContext.Provider
       value={{
@@ -178,11 +130,6 @@ export const KanbanDataContextProvider = ({ children }) => {
         addTask,
         setBoardId,
         setTodoCategories,
-        addCategory,
-        deleteCategory,
-        clearAllTasks,
-        deleteTodo,
-        setError,
         moveTask,
       }}
     >

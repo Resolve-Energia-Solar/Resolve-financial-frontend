@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import leadService from '@/services/leadService';
 
 const useLeadForm = (initialData, id) => {
-  const [formData, setFormData] = useState({
+  const initialFormState = {
     seller_id: null,
     sdr_id: null,
     addresses_ids: [],
@@ -21,8 +21,9 @@ const useLeadForm = (initialData, id) => {
     funnel: '',
     qualification: '',
     kwp: '',
-  });
+  };
 
+  const [formData, setFormData] = useState(initialFormState);
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -50,6 +51,8 @@ const useLeadForm = (initialData, id) => {
         qualification: initialData.qualification || '',
         kwp: initialData.kwp || '',
       });
+    } else {
+      resetForm(); // Restaura para o estado inicial
     }
   }, [initialData]);
 
@@ -99,10 +102,19 @@ const useLeadForm = (initialData, id) => {
     }
   };
 
+  const resetForm = () => {
+    setFormData(initialFormState);
+    setFormErrors({});
+    setSuccess(false);
+    setLoading(false);
+    setDataReceived(false);
+  };
+
   return {
     formData,
     handleChange,
     handleSave,
+    resetForm,
     dataReceived,
     formErrors,
     success,
