@@ -1,6 +1,5 @@
 'use client';
-import { useContext, useEffect, useState } from 'react';
-
+import { useContext, useState } from 'react';
 import {
   Button,
   Dialog,
@@ -14,14 +13,13 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { KanbanDataContext } from '@/app/context/kanbancontext';
 import columnService from '@/services/boardColumnService';
-import { enqueueSnackbar, useSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 import ColorPicker from '../components/ColorPicker';
 import FormSelect from '../../forms/form-custom/FormSelect';
 
 function AddCategoryModal({ showModal, handleCloseModal, boardId }) {
   const { refresh } = useContext(KanbanDataContext);
   const [loading, setLoading] = useState(false);
-
   const { enqueueSnackbar } = useSnackbar();
   const [formErrors, setFormErrors] = useState({});
 
@@ -35,25 +33,25 @@ function AddCategoryModal({ showModal, handleCloseModal, boardId }) {
   const [formData, setFormData] = useState({
     name: '',
     color: '',
-    board: '',
+    board_id: '',
     column_type: '',
   });
 
-  formData.board = parseInt(boardId, 10);
+  boardId ? formData.board_id = boardId : null;
 
   const handleSave = async () => {
     try {
       setLoading(true);
+      setFormErrors({}); // Limpar erros anteriores
       await columnService.createColumn(formData);
-      enqueueSnackbar(`Coluna criada com sucesso`, {
-        variant: 'success',
-      });
+      enqueueSnackbar('Coluna criada com sucesso!', { variant: 'success' });
       handleCloseModal();
       refresh();
     } catch (error) {
       console.error('Erro ao criar a coluna:', error.message);
-      enqueueSnackbar('Erro ao criar a coluna', { variant: 'error' });
-      setFormErrors(error.response.data);
+      const errorData = error.response?.data || {};
+      setFormErrors(errorData); // Ajustar exibição de erros
+      enqueueSnackbar('Erro ao criar a coluna.', { variant: 'error' });
     } finally {
       setLoading(false);
     }
@@ -77,7 +75,8 @@ function AddCategoryModal({ showModal, handleCloseModal, boardId }) {
               variant="outlined"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              {...(formErrors.name && { error: true, helperText: formErrors.name })}
+              error={!!formErrors.name}
+              helperText={formErrors.name}
               fullWidth
             />
           </Grid>
@@ -114,4 +113,5 @@ function AddCategoryModal({ showModal, handleCloseModal, boardId }) {
     </Dialog>
   );
 }
+
 export default AddCategoryModal;
