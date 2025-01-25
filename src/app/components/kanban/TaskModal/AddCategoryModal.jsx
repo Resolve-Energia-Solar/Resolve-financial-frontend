@@ -16,40 +16,30 @@ import { KanbanDataContext } from '@/app/context/kanbancontext';
 import columnService from '@/services/boardColumnService';
 import { enqueueSnackbar, useSnackbar } from 'notistack';
 import ColorPicker from '../components/ColorPicker';
+import FormSelect from '../../forms/form-custom/FormSelect';
 
 function AddCategoryModal({ showModal, handleCloseModal, boardId }) {
-  console.log('boardId:', boardId);
   const { refresh } = useContext(KanbanDataContext);
   const [loading, setLoading] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
   const [formErrors, setFormErrors] = useState({});
 
+  const choicesColumnTypes = [
+    { value: 'B', label: 'Pendências' },
+    { value: 'T', label: 'A fazer' },
+    { value: 'I', label: 'Em andamento' },
+    { value: 'D', label: 'Concluído' },
+  ];
 
   const [formData, setFormData] = useState({
     name: '',
     color: '',
     board: '',
-    position: '',
+    column_type: '',
   });
 
   formData.board = parseInt(boardId, 10);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await columnService.getColumns({
-          params: { fields: 'id,board,position', board: boardId, ordering: '-position' },
-        });
-        if (response.length > 0) {
-          setFormData({ ...formData, position: response[0].position + 1 });
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-    fetchData();
-  }, [boardId]);
 
   const handleSave = async () => {
     try {
@@ -92,8 +82,19 @@ function AddCategoryModal({ showModal, handleCloseModal, boardId }) {
             />
           </Grid>
           <Grid item xs={12}>
+            <FormSelect
+              label="Tipo de Coluna"
+              options={choicesColumnTypes}
+              value={formData.column_type}
+              onChange={(e) => setFormData({ ...formData, column_type: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12}>
             <CustomFormLabel htmlFor="color">Cor</CustomFormLabel>
-            <ColorPicker value={formData.color} onChange={(color) => setFormData({ ...formData, color })} />
+            <ColorPicker
+              value={formData.color}
+              onChange={(color) => setFormData({ ...formData, color })}
+            />
           </Grid>
         </Grid>
       </DialogContent>

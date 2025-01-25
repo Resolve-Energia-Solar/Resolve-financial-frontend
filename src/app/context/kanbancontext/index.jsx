@@ -24,7 +24,7 @@ export const KanbanDataContextProvider = ({ children }) => {
       setLoadingCategories(true);
       try {
         const response = await columnService.getColumns({
-          params: { fields: 'id,name,color', board: boardId },
+          params: { fields: 'id,name,color,column_type', board: boardId },
         });
         setTodoCategories(response || []);
       } catch (error) {

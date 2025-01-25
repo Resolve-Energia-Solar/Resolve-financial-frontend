@@ -16,17 +16,28 @@ import { KanbanDataContext } from '@/app/context/kanbancontext';
 import columnService from '@/services/boardColumnService';
 import { enqueueSnackbar, useSnackbar } from 'notistack';
 import ColorPicker from '../components/ColorPicker';
+import FormSelect from '../../forms/form-custom/FormSelect';
 
-function EditCategoryModal({ showModal, handleCloseModal, initialCategoryName, column }) {
+function EditCategoryModal({ showModal, handleCloseModal, column }) {
   const { refresh } = useContext(KanbanDataContext);
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
 
+  console.log('column:', column);
+
   const { enqueueSnackbar } = useSnackbar();
+
+  const choicesColumnTypes = [
+    { value: 'B', label: 'Pendências' },
+    { value: 'T', label: 'A fazer' },
+    { value: 'I', label: 'Em andamento' },
+    { value: 'D', label: 'Concluído' },
+  ];
 
   const [formData, setFormData] = useState({
     name: column.name,
     color: column.color,
+    column_type: column.column_type,
   });
 
   const handleSave = async () => {
@@ -70,8 +81,19 @@ function EditCategoryModal({ showModal, handleCloseModal, initialCategoryName, c
             />
           </Grid>
           <Grid item xs={12}>
+            <FormSelect
+              label="Tipo de Coluna"
+              options={choicesColumnTypes}
+              value={formData.column_type}
+              onChange={(e) => setFormData({ ...formData, column_type: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12}>
             <CustomFormLabel htmlFor="color">Cor</CustomFormLabel>
-            <ColorPicker value={formData.color} onChange={(color) => setFormData({ ...formData, color })} />
+            <ColorPicker
+              value={formData.color}
+              onChange={(color) => setFormData({ ...formData, color })}
+            />
           </Grid>
         </Grid>
       </DialogContent>
