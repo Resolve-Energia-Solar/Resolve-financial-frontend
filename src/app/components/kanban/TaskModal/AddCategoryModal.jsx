@@ -1,5 +1,5 @@
 'use client';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import {
   Button,
@@ -17,31 +17,53 @@ import columnService from '@/services/boardColumnService';
 import { enqueueSnackbar, useSnackbar } from 'notistack';
 import ColorPicker from '../components/ColorPicker';
 
-function EditCategoryModal({ showModal, handleCloseModal, initialCategoryName, column }) {
+function AddCategoryModal({ showModal, handleCloseModal, boardId }) {
+  console.log('boardId:', boardId);
   const { refresh } = useContext(KanbanDataContext);
   const [loading, setLoading] = useState(false);
-  const [formErrors, setFormErrors] = useState({});
 
   const { enqueueSnackbar } = useSnackbar();
+  const [formErrors, setFormErrors] = useState({});
+
 
   const [formData, setFormData] = useState({
-    name: column.name,
-    color: column.color,
+    name: '',
+    color: '',
+    board: '',
+    position: '',
   });
+
+  formData.board = parseInt(boardId, 10);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await columnService.getColumns({
+          params: { fields: 'id,board,position', board: boardId, ordering: '-position' },
+        });
+        if (response.length > 0) {
+          setFormData({ ...formData, position: response[0].position + 1 });
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+    fetchData();
+  }, [boardId]);
 
   const handleSave = async () => {
     try {
       setLoading(true);
-      await columnService.updateColumnPatch(column.id, formData);
-      enqueueSnackbar(`Coluna "${column.name}" atualizada com sucesso`, {
+      await columnService.createColumn(formData);
+      enqueueSnackbar(`Coluna criada com sucesso`, {
         variant: 'success',
       });
-      refresh();
       handleCloseModal();
+      refresh();
     } catch (error) {
-      console.error(`Erro ao atualizar a coluna "${column.name}":`, error.message);
-      enqueueSnackbar(`Erro ao atualizar a coluna "${column.name}"`, { variant: 'error' });
-      setFormErrors(error.response?.data || {});
+      console.error('Erro ao criar a coluna:', error.message);
+      enqueueSnackbar('Erro ao criar a coluna', { variant: 'error' });
+      setFormErrors(error.response.data);
     } finally {
       setLoading(false);
     }
@@ -55,7 +77,7 @@ function EditCategoryModal({ showModal, handleCloseModal, initialCategoryName, c
       aria-describedby="alert-dialog-description"
       sx={{ '.MuiDialog-paper': { width: '600px' } }}
     >
-      <DialogTitle id="alert-dialog-title">Editar Coluna</DialogTitle>
+      <DialogTitle id="alert-dialog-title">Adicionar Coluna</DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
           <Grid item xs={12}>
@@ -85,10 +107,10 @@ function EditCategoryModal({ showModal, handleCloseModal, initialCategoryName, c
           disabled={loading}
           endIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
         >
-          {loading ? 'Atualizando...' : 'Atualizar'}
+          {loading ? 'Adicionando...' : 'Adicionar'}
         </Button>
       </DialogActions>
     </Dialog>
   );
 }
-export default EditCategoryModal;
+export default AddCategoryModal;

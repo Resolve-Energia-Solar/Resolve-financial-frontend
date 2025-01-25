@@ -1,29 +1,29 @@
-import React, { useState } from "react";
-import { Box, Button, Grid, Typography, Dialog } from "@mui/material";
-import { ChromePicker } from "react-color";
+import React, { useState } from 'react';
+import { Box, Button, Grid, Typography, Dialog } from '@mui/material';
+import { ChromePicker } from 'react-color';
 
-const ColorPicker = ({ value = "#FFFFFF", onChange }) => {
+const ColorPicker = ({ value = '#FFFFFF', onChange }) => {
   const predefinedColors = [
-    "#FF5733", // Vermelho
-    "#33FF57", // Verde
-    "#3357FF", // Azul
-    "#F1C40F", // Amarelo
-    "#9B59B6", // Roxo
+    '#D98880',
+    '#82E0AA',
+    '#85C1E9',
+    '#F9E79F',
+    '#C39BD3',
   ];
 
-  const [selectedColor, setSelectedColor] = useState(value); // Inicializa com `value`
-  const [customColor, setCustomColor] = useState(value); // Inicializa com `value`
+  const [selectedColor, setSelectedColor] = useState(value);
+  const [customColor, setCustomColor] = useState(value);
   const [openPicker, setOpenPicker] = useState(false);
 
   const handlePredefinedColorClick = (color) => {
     setSelectedColor(color);
-    if (onChange) onChange(color); // Dispara callback
+    if (onChange) onChange(color);
   };
 
   const handleCustomColorChange = (color) => {
     setCustomColor(color.hex);
     setSelectedColor(color.hex);
-    if (onChange) onChange(color.hex); // Dispara callback
+    if (onChange) onChange(color.hex);
   };
 
   const handleOpenPicker = () => {
@@ -45,8 +45,8 @@ const ColorPicker = ({ value = "#FFFFFF", onChange }) => {
                 width: 40,
                 height: 40,
                 backgroundColor: color,
-                border: selectedColor === color ? "2px solid black" : "none",
-                borderRadius: "50%",
+                border: selectedColor === color ? '2px solid black' : 'none',
+                borderRadius: '50%',
                 minWidth: 0,
               }}
             />
@@ -59,8 +59,8 @@ const ColorPicker = ({ value = "#FFFFFF", onChange }) => {
               width: 40,
               height: 40,
               backgroundColor: customColor,
-              border: selectedColor === customColor ? "2px solid black" : "none",
-              borderRadius: "50%",
+              border: selectedColor === customColor ? '2px solid black' : 'none',
+              borderRadius: '50%',
               minWidth: 0,
             }}
           >
@@ -71,10 +71,7 @@ const ColorPicker = ({ value = "#FFFFFF", onChange }) => {
 
       <Dialog open={openPicker} onClose={handleClosePicker}>
         <Box sx={{ padding: 2 }}>
-          <ChromePicker
-            color={customColor}
-            onChange={handleCustomColorChange}
-          />
+          <ChromePicker color={customColor} onChange={handleCustomColorChange} />
           <Button
             onClick={handleClosePicker}
             variant="contained"
