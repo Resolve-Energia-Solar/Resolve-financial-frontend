@@ -1,12 +1,21 @@
 'use client';
 import { useContext, useState } from 'react';
 
-import { Button, Dialog, DialogTitle, DialogContent, Grid, DialogActions, CircularProgress } from '@mui/material';
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Grid,
+  DialogActions,
+  CircularProgress,
+} from '@mui/material';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { KanbanDataContext } from '@/app/context/kanbancontext';
 import columnService from '@/services/boardColumnService';
 import { enqueueSnackbar, useSnackbar } from 'notistack';
+import ColorPicker from '../components/ColorPicker';
 
 function EditCategoryModal({ showModal, handleCloseModal, initialCategoryName, column }) {
   const { refresh } = useContext(KanbanDataContext);
@@ -16,6 +25,7 @@ function EditCategoryModal({ showModal, handleCloseModal, initialCategoryName, c
 
   const [formData, setFormData] = useState({
     name: column.name,
+    color: column.color,
   });
 
   const handleSave = async () => {
@@ -55,6 +65,10 @@ function EditCategoryModal({ showModal, handleCloseModal, initialCategoryName, c
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               fullWidth
             />
+          </Grid>
+          <Grid item xs={12}>
+            <CustomFormLabel htmlFor="color">Cor</CustomFormLabel>
+            <ColorPicker value={formData.color} onChange={(color) => setFormData({ ...formData, color })} />
           </Grid>
         </Grid>
       </DialogContent>
