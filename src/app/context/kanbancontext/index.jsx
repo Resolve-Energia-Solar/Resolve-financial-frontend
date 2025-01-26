@@ -13,6 +13,7 @@ const config = {
 
 export const KanbanDataContextProvider = ({ children }) => {
   const [todoCategories, setTodoCategories] = useState([]);
+  console.log('todoCategories:', todoCategories);
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [boardId, setBoardId] = useState(null);
   const [loadingLeadsIds, setLoadingLeadsIds] = useState([]);

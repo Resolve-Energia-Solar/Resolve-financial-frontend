@@ -1,4 +1,3 @@
-'use client';
 import { useContext, useEffect, useState } from 'react';
 import { IconPlus, IconDotsVertical } from '@tabler/icons-react';
 import TaskData from './TaskData';
@@ -8,13 +7,15 @@ import AddNewTaskModal from './TaskModal/AddNewTaskModal';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { KanbanDataContext } from '@/app/context/kanbancontext/index';
-import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material';
+import { Box, IconButton, Stack, Tooltip, Typography, useTheme } from '@mui/material';
 
 import leadService from '@/services/leadService';
 import TaskDataSkeleton from './components/TaskDataSkeleton';
 import DeleteCategoryModal from './TaskModal/DeleteCategoryModal';
+import { debounce } from 'lodash';
 
 function CategoryTaskList({ id }) {
+  const theme = useTheme();
   const { todoCategories, setTodoCategories } = useContext(KanbanDataContext);
 
   const category = todoCategories.find((cat) => cat.id === id);
@@ -26,6 +27,10 @@ function CategoryTaskList({ id }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const [count, setCount] = useState(0);
+  const [page, setPage] = useState(1);
+  const [hasNext, setHasNext] = useState(false);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -33,11 +38,40 @@ function CategoryTaskList({ id }) {
     setAnchorEl(null);
   };
 
+  const nextPage = () => {
+    if (hasNext) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handleScroll = debounce((event) => {
+    if (loading) return;
+    const scrollTop = event.target.scrollTop;
+    const scrollHeight = event.target.scrollHeight;
+    const clientHeight = event.target.clientHeight;
+    const scrollPosition = scrollTop + clientHeight;
+
+    if (scrollPosition >= 0.75 * scrollHeight && hasNext) {
+      nextPage();
+    }
+  }, 700);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await leadService.getLeadByColumnId(id);
+        const response = await leadService.getLeads({
+          params: {
+            fields: 'id,name,phone,created_at,qualification',
+            column: id,
+            ordering: '-created_at',
+            page: page,
+            limit: 10,
+          },
+        });
+        setCount(response.count);
+        response?.next ? setHasNext(true) : setHasNext(false);
+
         if (!response) {
           throw new Error('Failed to fetch leads');
         }
@@ -45,7 +79,12 @@ function CategoryTaskList({ id }) {
           const category = prevCategories.find((cat) => cat.id === id);
           if (category) {
             return prevCategories.map((cat) =>
-              cat.id === id ? { ...cat, child: response.results || [] } : cat,
+              cat.id === id
+                ? {
+                    ...cat,
+                    child: [...(category.child || []), ...(response.results || [])],
+                  }
+                : cat,
             );
           }
           return prevCategories;
@@ -57,14 +96,14 @@ function CategoryTaskList({ id }) {
       }
     };
     fetchData();
-  }, []);
+  }, [id, page]);
 
   useEffect(() => {
     const category = todoCategories.find((cat) => cat.id === id);
     if (category) {
       setAllTasks(category.child);
     }
-  }, [todoCategories, id]);
+  }, [todoCategories, page, id]);
 
   const handleShowModal = () => {
     setShowModal(true);
@@ -110,7 +149,7 @@ function CategoryTaskList({ id }) {
                     Etapa
                   </Typography>
                   <Typography variant="h6" className="fw-semibold">
-                    {category.name}
+                    <Typography variant="h6">{category.name}</Typography>
                   </Typography>
                 </Stack>
 
@@ -153,8 +192,15 @@ function CategoryTaskList({ id }) {
             </Box>
 
             {/* Conteúdo com scroll */}
-            <Box flex={1} overflow="auto" px={3} py={2} maxHeight="calc(100vh - 160px)">
-              {loading ? (
+            <Box
+              flex={1}
+              overflow="auto"
+              px={3}
+              py={2}
+              maxHeight="calc(100vh - 160px)"
+              onScroll={handleScroll} // Adiciona o evento de rolagem
+            >
+              {loading && page === 1 ? (
                 <Stack spacing={2}>
                   {Array.from({ length: 5 }).map((_, i) => (
                     <TaskDataSkeleton key={i} />
@@ -173,6 +219,13 @@ function CategoryTaskList({ id }) {
                 <Typography variant="body2" color="text.secondary" align="center" mt={5}>
                   Não há leads nesta etapa.
                 </Typography>
+              )}
+              {loading && page > 1 && (
+                <Stack spacing={2}>
+                  {Array.from({ length: 2 }).map((_, i) => (
+                    <TaskDataSkeleton key={i} />
+                  ))}
+                </Stack>
               )}
             </Box>
           </>

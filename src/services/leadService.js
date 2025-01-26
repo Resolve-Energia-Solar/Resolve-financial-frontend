@@ -3,19 +3,11 @@ import apiClient from './apiClient'
 const leadService = {
   getLeads: async (params = {}) => {
     try {
+      await setTimeout(() => {}, 3000)
       const response = await apiClient.get('/api/leads/', { ...params });
       return response.data
     } catch (error) {
       console.error('Erro ao buscar leads:', error)
-      throw error
-    }
-  },
-  getLeadByColumnId: async leadId => {
-    try {
-      const response = await apiClient.get(`/api/leads/?column=${leadId}`)
-      return response.data
-    } catch (error) {
-      console.error(`Erro ao buscar lead com id ${leadId}:`, error)
       throw error
     }
   },

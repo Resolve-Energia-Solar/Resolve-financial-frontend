@@ -2,7 +2,7 @@ import apiClient from './apiClient';
 
 const boardService = {
   getBoards: async (params = {}) => {
-    const response = await apiClient.get('/api/boards/', { params });
+    const response = await apiClient.get('/api/boards/', { ...params });
     return response.data;
   },
   createBoard: async (data) => {
