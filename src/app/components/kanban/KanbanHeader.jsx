@@ -1,28 +1,21 @@
 'use client';
 import React, { useState, useContext, useEffect } from 'react';
 import { KanbanDataContext } from '@/app/context/kanbancontext/index';
-import axios from '@/utils/axios';
 import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Button,
-  Typography,
   Box,
-  Grid,
 } from '@mui/material';
-import CustomTextField from '../forms/theme-elements/CustomTextField';
-import CustomFormLabel from '../forms/theme-elements/CustomFormLabel';
 import DynamicSelect from './components/DynamicSelect';
 import boardService from '@/services/boardService';
 import AddCategoryModal from './TaskModal/AddCategoryModal';
+import AddBoardModal from './TaskModal/AddBoardModal';
 
 function KanbanHeader() {
-  const { addCategory, boardId, setBoardId, setError } = useContext(KanbanDataContext);
+  const { boardId, setBoardId } = useContext(KanbanDataContext);
   const [show, setShow] = useState(false);
-  const [listName, setListName] = useState('');
   const [boards, setBoards] = useState([]);
+  const [showAddBoardModal, setShowAddBoardModal] = useState(false);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,17 +43,19 @@ function KanbanHeader() {
 
   return (
     <>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <DynamicSelect
           options={boards}
           value={boardId}
           onChange={(selectedOption) => setBoardId(selectedOption)}
+          onAdd={() => setShowAddBoardModal(true)}
         />
         <Button variant="contained" onClick={handleShow}>
           Adicionar coluna
         </Button>
       </Box>
       <AddCategoryModal showModal={show} handleCloseModal={handleClose} boardId={boardId} />
+      <AddBoardModal showModal={showAddBoardModal} handleCloseModal={() => setShowAddBoardModal(false)} />
     </>
   );
 }

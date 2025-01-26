@@ -50,9 +50,12 @@ function EditCategoryModal({ showModal, handleCloseModal, column }) {
       refresh();
       handleCloseModal();
     } catch (error) {
-      console.error(`Erro ao atualizar a coluna "${column.name}":`, error.message);
-      enqueueSnackbar(`Erro ao atualizar a coluna "${column.name}"`, { variant: 'error' });
-      setFormErrors(error.response?.data || {});
+      console.error('Erro ao criar o board:', error.message);
+      const errorData = error.response?.data || {};
+      setFormErrors(errorData);
+      Object.entries(errorData).forEach(([key, value]) => {
+        enqueueSnackbar(`${key}: ${value.join(' ')}`, { variant: 'error' });
+      });
     } finally {
       setLoading(false);
     }

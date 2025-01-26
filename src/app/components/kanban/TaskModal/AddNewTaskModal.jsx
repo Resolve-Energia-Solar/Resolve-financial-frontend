@@ -15,9 +15,11 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import useLeadForm from '@/hooks/leads/useLeadtForm';
 import AutoCompleteOrigin from '../../apps/leads/auto-input-origin';
 import { KanbanDataContext } from '@/app/context/kanbancontext/index';
+import { enqueueSnackbar, useSnackbar } from 'notistack';
 
 function AddNewList({ show, onHide, columnId }) {
   const { addTask } = useContext(KanbanDataContext);
+  const { enqueueSnackbar } = useSnackbar();
 
   const {
     formData,
@@ -37,6 +39,11 @@ function AddNewList({ show, onHide, columnId }) {
       addTask(columnId, dataReceived);
       onHide();
       resetForm();
+    }
+    if (!success && Object.keys(formErrors).length) {
+      Object.entries(formErrors).forEach(([key, value]) => {
+        enqueueSnackbar(`${key}: ${value.join(' ')}`, { variant: 'error' });
+      });
     }
   }, [success, formErrors]);
 

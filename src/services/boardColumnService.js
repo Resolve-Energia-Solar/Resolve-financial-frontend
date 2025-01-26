@@ -57,6 +57,16 @@ const columnService = {
       throw error;
     }
   },
+
+  deleteColumn: async (id, data) => {
+    try {
+      const response = await apiClient.delete(`/api/columns/${id}/`, data);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao excluir coluna com id ${id}:`, error);
+      throw error;
+    }
+},
 };
 
 export default columnService;

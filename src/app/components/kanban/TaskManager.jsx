@@ -32,7 +32,7 @@ function TaskManager() {
       <KanbanHeader />
       <SimpleBar>
         <DragDropContext onDragEnd={onDragEnd}>
-          <Box display="flex" gap={2} p={2}>
+          <Box display="flex" gap={2} p={1}>
             {loadingCategories
               ? Array.from({ length: 4 }).map((_, index) => (
                   <CategoryTaskListSkeleton key={index} />

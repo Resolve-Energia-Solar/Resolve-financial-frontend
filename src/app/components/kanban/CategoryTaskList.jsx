@@ -12,6 +12,7 @@ import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 
 import leadService from '@/services/leadService';
 import TaskDataSkeleton from './components/TaskDataSkeleton';
+import DeleteCategoryModal from './TaskModal/DeleteCategoryModal';
 
 function CategoryTaskList({ id }) {
   const { todoCategories, setTodoCategories } = useContext(KanbanDataContext);
@@ -21,6 +22,7 @@ function CategoryTaskList({ id }) {
   const [allTasks, setAllTasks] = useState(category ? category.child : []);
   const [showModal, setShowModal] = useState(false);
   const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
+  const [showDeleteCategoryModal, setShowDeleteCategoryModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -43,7 +45,7 @@ function CategoryTaskList({ id }) {
           const category = prevCategories.find((cat) => cat.id === id);
           if (category) {
             return prevCategories.map((cat) =>
-              cat.id === id ? { ...cat, child: response.results || [] } : cat
+              cat.id === id ? { ...cat, child: response.results || [] } : cat,
             );
           }
           return prevCategories;
@@ -77,7 +79,13 @@ function CategoryTaskList({ id }) {
     handleClose();
   };
 
+  const handleShowDeleteCategoryModal = () => {
+    setShowDeleteCategoryModal(true);
+    handleClose();
+  };
+
   const handleCloseEditCategoryModal = () => setShowEditCategoryModal(false);
+  const handleCloseDeleteCategoryModal = () => setShowDeleteCategoryModal(false);
 
   return (
     <>
@@ -95,13 +103,7 @@ function CategoryTaskList({ id }) {
         {category && (
           <>
             {/* Header fixo */}
-            <Box
-              px={3}
-              py={2}
-              position="sticky"
-              top={0}
-              zIndex={1}
-            >
+            <Box px={3} py={2} position="sticky" top={0} zIndex={1}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Stack direction="column" spacing={0.5}>
                   <Typography variant="caption" className="fw-semibold">
@@ -114,17 +116,25 @@ function CategoryTaskList({ id }) {
 
                 <Stack direction="row">
                   <Box>
-                    <>
-                      <Tooltip title="Add Task">
-                        <IconButton onClick={handleShowModal}>
-                          <IconPlus size="1rem" />
-                        </IconButton>
-                      </Tooltip>
-                      <AddNewTaskModal show={showModal} onHide={handleCloseModal} columnId={id} />
-                    </>
+                    {category.column_type === 'B' && (
+                      <>
+                        <Tooltip title="Add Task">
+                          <IconButton onClick={handleShowModal}>
+                            <IconPlus size="1rem" />
+                          </IconButton>
+                        </Tooltip>
+                        <AddNewTaskModal show={showModal} onHide={handleCloseModal} columnId={id} />
+                      </>
+                    )}
                     <EditCategoryModal
                       showModal={showEditCategoryModal}
                       handleCloseModal={handleCloseEditCategoryModal}
+                      column={category}
+                    />
+
+                    <DeleteCategoryModal
+                      showModal={showDeleteCategoryModal}
+                      handleCloseModal={handleCloseDeleteCategoryModal}
                       column={category}
                     />
                   </Box>
@@ -136,19 +146,14 @@ function CategoryTaskList({ id }) {
                   </Tooltip>
                   <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
                     <MenuItem onClick={handleShowEditCategoryModal}>Editar</MenuItem>
+                    <MenuItem onClick={handleShowDeleteCategoryModal}>Deletar</MenuItem>
                   </Menu>
                 </Stack>
               </Box>
             </Box>
 
             {/* Conteúdo com scroll */}
-            <Box
-              flex={1}
-              overflow="auto"
-              px={3}
-              py={2}
-              maxHeight="calc(100vh - 160px)"
-            >
+            <Box flex={1} overflow="auto" px={3} py={2} maxHeight="calc(100vh - 160px)">
               {loading ? (
                 <Stack spacing={2}>
                   {Array.from({ length: 5 }).map((_, i) => (
