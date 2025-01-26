@@ -23,8 +23,6 @@ function EditCategoryModal({ showModal, handleCloseModal, column }) {
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
 
-  console.log('column:', column);
-
   const { enqueueSnackbar } = useSnackbar();
 
   const choicesColumnTypes = [

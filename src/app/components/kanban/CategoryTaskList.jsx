@@ -29,6 +29,7 @@ function CategoryTaskList({ id }) {
 
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
   const [hasNext, setHasNext] = useState(false);
 
   const handleClick = (event) => {
@@ -57,7 +58,20 @@ function CategoryTaskList({ id }) {
   }, 700);
 
   useEffect(() => {
+    const debouncedEffect = debounce(() => {
+      if (category?.child?.length <= 9 && hasNext) {
+        console.log('Loading next page because there are exactly 7 items');
+        nextPage();
+      }
+    }, 500);
+    
+    debouncedEffect();
+    return () => debouncedEffect.cancel();
+  }, [category?.child?.length, hasNext]);
+  
+  useEffect(() => {
     const fetchData = async () => {
+      if (page > 1 && !hasNext) return;
       setLoading(true);
       try {
         const response = await leadService.getLeads({
@@ -66,7 +80,7 @@ function CategoryTaskList({ id }) {
             column: id,
             ordering: '-created_at',
             page: page,
-            limit: 10,
+            limit: perPage,
           },
         });
         setCount(response.count);

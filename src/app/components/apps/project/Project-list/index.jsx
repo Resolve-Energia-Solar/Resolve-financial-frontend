@@ -52,6 +52,7 @@ const ProjectList = ({ onClick }) => {
           page: page + 1,
           limit: rowsPerPage,
           expand: 'sale.customer',
+          is_released_to_engineering: true,
           ...filters,
         });
 
