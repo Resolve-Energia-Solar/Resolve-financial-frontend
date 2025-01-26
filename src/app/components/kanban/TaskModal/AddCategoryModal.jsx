@@ -1,6 +1,5 @@
 'use client';
 import { useContext, useState } from 'react';
-
 import {
   Button,
   Dialog,
@@ -14,18 +13,15 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { KanbanDataContext } from '@/app/context/kanbancontext';
 import columnService from '@/services/boardColumnService';
-import { enqueueSnackbar, useSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 import ColorPicker from '../components/ColorPicker';
 import FormSelect from '../../forms/form-custom/FormSelect';
 
-function EditCategoryModal({ showModal, handleCloseModal, column }) {
+function AddCategoryModal({ showModal, handleCloseModal, boardId }) {
   const { refresh } = useContext(KanbanDataContext);
   const [loading, setLoading] = useState(false);
-  const [formErrors, setFormErrors] = useState({});
-
-  console.log('column:', column);
-
   const { enqueueSnackbar } = useSnackbar();
+  const [formErrors, setFormErrors] = useState({});
 
   const choicesColumnTypes = [
     { value: 'B', label: 'Pendências' },
@@ -35,20 +31,22 @@ function EditCategoryModal({ showModal, handleCloseModal, column }) {
   ];
 
   const [formData, setFormData] = useState({
-    name: column.name,
-    color: column.color,
-    column_type: column.column_type,
+    name: '',
+    color: '',
+    board_id: '',
+    column_type: '',
   });
+
+  boardId ? formData.board_id = boardId : null;
 
   const handleSave = async () => {
     try {
       setLoading(true);
-      await columnService.updateColumnPatch(column.id, formData);
-      enqueueSnackbar(`Coluna "${column.name}" atualizada com sucesso`, {
-        variant: 'success',
-      });
-      refresh();
+      setFormErrors({}); // Limpar erros anteriores
+      await columnService.createColumn(formData);
+      enqueueSnackbar('Coluna criada com sucesso!', { variant: 'success' });
       handleCloseModal();
+      refresh();
     } catch (error) {
       console.error('Erro ao criar o board:', error.message);
       const errorData = error.response?.data || {};
@@ -69,7 +67,7 @@ function EditCategoryModal({ showModal, handleCloseModal, column }) {
       aria-describedby="alert-dialog-description"
       sx={{ '.MuiDialog-paper': { width: '600px' } }}
     >
-      <DialogTitle id="alert-dialog-title">Editar Coluna</DialogTitle>
+      <DialogTitle id="alert-dialog-title">Adicionar Coluna</DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
           <Grid item xs={12}>
@@ -79,7 +77,8 @@ function EditCategoryModal({ showModal, handleCloseModal, column }) {
               variant="outlined"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              {...(formErrors.name && { error: true, helperText: formErrors.name })}
+              error={!!formErrors.name}
+              helperText={formErrors.name}
               fullWidth
             />
           </Grid>
@@ -110,10 +109,11 @@ function EditCategoryModal({ showModal, handleCloseModal, column }) {
           disabled={loading}
           endIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
         >
-          {loading ? 'Atualizando...' : 'Atualizar'}
+          {loading ? 'Adicionando...' : 'Adicionar'}
         </Button>
       </DialogActions>
     </Dialog>
   );
 }
-export default EditCategoryModal;
+
+export default AddCategoryModal;

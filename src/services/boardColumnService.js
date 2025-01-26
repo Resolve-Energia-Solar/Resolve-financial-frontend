@@ -3,7 +3,7 @@ import apiClient from './apiClient';
 const columnService = {
   getColumns: async (params = {}) => {
     try {
-      const response = await apiClient.get('/api/columns/', { params });
+      const response = await apiClient.get('/api/columns/', { ...params });
       return response.data.results;
     } catch (error) {
       console.error('Erro ao buscar colunas:', error);
@@ -57,6 +57,16 @@ const columnService = {
       throw error;
     }
   },
+
+  deleteColumn: async (id, data) => {
+    try {
+      const response = await apiClient.delete(`/api/columns/${id}/`, data);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao excluir coluna com id ${id}:`, error);
+      throw error;
+    }
+},
 };
 
 export default columnService;

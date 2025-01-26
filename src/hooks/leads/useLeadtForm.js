@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import leadService from '@/services/leadService';
 
 const useLeadForm = (initialData, id) => {
-  const [formData, setFormData] = useState({
+  const initialFormState = {
     seller_id: null,
     sdr_id: null,
     addresses_ids: [],
@@ -21,11 +21,13 @@ const useLeadForm = (initialData, id) => {
     funnel: '',
     qualification: '',
     kwp: '',
-  });
+  };
 
+  const [formData, setFormData] = useState(initialFormState);
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [dataReceived, setDataReceived] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -49,6 +51,8 @@ const useLeadForm = (initialData, id) => {
         qualification: initialData.qualification || '',
         kwp: initialData.kwp || '',
       });
+    } else {
+      resetForm(); // Restaura para o estado inicial
     }
   }, [initialData]);
 
@@ -73,18 +77,20 @@ const useLeadForm = (initialData, id) => {
       gender: formData.gender,
       contact_email: formData.contact_email,
       phone: formData.phone,
-      origin: formData.origin,
+      origin: formData.origin ? formData.origin : undefined,
       funnel: formData.funnel,
       qualification: formData.qualification !== '' ? Number(formData.qualification) : null,
       kwp: formData.kwp !== '' ? parseFloat(formData.kwp) : null,
     };
 
     try {
+      let response;
       if (id) {
-        await leadService.updateLead(id, dataToSend);
+        response = await leadService.updateLead(id, dataToSend);
       } else {
-        await leadService.createLead(dataToSend);
+        response = await leadService.createLead(dataToSend);
       }
+      setDataReceived(response);
       setFormErrors({});
       setSuccess(true);
     } catch (err) {
@@ -96,10 +102,20 @@ const useLeadForm = (initialData, id) => {
     }
   };
 
+  const resetForm = () => {
+    setFormData(initialFormState);
+    setFormErrors({});
+    setSuccess(false);
+    setLoading(false);
+    setDataReceived(false);
+  };
+
   return {
     formData,
     handleChange,
     handleSave,
+    resetForm,
+    dataReceived,
     formErrors,
     success,
     loading,

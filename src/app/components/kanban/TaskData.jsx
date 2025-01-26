@@ -19,6 +19,7 @@ import {
   Card,
   Chip,
   IconButton,
+  LinearProgress,
   ListItemIcon,
   ListItemText,
   Rating,
@@ -27,73 +28,41 @@ import {
   useTheme,
 } from '@mui/material';
 import BlankCard from '../shared/BlankCard';
-import { AccessTime, PunchClock, PunchClockSharp, WbSunny } from '@mui/icons-material';
+import {
+  AccessTime,
+  LocalPhone,
+  PersonOutline,
+  PunchClock,
+  PunchClockSharp,
+  Start,
+  WbSunny,
+} from '@mui/icons-material';
+import ChipDeadLine from './components/Chipdead-line';
+import leadService from '@/services/leadService';
+import { useSnackbar } from 'notistack';
 
 const TaskData = ({ task, onDeleteTask, index }) => {
   const theme = useTheme();
-  const { setError } = useContext(KanbanDataContext);
-  const [showEditModal, setShowEditModal] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
+  const { setError, setLoadingLeadsIds, loadingLeadsIds, updateTask } =
+    useContext(KanbanDataContext);
   const [editedTask, setEditedTask] = useState(task);
-  const [anchorEl, setAnchorEl] = useState(null);
   const taskId = task.id ? task.id.toString() : task.task;
 
-  const handleShowEditModal = () => {
-    setShowEditModal(true);
-    handleClose();
-  };
-  const handleCloseEditModal = () => setShowEditModal(false);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleDeleteClick = () => onDeleteTask(task.id);
-
-  const handleSaveEditedTask = async (editedTaskData) => {
+  const changeQualification = async (event, newValue) => {
     try {
-      const response = await axios.put('/api/TodoData/editTask', {
-        taskId: editedTaskData.id,
-        newData: editedTaskData,
-      });
-      if (response.status === 200) {
-        setEditedTask(editedTaskData);
-      } else {
-        throw new Error('Failed to edit task');
-      }
+      setLoadingLeadsIds((prev) => [...prev, taskId]);
+      const response = await leadService.patchLead(taskId, { qualification: newValue });
+      updateTask(task.id, response);
+      setEditedTask(response);
+      enqueueSnackbar(`Qualificação do lead "${editedTask.name}" foi alterada para: ${newValue}`, { variant: 'success' });
     } catch (error) {
       setError(error.message);
+      enqueueSnackbar('Ocorreu um erro ao alterar a qualificação do lead', { variant: 'error' });
+    } finally {
+      setLoadingLeadsIds((prev) => prev.filter((id) => id !== taskId));
     }
   };
-
-  const formatDate = (selectedDate) => {
-    if (!selectedDate) return '';
-    const dateObj = new Date(selectedDate);
-    const day = dateObj.getDate();
-    const month = dateObj.toLocaleString('default', { month: 'long' });
-    const year = dateObj.getFullYear();
-    return `${day} ${month} ${year}`;
-  };
-
-  const backgroundColor =
-    editedTask.taskProperty === 'Design'
-      ? 'success.main'
-      : editedTask.taskProperty === 'Development'
-      ? 'warning.main'
-      : editedTask.taskProperty === 'Mobile'
-      ? 'primary.main'
-      : editedTask.taskProperty === 'UX Stage'
-      ? 'warning.main'
-      : editedTask.taskProperty === 'Research'
-      ? 'secondary.main'
-      : editedTask.taskProperty === 'Data Science'
-      ? 'error.main'
-      : editedTask.taskProperty === 'Branding'
-      ? 'success.main'
-      : 'primary.contrastText';
 
   return (
     <Draggable draggableId={taskId} index={index}>
@@ -105,26 +74,46 @@ const TaskData = ({ task, onDeleteTask, index }) => {
           ref={provided.innerRef}
         >
           <BlankCard>
-            <Box px={2} py={1} display="flex" alignItems="center" justifyContent="space-between">
-              <Box display="flex" alignItems="center" sx={{ color: 'text.secondary' }}>
-                <AccessTime fontSize="10" />
-                <Typography variant="body2" sx={{ ml: 0.5, fontSize: 11 }}>
-                  {new Intl.DateTimeFormat('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: '2-digit',
-                  }).format(new Date(editedTask.created_at))}
-                </Typography>
+            {loadingLeadsIds.includes(taskId) && (
+              <Box sx={{ width: '100%' }}>
+                <LinearProgress />
               </Box>
+            )}
+            <Box
+              mt={1}
+              px={2}
+              py={1}
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Stack
+                direction="row"
+                alignItems="center"
+                spacing={1}
+                sx={{ color: 'text.secondary' }}
+              >
+                <ChipDeadLine status={'A'} />
+                <AccessTime fontSize="10" />
+                <Typography variant="body2" sx={{ fontSize: 11 }}>
+                  {editedTask.created_at
+                    ? new Intl.DateTimeFormat('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: '2-digit',
+                      }).format(new Date(editedTask.created_at))
+                    : '-'}
+                </Typography>
+              </Stack>
 
               <Box>
                 <Box display="flex" justifyContent="flex-end">
                   <Rating
                     name="qualification"
-                    value={0}
+                    value={editedTask.qualification}
                     max={5}
                     size="small"
-                    readOnly
+                    onChange={changeQualification}
                     sx={{ ml: 1 }}
                     icon={<WbSunny fontSize="inherit" sx={{ color: theme.palette.warning.main }} />}
                     emptyIcon={
@@ -137,7 +126,7 @@ const TaskData = ({ task, onDeleteTask, index }) => {
             <Box px={2} py={0} display="flex" alignItems="center" justifyContent="space-between">
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Typography fontSize="14px" variant="h6">
-                  {editedTask.name} teste
+                  {editedTask.name}
                 </Typography>
               </Box>
 
@@ -159,29 +148,30 @@ const TaskData = ({ task, onDeleteTask, index }) => {
                 />
               )}
             </Box>
-            {editedTask.taskText && (
-              <Box px={2} py={1}>
-                <Typography variant="body2">{editedTask.taskText}</Typography>
+            {editedTask?.origin && (
+              <Box px={2} py={0} display="flex" alignItems="center" gap={0.5}>
+                <Start fontSize="10" />
+                <Typography variant="body2">Origem: {editedTask?.origin?.name}</Typography>
               </Box>
             )}
-            <Box display="flex" alignItems="center" justifyContent="space-between" px={2} py={1}>
-              <Stack direction="row" gap={1}>
-                <IconCalendar size="1rem" />
-                <Typography variant="body2">{formatDate(editedTask.date)}</Typography>
-              </Stack>
-              <Box>
-                <Chip
-                  size="small"
-                  label={editedTask.taskProperty}
-                  sx={{
-                    backgroundColor,
-                    color: 'white',
-                    borderRadius: '8px',
-                    fontSize: '11px',
-                    fontWeight: 400,
-                  }}
-                />
+            {editedTask?.phone && (
+              <Box px={2} py={0.5} display="flex" alignItems="center" gap={0.5}>
+                <LocalPhone fontSize="10" />
+                <Typography variant="body2">{editedTask?.phone}</Typography>
               </Box>
+            )}
+            <Box
+              display="flex"
+              alignItems="center"
+              px={2}
+              py={1}
+              mt={1}
+              sx={{ backgroundColor: 'grey.100', gap: 0.5 }}
+            >
+              <PersonOutline fontSize="8" />
+              <Typography variant="body2" fontSize="10px">
+                <strong>Responsável:</strong> {editedTask?.seller?.complete_name}
+              </Typography>
             </Box>
           </BlankCard>
         </Box>

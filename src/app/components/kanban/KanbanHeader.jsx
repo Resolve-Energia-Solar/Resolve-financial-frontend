@@ -1,94 +1,63 @@
-"use client";
-import React, { useState, useContext } from 'react';
+'use client';
+import React, { useState, useContext, useEffect } from 'react';
 import { KanbanDataContext } from '@/app/context/kanbancontext/index';
-import axios from '@/utils/axios';
 import {
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Button,
-    Typography,
-    Box,
-    Grid,
-} from "@mui/material";
-import CustomTextField from "../forms/theme-elements/CustomTextField";
-import CustomFormLabel from '../forms/theme-elements/CustomFormLabel';
+  Button,
+  Box,
+} from '@mui/material';
+import DynamicSelect from './components/DynamicSelect';
+import boardService from '@/services/boardService';
+import AddCategoryModal from './TaskModal/AddCategoryModal';
+import AddBoardModal from './TaskModal/AddBoardModal';
 
 function KanbanHeader() {
-    const { addCategory, setError } = useContext(KanbanDataContext);
-    const [show, setShow] = useState(false);
-    const [listName, setListName] = useState('');
+  const { boardId, setBoardId } = useContext(KanbanDataContext);
+  const [show, setShow] = useState(false);
+  const [boards, setBoards] = useState([]);
+  const [showAddBoardModal, setShowAddBoardModal] = useState(false);
 
-    // Closes the modal 
-    const handleClose = () => setShow(false);
-    // Opens the modal 
-    const handleShow = () => setShow(true);
 
-    // Handles adding a new category.
-    const handleSave = async () => {
-        try {
-            const response = await axios.post('/api/TodoData/addCategory', { categoryName: listName });
-            addCategory(response.data.name);
-            setListName('');
-            setShow(false);
-        } catch (error) {
-            setError(error.message);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await boardService.getBoards({
+          params: { fields: 'id,title', is_deleted: 'false' },
+        });
+        console.log(response);
+        const boards = response.results.map((board) => ({ value: board.id, label: board.title }));
+        setBoards(boards);
+        if (boards.length > 0) {
+          setBoardId(boards[0].value);
         }
+      } catch (error) {
+        console.error('Error:', error);
+      }
     };
-    const isAddButtonDisabled = listName.trim().length === 0;
+    fetchData();
+  }, []);
 
-    return (
-        <>
-            <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                mb={4}
-            >
-                <Typography variant="h5">Improving Work Processes</Typography>
-                <Button variant="contained" onClick={handleShow}>
-                    Add List
-                </Button>
-            </Box>
-            <Dialog
-                open={show}
-                onClose={handleClose}
-                maxWidth="lg"
-                sx={{ ".MuiDialog-paper": { width: "600px" } }}
-            >
-                <DialogTitle>Add List</DialogTitle>
-                <DialogContent>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} lg={12}>
-                            <CustomFormLabel
+  // Closes the modal
+  const handleClose = () => setShow(false);
+  // Opens the modal
+  const handleShow = () => setShow(true);
 
-                                htmlFor="default-value"
-                            >
-                                List Name
-                            </CustomFormLabel>
-                            <CustomTextField
-                                autoFocus
-                                id="default-value"
-                                variant="outlined"
-                                value={listName}
-                                fullWidth
-                                onChange={(e) => setListName(e.target.value)}
-                            />
-                        </Grid>
-                    </Grid>
-                </DialogContent>
-                <DialogActions>
-                    <Button variant="outlined" onClick={handleClose} color="error">
-                        Cancel
-                    </Button>
-                    <Button variant="contained" onClick={handleSave} color="primary" disabled={isAddButtonDisabled}>
-                        Add List
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </>
-    );
+  return (
+    <>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+        <DynamicSelect
+          options={boards}
+          value={boardId}
+          onChange={(selectedOption) => setBoardId(selectedOption)}
+          onAdd={() => setShowAddBoardModal(true)}
+        />
+        <Button variant="contained" onClick={handleShow}>
+          Adicionar coluna
+        </Button>
+      </Box>
+      <AddCategoryModal showModal={show} handleCloseModal={handleClose} boardId={boardId} />
+      <AddBoardModal showModal={showAddBoardModal} handleCloseModal={() => setShowAddBoardModal(false)} />
+    </>
+  );
 }
 
 export default KanbanHeader;

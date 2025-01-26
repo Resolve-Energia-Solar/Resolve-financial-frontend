@@ -20,7 +20,6 @@ function page() {
   return (
     <KanbanDataContextProvider>
       <PageContainer title="Kanban App" description="this is Kanban App">
-        <Breadcrumb title="Kanban app" items={BCrumb} />
         <BlankCard>
           <CardContent>
             <TaskManager />
