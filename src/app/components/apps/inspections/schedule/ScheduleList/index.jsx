@@ -3,7 +3,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import theme from '@/utils/theme';
 
-// Components
 import {
   Button,
   CardContent,
@@ -247,7 +246,6 @@ const SchedulingList = () => {
         <Table stickyHeader aria-label="schedule table">
           <TableHead>
             <TableRow>
-              {/* Contratante */}
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('customer.complete_name')}
@@ -260,7 +258,6 @@ const SchedulingList = () => {
                   </Box>
                 </Box>
               </TableCell>
-              {/* Status */}
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('status')}
@@ -300,7 +297,6 @@ const SchedulingList = () => {
                 </Box>
               </TableCell>
 
-              {/* Data do Agendamento */}
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('schedule_date')}
@@ -314,7 +310,6 @@ const SchedulingList = () => {
                 </Box>
               </TableCell>
 
-              {/* Hora do Agendamento */}
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('schedule_start_time')}
@@ -328,7 +323,6 @@ const SchedulingList = () => {
                 </Box>
               </TableCell>
 
-              {/* Serviço */}
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('service.name')}
@@ -342,7 +336,6 @@ const SchedulingList = () => {
                 </Box>
               </TableCell>
 
-              {/* Agente */}
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('schedule_agent.complete_name')}
@@ -356,7 +349,6 @@ const SchedulingList = () => {
                 </Box>
               </TableCell>
 
-              {/* Endereço */}
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('address.street')}
@@ -442,7 +434,6 @@ const SchedulingList = () => {
         onRowsPerPageChange={handleRowsPerPageChange}
         labelRowsPerPage="Linhas por página"
       />
-      {/* Modal de confirmação de exclusão */}
       <Dialog
         open={isDialogOpen}
         aria-labelledby="alert-dialog-title"
@@ -465,7 +456,6 @@ const SchedulingList = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Componente Drawer para exibir detalhes do agendamento */}
       <ScheduleView
         open={drawerOpen}
         onClose={handleDrawerClose}

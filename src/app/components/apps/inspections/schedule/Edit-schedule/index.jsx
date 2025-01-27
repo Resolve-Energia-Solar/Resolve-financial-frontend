@@ -47,7 +47,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     formErrors,
     success,
   } = useScheduleForm(scheduleData, id);
-
+console.log('formData', formData)
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
   const [alertType, setAlertType] = React.useState('success');
