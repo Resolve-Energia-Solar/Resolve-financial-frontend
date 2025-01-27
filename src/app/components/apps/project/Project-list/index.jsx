@@ -45,7 +45,6 @@ const ProjectList = ({ onClick }) => {
   const { filters, refresh } = useContext(ProjectDataContext);
 
   useEffect(() => {
-    console.log('filters', filters);
     const fetchProjects = async () => {
       setLoading(true);
       try {

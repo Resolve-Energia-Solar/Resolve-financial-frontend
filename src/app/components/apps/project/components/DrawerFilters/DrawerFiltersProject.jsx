@@ -16,6 +16,8 @@ export default function DrawerFiltersProject() {
     status: filters.status,
     customer: filters.customer,
     designer_status: filters.designer_status,
+    customer: filters.customer,
+    is_released_to_engineering: filters.is_released_to_engineering,
   });
 
   const createFilterParams = (filters) => {
@@ -32,13 +34,15 @@ export default function DrawerFiltersProject() {
     }
 
     if (filters.status && filters.status.length > 0) {
-      const statusValues = filters.status.map((status) => status.value);
-      params.status__in = statusValues.join(',');
+      params.status__in = filters.status.map((status) => status.value).join(',');
     }
 
     if (filters.designer_status && filters.designer_status.length > 0) {
-      const statusValues = filters.designer_status.map((status) => status.value);
-      params.designer_status__in = statusValues.join(',');
+      params.designer_status__in = filters.designer_status.map((status) => status.value).join(',');
+    }
+
+    if (filters.customer) {
+      params.customer = filters.customer;
     }
 
     return params;
@@ -98,6 +102,16 @@ export default function DrawerFiltersProject() {
           >
             <Grid container spacing={2}>
               <Grid item xs={12}>
+                <CustomFormLabel htmlFor="customer">Cliente</CustomFormLabel>
+                <AutoCompleteUser
+                  placeholder="Selecione o cliente"
+                  value={tempFilters.customer}
+                  onChange={(id) => handleChange('customer', id)}
+                />
+              </Grid>
+
+
+              <Grid item xs={12}>
                 <CustomFormLabel htmlFor="Status">Status do Projeto</CustomFormLabel>
                 <CheckboxesTags
                   options={[
@@ -123,7 +137,7 @@ export default function DrawerFiltersProject() {
                     { value: 'C', label: 'Cancelado' },
                     { value: 'D', label: 'Distrato' },
                   ]}
-                  placeholder="Selecione o Status do Projetist"
+                  placeholder="Selecione o Status do Projetista"
                   value={tempFilters.designer_status}
                   onChange={(event, value) => handleChange('designer_status', value)}
                 />
