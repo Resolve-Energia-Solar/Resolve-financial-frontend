@@ -185,6 +185,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
   totalValue ? (formData.totalValue = totalValue) : null;
   productIds ? (formData.productIds = productIds) : null;
   user?.user ? (formData.sellerId = user.user.id) : null;
+  
 
   user?.user?.employee?.user_manager
     ? (formData.salesSupervisorId = user?.user?.employee?.user_manager)
@@ -194,6 +195,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
     : null;
 
   formData.status = 'P';
+  formData.payment_status = 'P';
   user?.user?.employee?.branch ? (formData.branchId = user?.user?.employee?.branch?.id) : null;
 
   const handleBack = () => {
