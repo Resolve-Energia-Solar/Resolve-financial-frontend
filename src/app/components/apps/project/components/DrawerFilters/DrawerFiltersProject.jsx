@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Box, Drawer, Button, Typography, Grid } from '@mui/material';
+import { Box, Drawer, Button, Typography, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { FilterAlt } from '@mui/icons-material';
 import CheckboxesTags from './CheckboxesTags';
 import FormDateRange from './DateRangePicker';
@@ -16,8 +16,7 @@ export default function DrawerFiltersProject() {
     status: filters.status,
     customer: filters.customer,
     designer_status: filters.designer_status,
-    customer: filters.customer,
-    is_released_to_engineering: filters.is_released_to_engineering,
+    is_released_to_engineering: filters.is_released_to_engineering ?? null,
   });
 
   const createFilterParams = (filters) => {
@@ -45,6 +44,10 @@ export default function DrawerFiltersProject() {
       params.customer = filters.customer;
     }
 
+    if (filters.is_released_to_engineering !== null) {
+      params.is_released_to_engineering = filters.is_released_to_engineering;
+    }
+
     return params;
   };
 
@@ -57,6 +60,7 @@ export default function DrawerFiltersProject() {
       documentCompletionDate: [null, null],
       status: [],
       designer_status: [],
+      is_released_to_engineering: null,
     });
   };
 
@@ -110,7 +114,6 @@ export default function DrawerFiltersProject() {
                 />
               </Grid>
 
-
               <Grid item xs={12}>
                 <CustomFormLabel htmlFor="Status">Status do Projeto</CustomFormLabel>
                 <CheckboxesTags
@@ -141,6 +144,32 @@ export default function DrawerFiltersProject() {
                   value={tempFilters.designer_status}
                   onChange={(event, value) => handleChange('designer_status', value)}
                 />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="isReleased">Liberado para Engenharia</CustomFormLabel>
+                <FormControl fullWidth>
+                  <Select
+                    labelId="is-released-label"
+                    value={
+                      tempFilters.is_released_to_engineering === null
+                        ? ''
+                        : tempFilters.is_released_to_engineering.toString()
+                    }
+                    onChange={(event) =>
+                      handleChange(
+                        'is_released_to_engineering',
+                        event.target.value === '' ? null : event.target.value === 'true'
+                      )
+                    }
+                  >
+                    <MenuItem value="">
+                      <em>Todos</em>
+                    </MenuItem>
+                    <MenuItem value="true">Sim</MenuItem>
+                    <MenuItem value="false">Não</MenuItem>
+                  </Select>
+                </FormControl>
               </Grid>
 
               <Grid item xs={12}>
