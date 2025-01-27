@@ -16,7 +16,7 @@ import { debounce } from 'lodash';
 
 function CategoryTaskList({ id }) {
   const theme = useTheme();
-  const { todoCategories, setTodoCategories, insertChildren } = useContext(KanbanDataContext);
+  const { todoCategories, setCount, insertChildren } = useContext(KanbanDataContext);
 
   const category = todoCategories.find((cat) => cat.id === id);
 
@@ -28,9 +28,8 @@ function CategoryTaskList({ id }) {
   const [loading, setLoading] = useState(false);
   const [reload, setReload] = useState(false);
 
-  const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPage] = useState(15);
   const [hasNext, setHasNext] = useState(false);
 
   const handleClick = (event) => {
@@ -75,7 +74,8 @@ function CategoryTaskList({ id }) {
 
   useEffect(() => {
     const debouncedEffect = debounce(() => {
-      if (category?.child?.length <= 7 && hasNext) {
+      const percentageBase = Math.ceil(perPage * 0.7);
+      if (category?.child?.length <= percentageBase && hasNext) {
         setPage(1);
         refresh();
       }
@@ -99,9 +99,9 @@ function CategoryTaskList({ id }) {
             limit: perPage,
           },
         });
-        setCount(response.count);
+        
         response?.next ? setHasNext(true) : setHasNext(false);
-
+        setCount(id, response?.count);
         if (!response) {
           throw new Error('Failed to fetch leads');
         }
@@ -166,7 +166,10 @@ function CategoryTaskList({ id }) {
                     Etapa
                   </Typography>
                   <Typography variant="h6" className="fw-semibold">
-                    <Typography variant="h6">{category.name}</Typography>
+                    {category.name} 
+                    <Typography variant="body1" component="span" color="text.secondary" ml={0.2}>
+                      {category.count ? ` (${category.count})` : ''}
+                    </Typography>
                   </Typography>
                 </Stack>
 
