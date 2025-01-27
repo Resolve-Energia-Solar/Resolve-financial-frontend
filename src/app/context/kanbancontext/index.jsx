@@ -157,6 +157,7 @@ export const KanbanDataContextProvider = ({ children }) => {
           return {
             ...category,
             child: [newTask, ...category.child],
+            count: (category.count || 0) + 1,
           };
         }
         return category;
