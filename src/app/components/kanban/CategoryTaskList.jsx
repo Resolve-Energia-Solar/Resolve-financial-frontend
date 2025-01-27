@@ -96,7 +96,7 @@ function CategoryTaskList({ id }) {
             column: id,
             ordering: '-created_at',
             page: page,
-            limit: perPage,
+            limit: perPage,            
           },
         });
         
