@@ -16,7 +16,7 @@ import { debounce } from 'lodash';
 
 function CategoryTaskList({ id }) {
   const theme = useTheme();
-  const { todoCategories, setTodoCategories } = useContext(KanbanDataContext);
+  const { todoCategories, setCount, insertChildren } = useContext(KanbanDataContext);
 
   const category = todoCategories.find((cat) => cat.id === id);
 
@@ -26,10 +26,10 @@ function CategoryTaskList({ id }) {
   const [showDeleteCategoryModal, setShowDeleteCategoryModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [reload, setReload] = useState(false);
 
-  const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPage] = useState(15);
   const [hasNext, setHasNext] = useState(false);
 
   const handleClick = (event) => {
@@ -45,30 +45,46 @@ function CategoryTaskList({ id }) {
     }
   };
 
+  const refresh = () => {
+    setReload((prev) => !prev);
+  };
+
   const handleScroll = debounce((event) => {
     if (loading) return;
-    const scrollTop = event.target.scrollTop;
-    const scrollHeight = event.target.scrollHeight;
-    const clientHeight = event.target.clientHeight;
+  
+    const { scrollTop, scrollHeight, clientHeight } = event.target;
     const scrollPosition = scrollTop + clientHeight;
+  
+    const isNearTop = scrollPosition <= 0.35 * scrollHeight && page > 1;
+  
+    const isNearBottom = scrollPosition >= 0.75 * scrollHeight && hasNext;
 
-    if (scrollPosition >= 0.75 * scrollHeight && hasNext) {
+    console.log('isNearTop:', isNearTop);
+    console.log('page:', page);
+  
+    if (isNearTop && !loading) {
+      setPage(1); // Vai para a primeira página
+    }
+  
+    if (isNearBottom) {
       nextPage();
     }
   }, 700);
+  
 
   useEffect(() => {
     const debouncedEffect = debounce(() => {
-      if (category?.child?.length <= 9 && hasNext) {
-        console.log('Loading next page because there are exactly 7 items');
-        nextPage();
+      const percentageBase = Math.ceil(perPage * 0.7);
+      if (category?.child?.length <= percentageBase && hasNext) {
+        setPage(1);
+        refresh();
       }
-    }, 500);
-    
+    }, 700);
+
     debouncedEffect();
     return () => debouncedEffect.cancel();
   }, [category?.child?.length, hasNext]);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       if (page > 1 && !hasNext) return;
@@ -83,26 +99,13 @@ function CategoryTaskList({ id }) {
             limit: perPage,
           },
         });
-        setCount(response.count);
+        
         response?.next ? setHasNext(true) : setHasNext(false);
-
+        setCount(id, response?.count);
         if (!response) {
           throw new Error('Failed to fetch leads');
         }
-        setTodoCategories((prevCategories) => {
-          const category = prevCategories.find((cat) => cat.id === id);
-          if (category) {
-            return prevCategories.map((cat) =>
-              cat.id === id
-                ? {
-                    ...cat,
-                    child: [...(category.child || []), ...(response.results || [])],
-                  }
-                : cat,
-            );
-          }
-          return prevCategories;
-        });
+        insertChildren(id, response.results, page === 1);
       } catch (error) {
         console.error('Error fetching leads:', error);
       } finally {
@@ -110,7 +113,7 @@ function CategoryTaskList({ id }) {
       }
     };
     fetchData();
-  }, [id, page]);
+  }, [id, page, reload]);
 
   useEffect(() => {
     const category = todoCategories.find((cat) => cat.id === id);
@@ -163,7 +166,10 @@ function CategoryTaskList({ id }) {
                     Etapa
                   </Typography>
                   <Typography variant="h6" className="fw-semibold">
-                    <Typography variant="h6">{category.name}</Typography>
+                    {category.name} 
+                    <Typography variant="body1" component="span" color="text.secondary" ml={0.2}>
+                      {category.count ? ` (${category.count})` : ''}
+                    </Typography>
                   </Typography>
                 </Stack>
 
