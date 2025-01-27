@@ -8,7 +8,7 @@ const ClickSignService = {
     createDocument: async (path, content_base64) => {
       try {
         const response = await axios.post(
-          `${API_DOCUMENT_BASE_URL}/api/v1/documents?access_token=b6c16e80-4442-4a0f-8aad-f5e976b51023`,
+          `${API_DOCUMENT_BASE_URL}/api/v1/documents?access_token=${API_TOKEN}`,
           {
             document: {
               path: path,
@@ -23,7 +23,7 @@ const ClickSignService = {
           {
             headers: {
               'Content-Type': 'application/json',
-              'Accept': 'application/json',
+              Accept: 'application/json',
             },
           },
         )
@@ -37,10 +37,10 @@ const ClickSignService = {
       }
     },
 
-    getDocument: async key => {
+    getDocument: async (envelopeId, key) => {
       try {
         const response = await axios.get(
-          `${API_DOCUMENT_BASE_URL}/api/v1/documents/${key}?access_token=${API_TOKEN}`,
+          `${API_DOCUMENT_BASE_URL}/api/v3/envelopes/${envelopeId}/documents/${key}?access_token=${API_TOKEN}`,
           {
             headers: {
               'Content-Type': 'application/json',

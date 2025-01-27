@@ -24,7 +24,6 @@ import axios from 'axios';
 import contractService from '@/services/contract-submissions';
 import ContractChip from '../components/contractChip';
 import EventsTimeline from '../components/EventsTimeline';
-import SendContractButton from '../Send-contract';
 
 function ContractSubmissions({ sale }) {
   const [loading, setLoading] = useState(true);
@@ -60,30 +59,48 @@ function ContractSubmissions({ sale }) {
 
   useEffect(() => {
     const fetchContractsBySale = async () => {
+      if (!sale?.id) {
+        console.error('ID da venda não fornecido.');
+        setLoading(false);
+        return;
+      }
+
       try {
-        console.log(`Buscando contratos para venda: ${sale?.id}`);
-        const contractsResponse = await contractService.getContractsBySaleId(sale?.id);
+        console.log(`Buscando contratos para venda: ${sale.id}`);
+        const contractsResponse = await contractService.getContractsBySaleId(sale.id);
 
         console.log('Contratos retornados:', contractsResponse);
-        setContracts(contractsResponse.results || []);
 
-        if (contractsResponse.results && contractsResponse.results.length > 0) {
-          const documentKeys = contractsResponse.results.map((contract) => contract.key_number);
+        const contracts = contractsResponse?.results || [];
+        setContracts(contracts);
 
-          const documentPromises = documentKeys.map((key) =>
-            axios.get(`/api/clicksign/getDocument/${key}`).catch((error) => {
-              console.error(`Erro ao buscar o contrato com chave ${key}:`, error.message);
+        if (contracts.length === 0) {
+          console.warn('Nenhum contrato encontrado para esta venda.');
+          return;
+        }
+
+        const documentPromises = contracts.map(({ envelope_id, key_number }) =>
+          axios
+            .get('/api/clicksign/getDocument', {
+              params: {
+                envelopes: envelope_id,
+                documents: key_number,
+              },
+            })
+            .then((response) => response.data)
+            .catch((error) => {
+              console.error(
+                `Erro ao buscar o contrato com chave ${key_number} e envelope_id ${envelope_id}: ${error.message}`,
+              );
               return null;
             }),
-          );
-          const documentResponses = await Promise.all(documentPromises);
-          const documentData = documentResponses
-            .filter((response) => response !== null)
-            .map((response) => response.data);
+        );
 
-          console.log('Dados de documentos:', documentData);
-          setContracts(documentData);
-        }
+        const documentResponses = await Promise.all(documentPromises);
+        const validDocuments = documentResponses.filter((doc) => doc !== null);
+
+        console.log('Dados de documentos:', validDocuments);
+        setContracts(validDocuments);
       } catch (error) {
         console.error('Erro ao buscar contratos ou metadados do documento:', error.message);
       } finally {
@@ -91,12 +108,7 @@ function ContractSubmissions({ sale }) {
       }
     };
 
-    if (sale?.id) {
-      fetchContractsBySale();
-    } else {
-      console.error('ID da venda não fornecido.');
-      setLoading(false);
-    }
+    fetchContractsBySale();
   }, [sale?.id]);
 
   if (loading) {

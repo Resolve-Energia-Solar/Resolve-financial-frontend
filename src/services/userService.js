@@ -1,7 +1,7 @@
 import apiClient from './apiClient';
 
 const formatTime = (time) => {
-  if (!time) return null;
+  if (!time || time === 'Invalid') return undefined;
   const date = new Date(time);
   return date.toTimeString().split(' ')[0];
 };
@@ -10,10 +10,7 @@ const userService = {
   getUser: async ({ page = 1, limit = 10 } = {}) => {
     try {
       const response = await apiClient.get('/api/users/', {
-        params: {
-          page,
-          limit,
-        },
+        params: { page, limit },
       });
       return response.data;
     } catch (error) {
@@ -61,12 +58,12 @@ const userService = {
     try {
       const response = await apiClient.get(`/api/users/${id}/`, {
         params: {
-          category: query.category,
-          date: query.scheduleDate,
-          start_time: formatTime(query.scheduleStartTime),
-          end_time: formatTime(query.scheduleEndTime),
-          latitude: query.scheduleLatitude,
-          longitude: query.scheduleLongitude,
+          category: query.category || undefined,
+          date: query.scheduleDate || undefined,
+        /*   start_time: formatTime(query.scheduleStartTime),
+          end_time: formatTime(query.scheduleEndTime), */
+          latitude: query.scheduleLatitude || undefined,
+          longitude: query.scheduleLongitude || undefined,
         },
       });
       return response.data;
@@ -75,27 +72,25 @@ const userService = {
       throw error;
     }
   },
-
   getUserByName: async (name) => {
     try {
       const response = await apiClient.get(`/api/users/?name=${name}`);
       return response.data;
     } catch (error) {
-      console.error(`Erro ao buscar usuário com id ${name}:`, error);
+      console.error(`Erro ao buscar usuário com nome ${name}:`, error);
       throw error;
     }
   },
-
   getUsersBySchedule: async (query) => {
     try {
       const response = await apiClient.get(`/api/users/`, {
         params: {
-          category: query.category,
-          date: query.scheduleDate,
-          start_time: query.scheduleStartTime,
-          end_time: query.scheduleEndTime,
-          latitude: query.scheduleLatitude,
-          longitude: query.scheduleLongitude,
+          category: query.category || undefined,
+          date: query.scheduleDate || undefined,
+         /*  start_time: formatTime(query.scheduleStartTime),
+          end_time: formatTime(query.scheduleEndTime), */
+          latitude: query.scheduleLatitude || undefined,
+          longitude: query.scheduleLongitude || undefined,
         },
       });
       return response.data;
@@ -104,7 +99,6 @@ const userService = {
       throw error;
     }
   },
-
   updateUser: async (id, data) => {
     try {
       const response = await apiClient.patch(`/api/users/${id}/`, data);

@@ -87,6 +87,8 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
     fetchSeller();
   }, [selectedSchedule]);
 
+  console.log('selectedSchedule:', selectedSchedule);
+
   const handleEditClick = (id) => {
     router.push(`/apps/inspections/schedule/${id}/update`);
   };
