@@ -47,7 +47,9 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     formErrors,
     success,
   } = useScheduleForm(scheduleData, id);
-console.log('formData', formData)
+
+  console.log('formData', formData)
+
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
   const [alertType, setAlertType] = React.useState('success');
@@ -75,6 +77,7 @@ console.log('formData', formData)
       showAlert('Ordem de serviço editada com sucesso', 'success');
     }
   };
+  
 
   const formattedServiceOpinions = (opinions) => {
     const formattedOpinions = [];
@@ -298,7 +301,6 @@ console.log('formData', formData)
           </Grid>
         </HasPermission>
 
-        {/* Agente de Campo */}
         <Grid item xs={12} sm={6} lg={6}>
           <CustomFormLabel htmlFor="field_agent">
             Agentes Disponíveis{' '}
@@ -320,6 +322,7 @@ console.log('formData', formData)
               scheduleEndTime: formData.schedule_end_time,
               scheduleLatitude: formData.latitude,
               scheduleLongitude: formData.longitude,
+              complete_name: formData.complete_name // Adiciona a busca pelo nome completo
             }}
             {...(formErrors.schedule_agent_id && {
               error: true,
@@ -328,7 +331,7 @@ console.log('formData', formData)
           />
         </Grid>
 
-        {/* Parecer final de Serviço */}
+          {/* Parecer final de Serviço */}
         <HasPermission
           permissions={['field_services.change_final_service_opinion']}
           userPermissions={userPermissions}

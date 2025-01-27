@@ -1,18 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import userService from '@/services/userService';
 import { debounce } from 'lodash';
 
-const AutoCompleteUserSchedule = ({ onChange, value, error, helperText, disabled, query }) => {
-  const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+export default function AutoCompleteUserSchedule({
+  onChange,
+  value,
+  error,
+  helperText,
+  disabled,
+  query,
+}) {
+  const [open, setOpen] = React.useState(false);
+  const [options, setOptions] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+  const [selectedUser, setSelectedUser] = React.useState(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const fetchDefaultUser = async () => {
       if (value) {
         try {
@@ -34,43 +40,55 @@ const AutoCompleteUserSchedule = ({ onChange, value, error, helperText, disabled
     };
 
     fetchDefaultUser();
-  }, [value, query]);
+  }, [value]);
 
-  const formatUserData = (user) => ({
-    id: user.id,
-    name: user.complete_name,
-    distance: user.distance ? user.distance.toFixed(2) : 'N/A',
-    daily_schedules_count: user.daily_schedules_count || '0',
-  });
-
-  const fetchUsersByName = debounce(async (name) => {
-    setLoading(true);
-    try {
-      const users = await userService.getUsersBySchedule(query);
-      const formattedUsers = users.results.map(formatUserData);
-      setOptions(formattedUsers);
-    } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
-    } finally {
-      setLoading(false);
+  const handleChange = (event, newValue) => {
+    setSelectedUser(newValue);
+    if (newValue) {
+      onChange(newValue.id);
+    } else {
+      onChange(null);
     }
-  }, 300);
+  };
+
+  const fetchUsersByName = React.useCallback(
+    debounce(async (name) => {
+      setLoading(true);
+      try {
+        // Atualiza a query com o parâmetro `complete_name__icontains`
+        const updatedQuery = {
+          ...query,
+          complete_name: name, // Passa o nome para o campo `complete_name__icontains`
+        };
+  
+        const users = await userService.getUsersBySchedule(updatedQuery);
+  
+        const formattedUsers = users.results.map((user) => ({
+          id: user.id,
+          name: user.complete_name,
+          distance: (user.distance || 0).toFixed(2),
+          daily_schedules_count: user.daily_schedules_count || '0',
+        }));
+  
+        setOptions(formattedUsers);
+      } catch (error) {
+        console.error('Erro ao buscar usuários:', error);
+      } finally {
+        setLoading(false);
+      }
+    }, 300),
+    [query], // query original como dependência
+  );
+  
+  
 
   const handleOpen = () => {
     setOpen(true);
-    if (options.length === 0) {
-      fetchUsersByName('');
-    }
   };
 
   const handleClose = () => {
     setOpen(false);
     setOptions([]);
-  };
-
-  const handleChange = (event, newValue) => {
-    setSelectedUser(newValue);
-    onChange(newValue ? newValue.id : null);
   };
 
   return (
@@ -80,7 +98,7 @@ const AutoCompleteUserSchedule = ({ onChange, value, error, helperText, disabled
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.id === value?.id}
+        isOptionEqualToValue={(option, value) => option.name === value.name}
         getOptionLabel={(option) =>
           `${option.name} (Distância: ${option.distance} KMs | Agendamentos: ${option.daily_schedules_count})`
         }
@@ -88,11 +106,12 @@ const AutoCompleteUserSchedule = ({ onChange, value, error, helperText, disabled
         loading={loading}
         disabled={disabled}
         noOptionsText="Não há agentes disponíveis para a região, data e horário selecionados. Por favor, escolha outra data e horário ou entre em contato com o setor de vistoria."
-        value={selectedUser || null}
+        value={selectedUser}
         onInputChange={(event, newInputValue) => {
-          if (newInputValue.trim()) fetchUsersByName(newInputValue);
+          fetchUsersByName(newInputValue);
         }}
         onChange={handleChange}
+        onFocus={() => fetchUsersByName('')}
         renderInput={(params) => (
           <CustomTextField
             {...params}
@@ -103,10 +122,10 @@ const AutoCompleteUserSchedule = ({ onChange, value, error, helperText, disabled
             InputProps={{
               ...params.InputProps,
               endAdornment: (
-                <>
-                  {loading && <CircularProgress color="inherit" size={20} />}
+                <React.Fragment>
+                  {loading ? <CircularProgress color="inherit" size={20} /> : null}
                   {params.InputProps.endAdornment}
-                </>
+                </React.Fragment>
               ),
             }}
           />
@@ -114,28 +133,4 @@ const AutoCompleteUserSchedule = ({ onChange, value, error, helperText, disabled
       />
     </div>
   );
-};
-
-AutoCompleteUserSchedule.propTypes = {
-  onChange: PropTypes.func.isRequired,
-  value: PropTypes.string,
-  error: PropTypes.bool,
-  helperText: PropTypes.string,
-  disabled: PropTypes.bool,
-  query: PropTypes.shape({
-    category: PropTypes.string,
-    scheduleDate: PropTypes.string,
-    scheduleLatitude: PropTypes.number,
-    scheduleLongitude: PropTypes.number,
-  }),
-};
-
-AutoCompleteUserSchedule.defaultProps = {
-  value: null,
-  error: false,
-  helperText: '',
-  disabled: false,
-  query: {},
-};
-
-export default AutoCompleteUserSchedule;
+}
