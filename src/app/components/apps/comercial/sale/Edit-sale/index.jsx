@@ -102,6 +102,12 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
     { value: 'D', label: 'Distrato' },
   ];
 
+  const financialOptions = [
+    { value: 'P', label: 'Pendente' },
+    { value: 'L', label: 'Liberada' },
+    { value: 'C', label: 'Cancelado' },
+  ];
+
   const [value, setValue] = useState(0);
 
   const handleChangeTab = (event, newValue) => {
@@ -255,6 +261,15 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                     value={formData.status}
                     onChange={(e) => handleChange('status', e.target.value)}
                     disabled={!hasPermission(['accounts.change_status_sale_field'])}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} lg={4}>
+                  <FormSelect
+                    label="Status Financeiro"
+                    options={financialOptions}
+                    value={formData.payment_status}
+                    onChange={(e) => handleChange('payment_status', e.target.value)}
+                    disabled={!hasPermission(['financial.change_status_financial'])}
                   />
                 </Grid>
                 <HasPermission
