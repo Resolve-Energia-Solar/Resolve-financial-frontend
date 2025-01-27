@@ -94,6 +94,31 @@ export const KanbanDataContextProvider = ({ children }) => {
     }
   };
 
+  const insertChildren = (categoryId, childrenToAdd, overwrite = false) => {
+    setTodoCategories((prevCategories) => {
+      return prevCategories.map((category) => {
+        if (category.id === categoryId) {
+          const currentChildren = category.child ?? [];
+          
+          if (childrenToAdd.length === 0 && !overwrite) {
+            console.warn('Nenhum child foi adicionado.');
+            return category;
+          }
+          console.log("hell")
+          return {
+            ...category,
+            child: overwrite ? [...childrenToAdd] : [...currentChildren, ...childrenToAdd],
+          };
+        }
+        return category;
+      });
+    });
+  };
+  
+  
+  
+  
+
   const updateTask = (taskId, data) => {
     setTodoCategories((prevCategories) => {
       return prevCategories.map((category) => {
@@ -121,6 +146,7 @@ export const KanbanDataContextProvider = ({ children }) => {
     });
   };
   
+  
   return (
     <KanbanDataContext.Provider
       value={{
@@ -128,6 +154,7 @@ export const KanbanDataContextProvider = ({ children }) => {
         loadingCategories,
         boardId,
         loadingLeadsIds,
+        insertChildren,
         setLoadingLeadsIds,
         updateTask,
         addTask,
