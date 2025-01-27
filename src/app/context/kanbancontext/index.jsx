@@ -13,7 +13,6 @@ const config = {
 
 export const KanbanDataContextProvider = ({ children }) => {
   const [todoCategories, setTodoCategories] = useState([]);
-  console.log('todoCategories:', todoCategories);
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [boardId, setBoardId] = useState(null);
   const [loadingLeadsIds, setLoadingLeadsIds] = useState([]);
@@ -111,7 +110,6 @@ export const KanbanDataContextProvider = ({ children }) => {
             console.warn('Nenhum child foi adicionado.');
             return category;
           }
-          console.log("hell")
           return {
             ...category,
             child: overwrite ? [...childrenToAdd] : [...currentChildren, ...childrenToAdd],
