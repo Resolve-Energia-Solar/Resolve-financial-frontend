@@ -25,8 +25,10 @@ const baselightTheme = {
     },
     error: {
       main: '#FA896B',
+      critical: '#EA3209',
       light: '#FDEDE8',
       dark: '#f3704d',
+      highlight: '#FFEBE4',
       contrastText: '#ffffff',
     },
     warning: {
@@ -89,8 +91,10 @@ const baseDarkTheme = {
     },
     error: {
       main: '#FA896B',
+      critical: '#EA3209',
       light: '#4B313D',
       dark: '#f3704d',
+      highlight: '#FFEBE4',
       contrastText: '#ffffff',
     },
     warning: {

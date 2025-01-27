@@ -93,7 +93,7 @@ const TaskData = ({ task, onDeleteTask, index }) => {
                 spacing={1}
                 sx={{ color: 'text.secondary' }}
               >
-                <ChipDeadLine status={'A'} />
+                <ChipDeadLine status={'P'} />
                 <AccessTime fontSize="10" />
                 <Typography variant="body2" sx={{ fontSize: 11 }}>
                   {editedTask.created_at
