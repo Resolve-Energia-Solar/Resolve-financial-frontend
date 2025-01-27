@@ -92,7 +92,7 @@ function CategoryTaskList({ id }) {
       try {
         const response = await leadService.getLeads({
           params: {
-            fields: 'id,name,phone,created_at,qualification',
+            fields: 'id,name,phone,created_at,qualification,origin',
             column: id,
             ordering: '-created_at',
             page: page,
