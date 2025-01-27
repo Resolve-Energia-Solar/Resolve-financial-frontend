@@ -18,6 +18,8 @@ import {
   DialogActions,
   Chip,
   Grid,
+  Checkbox,
+  Switch,
 } from '@mui/material';
 import { Edit, KeyboardArrowRight } from '@mui/icons-material';
 import { IconTrash } from '@tabler/icons-react';
@@ -29,6 +31,7 @@ import ScheduleFormEdit from '../../../inspections/schedule/Edit-schedule';
 import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
+import projectService from '@/services/projectService';
 
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
 
@@ -62,12 +65,26 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
       try {
         const response = await scheduleService.getAllSchedulesInspectionByProject(projectId);
         console.log('response', response.results);
+  
+        // Obter os detalhes do projeto para verificar a vistoria principal
+        const projectResponse = await projectService.getProjectById(projectId);
+  
+        // Extrair o ID da vistoria principal
+        const inspectionIdPrincipal = projectResponse.inspection.id;
+  
+        // Atualizar o estado das unidades para refletir qual deve ser marcada como principal
+        const updatedUnits = response.results.map((unit) => ({
+          ...unit,
+          isChecked: unit.id === inspectionIdPrincipal, // Marca apenas a vistoria correta
+        }));
+  
+        setUnits(updatedUnits);
         setLoading(false);
-        setUnits(response.results);
       } catch (error) {
         console.log('Error: ', error);
       }
     };
+  
     fetchUnits();
   }, [projectId, reload]);
 
@@ -92,6 +109,30 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
 
   const [units, setUnits] = useState([]);
 
+  const handleSwitchChange = async (checked, unitId) => {
+    // Salva o estado atual das unidades para possível reversão
+    const previousUnits = [...units];
+  
+    // Atualiza o estado localmente antes da requisição
+    const updatedUnits = units.map((unit) =>
+      unit.id === unitId ? { ...unit, isChecked: checked } : { ...unit, isChecked: false }
+    );
+    setUnits(updatedUnits);
+  
+    try {
+      if (checked) {
+        // Atualiza o projeto na API com a vistoria marcada como principal
+        await projectService.partialUpdateProject(projectId, { inspection_id: unitId });
+      } else {
+        console.log('Não é possível desmarcar a vistoria principal diretamente.');
+        setUnits(previousUnits); // Reverte caso o usuário tente desmarcar
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar o projeto:', error);
+      setUnits(previousUnits); // Reverte em caso de erro na requisição
+    }
+  };
+  
   const handleEdit = (unitId) => {
     setSelectedUnitId(unitId);
     setEditModalOpen(true);
@@ -165,6 +206,11 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                 </TableCell>
                 <TableCell align="center">
                   <Typography variant="h6" fontSize="14px">
+                    Principal
+                  </Typography>
+                </TableCell>
+                <TableCell align="center">
+                  <Typography variant="h6" fontSize="14px">
                     Ações
                   </Typography>
                 </TableCell>
@@ -199,6 +245,12 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                           <Chip label="Em Análise" color="info" />
                         )}
                       </Typography>
+                    </TableCell>
+                    <TableCell align="center">
+                    <Switch
+                      checked={unit?.isChecked || false}
+                      onChange={(e) => handleSwitchChange(e.target.checked, unit.id)}
+                    />
                     </TableCell>
                     <TableCell align="center">
                       <Tooltip title="Edit Item">
