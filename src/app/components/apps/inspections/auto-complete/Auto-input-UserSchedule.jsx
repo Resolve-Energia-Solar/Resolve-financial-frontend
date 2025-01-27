@@ -32,7 +32,7 @@ export default function AutoCompleteUserSchedule({
             });
           }
         } catch (error) {
-          console.error('Erro ao buscar usuário:', error);
+          console.error('Erro ao buscar usuário inicial:', error);
         }
       } else {
         setSelectedUser(null);
@@ -40,7 +40,7 @@ export default function AutoCompleteUserSchedule({
     };
 
     fetchDefaultUser();
-  }, [value]);
+  }, [value, query]);
 
   const handleChange = (event, newValue) => {
     setSelectedUser(newValue);

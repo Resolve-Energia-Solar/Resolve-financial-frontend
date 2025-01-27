@@ -1,9 +1,10 @@
 import apiClient from './apiClient';
 
 const formatTime = (time) => {
-  if (!time) return null;
-  const date = new Date(time);
-  return date.toTimeString().split(' ')[0];
+  if (!time || time === 'Invalid') {
+    return null; // Retorna null para horários inválidos
+  }
+  return time; // Retorna o horário válido
 };
 
 const userService = {
@@ -59,17 +60,23 @@ const userService = {
   },
   getUserByIdQuery: async (id, query) => {
     try {
-      const response = await apiClient.get(`/api/users/${id}/`, {
-        params: {
-          category: query.category,
-          date: query.scheduleDate,
-          start_time: formatTime(query.scheduleStartTime),
-          end_time: formatTime(query.scheduleEndTime),
-          latitude: query.scheduleLatitude,
-          longitude: query.scheduleLongitude,
-          complete_name__icontains: query.complete_name,
-        },
+      // Define os parâmetros apenas se `id` não for fornecido
+      const params = id
+        ? {} // Sem parâmetros se `id` existir
+        : {
+            category: query?.category || null,
+            date: query?.scheduleDate || null,
+            start_time: formatTime(query?.scheduleStartTime),
+            end_time: formatTime(query?.scheduleEndTime),
+            latitude: query?.scheduleLatitude || null,
+            longitude: query?.scheduleLongitude || null,
+            complete_name__icontains: query?.complete_name || null,
+          };
+  
+      const response = await apiClient.get(`/api/users/${id || ''}/`, {
+        params,
       });
+  
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar usuário com id ${id}:`, error);

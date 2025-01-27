@@ -28,6 +28,7 @@ import { useSelector } from 'react-redux';
 import AutoCompleteProduct from '../../auto-complete/Auto-input-product';
 import AutoInputStatusSchedule from '../../auto-complete/Auto-Input-StatusInspection';
 import AutoCompleteParentSchedule from '../../auto-complete/Auto-Input-parentSchedule';
+import userService from '@/services/userService';
 
 const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh = null }) => {
   const router = useRouter();
@@ -53,6 +54,8 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
   const [alertType, setAlertType] = React.useState('success');
+  const [initialAgent, setInitialAgent] = useState(null); // Estado para o vistoriador inicial
+
 
   const statusOptions = [
     { value: 'Pendente', label: 'Pendente' },
@@ -67,6 +70,36 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     { value: '13:30:00', label: '13:30' },
     { value: '15:00:00', label: '15:00' },
   ];
+
+  useEffect(() => {
+    const fetchInitialAgent = async () => {
+      if (formData.schedule_agent_id) {
+        try {
+          const response = await userService.getUserByIdQuery(formData.schedule_agent_id, {
+            category: formData.category_id,
+            scheduleDate: formData.schedule_date,
+            scheduleStartTime: formData.schedule_start_time,
+            scheduleEndTime: formData.schedule_end_time,
+            scheduleLatitude: formData.latitude,
+            scheduleLongitude: formData.longitude,
+          });
+
+          setInitialAgent({
+            id: response.id,
+            name: response.complete_name,
+            distance: (response.distance || 0).toFixed(2),
+            daily_schedules_count: response.daily_schedules_count || '0',
+          });
+        } catch (error) {
+          console.error('Erro ao carregar o inspetor inicial:', error);
+        }
+      } else {
+        setInitialAgent(null);
+      }
+    };
+
+    fetchInitialAgent();
+  }, [formData]);
 
   const [serviceOpinions, setServiceOpinions] = useState([]);
   const [loadingServiceOpinions, setLoadingServiceOpinions] = useState(false);
@@ -301,6 +334,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
           </Grid>
         </HasPermission>
 
+        {/* Agente de Campo */}
         <Grid item xs={12} sm={6} lg={6}>
           <CustomFormLabel htmlFor="field_agent">
             Agentes Disponíveis{' '}
@@ -314,7 +348,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
           <AutoCompleteUserSchedule
             onChange={(id) => handleChange('schedule_agent_id', id)}
             value={formData.schedule_agent_id}
-            disabled={formData.category_id === null}
+            disabled={!formData.category_id}
             query={{
               category: formData.category_id,
               scheduleDate: formData.schedule_date,
@@ -322,8 +356,8 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
               scheduleEndTime: formData.schedule_end_time,
               scheduleLatitude: formData.latitude,
               scheduleLongitude: formData.longitude,
-              complete_name: formData.complete_name // Adiciona a busca pelo nome completo
             }}
+            initialValue={initialAgent} // Passa o inspetor inicial ao autocomplete
             {...(formErrors.schedule_agent_id && {
               error: true,
               helperText: formErrors.schedule_agent_id,
