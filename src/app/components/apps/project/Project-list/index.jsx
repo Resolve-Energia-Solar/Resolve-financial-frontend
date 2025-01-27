@@ -30,6 +30,7 @@ import DrawerFiltersProject from '../components/DrawerFilters/DrawerFiltersProje
 import StatusChip from '@/utils/status/ProjectStatusChip';
 import { default as DocumentStatusChip } from '@/utils/status/DocumentStatusIcon';
 import { ProjectDataContext } from '@/app/context/ProjectContext';
+import TableSkeleton from '../../comercial/sale/components/TableSkeleton';
 
 const ProjectList = ({ onClick }) => {
   const [projectsList, setProjectsList] = useState([]);
@@ -52,7 +53,6 @@ const ProjectList = ({ onClick }) => {
           page: page + 1,
           limit: rowsPerPage,
           expand: 'sale.customer',
-          is_released_to_engineering: true,
           ...filters,
         });
 
@@ -83,7 +83,7 @@ const ProjectList = ({ onClick }) => {
 
   return (
     <>
-      <Accordion sx={{ marginBottom: 4 }}>
+      {/* <Accordion sx={{ marginBottom: 4 }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="sale-cards-content"
@@ -132,84 +132,53 @@ const ProjectList = ({ onClick }) => {
             ]}
           />
         </AccordionDetails>
-      </Accordion>
+      </Accordion> */}
 
       <Typography variant="h6" gutterBottom>
         Lista de Projetos
       </Typography>
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
-        <Button
-          variant="outlined"
-          startIcon={<AddBoxRounded />}
-          onClick={() => router.push('/apps/project/create')}
-          sx={{ marginBottom: 2 }}
-        >
-          Criar Projeto
-        </Button>
+        <Box>
+          {/* <Button
+            variant="outlined"
+            startIcon={<AddBoxRounded />}
+            onClick={() => router.push('/apps/project/create')}
+            sx={{ marginBottom: 2 }}
+          >
+            Criar Projeto
+          </Button> */}
+        </Box>
 
         <DrawerFiltersProject />
       </Box>
 
-      {loading ? (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <Skeleton variant="text" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton variant="text" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton variant="text" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton variant="text" />
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {Array.from(new Array(rowsPerPage)).map((_, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Skeleton variant="text" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      ) : error ? (
-        <Typography color="error">{error}</Typography>
-      ) : (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Cliente</TableCell>
-                <TableCell>Projeto</TableCell>
-                <TableCell>Produto</TableCell>
-                <TableCell>Status do Projeto</TableCell>
-                <TableCell>Status do Contrato</TableCell>
-                <TableCell>Ações</TableCell>
-              </TableRow>
-            </TableHead>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Cliente</TableCell>
+              <TableCell>Projeto</TableCell>
+              <TableCell>Produto</TableCell>
+              <TableCell>Status do Projeto</TableCell>
+              <TableCell>Status da Venda</TableCell>
+            </TableRow>
+          </TableHead>
+          {loading ? (
+            <TableSkeleton rows={5} columns={5} />
+          ) : error && page === 1 ? (
+            <Typography color="error">{error}</Typography>
+          ) : (
             <TableBody>
               {projectsList.map((item) => (
                 <TableRow
                   key={item.id}
                   onClick={() => onClick(item)}
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'rgba(236, 242, 255, 0.35)',
+                    },
+                  }}
                 >
                   <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                   <TableCell>{item?.project_number}</TableCell>
@@ -220,36 +189,22 @@ const ProjectList = ({ onClick }) => {
                   <TableCell>
                     <DocumentStatusChip status={item?.sale?.status} />
                   </TableCell>
-                  <TableCell>
-                    <Tooltip title="Editar">
-                      <IconButton
-                        color="primary"
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          router.push(`/apps/project/${item.id}/update`);
-                        }}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={totalRows}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handlePageChange}
-            onRowsPerPageChange={handleRowsPerPageChange}
-            labelRowsPerPage="Linhas por página"
-          />
-        </TableContainer>
-      )}
+          )}
+        </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={totalRows}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handlePageChange}
+          onRowsPerPageChange={handleRowsPerPageChange}
+          labelRowsPerPage="Linhas por página"
+        />
+      </TableContainer>
     </>
   );
 };
