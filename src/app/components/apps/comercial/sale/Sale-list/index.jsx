@@ -47,7 +47,6 @@ import DrawerFilters from '../components/DrawerFilters/DrawerFilters';
 import { SaleDataContext } from '@/app/context/SaleContext';
 import ActionFlash from '../components/flashAction/actionFlash';
 import StatusPreSale from '../components/StatusPreSale';
-import { IconEyeglass } from '@tabler/icons-react';
 import OnboardingCreateSale from '../Add-sale/onboarding';
 import { useSelector } from 'react-redux';
 import useSale from '@/hooks/sales/useSale';

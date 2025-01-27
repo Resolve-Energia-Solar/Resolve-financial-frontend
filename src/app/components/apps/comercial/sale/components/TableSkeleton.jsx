@@ -8,7 +8,14 @@ const TableSkeleton = ({ rows = 5, columns = 8 }) => {
         <TableRow key={index}>
           {Array.from(new Array(columns)).map((_, cellIndex) => (
             <TableCell key={cellIndex}>
-              <Skeleton variant={cellIndex === 0 ? 'rectangular' : 'text'} width="100%" height={40} />
+              <Skeleton
+                variant={cellIndex === 0 ? 'rectangular' : 'text'}
+                width="100%"
+                height={40}
+                sx={{
+                  borderRadius: 1,
+                }}
+              />
             </TableCell>
           ))}
         </TableRow>
@@ -18,4 +25,3 @@ const TableSkeleton = ({ rows = 5, columns = 8 }) => {
 };
 
 export default TableSkeleton;
-  
