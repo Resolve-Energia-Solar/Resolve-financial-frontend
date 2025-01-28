@@ -16,6 +16,7 @@ import FormDateRange from './DateRangePicker';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
 import { ProjectDataContext } from '@/app/context/ProjectContext';
+import NumberInputBasic, { CustomNumberInput, NumberInput } from '../NumberInput';
 
 export default function DrawerFiltersProject() {
   const [open, setOpen] = useState(false);
@@ -29,6 +30,7 @@ export default function DrawerFiltersProject() {
     is_released_to_engineering: filters.is_released_to_engineering ?? null,
     homologator: filters.homologator,
     signature_date: filters.signature_date,
+    product_kwp: filters.product_kwp || null,
   });
 
   const createFilterParams = (filters) => {
@@ -70,10 +72,16 @@ export default function DrawerFiltersProject() {
       params.homologator = filters.homologator;
     }
 
+    if (filters.product_kwp) {
+      params.product_kwp = filters.product_kwp
+    }
+
     return params;
   };
 
   const handleChange = (key, value) => {
+    console.log('key:', key);
+    console.log('value:', value);
     setTempFilters((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -85,6 +93,8 @@ export default function DrawerFiltersProject() {
       is_released_to_engineering: null,
       customer: null,
       homologator: null,
+      signature_date: [null, null],
+      product_kwp: null,
     });
   };
 
@@ -154,6 +164,16 @@ export default function DrawerFiltersProject() {
                   onChange={(newValue) => handleChange('signature_date', newValue)}
                   error={false}
                   helperText=""
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="homologator">Kwp</CustomFormLabel>
+                <NumberInput
+                  label="product_kwp"
+                  placeholder="Digite o Kwp"
+                  value={tempFilters.product_kwp}
+                  onChange={(event) => handleChange('product_kwp', event.target.value)}
                 />
               </Grid>
 
