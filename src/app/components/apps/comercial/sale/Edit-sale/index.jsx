@@ -105,7 +105,8 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
   const financialOptions = [
     { value: 'P', label: 'Pendente' },
     { value: 'L', label: 'Liberada' },
-    { value: 'C', label: 'Cancelado' },
+    { value: 'C', label: 'Concluído' },
+    { value: 'CA', label: 'Cancelado' },
   ];
 
   const [value, setValue] = useState(0);
