@@ -11,6 +11,7 @@ const useProjectForm = (initialData, id) => {
     start_date: null,
     end_date: null,
     is_completed: false,
+    is_documentation_completed: false,
     status: '',
     designer_status: '',
   });
@@ -29,6 +30,7 @@ const useProjectForm = (initialData, id) => {
         start_date: initialData.start_date ? initialData.start_date : null,
         end_date: initialData.end_date ? initialData.end_date : null,
         is_completed: initialData.is_completed || false,
+        is_documentation_completed: initialData.is_documentation_completed || false,
         status: initialData.status || '',
         designer_status: initialData.designer_status || '',
       });
@@ -48,6 +50,7 @@ const useProjectForm = (initialData, id) => {
       start_date: formData.start_date ? formatDate(formData.start_date) : null,
       end_date: formData.end_date ? formatDate(formData.end_date) : null,
       is_completed: formData.is_completed,
+      is_documentation_completed: formData.is_documentation_completed,
       status: formData.status,
       designer_status: formData.designer_status,
     };

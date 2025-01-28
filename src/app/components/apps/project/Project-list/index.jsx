@@ -31,6 +31,7 @@ import StatusChip from '@/utils/status/ProjectStatusChip';
 import { default as DocumentStatusChip } from '@/utils/status/DocumentStatusIcon';
 import { ProjectDataContext } from '@/app/context/ProjectContext';
 import TableSkeleton from '../../comercial/sale/components/TableSkeleton';
+import ChipProject from '../components/ChipProject';
 
 const ProjectList = ({ onClick }) => {
   const [projectsList, setProjectsList] = useState([]);
@@ -157,14 +158,17 @@ const ProjectList = ({ onClick }) => {
           <TableHead>
             <TableRow>
               <TableCell>Cliente</TableCell>
+              <TableCell>Homologador</TableCell>
               <TableCell>Projeto</TableCell>
               <TableCell>Produto</TableCell>
+              <TableCell>Kwp</TableCell>
               <TableCell>Status do Projeto</TableCell>
+              <TableCell>Status do Cliente</TableCell>
               <TableCell>Status da Venda</TableCell>
             </TableRow>
           </TableHead>
           {loading ? (
-            <TableSkeleton rows={5} columns={5} />
+            <TableSkeleton rows={rowsPerPage} cols={7} />
           ) : error && page === 1 ? (
             <Typography color="error">{error}</Typography>
           ) : (
@@ -180,8 +184,13 @@ const ProjectList = ({ onClick }) => {
                   }}
                 >
                   <TableCell>{item.sale?.customer?.complete_name}</TableCell>
+                  <TableCell>{item.homologator?.complete_name || '-'}</TableCell>
                   <TableCell>{item?.project_number}</TableCell>
                   <TableCell>{item.product?.name}</TableCell>
+                  <TableCell>{item.product?.params || '-'}</TableCell>
+                  <TableCell>
+                    <ChipProject status={item.is_documentation_completed} />
+                  </TableCell>
                   <TableCell>
                     <StatusChip status={item.status} />
                   </TableCell>

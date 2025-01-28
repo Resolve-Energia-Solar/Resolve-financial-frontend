@@ -16,6 +16,7 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
+  FormControlLabel,
 } from '@mui/material';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import { useParams } from 'next/navigation';
@@ -31,11 +32,15 @@ import FormPageSkeleton from '../../../comercial/sale/components/FormPageSkeleto
 import ProductChip from '../../../product/components/ProductChip';
 import { CheckCircle, Error } from '@mui/icons-material';
 import { useState } from 'react';
+import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
+import { useSelector } from 'react-redux';
 
 export default function EditProjectTab({ projectId = null, detail = false }) {
   const params = useParams();
   let id = projectId;
   if (!projectId) id = params.id;
+
+  const userPermissions = useSelector((state) => state.user.permissions);
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
@@ -47,7 +52,7 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
       project_number: 'Número do Projeto',
       start_date: 'Data de Início',
       end_date: 'Data de Término',
-      status: 'Status',
+      status: 'Status do Cliente',
       designer_status: 'Status Projetista',
     };
 
@@ -62,10 +67,14 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
 
   console.log('produtos/materiais', projectData?.product?.materials);
 
-  const { formData, handleChange, handleSave, formErrors, success, loading: formLoading } = useProjectForm(
-    projectData,
-    id,
-  );
+  const {
+    formData,
+    handleChange,
+    handleSave,
+    formErrors,
+    success,
+    loading: formLoading,
+  } = useProjectForm(projectData, id);
 
   const status_options = [
     { value: 'P', label: 'Pendente' },
@@ -122,7 +131,7 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
                     {projectData?.product?.materials.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={2} align="center">
-                          <Typography variant="body2">Nenhuma vistoria agendada</Typography>
+                          <Typography variant="body2">Nenhuma material cadastrado</Typography>
                         </TableCell>
                       </TableRow>
                     ) : (
@@ -178,7 +187,7 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
         </Grid>
         <Grid item xs={12} sm={12} lg={4}>
           <FormSelect
-            label="Status"
+            label="Status do Cliente"
             options={status_options}
             value={formData.status}
             onChange={(e) => handleChange('status', e.target.value)}
@@ -212,6 +221,19 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
             onChange={(newValue) => handleChange('end_date', newValue)}
             disabled={detail}
             {...(formErrors.end_date && { error: true, helperText: formErrors.end_date })}
+          />
+        </Grid>
+        <Grid item xs={12} sm={12} lg={12}>
+          <CustomFormLabel>Projeto</CustomFormLabel>
+          <FormControlLabel
+            control={
+              <CustomSwitch
+                checked={formData.is_documentation_completed}
+                disabled={!userPermissions.includes('resolve_crm.change_status_is_documentation_completed_project')}
+                onChange={(e) => handleChange('is_documentation_completed', e.target.checked)}
+              />
+            }
+            label={formData.is_documentation_completed ? 'Projeto Concluído' : 'Projeto Pendente'}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={12}>
