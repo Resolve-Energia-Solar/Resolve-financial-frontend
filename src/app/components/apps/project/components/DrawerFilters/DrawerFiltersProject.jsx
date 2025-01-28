@@ -1,5 +1,15 @@
 import React, { useState, useContext } from 'react';
-import { Box, Drawer, Button, Typography, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import {
+  Box,
+  Drawer,
+  Button,
+  Typography,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from '@mui/material';
 import { FilterAlt } from '@mui/icons-material';
 import CheckboxesTags from './CheckboxesTags';
 import FormDateRange from './DateRangePicker';
@@ -18,6 +28,7 @@ export default function DrawerFiltersProject() {
     designer_status: filters.designer_status,
     is_released_to_engineering: filters.is_released_to_engineering ?? null,
     homologator: filters.homologator,
+    signature_date: filters.signature_date,
   });
 
   const createFilterParams = (filters) => {
@@ -31,6 +42,12 @@ export default function DrawerFiltersProject() {
       const startDate = filters.documentCompletionDate[0].toISOString().split('T')[0];
       const endDate = filters.documentCompletionDate[1].toISOString().split('T')[0];
       params.end_date__range = `${startDate},${endDate}`;
+    }
+
+    if (filters.signature_date && filters.signature_date[0] && filters.signature_date[1]) {
+      const startDate = filters.signature_date[0].toISOString().split('T')[0];
+      const endDate = filters.signature_date[1].toISOString().split('T')[0];
+      params.signature_date = `${startDate},${endDate}`;
     }
 
     if (filters.status && filters.status.length > 0) {
@@ -131,6 +148,16 @@ export default function DrawerFiltersProject() {
               </Grid>
 
               <Grid item xs={12}>
+                <FormDateRange
+                  label="Data de Contrato"
+                  value={tempFilters.signature_date}
+                  onChange={(newValue) => handleChange('signature_date', newValue)}
+                  error={false}
+                  helperText=""
+                />
+              </Grid>
+
+              <Grid item xs={12}>
                 <CustomFormLabel htmlFor="Status">Status do Projeto</CustomFormLabel>
                 <CheckboxesTags
                   options={[
@@ -175,7 +202,7 @@ export default function DrawerFiltersProject() {
                     onChange={(event) =>
                       handleChange(
                         'is_released_to_engineering',
-                        event.target.value === '' ? null : event.target.value === 'true'
+                        event.target.value === '' ? null : event.target.value === 'true',
                       )
                     }
                   >
@@ -186,16 +213,6 @@ export default function DrawerFiltersProject() {
                     <MenuItem value="false">Não</MenuItem>
                   </Select>
                 </FormControl>
-              </Grid>
-
-              <Grid item xs={12}>
-                <FormDateRange
-                  label="Selecione a Data de Conclusão"
-                  value={tempFilters.documentCompletionDate}
-                  onChange={(newValue) => handleChange('documentCompletionDate', newValue)}
-                  error={false}
-                  helperText=""
-                />
               </Grid>
             </Grid>
           </Box>
