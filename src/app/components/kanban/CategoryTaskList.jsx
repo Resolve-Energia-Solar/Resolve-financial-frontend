@@ -63,7 +63,7 @@ function CategoryTaskList({ id }) {
     console.log('page:', page);
   
     if (isNearTop && !loading) {
-      setPage(1); // Vai para a primeira página
+      setPage(1);
     }
   
     if (isNearBottom) {

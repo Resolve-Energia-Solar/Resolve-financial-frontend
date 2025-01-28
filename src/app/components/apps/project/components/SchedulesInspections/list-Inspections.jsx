@@ -66,19 +66,19 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
         setLoading(true); // Garantir que o loading seja ativado no início
         const response = await scheduleService.getAllSchedulesInspectionByProject(projectId);
         console.log('response', response.results);
-  
+
         // Obter os detalhes do projeto para verificar a vistoria principal
         const projectResponse = await projectService.getProjectById(projectId);
-  
+
         // Extrair o ID da vistoria principal
         const inspectionIdPrincipal = projectResponse.inspection?.id || null;
-  
+
         // Atualizar o estado das unidades para refletir qual deve ser marcada como principal
         const updatedschedules = response.results.map((schedule) => ({
           ...schedule,
           isChecked: schedule.id === inspectionIdPrincipal, // Marca apenas a vistoria correta
         }));
-  
+
         setschedules(updatedschedules);
       } catch (error) {
         console.error('Erro ao buscar unidades: ', error);
@@ -86,12 +86,11 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
         setLoading(false); // Garantir que o loading seja desativado mesmo em caso de erro
       }
     };
-  
+
     if (projectId) {
       fetchSchedules();
     }
   }, [projectId, reload]); // Adicionar dependências específicas
-  
 
   useEffect(() => {
     const fetch = async () => {
@@ -106,25 +105,26 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
         setLoadingInspections(false); // Garantir que loadingInspections seja desativado
       }
     };
-  
+
     if (customer) {
       fetch();
     }
   }, [customer, reload]);
-  
 
   const [schedules, setschedules] = useState([]);
 
   const handleSwitchChange = async (checked, scheduleId) => {
     // Salva o estado atual das unidades para possível reversão
     const previousschedules = [...schedules];
-  
+
     // Atualiza o estado localmente antes da requisição
     const updatedschedules = schedules.map((schedule) =>
-      schedule.id === scheduleId ? { ...schedule, isChecked: checked } : { ...schedule, isChecked: false }
+      schedule.id === scheduleId
+        ? { ...schedule, isChecked: checked }
+        : { ...schedule, isChecked: false },
     );
     setschedules(updatedschedules);
-  
+
     try {
       if (checked) {
         // Atualiza o projeto na API com a vistoria marcada como principal
@@ -140,7 +140,7 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
       setschedules(previousschedules); // Reverte em caso de erro na requisição
     }
   };
-  
+
   const handleEdit = (scheduleId) => {
     setSelectedscheduleId(scheduleId);
     setEditModalOpen(true);
@@ -153,7 +153,9 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
   const handleDelete = async (scheduleId) => {
     try {
       await scheduleService.deleteSchedule(scheduleId);
-      setschedules((prevschedules) => prevschedules.filter((schedule) => schedule.id !== scheduleId));
+      setschedules((prevschedules) =>
+        prevschedules.filter((schedule) => schedule.id !== scheduleId),
+      );
       setConfirmDeleteModalOpen(false);
     } catch (error) {
       console.error('Erro ao excluir a unidade', error);
@@ -184,14 +186,6 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
   console.log('projectId:', projectId);
   console.log('schedules:', schedules);
   console.log('customer:', customer);
-
-  if (loading) {
-    return (
-      <Box>
-        <TableSkeleton rows={5} columns={20} sx={{ width: '100%' }} />
-      </Box>
-    );
-  }
 
   return (
     <Box>
@@ -232,15 +226,17 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                 </TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {schedules.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} align="center">
-                    <Typography variant="body2">Nenhuma vistoria agendada</Typography>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                schedules.map((schedule) => (
+            {loading ? (
+              <TableSkeleton rows={5} columns={6} />
+            ) : schedules.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} align="center">
+                  <Typography variant="body2">Nenhuma vistoria agendada</Typography>
+                </TableCell>
+              </TableRow>
+            ) : (
+              <TableBody>
+                {schedules.map((schedule) => (
                   <TableRow key={schedule.id}>
                     <TableCell align="center">
                       <Typography variant="body2">{schedule?.schedule_date}</Typography>
@@ -263,10 +259,10 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
-                    <Switch
-                      checked={schedule?.isChecked || false}
-                      onChange={(e) => handleSwitchChange(e.target.checked, schedule.id)}
-                    />
+                      <Switch
+                        checked={schedule?.isChecked || false}
+                        onChange={(e) => handleSwitchChange(e.target.checked, schedule.id)}
+                      />
                     </TableCell>
                     <TableCell align="center">
                       <Tooltip title="Edit Item">
@@ -281,27 +277,27 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                       </Tooltip>
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-              <TableRow>
-                <TableCell colSpan={6} align="center">
-                  <Button variant="contained" color="primary" onClick={() => handleAdd()}>
-                    Agendar Vistoria
-                  </Button>
-                  <Typography
-                    variant="body2"
-                    color="primary"
-                    component="a"
-                    display="block"
-                    mt={1}
-                    sx={{ cursor: 'pointer' }}
-                    onClick={() => setOpenModelInspectionNotAssociated(true)}
-                  >
-                    Adicionar uma vistoria já existente
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            </TableBody>
+                ))}
+                <TableRow>
+                  <TableCell colSpan={6} align="center">
+                    <Button variant="contained" color="primary" onClick={() => handleAdd()}>
+                      Agendar Vistoria
+                    </Button>
+                    <Typography
+                      variant="body2"
+                      color="primary"
+                      component="a"
+                      display="block"
+                      mt={1}
+                      sx={{ cursor: 'pointer' }}
+                      onClick={() => setOpenModelInspectionNotAssociated(true)}
+                    >
+                      Adicionar uma vistoria já existente
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            )}
           </Table>
         </TableContainer>
       </Paper>
@@ -377,52 +373,55 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                   </TableCell>
                 </TableRow>
               </TableHead>
-      {loadingInspections ? (
-        <TableSkeleton rows={5} columns={5} />
-      ) : (
-        <TableBody>
-          {inspectionsNotAssociated.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={5} align="center">
-                <Typography variant="body2">
-                  Nenhuma vistoria encontrada para este cliente
-                </Typography>
-              </TableCell>
-            </TableRow>
-          ) : (
-            inspectionsNotAssociated.map((schedule) => (
-              <TableRow key={schedule.id}>
-                <TableCell align="center">
-                  <Typography variant="body2">{schedule?.schedule_date}</Typography>
-                </TableCell>
-                <TableCell align="center">
-                  <Typography variant="body2">{schedule?.schedule_start_time}</Typography>
-                </TableCell>
-                <TableCell align="center">
-                  <Typography variant="body2">{schedule?.schedule_end_time}</Typography>
-                </TableCell>
-                <TableCell align="center">
-                  <Typography variant="body2">
-                    <SupplyChip status={schedule?.status} />
-                  </Typography>
-                </TableCell>
-                <TableCell align="center">
-                  <Tooltip title="Editar Item">
-                    <IconButton color="primary" onClick={() => handleEdit(schedule.id)}>
-                      <Edit width={22} />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Associar Item">
-                    <IconButton color="success" onClick={() => openAssociateModal(schedule.id)}>
-                      <KeyboardArrowRight width={22} />
-                    </IconButton>
-                  </Tooltip>
-                </TableCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      )}
+              {loadingInspections ? (
+                <TableSkeleton rows={5} columns={5} />
+              ) : (
+                <TableBody>
+                  {inspectionsNotAssociated.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} align="center">
+                        <Typography variant="body2">
+                          Nenhuma vistoria encontrada para este cliente
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    inspectionsNotAssociated.map((schedule) => (
+                      <TableRow key={schedule.id}>
+                        <TableCell align="center">
+                          <Typography variant="body2">{schedule?.schedule_date}</Typography>
+                        </TableCell>
+                        <TableCell align="center">
+                          <Typography variant="body2">{schedule?.schedule_start_time}</Typography>
+                        </TableCell>
+                        <TableCell align="center">
+                          <Typography variant="body2">{schedule?.schedule_end_time}</Typography>
+                        </TableCell>
+                        <TableCell align="center">
+                          <Typography variant="body2">
+                            <SupplyChip status={schedule?.status} />
+                          </Typography>
+                        </TableCell>
+                        <TableCell align="center">
+                          <Tooltip title="Editar Item">
+                            <IconButton color="primary" onClick={() => handleEdit(schedule.id)}>
+                              <Edit width={22} />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Associar Item">
+                            <IconButton
+                              color="success"
+                              onClick={() => openAssociateModal(schedule.id)}
+                            >
+                              <KeyboardArrowRight width={22} />
+                            </IconButton>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              )}
             </Table>
           </TableContainer>
         </DialogContent>
