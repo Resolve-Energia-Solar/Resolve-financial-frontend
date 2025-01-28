@@ -37,7 +37,7 @@ const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
 
 const ListInspection = ({ projectId = null, product = [], customerId }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedUnitId, setSelectedUnitId] = useState(null);
+  const [selectedscheduleId, setSelectedscheduleId] = useState(null);
   const [AddModalOpen, setAddModalOpen] = useState(false);
   const [openModelInspectionNotAssociated, setOpenModelInspectionNotAssociated] = useState(false);
   const [confirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
@@ -61,8 +61,9 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
   };
 
   useEffect(() => {
-    const fetchUnits = async () => {
+    const fetchSchedules = async () => {
       try {
+        setLoading(true); // Garantir que o loading seja ativado no início
         const response = await scheduleService.getAllSchedulesInspectionByProject(projectId);
         console.log('response', response.results);
   
@@ -70,27 +71,31 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
         const projectResponse = await projectService.getProjectById(projectId);
   
         // Extrair o ID da vistoria principal
-        const inspectionIdPrincipal = projectResponse.inspection.id;
+        const inspectionIdPrincipal = projectResponse.inspection?.id || null;
   
         // Atualizar o estado das unidades para refletir qual deve ser marcada como principal
-        const updatedUnits = response.results.map((unit) => ({
-          ...unit,
-          isChecked: unit.id === inspectionIdPrincipal, // Marca apenas a vistoria correta
+        const updatedschedules = response.results.map((schedule) => ({
+          ...schedule,
+          isChecked: schedule.id === inspectionIdPrincipal, // Marca apenas a vistoria correta
         }));
   
-        setUnits(updatedUnits);
-        setLoading(false);
+        setschedules(updatedschedules);
       } catch (error) {
-        console.log('Error: ', error);
+        console.error('Erro ao buscar unidades: ', error);
+      } finally {
+        setLoading(false); // Garantir que o loading seja desativado mesmo em caso de erro
       }
     };
   
-    fetchUnits();
-  }, [projectId, reload]);
+    if (projectId) {
+      fetchSchedules();
+    }
+  }, [projectId, reload]); // Adicionar dependências específicas
+  
 
   useEffect(() => {
     const fetch = async () => {
-      setLoadingInspections(true);
+      setLoadingInspections(true); // Garantir que loadingInspections seja true no início
       try {
         const response = await scheduleService.getAllSchedulesInspectionByCustomer(customer);
         const filteredResults = response.results.filter((item) => item.project?.sale_id === null);
@@ -98,43 +103,46 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
       } catch (error) {
         console.error('Erro ao buscar agendamentos:', error);
       } finally {
-        setLoadingInspections(false);
+        setLoadingInspections(false); // Garantir que loadingInspections seja desativado
       }
     };
-
+  
     if (customer) {
       fetch();
     }
   }, [customer, reload]);
+  
 
-  const [units, setUnits] = useState([]);
+  const [schedules, setschedules] = useState([]);
 
-  const handleSwitchChange = async (checked, unitId) => {
+  const handleSwitchChange = async (checked, scheduleId) => {
     // Salva o estado atual das unidades para possível reversão
-    const previousUnits = [...units];
+    const previousschedules = [...schedules];
   
     // Atualiza o estado localmente antes da requisição
-    const updatedUnits = units.map((unit) =>
-      unit.id === unitId ? { ...unit, isChecked: checked } : { ...unit, isChecked: false }
+    const updatedschedules = schedules.map((schedule) =>
+      schedule.id === scheduleId ? { ...schedule, isChecked: checked } : { ...schedule, isChecked: false }
     );
-    setUnits(updatedUnits);
+    setschedules(updatedschedules);
   
     try {
       if (checked) {
         // Atualiza o projeto na API com a vistoria marcada como principal
-        await projectService.partialUpdateProject(projectId, { inspection_id: unitId });
+        await projectService.partialUpdateProject(projectId, { inspection_id: scheduleId });
+        console.log('Vistoria principal atualizada com sucesso.');
+        console.log('scheduleId:', scheduleId);
       } else {
         console.log('Não é possível desmarcar a vistoria principal diretamente.');
-        setUnits(previousUnits); // Reverte caso o usuário tente desmarcar
+        setschedules(previousschedules); // Reverte caso o usuário tente desmarcar
       }
     } catch (error) {
       console.error('Erro ao atualizar o projeto:', error);
-      setUnits(previousUnits); // Reverte em caso de erro na requisição
+      setschedules(previousschedules); // Reverte em caso de erro na requisição
     }
   };
   
-  const handleEdit = (unitId) => {
-    setSelectedUnitId(unitId);
+  const handleEdit = (scheduleId) => {
+    setSelectedscheduleId(scheduleId);
     setEditModalOpen(true);
   };
 
@@ -142,10 +150,10 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
     setAddModalOpen(true);
   };
 
-  const handleDelete = async (unitId) => {
+  const handleDelete = async (scheduleId) => {
     try {
-      await scheduleService.deleteSchedule(unitId);
-      setUnits((prevUnits) => prevUnits.filter((unit) => unit.id !== unitId));
+      await scheduleService.deleteSchedule(scheduleId);
+      setschedules((prevschedules) => prevschedules.filter((schedule) => schedule.id !== scheduleId));
       setConfirmDeleteModalOpen(false);
     } catch (error) {
       console.error('Erro ao excluir a unidade', error);
@@ -163,18 +171,26 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
     }
   };
 
-  const openDeleteModal = (unitId) => {
-    setInspectionSelected(unitId);
+  const openDeleteModal = (scheduleId) => {
+    setInspectionSelected(scheduleId);
     setConfirmDeleteModalOpen(true);
   };
 
-  const openAssociateModal = (unitId) => {
-    setInspectionSelected(unitId);
+  const openAssociateModal = (scheduleId) => {
+    setInspectionSelected(scheduleId);
     setConfirmAssociateModalOpen(true);
   };
 
+  console.log('projectId:', projectId);
+  console.log('schedules:', schedules);
+  console.log('customer:', customer);
+
   if (loading) {
-    return <Typography variant="body2">Carregando...</Typography>;
+    return (
+      <Box>
+        <TableSkeleton rows={5} columns={20} sx={{ width: '100%' }} />
+      </Box>
+    );
   }
 
   return (
@@ -217,30 +233,30 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {units.length === 0 ? (
+              {schedules.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} align="center">
                     <Typography variant="body2">Nenhuma vistoria agendada</Typography>
                   </TableCell>
                 </TableRow>
               ) : (
-                units.map((unit) => (
-                  <TableRow key={unit.id}>
+                schedules.map((schedule) => (
+                  <TableRow key={schedule.id}>
                     <TableCell align="center">
-                      <Typography variant="body2">{unit?.schedule_date}</Typography>
+                      <Typography variant="body2">{schedule?.schedule_date}</Typography>
                     </TableCell>
                     <TableCell align="center">
-                      <Typography variant="body2">{unit?.schedule_start_time}</Typography>
+                      <Typography variant="body2">{schedule?.schedule_start_time}</Typography>
                     </TableCell>
                     <TableCell align="center">
                       <Typography variant="body2">
-                        <SupplyChip status={unit?.status} />
+                        <SupplyChip status={schedule?.status} />
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
                       <Typography variant="body2">
-                        {unit?.final_service_opinion?.name ? (
-                          <Chip label={unit?.final_service_opinion?.name} />
+                        {schedule?.final_service_opinion?.name ? (
+                          <Chip label={schedule?.final_service_opinion?.name} />
                         ) : (
                           <Chip label="Em Análise" color="info" />
                         )}
@@ -248,18 +264,18 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                     </TableCell>
                     <TableCell align="center">
                     <Switch
-                      checked={unit?.isChecked || false}
-                      onChange={(e) => handleSwitchChange(e.target.checked, unit.id)}
+                      checked={schedule?.isChecked || false}
+                      onChange={(e) => handleSwitchChange(e.target.checked, schedule.id)}
                     />
                     </TableCell>
                     <TableCell align="center">
                       <Tooltip title="Edit Item">
-                        <IconButton color="primary" onClick={() => handleEdit(unit.id)}>
+                        <IconButton color="primary" onClick={() => handleEdit(schedule.id)}>
                           <Edit width={22} />
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Delete Item">
-                        <IconButton color="error" onClick={() => openDeleteModal(unit.id)}>
+                        <IconButton color="error" onClick={() => openDeleteModal(schedule.id)}>
                           <IconTrash width={22} />
                         </IconButton>
                       </Tooltip>
@@ -296,7 +312,7 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
         <DialogContent>
           <ScheduleFormEdit
             onClosedModal={() => setEditModalOpen(false)}
-            scheduleId={selectedUnitId}
+            scheduleId={selectedscheduleId}
             onRefresh={reloadPage}
           />
         </DialogContent>
@@ -374,30 +390,30 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
               </TableCell>
             </TableRow>
           ) : (
-            inspectionsNotAssociated.map((unit) => (
-              <TableRow key={unit.id}>
+            inspectionsNotAssociated.map((schedule) => (
+              <TableRow key={schedule.id}>
                 <TableCell align="center">
-                  <Typography variant="body2">{unit?.schedule_date}</Typography>
+                  <Typography variant="body2">{schedule?.schedule_date}</Typography>
                 </TableCell>
                 <TableCell align="center">
-                  <Typography variant="body2">{unit?.schedule_start_time}</Typography>
+                  <Typography variant="body2">{schedule?.schedule_start_time}</Typography>
                 </TableCell>
                 <TableCell align="center">
-                  <Typography variant="body2">{unit?.schedule_end_time}</Typography>
+                  <Typography variant="body2">{schedule?.schedule_end_time}</Typography>
                 </TableCell>
                 <TableCell align="center">
                   <Typography variant="body2">
-                    <SupplyChip status={unit?.status} />
+                    <SupplyChip status={schedule?.status} />
                   </Typography>
                 </TableCell>
                 <TableCell align="center">
                   <Tooltip title="Editar Item">
-                    <IconButton color="primary" onClick={() => handleEdit(unit.id)}>
+                    <IconButton color="primary" onClick={() => handleEdit(schedule.id)}>
                       <Edit width={22} />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Associar Item">
-                    <IconButton color="success" onClick={() => openAssociateModal(unit.id)}>
+                    <IconButton color="success" onClick={() => openAssociateModal(schedule.id)}>
                       <KeyboardArrowRight width={22} />
                     </IconButton>
                   </Tooltip>
