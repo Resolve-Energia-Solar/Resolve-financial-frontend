@@ -159,10 +159,10 @@ const ProjectList = ({ onClick }) => {
             <TableRow>
               <TableCell>Cliente</TableCell>
               <TableCell>Homologador</TableCell>
-              <TableCell>Projeto</TableCell>
+              <TableCell>Status do Projeto</TableCell>
+
               <TableCell>Produto</TableCell>
               <TableCell>Kwp</TableCell>
-              <TableCell>Status do Projeto</TableCell>
               <TableCell>Status do Cliente</TableCell>
               <TableCell>Status da Venda</TableCell>
             </TableRow>
@@ -185,12 +185,11 @@ const ProjectList = ({ onClick }) => {
                 >
                   <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                   <TableCell>{item.homologator?.complete_name || '-'}</TableCell>
-                  <TableCell>{item?.project_number}</TableCell>
-                  <TableCell>{item.product?.name}</TableCell>
-                  <TableCell>{item.product?.params || '-'}</TableCell>
                   <TableCell>
                     <ChipProject status={item.is_documentation_completed} />
-                  </TableCell>
+                  </TableCell>{' '}
+                  <TableCell>{item.product?.name}</TableCell>
+                  <TableCell>{item.product?.params || '-'}</TableCell>
                   <TableCell>
                     <StatusChip status={item.status} />
                   </TableCell>

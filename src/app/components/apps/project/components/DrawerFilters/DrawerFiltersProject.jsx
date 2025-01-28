@@ -17,6 +17,7 @@ export default function DrawerFiltersProject() {
     customer: filters.customer,
     designer_status: filters.designer_status,
     is_released_to_engineering: filters.is_released_to_engineering ?? null,
+    homologator: filters.homologator,
   });
 
   const createFilterParams = (filters) => {
@@ -48,6 +49,10 @@ export default function DrawerFiltersProject() {
       params.is_released_to_engineering = filters.is_released_to_engineering;
     }
 
+    if (filters.homologator) {
+      params.homologator = filters.homologator;
+    }
+
     return params;
   };
 
@@ -61,6 +66,8 @@ export default function DrawerFiltersProject() {
       status: [],
       designer_status: [],
       is_released_to_engineering: null,
+      customer: null,
+      homologator: null,
     });
   };
 
@@ -111,6 +118,15 @@ export default function DrawerFiltersProject() {
                   placeholder="Selecione o cliente"
                   value={tempFilters.customer}
                   onChange={(id) => handleChange('customer', id)}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="homologator">Homologador</CustomFormLabel>
+                <AutoCompleteUser
+                  placeholder="Selecione o homologator"
+                  value={tempFilters.homologator}
+                  onChange={(id) => handleChange('homologator', id)}
                 />
               </Grid>
 
