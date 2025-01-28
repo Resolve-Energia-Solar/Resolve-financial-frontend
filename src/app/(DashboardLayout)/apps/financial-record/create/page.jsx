@@ -1,5 +1,8 @@
 'use client';
-import { Grid, Button, Stack, Select, MenuItem } from '@mui/material';
+import { Grid, Button, Stack, Select, MenuItem, InputAdornment, FormHelperText } from '@mui/material';
+import AutoCompleteDepartment from '@/app/components/apps/financial-record/departmentInput';
+import AutoCompleteCategory from '@/app/components/apps/financial-record/categoryInput';
+import AutoCompleteBeneficiary from '@/app/components/apps/financial-record/beneficiaryInput';
 import { IconArrowDown, IconArrowUp } from '@tabler/icons-react';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
@@ -17,9 +20,21 @@ export default function FormCustom() {
   const router = useRouter();
   const { formData, handleChange, handleSave, formErrors, success } = useFinancialRecordForm();
   const user = useSelector((state) => state.user?.user);
+
   if (success) {
     router.push('/apps/financial-record');
   }
+
+  const getCurrentTimestamp = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    return `${year}${month}${day}${hours}${minutes}${seconds}`;
+  };
 
   return (
     <PageContainer title="Criação de Contas a Receber/Pagar" description="Formulário para criar nova conta a receber/pagar">
@@ -32,52 +47,28 @@ export default function FormCustom() {
       <ParentCard title="Nova Conta a Receber/Pagar">
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <CustomFormLabel htmlFor="requester_id">Solicitante</CustomFormLabel>
+            <CustomFormLabel>Solicitante</CustomFormLabel>
             <Select
-              name="requester_id"
               variant="outlined"
               fullWidth
-              value={user.id}
+              value='1'
               disabled
             >
-              <MenuItem value={user.id}>{user.complete_name}</MenuItem>
+              <MenuItem value='1'>{user.complete_name}</MenuItem>
             </Select>
           </Grid>
           <Grid item xs={12}>
-            <CustomFormLabel htmlFor="responsible_id">Responsável</CustomFormLabel>
+            <CustomFormLabel>Responsável</CustomFormLabel>
             <Select
-              name="responsible_id"
               variant="outlined"
               fullWidth
-              value={user.id}
+              value='1'
               disabled
             >
-              <MenuItem value={user.id}>{user.complete_name}</MenuItem>
+              <MenuItem value='1'>{user.employee.user_manager.complete_name}</MenuItem>
             </Select>
           </Grid>
-          <Grid item xs={12}>
-            <CustomFormLabel htmlFor="integration_code">Código de Integração</CustomFormLabel>
-            <CustomTextField
-              name="integration_code"
-              variant="outlined"
-              fullWidth
-              value={formData.integration_code}
-              onChange={(e) => handleChange('integration_code', e.target.value)}
-              {...(formErrors.integration_code && { error: true, helperText: formErrors.integration_code })}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <CustomFormLabel htmlFor="protocol">Protocolo</CustomFormLabel>
-            <CustomTextField
-              name="protocol"
-              variant="outlined"
-              fullWidth
-              value={formData.protocol}
-              onChange={(e) => handleChange('protocol', e.target.value)}
-              {...(formErrors.protocol && { error: true, helperText: formErrors.protocol })}
-            />
-          </Grid>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <CustomFormLabel htmlFor="is_receivable">A pagar / A receber</CustomFormLabel>
             <Stack direction="row" spacing={2}>
               <Button
@@ -97,18 +88,7 @@ export default function FormCustom() {
                 A Pagar
               </Button>
             </Stack>
-          </Grid>
-          <Grid item xs={12}>
-            <CustomFormLabel htmlFor="status">Status</CustomFormLabel>
-            <CustomTextField
-              name="status"
-              variant="outlined"
-              fullWidth
-              value={formData.status}
-              onChange={(e) => handleChange('status', e.target.value)}
-              {...(formErrors.status && { error: true, helperText: formErrors.status })}
-            />
-          </Grid>
+          </Grid> */}
           <Grid item xs={12}>
             <CustomFormLabel htmlFor="value">Valor</CustomFormLabel>
             <CustomTextField
@@ -117,6 +97,9 @@ export default function FormCustom() {
               fullWidth
               value={formData.value}
               onChange={(e) => handleChange('value', e.target.value)}
+              InputProps={{
+                startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+              }}
               {...(formErrors.value && { error: true, helperText: formErrors.value })}
             />
           </Grid>
@@ -124,6 +107,7 @@ export default function FormCustom() {
             <CustomFormLabel htmlFor="due_date">Data de Vencimento</CustomFormLabel>
             <CustomTextField
               name="due_date"
+              type="date"
               variant="outlined"
               fullWidth
               value={formData.due_date}
@@ -135,6 +119,7 @@ export default function FormCustom() {
             <CustomFormLabel htmlFor="service_date">Data de Serviço</CustomFormLabel>
             <CustomTextField
               name="service_date"
+              type="date"
               variant="outlined"
               fullWidth
               value={formData.service_date}
@@ -143,36 +128,37 @@ export default function FormCustom() {
             />
           </Grid>
           <Grid item xs={12}>
-            <CustomFormLabel htmlFor="department_code">Código do Departamento</CustomFormLabel>
-            <CustomTextField
-              name="department_code"
-              variant="outlined"
-              fullWidth
+            <CustomFormLabel htmlFor="department_code">Departamento</CustomFormLabel>
+            <AutoCompleteDepartment
+              onChange={(value) => handleChange('department_code', value)}
               value={formData.department_code}
-              onChange={(e) => handleChange('department_code', e.target.value)}
-              {...(formErrors.department_code && { error: true, helperText: formErrors.department_code })}
+              error={formErrors.department_code}
+              helperText={formErrors.department_code}
+              disabled={false}
+              // labeltitle="Departamento"
             />
           </Grid>
           <Grid item xs={12}>
-            <CustomFormLabel htmlFor="category_code">Código da Categoria</CustomFormLabel>
-            <CustomTextField
-              name="category_code"
-              variant="outlined"
-              fullWidth
+            <CustomFormLabel htmlFor="category_code">Categoria</CustomFormLabel>
+            <AutoCompleteCategory
+              onChange={(value) => handleChange('category_code', value)}
               value={formData.category_code}
-              onChange={(e) => handleChange('category_code', e.target.value)}
-              {...(formErrors.category_code && { error: true, helperText: formErrors.category_code })}
+              error={formErrors.category_code}
+              helperText={formErrors.category_code}
+              disabled={false}
+              // labeltitle="Categoria"
             />
           </Grid>
           <Grid item xs={12}>
-            <CustomFormLabel htmlFor="client_supplier_code">Código do Cliente/Fornecedor</CustomFormLabel>
-            <CustomTextField
+            <CustomFormLabel htmlFor="client_supplier_code">Beneficiário</CustomFormLabel>
+            <AutoCompleteBeneficiary
               name="client_supplier_code"
-              variant="outlined"
-              fullWidth
-              value={formData.client_supplier_code}
+              value={formData.customer_code}
+              error={formErrors.customer_code}
+              helperText={formErrors.customer_code}
+              disabled={false}
               onChange={(e) => handleChange('client_supplier_code', e.target.value)}
-              {...(formErrors.client_supplier_code && { error: true, helperText: formErrors.client_supplier_code })}
+              // labeltitle="Beneficiário"
             />
           </Grid>
           <Grid item xs={12}>
@@ -187,7 +173,7 @@ export default function FormCustom() {
             />
           </Grid>
           <Grid item xs={12}>
-            <CustomFormLabel htmlFor="notes">Notas</CustomFormLabel>
+            <CustomFormLabel htmlFor="notes">Descrição</CustomFormLabel>
             <CustomTextField
               name="notes"
               variant="outlined"
@@ -195,28 +181,6 @@ export default function FormCustom() {
               value={formData.notes}
               onChange={(e) => handleChange('notes', e.target.value)}
               {...(formErrors.notes && { error: true, helperText: formErrors.notes })}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <CustomFormLabel htmlFor="approved_at">Data de Aprovação</CustomFormLabel>
-            <CustomTextField
-              name="approved_at"
-              variant="outlined"
-              fullWidth
-              value={formData.approved_at}
-              onChange={(e) => handleChange('approved_at', e.target.value)}
-              {...(formErrors.approved_at && { error: true, helperText: formErrors.approved_at })}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <CustomFormLabel htmlFor="paid_at">Data de Pagamento</CustomFormLabel>
-            <CustomTextField
-              name="paid_at"
-              variant="outlined"
-              fullWidth
-              value={formData.paid_at}
-              onChange={(e) => handleChange('paid_at', e.target.value)}
-              {...(formErrors.paid_at && { error: true, helperText: formErrors.paid_at })}
             />
           </Grid>
           <Grid item xs={12}>
