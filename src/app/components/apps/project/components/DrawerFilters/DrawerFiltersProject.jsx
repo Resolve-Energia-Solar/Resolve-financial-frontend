@@ -17,6 +17,7 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
 import { ProjectDataContext } from '@/app/context/ProjectContext';
 import NumberInputBasic, { CustomNumberInput, NumberInput } from '../NumberInput';
+import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 
 export default function DrawerFiltersProject() {
   const [open, setOpen] = useState(false);
@@ -169,11 +170,17 @@ export default function DrawerFiltersProject() {
 
               <Grid item xs={12}>
                 <CustomFormLabel htmlFor="homologator">Kwp</CustomFormLabel>
-                <NumberInput
-                  label="product_kwp"
+                <CustomTextField
+                  fullWidth
                   placeholder="Digite o Kwp"
                   value={tempFilters.product_kwp}
-                  onChange={(event) => handleChange('product_kwp', event.target.value)}
+                  onChange={(event) => {
+                    const onlyNumbers = event.target.value.replace(/\D/g, '');
+                    handleChange('product_kwp', onlyNumbers);
+                  }}
+                  inputProps={{
+                    type: 'number',
+                  }}
                 />
               </Grid>
 
