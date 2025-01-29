@@ -9,8 +9,8 @@ const ProductService = {
     const response = await apiClient.get(`/api/products/?default__in=S`);
     return response.data;
   },
-  getProductsByName: async (name) => {
-    const response = await apiClient.get(`/api/products/?name__icontains=${name}`);
+  getProductsByName: async (name, defaultValue) => {
+    const response = await apiClient.get(`/api/products/?name__icontains=${name}&default__in=S`);
     return response.data;
   },
 
