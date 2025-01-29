@@ -1,11 +1,23 @@
 import React, { useState, useContext } from 'react';
-import { Box, Drawer, Button, Typography, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import {
+  Box,
+  Drawer,
+  Button,
+  Typography,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from '@mui/material';
 import { FilterAlt } from '@mui/icons-material';
 import CheckboxesTags from './CheckboxesTags';
 import FormDateRange from './DateRangePicker';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
 import { ProjectDataContext } from '@/app/context/ProjectContext';
+import NumberInputBasic, { CustomNumberInput, NumberInput } from '../NumberInput';
+import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 
 export default function DrawerFiltersProject() {
   const [open, setOpen] = useState(false);
@@ -17,6 +29,9 @@ export default function DrawerFiltersProject() {
     customer: filters.customer,
     designer_status: filters.designer_status,
     is_released_to_engineering: filters.is_released_to_engineering ?? null,
+    homologator: filters.homologator,
+    signature_date: filters.signature_date,
+    product_kwp: filters.product_kwp || null,
   });
 
   const createFilterParams = (filters) => {
@@ -30,6 +45,12 @@ export default function DrawerFiltersProject() {
       const startDate = filters.documentCompletionDate[0].toISOString().split('T')[0];
       const endDate = filters.documentCompletionDate[1].toISOString().split('T')[0];
       params.end_date__range = `${startDate},${endDate}`;
+    }
+
+    if (filters.signature_date && filters.signature_date[0] && filters.signature_date[1]) {
+      const startDate = filters.signature_date[0].toISOString().split('T')[0];
+      const endDate = filters.signature_date[1].toISOString().split('T')[0];
+      params.signature_date = `${startDate},${endDate}`;
     }
 
     if (filters.status && filters.status.length > 0) {
@@ -48,10 +69,20 @@ export default function DrawerFiltersProject() {
       params.is_released_to_engineering = filters.is_released_to_engineering;
     }
 
+    if (filters.homologator) {
+      params.homologator = filters.homologator;
+    }
+
+    if (filters.product_kwp) {
+      params.product_kwp = filters.product_kwp
+    }
+
     return params;
   };
 
   const handleChange = (key, value) => {
+    console.log('key:', key);
+    console.log('value:', value);
     setTempFilters((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -61,6 +92,10 @@ export default function DrawerFiltersProject() {
       status: [],
       designer_status: [],
       is_released_to_engineering: null,
+      customer: null,
+      homologator: null,
+      signature_date: [null, null],
+      product_kwp: null,
     });
   };
 
@@ -115,6 +150,41 @@ export default function DrawerFiltersProject() {
               </Grid>
 
               <Grid item xs={12}>
+                <CustomFormLabel htmlFor="homologator">Homologador</CustomFormLabel>
+                <AutoCompleteUser
+                  placeholder="Selecione o homologator"
+                  value={tempFilters.homologator}
+                  onChange={(id) => handleChange('homologator', id)}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <FormDateRange
+                  label="Data de Contrato"
+                  value={tempFilters.signature_date}
+                  onChange={(newValue) => handleChange('signature_date', newValue)}
+                  error={false}
+                  helperText=""
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="homologator">Kwp</CustomFormLabel>
+                <CustomTextField
+                  fullWidth
+                  placeholder="Digite o Kwp"
+                  value={tempFilters.product_kwp}
+                  onChange={(event) => {
+                    const onlyNumbers = event.target.value.replace(/\D/g, '');
+                    handleChange('product_kwp', onlyNumbers);
+                  }}
+                  inputProps={{
+                    type: 'number',
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
                 <CustomFormLabel htmlFor="Status">Status do Projeto</CustomFormLabel>
                 <CheckboxesTags
                   options={[
@@ -159,7 +229,7 @@ export default function DrawerFiltersProject() {
                     onChange={(event) =>
                       handleChange(
                         'is_released_to_engineering',
-                        event.target.value === '' ? null : event.target.value === 'true'
+                        event.target.value === '' ? null : event.target.value === 'true',
                       )
                     }
                   >
@@ -170,16 +240,6 @@ export default function DrawerFiltersProject() {
                     <MenuItem value="false">Não</MenuItem>
                   </Select>
                 </FormControl>
-              </Grid>
-
-              <Grid item xs={12}>
-                <FormDateRange
-                  label="Selecione a Data de Conclusão"
-                  value={tempFilters.documentCompletionDate}
-                  onChange={(newValue) => handleChange('documentCompletionDate', newValue)}
-                  error={false}
-                  helperText=""
-                />
               </Grid>
             </Grid>
           </Box>

@@ -20,8 +20,6 @@ export default function EditProject({ projectId = null }) {
   let id = projectId;
   if (!projectId) id = params.id;
 
-  console.log('ID: ', id);
-
   const [value, setValue] = useState(0);
   const [documentTypes, setDocumentTypes] = useState([]);
   const [projectData, setProjectData] = useState(null);
