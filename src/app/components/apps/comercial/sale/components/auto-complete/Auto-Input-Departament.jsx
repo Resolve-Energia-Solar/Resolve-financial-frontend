@@ -3,7 +3,6 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import { debounce } from 'lodash';
 import departmentService from '@/services/departmentService';
 
 export default function AutoCompleteDepartament({ onChange, value, error, helperText }) {
@@ -12,38 +11,12 @@ export default function AutoCompleteDepartament({ onChange, value, error, helper
   const [loading, setLoading] = useState(false);
   const [selectedDepartament, setSelectedDepartament] = useState(null);
 
+  // Carregar todos os departamentos ao montar a página
   useEffect(() => {
-    const fetchDefaultDepartament = async () => {
-      if (value) {
-        try {
-          const departament = await departmentService.getDepartmentById(value);
-          if (departament) {
-            setSelectedDepartament({ id: departament.id, name: departament.name });
-          }
-        } catch (error) {
-          console.error('Erro ao buscar departamento:', error);
-        }
-      }
-    };
-
-    fetchDefaultDepartament();
-  }, [value]);
-
-  const handleChange = (event, newValue) => {
-    setSelectedDepartament(newValue);
-    if (newValue) {
-      onChange(newValue.id);
-    } else {
-      onChange(null);
-    }
-  };
-
-  const fetchDepartamentsByName = useCallback(
-    debounce(async (name) => {
-      if (!name) return;
+    const fetchInitialDepartaments = async () => {
       setLoading(true);
       try {
-        const departaments = await departmentService.getDepartmentByName(name);
+        const departaments = await departmentService.getDepartment({ limit: 1000 }); // Traz todos os departamentos
         if (departaments && departaments.results) {
           const formattedDepartaments = departaments.results.map(departament => ({
             id: departament.id,
@@ -55,39 +28,28 @@ export default function AutoCompleteDepartament({ onChange, value, error, helper
         console.error('Erro ao buscar departamentos:', error);
       }
       setLoading(false);
-    }, 300),
-    []
-  );
+    };
 
-  const fetchInitialDepartaments = useCallback(async () => {
-    setLoading(true);
-    try {
-      const departaments = await departmentService.getDepartment({ limit: 5 });
-      if (departaments && departaments.results) {
-        const formattedDepartaments = departaments.results.map(departament => ({
-          id: departament.id,
-          name: departament.name,
-        }));
-        setOptions(formattedDepartaments);
+    fetchInitialDepartaments();
+  }, []); // Apenas uma vez ao montar a página
+
+  // Carregar nome do departamento inicial, se houver um valor
+  useEffect(() => {
+    if (value && options.length > 0) {
+      const initialDepartment = options.find(dept => dept.id === value);
+      if (initialDepartment) {
+        setSelectedDepartament(initialDepartment);
       }
-    } catch (error) {
-      console.error('Erro ao buscar departamentos:', error);
     }
-    setLoading(false);
-  }
-  , []);
-  
-  const handleOpen = () => {
-    setOpen(true);
-    if (options.length === 0) {
-      fetchInitialDepartaments();
-    }
-  };
+  }, [value, options]); // Atualiza quando os departamentos são carregados
 
-  // Função para fechar o autocomplete
-  const handleClose = () => {
-    setOpen(false);
-    setOptions([]);
+  const handleChange = (event, newValue) => {
+    setSelectedDepartament(newValue);
+    if (newValue) {
+      onChange(newValue.id);
+    } else {
+      onChange(null);
+    }
   };
 
   return (
@@ -95,16 +57,13 @@ export default function AutoCompleteDepartament({ onChange, value, error, helper
       <Autocomplete
         sx={{ width: '100%' }}
         open={open}
-        onOpen={handleOpen}
-        onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.name === value.name}
+        onOpen={() => setOpen(true)}
+        onClose={() => setOpen(false)}
+        isOptionEqualToValue={(option, value) => option.id === value?.id}
         getOptionLabel={(option) => option.name}
         options={options}
         loading={loading}
         value={selectedDepartament}
-        onInputChange={(event, newInputValue) => {
-          fetchDepartamentsByName(newInputValue);
-        }}
         onChange={handleChange}
         renderInput={(params) => (
           <CustomTextField
