@@ -278,27 +278,25 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                     </TableCell>
                   </TableRow>
                 ))}
-                <TableRow>
-                  <TableCell colSpan={6} align="center">
-                    <Button variant="contained" color="primary" onClick={() => handleAdd()}>
-                      Agendar Vistoria
-                    </Button>
-                    <Typography
-                      variant="body2"
-                      color="primary"
-                      component="a"
-                      display="block"
-                      mt={1}
-                      sx={{ cursor: 'pointer' }}
-                      onClick={() => setOpenModelInspectionNotAssociated(true)}
-                    >
-                      Adicionar uma vistoria já existente
-                    </Typography>
-                  </TableCell>
-                </TableRow>
               </TableBody>
             )}
           </Table>
+          <Grid container justifyContent="center" align="center" mt={1}>
+            <Button variant="contained" color="primary" onClick={() => handleAdd()}>
+              Agendar Vistoria
+            </Button>
+          </Grid>
+          <Grid container justifyContent="center" align="center" mt={1} mb={2}>
+            <Typography
+              variant="body2"
+              color="primary"
+              component="a"
+              sx={{ cursor: 'pointer' }}
+              onClick={() => setOpenModelInspectionNotAssociated(true)}
+            >
+              Adicionar uma vistoria já existente
+            </Typography>
+          </Grid>
         </TableContainer>
       </Paper>
 
