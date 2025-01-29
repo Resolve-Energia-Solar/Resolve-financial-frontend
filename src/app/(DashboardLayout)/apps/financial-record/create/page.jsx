@@ -30,7 +30,6 @@ export default function FormCustom() {
         const department = user?.employee?.department?.id || '';
         const category = formData.category_code;
 
-        // Calcula a data de vencimento
         const dueDate = calculateDueDate({
           now,
           amount,
@@ -41,7 +40,6 @@ export default function FormCustom() {
 
         const formattedDueDate = dueDate.toISOString().split('T')[0];
 
-        // Atualiza o estado somente se o valor calculado for diferente do atual
         if (formData.due_date !== formattedDueDate) {
           handleChange('due_date', formattedDueDate);
         }
@@ -49,7 +47,7 @@ export default function FormCustom() {
         console.error('Erro ao calcular a data de vencimento:', error);
       }
     }
-  }, [formData.value, formData.category_code, user?.department_code, formData.due_date, handleChange]);
+  }, [formData.value, formData.category_code, user?.employee?.department?.id, formData.due_date, handleChange]);
 
   if (success) {
     router.push('/apps/financial-record');
@@ -65,26 +63,16 @@ export default function FormCustom() {
       )}
       <ParentCard title="Nova Conta a Receber/Pagar">
         <Grid container spacing={3}>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <CustomFormLabel>Solicitante</CustomFormLabel>
-            <Select
-              variant="outlined"
-              fullWidth
-              value='1'
-              disabled
-            >
-              <MenuItem value='1'>{user.complete_name}</MenuItem>
+            <Select variant="outlined" fullWidth value={user?.complete_name || ''} disabled>
+              <MenuItem value={user?.complete_name || ''}>{user?.complete_name}</MenuItem>
             </Select>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <CustomFormLabel>Responsável pela Aprovação</CustomFormLabel>
-            <Select
-              variant="outlined"
-              fullWidth
-              value='1'
-              disabled
-            >
-              <MenuItem value='1'>{user.employee.user_manager.complete_name}</MenuItem>
+            <Select variant="outlined" fullWidth value={user?.employee?.manager?.complete_name || ''} disabled>
+              <MenuItem value={user?.employee?.manager?.complete_name || ''}>{user?.employee?.manager?.complete_name}</MenuItem>
             </Select>
           </Grid>
           <Grid item xs={12}>
@@ -105,7 +93,7 @@ export default function FormCustom() {
               error={formErrors.customer_code}
               helperText={formErrors.customer_code}
               disabled={false}
-              onChange={(e) => handleChange('client_supplier_code', e.target.value)}
+              onChange={(codigo_cliente) => handleChange('customer_code', codigo_cliente)}
             />
           </Grid>
           <Grid item xs={12}>
@@ -116,10 +104,11 @@ export default function FormCustom() {
               fullWidth
               value={formData.notes}
               onChange={(e) => handleChange('notes', e.target.value)}
-              {...(formErrors.notes && { error: true, helperText: formErrors.notes })}
+              error={!!formErrors.notes}
+              helperText={formErrors.notes}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <CustomFormLabel htmlFor="category_code">Categoria</CustomFormLabel>
             <AutoCompleteCategory
               onChange={(value) => handleChange('category_code', value)}
@@ -129,7 +118,7 @@ export default function FormCustom() {
               disabled={false}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <CustomFormLabel htmlFor="value">Valor (R$)</CustomFormLabel>
             <CustomTextField
               name="value"
@@ -140,7 +129,8 @@ export default function FormCustom() {
               InputProps={{
                 startAdornment: <InputAdornment position="start">R$</InputAdornment>,
               }}
-              {...(formErrors.value && { error: true, helperText: formErrors.value })}
+              error={!!formErrors.value}
+              helperText={formErrors.value}
             />
           </Grid>
           <Grid item xs={12}>
@@ -152,7 +142,6 @@ export default function FormCustom() {
               value={formData.payment_method || ''}
               onChange={(e) => handleChange('payment_method', e.target.value)}
             >
-              {/* Adicione as opções de forma de pagamento aqui */}
               <MenuItem value="boleto">Boleto</MenuItem>
               <MenuItem value="cartao">Cartão</MenuItem>
               <MenuItem value="transferencia">Transferência</MenuItem>
@@ -168,7 +157,8 @@ export default function FormCustom() {
               fullWidth
               value={formData.service_date}
               onChange={(e) => handleChange('service_date', e.target.value)}
-              {...(formErrors.service_date && { error: true, helperText: formErrors.service_date })}
+              error={!!formErrors.service_date}
+              helperText={formErrors.service_date}
             />
           </Grid>
           <Grid item xs={6}>
@@ -181,18 +171,8 @@ export default function FormCustom() {
               value={formData.due_date}
               onChange={(e) => handleChange('due_date', e.target.value)}
               inputProps={{ min: formData.due_date }}
-              {...(formErrors.due_date && { error: true, helperText: formErrors.due_date })}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <CustomFormLabel htmlFor="invoice_number">Número da Nota Fiscal</CustomFormLabel>
-            <CustomTextField
-              name="invoice_number"
-              variant="outlined"
-              fullWidth
-              value={formData.invoice_number}
-              onChange={(e) => handleChange('invoice_number', e.target.value)}
-              {...(formErrors.invoice_number && { error: true, helperText: formErrors.invoice_number })}
+              error={!!formErrors.due_date}
+              helperText={formErrors.due_date}
             />
           </Grid>
           <Grid item xs={12}>

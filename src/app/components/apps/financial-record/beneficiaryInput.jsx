@@ -73,7 +73,9 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
     setOptions([]);
   };
 
-  const handleInputChange = (event, newInputValue) => {
+  const handleInputChange = (event, newInputValue, reason) => {
+    if (reason === 'reset') return;
+
     if (!newInputValue) {
       setOptions([]);
       return;
@@ -88,6 +90,7 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
       fetchBeneficiariesByFilter(newInputValue);
     }
   };
+
 
   return (
     <div>
