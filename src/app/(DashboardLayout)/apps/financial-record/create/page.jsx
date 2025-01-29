@@ -4,6 +4,7 @@ import { Grid, Button, Stack, Select, MenuItem, InputAdornment, FormHelperText }
 import AutoCompleteDepartment from '@/app/components/apps/financial-record/departmentInput';
 import AutoCompleteCategory from '@/app/components/apps/financial-record/categoryInput';
 import AutoCompleteBeneficiary from '@/app/components/apps/financial-record/beneficiaryInput';
+import AutoCompleteDepartament from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Departament';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
@@ -82,6 +83,16 @@ export default function FormCustom() {
               value={formData.department_code}
               error={formErrors.department_code}
               helperText={formErrors.department_code}
+              disabled={false}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <CustomFormLabel htmlFor="requesting_department">Departamento Solicitante</CustomFormLabel>
+            <AutoCompleteDepartament
+              onChange={(value) => handleChange('requesting_department', value)}
+              value={formData.requesting_department || user?.employee?.department?.id}
+              error={formErrors.requesting_department}
+              helperText={formErrors.requesting_department}
               disabled={false}
             />
           </Grid>

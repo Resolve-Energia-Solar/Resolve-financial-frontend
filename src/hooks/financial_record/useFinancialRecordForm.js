@@ -1,52 +1,54 @@
-import { useState, useEffect } from 'react';
 import financialRecordService from '@/services/financialRecordService';
+import { useState } from 'react';
 
-const useFinancialRecordForm = (initialData, id) => {
+export default function useFinancialRecordForm() {
   const [formData, setFormData] = useState({
-    name: ''
+    customer_code: '',
+    requesting_department: '',
+    department_code: '',
+    category_code: '',
+    value: '',
+    notes: '',
+    payment_method: '',
+    service_date: '',
+    due_date: '',
+    invoice_number: '',
   });
 
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
 
-  useEffect(() => {
-    if (initialData) {
-      setFormData({
-        name: initialData.name || '',
-      });
-    }
-  }, [initialData]);
+  const validateForm = () => {
+    let errors = {};
+    if (!formData.customer_code) errors.customer_code = 'Beneficiário obrigatório';
+    if (!formData.value) errors.value = 'Valor obrigatório';
+    if (!formData.payment_method) errors.payment_method = 'Forma de pagamento obrigatória';
+    if (!formData.due_date) errors.due_date = 'Data de vencimento obrigatória';
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = async () => {
-    const dataToSend = {
-      name: formData.name,
-    };
+    console.log('Botão Criar foi clicado!');
+    if (!validateForm()) return;
 
     try {
-      if (id) {
-        await financialRecordService.updateFinancialRecord(id, dataToSend);
-      } else {
-        await financialRecordService.createFinancialRecord(dataToSend);
+      console.log('Enviando dados:', formData);
+      const response = await financialRecordService.createFinancialRecord('/financial-records', formData);
+      console.log('Resposta da API:', response);
+      if (response.status === 201) {
+        setSuccess(true);
       }
-      setFormErrors({});
-      setSuccess(true);
-    } catch (err) {
-      setSuccess(false);
-      setFormErrors(err.response?.data || {});
+    } catch (error) {
+      console.error('Erro ao salvar:', error);
     }
   };
 
-  return {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success,
-  };
-};
 
-export default useFinancialRecordForm;
+  return { formData, handleChange, handleSave, formErrors, success };
+}
