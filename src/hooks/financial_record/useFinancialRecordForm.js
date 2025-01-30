@@ -3,13 +3,14 @@ import { useState } from 'react';
 
 export default function useFinancialRecordForm() {
   const [formData, setFormData] = useState({
-    customer_code: '',
-    requesting_department: '',
+    client_supplier_code: '',
+    requesting_department_id: '',
     department_code: '',
     category_code: '',
     value: '',
     notes: '',
     payment_method: '',
+    is_receivable: false,
     service_date: '',
     due_date: '',
     invoice_number: '',
@@ -20,7 +21,7 @@ export default function useFinancialRecordForm() {
 
   const validateForm = () => {
     let errors = {};
-    if (!formData.customer_code) errors.customer_code = 'Beneficiário obrigatório';
+    if (!formData.client_supplier_code) errors.client_supplier_code = 'Beneficiário obrigatório';
     if (!formData.value) errors.value = 'Valor obrigatório';
     if (!formData.payment_method) errors.payment_method = 'Forma de pagamento obrigatória';
     if (!formData.due_date) errors.due_date = 'Data de vencimento obrigatória';
@@ -34,13 +35,13 @@ export default function useFinancialRecordForm() {
   };
 
   const handleSave = async () => {
-    console.log('Botão Criar foi clicado!');
     if (!validateForm()) return;
-
+  
     try {
       console.log('Enviando dados:', formData);
-      const response = await financialRecordService.createFinancialRecord('/financial-records', formData);
+      const response = await financialRecordService.createFinancialRecord(formData);
       console.log('Resposta da API:', response);
+  
       if (response.status === 201) {
         setSuccess(true);
       }
@@ -48,7 +49,7 @@ export default function useFinancialRecordForm() {
       console.error('Erro ao salvar:', error);
     }
   };
-
+  
 
   return { formData, handleChange, handleSave, formErrors, success };
 }

@@ -11,6 +11,7 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import ParentCard from '@/app/components/shared/ParentCard';
 import Alert from '@mui/material/Alert';
 import { useRouter } from 'next/navigation';
+import { IconArrowDown, IconArrowUp } from '@tabler/icons-react';
 
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import { useSelector } from 'react-redux';
@@ -76,7 +77,7 @@ export default function FormCustom() {
               <MenuItem value={user?.employee?.manager?.complete_name || ''}>{user?.employee?.manager?.complete_name}</MenuItem>
             </Select>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
             <CustomFormLabel htmlFor="department_code">Departamento Causador</CustomFormLabel>
             <AutoCompleteDepartment
               onChange={(value) => handleChange('department_code', value)}
@@ -86,13 +87,13 @@ export default function FormCustom() {
               disabled={false}
             />
           </Grid>
-          <Grid item xs={12}>
-            <CustomFormLabel htmlFor="requesting_department">Departamento Solicitante</CustomFormLabel>
+          <Grid item xs={12} md={6}>
+            <CustomFormLabel htmlFor="requesting_department_id">Departamento Solicitante</CustomFormLabel>
             <AutoCompleteDepartament
-              onChange={(value) => handleChange('requesting_department', value)}
-              value={formData.requesting_department || user?.employee?.department?.id}
-              error={formErrors.requesting_department}
-              helperText={formErrors.requesting_department}
+              onChange={(value) => handleChange('requesting_department_id', value)}
+              value={formData.requesting_department_id || user?.employee?.department?.id}
+              error={formErrors.requesting_department_id}
+              helperText={formErrors.requesting_department_id}
               disabled={false}
             />
           </Grid>
@@ -100,11 +101,11 @@ export default function FormCustom() {
             <CustomFormLabel htmlFor="client_supplier_code">Beneficiário (Nome/CPF/CNPJ)</CustomFormLabel>
             <AutoCompleteBeneficiary
               name="client_supplier_code"
-              value={formData.customer_code}
-              error={formErrors.customer_code}
-              helperText={formErrors.customer_code}
+              value={formData.client_supplier_code}
+              error={formErrors.client_supplier_code}
+              helperText={formErrors.client_supplier_code}
               disabled={false}
-              onChange={(codigo_cliente) => handleChange('customer_code', codigo_cliente)}
+              onChange={(codigo_cliente) => handleChange('client_supplier_code', codigo_cliente)}
             />
           </Grid>
           <Grid item xs={12}>
@@ -144,7 +145,7 @@ export default function FormCustom() {
               helperText={formErrors.value}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
             <CustomFormLabel htmlFor="payment_method">Forma de Pagamento</CustomFormLabel>
             <Select
               name="payment_method"
@@ -158,6 +159,29 @@ export default function FormCustom() {
               <MenuItem value="transferencia">Transferência</MenuItem>
             </Select>
             {formErrors.payment_method && <FormHelperText>{formErrors.payment_method}</FormHelperText>}
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <CustomFormLabel htmlFor="is_receivable">A pagar / A receber</CustomFormLabel>
+            <Stack direction="row" spacing={2}>
+              <Button
+                variant={formData.is_receivable == true ? 'contained' : 'outlined'}
+                color="success"
+                disabled
+                onClick={() => handleChange('is_receivable', true)}
+                startIcon={<IconArrowDown />}
+              >
+                A Receber
+              </Button>
+              <Button
+                variant={formData.is_receivable == false ? 'contained' : 'outlined'}
+                color="error"
+                disabled
+                onClick={() => handleChange('is_receivable', false)}
+                startIcon={<IconArrowUp />}
+              >
+                A Pagar
+              </Button>
+            </Stack>
           </Grid>
           <Grid item xs={6}>
             <CustomFormLabel htmlFor="service_date">Data do Serviço</CustomFormLabel>
