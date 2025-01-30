@@ -256,6 +256,8 @@ const SaleList = () => {
     }
   };
 
+  console.log('salesList', salesList);
+
   return (
     <Box>
       <Accordion defaultExpanded sx={{ marginBottom: 4 }}>
@@ -476,7 +478,7 @@ const SaleList = () => {
                     <TableCell>{item.customer.complete_name}</TableCell>
                     <TableCell>
                       {item?.signature_date
-                        ? new Date(item.signature_date).toLocaleDateString()
+                        ? new Date(item.signature_date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
                         : '\u2014'}
                     </TableCell>
                     <TableCell>
@@ -505,7 +507,7 @@ const SaleList = () => {
                       )}
                     </TableCell>
                     <TableCell>
-                      {item?.created_at ? new Date(item.created_at).toLocaleDateString() : '-'}
+                      {item?.created_at ? new Date(item.created_at).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '-'}
                     </TableCell>
                     <TableCell>{item.branch.name}</TableCell>
                     {/* <TableCell>
