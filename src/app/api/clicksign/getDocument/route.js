@@ -1,7 +1,9 @@
 import ClickSignService from '@/services/ClickSign'
 
 export async function GET (req, { params }) {
-  const { envelopID, key } = params
+  const { searchParams } = new URL(req.url)
+  const envelopID = searchParams.get('envelopes')
+  const key = searchParams.get('documents')
 
   if (!key || !envelopID) {
     return new Response(
