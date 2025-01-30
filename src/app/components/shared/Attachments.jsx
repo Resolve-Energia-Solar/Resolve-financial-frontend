@@ -94,6 +94,8 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
       try {
         const response = await attachmentService.getAttanchmentByIdProject(objectId);
         setAttachments(response.results);
+
+        console.log('Attachments: ', response.results);
       } catch (error) {
         console.log('Error: ', error);
       } finally {
