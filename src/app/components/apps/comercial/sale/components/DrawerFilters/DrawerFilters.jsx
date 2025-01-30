@@ -8,10 +8,13 @@ import AutoCompleteBranch from '../auto-complete/Auto-Input-Branch';
 import AutoCompleteUser from '../auto-complete/Auto-Input-User';
 import { SaleDataContext } from '@/app/context/SaleContext';
 import AutoCompleteCampaign from '../auto-complete/Auto-Input-Campaign';
+import AutoInputStatusSchedule from '@/app/components/apps/inspections/auto-complete/Auto-Input-StatusInspection';
 
 export default function DrawerFilters() {
   const [open, setOpen] = useState(false);
   const { filters, setFilters } = useContext(SaleDataContext);
+
+  const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
 
   const [tempFilters, setTempFilters] = useState({
     documentCompletionDate: filters.documentCompletionDate,
@@ -24,6 +27,7 @@ export default function DrawerFilters() {
     created_at: filters.created_at,
     is_signed: filters.is_signed,
     signature_date: filters.signature_date,
+    final_service_options: filters.final_service_options,
   });
 
   console.log('tempFilters', tempFilters);
@@ -84,6 +88,10 @@ export default function DrawerFilters() {
       params.signature_date__range = `${startDate},${endDate}`;
     }
 
+    if (filters.final_service_options) {
+      params.final_service_options = filters.final_service_options;
+    }
+
     return params;
   };
 
@@ -102,6 +110,8 @@ export default function DrawerFilters() {
       marketing_campaign: null,
       created_at: [null, null],
       is_signed: [],
+      signature_date: [null, null],
+      final_service_options: null,
     });
   };
 
@@ -166,6 +176,16 @@ export default function DrawerFilters() {
                   placeholder="Selecione o status"
                   value={tempFilters.statusDocument}
                   onChange={(event, value) => handleChange('statusDocument', value)}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="final_service_options">Parecer Final Vistoria</CustomFormLabel>
+                <AutoInputStatusSchedule
+                  onChange={(id) => handleChange('final_service_options', id)}
+                  value={tempFilters.final_service_options}
+                  isFinalOpinion={true}
+                  serviceId={SERVICE_INSPECTION_ID}
                 />
               </Grid>
 
