@@ -501,7 +501,7 @@ const SaleList = () => {
                           color={item.final_service_opinion[0] === 'Aprovado' ? 'success' : 'default'}
                         />
                       ) : (
-                        <Chip label="Em Análise" color="warning" />
+                        <Chip label="Sem Vistoria" color="warning" />
                       )}
                     </TableCell>
                     <TableCell>
