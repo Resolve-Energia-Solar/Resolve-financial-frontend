@@ -432,6 +432,19 @@ const SaleList = () => {
 
                 <TableCell
                   sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('final_service_opinion')}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    P.F Vistoria
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'final_service_opinion' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    </Box>
+                  </Box>
+                </TableCell>
+
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                   onClick={() => handleSort('created_at')}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -448,7 +461,7 @@ const SaleList = () => {
               </TableRow>
             </TableHead>
             {loading ? (
-              <TableSkeleton rows={5} columns={8} />
+              <TableSkeleton rows={rowsPerPage} cols={9} />
             ) : error && page === 1 ? (
               <Typography color="error">{error}</Typography>
             ) : (
@@ -480,6 +493,16 @@ const SaleList = () => {
                     </TableCell>
                     <TableCell>
                       <StatusChip status={item.status} />
+                    </TableCell>
+                    <TableCell>
+                      {item.final_service_opinion[0] ? (
+                        <Chip
+                          label={item.final_service_opinion[0]}
+                          color={item.final_service_opinion[0] === 'Aprovado' ? 'success' : 'default'}
+                        />
+                      ) : (
+                        <Chip label="Sem Vistoria" color="warning" />
+                      )}
                     </TableCell>
                     <TableCell>
                       {item?.created_at ? new Date(item.created_at).toLocaleDateString() : '-'}
