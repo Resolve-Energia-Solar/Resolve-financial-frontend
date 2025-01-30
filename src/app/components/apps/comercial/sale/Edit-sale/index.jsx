@@ -40,6 +40,7 @@ import SendContractButton from '../../../contractSubmissions/Send-contract';
 import ContractSubmissions from '../../../contractSubmissions/contract-list';
 import SchedulesInspections from '../../../project/components/SchedulesInspections';
 import History from '@/app/components/apps/history';
+import Comment from '../../../comment';
 import useSendContract from '@/hooks/contract/useSendContract';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
@@ -48,8 +49,6 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
   const params = useParams();
   let id = saleId;
   if (!saleId) id = params.id;
-
-  console.log('CONTEXT_TYPE_SALE_ID: ', CONTEXT_TYPE_SALE_ID);
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
@@ -150,6 +149,7 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
         <Tab label="Checklist" />
         <Tab label="Envios" />
         <Tab label="Histórico" />
+        <Tab label="Comentários" />
       </Tabs>
       {loading ? (
         <FormPageSkeleton />
@@ -313,6 +313,8 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
           {value === 6 && <ContractSubmissions sale={saleData} />}
 
           {value === 7 && <History contentType={CONTEXT_TYPE_SALE_ID} objectId={id_sale} />}
+
+          {value === 8 && <Comment contentType={CONTEXT_TYPE_SALE_ID} objectId={id_sale} />}
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             {onClosedModal && (
