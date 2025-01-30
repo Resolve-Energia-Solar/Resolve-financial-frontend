@@ -90,17 +90,29 @@ function ContractSubmissions({ sale }) {
             .then((response) => response.data)
             .catch((error) => {
               console.error(
-                `Erro ao buscar o contrato com chave ${key_number} e envelope_id ${envelope_id}: ${error.message}`,
+                `Erro ao buscar o contrato com chave ${key_number} e envelope_id ${envelope_id}: ${error.message}`
               );
               return null;
-            }),
+            })
         );
 
         const documentResponses = await Promise.all(documentPromises);
-        const validDocuments = documentResponses.filter((doc) => doc !== null);
+        const formattedContracts = documentResponses
+          .filter((doc) => doc !== null)
+          .map((doc) => ({
+            id: doc.data.id,
+            filename: doc.data.attributes.filename,
+            status: doc.data.attributes.status,
+            uploadedAt: doc.data.attributes.created,
+            modifiedAt: doc.data.attributes.modified,
+            customerName: doc.data.attributes.metadata.customer_name,
+            saleNumber: doc.data.attributes.metadata.sale_number,
+            originalFileUrl: doc.data.links.files.original,
+            signedFileUrl: doc.data.links.files.signed,
+            zipedFileUrl: doc.data.links.files.ziped,
+          }));
 
-        console.log('Dados de documentos:', validDocuments);
-        setContracts(validDocuments);
+        setContracts(formattedContracts);
       } catch (error) {
         console.error('Erro ao buscar contratos ou metadados do documento:', error.message);
       } finally {
@@ -135,13 +147,9 @@ function ContractSubmissions({ sale }) {
   return (
     <Fade in={!loading}>
       <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" gutterBottom>
-            Envios para Clicksign
-          </Typography>
-
-          {/* <SendContractButton sale={sale.id} sx={{ mr: 2 }} /> */}
-        </Box>
+        <Typography variant="h4" gutterBottom>
+          Envios para Clicksign
+        </Typography>
 
         {contracts.length === 0 ? (
           <Box textAlign="center" mt={10} mb={5}>
@@ -152,62 +160,22 @@ function ContractSubmissions({ sale }) {
         ) : (
           <Grid container spacing={3}>
             {contracts.map((contract) => (
-              <Grid item xs={12} sm={6} md={4} key={contract.key}>
+              <Grid item xs={12} sm={8} md={9} key={contract.id}>
                 <Slide direction="up" in={!loading} mountOnEnter unmountOnExit>
-                  <Card
-                    sx={{
-                      position: 'relative',
-                      transition: 'transform 0.3s',
-                      '&:hover': { transform: 'scale(1.05)' },
-                      boxShadow: 3,
-                      borderRadius: 2,
-                    }}
-                  >
+                  <Card sx={{ boxShadow: 3, borderRadius: 2, position: 'relative' }}>
                     <CardContent>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'flex-start',
-                        }}
-                      >
-                        <Box>
-                          <Typography variant="h6">{contract.document?.filename}</Typography>
-                          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                            Data de Upload:{' '}
-                            {new Date(contract.document?.uploaded_at).toLocaleDateString('pt-BR')}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            Data de Vencimento:{' '}
-                            {new Date(contract.document?.deadline_at).toLocaleDateString('pt-BR')}
-                          </Typography>
-                        </Box>
-                        <ContractChip status={contract.document?.status} />
+                      <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant="h6">{contract.filename}</Typography>
+                        <ContractChip status={contract.status} />
                       </Box>
-
-                      <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: 2 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Link para visualização:{' '}
-                          <a
-                            href={contract.document?.downloads?.original_file_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ color: '#1976d2', textDecoration: 'none' }}
-                          >
-                            Abrir Contrato
-                          </a>
-                        </Typography>
-
-                        <Box sx={{ marginTop: 2, display: 'flex', justifyContent: 'flex-end' }}>
-                          <Tooltip title="Mais opções">
-                            <IconButton
-                              size="small"
-                              onClick={(event) => handleMenuOpen(event, contract)}
-                            >
-                              <MoreVert />
-                            </IconButton>
-                          </Tooltip>
-                        </Box>
+                      <Typography variant="body2" color="text.secondary">Cliente: {contract.customerName}</Typography>
+                      <Typography variant="body2" color="text.secondary">Venda: {contract.saleNumber}</Typography>
+                      <Typography variant="body2" color="text.secondary">Data de Upload: {new Date(contract.uploadedAt).toLocaleDateString('pt-BR')}</Typography>
+                      <Typography variant="body2" color="text.secondary">Última Modificação: {new Date(contract.modifiedAt).toLocaleDateString('pt-BR')}</Typography>
+                      <Box sx={{ mt: 2 }}>
+                        <Typography variant="body2" color="text.secondary">Arquivo Original: <a href={contract.originalFileUrl} target="_blank" rel="noopener noreferrer">Abrir</a></Typography>
+                        <Typography variant="body2" color="text.secondary">Arquivo Assinado: <a href={contract.signedFileUrl} target="_blank" rel="noopener noreferrer">Abrir</a></Typography>
+                        <Typography variant="body2" color="text.secondary">Arquivo Compactado: <a href={contract.zipedFileUrl} target="_blank" rel="noopener noreferrer">Abrir</a></Typography>
                       </Box>
                     </CardContent>
                   </Card>
@@ -216,20 +184,6 @@ function ContractSubmissions({ sale }) {
             ))}
           </Grid>
         )}
-
-        {/* Submenu */}
-        <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
-          <MenuItem onClick={() => openModalEvents(selectedContract?.document?.events || [])}>
-            Eventos
-          </MenuItem>
-        </Menu>
-
-        <Dialog open={openEventsModal} onClose={closeModalEvents} maxWidth="lg">
-          <DialogTitle sx={{ textAlign: 'center' }}>Eventos</DialogTitle>
-          <DialogContent>
-            <EventsTimeline events={selectedEvent} />
-          </DialogContent>
-        </Dialog>
       </Box>
     </Fade>
   );
