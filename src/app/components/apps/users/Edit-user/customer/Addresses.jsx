@@ -66,7 +66,7 @@ export default function ListAddresses({ userId = null }) {
           sx={{ marginBottom: 2 }}
           onClick={() => setOpenModal(true)}
         >
-          Adicionar Endereço
+          Adicionar Endereço da Vistoria
         </Button>
       </Box>
       <Table sx={{ width: '100%' }} aria-label="table of addresses">
