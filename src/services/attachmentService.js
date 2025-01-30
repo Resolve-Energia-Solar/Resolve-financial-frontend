@@ -51,6 +51,16 @@ const attachmentService = {
       throw error;
     }
   },
+  getAttachment: async (id, content_type) => {
+    try {
+      const response = await apiClient.get(`/api/attachments/?object_id=${id}&content_type=${content_type}`);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar anexo com id ${id}:`, error);
+      throw error;
+    }
+  },
   getAttanchmentByIdProject: async (id) => {
     try {
       const response = await apiClient.get(`/api/attachments/?object_id=${id}&content_type=${CONTENT_TYPE_PROJECT_ID}`);

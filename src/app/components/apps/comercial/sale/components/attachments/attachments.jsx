@@ -117,35 +117,6 @@ export default function FileUpload({ objectId, contentType }) {
     handleChange('description', '');
   };
 
-  useEffect(() => {
-    setLoadingAttachments(true);
-    if (success) {
-      resetForm();
-      handleCloseModal();
-      const fetchAttachments = async () => {
-        const updatedAttachments = await attachmentService.getAttachmentByIdSale(objectId);
-        setAttachments(updatedAttachments.results);
-      };
-      fetchAttachments();
-    }
-    setLoadingAttachments(false);
-  }, [success]);
-
-  useEffect(() => {
-    const fetchAttachments = async () => {
-      try {
-        setLoadingAttachments(true);
-        const updatedAttachments = await attachmentService.getAttachmentByIdSale(objectId);
-        setAttachments(updatedAttachments.results);
-      } catch (error) {
-        console.error('Erro ao carregar anexos:', error);
-      } finally {
-        setLoadingAttachments(false);
-      }
-    };
-
-    fetchAttachments();
-  }, [objectId]);
 
   return (
     <Box sx={{ padding: 3 }}>

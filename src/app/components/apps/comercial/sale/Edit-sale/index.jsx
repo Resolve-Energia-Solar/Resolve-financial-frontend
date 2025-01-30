@@ -49,6 +49,8 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
   let id = saleId;
   if (!saleId) id = params.id;
 
+  console.log('CONTEXT_TYPE_SALE_ID: ', CONTEXT_TYPE_SALE_ID);
+
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const formatFieldName = (fieldName) => {

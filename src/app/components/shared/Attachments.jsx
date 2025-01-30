@@ -88,11 +88,13 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
     }
   };
 
+  console.log('content type no componente: ', contentType);
+
   useEffect(() => {
     setLoading(true);
     const fetchData = async () => {
       try {
-        const response = await attachmentService.getAttanchmentByIdProject(objectId);
+        const response = await attachmentService.getAttachment(objectId, contentType);
         setAttachments(response.results);
 
         console.log('Attachments: ', response.results);
