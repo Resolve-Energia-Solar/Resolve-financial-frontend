@@ -24,6 +24,7 @@ export default function useFinancialRecordForm() {
     if (!formData.client_supplier_code) errors.client_supplier_code = 'Beneficiário obrigatório';
     if (!formData.value) errors.value = 'Valor obrigatório';
     if (!formData.payment_method) errors.payment_method = 'Forma de pagamento obrigatória';
+    if (!formData.service_date) errors.service_date = 'Data de serviço obrigatória';
     if (!formData.due_date) errors.due_date = 'Data de vencimento obrigatória';
 
     setFormErrors(errors);

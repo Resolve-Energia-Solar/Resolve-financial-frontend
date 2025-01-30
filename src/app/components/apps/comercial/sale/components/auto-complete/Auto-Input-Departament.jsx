@@ -16,7 +16,7 @@ export default function AutoCompleteDepartament({ onChange, value, error, helper
     const fetchInitialDepartaments = async () => {
       setLoading(true);
       try {
-        const departaments = await departmentService.getDepartment({ limit: 1000 }); // Traz todos os departamentos
+        const departaments = await departmentService.getDepartment({ limit: 100 });
         if (departaments && departaments.results) {
           const formattedDepartaments = departaments.results.map(departament => ({
             id: departament.id,
@@ -39,9 +39,11 @@ export default function AutoCompleteDepartament({ onChange, value, error, helper
       const initialDepartment = options.find(dept => dept.id === value);
       if (initialDepartment) {
         setSelectedDepartament(initialDepartment);
+        onChange(initialDepartment.id);
       }
     }
   }, [value, options]); // Atualiza quando os departamentos são carregados
+  
 
   const handleChange = (event, newValue) => {
     setSelectedDepartament(newValue);

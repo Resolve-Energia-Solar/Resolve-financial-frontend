@@ -94,7 +94,6 @@ export default function FormCustom() {
               value={formData.requesting_department_id || user?.employee?.department?.id}
               error={formErrors.requesting_department_id}
               helperText={formErrors.requesting_department_id}
-              disabled={false}
             />
           </Grid>
           <Grid item xs={12}>
@@ -104,7 +103,6 @@ export default function FormCustom() {
               value={formData.client_supplier_code}
               error={formErrors.client_supplier_code}
               helperText={formErrors.client_supplier_code}
-              disabled={false}
               onChange={(codigo_cliente) => handleChange('client_supplier_code', codigo_cliente)}
             />
           </Grid>
