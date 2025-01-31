@@ -15,7 +15,6 @@ import {
   AccordionDetails,
 } from '@mui/material';
 import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
-import InforCards from '@/app/components/apps/inforCards/InforCards';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Edit as EditIcon, Delete as DeleteIcon, AddBoxRounded } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
@@ -66,7 +65,6 @@ const ProjectList = ({ onClick }) => {
           ...filters,
         });
 
-
         setIndicators(data.indicators);
         console.log('indicators: ', indicators.indicators);
       } catch (err) {
@@ -106,22 +104,54 @@ const ProjectList = ({ onClick }) => {
                 backgroundColor: 'primary.light',
                 iconColor: 'primary.main',
                 IconComponent: IconListDetails,
-                title: 'Bloqueado para Engenharia',
+                title: 'Bloqueado',
+                subtitle: 'Para Engenharia',
                 count: indicators?.blocked_to_engineering || '-',
               },
               {
                 backgroundColor: 'success.light',
                 iconColor: 'success.main',
                 IconComponent: IconListDetails,
-                title: 'Pendente Lista de Materiais',
+                title: 'Pendente',
+                subtitle: 'Lista de Materiais',
                 count: indicators?.pending_material_list || '-',
               },
               {
                 backgroundColor: 'secondary.light',
                 iconColor: 'secondary.main',
-                IconComponent: IconPaperclip,
-                title: 'Liberados para Engenharia',
+                IconComponent: IconListDetails,
+                title: 'Liberados',
+                subtitle: 'Para Engenharia',
                 count: indicators?.is_released_to_engineering || '-',
+              },
+            ]}
+          />
+
+          <ProjectCards
+            cardsData={[
+              {
+                backgroundColor: 'primary.light',
+                iconColor: 'primary.main',
+                IconComponent: IconListDetails,
+                title: 'Em Andamento',
+                subtitle: 'Projestista',
+                count: indicators?.designer?.blocked_to_engineering || '-',
+              },
+              {
+                backgroundColor: 'success.light',
+                iconColor: 'success.main',
+                IconComponent: IconListDetails,
+                title: 'Concluído',
+                subtitle: 'Projestista',
+                count: indicators?.designer?.complete || '-',
+              },
+              {
+                backgroundColor: 'secondary.light',
+                iconColor: 'secondary.main',
+                IconComponent: IconListDetails,
+                title: 'Cancelado',
+                subtitle: 'Projestista',
+                count: indicators?.designer?.canceled || '-',
               },
             ]}
           />
