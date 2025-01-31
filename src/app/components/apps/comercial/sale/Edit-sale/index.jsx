@@ -110,21 +110,6 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
     { value: 'CA', label: 'Cancelado' },
   ];
 
-  const monthOptions = [
-    { value: 1, label: 'Janeiro' },
-    { value: 2, label: 'Fevereiro' },
-    { value: 3, label: 'Março' },
-    { value: 4, label: 'Abril' },
-    { value: 5, label: 'Maio' },
-    { value: 6, label: 'Junho' },
-    { value: 7, label: 'Julho' },
-    { value: 8, label: 'Agosto' },
-    { value: 9, label: 'Setembro' },
-    { value: 10, label: 'Outubro' },
-    { value: 11, label: 'Novembro' },
-    { value: 12, label: 'Dezembro' },
-
-  ];
   const [value, setValue] = useState(0);
 
   const handleChangeTab = (event, newValue) => {
@@ -290,19 +275,27 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                     disabled={!hasPermission(['financial.change_status_financial'])}
                   />
                 </Grid>
+                
                 <HasPermission
-                  permissions={['resolve_crm.can_change_billing_month']}
+                  permissions={['resolve_crm.can_change_billing_date']}
                   userPermissions={userPermissions}
                 >
-                <Grid item xs={12} sm={12} lg={4}>
-                  <FormSelect
-                    label="Mês do Faturamento"
-                    options={monthOptions}
-                    value={formData.billing_month}
-                    onChange={(e) => handleChange('billing_month', e.target.value)}
-                    disabled={!hasPermission(['resolve_crm.can_change_billing_month'])}
-                  />
-                </Grid>
+                  <Grid item xs={12} sm={12} lg={4}>
+                    <CustomFormLabel htmlFor="billing_date">Data de competência</CustomFormLabel>
+                    <CustomTextField
+                      type="date"
+                      name="billing_date"
+                      variant="outlined"
+                      fullWidth
+                      value={formData.billing_date}
+                      onChange={(e) => handleChange('billing_date', e.target.value)}
+                      disabled={!hasPermission(['resolve_crm.can_change_billing_date'])}
+                      {...(formErrors.billing_date && {
+                        error: true,
+                        helperText: formErrors.billing_date,
+                      })}
+                    />
+                  </Grid>
                 </HasPermission>
                 <HasPermission
                   permissions={['accounts.change_pre_sale_field']}
