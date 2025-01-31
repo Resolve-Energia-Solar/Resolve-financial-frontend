@@ -91,7 +91,7 @@ export default function History({ contentType, objectId }) {
             <ListItem alignItems="flex-start">
               <ListItemAvatar>
                 <Avatar sx={{ bgcolor: 'primary.main', color: 'white' }}>
-                  {getInitials(activity.author.complete_name.toUpperCase() || activity.author.email).toUpperCase()}
+                  {getInitials(activity.author.complete_name.toUpperCase() || activity.author.email.toUpperCase())}
                 </Avatar>
               </ListItemAvatar>
               <ListItemText
