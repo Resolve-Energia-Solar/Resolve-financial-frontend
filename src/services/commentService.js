@@ -5,7 +5,7 @@ import apiClient from "./apiClient";
 const commentService = {
   getComment: async (id, content_type) => {
       try {
-          const response = await apiClient.get(`/api/comments/?object_id=${id}&content_type=${content_type}&ordering=-created_at`);
+          const response = await apiClient.get(`/api/comments/?object_id=${id}&content_type=${content_type}&ordering=created_at`);
           console.log(response.data);
           return response.data;
       } catch (error) {
