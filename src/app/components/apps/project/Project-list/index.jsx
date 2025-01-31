@@ -9,13 +9,7 @@ import {
   TableRow,
   Paper,
   Typography,
-  IconButton,
-  Tooltip,
-  Chip,
-  Button,
   Box,
-  CircularProgress,
-  Skeleton,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -32,6 +26,7 @@ import { default as DocumentStatusChip } from '@/utils/status/DocumentStatusIcon
 import { ProjectDataContext } from '@/app/context/ProjectContext';
 import TableSkeleton from '../../comercial/sale/components/TableSkeleton';
 import ChipProject from '../components/ChipProject';
+import ProjectCards from '../../inforCards/InforQuantity';
 
 const ProjectList = ({ onClick }) => {
   const [projectsList, setProjectsList] = useState([]);
@@ -55,11 +50,6 @@ const ProjectList = ({ onClick }) => {
           expand: 'sale.customer',
           ...filters,
         });
-
-        console.log('data.results', data.results);
-        console.log('indicators', data.results.indicators);
-
-        setIndicators(data?.results?.indicators);
         setProjectsList(data.results.results);
         setTotalRows(data.count);
       } catch (err) {
@@ -69,6 +59,24 @@ const ProjectList = ({ onClick }) => {
       }
     };
 
+    const fetchIndicators = async () => {
+      setLoading(true);
+      try {
+        const data = await projectService.getProjectsIndicators({
+          ...filters,
+        });
+
+
+        setIndicators(data.indicators);
+        console.log('indicators: ', indicators.indicators);
+      } catch (err) {
+        setError('Erro ao carregar Projetos');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchIndicators();
     fetchProjects();
   }, [page, rowsPerPage, filters, refresh]);
 
@@ -83,56 +91,42 @@ const ProjectList = ({ onClick }) => {
 
   return (
     <>
-      {/* <Accordion sx={{ marginBottom: 4 }}>
+      <Accordion defaultExpanded sx={{ marginBottom: 4 }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="sale-cards-content"
           id="sale-cards-header"
         >
-          <Typography variant="h6">Status do Projeto (Engenharia)</Typography>
+          <Typography variant="h6">Indicadores</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <InforCards
+          <ProjectCards
             cardsData={[
               {
                 backgroundColor: 'primary.light',
                 iconColor: 'primary.main',
                 IconComponent: IconListDetails,
-                title: 'Em andamento',
-                count: indicators?.designer_in_progress_count || '-',
+                title: 'Bloqueado para Engenharia',
+                count: indicators?.blocked_to_engineering || '-',
               },
               {
                 backgroundColor: 'success.light',
                 iconColor: 'success.main',
                 IconComponent: IconListDetails,
-                title: 'Finalizado',
-                count: indicators?.designer_complete_count || '-',
+                title: 'Pendente Lista de Materiais',
+                count: indicators?.pending_material_list || '-',
               },
               {
                 backgroundColor: 'secondary.light',
                 iconColor: 'secondary.main',
                 IconComponent: IconPaperclip,
-                title: 'Pendente',
-                count: indicators?.designer_pending_count || '-',
-              },
-              {
-                backgroundColor: 'warning.light',
-                iconColor: 'warning.main',
-                IconComponent: IconSortAscending,
-                title: 'Cancelado',
-                count: indicators?.designer_canceled_count || '-',
-              },
-              {
-                backgroundColor: 'warning.light',
-                iconColor: 'warning.main',
-                IconComponent: IconSortAscending,
-                title: 'Distrato',
-                count: indicators?.designer_termination_count || '-',
+                title: 'Liberados para Engenharia',
+                count: indicators?.is_released_to_engineering || '-',
               },
             ]}
           />
         </AccordionDetails>
-      </Accordion> */}
+      </Accordion>
 
       <Typography variant="h6" gutterBottom>
         Lista de Projetos
