@@ -19,6 +19,7 @@ const useSaleForm = (initialData, id) => {
     totalValue: '',
     status: '',
     completedDocument: false,
+    billing_month: ''
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -41,6 +42,7 @@ const useSaleForm = (initialData, id) => {
         totalValue: initialData.total_value || '',
         status: initialData.status || '',
         completedDocument: initialData.completed_document || false,
+        billing_month: initialData.billing_month || ''
       });
     }
   }, [initialData]);
@@ -64,6 +66,7 @@ const useSaleForm = (initialData, id) => {
       total_value: formData.totalValue,
       status: formData.status,
       completed_document: formData.completedDocument,
+      billing_month: formData.billing_month
     };
 
     try {
