@@ -1,5 +1,5 @@
 'use client';
-import { Tabs, Tab, Box, Button, Drawer } from '@mui/material';
+import { Tabs, Tab, Box, Button, Drawer, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import EditProjectTab from '@/app/components/apps/project/Edit-project/tabs/EditProject';
 import { useParams } from 'next/navigation';
@@ -12,8 +12,10 @@ import History from '@/app/components/apps/history';
 import ListInspection from '../components/SchedulesInspections/list-Inspections';
 import RequestList from '../../request/Request-list';
 import UploadDocument from '../UploadDocument';
+import AttachmentDetails from '@/app/components/shared/AttachmentDetails';
 
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
+const CONTENT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
 export default function EditProject({ projectId = null }) {
   const params = useParams();
@@ -24,11 +26,11 @@ export default function EditProject({ projectId = null }) {
   const [documentTypes, setDocumentTypes] = useState([]);
   const [projectData, setProjectData] = useState(null);
 
+  console.log('projectData: ', projectData);
+
   const handleChangeTab = (event, newValue) => {
     setValue(newValue);
   };
-
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,11 +87,25 @@ export default function EditProject({ projectId = null }) {
       )}
 
       {value === 3 && (
-        <Attachments
-          contentType={CONTENT_TYPE_PROJECT_ID}
-          objectId={id}
-          documentTypes={documentTypes}
-        />
+        <>
+          <Typography variant="h6" sx={{ mt: 3 }}>
+            Anexos do Projeto
+          </Typography>
+          <Attachments
+            contentType={CONTENT_TYPE_PROJECT_ID}
+            objectId={id}
+            documentTypes={documentTypes}
+          />
+
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            Anexos da Venda
+          </Typography>
+          <AttachmentDetails
+            contentType={CONTENT_TYPE_SALE_ID}
+            objectId={projectData?.sale?.id}
+            documentTypes={documentTypes}
+          />
+        </>
       )}
 
       {value === 4 && (
