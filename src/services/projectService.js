@@ -5,6 +5,10 @@ const projectService = {
     const response = await apiClient.get(`/api/projects/?expand=units`, { params })
     return response.data
   },
+  getProjectsIndicators: async (params = {}) => {
+    const response = await apiClient.get(`/api/projects/indicators/`, { params })
+    return response.data
+  },
   getProjectById: async id => {
     const response = await apiClient.get(`/api/projects/${id}/?&expand=units`)
     console.log('sending2', response.data)
