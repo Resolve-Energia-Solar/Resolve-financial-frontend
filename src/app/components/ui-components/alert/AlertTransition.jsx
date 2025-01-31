@@ -1,54 +1,41 @@
 'use client';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { IconX } from "@tabler/icons-react";
-import { Stack, Button, IconButton, Collapse, Alert } from '@mui/material';
+import { Snackbar, Alert, IconButton } from '@mui/material';
 
-import ChildCard from '@/app/components/shared/ChildCard';
+const AlertTransition = ({ message, type = "info", open, onClose }) => {
+    const [visible, setVisible] = useState(open);
 
+    useEffect(() => {
+        setVisible(open);
+    }, [open]);
 
-import TransitionCode from "@/app/components/ui-components/alert/code/TransitionCode";
-
-
-
-const AlertTransition = () => {
-    const [open, setOpen] = React.useState(true);
+    console.log('message:', message);
 
     return (
-
-        <ChildCard title="Transition" codeModel={<TransitionCode />}>
-            <Stack spacing={1}>
-                <Collapse in={open}>
-                    <Alert
-                        variant="filled"
-                        severity="info"
-                        sx={{ mb: 1 }}
-                        action={
-                            <IconButton
-                                aria-label="close"
-                                color="inherit"
-                                size="small"
-                                onClick={() => {
-                                    setOpen(false);
-                                }}
-                            >
-                                <IconX width={20} />
-                            </IconButton>
-                        }
+        <Snackbar
+            open={visible}
+            autoHideDuration={5000} // Fecha automaticamente após 5s
+            onClose={onClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }} // Posição no canto superior direito
+        >
+            <Alert
+                variant="filled"
+                severity={type} // Tipos: "success", "error", "warning", "info"
+                action={
+                    <IconButton
+                        aria-label="close"
+                        color="inherit"
+                        size="small"
+                        onClick={onClose}
                     >
-                        Close me!
-                    </Alert>
-                </Collapse>
-            </Stack>
-            <Button
-                disabled={open}
-                variant="contained"
-                onClick={() => {
-                    setOpen(true);
-                }}
+                        <IconX width={20} />
+                    </IconButton>
+                }
             >
-                Re-open
-            </Button>
-        </ChildCard>
+                {message}
+            </Alert>
+        </Snackbar>
     );
 };
 
