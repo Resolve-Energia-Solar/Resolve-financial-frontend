@@ -27,7 +27,7 @@ export default function AttachmentDetails({ objectId, contentType }) {
     setLoading(true);
     const fetchData = async () => {
       try {
-        const response = await attachmentService.getAttanchmentByIdProject(objectId);
+        const response = await attachmentService.getAttachment(objectId, contentType);
         setAttachments(response.results);
       } catch (error) {
         console.error('Error fetching attachments:', error);
