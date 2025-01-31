@@ -372,7 +372,7 @@ const SaleList = () => {
                   onClick={() => handleSort('signature_date')}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    Data de Contrato
+                    Data de Assinatura
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
                       {order === 'signature_date' &&
                         (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}

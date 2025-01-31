@@ -42,7 +42,7 @@ const useSaleForm = (initialData, id) => {
         totalValue: initialData.total_value || '',
         status: initialData.status || '',
         completedDocument: initialData.completed_document || false,
-        billing_date: initialData.billing_date || ''
+        billing_date: initialData.billing_date || null
       });
     }
   }, [initialData]);
@@ -66,7 +66,7 @@ const useSaleForm = (initialData, id) => {
       total_value: formData.totalValue,
       status: formData.status,
       completed_document: formData.completedDocument,
-      billing_date: formData.billing_date
+      billing_date: formData.billing_date || null
     };
 
     try {

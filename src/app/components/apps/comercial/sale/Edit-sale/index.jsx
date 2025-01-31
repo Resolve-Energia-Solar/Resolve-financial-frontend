@@ -42,6 +42,7 @@ import SchedulesInspections from '../../../project/components/SchedulesInspectio
 import History from '@/app/components/apps/history';
 import Comment from '../../../comment';
 import useSendContract from '@/hooks/contract/useSendContract';
+import AlertTransition from '@/app/components/ui-components/alert/AlertTransition';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -51,6 +52,8 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
   if (!saleId) id = params.id;
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [alert, setAlert] = useState({ open: false, message: "", type: "info" }); // Estado do alerta
+
 
   const formatFieldName = (fieldName) => {
     const fieldLabels = {
@@ -408,45 +411,12 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
         saleId={id_sale}
       /> */}
 
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={formErrors && Object.keys(formErrors).length > 0 ? 'error' : 'success'}
-          sx={{ width: '100%', display: 'flex', alignItems: 'center' }}
-          iconMapping={{
-            error: <Error style={{ verticalAlign: 'middle' }} />,
-            success: <CheckCircle style={{ verticalAlign: 'middle' }} />,
-          }}
-        >
-          {formErrors && Object.keys(formErrors).length > 0 ? (
-            <ul
-              style={{
-                margin: '10px 0',
-                paddingLeft: '20px',
-                listStyleType: 'disc',
-              }}
-            >
-              {Object.entries(formErrors).map(([field, messages]) => (
-                <li
-                  key={field}
-                  style={{
-                    marginBottom: '8px',
-                  }}
-                >
-                  {`${formatFieldName(field)}: ${messages.join(', ')}`}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            'Alterações salvas com sucesso!'
-          )}
-        </Alert>
-      </Snackbar>
+    <AlertTransition 
+            message={alert.message} 
+            type={alert.type} 
+            open={alert.open} 
+            onClose={() => setAlert({ ...alert, open: false })}
+          />
     </Box>
   );
 };

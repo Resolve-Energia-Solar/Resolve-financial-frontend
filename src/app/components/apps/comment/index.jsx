@@ -118,7 +118,7 @@ export default function Comment({ contentType, objectId }) {
             }}
         >
             <Typography variant="h6" gutterBottom sx={{ p: 2 }}>
-                Comentáros
+                Comentários
             </Typography>
 
             {/* Área de mensagens */}
