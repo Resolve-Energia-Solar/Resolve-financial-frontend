@@ -50,6 +50,7 @@ import ScheduleDrawerFilters from '../ScheduleDrawerFilters';
 import ScheduleView from '../ScheduleView';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
 import { ScheduleDataContext } from '@/app/context/Inspection/ScheduleContext';
+import { format } from 'date-fns';
 
 const SchedulingList = () => {
   const router = useRouter();
@@ -361,6 +362,19 @@ const SchedulingList = () => {
                   </Box>
                 </Box>
               </TableCell>
+
+              <TableCell
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                onClick={() => handleSort('created_at')}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  Criado Em
+                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                    {order === 'created_at' &&
+                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                  </Box>
+                </Box>
+              </TableCell>
             </TableRow>
           </TableHead>
           {loading ? (
@@ -409,6 +423,10 @@ const SchedulingList = () => {
                   </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     {`${schedule.address.street}, ${schedule.address.number}, ${schedule.address.neighborhood}, ${schedule.address.city} - ${schedule.address.state}`}
+                  </TableCell>
+
+                  <TableCell onClick={() => handleRowClick(schedule)}>
+                    {format(new Date(schedule.created_at), 'dd/MM/yyyy HH:mm:ss')}
                   </TableCell>
                 </TableRow>
               ))}

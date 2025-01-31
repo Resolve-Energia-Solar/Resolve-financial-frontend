@@ -259,7 +259,7 @@ const ListProductsDefault = () => {
                         </Typography>
                       </Stack>
                       <Stack direction="row" alignItems="center" justifyContent="space-between">
-                          <Chip label={`Telhado - ${product?.roof_type?.name}`} />
+                          <Chip label={`Estrutura - ${product?.roof_type?.name}`} />
                         </Stack>
                     </Stack>
                   </CardContent>

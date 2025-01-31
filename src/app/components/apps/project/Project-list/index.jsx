@@ -37,7 +37,7 @@ const ProjectList = ({ onClick }) => {
   const router = useRouter();
   const [indicators, setIndicators] = useState({});
 
-  const { filters, refresh } = useContext(ProjectDataContext);
+  const { filters, setFilters, refresh } = useContext(ProjectDataContext);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -136,6 +136,7 @@ const ProjectList = ({ onClick }) => {
                 title: 'Em Andamento',
                 subtitle: 'Projestista',
                 count: indicators?.designer?.blocked_to_engineering || '-',
+                onClick: () => setFilters({ ...filters, designer_status: 'EA' }),
               },
               {
                 backgroundColor: 'success.light',
@@ -144,6 +145,7 @@ const ProjectList = ({ onClick }) => {
                 title: 'Concluído',
                 subtitle: 'Projestista',
                 count: indicators?.designer?.complete || '-',
+                onClick: () => setFilters({ ...filters, designer_status: 'CO' }),
               },
               {
                 backgroundColor: 'secondary.light',
@@ -152,6 +154,7 @@ const ProjectList = ({ onClick }) => {
                 title: 'Cancelado',
                 subtitle: 'Projestista',
                 count: indicators?.designer?.canceled || '-',
+                onClick: () => setFilters({ ...filters, designer_status: 'C' }),
               },
             ]}
           />
