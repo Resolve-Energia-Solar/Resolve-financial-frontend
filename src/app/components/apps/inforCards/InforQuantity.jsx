@@ -1,29 +1,40 @@
 import React from 'react';
-import { Grid, Box, Stack, Typography, Chip } from '@mui/material';
+import { Grid, Box, Stack, Typography } from '@mui/material';
 
-// Componente InfoCard
-const InforQuantity = ({ backgroundColor, iconColor, IconComponent, title, count, onClick }) => (
+const InforQuantity = ({ backgroundColor, iconColor, IconComponent, title, subtitle, count, onClick }) => (
   <Grid item xs={12} sm={4}>
     <Box
       bgcolor={backgroundColor}
-      p={1}
-      sx={{ cursor: 'pointer' }}
-      onClick={onClick} // Evento de clique aplicado aqui
+      p={2}
+      borderRadius={0.5}
+      boxShadow={2}
+      sx={{ cursor: 'pointer', transition: '0.3s', '&:hover': { boxShadow: 4 } }}
+      onClick={onClick}
     >
-      <Stack direction="row" gap={2} alignItems="center">
+      <Stack direction="row" spacing={2} alignItems="center">
         <Box
-          width={35}
-          height={35}
+          width={40}
+          height={40}
           bgcolor={iconColor}
           display="flex"
           alignItems="center"
           justifyContent="center"
+          borderRadius={0.5}
         >
-        <IconComponent width={22} style={{ color: '#fff' }} />
+          <IconComponent width={24} style={{ color: '#fff' }} />
         </Box>
         <Box>
-          <Typography>{title}</Typography>
-          <Typography fontWeight={500}>{count}</Typography>
+          <Typography variant="h6" fontWeight={600} color="text.primary">
+            {title}
+          </Typography>
+          {subtitle && (
+            <Typography variant="body2" color="text.secondary">
+              {subtitle}
+            </Typography>
+          )}
+          <Typography variant="h5" fontWeight={700} color="primary.main">
+            {count}
+          </Typography>
         </Box>
       </Stack>
     </Box>
@@ -39,6 +50,7 @@ const ProjectCards = ({ cardsData }) => (
         iconColor={card.iconColor}
         IconComponent={card.IconComponent}
         title={card.title}
+        subtitle={card.subtitle}
         count={card.count || 0}
         onClick={card.onClick}
       />
