@@ -19,7 +19,7 @@ const useSaleForm = (initialData, id) => {
     totalValue: '',
     status: '',
     completedDocument: false,
-    billing_month: ''
+    billing_month: null
   });
 
   const [formErrors, setFormErrors] = useState({});
