@@ -21,7 +21,7 @@ import {
   Checkbox,
   Switch,
 } from '@mui/material';
-import { Edit, KeyboardArrowRight } from '@mui/icons-material';
+import { ArrowBack, Edit, KeyboardArrowRight } from '@mui/icons-material';
 import { IconTrash } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import scheduleService from '@/services/scheduleService';
@@ -152,10 +152,8 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
 
   const handleDelete = async (scheduleId) => {
     try {
-      await scheduleService.deleteSchedule(scheduleId);
-      setschedules((prevschedules) =>
-        prevschedules.filter((schedule) => schedule.id !== scheduleId),
-      );
+      await scheduleService.patchSchedule(scheduleId, { project_id: null });
+      reloadPage();
       setConfirmDeleteModalOpen(false);
     } catch (error) {
       console.error('Erro ao excluir a unidade', error);
@@ -270,9 +268,9 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                           <Edit width={22} />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Delete Item">
+                      <Tooltip title="Desassociar Item">
                         <IconButton color="error" onClick={() => openDeleteModal(schedule.id)}>
-                          <IconTrash width={22} />
+                          <ArrowBack width={22} />
                         </IconButton>
                       </Tooltip>
                     </TableCell>
@@ -431,10 +429,10 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
         maxWidth="xs"
         fullWidth
       >
-        <DialogTitle>Confirmar Exclusão</DialogTitle>
+        <DialogTitle>Confirmar Desassociação</DialogTitle>
         <DialogContent>
           <Typography variant="body2">
-            Tem certeza que deseja excluir esta unidade? Esta ação não pode ser desfeita.
+            Tem certeza que deseja desassociar esta vistoria do projeto? Esta ação não pode ser desfeita.
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -442,7 +440,7 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
             Cancelar
           </Button>
           <Button onClick={() => handleDelete(inspectionSelected)} color="error">
-            Excluir
+            Confirmar
           </Button>
         </DialogActions>
       </Dialog>
