@@ -107,6 +107,19 @@ const CreateProduct = ({
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={6}>
+          <CustomFormLabel htmlFor="kwp">Kwp</CustomFormLabel>
+          <CustomTextField
+            name="kwp"
+            value={formData.params}
+            type="number"
+            onChange={(e) => handleChange('params', e.target.value)}
+            placeholder="Kwp"
+            variant="outlined"
+            fullWidth
+            {...(formErrors.params && { error: true, helperText: formErrors.params })}
+          />
+        </Grid>
+        <Grid item xs={12} sm={12} lg={6}>
           <CustomFormLabel htmlFor="product_value">Valor do Produto</CustomFormLabel>
           <CustomFieldMoney
             name="product_value"
@@ -162,7 +175,7 @@ const CreateProduct = ({
             {...(formErrors.branches_ids && { error: true, helperText: formErrors.branches_ids })}
           />
         </Grid>
-        <Grid item xs={12} sm={12} lg={6}>
+        <Grid item xs={12} sm={12} lg={12}>
           <CustomFormLabel htmlFor="roof_type_id">Tipo de Telhado</CustomFormLabel>
           <AutoCompleteRoofType
             name="roof_type_id"

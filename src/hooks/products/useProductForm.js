@@ -14,6 +14,7 @@ const useProductForm = (initialData, id) => {
     reference_value: '',
     cost_value: '',
     default: '',
+    params: '',
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -32,6 +33,7 @@ const useProductForm = (initialData, id) => {
         product_value: initialData.product_value || '',
         reference_value: initialData.reference_value || '',
         cost_value: initialData.cost_value || '',
+        params: initialData.params || '',
         materials_ids: initialData.materials.map(({ material, ...rest }) => ({
           ...rest,
           material_id: material.id,
@@ -89,6 +91,7 @@ const useProductForm = (initialData, id) => {
       cost_value: formData.cost_value,
       materials_ids: formData.materials_ids,
       default: formData.default,
+      params: formData.params,
     };
 
     try {
