@@ -14,10 +14,10 @@ const useSaleForm = (initialData, id) => {
     branchId: null,
     marketingCampaignId: null,
     productIds: [],
-    payment_status: '',
+    payment_status: null,
     isSale: true,
     totalValue: '',
-    status: '',
+    status: null,
     completedDocument: false,
     billing_date: null
   });
@@ -37,10 +37,10 @@ const useSaleForm = (initialData, id) => {
         branchId: initialData.branch?.id || '',
         marketingCampaignId: initialData.marketing_campaign?.id || null,
         productIds: initialData.products?.map((product) => product) || [],
-        payment_status: initialData.payment_status || '',
+        payment_status: initialData.payment_status || null,
         isSale: initialData.is_pre_sale || false,
         totalValue: initialData.total_value || '',
-        status: initialData.status || '',
+        status: initialData.status || null,
         completedDocument: initialData.completed_document || false,
         billing_date: initialData.billing_date || null
       });
