@@ -16,7 +16,7 @@ const ChipSigned = ({ status }) => {
       case 'Recusado':
         return { label: 'Recusado', color: 'error', icon: <HourglassEmptyIcon /> };
       default:
-        return { label: status };
+        return { label: 'Pendente', color: 'warning', icon: <HourglassEmptyIcon /> };
     }
   };
 
