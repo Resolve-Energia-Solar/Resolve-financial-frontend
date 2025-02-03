@@ -105,7 +105,7 @@ const ListProductsDefault = () => {
         const product = productList.find((p) => p.id === productId);
         return acc + (Number(product?.product_value) || 0);
       }, 0);
-      setTotalValue(totalValue);
+      setTotalValue(totalValue.toFixed(3));
 
       return newProductIds;
     });
