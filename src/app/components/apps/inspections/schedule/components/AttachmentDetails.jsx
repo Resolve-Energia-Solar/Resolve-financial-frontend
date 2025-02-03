@@ -72,20 +72,28 @@ export default function AttachmentDetailsSchedule({
     setSelectedAttachment(null);
   };
 
-  const handleAttach = async (attachment) => {
+  const handleToggleAttachment = async (attachment) => {
     setAttaching(true);
-    try {
-      const response = await scheduleService.patchSchedule(scheduleId, {
-        attachments_id: [...attachmentIds, attachment.id],
-      });
-      setAttachmentIds([...attachmentIds, attachment.id]);
-      onRefresh();
-      alert('Anexo adicionado com sucesso!');
-    } catch (error) {
-      console.error('Error attaching file:', error);
+    const isAttached = attachmentIds.includes(attachment.id);
+    const newAttachmentIds = isAttached
+      ? attachmentIds.filter((id) => id !== attachment.id)
+      : [...attachmentIds, attachment.id];
 
-      if (Object.keys(error?.response?.data).length) {
-        Object.entries(error?.response?.data).forEach(([key, value]) => {
+    try {
+      await scheduleService.patchSchedule(scheduleId, {
+        attachments_id: newAttachmentIds,
+      });
+      setAttachmentIds(newAttachmentIds);
+      onRefresh();
+      enqueueSnackbar(
+        isAttached ? 'Anexo removido com sucesso!' : 'Anexo adicionado com sucesso!',
+        { variant: 'success' },
+      );
+    } catch (error) {
+      console.error('Error toggling attachment:', error);
+      
+      if (error?.response?.data && Object.keys(error.response.data).length) {
+        Object.entries(error.response.data).forEach(([key, value]) => {
           enqueueSnackbar(`${key}: ${value.join(' ')}`, { variant: 'error' });
         });
       }
@@ -209,12 +217,18 @@ export default function AttachmentDetailsSchedule({
               <ListItem>
                 <Button
                   variant="contained"
-                  color="primary"
+                  color={attachmentIds.includes(selectedAttachment.id) ? 'secondary' : 'primary'}
                   sx={{ marginLeft: 1 }}
-                  onClick={() => handleAttach(selectedAttachment)}
+                  onClick={() => handleToggleAttachment(selectedAttachment)}
                   disabled={attaching}
                 >
-                  {attaching ? <CircularProgress size={24} /> : 'Anexar'}
+                  {attaching ? (
+                    <CircularProgress size={24} />
+                  ) : attachmentIds.includes(selectedAttachment.id) ? (
+                    'Desanexar'
+                  ) : (
+                    'Anexar'
+                  )}
                 </Button>
               </ListItem>
             </List>
