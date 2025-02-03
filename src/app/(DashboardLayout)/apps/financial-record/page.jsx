@@ -29,6 +29,7 @@ import { useRouter } from 'next/navigation';
 import BlankCard from '@/app/components/shared/BlankCard';
 import PageContainer from "@/app/components/container/PageContainer";
 import financialRecordService from "@/services/financialRecordService";
+import FinancialRecordDetailDrawer from "@/app/components/apps/financial-record/detailDrawer";
 
 const financialRecordList = () => {
     const [financialRecordList, setFinancialRecordList] = useState([]);
@@ -36,6 +37,8 @@ const financialRecordList = () => {
     const [error, setError] = useState(null);
     const [open, setOpen] = useState(false);
     const [financialRecordToDelete, setFinancialRecordToDelete] = useState(null);
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [selectedRecord, setSelectedRecord] = useState(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -99,7 +102,17 @@ const financialRecordList = () => {
                 return 'Desconhecido';
         }
     };
-    
+
+    const handleRowClick = (record) => {
+        setSelectedRecord(record);
+        setDrawerOpen(true);
+    };
+
+    const handleDrawerClose = () => {
+        setDrawerOpen(false);
+        setSelectedRecord(null);
+    };
+
     return (
         <PageContainer title="Contas a Receber/Pagar" description="Lista de Contas a Receber/Pagar">
             <BlankCard>
@@ -118,7 +131,7 @@ const financialRecordList = () => {
                         <TableContainer component={Paper} elevation={3}>
                             <Table aria-label="table">
                                 <TableHead>
-                                <TableRow>
+                                    <TableRow>
                                         <TableCell>Protocolo</TableCell>
                                         <TableCell>Descrição</TableCell>
                                         <TableCell>Beneficiário/Pagador</TableCell>
@@ -130,11 +143,11 @@ const financialRecordList = () => {
                                 </TableHead>
                                 <TableBody>
                                     {financialRecordList.map((item) => (
-                                        <TableRow key={item.id} hover>
+                                        <TableRow key={item.id} hover onClick={() => handleRowClick(item)}>
                                             <TableCell>{item.protocol}</TableCell>
                                             <TableCell>{item.notes.length > 35 ? `${item.notes.substring(0, 35)}...` : item.notes}</TableCell>
                                             <TableCell>{item.client_supplier_name}</TableCell>
-                                            <TableCell>{item.value}</TableCell>
+                                            <TableCell>R$ {item.value}</TableCell>
                                             <TableCell>{item.due_date}</TableCell>
                                             <TableCell>{getStatusLabel(item.status)}</TableCell>
                                             <TableCell>
@@ -142,7 +155,7 @@ const financialRecordList = () => {
                                                     <IconButton 
                                                         color="primary" 
                                                         size="small" 
-                                                        onClick={() => handleEditClick(item.id)}
+                                                        onClick={(e) => { e.stopPropagation(); handleEditClick(item.id); }}
                                                     >
                                                         <EditIcon />
                                                     </IconButton>
@@ -151,7 +164,7 @@ const financialRecordList = () => {
                                                     <IconButton 
                                                         color="error" 
                                                         size="small" 
-                                                        onClick={() => handleDeleteClick(item.id)}
+                                                        onClick={(e) => { e.stopPropagation(); handleDeleteClick(item.id); }}
                                                     >
                                                         <DeleteIcon />
                                                     </IconButton>
@@ -182,6 +195,12 @@ const financialRecordList = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <FinancialRecordDetailDrawer
+                open={drawerOpen}
+                onClose={handleDrawerClose}
+                record={selectedRecord}
+            />
         </PageContainer>
     );
 };

@@ -42,15 +42,13 @@ export default function useFinancialRecordForm() {
       console.log('Enviando dados:', formData);
       const response = await financialRecordService.createFinancialRecord(formData);
       console.log('Resposta da API:', response);
-  
-      if (response.status === 201) {
+      if (response) {
         setSuccess(true);
       }
     } catch (error) {
       console.error('Erro ao salvar:', error);
     }
   };
-  
 
   return { formData, handleChange, handleSave, formErrors, success };
 }

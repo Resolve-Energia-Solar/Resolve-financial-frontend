@@ -73,7 +73,6 @@ export default function History({ contentType, objectId }) {
         bgcolor: 'background.paper',
         borderRadius: 2,
         p: 2,
-        // boxShadow: 1,
         mt: 2,
       }}
     >
@@ -91,7 +90,7 @@ export default function History({ contentType, objectId }) {
             <ListItem alignItems="flex-start">
               <ListItemAvatar>
                 <Avatar sx={{ bgcolor: 'primary.main', color: 'white' }}>
-                  {getInitials(activity.author.complete_name.toUpperCase() || activity.author.email).toUpperCase()}
+                  {activity.author ? getInitials(activity.author.complete_name.toUpperCase() || activity.author.email.toUpperCase()) || activity.author.username : '?'}
                 </Avatar>
               </ListItemAvatar>
               <ListItemText
@@ -102,7 +101,7 @@ export default function History({ contentType, objectId }) {
                       Realizado em: {new Date(activity.timestamp).toLocaleString('pt-BR')}
                     </Typography>
                     <Typography variant="body2">
-                      Realizado por: {activity.author.complete_name || activity.author.email}
+                      Realizado por: {activity.author ? (activity.author.complete_name || activity.author.email || activity.author.username ) : '?'}
                     </Typography>
                   </>
                 }
