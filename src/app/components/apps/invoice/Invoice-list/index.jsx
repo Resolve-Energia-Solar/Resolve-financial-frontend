@@ -1,48 +1,68 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   Box,
   Typography,
   Stack,
-
-} from '@mui/material';
-import { useEffect } from 'react';
-import paymentService from '@/services/paymentService';
-import { AddBoxRounded } from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
-import PaymentList from '../components/paymentList/list';
-import InforCards from '../../inforCards/InforCards';
-import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
-import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
 } from '@mui/material';
+import { AddBoxRounded, FilterAlt } from '@mui/icons-material';
+import { useRouter } from 'next/navigation';
+import paymentService from '@/services/paymentService';
+import PaymentList from '../components/paymentList/list';
+import InforCards from '../../inforCards/InforCards';
+import FilterDrawer from '../components/filterDrawer/FilterDrawer';
+import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { InvoiceContext } from '@/app/context/InvoiceContext';
+import { useContext } from 'react';
 
-function InvoiceList({ onClick }) {
-
-  const [paymentList, setPaymentsList] = useState()
-
+export default function InvoiceList({ onClick }) {
+  const [paymentList, setPaymentsList] = useState([]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const router = useRouter();
+  const [page, setPage] = useState(0);
+
+  const { filters, setFilters, refresh } = useContext(InvoiceContext);
+
+  // Busca inicial dos pagamentos
+  useEffect(() => {
+    setPage(0);
+    setPaymentsList([]);
+  }, [filters, refresh]);
+
+  console.log('filters', filters);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (filters = {}) => {
       try {
-        const response = await paymentService.getPayments();
+        const response = await paymentService.getPayments({ filters });
         setPaymentsList(response.results);
       } catch (error) {
-        console.log('Error: ', error);
+        console.log('Error:', error);
       }
     };
 
-    fetchData();
-  }, []);
+    fetchData(filters);
+  }, [filters]);
 
   const handleCreateClick = () => {
     router.push('/apps/invoice/create');
   };
+
+  const toggleFilterDrawer = (open) => () => {
+    setIsFilterOpen(open);
+  };
+
+  const handleApplyFilters = (filters) => {
+    // Chama novamente a busca com filtros
+    fetchData(filters);
+  };
+
+  console.log('filters:', filters);
 
   const cardsData = [
     {
@@ -84,8 +104,6 @@ function InvoiceList({ onClick }) {
 
   return (
     <Box>
-      {/* <DashboardCards /> */}
-
       <Accordion sx={{ marginBottom: 4 }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -98,7 +116,6 @@ function InvoiceList({ onClick }) {
           <InforCards cardsData={cardsData} />
         </AccordionDetails>
       </Accordion>
-
 
       <Stack
         mt={3}
@@ -116,9 +133,24 @@ function InvoiceList({ onClick }) {
             Adicionar Pagamento
           </Button>
         </Box>
+        <Box>
+          <Button
+            variant="outlined"
+            startIcon={<FilterAlt />}
+            sx={{ marginTop: 1, marginBottom: 2 }}
+            onClick={toggleFilterDrawer(true)}
+          >
+            Filtros
+          </Button>
+            <FilterDrawer
+              externalOpen={isFilterOpen}
+              onClose={toggleFilterDrawer(false)}
+              onApplyFilters={handleApplyFilters}
+            />
+        </Box>
       </Stack>
-      <PaymentList onClick={onClick} />
+
+      <PaymentList onClick={onClick} items={paymentList} />
     </Box>
   );
 }
-export default InvoiceList;

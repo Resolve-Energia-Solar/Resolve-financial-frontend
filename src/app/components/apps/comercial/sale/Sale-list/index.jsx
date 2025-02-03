@@ -44,7 +44,7 @@ import saleService from '@/services/saleService';
 import useSendContract from '@/hooks/clicksign/useClickSign';
 import TableSkeleton from '../components/TableSkeleton';
 import DrawerFilters from '../components/DrawerFilters/DrawerFilters';
-import { SaleDataContext } from '@/app/context/SaleContext';
+import { SaleDataContext } from '@/app/context/InvoiceContext';
 import ActionFlash from '../components/flashAction/actionFlash';
 import StatusPreSale from '../components/StatusPreSale';
 import OnboardingCreateSale from '../Add-sale/onboarding';

@@ -9,6 +9,8 @@ export const InvoiceProvider = ({ children }) => {
     const [invoices, setInvoices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState (null);
+    const [filters, setFilters] = useState([]);
+    const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -60,8 +62,13 @@ export const InvoiceProvider = ({ children }) => {
         }
     };
 
+    const refreshData = () => {
+        setRefresh((prev) => !prev);
+    };
+
+
     return (
-        <InvoiceContext.Provider value={{ invoices, loading, error, deleteInvoice, addInvoice, updateInvoice }}>
+        <InvoiceContext.Provider value={{ invoices, loading, error, deleteInvoice, addInvoice, updateInvoice, filters, setFilters, refreshData, refresh }}>
             {children}
         </InvoiceContext.Provider>
     );

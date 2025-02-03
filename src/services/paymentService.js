@@ -8,6 +8,11 @@ const paymentService = {
       if (params.sale) {
         queryParams.append('sale', params.sale);
       }
+      if (params.filters) {
+        Object.keys(params.filters).forEach(key => {
+          queryParams.append(key, params.filters[key]);
+        });
+      }
   
       const url = `/api/payments/?${queryParams.toString()}`;
   
