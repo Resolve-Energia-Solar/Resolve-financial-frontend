@@ -488,7 +488,7 @@ const SaleList = () => {
                       })}
                     </TableCell>
                     <TableCell>
-                      {<ChipSigned status={item?.signature_date ? true : false} />}
+                      {<ChipSigned status={item?.signature_status} />}
                     </TableCell>
                     <TableCell>
                       <StatusPreSale status={item.is_pre_sale} />
