@@ -8,20 +8,47 @@ import {
     Divider,
     Tabs,
     Tab,
-    Grid
+    Grid,
+    IconButton,
+    Chip,
+    Link
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import Comment from '../comment';
+
+const statusMap = {
+    "S": <Chip label="Solicitada" color="warning" />,
+    "E": <Chip label="Em Andamento" color="primary" />,
+    "P": <Chip label="Paga" color="success" />,
+    "C": <Chip label="Cancelada" color="error" />
+};
+
+const paymentStatusMap = {
+    "P": <Chip label="Pago" color="success" />,
+    "E": <Chip label="Pendente" color="warning" />,
+    "C": <Chip label="Cancelado" color="error" />
+};
+
+const responsibleStatusMap = {
+    "P": <Chip label="Pendente" color="warning" />,
+    "A": <Chip label="Aprovado" color="success" />,
+    "R": <Chip label="Reprovado" color="error" />
+};
 
 const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
     const [tabIndex, setTabIndex] = useState(0);
-
     if (!record) return null;
 
     return (
         <Drawer anchor="right" open={open} onClose={onClose}>
-            <Box sx={{ width: '40vw', p: 4 }}>
-                <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>Detalhes do Registro</Typography>
-                
+            <Box sx={{ width: '55vw', p: 4 }}>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>Solicitação nº {record.protocol}</Typography>
+                    <IconButton onClick={onClose}>
+                        <CloseIcon />
+                    </IconButton>
+                </Box>
+
                 <Tabs value={tabIndex} onChange={(e, newIndex) => setTabIndex(newIndex)}>
                     <Tab label="Geral" />
                     <Tab label="Comentários" />
@@ -30,48 +57,56 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
                 {tabIndex === 0 && (
                     <Box sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
-                            <Grid item xs={12}><Typography><strong>Protocolo:</strong> {record.protocol}</Typography></Grid>
-                            <Grid item xs={12}><Typography><strong>Descrição:</strong> {record.notes}</Typography></Grid>
-                            <Grid item xs={6}><Typography><strong>Beneficiário/Pagador:</strong> {record.client_supplier_name}</Typography></Grid>
-                            <Grid item xs={6}><Typography><strong>Valor:</strong>R$ {record.value}</Typography></Grid>
-                            <Grid item xs={6}><Typography><strong>Data de Vencimento:</strong> {record.due_date}</Typography></Grid>
-                            <Grid item xs={6}><Typography><strong>Data do Serviço:</strong> {record.service_date}</Typography></Grid>
-                            <Grid item xs={6}><Typography><strong>Status:</strong> {record.status}</Typography></Grid>
-                            <Grid item xs={6}><Typography><strong>Status do Pagamento:</strong> {record.payment_status}</Typography></Grid>
-                            <Grid item xs={12}><Typography><strong>Data de Criação:</strong> {record.created_at}</Typography></Grid>
+                            <Grid item xs={12} md={6}><Typography><strong>Protocolo:</strong> {record.protocol}</Typography></Grid>
+                            <Grid item xs={12} md={6}><Typography><strong>Descrição:</strong> {record.notes}</Typography></Grid>
+                            <Grid item xs={12} md={6}><Typography><strong>Beneficiário:</strong> {record.client_supplier_name}</Typography></Grid>
+                            <Grid item xs={12} md={6}>
+                              <Typography><strong>Valor:</strong> R$ {parseFloat(record.value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography>
+                            </Grid>
+                            <Grid item xs={12} md={6}><Typography><strong>Data de Vencimento:</strong> {new Date(record.due_date).toLocaleDateString('pt-BR')}</Typography></Grid>
+                            <Grid item xs={12} md={6}><Typography><strong>Data do Serviço:</strong> {new Date(record.service_date).toLocaleDateString('pt-BR')}</Typography></Grid>
+                            <Grid item xs={12} md={6}><Typography><strong>Status:</strong> {statusMap[record.status]}</Typography></Grid>
+                            <Grid item xs={12} md={6}><Typography><strong>Status do Financeiro:</strong> {paymentStatusMap[record.payment_status]}</Typography></Grid>
+                            <Grid item xs={12} md={6}><Typography><strong>Status do Gestor:</strong> {responsibleStatusMap[record.responsible_status]}</Typography></Grid>
+                            <Grid item xs={12} md={6}><Typography><strong>Data de Criação:</strong> {new Date(record.created_at).toLocaleString('pt-BR')}</Typography></Grid>
                         </Grid>
                         <Divider sx={{ my: 3 }} />
-                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Solicitante</Typography>
-                        <Box display="flex" alignItems="center" gap={2} sx={{ mt: 2 }}>
-                            <Avatar src={record.requester.profile_picture} alt={record.requester.complete_name} sx={{ width: 56, height: 56 }} />
-                            <Box>
-                                <Typography><strong>Nome:</strong> {record.requester.complete_name}</Typography>
-                                <Typography><strong>Email:</strong> {record.requester.email}</Typography>
-                                <Typography><strong>Telefone:</strong> +{record.requester.phone_numbers[0].country_code} ({record.requester.phone_numbers[0].area_code}) {record.requester.phone_numbers[0].phone_number}</Typography>
-                            </Box>
-                        </Box>
-                        <Divider sx={{ my: 3 }} />
-                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Responsável</Typography>
-                        <Box display="flex" alignItems="center" gap={2} sx={{ mt: 2 }}>
-                            <Avatar src={record.responsible.profile_picture} alt={record.responsible.complete_name} sx={{ width: 56, height: 56 }} />
-                            <Box>
-                                <Typography><strong>Nome:</strong> {record.responsible.complete_name}</Typography>
-                                <Typography><strong>Email:</strong> {record.responsible.email}</Typography>
-                                <Typography><strong>Telefone:</strong> +{record.responsible.phone_numbers[0].country_code} ({record.responsible.phone_numbers[0].area_code}) {record.responsible.phone_numbers[0].phone_number}</Typography>
-                            </Box>
-                        </Box>
-                        <Divider sx={{ my: 3 }} />
                         <Grid container spacing={2}>
-                            <Grid item xs={6}><Typography><strong>Código do Departamento:</strong> {record.department_code}</Typography></Grid>
-                            <Grid item xs={6}><Typography><strong>Código da Categoria:</strong> {record.category_code}</Typography></Grid>
-                            <Grid item xs={6}><Typography><strong>Código do Cliente/Fornecedor:</strong> {record.client_supplier_code}</Typography></Grid>
-                            <Grid item xs={6}><Typography><strong>Número da Fatura:</strong> {record.invoice_number}</Typography></Grid>
+                            <Grid item xs={12} md={6}><Typography><strong>Código do Departamento:</strong> {record.department_code}</Typography></Grid>
+                            <Grid item xs={12} md={6}><Typography><strong>Código da Categoria:</strong> {record.category_code}</Typography></Grid>
+                            <Grid item xs={12} md={6}><Typography><strong>Código do Cliente/Fornecedor:</strong> {record.client_supplier_code}</Typography></Grid>
+                            <Grid item xs={12} md={6}><Typography><strong>Número da Fatura:</strong> {record.invoice_number || "-"}</Typography></Grid>
+                        </Grid>
+                        <Divider sx={{ my: 3 }} />
+                        <Grid container>
+                            <Box display="flex" gap={2}>
+                                <Box>
+                                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Solicitante</Typography>
+                                    <Box display="flex" alignItems="center" gap={2} sx={{ mt: 2 }}>
+                                        <Avatar src={record.requester.profile_picture} alt={record.requester.complete_name} sx={{ width: 40, height: 40 }} />
+                                        <Box>
+                                            <Typography>{record.requester.complete_name}</Typography>
+                                            <Typography><Link href={`mailto:${record.requester.email}`}>{record.requester.email}</Link></Typography>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                                <Box>
+                                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Gestor</Typography>
+                                    <Box display="flex" alignItems="center" gap={2} sx={{ mt: 2 }}>
+                                        <Avatar src={record.responsible.profile_picture} alt={record.responsible.complete_name} sx={{ width: 40, height: 40 }} />
+                                        <Box>
+                                            <Typography>{record.responsible.complete_name}</Typography>
+                                            <Typography><Link href={`mailto:${record.responsible.email}`}>{record.responsible.email}</Link></Typography>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            </Box>
                         </Grid>
                     </Box>
                 )}
 
                 {tabIndex === 1 && (
-                    <Comment contentType={104} objectId={record.id}/>
+                    <Comment contentType={104} objectId={record.id} />
                 )}
             </Box>
         </Drawer>
