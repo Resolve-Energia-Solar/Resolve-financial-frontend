@@ -23,6 +23,7 @@ import {
   IconPoint,
   IconUserPin,
 } from '@tabler/icons-react';
+import { permission } from 'process';
 
 const Menuitems = [
   {
@@ -83,6 +84,13 @@ const Menuitems = [
         title: 'Parcelas',
         icon: IconPoint,
         href: '/apps/invoice/installments',
+      },
+      {
+        id: uniqueId(),
+        title: 'Solicitação de Pagamento',
+        icon: IconPoint,
+        href: '/apps/financial-record',
+        permissions: ['financial.view_financialrecord'],
       },
     ],
   },
