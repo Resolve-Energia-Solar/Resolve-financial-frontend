@@ -26,6 +26,10 @@ const PaymentChip = ({ paymentType }) => {
         return { label: 'Transferência', color: 'info', icon: <PaymentsIcon /> };
       case 'D':
         return { label: 'Dinheiro', color: 'info', icon: <PaymentsIcon /> };
+      case 'PA':
+        return { label: 'Poste Auxiliar', color: 'info', icon: <PaymentsIcon /> };
+      case 'RO':
+        return { label: 'Repasse de Obra', color: 'info', icon: <PaymentsIcon /> };
       default:
         return { label: paymentType };
     }

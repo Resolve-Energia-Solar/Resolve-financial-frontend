@@ -80,6 +80,8 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
     { value: 'P', label: 'Pix' },
     { value: 'T', label: 'Transferência' },
     { value: 'D', label: 'Dinheiro' },
+    { value: 'PA', label: 'Poste Auxiliar' },
+    { value: 'RO', label: 'Repasse de Obra' },
   ];
 
   const invoiceStatus = [
