@@ -125,21 +125,16 @@ const PaymentList = ({ onClick }) => {
                   Status
                 </Typography>
               </TableCell>
-              <TableCell align="center">
-                <Typography variant="h6" fontSize="14px">
-                  Ações
-                </Typography>
-              </TableCell>
             </TableRow>
           </TableHead>
           {loading ? (
-            <TableSkeleton rows={5} columns={6} />
+            <TableSkeleton rows={5} columns={5} />
           ) : error ? (
             <Typography color="error">{error}</Typography>
           ) : (
             <TableBody>
               {paymentsList.map((item) => (
-                <TableRow key={item?.id} onClick={() => onClick(item)}>
+                <TableRow key={item?.id} onClick={() => onClick(item)} hover>
               
                   <TableCell>
                     <Typography fontSize="14px">
@@ -162,51 +157,6 @@ const PaymentList = ({ onClick }) => {
                   </TableCell>
                   <TableCell>
                     <PaymentStatusChip paymentType={item?.is_paid} />
-                  </TableCell>
-                  <TableCell align="center">
-                    <Tooltip title="Ações">
-                      <IconButton
-                        size="small"
-                        onClick={(event) => handleMenuClick(event, item?.id)}
-                      >
-                        <MoreVert fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                    <Menu
-                      anchorEl={menuAnchorEl}
-                      open={menuOpenRowId === item?.id}
-                      onClose={handleMenuClose}
-                      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                    >
-                      <MenuItem
-                        onClick={() => {
-                          handleDetailClick(item?.id);
-                          handleMenuClose();
-                        }}
-                      >
-                        <Visibility fontSize="small" sx={{ mr: 1 }} />
-                        Visualizar
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          handleEditClick(item?.id);
-                          handleMenuClose();
-                        }}
-                      >
-                        <Edit fontSize="small" sx={{ mr: 1 }} />
-                        Editar
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          handleDeleteClick(item?.id);
-                          handleMenuClose();
-                        }}
-                      >
-                        <Delete fontSize="small" sx={{ mr: 1 }} />
-                        Excluir
-                      </MenuItem>
-                    </Menu>
                   </TableCell>
                 </TableRow>
               ))}

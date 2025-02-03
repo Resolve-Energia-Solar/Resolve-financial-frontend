@@ -34,7 +34,6 @@ export default function AttachmentDetailsSchedule({
   const [loading, setLoading] = useState(true);
   const [attaching, setAttaching] = useState(false);
   const [attachmentIds, setAttachmentIds] = useState([]);
-  const [errorAttaching, setErrorAttaching] = useState({});
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -60,7 +59,7 @@ export default function AttachmentDetailsSchedule({
       }
     };
     fetchData();
-  }, [objectId, contentType]);
+  }, [objectId, contentType,objectIds]);
 
   const handleOpenModal = (attachment) => {
     setSelectedAttachment(attachment);
