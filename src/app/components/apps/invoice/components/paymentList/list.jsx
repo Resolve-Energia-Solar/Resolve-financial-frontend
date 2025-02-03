@@ -128,7 +128,7 @@ const PaymentList = ({ onClick }) => {
             </TableRow>
           </TableHead>
           {loading ? (
-            <TableSkeleton rows={5} columns={6} />
+            <TableSkeleton rows={5} columns={5} />
           ) : error ? (
             <Typography color="error">{error}</Typography>
           ) : (
