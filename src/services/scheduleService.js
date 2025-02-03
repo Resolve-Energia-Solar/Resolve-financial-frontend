@@ -50,7 +50,15 @@ const scheduleService = {
       throw error
     }
   },
-
+  getScheduleByIdAttachments: async id => {
+    try {
+      const response = await apiClient.get(`/api/schedule/${id}/?fields=attachments,project,id`)
+      return response.data
+    } catch (error) {
+      console.error(`Erro ao buscar agendamento com id ${id}:`, error)
+      throw error
+    }
+  },
   getMySchedules: async ({ ordering, params, nextPage, userId }) => {
     const urlParams = params ? `&${params}` : ''
     const urlNextPage = nextPage ? `&page=${nextPage}` : ''

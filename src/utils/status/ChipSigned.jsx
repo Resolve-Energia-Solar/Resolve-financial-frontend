@@ -7,12 +7,16 @@ import {
 const ChipSigned = ({ status }) => {
   const getChipProps = (status) => {
     switch (status) {
-      case true:
+      case 'Assinado':
         return { label: 'Assinado', color: 'success', icon: <CheckCircleIcon /> };
-      case false:
-        return { label: 'Não Assinado', color: 'error', icon: <HourglassEmptyIcon /> };
+      case 'Enviado':
+        return { label: 'Enviado', color: 'info', icon: <HourglassEmptyIcon /> };
+      case 'Pendente':
+        return { label: 'Pendente', color: 'warning', icon: <HourglassEmptyIcon /> };
+      case 'Recusado':
+        return { label: 'Recusado', color: 'error', icon: <HourglassEmptyIcon /> };
       default:
-        return { label: status };
+        return { label: 'Pendente', color: 'warning', icon: <HourglassEmptyIcon /> };
     }
   };
 

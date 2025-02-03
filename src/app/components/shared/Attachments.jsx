@@ -83,10 +83,19 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setSelectedFile(file);
-      handleChange('file', file);
+      const timestamp = Date.now(); 
+      const fileNameWithoutExt = file.name.replace(/\.[^/.]+$/, ""); 
+      const extension = file.name.split('.').pop(); 
+      const uniqueFileName = `${fileNameWithoutExt}_${timestamp}.${extension}`; 
+  
+      const renamedFile = new File([file], uniqueFileName, { type: file.type });
+  
+      setSelectedFile(renamedFile);
+      handleChange('file', renamedFile);
     }
   };
+  
+  
 
   console.log('content type no componente: ', contentType);
 
