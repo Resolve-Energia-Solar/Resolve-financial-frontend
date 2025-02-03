@@ -11,10 +11,13 @@ import {
     Grid,
     IconButton,
     Chip,
-    Link
+    Link,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import Comment from '../comment';
+import Attachments from '../../shared/Attachments';
+
+const FINANCIAL_RECORD_CONTENT_TYPE = process.env.NEXT_PUBLIC_FINANCIAL_RECORD_CONTENT_TYPE
 
 const statusMap = {
     "S": <Chip label="Solicitada" color="warning" />,
@@ -37,6 +40,7 @@ const responsibleStatusMap = {
 
 const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
     const [tabIndex, setTabIndex] = useState(0);
+    const [openAddAttachmentModal, setOpenAddAttachmentModal] = useState(false);
     if (!record) return null;
 
     return (
@@ -52,6 +56,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
                 <Tabs value={tabIndex} onChange={(e, newIndex) => setTabIndex(newIndex)}>
                     <Tab label="Geral" />
                     <Tab label="Comentários" />
+                    <Tab label="Anexos" />
                 </Tabs>
 
                 {tabIndex === 0 && (
@@ -61,7 +66,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
                             <Grid item xs={12} md={6}><Typography><strong>Descrição:</strong> {record.notes}</Typography></Grid>
                             <Grid item xs={12} md={6}><Typography><strong>Beneficiário:</strong> {record.client_supplier_name}</Typography></Grid>
                             <Grid item xs={12} md={6}>
-                              <Typography><strong>Valor:</strong> R$ {parseFloat(record.value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography>
+                                <Typography><strong>Valor:</strong> R$ {parseFloat(record.value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography>
                             </Grid>
                             <Grid item xs={12} md={6}><Typography><strong>Data de Vencimento:</strong> {new Date(record.due_date).toLocaleDateString('pt-BR')}</Typography></Grid>
                             <Grid item xs={12} md={6}><Typography><strong>Data do Serviço:</strong> {new Date(record.service_date).toLocaleDateString('pt-BR')}</Typography></Grid>
@@ -106,7 +111,11 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
                 )}
 
                 {tabIndex === 1 && (
-                    <Comment contentType={104} objectId={record.id} />
+                    <Comment contentType={FINANCIAL_RECORD_CONTENT_TYPE} objectId={record.id} />
+                )}
+
+                {tabIndex === 2 && (
+                    <Attachments objectId={record.id} contentType={FINANCIAL_RECORD_CONTENT_TYPE} documentTypes={["Financial"]} />
                 )}
             </Box>
         </Drawer>
