@@ -37,12 +37,7 @@ export default function Comment({ contentType, objectId }) {
         const fetchComments = async () => {
             try {
                 const data = await CommentService.getComment(objectId, contentType);
-                
-                // Se a API já retorna do mais antigo para o mais recente:
                 setComments(data.results || []);
-
-                // Se a API retornar invertido (mais recente -> mais antigo), usar:
-                // setComments((data.results || []).reverse());
 
             } catch (err) {
                 setError(err.message || 'Erro ao carregar comentários.');
