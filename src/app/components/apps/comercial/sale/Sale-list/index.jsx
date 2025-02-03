@@ -590,11 +590,11 @@ const SaleList = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={totalRows} // Total de linhas retornadas pela API
-          rowsPerPage={rowsPerPage} // Linhas por página
-          page={page} // Página atual (base zero)
-          onPageChange={handlePageChange} // Muda a página
-          onRowsPerPageChange={handleRowsPerPageChange} // Muda o número de linhas por página
+          count={totalRows} 
+          rowsPerPage={rowsPerPage} 
+          page={page} 
+          onPageChange={handlePageChange} 
+          onRowsPerPageChange={handleRowsPerPageChange} 
           labelRowsPerPage="Linhas por página"
         />
       </Box>
