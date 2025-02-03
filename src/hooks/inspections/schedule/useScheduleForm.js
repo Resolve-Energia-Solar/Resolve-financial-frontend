@@ -280,7 +280,7 @@ const useScheduleForm = (initialData, id) => {
     const dataToSend = {
       schedule_creator: formData.schedule_creator,
       service_id: formData.service_id,
-      parent_schedules_id: formData.parent_schedules_id,
+      parent_schedules_id: formData.parent_schedules_id || undefined,
       customer_id: formData.customer_id,
       project_id: formData.project_id,
       products: normalizedProductsIds,
