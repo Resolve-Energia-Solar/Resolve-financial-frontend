@@ -11,7 +11,8 @@ import {
     ListItemAvatar,
     TextField,
     Button,
-    Skeleton
+    Skeleton,
+    Tooltip
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useSelector } from 'react-redux';
@@ -145,40 +146,57 @@ export default function Comment({ contentType, objectId }) {
                                     justifyContent: comment.author.id === user?.id ? 'flex-end' : 'flex-start'
                                 }}
                             >
-                                <ListItem
-                                    sx={{
-                                        maxWidth: '70%',
-                                        bgcolor: comment.author.id === user?.id ? 'primary.light' : 'grey.300',
-                                        borderRadius: 2,
-                                        padding: 1,
-                                        alignSelf: comment.author.id === user?.id ? 'flex-end' : 'flex-start'
-                                    }}
+                                <Tooltip
+                                    title={
+                                        <Box sx={{ p: 0, textAlign: 'left' }}>
+                                            <Typography variant="body2"><strong>Nome:</strong> {comment.author?.complete_name}</Typography>
+                                            <Typography variant="body2"><strong>Email:</strong> {comment.author?.email}</Typography>
+                                            <Typography variant="body2"><strong>Cargo:</strong> {comment.author.employee?.role?.name}</Typography>
+                                            <Typography variant="body2"><strong>Setor:</strong> {comment.author.employee?.department?.name}</Typography>
+                                            <Typography variant="body2"><strong>Unidade:</strong> {comment.author.employee?.branch?.name}</Typography>
+                                            <Typography variant="body2"><strong>Data:</strong> {new Date(comment.created_at).toLocaleString()}</Typography>
+                                        </Box>
+                                    }
+                                    arrow
+                                    placement="right"
+                                    enterDelay={300}
+                                    leaveDelay={50}
                                 >
-                                    <ListItemAvatar>
-                                        <Avatar sx={{ bgcolor: 'primary.main', color: 'white' }}>
-                                            {getInitials(
-                                                comment.author.complete_name || comment.author.email
-                                            )}
-                                        </Avatar>
-                                    </ListItemAvatar>
-                                    <ListItemText
-                                        primary={
-                                            comment.author.complete_name
-                                                ? comment.author.complete_name.charAt(0).toUpperCase() + comment.author.complete_name.slice(1).toLowerCase()
-                                                : comment.author.email.charAt(0).toUpperCase() + comment.author.email.slice(1).toLowerCase()
-                                        }
-                                        secondary={
-                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <Typography variant="body1">
-                                                    {comment?.text}
-                                                </Typography>
-                                                <Typography variant="caption" color="textSecondary" sx={{ marginLeft: '10px' }}>
-                                                    {new Date(comment.created_at).toLocaleString()}
-                                                </Typography>
-                                            </Box>
-                                        }
-                                    />
-                                </ListItem>
+                                    <ListItem
+                                        sx={{
+                                            maxWidth: '70%',
+                                            bgcolor: comment.author.id === user?.id ? 'primary.light' : 'grey.300',
+                                            borderRadius: 2,
+                                            padding: 1,
+                                            alignSelf: comment.author.id === user?.id ? 'flex-end' : 'flex-start'
+                                        }}
+                                    >
+                                        <ListItemAvatar>
+                                            <Avatar sx={{ bgcolor: 'primary.main', color: 'white' }}>
+                                                {getInitials(
+                                                    comment.author.complete_name || comment.author.email
+                                                )}
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={
+                                                comment.author.complete_name
+                                                    ? comment.author.complete_name.charAt(0).toUpperCase() + comment.author.complete_name.slice(1).toLowerCase()
+                                                    : comment.author.email.charAt(0).toUpperCase() + comment.author.email.slice(1).toLowerCase()
+                                            }
+                                            secondary={
+                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    <Typography variant="body1">
+                                                        {comment?.text}
+                                                    </Typography>
+                                                    <Typography variant="caption" color="textSecondary" sx={{ marginLeft: '10px' }}>
+                                                        {new Date(comment.created_at).toLocaleString()}
+                                                    </Typography>
+                                                </Box>
+                                            }
+                                        />
+                                    </ListItem>
+                                </Tooltip>
                             </motion.div>
                         ))
                     )}
