@@ -28,6 +28,7 @@ export default function DrawerFilters() {
     is_signed: filters.is_signed,
     signature_date: filters.signature_date,
     final_service_options: filters.final_service_options,
+    invoice_status: filters.invoice_status,
   });
 
   console.log('tempFilters', tempFilters);
@@ -92,6 +93,11 @@ export default function DrawerFilters() {
       params.final_service_options = filters.final_service_options;
     }
 
+    if (filters.invoice_status && filters.invoice_status.length > 0) {
+      const paymentStatusValues = filters.invoice_status.map((status) => status.value);
+      params.invoice_status = paymentStatusValues.join(',');
+    }
+
     return params;
   };
 
@@ -112,6 +118,7 @@ export default function DrawerFilters() {
       is_signed: [],
       signature_date: [null, null],
       final_service_options: null,
+      invoice_status: null
     });
   };
 
@@ -138,6 +145,13 @@ export default function DrawerFilters() {
   const isPreSaleOptions = [
     { value: 'true', label: 'Pré-Venda' },
     { value: 'false', label: 'Venda' },
+  ];
+
+  const invoiceStatusChoices = [
+    { value: 'E', label: 'Emitida' },
+    { value: 'L', label: 'Liberada' },
+    { value: 'P', label: 'Pendente' },
+    { value: 'C', label: 'Cancelada' },
   ];
 
   return (
@@ -176,6 +190,16 @@ export default function DrawerFilters() {
                   placeholder="Selecione o status"
                   value={tempFilters.statusDocument}
                   onChange={(event, value) => handleChange('statusDocument', value)}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="statusDocument">Status da Nota Fiscal</CustomFormLabel>
+                <CheckboxesTags
+                  options={invoiceStatusChoices}
+                  placeholder="Selecione o status"
+                  value={tempFilters.invoice_status}
+                  onChange={(event, value) => handleChange('invoice_status', value)}
                 />
               </Grid>
 
