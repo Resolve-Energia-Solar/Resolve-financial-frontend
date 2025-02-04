@@ -7,7 +7,6 @@ import {
   Chip,
   Divider,
   Drawer,
-  Grid,
   Paper,
   Stack,
   Typography,
@@ -19,7 +18,6 @@ import ScheduleStatusChip from '../StatusChip';
 import answerService from '@/services/answerService';
 import userService from '@/services/userService';
 import AnswerForm from '../../form-builder/AnswerForm';
-import saleService from '@/services/saleService';
 
 export default function ScheduleView({ open, onClose, selectedSchedule }) {
   const router = useRouter();
@@ -27,6 +25,9 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
   const [answerData, setAnswerData] = useState(null);
   const [loadingAnswer, setLoadingAnswer] = useState(true);
   const [seller, setSeller] = useState(null);
+  const [supervisor, setSupervisor] = useState(null);
+
+  console.log('seller: ', seller)
 
   const formatDateTime = (dateString) => {
     if (!dateString) return 'Não identificado';
@@ -46,14 +47,13 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
         try {
           const creatorData = await userService.getUserById(selectedSchedule.schedule_creator);
           setCreator(creatorData);
-        } catch (error) {
-          console.error('Error fetching creator:', error);
-        }
+        } catch (error) {}
       }
     }
 
     fetchCreator();
   }, [selectedSchedule]);
+  
 
   useEffect(() => {
     const fetchAnswer = async () => {
@@ -61,9 +61,7 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
       try {
         const data = await answerService.getAnswerBySchedule(selectedSchedule.id);
         setAnswerData(data);
-      } catch (err) {
-        console.error('Erro ao carregar a resposta:', err);
-      } finally {
+      } catch (err) {} finally {
         setLoadingAnswer(false);
       }
     };
@@ -71,23 +69,35 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
     if (selectedSchedule) {
       fetchAnswer();
     }
+  }, [selectedSchedule]);
 
+  useEffect(() => {
     const fetchSeller = async () => {
       if (selectedSchedule?.project?.sale?.seller) {
         try {
-          const data = await userService.getUserById(selectedSchedule?.project?.sale?.seller);
+          const data = await userService.getUserById(selectedSchedule.project.sale.seller);
           setSeller(data);
-          console.log('Vendedor:', data);
-        } catch (err) {
-          console.error('Erro ao carregar as vendas:', err);
-        }
+        } catch (err) {}
       }
     };
 
     fetchSeller();
   }, [selectedSchedule]);
 
-  console.log('selectedSchedule:', selectedSchedule);
+  // useEffect(() => {
+  //   const fetchSupervisor = async () => {
+  //     if (seller?.employee?.user_manager) {
+  //       try {
+  //         const data = await userService.getUserById(seller.employee.user_manager);
+  //         setSupervisor(data);
+  //       } catch (err) {}
+  //     }
+  //   };
+
+  //   if (seller) {
+  //     fetchSupervisor();
+  //   }
+  // }, [seller]);
 
   const handleEditClick = (id) => {
     router.push(`/apps/inspections/schedule/${id}/update`);
@@ -165,16 +175,12 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                     {seller?.complete_name || 'Sem vendedor associado'}
                   </Typography>
                   <Typography variant="body1">
+                    <strong>Supervisor:</strong>{' '}
+                    {seller?.employee?.manager?.complete_name || 'Sem supervisor associado'}
+                  </Typography>
+                  <Typography variant="body1">
                     <strong>Unidade:</strong>{' '}
                     {seller?.employee?.branch?.name || 'Sem unidade associada'}
-                  </Typography>
-
-                  <Typography variant="body1">
-                    <strong>Telefone:</strong>{' '}
-                    {seller?.phone_numbers[0] ? 
-                      `(${seller?.phone_numbers[0]?.area_code}) ${seller?.phone_numbers[0]?.phone_number}` 
-                      : 'Sem telefone associado'
-                    }
                   </Typography>
                 </Paper>
 
