@@ -59,7 +59,7 @@ export default function AttachmentDetailsSchedule({
       }
     };
     fetchData();
-  }, [objectId, contentType,objectIds]);
+  }, [objectId, contentType, objectIds]);
 
   const handleOpenModal = (attachment) => {
     setSelectedAttachment(attachment);
@@ -90,7 +90,7 @@ export default function AttachmentDetailsSchedule({
       );
     } catch (error) {
       console.error('Error toggling attachment:', error);
-      
+
       if (error?.response?.data && Object.keys(error.response.data).length) {
         Object.entries(error.response.data).forEach(([key, value]) => {
           enqueueSnackbar(`${key}: ${value.join(' ')}`, { variant: 'error' });
@@ -213,23 +213,26 @@ export default function AttachmentDetailsSchedule({
                   {selectedAttachment.description || 'Sem descrição'}
                 </Typography>
               </ListItem>
-              <ListItem>
-                <Button
-                  variant="contained"
-                  color={attachmentIds.includes(selectedAttachment.id) ? 'secondary' : 'primary'}
-                  sx={{ marginLeft: 1 }}
-                  onClick={() => handleToggleAttachment(selectedAttachment)}
-                  disabled={attaching}
-                >
-                  {attaching ? (
-                    <CircularProgress size={24} />
-                  ) : attachmentIds.includes(selectedAttachment.id) ? (
-                    'Desanexar'
-                  ) : (
-                    'Anexar'
-                  )}
-                </Button>
-              </ListItem>
+              { !objectIds && (
+                <ListItem>
+                  <Button
+                    variant="contained"
+                    color={attachmentIds.includes(selectedAttachment.id) ? 'error' : 'primary'}
+                    sx={{ marginLeft: 1 }}
+                    onClick={() => handleToggleAttachment(selectedAttachment)}
+                    disabled={attaching}
+                  >
+                    {attaching ? (
+                      <CircularProgress size={24} />
+                    ) : attachmentIds.includes(selectedAttachment.id) ? (
+                      'Desanexar'
+                    ) : (
+                      'Anexar'
+                    )}
+                  </Button>
+                </ListItem>
+              )}
+
             </List>
           ) : (
             <Typography variant="body2">Nenhum detalhe disponível.</Typography>
