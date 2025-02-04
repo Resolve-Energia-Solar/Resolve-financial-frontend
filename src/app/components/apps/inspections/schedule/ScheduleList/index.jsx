@@ -249,6 +249,19 @@ const SchedulingList = () => {
             <TableRow>
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                onClick={() => handleSort('created_at')}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  Criado Em
+                  <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                    {order === 'created_at' &&
+                      (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                  </Box>
+                </Box>
+              </TableCell>
+
+              <TableCell
+                sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('customer.complete_name')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -365,12 +378,12 @@ const SchedulingList = () => {
 
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                onClick={() => handleSort('created_at')}
+                onClick={() => handleSort('observation')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  Criado Em
+                  Descrição
                   <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                    {order === 'created_at' &&
+                    {order === 'observation' &&
                       (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                   </Box>
                 </Box>
@@ -378,13 +391,16 @@ const SchedulingList = () => {
             </TableRow>
           </TableHead>
           {loading ? (
-            <TableSkeleton rows={rowsPerPage} columns={9} />
+            <TableSkeleton rows={rowsPerPage} columns={11} />
           ) : error ? (
             <Typography color="error">{error}</Typography>
           ) : (
             <TableBody>
               {scheduleList.map((schedule) => (
                 <TableRow key={schedule.id} hover>
+                  <TableCell onClick={() => handleRowClick(schedule)}>
+                    {format(new Date(schedule.created_at), 'dd/MM/yyyy HH:mm:ss')}
+                  </TableCell>
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     {schedule?.customer?.complete_name}
                   </TableCell>
@@ -426,7 +442,15 @@ const SchedulingList = () => {
                   </TableCell>
 
                   <TableCell onClick={() => handleRowClick(schedule)}>
-                    {format(new Date(schedule.created_at), 'dd/MM/yyyy HH:mm:ss')}
+                    {schedule.observation ? (
+                      schedule.observation.length > 50 ? (
+                        `${schedule.observation.substring(0, 50)}...`
+                      ) : (
+                        schedule.observation
+                      )
+                    ) : (
+                      <Chip label="Sem Observação" color="warning" />
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

@@ -14,6 +14,8 @@ function AttachmentSchedule({ scheduleId }) {
   const [saleId, setSaleId] = useState(null);
   const [projectId, setProjectId] = useState(null);
 
+  console.log('attachments: ', attachments);
+
   const userPermissions = useSelector((state) => state.user.permissions);
 
 

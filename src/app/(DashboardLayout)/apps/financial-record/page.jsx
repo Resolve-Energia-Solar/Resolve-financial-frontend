@@ -147,8 +147,8 @@ const financialRecordList = () => {
                                             <TableCell>{item.protocol}</TableCell>
                                             <TableCell>{item.notes.length > 35 ? `${item.notes.substring(0, 35)}...` : item.notes}</TableCell>
                                             <TableCell>{item.client_supplier_name}</TableCell>
-                                            <TableCell>R$ {item.value}</TableCell>
-                                            <TableCell>{item.due_date}</TableCell>
+                                            <TableCell>R$ {parseFloat(item.value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                            <TableCell>{new Date(item.due_date).toLocaleDateString('pt-BR')}</TableCell>
                                             <TableCell>{getStatusLabel(item.status)}</TableCell>
                                             <TableCell>
                                                 <Tooltip title="Editar">
