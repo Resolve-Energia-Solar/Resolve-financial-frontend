@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Table,
   TableBody,
@@ -10,46 +10,50 @@ import {
   Typography,
   IconButton,
   Tooltip,
-  Menu,
-  MenuItem,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   Button,
+  TablePagination,
 } from '@mui/material';
-import { MoreVert, Edit, Delete, Visibility } from '@mui/icons-material';
 import PaymentChip from '../PaymentChip';
 import PaymentStatusChip from '../../../../../../utils/status/PaymentStatusChip';
 import paymentService from '@/services/paymentService';
 import { useRouter } from 'next/navigation';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
-import { useContext } from 'react';
 import { InvoiceContext } from '@/app/context/InvoiceContext';
 
 const PaymentList = ({ onClick }) => {
   const [paymentsList, setPaymentsList] = useState([]);
-  const [menuAnchorEl, setMenuAnchorEl] = useState(null);
-  const [menuOpenRowId, setMenuOpenRowId] = useState(null);
   const [open, setOpen] = useState(false);
   const [invoiceToDelete, setInvoiceToDelete] = useState(null);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [totalCount, setTotalCount] = useState(0);
 
   const { filters, setFilters, refresh } = useContext(InvoiceContext);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5); // Valor padrão
 
   useEffect(() => {
     setPaymentsList([]);
-}, [filters, refresh]);
+  }, [filters, refresh]);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await paymentService.getPayments(filters);
+        const response = await paymentService.getPayments({
+          ...filters,
+          page: page + 1, // API espera página começando de 1
+          limit: rowsPerPage,
+        });
+
         setPaymentsList(response.results);
+        setTotalCount(response.count || 0);
       } catch (error) {
         setError('Erro ao carregar faturas');
       } finally {
@@ -58,29 +62,7 @@ const PaymentList = ({ onClick }) => {
     };
 
     fetchData();
-  }, [filters, refresh]);
-
-  const handleMenuClick = (event, id) => {
-    setMenuAnchorEl(event.currentTarget);
-    setMenuOpenRowId(id);
-  };
-
-  const handleMenuClose = () => {
-    setMenuAnchorEl(null);
-    setMenuOpenRowId(null);
-  };
-
-  const handleEditClick = (id) => {
-    router.push(`/apps/invoice/${id}/update`);
-  };
-
-  const handleCreateClick = () => {
-    router.push('/apps/invoice/create');
-  };
-
-  const handleDetailClick = (id) => {
-    router.push(`/apps/invoice/${id}/view`);
-  };
+  }, [filters, refresh, page, rowsPerPage]);
 
   const handleDeleteClick = (id) => {
     setInvoiceToDelete(id);
@@ -90,7 +72,7 @@ const PaymentList = ({ onClick }) => {
   const handleConfirmDelete = async () => {
     try {
       await paymentService.deletePayment(invoiceToDelete);
-      setPaymentsList((prev) => prev.filter((payment) => item?.id !== invoiceToDelete));
+      setPaymentsList((prev) => prev.filter((item) => item?.id !== invoiceToDelete));
     } catch (error) {
       console.log('Error: ', error);
     } finally {
@@ -98,44 +80,38 @@ const PaymentList = ({ onClick }) => {
     }
   };
 
+  const handleChangePage = (_, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <>
       <TableContainer component={Paper} elevation={10} sx={{ overflowX: 'auto' }}>
-        <Table stickyHeader aria-label="sales table">
+        <Table stickyHeader aria-label="payments table">
           <TableHead>
             <TableRow>
-              {/* <TableCell padding="checkbox">
-                <CustomCheckbox />
-              </TableCell> */}
               <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Cliente
-                </Typography>
+                <Typography variant="h6" fontSize="14px">Cliente</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Tomador
-                </Typography>
+                <Typography variant="h6" fontSize="14px">Tomador</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Parcelas
-                </Typography>
+                <Typography variant="h6" fontSize="14px">Parcelas</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Valor
-                </Typography>
+                <Typography variant="h6" fontSize="14px">Valor</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Tipo Pagamento
-                </Typography>
+                <Typography variant="h6" fontSize="14px">Tipo Pagamento</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Status
-                </Typography>
+                <Typography variant="h6" fontSize="14px">Status</Typography>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -147,26 +123,18 @@ const PaymentList = ({ onClick }) => {
             <TableBody>
               {paymentsList.map((item) => (
                 <TableRow key={item?.id} onClick={() => onClick(item)} hover>
-              
                   <TableCell>
-                    <Typography fontSize="14px">
-                      {item?.sale?.customer?.complete_name}
-                    </Typography>
+                    <Typography fontSize="14px">{item?.sale?.customer?.complete_name}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography fontSize="14px">
-                      {item?.borrower?.complete_name}
-                    </Typography>
+                    <Typography fontSize="14px">{item?.borrower?.complete_name}</Typography>
                   </TableCell>
                   <TableCell>
                     <Typography fontSize="14px">{item?.installments.length}x</Typography>
                   </TableCell>
                   <TableCell>
                     <Typography fontSize="14px">
-                      {Number(item?.value).toLocaleString('pt-BR', {
-                        style: 'currency',
-                        currency: 'BRL',
-                      })}
+                      {Number(item?.value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -182,6 +150,18 @@ const PaymentList = ({ onClick }) => {
         </Table>
       </TableContainer>
 
+      {/* Paginação */}
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={totalCount}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+
+      {/* Diálogo de confirmação de exclusão */}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Confirmação de Exclusão</DialogTitle>
         <DialogContent>
@@ -190,12 +170,8 @@ const PaymentList = ({ onClick }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)} color="primary">
-            Cancelar
-          </Button>
-          <Button onClick={handleConfirmDelete} color="secondary">
-            Confirmar
-          </Button>
+          <Button onClick={() => setOpen(false)} color="primary">Cancelar</Button>
+          <Button onClick={handleConfirmDelete} color="secondary">Confirmar</Button>
         </DialogActions>
       </Dialog>
     </>
