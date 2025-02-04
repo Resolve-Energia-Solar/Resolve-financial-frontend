@@ -442,7 +442,7 @@ const PaymentCard = ({ sale = null }) => {
       </Dialog>
 
       <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>Editar Fatura</DialogTitle>
+        <DialogTitle>Editar Pagamento</DialogTitle>
         <DialogContent>
           <EditInvoicePage
             payment_id={invoiceToEdit}
