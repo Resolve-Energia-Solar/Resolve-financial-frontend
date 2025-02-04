@@ -213,7 +213,7 @@ export default function AttachmentDetailsSchedule({
                   {selectedAttachment.description || 'Sem descrição'}
                 </Typography>
               </ListItem>
-              { !objectIds && (
+              { scheduleId && (
                 <ListItem>
                   <Button
                     variant="contained"
