@@ -83,6 +83,8 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
     { value: 'P', label: 'Pix' },
     { value: 'T', label: 'Transferência' },
     { value: 'D', label: 'Dinheiro' },
+    { value: 'PA', label: 'Poste Auxiliar' },
+    { value: 'RO', label: 'Repasse de Obra' },
   ];
 
   const invoiceStatus = [

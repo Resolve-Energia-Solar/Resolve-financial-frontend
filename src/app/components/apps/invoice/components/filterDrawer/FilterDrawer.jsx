@@ -9,88 +9,118 @@ import {
   TextField,
 } from '@mui/material';
 import { FilterAlt } from '@mui/icons-material';
-// Supondo que você tenha um componente de multi-select ou checkboxes:
-import CheckboxesTags from '../../../project/components/DrawerFilters/CheckboxesTags';
-// Supondo que você tenha um componente de range de datas:
+import CheckboxesTags from '../../../project/components/DrawerFilters/CheckboxesTags'
 import FormDateRange from '../../../project/components/DrawerFilters/DateRangePicker';
-// Se tiver um FormLabel customizado
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 
 // Importe seu contexto
 import { InvoiceContext } from '@/app/context/InvoiceContext';
+import AutoCompleteSale from '../auto-complete/Auto-Input-Sales';
+import AutoCompleteUser from '../auto-complete/Auto-Input-User';
+import AutoCompleteFinancier from '../auto-complete/Auto-Input-financiers';
 
 export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) {
   const [open, setOpen] = useState(externalOpen);
   
-  // Acessa os filtros do contexto
   const { filters, setFilters } = useContext(InvoiceContext);
 
-  // Estado temporário para edição no Drawer
   const [tempFilters, setTempFilters] = useState({
     borrower: filters.borrower || '',
     sale: filters.sale || '',
     value: filters.value || '',
     value__gte: filters.value__gte || '',
     value__lte: filters.value__lte || '',
-    payment_type__in: filters.payment_type__in || [], // array para múltiplas seleções
+    payment_type__in: filters.payment_type__in || [],
     financier: filters.financier || '',
     due_date__range: filters.due_date__range || [null, null],
-    observation__icontains: filters.observation__icontains || '',
     invoice_status__in: filters.invoice_status__in || [],
     created_at__range: filters.created_at__range || [null, null],
   });
 
-  // Exemplo de opções de payment_type e invoice_status
+
   const paymentTypeOptions = [
     { value: 'C', label: 'Crédito' },
     { value: 'D', label: 'Débito' },
     { value: 'B', label: 'Boleto' },
-    { value: 'P', label: 'PIX' },
+    { value: 'F', label: 'Financiamento' },
+    { value: 'PI', label: 'Parcelamento interno' },
+    { value: 'P', label: 'Pix' },
+    { value: 'T', label: 'Transferência Bancária' },
+    { value: 'DI', label: 'Dinheiro' },
+    { value: 'PA', label: 'Poste auxiliar' },
+    { value: 'RO', label: 'Repasse de Obra' },
   ];
 
   const invoiceStatusOptions = [
-    { value: 'open', label: 'Aberto' },
-    { value: 'paid', label: 'Pago' },
-    { value: 'canceled', label: 'Cancelado' },
+    { value: 'E', label: 'Emitida' },
+    { value: 'L', label: 'Liberada' },
+    { value: 'P', label: 'Pendente' },
+    { value: 'C', label: 'Cancelada' },
   ];
 
-  // Função para abrir/fechar o Drawer
-  const toggleDrawer = (inOpen) => () => {
+    const toggleDrawer = (inOpen) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
     setOpen(inOpen);
   };
 
-  // Função para atualizar estado temporário
   const handleChange = (key, value) => {
     setTempFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  // Monta o objeto final para enviar ao contexto
   const createFilterParams = (data) => {
     const params = { ...data };
-
-    // due_date__range e created_at__range podem precisar de formatação de datas
-    // se você estiver usando libs como dayjs, moment, etc.
-    // Exemplo simples de conversão:
+  
     if (data.due_date__range && data.due_date__range[0] && data.due_date__range[1]) {
       const startDate = data.due_date__range[0].toISOString().split('T')[0];
       const endDate = data.due_date__range[1].toISOString().split('T')[0];
       params.due_date__range = `${startDate},${endDate}`;
     } else {
-      params.due_date__range = '';
+      delete params.due_date__range;
     }
-
+  
     if (data.created_at__range && data.created_at__range[0] && data.created_at__range[1]) {
       const startDate = data.created_at__range[0].toISOString().split('T')[0];
       const endDate = data.created_at__range[1].toISOString().split('T')[0];
       params.created_at__range = `${startDate},${endDate}`;
     } else {
-      params.created_at__range = '';
+      delete params.created_at__range;
     }
-
+  
+    if (Array.isArray(data.payment_type__in) && data.payment_type__in.length > 0) {
+      params.payment_type__in = data.payment_type__in.map(option => option.value).join(',');
+    } else {
+      delete params.payment_type__in;
+    }
+  
+    if (Array.isArray(data.invoice_status__in) && data.invoice_status__in.length > 0) {
+      params.invoice_status__in = data.invoice_status__in.map(option => option.value).join(',');
+    } else {
+      delete params.invoice_status__in;
+    }
+  
+    if (data.value__gte) params.value__gte = data.value__gte;
+    else delete params.value__gte;
+  
+    if (data.value__lte) params.value__lte = data.value__lte;
+    else delete params.value__lte;
+  
+    if (data.value) params.value = data.value;
+    else delete params.value;
+  
+    if (data.borrower) params.borrower = data.borrower;
+    else delete params.borrower;
+  
+    if (data.sale) params.sale = data.sale;
+    else delete params.sale;
+  
+    if (data.financier) params.financier = data.financier;
+    else delete params.financier;
+  
     return params;
   };
-
-  // Limpa os filtros
+  
   const clearFilters = () => {
     setTempFilters({
       borrower: '',
@@ -101,7 +131,6 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
       payment_type__in: [],
       financier: '',
       due_date__range: [null, null],
-      observation__icontains: '',
       invoice_status__in: [],
       created_at__range: [null, null],
     });
@@ -111,6 +140,7 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
   const applyFilters = () => {
     const finalParams = createFilterParams(tempFilters);
     setFilters(finalParams);
+    onApplyFilters(finalParams);
     setOpen(false);
   };
 
@@ -141,22 +171,18 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
               {/* Borrower */}
               <Grid item xs={12}>
                 <CustomFormLabel>Tomador</CustomFormLabel>
-                <TextField
-                  fullWidth
-                  size="small"
+                <AutoCompleteUser
                   value={tempFilters.borrower}
-                  onChange={(e) => handleChange('borrower', e.target.value)}
+                  onChange={(newValue) => handleChange('borrower', newValue)}
                 />
               </Grid>
 
               {/* Sale */}
               <Grid item xs={12}>
                 <CustomFormLabel>Venda</CustomFormLabel>
-                <TextField
-                  fullWidth
-                  size="small"
+                <AutoCompleteSale
                   value={tempFilters.sale}
-                  onChange={(e) => handleChange('sale', e.target.value)}
+                  onChange={(newValue) => handleChange('sale', newValue)}
                 />
               </Grid>
 
@@ -172,7 +198,7 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
               </Grid>
 
               {/* Value GTE */}
-              <Grid item xs={12}>
+              <Grid item xs={6}>
                 <CustomFormLabel>Valor Mínimo</CustomFormLabel>
                 <TextField
                   fullWidth
@@ -183,7 +209,7 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
               </Grid>
 
               {/* Value LTE */}
-              <Grid item xs={12}>
+              <Grid item xs={6}>
                 <CustomFormLabel>Valor Máximo</CustomFormLabel>
                 <TextField
                   fullWidth
@@ -206,31 +232,20 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
               {/* Financier */}
               <Grid item xs={12}>
                 <CustomFormLabel>Financiadora</CustomFormLabel>
-                <TextField
-                  fullWidth
-                  size="small"
+                <AutoCompleteFinancier
                   value={tempFilters.financier}
-                  onChange={(e) => handleChange('financier', e.target.value)}
+                  onChange={(newValue) => handleChange('financier', newValue)}
                 />
               </Grid>
 
               {/* Due date range */}
               <Grid item xs={12}>
-                <CustomFormLabel>Data de vencimento</CustomFormLabel>
                 <FormDateRange
+                  label="Data de Vencimento"
                   value={tempFilters.due_date__range}
                   onChange={(newValue) => handleChange('due_date__range', newValue)}
-                />
-              </Grid>
-
-              {/* Observation (icontains) */}
-              <Grid item xs={12}>
-                <CustomFormLabel>Observação</CustomFormLabel>
-                <TextField
-                  fullWidth
-                  size="small"
-                  value={tempFilters.observation__icontains}
-                  onChange={(e) => handleChange('observation__icontains', e.target.value)}
+                  error={false}
+                  helperText=""
                 />
               </Grid>
 
@@ -244,14 +259,16 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
                 />
               </Grid>
 
-              {/* Created at range */}
               <Grid item xs={12}>
-                <CustomFormLabel>Data de Criação</CustomFormLabel>
                 <FormDateRange
+                  label="Data de Criação"
                   value={tempFilters.created_at__range}
                   onChange={(newValue) => handleChange('created_at__range', newValue)}
+                  error={false}
+                  helperText=""
                 />
               </Grid>
+
             </Grid>
           </Box>
 

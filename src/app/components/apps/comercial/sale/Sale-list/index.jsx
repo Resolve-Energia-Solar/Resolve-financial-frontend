@@ -44,7 +44,7 @@ import saleService from '@/services/saleService';
 import useSendContract from '@/hooks/clicksign/useClickSign';
 import TableSkeleton from '../components/TableSkeleton';
 import DrawerFilters from '../components/DrawerFilters/DrawerFilters';
-import { SaleDataContext } from '@/app/context/InvoiceContext';
+import { SaleDataContext } from '@/app/context/SaleContext';
 import ActionFlash from '../components/flashAction/actionFlash';
 import StatusPreSale from '../components/StatusPreSale';
 import OnboardingCreateSale from '../Add-sale/onboarding';
@@ -150,12 +150,12 @@ const SaleList = () => {
   }, [page, rowsPerPage, order, orderDirection, filters, refresh]);
 
   const handlePageChange = (event, newPage) => {
-    setPage(newPage); // Define a nova página (base zero)
+    setPage(newPage);
   };
 
   const handleRowsPerPageChange = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10)); // Atualiza o número de linhas por página
-    setPage(0); // Reseta para a primeira página ao alterar o número de itens por página
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   const showAlert = (message, type) => {

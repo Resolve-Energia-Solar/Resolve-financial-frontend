@@ -25,29 +25,40 @@ export default function InvoiceList({ onClick }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const router = useRouter();
   const [page, setPage] = useState(0);
-
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const { filters, setFilters, refresh } = useContext(InvoiceContext);
 
-  // Busca inicial dos pagamentos
   useEffect(() => {
     setPage(0);
     setPaymentsList([]);
-  }, [filters, refresh]);
+  }, [filters, refresh, page, rowsPerPage]);
 
-  console.log('filters', filters);
-
+  const fetchData = async (filters = {}) => {
+    console.log('filters:', filters);
+    try {
+      const response = await paymentService.getPayments({
+        limit: rowsPerPage,
+        page: page + 1,
+        filters
+         });
+      setPaymentsList(response.results);
+    } catch (error) {
+      console.log('Error:', error);
+    }
+  };
+  
   useEffect(() => {
-    const fetchData = async (filters = {}) => {
-      try {
-        const response = await paymentService.getPayments({ filters });
-        setPaymentsList(response.results);
-      } catch (error) {
-        console.log('Error:', error);
-      }
-    };
-
     fetchData(filters);
-  }, [filters]);
+  }, [filters, refresh, page, rowsPerPage]);
+
+  const handleRowsPerPageChange = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
 
   const handleCreateClick = () => {
     router.push('/apps/invoice/create');
@@ -57,12 +68,16 @@ export default function InvoiceList({ onClick }) {
     setIsFilterOpen(open);
   };
 
-  const handleApplyFilters = (filters) => {
-    // Chama novamente a busca com filtros
-    fetchData(filters);
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
   };
+  
+  useEffect(() => {
+    if (filters) {
+      fetchData(filters);
+    }
+  }, [filters, refresh, page, rowsPerPage]);
 
-  console.log('filters:', filters);
 
   const cardsData = [
     {

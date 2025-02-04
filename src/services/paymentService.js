@@ -1,28 +1,25 @@
 import apiClient from "./apiClient";
 
 const paymentService = {
-  getPayments: async (params = {}) => {
+  getPayments: async ({ ordering, nextPage, userRole, limit = 25, page = 1, ...filters }) => {
     try {
-      const queryParams = new URLSearchParams();
-  
-      if (params.sale) {
-        queryParams.append('sale', params.sale);
-      }
-      if (params.filters) {
-        Object.keys(params.filters).forEach(key => {
-          queryParams.append(key, params.filters[key]);
-        });
-      }
-  
-      const url = `/api/payments/?${queryParams.toString()}`;
-  
-      const response = await apiClient.get(url);
+      console.log('Buscando payments com os parâmetros:', { ordering, nextPage, userRole, limit, page, ...filters });
+
+      const params = {
+        ordering: ordering || '',
+        page: nextPage || page,
+        limit,
+        ...filters,
+      };
+
+      const response = await apiClient.get('/api/payments/', { params });
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar payments:', error);
       throw error;
     }
   },
+  
   getAllPaymentsBySale: async (saleId) => {
     try {
       const response = await apiClient.get(`/api/payments/?sale=${saleId}`);

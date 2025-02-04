@@ -25,6 +25,8 @@ import PaymentStatusChip from '../../../../../../utils/status/PaymentStatusChip'
 import paymentService from '@/services/paymentService';
 import { useRouter } from 'next/navigation';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
+import { useContext } from 'react';
+import { InvoiceContext } from '@/app/context/InvoiceContext';
 
 const PaymentList = ({ onClick }) => {
   const [paymentsList, setPaymentsList] = useState([]);
@@ -36,22 +38,27 @@ const PaymentList = ({ onClick }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const { filters, setFilters, refresh } = useContext(InvoiceContext);
+
   useEffect(() => {
-    setLoading(true);
+    setPaymentsList([]);
+}, [filters, refresh]);
+
+  useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
-        const response = await paymentService.getPayments();
+        const response = await paymentService.getPayments(filters);
         setPaymentsList(response.results);
       } catch (error) {
         setError('Erro ao carregar faturas');
-        console.log('Error: ', error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [filters, refresh]);
 
   const handleMenuClick = (event, id) => {
     setMenuAnchorEl(event.currentTarget);
