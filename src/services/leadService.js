@@ -3,7 +3,6 @@ import apiClient from './apiClient'
 const leadService = {
   getLeads: async (params = {}) => {
     try {
-      await setTimeout(() => {}, 3000)
       const response = await apiClient.get('/api/leads/', { ...params });
       return response.data
     } catch (error) {
