@@ -18,7 +18,7 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import DescriptionIcon from '@mui/icons-material/Description';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import attachmentService from '@/services/attachmentService';
-import { Image, UploadFile } from '@mui/icons-material';
+import { Add, Image, UploadFile } from '@mui/icons-material';
 import AttachmentsSkeleton from './AttachmentsSkeleton';
 import useAttachmentForm from '@/hooks/attachments/useAttachmentsForm';
 import FormSelect from '../forms/form-custom/FormSelect';
@@ -29,6 +29,11 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
   const theme = useTheme();
   const [selectedAttachment, setSelectedAttachment] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const options_document_types = documentTypes.map((docType) => ({
+    value: docType.id,
+    label: docType.name,
+  }));
 
   const userPermissions = useSelector((state) => state.user.permissions);
 
@@ -60,6 +65,7 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
   const [attachments, setAttachments] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  
 
   const handleOpenModal = (attachment, documentType) => {
     setOpenModal(true);
@@ -83,21 +89,17 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const timestamp = Date.now(); 
-      const fileNameWithoutExt = file.name.replace(/\.[^/.]+$/, ""); 
-      const extension = file.name.split('.').pop(); 
-      const uniqueFileName = `${fileNameWithoutExt}_${timestamp}.${extension}`; 
-  
+      const timestamp = Date.now();
+      const fileNameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
+      const extension = file.name.split('.').pop();
+      const uniqueFileName = `${fileNameWithoutExt}_${timestamp}.${extension}`;
+
       const renamedFile = new File([file], uniqueFileName, { type: file.type });
-  
+
       setSelectedFile(renamedFile);
       handleChange('file', renamedFile);
     }
   };
-  
-  
-
-  console.log('content type no componente: ', contentType);
 
   useEffect(() => {
     setLoading(true);
@@ -138,9 +140,11 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
           <Grid item xs={3} key={attachment.id}>
             <Box
               sx={{
-                border: `2px solid ${statusDoc?.find((s) => s.value === attachment.status)?.color ||
+                border: `2px solid ${
+                  statusDoc?.find((s) => s.value === attachment.status)?.color ||
                   statusDoc?.find((s) => s.value === 'EA')?.color ||
-                  theme.palette.primary.main}`,
+                  theme.palette.primary.main
+                }`,
                 padding: 2,
                 textAlign: 'center',
                 borderRadius: 1,
@@ -202,6 +206,30 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
             </Grid>
           ))}
 
+        <Grid item xs={3}>
+          <Box
+            sx={{
+              border: `2px dashed ${theme.palette.primary.main}`,
+              padding: 2,
+              textAlign: 'center',
+              borderRadius: 1,
+              backgroundColor: theme.palette.background.default,
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+            }}
+            onClick={() => handleOpenModal(null, null)}
+          >
+            <Add sx={{ fontSize: 30 }} />
+            <Typography variant="caption" sx={{ marginTop: 1 }}>
+              Adicionar Mais
+            </Typography>
+          </Box>
+        </Grid>
+
         <Modal
           open={openModal}
           onClose={handleCloseModal}
@@ -249,6 +277,13 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
               <Typography>Clique para adicionar um arquivo</Typography>
               <input type="file" id="file-upload" hidden onChange={handleFileSelect} />
             </Box>
+
+            <FormSelect
+              label="Tipo de Documento"
+              options={options_document_types}
+              value={formData.document_type_id}
+              onChange={(e) => handleChange('document_type_id', e.target.value)}
+            />
 
             <HasPermission
               permissions={['core.change_status_attachment_field']}
