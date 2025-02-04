@@ -8,15 +8,13 @@ import {
   TableRow,
   Paper,
   Typography,
-  IconButton,
-  Tooltip,
+  TablePagination,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   Button,
-  TablePagination,
 } from '@mui/material';
 import PaymentChip from '../PaymentChip';
 import PaymentStatusChip from '../../../../../../utils/status/PaymentStatusChip';
@@ -26,36 +24,42 @@ import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
 import { InvoiceContext } from '@/app/context/InvoiceContext';
 
 const PaymentList = ({ onClick }) => {
+  // Estados para dados, loading, erro e paginação
   const [paymentsList, setPaymentsList] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [invoiceToDelete, setInvoiceToDelete] = useState(null);
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
-
-  const { filters, setFilters, refresh } = useContext(InvoiceContext);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5); // Valor padrão
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  // Estados para o diálogo de exclusão
+  const [open, setOpen] = useState(false);
+  const [invoiceToDelete, setInvoiceToDelete] = useState(null);
+
+  const router = useRouter();
+  const { filters, refresh } = useContext(InvoiceContext);
+
+  // Sempre que os filtros ou o refresh mudarem, reseta a página
   useEffect(() => {
-    setPaymentsList([]);
+    setPage(0);
   }, [filters, refresh]);
 
+  // Busca os pagamentos sempre que os filtros, refresh, página ou linhas por página mudarem
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+      setError(null);
       try {
         const response = await paymentService.getPayments({
           ...filters,
-          page: page + 1, // API espera página começando de 1
+          page: page + 1,
           limit: rowsPerPage,
         });
-
-        setPaymentsList(response.results);
+        setPaymentsList(response.results.results);
         setTotalCount(response.count || 0);
-      } catch (error) {
-        setError('Erro ao carregar faturas');
+      } catch (err) {
+        console.error('Erro ao carregar pagamentos:', err);
+        setError('Erro ao carregar pagamentos.');
       } finally {
         setLoading(false);
       }
@@ -64,6 +68,17 @@ const PaymentList = ({ onClick }) => {
     fetchData();
   }, [filters, refresh, page, rowsPerPage]);
 
+  // Handlers para paginação
+  const handlePageChange = (_, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleRowsPerPageChange = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  // Handlers para exclusão
   const handleDeleteClick = (id) => {
     setInvoiceToDelete(id);
     setOpen(true);
@@ -72,21 +87,12 @@ const PaymentList = ({ onClick }) => {
   const handleConfirmDelete = async () => {
     try {
       await paymentService.deletePayment(invoiceToDelete);
-      setPaymentsList((prev) => prev.filter((item) => item?.id !== invoiceToDelete));
-    } catch (error) {
-      console.log('Error: ', error);
+      setPaymentsList((prev) => prev.filter((item) => item.id !== invoiceToDelete));
+    } catch (err) {
+      console.error('Erro ao excluir pagamento:', err);
     } finally {
       setOpen(false);
     }
-  };
-
-  const handleChangePage = (_, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
   };
 
   return (
@@ -96,69 +102,109 @@ const PaymentList = ({ onClick }) => {
           <TableHead>
             <TableRow>
               <TableCell>
-                <Typography variant="h6" fontSize="14px">Cliente</Typography>
+                <Typography variant="h6" fontSize="14px">
+                  Cliente
+                </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h6" fontSize="14px">Tomador</Typography>
+                <Typography variant="h6" fontSize="14px">
+                  Tomador
+                </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h6" fontSize="14px">Parcelas</Typography>
+                <Typography variant="h6" fontSize="14px">
+                  Parcelas
+                </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h6" fontSize="14px">Valor</Typography>
+                <Typography variant="h6" fontSize="14px">
+                  Valor
+                </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h6" fontSize="14px">Tipo Pagamento</Typography>
+                <Typography variant="h6" fontSize="14px">
+                  Tipo Pagamento
+                </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h6" fontSize="14px">Status</Typography>
+                <Typography variant="h6" fontSize="14px">
+                  Status
+                </Typography>
               </TableCell>
             </TableRow>
           </TableHead>
+
           {loading ? (
-            <TableSkeleton rows={5} columns={6} />
+            <TableSkeleton rows={rowsPerPage} cols={6} />
           ) : error ? (
-            <Typography color="error">{error}</Typography>
+            <TableBody>
+              <TableRow>
+                <TableCell colSpan={6}>
+                  <Typography color="error" align="center">
+                    {error}
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            </TableBody>
           ) : (
             <TableBody>
-              {paymentsList.map((item) => (
-                <TableRow key={item?.id} onClick={() => onClick(item)} hover>
-                  <TableCell>
-                    <Typography fontSize="14px">{item?.sale?.customer?.complete_name}</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography fontSize="14px">{item?.borrower?.complete_name}</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography fontSize="14px">{item?.installments.length}x</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography fontSize="14px">
-                      {Number(item?.value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+              {paymentsList && paymentsList.length > 0 ? (
+                paymentsList.map((item) => (
+                  <TableRow key={item.id} onClick={() => onClick(item)} hover>
+                    <TableCell>
+                      <Typography fontSize="14px">
+                        {item?.sale?.customer?.complete_name}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography fontSize="14px">
+                        {item?.borrower?.complete_name}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography fontSize="14px">
+                        {item?.installments.length}x
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography fontSize="14px">
+                        {Number(item?.value).toLocaleString('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL',
+                        })}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <PaymentChip paymentType={item?.payment_type} />
+                    </TableCell>
+                    <TableCell>
+                      <PaymentStatusChip paymentType={item?.is_paid} />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <Typography variant="h6" align="center">
+                      Nenhum pagamento encontrado
                     </Typography>
                   </TableCell>
-                  <TableCell>
-                    <PaymentChip paymentType={item?.payment_type} />
-                  </TableCell>
-                  <TableCell>
-                    <PaymentStatusChip paymentType={item?.is_paid} />
-                  </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           )}
         </Table>
       </TableContainer>
 
-      {/* Paginação */}
+      {/* Controles de paginação */}
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
         count={totalCount}
         rowsPerPage={rowsPerPage}
         page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handleRowsPerPageChange}
       />
 
       {/* Diálogo de confirmação de exclusão */}
@@ -166,12 +212,16 @@ const PaymentList = ({ onClick }) => {
         <DialogTitle>Confirmação de Exclusão</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Tem certeza de que deseja excluir esta fatura? Esta ação não pode ser desfeita.
+            Tem certeza de que deseja excluir este pagamento? Esta ação não pode ser desfeita.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)} color="primary">Cancelar</Button>
-          <Button onClick={handleConfirmDelete} color="secondary">Confirmar</Button>
+          <Button onClick={() => setOpen(false)} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleConfirmDelete} color="secondary">
+            Confirmar
+          </Button>
         </DialogActions>
       </Dialog>
     </>

@@ -7,7 +7,6 @@ import CustomSelect from "../../forms/theme-elements/CustomSelect";
 import StatusInspectionChip from "@/utils/status/InspecStatusChip";
 
 export default function Details({ data, handleInputChange }) {
-  console.log('dados detail:', data);
   return (
     <Box>
       <Grid container spacing={3}>

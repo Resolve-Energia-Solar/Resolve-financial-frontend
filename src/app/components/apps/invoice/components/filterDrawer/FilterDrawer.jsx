@@ -35,6 +35,9 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
     due_date__range: filters.due_date__range || [null, null],
     invoice_status__in: filters.invoice_status__in || [],
     created_at__range: filters.created_at__range || [null, null],
+    sale_status: filters.sale_status || [],
+    sale_payment_status: filters.sale_payment_status || [],
+    sale_customer: filters.sale_customer || '',
   });
 
 
@@ -49,6 +52,21 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
     { value: 'DI', label: 'Dinheiro' },
     { value: 'PA', label: 'Poste auxiliar' },
     { value: 'RO', label: 'Repasse de Obra' },
+  ];
+
+  const saleStatusOptions = [
+    { value: 'P', label: 'Pendente' },
+    { value: 'F', label: 'Finalizado' },
+    { value: 'EA', label: 'Em Andamento' },
+    { value: 'C', label: 'Cancelado' },
+    { value: 'D', label: 'Distrato' },
+  ];
+
+  const paymentStatusOptions = [
+    { value: 'P', label: 'Pendente' },
+    { value: 'L', label: 'Liberado' },
+    { value: 'C', label: 'Concluído' },
+    { value: 'CA', label: 'Cancelado' },
   ];
 
   const invoiceStatusOptions = [
@@ -99,6 +117,18 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
     } else {
       delete params.invoice_status__in;
     }
+
+    if (Array.isArray(data.sale_status) && data.sale_status.length > 0) {
+      params.sale_status = data.sale_status.map(option => option.value).join(',');
+    } else {
+      delete params.sale_status;
+    }
+
+    if (Array.isArray(data.sale_payment_status) && data.sale_payment_status.length > 0) {
+      params.sale_payment_status = data.sale_payment_status.map(option => option.value).join(',');
+    } else {
+      delete params.sale_payment_status;
+    }
   
     if (data.value__gte) params.value__gte = data.value__gte;
     else delete params.value__gte;
@@ -111,6 +141,9 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
   
     if (data.borrower) params.borrower = data.borrower;
     else delete params.borrower;
+
+    if (data.sale_customer) params.sale_customer = data.sale_customer;
+    else delete params.sale_customer;
   
     if (data.sale) params.sale = data.sale;
     else delete params.sale;
@@ -133,6 +166,8 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
       due_date__range: [null, null],
       invoice_status__in: [],
       created_at__range: [null, null],
+      sale_status: [],
+      sale_payment_status: [],
     });
   };
 
@@ -177,12 +212,38 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
                 />
               </Grid>
 
+              <Grid item xs={12}>
+                <CustomFormLabel>Cliente (Venda)</CustomFormLabel>
+                <AutoCompleteUser
+                  value={tempFilters.sale_customer}
+                  onChange={(newValue) => handleChange('sale_customer', newValue)}
+                />
+              </Grid>
+
               {/* Sale */}
               <Grid item xs={12}>
                 <CustomFormLabel>Venda</CustomFormLabel>
                 <AutoCompleteSale
                   value={tempFilters.sale}
                   onChange={(newValue) => handleChange('sale', newValue)}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel>Status da Venda</CustomFormLabel>
+                <CheckboxesTags
+                  options={saleStatusOptions}
+                  value={tempFilters.sale_status}
+                  onChange={(event, newValue) => handleChange('sale_status', newValue)}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel>Status do Pagamento (Venda)</CustomFormLabel>
+                <CheckboxesTags
+                  options={paymentStatusOptions}
+                  value={tempFilters.sale_payment_status}
+                  onChange={(event, newValue) => handleChange('sale_payment_status', newValue)}
                 />
               </Grid>
 

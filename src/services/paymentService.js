@@ -3,16 +3,14 @@ import apiClient from "./apiClient";
 const paymentService = {
   getPayments: async ({ ordering, nextPage, userRole, limit = 25, page = 1, ...filters }) => {
     try {
-      console.log('Buscando payments com os parâmetros:', { ordering, nextPage, userRole, limit, page, ...filters });
-
       const params = {
         ordering: ordering || '',
         page: nextPage || page,
         limit,
         ...filters,
       };
-
       const response = await apiClient.get('/api/payments/', { params });
+      console.log('Pagamentos:', response.data);
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar payments:', error);

@@ -1,84 +1,34 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import {
-  Button,
   Box,
-  Typography,
-  Stack,
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Typography,
+  Button,
 } from '@mui/material';
 import { AddBoxRounded, FilterAlt } from '@mui/icons-material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useRouter } from 'next/navigation';
-import paymentService from '@/services/paymentService';
+
+// Componentes personalizados
+import FilterDrawer from '../components/filterDrawer/FilterDrawer';
 import PaymentList from '../components/paymentList/list';
 import InforCards from '../../inforCards/InforCards';
-import FilterDrawer from '../components/filterDrawer/FilterDrawer';
+
+// Ícones para os cards
 import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+// Contexto que fornece os filtros e refresh
 import { InvoiceContext } from '@/app/context/InvoiceContext';
-import { useContext } from 'react';
 
 export default function InvoiceList({ onClick }) {
-  const [paymentList, setPaymentsList] = useState([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const { filters, setFilters } = useContext(InvoiceContext);
   const router = useRouter();
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const { filters, setFilters, refresh } = useContext(InvoiceContext);
 
-  useEffect(() => {
-    setPage(0);
-    setPaymentsList([]);
-  }, [filters, refresh, page, rowsPerPage]);
-
-  const fetchData = async (filters = {}) => {
-    console.log('filters:', filters);
-    try {
-      const response = await paymentService.getPayments({
-        limit: rowsPerPage,
-        page: page + 1,
-        filters
-         });
-      setPaymentsList(response.results);
-    } catch (error) {
-      console.log('Error:', error);
-    }
-  };
-  
-  useEffect(() => {
-    fetchData(filters);
-  }, [filters, refresh, page, rowsPerPage]);
-
-  const handleRowsPerPageChange = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handlePageChange = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleCreateClick = () => {
-    router.push('/apps/invoice/create');
-  };
-
-  const toggleFilterDrawer = (open) => () => {
-    setIsFilterOpen(open);
-  };
-
-  const handleApplyFilters = (newFilters) => {
-    setFilters(newFilters);
-  };
-  
-  useEffect(() => {
-    if (filters) {
-      fetchData(filters);
-    }
-  }, [filters, refresh, page, rowsPerPage]);
-
-
+  // Dados para os cards de status (exemplo)
   const cardsData = [
     {
       backgroundColor: 'primary.light',
@@ -117,8 +67,24 @@ export default function InvoiceList({ onClick }) {
     },
   ];
 
+  // Abre/fecha o drawer de filtros
+  const toggleFilterDrawer = (open) => () => {
+    setIsFilterOpen(open);
+  };
+
+  // Handler para aplicar filtros; atualiza o contexto
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+  // Redireciona para a tela de criação de pagamento
+  const handleCreateClick = () => {
+    router.push('/apps/invoice/create');
+  };
+
   return (
     <Box>
+      {/* Seção de cards de status */}
       <Accordion sx={{ marginBottom: 4 }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -132,40 +98,40 @@ export default function InvoiceList({ onClick }) {
         </AccordionDetails>
       </Accordion>
 
-      <Stack
-        mt={3}
-        justifyContent="space-between"
-        direction={{ xs: 'column', sm: 'row' }}
-        spacing={{ xs: 1, sm: 2, md: 4 }}
+      {/* Container com botões: "Adicionar Pagamento" à esquerda e "Filtros" à direita */}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+        }}
       >
-        <Box>
-          <Button
-            variant="outlined"
-            startIcon={<AddBoxRounded />}
-            sx={{ marginTop: 1, marginBottom: 2 }}
-            onClick={handleCreateClick}
-          >
-            Adicionar Pagamento
-          </Button>
-        </Box>
-        <Box>
-          <Button
-            variant="outlined"
-            startIcon={<FilterAlt />}
-            sx={{ marginTop: 1, marginBottom: 2 }}
-            onClick={toggleFilterDrawer(true)}
-          >
-            Filtros
-          </Button>
-            <FilterDrawer
-              externalOpen={isFilterOpen}
-              onClose={toggleFilterDrawer(false)}
-              onApplyFilters={handleApplyFilters}
-            />
-        </Box>
-      </Stack>
+        <Button
+          variant="outlined"
+          startIcon={<AddBoxRounded />}
+          onClick={handleCreateClick}
+        >
+          Adicionar Pagamento
+        </Button>
+        <Button
+          variant="outlined"
+          startIcon={<FilterAlt />}
+          onClick={toggleFilterDrawer(true)}
+        >
+          Filtros
+        </Button>
+      </Box>
 
-      <PaymentList onClick={onClick} items={paymentList} />
+      {/* Drawer de filtros */}
+      <FilterDrawer
+        externalOpen={isFilterOpen}
+        onClose={toggleFilterDrawer(false)}
+        onApplyFilters={handleApplyFilters}
+      />
+
+      {/* Componente de listagem */}
+      <PaymentList onClick={onClick} />
     </Box>
   );
 }
