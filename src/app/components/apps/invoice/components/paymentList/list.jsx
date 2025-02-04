@@ -114,6 +114,11 @@ const PaymentList = ({ onClick }) => {
               </TableCell>
               <TableCell>
                 <Typography variant="h6" fontSize="14px">
+                  Tomador
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="h6" fontSize="14px">
                   Parcelas
                 </Typography>
               </TableCell>
@@ -135,7 +140,7 @@ const PaymentList = ({ onClick }) => {
             </TableRow>
           </TableHead>
           {loading ? (
-            <TableSkeleton rows={5} columns={5} />
+            <TableSkeleton rows={5} columns={6} />
           ) : error ? (
             <Typography color="error">{error}</Typography>
           ) : (
@@ -146,6 +151,11 @@ const PaymentList = ({ onClick }) => {
                   <TableCell>
                     <Typography fontSize="14px">
                       {item?.sale?.customer?.complete_name}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography fontSize="14px">
+                      {item?.borrower?.complete_name}
                     </Typography>
                   </TableCell>
                   <TableCell>
