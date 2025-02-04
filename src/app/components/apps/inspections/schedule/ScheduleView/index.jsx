@@ -27,6 +27,7 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
   const [seller, setSeller] = useState(null);
   const [supervisor, setSupervisor] = useState(null);
 
+
   console.log('seller: ', seller)
 
   const formatDateTime = (dateString) => {
@@ -177,6 +178,12 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                   <Typography variant="body1">
                     <strong>Supervisor:</strong>{' '}
                     {seller?.employee?.manager?.complete_name || 'Sem supervisor associado'}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Número do Supervisor:</strong>{' '}
+                    {seller?.employee?.manager?.phone_numbers[0]
+                      ? `+${seller?.employee?.manager?.phone_numbers[0]?.country_code} (${seller?.employee?.manager?.phone_numbers[0]?.area_code}) ${seller?.employee?.manager?.phone_numbers[0]?.phone_number}`
+                      : 'Sem número associado'}
                   </Typography>
                   <Typography variant="body1">
                     <strong>Unidade:</strong>{' '}
