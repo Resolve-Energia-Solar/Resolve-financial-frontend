@@ -29,6 +29,7 @@ export default function DrawerFilters() {
     signature_date: filters.signature_date,
     final_service_options: filters.final_service_options,
     invoice_status: filters.invoice_status,
+    billing_date: filters.billing_date,
   });
 
   console.log('tempFilters', tempFilters);
@@ -44,6 +45,12 @@ export default function DrawerFilters() {
       const startDate = filters.documentCompletionDate[0].toISOString().split('T')[0];
       const endDate = filters.documentCompletionDate[1].toISOString().split('T')[0];
       params.document_completion_date__range = `${startDate},${endDate}`;
+    }
+
+    if (filters.billing_date && filters.billing_date[0] && filters.billing_date[1]) {
+      const startDate = filters.billing_date[0].toISOString().split('T')[0];
+      const endDate = filters.billing_date[1].toISOString().split('T')[0];
+      params.billing_date__range = `${startDate},${endDate}`;
     }
 
     if (filters.statusDocument && filters.statusDocument.length > 0) {
@@ -251,6 +258,16 @@ export default function DrawerFilters() {
                   label="Data de Conclusão"
                   value={tempFilters.documentCompletionDate}
                   onChange={(newValue) => handleChange('documentCompletionDate', newValue)}
+                  error={false}
+                  helperText=""
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <FormDateRange
+                  label="Data de Competência"
+                  value={tempFilters.billing_date}
+                  onChange={(newValue) => handleChange('billing_date', newValue)}
                   error={false}
                   helperText=""
                 />
