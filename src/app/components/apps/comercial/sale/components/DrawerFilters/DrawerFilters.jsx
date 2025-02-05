@@ -318,6 +318,15 @@ export default function DrawerFilters() {
               </Grid>
 
               <Grid item xs={12}>
+                <CustomFormLabel htmlFor="borrower">Vendedor</CustomFormLabel>
+                <AutoCompleteUser
+                  placeholder="Selecione o Vendedor"
+                  value={tempFilters.seller}
+                  onChange={(id) => handleChange('seller', id)}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
                 <CustomFormLabel htmlFor="borrower">Tomador</CustomFormLabel>
                 <AutoCompleteUser
                   placeholder="Selecione o tomador"
