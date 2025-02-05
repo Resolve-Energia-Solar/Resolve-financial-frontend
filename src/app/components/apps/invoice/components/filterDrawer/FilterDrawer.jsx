@@ -18,8 +18,13 @@ import { InvoiceContext } from '@/app/context/InvoiceContext';
 import AutoCompleteSale from '../auto-complete/Auto-Input-Sales';
 import AutoCompleteUser from '../auto-complete/Auto-Input-User';
 import AutoCompleteFinancier from '../auto-complete/Auto-Input-financiers';
+import AutoCompleteBranch from '../auto-complete/Auto-Input-Branch';
+import AutoCompleteCampaign from '../../../comercial/sale/components/auto-complete/Auto-Input-Campaign';
+import AutoInputStatusSchedule from '../../../inspections/auto-complete/Auto-Input-StatusInspection';
 
 export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) {
+
+  const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
   const [open, setOpen] = useState(externalOpen);
   
   const { filters, setFilters } = useContext(InvoiceContext);
@@ -38,6 +43,10 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
     sale_status: filters.sale_status || [],
     sale_payment_status: filters.sale_payment_status || [],
     sale_customer: filters.sale_customer || '',
+    sale_marketing_campaign: filters.sale_marketing_campaign || '',
+    sale_branch: filters.sale_branch || '',
+    principal_final_service_opinion__in: filters.principal_final_service_opinion__in || [],
+    final_service_opinions__in: filters.final_service_opinions__in || [],
   });
 
 
@@ -118,6 +127,24 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
       delete params.invoice_status__in;
     }
 
+    if (Array.isArray(data.sale_branch) && data.sale_branch.length > 0) {
+      params.sale_branch = data.sale_branch.map(option => option.value).join(',');
+    } else {
+      delete params.sale_branch;
+    }
+
+    if (Array.isArray(data.principal_final_service_opinion__in) && data.principal_final_service_opinion__in.length > 0) {
+      params.principal_final_service_opinion__in = data.principal_final_service_opinion__in.map(option => option.value).join(',');
+    } else {
+      delete params.principal_final_service_opinion__in;
+    }
+
+    if (Array.isArray(data.final_service_opinions__in) && data.final_service_opinions__in.length > 0) {
+      params.final_service_opinions__in = data.final_service_opinions__in.map(option => option.value).join(',');
+    } else {
+      delete params.final_service_opinions__in;
+    }
+
     if (Array.isArray(data.sale_status) && data.sale_status.length > 0) {
       params.sale_status = data.sale_status.map(option => option.value).join(',');
     } else {
@@ -132,6 +159,18 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
   
     if (data.value__gte) params.value__gte = data.value__gte;
     else delete params.value__gte;
+
+    if (data.sale_marketing_campaign) params.sale_marketing_campaign = data.sale_marketing_campaign;
+    else delete params.sale_marketing_campaign;
+
+    if (data.sale_branch) params.sale_branch = data.sale_branch;
+    else delete params.sale_branch;
+
+    if (data.principal_final_service_opinion__in) params.principal_final_service_opinion__in = data.principal_final_service_opinion__in;
+    else delete params.principal_final_service_opinion__in;
+
+    if (data.final_service_opinions__in) params.final_service_opinions__in = data.final_service_opinions__in;
+    else delete params.final_service_opinions__in;
   
     if (data.value__lte) params.value__lte = data.value__lte;
     else delete params.value__lte;
@@ -168,6 +207,11 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
       created_at__range: [null, null],
       sale_status: [],
       sale_payment_status: [],
+      sale_customer: '',
+      sale_marketing_campaign: '',
+      sale_branch: '',
+      principal_final_service_opinion__in: [],
+      final_service_opinions__in: [],
     });
   };
 
@@ -287,6 +331,44 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
                   options={paymentTypeOptions}
                   value={tempFilters.payment_type__in}
                   onChange={(event, newValue) => handleChange('payment_type__in', newValue)}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel>Parecer Final do Serviço Principal</CustomFormLabel>
+                <AutoInputStatusSchedule
+                  serviceId={SERVICE_INSPECTION_ID}
+                  isFinalOpinion={true}
+                  value={tempFilters.principal_final_service_opinion__in}
+                  onChange={(newValue) => handleChange('principal_final_service_opinion__in', newValue)}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel>Parecer Final ds Serviços Vinculados</CustomFormLabel>
+                <AutoInputStatusSchedule
+                  serviceId={SERVICE_INSPECTION_ID}
+                  isFinalOpinion={true}
+                  value={tempFilters.final_service_opinions__in}
+                  onChange={(newValue) => handleChange('final_service_opinions__in', newValue)}
+                />
+              </Grid>
+
+              {/* Branch */}
+
+              <Grid item xs={12}>
+                <CustomFormLabel>Unidade</CustomFormLabel>
+                <AutoCompleteBranch
+                  value={tempFilters.sale_branch}
+                  onChange={(newValue) => handleChange('sale_branch', newValue)}
+                />
+              </Grid>
+              
+              <Grid item xs={12}>
+                <CustomFormLabel>Campanha de Marketing</CustomFormLabel>
+                <AutoCompleteCampaign
+                  value={tempFilters.sale_marketing_campaign}
+                  onChange={(newValue) => handleChange('sale_marketing_campaign', newValue)}
                 />
               </Grid>
 
