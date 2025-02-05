@@ -12,15 +12,12 @@ import { AddBoxRounded, FilterAlt } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useRouter } from 'next/navigation';
 
-// Componentes personalizados
 import FilterDrawer from '../components/filterDrawer/FilterDrawer';
 import PaymentList from '../components/paymentList/list';
 import InforCards from '../../inforCards/InforCards';
 
-// Ícones para os cards
 import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
 
-// Contexto que fornece os filtros e refresh
 import { InvoiceContext } from '@/app/context/InvoiceContext';
 
 export default function InvoiceList({ onClick }) {
@@ -28,7 +25,6 @@ export default function InvoiceList({ onClick }) {
   const { filters, setFilters } = useContext(InvoiceContext);
   const router = useRouter();
 
-  // Dados para os cards de status (exemplo)
   const cardsData = [
     {
       backgroundColor: 'primary.light',
@@ -67,24 +63,23 @@ export default function InvoiceList({ onClick }) {
     },
   ];
 
-  // Abre/fecha o drawer de filtros
+
   const toggleFilterDrawer = (open) => () => {
     setIsFilterOpen(open);
   };
 
-  // Handler para aplicar filtros; atualiza o contexto
+
   const handleApplyFilters = (newFilters) => {
     setFilters(newFilters);
   };
 
-  // Redireciona para a tela de criação de pagamento
+
   const handleCreateClick = () => {
     router.push('/apps/invoice/create');
   };
 
   return (
     <Box>
-      {/* Seção de cards de status */}
       <Accordion sx={{ marginBottom: 4 }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -98,7 +93,6 @@ export default function InvoiceList({ onClick }) {
         </AccordionDetails>
       </Accordion>
 
-      {/* Container com botões: "Adicionar Pagamento" à esquerda e "Filtros" à direita */}
       <Box
         sx={{
           display: 'flex',
@@ -123,14 +117,12 @@ export default function InvoiceList({ onClick }) {
         </Button>
       </Box>
 
-      {/* Drawer de filtros */}
       <FilterDrawer
         externalOpen={isFilterOpen}
         onClose={toggleFilterDrawer(false)}
         onApplyFilters={handleApplyFilters}
       />
 
-      {/* Componente de listagem */}
       <PaymentList onClick={onClick} />
     </Box>
   );
