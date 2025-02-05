@@ -30,6 +30,7 @@ export default function DrawerFilters() {
     final_service_options: filters.final_service_options,
     invoice_status: filters.invoice_status,
     billing_date: filters.billing_date,
+    borrower: filters.borrower,
   });
 
   console.log('tempFilters', tempFilters);
@@ -68,6 +69,10 @@ export default function DrawerFilters() {
 
     if (filters.customer) {
       params.customer = filters.customer;
+    }
+
+    if (filters.borrower) {
+      params.borrower = filters.borrower;
     }
 
     if (filters.isPreSale && filters.isPreSale.length > 0) {
@@ -125,7 +130,9 @@ export default function DrawerFilters() {
       is_signed: [],
       signature_date: [null, null],
       final_service_options: null,
-      invoice_status: null
+      invoice_status: null,
+      billing_date: [null, null],
+      borrower: null,
     });
   };
 
@@ -311,10 +318,10 @@ export default function DrawerFilters() {
               </Grid>
 
               <Grid item xs={12}>
-                <CustomFormLabel htmlFor="customer">Vendedor</CustomFormLabel>
+                <CustomFormLabel htmlFor="borrower">Tomador</CustomFormLabel>
                 <AutoCompleteUser
-                  placeholder="Selecione o cliente"
-                  value={tempFilters.seller}
+                  placeholder="Selecione o tomador"
+                  value={tempFilters.borrower}
                   onChange={(id) => handleChange('seller', id)}
                 />
               </Grid>
