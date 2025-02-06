@@ -58,23 +58,17 @@ const ValidateContract = () => {
                         <Avatar src={contractData?.contract_submission?.sale?.customer?.profile_picture} sx={{ width: 80, height: 80, mb: 2 }} />
                         <Typography><strong>Nome:</strong> {contractData?.contract_submission?.sale?.customer?.complete_name}</Typography>
                         <Typography><strong>Email:</strong> {contractData?.contract_submission?.sale?.customer?.email}</Typography>
-                        <Typography><strong>Telefone:</strong> {contractData?.contract_submission?.sale?.customer?.phone_numbers?.[0]?.phone_number}</Typography>
                     </Box>
 
                     <Box mt={3}>
                         <Typography variant="h6">Vendedor</Typography>
                         <Typography><strong>Nome:</strong> {contractData?.contract_submission?.sale?.seller?.complete_name}</Typography>
-                        <Typography><strong>Email:</strong> {contractData?.contract_submission?.sale?.seller?.email}</Typography>
-                        <Typography><strong>Telefone:</strong> {contractData?.contract_submission?.sale?.seller?.phone_numbers?.[0]?.phone_number}</Typography>
                     </Box>
 
                     <Box mt={3}>
                         <Typography variant="h6">Detalhes do Contrato</Typography>
                         <Typography><strong>Status:</strong> {statusMap[contractData?.contract_submission?.status]}</Typography>
                         <Typography><strong>Data de Envio:</strong> {format(new Date(contractData?.contract_submission?.submit_datetime), 'dd/MM/yyyy HH:mm:ss')}</Typography>
-                        <Typography>
-                            <strong>Link:</strong> <a href={contractData?.contract_submission?.link} target="_blank" rel="noopener noreferrer">Clique aqui</a>
-                        </Typography>
                     </Box>
                 </CardContent>
             </Card>
