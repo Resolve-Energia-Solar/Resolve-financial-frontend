@@ -151,9 +151,9 @@ export default function Comment({ contentType, objectId }) {
                                         <Box sx={{ p: 0, textAlign: 'left' }}>
                                             <Typography variant="body2"><strong>Nome:</strong> {comment.author?.complete_name}</Typography>
                                             <Typography variant="body2"><strong>Email:</strong> {comment.author?.email}</Typography>
-                                            <Typography variant="body2"><strong>Cargo:</strong> {comment.author.employee?.role?.name}</Typography>
-                                            <Typography variant="body2"><strong>Setor:</strong> {comment.author.employee?.department?.name}</Typography>
-                                            <Typography variant="body2"><strong>Unidade:</strong> {comment.author.employee?.branch?.name}</Typography>
+                                            <Typography variant="body2"><strong>Cargo:</strong> {comment.author.employee_data?.role}</Typography>
+                                            <Typography variant="body2"><strong>Setor:</strong> {comment.author.employee_data?.department}</Typography>
+                                            <Typography variant="body2"><strong>Unidade:</strong> {comment.author.employee_data?.branch}</Typography>
                                             <Typography variant="body2"><strong>Data:</strong> {new Date(comment.created_at).toLocaleString()}</Typography>
                                         </Box>
                                     }
