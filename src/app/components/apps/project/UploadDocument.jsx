@@ -335,7 +335,7 @@ const UploadDocument = ({ projectId }) => {
                         >
                           <EditIcon />
                         </IconButton>
-                        <IconButton onClick={() => handleDelete(item.material.id)} color="error">
+                        <IconButton onClick={() => handleDelete(item.id)} color="error">
                           <DeleteIcon />
                         </IconButton>
                       </>
