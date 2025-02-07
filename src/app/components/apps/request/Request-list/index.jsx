@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   TablePagination,
   Table,
@@ -9,24 +9,23 @@ import {
   TableRow,
   Paper,
   Typography,
-  IconButton,
-  Tooltip,
-  Chip,
   Button,
   Box,
-  CircularProgress,
   Skeleton,
   Dialog,
   DialogTitle,
   DialogContent,
 } from '@mui/material';
-import { Edit as EditIcon, Delete as DeleteIcon, AddBoxRounded } from '@mui/icons-material';
+import { AddBoxRounded } from '@mui/icons-material';
+import FilterAlt from '@mui/icons-material/FilterAlt';
 import { useRouter } from 'next/navigation';
 import requestConcessionaireService from '@/services/requestConcessionaireService';
 import { format } from 'date-fns';
-import ChipRequest from '../components/ChipRequest';
+import ChipRequest from '../components/auto-complete/ChipRequest';
 import EditRequestCompany from '../Edit-request';
 import AddRequestCompany from '../Add-request';
+import RequestDrawer from '../components/filterDrawer/RequestDrawer';
+import { RequestDataContext } from '@/app/context/RequestContext';
 
 const RequestList = ({ projectId = null }) => {
   const [projectsList, setProjectsList] = useState([]);
@@ -37,6 +36,9 @@ const RequestList = ({ projectId = null }) => {
   const [totalRows, setTotalRows] = useState(0);
   const router = useRouter();
 
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const { filters, setFilters } = useContext(RequestDataContext);
+
   const [requestIdSelected, setRequestIdSelected] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openAddDialog, setOpenAddDialog] = useState(false);
@@ -45,6 +47,15 @@ const RequestList = ({ projectId = null }) => {
 
   const refreshData = () => {
     setRefresh(!refresh);
+  };
+
+  const toggleRequestDrawer = (open) => () => {
+    setIsFilterOpen(open);
+  };
+
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
+    setPage(0);
   };
 
   const handleEdit = (requestId) => {
@@ -61,23 +72,26 @@ const RequestList = ({ projectId = null }) => {
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        const data = await requestConcessionaireService.getAllByProject({
+        const params = {
           page: page + 1,
           limit: rowsPerPage,
           projectId,
-        });
+          ...filters,
+        };
+
+        const data = await requestConcessionaireService.getAllByProject(params);
         setProjectsList(data.results);
         setTotalRows(data.count);
         console.log('Data: ', data);
       } catch (err) {
-        setError('Erro ao carregar Solicitacoes');
+        setError('Erro ao carregar Solicitações');
       } finally {
         setLoading(false);
       }
     };
 
     fetchProjects();
-  }, [page, rowsPerPage, refresh]);
+  }, [page, rowsPerPage, refresh, filters]);
 
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
@@ -99,6 +113,17 @@ const RequestList = ({ projectId = null }) => {
         >
           Nova Solicitação
         </Button>
+
+        <Box>
+          <Button variant="outlined" startIcon={<FilterAlt />} onClick={toggleRequestDrawer(true)}>
+            Filtros
+          </Button>
+          <RequestDrawer
+            externalOpen={isFilterOpen}
+            onClose={toggleRequestDrawer(false)}
+            onApplyFilters={handleApplyFilters}
+          />
+        </Box>
       </Box>
 
       {loading ? (
@@ -167,7 +192,9 @@ const RequestList = ({ projectId = null }) => {
                     <ChipRequest status={item.status} />
                   </TableCell>
                   <TableCell>
-                    {item.request_date ? format(new Date(item.request_date), 'dd/MM/yyyy') : '-'}
+                    {item.request_date
+                      ? format(new Date(item.request_date), 'dd/MM/yyyy')
+                      : '-'}
                   </TableCell>
                   <TableCell>
                     {item.conclusion_date
@@ -193,7 +220,6 @@ const RequestList = ({ projectId = null }) => {
 
       <Dialog open={openEditDialog} onClose={handleCloseEditDialog} fullWidth maxWidth="lg">
         <DialogTitle>Editar Solicitação</DialogTitle>
-
         <DialogContent>
           <EditRequestCompany
             requestId={requestIdSelected}
@@ -205,7 +231,6 @@ const RequestList = ({ projectId = null }) => {
 
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)} fullWidth maxWidth="lg">
         <DialogTitle>Criar Solicitação</DialogTitle>
-
         <DialogContent>
           <AddRequestCompany
             projectId={projectId}

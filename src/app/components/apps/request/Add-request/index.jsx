@@ -6,13 +6,13 @@ import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import { useSelector } from 'react-redux';
 
-import AutoCompleteCompanies from '../components/AutoCompleteConcessionaire';
+import AutoCompleteCompanies from '../components/auto-complete/AutoCompleteConcessionaire';
 import useEnergyCompany from '@/hooks/requestEnergyCompany/useEnergyCompany';
 import useEnergyCompanyForm from '@/hooks/requestEnergyCompany/useEnergyCompanyForm';
-import AutoCompleteRequestType from '../components/AutoCompleteRequestType';
+import AutoCompleteRequestType from '../components/auto-complete/AutoCompleteRequestType';
 import { useEffect } from 'react';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
-import AutoCompleteUnits from '../components/AutoCompleteUnits';
+import AutoCompleteUnits from '../components/auto-complete/AutoCompleteUnits';
 import AutoCompleteUserProject from '../../inspections/auto-complete/Auto-input-UserProject';
 import AutoCompleteProject from '../../inspections/auto-complete/Auto-input-Project';
 import AutoCompleteSituation from '../../comercial/sale/components/auto-complete/Auto-Input-Situation';

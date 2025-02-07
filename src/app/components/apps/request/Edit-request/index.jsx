@@ -8,14 +8,14 @@ import { useSelector } from 'react-redux';
 
 import { useParams, useRouter } from 'next/navigation';
 
-import AutoCompleteCompanies from '../components/AutoCompleteConcessionaire';
+import AutoCompleteCompanies from '../components/auto-complete/AutoCompleteConcessionaire';
 import useEnergyCompany from '@/hooks/requestEnergyCompany/useEnergyCompany';
 import useEnergyCompanyForm from '@/hooks/requestEnergyCompany/useEnergyCompanyForm';
-import AutoCompleteRequestType from '../components/AutoCompleteRequestType';
+import AutoCompleteRequestType from '../components/auto-complete/AutoCompleteRequestType';
 import { useEffect } from 'react';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import AutoCompleteUserProject from '../../inspections/auto-complete/Auto-input-UserProject';
-import AutoCompleteUnits from '../components/AutoCompleteUnits';
+import AutoCompleteUnits from '../components/auto-complete/AutoCompleteUnits';
 import AutoCompleteSituation from '../../comercial/sale/components/auto-complete/Auto-Input-Situation';
 
 export default function EditRequestCompany({
