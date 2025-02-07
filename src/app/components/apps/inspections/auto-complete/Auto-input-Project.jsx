@@ -47,7 +47,7 @@ export default function AutoCompleteProject({ onChange, value, error, helperText
       setLoading(true);
       try {
         const response = await projectService.getProjects();
-        const formattedProjects = response.results
+        const formattedProjects = response.results.results
           .filter((project) =>
             project.project_number.toLowerCase().includes(codeNumber.toLowerCase()),
           )
