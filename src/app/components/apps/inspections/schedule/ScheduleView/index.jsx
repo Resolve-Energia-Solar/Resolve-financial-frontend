@@ -189,7 +189,7 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                   </Typography>
                   <Typography variant="body1">
                     <strong>Número do Supervisor:</strong>{' '}
-                    {seller?.employee?.manager?.phone_numbers[0]
+                    {seller?.employee?.manager?.phone_numbers?.length > 0
                       ? `+${seller?.employee?.manager?.phone_numbers[0]?.country_code} (${seller?.employee?.manager?.phone_numbers[0]?.area_code}) ${seller?.employee?.manager?.phone_numbers[0]?.phone_number}`
                       : 'Sem número associado'}
                   </Typography>
