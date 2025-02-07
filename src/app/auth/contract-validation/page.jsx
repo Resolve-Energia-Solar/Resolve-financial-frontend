@@ -57,7 +57,9 @@ const ValidateContract = () => {
                         <Typography variant="h6">Dados do Cliente</Typography>
                         <Avatar src={contractData?.contract_submission?.sale?.customer?.profile_picture} sx={{ width: 80, height: 80, mb: 2 }} />
                         <Typography><strong>Nome:</strong> {contractData?.contract_submission?.sale?.customer?.complete_name}</Typography>
-                        <Typography><strong>Email:</strong> {contractData?.contract_submission?.sale?.customer?.email}</Typography>
+                        <Typography><strong>Telefone:</strong> {contractData?.contract_submission?.sale?.customer?.phone_number}</Typography>
+                        <Typography><strong>E-mail:</strong> {contractData?.contract_submission?.sale?.customer?.email}</Typography>
+                        <Typography><strong>CPF:</strong> {contractData?.contract_submission?.sale?.customer?.first_document}</Typography>
                     </Box>
 
                     <Box mt={3}>
@@ -69,6 +71,11 @@ const ValidateContract = () => {
                         <Typography variant="h6">Detalhes do Contrato</Typography>
                         <Typography><strong>Status:</strong> {statusMap[contractData?.contract_submission?.status]}</Typography>
                         <Typography><strong>Data de Envio:</strong> {format(new Date(contractData?.contract_submission?.submit_datetime), 'dd/MM/yyyy HH:mm:ss')}</Typography>
+                        {contractData?.contract_submission?.status === "P" && (
+                            <>
+                                <Typography><strong>Data de Vencimento:</strong> {format(new Date(contractData?.contract_submission?.due_date), 'dd/MM/yyyy HH:mm:ss')}</Typography>
+                            </>
+                        )}
                     </Box>
                 </CardContent>
             </Card>
