@@ -34,6 +34,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import projectMaterialsService from '@/services/projectMaterialService';
 import projectService from '@/services/projectService';
+import { AddBoxRounded } from '@mui/icons-material';
+import AddMaterialList from './modal/AddMaterialList';
 
 const UploadDocument = ({ projectId }) => {
   const [file, setFile] = useState(null);
@@ -48,8 +50,12 @@ const UploadDocument = ({ projectId }) => {
   const [editedAmount, setEditedAmount] = useState('');
   const [materials, setMaterials] = useState([]);
   const [project, setProject] = useState(null);
+  const [addMaterialListModal, setAddMaterialListModal] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
-  console.log('Materiais:', materials);
+  const handleRefresh = () => {
+    setRefresh(!refresh);
+  };
 
   const fetchProject = async () => {
     try {
@@ -63,7 +69,7 @@ const UploadDocument = ({ projectId }) => {
 
   useEffect(() => {
     fetchProject();
-  }, [projectId]);
+  }, [projectId, refresh]);
 
   const handleUpload = (event) => {
     const selectedFile = event.target.files[0];
@@ -280,6 +286,14 @@ const UploadDocument = ({ projectId }) => {
 
       {materials.length > 0 && (
         <TableContainer component={Paper} sx={{ marginTop: 4, maxHeight: 400, overflow: 'auto' }}>
+          <Button
+            variant="outlined"
+            startIcon={<AddBoxRounded />}
+            sx={{ marginTop: 1, marginBottom: 2 }}
+            onClick={() => setAddMaterialListModal(true)}
+          >
+            Adicionar Material
+          </Button>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
@@ -335,7 +349,7 @@ const UploadDocument = ({ projectId }) => {
                         >
                           <EditIcon />
                         </IconButton>
-                        <IconButton onClick={() => handleDelete(item.material.id)} color="error">
+                        <IconButton onClick={() => handleDelete(item.id)} color="error">
                           <DeleteIcon />
                         </IconButton>
                       </>
@@ -381,6 +395,8 @@ const UploadDocument = ({ projectId }) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <AddMaterialList open={addMaterialListModal} handleClose={() => setAddMaterialListModal(false)} projectId={projectId} onRefresh={handleRefresh} />
     </Paper>
   );
 };
