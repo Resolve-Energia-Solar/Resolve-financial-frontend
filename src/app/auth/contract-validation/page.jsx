@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Container, Typography, Card, CardContent, Avatar, CircularProgress, Alert, Box } from "@mui/material";
+import { Container, Typography, Card, CardContent, Avatar, CircularProgress, Alert, Box, Chip, Grid } from "@mui/material";
 import { format } from "date-fns";
 
 const statusMap = {
-    "P": "Pendente",
-    "A": "Aceito",
-    "R": "Recusado"
+    "P": <Chip label="Pendente" color="warning" size="small" />,
+    "A": <Chip label="Aceito" color="success" size="small" />,
+    "R": <Chip label="Recusado" color="error" size="small" />
 };
 
 const ValidateContract = () => {
@@ -50,33 +50,35 @@ const ValidateContract = () => {
         <Container maxWidth="md" sx={{ mt: 4 }}>
             <Card>
                 <CardContent>
-                    <Typography variant="h4" gutterBottom>Validação de Contrato</Typography>
+                    <Typography my={2} variant="h4" gutterBottom>Validação de Contrato</Typography>
                     <Alert severity="success">{contractData?.message}</Alert>
-
-                    <Box mt={3}>
-                        <Typography variant="h6">Dados do Cliente</Typography>
-                        <Avatar src={contractData?.contract_submission?.sale?.customer?.profile_picture} sx={{ width: 80, height: 80, mb: 2 }} />
-                        <Typography><strong>Nome:</strong> {contractData?.contract_submission?.sale?.customer?.complete_name}</Typography>
-                        <Typography><strong>Telefone:</strong> {contractData?.contract_submission?.sale?.customer?.phone_number}</Typography>
-                        <Typography><strong>E-mail:</strong> {contractData?.contract_submission?.sale?.customer?.email}</Typography>
-                        <Typography><strong>CPF:</strong> {contractData?.contract_submission?.sale?.customer?.first_document}</Typography>
-                    </Box>
-
-                    <Box mt={3}>
-                        <Typography variant="h6">Vendedor</Typography>
-                        <Typography><strong>Nome:</strong> {contractData?.contract_submission?.sale?.seller?.complete_name}</Typography>
-                    </Box>
-
-                    <Box mt={3}>
-                        <Typography variant="h6">Detalhes do Contrato</Typography>
-                        <Typography><strong>Status:</strong> {statusMap[contractData?.contract_submission?.status]}</Typography>
-                        <Typography><strong>Data de Envio:</strong> {format(new Date(contractData?.contract_submission?.submit_datetime), 'dd/MM/yyyy HH:mm:ss')}</Typography>
-                        {contractData?.contract_submission?.status === "P" && (
-                            <>
-                                <Typography><strong>Data de Vencimento:</strong> {format(new Date(contractData?.contract_submission?.due_date), 'dd/MM/yyyy HH:mm:ss')}</Typography>
-                            </>
-                        )}
-                    </Box>
+                    <Grid container justifyContent={"space-between"}>
+                        <Box>
+                            <Box mt={3}>
+                                <Typography my={1} variant="h6">Dados do Cliente</Typography>
+                                <Typography my={1}><strong>Nome:</strong> {contractData?.contract_submission?.sale?.customer?.complete_name}</Typography>
+                                <Typography my={1}><strong>Telefone:</strong> {contractData?.contract_submission?.sale?.customer?.phone_number}</Typography>
+                                <Typography my={1}><strong>E-mail:</strong> {contractData?.contract_submission?.sale?.customer?.email}</Typography>
+                                <Typography my={1}><strong>CPF:</strong> {contractData?.contract_submission?.sale?.customer?.first_document}</Typography>
+                            </Box>
+                        </Box>
+                        <Box>
+                            <Box mt={3}>
+                                <Typography my={1} variant="h6">Vendedor</Typography>
+                                <Typography my={1}><strong>Nome:</strong> {contractData?.contract_submission?.sale?.seller?.complete_name}</Typography>
+                            </Box>
+                            <Box mt={3}>
+                                <Typography my={1} variant="h6">Detalhes do Contrato</Typography>
+                                <Typography my={1}><strong>Status:</strong> {statusMap[contractData?.contract_submission?.status]}</Typography>
+                                <Typography my={1}><strong>Data de Envio:</strong> {format(new Date(contractData?.contract_submission?.submit_datetime), 'dd/MM/yyyy HH:mm:ss')}</Typography>
+                                {contractData?.contract_submission?.status === "P" && (
+                                    <>
+                                        <Typography my={1}><strong>Limite para assinar:</strong> {format(new Date(contractData?.contract_submission?.due_date), 'dd/MM/yyyy HH:mm:ss')}</Typography>
+                                    </>
+                                )}
+                            </Box>
+                        </Box>
+                    </Grid>
                 </CardContent>
             </Card>
         </Container>
