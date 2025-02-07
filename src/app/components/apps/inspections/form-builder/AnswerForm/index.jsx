@@ -34,6 +34,19 @@ const AnswerForm = ({ answerData }) => {
     return answers[fieldName];
   };
 
+  const normalizeValue = (value, isMultiple) => {
+    if (isMultiple) {
+      if (Array.isArray(value)) {
+        return value;
+      } else if (value != null) {
+        return [value];
+      } else {
+        return [];
+      }
+    }
+    return value || '';
+  };
+  
   useEffect(() => {
     try {
       if (answerData) {
@@ -112,8 +125,39 @@ const AnswerForm = ({ answerData }) => {
                     </Typography>
                   </Grid>
                 );
-              case 'select':
-                if (field.multiple) {
+                case 'select':
+                  const rawValue = answerFromField(`${field.type}-${field.id}`);
+                  const normalizedValue = normalizeValue(rawValue, field.multiple);
+                
+                  if (field.multiple) {
+                    return (
+                      <Grid
+                        item
+                        xs={12}
+                        sm={12}
+                        p={2}
+                        key={field.id}
+                        sx={{ alignItems: 'center', width: '100%' }}
+                      >
+                        <Typography variant="h5">{field.label}:</Typography>
+                        <CustomSelect
+                          id={`${field.type}-${field.id}`}
+                          name={`${field.type}-${field.id}`}
+                          variant="standard"
+                          disabled
+                          value={normalizedValue}
+                          multiple
+                          width="100%"
+                        >
+                          {field.options.map((option) => (
+                            <MenuItem key={option.id} value={option.value}>
+                              {option.label}
+                            </MenuItem>
+                          ))}
+                        </CustomSelect>
+                      </Grid>
+                    );
+                  }
                   return (
                     <Grid
                       item
@@ -129,9 +173,7 @@ const AnswerForm = ({ answerData }) => {
                         name={`${field.type}-${field.id}`}
                         variant="standard"
                         disabled
-                        value={answerFromField(`${field.type}-${field.id}`) || []}
-                        multiple
-                        width="100%"
+                        value={normalizedValue}
                       >
                         {field.options.map((option) => (
                           <MenuItem key={option.id} value={option.value}>
@@ -141,32 +183,7 @@ const AnswerForm = ({ answerData }) => {
                       </CustomSelect>
                     </Grid>
                   );
-                }
-                return (
-                  <Grid
-                    item
-                    xs={12}
-                    sm={12}
-                    p={2}
-                    key={field.id}
-                    sx={{ alignItems: 'center', width: '100%' }}
-                  >
-                    <Typography variant="h5">{field.label}:</Typography>
-                    <CustomSelect
-                      id={`${field.type}-${field.id}`}
-                      name={`${field.type}-${field.id}`}
-                      variant="standard"
-                      disabled
-                      value={answerFromField(`${field.type}-${field.id}`) || []}
-                    >
-                      {field.options.map((option) => (
-                        <MenuItem key={option.id} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      ))}
-                    </CustomSelect>
-                  </Grid>
-                );
+                
               case 'date':
                 return (
                   <Grid

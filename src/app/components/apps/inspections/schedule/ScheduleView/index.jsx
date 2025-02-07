@@ -12,12 +12,15 @@ import {
   Typography,
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
+import { useSelector } from 'react-redux';
 
 import Logo from '@/app/(DashboardLayout)/layout/shared/logo/Logo';
 import ScheduleStatusChip from '../StatusChip';
 import answerService from '@/services/answerService';
 import userService from '@/services/userService';
 import AnswerForm from '../../form-builder/AnswerForm';
+import HasPermission from '@/app/components/permissions/HasPermissions';
+
 
 export default function ScheduleView({ open, onClose, selectedSchedule }) {
   const router = useRouter();
@@ -26,9 +29,12 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
   const [loadingAnswer, setLoadingAnswer] = useState(true);
   const [seller, setSeller] = useState(null);
   const [supervisor, setSupervisor] = useState(null);
+  const userPermissions = useSelector((state) => state.user.permissions);
 
-
-  console.log('seller: ', seller)
+  const hasPermission = (permissions) => {
+    if (!permissions) return true;
+    return permissions.some((permission) => userPermissions.includes(permission));
+  };
 
   const formatDateTime = (dateString) => {
     if (!dateString) return 'Não identificado';
@@ -41,6 +47,8 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
       minute: '2-digit',
     }).format(date);
   };
+
+  console.log('SELECIONADA:', selectedSchedule);
 
   useEffect(() => {
     async function fetchCreator() {
@@ -181,7 +189,7 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                   </Typography>
                   <Typography variant="body1">
                     <strong>Número do Supervisor:</strong>{' '}
-                    {seller?.employee?.manager?.phone_numbers[0]
+                    {seller?.employee?.manager?.phone_numbers?.length > 0
                       ? `+${seller?.employee?.manager?.phone_numbers[0]?.country_code} (${seller?.employee?.manager?.phone_numbers[0]?.area_code}) ${seller?.employee?.manager?.phone_numbers[0]?.phone_number}`
                       : 'Sem número associado'}
                   </Typography>
@@ -189,6 +197,23 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                     <strong>Unidade:</strong>{' '}
                     {seller?.employee?.branch?.name || 'Sem unidade associada'}
                   </Typography>
+                  <HasPermission
+                    permissions={['field_services.view_agent_info']}
+                    userPermissions={userPermissions}
+                  >
+                    <Typography variant="body1">
+                      <strong>Nome do Vistoriador:</strong>{' '}
+                      {selectedSchedule?.schedule_agent?.complete_name || 'Sem nome associada'}
+                    </Typography>
+                    <Typography variant="body1">
+                      <strong>Telefone do Vistoriador:</strong>{' '}
+                      {selectedSchedule?.schedule_agent?.phone_numbers?.length > 0
+                        ? selectedSchedule.schedule_agent.phone_numbers
+                            .map(phone => `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`)
+                            .join(', ')
+                        : 'Sem telefone associado'}
+                    </Typography>
+                  </HasPermission>
                 </Paper>
 
                 <Paper variant="outlined" sx={{ mt: 3, p: 2 }}>

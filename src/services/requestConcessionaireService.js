@@ -10,8 +10,25 @@ const requestConcessionaireService = {
       throw error;
     }
   },
-  getAllByProject: async ({ page = 1, limit = 10, projectId } = {}) => {
-    const params = { page, limit };
+
+  getRequests: async ({ ordering, nextPage, limit = 25, page = 1, ...filters }) => {
+    try {
+      const params = {
+        ordering: ordering || '',
+        page: nextPage || page,
+        limit,
+        ...filters,
+      };
+      const response = await apiClient.get('/api/requests-energy-companies/', { params });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar solicitação:', error);
+      throw error;
+    }
+  },
+
+  getAllByProject: async ({ page = 1, limit = 10, projectId , ...filters} = {}) => {
+    const params = { page, limit, ...filters };
     if (projectId) {
       params.project = projectId;
     }

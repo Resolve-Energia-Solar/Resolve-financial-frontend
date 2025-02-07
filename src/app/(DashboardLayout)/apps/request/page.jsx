@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import RequestList from "@/app/components/apps/request/Request-list";
+import { RequestDataContextProvider } from "@/app/context/RequestContext";
 const BCrumb = [
   {
     to: "/",
@@ -74,30 +75,32 @@ const RequestCE = () => {
 
   return (
     <div >
-      <PageContainer title="Solicitações da Concessionária de Energia" description="Essa é a Lista de Pagamentos">
-        <Breadcrumb title="Solicitações da Concessionária de Energia" items={BCrumb} />
-        <BlankCard>
+      <RequestDataContextProvider>
+        <PageContainer title="Solicitações da Concessionária de Energia" description="Essa é a Lista de Pagamentos">
+          <Breadcrumb title="Solicitações da Concessionária de Energia" items={BCrumb} />
+          <BlankCard>
 
-          <Accordion sx={{ marginBottom: 4 }}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="sale-cards-content"
-              id="sale-cards-header"
-            >
-              <Typography variant="h6">Status</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <InforCards cardsData={cardsData} />
-            </AccordionDetails>
-          </Accordion>
+            <Accordion sx={{ marginBottom: 4 }}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="sale-cards-content"
+                id="sale-cards-header"
+              >
+                <Typography variant="h6">Status</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <InforCards cardsData={cardsData} />
+              </AccordionDetails>
+            </Accordion>
 
-          <CardContent>
-            <Box sx={{ display: 'flex' }}>
-            </Box>
-            <RequestList />
-          </CardContent>
-        </BlankCard>
-      </PageContainer>
+            <CardContent>
+              <Box sx={{ display: 'flex' }}>
+              </Box>
+              <RequestList />
+            </CardContent>
+          </BlankCard>
+        </PageContainer>
+      </RequestDataContextProvider>
     </div>
   );
 };

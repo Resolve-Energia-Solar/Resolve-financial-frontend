@@ -44,9 +44,17 @@ const useUnitForm = (initialData, id) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const generateFileNameWithHash = (file) => {
+    if (!file) return null;
+    
+    const timestamp = Date.now();
+    const fileExtension = file.name.split('.').pop(); 
+    return `${file.name.split('.')[0]}_${timestamp}.${fileExtension}`;
+  };
+
   const handleSave = async () => {
-    setLoading(true); // Define o estado de loading como true
-    const is_file = formData.bill_file instanceof File || (formData.bill_file instanceof FileList && formData.bill_file.length > 0);
+    setLoading(true);
+    const isFile = formData.bill_file instanceof File || (formData.bill_file instanceof FileList && formData.bill_file.length > 0);
     const dataToSend = new FormData();
     
     dataToSend.append('address_id', formData.address_id);
@@ -64,8 +72,13 @@ const useUnitForm = (initialData, id) => {
       dataToSend.append('supply_adquance_ids', supplyAdquanceId);
     });
 
-    if (is_file) {
-      dataToSend.append('bill_file', formData.bill_file);
+    if (isFile) {
+      const renamedFile = new File(
+        [formData.bill_file],
+        generateFileNameWithHash(formData.bill_file),
+        { type: formData.bill_file.type }
+      );
+      dataToSend.append('bill_file', renamedFile);
     }
 
     try {
@@ -81,7 +94,7 @@ const useUnitForm = (initialData, id) => {
       setFormErrors(err.response?.data || {});
       console.log(err.response?.data || err);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
