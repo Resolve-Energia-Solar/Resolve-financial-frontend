@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Container, Typography, Card, CardContent, Avatar, CircularProgress, Alert, Box, Chip, Grid } from "@mui/material";
+import { Container, Typography, Card, CardContent, Link, CircularProgress, Alert, Box, Chip, Grid } from "@mui/material";
 import { format } from "date-fns";
+import { useSystemConfig } from "@/context/SystemConfigContext";
 
 const statusMap = {
     "P": <Chip label="Pendente" color="warning" size="small" />,
@@ -17,6 +18,7 @@ const ValidateContract = () => {
     const [contractData, setContractData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { config } = useSystemConfig();
 
     useEffect(() => {
         if (!envelope_id) {
@@ -29,6 +31,9 @@ const ValidateContract = () => {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/validate-contract/?envelope_id=${envelope_id}`);
                 if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error("Contrato não reconhecido. Entre em contato com o setor jurídico pelo e-mail ");
+                    }
                     throw new Error("Erro ao buscar os dados do contrato");
                 }
                 const data = await response.json();
@@ -41,10 +46,18 @@ const ValidateContract = () => {
         };
 
         fetchContractData();
-    }, [envelope_id]);
+    }, [envelope_id, config]);
 
     if (loading) return <Container sx={{ textAlign: 'center', mt: 4 }}><CircularProgress /></Container>;
-    if (error) return <Container sx={{ mt: 4 }}><Alert severity="error">{error}</Alert></Container>;
+    if (error) return (
+        <Container sx={{ mt: 4 }}>
+            <Alert severity="error">
+                {error} <Link href={`mailto:${config?.configs?.juridical_email}`}>
+                    {config?.configs?.juridical_email}
+                </Link>.
+            </Alert>
+        </Container>
+    );
 
     return (
         <Container maxWidth="md" sx={{ mt: 4 }}>
@@ -79,6 +92,13 @@ const ValidateContract = () => {
                             </Box>
                         </Box>
                     </Grid>
+                    <small my={1}>Em caso de dúvidas entre em contato com:
+                        <strong>
+                            <Link href={`mailto:${config?.configs?.juridical_email}`}>
+                                {config?.configs?.juridical_email}
+                            </Link>
+                        </strong>
+                    </small>
                 </CardContent>
             </Card>
         </Container>
