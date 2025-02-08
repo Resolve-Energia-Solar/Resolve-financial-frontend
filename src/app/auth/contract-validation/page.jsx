@@ -92,7 +92,7 @@ const ValidateContract = () => {
                             </Box>
                         </Box>
                     </Grid>
-                    <small my={1}>Em caso de dúvidas entre em contato com:
+                    <small my={1}>Em caso de dúvidas entre em contato com: 
                         <strong>
                             <Link href={`mailto:${config?.configs?.juridical_email}`}>
                                 {config?.configs?.juridical_email}
