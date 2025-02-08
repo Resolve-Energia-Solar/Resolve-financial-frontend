@@ -10,6 +10,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import '@/utils/i18n';
 import '@/app/api/index';
 import { SnackbarProvider } from 'notistack';
+import AppProviders from "../context/AppProviders";
 
 const MyApp = ({ children }) => {
   const theme = ThemeSettings();
@@ -22,7 +23,9 @@ const MyApp = ({ children }) => {
           <ThemeProvider theme={theme}>
             <RTL direction={customizer.activeDir}>
               <CssBaseline />
-              {children}
+              <AppProviders>
+                {children}
+              </AppProviders>
             </RTL>
           </ThemeProvider>
         </AppRouterCacheProvider>
