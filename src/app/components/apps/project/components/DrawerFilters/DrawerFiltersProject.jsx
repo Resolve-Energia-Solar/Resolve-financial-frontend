@@ -185,7 +185,7 @@ export default function DrawerFiltersProject() {
               </Grid>
 
               <Grid item xs={12}>
-                <CustomFormLabel htmlFor="Status">Status do Cliente</CustomFormLabel>
+                <CustomFormLabel htmlFor="Status">Status de Homologação</CustomFormLabel>
                 <CheckboxesTags
                   options={[
                     { value: 'P', label: 'Pendente' },
@@ -201,7 +201,7 @@ export default function DrawerFiltersProject() {
               </Grid>
 
               <Grid item xs={12}>
-                <CustomFormLabel htmlFor="isPreSale">Status do Projetista</CustomFormLabel>
+                <CustomFormLabel htmlFor="isPreSale">Status do Projeto</CustomFormLabel>
                 <CheckboxesTags
                   options={[
                     { value: 'P', label: 'Pendente' },
