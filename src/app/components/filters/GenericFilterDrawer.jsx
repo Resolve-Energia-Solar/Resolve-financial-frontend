@@ -82,6 +82,24 @@ const NumberRangeInput = ({ label, value, onChange }) => {
 const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose }) => {
   const [filterValues, setFilterValues] = useState({});
 
+  // Função para retornar os valores padrão (reset)
+  const getDefaultValues = () => {
+    const defaultValues = {};
+    filters.forEach((filterConfig) => {
+      if (filterConfig.type === "number-range") {
+        defaultValues[filterConfig.key] = { min: "", max: "" };
+      } else if (filterConfig.type === "range") {
+        defaultValues[filterConfig.key] = { start: "", end: "" };
+      } else if (filterConfig.type === "multiselect") {
+        defaultValues[filterConfig.key] = [];
+      } else {
+        defaultValues[filterConfig.key] = "";
+      }
+    });
+    return defaultValues;
+  };
+
+  // Ao abrir o drawer, inicializa os valores a partir de initialValues
   useEffect(() => {
     if (open) {
       const defaultValues = {};
@@ -100,12 +118,13 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
             defaultValues[filterConfig.key] = { min: "", max: "" };
           }
         } else if (filterConfig.type === "range") {
-          if (
-            initialValues &&
-            initialValues[filterConfig.key] &&
-            typeof initialValues[filterConfig.key] === "object"
-          ) {
-            defaultValues[filterConfig.key] = initialValues[filterConfig.key];
+          if (initialValues && initialValues[filterConfig.key]) {
+            if (typeof initialValues[filterConfig.key] === "object") {
+              defaultValues[filterConfig.key] = initialValues[filterConfig.key];
+            } else if (typeof initialValues[filterConfig.key] === "string") {
+              const [start, end] = initialValues[filterConfig.key].split(",");
+              defaultValues[filterConfig.key] = { start: start || "", end: end || "" };
+            }
           } else {
             defaultValues[filterConfig.key] = { start: "", end: "" };
           }
@@ -114,8 +133,8 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
             defaultValues[filterConfig.key] = Array.isArray(initialValues[filterConfig.key])
               ? initialValues[filterConfig.key]
               : initialValues[filterConfig.key] === ""
-                ? []
-                : initialValues[filterConfig.key].split(",");
+              ? []
+              : initialValues[filterConfig.key].split(",");
           } else {
             defaultValues[filterConfig.key] = [];
           }
@@ -131,6 +150,12 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
 
   const handleChange = (key, value) => {
     setFilterValues((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const resetFilters = () => {
+    setFilterValues(getDefaultValues());
+    onApply(onClose());
+    onApply(getDefaultValues());
   };
 
   const handleApply = () => {
@@ -156,7 +181,6 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
     onApply(transformedFilters);
     onClose();
   };
-
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
@@ -239,7 +263,6 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
               />
             );
           } else if (filterConfig.type === "async-autocomplete") {
-            // Utiliza o componente genérico para busca assíncrona.
             return (
               <GenericAsyncAutocompleteInput
                 key={filterConfig.key}
@@ -266,6 +289,15 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
             );
           }
         })}
+        <Button
+          variant="outlined"
+          color="secondary"
+          fullWidth
+          onClick={resetFilters}
+          sx={{ mt: 1 }}
+        >
+          Resetar Filtros
+        </Button>
         <Button variant="contained" color="primary" fullWidth onClick={handleApply} sx={{ mt: 2 }}>
           Aplicar
         </Button>

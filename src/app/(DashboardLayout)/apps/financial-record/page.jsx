@@ -133,16 +133,6 @@ const financialRecordList = () => {
         { key: "integration_code__in", label: "Código de Integração (Lista)", type: "multiselect", options: [] },
         { key: "protocol__icontains", label: "Protocolo (Contém)", type: "text" },
         { key: "protocol__in", label: "Protocolo (Lista)", type: "multiselect", options: [] },
-        {
-            key: "is_receivable",
-            label: "É a Receber?",
-            type: "select",
-            options: [
-                { label: "Sim", value: "true" },
-                { label: "Não", value: "false" }
-            ]
-        },
-        { key: "status__icontains", label: "Status (Contém)", type: "text" },
         { key: "status__in", label: "Status (Lista)", type: "multiselect", options: [] },
         {
             key: "value_range",
