@@ -2,15 +2,24 @@ import { Chip } from '@mui/material';
 import {
   CheckCircle as CheckCircleIcon,
   HourglassEmpty as HourglassEmptyIcon,
+  PlayCircleFilled as PlayCircleFilledIcon,
+  Cancel as CancelIcon,
+  RemoveCircle as RemoveCircleIcon,
 } from '@mui/icons-material';
 
 const ChipProject = ({ status }) => {
   const getChipProps = (status) => {
     switch (status) {
-      case true:
+      case 'CO':
         return { label: 'Concluído', color: 'success', icon: <CheckCircleIcon /> };
-      case false:
+      case 'P':
         return { label: 'Pendente', color: 'warning', icon: <HourglassEmptyIcon /> };
+      case 'EA':
+        return { label: 'Em Andamento', color: 'primary', icon: <PlayCircleFilledIcon /> };
+      case 'C':
+        return { label: 'Cancelado', color: 'error', icon: <CancelIcon /> };
+      case 'D':
+        return { label: 'Distrato', color: 'default', icon: <RemoveCircleIcon /> };
       default:
         return { label: status };
     }

@@ -212,7 +212,7 @@ const ProjectList = ({ onClick }) => {
                   <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                   <TableCell>{item.homologator?.complete_name || '-'}</TableCell>
                   <TableCell>
-                    <ChipProject status={item.is_documentation_completed} />
+                    <ChipProject status={item.designer_status} />
                   </TableCell>{' '}
                   <TableCell>{item.product?.name}</TableCell>
                   <TableCell>{item.product?.params || '-'}</TableCell>
