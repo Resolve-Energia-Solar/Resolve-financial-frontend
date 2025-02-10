@@ -80,9 +80,8 @@ const RequestList = ({ projectId = null }) => {
         };
 
         const data = await requestConcessionaireService.getAllByProject(params);
-        setProjectsList(data.results);
+        setProjectsList(data.results.results);
         setTotalRows(data.count);
-        console.log('Data: ', data);
       } catch (err) {
         setError('Erro ao carregar Solicitações');
       } finally {
@@ -180,7 +179,7 @@ const RequestList = ({ projectId = null }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {projectsList.map((item) => (
+              {Array.isArray(projectsList) && projectsList.map((item) => (
                 <TableRow
                   key={item.id}
                   sx={{ cursor: 'pointer' }}
