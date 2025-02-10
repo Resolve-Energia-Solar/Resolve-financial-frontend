@@ -52,8 +52,8 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
       project_number: 'Número do Projeto',
       start_date: 'Data de Início',
       end_date: 'Data de Término',
-      status: 'Status do Cliente',
-      designer_status: 'Status Projetista',
+      status: 'Status de Homologação',
+      designer_status: 'Status do Projeto',
     };
 
     return fieldLabels[fieldName] || fieldName;
@@ -187,7 +187,7 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
         </Grid>
         <Grid item xs={12} sm={12} lg={4}>
           <FormSelect
-            label="Status do Cliente"
+            label="Status de Homologação"
             options={status_options}
             value={formData.status}
             onChange={(e) => handleChange('status', e.target.value)}
@@ -196,7 +196,7 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
         </Grid>
         <Grid item xs={12} sm={12} lg={4}>
           <FormSelect
-            label="Status Projetista"
+            label="Status do Projeto"
             options={status_options}
             value={formData.designer_status}
             onChange={(e) => handleChange('designer_status', e.target.value)}

@@ -187,10 +187,9 @@ const ProjectList = ({ onClick }) => {
               <TableCell>Cliente</TableCell>
               <TableCell>Homologador</TableCell>
               <TableCell>Status do Projeto</TableCell>
-
               <TableCell>Produto</TableCell>
               <TableCell>Kwp</TableCell>
-              <TableCell>Status do Cliente</TableCell>
+              <TableCell>Status de Homologação</TableCell>
               <TableCell>Status da Venda</TableCell>
             </TableRow>
           </TableHead>

@@ -210,7 +210,7 @@ export default function DrawerFiltersProject() {
                     { value: 'C', label: 'Cancelado' },
                     { value: 'D', label: 'Distrato' },
                   ]}
-                  placeholder="Selecione o Status do Projetista"
+                  placeholder="Selecione o Status do Projeto"
                   value={tempFilters.designer_status}
                   onChange={(event, value) => handleChange('designer_status', value)}
                 />
