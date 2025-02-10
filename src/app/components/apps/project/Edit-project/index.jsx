@@ -110,7 +110,7 @@ export default function EditProject({ projectId = null }) {
 
       {value === 4 && (
         <Box mt={2}>
-          <RequestList projectId={id} />
+          <RequestList projectId={id} enableFilters={false} />
         </Box>
       )}
 

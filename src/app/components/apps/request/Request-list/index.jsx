@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import {
   TablePagination,
   Table,
@@ -27,7 +27,7 @@ import AddRequestCompany from '../Add-request';
 import RequestDrawer from '../components/filterDrawer/RequestDrawer';
 import { RequestDataContext } from '@/app/context/RequestContext';
 
-const RequestList = ({ projectId = null }) => {
+const RequestList = ({ projectId = null, enableFilters = true }) => {
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -37,13 +37,19 @@ const RequestList = ({ projectId = null }) => {
   const router = useRouter();
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const { filters, setFilters } = useContext(RequestDataContext);
+
+  // Tenta acessar o contexto, se não existir, ignora os filtros
+  const context = useContext(RequestDataContext);
+  const filters = context ? context.filters : {};
+  const setFilters = context ? context.setFilters : () => {};
 
   const [requestIdSelected, setRequestIdSelected] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openAddDialog, setOpenAddDialog] = useState(false);
-
   const [refresh, setRefresh] = useState(false);
+
+  // 🚀 Usa `useMemo` para evitar que `filters` cause re-renders desnecessários
+  const stableFilters = useMemo(() => filters, [JSON.stringify(filters)]);
 
   const refreshData = () => {
     setRefresh(!refresh);
@@ -54,8 +60,10 @@ const RequestList = ({ projectId = null }) => {
   };
 
   const handleApplyFilters = (newFilters) => {
-    setFilters(newFilters);
-    setPage(0);
+    if (context) {
+      setFilters(newFilters);
+      setPage(0);
+    }
   };
 
   const handleEdit = (requestId) => {
@@ -76,7 +84,7 @@ const RequestList = ({ projectId = null }) => {
           page: page + 1,
           limit: rowsPerPage,
           projectId,
-          ...filters,
+          ...stableFilters, // Usa a versão memorizada de filters
         };
 
         const data = await requestConcessionaireService.getAllByProject(params);
@@ -90,7 +98,7 @@ const RequestList = ({ projectId = null }) => {
     };
 
     fetchProjects();
-  }, [page, rowsPerPage, refresh, filters]);
+  }, [page, rowsPerPage, refresh, stableFilters]); // Agora, `filters` não recria o efeito desnecessariamente
 
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
@@ -113,16 +121,19 @@ const RequestList = ({ projectId = null }) => {
           Nova Solicitação
         </Button>
 
-        <Box>
-          <Button variant="outlined" startIcon={<FilterAlt />} onClick={toggleRequestDrawer(true)}>
-            Filtros
-          </Button>
-          <RequestDrawer
-            externalOpen={isFilterOpen}
-            onClose={toggleRequestDrawer(false)}
-            onApplyFilters={handleApplyFilters}
-          />
-        </Box>
+        {/* Só exibir filtros se enableFilters for true e houver contexto */}
+        {enableFilters && context && (
+          <Box>
+            <Button variant="outlined" startIcon={<FilterAlt />} onClick={toggleRequestDrawer(true)}>
+              Filtros
+            </Button>
+            <RequestDrawer
+              externalOpen={isFilterOpen}
+              onClose={toggleRequestDrawer(false)}
+              onApplyFilters={handleApplyFilters}
+            />
+          </Box>
+        )}
       </Box>
 
       {loading ? (
@@ -216,7 +227,6 @@ const RequestList = ({ projectId = null }) => {
           />
         </TableContainer>
       )}
-
       <Dialog open={openEditDialog} onClose={handleCloseEditDialog} fullWidth maxWidth="lg">
         <DialogTitle>Editar Solicitação</DialogTitle>
         <DialogContent>
