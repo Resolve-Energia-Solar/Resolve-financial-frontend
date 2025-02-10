@@ -1,9 +1,12 @@
 import { SystemConfigProvider } from "./SystemConfigContext";
+import { FilterProvider } from "./FilterContext";
 
 const AppProviders = ({ children }) => {
   return (
     <SystemConfigProvider>
-      {children}
+      <FilterProvider>
+        {children}
+      </FilterProvider>
     </SystemConfigProvider>
   );
 };

@@ -1,6 +1,7 @@
 'use client';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
+    Box,
     CardContent,
     Table,
     TableBody,
@@ -24,14 +25,19 @@ import {
     Delete as DeleteIcon,
     AddBoxRounded,
 } from '@mui/icons-material';
-
+import { FilterContext } from "@/context/FilterContext";
 import { useRouter } from 'next/navigation';
 import BlankCard from '@/app/components/shared/BlankCard';
 import PageContainer from "@/app/components/container/PageContainer";
 import financialRecordService from "@/services/financialRecordService";
 import FinancialRecordDetailDrawer from "@/app/components/apps/financial-record/detailDrawer";
+import GenericFilterDrawer from "@/app/components/filters/GenericFilterDrawer";
 
 const financialRecordList = () => {
+    const router = useRouter();
+    // Mova a desestruturação do contexto para o topo do componente
+    const { filters, setFilters } = useContext(FilterContext);
+
     const [financialRecordList, setFinancialRecordList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -39,13 +45,14 @@ const financialRecordList = () => {
     const [financialRecordToDelete, setFinancialRecordToDelete] = useState(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedRecord, setSelectedRecord] = useState(null);
-    const router = useRouter();
+    const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
     useEffect(() => {
         const fetchFinancialRecords = async () => {
+            setLoading(true);
             try {
-                const data = await financialRecordService.getFinancialRecordList();
-                console.log(data);
+                // Passe os filtros para a requisição
+                const data = await financialRecordService.getFinancialRecordList(filters);
                 setFinancialRecordList(data.results);
             } catch (err) {
                 setError('Erro ao carregar Contas a Receber/Pagar');
@@ -53,9 +60,8 @@ const financialRecordList = () => {
                 setLoading(false);
             }
         };
-
         fetchFinancialRecords();
-    }, []);
+    }, [filters]);
 
     const handleCreateClick = () => {
         router.push('/apps/financial-record/create');
@@ -113,6 +119,92 @@ const financialRecordList = () => {
         setSelectedRecord(null);
     };
 
+    const fetchUsers = async (query) => {
+        const response = await fetch(`/api/users/?complete_name__icontains=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        return data.results.map(user => ({
+            label: user.complete_name,
+            value: user.id
+        }));
+    };
+
+    const financialRecordFilterConfig = [
+        { key: "integration_code__icontains", label: "Código de Integração (Contém)", type: "text" },
+        { key: "integration_code__in", label: "Código de Integração (Lista)", type: "multiselect", options: [] },
+        { key: "protocol__icontains", label: "Protocolo (Contém)", type: "text" },
+        { key: "protocol__in", label: "Protocolo (Lista)", type: "multiselect", options: [] },
+        {
+            key: "is_receivable",
+            label: "É a Receber?",
+            type: "select",
+            options: [
+                { label: "Sim", value: "true" },
+                { label: "Não", value: "false" }
+            ]
+        },
+        { key: "status__icontains", label: "Status (Contém)", type: "text" },
+        { key: "status__in", label: "Status (Lista)", type: "multiselect", options: [] },
+        {
+            key: "value_range",
+            label: "Valor",
+            type: "number-range",
+            subkeys: { min: "value__gte", max: "value__lte" }
+        },
+        { key: "due_date__range", label: "Data de Vencimento (Entre)", type: "range", inputType: "date" },
+        { key: "service_date__range", label: "Data de Serviço (Entre)", type: "range", inputType: "date" },
+        { key: "requesting_department", label: "Departamento Solicitante", type: "text" },
+        { key: "department_code__icontains", label: "Código do Departamento (Contém)", type: "text" },
+        { key: "department_code__in", label: "Código do Departamento (Lista)", type: "multiselect", options: [] },
+        { key: "category_code__icontains", label: "Código da Categoria (Contém)", type: "text" },
+        { key: "category_code__in", label: "Código da Categoria (Lista)", type: "multiselect", options: [] },
+        { key: "invoice_number__icontains", label: "Número da Fatura (Contém)", type: "text" },
+        { key: "invoice_number__in", label: "Número da Fatura (Lista)", type: "multiselect", options: [] },
+        { key: "notes__icontains", label: "Notas (Contém)", type: "text" },
+        { key: "notes__in", label: "Notas (Lista)", type: "multiselect", options: [] },
+        {
+            key: "requester",
+            label: "Solicitante",
+            type: "async-autocomplete",
+            endpoint: "/api/users/",
+            queryParam: "complete_name__icontains",
+            extraParams: {},
+            mapResponse: (data) => data.results.map(user => ({
+                label: user.complete_name,
+                value: user.id
+            }))
+        },
+        { key: "created_at__range", label: "Criado em (Entre)", type: "range", inputType: "date" },
+        {
+            key: "responsible",
+            label: "Responsável",
+            type: "async-autocomplete",
+            endpoint: "/api/users/",
+            queryParam: "complete_name__icontains",
+            extraParams: {},
+            mapResponse: (data) => data.results.map(user => ({
+                label: user.complete_name,
+                value: user.id
+            }))
+        }, {
+            key: "responsible_status__in", label: "Status do Responsável (Lista)", type: "multiselect", options: [
+                { label: "Aprovada", value: "A" },
+                { label: "Pendente", value: "P" },
+                { label: "Reprovada", value: "R" }
+            ]
+        },
+        { key: "responsible_response_date__range", label: "Data de Resposta (Entre)", type: "range", inputType: "date" },
+        { key: "responsible_notes__icontains", label: "Notas do Responsável (Contém)", type: "text" },
+        { key: "responsible_notes__in", label: "Notas do Responsável (Lista)", type: "multiselect", options: [] },
+        {
+            key: "payment_status__in", label: "Status de Pagamento (Lista)", type: "multiselect", options: [
+                { label: "Paga", value: "PG" },
+                { label: "Pendente", value: "P" },
+                { label: "Cancelada", value: "C" }
+            ]
+        },
+        { key: "paid_at__range", label: "Pago em (Entre)", type: "range", inputType: "date" },
+    ];
+
     return (
         <PageContainer title="Contas a Receber/Pagar" description="Lista de Contas a Receber/Pagar">
             <BlankCard>
@@ -120,9 +212,35 @@ const financialRecordList = () => {
                     <Typography variant="h6" gutterBottom>
                         Lista de Contas a Receber/Pagar
                     </Typography>
-                    <Button variant="outlined" startIcon={<AddBoxRounded />} sx={{marginTop:1,marginBottom:2}} onClick={handleCreateClick}>
-                        Criar Conta a Receber/Pagar
-                    </Button>
+
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                        <Button
+                            variant="outlined"
+                            startIcon={<AddBoxRounded />}
+                            sx={{ mt: 1, mb: 2 }}
+                            onClick={handleCreateClick}
+                        >
+                            Criar Conta a Receber/Pagar
+                        </Button>
+
+                        <Button
+                            variant="outlined"
+                            sx={{ mt: 1, mb: 2 }}
+                            onClick={() => setFilterDrawerOpen(true)}
+                        >
+                            Abrir Filtros
+                        </Button>
+                    </Box>
+
+                    <GenericFilterDrawer
+                        filters={financialRecordFilterConfig}
+                        initialValues={filters}
+                        open={filterDrawerOpen}
+                        onClose={() => setFilterDrawerOpen(false)}
+                        onApply={(newFilters) => setFilters(newFilters)}
+                    />
+
+
                     {loading ? (
                         <Typography>Carregando...</Typography>
                     ) : error ? (
@@ -145,26 +263,41 @@ const financialRecordList = () => {
                                     {financialRecordList.map((item) => (
                                         <TableRow key={item.id} hover onClick={() => handleRowClick(item)}>
                                             <TableCell>{item.protocol}</TableCell>
-                                            <TableCell>{item.notes.length > 35 ? `${item.notes.substring(0, 35)}...` : item.notes}</TableCell>
+                                            <TableCell>
+                                                {item.notes.length > 35 ? `${item.notes.substring(0, 35)}...` : item.notes}
+                                            </TableCell>
                                             <TableCell>{item.client_supplier_name}</TableCell>
-                                            <TableCell>R$ {parseFloat(item.value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                            <TableCell>{new Date(item.due_date).toLocaleDateString('pt-BR')}</TableCell>
+                                            <TableCell>
+                                                R$ {parseFloat(item.value).toLocaleString('pt-BR', {
+                                                    minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2,
+                                                })}
+                                            </TableCell>
+                                            <TableCell>
+                                                {new Date(item.due_date).toLocaleDateString('pt-BR')}
+                                            </TableCell>
                                             <TableCell>{getStatusLabel(item.status)}</TableCell>
                                             <TableCell>
                                                 <Tooltip title="Editar">
-                                                    <IconButton 
-                                                        color="primary" 
-                                                        size="small" 
-                                                        onClick={(e) => { e.stopPropagation(); handleEditClick(item.id); }}
+                                                    <IconButton
+                                                        color="primary"
+                                                        size="small"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleEditClick(item.id);
+                                                        }}
                                                     >
                                                         <EditIcon />
                                                     </IconButton>
                                                 </Tooltip>
                                                 <Tooltip title="Excluir">
-                                                    <IconButton 
-                                                        color="error" 
-                                                        size="small" 
-                                                        onClick={(e) => { e.stopPropagation(); handleDeleteClick(item.id); }}
+                                                    <IconButton
+                                                        color="error"
+                                                        size="small"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDeleteClick(item.id);
+                                                        }}
                                                     >
                                                         <DeleteIcon />
                                                     </IconButton>

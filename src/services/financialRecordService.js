@@ -1,9 +1,9 @@
 import apiClient from './apiClient'
 
 const financialRecordService = {
-  getFinancialRecordList: async () => {
-    const response = await apiClient.get('/api/financial-records/')
-    return response.data
+  getFinancialRecordList: async (filters = {}) => {
+    const response = await apiClient.get('/api/financial-records/', { params: filters });
+    return response.data;
   },
 
   createFinancialRecord: async data => {
