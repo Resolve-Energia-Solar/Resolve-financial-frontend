@@ -119,17 +119,19 @@ const financialRecordList = () => {
         setSelectedRecord(null);
     };
 
-    const fetchUsers = async (query) => {
-        const response = await fetch(`/api/users/?complete_name__icontains=${encodeURIComponent(query)}`);
-        const data = await response.json();
-        return data.results.map(user => ({
-            label: user.complete_name,
-            value: user.id
-        }));
-    };
-
     const financialRecordFilterConfig = [
-        { key: "integration_code__icontains", label: "Código de Integração (Contém)", type: "text" },
+        {
+            key: "integration_code",
+            label: "Código de Integração",
+            type: "async-autocomplete",
+            endpoint: "/api/financial-record/",
+            queryParam: "integration_code__exact",
+            extraParams: {},
+            mapResponse: (data) => data.results.map(financialRecord => ({
+                label: financialRecord.protocol,
+                value: financialRecord.protocol
+            }))
+        },
         { key: "integration_code__in", label: "Código de Integração (Lista)", type: "multiselect", options: [] },
         { key: "protocol__icontains", label: "Protocolo (Contém)", type: "text" },
         { key: "protocol__in", label: "Protocolo (Lista)", type: "multiselect", options: [] },
