@@ -242,7 +242,7 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = nu
                     <Box>
                       <Typography variant="body1" color="textSecondary">
                         Atualmente:{' '}
-                        {formData.bill_file ? (
+                        {formData.bill_file && formData.bill_file.length > 0 ? (
                           <Link
                             href={formData?.bill_file}
                             target="_blank"
