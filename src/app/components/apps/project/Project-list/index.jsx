@@ -122,7 +122,7 @@ const ProjectList = ({ onClick }) => {
                   • STATUS do FINANCEIRO na venda esteja como <strong>PAGO</strong> ou <strong>LIBERADO</strong>.
                 </Typography>
                 <Typography variant="body2" sx={{ ml: 2 }}>
-                  • A vistoria principal esteja com PARECER FINAL <strong>APROVADO</strong>.
+                  • A vistoria principal esteja com PARECER FINAL <strong>APROVADA</strong>.
                 </Typography>
               </React.Fragment>
             }
