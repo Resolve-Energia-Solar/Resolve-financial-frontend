@@ -35,7 +35,6 @@ import GenericFilterDrawer from "@/app/components/filters/GenericFilterDrawer";
 
 const financialRecordList = () => {
     const router = useRouter();
-    // Mova a desestruturação do contexto para o topo do componente
     const { filters, setFilters } = useContext(FilterContext);
 
     const [financialRecordList, setFinancialRecordList] = useState([]);
