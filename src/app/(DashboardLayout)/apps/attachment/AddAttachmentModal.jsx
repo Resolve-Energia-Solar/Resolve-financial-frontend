@@ -1,0 +1,149 @@
+import React, { useState, useRef } from "react";
+import {
+    Modal,
+    Box,
+    Typography,
+    TextField,
+    Button,
+    Paper,
+} from "@mui/material";
+import { UploadFile } from "@mui/icons-material";
+import attachmentService from "@/services/attachmentService";
+
+const AddAttachmentModal = ({
+    open,
+    onClose,
+    objectId,
+    contentType,
+    onAddAttachment,
+    showFields = { description: true },
+}) => {
+    const [newAttachment, setNewAttachment] = useState({ file: null, description: "" });
+    const [dragOver, setDragOver] = useState(false);
+    const fileInputRef = useRef(null);
+
+    const handleFileChange = (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setNewAttachment((prev) => ({ ...prev, file }));
+        }
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        setDragOver(true);
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        setDragOver(false);
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setDragOver(false);
+        const file = e.dataTransfer.files?.[0];
+        if (file) {
+            setNewAttachment((prev) => ({ ...prev, file }));
+        }
+    };
+
+    const handleDescriptionChange = (e) => {
+        setNewAttachment((prev) => ({ ...prev, description: e.target.value }));
+    };
+
+    const handleSaveAttachment = async () => {
+        if (newAttachment.file) {
+            if (objectId) {
+                const formData = new FormData();
+                formData.append("file", newAttachment.file);
+                formData.append("description", newAttachment.description);
+                formData.append("object_id", objectId);
+                formData.append("content_type_id", contentType);
+                formData.append("document_type_id", "");
+                formData.append("document_subtype_id", "");
+                formData.append("status", "");
+                try {
+                    const response = await attachmentService.createAttachment(formData);
+                    onAddAttachment(response);
+                } catch (error) {
+                    console.error("Erro ao salvar anexo:", error);
+                }
+            } else {
+                onAddAttachment(newAttachment);
+            }
+            onClose();
+            setNewAttachment({ file: null, description: "" });
+        }
+    };
+
+    return (
+        <Modal open={open} onClose={onClose}>
+            <Box
+                sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: 400,
+                    bgcolor: "background.paper",
+                    p: 4,
+                    borderRadius: 1,
+                }}
+            >
+                <Typography variant="h6" mb={2}>
+                    Novo Anexo
+                </Typography>
+                <Paper
+                    variant="outlined"
+                    sx={{
+                        p: 2,
+                        textAlign: "center",
+                        borderColor: dragOver ? "primary.main" : "grey.400",
+                        backgroundColor: dragOver ? "grey.100" : "inherit",
+                        cursor: "pointer",
+                        mb: 2,
+                    }}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                >
+                    <UploadFile sx={{ fontSize: 40, color: "grey.600" }} />
+                    <Typography variant="body2">
+                        Arraste e solte ou clique para selecionar um arquivo
+                    </Typography>
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        hidden
+                        onChange={handleFileChange}
+                        accept="image/*,application/pdf"
+                    />
+                </Paper>
+                {newAttachment.file && (
+                    <Typography variant="body2" sx={{ mb: 2 }}>
+                        Arquivo selecionado: {newAttachment.file.name}
+                    </Typography>
+                )}
+
+                {/* Exibe o campo de descrição apenas se estiver ativado */}
+                {showFields.description && (
+                    <TextField
+                        fullWidth
+                        label="Descrição"
+                        value={newAttachment.description}
+                        onChange={handleDescriptionChange}
+                        margin="normal"
+                    />
+                )}
+
+                <Button variant="contained" onClick={handleSaveAttachment} sx={{ mt: 2 }}>
+                    Salvar
+                </Button>
+            </Box>
+        </Modal>
+    );
+};
+
+export default AddAttachmentModal;

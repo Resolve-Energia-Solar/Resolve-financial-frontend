@@ -1,4 +1,3 @@
-import { create, get } from "lodash";
 import apiClient from "./apiClient";
 
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
@@ -11,6 +10,16 @@ const attachmentService = {
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar anexos:', error);
+      throw error;
+    }
+  },
+  getAttachmentsByObjectIdAndContentType: async (object_id, content_type) => {
+    try {
+      const response = await apiClient.get(`/api/attachments/?object_id=${object_id}&content_type=${content_type}`);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar anexos:`, error);
       throw error;
     }
   },
