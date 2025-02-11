@@ -1,6 +1,19 @@
 'use client';
-import React, { useEffect } from 'react';
-import { Grid, Button, Stack, Select, MenuItem, InputAdornment, FormHelperText } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import {
+  Grid,
+  Button,
+  Stack,
+  Select,
+  MenuItem,
+  InputAdornment,
+  FormHelperText,
+} from '@mui/material';
+import Alert from '@mui/material/Alert';
+import { useRouter } from 'next/navigation';
+import { IconArrowDown, IconArrowUp } from '@tabler/icons-react';
+import { useSelector } from 'react-redux';
+
 import AutoCompleteDepartment from '@/app/components/apps/financial-record/departmentInput';
 import AutoCompleteCategory from '@/app/components/apps/financial-record/categoryInput';
 import AutoCompleteBeneficiary from '@/app/components/apps/financial-record/beneficiaryInput';
@@ -9,20 +22,26 @@ import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcr
 import PageContainer from '@/app/components/container/PageContainer';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import ParentCard from '@/app/components/shared/ParentCard';
-import Alert from '@mui/material/Alert';
-import { useRouter } from 'next/navigation';
-import { IconArrowDown, IconArrowUp } from '@tabler/icons-react';
-
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import { useSelector } from 'react-redux';
+import AttachmentDrawer from '../../attachment/AttachmentDrawer';
 
 import useFinancialRecordForm from '@/hooks/financial_record/useFinancialRecordForm';
 import { calculateDueDate } from '@/utils/calcDueDate';
+import financialRecordService from '@/services/financialRecordService';
+import attachmentService from '@/services/attachmentService';
+
+const FINANCIAL_RECORD_CONTENT_TYPE = process.env.NEXT_PUBLIC_FINANCIAL_RECORD_CONTENT_TYPE;
 
 export default function FormCustom() {
   const router = useRouter();
-  const { formData, handleChange, handleSave, formErrors, success } = useFinancialRecordForm();
+  const { formData, handleChange, formErrors, success } = useFinancialRecordForm();
+  const [attachments, setAttachments] = useState([]);
   const user = useSelector((state) => state.user?.user);
+
+  // Armazena os anexos adicionados (antes da criação)
+  const handleAddAttachment = (attachment) => {
+    setAttachments((prev) => [...prev, attachment]);
+  };
 
   useEffect(() => {
     if (formData.value && formData.category_code) {
@@ -31,7 +50,6 @@ export default function FormCustom() {
         const amount = parseFloat(formData.value.replace('.', '').replace(',', '.'));
         const department = user?.employee?.department?.id || '';
         const category = formData.category_code;
-
         const dueDate = calculateDueDate({
           now,
           amount,
@@ -39,9 +57,7 @@ export default function FormCustom() {
           department,
           requestTime: now,
         });
-
         const formattedDueDate = dueDate.toISOString().split('T')[0];
-
         if (formData.due_date !== formattedDueDate) {
           handleChange('due_date', formattedDueDate);
         }
@@ -50,6 +66,31 @@ export default function FormCustom() {
       }
     }
   }, [formData.value, formData.category_code, user?.employee?.department?.id, formData.due_date, handleChange]);
+
+  const handleSubmit = async () => {
+    try {
+      // Cria o registro e obtém o object_id
+      const recordResponse = await financialRecordService.createFinancialRecord(formData);
+      const recordId = recordResponse.id;
+      // Envia cada anexo pendente
+      await Promise.all(
+        attachments.map(async (attachment) => {
+          const formDataAttachment = new FormData();
+          formDataAttachment.append("file", attachment.file);
+          formDataAttachment.append("description", attachment.description);
+          formDataAttachment.append("object_id", recordId);
+          formDataAttachment.append("content_type_id", FINANCIAL_RECORD_CONTENT_TYPE);
+          formDataAttachment.append("document_type_id", "");
+          formDataAttachment.append("document_subtype_id", "");
+          formDataAttachment.append("status", "");
+          await attachmentService.createAttachment(formDataAttachment);
+        })
+      );
+      router.push("/apps/financial-record");
+    } catch (error) {
+      console.error("Erro ao salvar registro ou anexos:", error);
+    }
+  };
 
   if (success) {
     router.push('/apps/financial-record');
@@ -74,7 +115,9 @@ export default function FormCustom() {
           <Grid item xs={12} md={6}>
             <CustomFormLabel>Responsável pela Aprovação</CustomFormLabel>
             <Select variant="outlined" fullWidth value={user?.employee?.manager?.complete_name || ''} disabled>
-              <MenuItem value={user?.employee?.manager?.complete_name || ''}>{user?.employee?.manager?.complete_name}</MenuItem>
+              <MenuItem value={user?.employee?.manager?.complete_name || ''}>
+                {user?.employee?.manager?.complete_name}
+              </MenuItem>
             </Select>
           </Grid>
           <Grid item xs={12} md={6}>
@@ -210,11 +253,20 @@ export default function FormCustom() {
           </Grid>
           <Grid item xs={12}>
             <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-              <Button variant="contained" color="primary" onClick={handleSave}>
+              <Button variant="contained" color="primary" onClick={handleSubmit}>
                 Criar
               </Button>
             </Stack>
           </Grid>
+          <Grid item xs={12}>
+            <AttachmentDrawer
+              objectId={null}
+              attachments={attachments}
+              onAddAttachment={handleAddAttachment}
+              contentTypeId={FINANCIAL_RECORD_CONTENT_TYPE}
+            />
+          </Grid>
+
         </Grid>
       </ParentCard>
     </PageContainer>
