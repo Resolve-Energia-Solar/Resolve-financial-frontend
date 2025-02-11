@@ -17,9 +17,17 @@ import AutoCompleteUserProject from '../../auto-complete/Auto-input-UserProject'
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
 import AutoCompleteProduct from '../../auto-complete/Auto-input-product';
+import { useSelector } from 'react-redux';
+import HasPermission from '@/app/components/permissions/HasPermissions';
 
 const ScheduleFormCreateExternal = () => {
   const router = useRouter();
+
+  const userPermissions = useSelector((state) => state.user.permissions);
+  const hasPermission = (permissions) => {
+    if (!permissions) return true; 
+    return permissions.some(permission => userPermissions?.includes(permission));
+  };
 
   const { formData, handleChange, handleSave, loading: formLoading, formErrors, success } = useSheduleForm();
   const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
@@ -109,6 +117,10 @@ const ScheduleFormCreateExternal = () => {
   return (
     <>
       <Grid container spacing={3}>
+        <HasPermission 
+        permissions={['field_services.can_change_service']}
+        userPermissions={userPermissions}
+        >
         <Grid item xs={12} sm={12} lg={6}>
           <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
           <AutoCompleteServiceCatalog
@@ -121,6 +133,7 @@ const ScheduleFormCreateExternal = () => {
             noOptionsText={'Nenhum serviço encontrado'}
           />
         </Grid>
+        </HasPermission>
 
         <Grid item xs={12} sm={12} lg={6}>
           <CustomFormLabel htmlFor="products">Produtos</CustomFormLabel>

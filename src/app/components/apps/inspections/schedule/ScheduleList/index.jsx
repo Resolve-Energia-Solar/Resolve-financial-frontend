@@ -41,7 +41,6 @@ import {
   ArrowDropDown as ArrowDropDownIcon,
   ArrowDropUp as ArrowDropUpIcon,
 } from '@mui/icons-material';
-import HasPermission from '@/app/components/permissions/HasPermissions';
 import { useSelector } from 'react-redux';
 
 // Services and utils
