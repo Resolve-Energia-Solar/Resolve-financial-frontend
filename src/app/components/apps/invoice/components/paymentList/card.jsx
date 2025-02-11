@@ -236,100 +236,100 @@ const PaymentCard = ({ sale = null }) => {
 
         {loading
           ? [...Array(3)].map((_, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <Card elevation={10}>
+                <CardContent>
+                  <Skeleton variant="text" width="60%" height={20} />
+                  <Skeleton variant="text" width="80%" height={20} />
+                  <Skeleton variant="rectangular" width="100%" height={10} sx={{ mt: 2 }} />
+                </CardContent>
+                <CardActions disableSpacing>
+                  <Skeleton variant="circular" width={24} height={24} />
+                </CardActions>
+              </Card>
+            </Grid>
+          ))
+          : paymentsList.map((payment) => {
+            const progressValue = payment?.percentual_paid * 100 || 0;
+
+            return (
+              <Grid item xs={12} sm={6} md={4} key={payment.id}>
                 <Card elevation={10}>
                   <CardContent>
-                    <Skeleton variant="text" width="60%" height={20} />
-                    <Skeleton variant="text" width="80%" height={20} />
-                    <Skeleton variant="rectangular" width="100%" height={10} sx={{ mt: 2 }} />
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Box>
+                        <Typography fontSize="14px" color="text.secondary">
+                          {payment?.installments?.length}x parcelas
+                        </Typography>
+                        <Typography fontSize="14px">
+                          {Number(payment?.value).toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                          })}
+                        </Typography>
+                      </Box>
+                      <PaymentChip paymentType={payment.payment_type} />
+                    </Box>
+                    <Box mt={2}>
+                      <Typography variant="caption" color="text.secondary" fontSize="12px">
+                        {progressValue}% Pago
+                      </Typography>
+                      <BorderLinearProgress
+                        variant="determinate"
+                        value={progressValue}
+                        sx={{ mt: 1 }}
+                      />
+                    </Box>
                   </CardContent>
                   <CardActions disableSpacing>
-                    <Skeleton variant="circular" width={24} height={24} />
+                    <Tooltip title="Ações">
+                      <IconButton
+                        size="small"
+                        onClick={(event) => handleMenuClick(event, payment.id)}
+                      >
+                        <MoreVert fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    <Menu
+                      anchorEl={menuAnchorEl}
+                      open={menuOpenRowId === payment.id}
+                      onClose={handleMenuClose}
+                      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    >
+                      <MenuItem
+                        onClick={() => {
+                          handleDetailClick(payment.id);
+                          handleMenuClose();
+                        }}
+                      >
+                        <Visibility fontSize="small" sx={{ mr: 1 }} />
+                        Visualizar
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          handleEditClick(payment.id);
+                          handleMenuClose();
+                        }}
+                      >
+                        <Edit fontSize="small" sx={{ mr: 1 }} />
+                        Editar
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          handleDeleteClick(payment.id);
+                          handleMenuClose();
+                        }}
+                      >
+                        <Delete fontSize="small" sx={{ mr: 1 }} />
+                        Excluir
+                      </MenuItem>
+                    </Menu>
                   </CardActions>
                 </Card>
               </Grid>
-            ))
-          : paymentsList.map((payment) => {
-              const progressValue = payment?.percentual_paid * 100 || 0;
-
-              return (
-                <Grid item xs={12} sm={6} md={4} key={payment.id}>
-                  <Card elevation={10}>
-                    <CardContent>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Box>
-                          <Typography fontSize="14px" color="text.secondary">
-                            {payment?.installments?.length}x parcelas
-                          </Typography>
-                          <Typography fontSize="14px">
-                            {Number(payment?.value).toLocaleString('pt-BR', {
-                              style: 'currency',
-                              currency: 'BRL',
-                            })}
-                          </Typography>
-                        </Box>
-                        <PaymentChip paymentType={payment.payment_type} />
-                      </Box>
-                      <Box mt={2}>
-                        <Typography variant="caption" color="text.secondary" fontSize="12px">
-                          {progressValue}% Pago
-                        </Typography>
-                        <BorderLinearProgress
-                          variant="determinate"
-                          value={progressValue}
-                          sx={{ mt: 1 }}
-                        />
-                      </Box>
-                    </CardContent>
-                    <CardActions disableSpacing>
-                      <Tooltip title="Ações">
-                        <IconButton
-                          size="small"
-                          onClick={(event) => handleMenuClick(event, payment.id)}
-                        >
-                          <MoreVert fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                      <Menu
-                        anchorEl={menuAnchorEl}
-                        open={menuOpenRowId === payment.id}
-                        onClose={handleMenuClose}
-                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                      >
-                        <MenuItem
-                          onClick={() => {
-                            handleDetailClick(payment.id);
-                            handleMenuClose();
-                          }}
-                        >
-                          <Visibility fontSize="small" sx={{ mr: 1 }} />
-                          Visualizar
-                        </MenuItem>
-                        <MenuItem
-                          onClick={() => {
-                            handleEditClick(payment.id);
-                            handleMenuClose();
-                          }}
-                        >
-                          <Edit fontSize="small" sx={{ mr: 1 }} />
-                          Editar
-                        </MenuItem>
-                        <MenuItem
-                          onClick={() => {
-                            handleDeleteClick(payment.id);
-                            handleMenuClose();
-                          }}
-                        >
-                          <Delete fontSize="small" sx={{ mr: 1 }} />
-                          Excluir
-                        </MenuItem>
-                      </Menu>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              );
-            })}
+            );
+          })}
       </Grid>
 
       {sale && (
@@ -360,9 +360,9 @@ const PaymentCard = ({ sale = null }) => {
               >
                 {saleData?.total_value > productValue
                   ? `+ ${Intl.NumberFormat('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    }).format(saleData?.total_value - productValue)}`
+                    style: 'currency',
+                    currency: 'BRL',
+                  }).format(saleData?.total_value - productValue)}`
                   : '-'}
               </Typography>
             </Box>
@@ -380,9 +380,9 @@ const PaymentCard = ({ sale = null }) => {
               >
                 {saleData?.total_value < productValue
                   ? `- ${Intl.NumberFormat('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    }).format(productValue - (saleData?.total_value || 0))}`
+                    style: 'currency',
+                    currency: 'BRL',
+                  }).format(productValue - (saleData?.total_value || 0))}`
                   : '-'}
               </Typography>
             </Box>
@@ -400,6 +400,18 @@ const PaymentCard = ({ sale = null }) => {
                 }).format(saleData?.total_value)}
               </Typography>
             </Box>
+          </Box>
+          <Box display="flex" justifyContent="end" gap={2}>
+            <Typography variant="body1" fontWeight={600}>
+              Valor pago:
+            </Typography>
+            <Typography variant="body1" fontWeight={600}>
+              {Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(saleData?.total_paid)}{' '}
+              ({((saleData?.total_paid / saleData?.total_value) * 100).toFixed(2)}%)
+            </Typography>
           </Box>
         </Box>
       )}
