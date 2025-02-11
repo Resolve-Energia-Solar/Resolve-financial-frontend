@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux'
 import axios from 'axios'
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID
 
 const useScheduleForm = (initialData, id) => {
   const user = useSelector(state => state.user)
@@ -16,7 +17,7 @@ const useScheduleForm = (initialData, id) => {
   const [formData, setFormData] = useState({
     schedule_creator: user?.user?.id,
     category_id: null,
-    service_id: null,
+    service_id: null || SERVICE_INSPECTION_ID,
     parent_schedules_id	: [],
     customer_id: null,
     project_id: null,
@@ -46,7 +47,7 @@ const useScheduleForm = (initialData, id) => {
     if (initialData) {
       setFormData({
         schedule_creator: initialData.schedule_creator || null,
-        service_id: initialData.service?.id || null,
+        service_id: initialData.service?.id || SERVICE_INSPECTION_ID,
         parent_schedules_id: initialData.parent_schedules?.map(schedule => schedule.id) || [],
         customer_id: initialData?.customer?.id || null,
         project_id: initialData.project?.id || null,
