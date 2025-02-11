@@ -29,6 +29,7 @@ import TableSkeleton from '../../comercial/sale/components/TableSkeleton';
 import ChipProject from '../components/ChipProject';
 import ProjectCards from '../../inforCards/InforQuantity';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import { on } from 'events';
 
 const ProjectList = ({ onClick }) => {
   // Estados para os dados e loading dos projetos
@@ -157,6 +158,7 @@ const ProjectList = ({ onClick }) => {
                     title: 'Bloqueado',
                     subtitle: 'Para Engenharia',
                     count: indicators?.blocked_to_engineering || 0,
+                    onClick: () => setFilters({ ...filters, is_released_to_engineering: false }),
                   },
                   {
                     backgroundColor: 'success.light',
@@ -173,6 +175,7 @@ const ProjectList = ({ onClick }) => {
                     title: 'Liberados',
                     subtitle: 'Para Engenharia',
                     count: indicators?.is_released_to_engineering || 0,
+                    onClick: () => setFilters({ ...filters, is_released_to_engineering: true }),
                   },
                 ]}
               />
@@ -186,7 +189,7 @@ const ProjectList = ({ onClick }) => {
                     title: 'Em Andamento',
                     subtitle: 'Projestista',
                     count: indicators?.designer?.in_progress || 0,
-                    onClick: () => setFilters({ ...filters, designer_status: 'EA' }),
+                    onClick: () => setFilters({ ...filters, designer_status__in: 'EA' }),
                   },
                   {
                     backgroundColor: 'success.light',
@@ -195,7 +198,7 @@ const ProjectList = ({ onClick }) => {
                     title: 'Concluído',
                     subtitle: 'Projestista',
                     count: indicators?.designer?.complete || 0,
-                    onClick: () => setFilters({ ...filters, designer_status: 'CO' }),
+                    onClick: () => setFilters({ ...filters, designer_status__in: 'CO' }),
                   },
                   {
                     backgroundColor: 'secondary.light',
@@ -204,7 +207,7 @@ const ProjectList = ({ onClick }) => {
                     title: 'Cancelado',
                     subtitle: 'Projestista',
                     count: indicators?.designer?.canceled || 0,
-                    onClick: () => setFilters({ ...filters, designer_status: 'C' }),
+                    onClick: () => setFilters({ ...filters, designer_status__in: 'C' }),
                   },
                 ]}
               />
