@@ -24,7 +24,7 @@ const itemVariants = {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-export default function Comment({ contentType, objectId }) {
+export default function Comment({ contentType, objectId, label='Comentários' }) {
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -114,7 +114,7 @@ export default function Comment({ contentType, objectId }) {
             }}
         >
             <Typography variant="h6" gutterBottom sx={{ p: 2 }}>
-                Comentários
+                {label}
             </Typography>
 
             {/* Área de mensagens */}
@@ -164,7 +164,7 @@ export default function Comment({ contentType, objectId }) {
                                 >
                                     <ListItem
                                         sx={{
-                                            maxWidth: '70%',
+                                            maxWidth: '90%',
                                             bgcolor: comment.author.id === user?.id ? 'primary.light' : 'grey.300',
                                             borderRadius: 2,
                                             padding: 1,

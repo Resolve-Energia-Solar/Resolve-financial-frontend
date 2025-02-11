@@ -41,6 +41,7 @@ import {
   ArrowDropDown as ArrowDropDownIcon,
   ArrowDropUp as ArrowDropUpIcon,
 } from '@mui/icons-material';
+import { useSelector } from 'react-redux';
 
 // Services and utils
 import scheduleService from '@/services/scheduleService';
@@ -55,9 +56,13 @@ import { format } from 'date-fns';
 const SchedulingList = () => {
   const router = useRouter();
 
-  const [scheduleList, setScheduleList] = useState([]);
+  const userPermissions = useSelector((state) => state.user.permissions);
+  const hasPermission = (permissions) => {
+    if (!permissions) return true; 
+    return permissions.some(permission => userPermissions?.includes(permission));
+  };
 
-  console.log('scheduleList:', scheduleList);
+  const [scheduleList, setScheduleList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
@@ -216,20 +221,20 @@ const SchedulingList = () => {
       <Typography variant="h6" gutterBottom>
         Lista de Agendamentos
       </Typography>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Button
-          variant="outlined"
-          startIcon={<AddBoxRounded />}
-          sx={{ marginTop: 1, marginBottom: 2 }}
-          onClick={handleCreateClick}
-        >
-          Adicionar Agendamento
-        </Button>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Button
+            variant="outlined"
+            startIcon={<AddBoxRounded />}
+            sx={{ marginTop: 1, marginBottom: 2 }}
+            onClick={handleCreateClick}
+          >
+            Adicionar Agendamento
+          </Button>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <ScheduleDrawerFilters />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <ScheduleDrawerFilters />
+          </Box>
         </Box>
-      </Box>
       <TableContainer
         component={Paper}
         elevation={10}
@@ -284,7 +289,8 @@ const SchedulingList = () => {
                   </Box>
                 </Box>
               </TableCell>
-
+              
+              {hasPermission(['field_services.view_service_opinion']) && (
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('service_opinion')}
@@ -297,6 +303,7 @@ const SchedulingList = () => {
                   </Box>
                 </Box>
               </TableCell>
+                )}
 
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
@@ -349,7 +356,8 @@ const SchedulingList = () => {
                   </Box>
                 </Box>
               </TableCell>
-
+              
+              {hasPermission(['field_services.view_agent_info']) && (
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                 onClick={() => handleSort('schedule_agent.complete_name')}
@@ -362,6 +370,7 @@ const SchedulingList = () => {
                   </Box>
                 </Box>
               </TableCell>
+              )}
 
               <TableCell
                 sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
@@ -407,6 +416,7 @@ const SchedulingList = () => {
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     <ScheduleStatusChip status={schedule.status} />
                   </TableCell>
+                  {hasPermission(['field_services.view_service_opinion']) && (
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     {schedule.service_opinion ? (
                       schedule.service_opinion.name
@@ -414,6 +424,7 @@ const SchedulingList = () => {
                       <Chip label="Sem Parecer" color="error" />
                     )}
                   </TableCell>
+                  )}
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     {schedule.final_service_opinion ? (
                       schedule.final_service_opinion.name
@@ -430,6 +441,7 @@ const SchedulingList = () => {
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     {schedule.service.name}
                   </TableCell>
+                  {hasPermission(['field_services.view_agent_info']) && (
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     {schedule.schedule_agent ? (
                       schedule.schedule_agent.complete_name
@@ -437,6 +449,7 @@ const SchedulingList = () => {
                       <Chip label="Sem Agente" color="error" />
                     )}
                   </TableCell>
+                  )}
                   <TableCell onClick={() => handleRowClick(schedule)}>
                     {`${schedule.address.street}, ${schedule.address.number}, ${schedule.address.neighborhood}, ${schedule.address.city} - ${schedule.address.state}`}
                   </TableCell>

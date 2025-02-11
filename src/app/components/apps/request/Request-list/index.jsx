@@ -26,8 +26,10 @@ import EditRequestCompany from '../Edit-request';
 import AddRequestCompany from '../Add-request';
 import RequestDrawer from '../components/filterDrawer/RequestDrawer';
 import { RequestDataContext } from '@/app/context/RequestContext';
+import Comment from '../../comment';
 
 const RequestList = ({ projectId = null, enableFilters = true }) => {
+  const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -230,11 +232,21 @@ const RequestList = ({ projectId = null, enableFilters = true }) => {
       <Dialog open={openEditDialog} onClose={handleCloseEditDialog} fullWidth maxWidth="lg">
         <DialogTitle>Editar Solicitação</DialogTitle>
         <DialogContent>
-          <EditRequestCompany
-            requestId={requestIdSelected}
-            onClosedModal={handleCloseEditDialog}
-            onRefresh={refreshData}
-          />
+          <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
+            {/* Área de Edição - Ocupa 70% da largura */}
+            <Box sx={{ flex: 7 }}>
+              <EditRequestCompany
+                requestId={requestIdSelected}
+                onClosedModal={handleCloseEditDialog}
+                onRefresh={refreshData}
+              />
+            </Box>
+            
+            {/* Área de Comentários - Ocupa 30% da largura */}
+            <Box sx={{ flex: 3, borderLeft: '1px solid #ddd', paddingLeft: 2 }}>
+              <Comment contentType={CONTENT_TYPE_PROJECT_ID} objectId={requestIdSelected} label='Comentários do Projeto' />
+            </Box>
+          </Box>
         </DialogContent>
       </Dialog>
 
