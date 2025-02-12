@@ -4,6 +4,8 @@ import CustomFormLabel from '../../forms/theme-elements/CustomFormLabel';
 import CustomTextField from '../../forms/theme-elements/CustomTextField';
 import leadService from '@/services/leadService';
 import { useEffect, useState } from 'react';
+import AutoCompleteOrigin from '../../apps/leads/auto-input-origin';
+import FormSelect from '../../forms/form-custom/FormSelect';
 
 function EditLead({ leadId = null }) {
     const [lead, setLead] = useState(null);
@@ -43,14 +45,16 @@ function EditLead({ leadId = null }) {
                 </Grid>
             </Grid>
 
+
             <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={4}>
                     <CustomFormLabel htmlFor="name">Nome Completo</CustomFormLabel>
                     <CustomTextField
                         name="name"
                         placeholder="Nome"
                         variant="outlined"
                         value={lead?.name}
+                        size="Normal"
                         fullWidth
                         InputProps={{
                             startAdornment: (
@@ -59,6 +63,39 @@ function EditLead({ leadId = null }) {
                                 </InputAdornment>
                             ),
                         }}
+                    />
+                </Grid>
+
+                <Grid item xs={12} sm={4}>
+                    <FormSelect
+                        label="Tipo"
+                        options={[
+                            { value: 'PF', label: 'Pessoa Física' },
+                            { value: 'PJ', label: 'Pessoa Jurídica' },
+                          ]}
+                        value={lead?.type}
+                    />
+                </Grid>
+
+                <Grid item xs={12} sm={4}>
+                    <FormSelect
+                        label="Funil"
+                        options={[
+                            { value: 'N', label: 'Não Interessado' },
+                            { value: 'P', label: 'Pouco Interessado' },
+                            { value: 'I', label: 'Interessado' },
+                            { value: 'M', label: 'Muito Interessado' },
+                            { value: 'PC', label: 'Pronto para Comprar' },
+                        ]}
+                        value={lead?.funnel}
+                    />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                    <CustomFormLabel htmlFor="branch">Origem</CustomFormLabel>
+                    <AutoCompleteOrigin
+                        onChange={(id) => handleChange('origin_id', id)}
+                        value={lead?.origin_id}
                     />
                 </Grid>
 
