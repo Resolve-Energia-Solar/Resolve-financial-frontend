@@ -50,6 +50,7 @@ function EditLead({ leadId = null }) {
                         name="name"
                         placeholder="Nome"
                         variant="outlined"
+                        value={lead?.name}
                         fullWidth
                         InputProps={{
                             startAdornment: (
@@ -68,6 +69,7 @@ function EditLead({ leadId = null }) {
                         placeholder="008.123.456-78"
                         variant="outlined"
                         fullWidth
+                        value={lead?.first_document}
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start" sx={{ mr: 0 }}>
@@ -85,6 +87,7 @@ function EditLead({ leadId = null }) {
                         placeholder="(91) 99999-9999"
                         variant="outlined"
                         fullWidth
+                        value={lead?.phone}
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start" sx={{ mr: 0 }}>
@@ -102,6 +105,7 @@ function EditLead({ leadId = null }) {
                         placeholder="example.resolve@gmail.com"
                         variant="outlined"
                         fullWidth
+                        value={lead?.contact_email}
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start" sx={{ mr: 0 }}>
