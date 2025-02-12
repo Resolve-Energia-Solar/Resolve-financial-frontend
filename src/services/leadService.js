@@ -45,10 +45,9 @@ const leadService = {
   patchLead: async (id, data) => {
     try {
       const response = await apiClient.patch(`/api/leads/${id}/`, data)
-      return response.data
+      return response?.data
     } catch (error) {
       console.error('Erro na requisição de atualização do lead:', error)
-      console.error('Dados enviados:', data)
       throw error
     }
   },
