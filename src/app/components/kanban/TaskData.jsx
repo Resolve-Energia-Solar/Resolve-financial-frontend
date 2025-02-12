@@ -1,27 +1,11 @@
 'use client';
 import React, { useContext, useState } from 'react';
-import {
-  IconPencil,
-  IconDotsVertical,
-  IconTrash,
-  IconCalendar,
-  IconClock,
-} from '@tabler/icons-react';
-import EditTaskModal from './TaskModal/EditTaskModal';
 import { KanbanDataContext } from '@/app/context/kanbancontext/index';
 import { Draggable } from 'react-beautiful-dnd';
-import axios from '@/utils/axios';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import {
   Avatar,
   Box,
-  Card,
-  Chip,
-  IconButton,
   LinearProgress,
-  ListItemIcon,
-  ListItemText,
   Rating,
   Stack,
   Typography,
@@ -32,8 +16,6 @@ import {
   AccessTime,
   LocalPhone,
   PersonOutline,
-  PunchClock,
-  PunchClockSharp,
   Start,
   WbSunny,
 } from '@mui/icons-material';
@@ -42,7 +24,7 @@ import leadService from '@/services/leadService';
 import { useSnackbar } from 'notistack';
 import EditLeadModal from './TaskModal/EditLeadModal';
 
-const TaskData = ({ task, onDeleteTask, index }) => {
+const TaskData = ({ task, index }) => {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const [showEditModal, setShowEditModal] = useState(false);
@@ -188,7 +170,7 @@ const TaskData = ({ task, onDeleteTask, index }) => {
           <EditLeadModal
             showModal={showEditModal}
             onClose={() => setShowEditModal(false)}
-            leadId="0"
+            leadId={editedTask.id}
           />
         </>
       )}

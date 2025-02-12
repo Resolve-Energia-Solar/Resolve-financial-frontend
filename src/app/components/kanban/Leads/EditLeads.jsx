@@ -2,8 +2,26 @@ import { Grid, Typography, Chip, InputAdornment } from '@mui/material';
 import { AccountCircle, Phone, Email } from '@mui/icons-material';
 import CustomFormLabel from '../../forms/theme-elements/CustomFormLabel';
 import CustomTextField from '../../forms/theme-elements/CustomTextField';
+import leadService from '@/services/leadService';
+import { useEffect, useState } from 'react';
 
-function EditLead({ leadId }) {
+function EditLead({ leadId = null }) {
+    const [lead, setLead] = useState(null);
+
+    useEffect(() => {
+        const fetchLead = async () => {
+            try {
+                const response = await leadService.getLeadById(leadId);
+                console.log(response);
+                setLead(response);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        fetchLead();
+    }, []);
+
     return (
         <Grid container spacing={3} sx={{ p: 2 }}>
             <Grid container spacing={2} alignItems="center" sx={{ borderBottom: '1px solid #e0e0e0', pb: 2 }}>
@@ -16,12 +34,12 @@ function EditLead({ leadId }) {
                             Cliente
                         </Typography>
                         <Typography variant="h6" gutterBottom>
-                            Matheus Barbosa de Almeida Macias
+                            {lead?.name}
                         </Typography>
                     </Grid>
                 </Grid>
                 <Grid item xs={6} container justifyContent="flex-end" alignItems="center">
-                    <Chip label="Última atualização: 10/02/2025 10h24" />
+                    <Chip label={`Criado em: ${new Date(lead?.created_at).toLocaleString('pt-BR')}`} sx={{ backgroundColor: '#F4F5F7', color: '#7E8388' }} />
                 </Grid>
             </Grid>
 

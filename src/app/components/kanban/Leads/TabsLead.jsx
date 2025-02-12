@@ -54,7 +54,7 @@ function TabsComponent({ tabValue, handleChange, loading, leadId }) {
       <CustomTabPanel value={tabValue} index={0}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <EditLead leadId={0} />
+            <EditLead leadId={leadId} />
           </Grid>
         </Grid>
       </CustomTabPanel>

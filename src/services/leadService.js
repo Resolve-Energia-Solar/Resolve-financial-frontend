@@ -10,6 +10,15 @@ const leadService = {
       throw error
     }
   },
+  getLeadById: async (leadId, data) => {
+    try {
+      const response = await apiClient.get(`/api/leads/${leadId}/`, data)
+      return response.data
+    } catch (error) {
+      console.error('Erro ao buscar lead:', error)
+      throw error
+    }
+  },
   createLead: async data => {
     const response = await apiClient.post('/api/leads/', data)
     return response.data
