@@ -7,6 +7,7 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import SimpleBar from 'simplebar-react';
 import { Box } from '@mui/material';
 import CategoryTaskListSkeleton from './components/CategoryTaskListSkeleton';
+import EditLeadModal from './TaskModal/EditLeadModal';
 
 function TaskManager() {
   const { todoCategories, loadingCategories, moveTask } = useContext(KanbanDataContext);
@@ -49,6 +50,7 @@ function TaskManager() {
                 ))}
           </Box>
         </DragDropContext>
+        <EditLeadModal showModal={true} handleCloseModal={() => {}} leadId={1} />
       </SimpleBar>
     </>
   );
