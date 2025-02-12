@@ -99,54 +99,59 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
     return defaultValues;
   };
 
-  // Ao abrir o drawer, inicializa os valores a partir de initialValues
   useEffect(() => {
     if (open) {
-      const defaultValues = {};
-      filters.forEach((filterConfig) => {
-        if (filterConfig.type === "number-range") {
-          if (
-            initialValues &&
-            initialValues[filterConfig.subkeys.min] !== undefined &&
-            initialValues[filterConfig.subkeys.max] !== undefined
-          ) {
-            defaultValues[filterConfig.key] = {
-              min: initialValues[filterConfig.subkeys.min],
-              max: initialValues[filterConfig.subkeys.max],
-            };
-          } else {
-            defaultValues[filterConfig.key] = { min: "", max: "" };
-          }
-        } else if (filterConfig.type === "range") {
-          if (initialValues && initialValues[filterConfig.key]) {
-            if (typeof initialValues[filterConfig.key] === "object") {
-              defaultValues[filterConfig.key] = initialValues[filterConfig.key];
-            } else if (typeof initialValues[filterConfig.key] === "string") {
-              const [start, end] = initialValues[filterConfig.key].split(",");
-              defaultValues[filterConfig.key] = { start: start || "", end: end || "" };
+      setFilterValues(prev => {
+        // Se já houver valores (não vazio), mantenha-os
+        if (Object.keys(prev).length > 0) return prev;
+        // Senão, monte os valores iniciais com base em initialValues
+        const defaultValues = {};
+        filters.forEach((filterConfig) => {
+          if (filterConfig.type === "number-range") {
+            if (
+              initialValues &&
+              initialValues[filterConfig.subkeys.min] !== undefined &&
+              initialValues[filterConfig.subkeys.max] !== undefined
+            ) {
+              defaultValues[filterConfig.key] = {
+                min: initialValues[filterConfig.subkeys.min],
+                max: initialValues[filterConfig.subkeys.max],
+              };
+            } else {
+              defaultValues[filterConfig.key] = { min: "", max: "" };
+            }
+          } else if (filterConfig.type === "range") {
+            if (initialValues && initialValues[filterConfig.key]) {
+              if (typeof initialValues[filterConfig.key] === "object") {
+                defaultValues[filterConfig.key] = initialValues[filterConfig.key];
+              } else if (typeof initialValues[filterConfig.key] === "string") {
+                const [start, end] = initialValues[filterConfig.key].split(",");
+                defaultValues[filterConfig.key] = { start: start || "", end: end || "" };
+              }
+            } else {
+              defaultValues[filterConfig.key] = { start: "", end: "" };
+            }
+          } else if (filterConfig.type === "multiselect") {
+            if (initialValues && initialValues[filterConfig.key] !== undefined) {
+              defaultValues[filterConfig.key] = Array.isArray(initialValues[filterConfig.key])
+                ? initialValues[filterConfig.key]
+                : initialValues[filterConfig.key] === ""
+                  ? []
+                  : initialValues[filterConfig.key].split(",");
+            } else {
+              defaultValues[filterConfig.key] = [];
             }
           } else {
-            defaultValues[filterConfig.key] = { start: "", end: "" };
-          }
-        } else if (filterConfig.type === "multiselect") {
-          if (initialValues && initialValues[filterConfig.key] !== undefined) {
-            defaultValues[filterConfig.key] = Array.isArray(initialValues[filterConfig.key])
+            defaultValues[filterConfig.key] = initialValues && initialValues[filterConfig.key]
               ? initialValues[filterConfig.key]
-              : initialValues[filterConfig.key] === ""
-              ? []
-              : initialValues[filterConfig.key].split(",");
-          } else {
-            defaultValues[filterConfig.key] = [];
+              : "";
           }
-        } else {
-          defaultValues[filterConfig.key] = initialValues && initialValues[filterConfig.key]
-            ? initialValues[filterConfig.key]
-            : "";
-        }
+        });
+        return defaultValues;
       });
-      setFilterValues(defaultValues);
     }
   }, [initialValues, filters, open]);
+
 
   const handleChange = (key, value) => {
     setFilterValues((prev) => ({ ...prev, [key]: value }));
