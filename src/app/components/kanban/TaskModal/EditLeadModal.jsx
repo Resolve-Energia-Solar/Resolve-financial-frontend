@@ -6,7 +6,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  CircularProgress,
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import TabsComponent from '../Leads/TabsLead';
