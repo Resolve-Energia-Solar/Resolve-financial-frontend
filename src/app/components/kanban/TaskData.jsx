@@ -118,6 +118,7 @@ const TaskData = ({ task, onDeleteTask, index }) => {
                       value={editedTask.qualification}
                       max={5}
                       size="small"
+                      onClick={(event) => event.stopPropagation()}
                       onChange={changeQualification}
                       sx={{ ml: 1 }}
                       icon={<WbSunny fontSize="inherit" sx={{ color: theme.palette.warning.main }} />}
