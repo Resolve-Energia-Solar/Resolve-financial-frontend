@@ -1,6 +1,5 @@
-'use client';
-import { Grid, Typography, Chip } from '@mui/material';
-import { AccountCircle } from '@mui/icons-material';
+import { Grid, Typography, Chip, InputAdornment } from '@mui/material';
+import { AccountCircle, Phone, Email } from '@mui/icons-material';
 import CustomFormLabel from '../../forms/theme-elements/CustomFormLabel';
 import CustomTextField from '../../forms/theme-elements/CustomTextField';
 
@@ -34,36 +33,64 @@ function EditLead({ leadId }) {
                         placeholder="Nome"
                         variant="outlined"
                         fullWidth
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start" sx={{ mr: 0 }}>
+                                    <AccountCircle />
+                                </InputAdornment>
+                            ),
+                        }}
                     />
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                    <CustomFormLabel htmlFor="name">CPF/CNPJ</CustomFormLabel>
+                    <CustomFormLabel htmlFor="cpf">CPF/CNPJ</CustomFormLabel>
                     <CustomTextField
-                        name="name"
-                        placeholder="Nome"
+                        name="cpf"
+                        placeholder="008.123.456-78"
                         variant="outlined"
                         fullWidth
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start" sx={{ mr: 0 }}>
+                                    <AccountCircle />
+                                </InputAdornment>
+                            ),
+                        }}
                     />
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                    <CustomFormLabel htmlFor="name">Telefone com DDD</CustomFormLabel>
+                    <CustomFormLabel htmlFor="phone">Telefone com DDD</CustomFormLabel>
                     <CustomTextField
-                        name="name"
-                        placeholder="Nome"
+                        name="phone"
+                        placeholder="(91) 99999-9999"
                         variant="outlined"
                         fullWidth
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start" sx={{ mr: 0 }}>
+                                    <Phone />
+                                </InputAdornment>
+                            ),
+                        }}
                     />
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                    <CustomFormLabel htmlFor="name">E-mail</CustomFormLabel>
+                    <CustomFormLabel htmlFor="email">E-mail</CustomFormLabel>
                     <CustomTextField
-                        name="name"
-                        placeholder="Nome"
+                        name="email"
+                        placeholder="example.resolve@gmail.com"
                         variant="outlined"
                         fullWidth
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start" sx={{ mr: 0 }}>
+                                    <Email />
+                                </InputAdornment>
+                            ),
+                        }}
                     />
                 </Grid>
             </Grid>
