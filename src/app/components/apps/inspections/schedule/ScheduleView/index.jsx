@@ -228,6 +228,11 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                       <strong>Criado em:</strong> {formatDateTime(selectedSchedule?.created_at)}
                     </Typography>{' '}
                   </Typography>
+                  <Typography variant="body1">
+                    <Typography variant="body1">
+                      <strong>Observação do comercial:</strong> {selectedSchedule?.observation || ' - '}
+                    </Typography>
+                  </Typography>
                 </Paper>
 
                 {answerData?.results?.length > 0 && !loadingAnswer && (
