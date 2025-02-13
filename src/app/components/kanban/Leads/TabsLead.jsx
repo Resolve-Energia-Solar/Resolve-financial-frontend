@@ -13,11 +13,20 @@ function CustomTabPanel(props) {
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
+      style={{
+        // boxShadow: '0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1)',
+        // borderRadius: '20px',
+        // margin: '0px 3px 3px 3px',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box sx={{ p: 3, height: '100%', overflowY: 'auto' }}>{children}</Box>}
     </div>
   );
 }
+
+
 
 CustomTabPanel.propTypes = {
   children: PropTypes.node,
@@ -34,7 +43,7 @@ function a11yProps(index) {
 
 function TabsComponent({ tabValue, handleChange, loading, leadId }) {
   return (
-    <Box sx={{ overflow: 'hidden' }}>
+    <Box sx={{ overflow: 'hidden', height: '100%' }}>
       <Tabs
         value={tabValue}
         onChange={handleChange}

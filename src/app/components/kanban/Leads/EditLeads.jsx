@@ -1,4 +1,4 @@
-import { Grid, Typography, Chip, InputAdornment, Button } from '@mui/material';
+import { Grid, Typography, Chip, InputAdornment } from '@mui/material';
 import { AccountCircle, Phone, Email } from '@mui/icons-material';
 import CustomFormLabel from '../../forms/theme-elements/CustomFormLabel';
 import CustomTextField from '../../forms/theme-elements/CustomTextField';
@@ -9,10 +9,9 @@ import FormSelect from '../../forms/form-custom/FormSelect';
 import { useForm, Controller } from "react-hook-form";
 import { useSnackbar } from 'notistack';
 
-function EditLead({ leadId = null }) {
+function EditLead({ leadId = null, onSubmit = null }) {
 
     const { enqueueSnackbar } = useSnackbar();
-
 
     const {
         register,
@@ -21,19 +20,18 @@ function EditLead({ leadId = null }) {
         setValue,
         getValues,
         formState: { errors },
-        setError } = useForm({
-            defaultValues: {
-                name: '',
-                type: '',
-                funnel: '',
-                origin_id: '',
-                first_document: '',
-                phone: '',
-                contact_email: ''
-            }
-        });
-
-
+        setError
+    } = useForm({
+        defaultValues: {
+            name: '',
+            type: '',
+            funnel: '',
+            origin_id: '',
+            first_document: '',
+            phone: '',
+            contact_email: ''
+        }
+    });
 
     useEffect(() => {
         const fetchLead = async () => {
@@ -53,7 +51,7 @@ function EditLead({ leadId = null }) {
         }
     }, [leadId, setValue]);
 
-    const onSubmit = async data => {
+    const onSubmitForm = async (data) => {
         console.log('Dados enviados:', data);
         try {
             await leadService.patchLead(leadId, data);
@@ -66,12 +64,18 @@ function EditLead({ leadId = null }) {
             });
         }
     };
-    
+
+    // Submeter o formulário diretamente ao passar a função `onSubmit` via props
+    useEffect(() => {
+        if (onSubmit) {
+            onSubmit(handleSubmit(onSubmitForm));
+        }
+    }, [onSubmit, handleSubmit]);
 
     return (
         <Grid container spacing={3} sx={{ p: 2 }}>
             <Grid container spacing={2} alignItems="center" sx={{ borderBottom: '1px solid #e0e0e0', pb: 2 }}>
-                <Grid item xs={6} container alignItems="center" spacing={3}>
+                <Grid item xs={12} md={6} container alignItems="center" spacing={3}>
                     <Grid item>
                         <AccountCircle sx={{ fontSize: 70 }} />
                     </Grid>
@@ -90,7 +94,7 @@ function EditLead({ leadId = null }) {
                         />
                     </Grid>
                 </Grid>
-                <Grid item xs={6} container justifyContent="flex-end" alignItems="center">
+                <Grid item xs={12} md={6} container justifyContent="flex-end" alignItems="center">
                     <Chip
                         label={
                             <Controller
@@ -128,7 +132,6 @@ function EditLead({ leadId = null }) {
                                     ),
                                 }}
                             />
-                            
                         )}
                     />
                 </Grid>
@@ -256,7 +259,6 @@ function EditLead({ leadId = null }) {
                 </Grid>
             </Grid>
 
-            {/* <Button variant="contained" onClick={handleSubmit(onSubmit)}>Salvar</Button> */}
         </Grid>
     );
 }
