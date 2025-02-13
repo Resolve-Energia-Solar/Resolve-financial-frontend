@@ -32,26 +32,50 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { on } from 'events';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
+import { useSelector } from 'react-redux';
+
+function useAnimatedNumber(targetValue, duration = 800) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    let startTime;
+
+    const animate = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const currentValue = Math.floor(progress * targetValue);
+      setDisplayValue(currentValue);
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [targetValue, duration]);
+
+  return displayValue;
+}
 
 const ProjectList = ({ onClick }) => {
-  // Estados para os dados e loading dos projetos
   const [projectsList, setProjectsList] = useState([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
-
-  // Estados para os indicadores
   const [indicators, setIndicators] = useState({});
   const [loadingIndicators, setLoadingIndicators] = useState(true);
-
-  // Outros estados
   const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalRows, setTotalRows] = useState(0);
   const router = useRouter();
+
+  const userPermissions = useSelector((state) => state.user.permissions);
   const { filters, setFilters, refresh } = useContext(ProjectDataContext);
 
+  const hasPermission = (permissions) => {
+    if (!permissions) return true;
+    return permissions.some(permission => userPermissions?.includes(permission));
+  };
+
   useEffect(() => {
-    // Função para buscar os projetos
     const fetchProjects = async () => {
       setLoadingProjects(true);
       try {
@@ -71,7 +95,6 @@ const ProjectList = ({ onClick }) => {
       }
     };
 
-    // Função para buscar os indicadores
     const fetchIndicators = async () => {
       setLoadingIndicators(true);
       try {
@@ -99,6 +122,13 @@ const ProjectList = ({ onClick }) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  const blockedToEngineering = useAnimatedNumber(indicators?.blocked_to_engineering || 0);
+  const pendingMaterialList = useAnimatedNumber(indicators?.pending_material_list || 0);
+  const releasedToEngineering = useAnimatedNumber(indicators?.is_released_to_engineering || 0);
+  const designerInProgress = useAnimatedNumber(indicators?.designer?.in_progress || 0);
+  const designerComplete = useAnimatedNumber(indicators?.designer?.complete || 0);
+  const designerCanceled = useAnimatedNumber(indicators?.designer?.canceled || 0);
 
   return (
     <>
@@ -136,7 +166,8 @@ const ProjectList = ({ onClick }) => {
           </Tooltip>
         </AccordionSummary>
         <AccordionDetails>
-          {loadingIndicators ? (
+          {false && loadingIndicators ? (
+            /* Mantemos o código do Skeleton, porém não renderizamos nada, evitando remover qualquer trecho */
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Box sx={{ display: 'flex', gap: 2 }}>
                 <Skeleton variant="rectangular" width={200} height={100} />
@@ -159,7 +190,7 @@ const ProjectList = ({ onClick }) => {
                     IconComponent: IconListDetails,
                     title: 'Bloqueado',
                     subtitle: 'Para Engenharia',
-                    count: indicators?.blocked_to_engineering || 0,
+                    count: blockedToEngineering,
                     onClick: () => setFilters({ ...filters, is_released_to_engineering: false }),
                   },
                   {
@@ -168,7 +199,7 @@ const ProjectList = ({ onClick }) => {
                     IconComponent: IconListDetails,
                     title: 'Pendente',
                     subtitle: 'Lista de Materiais',
-                    count: indicators?.pending_material_list || 0,
+                    count: pendingMaterialList,
                   },
                   {
                     backgroundColor: 'secondary.light',
@@ -176,7 +207,7 @@ const ProjectList = ({ onClick }) => {
                     IconComponent: IconListDetails,
                     title: 'Liberados',
                     subtitle: 'Para Engenharia',
-                    count: indicators?.is_released_to_engineering || 0,
+                    count: releasedToEngineering,
                     onClick: () => setFilters({ ...filters, is_released_to_engineering: true }),
                   },
                 ]}
@@ -190,7 +221,7 @@ const ProjectList = ({ onClick }) => {
                     IconComponent: IconListDetails,
                     title: 'Em Andamento',
                     subtitle: 'Projestista',
-                    count: indicators?.designer?.in_progress || 0,
+                    count: designerInProgress,
                     onClick: () => setFilters({ ...filters, designer_status__in: 'EA' }),
                   },
                   {
@@ -199,7 +230,7 @@ const ProjectList = ({ onClick }) => {
                     IconComponent: IconListDetails,
                     title: 'Concluído',
                     subtitle: 'Projestista',
-                    count: indicators?.designer?.complete || 0,
+                    count: designerComplete,
                     onClick: () => setFilters({ ...filters, designer_status__in: 'CO' }),
                   },
                   {
@@ -208,7 +239,7 @@ const ProjectList = ({ onClick }) => {
                     IconComponent: IconListDetails,
                     title: 'Cancelado',
                     subtitle: 'Projestista',
-                    count: indicators?.designer?.canceled || 0,
+                    count: designerCanceled,
                     onClick: () => setFilters({ ...filters, designer_status__in: 'C' }),
                   },
                 ]}
@@ -241,6 +272,7 @@ const ProjectList = ({ onClick }) => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>Liberado</TableCell>
               <TableCell>Cliente</TableCell>
               <TableCell>Homologador</TableCell>
               <TableCell>Status do Projeto</TableCell>
@@ -252,43 +284,57 @@ const ProjectList = ({ onClick }) => {
             </TableRow>
           </TableHead>
           {loadingProjects ? (
-            <TableSkeleton rows={rowsPerPage} cols={7} />
+            <TableSkeleton rows={rowsPerPage} cols={9} />
           ) : error && page === 1 ? (
             <Typography color="error">{error}</Typography>
           ) : (
             <TableBody>
-              {projectsList.map((item) => (
-                <TableRow
-                  key={item.id}
-                  onClick={() => onClick(item)}
-                  sx={{
-                    '&:hover': {
-                      backgroundColor: 'rgba(236, 242, 255, 0.35)',
-                    },
-                  }}
-                >
-                  <TableCell>{item.sale?.customer?.complete_name}</TableCell>
-                  <TableCell>{item.homologator?.complete_name || '-'}</TableCell>
-                  <TableCell>
-                    <ChipProject status={item.designer_status} />
-                  </TableCell>
-                  <TableCell>
-                    {item.material_list_is_completed ? (
-                      <CheckIcon color="success" />
-                    ) : (
-                      <CloseIcon color="error" />
-                    )}
-                  </TableCell>
-                  <TableCell>{item.product?.name}</TableCell>
-                  <TableCell>{item.product?.params || '-'}</TableCell>
-                  <TableCell>
-                    <StatusChip status={item.status} />
-                  </TableCell>
-                  <TableCell>
-                    <DocumentStatusChip status={item?.sale?.status} />
-                  </TableCell>
-                </TableRow>
-              ))}
+              {projectsList.map((item) => {
+                const canEdit = item.is_released_to_engineering || hasPermission(['resolve_crm.can_change_unready_project']);
+                return (
+                  <TableRow
+                    key={item.id}
+                    onClick={() => canEdit && onClick(item)}
+                    sx={{
+                      opacity: canEdit ? 1 : 0.5,
+                      pointerEvents: canEdit ? 'auto' : 'none',
+                      '&:hover': canEdit
+                        ? {
+                            backgroundColor: 'rgba(236, 242, 255, 0.35)',
+                          }
+                        : {},
+                    }}
+                  >
+                    <TableCell>
+                      {item.is_released_to_engineering ? (
+                        <CheckIcon color="success" />
+                      ) : (
+                        <CloseIcon color="error" />
+                      )}
+                    </TableCell>
+                    <TableCell>{item.sale?.customer?.complete_name}</TableCell>
+                    <TableCell>{item.homologator?.complete_name || '-'}</TableCell>
+                    <TableCell>
+                      <ChipProject status={item.designer_status} />
+                    </TableCell>
+                    <TableCell>
+                      {item.material_list_is_completed ? (
+                        <CheckIcon color="success" />
+                      ) : (
+                        <CloseIcon color="error" />
+                      )}
+                    </TableCell>
+                    <TableCell>{item.product?.name}</TableCell>
+                    <TableCell>{item.product?.params || '-'}</TableCell>
+                    <TableCell>
+                      <StatusChip status={item.status} />
+                    </TableCell>
+                    <TableCell>
+                      <DocumentStatusChip status={item?.sale?.status} />
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           )}
         </Table>
