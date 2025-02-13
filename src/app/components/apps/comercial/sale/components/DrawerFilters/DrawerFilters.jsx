@@ -31,9 +31,9 @@ export default function DrawerFilters() {
     invoice_status: filters.invoice_status,
     billing_date: filters.billing_date,
     borrower: filters.borrower,
+    payment_status: filters.payment_status,
   });
 
-  console.log('tempFilters', tempFilters);
 
   const createFilterParams = (filters) => {
     const params = {};
@@ -57,6 +57,11 @@ export default function DrawerFilters() {
     if (filters.statusDocument && filters.statusDocument.length > 0) {
       const statusValues = filters.statusDocument.map((status) => status.value);
       params.status__in = statusValues.join(',');
+    }
+
+    if (filters.payment_status && filters.payment_status.length > 0) {
+      const paymentStatusValues = filters.payment_status.map((status) => status.value);
+      params.payment_status__in = paymentStatusValues.join(',');
     }
 
     if (filters.branch) {
@@ -133,6 +138,7 @@ export default function DrawerFilters() {
       invoice_status: null,
       billing_date: [null, null],
       borrower: null,
+      payment_status: [],
     });
   };
 
@@ -147,6 +153,13 @@ export default function DrawerFilters() {
     }
     setOpen(inOpen);
   };
+
+  const PaymentStatus = [
+    { value: 'P', label: 'Pendente' },
+    { value: 'L', label: 'Liberado' },
+    { value: 'C', label: 'Concluído' },
+    { value: 'CA', label: 'Cancelado' },
+  ]
 
   const StatusDocument = [
     { value: 'F', label: 'Finalizado' },
@@ -214,6 +227,16 @@ export default function DrawerFilters() {
                   placeholder="Selecione o status"
                   value={tempFilters.invoice_status}
                   onChange={(event, value) => handleChange('invoice_status', value)}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="statusDocument">Status do Financeiro</CustomFormLabel>
+                <CheckboxesTags
+                  options={PaymentStatus}
+                  placeholder="Selecione o status"
+                  value={tempFilters.payment_status}
+                  onChange={(event, value) => handleChange('payment_status', value)}
                 />
               </Grid>
 
