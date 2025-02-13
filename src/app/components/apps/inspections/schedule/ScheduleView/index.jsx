@@ -174,6 +174,10 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                     <strong>Serviço:</strong> {selectedSchedule.service.name}
                   </Typography>
                   <Typography variant="body1">
+                    <strong>Kit:</strong>{' '}
+                    {selectedSchedule.project?.product?.name || 'Sem kit associado'}
+                  </Typography>
+                  <Typography variant="body1">
                     <strong>Agente:</strong>{' '}
                     {selectedSchedule.schedule_agent
                       ? selectedSchedule.schedule_agent.complete_name
@@ -227,6 +231,11 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                     <Typography variant="body1">
                       <strong>Criado em:</strong> {formatDateTime(selectedSchedule?.created_at)}
                     </Typography>{' '}
+                  </Typography>
+                  <Typography variant="body1">
+                    <Typography variant="body1">
+                      <strong>Observação do comercial:</strong> {selectedSchedule?.observation || ' - '}
+                    </Typography>
                   </Typography>
                 </Paper>
 

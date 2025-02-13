@@ -47,12 +47,12 @@ function EditLeadModal({ showModal, onClose, leadId }) {
           leadId={leadId}
         />
       </DialogContent>
-      <DialogActions>
+      {/* <DialogActions>
         <Button onClick={onClose} color="primary">Cancel</Button>
         <Button onClick={handleSave} color="primary" disabled={loading}>
           Save
         </Button>
-      </DialogActions>
+      </DialogActions> */}
     </Dialog>
   );
 }
