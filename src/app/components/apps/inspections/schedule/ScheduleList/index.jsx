@@ -292,60 +292,250 @@ const SchedulingList = () => {
       ) : error ? (
         <Typography color="error">{error}</Typography>
       ) : (
-        <TableContainer component={Paper} elevation={10}>
+        <TableContainer
+          component={Paper}
+          elevation={10}
+          sx={{
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
+            '&::-webkit-scrollbar': {
+              display: 'none',
+            },
+            '&-ms-overflow-style:': {
+              display: 'none',
+            },
+          }}
+        >
           <Table stickyHeader aria-label="schedule table">
             <TableHead>
               <TableRow>
-                <TableCell sx={{ cursor: 'pointer' }} onClick={() => handleSort('created_at')}>
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('created_at')}
+                >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Criado Em
-                    <Box sx={{ ml: 1 }}>
-                      {order === 'created_at' && (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'created_at' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell sx={{ cursor: 'pointer' }} onClick={() => handleSort('customer.complete_name')}>
+
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('customer.complete_name')}
+                >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Contratante
-                    <Box sx={{ ml: 1 }}>
-                      {order === 'customer.complete_name' && (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'customer.complete_name' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell sx={{ cursor: 'pointer' }} onClick={() => handleSort('status')}>
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('status')}
+                >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Status Agendamento
-                    <Box sx={{ ml: 1 }}>
-                      {order === 'status' && (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'status' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                     </Box>
                   </Box>
                 </TableCell>
-                {/* Outras colunas conforme necessário */}
+
+                {hasPermission(['field_services.view_service_opinion']) && (
+                  <TableCell
+                    sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                    onClick={() => handleSort('service_opinion')}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      Parecer do Serviço
+                      <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                        {order === 'service_opinion' &&
+                          (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                      </Box>
+                    </Box>
+                  </TableCell>
+                )}
+
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('final_service_opinion')}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    Parecer Final do Serviço
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'final_service_opinion' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    </Box>
+                  </Box>
+                </TableCell>
+
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('schedule_date')}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    Data
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'schedule_date' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    </Box>
+                  </Box>
+                </TableCell>
+
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('schedule_start_time')}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    Hora
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'schedule_start_time' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    </Box>
+                  </Box>
+                </TableCell>
+
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('service.name')}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    Serviço
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'service.name' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    </Box>
+                  </Box>
+                </TableCell>
+
+                {hasPermission(['field_services.view_agent_info']) && (
+                  <TableCell
+                    sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                    onClick={() => handleSort('schedule_agent.complete_name')}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      Agente
+                      <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                        {order === 'schedule_agent.complete_name' &&
+                          (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                      </Box>
+                    </Box>
+                  </TableCell>
+                )}
+
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('address.street')}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    Endereço
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'address.street' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    </Box>
+                  </Box>
+                </TableCell>
+
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('observation')}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    Descrição
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'observation' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    </Box>
+                  </Box>
+                </TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {scheduleList.map((schedule) => (
-                <TableRow key={schedule.id} hover onClick={() => handleRowClick(schedule)}>
-                  <TableCell>
-                    {format(new Date(schedule.created_at), 'dd/MM/yyyy HH:mm:ss')}
-                  </TableCell>
-                  <TableCell>{schedule?.customer?.complete_name}</TableCell>
-                  <TableCell>
-                    <ScheduleStatusChip status={schedule.status} />
-                  </TableCell>
-                  {/* Renderize as demais colunas conforme sua necessidade */}
-                </TableRow>
-              ))}
-              {loading && page > 1 && (
-                <TableRow>
-                  <TableCell colSpan={10} align="center">
-                    <CircularProgress />
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
+            {loading ? (
+              <TableSkeleton rows={rowsPerPage} columns={11} />
+            ) : error ? (
+              <Typography color="error">{error}</Typography>
+            ) : (
+              <TableBody>
+                {scheduleList.map((schedule) => (
+                  <TableRow key={schedule.id} hover>
+                    <TableCell onClick={() => handleRowClick(schedule)}>
+                      {format(new Date(schedule.created_at), 'dd/MM/yyyy HH:mm:ss')}
+                    </TableCell>
+                    <TableCell onClick={() => handleRowClick(schedule)}>
+                      {schedule?.customer?.complete_name}
+                    </TableCell>
+                    <TableCell onClick={() => handleRowClick(schedule)}>
+                      <ScheduleStatusChip status={schedule.status} />
+                    </TableCell>
+                    {hasPermission(['field_services.view_service_opinion']) && (
+                      <TableCell onClick={() => handleRowClick(schedule)}>
+                        {schedule.service_opinion ? (
+                          schedule.service_opinion.name
+                        ) : (
+                          <Chip label="Sem Parecer" color="error" />
+                        )}
+                      </TableCell>
+                    )}
+                    <TableCell onClick={() => handleRowClick(schedule)}>
+                      {schedule.final_service_opinion ? (
+                        schedule.final_service_opinion.name
+                      ) : (
+                        <Chip label="Em Análise" color="warning" />
+                      )}
+                    </TableCell>
+                    <TableCell onClick={() => handleRowClick(schedule)}>
+                      {formatDate(schedule.schedule_date)}
+                    </TableCell>
+                    <TableCell onClick={() => handleRowClick(schedule)}>
+                      {formatTime(schedule.schedule_start_time)}
+                    </TableCell>
+                    <TableCell onClick={() => handleRowClick(schedule)}>
+                      {schedule.service.name}
+                    </TableCell>
+                    {hasPermission(['field_services.view_agent_info']) && (
+                      <TableCell onClick={() => handleRowClick(schedule)}>
+                        {schedule.schedule_agent ? (
+                          schedule.schedule_agent.complete_name
+                        ) : (
+                          <Chip label="Sem Agente" color="error" />
+                        )}
+                      </TableCell>
+                    )}
+                    <TableCell onClick={() => handleRowClick(schedule)}>
+                      {`${schedule.address.street}, ${schedule.address.number}, ${schedule.address.neighborhood}, ${schedule.address.city} - ${schedule.address.state}`}
+                    </TableCell>
+
+                    <TableCell onClick={() => handleRowClick(schedule)}>
+                      {schedule.observation ? (
+                        schedule.observation.length > 50 ? (
+                          `${schedule.observation.substring(0, 50)}...`
+                        ) : (
+                          schedule.observation
+                        )
+                      ) : (
+                        <Chip label="Sem Observação" color="warning" />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {loading && page > 1 && (
+                  <TableRow>
+                    <TableCell colSpan={10} align="center">
+                      <CircularProgress />
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            )}
           </Table>
         </TableContainer>
+
       )}
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
