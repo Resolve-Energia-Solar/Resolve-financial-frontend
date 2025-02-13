@@ -13,35 +13,45 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Skeleton,
+  Tooltip
 } from '@mui/material';
-import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
+import { IconListDetails } from '@tabler/icons-react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Edit as EditIcon, Delete as DeleteIcon, AddBoxRounded } from '@mui/icons-material';
+import { AddBoxRounded } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import projectService from '@/services/projectService';
 import DrawerFiltersProject from '../components/DrawerFilters/DrawerFiltersProject';
 import StatusChip from '@/utils/status/ProjectStatusChip';
-import { default as DocumentStatusChip } from '@/utils/status/DocumentStatusIcon';
+import DocumentStatusChip from '@/utils/status/DocumentStatusIcon';
 import { ProjectDataContext } from '@/app/context/ProjectContext';
 import TableSkeleton from '../../comercial/sale/components/TableSkeleton';
 import ChipProject from '../components/ChipProject';
 import ProjectCards from '../../inforCards/InforQuantity';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import { on } from 'events';
 
 const ProjectList = ({ onClick }) => {
+  // Estados para os dados e loading dos projetos
   const [projectsList, setProjectsList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingProjects, setLoadingProjects] = useState(true);
+
+  // Estados para os indicadores
+  const [indicators, setIndicators] = useState({});
+  const [loadingIndicators, setLoadingIndicators] = useState(true);
+
+  // Outros estados
   const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalRows, setTotalRows] = useState(0);
   const router = useRouter();
-  const [indicators, setIndicators] = useState({});
-
   const { filters, setFilters, refresh } = useContext(ProjectDataContext);
 
   useEffect(() => {
+    // Função para buscar os projetos
     const fetchProjects = async () => {
-      setLoading(true);
+      setLoadingProjects(true);
       try {
         const data = await projectService.getProjects({
           page: page + 1,
@@ -49,28 +59,29 @@ const ProjectList = ({ onClick }) => {
           expand: 'sale.customer',
           ...filters,
         });
+        console.log('data: ', data);
         setProjectsList(data.results.results);
         setTotalRows(data.count);
       } catch (err) {
         setError('Erro ao carregar Projetos');
       } finally {
-        setLoading(false);
+        setLoadingProjects(false);
       }
     };
 
+    // Função para buscar os indicadores
     const fetchIndicators = async () => {
-      setLoading(true);
+      setLoadingIndicators(true);
       try {
         const data = await projectService.getProjectsIndicators({
           ...filters,
         });
-
         setIndicators(data.indicators);
-        console.log('indicators: ', indicators.indicators);
+        console.log('indicators: ', data.indicators);
       } catch (err) {
-        setError('Erro ao carregar Projetos');
+        setError('Erro ao carregar Indicadores');
       } finally {
-        setLoading(false);
+        setLoadingIndicators(false);
       }
     };
 
@@ -96,68 +107,112 @@ const ProjectList = ({ onClick }) => {
           id="sale-cards-header"
         >
           <Typography variant="h6">Indicadores</Typography>
+          <Tooltip
+            title={
+              <React.Fragment>
+                <Typography variant="body2">
+                  <strong>ATENÇÃO</strong>
+                </Typography>
+                <Typography variant="body2">
+                  Para que o <strong>PROJETO</strong> seja liberado para a engenharia, é necessário que:
+                </Typography>
+                <Typography variant="body2" sx={{ ml: 2 }}>
+                  • STATUS da VENDA esteja como <strong>FINALIZADO</strong>.
+                </Typography>
+                <Typography variant="body2" sx={{ ml: 2 }}>
+                  • STATUS do FINANCEIRO na venda esteja como <strong>PAGO</strong> ou <strong>LIBERADO</strong>.
+                </Typography>
+                <Typography variant="body2" sx={{ ml: 2 }}>
+                  • A vistoria principal esteja com PARECER FINAL <strong>APROVADA</strong>.
+                </Typography>
+              </React.Fragment>
+            }
+          >
+            <Box sx={{ ml: 2, display: 'flex', alignItems: 'center' }}>
+              <HelpOutlineIcon />
+            </Box>
+          </Tooltip>
         </AccordionSummary>
         <AccordionDetails>
-          <ProjectCards
-            cardsData={[
-              {
-                backgroundColor: 'primary.light',
-                iconColor: 'primary.main',
-                IconComponent: IconListDetails,
-                title: 'Bloqueado',
-                subtitle: 'Para Engenharia',
-                count: indicators?.blocked_to_engineering || '-',
-              },
-              {
-                backgroundColor: 'success.light',
-                iconColor: 'success.main',
-                IconComponent: IconListDetails,
-                title: 'Pendente',
-                subtitle: 'Lista de Materiais',
-                count: indicators?.pending_material_list || '-',
-              },
-              {
-                backgroundColor: 'secondary.light',
-                iconColor: 'secondary.main',
-                IconComponent: IconListDetails,
-                title: 'Liberados',
-                subtitle: 'Para Engenharia',
-                count: indicators?.is_released_to_engineering || '-',
-              },
-            ]}
-          />
+          {loadingIndicators ? (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <Skeleton variant="rectangular" width={200} height={100} />
+                <Skeleton variant="rectangular" width={200} height={100} />
+                <Skeleton variant="rectangular" width={200} height={100} />
+              </Box>
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <Skeleton variant="rectangular" width={200} height={100} />
+                <Skeleton variant="rectangular" width={200} height={100} />
+                <Skeleton variant="rectangular" width={200} height={100} />
+              </Box>
+            </Box>
+          ) : (
+            <>
+              <ProjectCards
+                cardsData={[
+                  {
+                    backgroundColor: 'primary.light',
+                    iconColor: 'primary.main',
+                    IconComponent: IconListDetails,
+                    title: 'Bloqueado',
+                    subtitle: 'Para Engenharia',
+                    count: indicators?.blocked_to_engineering || 0,
+                    onClick: () => setFilters({ ...filters, is_released_to_engineering: false }),
+                  },
+                  {
+                    backgroundColor: 'success.light',
+                    iconColor: 'success.main',
+                    IconComponent: IconListDetails,
+                    title: 'Pendente',
+                    subtitle: 'Lista de Materiais',
+                    count: indicators?.pending_material_list || 0,
+                  },
+                  {
+                    backgroundColor: 'secondary.light',
+                    iconColor: 'secondary.main',
+                    IconComponent: IconListDetails,
+                    title: 'Liberados',
+                    subtitle: 'Para Engenharia',
+                    count: indicators?.is_released_to_engineering || 0,
+                    onClick: () => setFilters({ ...filters, is_released_to_engineering: true }),
+                  },
+                ]}
+              />
 
-          <ProjectCards
-            cardsData={[
-              {
-                backgroundColor: 'primary.light',
-                iconColor: 'primary.main',
-                IconComponent: IconListDetails,
-                title: 'Em Andamento',
-                subtitle: 'Projestista',
-                count: indicators?.designer?.blocked_to_engineering || '-',
-                onClick: () => setFilters({ ...filters, designer_status: 'EA' }),
-              },
-              {
-                backgroundColor: 'success.light',
-                iconColor: 'success.main',
-                IconComponent: IconListDetails,
-                title: 'Concluído',
-                subtitle: 'Projestista',
-                count: indicators?.designer?.complete || '-',
-                onClick: () => setFilters({ ...filters, designer_status: 'CO' }),
-              },
-              {
-                backgroundColor: 'secondary.light',
-                iconColor: 'secondary.main',
-                IconComponent: IconListDetails,
-                title: 'Cancelado',
-                subtitle: 'Projestista',
-                count: indicators?.designer?.canceled || '-',
-                onClick: () => setFilters({ ...filters, designer_status: 'C' }),
-              },
-            ]}
-          />
+              <ProjectCards
+                cardsData={[
+                  {
+                    backgroundColor: 'primary.light',
+                    iconColor: 'primary.main',
+                    IconComponent: IconListDetails,
+                    title: 'Em Andamento',
+                    subtitle: 'Projestista',
+                    count: indicators?.designer?.in_progress || 0,
+                    onClick: () => setFilters({ ...filters, designer_status__in: 'EA' }),
+                  },
+                  {
+                    backgroundColor: 'success.light',
+                    iconColor: 'success.main',
+                    IconComponent: IconListDetails,
+                    title: 'Concluído',
+                    subtitle: 'Projestista',
+                    count: indicators?.designer?.complete || 0,
+                    onClick: () => setFilters({ ...filters, designer_status__in: 'CO' }),
+                  },
+                  {
+                    backgroundColor: 'secondary.light',
+                    iconColor: 'secondary.main',
+                    IconComponent: IconListDetails,
+                    title: 'Cancelado',
+                    subtitle: 'Projestista',
+                    count: indicators?.designer?.canceled || 0,
+                    onClick: () => setFilters({ ...filters, designer_status__in: 'C' }),
+                  },
+                ]}
+              />
+            </>
+          )}
         </AccordionDetails>
       </Accordion>
 
@@ -167,6 +222,7 @@ const ProjectList = ({ onClick }) => {
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
         <Box>
+          {/* Exemplo: Botão para criar projeto */}
           {/* <Button
             variant="outlined"
             startIcon={<AddBoxRounded />}
@@ -176,7 +232,6 @@ const ProjectList = ({ onClick }) => {
             Criar Projeto
           </Button> */}
         </Box>
-
         <DrawerFiltersProject />
       </Box>
 
@@ -193,7 +248,7 @@ const ProjectList = ({ onClick }) => {
               <TableCell>Status da Venda</TableCell>
             </TableRow>
           </TableHead>
-          {loading ? (
+          {loadingProjects ? (
             <TableSkeleton rows={rowsPerPage} cols={7} />
           ) : error && page === 1 ? (
             <Typography color="error">{error}</Typography>
@@ -213,7 +268,7 @@ const ProjectList = ({ onClick }) => {
                   <TableCell>{item.homologator?.complete_name || '-'}</TableCell>
                   <TableCell>
                     <ChipProject status={item.designer_status} />
-                  </TableCell>{' '}
+                  </TableCell>
                   <TableCell>{item.product?.name}</TableCell>
                   <TableCell>{item.product?.params || '-'}</TableCell>
                   <TableCell>

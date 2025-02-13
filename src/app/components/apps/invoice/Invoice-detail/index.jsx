@@ -46,7 +46,7 @@ const DetailInvoicePage = ({ payment_id = null }) => {
 
   const invoiceStatus = {
     E: 'Emitida',
-    L: 'Liquidada',
+    L: 'Liberada',
     P: 'Pendente',
     C: 'Cancelada',
   };

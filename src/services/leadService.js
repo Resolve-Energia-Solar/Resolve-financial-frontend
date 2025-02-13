@@ -10,6 +10,15 @@ const leadService = {
       throw error
     }
   },
+  getLeadById: async (leadId, data) => {
+    try {
+      const response = await apiClient.get(`/api/leads/${leadId}/`, data)
+      return response.data
+    } catch (error) {
+      console.error('Erro ao buscar lead:', error)
+      throw error
+    }
+  },
   createLead: async data => {
     const response = await apiClient.post('/api/leads/', data)
     return response.data
@@ -36,10 +45,9 @@ const leadService = {
   patchLead: async (id, data) => {
     try {
       const response = await apiClient.patch(`/api/leads/${id}/`, data)
-      return response.data
+      return response?.data
     } catch (error) {
       console.error('Erro na requisição de atualização do lead:', error)
-      console.error('Dados enviados:', data)
       throw error
     }
   },

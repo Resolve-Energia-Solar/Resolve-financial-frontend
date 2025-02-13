@@ -369,6 +369,19 @@ const SaleList = () => {
 
                 <TableCell
                   sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('contract_number')}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    Número de contrato
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'contract_number' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    </Box>
+                  </Box>
+                </TableCell>
+
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                   onClick={() => handleSort('signature_date')}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -476,6 +489,7 @@ const SaleList = () => {
                     sx={{ backgroundColor: rowSelected?.id === item.id && '#ECF2FF' }}
                   >
                     <TableCell>{item.customer.complete_name}</TableCell>
+                    <TableCell>{item.contract_number}</TableCell>
                     <TableCell>
                       {item?.signature_date
                         ? new Date(item.signature_date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
