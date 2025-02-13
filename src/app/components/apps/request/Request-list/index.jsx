@@ -27,6 +27,14 @@ import AddRequestCompany from '../Add-request';
 import RequestDrawer from '../components/filterDrawer/RequestDrawer';
 import { RequestDataContext } from '@/app/context/RequestContext';
 import Comment from '../../comment';
+import InforCards from '@/app/components/apps/inforCards/InforCards';
+import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const RequestList = ({ projectId = null, enableFilters = true }) => {
   const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
@@ -50,7 +58,6 @@ const RequestList = ({ projectId = null, enableFilters = true }) => {
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
-  // 🚀 Usa `useMemo` para evitar que `filters` cause re-renders desnecessários
   const stableFilters = useMemo(() => filters, [JSON.stringify(filters)]);
 
   const refreshData = () => {
@@ -86,10 +93,11 @@ const RequestList = ({ projectId = null, enableFilters = true }) => {
           page: page + 1,
           limit: rowsPerPage,
           projectId,
-          ...stableFilters, // Usa a versão memorizada de filters
+          ...stableFilters,
         };
 
         const data = await requestConcessionaireService.getAllByProject(params);
+        console.log('data', data);
         setProjectsList(data.results.results);
         setTotalRows(data.count);
       } catch (err) {
@@ -100,7 +108,7 @@ const RequestList = ({ projectId = null, enableFilters = true }) => {
     };
 
     fetchProjects();
-  }, [page, rowsPerPage, refresh, stableFilters]); // Agora, `filters` não recria o efeito desnecessariamente
+  }, [page, rowsPerPage, refresh, stableFilters]);
 
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
@@ -111,32 +119,87 @@ const RequestList = ({ projectId = null, enableFilters = true }) => {
     setPage(0);
   };
 
+  const cardsData = [
+    {
+      backgroundColor: 'primary.light',
+      iconColor: 'primary.main',
+      IconComponent: IconListDetails,
+      title: 'Parecer de Acesso',
+      count: '-',
+    },
+    {
+      backgroundColor: 'success.light',
+      iconColor: 'success.main',
+      IconComponent: IconListDetails,
+      title: 'Aumento de carga ',
+      count: '-',
+    },
+    {
+      backgroundColor: 'secondary.light',
+      iconColor: 'secondary.main',
+      IconComponent: IconPaperclip,
+      title: 'Vistoria final',
+      count: '-',
+    },
+    {
+      backgroundColor: 'warning.light',
+      iconColor: 'warning.main',
+      IconComponent: IconSortAscending,
+      title: 'Ajuste de ramal',
+      count: '-',
+    },
+    {
+      backgroundColor: 'warning.light',
+      iconColor: 'warning.main',
+      IconComponent: IconSortAscending,
+      title: 'Nova UC',
+      count: '-',
+    },
+  ];
+
   return (
     <>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Button
-          variant="outlined"
-          startIcon={<AddBoxRounded />}
-          onClick={() => setOpenAddDialog(true)}
-          sx={{ marginTop: 1, marginBottom: 2 }}
-        >
-          Nova Solicitação
-        </Button>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Typography variant="h4">Solicitações</Typography>
 
-        {/* Só exibir filtros se enableFilters for true e houver contexto */}
-        {enableFilters && context && (
-          <Box>
-            <Button variant="outlined" startIcon={<FilterAlt />} onClick={toggleRequestDrawer(true)}>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="sale-cards-content"
+            id="sale-cards-header"
+          >
+            <Typography variant="h6">Indicadores</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <InforCards cardsData={cardsData} />
+          </AccordionDetails>
+        </Accordion>
+
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<AddBoxRounded />}
+            onClick={() => setOpenAddDialog(true)}
+          >
+            Nova Solicitação
+          </Button>
+          {enableFilters && context && (
+            <Button
+              variant="outlined"
+              startIcon={<FilterAlt />}
+              onClick={toggleRequestDrawer(true)}
+            >
               Filtros
             </Button>
-            <RequestDrawer
-              externalOpen={isFilterOpen}
-              onClose={toggleRequestDrawer(false)}
-              onApplyFilters={handleApplyFilters}
-            />
-          </Box>
-        )}
+          )}
+        </Box>
       </Box>
+
+      <RequestDrawer
+        externalOpen={isFilterOpen}
+        onClose={toggleRequestDrawer(false)}
+        onApplyFilters={handleApplyFilters}
+      />
 
       {loading ? (
         <TableContainer component={Paper}>
@@ -241,10 +304,14 @@ const RequestList = ({ projectId = null, enableFilters = true }) => {
                 onRefresh={refreshData}
               />
             </Box>
-            
+
             {/* Área de Comentários - Ocupa 30% da largura */}
             <Box sx={{ flex: 3, borderLeft: '1px solid #ddd', paddingLeft: 2 }}>
-              <Comment contentType={CONTENT_TYPE_PROJECT_ID} objectId={requestIdSelected} label='Comentários do Projeto' />
+              <Comment
+                contentType={CONTENT_TYPE_PROJECT_ID}
+                objectId={requestIdSelected}
+                label="Comentários do Projeto"
+              />
             </Box>
           </Box>
         </DialogContent>

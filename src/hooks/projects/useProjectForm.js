@@ -14,6 +14,7 @@ const useProjectForm = (initialData, id) => {
     is_documentation_completed: false,
     status: '',
     designer_status: '',
+    material_list_is_completed: false,
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -33,6 +34,7 @@ const useProjectForm = (initialData, id) => {
         is_documentation_completed: initialData.is_documentation_completed || false,
         status: initialData.status || '',
         designer_status: initialData.designer_status || '',
+        material_list_is_completed: initialData.material_list_is_completed || false,
       });
     }
   }, [initialData]);
@@ -53,6 +55,7 @@ const useProjectForm = (initialData, id) => {
       is_documentation_completed: formData.is_documentation_completed,
       status: formData.status,
       designer_status: formData.designer_status,
+      material_list_is_completed: formData.material_list_is_completed,
     };
 
     setLoading(true);
