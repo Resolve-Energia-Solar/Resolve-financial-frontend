@@ -14,7 +14,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   Skeleton,
-  Tooltip
+  Tooltip,
 } from '@mui/material';
 import { IconListDetails } from '@tabler/icons-react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -30,6 +30,8 @@ import ChipProject from '../components/ChipProject';
 import ProjectCards from '../../inforCards/InforQuantity';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { on } from 'events';
+import CloseIcon from '@mui/icons-material/Close';
+import CheckIcon from '@mui/icons-material/Check';
 
 const ProjectList = ({ onClick }) => {
   // Estados para os dados e loading dos projetos
@@ -123,7 +125,7 @@ const ProjectList = ({ onClick }) => {
                   • STATUS do FINANCEIRO na venda esteja como <strong>PAGO</strong> ou <strong>LIBERADO</strong>.
                 </Typography>
                 <Typography variant="body2" sx={{ ml: 2 }}>
-                  • A vistoria principal esteja com PARECER FINAL <strong>APROVADA</strong>.
+                  • A vistoria principal esteja com PARECER FINAL <strong>APROVADO</strong>.
                 </Typography>
               </React.Fragment>
             }
@@ -220,7 +222,7 @@ const ProjectList = ({ onClick }) => {
         Lista de Projetos
       </Typography>
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2, mb: 2 }}>
         <Box>
           {/* Exemplo: Botão para criar projeto */}
           {/* <Button
@@ -242,6 +244,7 @@ const ProjectList = ({ onClick }) => {
               <TableCell>Cliente</TableCell>
               <TableCell>Homologador</TableCell>
               <TableCell>Status do Projeto</TableCell>
+              <TableCell>Lista de Materiais</TableCell>
               <TableCell>Produto</TableCell>
               <TableCell>Kwp</TableCell>
               <TableCell>Status de Homologação</TableCell>
@@ -268,6 +271,13 @@ const ProjectList = ({ onClick }) => {
                   <TableCell>{item.homologator?.complete_name || '-'}</TableCell>
                   <TableCell>
                     <ChipProject status={item.designer_status} />
+                  </TableCell>
+                  <TableCell>
+                    {item.material_list_is_completed ? (
+                      <CheckIcon color="success" />
+                    ) : (
+                      <CloseIcon color="error" />
+                    )}
                   </TableCell>
                   <TableCell>{item.product?.name}</TableCell>
                   <TableCell>{item.product?.params || '-'}</TableCell>
