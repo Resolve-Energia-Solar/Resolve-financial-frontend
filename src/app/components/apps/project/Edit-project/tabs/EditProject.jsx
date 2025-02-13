@@ -224,16 +224,16 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={12}>
-          <CustomFormLabel>Projeto</CustomFormLabel>
+          <CustomFormLabel>Lista de Material</CustomFormLabel>
           <FormControlLabel
             control={
               <CustomSwitch
-                checked={formData.is_documentation_completed}
-                disabled={!userPermissions.includes('resolve_crm.change_status_is_documentation_completed_project')}
-                onChange={(e) => handleChange('is_documentation_completed', e.target.checked)}
+                checked={formData.material_list_is_completed}
+                // disabled={!userPermissions.includes('resolve_crm.change_status_is_documentation_completed_project')}
+                onChange={(e) => handleChange('material_list_is_completed', e.target.checked)}
               />
             }
-            label={formData.is_documentation_completed ? 'Projeto Concluído' : 'Projeto Pendente'}
+            label={formData.material_list_is_completed ? 'Lista Finalizada' : 'Lista Pendente'}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={12}>
