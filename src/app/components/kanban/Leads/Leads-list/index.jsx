@@ -7,29 +7,20 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   Typography,
   Box,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Skeleton,
-  Tooltip,
-  Button
+  Button,
+  Chip
 } from '@mui/material';
-import { IconListDetails } from '@tabler/icons-react';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Add, AddBoxRounded } from '@mui/icons-material';
+import { Add } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import projectService from '@/services/projectService';
-import DrawerFiltersProject from '@/app/components/apps/project/components/DrawerFilters/DrawerFiltersProject';
 import StatusChip from '@/utils/status/ProjectStatusChip';
 import DocumentStatusChip from '@/utils/status/DocumentStatusIcon';
 import { ProjectDataContext } from '@/app/context/ProjectContext';
 import TableSkeleton from '@/app/components/apps/comercial/sale/components/TableSkeleton';
 import ChipProject from '@/app/components/apps/project/components/ChipProject';
-import ProjectCards from '@/app/components/apps/inforCards/InforQuantity';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import leadService from '@/services/leadService';
 
 const LeadList = ({ onClick }) => {
   // Estados para os dados e loading dos projetos
@@ -39,6 +30,26 @@ const LeadList = ({ onClick }) => {
   // Estados para os indicadores
   const [indicators, setIndicators] = useState({});
   const [loadingIndicators, setLoadingIndicators] = useState(true);
+
+  const formatPhoneNumber = (phone) => {
+    if (!phone) return "-";
+
+    // Remover caracteres não numéricos
+    const cleaned = phone.replace(/\D/g, "");
+
+    // Verificar se o número tem o tamanho esperado
+    if (cleaned.length < 10 || cleaned.length > 11) return phone; // Retorna como está se não for válido
+
+    // Adicionar código do país (Brasil +55 como exemplo)
+    const countryCode = "+55";
+
+    // Extrair DDD e número
+    const ddd = cleaned.slice(0, 2);
+    const firstPart = cleaned.length === 10 ? cleaned.slice(2, 6) : cleaned.slice(2, 7);
+    const secondPart = cleaned.length === 10 ? cleaned.slice(6) : cleaned.slice(7);
+
+    return `${countryCode} (${ddd}) ${firstPart}-${secondPart}`;
+  };
 
   // Outros estados
   const [error, setError] = useState(null);
@@ -53,14 +64,11 @@ const LeadList = ({ onClick }) => {
     const fetchProjects = async () => {
       setLoadingProjects(true);
       try {
-        const data = await projectService.getProjects({
+        const data = await leadService.getLeads({
           page: page + 1,
           limit: rowsPerPage,
-          expand: 'sale.customer',
-          ...filters,
         });
-        console.log('data: ', data);
-        setProjectsList(data.results.results);
+        setProjectsList(data.results);
         setTotalRows(data.count);
       } catch (err) {
         setError('Erro ao carregar Projetos');
@@ -69,24 +77,8 @@ const LeadList = ({ onClick }) => {
       }
     };
 
-    // Função para buscar os indicadores
-    const fetchIndicators = async () => {
-      setLoadingIndicators(true);
-      try {
-        const data = await projectService.getProjectsIndicators({
-          ...filters,
-        });
-        setIndicators(data.indicators);
-        console.log('indicators: ', data.indicators);
-      } catch (err) {
-        setError('Erro ao carregar Indicadores');
-      } finally {
-        setLoadingIndicators(false);
-      }
-    };
-
-    fetchIndicators();
     fetchProjects();
+
   }, [page, rowsPerPage, filters, refresh]);
 
   const handlePageChange = (event, newPage) => {
@@ -105,7 +97,7 @@ const LeadList = ({ onClick }) => {
           {/* Exemplo: Botão para criar projeto */}
           <Button
             startIcon={<Add />}
-            onClick={() => router.push('/apps/project/create')}
+            // onClick={() => router.push('/apps/lead/create')}
             sx={{
               width: 74,
               height: 28,
@@ -132,13 +124,13 @@ const LeadList = ({ onClick }) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Cliente</TableCell>
-              <TableCell>Homologador</TableCell>
-              <TableCell>Status do Projeto</TableCell>
-              <TableCell>Produto</TableCell>
-              <TableCell>Kwp</TableCell>
-              <TableCell>Status de Homologação</TableCell>
-              <TableCell>Status da Venda</TableCell>
+              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Nome</TableCell>
+              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>CPF/CNPJ</TableCell>
+              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Origem</TableCell>
+              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>KwH</TableCell>
+              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Endereço</TableCell>
+              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Fone</TableCell>
+              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Status</TableCell>
             </TableRow>
           </TableHead>
           {loadingProjects ? (
@@ -157,18 +149,21 @@ const LeadList = ({ onClick }) => {
                     },
                   }}
                 >
-                  <TableCell>{item.sale?.customer?.complete_name}</TableCell>
-                  <TableCell>{item.homologator?.complete_name || '-'}</TableCell>
+                  <TableCell sx={{fontWeight: "600", color: "#7E8388"}}>{item?.name}</TableCell>
+                  <TableCell sx={{color: "#7E8388"}}>{item.first_document || '-'}</TableCell>
+                  <TableCell sx={{color: "#7E8388"}}>{item?.origin?.name || '-'}</TableCell>
+                  <TableCell sx={{color: "#7E8388"}}>{item?.kwp || '-'}</TableCell>
+                  <TableCell sx={{color: "#7E8388"}}>{item?.addresses[0]?.street || '-'}, {item?.addresses[0]?.number || '-'} - {item?.addresses[0]?.city || '-'}</TableCell>
+                  <TableCell sx={{color: "#7E8388"}}>{formatPhoneNumber(item?.phone)}</TableCell>
                   <TableCell>
-                    <ChipProject status={item.designer_status} />
-                  </TableCell>
-                  <TableCell>{item.product?.name}</TableCell>
-                  <TableCell>{item.product?.params || '-'}</TableCell>
-                  <TableCell>
-                    <StatusChip status={item.status} />
-                  </TableCell>
-                  <TableCell>
-                    <DocumentStatusChip status={item?.sale?.status} />
+                    <Chip
+                      label={item?.column?.name || '-'}
+                      sx={{
+                        border: `1px solid ${item?.column?.color || 'transparent'}`,
+                        backgroundColor: 'transparent',
+                        color: "#7E8388"
+                      }}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
