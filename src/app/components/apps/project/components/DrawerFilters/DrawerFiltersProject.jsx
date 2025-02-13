@@ -9,6 +9,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Tooltip
 } from '@mui/material';
 import { FilterAlt } from '@mui/icons-material';
 import CheckboxesTags from './CheckboxesTags';
@@ -18,6 +19,7 @@ import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/A
 import { ProjectDataContext } from '@/app/context/ProjectContext';
 import NumberInputBasic, { CustomNumberInput, NumberInput } from '../NumberInput';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 export default function DrawerFiltersProject() {
   const [open, setOpen] = useState(false);
@@ -32,6 +34,7 @@ export default function DrawerFiltersProject() {
     homologator: filters.homologator,
     signature_date: filters.signature_date,
     product_kwp: filters.product_kwp || null,
+    material_list_is_completed: filters.material_list_is_completed,
   });
 
   const createFilterParams = (filters) => {
@@ -51,6 +54,10 @@ export default function DrawerFiltersProject() {
       const startDate = filters.signature_date[0].toISOString().split('T')[0];
       const endDate = filters.signature_date[1].toISOString().split('T')[0];
       params.signature_date = `${startDate},${endDate}`;
+    }
+
+    if (filters.material_list_is_completed !== null) {
+      params.material_list_is_completed = filters.material_list_is_completed;
     }
 
     if (filters.status && filters.status.length > 0) {
@@ -85,6 +92,12 @@ export default function DrawerFiltersProject() {
     console.log('value:', value);
     setTempFilters((prev) => ({ ...prev, [key]: value }));
   };
+
+  const materialListIsCompleted = [
+    { value: true, label: 'Sim' },
+    { value: false, label: 'Não' },
+    { value: null, label: 'Todos' },
+  ]
 
   const clearFilters = () => {
     setTempFilters({
@@ -169,7 +182,7 @@ export default function DrawerFiltersProject() {
               </Grid>
 
               <Grid item xs={12}>
-                <CustomFormLabel htmlFor="homologator">Kwp</CustomFormLabel>
+                <CustomFormLabel htmlFor="kwp">Kwp</CustomFormLabel>
                 <CustomTextField
                   fullWidth
                   placeholder="Digite o Kwp"
@@ -182,6 +195,46 @@ export default function DrawerFiltersProject() {
                     type: 'number',
                   }}
                 />
+              </Grid>
+
+              <Grid item xs={12}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <CustomFormLabel
+                    htmlFor="Lista de Material"
+                    sx={{
+                      margin: 0,
+                      padding: 0,
+                      lineHeight: 4,
+                    }}
+                  >
+                    Lista de Material
+                  </CustomFormLabel>
+                  <Tooltip title="Status necessário para o cliente prosseguir na esteira">
+                    <HelpOutlineIcon />
+                  </Tooltip>
+                </Box>
+
+                <FormControl fullWidth>
+                  <Select
+                    value={
+                      tempFilters.material_list_is_completed == null
+                        ? ''
+                        : tempFilters.material_list_is_completed.toString()
+                    }
+                    onChange={(event) =>
+                      handleChange(
+                        'material_list_is_completed',
+                        event.target.value === '' ? null : event.target.value === 'true'
+                      )
+                    }
+                  >
+                    <MenuItem value="">
+                      <em>Todos</em>
+                    </MenuItem>
+                    <MenuItem value="true">Sim</MenuItem>
+                    <MenuItem value="false">Não</MenuItem>
+                  </Select>
+                </FormControl>
               </Grid>
 
               <Grid item xs={12}>
@@ -201,7 +254,21 @@ export default function DrawerFiltersProject() {
               </Grid>
 
               <Grid item xs={12}>
-                <CustomFormLabel htmlFor="isPreSale">Status do Projeto</CustomFormLabel>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <CustomFormLabel
+                      htmlFor="Lista de Material"
+                      sx={{
+                        margin: 0,
+                        padding: 0,
+                        lineHeight: 4,
+                      }}
+                    >
+                      Status do Projeto
+                    </CustomFormLabel>
+                    <Tooltip title="Status necessário para o cliente prosseguir na esteira">
+                      <HelpOutlineIcon />
+                    </Tooltip>
+                </Box>
                 <CheckboxesTags
                   options={[
                     { value: 'P', label: 'Pendente' },

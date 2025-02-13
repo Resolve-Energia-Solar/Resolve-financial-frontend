@@ -17,6 +17,7 @@ import {
   Alert,
   CircularProgress,
   FormControlLabel,
+  Tooltip
 } from '@mui/material';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import { useParams } from 'next/navigation';
@@ -34,6 +35,7 @@ import { CheckCircle, Error } from '@mui/icons-material';
 import { useState } from 'react';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import { useSelector } from 'react-redux';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 export default function EditProjectTab({ projectId = null, detail = false }) {
   const params = useParams();
@@ -165,7 +167,21 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="name">Projetista</CustomFormLabel>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CustomFormLabel
+                htmlFor="Status do Projeto"
+                sx={{
+                  margin: 0,
+                  padding: 0,
+                  lineHeight: 4,
+                }}
+              >
+                Status do Projeto
+              </CustomFormLabel>
+              <Tooltip title="Status necessário para o cliente prosseguir na esteira">
+                <HelpOutlineIcon />
+              </Tooltip>
+            </Box>
           <AutoCompleteUser
             onChange={(id) => handleChange('designer_id', id)}
             value={formData.designer_id}
@@ -224,7 +240,21 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={12}>
-          <CustomFormLabel>Lista de Material</CustomFormLabel>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <CustomFormLabel
+              htmlFor="Lista de Material"
+              sx={{
+                margin: 0,
+                padding: 0,
+                lineHeight: 4,
+              }}
+            >
+              Lista de Material
+            </CustomFormLabel>
+            <Tooltip title="Status necessário para o cliente prosseguir na esteira">
+              <HelpOutlineIcon />
+            </Tooltip>
+          </Box>
           <FormControlLabel
             control={
               <CustomSwitch

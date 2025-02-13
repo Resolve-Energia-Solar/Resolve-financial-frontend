@@ -200,6 +200,7 @@ const ProjectList = ({ onClick }) => {
                     title: 'Pendente',
                     subtitle: 'Lista de Materiais',
                     count: pendingMaterialList,
+                    onClick: () => setFilters({ ...filters, material_list_is_completed: false, is_released_to_engineering: true }),
                   },
                   {
                     backgroundColor: 'secondary.light',
