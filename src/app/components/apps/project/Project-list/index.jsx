@@ -152,7 +152,7 @@ const ProjectList = ({ onClick }) => {
                   • STATUS da VENDA esteja como <strong>FINALIZADO</strong>.
                 </Typography>
                 <Typography variant="body2" sx={{ ml: 2 }}>
-                  • STATUS do FINANCEIRO na venda esteja como <strong>PAGO</strong> ou <strong>LIBERADO</strong>.
+                  • STATUS do FINANCEIRO na venda esteja como <strong>CONCLUÍDO</strong> ou <strong>LIBERADO</strong>.
                 </Typography>
                 <Typography variant="body2" sx={{ ml: 2 }}>
                   • A vistoria principal esteja com PARECER FINAL <strong>APROVADO</strong>.
