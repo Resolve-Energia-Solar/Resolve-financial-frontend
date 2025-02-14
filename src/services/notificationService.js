@@ -5,9 +5,11 @@ const notificationService = {
     const response = await apiClient.get('/api/notifications/?unread=true')
     return response.data
   },
-  getAllNotifications: async () => {
-    const response = await apiClient.get('/api/notifications/?unread=true')
-    return response.data
+  getAllNotifications: async (filters = {}) => {
+    const queryParams = new URLSearchParams(filters).toString();
+    const url = `/api/notifications/${queryParams ? '?' + queryParams : ''}`;
+    const response = await apiClient.get(url);
+    return response.data;
   },
   getNotificationById: async id => {
     const response = await apiClient.get(`/api/notifications/${id}/`)
