@@ -33,6 +33,12 @@ import { on } from 'events';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import { useSelector } from 'react-redux';
+import GenericChip from '@/utils/status/Chip';
+import theme from '@/utils/theme';
+import CancelIcon from '@mui/icons-material/Cancel';
+import HourglassFullIcon from '@mui/icons-material/HourglassFull';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 
 function useAnimatedNumber(targetValue, duration = 800) {
   const [displayValue, setDisplayValue] = useState(0);
@@ -121,6 +127,28 @@ const ProjectList = ({ onClick }) => {
   const handleRowsPerPageChange = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+
+
+  const trtStatusMap = {
+    'Reprovada': { label: 'Reprovada', color: theme.palette.error.light, icon: <CancelIcon sx={{ color: '#fff' }} /> },
+    'Em Andamento': { label: 'Em Andamento', color: theme.palette.info.light, icon: <HourglassFullIcon sx={{ color: '#fff' }} /> },
+    'Concluída': { label: 'Concluída', color: theme.palette.success.light, icon: <CheckCircleIcon sx={{ color: '#fff' }} /> },
+    'Pendente': { label: 'Pendente', color: theme.palette.warning.light, icon: <HourglassEmptyIcon sx={{ color: '#fff' }} /> },
+  };
+
+  const accessOpinionStatusMap = {
+    'Liberado': { 
+      label: 'Liberado', 
+      color: theme.palette.success.light, 
+      icon: <CheckCircleIcon sx={{ color: '#fff' }} /> 
+    },
+    'Bloqueado': { 
+      label: 'Bloqueado', 
+      color: theme.palette.warning.light, 
+      icon: <HourglassEmptyIcon sx={{ color: '#fff' }} /> 
+    },
   };
 
   const blockedToEngineering = useAnimatedNumber(indicators?.blocked_to_engineering || 0);
@@ -278,6 +306,9 @@ const ProjectList = ({ onClick }) => {
               <TableCell>Homologador</TableCell>
               <TableCell>Status do Projeto</TableCell>
               <TableCell>Lista de Materiais</TableCell>
+              <TableCell>ART/TRT</TableCell>
+              <TableCell>Solicitação da Conce.</TableCell>
+              <TableCell>Parecer de Acesso</TableCell>
               <TableCell>Produto</TableCell>
               <TableCell>Kwp</TableCell>
               <TableCell>Status de Homologação</TableCell>
@@ -324,6 +355,19 @@ const ProjectList = ({ onClick }) => {
                       ) : (
                         <CloseIcon color="error" />
                       )}
+                    </TableCell>
+                    <TableCell>
+                      <GenericChip status={item.trt_pending} statusMap={trtStatusMap} />
+                    </TableCell>
+                    <TableCell>
+                      {item.peding_request ? (
+                        <CheckIcon color="success" />
+                      ) : (
+                        <CloseIcon color="error" />
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <GenericChip status={item.access_opinion} statusMap={accessOpinionStatusMap} />
                     </TableCell>
                     <TableCell>{item.product?.name}</TableCell>
                     <TableCell>{item.product?.params || '-'}</TableCell>
