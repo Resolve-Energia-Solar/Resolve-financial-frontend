@@ -10,12 +10,15 @@ import {
   Typography,
   Box,
   Button,
-  Chip
+  Chip,
+  IconButton
 } from '@mui/material';
-import { Add } from '@mui/icons-material';
+import { Add, Edit, Visibility } from '@mui/icons-material';
 import TableSkeleton from '@/app/components/apps/comercial/sale/components/TableSkeleton';
 import leadService from '@/services/leadService';
 import formatPhoneNumber from '@/utils/formatPhoneNumber';
+import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
+import { IconEye, IconPencil } from '@tabler/icons-react';
 
 const LeadList = ({ onClick }) => {
   const [leadsList, setLeadsList] = useState([]);
@@ -60,38 +63,37 @@ const LeadList = ({ onClick }) => {
 
   return (
     <>
-      <Box sx={{ display: 'flex', justifyContent: 'end', alignItems: 'flex-end' }}>
-        <Box>
-          {/* Exemplo: Botão para criar lead */}
-          <Button
-            startIcon={<Add />}
-            // onClick={() => router.push('/apps/lead/create')}
-            sx={{
-              width: 74,
-              height: 28,
-              fontSize: '0.75rem',
-              padding: '4px 8px',
-              minWidth: 'unset',
-              borderRadius: '4px',
-              marginBottom: 2,
-              backgroundColor: '#FFCC00',
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+        <Typography sx={{ fontSize: '15px' }}>
+          <span style={{ fontWeight: 'bold' }}>Total:</span> {totalRows} leads
+        </Typography>
+        <Button
+          startIcon={<Add />}
+          // onClick={() => router.push('/apps/lead/create')}
+          sx={{
+            width: 74,
+            height: 28,
+            fontSize: '0.75rem',
+            padding: '4px 8px',
+            minWidth: 'unset',
+            borderRadius: '4px',
+            backgroundColor: '#FFCC00',
+            color: '#000',
+            '&:hover': {
+              backgroundColor: '#FFB800',
               color: '#000',
-              '&:hover': {
-                backgroundColor: '#FFB800',
-                color: '#000',
-              },
-            }}
-          >
-            Criar
-          </Button>
-        </Box>
-
+            },
+          }}
+        >
+          Criar
+        </Button>
       </Box>
 
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell><CustomCheckbox /></TableCell>
               <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Nome</TableCell>
               <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>CPF/CNPJ</TableCell>
               <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Origem</TableCell>
@@ -99,10 +101,11 @@ const LeadList = ({ onClick }) => {
               <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Endereço</TableCell>
               <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Fone</TableCell>
               <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Status</TableCell>
+              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Editar/ Ver</TableCell>
             </TableRow>
           </TableHead>
           {loadingLeads ? (
-            <TableSkeleton rows={rowsPerPage} cols={7} />
+            <TableSkeleton rows={rowsPerPage} columns={9} />
           ) : error && page === 1 ? (
             <Typography color="error">{error}</Typography>
           ) : (
@@ -117,6 +120,7 @@ const LeadList = ({ onClick }) => {
                     },
                   }}
                 >
+                  <TableCell><CustomCheckbox /></TableCell>
                   <TableCell sx={{ fontWeight: "600", color: "#7E8388" }}>{item?.name}</TableCell>
                   <TableCell sx={{ color: "#7E8388" }}>{item.first_document || '-'}</TableCell>
                   <TableCell sx={{ color: "#7E8388" }}>{item?.origin?.name || '-'}</TableCell>
@@ -133,6 +137,23 @@ const LeadList = ({ onClick }) => {
                       }}
                     />
                   </TableCell>
+
+                  <TableCell sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <IconButton
+                      size="small"
+                    // onClick={() => onClick(item, 'edit')}
+                    >
+                      <IconPencil fontSize="small" />
+                    </IconButton>
+
+                    <IconButton
+                      size="small"
+                    // onClick={() => onClick(item, 'view')}
+                    >
+                      <IconEye fontSize="small" />
+                    </IconButton>
+                  </TableCell>
+
                 </TableRow>
               ))}
             </TableBody>
