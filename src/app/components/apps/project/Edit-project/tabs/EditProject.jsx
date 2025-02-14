@@ -167,21 +167,7 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={4}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <CustomFormLabel
-                htmlFor="Status do Projeto"
-                sx={{
-                  margin: 0,
-                  padding: 0,
-                  lineHeight: 4,
-                }}
-              >
-                Status do Projeto
-              </CustomFormLabel>
-              <Tooltip title="Status necessário para o cliente prosseguir na esteira">
-                <HelpOutlineIcon />
-              </Tooltip>
-            </Box>
+          <CustomFormLabel htmlFor="name">Projetista</CustomFormLabel>
           <AutoCompleteUser
             onChange={(id) => handleChange('designer_id', id)}
             value={formData.designer_id}
