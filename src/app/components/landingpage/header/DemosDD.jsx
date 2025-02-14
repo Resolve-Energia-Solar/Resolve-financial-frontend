@@ -50,7 +50,7 @@ const apps = [
     title: 'Contact',
   },
   {
-    link: 'https://modernize-nextjs.adminmart.com/apps/email',
+    link: 'https://modernize-nextjs.adminmart.com/apps/notification',
     img: '/images/landingpage/apps/app-email.jpg',
     title: 'Email',
   },

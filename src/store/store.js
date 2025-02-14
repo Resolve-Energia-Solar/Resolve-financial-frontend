@@ -5,7 +5,7 @@ import counterReducer from './counter/counterSlice';
 import CustomizerReducer from './customizer/CustomizerSlice';
 import ChatsReducer from './apps/chat/ChatSlice';
 import NotesReducer from './apps/notes/NotesSlice';
-import EmailReducer from './apps/email/EmailSlice';
+import EmailReducer from './apps/notification/NotificationSlice';
 import TicketReducer from './apps/tickets/TicketSlice';
 import ContactsReducer from './apps/contacts/ContactSlice';
 import EcommerceReducer from './apps/eCommerce/EcommerceSlice';

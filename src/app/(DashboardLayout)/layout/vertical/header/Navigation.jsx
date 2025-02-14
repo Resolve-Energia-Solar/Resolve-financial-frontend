@@ -123,7 +123,7 @@ const AppDD = () => {
         color="inherit"
         sx={{ color: (theme) => theme.palette.text.secondary }}
         variant="text"
-        href="/apps/email"
+        href="/apps/notification"
         component={Link}
       >
         Email

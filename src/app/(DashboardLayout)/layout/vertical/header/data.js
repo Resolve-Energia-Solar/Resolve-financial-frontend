@@ -54,7 +54,7 @@ const profile = [
     icon: '/images/svgs/icon-account.svg',
   },
   {
-    href: '/apps/email',
+    href: '/apps/notification',
     title: 'Minha Caixa de Entrada',
     subtitle: 'Mensagens e E-mails',
     icon: '/images/svgs/icon-inbox.svg',
@@ -107,7 +107,7 @@ const appsLink = [
     avatar: '/images/svgs/icon-dd-lifebuoy.svg',
   },
   {
-    href: '/apps/email',
+    href: '/apps/notification',
     title: 'Aplicativo de E-mail',
     subtext: 'Receba novos e-mails',
     avatar: '/images/svgs/icon-dd-message-box.svg',

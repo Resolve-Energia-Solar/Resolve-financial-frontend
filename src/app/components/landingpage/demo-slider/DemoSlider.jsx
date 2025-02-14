@@ -82,7 +82,7 @@ const apps = [
     title: 'Contact App',
   },
   {
-    link: 'https://modernize-nextjs.adminmart.com/apps/email',
+    link: 'https://modernize-nextjs.adminmart.com/apps/notification',
     img: App4,
     title: 'Email App',
   },

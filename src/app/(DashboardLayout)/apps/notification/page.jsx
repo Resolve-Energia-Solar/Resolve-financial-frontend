@@ -2,21 +2,21 @@ import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcr
 import PageContainer from '@/app/components/container/PageContainer';
 import AppCard from '@/app/components/shared/AppCard';
 import Image from 'next/image';
-import EmailApp from '@/app/components/apps/email/index'
+import NotificationApp from '@/app/components/apps/notification/index'
 
-const Email = () => {
+const Notification = () => {
 
   return (
-    <PageContainer title="Email" description="this is Email">
-      <Breadcrumb title="Email app" subtitle="Look at Inbox">
+    <PageContainer title="Notificações" description="Ver todas as suas notificações">
+      <Breadcrumb title="Notificações" subtitle="Ver todas as suas notificações">
         <Image src="/images/breadcrumb/emailSv.png" alt={'emailIcon'} width={195} height={195} />
       </Breadcrumb>
 
       <AppCard>
-        <EmailApp />
+        <NotificationApp />
       </AppCard>
     </PageContainer>
   );
 };
 
-export default Email;
+export default Notification;

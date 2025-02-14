@@ -158,10 +158,12 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
   };
 
   const resetFilters = () => {
-    setFilterValues(getDefaultValues());
-    onApply(onClose());
-    onApply(getDefaultValues());
+    const defaults = getDefaultValues();
+    setFilterValues(defaults);
+    onApply(defaults);
+    onClose();
   };
+  
 
   const handleApply = () => {
     const transformedFilters = {};

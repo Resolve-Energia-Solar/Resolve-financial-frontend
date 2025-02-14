@@ -205,7 +205,7 @@ const Notifications = () => {
             Marcar todas como lidas
           </Button>}
           <Button
-            href="/apps/email"
+            href="/apps/notification"
             variant="outlined"
             component={Link}
             color="primary"

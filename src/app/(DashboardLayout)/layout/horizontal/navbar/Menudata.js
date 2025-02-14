@@ -69,9 +69,9 @@ const Menuitems = [
       },
       {
         id: uniqueId(),
-        title: 'Email',
+        title: 'Notificações',
         icon: IconPoint,
-        href: '/apps/email',
+        href: '/apps/notification',
       },
       {
         id: uniqueId(),

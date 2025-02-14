@@ -62,7 +62,7 @@ const MobileRightSidebar = () => {
               </Typography>
             </ListItemText>
           </ListItemButton>
-          <ListItemButton component={Link} href="/apps/email">
+          <ListItemButton component={Link} href="/apps/notification">
             <ListItemIcon sx={{ minWidth: 35 }}>
               <IconMail size="21" stroke="1.5" />
             </ListItemIcon>
