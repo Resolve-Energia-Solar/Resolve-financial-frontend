@@ -19,10 +19,14 @@ import leadService from '@/services/leadService';
 import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import { IconEye, IconPencil } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 
 const LeadList = ({ onClick }) => {
   const [leadsList, setLeadsList] = useState([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
+
+  const router = useRouter();
+
 
   const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
@@ -148,7 +152,7 @@ const LeadList = ({ onClick }) => {
 
                     <IconButton
                       size="small"
-                    // onClick={() => onClick(item, 'view')}
+                      onClick={() => router.push(`/apps/leads/${item.id}/view`)}
                     >
                       <IconEye fontSize="small" />
                     </IconButton>
