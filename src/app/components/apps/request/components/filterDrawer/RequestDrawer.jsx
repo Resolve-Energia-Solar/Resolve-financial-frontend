@@ -29,7 +29,7 @@ export default function RequestDrawer({ externalOpen, onClose, onApplyFilters })
 
   const [open, setOpen] = useState(externalOpen);
   
-  const { filters, setFilters } = useContext(RequestDataContext);
+  const { filters = {}, setFilters = () => {} } = useContext(RequestDataContext) || {};
 
   const [tempFilters, setTempFilters] = useState({
     status__in: filters.status__in || [],

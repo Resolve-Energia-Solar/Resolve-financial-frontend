@@ -48,10 +48,11 @@ const RequestList = ({ projectId = null, enableFilters = true }) => {
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // Tenta acessar o contexto, se não existir, ignora os filtros
   const context = useContext(RequestDataContext);
+
   const filters = context ? context.filters : {};
   const setFilters = context ? context.setFilters : () => {};
+  
 
   const [requestIdSelected, setRequestIdSelected] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
