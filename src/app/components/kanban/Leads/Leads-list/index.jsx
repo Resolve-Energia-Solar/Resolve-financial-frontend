@@ -63,32 +63,30 @@ const LeadList = ({ onClick }) => {
 
   return (
     <>
-      <Box sx={{ display: 'flex', justifyContent: 'end', alignItems: 'flex-end' }}>
-        <Box>
-          {/* Exemplo: Botão para criar lead */}
-          <Button
-            startIcon={<Add />}
-            // onClick={() => router.push('/apps/lead/create')}
-            sx={{
-              width: 74,
-              height: 28,
-              fontSize: '0.75rem',
-              padding: '4px 8px',
-              minWidth: 'unset',
-              borderRadius: '4px',
-              marginBottom: 2,
-              backgroundColor: '#FFCC00',
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+        <Typography sx={{ fontSize: '15px' }}>
+          <span style={{ fontWeight: 'bold' }}>Total:</span> {totalRows} leads
+        </Typography>
+        <Button
+          startIcon={<Add />}
+          // onClick={() => router.push('/apps/lead/create')}
+          sx={{
+            width: 74,
+            height: 28,
+            fontSize: '0.75rem',
+            padding: '4px 8px',
+            minWidth: 'unset',
+            borderRadius: '4px',
+            backgroundColor: '#FFCC00',
+            color: '#000',
+            '&:hover': {
+              backgroundColor: '#FFB800',
               color: '#000',
-              '&:hover': {
-                backgroundColor: '#FFB800',
-                color: '#000',
-              },
-            }}
-          >
-            Criar
-          </Button>
-        </Box>
-
+            },
+          }}
+        >
+          Criar
+        </Button>
       </Box>
 
       <TableContainer>
@@ -103,7 +101,7 @@ const LeadList = ({ onClick }) => {
               <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Endereço</TableCell>
               <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Fone</TableCell>
               <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Status</TableCell>
-              <TableCell>Editar/ Ver</TableCell>
+              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Editar/ Ver</TableCell>
             </TableRow>
           </TableHead>
           {loadingLeads ? (
@@ -150,7 +148,7 @@ const LeadList = ({ onClick }) => {
 
                     <IconButton
                       size="small"
-                      // onClick={() => onClick(item, 'view')}
+                    // onClick={() => onClick(item, 'view')}
                     >
                       <IconEye fontSize="small" />
                     </IconButton>
