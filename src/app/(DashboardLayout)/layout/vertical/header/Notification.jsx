@@ -10,7 +10,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import Scrollbar from '@/app/components/custom-scroll/Scrollbar';
-import { IconBellRinging, IconBell } from '@tabler/icons-react';
+import { IconBellRinging, IconBell, IconBellQuestion } from '@tabler/icons-react';
 import { Stack } from '@mui/system';
 import Link from 'next/link';
 
@@ -19,6 +19,7 @@ import notificationService from '@/services/notificationService';
 const Notifications = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
   const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const handleClick2 = (event) => {
     setAnchorEl2(event.currentTarget);
@@ -30,12 +31,17 @@ const Notifications = () => {
 
   // Busca notificações não lidas
   const fetchNotifications = () => {
+    setLoading(true);
     notificationService
       .getUnreadNotifications()
-      .then((data) => setNotifications(data.results))
-      .catch((error) =>
-        console.error('Erro ao buscar notificações:', error)
-      );
+      .then((data) => {
+        setNotifications(data.results);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Erro ao buscar notificações:', error);
+        setLoading(false);
+      });
   };
 
   // Marca uma notificação como lida sem fechar o dropdown
@@ -86,7 +92,9 @@ const Notifications = () => {
         onClick={handleClick2}
       >
         <Badge variant={notifications.length > 0 ? "dot" : undefined} color="primary">
-          {notifications.length > 0 ? (
+          {loading ? (
+            <IconBellQuestion size="21" stroke="1.5" />
+          ) : notifications.length > 0 ? (
             <IconBellRinging size="21" stroke="1.5" />
           ) : (
             <IconBell size="21" stroke="1.5" />
