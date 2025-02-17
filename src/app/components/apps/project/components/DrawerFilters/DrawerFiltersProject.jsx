@@ -20,13 +20,13 @@ import { ProjectDataContext } from '@/app/context/ProjectContext';
 import NumberInputBasic, { CustomNumberInput, NumberInput } from '../NumberInput';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import AutoCompleteSupplyAds from '../../../checklist/components/auto-complete/Auto-Input-SupplyAds';
 
 export default function DrawerFiltersProject() {
   const [open, setOpen] = useState(false);
   const { filters, setFilters } = useContext(ProjectDataContext);
 
   const [tempFilters, setTempFilters] = useState({
-    documentCompletionDate: filters.documentCompletionDate,
     status: filters.status,
     customer: filters.customer,
     designer_status: filters.designer_status,
@@ -35,25 +35,31 @@ export default function DrawerFiltersProject() {
     signature_date: filters.signature_date,
     product_kwp: filters.product_kwp || null,
     material_list_is_completed: filters.material_list_is_completed,
+    trt_status: filters.trt_status,
+    new_contract_number: filters.new_contract_number,
+    supply_adquance: filters.supply_adquance,
   });
+
 
   const createFilterParams = (filters) => {
     const params = {};
-
-    if (
-      filters.documentCompletionDate &&
-      filters.documentCompletionDate[0] &&
-      filters.documentCompletionDate[1]
-    ) {
-      const startDate = filters.documentCompletionDate[0].toISOString().split('T')[0];
-      const endDate = filters.documentCompletionDate[1].toISOString().split('T')[0];
-      params.end_date__range = `${startDate},${endDate}`;
-    }
 
     if (filters.signature_date && filters.signature_date[0] && filters.signature_date[1]) {
       const startDate = filters.signature_date[0].toISOString().split('T')[0];
       const endDate = filters.signature_date[1].toISOString().split('T')[0];
       params.signature_date = `${startDate},${endDate}`;
+    }
+
+    if (filters.new_contract_number) {
+      params.new_contract_number = filters.new_contract_number;
+    }
+
+    if (filters.supply_adquance && filters.supply_adquance.length > 0) {
+      params.supply_adquance = filters.supply_adquance.join(',');
+    }
+
+    if (filters.trt_status && filters.trt_status.length > 0) {
+      params.trt_status = filters.trt_status.map((status) => status.value).join(',');
     }
 
     if (filters.material_list_is_completed !== null) {
@@ -88,10 +94,16 @@ export default function DrawerFiltersProject() {
   };
 
   const handleChange = (key, value) => {
-    console.log('key:', key);
-    console.log('value:', value);
     setTempFilters((prev) => ({ ...prev, [key]: value }));
   };
+
+  const statusOptions = [
+    {value: 'P', label: 'Pendente'},
+    {value: 'A', label: 'Aprovado'},
+    {value: 'EA', label: 'Em Andamento'},
+    {value: 'R', label: 'Recusado'},
+  ];
+
 
   const materialListIsCompleted = [
     { value: true, label: 'Sim' },
@@ -101,7 +113,6 @@ export default function DrawerFiltersProject() {
 
   const clearFilters = () => {
     setTempFilters({
-      documentCompletionDate: [null, null],
       status: [],
       designer_status: [],
       is_released_to_engineering: null,
@@ -109,6 +120,10 @@ export default function DrawerFiltersProject() {
       homologator: null,
       signature_date: [null, null],
       product_kwp: null,
+      material_list_is_completed: null,
+      trt_status: [],
+      new_contract_number: null,
+      supply_adquance: null
     });
   };
 
@@ -123,6 +138,19 @@ export default function DrawerFiltersProject() {
     }
     setOpen(inOpen);
   };
+
+  const handleStatusChange = (event, value) => {
+  
+    if (value.some((trt_status) => trt_status.value === 'P')) {
+      setTempFilters((prev) => ({ ...prev, trt_status: [{ value: 'P', label: 'Pendente' }] }));
+    } else {
+      setTempFilters((prev) => ({
+        ...prev,
+        trt_status: value.filter((trt_status) => trt_status.value !== 'P'),
+      }));
+    }
+  };
+  
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -213,7 +241,6 @@ export default function DrawerFiltersProject() {
                     <HelpOutlineIcon />
                   </Tooltip>
                 </Box>
-
                 <FormControl fullWidth>
                   <Select
                     value={
@@ -224,6 +251,42 @@ export default function DrawerFiltersProject() {
                     onChange={(event) =>
                       handleChange(
                         'material_list_is_completed',
+                        event.target.value === '' ? null : event.target.value === 'true'
+                      )
+                    }
+                  >
+                    <MenuItem value="">
+                      <em>Todos</em>
+                    </MenuItem>
+                    <MenuItem value="true">Sim</MenuItem>
+                    <MenuItem value="false">Não</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <CustomFormLabel
+                    htmlFor="Nova UC"
+                    sx={{
+                      margin: 0,
+                      padding: 0,
+                      lineHeight: 4,
+                    }}
+                  >
+                    Nova UC
+                  </CustomFormLabel>
+                </Box>
+                <FormControl fullWidth>
+                  <Select
+                    value={
+                      tempFilters.new_contract_number == null
+                        ? ''
+                        : tempFilters.new_contract_number.toString()
+                    }
+                    onChange={(event) =>
+                      handleChange(
+                        'new_contract_number',
                         event.target.value === '' ? null : event.target.value === 'true'
                       )
                     }
@@ -250,6 +313,25 @@ export default function DrawerFiltersProject() {
                   placeholder="Selecione o status"
                   value={tempFilters.status}
                   onChange={(event, value) => handleChange('status', value)}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="Status">Status de TRT</CustomFormLabel>
+                <CheckboxesTags
+                  options={statusOptions}
+                  placeholder={'Selecione o status'}
+                  value={tempFilters.trt_status}
+                  onChange={handleStatusChange}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="supply_adquance">Adequação de Fornecimento</CustomFormLabel>
+                <AutoCompleteSupplyAds
+                  placeholder="Selecione a adequação de fornecimento"
+                  value={tempFilters.supply_adquance}
+                  onChange={(id) => handleChange('supply_adquance', id)}
                 />
               </Grid>
 

@@ -21,7 +21,7 @@ export default function AutoCompleteSupplyAds({
 
   useEffect(() => {
     const fetchDefaultSupplies = async () => {
-      if (value.length > 0) {
+      if (value && value.length > 0) {
         try {
           const supplies = await Promise.all(value.map((id) => supplyService.getSupplyAdById(id)));
           const formattedSupplies = supplies.map((supply) => ({
