@@ -46,7 +46,7 @@ const AnswerForm = ({ answerData }) => {
     }
     return value || '';
   };
-  
+
   useEffect(() => {
     try {
       if (answerData) {
@@ -61,7 +61,9 @@ const AnswerForm = ({ answerData }) => {
     const fetchAnswersFiles = async () => {
       try {
         if (answerData?.results[0]?.id) {
-          const files = await answerService.getAnswerFormFiles(answerData?.results[0]?.id);
+          const files = await answerService.getAnswerFormFiles(answerData?.results[0]?.id, {
+            limit: 50,
+          });
           setAnswersFiles(files.results);
         }
       } catch (error) {
@@ -125,39 +127,11 @@ const AnswerForm = ({ answerData }) => {
                     </Typography>
                   </Grid>
                 );
-                case 'select':
-                  const rawValue = answerFromField(`${field.type}-${field.id}`);
-                  const normalizedValue = normalizeValue(rawValue, field.multiple);
-                
-                  if (field.multiple) {
-                    return (
-                      <Grid
-                        item
-                        xs={12}
-                        sm={12}
-                        p={2}
-                        key={field.id}
-                        sx={{ alignItems: 'center', width: '100%' }}
-                      >
-                        <Typography variant="h5">{field.label}:</Typography>
-                        <CustomSelect
-                          id={`${field.type}-${field.id}`}
-                          name={`${field.type}-${field.id}`}
-                          variant="standard"
-                          disabled
-                          value={normalizedValue}
-                          multiple
-                          width="100%"
-                        >
-                          {field.options.map((option) => (
-                            <MenuItem key={option.id} value={option.value}>
-                              {option.label}
-                            </MenuItem>
-                          ))}
-                        </CustomSelect>
-                      </Grid>
-                    );
-                  }
+              case 'select':
+                const rawValue = answerFromField(`${field.type}-${field.id}`);
+                const normalizedValue = normalizeValue(rawValue, field.multiple);
+
+                if (field.multiple) {
                   return (
                     <Grid
                       item
@@ -174,6 +148,8 @@ const AnswerForm = ({ answerData }) => {
                         variant="standard"
                         disabled
                         value={normalizedValue}
+                        multiple
+                        width="100%"
                       >
                         {field.options.map((option) => (
                           <MenuItem key={option.id} value={option.value}>
@@ -183,7 +159,33 @@ const AnswerForm = ({ answerData }) => {
                       </CustomSelect>
                     </Grid>
                   );
-                
+                }
+                return (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={12}
+                    p={2}
+                    key={field.id}
+                    sx={{ alignItems: 'center', width: '100%' }}
+                  >
+                    <Typography variant="h5">{field.label}:</Typography>
+                    <CustomSelect
+                      id={`${field.type}-${field.id}`}
+                      name={`${field.type}-${field.id}`}
+                      variant="standard"
+                      disabled
+                      value={normalizedValue}
+                    >
+                      {field.options.map((option) => (
+                        <MenuItem key={option.id} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </CustomSelect>
+                  </Grid>
+                );
+
               case 'date':
                 return (
                   <Grid
