@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
-import {
+"use client";
+
+import { useState, useEffect } from "react";import {
   Drawer,
   Box,
   TextField,
@@ -86,7 +87,9 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
   const getDefaultValues = () => {
     const defaultValues = {};
     filters.forEach((filterConfig) => {
-      if (filterConfig.type === "number-range") {
+      if (filterConfig.type === "async-multiselect") {
+        defaultValues[filterConfig.key] = [];
+      } else if (filterConfig.type === "number-range") {
         defaultValues[filterConfig.key] = { min: "", max: "" };
       } else if (filterConfig.type === "range") {
         defaultValues[filterConfig.key] = { start: "", end: "" };
@@ -163,7 +166,7 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
     onApply(defaults);
     onClose();
   };
-  
+
 
   const handleApply = () => {
     const transformedFilters = {};
@@ -172,6 +175,11 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
         const val = filterValues[filterConfig.key] || {};
         transformedFilters[filterConfig.subkeys.min] = val.min;
         transformedFilters[filterConfig.subkeys.max] = val.max;
+      } else if (filterConfig.type === "async-multiselect") {
+        const selected = filterValues[filterConfig.key];
+        transformedFilters[filterConfig.key] = Array.isArray(selected)
+          ? selected.map(item => item.value).join(",")
+          : "";
       } else if (filterConfig.type === "range") {
         const val = filterValues[filterConfig.key] || { start: "", end: "" };
         transformedFilters[filterConfig.key] = (val.start || val.end) ? `${val.start},${val.end}` : "";
@@ -245,6 +253,20 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
                 value={filterValues[filterConfig.key] || { start: "", end: "" }}
                 onChange={(value) => handleChange(filterConfig.key, value)}
                 inputType={inputType}
+              />
+            );
+          } else if (filterConfig.type === "async-multiselect") {
+            return (
+              <GenericAsyncAutocompleteInput
+                key={filterConfig.key}
+                label={filterConfig.label}
+                value={filterValues[filterConfig.key] || []}
+                onChange={(newValue) => handleChange(filterConfig.key, newValue)}
+                endpoint={filterConfig.endpoint}
+                queryParam={filterConfig.queryParam}
+                extraParams={filterConfig.extraParams}
+                mapResponse={filterConfig.mapResponse}
+                multiple
               />
             );
           } else if (filterConfig.type === "number-range") {

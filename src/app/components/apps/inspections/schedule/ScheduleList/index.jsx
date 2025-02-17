@@ -104,9 +104,9 @@ const scheduleFilterConfig = [
       })),
   },
   {
-    key: "service_opinion",
+    key: "service_opinion__in",
     label: "Parecer do Serviço",
-    type: "async-autocomplete",
+    type: "async-multiselect",
     endpoint: "/api/service-opinions/",
     queryParam: "name__icontains",
     extraParams: {},
@@ -117,9 +117,9 @@ const scheduleFilterConfig = [
       })),
   },
   {
-    key: "final_service_opinion",
+    key: "final_service_opinion__in",
     label: "Parecer Final do Serviço",
-    type: "async-autocomplete",
+    type: "async-multiselect",
     endpoint: "/api/service-opinions/",
     queryParam: "name__icontains",
     extraParams: {},
