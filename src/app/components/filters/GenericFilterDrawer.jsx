@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";import {
+import { useState, useEffect } from "react"; import {
   Drawer,
   Box,
   TextField,
@@ -8,9 +8,11 @@ import { useState, useEffect } from "react";import {
   Button,
   IconButton,
   Typography,
+  Grid
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import GenericAsyncAutocompleteInput from "./GenericAsyncAutocompleteInput";
+import CustomFormLabel from "../forms/theme-elements/CustomFormLabel";
 
 // Componente para intervalos (range)
 const RangeInput = ({ label, value, onChange, inputType = "text" }) => {
@@ -209,21 +211,24 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
         {filters.map((filterConfig) => {
           if (filterConfig.type === "select") {
             return (
-              <TextField
-                key={filterConfig.key}
-                label={filterConfig.label}
-                value={filterValues[filterConfig.key] || ""}
-                onChange={(e) => handleChange(filterConfig.key, e.target.value)}
-                fullWidth
-                margin="normal"
-                select
-              >
-                {filterConfig.options?.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
+              <Grid>
+                <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+                <TextField
+                  key={filterConfig.key}
+                  label={filterConfig.label}
+                  value={filterValues[filterConfig.key] || ""}
+                  onChange={(e) => handleChange(filterConfig.key, e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  select
+                >
+                  {filterConfig.options?.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
             );
           } else if (filterConfig.type === "multiselect") {
             return (
@@ -247,74 +252,95 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
           } else if (filterConfig.type === "range") {
             const inputType = filterConfig.inputType || "text";
             return (
-              <RangeInput
-                key={filterConfig.key}
-                label={filterConfig.label}
-                value={filterValues[filterConfig.key] || { start: "", end: "" }}
-                onChange={(value) => handleChange(filterConfig.key, value)}
-                inputType={inputType}
-              />
+              <Grid>
+                <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+                <RangeInput
+                  key={filterConfig.key}
+                  label={filterConfig.label}
+                  value={filterValues[filterConfig.key] || { start: "", end: "" }}
+                  onChange={(value) => handleChange(filterConfig.key, value)}
+                  inputType={inputType}
+                />
+              </Grid>
             );
           } else if (filterConfig.type === "async-multiselect") {
             return (
-              <GenericAsyncAutocompleteInput
-                key={filterConfig.key}
-                label={filterConfig.label}
-                value={filterValues[filterConfig.key] || []}
-                onChange={(newValue) => handleChange(filterConfig.key, newValue)}
-                endpoint={filterConfig.endpoint}
-                queryParam={filterConfig.queryParam}
-                extraParams={filterConfig.extraParams}
-                mapResponse={filterConfig.mapResponse}
-                multiple
-              />
+              <Grid>
+                <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+
+                <GenericAsyncAutocompleteInput
+                  key={filterConfig.key}
+                  label={filterConfig.label}
+                  value={filterValues[filterConfig.key] || []}
+                  onChange={(newValue) => handleChange(filterConfig.key, newValue)}
+                  endpoint={filterConfig.endpoint}
+                  queryParam={filterConfig.queryParam}
+                  extraParams={filterConfig.extraParams}
+                  mapResponse={filterConfig.mapResponse}
+                  multiple
+                />
+              </Grid>
             );
           } else if (filterConfig.type === "number-range") {
             return (
-              <NumberRangeInput
-                key={filterConfig.key}
-                label={filterConfig.label}
-                value={filterValues[filterConfig.key] || { min: "", max: "" }}
-                onChange={(value) => handleChange(filterConfig.key, value)}
-              />
+              <Grid>
+                <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+
+                <NumberRangeInput
+                  key={filterConfig.key}
+                  label={filterConfig.label}
+                  value={filterValues[filterConfig.key] || { min: "", max: "" }}
+                  onChange={(value) => handleChange(filterConfig.key, value)}
+                />
+              </Grid>
             );
           } else if (filterConfig.type === "date") {
             return (
-              <TextField
-                key={filterConfig.key}
-                label={filterConfig.label}
-                type="date"
-                value={filterValues[filterConfig.key] || ""}
-                onChange={(e) => handleChange(filterConfig.key, e.target.value)}
-                fullWidth
-                margin="normal"
-                InputLabelProps={{ shrink: true }}
-              />
+              <Grid>
+                <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+                <TextField
+                  key={filterConfig.key}
+                  label={filterConfig.label}
+                  type="date"
+                  value={filterValues[filterConfig.key] || ""}
+                  onChange={(e) => handleChange(filterConfig.key, e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
             );
           } else if (filterConfig.type === "async-autocomplete") {
             return (
-              <GenericAsyncAutocompleteInput
-                key={filterConfig.key}
-                label={filterConfig.label}
-                value={filterValues[filterConfig.key] || null}
-                onChange={(newValue) => handleChange(filterConfig.key, newValue)}
-                endpoint={filterConfig.endpoint}
-                queryParam={filterConfig.queryParam}
-                extraParams={filterConfig.extraParams}
-                mapResponse={filterConfig.mapResponse}
-              />
+              <Grid>
+                <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+                <GenericAsyncAutocompleteInput
+                  key={filterConfig.key}
+                  label={filterConfig.label}
+                  value={filterValues[filterConfig.key] || null}
+                  onChange={(newValue) => handleChange(filterConfig.key, newValue)}
+                  endpoint={filterConfig.endpoint}
+                  queryParam={filterConfig.queryParam}
+                  extraParams={filterConfig.extraParams}
+                  mapResponse={filterConfig.mapResponse}
+                />
+              </Grid>
             );
           } else {
             return (
-              <TextField
-                key={filterConfig.key}
-                label={filterConfig.label}
-                value={filterValues[filterConfig.key] || ""}
-                onChange={(e) => handleChange(filterConfig.key, e.target.value)}
-                fullWidth
-                margin="normal"
-                type={filterConfig.type === "number" ? "number" : "text"}
-              />
+              <Grid>
+                <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+
+                <TextField
+                  key={filterConfig.key}
+                  label={filterConfig.label}
+                  value={filterValues[filterConfig.key] || ""}
+                  onChange={(e) => handleChange(filterConfig.key, e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  type={filterConfig.type === "number" ? "number" : "text"}
+                />
+              </Grid>
             );
           }
         })}
