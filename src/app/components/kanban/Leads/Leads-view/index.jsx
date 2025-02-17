@@ -4,9 +4,36 @@ import { AccountCircle, CalendarToday, CalendarViewWeek, WbSunny } from '@mui/ic
 import BlankCard from '@/app/components/shared/BlankCard';
 import { IconCalendarWeek, IconEye, IconPencil, IconTrash } from '@tabler/icons-react';
 import MediaControlCard from '../../components/CardProposal';
+import { useEffect, useState } from 'react';
+import leadService from '@/services/leadService';
+import { parse } from 'path';
+import formatPhoneNumber from '@/utils/formatPhoneNumber';
+import { useSnackbar } from 'notistack';
 
 function ViewLeadPage({ leadId = null }) {
     const theme = useTheme();
+    const [lead, setLead] = useState(null);
+    const [loadingLeads, setLoadingLeads] = useState(true);
+    const { enqueueSnackbar } = useSnackbar();
+
+
+    useEffect(() => {
+        const fetchLead = async () => {
+            setLoadingLeads(true);
+            try {
+                const data = await leadService.getLeadById(leadId);
+                setLead(data);
+                console.log(data);
+            } catch (err) {
+                enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
+            } finally {
+                setLoadingLeads(false);
+            }
+        }
+        fetchLead();
+
+    }, []);
+
 
     return (
         <Grid container spacing={3} sx={{ p: 2 }}>
@@ -22,7 +49,7 @@ function ViewLeadPage({ leadId = null }) {
                                     Cliente
                                 </Typography>
                                 <Typography variant="h6" gutterBottom sx={{ fontSize: 16 }}>
-                                    Marília Leal da Cunha
+                                    {lead?.name}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -34,8 +61,9 @@ function ViewLeadPage({ leadId = null }) {
                                     </Typography>
                                     <Rating
                                         name="qualification"
-                                        value={0}
+                                        value={lead?.qualification}
                                         max={5}
+                                        readOnly
                                         size="small"
                                         sx={{ ml: 1 }}
                                         icon={<WbSunny fontSize="inherit" sx={{ color: theme.palette.warning.main }} />}
@@ -48,7 +76,7 @@ function ViewLeadPage({ leadId = null }) {
                                     <Typography variant="body1" gutterBottom sx={{ fontSize: 12, color: '#ADADAD' }}>
                                         Status
                                     </Typography>
-                                    <Chip label="Contrato" size="small" sx={{ width: '100%', p: 2, backgroundColor: 'transparent', border: '1px solid #FFC107', color: '#ADADAD' }} />
+                                    <Chip label={lead?.column?.name} size="small" sx={{ width: '100%', p: 2, backgroundColor: 'transparent', border: `1px solid ${lead?.column?.color}`, color: '#ADADAD' }} />
                                 </Grid>
                                 <Grid item xs={12} md={2}>
                                     <IconButton
@@ -84,7 +112,7 @@ function ViewLeadPage({ leadId = null }) {
                             }}
                         >
                             <IconCalendarWeek size={28} style={{ verticalAlign: 'middle' }} />
-                            <Typography variant="p" sx={{ color: '#000000', fontSize: '24px' }}>
+                            <Typography variant="body1" sx={{ color: '#000000', fontSize: '24px' }}>
                                 Vistoria técnica{' '}
                                 <Box
                                     component="span"
@@ -108,7 +136,7 @@ function ViewLeadPage({ leadId = null }) {
                                 CPF
                             </Typography>
                             <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
-                                001.008.003-24
+                                {lead?.first_document || '-'}
                             </Typography>
                         </Grid>
 
@@ -117,7 +145,7 @@ function ViewLeadPage({ leadId = null }) {
                                 Fone
                             </Typography>
                             <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
-                                (91) 99377-8899
+                                {formatPhoneNumber(lead?.phone)}
                             </Typography>
                         </Grid>
 
@@ -126,7 +154,7 @@ function ViewLeadPage({ leadId = null }) {
                                 E-mail
                             </Typography>
                             <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
-                                mariliale@gmail.com
+                                {lead?.contact_email || '-'}
                             </Typography>
                         </Grid>
 
@@ -135,7 +163,7 @@ function ViewLeadPage({ leadId = null }) {
                                 Endereço
                             </Typography>
                             <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
-                                Rua Antônio Barreto, 1523
+                                {lead?.addresses[0]?.street || '-'}, {lead?.addresses[0]?.number || '-'}
                             </Typography>
                         </Grid>
 
@@ -144,7 +172,7 @@ function ViewLeadPage({ leadId = null }) {
                                 Origem/Campanha
                             </Typography>
                             <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
-                                Facebook / Dia da Mulher
+                                {lead?.origin?.name || '-'} / -
                             </Typography>
                         </Grid>
 
@@ -153,7 +181,7 @@ function ViewLeadPage({ leadId = null }) {
                                 kWp
                             </Typography>
                             <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
-                                250
+                                {lead?.kwp || '-'}
                             </Typography>
                         </Grid>
 
@@ -162,7 +190,7 @@ function ViewLeadPage({ leadId = null }) {
                                 Responsável
                             </Typography>
                             <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
-                                Beatriz Silva
+                                -
                             </Typography>
                         </Grid>
 
@@ -170,8 +198,8 @@ function ViewLeadPage({ leadId = null }) {
                             <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
                                 Observações
                             </Typography>
-                            <Typography variant="p" gutterBottom sx={{ color: '#303030', fontSize: '14px' }}>
-                                At risus viverra adipiscing at in tellus. Blandit massa enim nec dui nunc mattis. Lacus vel facilisis volutpat est velit.
+                            <Typography variant="body1" gutterBottom sx={{ color: '#303030', fontSize: '14px' }}>
+                                -
                             </Typography>
                         </Grid>
                     </Grid>
