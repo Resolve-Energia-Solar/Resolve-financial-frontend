@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react"; import {
+import { useState, useEffect } from "react";
+import {
   Drawer,
   Box,
   TextField,
@@ -8,7 +9,7 @@ import { useState, useEffect } from "react"; import {
   Button,
   IconButton,
   Typography,
-  Grid
+  Grid,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import GenericAsyncAutocompleteInput from "./GenericAsyncAutocompleteInput";
@@ -106,10 +107,8 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
 
   useEffect(() => {
     if (open) {
-      setFilterValues(prev => {
-        // Se já houver valores (não vazio), mantenha-os
+      setFilterValues((prev) => {
         if (Object.keys(prev).length > 0) return prev;
-        // Senão, monte os valores iniciais com base em initialValues
         const defaultValues = {};
         filters.forEach((filterConfig) => {
           if (filterConfig.type === "number-range") {
@@ -136,7 +135,7 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
             } else {
               defaultValues[filterConfig.key] = { start: "", end: "" };
             }
-          } else if (filterConfig.type === "multiselect") {
+          } else if (filterConfig.type === "multiselect" || filterConfig.type === "async-multiselect") {
             if (initialValues && initialValues[filterConfig.key] !== undefined) {
               defaultValues[filterConfig.key] = Array.isArray(initialValues[filterConfig.key])
                 ? initialValues[filterConfig.key]
@@ -157,7 +156,6 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
     }
   }, [initialValues, filters, open]);
 
-
   const handleChange = (key, value) => {
     setFilterValues((prev) => ({ ...prev, [key]: value }));
   };
@@ -168,7 +166,6 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
     onApply(defaults);
     onClose();
   };
-
 
   const handleApply = () => {
     const transformedFilters = {};
@@ -201,161 +198,177 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
-      <Box sx={{ width: 350, p: 2 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-          <Typography variant="h6">Filtros</Typography>
-          <IconButton onClick={onClose}>
-            <CloseIcon />
-          </IconButton>
+      <Box sx={{ width: 600, height: "100%", display: "flex", flexDirection: "column" }}>
+        {/* Área de conteúdo scrollável */}
+        <Box sx={{ flex: 1, overflowY: "auto", pr: 2, pl: 2 }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+            <Typography variant="h6">Filtros</Typography>
+            <IconButton onClick={onClose}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <Grid container spacing={2}>
+            {filters.map((filterConfig) => {
+              if (filterConfig.type === "select") {
+                return (
+                  <Grid item xs={12} key={filterConfig.key}>
+                    <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+                    <TextField
+                      value={filterValues[filterConfig.key] || ""}
+                      onChange={(e) => handleChange(filterConfig.key, e.target.value)}
+                      fullWidth
+                      margin="normal"
+                      select
+                    >
+                      {filterConfig.options?.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                );
+              } else if (filterConfig.type === "multiselect") {
+                return (
+                  <Grid item xs={12} key={filterConfig.key}>
+                    <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+                    <TextField
+                      value={filterValues[filterConfig.key] || []}
+                      onChange={(e) => handleChange(filterConfig.key, e.target.value)}
+                      fullWidth
+                      margin="normal"
+                      select
+                      SelectProps={{ multiple: true }}
+                    >
+                      {filterConfig.options?.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                );
+              } else if (filterConfig.type === "range") {
+                const inputType = filterConfig.inputType || "text";
+                return (
+                  <Grid item xs={12} key={filterConfig.key}>
+                    <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+                    <RangeInput
+                      label={filterConfig.label}
+                      value={filterValues[filterConfig.key] || { start: "", end: "" }}
+                      onChange={(value) => handleChange(filterConfig.key, value)}
+                      inputType={inputType}
+                    />
+                  </Grid>
+                );
+              } else if (filterConfig.type === "async-multiselect") {
+                return (
+                  <Grid item xs={12} key={filterConfig.key}>
+                    <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+                    <GenericAsyncAutocompleteInput
+                      label={filterConfig.label}
+                      value={filterValues[filterConfig.key] || []}
+                      onChange={(newValue) => handleChange(filterConfig.key, newValue)}
+                      endpoint={filterConfig.endpoint}
+                      queryParam={filterConfig.queryParam}
+                      extraParams={filterConfig.extraParams}
+                      mapResponse={filterConfig.mapResponse}
+                      multiple
+                    />
+                  </Grid>
+                );
+              } else if (filterConfig.type === "number-range") {
+                return (
+                  <Grid item xs={12} key={filterConfig.key}>
+                    <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+                    <NumberRangeInput
+                      label={filterConfig.label}
+                      value={filterValues[filterConfig.key] || { min: "", max: "" }}
+                      onChange={(value) => handleChange(filterConfig.key, value)}
+                    />
+                  </Grid>
+                );
+              } else if (filterConfig.type === "date") {
+                return (
+                  <Grid item xs={12} key={filterConfig.key}>
+                    <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+                    <TextField
+                      label={filterConfig.label}
+                      type="date"
+                      value={filterValues[filterConfig.key] || ""}
+                      onChange={(e) => handleChange(filterConfig.key, e.target.value)}
+                      fullWidth
+                      margin="normal"
+                      InputLabelProps={{ shrink: true }}
+                    />
+                  </Grid>
+                );
+              } else if (filterConfig.type === "async-autocomplete") {
+                return (
+                  <Grid item xs={12} key={filterConfig.key}>
+                    <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+                    <GenericAsyncAutocompleteInput
+                      label={filterConfig.label}
+                      value={filterValues[filterConfig.key] || null}
+                      onChange={(newValue) => handleChange(filterConfig.key, newValue)}
+                      endpoint={filterConfig.endpoint}
+                      queryParam={filterConfig.queryParam}
+                      extraParams={filterConfig.extraParams}
+                      mapResponse={filterConfig.mapResponse}
+                    />
+                  </Grid>
+                );
+              } else {
+                return (
+                  <Grid item xs={12} key={filterConfig.key}>
+                    <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+                    <TextField
+                      label={filterConfig.label}
+                      value={filterValues[filterConfig.key] || ""}
+                      onChange={(e) => handleChange(filterConfig.key, e.target.value)}
+                      fullWidth
+                      margin="normal"
+                      type={filterConfig.type === "number" ? "number" : "text"}
+                    />
+                  </Grid>
+                );
+              }
+            })}
+          </Grid>
         </Box>
-        {filters.map((filterConfig) => {
-          if (filterConfig.type === "select") {
-            return (
-              <Grid>
-                <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
-                <TextField
-                  key={filterConfig.key}
-                  label={filterConfig.label}
-                  value={filterValues[filterConfig.key] || ""}
-                  onChange={(e) => handleChange(filterConfig.key, e.target.value)}
-                  fullWidth
-                  margin="normal"
-                  select
-                >
-                  {filterConfig.options?.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-            );
-          } else if (filterConfig.type === "multiselect") {
-            return (
-              <TextField
-                key={filterConfig.key}
-                label={filterConfig.label}
-                value={filterValues[filterConfig.key] || []}
-                onChange={(e) => handleChange(filterConfig.key, e.target.value)}
-                fullWidth
-                margin="normal"
-                select
-                SelectProps={{ multiple: true }}
-              >
-                {filterConfig.options?.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            );
-          } else if (filterConfig.type === "range") {
-            const inputType = filterConfig.inputType || "text";
-            return (
-              <Grid>
-                <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
-                <RangeInput
-                  key={filterConfig.key}
-                  label={filterConfig.label}
-                  value={filterValues[filterConfig.key] || { start: "", end: "" }}
-                  onChange={(value) => handleChange(filterConfig.key, value)}
-                  inputType={inputType}
-                />
-              </Grid>
-            );
-          } else if (filterConfig.type === "async-multiselect") {
-            return (
-              <Grid>
-                <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
-
-                <GenericAsyncAutocompleteInput
-                  key={filterConfig.key}
-                  label={filterConfig.label}
-                  value={filterValues[filterConfig.key] || []}
-                  onChange={(newValue) => handleChange(filterConfig.key, newValue)}
-                  endpoint={filterConfig.endpoint}
-                  queryParam={filterConfig.queryParam}
-                  extraParams={filterConfig.extraParams}
-                  mapResponse={filterConfig.mapResponse}
-                  multiple
-                />
-              </Grid>
-            );
-          } else if (filterConfig.type === "number-range") {
-            return (
-              <Grid>
-                <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
-
-                <NumberRangeInput
-                  key={filterConfig.key}
-                  label={filterConfig.label}
-                  value={filterValues[filterConfig.key] || { min: "", max: "" }}
-                  onChange={(value) => handleChange(filterConfig.key, value)}
-                />
-              </Grid>
-            );
-          } else if (filterConfig.type === "date") {
-            return (
-              <Grid>
-                <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
-                <TextField
-                  key={filterConfig.key}
-                  label={filterConfig.label}
-                  type="date"
-                  value={filterValues[filterConfig.key] || ""}
-                  onChange={(e) => handleChange(filterConfig.key, e.target.value)}
-                  fullWidth
-                  margin="normal"
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-            );
-          } else if (filterConfig.type === "async-autocomplete") {
-            return (
-              <Grid>
-                <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
-                <GenericAsyncAutocompleteInput
-                  key={filterConfig.key}
-                  label={filterConfig.label}
-                  value={filterValues[filterConfig.key] || null}
-                  onChange={(newValue) => handleChange(filterConfig.key, newValue)}
-                  endpoint={filterConfig.endpoint}
-                  queryParam={filterConfig.queryParam}
-                  extraParams={filterConfig.extraParams}
-                  mapResponse={filterConfig.mapResponse}
-                />
-              </Grid>
-            );
-          } else {
-            return (
-              <Grid>
-                <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
-
-                <TextField
-                  key={filterConfig.key}
-                  label={filterConfig.label}
-                  value={filterValues[filterConfig.key] || ""}
-                  onChange={(e) => handleChange(filterConfig.key, e.target.value)}
-                  fullWidth
-                  margin="normal"
-                  type={filterConfig.type === "number" ? "number" : "text"}
-                />
-              </Grid>
-            );
-          }
-        })}
-        <Button
-          variant="outlined"
-          color="secondary"
-          fullWidth
-          onClick={resetFilters}
-          sx={{ mt: 1 }}
+        {/* Área fixa dos botões */}
+        <Box
+          sx={{
+            position: "sticky",
+            bottom: 0,
+            backgroundColor: "background.paper",
+            p: 2,
+            boxShadow: 3,
+          }}
         >
-          Resetar Filtros
-        </Button>
-        <Button variant="contained" color="primary" fullWidth onClick={handleApply} sx={{ mt: 2 }}>
-          Aplicar
-        </Button>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                fullWidth
+                onClick={resetFilters}
+              >
+                Limpar Filtros
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={handleApply}
+              >
+                Aplicar
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
       </Box>
     </Drawer>
   );
