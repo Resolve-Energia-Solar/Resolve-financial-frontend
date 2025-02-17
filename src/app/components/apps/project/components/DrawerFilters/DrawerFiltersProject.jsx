@@ -38,6 +38,7 @@ export default function DrawerFiltersProject() {
     trt_status: filters.trt_status,
     new_contract_number: filters.new_contract_number,
     supply_adquance: filters.supply_adquance,
+    access_opnion: filters.access_opnion,
   });
 
 
@@ -52,6 +53,10 @@ export default function DrawerFiltersProject() {
 
     if (filters.new_contract_number) {
       params.new_contract_number = filters.new_contract_number;
+    }
+
+    if (filters.access_opnion) {
+      params.access_opnion = filters.access_opnion;
     }
 
     if (filters.supply_adquance && filters.supply_adquance.length > 0) {
@@ -105,10 +110,9 @@ export default function DrawerFiltersProject() {
   ];
 
 
-  const materialListIsCompleted = [
-    { value: true, label: 'Sim' },
-    { value: false, label: 'Não' },
-    { value: null, label: 'Todos' },
+  const accessOpinionOptions = [
+    {value: 'liberado', label: 'Liberado'},
+    {value: 'bloqueado', label: 'Bloqueado'},
   ]
 
   const clearFilters = () => {
@@ -123,7 +127,8 @@ export default function DrawerFiltersProject() {
       material_list_is_completed: null,
       trt_status: [],
       new_contract_number: null,
-      supply_adquance: null
+      supply_adquance: null,
+      access_opnion: null,
     });
   };
 
@@ -313,6 +318,16 @@ export default function DrawerFiltersProject() {
                   placeholder="Selecione o status"
                   value={tempFilters.status}
                   onChange={(event, value) => handleChange('status', value)}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="Parecer de Acesso">Parecer de Acesso</CustomFormLabel>
+                <CheckboxesTags
+                  options={accessOpinionOptions}
+                  placeholder="Selecione status do parecer"
+                  value={tempFilters.access_opnion}
+                  onChange={(event, value) => handleChange('access_opnion', value)}
                 />
               </Grid>
 

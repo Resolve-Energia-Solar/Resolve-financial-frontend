@@ -367,7 +367,7 @@ const ProjectList = ({ onClick }) => {
                       )}
                     </TableCell>
                     <TableCell>
-                      <GenericChip status={item.access_opinion} statusMap={accessOpinionStatusMap} />
+                      <GenericChip status={item.access_opnion} statusMap={accessOpinionStatusMap} />
                     </TableCell>
                     <TableCell>{item.product?.name}</TableCell>
                     <TableCell>{item.product?.params || '-'}</TableCell>
