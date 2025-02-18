@@ -20,6 +20,7 @@ import AutoCompleteBeneficiary from '@/app/components/apps/financial-record/bene
 import AutoCompleteDepartament from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Departament';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
+import CustomFieldMoney from '@/app/components/apps/invoice/components/CustomFieldMoney';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import ParentCard from '@/app/components/shared/ParentCard';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
@@ -173,15 +174,12 @@ export default function FormCustom() {
           </Grid>
           <Grid item xs={12} md={6}>
             <CustomFormLabel htmlFor="value">Valor (R$)</CustomFormLabel>
-            <CustomTextField
+            <CustomFieldMoney
               name="value"
               variant="outlined"
               fullWidth
               value={formData.value}
-              onChange={(e) => handleChange('value', e.target.value)}
-              InputProps={{
-                startAdornment: <InputAdornment position="start">R$</InputAdornment>,
-              }}
+              onChange={(value) => handleChange('value', value)}
               error={!!formErrors.value}
               helperText={formErrors.value}
             />
