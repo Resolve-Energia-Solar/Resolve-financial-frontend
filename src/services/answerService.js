@@ -31,9 +31,9 @@ const answerService = {
     }
   },
 
-  getAnswerFormFiles: async (answerId) => {
+  getAnswerFormFiles: async (answerId, params = {}) => {
     try {
-      const response = await apiClient.get(`/api/form-files/?answer=${answerId}`);
+      const response = await apiClient.get(`/api/form-files/?answer=${answerId}`, { params });
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar arquivos da resposta ${answerId}:`, error);
