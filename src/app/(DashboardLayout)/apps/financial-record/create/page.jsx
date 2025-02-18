@@ -250,21 +250,18 @@ export default function FormCustom() {
             />
           </Grid>
           <Grid item xs={12}>
-            <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
+            <Stack direction="row" spacing={2} justifyContent="space-between" mt={2}>
+              <AttachmentDrawer
+                objectId={null}
+                attachments={attachments}
+                onAddAttachment={handleAddAttachment}
+                contentTypeId={FINANCIAL_RECORD_CONTENT_TYPE}
+              />
               <Button variant="contained" color="primary" onClick={handleSubmit}>
                 Criar
               </Button>
             </Stack>
           </Grid>
-          <Grid item xs={12}>
-            <AttachmentDrawer
-              objectId={null}
-              attachments={attachments}
-              onAddAttachment={handleAddAttachment}
-              contentTypeId={FINANCIAL_RECORD_CONTENT_TYPE}
-            />
-          </Grid>
-
         </Grid>
       </ParentCard>
     </PageContainer>
