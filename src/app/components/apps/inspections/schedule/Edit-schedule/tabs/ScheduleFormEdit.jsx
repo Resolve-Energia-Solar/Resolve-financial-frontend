@@ -68,7 +68,6 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     { value: '13:00:00', label: '13:00' },
     { value: '14:30:00', label: '14:30' },
     { value: '16:00:00', label: '16:00' },
-    { value: '17:30:00', label: '17:30' },
   ];
 
   useEffect(() => {
