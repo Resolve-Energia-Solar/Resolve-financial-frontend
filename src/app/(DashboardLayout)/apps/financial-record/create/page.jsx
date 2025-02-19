@@ -47,7 +47,7 @@ export default function FormCustom() {
     if (formData.value && formData.category_code) {
       try {
         const now = new Date();
-        const amount = parseFloat(formData.value.replace('.', '').replace(',', '.'));
+        const amount = parseFloat(String(formData.value).replace('.', '').replace(',', '.'));
         const department = user?.employee?.department?.id || '';
         const category = formData.category_code;
         const dueDate = calculateDueDate({
