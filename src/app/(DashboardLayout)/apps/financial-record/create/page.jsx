@@ -156,6 +156,7 @@ export default function FormCustom() {
               name="notes"
               variant="outlined"
               fullWidth
+              multiline
               value={formData.notes}
               onChange={(e) => handleChange('notes', e.target.value)}
               error={!!formErrors.notes}
@@ -206,8 +207,6 @@ export default function FormCustom() {
                 variant={formData.is_receivable == true ? 'contained' : 'outlined'}
                 color="success"
                 disabled
-                onClick={() => handleChange('is_receivable', true)}
-                startIcon={<IconArrowDown />}
               >
                 A Receber
               </Button>
