@@ -10,7 +10,7 @@ import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
 
-function ViewLeadPage({ leadId = null }) {
+function EditLeadPage({ leadId = null }) {
     const router = useRouter();
     const theme = useTheme();
     const [lead, setLead] = useState(null);
@@ -243,4 +243,4 @@ function ViewLeadPage({ leadId = null }) {
     );
 }
 
-export default ViewLeadPage;
+export default EditLeadPage;

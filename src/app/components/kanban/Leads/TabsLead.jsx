@@ -1,5 +1,5 @@
-import React from 'react';
-import { Tabs, Tab, Box, Grid, CircularProgress } from '@mui/material';
+import React, { useState } from 'react';
+import { Tabs, Tab, Box, Grid } from '@mui/material';
 import PropTypes from 'prop-types';
 import EditLead from './EditLeads';
 
@@ -14,9 +14,6 @@ function CustomTabPanel(props) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
       style={{
-        // boxShadow: '0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1)',
-        // borderRadius: '20px',
-        // margin: '0px 3px 3px 3px',
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -25,8 +22,6 @@ function CustomTabPanel(props) {
     </div>
   );
 }
-
-
 
 CustomTabPanel.propTypes = {
   children: PropTypes.node,
@@ -41,7 +36,13 @@ function a11yProps(index) {
   };
 }
 
-function TabsComponent({ tabValue, handleChange, loading, leadId }) {
+function EditLeadTabs({ leadId }) {
+  const [tabValue, setTabValue] = useState(0);
+
+  const handleChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
   return (
     <Box sx={{ overflow: 'hidden', height: '100%' }}>
       <Tabs
@@ -55,7 +56,18 @@ function TabsComponent({ tabValue, handleChange, loading, leadId }) {
             key={index}
             label={label}
             {...a11yProps(index)}
-            sx={tabValue === index ? { backgroundColor: '#FFCC00', color: 'black', borderTopLeftRadius: '10px', borderTopRightRadius: '10px', fontWeight: '500', '&.Mui-selected': { color: 'black' } } : {}}
+            sx={
+              tabValue === index
+                ? {
+                    backgroundColor: '#FFCC00',
+                    color: 'black',
+                    borderTopLeftRadius: '10px',
+                    borderTopRightRadius: '10px',
+                    fontWeight: '500',
+                    '&.Mui-selected': { color: 'black' },
+                  }
+                : {}
+            }
           />
         ))}
       </Tabs>
@@ -69,21 +81,18 @@ function TabsComponent({ tabValue, handleChange, loading, leadId }) {
       </CustomTabPanel>
 
       <CustomTabPanel value={tabValue} index={1}>
-        {loading ? <CircularProgress /> : <p>Details content here</p>}
+        <p>Details content here</p>
       </CustomTabPanel>
 
       <CustomTabPanel value={tabValue} index={2}>
-        {loading ? <CircularProgress /> : <p>Notes content here</p>}
+        <p>Notes content here</p>
       </CustomTabPanel>
     </Box>
   );
 }
 
-TabsComponent.propTypes = {
-  tabValue: PropTypes.number.isRequired,
-  handleChange: PropTypes.func.isRequired,
-  loading: PropTypes.bool.isRequired,
+EditLeadTabs.propTypes = {
   leadId: PropTypes.string.isRequired,
 };
 
-export default TabsComponent;
+export default EditLeadTabs;
