@@ -5,9 +5,8 @@ import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcr
 import PageContainer from '@/app/components/container/PageContainer';
 import ParentCard from '@/app/components/shared/ParentCard';
 
-import CustomerTabs from "@/app/components/apps/users/Edit-user/customer/tabs";
-import ViewLeadPage from "@/app/components/kanban/Leads/Leads-view";
 import { useParams } from 'next/navigation';
+import EditLeadTabs from "@/app/components/kanban/Leads/Leads-edit/TabsLead";
 
 
 
@@ -26,9 +25,9 @@ const ViewLead = () => {
   ];
 
   return (
-    <PageContainer title="Visualização de lead" description="Visualização de leads">
+    <PageContainer title="Edição de lead" description="Editar de lead">
       <CardContent>
-        <ViewLeadPage leadId={id} />
+        <EditLeadTabs leadId={id} />
       </CardContent>
     </PageContainer>
   );

@@ -132,6 +132,7 @@ const ProjectList = ({ onClick }) => {
 
 
   const trtStatusMap = {
+    'Bloqueado': { label: 'Bloqueado', color: theme.palette.error.light, icon: <CancelIcon sx={{ color: '#fff' }} /> },
     'Reprovada': { label: 'Reprovada', color: theme.palette.error.light, icon: <CancelIcon sx={{ color: '#fff' }} /> },
     'Em Andamento': { label: 'Em Andamento', color: theme.palette.info.light, icon: <HourglassFullIcon sx={{ color: '#fff' }} /> },
     'Concluída': { label: 'Concluída', color: theme.palette.success.light, icon: <CheckCircleIcon sx={{ color: '#fff' }} /> },
