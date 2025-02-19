@@ -1,76 +1,50 @@
-import { Grid, Typography, Chip, InputAdornment } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Grid, Typography, Chip, InputAdornment, TextField, MenuItem } from '@mui/material';
 import { AccountCircle, Phone, Email } from '@mui/icons-material';
-import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel'; 
-import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField'; 
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import leadService from '@/services/leadService';
-import { useEffect } from 'react';
 import AutoCompleteOrigin from '@/app/components/apps/leads/auto-input-origin';
-import FormSelect from '@/app/components/forms/form-custom/FormSelect';
-import { useForm, Controller } from "react-hook-form";
 import { useSnackbar } from 'notistack';
 
-function EditLead({ leadId = null, onSubmit = null }) {
-
+function EditLeadteste({ leadId = null }) {
     const { enqueueSnackbar } = useSnackbar();
-
-    const {
-        register,
-        handleSubmit,
-        control,
-        setValue,
-        getValues,
-        formState: { errors },
-        setError
-    } = useForm({
-        defaultValues: {
-            name: '',
-            type: '',
-            funnel: '',
-            origin_id: '',
-            first_document: '',
-            phone: '',
-            contact_email: ''
-        }
+    const [formData, setFormData] = useState({
+        name: '',
+        type: '',
+        funnel: '',
+        origin_id: '',
+        first_document: '',
+        phone: '',
+        contact_email: '',
+        created_at: ''
     });
 
     useEffect(() => {
         const fetchLead = async () => {
             try {
                 const response = await leadService.getLeadById(leadId);
-
-                Object.keys(getValues()).forEach(key => {
-                    setValue(key, response[key]);
-                });
+                setFormData(response);
             } catch (error) {
                 console.error(error);
             }
         };
 
-        if (leadId) {
-            fetchLead();
-        }
-    }, [leadId, setValue]);
+        if (leadId) fetchLead();
+    }, [leadId]);
 
-    const onSubmitForm = async (data) => {
-        console.log('Dados enviados:', data);
-        try {
-            await leadService.patchLead(leadId, data);
-            enqueueSnackbar('Lead atualizado com sucesso', { variant: 'success' });
-        } catch (error) {
-            const formErrors = error?.response?.data || {};
-            Object.entries(formErrors).forEach(([key, value]) => {
-                setError(key, { type: 'manual', message: value.join(' ') });
-                enqueueSnackbar(`${key}: ${value.join(' ')}`, { variant: 'error' });
-            });
-        }
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
 
-    // Submeter o formulário diretamente ao passar a função `onSubmit` via props
-    useEffect(() => {
-        if (onSubmit) {
-            onSubmit(handleSubmit(onSubmitForm));
+    const handleSubmit = async () => {
+        try {
+            await leadService.patchLead(leadId, formData);
+            enqueueSnackbar('Lead atualizado com sucesso', { variant: 'success' });
+        } catch (error) {
+            enqueueSnackbar('Erro ao atualizar lead', { variant: 'error' });
         }
-    }, [onSubmit, handleSubmit]);
+    };
 
     return (
         <Grid container spacing={3} sx={{ p: 2 }}>
@@ -80,187 +54,64 @@ function EditLead({ leadId = null, onSubmit = null }) {
                         <AccountCircle sx={{ fontSize: 70 }} />
                     </Grid>
                     <Grid item>
-                        <Typography variant="body1" gutterBottom>
-                            Cliente
-                        </Typography>
-                        <Controller
-                            name="name"
-                            control={control}
-                            render={({ field }) => (
-                                <Typography variant="h6" gutterBottom>
-                                    {field.value}
-                                </Typography>
-                            )}
-                        />
+                        <Typography variant="body1">Cliente</Typography>
+                        <Typography variant="h6">{formData.name}</Typography>
                     </Grid>
                 </Grid>
                 <Grid item xs={12} md={6} container justifyContent="flex-end" alignItems="center">
-                    <Chip
-                        label={
-                            <Controller
-                                name="created_at"
-                                control={control}
-                                render={({ field }) =>
-                                    field.value ? `Criado em: ${new Date(field.value).toLocaleString('pt-BR')}` : ''
-                                }
-                            />
-                        }
-                        sx={{ backgroundColor: '#F4F5F7', color: '#7E8388' }}
-                    />
+                    <Chip label={`Criado em: ${new Date(formData.created_at).toLocaleString('pt-BR')}`}
+                        sx={{ backgroundColor: '#F4F5F7', color: '#7E8388' }} />
                 </Grid>
             </Grid>
 
             <Grid container spacing={3}>
                 <Grid item xs={12} sm={4}>
                     <CustomFormLabel htmlFor="name">Nome Completo</CustomFormLabel>
-                    <Controller
-                        name="name"
-                        control={control}
-                        render={({ field }) => (
-                            <CustomTextField
-                                {...field}
-                                placeholder="Nome"
-                                variant="outlined"
-                                size="normal"
-                                fullWidth
-                                {...(errors.name && { error: true, helperText: errors.name.message })}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start" sx={{ mr: 0 }}>
-                                            <AccountCircle />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
-                        )}
-                    />
+                    <TextField name="name" value={formData.name} onChange={handleChange} fullWidth
+                        InputProps={{ startAdornment: (<InputAdornment position="start"><AccountCircle /></InputAdornment>) }} />
                 </Grid>
 
                 <Grid item xs={12} sm={4}>
-                    <Controller
-                        name="type"
-                        control={control}
-                        render={({ field }) => (
-                            <FormSelect
-                                label="Tipo"
-                                {...(errors.type && { error: true, helperText: errors.type.message })}
-                                options={[
-                                    { value: 'PF', label: 'Pessoa Física' },
-                                    { value: 'PJ', label: 'Pessoa Jurídica' },
-                                ]}
-                                {...field}
-                            />
-                        )}
-                    />
+                    <TextField select name="type" label="Tipo" value={formData.type} onChange={handleChange} fullWidth>
+                        <MenuItem value="PF">Pessoa Física</MenuItem>
+                        <MenuItem value="PJ">Pessoa Jurídica</MenuItem>
+                    </TextField>
                 </Grid>
 
                 <Grid item xs={12} sm={4}>
-                    <Controller
-                        name="funnel"
-                        control={control}
-                        render={({ field }) => (
-                            <FormSelect
-                                label="Funil"
-                                options={[
-                                    { value: 'N', label: 'Não Interessado' },
-                                    { value: 'P', label: 'Pouco Interessado' },
-                                    { value: 'I', label: 'Interessado' },
-                                    { value: 'M', label: 'Muito Interessado' },
-                                    { value: 'PC', label: 'Pronto para Comprar' },
-                                ]}
-                                {...field}
-                            />
-                        )}
-                    />
+                    <TextField select name="funnel" label="Funil" value={formData.funnel} onChange={handleChange} fullWidth>
+                        <MenuItem value="N">Não Interessado</MenuItem>
+                        <MenuItem value="P">Pouco Interessado</MenuItem>
+                        <MenuItem value="I">Interessado</MenuItem>
+                        <MenuItem value="M">Muito Interessado</MenuItem>
+                        <MenuItem value="PC">Pronto para Comprar</MenuItem>
+                    </TextField>
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
                     <CustomFormLabel htmlFor="origin_id">Origem</CustomFormLabel>
-                    <Controller
-                        name="origin_id"
-                        control={control}
-                        {...(errors.origin_id && { error: true, helperText: errors.origin_id.message })}
-                        render={({ field }) => (
-                            <AutoCompleteOrigin {...field} />
-                        )}
-                    />
+                    <AutoCompleteOrigin value={formData.origin_id} onChange={(value) => setFormData({ ...formData, origin_id: value })} />
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
                     <CustomFormLabel htmlFor="first_document">CPF/CNPJ</CustomFormLabel>
-                    <Controller
-                        name="first_document"
-                        control={control}
-                        render={({ field }) => (
-                            <CustomTextField
-                                {...field}
-                                placeholder="008.123.456-78"
-                                variant="outlined"
-                                fullWidth
-                                {...(errors.first_document && { error: true, helperText: errors.first_document.message })}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start" sx={{ mr: 0 }}>
-                                            <AccountCircle />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
-                        )}
-                    />
+                    <TextField name="first_document" value={formData.first_document} onChange={handleChange} fullWidth />
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
                     <CustomFormLabel htmlFor="phone">Telefone com DDD</CustomFormLabel>
-                    <Controller
-                        name="phone"
-                        control={control}
-                        render={({ field }) => (
-                            <CustomTextField
-                                {...field}
-                                placeholder="(91) 99999-9999"
-                                variant="outlined"
-                                fullWidth
-                                {...(errors.phone && { error: true, helperText: errors.phone.message })}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start" sx={{ mr: 0 }}>
-                                            <Phone />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
-                        )}
-                    />
+                    <TextField name="phone" value={formData.phone} onChange={handleChange} fullWidth
+                        InputProps={{ startAdornment: (<InputAdornment position="start"><Phone /></InputAdornment>) }} />
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
                     <CustomFormLabel htmlFor="contact_email">E-mail</CustomFormLabel>
-                    <Controller
-                        name="contact_email"
-                        control={control}
-                        render={({ field }) => (
-                            <CustomTextField
-                                {...field}
-                                placeholder="example.resolve@gmail.com"
-                                variant="outlined"
-                                fullWidth
-                                {...(errors.contact_email && { error: true, helperText: errors.contact_email.message })}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start" sx={{ mr: 0 }}>
-                                            <Email />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
-                        )}
-                    />
+                    <TextField name="contact_email" value={formData.contact_email} onChange={handleChange} fullWidth
+                        InputProps={{ startAdornment: (<InputAdornment position="start"><Email /></InputAdornment>) }} />
                 </Grid>
             </Grid>
-
         </Grid>
     );
 }
 
-export default EditLead;
+export default EditLeadteste;

@@ -1,6 +1,6 @@
 'use client';
-import { Grid, Typography, Chip, Divider, Box, Rating, useTheme, IconButton, Card } from '@mui/material';
-import { AccountCircle, CalendarToday, CalendarViewWeek, WbSunny } from '@mui/icons-material';
+import { Grid, Typography, Chip, Divider, Box, Rating, useTheme, IconButton, Card, MenuItem, InputAdornment, TextField } from '@mui/material';
+import { AccountCircle, CalendarToday, CalendarViewWeek, Email, Phone, WbSunny } from '@mui/icons-material';
 import BlankCard from '@/app/components/shared/BlankCard';
 import { IconCalendarWeek, IconEye, IconPencil, IconTrash } from '@tabler/icons-react';
 import MediaControlCard from '../../components/CardProposal';
@@ -9,6 +9,8 @@ import leadService from '@/services/leadService';
 import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import AutoCompleteOrigin from '@/app/components/apps/leads/auto-input-origin';
 
 function EditLeadPage({ leadId = null }) {
     const router = useRouter();
@@ -17,6 +19,34 @@ function EditLeadPage({ leadId = null }) {
     const [loadingLeads, setLoadingLeads] = useState(true);
     const { enqueueSnackbar } = useSnackbar();
 
+    const [formData, setFormData] = useState({
+        name: '',
+        type: '',
+        funnel: '',
+        origin_id: '',
+        first_document: '',
+        phone: '',
+        contact_email: '',
+        created_at: ''
+    });
+
+    useEffect(() => {
+        const fetchLead = async () => {
+            try {
+                const response = await leadService.getLeadById(leadId);
+                setFormData(response);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        if (leadId) fetchLead();
+    }, [leadId]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
+    };
 
     useEffect(() => {
         const fetchLead = async () => {
@@ -46,7 +76,7 @@ function EditLeadPage({ leadId = null }) {
                                 <AccountCircle sx={{ fontSize: 62 }} />
                             </Grid>
                             <Grid item>
-                                <Typography variant="body1" gutterBottom sx={{ fontSize: 12, color: '#ADADAD' }}>
+                                <Typography variant="body1" gutterBottom sx={{ fontSize: 12, color: '#ADADAD', margin: 0 }}>
                                     Cliente
                                 </Typography>
                                 <Typography variant="h6" gutterBottom sx={{ fontSize: 16 }}>
@@ -77,111 +107,57 @@ function EditLeadPage({ leadId = null }) {
                     </Grid>
 
                     <Divider sx={{ my: 0 }} />
-                    <Box sx={{ p: 3.5 }}>
-                        <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
-                            Agendamento
-                        </Typography>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1,
-                                mt: 1.5,
-                                flexDirection: { xs: 'column', md: 'row' }, // Responsivo: coluna em telas pequenas, linha em telas maiores
-                                textAlign: { xs: 'center', md: 'left' }, // Centraliza o texto em telas pequenas
-                            }}
-                        >
-                            <IconCalendarWeek size={28} style={{ verticalAlign: 'middle' }} />
-                            <Typography variant="body1" sx={{ color: '#000000', fontSize: '24px' }}>
-                                Vistoria técnica{' '}
-                                <Box
-                                    component="span"
-                                    sx={{
-                                        fontWeight: 'bold',
-                                        fontSize: '24px',
-                                        marginLeft: { xs: 0, sm: 1 },
-                                        whiteSpace: 'nowrap', // Impede que a data e hora quebrem
-                                    }}
-                                >
-                                    11/02/2025 • 14h
-                                </Box>
-                            </Typography>
-                        </Box>
-                    </Box>
-                    <Divider sx={{ my: 0 }} />
 
-                    <Grid container spacing={6} sx={{ p: 3.5 }}>
-                        <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
-                                CPF
-                            </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
-                                {lead?.first_document || '-'}
-                            </Typography>
+                    <Grid container spacing={2} sx={{ p: 3.5 }}>
+
+                        <Grid item xs={12} sm={4}>
+                            <CustomFormLabel htmlFor="name">Nome Completo</CustomFormLabel>
+                            <TextField name="name" value={formData.name} onChange={handleChange} fullWidth
+                                InputProps={{ startAdornment: (<InputAdornment position="start"><AccountCircle /></InputAdornment>) }} />
                         </Grid>
 
-                        <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
-                                Fone
-                            </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
-                                {formatPhoneNumber(lead?.phone)}
-                            </Typography>
+                        <Grid item xs={12} sm={4}>
+                            <CustomFormLabel htmlFor="name">Tipo</CustomFormLabel>
+
+                            <TextField select name="type"value={formData.type} onChange={handleChange} fullWidth>
+                                <MenuItem value="PF">Pessoa Física</MenuItem>
+                                <MenuItem value="PJ">Pessoa Jurídica</MenuItem>
+                            </TextField>
                         </Grid>
 
-                        <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
-                                E-mail
-                            </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
-                                {lead?.contact_email || '-'}
-                            </Typography>
+                        <Grid item xs={12} sm={4}>
+                            <CustomFormLabel htmlFor="funnel">Funil</CustomFormLabel>
+                            <TextField select name="funnel" value={formData.funnel} onChange={handleChange} fullWidth>
+                                <MenuItem value="N">Não Interessado</MenuItem>
+                                <MenuItem value="P">Pouco Interessado</MenuItem>
+                                <MenuItem value="I">Interessado</MenuItem>
+                                <MenuItem value="M">Muito Interessado</MenuItem>
+                                <MenuItem value="PC">Pronto para Comprar</MenuItem>
+                            </TextField>
                         </Grid>
 
-                        <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
-                                Endereço
-                            </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
-                                {lead?.addresses[0]?.street || '-'}, {lead?.addresses[0]?.number || '-'}
-                            </Typography>
+                        <Grid item xs={12} sm={6}>
+                            <CustomFormLabel htmlFor="origin_id">Origem</CustomFormLabel>
+                            <AutoCompleteOrigin value={formData.origin_id} onChange={(value) => setFormData({ ...formData, origin_id: value })} />
                         </Grid>
 
-                        <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
-                                Origem/Campanha
-                            </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
-                                {lead?.origin?.name || '-'} / -
-                            </Typography>
+                        <Grid item xs={12} sm={6}>
+                            <CustomFormLabel htmlFor="first_document">CPF/CNPJ</CustomFormLabel>
+                            <TextField name="first_document" value={formData.first_document} onChange={handleChange} fullWidth />
                         </Grid>
 
-                        <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
-                                kWp
-                            </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
-                                {lead?.kwp || '-'}
-                            </Typography>
+                        <Grid item xs={12} sm={6}>
+                            <CustomFormLabel htmlFor="phone">Telefone com DDD</CustomFormLabel>
+                            <TextField name="phone" value={formData.phone} onChange={handleChange} fullWidth
+                                InputProps={{ startAdornment: (<InputAdornment position="start"><Phone /></InputAdornment>) }} />
                         </Grid>
 
-                        <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
-                                Responsável
-                            </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
-                                -
-                            </Typography>
+                        <Grid item xs={12} sm={6}>
+                            <CustomFormLabel htmlFor="contact_email">E-mail</CustomFormLabel>
+                            <TextField name="contact_email" value={formData.contact_email} onChange={handleChange} fullWidth
+                                InputProps={{ startAdornment: (<InputAdornment position="start"><Email /></InputAdornment>) }} />
                         </Grid>
 
-                        <Grid item xs={12} md={8} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
-                                Observações
-                            </Typography>
-                            <Typography variant="body1" gutterBottom sx={{ color: '#303030', fontSize: '14px' }}>
-                                -
-                            </Typography>
-                        </Grid>
                     </Grid>
                 </BlankCard>
             </Grid>
