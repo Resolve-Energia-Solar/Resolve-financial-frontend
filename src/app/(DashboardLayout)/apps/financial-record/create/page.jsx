@@ -6,7 +6,6 @@ import {
   Stack,
   Select,
   MenuItem,
-  InputAdornment,
   FormHelperText,
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
@@ -194,9 +193,11 @@ export default function FormCustom() {
               value={formData.payment_method || ''}
               onChange={(e) => handleChange('payment_method', e.target.value)}
             >
-              <MenuItem value="boleto">Boleto</MenuItem>
-              <MenuItem value="cartao">Cartão</MenuItem>
-              <MenuItem value="transferencia">Transferência</MenuItem>
+              <MenuItem value="B">Boleto</MenuItem>
+              <MenuItem value="C">Cartão</MenuItem>
+              <MenuItem value="T">Transferência Bancária</MenuItem>
+              <MenuItem value="D">Dinheiro</MenuItem>
+              <MenuItem value="P">Pix</MenuItem>
             </Select>
             {formErrors.payment_method && <FormHelperText>{formErrors.payment_method}</FormHelperText>}
           </Grid>
