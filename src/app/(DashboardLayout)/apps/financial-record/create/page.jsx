@@ -6,7 +6,6 @@ import {
   Stack,
   Select,
   MenuItem,
-  InputAdornment,
   FormHelperText,
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
@@ -20,6 +19,7 @@ import AutoCompleteBeneficiary from '@/app/components/apps/financial-record/bene
 import AutoCompleteDepartament from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Departament';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
+import CustomFieldMoney from '@/app/components/apps/invoice/components/CustomFieldMoney';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import ParentCard from '@/app/components/shared/ParentCard';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
@@ -155,6 +155,7 @@ export default function FormCustom() {
               name="notes"
               variant="outlined"
               fullWidth
+              multiline
               value={formData.notes}
               onChange={(e) => handleChange('notes', e.target.value)}
               error={!!formErrors.notes}
@@ -173,15 +174,12 @@ export default function FormCustom() {
           </Grid>
           <Grid item xs={12} md={6}>
             <CustomFormLabel htmlFor="value">Valor (R$)</CustomFormLabel>
-            <CustomTextField
+            <CustomFieldMoney
               name="value"
               variant="outlined"
               fullWidth
               value={formData.value}
-              onChange={(e) => handleChange('value', e.target.value)}
-              InputProps={{
-                startAdornment: <InputAdornment position="start">R$</InputAdornment>,
-              }}
+              onChange={(value) => handleChange('value', value)}
               error={!!formErrors.value}
               helperText={formErrors.value}
             />
@@ -195,9 +193,11 @@ export default function FormCustom() {
               value={formData.payment_method || ''}
               onChange={(e) => handleChange('payment_method', e.target.value)}
             >
-              <MenuItem value="boleto">Boleto</MenuItem>
-              <MenuItem value="cartao">Cartão</MenuItem>
-              <MenuItem value="transferencia">Transferência</MenuItem>
+              <MenuItem value="B">Boleto</MenuItem>
+              <MenuItem value="C">Cartão</MenuItem>
+              <MenuItem value="T">Transferência Bancária</MenuItem>
+              <MenuItem value="D">Dinheiro</MenuItem>
+              <MenuItem value="P">Pix</MenuItem>
             </Select>
             {formErrors.payment_method && <FormHelperText>{formErrors.payment_method}</FormHelperText>}
           </Grid>
@@ -208,8 +208,6 @@ export default function FormCustom() {
                 variant={formData.is_receivable == true ? 'contained' : 'outlined'}
                 color="success"
                 disabled
-                onClick={() => handleChange('is_receivable', true)}
-                startIcon={<IconArrowDown />}
               >
                 A Receber
               </Button>
@@ -252,21 +250,18 @@ export default function FormCustom() {
             />
           </Grid>
           <Grid item xs={12}>
-            <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
+            <Stack direction="row" spacing={2} justifyContent="space-between" mt={2}>
+              <AttachmentDrawer
+                objectId={null}
+                attachments={attachments}
+                onAddAttachment={handleAddAttachment}
+                contentTypeId={FINANCIAL_RECORD_CONTENT_TYPE}
+              />
               <Button variant="contained" color="primary" onClick={handleSubmit}>
                 Criar
               </Button>
             </Stack>
           </Grid>
-          <Grid item xs={12}>
-            <AttachmentDrawer
-              objectId={null}
-              attachments={attachments}
-              onAddAttachment={handleAddAttachment}
-              contentTypeId={FINANCIAL_RECORD_CONTENT_TYPE}
-            />
-          </Grid>
-
         </Grid>
       </ParentCard>
     </PageContainer>

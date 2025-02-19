@@ -30,6 +30,21 @@ const financialRecordService = {
     const response = await apiClient.delete(`/api/financial-records/${id}/`)
     return response.data
   },
+  updateFinancialRecordResponsibleStatus: async (id, data) => {
+    const rows = data.map(item => ({
+      financial_record_id: id,
+      manager_status: item.status === 'A' ? 'Aprovado' : 'Reprovado',
+      manager_note: item.manager_note || ''
+    }));
+
+    const payload = {
+      Action: 'Edit',
+      Rows: rows
+    };
+
+    const response = await apiClient.patch(`/api/financial/approve-financial-record/${id}/`, payload);
+    return response.data;
+  }
 }
 
 export default financialRecordService
