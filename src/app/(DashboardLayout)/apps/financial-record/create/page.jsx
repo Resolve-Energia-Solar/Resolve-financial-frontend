@@ -207,6 +207,7 @@ export default function FormCustom() {
               <Button
                 variant={formData.is_receivable == true ? 'contained' : 'outlined'}
                 color="success"
+                startIcon={<IconArrowDown />}
                 disabled
               >
                 A Receber
