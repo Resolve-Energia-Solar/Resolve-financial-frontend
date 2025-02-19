@@ -145,7 +145,7 @@ const LeadList = ({ onClick }) => {
                   <TableCell sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <IconButton
                       size="small"
-                    // onClick={() => onClick(item, 'edit')}
+                    onClick={() => router.push(`/apps/leads/${item.id}/edit`)}
                     >
                       <IconPencil fontSize="small" />
                     </IconButton>

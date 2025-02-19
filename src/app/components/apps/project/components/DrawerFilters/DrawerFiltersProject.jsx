@@ -323,12 +323,21 @@ export default function DrawerFiltersProject() {
 
               <Grid item xs={12}>
                 <CustomFormLabel htmlFor="Parecer de Acesso">Parecer de Acesso</CustomFormLabel>
-                <CheckboxesTags
-                  options={accessOpinionOptions}
-                  placeholder="Selecione status do parecer"
-                  value={tempFilters.access_opnion}
-                  onChange={(event, value) => handleChange('access_opnion', value)}
-                />
+                <FormControl fullWidth>
+                  <Select
+                    value={tempFilters.access_opnion || ''}
+                    onChange={(event) => handleChange('access_opnion', event.target.value)}
+                  >
+                    <MenuItem value="">
+                      <em>Todos</em>
+                    </MenuItem>
+                    {accessOpinionOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
 
               <Grid item xs={12}>
