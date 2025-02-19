@@ -98,6 +98,8 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
         defaultValues[filterConfig.key] = { start: "", end: "" };
       } else if (filterConfig.type === "multiselect") {
         defaultValues[filterConfig.key] = [];
+      } else if (filterConfig.type === "custom") {
+        defaultValues[filterConfig.key] = "";
       } else {
         defaultValues[filterConfig.key] = "";
       }
@@ -145,6 +147,10 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
             } else {
               defaultValues[filterConfig.key] = [];
             }
+          } else if (filterConfig.type === "custom") {
+            defaultValues[filterConfig.key] = initialValues && initialValues[filterConfig.key]
+              ? initialValues[filterConfig.key]
+              : "";
           } else {
             defaultValues[filterConfig.key] = initialValues && initialValues[filterConfig.key]
               ? initialValues[filterConfig.key]
@@ -188,6 +194,12 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
       } else if (filterConfig.type === "async-autocomplete") {
         const selected = filterValues[filterConfig.key];
         transformedFilters[filterConfig.key] = selected && selected.value ? selected.value : "";
+      } else if (filterConfig.type === "custom") {
+        if (filterConfig.customTransform) {
+          transformedFilters[filterConfig.key] = filterConfig.customTransform(filterValues[filterConfig.key]);
+        } else {
+          transformedFilters[filterConfig.key] = filterValues[filterConfig.key];
+        }
       } else {
         transformedFilters[filterConfig.key] = filterValues[filterConfig.key];
       }
@@ -318,6 +330,25 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
                     />
                   </Grid>
                 );
+              } else if (filterConfig.type === "custom") {
+                return (
+                  <Grid item xs={12} key={filterConfig.key}>
+                    <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+                    {filterConfig.customComponent ? (
+                      <filterConfig.customComponent
+                        value={filterValues[filterConfig.key] || ""}
+                        onChange={(newValue) => handleChange(filterConfig.key, newValue)}
+                      />
+                    ) : (
+                      <TextField
+                        value={filterValues[filterConfig.key] || ""}
+                        onChange={(e) => handleChange(filterConfig.key, e.target.value)}
+                        fullWidth
+                        margin="normal"
+                      />
+                    )}
+                  </Grid>
+                );
               } else {
                 return (
                   <Grid item xs={12} key={filterConfig.key}>
@@ -348,22 +379,12 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
         >
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              <Button
-                variant="outlined"
-                color="secondary"
-                fullWidth
-                onClick={resetFilters}
-              >
+              <Button variant="outlined" color="secondary" fullWidth onClick={resetFilters}>
                 Limpar Filtros
               </Button>
             </Grid>
             <Grid item xs={6}>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={handleApply}
-              >
+              <Button variant="contained" color="primary" fullWidth onClick={handleApply}>
                 Aplicar
               </Button>
             </Grid>
