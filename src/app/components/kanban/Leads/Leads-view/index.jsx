@@ -37,8 +37,8 @@ function ViewLeadPage({ leadId = null }) {
 
 
     return (
-        <Grid container spacing={3} sx={{ p: 2 }}>
-            <Grid item xs={12} md={8}>
+        <Grid container spacing={0}>
+            <Grid item xs={12} md={8} sx={{ padding: '0px 10px 10px 10px' }}>
                 <BlankCard sx={{ borderRadius: "20px", boxShadow: 3, p: 0, display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                     <Grid container spacing={2} alignItems="center" sx={{ p: 3 }}>
                         <Grid item xs={12} md={5} container alignItems="center" spacing={2}>
@@ -208,7 +208,7 @@ function ViewLeadPage({ leadId = null }) {
                 </BlankCard>
             </Grid>
 
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={4} sx={{ padding: '0px 10px 10px 10px' }}>
                 <Grid container direction="column" spacing={2}>
                     <Grid item>
                         <Typography variant="h6" gutterBottom sx={{ fontSize: 18, fontWeight: 700 }}>

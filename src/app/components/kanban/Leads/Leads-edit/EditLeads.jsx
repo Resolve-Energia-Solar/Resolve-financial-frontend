@@ -1,11 +1,11 @@
 import { Grid, Typography, Chip, InputAdornment } from '@mui/material';
 import { AccountCircle, Phone, Email } from '@mui/icons-material';
-import CustomFormLabel from '../../forms/theme-elements/CustomFormLabel';
-import CustomTextField from '../../forms/theme-elements/CustomTextField';
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel'; 
+import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField'; 
 import leadService from '@/services/leadService';
 import { useEffect } from 'react';
-import AutoCompleteOrigin from '../../apps/leads/auto-input-origin';
-import FormSelect from '../../forms/form-custom/FormSelect';
+import AutoCompleteOrigin from '@/app/components/apps/leads/auto-input-origin';
+import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import { useForm, Controller } from "react-hook-form";
 import { useSnackbar } from 'notistack';
 

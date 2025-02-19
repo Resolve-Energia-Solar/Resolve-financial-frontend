@@ -37,8 +37,8 @@ function EditLeadPage({ leadId = null }) {
 
 
     return (
-        <Grid container spacing={3} sx={{ p: 2 }}>
-            <Grid item xs={12} md={8}>
+        <Grid container spacing={0}>
+            <Grid item xs={12}>
                 <BlankCard sx={{ borderRadius: "20px", boxShadow: 3, p: 0, display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                     <Grid container spacing={2} alignItems="center" sx={{ p: 3 }}>
                         <Grid item xs={12} md={5} container alignItems="center" spacing={2}>
@@ -50,7 +50,7 @@ function EditLeadPage({ leadId = null }) {
                                     Cliente
                                 </Typography>
                                 <Typography variant="h6" gutterBottom sx={{ fontSize: 16 }}>
-                                    {lead?.name?.length > 20 ? `${lead.name.substring(0, 20)}...` : lead?.name}
+                                    {lead?.name}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -65,34 +65,12 @@ function EditLeadPage({ leadId = null }) {
                                         value={lead?.qualification}
                                         max={5}
                                         readOnly
-                                        size="small"
-                                        sx={{ ml: 1 }}
+                                        size="normal"
                                         icon={<WbSunny fontSize="inherit" sx={{ color: theme.palette.warning.main }} />}
                                         emptyIcon={
                                             <WbSunny fontSize="inherit" sx={{ color: theme.palette.action.disabled }} />
                                         }
                                     />
-                                </Grid>
-                                <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                                    <Typography variant="body1" gutterBottom sx={{ fontSize: 12, color: '#ADADAD' }}>
-                                        Status
-                                    </Typography>
-                                    <Chip label={lead?.column?.name} size="small" sx={{ width: '100%', p: 2, backgroundColor: 'transparent', border: `1px solid ${lead?.column?.color}`, color: '#ADADAD' }} />
-                                </Grid>
-                                <Grid item xs={12} md={2}>
-                                    <IconButton
-                                        size="small"
-                                        onClick={() => router.push(`/apps/leads/${leadId}/edit`)}
-                                    >
-                                        <IconPencil fontSize="small" />
-                                    </IconButton>
-
-                                    <IconButton
-                                        size="small"
-                                    // onClick={() => router.push(`/apps/leads/${item.id}/view`)}
-                                    >
-                                        <IconTrash fontSize="small" />
-                                    </IconButton>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -207,38 +185,6 @@ function EditLeadPage({ leadId = null }) {
                     </Grid>
                 </BlankCard>
             </Grid>
-
-            <Grid item xs={12} md={4}>
-                <Grid container direction="column" spacing={2}>
-                    <Grid item>
-                        <Typography variant="h6" gutterBottom sx={{ fontSize: 18, fontWeight: 700 }}>
-                            Propostas
-                        </Typography>
-                        <Typography variant="body1" gutterBottom sx={{ fontSize: 14, color: '#7E92A2' }}>
-                            Última proposta enviada
-                        </Typography>
-                    </Grid>
-
-                    <Grid item>
-                        <MediaControlCard />
-                    </Grid>
-
-                    <Grid item>
-                        <Typography variant="body1" gutterBottom sx={{ fontSize: 14, color: '#7E92A2' }}>
-                            Outras propostas
-                        </Typography>
-                    </Grid>
-
-                    <Grid item>
-                        <MediaControlCard />
-                    </Grid>
-
-                    <Grid item>
-                        <MediaControlCard />
-                    </Grid>
-                </Grid>
-            </Grid>
-
         </Grid>
     );
 }

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Tabs, Tab, Box, Grid } from '@mui/material';
+import { Tabs, Tab, Box } from '@mui/material';
 import PropTypes from 'prop-types';
 import EditLead from './EditLeads';
+import ViewLeadPage from '../Leads-view';
+import EditLeadPage from '.';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -18,7 +20,7 @@ function CustomTabPanel(props) {
         flexDirection: 'column',
       }}
     >
-      {value === index && <Box sx={{ p: 3, height: '100%', overflowY: 'auto' }}>{children}</Box>}
+      {value === index && <Box sx={{ p: 0.1, height: '100%', overflowY: 'auto' }}>{children}</Box>}
     </div>
   );
 }
@@ -50,6 +52,7 @@ function EditLeadTabs({ leadId }) {
         onChange={handleChange}
         aria-label="lead edit tabs"
         TabIndicatorProps={{ style: { backgroundColor: 'white' } }}
+        sx={{ marginLeft: '25px'}}
       >
         {["Informações Lead", "Propostas", "Vendas"].map((label, index) => (
           <Tab
@@ -73,15 +76,12 @@ function EditLeadTabs({ leadId }) {
       </Tabs>
 
       <CustomTabPanel value={tabValue} index={0}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <EditLead leadId={leadId} />
-          </Grid>
-        </Grid>
+        <EditLeadPage leadId={leadId} />
       </CustomTabPanel>
 
       <CustomTabPanel value={tabValue} index={1}>
-        <p>Details content here</p>
+        {/* <ViewLeadPage leadId={leadId} /> */}
+        <p>Notes content here</p>
       </CustomTabPanel>
 
       <CustomTabPanel value={tabValue} index={2}>
