@@ -269,7 +269,6 @@ const financialRecordList = () => {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>Protocolo</TableCell>
-                                        <TableCell>Descrição</TableCell>
                                         <TableCell>Beneficiário/Pagador</TableCell>
                                         <TableCell>Valor</TableCell>
                                         <TableCell>Data de Vencimento</TableCell>
@@ -281,9 +280,7 @@ const financialRecordList = () => {
                                     {financialRecordList.map((item) => (
                                         <TableRow key={item.id} hover onClick={() => handleRowClick(item)}>
                                             <TableCell>{item.protocol}</TableCell>
-                                            <TableCell>
-                                                {item.notes.length > 35 ? `${item.notes.substring(0, 35)}...` : item.notes}
-                                            </TableCell>
+
                                             <TableCell>{item.client_supplier_name}</TableCell>
                                             <TableCell>
                                                 R$ {parseFloat(item.value).toLocaleString('pt-BR', {

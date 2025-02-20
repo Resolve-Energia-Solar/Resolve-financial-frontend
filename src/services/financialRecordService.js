@@ -16,6 +16,11 @@ const financialRecordService = {
     return response.data
   },
 
+  generateFinancialRecordPDFById: async id => {
+    const response = await apiClient.get(`/api/financial-records/${id}/?generate_pdf=true`, { responseType: 'blob' })
+    return response.data
+  },
+
   updateFinancialRecord: async (id, data) => {
     const response = await apiClient.put(`/api/financial-records/${id}/`, data)
     return response.data
