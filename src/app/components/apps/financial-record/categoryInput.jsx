@@ -16,8 +16,9 @@ export default function AutoCompleteCategory({ onChange, value, error, helperTex
         const categories = await omieService.getCategories();
         const category = categories.find(cat => cat.codigo === categoryId);
         if (category) {
-          setSelectedCategory({ codigo: category.codigo, descricao: category.descricao });
-          if (!value) onChange(category.codigo);
+          const defaultCategory = { codigo: category.codigo, descricao: category.descricao };
+          setSelectedCategory(defaultCategory);
+          if (!value) onChange(defaultCategory);
         }
       } catch (error) {
         console.error('Erro ao buscar categoria:', error);
@@ -51,11 +52,7 @@ export default function AutoCompleteCategory({ onChange, value, error, helperTex
 
   const handleChange = (event, newValue) => {
     setSelectedCategory(newValue);
-    if (newValue) {
-      onChange(newValue.codigo);
-    } else {
-      onChange(null);
-    }
+    onChange(newValue);
   };
 
   const handleInputChange = (event, newInputValue) => {
@@ -85,12 +82,22 @@ export default function AutoCompleteCategory({ onChange, value, error, helperTex
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.descricao === value.descricao}
-        getOptionLabel={(option) => option.descricao}
+        isOptionEqualToValue={(option, value) => {
+          if (typeof value === 'object' && value !== null) {
+            return option.codigo === value.codigo;
+          }
+          return option.codigo === value;
+        }}
+        getOptionLabel={(option) => {
+          if (!option) return '';
+          if (typeof option === 'string') return option;
+          const { descricao = '' } = option;
+          return descricao;
+        }}
         options={options}
         loading={loading}
         disabled={disabled}
-        value={selectedCategory}
+        value={selectedCategory || value}
         onInputChange={handleInputChange}
         onChange={handleChange}
         renderInput={(params) => (

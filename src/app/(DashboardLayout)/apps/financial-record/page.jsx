@@ -123,26 +123,29 @@ const financialRecordList = () => {
 
     const financialRecordFilterConfig = [
         {
-            key: 'client_supplier_code',
-            label: 'Cliente/Fornecedor (Omie)',
-            type: 'custom',
-            customComponent: AutoCompleteBeneficiary,
-            customTransform: (value) => value,
+          key: 'client_supplier_code',
+          label: 'Cliente/Fornecedor (Omie)',
+          type: 'custom',
+          customComponent: AutoCompleteBeneficiary,
+          customTransform: (value) =>
+            value && typeof value === 'object' ? value.codigo_cliente : value,
         },
         {
-            key: 'department_code__icontains',
-            label: 'Departamento Causador (Omie)',
-            type: 'custom',
-            customComponent: AutoCompleteDepartment,
-            customTransform: (value) => value,
+          key: 'department_code__icontains',
+          label: 'Departamento Causador (Omie)',
+          type: 'custom',
+          customComponent: AutoCompleteDepartment,
+          customTransform: (value) =>
+            value && typeof value === 'object' ? value.codigo : value,
         },
         {
-            key: 'category_code__icontains',
-            label: 'Categoria (Omie)',
-            type: 'custom',
-            customComponent: AutoCompleteCategory,
-            customTransform: (value) => value,
-        },
+          key: 'category_code__icontains',
+          label: 'Categoria (Omie)',
+          type: 'custom',
+          customComponent: AutoCompleteCategory,
+          customTransform: (value) =>
+            value && typeof value === 'object' ? value.codigo : value,
+        },      
         {
             key: "integration_code",
             label: "Código de Integração",
@@ -266,7 +269,6 @@ const financialRecordList = () => {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>Protocolo</TableCell>
-                                        <TableCell>Descrição</TableCell>
                                         <TableCell>Beneficiário/Pagador</TableCell>
                                         <TableCell>Valor</TableCell>
                                         <TableCell>Data de Vencimento</TableCell>
@@ -278,9 +280,7 @@ const financialRecordList = () => {
                                     {financialRecordList.map((item) => (
                                         <TableRow key={item.id} hover onClick={() => handleRowClick(item)}>
                                             <TableCell>{item.protocol}</TableCell>
-                                            <TableCell>
-                                                {item.notes.length > 35 ? `${item.notes.substring(0, 35)}...` : item.notes}
-                                            </TableCell>
+
                                             <TableCell>{item.client_supplier_name}</TableCell>
                                             <TableCell>
                                                 R$ {parseFloat(item.value).toLocaleString('pt-BR', {

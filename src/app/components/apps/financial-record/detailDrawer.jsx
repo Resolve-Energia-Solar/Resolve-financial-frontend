@@ -21,6 +21,7 @@ import Comment from '../comment';
 import AttachmentTable from '../attachment/attachmentTable';
 import { useSelector } from 'react-redux';
 import financialRecordService from '@/services/financialRecordService';
+import { IconPdf } from '@tabler/icons-react';
 
 const statusMap = {
   S: <Chip label="Solicitada" color="warning" size="small" />,
@@ -54,9 +55,9 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
 
   const handlePaymentStatusChange = async (status) => {
     try {
-    await financialRecordService.updateFinancialRecordResponsibleStatus(currentRecord.id, {
-      status
-    });
+      await financialRecordService.updateFinancialRecordResponsibleStatus(currentRecord.id, {
+        status
+      });
       setCurrentRecord((prev) => ({ ...prev, payment_status: status }));
     } catch (error) {
       console.error(error);
@@ -83,6 +84,21 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
     }
   };
 
+  const handlePDFBtnClick = async () => {
+    try {
+      const response = await financialRecordService.generateFinancialRecordPDFById(currentRecord.id);
+      const url = window.URL.createObjectURL(new Blob([response]));
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `solicitacao_${currentRecord.protocol}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error(error);
+      alert(`Erro ao gerar PDF: ${error.message}`);
+    }
+  };
+
   if (!currentRecord) return null;
 
   return (
@@ -92,9 +108,14 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
           <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>
             Solicitação nº {currentRecord.protocol}
           </Typography>
-          <IconButton onClick={onClose}>
-            <CloseIcon />
-          </IconButton>
+          <Box>
+            <IconButton onClick={handlePDFBtnClick}>
+              <IconPdf size={24} />
+            </IconButton>
+            <IconButton onClick={onClose}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
         </Box>
 
         <Tabs value={tabIndex} onChange={(event, newIndex) => setTabIndex(newIndex)}>
@@ -112,7 +133,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography>
-                  <strong>Descrição:</strong> {currentRecord.notes}
+                  <strong>Categoria:</strong> {currentRecord.category_name}
                 </Typography>
               </Grid>
               <Grid item xs={12} md={6}>
@@ -146,7 +167,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
                   <strong>Status do Financeiro:</strong>
                   {(user.employee?.department?.name === 'Tecnologia' ||
                     user.employee?.department?.name === 'Financeiro') &&
-                  currentRecord.payment_status === 'P' ? (
+                    currentRecord.payment_status === 'P' ? (
                     <FormControl variant="outlined" size="small" sx={{ ml: 1 }}>
                       <Select
                         value={currentRecord.payment_status}
@@ -172,7 +193,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
                 <Typography sx={{ display: 'flex', alignItems: 'center' }}>
                   <strong>Status do Gestor:</strong>
                   {user.id === currentRecord.responsible.id &&
-                  currentRecord.responsible_status === 'P' ? (
+                    currentRecord.responsible_status === 'P' ? (
                     <FormControl sx={{ ml: 1 }} variant="outlined" size="small">
                       <Select
                         value={currentRecord.responsible_status}
@@ -204,25 +225,45 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <Typography>
-                  <strong>Código do Departamento:</strong> {currentRecord.department_code}
+                  <strong>Departamento Solicitante:</strong> {currentRecord.requesting_department}
                 </Typography>
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography>
-                  <strong>Código da Categoria:</strong> {currentRecord.category_code}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography>
-                  <strong>Código do Cliente/Fornecedor:</strong> {currentRecord.client_supplier_code}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography>
-                  <strong>Número da Fatura:</strong> {currentRecord.invoice_number || '-'}
+                  <strong>Departamento Causador:</strong> {currentRecord.department_name}
                 </Typography>
               </Grid>
             </Grid>
+            <Divider sx={{ my: 3 }} />
+            <Grid item xs={12} md={6}>
+              <Typography>
+                <strong>Descrição:</strong><br />{currentRecord.notes}
+              </Typography>
+            </Grid>
+            {user.is_superuser && (
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <Typography>
+                    <strong>Código do Departamento:</strong> {currentRecord.department_code}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography>
+                    <strong>Código da Categoria:</strong> {currentRecord.category_code}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography>
+                    <strong>Código do Cliente/Fornecedor:</strong> {currentRecord.client_supplier_code}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography>
+                    <strong>Número da Fatura:</strong> {currentRecord.invoice_number || '-'}
+                  </Typography>
+                </Grid>
+              </Grid>
+            )}
             <Divider sx={{ my: 3 }} />
             <Grid container>
               <Box display="flex" gap={2}>

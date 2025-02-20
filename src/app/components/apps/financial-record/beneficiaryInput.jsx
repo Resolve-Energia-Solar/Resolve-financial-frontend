@@ -59,12 +59,13 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
 
       // Atualiza o beneficiário selecionado com o novo cliente
       const codigoCliente = newCustomer.codigo_cliente || newCustomer.id;
-      setSelectedBeneficiary({
+      const newBeneficiary = {
         codigo_cliente: codigoCliente,
         nome_fantasia: newCustomer.nome_fantasia || supplierName,
         cnpj_cpf: supplierCpfCnpj,
-      });
-      onChange(codigoCliente);
+      };
+      setSelectedBeneficiary(newBeneficiary);
+      onChange(newBeneficiary);
 
       // Limpa eventuais mensagens de erro e fecha o modal
       setSupplierError(null);
@@ -76,7 +77,7 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
         const { error: errMsg, details } = error.response.data;
         errorMsg = errMsg || errorMsg;
         if (details && details.faultstring) {
-            if (details.faultstring.includes('Cliente já cadastrado')) {
+          if (details.faultstring.includes('Cliente já cadastrado')) {
             errorMsg = 'CNPJ/CPF já cadastrado';
           } else if (details.faultstring.includes('O número do documento informado') && details.faultstring.includes('é inválido.')) {
             errorMsg = 'CNPJ/CPF inválido, revise-o e tente novamente.';
@@ -95,12 +96,13 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
         const beneficiaries = await omieService.getCustomers();
         const beneficiary = beneficiaries.find((ben) => ben.codigo_cliente === beneficiaryId);
         if (beneficiary) {
-          setSelectedBeneficiary({
+          const defaultBeneficiary = {
             codigo_cliente: beneficiary.codigo_cliente,
             nome_fantasia: beneficiary.nome_fantasia,
             cnpj_cpf: normalizeCnpjCpf(beneficiary.cnpj_cpf),
-          });
-          if (!value) onChange(beneficiary.codigo_cliente);
+          };
+          setSelectedBeneficiary(defaultBeneficiary);
+          if (!value) onChange(defaultBeneficiary);
         }
       } catch (error) {
         console.error('Erro ao buscar beneficiário:', error);
@@ -114,11 +116,7 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
 
   const handleChange = (event, newValue) => {
     setSelectedBeneficiary(newValue);
-    if (newValue) {
-      onChange(newValue.codigo_cliente);
-    } else {
-      onChange(null);
-    }
+    onChange(newValue);
   };
 
   const fetchBeneficiariesByFilter = React.useCallback(
@@ -173,13 +171,23 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.codigo_cliente === value.codigo_cliente}
-        getOptionLabel={(option) => `${option.nome_fantasia} - ${option.cnpj_cpf}`}
+        isOptionEqualToValue={(option, value) => {
+          if (typeof value === 'object' && value !== null) {
+            return option.codigo_cliente === value.codigo_cliente;
+          }
+          return option.codigo_cliente === value;
+        }}
+        getOptionLabel={(option) => {
+          if (!option) return '';
+          if (typeof option === 'string') return option;
+          const { nome_fantasia = '', cnpj_cpf = '' } = option;
+          return `${nome_fantasia} - ${cnpj_cpf}`.trim();
+        }}
         options={options}
         noOptionsText="Digite algo para buscar..."
         loading={loading}
         disabled={disabled}
-        value={selectedBeneficiary}
+        value={selectedBeneficiary || value}
         onInputChange={handleInputChange}
         onChange={handleChange}
         renderInput={(params) => (
