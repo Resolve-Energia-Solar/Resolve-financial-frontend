@@ -190,7 +190,7 @@ export default function FormCustom() {
               name="payment_method"
               variant="outlined"
               fullWidth
-              value={formData.payment_method || ''}
+              value={formData.payment_method || 'P'}
               onChange={(e) => handleChange('payment_method', e.target.value)}
             >
               <MenuItem value="B">Boleto</MenuItem>
