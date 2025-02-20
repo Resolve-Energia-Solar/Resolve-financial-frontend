@@ -143,17 +143,17 @@ export default function Comment({ contentType, objectId, label='Comentários' })
                                 style={{
                                     marginBottom: '8px',
                                     display: 'flex',
-                                    justifyContent: comment.author.id === user?.id ? 'flex-end' : 'flex-start'
+                                    justifyContent: comment.author?.id === user?.id ? 'flex-end' : 'flex-start'
                                 }}
                             >
                                 <Tooltip
                                     title={
                                         <Box sx={{ p: 0, textAlign: 'left' }}>
-                                            <Typography variant="body2"><strong>Nome:</strong> {comment.author?.complete_name}</Typography>
-                                            <Typography variant="body2"><strong>Email:</strong> {comment.author?.email}</Typography>
-                                            <Typography variant="body2"><strong>Cargo:</strong> {comment.author.employee_data?.role}</Typography>
-                                            <Typography variant="body2"><strong>Setor:</strong> {comment.author.employee_data?.department}</Typography>
-                                            <Typography variant="body2"><strong>Unidade:</strong> {comment.author.employee_data?.branch}</Typography>
+                                            <Typography variant="body2"><strong>Nome:</strong> {comment.author?.complete_name || 'Desconhecido'}</Typography>
+                                            <Typography variant="body2"><strong>Email:</strong> {comment.author?.email || 'Desconhecido'}</Typography>
+                                            <Typography variant="body2"><strong>Cargo:</strong> {comment.author?.employee_data?.role || 'Desconhecido'}</Typography>
+                                            <Typography variant="body2"><strong>Setor:</strong> {comment.author?.employee_data?.department || 'Desconhecido'}</Typography>
+                                            <Typography variant="body2"><strong>Unidade:</strong> {comment.author?.employee_data?.branch || 'Desconhecido'}</Typography>
                                             <Typography variant="body2"><strong>Data:</strong> {new Date(comment.created_at).toLocaleString()}</Typography>
                                         </Box>
                                     }
@@ -165,24 +165,26 @@ export default function Comment({ contentType, objectId, label='Comentários' })
                                     <ListItem
                                         sx={{
                                             maxWidth: '90%',
-                                            bgcolor: comment.author.id === user?.id ? 'primary.light' : 'grey.300',
+                                            bgcolor: comment.author?.id === user?.id ? 'primary.light' : 'grey.300',
                                             borderRadius: 2,
                                             padding: 1,
-                                            alignSelf: comment.author.id === user?.id ? 'flex-end' : 'flex-start'
+                                            alignSelf: comment.author?.id === user?.id ? 'flex-end' : 'flex-start'
                                         }}
                                     >
                                         <ListItemAvatar>
                                             <Avatar sx={{ bgcolor: 'primary.main', color: 'white' }}>
                                                 {getInitials(
-                                                    comment.author.complete_name || comment.author.email
+                                                    comment.author?.complete_name || comment.author?.email || 'D'
                                                 )}
                                             </Avatar>
                                         </ListItemAvatar>
                                         <ListItemText
                                             primary={
-                                                comment.author.complete_name
+                                                comment.author?.complete_name
                                                     ? comment.author.complete_name.charAt(0).toUpperCase() + comment.author.complete_name.slice(1).toLowerCase()
-                                                    : comment.author.email.charAt(0).toUpperCase() + comment.author.email.slice(1).toLowerCase()
+                                                    : comment.author?.email
+                                                        ? comment.author.email.charAt(0).toUpperCase() + comment.author.email.slice(1).toLowerCase()
+                                                        : 'Desconhecido'
                                             }
                                             secondary={
                                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
