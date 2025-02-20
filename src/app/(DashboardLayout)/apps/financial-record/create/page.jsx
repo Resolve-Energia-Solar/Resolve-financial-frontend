@@ -47,7 +47,7 @@ export default function FormCustom() {
     if (formData.value && formData.category_code) {
       try {
         const now = new Date();
-        const amount = parseFloat(formData.value.replace('.', '').replace(',', '.'));
+        const amount = parseFloat(String(formData.value).replace('.', '').replace(',', '.'));
         const department = user?.employee?.department?.id || '';
         const category = formData.category_code;
         const dueDate = calculateDueDate({
@@ -190,7 +190,7 @@ export default function FormCustom() {
               name="payment_method"
               variant="outlined"
               fullWidth
-              value={formData.payment_method || ''}
+              value={formData.payment_method || 'P'}
               onChange={(e) => handleChange('payment_method', e.target.value)}
             >
               <MenuItem value="B">Boleto</MenuItem>
@@ -207,6 +207,7 @@ export default function FormCustom() {
               <Button
                 variant={formData.is_receivable == true ? 'contained' : 'outlined'}
                 color="success"
+                startIcon={<IconArrowDown />}
                 disabled
               >
                 A Receber

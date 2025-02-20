@@ -32,6 +32,9 @@ import PageContainer from "@/app/components/container/PageContainer";
 import financialRecordService from "@/services/financialRecordService";
 import FinancialRecordDetailDrawer from "@/app/components/apps/financial-record/detailDrawer";
 import GenericFilterDrawer from "@/app/components/filters/GenericFilterDrawer";
+import AutoCompleteBeneficiary from '@/app/components/apps/financial-record/beneficiaryInput';
+import AutoCompleteDepartment from '@/app/components/apps/financial-record/departmentInput';
+import AutoCompleteCategory from '@/app/components/apps/financial-record/categoryInput';
 
 const financialRecordList = () => {
     const router = useRouter();
@@ -119,6 +122,27 @@ const financialRecordList = () => {
     };
 
     const financialRecordFilterConfig = [
+        {
+            key: 'client_supplier_code',
+            label: 'Cliente/Fornecedor (Omie)',
+            type: 'custom',
+            customComponent: AutoCompleteBeneficiary,
+            customTransform: (value) => value,
+        },
+        {
+            key: 'department_code__icontains',
+            label: 'Departamento Causador (Omie)',
+            type: 'custom',
+            customComponent: AutoCompleteDepartment,
+            customTransform: (value) => value,
+        },
+        {
+            key: 'category_code__icontains',
+            label: 'Categoria (Omie)',
+            type: 'custom',
+            customComponent: AutoCompleteCategory,
+            customTransform: (value) => value,
+        },
         {
             key: "integration_code",
             label: "Código de Integração",

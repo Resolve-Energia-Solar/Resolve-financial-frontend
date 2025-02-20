@@ -34,6 +34,18 @@ const omieService = {
             console.error('Erro ao obter clientes:', error);
             throw error;
         }
+    },
+    addCustomer: async ({ call = 'IncluirCliente', customer } = {}) => {
+        try {
+            const response = await apiClient.post('api/financial/omie/', {
+                call,
+                customer
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Erro ao adicionar cliente:', error);
+            throw error;
+        }
     }
 };
 
