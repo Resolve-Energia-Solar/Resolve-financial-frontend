@@ -123,7 +123,10 @@ export default function FormCustom() {
           <Grid item xs={12} md={6}>
             <CustomFormLabel htmlFor="department_code">Departamento Causador</CustomFormLabel>
             <AutoCompleteDepartment
-              onChange={(value) => handleChange('department_code', value)}
+              onChange={(department) => {
+                handleChange('department_code', department?.codigo || '');
+                handleChange('department_name', department?.descricao || '');
+              }}
               value={formData.department_code}
               error={formErrors.department_code}
               helperText={formErrors.department_code}
@@ -146,7 +149,10 @@ export default function FormCustom() {
               value={formData.client_supplier_code}
               error={formErrors.client_supplier_code}
               helperText={formErrors.client_supplier_code}
-              onChange={(codigo_cliente) => handleChange('client_supplier_code', codigo_cliente)}
+              onChange={(beneficiary) => {
+                handleChange('client_supplier_code', beneficiary?.codigo_cliente || '');
+                handleChange('client_supplier_name', beneficiary?.nome_fantasia || '');
+              }}
             />
           </Grid>
           <Grid item xs={12}>
@@ -165,7 +171,10 @@ export default function FormCustom() {
           <Grid item xs={12} md={6}>
             <CustomFormLabel htmlFor="category_code">Categoria</CustomFormLabel>
             <AutoCompleteCategory
-              onChange={(value) => handleChange('category_code', value)}
+              onChange={(category) => {
+                handleChange('category_code', category?.codigo || '');
+                handleChange('category_name', category?.descricao || '');
+              }}
               value={formData.category_code}
               error={formErrors.category_code}
               helperText={formErrors.category_code}
