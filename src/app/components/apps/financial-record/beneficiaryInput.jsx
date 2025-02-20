@@ -176,6 +176,7 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
         isOptionEqualToValue={(option, value) => option.codigo_cliente === value.codigo_cliente}
         getOptionLabel={(option) => `${option.nome_fantasia} - ${option.cnpj_cpf}`}
         options={options}
+        noOptionsText="Digite algo para buscar..."
         loading={loading}
         disabled={disabled}
         value={selectedBeneficiary}
