@@ -13,6 +13,7 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
 import InputCpfCnpj from '@/app/components/shared/InputCpfCnpj';
+import { useSnackbar } from 'notistack';
 
 const normalizeCnpjCpf = (value) => value.replace(/[^\d]/g, '');
 
@@ -27,6 +28,9 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
   const [supplierCpfCnpj, setSupplierCpfCnpj] = React.useState('');
   const [supplierName, setSupplierName] = React.useState('');
   const [supplierError, setSupplierError] = React.useState(null);
+  const [saving, setSaving] = React.useState(false);
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleCpfCnpjChange = (e) => {
     setSupplierCpfCnpj(e.target.value);
@@ -47,6 +51,7 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
 
   // Função para salvar os dados do fornecedor via addCustomer
   const handleSaveSupplier = async () => {
+    setSaving(true);
     try {
       const customerData = {
         cnpj_cpf: supplierCpfCnpj.replace(/\D/g, ''),
@@ -87,6 +92,9 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
         }
       }
       setSupplierError(errorMsg);
+      enqueueSnackbar(errorMsg, { variant: 'error' });
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -106,6 +114,7 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
         }
       } catch (error) {
         console.error('Erro ao buscar beneficiário:', error);
+        enqueueSnackbar('Erro ao buscar beneficiário.', { variant: 'error' });
       }
     }
   };
@@ -133,6 +142,7 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
         setOptions(formattedBeneficiaries);
       } catch (error) {
         console.error('Erro ao buscar beneficiários:', error);
+        enqueueSnackbar('Erro ao buscar beneficiários.', { variant: 'error' });
       }
       setLoading(false);
     }, 1000),
@@ -241,8 +251,8 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModal}>Cancelar</Button>
-          <Button onClick={handleSaveSupplier} color="primary" variant="contained">
-            Salvar
+          <Button onClick={handleSaveSupplier} color="primary" variant="contained" disabled={saving}>
+            {saving ? <CircularProgress size={24} /> : 'Salvar'}
           </Button>
         </DialogActions>
       </Dialog>
