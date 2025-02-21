@@ -9,6 +9,7 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    TablePagination,
     Paper,
     Typography,
     IconButton,
@@ -25,8 +26,8 @@ import {
     Delete as DeleteIcon,
     AddBoxRounded,
 } from '@mui/icons-material';
-import { FilterContext } from "@/context/FilterContext";
 import { useRouter } from 'next/navigation';
+import { FilterContext } from "@/context/FilterContext";
 import BlankCard from '@/app/components/shared/BlankCard';
 import PageContainer from "@/app/components/container/PageContainer";
 import financialRecordService from "@/services/financialRecordService";
@@ -35,6 +36,7 @@ import GenericFilterDrawer from "@/app/components/filters/GenericFilterDrawer";
 import AutoCompleteBeneficiary from '@/app/components/apps/financial-record/beneficiaryInput';
 import AutoCompleteDepartment from '@/app/components/apps/financial-record/departmentInput';
 import AutoCompleteCategory from '@/app/components/apps/financial-record/categoryInput';
+import { basicsTableData } from '@/app/(DashboardLayout)/react-tables/pagination/PaginationData';
 
 const financialRecordList = () => {
     const router = useRouter();
@@ -48,14 +50,30 @@ const financialRecordList = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [totalRows, setTotalRows] = useState(0);
+    const [page, setPage] = useState(0);
+
+    const handlePageChange = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleRowsPerPageChange = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
 
     useEffect(() => {
         const fetchFinancialRecords = async () => {
-            setLoading(true);
             try {
-                // Passe os filtros para a requisição
-                const data = await financialRecordService.getFinancialRecordList(filters);
+                setLoading(true);
+                const data = await financialRecordService.getFinancialRecordList({
+                    limit: rowsPerPage,
+                    page: page + 1,
+                    ...filters,
+                });
                 setFinancialRecordList(data.results);
+                setTotalRows(data.count);
             } catch (err) {
                 setError('Erro ao carregar Contas a Receber/Pagar');
             } finally {
@@ -63,7 +81,7 @@ const financialRecordList = () => {
             }
         };
         fetchFinancialRecords();
-    }, [filters]);
+    }, [filters, rowsPerPage, page]);
 
     const handleCreateClick = () => {
         router.push('/apps/financial-record/create');
@@ -123,29 +141,29 @@ const financialRecordList = () => {
 
     const financialRecordFilterConfig = [
         {
-          key: 'client_supplier_code',
-          label: 'Cliente/Fornecedor (Omie)',
-          type: 'custom',
-          customComponent: AutoCompleteBeneficiary,
-          customTransform: (value) =>
-            value && typeof value === 'object' ? value.codigo_cliente : value,
+            key: 'client_supplier_code',
+            label: 'Cliente/Fornecedor (Omie)',
+            type: 'custom',
+            customComponent: AutoCompleteBeneficiary,
+            customTransform: (value) =>
+                value && typeof value === 'object' ? value.codigo_cliente : value,
         },
         {
-          key: 'department_code__icontains',
-          label: 'Departamento Causador (Omie)',
-          type: 'custom',
-          customComponent: AutoCompleteDepartment,
-          customTransform: (value) =>
-            value && typeof value === 'object' ? value.codigo : value,
+            key: 'department_code__icontains',
+            label: 'Departamento Causador (Omie)',
+            type: 'custom',
+            customComponent: AutoCompleteDepartment,
+            customTransform: (value) =>
+                value && typeof value === 'object' ? value.codigo : value,
         },
         {
-          key: 'category_code__icontains',
-          label: 'Categoria (Omie)',
-          type: 'custom',
-          customComponent: AutoCompleteCategory,
-          customTransform: (value) =>
-            value && typeof value === 'object' ? value.codigo : value,
-        },      
+            key: 'category_code__icontains',
+            label: 'Categoria (Omie)',
+            type: 'custom',
+            customComponent: AutoCompleteCategory,
+            customTransform: (value) =>
+                value && typeof value === 'object' ? value.codigo : value,
+        },
         {
             key: "integration_code",
             label: "Código de Integração",
@@ -324,6 +342,16 @@ const financialRecordList = () => {
                             </Table>
                         </TableContainer>
                     )}
+                    <TablePagination
+                        rowsPerPageOptions={[5, 10, 25]}
+                        component="div"
+                        count={totalRows}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handlePageChange}
+                        onRowsPerPageChange={handleRowsPerPageChange}
+                        labelRowsPerPage="Linhas por página"
+                    />
                 </CardContent>
             </BlankCard>
 
