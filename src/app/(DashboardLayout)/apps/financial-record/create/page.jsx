@@ -295,6 +295,23 @@ export default function FormCustom() {
             />
           </Grid>
           <Grid item xs={12}>
+            <CustomFormLabel htmlFor="invoice_number">Número da Nota Fiscal</CustomFormLabel>
+            <CustomTextField
+              name="invoice_number"
+              variant="outlined"
+              fullWidth
+              value={formData.invoice_number}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*$/.test(value) && value.length <= 20) {
+                  handleChange('invoice_number', value);
+                }
+              }}
+              error={!!formErrors.invoice_number}
+              helperText={formErrors.invoice_number}
+            />
+          </Grid>
+          <Grid item xs={12}>
             <Stack direction="row" spacing={2} justifyContent="space-between" mt={2}>
               <AttachmentDrawer
                 objectId={null}
