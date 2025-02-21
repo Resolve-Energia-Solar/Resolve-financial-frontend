@@ -7,11 +7,13 @@ import {
   Select,
   MenuItem,
   FormHelperText,
+  CircularProgress,
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import { useRouter } from 'next/navigation';
 import { IconArrowDown, IconArrowUp } from '@tabler/icons-react';
 import { useSelector } from 'react-redux';
+import { useSnackbar } from 'notistack';
 
 import AutoCompleteDepartment from '@/app/components/apps/financial-record/departmentInput';
 import AutoCompleteCategory from '@/app/components/apps/financial-record/categoryInput';
@@ -34,9 +36,28 @@ const FINANCIAL_RECORD_CONTENT_TYPE = process.env.NEXT_PUBLIC_FINANCIAL_RECORD_C
 
 export default function FormCustom() {
   const router = useRouter();
-  const { formData, handleChange, formErrors, success } = useFinancialRecordForm();
+  const { formData, handleChange, formErrors, setFormErrors, success } = useFinancialRecordForm();
   const [attachments, setAttachments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
   const user = useSelector((state) => state.user?.user);
+
+  const fieldLabels = {
+    client_supplier_code: 'Beneficiário (Nome/CPF/CNPJ)',
+    client_supplier_name: 'Nome do Beneficiário',
+    requesting_department_id: 'Departamento Solicitante',
+    department_code: 'Departamento Causador',
+    department_name: 'Nome do Departamento',
+    category_code: 'Categoria',
+    category_name: 'Nome da Categoria',
+    value: 'Valor (R$)',
+    notes: 'Descrição',
+    payment_method: 'Forma de Pagamento',
+    is_receivable: 'A pagar / A receber',
+    service_date: 'Data do Serviço',
+    due_date: 'Data de Vencimento',
+    invoice_number: 'Número da Nota Fiscal',
+  };
 
   // Armazena os anexos adicionados (antes da criação)
   const handleAddAttachment = (attachment) => {
@@ -68,6 +89,7 @@ export default function FormCustom() {
   }, [formData.value, formData.category_code, user?.employee?.department?.id, formData.due_date, handleChange]);
 
   const handleSubmit = async () => {
+    setLoading(true);
     try {
       // Cria o registro e obtém o object_id
       const recordResponse = await financialRecordService.createFinancialRecord(formData);
@@ -89,6 +111,18 @@ export default function FormCustom() {
       router.push("/apps/financial-record");
     } catch (error) {
       console.error("Erro ao salvar registro ou anexos:", error);
+      if (error.response && error.response.data) {
+        const errors = error.response.data;
+        setFormErrors(errors);
+        Object.keys(errors).forEach((field) => {
+          const label = fieldLabels[field] || field;
+          enqueueSnackbar(`Erro no campo ${label}: ${errors[field].join(', ')}`, { variant: 'error' });
+        });
+      } else {
+        enqueueSnackbar("Erro ao salvar registro ou anexos: " + error.message, { variant: 'error' });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -201,6 +235,7 @@ export default function FormCustom() {
               fullWidth
               value={formData.payment_method || 'P'}
               onChange={(e) => handleChange('payment_method', e.target.value)}
+              error={!!formErrors.payment_method}
             >
               <MenuItem value="B">Boleto</MenuItem>
               <MenuItem value="C">Cartão</MenuItem>
@@ -267,8 +302,8 @@ export default function FormCustom() {
                 onAddAttachment={handleAddAttachment}
                 contentTypeId={FINANCIAL_RECORD_CONTENT_TYPE}
               />
-              <Button variant="contained" color="primary" onClick={handleSubmit}>
-                Criar
+              <Button variant="contained" color="primary" onClick={handleSubmit} disabled={loading}>
+                {loading ? <CircularProgress size={24} /> : 'Criar'}
               </Button>
             </Stack>
           </Grid>

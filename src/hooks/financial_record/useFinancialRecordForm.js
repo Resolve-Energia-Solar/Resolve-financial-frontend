@@ -12,7 +12,7 @@ export default function useFinancialRecordForm() {
     category_name: '',
     value: '',
     notes: '',
-    payment_method: '',
+    payment_method: 'P',
     is_receivable: false,
     service_date: '',
     due_date: '',
@@ -53,5 +53,5 @@ export default function useFinancialRecordForm() {
     }
   };
 
-  return { formData, handleChange, handleSave, formErrors, success };
+  return { formData, handleChange, handleSave, formErrors, setFormErrors, success };
 }
