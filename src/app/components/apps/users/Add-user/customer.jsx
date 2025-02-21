@@ -15,7 +15,15 @@ import AutoCompletePhoneNumber from '../../comercial/sale/components/auto-comple
 import { IconDeviceFloppy } from '@tabler/icons-react';
 
 export default function CreateCustomer({ onClosedModal = null, selectedUserId = null }) {
-  const { formData, handleChange, handleSave, formErrors, success, dataReceived, loading: formLoading } = useUserForm();
+  const {
+    formData,
+    handleChange,
+    handleSave,
+    formErrors,
+    success,
+    dataReceived,
+    loading: formLoading,
+  } = useUserForm();
 
   formData.is_active = true;
 
@@ -90,7 +98,7 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
           variant="outlined"
           fullWidth
           value={formData.complete_name}
-          onChange={(e) => handleChange('complete_name', e.target.value)}
+          onChange={(e) => handleChange('complete_name', e.target.value.toUpperCase())}
           {...(formErrors.complete_name && { error: true, helperText: formErrors.complete_name })}
         />
       </Grid>
