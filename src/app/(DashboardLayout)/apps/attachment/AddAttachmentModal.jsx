@@ -6,8 +6,10 @@ import {
     TextField,
     Button,
     Paper,
+    CircularProgress
 } from "@mui/material";
 import { UploadFile } from "@mui/icons-material";
+import { useSnackbar } from 'notistack';
 import attachmentService from "@/services/attachmentService";
 
 const AddAttachmentModal = ({
@@ -20,7 +22,9 @@ const AddAttachmentModal = ({
 }) => {
     const [newAttachment, setNewAttachment] = useState({ file: null, description: "" });
     const [dragOver, setDragOver] = useState(false);
+    const [loading, setLoading] = useState(false);
     const fileInputRef = useRef(null);
+    const { enqueueSnackbar } = useSnackbar();
 
     const handleFileChange = (e) => {
         const file = e.target.files?.[0];
@@ -54,6 +58,7 @@ const AddAttachmentModal = ({
 
     const handleSaveAttachment = async () => {
         if (newAttachment.file) {
+            setLoading(true);
             if (objectId) {
                 const formData = new FormData();
                 formData.append("file", newAttachment.file);
@@ -68,10 +73,12 @@ const AddAttachmentModal = ({
                     onAddAttachment(response);
                 } catch (error) {
                     console.error("Erro ao salvar anexo:", error);
+                    enqueueSnackbar("Erro ao salvar anexo: " + error.message, { variant: 'error' });
                 }
             } else {
                 onAddAttachment(newAttachment);
             }
+            setLoading(false);
             onClose();
             setNewAttachment({ file: null, description: "" });
         }
@@ -138,9 +145,15 @@ const AddAttachmentModal = ({
                     />
                 )}
 
-                <Button variant="contained" onClick={handleSaveAttachment} sx={{ mt: 2 }}>
-                    Salvar
-                </Button>
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                    <Button
+                        variant="contained"
+                        onClick={handleSaveAttachment}
+                        disabled={loading}
+                    >
+                        {loading ? <CircularProgress size={24} /> : 'Salvar'}
+                    </Button>
+                </Box>
             </Box>
         </Modal>
     );

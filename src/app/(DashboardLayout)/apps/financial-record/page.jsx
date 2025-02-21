@@ -36,7 +36,6 @@ import GenericFilterDrawer from "@/app/components/filters/GenericFilterDrawer";
 import AutoCompleteBeneficiary from '@/app/components/apps/financial-record/beneficiaryInput';
 import AutoCompleteDepartment from '@/app/components/apps/financial-record/departmentInput';
 import AutoCompleteCategory from '@/app/components/apps/financial-record/categoryInput';
-import { basicsTableData } from '@/app/(DashboardLayout)/react-tables/pagination/PaginationData';
 
 const financialRecordList = () => {
     const router = useRouter();
