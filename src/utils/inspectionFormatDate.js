@@ -1,22 +1,38 @@
 const formatDate = (dateString) => {
   if (!dateString) return null;
-  const [year, month, day] = dateString.split('-');
+  const parts = dateString.split('-');
+  if (parts.length < 3) {
+    console.error("Invalid date format:", dateString);
+    return null;
+  }
+  const [year, month, day] = parts;
   if (day.includes('T')) {
-    const [newDay, time] = day.split('T');
+    const [newDay] = day.split('T');
     return `${newDay}/${month}/${year}`;
   }
   return `${day}/${month}/${year}`;
 };
 
+
 const formatDateTime = (dateString) => {
   if (!dateString) return null;
-  const [year, month, day] = dateString.split('-');
-  if (day.includes('T')) {
-    const [newDay, time] = day.split('T');
-    return `${newDay}/${month}/${year} às ${time.split('.')[0]}`;
+  const parts = dateString.split('-');
+  if (parts.length < 3) {
+    console.error("Invalid date format:", dateString);
+    return null;
   }
-  return `${day}/${month}/${year} às ${dateString.split('T')[1].split('.')[0]}`;
+  const [year, month, day] = parts;
+  if (day.includes('T')) {
+    const [newDay, timePart] = day.split('T');
+    if (!timePart) return null;
+    return `${newDay}/${month}/${year} às ${timePart.split('.')[0]}`;
+  }
+  // This branch might still cause issues if dateString doesn't include 'T'
+  const timeParts = dateString.split('T');
+  if (timeParts.length < 2) return `${day}/${month}/${year}`;
+  return `${day}/${month}/${year} às ${timeParts[1].split('.')[0]}`;
 };
+
 
 const formatTime = (timeString) => {
   if (!timeString) return null;
