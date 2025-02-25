@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import serviceOpinionsService from '@/services/serviceOpinionsService';
+import { is } from 'date-fns/locale';
 
 export default function AutoInputStatusSchedule({
   onChange,
@@ -24,6 +25,8 @@ export default function AutoInputStatusSchedule({
           service: serviceId,
           is_final_opinion: isFinalOpinion,
         });
+        console.log('parecer final?', isFinalOpinion);
+        console.log('response', response);
         setStatus(
           response.results.map((item) => ({
             id: item.id,
