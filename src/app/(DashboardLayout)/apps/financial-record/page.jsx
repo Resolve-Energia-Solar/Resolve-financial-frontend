@@ -198,7 +198,7 @@ const financialRecordList = () => {
         },
         {
             key: 'client_supplier_code',
-            label: 'Cliente/Fornecedor (Omie)',
+            label: 'Beneficiário (Omie)',
             type: 'custom',
             customComponent: AutoCompleteBeneficiary,
             customTransform: (value) =>
@@ -421,7 +421,7 @@ const financialRecordList = () => {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>Protocolo</TableCell>
-                                        <TableCell>Beneficiário/Pagador</TableCell>
+                                        <TableCell>Beneficiário</TableCell>
                                         <TableCell>Valor</TableCell>
                                         <TableCell>Data de Vencimento</TableCell>
                                         <TableCell>Status</TableCell>
