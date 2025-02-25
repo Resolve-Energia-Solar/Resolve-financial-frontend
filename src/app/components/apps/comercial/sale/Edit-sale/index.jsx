@@ -42,6 +42,7 @@ import SchedulesInspections from '../../../project/components/SchedulesInspectio
 import History from '@/app/components/apps/history';
 import Comment from '../../../comment';
 import useSendContract from '@/hooks/contract/useSendContract';
+import TagList from '@/app/components/tags/TagList';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -167,7 +168,8 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
 
           {value === 2 && (
             <Box {...props}>
-              <Grid container spacing={3}>
+              <TagList appLabel="resolve_crm" model="sale" objectId={id_sale} />
+              <Grid container spacing={1} sx={{ mt: 0 }}>
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="name">Cliente</CustomFormLabel>
                   <AutoCompleteUser
@@ -275,7 +277,7 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                     disabled={!hasPermission(['financial.change_status_financial'])}
                   />
                 </Grid>
-                
+
                 <HasPermission
                   permissions={['resolve_crm.can_change_billing_date']}
                   userPermissions={userPermissions}
@@ -407,9 +409,7 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
       {/* <PreviewContractModal
         saleId={id_sale}
       /> */}
-
       <Snackbar
-        open={snackbarOpen}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
