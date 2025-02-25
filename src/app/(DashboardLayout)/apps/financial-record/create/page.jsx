@@ -31,10 +31,12 @@ import useFinancialRecordForm from '@/hooks/financial_record/useFinancialRecordF
 import { calculateDueDate } from '@/utils/calcDueDate';
 import financialRecordService from '@/services/financialRecordService';
 import attachmentService from '@/services/attachmentService';
+import getContentType from '@/utils/getContentType';
 
-const FINANCIAL_RECORD_CONTENT_TYPE = process.env.NEXT_PUBLIC_FINANCIAL_RECORD_CONTENT_TYPE;
+
 
 export default function FormCustom() {
+  const [FINANCIAL_RECORD_CONTENT_TYPE, setFinancialRecordContentType] = useState(null);
   const router = useRouter();
   const { formData, handleChange, formErrors, setFormErrors, success } = useFinancialRecordForm();
   const [attachments, setAttachments] = useState([]);
@@ -63,6 +65,14 @@ export default function FormCustom() {
   const handleAddAttachment = (attachment) => {
     setAttachments((prev) => [...prev, attachment]);
   };
+
+  useEffect(() => {
+    const fetchContentType = async () => {
+      const contentType = await getContentType('financial', 'financialrecord');
+      setFinancialRecordContentType(contentType);
+    };
+    fetchContentType();
+  }, []);
 
   useEffect(() => {
     if (formData.value && formData.category_code) {
