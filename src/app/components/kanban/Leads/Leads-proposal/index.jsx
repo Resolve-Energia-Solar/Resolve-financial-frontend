@@ -25,11 +25,13 @@ function LeadProposalPage({ leadId = null }) {
         ref_amount: '',
         entry_amount: '',
         payment_method: '',
+        financing_type: '',
         seller_id: '',
         proposal_validity: '',
         proposal_status: '',
         description: '',
-        created_at: ''
+        created_at: '',
+        installments_num: ''
 
     });
 
@@ -144,18 +146,41 @@ function LeadProposalPage({ leadId = null }) {
                         <Grid item xs={12} sm={6}>
                             <CustomFormLabel htmlFor="payment_method">Forma de pagamento</CustomFormLabel>
                             <TextField select name="payment_method" value={formData.payment_method} onChange={handleChange} fullWidth>
-                                <MenuItem value="C">Crédito</MenuItem>
-                                <MenuItem value="DE">Débito</MenuItem>
-                                <MenuItem value="B">Boleto</MenuItem>
-                                <MenuItem value="F">Financiamento</MenuItem>
-                                <MenuItem value="PI">Parcelamento Interno</MenuItem>
-                                <MenuItem value="PX">Pix</MenuItem>
-                                <MenuItem value="T">Transferência</MenuItem>
-                                <MenuItem value="DI">Dinheiro</MenuItem>
-                                <MenuItem value="PA">Poste Auxiliar</MenuItem>
-                                <MenuItem value="RO">Repasse de Obra</MenuItem>
+                                <MenuItem value="credit">Crédito</MenuItem>
+                                <MenuItem value="debit">Débito</MenuItem>
+                                <MenuItem value="bank_slip">Boleto</MenuItem>
+                                <MenuItem value="financing">Financiamento</MenuItem>
+                                <MenuItem value="internal_installments">Parcelamento Interno</MenuItem>
+                                <MenuItem value="pix">Pix</MenuItem>
+                                <MenuItem value="bank_transfer">Transferência</MenuItem>
+                                <MenuItem value="cash">Dinheiro</MenuItem>
+                                <MenuItem value="auxiliar">Poste Auxiliar</MenuItem>
+                                <MenuItem value="construction">Repasse de Obra</MenuItem>
                                 </TextField>
                         </Grid>
+
+                        {formData.payment_method === 'financing' && (
+                            <Grid item xs={12} sm={6}>
+                                <CustomFormLabel htmlFor="financing_type">Financiadoras</CustomFormLabel>
+                                <TextField select name="financing_type" value={formData.financing_type} onChange={handleChange} fullWidth>
+                                    <MenuItem value="2">2x</MenuItem>
+                                    <MenuItem value="3">3x</MenuItem>
+                                </TextField>
+                            </Grid>
+                        )}
+
+                        {formData.payment_method === 'credit' && (
+                            <Grid item xs={12} sm={6}>
+                                <CustomFormLabel htmlFor="installments_num">Parcelas</CustomFormLabel>
+                                <TextField select name="installments_num" value={formData.installments_num} onChange={handleChange} fullWidth>
+                                    <MenuItem value="2">2x</MenuItem>
+                                    <MenuItem value="3">3x</MenuItem>
+                                    <MenuItem value="4">4x</MenuItem>
+                                    <MenuItem value="5">5x</MenuItem>
+                                    <MenuItem value="6">6x</MenuItem>
+                                </TextField>
+                            </Grid>
+                        )}
 
                         <Grid item xs={12} sm={6}>
                             <CustomFormLabel htmlFor="seller_id">Vendedor Resonsável</CustomFormLabel>
