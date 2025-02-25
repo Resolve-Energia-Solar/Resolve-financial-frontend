@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect, useContext } from "react";
+import { useSelector } from 'react-redux';
 import {
     Box,
     CardContent,
@@ -20,22 +21,29 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-} from '@mui/material';
+    Divider,
+    Grid,
+} from "@mui/material";
 import {
     Edit as EditIcon,
     Delete as DeleteIcon,
     AddBoxRounded,
-} from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
+} from "@mui/icons-material";
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import { useRouter } from "next/navigation";
 import { FilterContext } from "@/context/FilterContext";
-import BlankCard from '@/app/components/shared/BlankCard';
+import BlankCard from "@/app/components/shared/BlankCard";
 import PageContainer from "@/app/components/container/PageContainer";
 import financialRecordService from "@/services/financialRecordService";
 import FinancialRecordDetailDrawer from "@/app/components/apps/financial-record/detailDrawer";
 import GenericFilterDrawer from "@/app/components/filters/GenericFilterDrawer";
-import AutoCompleteBeneficiary from '@/app/components/apps/financial-record/beneficiaryInput';
-import AutoCompleteDepartment from '@/app/components/apps/financial-record/departmentInput';
-import AutoCompleteCategory from '@/app/components/apps/financial-record/categoryInput';
+import AutoCompleteBeneficiary from "@/app/components/apps/financial-record/beneficiaryInput";
+import AutoCompleteDepartment from "@/app/components/apps/financial-record/departmentInput";
+import AutoCompleteCategory from "@/app/components/apps/financial-record/categoryInput";
+import SaleCards from "@/app/components/apps/inforCards/InforCards";
 
 const financialRecordList = () => {
     const router = useRouter();
@@ -52,6 +60,10 @@ const financialRecordList = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [totalRows, setTotalRows] = useState(0);
     const [page, setPage] = useState(0);
+    const [totalRequests, setTotalRequests] = useState(0);
+    const [totalAmount, setTotalAmount] = useState(0);
+    const [inProgressCount, setInProgressCount] = useState(0);
+    const [errorRequestsCount, setErrorRequestsCount] = useState(0);
 
     const handlePageChange = (event, newPage) => {
         setPage(newPage);
@@ -73,12 +85,49 @@ const financialRecordList = () => {
                 });
                 setFinancialRecordList(data.results);
                 setTotalRows(data.count);
+
+                // Atualizar KPIs globais
+                await fetchKPIs();
             } catch (err) {
-                setError('Erro ao carregar Contas a Receber/Pagar');
+                setError("Erro ao carregar Contas a Receber/Pagar");
             } finally {
                 setLoading(false);
             }
         };
+
+        const fetchKPIs = async () => {
+            try {
+                const kpiData = await financialRecordService.getFinancialRecordList({
+                    ...filters, // Apenas filtros, sem limite de página
+                });
+
+                setTotalRequests(kpiData.count); // Total de registros
+                setTotalAmount(
+                    kpiData.results.reduce(
+                        (acc, item) => acc + parseFloat(item.value),
+                        0
+                    )
+                ); // Soma do valor
+                setInProgressCount(
+                    kpiData.results.filter(
+                        (item) =>
+                            item.responsible_status === "A" && item.payment_status === "P"
+                    ).length
+                ); // Em Andamento
+                // Solicitações com erro: status A, pagamento P e integration_code null
+                setErrorRequestsCount(
+                    kpiData.results.filter(
+                        (item) =>
+                            item.responsible_status === "A" &&
+                            item.payment_status === "P" &&
+                            item.integration_code === null
+                    ).length
+                );
+            } catch (err) {
+                setError("Erro ao carregar KPIs");
+            }
+        };
+
         fetchFinancialRecords();
     }, [filters, rowsPerPage, page]);
 
@@ -140,6 +189,14 @@ const financialRecordList = () => {
 
     const financialRecordFilterConfig = [
         {
+            key: 'bug',
+            label: 'Com Erro?',
+            type: 'checkbox',
+            inputType: 'checkbox',
+            trueLabel: 'Com erro',
+            falseLabel: 'Sem erro',
+        },
+        {
             key: 'client_supplier_code',
             label: 'Cliente/Fornecedor (Omie)',
             type: 'custom',
@@ -167,12 +224,12 @@ const financialRecordList = () => {
             key: "integration_code",
             label: "Código de Integração",
             type: "async-autocomplete",
-            endpoint: "/api/financial-record/",
+            endpoint: "/api/financial-records/",
             queryParam: "integration_code__exact",
             extraParams: {},
             mapResponse: (data) => data.results.map(financialRecord => ({
                 label: financialRecord.protocol,
-                value: financialRecord.protocol
+                value: financialRecord.id
             }))
         },
         { key: "integration_code__in", label: "Código de Integração (Lista)", type: "multiselect", options: [] },
@@ -240,6 +297,81 @@ const financialRecordList = () => {
         { key: "paid_at__range", label: "Pago em (Entre)", type: "range", inputType: "date" },
     ];
 
+    // Função para lidar com o clique nos KPIs e aplicar filtros,
+    // zerando todos os outros filtros.
+    const handleKPIClick = (kpiType) => {
+        let newFilters = {}; // Zera todos os filtros
+
+        switch (kpiType) {
+            case 'inProgress':
+                newFilters = {
+                    responsible_status__in: 'A,',
+                    payment_status__in: 'P,',
+                };
+                break;
+            case 'error':
+                newFilters = {
+                    bug: 'true'
+                };
+                break;
+            case 'totalRequests':
+                // Para totalRequests, não aplicamos nenhum filtro.
+                break;
+            default:
+                break;
+        }
+
+        setFilters(newFilters);
+    };
+
+    // Dados para os KPI cards usando o componente SaleCard
+    const cardsData = [
+        {
+            backgroundColor: "lightblue",
+            iconColor: "#1976d2",
+            IconComponent: AssignmentIcon,
+            title: "Solicitações",
+            // Exemplo: valor e contagem são iguais, mas sem formatação monetária
+            value: totalRequests,
+            count: null,
+            isCurrency: false,  // <--- Falso, pois não queremos exibir em R$
+            onClick: () => handleKPIClick("totalRequests"),
+        },
+        {
+            backgroundColor: "lightgreen",
+            iconColor: "#2e7d32",
+            IconComponent: AttachMoneyIcon,
+            title: "Valor Total",
+            value: totalAmount,
+            count: totalRequests,
+            isCurrency: true,   // <--- Verdadeiro, pois queremos R$
+            onClick: () => handleKPIClick("totalAmount"),
+        },
+        {
+            backgroundColor: "lightyellow",
+            iconColor: "#ed6c02",
+            IconComponent: AutorenewIcon,
+            title: "Em Andamento",
+            value: inProgressCount,
+            count: null,
+            isCurrency: false,
+            onClick: () => handleKPIClick("inProgress"),
+        },
+        {
+            backgroundColor: "lightcoral",
+            iconColor: "#d32f2f",
+            IconComponent: ErrorOutlineIcon,
+            title: "Erro",
+            value: errorRequestsCount,
+            count: null,
+            isCurrency: false,
+            onClick: () => handleKPIClick("error"),
+            permission: "financial.delete_financialrecord",
+        },
+    ];
+
+    const user = useSelector((state) => state.user?.user);
+
     return (
         <PageContainer title="Contas a Receber/Pagar" description="Lista de Contas a Receber/Pagar">
             <BlankCard>
@@ -266,6 +398,9 @@ const financialRecordList = () => {
                             Abrir Filtros
                         </Button>
                     </Box>
+
+                    {/* Renderização dos KPIs utilizando o componente ProjectCards */}
+                    <SaleCards cardsData={cardsData} user_permissions={user.user_permissions} />
 
                     <GenericFilterDrawer
                         filters={financialRecordFilterConfig}

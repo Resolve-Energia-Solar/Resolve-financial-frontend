@@ -41,20 +41,22 @@ const InforQuantity = ({ backgroundColor, iconColor, IconComponent, title, subti
   </Grid>
 );
 
-const ProjectCards = ({ cardsData }) => (
+const ProjectCards = ({ cardsData, user_permissions = [] }) => (
   <Grid container spacing={3} sx={{ marginBottom: 3 }}>
-    {cardsData.map((card, index) => (
-      <InforQuantity
-        key={index}
-        backgroundColor={card.backgroundColor}
-        iconColor={card.iconColor}
-        IconComponent={card.IconComponent}
-        title={card.title}
-        subtitle={card.subtitle}
-        count={card.count || 0}
-        onClick={card.onClick}
-      />
-    ))}
+    {cardsData
+      .filter(card => !card.permission || user_permissions.includes(card.permission))
+      .map((card, index) => (
+        <InforQuantity
+          key={index}
+          backgroundColor={card.backgroundColor}
+          iconColor={card.iconColor}
+          IconComponent={card.IconComponent}
+          title={card.title}
+          subtitle={card.subtitle}
+          count={card.count || 0}
+          onClick={card.onClick}
+        />
+      ))}
   </Grid>
 );
 
