@@ -10,6 +10,8 @@ import {
   IconButton,
   Typography,
   Grid,
+  FormControlLabel,
+  Checkbox
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import GenericAsyncAutocompleteInput from "./GenericAsyncAutocompleteInput";
@@ -83,6 +85,15 @@ const NumberRangeInput = ({ label, value, onChange }) => {
   );
 };
 
+const CheckboxInput = ({ label, value, onChange }) => {
+  return (
+    <FormControlLabel
+      control={<Checkbox checked={value} onChange={(e) => onChange(e.target.checked)} />}
+      label={label}
+    />
+  );
+};
+
 const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose }) => {
   const [filterValues, setFilterValues] = useState({});
 
@@ -100,6 +111,8 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
         defaultValues[filterConfig.key] = [];
       } else if (filterConfig.type === "custom") {
         defaultValues[filterConfig.key] = "";
+      } else if (filterConfig.type === "checkbox") {
+        defaultValues[filterConfig.key] = false;
       } else {
         defaultValues[filterConfig.key] = "";
       }
@@ -147,6 +160,10 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
             } else {
               defaultValues[filterConfig.key] = [];
             }
+          } else if (filterConfig.type === "checkbox") {
+            defaultValues[filterConfig.key] = initialValues && initialValues[filterConfig.key] !== undefined
+              ? initialValues[filterConfig.key]
+              : false;
           } else if (filterConfig.type === "custom") {
             defaultValues[filterConfig.key] = initialValues && initialValues[filterConfig.key]
               ? initialValues[filterConfig.key]
@@ -194,6 +211,8 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
       } else if (filterConfig.type === "async-autocomplete") {
         const selected = filterValues[filterConfig.key];
         transformedFilters[filterConfig.key] = selected && selected.value ? selected.value : "";
+      } else if (filterConfig.type === "checkbox") {
+        transformedFilters[filterConfig.key] = filterValues[filterConfig.key];
       } else if (filterConfig.type === "custom") {
         if (filterConfig.customTransform) {
           transformedFilters[filterConfig.key] = filterConfig.customTransform(filterValues[filterConfig.key]);
@@ -238,6 +257,17 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
                         </MenuItem>
                       ))}
                     </TextField>
+                  </Grid>
+                );
+              } else if (filterConfig.type === "checkbox") {
+                return (
+                  <Grid item xs={12} key={filterConfig.key}>
+                    <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
+                    <CheckboxInput
+                      label={filterValues[filterConfig.key] ? filterConfig.trueLabel : filterConfig.falseLabel}
+                      value={filterValues[filterConfig.key] || false}
+                      onChange={(value) => handleChange(filterConfig.key, value)}
+                    />
                   </Grid>
                 );
               } else if (filterConfig.type === "multiselect") {
