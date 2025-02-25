@@ -1,16 +1,9 @@
 import apiClient from "./apiClient";
 
-const DEFAULT_ROUTER = '/api/tasks'
-
 const contentType = {
-    find: async function (id, params) {
-        try {
-            const response = await apiClient.get(`${DEFAULT_ROUTER}/${id}/`, { params: params });
-            return response.data;
-        } catch (error) {
-            console.error('Erro ao buscar dados:', error);
-            throw error;
-        }
+    find: async (appLabel, model = {}) => {
+        const response = await apiClient.get(`/api/content-types/?app_label__in=${appLabel}&model__in=${model}`);
+        return response.data;
     },
     index: async function (params) {
         try {
