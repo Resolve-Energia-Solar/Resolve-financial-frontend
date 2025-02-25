@@ -22,6 +22,7 @@ import AttachmentTable from '../attachment/attachmentTable';
 import { useSelector } from 'react-redux';
 import financialRecordService from '@/services/financialRecordService';
 import { IconPdf } from '@tabler/icons-react';
+import getContentType from '@/utils/getContentType';
 
 const statusMap = {
   S: <Chip label="Solicitada" color="warning" size="small" />,
@@ -42,13 +43,20 @@ const responsibleStatusMap = {
   R: <Chip label="Reprovado" color="error" size="small" />
 };
 
-const FINANCIAL_RECORD_CONTENT_TYPE = process.env.NEXT_PUBLIC_FINANCIAL_RECORD_CONTENT_TYPE;
-
 const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
   const user = useSelector((state) => state.user?.user);
   const [tabIndex, setTabIndex] = useState(0);
   const [currentRecord, setCurrentRecord] = useState(record);
-
+  const [FINANCIAL_RECORD_CONTENT_TYPE, setFinancialRecordContentType] = useState(null);
+  
+  useEffect(() => {
+    const fetchContentType = async () => {
+      const contentType = await getContentType('financial', 'financialrecord');
+      setFinancialRecordContentType(contentType);
+    };
+    fetchContentType();
+  }, []);
+  
   useEffect(() => {
     setCurrentRecord(record);
   }, [record]);
