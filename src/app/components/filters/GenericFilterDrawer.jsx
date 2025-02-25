@@ -152,11 +152,16 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
             }
           } else if (filterConfig.type === "multiselect" || filterConfig.type === "async-multiselect") {
             if (initialValues && initialValues[filterConfig.key] !== undefined) {
-              defaultValues[filterConfig.key] = Array.isArray(initialValues[filterConfig.key])
-                ? initialValues[filterConfig.key]
-                : initialValues[filterConfig.key] === ""
-                  ? []
-                  : initialValues[filterConfig.key].split(",");
+              const value = initialValues[filterConfig.key];
+              if (value === undefined || value === null) {
+                defaultValues[filterConfig.key] = [];
+              } else {
+                defaultValues[filterConfig.key] = Array.isArray(value)
+                  ? value
+                  : value === ""
+                    ? []
+                    : value.split(",");
+              }
             } else {
               defaultValues[filterConfig.key] = [];
             }
