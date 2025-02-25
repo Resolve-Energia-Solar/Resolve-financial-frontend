@@ -1,6 +1,6 @@
 'use client';
 import { Grid, Typography, Chip, Divider, Box, Rating, useTheme, IconButton, Card, MenuItem, InputAdornment, TextField } from '@mui/material';
-import { AccountCircle, CalendarToday, CalendarViewWeek, Email, Phone, WbSunny } from '@mui/icons-material';
+import { AccountCircle, CalendarToday, CalendarViewWeek, Description, Email, Phone, WbSunny } from '@mui/icons-material';
 import BlankCard from '@/app/components/shared/BlankCard';
 import { IconCalendarWeek, IconEye, IconPencil, IconTrash } from '@tabler/icons-react';
 import MediaControlCard from '../../components/CardProposal';
@@ -20,19 +20,17 @@ function LeadProposalPage({ leadId = null }) {
     const { enqueueSnackbar } = useSnackbar();
 
     const [formData, setFormData] = useState({
-        name: '',
+        proposal_name: '',
         amount: '',
-        funnel: '',
-        status: '',
-        first_document: '',
-        interest_level: '',
-        reference_amount: '',
+        ref_amount: '',
         entry_amount: '',
         payment_method: '',
-        seller: '',
-        proposal_expiration: '',
+        seller_id: '',
+        proposal_validity: '',
+        proposal_status: '',
         description: '',
         created_at: ''
+
     });
 
     useEffect(() => {
@@ -116,51 +114,66 @@ function LeadProposalPage({ leadId = null }) {
                     <Grid container spacing={2} sx={{ p: 3.5 }}>
 
                         <Grid item xs={12} sm={4}>
-                            <CustomFormLabel htmlFor="name">Nome Completo</CustomFormLabel>
-                            <TextField name="name" value={formData.name} onChange={handleChange} fullWidth
-                                InputProps={{ startAdornment: (<InputAdornment position="start"><AccountCircle /></InputAdornment>) }} />
-                        </Grid>
-
-                        <Grid item xs={12} sm={4}>
-                            <CustomFormLabel htmlFor="name">Tipo</CustomFormLabel>
-
-                            <TextField select name="type"value={formData.type} onChange={handleChange} fullWidth>
-                                <MenuItem value="PF">Pessoa Física</MenuItem>
-                                <MenuItem value="PJ">Pessoa Jurídica</MenuItem>
+                            <CustomFormLabel htmlFor="proposal_name">Nome da Proposta</CustomFormLabel>
+                            {/* <TextField name="name" value={formData.name} onChange={handleChange} fullWidth
+                                InputProps={{ startAdornment: (<InputAdornment position="start"><AccountCircle /></InputAdornment>) }} /> */}
+                                <TextField select name="proposal_name"value={formData.proposal_name} onChange={handleChange} fullWidth>
+                                <MenuItem value="K1">Kit Solar 2034</MenuItem>
+                                {/* <MenuItem value=""></MenuItem> */}
                             </TextField>
                         </Grid>
 
                         <Grid item xs={12} sm={4}>
-                            <CustomFormLabel htmlFor="funnel">Funil</CustomFormLabel>
-                            <TextField select name="funnel" value={formData.funnel} onChange={handleChange} fullWidth>
-                                <MenuItem value="N">Não Interessado</MenuItem>
-                                <MenuItem value="P">Pouco Interessado</MenuItem>
-                                <MenuItem value="I">Interessado</MenuItem>
-                                <MenuItem value="M">Muito Interessado</MenuItem>
-                                <MenuItem value="PC">Pronto para Comprar</MenuItem>
+                            <CustomFormLabel htmlFor="amount">Valor da proposta</CustomFormLabel>
+                            <TextField name="amount"value={formData.amount} onChange={handleChange} fullWidth
+                                InputProps={{ startAdornment: (<InputAdornment position="start">R$</InputAdornment>) }} />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <CustomFormLabel htmlFor="ref_amount">Valor da referência</CustomFormLabel>
+                            <TextField name="ref_amount"value={formData.ref_amount} onChange={handleChange} fullWidth
+                                InputProps={{ startAdornment: (<InputAdornment position="start">R$</InputAdornment>) }} />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <CustomFormLabel htmlFor="entry_amount">Valor de entrada</CustomFormLabel>
+                            <TextField name="entry_amount"value={formData.entry_amount} onChange={handleChange} fullWidth
+                                InputProps={{ startAdornment: (<InputAdornment position="start">R$</InputAdornment>) }} />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <CustomFormLabel htmlFor="payment_method">Forma de pagamento</CustomFormLabel>
+                            <TextField select name="payment_method" value={formData.payment_method} onChange={handleChange} fullWidth>
+                                <MenuItem value="C">Crédito</MenuItem>
+                                <MenuItem value="DE">Débito</MenuItem>
+                                <MenuItem value="B">Boleto</MenuItem>
+                                <MenuItem value="F">Financiamento</MenuItem>
+                                <MenuItem value="PI">Parcelamento Interno</MenuItem>
+                                <MenuItem value="PX">Pix</MenuItem>
+                                <MenuItem value="T">Transferência</MenuItem>
+                                <MenuItem value="DI">Dinheiro</MenuItem>
+                                <MenuItem value="PA">Poste Auxiliar</MenuItem>
+                                <MenuItem value="RO">Repasse de Obra</MenuItem>
+                                </TextField>
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <CustomFormLabel htmlFor="seller_id">Vendedor Resonsável</CustomFormLabel>
+                            <TextField select name="seller_id" value={formData.seller_id} onChange={handleChange} fullWidth>
+                                <MenuItem value="F">Fulano</MenuItem>
+                                <MenuItem value="C">Ciclano</MenuItem>
+                                <MenuItem value="B">Beltrano</MenuItem>
                             </TextField>
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
-                            <CustomFormLabel htmlFor="origin_id">Origem</CustomFormLabel>
-                            <AutoCompleteOrigin value={formData.origin_id} onChange={(value) => setFormData({ ...formData, origin_id: value })} />
+                            <CustomFormLabel htmlFor="proposal_validity">Validade da proposta</CustomFormLabel>
+                            <TextField name="proposal_validity" value={formData.proposal_validity} onChange={handleChange} fullWidth/>
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
-                            <CustomFormLabel htmlFor="first_document">CPF/CNPJ</CustomFormLabel>
-                            <TextField name="first_document" value={formData.first_document} onChange={handleChange} fullWidth />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6}>
-                            <CustomFormLabel htmlFor="phone">Telefone com DDD</CustomFormLabel>
-                            <TextField name="phone" value={formData.phone} onChange={handleChange} fullWidth
-                                InputProps={{ startAdornment: (<InputAdornment position="start"><Phone /></InputAdornment>) }} />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6}>
-                            <CustomFormLabel htmlFor="contact_email">E-mail</CustomFormLabel>
-                            <TextField name="contact_email" value={formData.contact_email} onChange={handleChange} fullWidth
-                                InputProps={{ startAdornment: (<InputAdornment position="start"><Email /></InputAdornment>) }} />
+                            <CustomFormLabel htmlFor="description">Descrição</CustomFormLabel>
+                            <TextField name="description" value={formData.description} onChange={handleChange} fullWidth/>
                         </Grid>
 
                     </Grid>
@@ -170,4 +183,4 @@ function LeadProposalPage({ leadId = null }) {
     );
 }
 
-export default EditLeadPage;
+export default LeadProposalPage;
