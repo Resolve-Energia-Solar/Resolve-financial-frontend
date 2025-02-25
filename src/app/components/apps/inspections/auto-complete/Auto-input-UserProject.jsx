@@ -65,13 +65,14 @@ export default function AutoCompleteUserProject({
       try {
         if (selectedClient) {
           const responseSales = await saleService.getSales({
-            params: `customer=${selectedClient}`,
+            customer: selectedClient ,
           });
 
           const projectsSet = new Set();
           const allProjects = [];
 
-          responseSales.results.forEach((sale) => {
+
+          responseSales.results.results.forEach((sale) => {
             sale.projects.forEach((project) => {
               if (!projectsSet.has(project.id)) {
                 projectsSet.add(project.id);
