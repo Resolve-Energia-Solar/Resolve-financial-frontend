@@ -425,7 +425,6 @@ const financialRecordList = () => {
                                         <TableCell>Valor</TableCell>
                                         <TableCell>Data de Vencimento</TableCell>
                                         <TableCell>Status</TableCell>
-                                        <TableCell>Ações</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -444,32 +443,6 @@ const financialRecordList = () => {
                                                 {new Date(item.due_date).toLocaleDateString('pt-BR')}
                                             </TableCell>
                                             <TableCell>{getStatusLabel(item.status)}</TableCell>
-                                            <TableCell>
-                                                <Tooltip title="Editar">
-                                                    <IconButton
-                                                        color="primary"
-                                                        size="small"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleEditClick(item.id);
-                                                        }}
-                                                    >
-                                                        <EditIcon />
-                                                    </IconButton>
-                                                </Tooltip>
-                                                <Tooltip title="Excluir">
-                                                    <IconButton
-                                                        color="error"
-                                                        size="small"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleDeleteClick(item.id);
-                                                        }}
-                                                    >
-                                                        <DeleteIcon />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
