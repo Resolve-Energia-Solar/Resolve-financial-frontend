@@ -1,14 +1,11 @@
 import apiClient from './apiClient';
 
 const tagService = {
-  getTags: async ({ page = 1, limit = 10 } = {}) => {
+  getTags: async ({ page = 1, limit = 10, ...filters } = {}) => {
     try {
-      const response = await apiClient.get('/api/tags/',
-        {params: {
-            page,
-            limit
-          }}
-      );
+      const response = await apiClient.get('/api/tags/', {
+        params: { page, limit, ...filters }
+      });
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar tags:', error);
@@ -39,7 +36,7 @@ const tagService = {
       console.error('Dados enviados:', data);
       throw error;
     }
-  },  
+  },
   deleteTag: async (tagId) => {
     const response = await apiClient.delete(`/api/tags/${tagId}/`);
     return response.data;
