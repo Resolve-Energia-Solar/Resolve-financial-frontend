@@ -1,4 +1,4 @@
-name: CI/CD Pipeline for resolve-erp-frontend PROD update
+name: CI/CD Pipeline for resolve-erp-frontend PROD update v2
 
 on:
   push:
