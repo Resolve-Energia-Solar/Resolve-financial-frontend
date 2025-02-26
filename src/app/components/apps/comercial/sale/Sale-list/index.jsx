@@ -498,11 +498,8 @@ const SaleList = () => {
                     sx={{ backgroundColor: rowSelected?.id === item.id && '#ECF2FF' }}
                   >
                     <TableCell align="center">
-                      {item.projects?.some(
-                        project => project.documents_under_analysis?.length > 0
-                      ) && <PulsingBadge />}
+                      {item.documents_under_analysis?.length > 0 && <PulsingBadge />}
                     </TableCell>
-
                     <TableCell>{item.customer.complete_name}</TableCell>
                     <TableCell>{item.contract_number}</TableCell>
                     <TableCell>
