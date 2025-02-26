@@ -22,17 +22,13 @@ import {
   Phone,
   WbSunny,
 } from '@mui/icons-material';
-import BlankCard from '@/app/components/shared/BlankCard';
-import { IconCalendarWeek, IconEye, IconPencil, IconTrash } from '@tabler/icons-react';
-import MediaControlCard from '../../components/CardProposal';
 import { useEffect, useState } from 'react';
 import leadService from '@/services/leadService';
-import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import AutoCompleteOrigin from '@/app/components/apps/leads/auto-input-origin';
 import ProductList from './ProposalCard';
+import LeadInfoHeader from '@/app/components/kanban/components/HeaderCard';
 import Button from "@mui/material/Button";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
@@ -107,47 +103,11 @@ function LeadProposalPage({ leadId = null }) {
           }}
         >
           {/* HEEEEEEEEEEEEADER */}
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} md={5} container alignItems="center" spacing={2}>
-              <Grid item>
-                <AccountCircle sx={{ fontSize: 62 }} />
-              </Grid>
-              <Grid item>
-                <Typography variant="body1" sx={{ fontSize: 12, color: '#ADADAD' }}>
-                  Cliente
-                </Typography>
-                <Typography variant="h6" sx={{ fontSize: 16 }}>
-                  {lead?.name}
-                </Typography>
-              </Grid>
-            </Grid>
-            <Grid item xs={12} md={7}>
-              <Grid container spacing={2} alignItems="center" justifyContent="flex-end">
-                <Grid
-                  item
-                  xs={12}
-                  md={4}
-                  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
-                >
-                  <Typography variant="body1" sx={{ fontSize: 12, color: '#ADADAD' }}>
-                    Nível de interesse
-                  </Typography>
-                  <Rating
-                    name="qualification"
-                    value={lead?.qualification}
-                    max={5}
-                    readOnly
-                    icon={<WbSunny fontSize="inherit" sx={{ color: theme.palette.warning.main }} />}
-                    emptyIcon={
-                      <WbSunny fontSize="inherit" sx={{ color: theme.palette.action.disabled }} />
-                    }
-                  />
-                </Grid>
-              </Grid>
-            </Grid>
+          <Grid container spacing={2} alignItems="center" xs={12}>
+            <LeadInfoHeader leadId={leadId}/>
           </Grid>
 
-          <Divider sx={{ my: 2 }} />
+          {/* <Divider sx={{ my: 2 }} /> */}
 
           <Grid container spacing={4}>
             {/* LEEEEEEEEEEEFT */}
@@ -334,7 +294,7 @@ function LeadProposalPage({ leadId = null }) {
             </Grid>
           </Grid>
 
-          {/* BOTTOM BUTTONS! */}
+          {/* BUTTONS! */}
           <Grid
             item
             xs={12}
