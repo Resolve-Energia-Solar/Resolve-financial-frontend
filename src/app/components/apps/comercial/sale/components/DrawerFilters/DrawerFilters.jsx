@@ -191,8 +191,7 @@ export default function DrawerFilters() {
 
   // Opções para o filtro de Tag (único)
   const tagNameOptions = [
-    { value: 'apto', label: 'Apto' },
-    { value: 'inapto', label: 'Inapto' }
+    { value: 'Documentação Pendente', label: 'Documentação Pendente' }
   ];
 
   return (
