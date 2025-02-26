@@ -76,8 +76,6 @@ const SaleList = () => {
 
   const user = useSelector((state) => state?.user?.user);
 
-  console.log('user', user);
-
   const userRole = {
     user: user?.id,
     role: user?.is_superusers ? 'Superuser' : user?.employee?.role?.name,
