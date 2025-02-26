@@ -33,6 +33,9 @@ import { useRouter } from 'next/navigation';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AutoCompleteOrigin from '@/app/components/apps/leads/auto-input-origin';
 import ProductList from './ProposalCard';
+import Button from "@mui/material/Button";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 function LeadProposalPage({ leadId = null }) {
   const router = useRouter();
@@ -92,7 +95,7 @@ function LeadProposalPage({ leadId = null }) {
 
   return (
     <Grid container spacing={0}>
-      <Grid item xs={12}>
+      <Grid item xs={12} sx={{ overflow: 'scroll' }}>
         <Box
           sx={{
             borderRadius: '20px',
@@ -146,9 +149,8 @@ function LeadProposalPage({ leadId = null }) {
 
           <Divider sx={{ my: 2 }} />
 
-          {/* LEEEEEEEEEEEFT */}
           <Grid container spacing={4}>
-            {/* LEFT: Proposal Form */}
+            {/* LEEEEEEEEEEEFT */}
             <Grid
               item
               xs={12}
@@ -158,6 +160,7 @@ function LeadProposalPage({ leadId = null }) {
               <Grid item xs={12} sm={4}>
                 <Typography variant="h6">Nova proposta</Typography>
               </Grid>
+
               {/* first row */}
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
@@ -327,9 +330,49 @@ function LeadProposalPage({ leadId = null }) {
               md={7}
               sx={{ display: 'flex', flexDirection: 'column', marginTop: 2, gap: 2 }}
             >
-              <ProductList/>
+              <ProductList />
             </Grid>
           </Grid>
+
+          {/* BOTTOM BUTTONS! */}
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between', // ✅ Ensures buttons are on opposite sides
+              alignItems: 'center',
+              mt: 2,
+              gap: 2,
+            }}
+          >
+            {/* LEFT: Black Button */}
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: 'black',
+                color: 'white',
+                '&:hover': { backgroundColor: '#333' },
+                px: 3,
+              }}
+            >
+              <Typography variant="body1">Pré-visualizar proposta</Typography>
+              <VisibilityIcon sx={{ ml: 1 }} />
+            </Button>
+
+            {/* RIGHT: Red & Yellow Buttons */}
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Button variant="outlined" color="error" sx={{ px: 3 }}>
+                <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
+                <DeleteOutlinedIcon />
+              </Button>
+
+              <Button variant="contained" sx={{ backgroundColor: '#FFC107', color: 'black', px: 3 }}>
+                <Typography variant="body1">Gerar proposta</Typography>
+              </Button>
+            </Box>
+          </Grid>
+
         </Box>
       </Grid>
     </Grid>
