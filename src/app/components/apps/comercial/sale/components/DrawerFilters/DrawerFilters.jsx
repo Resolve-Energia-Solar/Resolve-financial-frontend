@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Box, Drawer, Button, Typography, Grid } from '@mui/material';
+import { Box, Drawer, Button, Typography, Grid, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { FilterAlt } from '@mui/icons-material';
 import CheckboxesTags from './CheckboxesTags';
 import FormDateRange from './DateRangePicker';
@@ -16,24 +16,25 @@ export default function DrawerFilters() {
 
   const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
 
+  // Inicialização do estado
   const [tempFilters, setTempFilters] = useState({
-    documentCompletionDate: filters.documentCompletionDate,
-    statusDocument: filters.statusDocument,
-    branch: filters.branch,
-    customer: filters.customer,
-    isPreSale: filters.isPreSale,
-    seller: filters.seller,
-    marketing_campaign: filters.marketing_campaign,
-    created_at: filters.created_at,
-    is_signed: filters.is_signed,
-    signature_date: filters.signature_date,
-    final_service_options: filters.final_service_options,
-    invoice_status: filters.invoice_status,
-    billing_date: filters.billing_date,
-    borrower: filters.borrower,
-    payment_status: filters.payment_status,
+    documentCompletionDate: filters.documentCompletionDate || [null, null],
+    statusDocument: filters.statusDocument || [],
+    branch: filters.branch || "",
+    customer: filters.customer || "",
+    isPreSale: filters.isPreSale || [],
+    seller: filters.seller || "",
+    marketing_campaign: filters.marketing_campaign || "",
+    created_at: filters.created_at || [null, null],
+    is_signed: filters.is_signed || [],
+    signature_date: filters.signature_date || [null, null],
+    final_service_options: filters.final_service_options || "",
+    invoice_status: filters.invoice_status || [],  // Alterado para array
+    billing_date: filters.billing_date || [null, null],
+    borrower: filters.borrower || "",
+    payment_status: filters.payment_status || [],
+    tag_name__exact: filters.tag_name__exact || ""
   });
-
 
   const createFilterParams = (filters) => {
     const params = {};
@@ -111,8 +112,13 @@ export default function DrawerFilters() {
     }
 
     if (filters.invoice_status && filters.invoice_status.length > 0) {
-      const paymentStatusValues = filters.invoice_status.map((status) => status.value);
-      params.invoice_status = paymentStatusValues.join(',');
+      const invoiceStatusValues = filters.invoice_status.map((status) => status.value);
+      params.invoice_status = invoiceStatusValues.join(',');
+    }
+
+    // Filtro único para tag
+    if (filters.tag_name__exact) {
+      params.tag_name__exact = filters.tag_name__exact;
     }
 
     return params;
@@ -122,23 +128,25 @@ export default function DrawerFilters() {
     setTempFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  // Função de limpar filtros
   const clearFilters = () => {
     setTempFilters({
       documentCompletionDate: [null, null],
       statusDocument: [],
-      branch: null,
-      customer: null,
+      branch: "",
+      customer: "",
       isPreSale: [],
-      seller: null,
-      marketing_campaign: null,
+      seller: "",
+      marketing_campaign: "",
       created_at: [null, null],
       is_signed: [],
       signature_date: [null, null],
-      final_service_options: null,
-      invoice_status: null,
+      final_service_options: "",
+      invoice_status: [],  // Alterado para array
       billing_date: [null, null],
-      borrower: null,
+      borrower: "",
       payment_status: [],
+      tag_name__exact: ""
     });
   };
 
@@ -159,7 +167,7 @@ export default function DrawerFilters() {
     { value: 'L', label: 'Liberado' },
     { value: 'C', label: 'Concluído' },
     { value: 'CA', label: 'Cancelado' },
-  ]
+  ];
 
   const StatusDocument = [
     { value: 'F', label: 'Finalizado' },
@@ -179,6 +187,12 @@ export default function DrawerFilters() {
     { value: 'L', label: 'Liberada' },
     { value: 'P', label: 'Pendente' },
     { value: 'C', label: 'Cancelada' },
+  ];
+
+  // Opções para o filtro de Tag (único)
+  const tagNameOptions = [
+    { value: 'apto', label: 'Apto' },
+    { value: 'inapto', label: 'Inapto' }
   ];
 
   return (
@@ -240,6 +254,27 @@ export default function DrawerFilters() {
                 />
               </Grid>
 
+              {/* Filtro para Tag (único) */}
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="tag_name">Tag</CustomFormLabel>
+                <RadioGroup
+                  row
+                  name="tag_name__exact"
+                  value={tempFilters.tag_name__exact}
+                  onChange={(e) => handleChange('tag_name__exact', e.target.value)}
+                >
+                  {tagNameOptions.map((option) => (
+                    <FormControlLabel
+                      key={option.value}
+                      value={option.value}
+                      control={<Radio />}
+                      label={option.label}
+                    />
+                  ))}
+                </RadioGroup>
+              </Grid>
+
+              {/* Demais filtros */}
               <Grid item xs={12}>
                 <CustomFormLabel htmlFor="final_service_options">Parecer Final Vistoria</CustomFormLabel>
                 <AutoInputStatusSchedule
@@ -354,7 +389,7 @@ export default function DrawerFilters() {
                 <AutoCompleteUser
                   placeholder="Selecione o tomador"
                   value={tempFilters.borrower}
-                  onChange={(id) => handleChange('seller', id)}
+                  onChange={(id) => handleChange('borrower', id)}
                 />
               </Grid>
             </Grid>
