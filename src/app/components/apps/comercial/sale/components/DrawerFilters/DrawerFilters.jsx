@@ -224,7 +224,7 @@ export default function DrawerFilters() {
           >
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <CustomFormLabel htmlFor="statusDocument">Status da Documentação</CustomFormLabel>
+                <CustomFormLabel htmlFor="statusDocument">Status da Venda</CustomFormLabel>
                 <CheckboxesTags
                   options={StatusDocument}
                   placeholder="Selecione o status"
