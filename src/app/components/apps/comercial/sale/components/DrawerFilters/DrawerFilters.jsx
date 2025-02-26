@@ -191,7 +191,7 @@ export default function DrawerFilters() {
 
   // Opções para o filtro de Tag (único)
   const tagNameOptions = [
-    { value: 'Documentação Pendente', label: 'Documentação Pendente' }
+    { value: 'Documentação Parcial', label: 'Documentação Parcial' }
   ];
 
   return (
