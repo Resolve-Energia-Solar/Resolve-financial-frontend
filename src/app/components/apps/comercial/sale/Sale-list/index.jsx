@@ -38,6 +38,8 @@ import {
   MoreVert as MoreVertIcon,
   ArrowDropDown as ArrowDropDownIcon,
   ArrowDropUp as ArrowDropUpIcon,
+  Lock as LockIcon,
+  LockOpen as LockOpenIcon
 } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import saleService from '@/services/saleService';
@@ -458,6 +460,11 @@ const SaleList = () => {
                   </Box>
                 </TableCell>
 
+                <TableCell>
+                  Liberado p/Engenharia
+                </TableCell>
+
+
                 <TableCell
                   sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                   onClick={() => handleSort('created_at')}
@@ -476,7 +483,7 @@ const SaleList = () => {
               </TableRow>
             </TableHead>
             {loading ? (
-              <TableSkeleton rows={rowsPerPage} cols={9} />
+              <TableSkeleton rows={rowsPerPage} cols={11} />
             ) : error && page === 1 ? (
               <Typography color="error">{error}</Typography>
             ) : (
@@ -519,6 +526,13 @@ const SaleList = () => {
                       ) : (
                         <Chip label="Sem P.F" color="warning" />
                       )}
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={item.is_released_to_engineering === true ? 'Liberado' : 'Não-Liberado'}
+                        color={item.is_released_to_engineering === true ? 'success' : 'default'}
+                        icon={item.is_released_to_engineering === true ? <LockOpenIcon /> : <LockIcon />}
+                      />
                     </TableCell>
                     <TableCell>
                       {item?.created_at ? new Date(item.created_at).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '-'}
@@ -604,11 +618,11 @@ const SaleList = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={totalRows} 
-          rowsPerPage={rowsPerPage} 
-          page={page} 
-          onPageChange={handlePageChange} 
-          onRowsPerPageChange={handleRowsPerPageChange} 
+          count={totalRows}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handlePageChange}
+          onRowsPerPageChange={handleRowsPerPageChange}
           labelRowsPerPage="Linhas por página"
         />
       </Box>
