@@ -223,101 +223,102 @@ export default function FormCustom() {
               onChange={(category) => {
                 handleChange('category_code', category?.codigo || '');
                 handleChange('category_name', category?.descricao || '');
-              }}
-              value={formData.category_code}
-              error={formErrors.category_code}
-              helperText={formErrors.category_code}
-              disabled={false}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <CustomFormLabel htmlFor="value">Valor (R$)</CustomFormLabel>
-            <CustomFieldMoney
-              name="value"
-              variant="outlined"
-              fullWidth
-              value={formData.value}
-              onChange={(value) => handleChange('value', value)}
-              error={!!formErrors.value}
-              helperText={formErrors.value}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <CustomFormLabel htmlFor="payment_method">Forma de Pagamento</CustomFormLabel>
-            <Select
-              name="payment_method"
-              variant="outlined"
-              fullWidth
-              value={formData.payment_method || 'P'}
-              onChange={(e) => handleChange('payment_method', e.target.value)}
-              error={!!formErrors.payment_method}
-            >
-              <MenuItem value="B">Boleto</MenuItem>
-              <MenuItem value="C">Cartão</MenuItem>
-              <MenuItem value="T">Transferência Bancária</MenuItem>
-              <MenuItem value="D">Dinheiro</MenuItem>
-              <MenuItem value="P">Pix</MenuItem>
-            </Select>
-            {formErrors.payment_method && <FormHelperText>{formErrors.payment_method}</FormHelperText>}
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <CustomFormLabel htmlFor="is_receivable">A pagar / A receber</CustomFormLabel>
-            <Stack direction="row" spacing={2}>
-              <Button
+                }}
+                value={formData.category_code}
+                error={formErrors.category_code}
+                helperText={formErrors.category_code}
+                disabled={false}
+              />
+              </Grid>
+              <Grid item xs={12} md={6}>
+              <CustomFormLabel htmlFor="value">Valor (R$)</CustomFormLabel>
+              <CustomFieldMoney
+                name="value"
+                variant="outlined"
+                fullWidth
+                value={formData.value}
+                onChange={(value) => handleChange('value', value)}
+                error={!!formErrors.value}
+                helperText={formErrors.value}
+              />
+              </Grid>
+              <Grid item xs={12} md={6}>
+              <CustomFormLabel htmlFor="payment_method">Forma de Pagamento</CustomFormLabel>
+              <Select
+                name="payment_method"
+                variant="outlined"
+                fullWidth
+                value={formData.payment_method || 'P'}
+                onChange={(e) => handleChange('payment_method', e.target.value)}
+                error={!!formErrors.payment_method}
+              >
+                <MenuItem value="B">Boleto</MenuItem>
+                <MenuItem value="T">Transferência Bancária</MenuItem>
+                <MenuItem value="E">Dinheiro em Espécie</MenuItem>
+                <MenuItem value="D">Cartão de Débito</MenuItem>
+                <MenuItem value="C">Cartão de Crédito</MenuItem>
+                <MenuItem value="P">Pix</MenuItem>
+              </Select>
+              {formErrors.payment_method && <FormHelperText>{formErrors.payment_method}</FormHelperText>}
+              </Grid>
+              <Grid item xs={12} md={6}>
+              <CustomFormLabel htmlFor="is_receivable">A pagar / A receber</CustomFormLabel>
+              <Stack direction="row" spacing={2}>
+                <Button
                 variant={formData.is_receivable == true ? 'contained' : 'outlined'}
                 color="success"
                 startIcon={<IconArrowDown />}
                 disabled
-              >
+                >
                 A Receber
-              </Button>
-              <Button
+                </Button>
+                <Button
                 variant={formData.is_receivable == false ? 'contained' : 'outlined'}
                 color="error"
                 disabled
                 onClick={() => handleChange('is_receivable', false)}
                 startIcon={<IconArrowUp />}
-              >
+                >
                 A Pagar
-              </Button>
-            </Stack>
-          </Grid>
-          <Grid item xs={6}>
-            <CustomFormLabel htmlFor="service_date">Data do Serviço</CustomFormLabel>
-            <CustomTextField
-              name="service_date"
-              type="date"
-              variant="outlined"
-              fullWidth
-              value={formData.service_date}
-              onChange={(e) => handleChange('service_date', e.target.value)}
-              error={!!formErrors.service_date}
-              helperText={formErrors.service_date}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <CustomFormLabel htmlFor="due_date">Data de Vencimento</CustomFormLabel>
-            <CustomTextField
-              name="due_date"
-              type="date"
-              variant="outlined"
-              fullWidth
-              value={formData.due_date}
-              onChange={(e) => handleChange('due_date', e.target.value)}
-              inputProps={{ min: minDueDate }}
-              error={!!formErrors.due_date}
-              helperText={formErrors.due_date}
-              disabled={!(formData.value && formData.category_code)}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <CustomFormLabel htmlFor="invoice_number">Número da Nota Fiscal</CustomFormLabel>
-            <CustomTextField
-              name="invoice_number"
-              variant="outlined"
-              fullWidth
-              value={formData.invoice_number}
-              onChange={(e) => {
+                </Button>
+              </Stack>
+              </Grid>
+              <Grid item xs={6}>
+              <CustomFormLabel htmlFor="service_date">Data do Serviço</CustomFormLabel>
+              <CustomTextField
+                name="service_date"
+                type="date"
+                variant="outlined"
+                fullWidth
+                value={formData.service_date}
+                onChange={(e) => handleChange('service_date', e.target.value)}
+                error={!!formErrors.service_date}
+                helperText={formErrors.service_date}
+              />
+              </Grid>
+              <Grid item xs={6}>
+              <CustomFormLabel htmlFor="due_date">Data de Vencimento</CustomFormLabel>
+              <CustomTextField
+                name="due_date"
+                type="date"
+                variant="outlined"
+                fullWidth
+                value={formData.due_date}
+                onChange={(e) => handleChange('due_date', e.target.value)}
+                inputProps={{ min: minDueDate }}
+                error={!!formErrors.due_date}
+                helperText={formErrors.due_date}
+                disabled={!(formData.value && formData.category_code)}
+              />
+              </Grid>
+              <Grid item xs={12}>
+              <CustomFormLabel htmlFor="invoice_number">Número da Nota Fiscal</CustomFormLabel>
+              <CustomTextField
+                name="invoice_number"
+                variant="outlined"
+                fullWidth
+                value={formData.invoice_number}
+                onChange={(e) => {
                 const value = e.target.value;
                 if (/^\d*$/.test(value) && value.length <= 20) {
                   handleChange('invoice_number', value);
