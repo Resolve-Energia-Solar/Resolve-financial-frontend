@@ -43,6 +43,7 @@ export default function FormCustom() {
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const user = useSelector((state) => state.user?.user);
+  const [minDueDate, setMinDueDate] = useState('');
 
   const fieldLabels = {
     client_supplier_code: 'Beneficiário (Nome/CPF/CNPJ)',
@@ -81,16 +82,20 @@ export default function FormCustom() {
         const amount = parseFloat(String(formData.value).replace('.', '').replace(',', '.'));
         const department = user?.employee?.department?.id || '';
         const category = formData.category_code;
-        const dueDate = calculateDueDate({
+        const computedDueDate = calculateDueDate({
           now,
           amount,
           category,
           department,
           requestTime: now,
         });
-        const formattedDueDate = dueDate.toISOString().split('T')[0];
-        if (formData.due_date !== formattedDueDate) {
-          handleChange('due_date', formattedDueDate);
+        const formattedComputedDueDate = computedDueDate.toISOString().split('T')[0];
+
+        setMinDueDate(formattedComputedDueDate);
+
+        // Atualiza se estiver vazio ou se a data informada for inferior à mínima
+        if (!formData.due_date || new Date(formData.due_date) < new Date(formattedComputedDueDate)) {
+          handleChange('due_date', formattedComputedDueDate);
         }
       } catch (error) {
         console.error('Erro ao calcular a data de vencimento:', error);
@@ -299,9 +304,10 @@ export default function FormCustom() {
               fullWidth
               value={formData.due_date}
               onChange={(e) => handleChange('due_date', e.target.value)}
-              inputProps={{ min: formData.due_date }}
+              inputProps={{ min: minDueDate }}
               error={!!formErrors.due_date}
               helperText={formErrors.due_date}
+              disabled={!(formData.value && formData.category_code)}
             />
           </Grid>
           <Grid item xs={12}>
