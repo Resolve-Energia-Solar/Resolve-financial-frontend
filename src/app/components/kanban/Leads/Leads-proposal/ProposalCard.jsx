@@ -131,11 +131,16 @@ export function ProductList() {
           <IconButton
             sx={{
               mt: 2,
-              color: '#7E8388',
+              color: '#7E8388', 
               fontSize: 14,
               display: 'flex',
               alignItems: 'center',
               gap: 0.5,
+              transition: '0.3s', 
+              '&:hover': {
+                transform: 'scale(1.05)', 
+                backgroundColor: 'rgba(0, 0, 0, 0.00)',
+              },
             }}
           >
             <AddOutlinedIcon sx={{ fontSize: 18 }} />
