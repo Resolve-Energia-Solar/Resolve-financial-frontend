@@ -6,7 +6,7 @@ import {
   Divider,
   Box,
   Rating,
-  IconButton,
+  IconButton,  
   TextField,
   InputAdornment,
   MenuItem,
@@ -14,6 +14,7 @@ import {
   Avatar,
   Chip,
 } from '@mui/material';
+
 
 import {
   AccountCircle,
@@ -24,6 +25,7 @@ import {
   WbSunny,
 } from '@mui/icons-material';
 
+import EditIcon from '@mui/icons-material/Edit';
 import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 
@@ -67,11 +69,27 @@ function LeadInfoHeader({ leadId }) {
     >
       <Grid container xs={8} alignItems="center">
         <Grid item xs={4} sx={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar sx={{ width: 50, height: 50, marginRight: 2 }}>
-            {' '}
-            {/* {lead?.img} */}
-            {<AccountCircle sx={{ fontSize: 62 }} />}
-          </Avatar>
+          <Box sx={{ position: 'relative', display: 'inline-block' }}>
+            <Avatar sx={{ width: 50, height: 50, marginRight: 2 }}>
+              {' '}
+              {/* {lead?.img} */}
+              {<AccountCircle sx={{ fontSize: 62 }} />}
+            </Avatar>
+            <IconButton
+              sx={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                backgroundColor: theme.palette., // Yellow background
+                color: 'black',
+                width: 24,
+                height: 24,
+                '&:hover': { backgroundColor: theme.palette.secondary }, // Darker yellow on hover
+              }}
+            >
+              <EditIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+          </Box>
           <Box>
             <Typography variant="caption" sx={{ color: 'gray' }}>
               Cliente
