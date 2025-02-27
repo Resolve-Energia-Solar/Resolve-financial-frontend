@@ -14,7 +14,7 @@ const TagList = ({ appLabel, model, objectId }) => {
         const data = await tagService.getTags({
           content_type: contentTypeId,
           object_id: objectId,
-          limit: 100
+          limit: 100,
         });
         setTags(data.results);
       } catch (error) {
@@ -26,7 +26,7 @@ const TagList = ({ appLabel, model, objectId }) => {
 
   return (
     <Grid container spacing={1} xs={12}>
-      {tags.map(({ id, tag, color }) => (
+      {tags?.map(({ id, tag, color }) => (
         <Grid item key={id}>
           <Chip
             label={tag}
@@ -38,8 +38,8 @@ const TagList = ({ appLabel, model, objectId }) => {
               textTransform: 'capitalize',
               '&:hover': {
                 backgroundColor: color,
-                color: '#fff'
-              }
+                color: '#fff',
+              },
             }}
           />
         </Grid>
