@@ -50,6 +50,8 @@ const TaskData = ({ task, index }) => {
     }
   };
 
+  console.log("editedTask obj", editedTask);
+
   return (
     <Draggable draggableId={taskId} index={index}>
       {(provided) => (
@@ -148,12 +150,13 @@ const TaskData = ({ task, index }) => {
                   <LocalPhone fontSize="10" />
                   <Typography variant="body2">{editedTask?.phone}</Typography>
                 </Box>
+            
               )}
               {/* to be kwp */}
               {editedTask?.name && (
                 <Box px={2} py={0.5} display="flex" alignItems="center" gap={0.5}>
                   <BoltOutlinedIcon fontSize="10" />
-                  <Typography variant="body2">{editedTask?.phone}</Typography>
+                  <Typography variant="body2">200 kWp</Typography>
                 </Box>
               )}
 
