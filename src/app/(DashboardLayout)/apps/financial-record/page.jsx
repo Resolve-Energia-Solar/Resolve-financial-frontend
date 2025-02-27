@@ -44,11 +44,12 @@ import AutoCompleteBeneficiary from "@/app/components/apps/financial-record/bene
 import AutoCompleteDepartment from "@/app/components/apps/financial-record/departmentInput";
 import AutoCompleteCategory from "@/app/components/apps/financial-record/categoryInput";
 import SaleCards from "@/app/components/apps/inforCards/InforCards";
+import { useSnackbar } from 'notistack';
 
 const financialRecordList = () => {
     const router = useRouter();
     const { filters, setFilters } = useContext(FilterContext);
-
+    const { enqueueSnackbar } = useSnackbar();
     const [financialRecordList, setFinancialRecordList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -371,6 +372,14 @@ const financialRecordList = () => {
     ];
 
     const user = useSelector((state) => state.user?.user);
+    const userPermissions = user?.permissions || user?.user_permissions || [];
+
+    useEffect(() => {
+        if (!userPermissions.includes("financial.add_financialrecord")) {
+            enqueueSnackbar('Você não tem permissão para acessar essa página!', { variant: 'error' });
+            router.push('commercial/sale');
+        }
+    }, [userPermissions, router]);
 
     return (
         <PageContainer title="Contas a Receber/Pagar" description="Lista de Contas a Receber/Pagar">
@@ -381,15 +390,16 @@ const financialRecordList = () => {
                     </Typography>
 
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                        <Button
-                            variant="outlined"
-                            startIcon={<AddBoxRounded />}
-                            sx={{ mt: 1, mb: 2 }}
-                            onClick={handleCreateClick}
-                        >
-                            Criar Conta a Receber/Pagar
-                        </Button>
-
+                        {userPermissions.includes("financial.add_financialrecord") && (
+                            <Button
+                                variant="outlined"
+                                startIcon={<AddBoxRounded />}
+                                sx={{ mt: 1, mb: 2 }}
+                                onClick={handleCreateClick}
+                            >
+                                Criar Conta a Receber/Pagar
+                            </Button>
+                        )}
                         <Button
                             variant="outlined"
                             sx={{ mt: 1, mb: 2 }}

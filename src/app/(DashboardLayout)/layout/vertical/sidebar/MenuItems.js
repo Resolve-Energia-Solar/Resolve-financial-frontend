@@ -84,21 +84,23 @@ const Menuitems = [
         title: 'Pagamentos',
         icon: IconPoint,
         href: '/apps/invoice',
+        permissions: ['financial.view_payment']
       },
       {
         id: uniqueId(),
         title: 'Parcelas',
         icon: IconPoint,
         href: '/apps/invoice/installments',
-      },
-      {
-        id: uniqueId(),
-        title: 'Solicitação de Pagamento',
-        icon: IconPoint,
-        href: '/apps/financial-record',
-        permissions: ['financial.view_financialrecord'],
+        permissions: ['financial.view_payment']
       },
     ],
+  },
+  {
+    id: uniqueId(),
+    title: 'Solicitação de Pagamento',
+    icon: IconCurrencyDollar,
+    href: '/apps/financial-record',
+    permissions: ['financial.view_financialrecord'],
   },
   {
     id: uniqueId(),
@@ -119,7 +121,6 @@ const Menuitems = [
         title: 'Projetos',
         icon: IconPoint,
         href: '/apps/project',
-
         permissions: ['resolve_crm.view_project'],
       },
       {
