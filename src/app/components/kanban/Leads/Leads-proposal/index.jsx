@@ -324,7 +324,7 @@ function LeadProposalPage({ leadId = null }) {
                 <DeleteOutlinedIcon />
               </Button>
 
-              <Button variant="contained" sx={{ backgroundColor: '#FFC107', color: 'black', px: 3 }}>
+              <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }}>
                 <Typography variant="body1">Gerar proposta</Typography>
               </Button>
             </Box>

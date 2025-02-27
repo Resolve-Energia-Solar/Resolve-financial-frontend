@@ -30,6 +30,7 @@ import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 
 import leadService from '@/services/leadService';
+import { placeholder } from 'lodash/curry';
 
 function LeadInfoHeader({ leadId }) {
   const [lead, setLead] = useState(null);
@@ -69,22 +70,22 @@ function LeadInfoHeader({ leadId }) {
     >
       <Grid container xs={8} alignItems="center">
         <Grid item xs={4} sx={{ display: 'flex', alignItems: 'center' }}>
-          <Box sx={{ position: 'relative', display: 'inline-block' }}>
-            <Avatar sx={{ width: 50, height: 50, marginRight: 2 }}>
+          <Box sx={{ position: 'relative', display: 'inline-block', mr: 2 }}>
+            <Avatar sx={{ width: 55, height: 55, backgroundColor:'#D9D9D9', alignItems: 'center', justifyContent: 'center' }}>
               {' '}
               {/* {lead?.img} */}
-              {<AccountCircle sx={{ fontSize: 62 }} />}
+              {/* {placeholder?} */}
             </Avatar>
             <IconButton
               sx={{
                 position: 'absolute',
                 bottom: 0,
                 right: 0,
-                backgroundColor: theme.palette., // Yellow background
-                color: 'black',
-                width: 24,
-                height: 24,
-                '&:hover': { backgroundColor: theme.palette.secondary }, // Darker yellow on hover
+                backgroundColor: theme.palette.primary.main, 
+                color: theme.palette.primary.light,
+                width: 20.23,
+                height: 20.23,
+                '&:hover': { backgroundColor: theme.palette.secondary.main },
               }}
             >
               <EditIcon sx={{ fontSize: 16 }} />
@@ -122,7 +123,8 @@ function LeadInfoHeader({ leadId }) {
               max={5}
               readOnly
               size="normal"
-              icon={<WbSunny fontSize="inherit" sx={{ color: theme.palette.warning.main }} />}
+              sx={{gap: 0.5}}
+              icon={<WbSunny fontSize="inherit" sx={{ color: theme.palette.primary.main }} />}
               emptyIcon={
                 <WbSunny fontSize="inherit" sx={{ color: theme.palette.action.disabled }} />
               }
