@@ -2,26 +2,13 @@
 import {
   Grid,
   Typography,
-  Chip,
-  Divider,
   Box,
-  Rating,
   useTheme,
-  IconButton,
-  Card,
   MenuItem,
   InputAdornment,
   TextField,
 } from '@mui/material';
-import {
-  AccountCircle,
-  CalendarToday,
-  CalendarViewWeek,
-  Description,
-  Email,
-  Phone,
-  WbSunny,
-} from '@mui/icons-material';
+
 import { useEffect, useState } from 'react';
 import leadService from '@/services/leadService';
 import { useSnackbar } from 'notistack';

@@ -3,25 +3,16 @@
 import {
   Grid,
   Typography,
-  Divider,
   Box,
   Rating,
-  IconButton,  
-  TextField,
-  InputAdornment,
-  MenuItem,
+  IconButton,
   useTheme,
   Avatar,
   Chip,
 } from '@mui/material';
 
-
 import {
-  AccountCircle,
   CalendarToday,
-  CalendarViewWeek,
-  Email,
-  Phone,
   WbSunny,
 } from '@mui/icons-material';
 
@@ -30,7 +21,6 @@ import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 
 import leadService from '@/services/leadService';
-import { placeholder } from 'lodash/curry';
 
 function LeadInfoHeader({ leadId }) {
   const [lead, setLead] = useState(null);
@@ -69,9 +59,17 @@ function LeadInfoHeader({ leadId }) {
       spacing={2}
     >
       <Grid container xs={8} alignItems="center">
-        <Grid item xs={4} sx={{ display: 'flex', alignItems: 'center' }}>
-          <Box sx={{ position: 'relative', display: 'inline-block', mr: 2 }}>
-            <Avatar sx={{ width: 55, height: 55, backgroundColor:'#D9D9D9', alignItems: 'center', justifyContent: 'center' }}>
+        <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center' }}>
+          <Grid item sx={{ position: 'relative', display: 'inline-block', mr: 2 }}>
+            <Avatar
+              sx={{
+                width: 55,
+                height: 55,
+                backgroundColor: '#D9D9D9',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               {' '}
               {/* {lead?.img} */}
               {/* {placeholder?} */}
@@ -81,7 +79,7 @@ function LeadInfoHeader({ leadId }) {
                 position: 'absolute',
                 bottom: 0,
                 right: 0,
-                backgroundColor: theme.palette.primary.main, 
+                backgroundColor: theme.palette.primary.main,
                 color: theme.palette.primary.light,
                 width: 20.23,
                 height: 20.23,
@@ -90,15 +88,15 @@ function LeadInfoHeader({ leadId }) {
             >
               <EditIcon sx={{ fontSize: 16 }} />
             </IconButton>
-          </Box>
-          <Box>
+          </Grid>
+          <Grid item xs={8} >
             <Typography variant="caption" sx={{ color: 'gray' }}>
               Cliente
             </Typography>
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
               {lead?.name}
             </Typography>
-          </Box>
+          </Grid>
         </Grid>
 
         <Grid
@@ -123,7 +121,7 @@ function LeadInfoHeader({ leadId }) {
               max={5}
               readOnly
               size="normal"
-              sx={{gap: 0.5}}
+              sx={{ gap: 0.5 }}
               icon={<WbSunny fontSize="inherit" sx={{ color: theme.palette.primary.main }} />}
               emptyIcon={
                 <WbSunny fontSize="inherit" sx={{ color: theme.palette.action.disabled }} />
