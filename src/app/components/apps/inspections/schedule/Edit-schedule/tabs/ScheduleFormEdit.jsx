@@ -45,9 +45,8 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     loading: formLoading,
     formErrors,
     success,
-  } = useScheduleForm(scheduleData, id);
+  } = useScheduleForm(scheduleData, id, scheduleData?.service?.id);
 
-  console.log('formData', formData)
 
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
@@ -131,8 +130,6 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         const response = await serviceOpinionsService.getServiceOpinionsByService(
           formData.service_id,
         );
-
-        console.log('Service Opinions:', response.results);
 
         setServiceOpinions(formattedServiceOpinions(response.results));
       } catch (error) {
@@ -258,7 +255,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         </Grid>
 
         {/* Hora do Agendamento */}
-        {formData.service_id == SERVICE_INSPECTION_ID ? (
+        {formData?.service_id == SERVICE_INSPECTION_ID ? (
           <Grid item xs={12} sm={12} lg={6}>
             <FormSelect
               options={timeOptions}
@@ -380,8 +377,8 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
                 helperText: formErrors.final_service_opinion_id,
               })}
               isFinalOpinion={true}
-              serviceId={formData.service_id}
-              // disabled={loadingServiceOpinions || formData.service_id === null}
+              serviceId={scheduleData?.service?.id}
+              // disabled={loadingServiceOpinions || formData.service?.id === null}
             />
           </Grid>
         </HasPermission>

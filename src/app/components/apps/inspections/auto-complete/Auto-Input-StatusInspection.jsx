@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import serviceOpinionsService from '@/services/serviceOpinionsService';
-import { is } from 'date-fns/locale';
 
 export default function AutoInputStatusSchedule({
   onChange,
@@ -17,16 +16,16 @@ export default function AutoInputStatusSchedule({
 }) {
   const [status, setStatus] = useState([]);
   const [selectedValue, setSelectedValue] = useState(null);
+  const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {
     const getStatus = async () => {
       try {
         const response = await serviceOpinionsService.getServiceOpinions({
+          name__icontains: inputValue,
           service: serviceId,
-          is_final_opinion: isFinalOpinion,
+          is_final_service: isFinalOpinion,
         });
-        console.log('parecer final?', isFinalOpinion);
-        console.log('response', response);
         setStatus(
           response.results.map((item) => ({
             id: item.id,
@@ -38,8 +37,34 @@ export default function AutoInputStatusSchedule({
       }
     };
     getStatus();
-  }, [serviceId]);
+  }, [serviceId, isFinalOpinion]);
 
+  // Busca dinâmica conforme o usuário digita
+  useEffect(() => {
+    const fetchStatusByInput = async () => {
+      try {
+        // Verifica se o input possui um tamanho mínimo (opcional)
+        if (inputValue.length < 3) return;
+        const response = await serviceOpinionsService.getServiceOpinions({
+          name__icontains: inputValue,
+          service: serviceId,
+          is_final_service: isFinalOpinion,
+        });
+        setStatus(
+          response.results.map((item) => ({
+            id: item.id,
+            label: item.name,
+          })),
+        );
+      } catch (error) {
+        console.error('Erro ao buscar status por input:', error);
+      }
+    };
+
+    fetchStatusByInput();
+  }, [inputValue, serviceId, isFinalOpinion]);
+
+  // Busca o valor selecionado quando a prop "value" mudar
   useEffect(() => {
     const fetchSelectedValue = async () => {
       if (value) {
@@ -67,6 +92,8 @@ export default function AutoInputStatusSchedule({
       value={selectedValue}
       onChange={handleOnChange}
       disabled={disabled}
+      inputValue={inputValue}
+      onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
       sx={{ width: '100%' }}
       renderInput={(params) => (
         <TextField

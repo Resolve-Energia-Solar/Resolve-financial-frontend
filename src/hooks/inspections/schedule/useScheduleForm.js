@@ -9,7 +9,7 @@ import axios from 'axios'
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID
 
-const useScheduleForm = (initialData, id) => {
+const useScheduleForm = (initialData, id, service_id) => {
   const user = useSelector(state => state.user)
   const [serviceData, setServiceData] = useState(null)
   const [addressData, setAddressData] = useState(null)
@@ -17,8 +17,8 @@ const useScheduleForm = (initialData, id) => {
   const [formData, setFormData] = useState({
     schedule_creator: user?.user?.id,
     category_id: null,
-    service_id: null || SERVICE_INSPECTION_ID,
-    parent_schedules_id	: [],
+    service_id: null || service_id || SERVICE_INSPECTION_ID,
+    parent_schedules_id: [],
     customer_id: null,
     project_id: null,
     schedule_agent_id: null,
@@ -47,7 +47,7 @@ const useScheduleForm = (initialData, id) => {
     if (initialData) {
       setFormData({
         schedule_creator: initialData.schedule_creator || null,
-        service_id: initialData.service?.id || SERVICE_INSPECTION_ID,
+        service_id: initialData.service?.id || service_id || SERVICE_INSPECTION_ID,
         parent_schedules_id: initialData.parent_schedules?.map(schedule => schedule.id) || [],
         customer_id: initialData?.customer?.id || null,
         project_id: initialData.project?.id || null,
@@ -301,7 +301,6 @@ const useScheduleForm = (initialData, id) => {
       execution_finished_at: formData.execution_finished_at,
     }
   
-    console.log('Dados a serem enviados:', dataToSend)
   
     try {
       if (id) {

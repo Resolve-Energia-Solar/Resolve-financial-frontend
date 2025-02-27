@@ -3,7 +3,7 @@ import apiClient from './apiClient';
 const serviceOpinionsService = {
   getServiceOpinions: async ({ ordering, nextPage, limit = 5, page = 1, ...rest }) => {
 
-
+    
     const params = {
       ordering: ordering || '',
       page: nextPage || page,
