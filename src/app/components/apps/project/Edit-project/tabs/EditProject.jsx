@@ -17,6 +17,9 @@ import {
   Alert,
   CircularProgress,
   FormControlLabel,
+  FormControl,
+  MenuItem,
+  Select,
   Tooltip
 } from '@mui/material';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
@@ -225,10 +228,10 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
             {...(formErrors.end_date && { error: true, helperText: formErrors.end_date })}
           />
         </Grid>
-        <Grid item xs={12} sm={12} lg={12}>
+        <Grid item xs={12} sm={12} lg={4}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <CustomFormLabel
-              htmlFor="Lista de Material"
+              htmlFor="lista-material"
               sx={{
                 margin: 0,
                 padding: 0,
@@ -241,16 +244,19 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
               <HelpOutlineIcon />
             </Tooltip>
           </Box>
-          <FormControlLabel
-            control={
-              <CustomSwitch
-                checked={formData.material_list_is_completed}
-                // disabled={!userPermissions.includes('resolve_crm.change_status_is_documentation_completed_project')}
-                onChange={(e) => handleChange('material_list_is_completed', e.target.checked)}
-              />
-            }
-            label={formData.material_list_is_completed ? 'Lista Finalizada' : 'Lista Pendente'}
-          />
+          <FormControl fullWidth>
+            <Select
+              id="lista-material"
+              value={formData.material_list_is_completed ? 'true' : 'false'}
+              onChange={(e) => {
+                const novoStatus = e.target.value === 'true';
+                handleChange('material_list_is_completed', novoStatus);
+              }}
+            >
+              <MenuItem value="false">Pendente</MenuItem>
+              <MenuItem value="true">Finalizada</MenuItem>
+            </Select>
+          </FormControl>
         </Grid>
         <Grid item xs={12} sm={12} lg={12}>
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>

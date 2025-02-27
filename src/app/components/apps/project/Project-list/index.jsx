@@ -229,7 +229,7 @@ const ProjectList = ({ onClick }) => {
                     title: 'Pendente',
                     subtitle: 'Lista de Materiais',
                     count: pendingMaterialList,
-                    onClick: () => setFilters({ ...filters, material_list_is_completed: false, is_released_to_engineering: true }),
+                    onClick: () => setFilters({ ...filters, material_list_is_completed: false, is_released_to_engineering: true, designer_status__in: 'CO' }),
                   },
                   {
                     backgroundColor: 'secondary.light',
