@@ -45,6 +45,7 @@ import AutoCompleteDepartment from "@/app/components/apps/financial-record/depar
 import AutoCompleteCategory from "@/app/components/apps/financial-record/categoryInput";
 import SaleCards from "@/app/components/apps/inforCards/InforCards";
 import { useSnackbar } from 'notistack';
+import { formatDate } from "@/utils/dateUtils";
 
 const financialRecordList = () => {
     const router = useRouter();
@@ -450,7 +451,7 @@ const financialRecordList = () => {
                                                 })}
                                             </TableCell>
                                             <TableCell>
-                                                {new Date(item.due_date).toLocaleDateString('pt-BR')}
+                                            {formatDate(item.due_date)}
                                             </TableCell>
                                             <TableCell>{getStatusLabel(item.status)}</TableCell>
                                         </TableRow>
