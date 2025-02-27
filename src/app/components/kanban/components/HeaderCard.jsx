@@ -1,20 +1,8 @@
 'use client';
 
-import {
-  Grid,
-  Typography,
-  Box,
-  Rating,
-  IconButton,
-  useTheme,
-  Avatar,
-  Chip,
-} from '@mui/material';
+import { Grid, Typography, Box, Rating, IconButton, useTheme, Avatar, Chip } from '@mui/material';
 
-import {
-  CalendarToday,
-  WbSunny,
-} from '@mui/icons-material';
+import { CalendarToday, WbSunny } from '@mui/icons-material';
 
 import EditIcon from '@mui/icons-material/Edit';
 import { useEffect, useState } from 'react';
@@ -59,44 +47,43 @@ function LeadInfoHeader({ leadId }) {
       spacing={2}
     >
       <Grid container xs={8} alignItems="center">
-        <Grid item xs={6} sx={{ display: 'flex'}}>
-          <Grid item sx={{ position: 'relative', display: 'inline-block', mr: 2 }}>
-            <Avatar
-              sx={{
-                width: 55,
-                height: 55,
-                backgroundColor: '#D9D9D9',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              {' '}
-              {/* {lead?.img} */}
-              {/* {placeholder?} */}
-            </Avatar>
-            <IconButton
-              sx={{
-                position: 'absolute',
-                bottom: 0,
-                right: 0,
-                backgroundColor: theme.palette.primary.main,
-                color: theme.palette.primary.light,
-                width: 20.23,
-                height: 20.23,
-                '&:hover': { backgroundColor: theme.palette.secondary.main },
-              }}
-            >
-              <EditIcon sx={{ fontSize: 16 }} />
-            </IconButton>
-          </Grid>
-          <Grid item xs={8} >
-            <Typography variant="caption" sx={{ color: 'gray' }}>
-              Cliente
-            </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              {lead?.name}
-            </Typography>
-          </Grid>
+        <Grid item sx={{ position: 'relative', display: 'inline-block', mr: 2 }}>
+          <Avatar
+            sx={{
+              width: 55,
+              height: 55,
+              backgroundColor: '#D9D9D9',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {' '}
+            {/* {lead?.img} */}
+            {/* {placeholder?} */}
+          </Avatar>
+          <IconButton
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              backgroundColor: theme.palette.primary.main,
+              color: theme.palette.primary.light,
+              width: 20.23,
+              height: 20.23,
+              '&:hover': { backgroundColor: theme.palette.secondary.main },
+            }}
+          >
+            <EditIcon sx={{ fontSize: 16 }} />
+          </IconButton>
+        </Grid>
+
+        <Grid item xs={4} sx={{ position: 'relative', display: 'inline-block', mr: 1 }}>
+          <Typography variant="caption" sx={{ color: 'gray' }}>
+            Cliente
+          </Typography>
+          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            {lead?.name}
+          </Typography>
         </Grid>
 
         <Grid
