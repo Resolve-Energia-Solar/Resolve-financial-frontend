@@ -22,7 +22,6 @@ import AttachmentTable from '../attachment/attachmentTable';
 import { useSelector } from 'react-redux';
 import financialRecordService from '@/services/financialRecordService';
 import { IconPdf } from '@tabler/icons-react';
-import getContentType from '@/utils/getContentType';
 
 const statusMap = {
   S: <Chip label="Solicitada" color="warning" size="small" />,
@@ -47,15 +46,6 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
   const user = useSelector((state) => state.user?.user);
   const [tabIndex, setTabIndex] = useState(0);
   const [currentRecord, setCurrentRecord] = useState(record);
-  const [FINANCIAL_RECORD_CONTENT_TYPE, setFinancialRecordContentType] = useState(null);
-
-  useEffect(() => {
-    const fetchContentType = async () => {
-      const contentType = await getContentType('financial', 'financialrecord');
-      setFinancialRecordContentType(contentType);
-    };
-    fetchContentType();
-  }, []);
 
   useEffect(() => {
     setCurrentRecord(record);
@@ -325,13 +315,13 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
 
         {tabIndex === 1 && (
           <Box sx={{ mt: 3 }}>
-            <Comment contentType={FINANCIAL_RECORD_CONTENT_TYPE} objectId={currentRecord.id} />
+            <Comment appLabel={'financial'} model={'financialrecord'} objectId={currentRecord.id} />
           </Box>
         )}
 
         {tabIndex === 2 && (
           <Box sx={{ mt: 3 }}>
-            <AttachmentTable contentType={FINANCIAL_RECORD_CONTENT_TYPE} objectId={currentRecord.id} />
+            <AttachmentTable appLabel={'financial'} model={'financialrecord'} objectId={currentRecord.id} />
           </Box>
         )}
       </Box>

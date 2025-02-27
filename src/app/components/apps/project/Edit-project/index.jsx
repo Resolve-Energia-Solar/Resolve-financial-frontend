@@ -130,12 +130,12 @@ export default function EditProject({ projectId = null }) {
       
       {value === 7 && (
         <div>
-          <Comment contentType={CONTENT_TYPE_SALE_ID} objectId={projectData?.sale?.id} label='Comentários da Venda' />
+          <Comment appLabel={'resolve_crm'} model={'sale'} objectId={projectData?.sale?.id} label='Comentários da Venda' />
         </div>
       )}
       {value === 8 && (
         <div>
-          <Comment contentType={CONTENT_TYPE_PROJECT_ID} objectId={id} label='Comentários do Projeto' />
+          <Comment appLabel={'resolve_crm'} model={'project'} objectId={id} label='Comentários do Projeto' />
         </div>
       )}
 

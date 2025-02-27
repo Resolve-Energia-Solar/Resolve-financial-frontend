@@ -15,20 +15,34 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddAttachmentModal from "@/app/(DashboardLayout)/apps/attachment/AddAttachmentModal";
 import attachmentService from "@/services/attachmentService";
+import getContentType from "@/utils/getContentType";
 
-const AttachmentTable = ({ objectId, contentType, attachments: attachmentsProp, onAddAttachment, onDelete }) => {
+const AttachmentTable = ({ objectId, attachments: attachmentsProp, onAddAttachment, appLabel, model, onDelete }) => {
   const [fetchedAttachments, setFetchedAttachments] = useState([]);
   const [openAttachmentModal, setOpenAttachmentModal] = useState(false);
+  const [contentTypeId, setContentTypeId] = useState(null);
+
+  useEffect(() => {
+    async function fetchContentTypeId() {
+      try {
+        const id = await getContentType(appLabel, model);
+        setContentTypeId(id);
+      } catch (error) {
+        console.error("Erro ao buscar content type:", error);
+      }
+    }
+    fetchContentTypeId();
+  }, [appLabel, model]);
 
   useEffect(() => {
     if (objectId) {
       fetchAttachments();
     }
-  }, [objectId, contentType]);
+  }, [objectId, contentTypeId]);
 
   const fetchAttachments = async () => {
     try {
-      const response = await attachmentService.getAttachment(objectId, contentType);
+      const response = await attachmentService.getAttachment(objectId, contentTypeId);
       setFetchedAttachments(response.results || []);
     } catch (error) {
       console.error("Erro ao buscar anexos:", error);
@@ -110,7 +124,7 @@ const AttachmentTable = ({ objectId, contentType, attachments: attachmentsProp, 
         open={openAttachmentModal}
         onClose={() => setOpenAttachmentModal(false)}
         objectId={objectId}
-        contentType={contentType}
+        contentType={contentTypeId}
         onAddAttachment={(attachment) => {
           if (!objectId) {
             onAddAttachment && onAddAttachment(attachment);

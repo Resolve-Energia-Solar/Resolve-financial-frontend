@@ -17,6 +17,7 @@ import {
 import { motion } from 'framer-motion';
 import { useSelector } from 'react-redux';
 
+import getContentType from '@/utils/getContentType';
 import CommentService from '@/services/commentService';
 
 const itemVariants = {
@@ -24,20 +25,34 @@ const itemVariants = {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-export default function Comment({ contentType, objectId, label='Comentários' }) {
+export default function Comment({ appLabel, model, objectId, label = 'Comentários' }) {
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [newComment, setNewComment] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const [contentTypeId, setContentTypeId] = useState(null);
 
     const user = useSelector((state) => state?.user?.user);
     const listRef = useRef(null);
 
+
+  useEffect(() => {
+    async function fetchContentTypeId() {
+      try {
+        const id = await getContentType(appLabel, model);
+        setContentTypeId(id);
+      } catch (error) {
+        console.error("Erro ao buscar content type:", error);
+      }
+    }
+    fetchContentTypeId();
+  }, [appLabel, model]);
+
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const data = await CommentService.getComment(objectId, contentType);
+                const data = await CommentService.getComment(objectId, contentTypeId);
                 setComments(data.results || []);
 
             } catch (err) {
@@ -48,7 +63,7 @@ export default function Comment({ contentType, objectId, label='Comentários' })
         };
 
         fetchComments();
-    }, [contentType, objectId]);
+    }, [contentTypeId, objectId]);
 
     const getInitials = (name) => name?.charAt(0)?.toUpperCase() || '';
 
@@ -59,7 +74,7 @@ export default function Comment({ contentType, objectId, label='Comentários' })
         try {
             const data = await CommentService.createComment({
                 object_id: objectId,
-                content_type_id: contentType,
+                content_type_id: contentTypeId,
                 text: newComment,
                 author_id: user?.id
             });
@@ -84,7 +99,7 @@ export default function Comment({ contentType, objectId, label='Comentários' })
     // Skeleton para placeholder de mensagens
     const SkeletonList = () => (
         <>
-            {[1,2,3].map((_, i) => (
+            {[1, 2, 3].map((_, i) => (
                 <ListItem key={i} sx={{ maxWidth: '70%', mb: 1, bgcolor: 'grey.200', borderRadius: 2 }}>
                     <ListItemAvatar>
                         <Skeleton variant="circular" width={40} height={40} />

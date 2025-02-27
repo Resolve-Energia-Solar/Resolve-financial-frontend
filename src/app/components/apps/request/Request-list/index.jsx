@@ -309,7 +309,8 @@ const RequestList = ({ projectId = null, enableFilters = true }) => {
             {/* Área de Comentários - Ocupa 30% da largura */}
             <Box sx={{ flex: 3, borderLeft: '1px solid #ddd', paddingLeft: 2 }}>
               <Comment
-                contentType={CONTENT_TYPE_PROJECT_ID}
+                appLabel={'resolve_crm'}
+                model={'project'}
                 objectId={requestIdSelected}
                 label="Comentários do Projeto"
               />
