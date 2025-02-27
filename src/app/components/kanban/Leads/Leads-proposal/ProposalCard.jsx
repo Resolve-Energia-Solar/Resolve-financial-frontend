@@ -26,7 +26,6 @@ export function ProductList() {
             container
             spacing={0}
             sx={{
-                backgroundColor: 'white',
                 borderRadius: '12px',
                 border: '1px solid #E0E0E0',
                 p: 3,

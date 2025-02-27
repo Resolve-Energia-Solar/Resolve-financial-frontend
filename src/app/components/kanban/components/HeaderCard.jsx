@@ -11,6 +11,8 @@ import {
   InputAdornment,
   MenuItem,
   useTheme,
+  Avatar,
+  Chip,
 } from '@mui/material';
 
 import {
@@ -53,50 +55,108 @@ function LeadInfoHeader({ leadId }) {
   if (!lead) return <Typography>Carregando...</Typography>;
 
   return (
-    <Box sx={{ borderBottom: `1px solid ${theme.palette.divider}` }}>
-      <Grid container spacing={2} alignItems="center" sx={{ p: 3 }} xs={12}>
-        <Grid item xs={12} md={5} container alignItems="center" spacing={2}>
-          <Grid item>
-            <AccountCircle sx={{ fontSize: 62 }} />
-          </Grid>
-          <Grid item>
-            <Typography
-              variant="body1"
-              gutterBottom
-              sx={{ fontSize: 12, color: '#ADADAD', margin: 0 }}
-            >
+    <Box
+      sx={{
+        width: '100%',
+        borderBottom: '1px solid #E0E0E0',
+        borderRadius: '0px',
+        padding: '16px',
+        display: 'flex',
+      }}
+      spacing={2}
+    >
+      <Grid container xs={8} alignItems="center">
+        <Grid item xs={4} sx={{ display: 'flex', alignItems: 'center' }}>
+          <Avatar sx={{ width: 50, height: 50, marginRight: 2 }}>
+            {' '}
+            {/* {lead?.img} */}
+            {<AccountCircle sx={{ fontSize: 62 }} />}
+          </Avatar>
+          <Box>
+            <Typography variant="caption" sx={{ color: 'gray' }}>
               Cliente
             </Typography>
-            <Typography variant="h6" gutterBottom sx={{ fontSize: 16 }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
               {lead?.name}
             </Typography>
+          </Box>
+        </Grid>
+
+        <Grid
+          item
+          xs={4}
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}
+        >
+          <Grid
+            item
+            sx={{
+              display: 'flex',
+              flexDirection: 'column ',
+              alignItems: 'flex-start',
+              mr: 5,
+            }}
+          >
+            <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
+              Nível de interesse
+            </Typography>
+            <Rating
+              value={lead?.qualification}
+              max={5}
+              readOnly
+              size="normal"
+              icon={<WbSunny fontSize="inherit" sx={{ color: theme.palette.warning.main }} />}
+              emptyIcon={
+                <WbSunny fontSize="inherit" sx={{ color: theme.palette.action.disabled }} />
+              }
+            />
+          </Grid>
+
+          <Grid
+            item
+            sx={{
+              display: 'flex',
+              flexDirection: 'column ',
+              alignItems: 'flex-start',
+            }}
+          >
+            <Typography variant="caption" sx={{ color: 'gray', mr: 1, mb: 0.5 }}>
+              Status
+            </Typography>
+            <Chip
+              // label={lead?.status}
+              label="Contrato"
+              variant="outlined"
+              sx={{
+                color: 'gray',
+                borderColor: 'green',
+                px: 1,
+              }}
+            />
           </Grid>
         </Grid>
-        <Grid item xs={12} md={7}>
-          <Grid container spacing={2} alignItems="center" justifyContent="flex-end">
-            <Grid
-              item
-              xs={12}
-              md={4}
-              sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
-            >
-              <Typography variant="body1" gutterBottom sx={{ fontSize: 12, color: '#ADADAD' }}>
-                Nível de interesse
-              </Typography>
-              <Rating
-                name="qualification"
-                value={lead?.qualification}
-                max={5}
-                readOnly
-                size="normal"
-                icon={<WbSunny fontSize="inherit" sx={{ color: theme.palette.warning.main }} />}
-                emptyIcon={
-                  <WbSunny fontSize="inherit" sx={{ color: theme.palette.action.disabled }} />
-                }
-              />
-            </Grid>
-          </Grid>
-        </Grid>
+      </Grid>
+
+      <Grid
+        item
+        xs={4}
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flexGrow: 1 }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: '#F5F5F5',
+            borderRadius: '15px',
+            padding: '6px 12px',
+          }}
+          xs={4}
+        >
+          <CalendarToday fontSize="small" sx={{ color: 'gray', mr: 1 }} />
+          <Typography variant="caption" sx={{ color: 'gray' }}>
+            Última atualização: 27/02/2025 10:45
+          </Typography>
+        </Box>
       </Grid>
     </Box>
   );

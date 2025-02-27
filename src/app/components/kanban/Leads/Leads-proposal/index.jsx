@@ -99,11 +99,10 @@ function LeadProposalPage({ leadId = null }) {
             p: 3,
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: 'white',
           }}
         >
           {/* HEEEEEEEEEEEEADER */}
-          <Grid container spacing={2} alignItems="center" xs={12}>
+          <Grid item spacing={2} alignItems="center" xs={12}>
             <LeadInfoHeader leadId={leadId}/>
           </Grid>
 
@@ -300,13 +299,12 @@ function LeadProposalPage({ leadId = null }) {
             xs={12}
             sx={{
               display: 'flex',
-              justifyContent: 'space-between', // ✅ Ensures buttons are on opposite sides
+              justifyContent: 'space-between',
               alignItems: 'center',
               mt: 2,
               gap: 2,
             }}
           >
-            {/* LEFT: Black Button */}
             <Button
               variant="contained"
               sx={{
@@ -320,7 +318,6 @@ function LeadProposalPage({ leadId = null }) {
               <VisibilityIcon sx={{ ml: 1 }} />
             </Button>
 
-            {/* RIGHT: Red & Yellow Buttons */}
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Button variant="outlined" color="error" sx={{ px: 3 }}>
                 <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
