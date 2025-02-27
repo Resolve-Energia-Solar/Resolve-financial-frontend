@@ -45,7 +45,7 @@ function LeadInfoHeader({ leadId }) {
     fetchLead();
   }, [leadId]);
 
-  if (!lead) return <Typography>Carregando...</Typography>;
+  if (!lead) return <Typography>Carregando informações do lead...</Typography>;
 
   return (
     <Box
@@ -59,7 +59,7 @@ function LeadInfoHeader({ leadId }) {
       spacing={2}
     >
       <Grid container xs={8} alignItems="center">
-        <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center' }}>
+        <Grid item xs={6} sx={{ display: 'flex'}}>
           <Grid item sx={{ position: 'relative', display: 'inline-block', mr: 2 }}>
             <Avatar
               sx={{
