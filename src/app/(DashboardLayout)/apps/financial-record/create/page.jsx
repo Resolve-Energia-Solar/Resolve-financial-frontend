@@ -35,7 +35,6 @@ import getContentType from '@/utils/getContentType';
 
 
 export default function FormCustom() {
-  const [FINANCIAL_RECORD_CONTENT_TYPE, setFinancialRecordContentType] = useState(null);
   const router = useRouter();
   const { formData, handleChange, formErrors, setFormErrors, success } = useFinancialRecordForm();
   const [attachments, setAttachments] = useState([]);
@@ -44,6 +43,19 @@ export default function FormCustom() {
   const user = useSelector((state) => state.user?.user);
   const userPermissions = user?.permissions || user?.user_permissions || [];
   const [minDueDate, setMinDueDate] = useState('');
+  const [contentTypeId, setContentTypeId] = useState(null);
+
+  useEffect(() => {
+    async function fetchContentTypeId() {
+      try {
+        const id = await getContentType('financial', 'financialrecord');
+        setContentTypeId(id);
+      } catch (error) {
+        console.error("Erro ao buscar content type:", error);
+      }
+    }
+    fetchContentTypeId();
+  }, []);
 
   useEffect(() => {
     if (!userPermissions.includes("financial.add_financialrecord")) {
@@ -76,14 +88,6 @@ export default function FormCustom() {
   const handleAddAttachment = (attachment) => {
     setAttachments((prev) => [...prev, attachment]);
   };
-
-  useEffect(() => {
-    const fetchContentType = async () => {
-      const contentType = await getContentType('financial', 'financialrecord');
-      setFinancialRecordContentType(contentType);
-    };
-    fetchContentType();
-  }, []);
 
   useEffect(() => {
     if (formData.value && formData.category_code) {
@@ -126,7 +130,7 @@ export default function FormCustom() {
           formDataAttachment.append("file", attachment.file);
           formDataAttachment.append("description", attachment.description);
           formDataAttachment.append("object_id", recordId);
-          formDataAttachment.append("content_type_id", FINANCIAL_RECORD_CONTENT_TYPE);
+          formDataAttachment.append("content_type_id", contentTypeId);
           formDataAttachment.append("document_type_id", "");
           formDataAttachment.append("document_subtype_id", "");
           formDataAttachment.append("status", "");
@@ -331,7 +335,8 @@ export default function FormCustom() {
                 objectId={null}
                 attachments={attachments}
                 onAddAttachment={handleAddAttachment}
-                contentTypeId={FINANCIAL_RECORD_CONTENT_TYPE}
+                appLabel={'financial'}
+                model={'financialrecord'}
               />
               <Button variant="contained" color="primary" onClick={handleSubmit} disabled={loading}>
                 {loading ? <CircularProgress size={24} /> : 'Criar'}

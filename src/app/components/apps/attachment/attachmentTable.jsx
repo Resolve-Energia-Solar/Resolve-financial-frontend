@@ -16,11 +16,23 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddAttachmentModal from "@/app/(DashboardLayout)/apps/attachment/AddAttachmentModal";
 import attachmentService from "@/services/attachmentService";
 import getContentType from "@/utils/getContentType";
+import { useSelector } from "react-redux";
 
-const AttachmentTable = ({ objectId, attachments: attachmentsProp, onAddAttachment, appLabel, model, onDelete }) => {
+const AttachmentTable = ({
+  objectId,
+  attachments: attachmentsProp,
+  onAddAttachment,
+  appLabel,
+  model,
+  onDelete,
+}) => {
   const [fetchedAttachments, setFetchedAttachments] = useState([]);
   const [openAttachmentModal, setOpenAttachmentModal] = useState(false);
   const [contentTypeId, setContentTypeId] = useState(null);
+
+  // Recupera os dados do usuário e suas permissões do Redux
+  const user = useSelector((state) => state.user?.user);
+  const canDelete = user?.permissions?.includes(`${appLabel}.delete_${model}`);
 
   useEffect(() => {
     async function fetchContentTypeId() {
@@ -79,10 +91,18 @@ const AttachmentTable = ({ objectId, attachments: attachmentsProp, onAddAttachme
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell><strong>Nome do Arquivo</strong></TableCell>
-            <TableCell><strong>Descrição</strong></TableCell>
-            <TableCell><strong>Data de Upload</strong></TableCell>
-            <TableCell><strong>Ações</strong></TableCell>
+            <TableCell>
+              <strong>Nome do Arquivo</strong>
+            </TableCell>
+            <TableCell>
+              <strong>Descrição</strong>
+            </TableCell>
+            <TableCell>
+              <strong>Data de Upload</strong>
+            </TableCell>
+            <TableCell>
+              <strong>Ações</strong>
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -91,7 +111,11 @@ const AttachmentTable = ({ objectId, attachments: attachmentsProp, onAddAttachme
               <TableRow key={attachment.id || attachment.file.name}>
                 <TableCell>
                   {typeof attachment.file === "string" ? (
-                    <Link href={attachment.file} target="_blank" rel="noopener noreferrer">
+                    <Link
+                      href={attachment.file}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       {getFileName(attachment.file)}
                     </Link>
                   ) : (
@@ -105,9 +129,14 @@ const AttachmentTable = ({ objectId, attachments: attachmentsProp, onAddAttachme
                     : "-"}
                 </TableCell>
                 <TableCell>
-                  <IconButton color="error" onClick={() => onDelete && onDelete(attachment.id)}>
-                    <DeleteIcon />
-                  </IconButton>
+                  {canDelete && (
+                    <IconButton
+                      color="error"
+                      onClick={() => onDelete && onDelete(attachment.id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  )}
                 </TableCell>
               </TableRow>
             ))
