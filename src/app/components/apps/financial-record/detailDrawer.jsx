@@ -22,6 +22,7 @@ import AttachmentTable from '../attachment/attachmentTable';
 import { useSelector } from 'react-redux';
 import financialRecordService from '@/services/financialRecordService';
 import { IconPdf } from '@tabler/icons-react';
+import { formatDate } from '@/utils/dateUtils';
 
 const statusMap = {
   S: <Chip label="Solicitada" color="warning" size="small" />,
@@ -147,12 +148,12 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography>
-                  <strong>Data de Vencimento:</strong> {new Date(currentRecord.due_date).toLocaleDateString('pt-BR')}
+                  <strong>Data de Vencimento:</strong> {formatDate(currentRecord.due_date)}
                 </Typography>
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography>
-                  <strong>Data do Serviço:</strong> {new Date(currentRecord.service_date).toLocaleDateString('pt-BR')}
+                  <strong>Data do Serviço:</strong> {formatDate(currentRecord.service_date)}
                 </Typography>
               </Grid>
               <Grid item xs={12} md={6}>
