@@ -13,10 +13,11 @@ export default function useFinancialRecordForm() {
     value: '',
     notes: '',
     payment_method: 'P',
-    is_receivable: false,
+    project: null,
     service_date: '',
     due_date: '',
     invoice_number: '',
+    is_receivable: false,
   });
 
   const [formErrors, setFormErrors] = useState({});

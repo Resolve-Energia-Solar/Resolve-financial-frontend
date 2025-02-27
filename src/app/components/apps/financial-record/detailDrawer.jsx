@@ -48,7 +48,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
   const [tabIndex, setTabIndex] = useState(0);
   const [currentRecord, setCurrentRecord] = useState(record);
   const [FINANCIAL_RECORD_CONTENT_TYPE, setFinancialRecordContentType] = useState(null);
-  
+
   useEffect(() => {
     const fetchContentType = async () => {
       const contentType = await getContentType('financial', 'financialrecord');
@@ -56,7 +56,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
     };
     fetchContentType();
   }, []);
-  
+
   useEffect(() => {
     setCurrentRecord(record);
   }, [record]);
@@ -249,28 +249,31 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
               </Typography>
             </Grid>
             {user.is_superuser && (
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <Typography>
-                    <strong>Código do Departamento:</strong> {currentRecord.department_code}
-                  </Typography>
+              <>
+                <Divider sx={{ my: 3 }} />
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6}>
+                    <Typography>
+                      <strong>Código do Departamento:</strong> {currentRecord.department_code}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Typography>
+                      <strong>Código da Categoria:</strong> {currentRecord.category_code}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Typography>
+                      <strong>Código do Cliente/Fornecedor:</strong> {currentRecord.client_supplier_code}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Typography>
+                      <strong>Número da Fatura:</strong> {currentRecord.invoice_number || '-'}
+                    </Typography>
+                  </Grid>
                 </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography>
-                    <strong>Código da Categoria:</strong> {currentRecord.category_code}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography>
-                    <strong>Código do Cliente/Fornecedor:</strong> {currentRecord.client_supplier_code}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography>
-                    <strong>Número da Fatura:</strong> {currentRecord.invoice_number || '-'}
-                  </Typography>
-                </Grid>
-              </Grid>
+              </>
             )}
             <Divider sx={{ my: 3 }} />
             <Grid container>

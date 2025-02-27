@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import { useRouter } from 'next/navigation';
-import { IconArrowDown, IconArrowUp } from '@tabler/icons-react';
 import { useSelector } from 'react-redux';
 import { useSnackbar } from 'notistack';
 
@@ -19,6 +18,7 @@ import AutoCompleteDepartment from '@/app/components/apps/financial-record/depar
 import AutoCompleteCategory from '@/app/components/apps/financial-record/categoryInput';
 import AutoCompleteBeneficiary from '@/app/components/apps/financial-record/beneficiaryInput';
 import AutoCompleteDepartament from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Departament';
+import AutoCompleteProject from '@/app/components/apps/inspections/auto-complete/Auto-input-Project';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
 import CustomFieldMoney from '@/app/components/apps/invoice/components/CustomFieldMoney';
@@ -272,26 +272,13 @@ export default function FormCustom() {
             {formErrors.payment_method && <FormHelperText>{formErrors.payment_method}</FormHelperText>}
           </Grid>
           <Grid item xs={12} md={6}>
-            <CustomFormLabel htmlFor="is_receivable">A pagar / A receber</CustomFormLabel>
-            <Stack direction="row" spacing={2}>
-              <Button
-                variant={formData.is_receivable == true ? 'contained' : 'outlined'}
-                color="success"
-                startIcon={<IconArrowDown />}
-                disabled
-              >
-                A Receber
-              </Button>
-              <Button
-                variant={formData.is_receivable == false ? 'contained' : 'outlined'}
-                color="error"
-                disabled
-                onClick={() => handleChange('is_receivable', false)}
-                startIcon={<IconArrowUp />}
-              >
-                A Pagar
-              </Button>
-            </Stack>
+            <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
+            <AutoCompleteProject
+              onChange={(project) => handleChange('project', project)}
+              value={formData.project}
+              error={formErrors.project}
+              helperText={formErrors.project}
+            />
           </Grid>
           <Grid item xs={6}>
             <CustomFormLabel htmlFor="service_date">Data do Serviço</CustomFormLabel>
