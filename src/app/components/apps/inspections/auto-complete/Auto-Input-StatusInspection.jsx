@@ -24,7 +24,7 @@ export default function AutoInputStatusSchedule({
         const response = await serviceOpinionsService.getServiceOpinions({
           name__icontains: inputValue,
           service: serviceId,
-          is_final_service: isFinalOpinion,
+          is_final_opinion: isFinalOpinion,
         });
         setStatus(
           response.results.map((item) => ({
@@ -48,7 +48,7 @@ export default function AutoInputStatusSchedule({
         const response = await serviceOpinionsService.getServiceOpinions({
           name__icontains: inputValue,
           service: serviceId,
-          is_final_service: isFinalOpinion,
+          is_final_opinion: isFinalOpinion,
         });
         setStatus(
           response.results.map((item) => ({

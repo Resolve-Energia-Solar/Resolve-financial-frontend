@@ -127,8 +127,10 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     const fetchServiceOpinions = async () => {
       try {
         setLoadingServiceOpinions(true);
-        const response = await serviceOpinionsService.getServiceOpinionsByService(
-          formData.service_id,
+        const response = await serviceOpinionsService.getServiceOpinions({
+          service: formData.service_id,
+          is_final_opinion: true,
+        }
         );
 
         setServiceOpinions(formattedServiceOpinions(response.results));
