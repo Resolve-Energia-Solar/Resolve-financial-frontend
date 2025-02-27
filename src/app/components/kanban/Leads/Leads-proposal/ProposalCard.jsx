@@ -128,14 +128,19 @@ export function ProductList() {
 
         {/* ADD PRODUCT!*/}
         <Grid item sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Typography
-            variant="body2"
-            color="action"
-            sx={{ mt: 2, cursor: 'pointer', alignItems: 'center', p: 2 }}
-            >
-            <AddOutlinedIcon sx={{ fontSize: 15, color: "#7E8388" }} />
-            Adicionar produto
-            </Typography>
+          <IconButton
+            sx={{
+              mt: 2,
+              color: '#7E8388',
+              fontSize: 14,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.5,
+            }}
+          >
+            <AddOutlinedIcon sx={{ fontSize: 18 }} />
+            <Typography variant="body2">Adicionar produto</Typography>
+          </IconButton>
         </Grid>
       </Grid>
     </Grid>
