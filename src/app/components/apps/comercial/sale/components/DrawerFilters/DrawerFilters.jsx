@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Box, Drawer, Button, Typography, Grid, RadioGroup, FormControlLabel, Radio } from '@mui/material';
+import { Box, Drawer, Button, Typography, Grid, RadioGroup, FormControlLabel, Checkbox } from '@mui/material';
 import { FilterAlt } from '@mui/icons-material';
 import CheckboxesTags from './CheckboxesTags';
 import FormDateRange from './DateRangePicker';
@@ -33,7 +33,8 @@ export default function DrawerFilters() {
     billing_date: filters.billing_date || [null, null],
     borrower: filters.borrower || "",
     payment_status: filters.payment_status || [],
-    tag_name__exact: filters.tag_name__exact || ""
+    tag_name__exact: filters.tag_name__exact || "",
+    documents_under_analysis: filters.documents_under_analysis || false
   });
 
   const createFilterParams = (filters) => {
@@ -116,9 +117,12 @@ export default function DrawerFilters() {
       params.invoice_status = invoiceStatusValues.join(',');
     }
 
-    // Filtro único para tag
     if (filters.tag_name__exact) {
       params.tag_name__exact = filters.tag_name__exact;
+    }
+
+    if (typeof filters.documents_under_analysis === "boolean") {
+      params.documents_under_analysis = filters.documents_under_analysis;
     }
 
     return params;
@@ -146,7 +150,8 @@ export default function DrawerFilters() {
       billing_date: [null, null],
       borrower: "",
       payment_status: [],
-      tag_name__exact: ""
+      tag_name__exact: "",
+      documents_under_analysis: false
     });
   };
 
@@ -253,24 +258,37 @@ export default function DrawerFilters() {
                 />
               </Grid>
 
-              {/* Filtro para Tag (único) */}
               <Grid item xs={12}>
                 <CustomFormLabel htmlFor="tag_name">Tag</CustomFormLabel>
-                <RadioGroup
-                  row
-                  name="tag_name__exact"
-                  value={tempFilters.tag_name__exact}
-                  onChange={(e) => handleChange('tag_name__exact', e.target.value)}
-                >
-                  {tagNameOptions.map((option) => (
-                    <FormControlLabel
-                      key={option.value}
-                      value={option.value}
-                      control={<Radio />}
-                      label={option.label}
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={tempFilters.tag_name__exact === tagNameOptions[0].value}
+                      onChange={(e) =>
+                        handleChange(
+                          'tag_name__exact',
+                          e.target.checked ? tagNameOptions[0].value : ""
+                        )
+                      }
                     />
-                  ))}
-                </RadioGroup>
+                  }
+                  label={tagNameOptions[0].label}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="documents_under_analysis">Documentos em Análise</CustomFormLabel>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={tempFilters.documents_under_analysis}
+                      onChange={(e) =>
+                        handleChange('documents_under_analysis', e.target.checked)
+                      }
+                    />
+                  }
+                  label="Em Análise"
+                />
               </Grid>
 
               {/* Demais filtros */}
