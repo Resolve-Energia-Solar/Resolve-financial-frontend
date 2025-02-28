@@ -368,7 +368,7 @@ const financialRecordList = () => {
             count: null,
             isCurrency: false,
             onClick: () => handleKPIClick("error"),
-            permission: "financial.delete_financialrecord",
+            permission: "financial.change_financialrecord",
         },
     ];
 
