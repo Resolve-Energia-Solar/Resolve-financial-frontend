@@ -8,7 +8,7 @@ import { debounce } from 'lodash';
 
 export default function AutoCompleteParentSchedule({
   onChange,
-  value,
+  value = [],
   error,
   helperText,
   noOptionsText,
@@ -19,18 +19,18 @@ export default function AutoCompleteParentSchedule({
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedSchedules, setSelectedSchedules] = useState([]);
-  const [page, setPage] = useState(1);
 
+  // Busca os agendamentos padrão com base nos IDs passados em value
   useEffect(() => {
-    const fetchDefaultSchedule = async () => {
-      if (value && Array.isArray(value)) {
+    const fetchDefaultSchedules = async () => {
+      if (value.length > 0) {
         try {
           const schedules = await Promise.all(
             value.map(id => scheduleService.getScheduleById(id))
           );
           const formattedSchedules = schedules.map(schedule => ({
             id: schedule.id,
-            name: schedule.customer.complete_name,  
+            name: schedule.customer.complete_name,
             serviceName: schedule.service.category.name,
             status: schedule.status,
           }));
@@ -41,48 +41,81 @@ export default function AutoCompleteParentSchedule({
       }
     };
 
-    fetchDefaultSchedule();
+    fetchDefaultSchedules();
   }, [value]);
 
+  // Atualiza a seleção e envia uma lista de IDs para o componente pai
   const handleChange = (event, newValue) => {
     setSelectedSchedules(newValue);
-    const selectedIds = newValue.map(schedule => schedule.id);
-    onChange(selectedIds);
+    onChange(newValue.map(schedule => schedule.id));
   };
 
+  // Busca agendamentos pelo nome com debounce (300ms)
   const fetchSchedulesByName = useCallback(
     debounce(async (name) => {
+      if (!name) return;
       setLoading(true);
       try {
         const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
         const response = await scheduleService.getSchedules({
           ordering: orderingParam,
-          params: name ? `&name__icontains=${name}` : '',
-          nextPage: page,
+          nextPage: 1,
+          limit: 15,
+          customer_icontains: name,
         });
-        const formattedSchedules = response.results.map((schedule) => ({
+        const formattedSchedules = response.results.map(schedule => ({
           id: schedule.id,
           name: schedule.customer.complete_name,
-          date: schedule.date,
           status: schedule.status,
           serviceName: schedule.service.category.name,
+          date: schedule.date,
           agentName: schedule.schedule_agent ? schedule.schedule_agent.name : 'Não atribuído',
           customerId: schedule.customer.id,
           projectId: schedule.project.id,
-          address: schedule.address, 
+          address: schedule.address,
         }));
-
         setOptions(formattedSchedules);
       } catch (error) {
         console.error('Erro ao buscar agendamentos:', error);
       }
       setLoading(false);
     }, 300),
-    [order, orderDirection, page],
+    [order, orderDirection]
   );
+
+  // Busca inicial ao abrir o dropdown (caso nenhuma opção esteja carregada)
+  const fetchInitialSchedules = useCallback(async () => {
+    setLoading(true);
+    try {
+      const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
+      const response = await scheduleService.getSchedules({
+        ordering: orderingParam,
+        nextPage: 1,
+        limit: 15,
+      });
+      const formattedSchedules = response.results.map(schedule => ({
+        id: schedule.id,
+        name: schedule.customer.complete_name,
+        status: schedule.status,
+        serviceName: schedule.service.category.name,
+        date: schedule.date,
+        agentName: schedule.schedule_agent ? schedule.schedule_agent.name : 'Não atribuído',
+        customerId: schedule.customer.id,
+        projectId: schedule.project.id,
+        address: schedule.address,
+      }));
+      setOptions(formattedSchedules);
+    } catch (error) {
+      console.error('Erro ao buscar agendamentos iniciais:', error);
+    }
+    setLoading(false);
+  }, [order, orderDirection]);
 
   const handleOpen = () => {
     setOpen(true);
+    if (options.length === 0) {
+      fetchInitialSchedules();
+    }
   };
 
   const handleClose = () => {
@@ -91,14 +124,14 @@ export default function AutoCompleteParentSchedule({
   };
 
   return (
-    <Fragment>
+    <div>
       <Autocomplete
+        multiple
         sx={{ width: '100%' }}
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        multiple
-        isOptionEqualToValue={(option, value) => option.id === value.id} 
+        isOptionEqualToValue={(option, value) => option.id === value.id}
         getOptionLabel={(option) =>
           option.name && option.serviceName && option.status
             ? `${option.name} - ${option.serviceName} | Status: ${option.status}`
@@ -106,13 +139,12 @@ export default function AutoCompleteParentSchedule({
         }
         options={options}
         loading={loading}
-        value={selectedSchedules} 
+        value={selectedSchedules}
         noOptionsText={noOptionsText}
         onInputChange={(event, newInputValue) => {
           fetchSchedulesByName(newInputValue);
         }}
         onChange={handleChange}
-        onFocus={() => fetchSchedulesByName('')}
         renderInput={(params) => (
           <CustomTextField
             error={error}
@@ -124,7 +156,7 @@ export default function AutoCompleteParentSchedule({
               ...params.InputProps,
               endAdornment: (
                 <Fragment>
-                  {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                  {loading && <CircularProgress color="inherit" size={20} />}
                   {params.InputProps.endAdornment}
                 </Fragment>
               ),
@@ -132,6 +164,6 @@ export default function AutoCompleteParentSchedule({
           />
         )}
       />
-    </Fragment>
+    </div>
   );
 }
