@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import EditLead from './EditLeads';
 import ViewLeadPage from '../Leads-view';
 import LeadProposalPage from '../Leads-proposal';
+import LeadsContractPage from '../Leads-contract';
 import EditLeadPage from '.';   
 
 function CustomTabPanel(props) {
@@ -55,7 +56,7 @@ function EditLeadTabs({ leadId }) {
         TabIndicatorProps={{ style: { backgroundColor: 'white' } }}
         sx={{ marginLeft: '25px'}}
       >
-        {["Informações Lead", "Propostas", "Vendas"].map((label, index) => (
+        {["Informações Lead", "Propostas", "Contrato"].map((label, index) => (
           <Tab
             key={index}
             label={label}
@@ -85,7 +86,7 @@ function EditLeadTabs({ leadId }) {
       </CustomTabPanel>
 
       <CustomTabPanel value={tabValue} index={2}>
-        <p>Notes content here</p>
+        <LeadsContractPage leadId={leadId} />
       </CustomTabPanel>
     </Box>
   );
