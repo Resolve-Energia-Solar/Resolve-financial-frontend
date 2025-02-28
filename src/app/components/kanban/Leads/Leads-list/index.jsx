@@ -96,7 +96,7 @@ const LeadList = ({ onClick }) => {
 
       <TableHeader
         title={"Total de leads"}
-        totalItems={{totalRows}.value}
+        totalItems={totalRows}
         buttonLabel="Criar"
         onButtonClick={() => console.log('Go to create lead')}
       />
