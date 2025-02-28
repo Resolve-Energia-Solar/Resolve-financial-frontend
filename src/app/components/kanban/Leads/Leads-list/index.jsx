@@ -1,39 +1,49 @@
-import React, { useState, useEffect, useContext } from 'react';
-import {
-  TablePagination,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-  Box,
-  Button,
-  Chip,
-  IconButton
-} from '@mui/material';
-import { Add, Edit, Visibility } from '@mui/icons-material';
-import TableSkeleton from '@/app/components/apps/comercial/sale/components/TableSkeleton';
+import React, { useState, useEffect } from 'react';
 import leadService from '@/services/leadService';
-import formatPhoneNumber from '@/utils/formatPhoneNumber';
-import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
 import TableComponent from '@/app/components/kanban/Leads/components/TableComponent'
-import { IconEye, IconPencil } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
+import formatPhoneNumber from '@/utils/formatPhoneNumber';
 
-const LeadList = ({ onClick }) => {
-  const [leadsList, setLeadsList] = useState([]);
+
+const LeadList = () => {
+  const [data, setData] = useState([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
-
-  const router = useRouter();
-
-
   const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
+  const columns = [
+    { field: 'name', headerName: 'Nome' },
+    { field: 'first_document', headerName: 'CPF/CNPJ' },
+    { field: 'origin?.name', headerName: 'Origem' },
+    { field: 'kwp', headerName: 'KwP' },
+    {
+      field: 'address',
+      headerName: 'Endereço',
+      render: (row) =>
+        `${row?.addresses[0]?.number || '-'} - {row?.addresses[0]?.city || '-'}`
+    },
+    {
+      field: 'phone',
+      headerName: 'Fone',
+      render: (row) =>
+        formatPhoneNumber(row?.phone)
+    },
+    {
+      field: 'column.name',
+      headerName: 'Status',
+      render: (row) => (
+        <Chip
+          label={row?.column?.name || '-'}
+          sx={{
+            border: `1px solid ${row?.column?.color || 'transparent'}`,
+            backgroundColor: 'transparent',
+            color: "#7E8388"
+          }}
+        />
+      )
+    },
+  ];
 
   useEffect(() => {
     const fetchLeads = async () => {
@@ -45,8 +55,8 @@ const LeadList = ({ onClick }) => {
             limit: rowsPerPage,
           },
         });
-        setLeadsList(data.results);
-        setTotalRows(data.count);
+        setData(data.results);
+        setTotalRows(data.count); 
       } catch (err) {
         setError('Erro ao carregar Leads');
       } finally {
@@ -55,17 +65,8 @@ const LeadList = ({ onClick }) => {
     };
 
     fetchLeads();
-
   }, [page, rowsPerPage]);
 
-  const handlePageChange = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleRowsPerPageChange = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   return (
     <>
@@ -74,11 +75,17 @@ const LeadList = ({ onClick }) => {
         totalItems={totalRows}
         objNameNumberReference={"Leads"}
         buttonLabel="Criar"
-        onButtonClick={() => console.log('Go to create lead')}
+        // onButtonClick={() => console.log('Go to create lead')}
       />
 
-      <TableComponent/>
-
+      <TableComponent
+        columns={columns}
+        fetchData={async () => ({ results: data, count: totalRows })}
+        actions={{
+          edit: (row) => `/apps/leads/${row.id}/edit`,
+          view: (row) => `/apps/leads/${row.id}/view`,
+        }}
+      />
     </>
   );
 };
