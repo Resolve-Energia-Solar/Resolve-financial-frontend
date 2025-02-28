@@ -18,6 +18,7 @@ import TableSkeleton from '@/app/components/apps/comercial/sale/components/Table
 import leadService from '@/services/leadService';
 import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
+import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
 import { IconEye, IconPencil } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 
@@ -67,7 +68,7 @@ const LeadList = ({ onClick }) => {
 
   return (
     <>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+      {/* <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
         <Typography sx={{ fontSize: '15px' }}>
           <span style={{ fontWeight: 'bold' }}>Total:</span> {totalRows} leads
         </Typography>
@@ -91,8 +92,14 @@ const LeadList = ({ onClick }) => {
         >
           Criar
         </Button>
-      </Box>
+      </Box> */}
 
+      <TableHeader
+        title={"Total de leads"}
+        totalItems={{totalRows}.value}
+        buttonLabel="Criar"
+        onButtonClick={() => console.log('Go to create lead')}
+      />
       <TableContainer>
         <Table>
           <TableHead>
