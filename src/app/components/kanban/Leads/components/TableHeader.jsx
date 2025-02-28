@@ -2,13 +2,13 @@ import { Box, Typography, Button } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 
-const TableHeader = ({ title, totalItems, buttonLabel, onButtonClick }) => {
+const TableHeader = ({ title, totalItems, objNameNumberReference, buttonLabel, onButtonClick }) => {
     const router = useRouter();
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
             <Typography sx={{ fontSize: '15px' }}>
-                <span style={{ fontWeight: 'bold' }}>{title}:</span> {totalItems} registros
+                <span style={{ fontWeight: 'bold' }}>{title}: </span> {totalItems} {objNameNumberReference}
             </Typography>
             {onButtonClick && (
                 <Button 

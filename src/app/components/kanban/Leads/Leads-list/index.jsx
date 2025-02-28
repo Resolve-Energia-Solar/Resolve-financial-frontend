@@ -95,8 +95,9 @@ const LeadList = ({ onClick }) => {
       </Box> */}
 
       <TableHeader
-        title={"Total de leads"}
+        title={"Total"}
         totalItems={totalRows}
+        objNameNumberReference={"Leads"}
         buttonLabel="Criar"
         onButtonClick={() => console.log('Go to create lead')}
       />
