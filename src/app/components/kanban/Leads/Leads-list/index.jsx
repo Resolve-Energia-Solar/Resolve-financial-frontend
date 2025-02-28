@@ -1,3 +1,18 @@
+import {
+  TablePagination,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+  Box,
+  Button,
+  Chip,
+  IconButton
+} from '@mui/material';
+
 import React, { useState, useEffect } from 'react';
 import leadService from '@/services/leadService';
 import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
@@ -21,7 +36,7 @@ const LeadList = () => {
       field: 'address',
       headerName: 'Endereço',
       render: (row) =>
-        `${row?.addresses[0]?.number || '-'} - {row?.addresses[0]?.city || '-'}`
+        `${row?.addresses[0]?.number || '-'} - ${row?.addresses[0]?.city || '-'}`
     },
     {
       field: 'phone',
@@ -80,7 +95,9 @@ const LeadList = () => {
 
       <TableComponent
         columns={columns}
-        fetchData={async () => ({ results: data, count: totalRows })}
+        fetchData={async () => ({ 
+          results: data, 
+          count: totalRows})}
         actions={{
           edit: (row) => `/apps/leads/${row.id}/edit`,
           view: (row) => `/apps/leads/${row.id}/view`,

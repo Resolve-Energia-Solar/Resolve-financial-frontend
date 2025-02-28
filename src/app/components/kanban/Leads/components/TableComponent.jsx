@@ -7,10 +7,7 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Typography,
-    Box,
-    Button,
-    Chip,
+    Typography, 
     IconButton
 } from '@mui/material';
 import TableSkeleton from '@/app/components/apps/comercial/sale/components/TableSkeleton';
@@ -61,15 +58,6 @@ const TableComponent = ({ columns, fetchData, actions }) => {
             <Table>
                 <TableHead>
                     <TableRow>
-                        {/* <TableCell><CustomCheckbox /></TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Nome</TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>CPF/CNPJ</TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Origem</TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>kWp</TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Endereço</TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Fone</TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>Editar/ Ver</TableCell> */}
                         {columns.map((column) => (
                             <TableCell key={column.field} sx={{ fontWeight: 600, fontSize: "13px" }}>
                                 {column.headerName}
@@ -94,45 +82,11 @@ const TableComponent = ({ columns, fetchData, actions }) => {
                                     },
                                 }}
                             >
-
-                                {/* <TableCell><CustomCheckbox /></TableCell>
-                  <TableCell sx={{ fontWeight: "600", color: "#7E8388" }}>{row?.name}</TableCell>
-                  <TableCell sx={{ color: "#7E8388" }}>{row.first_document || '-'}</TableCell>
-                  <TableCell sx={{ color: "#7E8388" }}>{row?.origin?.name || '-'}</TableCell>
-                  <TableCell sx={{ color: "#7E8388" }}>{row?.kwp || '-'}</TableCell>
-                  <TableCell sx={{ color: "#7E8388" }}>{row?.    || '-'}, {row?.addresses[0]?.number || '-'} - {row?.addresses[0]?.city || '-'}</TableCell>
-                  <TableCell sx={{ color: "#7E8388" }}>{formatPhoneNumber(row?.phone)}</TableCell> */}
                                 {columns.map((column) => (
-                                    <TableCell key={column.field}>
+                                    <TableCell key={column.field} sx={{ fontWeight: 600, fontSize: "12px" }}>
                                         {column.render ? column.render(row) : row[column.field] || "-"}
                                     </TableCell>
                                 ))}
-                                {/* <TableCell>
-                    <Chip
-                      label={row?.column?.name || '-'}
-                      sx={{
-                        border: `1px solid ${row?.column?.color || 'transparent'}`,
-                        backgroundColor: 'transparent',
-                        color: "#7E8388"
-                      }}
-                    />
-                  </TableCell>
-
-                  <TableCell sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <IconButton
-                      size="small"
-                    onClick={() => router.push(`/apps/leads/${row.id}/edit`)}
-                    >
-                      <IconPencil fontSize="small" />
-                    </IconButton>
-
-                    <IconButton
-                      size="small"
-                      onClick={() => router.push(`/apps/leads/${row.id}/view`)}
-                    >
-                      <IconEye fontSize="small" />
-                    </IconButton>
-                  </TableCell> */}
 
                                 {actions && (
                                     <TableCell sx={{ display: 'flex', justifyContent: 'space-between' }}>
