@@ -4,21 +4,14 @@ import {
     Typography,
     Box,
     useTheme,
-    MenuItem,
-    InputAdornment,
-    TextField,
 } from '@mui/material';
 
 import { useEffect, useState } from 'react';
 import leadService from '@/services/leadService';
 import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
-import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import LeadList from '@/app/components/kanban/Leads/Leads-list';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
-import Button from "@mui/material/Button";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import TableComponent from '@/app/components/kanban/Leads/components/TableComponent'
 
 function LeadsContractPage({ leadId = null }) {
     const router = useRouter();
@@ -93,13 +86,14 @@ function LeadsContractPage({ leadId = null }) {
                         <LeadInfoHeader leadId={leadId} />
                     </Grid>
 
-                    <Grid container spacing={4}>
-
-                        <LeadList />
+                    <Grid container spacing={4} sx={{px: 7, mt: 2, mb: 1}}>
+                        <Typography variant="h5" fontWeight={"bold"}>
+                            Contratos
+                        </Typography>
+                        
                     </Grid>
 
-
-                    
+                    <TableComponent/>                    
 
                 </Box>
             </Grid>
