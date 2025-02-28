@@ -131,6 +131,9 @@ export default function AutoCompleteUserProject({
               <Typography variant="body2">
                 <strong>Data de Contrato:</strong> {formatDate(option.sale?.signature_date) || 'Data de Contrato não Disponível'}
               </Typography>
+              <Typography variant="body2">
+                <strong>Endereço:</strong> {option?.address?.str || 'Endereço não Disponível'}
+              </Typography>
             </Box>
           </li>
         )}
