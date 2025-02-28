@@ -88,15 +88,11 @@ function LeadProposalPage({ leadId = null }) {
             flexDirection: 'column',
           }}
         >
-          {/* HEEEEEEEEEEEEADER */}
           <Grid item spacing={2} alignItems="center" xs={12}>
             <LeadInfoHeader leadId={leadId}/>
           </Grid>
 
-          {/* <Divider sx={{ my: 2 }} /> */}
-
           <Grid container spacing={4}>
-            {/* LEEEEEEEEEEEFT */}
             <Grid
               item
               xs={12}
@@ -107,7 +103,6 @@ function LeadProposalPage({ leadId = null }) {
                 <Typography variant="h6">Nova proposta</Typography>
               </Grid>
 
-              {/* first row */}
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
                   <CustomFormLabel htmlFor="proposal_name">Nome da Proposta</CustomFormLabel>
@@ -136,7 +131,6 @@ function LeadProposalPage({ leadId = null }) {
                 </Grid>
               </Grid>
 
-              {/* second row */}
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
                   <CustomFormLabel htmlFor="ref_amount">Valor de referência</CustomFormLabel>
@@ -165,7 +159,6 @@ function LeadProposalPage({ leadId = null }) {
                 </Grid>
               </Grid>
 
-              {/* third row */}
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={12}>
                   <CustomFormLabel htmlFor="payment_method">Forma de pagamento</CustomFormLabel>
@@ -223,7 +216,6 @@ function LeadProposalPage({ leadId = null }) {
                 </>
               )}
 
-              {/* fourth row */}
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
                   <CustomFormLabel htmlFor="seller_id">Vendedor Responsável</CustomFormLabel>
@@ -253,7 +245,6 @@ function LeadProposalPage({ leadId = null }) {
                 </Grid>
               </Grid>
 
-              {/* fifth row */}
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={12}>
                   <CustomFormLabel htmlFor="description">Descrição</CustomFormLabel>
@@ -269,7 +260,6 @@ function LeadProposalPage({ leadId = null }) {
               </Grid>
             </Grid>
 
-            {/* RIIIIIIIIIIIIIIIIIIIGHT */}
             <Grid
               item
               xs={12}
@@ -280,7 +270,6 @@ function LeadProposalPage({ leadId = null }) {
             </Grid>
           </Grid>
 
-          {/* BUTTONS! */}
           <Grid
             item
             xs={12}
