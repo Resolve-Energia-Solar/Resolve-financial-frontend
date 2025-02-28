@@ -17,7 +17,7 @@ import { useLogout } from '@/utils/logout';
 
 export const Profile = () => {
   const customizer = useSelector((state) => state.customizer);
-  const userProfile = useSelector((state) => state.user.user);
+  const userProfile = useSelector((state) => state.user?.user);
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const hideMenu = lgUp ? customizer.isCollapse && !customizer.isSidebarHover : '';
 
@@ -43,7 +43,7 @@ export const Profile = () => {
               {userProfile?.first_name || 'Usuário'} 
             </Typography>
             <Typography variant="caption">
-              {userProfile?.role?.name || 'TI'}
+              {userProfile?.employee?.department?.name || 'Desconhecido'}
             </Typography>
           </Box>
           <Box sx={{ ml: 'auto' }}>

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Box, Drawer, Button, Typography, Grid, RadioGroup, FormControlLabel, Checkbox } from '@mui/material';
+import { Box, Drawer, Button, Typography, Grid, RadioGroup, FormControlLabel, Radio, Checkbox } from '@mui/material';
 import { FilterAlt } from '@mui/icons-material';
 import CheckboxesTags from './CheckboxesTags';
 import FormDateRange from './DateRangePicker';
@@ -121,9 +121,10 @@ export default function DrawerFilters() {
       params.tag_name__exact = filters.tag_name__exact;
     }
 
-    if (typeof filters.documents_under_analysis === "boolean") {
+    if (filters.documents_under_analysis !== undefined) {
       params.documents_under_analysis = filters.documents_under_analysis;
     }
+
 
     return params;
   };
@@ -151,7 +152,7 @@ export default function DrawerFilters() {
       borrower: "",
       payment_status: [],
       tag_name__exact: "",
-      documents_under_analysis: false
+      documents_under_analysis: ""
     });
   };
 
@@ -278,18 +279,31 @@ export default function DrawerFilters() {
 
               <Grid item xs={12}>
                 <CustomFormLabel htmlFor="documents_under_analysis">Documentos em Análise</CustomFormLabel>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={tempFilters.documents_under_analysis}
-                      onChange={(e) =>
-                        handleChange('documents_under_analysis', e.target.checked)
-                      }
-                    />
+                <RadioGroup
+                  row
+                  name="documents_under_analysis"
+                  value={
+                    tempFilters.documents_under_analysis === true
+                      ? "true"
+                      : tempFilters.documents_under_analysis === false
+                        ? "false"
+                        : ""
                   }
-                  label="Em Análise"
-                />
+                  onChange={(e) => {
+                    const selectedValue = e.target.value;
+                    let value;
+                    if (selectedValue === "true") value = true;
+                    else if (selectedValue === "false") value = false;
+                    else value = "";
+                    handleChange("documents_under_analysis", value);
+                  }}
+                >
+                  <FormControlLabel value="true" control={<Radio />} label="Em Análise" />
+                  <FormControlLabel value="false" control={<Radio />} label="Sem documento em análise" />
+                  <FormControlLabel value="" control={<Radio />} label="Todos" />
+                </RadioGroup>
               </Grid>
+
 
               {/* Demais filtros */}
               <Grid item xs={12}>
