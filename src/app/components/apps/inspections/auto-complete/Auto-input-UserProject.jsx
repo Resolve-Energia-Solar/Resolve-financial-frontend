@@ -8,6 +8,7 @@ import projectService from '@/services/projectService';
 import { debounce } from 'lodash';
 import saleService from '@/services/saleService';
 import { formatDate } from '@/utils/dateUtils';
+import { Box, Typography } from '@mui/material';
 
 export default function AutoCompleteUserProject({
   onChange,
@@ -33,7 +34,7 @@ export default function AutoCompleteUserProject({
               project_number: projectValue.project_number,
               sale: projectValue.sale,
               homologator: projectValue.homologator,
-              start_date:projectValue.start_date,
+              start_date: projectValue.start_date,
             });
           }
         } catch (error) {
@@ -60,7 +61,7 @@ export default function AutoCompleteUserProject({
       try {
         if (selectedClient) {
           const responseSales = await saleService.getSales({
-            customer: selectedClient ,
+            customer: selectedClient,
           });
 
           const projectsSet = new Set();
@@ -111,11 +112,28 @@ export default function AutoCompleteUserProject({
         onOpen={handleOpen}
         onClose={handleClose}
         isOptionEqualToValue={(option, value) => option.id === value.id}
-        getOptionLabel={(option) => {
-          return `${option.project_number} | Valor total: ${option.sale?.total_value || 'Sem valor Total'
-          } | Contrato: ${option.sale?.contract_number || 'Contrato não Disponível'} | Homologador: ${option.homologator?.complete_name || 'Homologador não Disponível'} | Data de Contrato: ${formatDate(option.sale?.signature_date) || 'Data de Contrato não Disponível'}` || ''
-        }
-        }
+        getOptionLabel={(option) => option.project_number?.toString() || ''}
+        renderOption={(props, option) => (
+          <li {...props}>
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Typography variant="body2">
+                <strong>Projeto:</strong> {option.project_number}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Valor total:</strong> {option.sale?.total_value || 'Sem valor Total'}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Contrato:</strong> {option.sale?.contract_number || 'Contrato não Disponível'}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Homologador:</strong> {option.homologator?.complete_name || 'Homologador não Disponível'}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Data de Contrato:</strong> {formatDate(option.sale?.signature_date) || 'Data de Contrato não Disponível'}
+              </Typography>
+            </Box>
+          </li>
+        )}
         options={options}
         noOptionsText={noTextOptions}
         loading={loading}
@@ -135,10 +153,10 @@ export default function AutoCompleteUserProject({
             InputProps={{
               ...params.InputProps,
               endAdornment: (
-                <Fragment>
+                <>
                   {loading ? <CircularProgress color="inherit" size={20} /> : null}
                   {params.InputProps.endAdornment}
-                </Fragment>
+                </>
               ),
             }}
           />
