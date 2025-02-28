@@ -7,6 +7,7 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import projectService from '@/services/projectService';
 import { debounce } from 'lodash';
 import saleService from '@/services/saleService';
+import { formatDate } from '@/utils/dateUtils';
 
 export default function AutoCompleteUserProject({
   onChange,
@@ -20,12 +21,6 @@ export default function AutoCompleteUserProject({
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
-
-  function formatDate(date) {
-    const dateObj = new Date(date);
-    dateObj.setDate(dateObj.getDate() + 1);
-    return dateObj.toLocaleDateString();
-  }
 
   useEffect(() => {
     const fetchDefaultProject = async () => {
@@ -117,11 +112,8 @@ export default function AutoCompleteUserProject({
         onClose={handleClose}
         isOptionEqualToValue={(option, value) => option.id === value.id}
         getOptionLabel={(option) => {
-          const date = new Date(option.start_date);
-          date.setDate(date.getDate() + 1);
-          const formattedDate = date.toLocaleDateString();
           return `${option.project_number} | Valor total: ${option.sale?.total_value || 'Sem valor Total'
-          } | Contrato: ${option.sale?.contract_number || 'Contrato não Disponível'} | Homologador: ${option.homologator?.complete_name || 'Homologador não Disponível'} | Data de Contrato: ${formattedDate || 'Data de Contrato não Disponível'}` || ''
+          } | Contrato: ${option.sale?.contract_number || 'Contrato não Disponível'} | Homologador: ${option.homologator?.complete_name || 'Homologador não Disponível'} | Data de Contrato: ${formatDate(option.sale?.signature_date) || 'Data de Contrato não Disponível'}` || ''
         }
         }
         options={options}
