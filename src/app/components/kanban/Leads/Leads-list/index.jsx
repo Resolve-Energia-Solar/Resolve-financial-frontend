@@ -13,6 +13,7 @@ import {
   IconButton
 } from '@mui/material';
 
+import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import leadService from '@/services/leadService';
 import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
@@ -21,6 +22,7 @@ import formatPhoneNumber from '@/utils/formatPhoneNumber';
 
 
 const LeadList = () => {
+  const router = useRouter(); 
   const [data, setData] = useState([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
   const [error, setError] = useState(null);
@@ -60,23 +62,27 @@ const LeadList = () => {
     },
   ];
 
-  const fetchLeads = async (page, rowsPerPage) => {
-    try {
-      const response = await leadService.getLeads({
-        params: {
-          page: page + 1,
-          limit: rowsPerPage,
-        },
-      });
-      return {
-        results: response.results,
-        count: response.count,
-      };
-    } catch (err) {
-      console.error('Erro ao carregar Leads', err);
-      return { results: [], count: 0 };
-    }
-  };
+  useEffect(() => {
+    const fetchLeads = async () => {
+      setLoadingLeads(true);
+      try {
+        const data = await leadService.getLeads({
+          params: {
+            page: page + 1,
+            limit: rowsPerPage,
+          },
+        });
+        setData(data.results);
+        setTotalRows(data.count);
+      } catch (err) {
+        setError('Erro ao carregar Leads');
+      } finally {
+        setLoadingLeads(false);
+      }
+    };
+
+    fetchLeads();
+  }, [page, rowsPerPage]);
 
 
   return (
@@ -91,12 +97,22 @@ const LeadList = () => {
 
       <TableComponent
         columns={columns}
-        fetchData={fetchLeads}
+        data={data} 
+        totalRows={totalRows} 
+        loading={loadingLeads} 
+        page={page}
+        rowsPerPage={rowsPerPage} 
+        onPageChange={(newPage) => setPage(newPage)} 
+        onRowsPerPageChange={(newRows) => {
+          setRowsPerPage(newRows);
+          setPage(0); 
+        }}
         actions={{
-          edit: (row) => `/apps/leads/${row.id}/edit`,
-          view: (row) => `/apps/leads/${row.id}/view`,
+          edit: (row) => router.push(`/apps/leads/${row.id}/edit`),
+          view: (row) => router.push(`/apps/leads/${row.id}/view`),
         }}
       />
+
     </>
   );
 };
