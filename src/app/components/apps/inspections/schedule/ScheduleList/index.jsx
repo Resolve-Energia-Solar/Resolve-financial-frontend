@@ -104,6 +104,19 @@ const scheduleFilterConfig = [
       })),
   },
   {
+    key: "branch__in",
+    label: "Unidade",
+    type: "async-multiselect",
+    endpoint: "/api/branches/",
+    queryParam: "name__icontains",
+    extraParams: {},
+    mapResponse: (data) =>
+      data.results.map((branch) => ({
+        label: branch.name,
+        value: branch.id,
+    })),
+  },
+  {
     key: "service_opinion__in",
     label: "Parecer do Serviço",
     type: "async-multiselect",
