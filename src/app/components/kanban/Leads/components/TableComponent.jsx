@@ -1,15 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {
-    TablePagination,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
-    Typography, 
-    IconButton
-} from '@mui/material';
+    Checkbox,
+    Typography,
+    Chip,
+    IconButton,
+    TablePagination,
+    Box,
+} from "@mui/material";
+import { Edit, Visibility } from "@mui/icons-material";
 import TableSkeleton from '@/app/components/apps/comercial/sale/components/TableSkeleton';
 import leadService from '@/services/leadService';
 import formatPhoneNumber from '@/utils/formatPhoneNumber';
@@ -30,10 +34,7 @@ const TableComponent = ({ columns, fetchData, actions }) => {
         const loadData = async () => {
             setLoadingData(true);
             try {
-                const result = await fetchData({
-                    page: page + 1,
-                    limit: rowsPerPage,
-                });
+                const result = await fetchData(page, rowsPerPage);
                 setData(result.results);
                 setTotalRows(result.count);
             } catch (err) {
@@ -45,21 +46,25 @@ const TableComponent = ({ columns, fetchData, actions }) => {
 
         loadData();
 
-    }, [page, rowsPerPage, fetchData]);
+    }, [page, rowsPerPage]);
 
-    const handlePageChange = (_, newPage) => setPage(newPage);
+    const handlePageChange = (event, newPage) => {
+        setPage(newPage)
+    };
+
     const handleRowsPerPageChange = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
 
+
     return (
-        <TableContainer>
-            <Table>
+        <TableContainer sx={{ borderRadius: '12px' }}>
+            <Table sx={{ borderCollapse: 'separate', borderSpacing: '0px 8px' }}>
                 <TableHead>
                     <TableRow>
                         {columns.map((column) => (
-                            <TableCell key={column.field} sx={{ fontWeight: 600, fontSize: "13px" }}>
+                            <TableCell key={column.field} sx={{ fontWeight: 600, fontSize: "13px", color: "#303030" }}>
                                 {column.headerName}
                             </TableCell>
                         ))}
@@ -80,10 +85,14 @@ const TableComponent = ({ columns, fetchData, actions }) => {
                                     '&:hover': {
                                         backgroundColor: 'rgba(236, 242, 255, 0.35)',
                                     },
+                                    borderBottom: "none",
                                 }}
                             >
+                                {/* <TableCell>
+                                    <Checkbox sx={{ color: "#7E8388" }} />
+                                </TableCell> */}
                                 {columns.map((column) => (
-                                    <TableCell key={column.field} sx={{ fontWeight: 600, fontSize: "12px" }}>
+                                    <TableCell key={column.field} sx={{ fontWeight: column.field === "name" ? 600 : 400, fontSize: "12px", color: "#7E8388" }}>
                                         {column.render ? column.render(row) : row[column.field] || "-"}
                                     </TableCell>
                                 ))}
@@ -94,6 +103,7 @@ const TableComponent = ({ columns, fetchData, actions }) => {
                                             <IconButton
                                                 size="small"
                                                 onClick={() => router.push(`/apps/leads/${row.id}/edit`)}
+                                                sx={{ color: "#7E8388" }}
                                             >
                                                 <IconPencil fontSize="small" />
                                             </IconButton>
@@ -102,6 +112,7 @@ const TableComponent = ({ columns, fetchData, actions }) => {
                                             <IconButton
                                                 size="small"
                                                 onClick={() => router.push(`/apps/leads/${row.id}/view`)}
+                                                sx={{ color: "#7E8388" }}
                                             >
                                                 <IconEye fontSize="small" />
                                             </IconButton>
@@ -121,10 +132,19 @@ const TableComponent = ({ columns, fetchData, actions }) => {
                 count={totalRows}
                 rowsPerPage={rowsPerPage}
                 page={page}
-                onPageChange={handlePageChange}
-                onRowsPerPageChange={handleRowsPerPageChange}
+                onPageChange={(event, newPage) => setPage(newPage)}
+                onRowsPerPageChange={(event) => setRowsPerPage(parseInt(event.target.value, 10))}
+
                 labelRowsPerPage="Linhas por página"
+                sx={{
+                    '& .Mui-selected': {
+                        backgroundColor: "#FFCC00 !important",
+                        color: '#7E8388',
+                        borderRadius: "6px",
+                    },
+                }}
             />
+
         </TableContainer>
     );
 }

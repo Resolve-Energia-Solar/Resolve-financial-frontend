@@ -60,27 +60,23 @@ const LeadList = () => {
     },
   ];
 
-  useEffect(() => {
-    const fetchLeads = async () => {
-      setLoadingLeads(true);
-      try {
-        const data = await leadService.getLeads({
-          params: {
-            page: page + 1,
-            limit: rowsPerPage,
-          },
-        });
-        setData(data.results);
-        setTotalRows(data.count); 
-      } catch (err) {
-        setError('Erro ao carregar Leads');
-      } finally {
-        setLoadingLeads(false);
-      }
-    };
-
-    fetchLeads();
-  }, [page, rowsPerPage]);
+  const fetchLeads = async (page, rowsPerPage) => {
+    try {
+      const response = await leadService.getLeads({
+        params: {
+          page: page + 1,
+          limit: rowsPerPage,
+        },
+      });
+      return {
+        results: response.results,
+        count: response.count,
+      };
+    } catch (err) {
+      console.error('Erro ao carregar Leads', err);
+      return { results: [], count: 0 };
+    }
+  };
 
 
   return (
@@ -90,14 +86,12 @@ const LeadList = () => {
         totalItems={totalRows}
         objNameNumberReference={"Leads"}
         buttonLabel="Criar"
-        // onButtonClick={() => console.log('Go to create lead')}
+        onButtonClick={() => console.log('Go to create lead')}
       />
 
       <TableComponent
         columns={columns}
-        fetchData={async () => ({ 
-          results: data, 
-          count: totalRows})}
+        fetchData={fetchLeads}
         actions={{
           edit: (row) => `/apps/leads/${row.id}/edit`,
           view: (row) => `/apps/leads/${row.id}/view`,
