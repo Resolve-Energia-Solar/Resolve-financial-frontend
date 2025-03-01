@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Autocomplete, TextField, CircularProgress } from "@mui/material";
 import apiClient from "@/services/apiClient";
 
-const GenericAsync\Input = ({
+const GenericAsyncAutocompleteInput = ({
   label,
   value,
   onChange,
