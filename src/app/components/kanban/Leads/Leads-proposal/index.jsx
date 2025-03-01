@@ -1,315 +1,110 @@
-'use client';
 import {
-  Grid,
+  TablePagination,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Typography,
   Box,
-  useTheme,
-  MenuItem,
-  InputAdornment,
-  TextField,
+  Button,
+  Chip,
+  IconButton
 } from '@mui/material';
 
-import { useEffect, useState } from 'react';
-import leadService from '@/services/leadService';
-import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
-import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import ProductList from '@/app/components/kanban/Leads/components/ProposalProductsCard';
-import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
-import Button from "@mui/material/Button";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import React, { useState, useEffect } from 'react';
+import proposalService from '@/services/proposalService';
+import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
+import TableComponent from '@/app/components/kanban/Leads/components/TableComponent'
+import formatPhoneNumber from '@/utils/formatPhoneNumber';
 
-function LeadProposalPage({ leadId = null }) {
-  const router = useRouter();
-  const theme = useTheme();
-  const [lead, setLead] = useState(null);
-  const [loadingLeads, setLoadingLeads] = useState(true);
-  const { enqueueSnackbar } = useSnackbar();
 
-  const [formData, setFormData] = useState({
-    proposal_name: '',
-    amount: '',
-    ref_amount: '',
-    entry_amount: '',
-    payment_method: '',
-    financing_type: '',
-    seller_id: '',
-    proposal_validity: '',
-    proposal_status: '',
-    description: '',
-    created_at: '',
-    installments_num: '',
-  });
-
-  useEffect(() => {
-    const fetchLead = async () => {
-      try {
-        const response = await leadService.getLeadById(leadId);
-        setFormData(response);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    if (leadId) fetchLead();
-  }, [leadId]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
+const LeadsProposalList = () => {
+  const router = useRouter(); 
+  const [data, setData] = useState([]);
+  const [loadingProposals, setLoadingProposals] = useState(true);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [totalRows, setTotalRows] = useState(0);
+  const columns = [
+    { field: 'name', headerName: 'Cliente' },
+    { field: 'first_document', headerName: 'Proposta' },
+    { field: 'origin?.name', headerName: 'Nome' },
+    { field: 'kwp', headerName: 'Valor' },
+    { field: 'address', headerName: 'Responsável'},
+    { field: 'phone', headerName: 'Data' },
+    {
+      field: 'column.name',
+      headerName: 'Status',
+      render: (row) => (
+        <Chip
+          label={row?.column?.name || '-'}
+          sx={{
+            border: `1px solid ${row?.column?.color || 'transparent'}`,
+            backgroundColor: 'transparent',
+            color: "#7E8388"
+          }}
+        />
+      )
+    },
+  ];
 
   useEffect(() => {
-    const fetchLead = async () => {
-      setLoadingLeads(true);
+    const fetchProposals = async () => {
+      setLoadingProposals(true);
       try {
-        const data = await leadService.getLeadById(leadId);
-        setLead(data);
-        console.log(data);
+        const data = await proposalService.getLeads({
+          params: {
+            page: page + 1,
+            limit: rowsPerPage,
+          },
+        });
+        setData(data.results);
+        setTotalRows(data.count);
       } catch (err) {
-        enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
+        setError('Erro ao carregar Propostas');
       } finally {
-        setLoadingLeads(false);
+        setLoadingProposals(false);
       }
     };
-    fetchLead();
-  }, []);
+
+    fetchProposals();
+  }, [page, rowsPerPage]);
+
 
   return (
-    <Grid container spacing={0}>
-      <Grid item xs={12} sx={{ overflow: 'scroll' }}>
-        <Box
-          sx={{
-            borderRadius: '20px',
-            boxShadow: 3,
-            p: 3,
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <Grid item spacing={2} alignItems="center" xs={12}>
-            <LeadInfoHeader leadId={leadId}/>
-          </Grid>
+    <>
+      <TableHeader
+        title={"Total"}
+        totalItems={totalRows}
+        objNameNumberReference={"Propostas"}
+        buttonLabel="Criar"
+        onButtonClick={() => console.log('Go to create proposal')}
+      />
 
-          <Grid container spacing={4}>
-            <Grid
-              item
-              xs={12}
-              md={5}
-              sx={{ display: 'flex', flexDirection: 'column', marginTop: 2 }}
-            >
-              <Grid item xs={12} sm={4}>
-                <Typography variant="h6">Nova proposta</Typography>
-              </Grid>
+      <TableComponent
+        columns={columns}
+        data={data} 
+        totalRows={totalRows} 
+        loading={loadingProposals} 
+        page={page}
+        rowsPerPage={rowsPerPage} 
+        onPageChange={(newPage) => setPage(newPage)} 
+        onRowsPerPageChange={(newRows) => {
+          setRowsPerPage(newRows);
+          setPage(0); 
+        }}
+        actions={{
+          edit: (row) => router.push(`/apps/leads/${row.id}/edit`),
+          view: (row) => router.push(`/apps/leads/${row.id}/view`),
+        }}
+      />
 
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="proposal_name">Nome da Proposta</CustomFormLabel>
-                  <TextField
-                    select
-                    name="proposal_name"
-                    value={formData.proposal_name}
-                    onChange={handleChange}
-                    fullWidth
-                  >
-                    <MenuItem value="K1">Kit Solar 2034</MenuItem>
-                  </TextField>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="amount">Valor da proposta</CustomFormLabel>
-                  <TextField
-                    name="amount"
-                    value={formData.amount}
-                    onChange={handleChange}
-                    fullWidth
-                    InputProps={{
-                      startAdornment: <InputAdornment position="start">R$</InputAdornment>,
-                    }}
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="ref_amount">Valor de referência</CustomFormLabel>
-                  <TextField
-                    name="ref_amount"
-                    value={formData.ref_amount}
-                    onChange={handleChange}
-                    fullWidth
-                    InputProps={{
-                      startAdornment: <InputAdornment position="start">R$</InputAdornment>,
-                    }}
-                  />
-                </Grid>
-
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="entry_amount">Valor de entrada</CustomFormLabel>
-                  <TextField
-                    name="entry_amount"
-                    value={formData.entry_amount}
-                    onChange={handleChange}
-                    fullWidth
-                    InputProps={{
-                      startAdornment: <InputAdornment position="start">R$</InputAdornment>,
-                    }}
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={12}>
-                  <CustomFormLabel htmlFor="payment_method">Forma de pagamento</CustomFormLabel>
-                  <TextField
-                    select
-                    name="payment_method"
-                    value={formData.payment_method}
-                    onChange={handleChange}
-                    fullWidth
-                  >
-                    <MenuItem value="credit">Crédito</MenuItem>
-                    <MenuItem value="debit">Débito</MenuItem>
-                    <MenuItem value="bank_slip">Boleto</MenuItem>
-                    <MenuItem value="financing">Financiamento</MenuItem>
-                    <MenuItem value="internal_installments">Parcelamento Interno</MenuItem>
-                    <MenuItem value="pix">Pix</MenuItem>
-                    <MenuItem value="bank_transfer">Transferência</MenuItem>
-                    <MenuItem value="cash">Dinheiro</MenuItem>
-                    <MenuItem value="auxiliar">Poste Auxiliar</MenuItem>
-                    <MenuItem value="construction">Repasse de Obra</MenuItem>
-                  </TextField>
-                </Grid>
-              </Grid>
-
-              {formData.payment_method === 'financing' && (
-                <>
-                  <CustomFormLabel htmlFor="financing_type">Financiadoras</CustomFormLabel>
-                  <TextField
-                    select
-                    name="financing_type"
-                    value={formData.financing_type}
-                    onChange={handleChange}
-                    fullWidth
-                  >
-                    <MenuItem value="2">Moon</MenuItem>
-                    <MenuItem value="3">Sun</MenuItem>
-                  </TextField>
-                </>
-              )}
-
-              {formData.payment_method === 'credit' && (
-                <>
-                  <CustomFormLabel htmlFor="installments_num">Parcelas</CustomFormLabel>
-                  <TextField
-                    select
-                    name="installments_num"
-                    value={formData.installments_num}
-                    onChange={handleChange}
-                    fullWidth
-                  >
-                    <MenuItem value="2">2x</MenuItem>
-                    <MenuItem value="3">3x</MenuItem>
-                    <MenuItem value="4">4x</MenuItem>
-                  </TextField>
-                </>
-              )}
-
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="seller_id">Vendedor Responsável</CustomFormLabel>
-                  <TextField
-                    select
-                    name="seller_id"
-                    value={formData.seller_id}
-                    onChange={handleChange}
-                    fullWidth
-                  >
-                    <MenuItem value="F">Fulano</MenuItem>
-                    <MenuItem value="C">Ciclano</MenuItem>
-                    <MenuItem value="B">Beltrano</MenuItem>
-                  </TextField>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="proposal_validity">
-                    Validade da proposta
-                  </CustomFormLabel>
-                  <TextField
-                    name="proposal_validity"
-                    value={formData.proposal_validity}
-                    onChange={handleChange}
-                    fullWidth
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={12}>
-                  <CustomFormLabel htmlFor="description">Descrição</CustomFormLabel>
-                  <TextField
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    fullWidth
-                    multiline
-                    rows={2}
-                  />
-                </Grid>
-              </Grid>
-            </Grid>
-
-            <Grid
-              item
-              xs={12}
-              md={7}
-              sx={{ display: 'flex', flexDirection: 'column', marginTop: 2, gap: 2 }}
-            >
-              <ProductList />
-            </Grid>
-          </Grid>
-
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              mt: 2,
-              gap: 2,
-            }}
-          >
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: 'black',
-                color: 'white',
-                '&:hover': { backgroundColor: '#333' },
-                px: 3,
-              }}
-            >
-              <Typography variant="body1">Pré-visualizar proposta</Typography>
-              <VisibilityIcon sx={{ ml: 1 }} />
-            </Button>
-
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button variant="outlined" color="error" sx={{ px: 3 }}>
-                <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
-                <DeleteOutlinedIcon />
-              </Button>
-
-              <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }}>
-                <Typography variant="body1">Gerar proposta</Typography>
-              </Button>
-            </Box>
-          </Grid>
-
-        </Box>
-      </Grid>
-    </Grid>
+    </>
   );
-}
+};
 
-export default LeadProposalPage;
+export default LeadProposalList;
