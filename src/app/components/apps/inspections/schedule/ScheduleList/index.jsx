@@ -65,9 +65,9 @@ const scheduleFilterConfig = [
     ],
   },
   {
-    key: "schedule_agent",
+    key: "schedule_agent__in",
     label: "Agente de Campo",
-    type: "async-autocomplete",
+    type: "async-multiselect",
     endpoint: "/api/users/",
     queryParam: "complete_name__icontains",
     extraParams: {},
