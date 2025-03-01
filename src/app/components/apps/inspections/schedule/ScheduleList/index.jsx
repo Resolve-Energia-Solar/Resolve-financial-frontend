@@ -133,7 +133,9 @@ const scheduleFilterConfig = [
     type: "async-multiselect",
     endpoint: "/api/service-opinions/",
     queryParam: "name__icontains",
-    extraParams: {},
+    extraParams: {
+      is_final_opinion: false,
+    },
     mapResponse: (data) =>
       data.results.map((opinion) => ({
         label: opinion.name,
@@ -146,7 +148,9 @@ const scheduleFilterConfig = [
     type: "async-multiselect",
     endpoint: "/api/service-opinions/",
     queryParam: "name__icontains",
-    extraParams: {},
+    extraParams: {
+      is_final_opinion: true,
+    },
     mapResponse: (data) =>
       data.results.map((opinion) => ({
         label: opinion.name,
