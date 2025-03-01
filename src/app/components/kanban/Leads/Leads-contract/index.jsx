@@ -33,31 +33,25 @@ const LeadsContractPage = ({ leadId = null }) => {
     const [totalRows, setTotalRows] = useState(0);
     const columns = [
         { field: 'name', headerName: 'Nome' },
-        { field: 'first_document', headerName: 'CPF/CNPJ' },
-        { field: 'origin?.name', headerName: 'Origem' },
-        { field: 'kwp', headerName: 'KwP' },
-        {
-            field: 'address',
-            headerName: 'Endereço',
-            render: (row) =>
-                `${row?.addresses[0]?.number || '-'} - ${row?.addresses[0]?.city || '-'}`
-        },
-        {
-            field: 'phone',
-            headerName: 'Fone',
-            render: (row) =>
-                formatPhoneNumber(row?.phone)
-        },
+        { field: 'product.name', headerName: 'Produto' },
+        { field: 'product.product_value', headerName: 'Total' },
+        { field: 'kwp', headerName: 'Vendedor' },
+        { field: 'contractSubmission.status', headerName: 'Data' },
         {
             field: 'column.name',
             headerName: 'Status',
             render: (row) => (
                 <Chip
-                    label={row?.column?.name || '-'}
+                    // label={row?.column?.name || '-'}
+                    label={"Aprovada" || '-'}
                     sx={{
                         border: `1px solid ${row?.column?.color || 'transparent'}`,
-                        backgroundColor: 'transparent',
-                        color: "#7E8388"
+                        backgroundColor: '#000000',
+                        color: "#FFFFFF",
+                        px: 2,
+                        fontSize: 10,
+                        // width: 95,
+                        // height: 27
                     }}
                 />
             )
@@ -103,7 +97,7 @@ const LeadsContractPage = ({ leadId = null }) => {
                         <LeadInfoHeader leadId={leadId} />
                     </Grid>
 
-                    <Grid container spacing={4} sx={{ px: 7, mt: 2, mb: 1 }}>
+                    <Grid container spacing={4} sx={{ mt: 2, mb: 1, ml: 1.5 }}>
                         <Typography variant="h5" fontWeight={"bold"}>
                             Contratos
                         </Typography>
