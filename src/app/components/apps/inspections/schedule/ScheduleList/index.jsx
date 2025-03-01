@@ -78,9 +78,9 @@ const scheduleFilterConfig = [
       })),
   },
   {
-    key: "service",
+    key: "service__in",
     label: "Serviço",
-    type: "async-autocomplete",
+    type: "async-multiselect",
     endpoint: "/api/services/",
     queryParam: "name__icontains",
     extraParams: {},
