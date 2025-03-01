@@ -76,9 +76,9 @@ const scheduleFilterConfig = [
     ],
   },
   {
-    key: "schedule_agent",
+    key: "schedule_agent__in",
     label: "Agente de Campo",
-    type: "async-autocomplete",
+    type: "async-multiselect",
     endpoint: "/api/users/",
     queryParam: "complete_name__icontains",
     extraParams: {},
@@ -89,12 +89,12 @@ const scheduleFilterConfig = [
       })),
   },
   {
-    key: "service",
+    key: "service__in",
     label: "Serviço",
-    type: "async-autocomplete",
+    type: "async-multiselect",
     endpoint: "/api/services/",
     queryParam: "name__icontains",
-    extraParams: {},
+    extraParams: { limit: 10 },
     mapResponse: (data) =>
       data.results.map((service) => ({
         label: service.name,
@@ -112,6 +112,19 @@ const scheduleFilterConfig = [
       data.results.map((customer) => ({
         label: customer.complete_name,
         value: customer.id,
+      })),
+  },
+  {
+    key: "branch__in",
+    label: "Unidade",
+    type: "async-multiselect",
+    endpoint: "/api/branches/",
+    queryParam: "name__icontains",
+    extraParams: {},
+    mapResponse: (data) =>
+      data.results.map((branch) => ({
+        label: branch.name,
+        value: branch.id,
       })),
   },
   {
