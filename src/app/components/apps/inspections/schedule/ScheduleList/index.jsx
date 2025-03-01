@@ -45,6 +45,7 @@ import ScheduleView from '../ScheduleView';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
 import { ScheduleDataContext } from '@/app/context/Inspection/ScheduleContext';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
+import { options } from 'numeral';
 
 // Configuração dos filtros para agendamentos
 const scheduleFilterConfig = [
@@ -62,6 +63,16 @@ const scheduleFilterConfig = [
       { value: "Pendente", label: "Pendente" },
       { value: "Confirmado", label: "Confirmado" },
       { value: "Cancelado", label: "Cancelado" },
+    ],
+  },
+  {
+    key: "final_service_is_null",
+    label: "Parecer Final do Serviço Pendente",
+    type: "select",
+    options: [
+      { value: 'null', label: "Todos" },
+      { value: true, label: "Pendente" },
+      { value: 'false', label: "Concluído" },
     ],
   },
   {
