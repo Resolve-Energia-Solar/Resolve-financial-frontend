@@ -23,7 +23,6 @@ import {
 } from '@mui/material';
 import { MoreVert, Visibility, Add, CheckCircle, Save, Edit, Delete } from '@mui/icons-material';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
-import { useRouter } from 'next/navigation';
 import ProductChip from '@/app/components/apps/product/components/ProductChip';
 import productService from '@/services/productsService';
 import saleService from '@/services/saleService';

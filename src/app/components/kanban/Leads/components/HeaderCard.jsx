@@ -33,6 +33,8 @@ function LeadInfoHeader({ leadId }) {
     fetchLead();
   }, [leadId]);
 
+  console.log('lead:', lead);
+
   if (!lead) return <Typography>Carregando informações do lead...</Typography>;
 
   return (
@@ -128,12 +130,11 @@ function LeadInfoHeader({ leadId }) {
               Status
             </Typography>
             <Chip
-              // label={lead?.status}
-              label="Contrato"
+              label={lead?.column?.name}
               variant="outlined"
               sx={{
                 color: 'gray',
-                borderColor: 'green',
+                borderColor: `${lead?.column?.color}`,
                 px: 1,
               }}
             />

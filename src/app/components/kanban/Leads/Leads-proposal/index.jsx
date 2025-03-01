@@ -7,6 +7,7 @@ import {
   MenuItem,
   InputAdornment,
   TextField,
+  CircularProgress,
 } from '@mui/material';
 
 import { useEffect, useState } from 'react';
@@ -19,6 +20,13 @@ import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard'
 import Button from "@mui/material/Button";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import useProposalForm from '@/hooks/proposal/useProposalForm';
+import FormDate from '@/app/components/forms/form-custom/FormDate';
+import CustomFieldMoney from '@/app/components/apps/invoice/components/CustomFieldMoney';
+import CustomTextArea from '@/app/components/forms/theme-elements/CustomTextArea';
+import { useSelector } from 'react-redux';
+import { removeProductFromLead, selectProductsByLead } from '@/store/products/customProducts';
+import { useDispatch } from 'react-redux';
 
 function LeadProposalPage({ leadId = null }) {
   const router = useRouter();
@@ -26,39 +34,40 @@ function LeadProposalPage({ leadId = null }) {
   const [lead, setLead] = useState(null);
   const [loadingLeads, setLoadingLeads] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
-  const [formData, setFormData] = useState({
-    proposal_name: '',
-    amount: '',
-    ref_amount: '',
-    entry_amount: '',
-    payment_method: '',
-    financing_type: '',
-    seller_id: '',
-    proposal_validity: '',
-    proposal_status: '',
-    description: '',
-    created_at: '',
-    installments_num: '',
-  });
+  const {
+    formData,
+    handleChange,
+    handleSave,
+    formErrors,
+    loading: formLoading,
+    success,
+  } = useProposalForm();
+
+  const customProducts = useSelector(selectProductsByLead(leadId));
+
+  formData.commercial_products_ids = customProducts.map((product) => product.id);
+  formData.lead_id ? null : (formData.lead_id = leadId);
+  formData.status ? null : (formData.status = 'P');
+  user?.user ? (formData.created_by_id = user.user.id) : null;
+
+  const discard_proposal = () => {
+    dispatch(removeProductFromLead({ leadId, productIds: customProducts.map((product) => product.id) }));
+    handleChange('due_date', null);
+    handleChange('value', null);
+    handleChange('observation', '');
+  };
+  
 
   useEffect(() => {
-    const fetchLead = async () => {
-      try {
-        const response = await leadService.getLeadById(leadId);
-        setFormData(response);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+    if (success) {
+      enqueueSnackbar('Proposta gerada com sucesso', { variant: 'success' });
+      discard_proposal();
+    }
+  }, [success,formErrors]);
 
-    if (leadId) fetchLead();
-  }, [leadId]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
 
   useEffect(() => {
     const fetchLead = async () => {
@@ -82,15 +91,16 @@ function LeadProposalPage({ leadId = null }) {
         <Box
           sx={{
             borderRadius: '20px',
-            boxShadow: 3,
+            boxShadow: 13,
             p: 3,
+            m: 0.1,
             display: 'flex',
             flexDirection: 'column',
           }}
         >
           {/* HEEEEEEEEEEEEADER */}
           <Grid item spacing={2} alignItems="center" xs={12}>
-            <LeadInfoHeader leadId={leadId}/>
+            <LeadInfoHeader leadId={leadId} />
           </Grid>
 
           {/* <Divider sx={{ my: 2 }} /> */}
@@ -110,34 +120,29 @@ function LeadProposalPage({ leadId = null }) {
               {/* first row */}
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="proposal_name">Nome da Proposta</CustomFormLabel>
-                  <TextField
-                    select
-                    name="proposal_name"
-                    value={formData.proposal_name}
-                    onChange={handleChange}
+                  <CustomFormLabel htmlFor="amount">Valor da proposta</CustomFormLabel>
+                  <CustomFieldMoney
+                    name="value"
                     fullWidth
-                  >
-                    <MenuItem value="K1">Kit Solar 2034</MenuItem>
-                  </TextField>
+                    value={formData.value}
+                    onChange={(value) => handleChange('value', value)}
+                    {...(formErrors.value && { error: true, helperText: formErrors.value })}
+                  />
                 </Grid>
 
                 <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="amount">Valor da proposta</CustomFormLabel>
-                  <TextField
-                    name="amount"
-                    value={formData.amount}
-                    onChange={handleChange}
-                    fullWidth
-                    InputProps={{
-                      startAdornment: <InputAdornment position="start">R$</InputAdornment>,
-                    }}
+                  <FormDate
+                    name="due_date"
+                    label="Data de Vencimento"
+                    value={formData.due_date}
+                    onChange={(value) => handleChange('due_date', value)}
+                    {...(formErrors.due_date && { error: true, helperText: formErrors.due_date })}
                   />
                 </Grid>
               </Grid>
 
               {/* second row */}
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              {/* <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
                   <CustomFormLabel htmlFor="ref_amount">Valor de referência</CustomFormLabel>
                   <TextField
@@ -145,9 +150,6 @@ function LeadProposalPage({ leadId = null }) {
                     value={formData.ref_amount}
                     onChange={handleChange}
                     fullWidth
-                    InputProps={{
-                      startAdornment: <InputAdornment position="start">R$</InputAdornment>,
-                    }}
                   />
                 </Grid>
 
@@ -158,15 +160,12 @@ function LeadProposalPage({ leadId = null }) {
                     value={formData.entry_amount}
                     onChange={handleChange}
                     fullWidth
-                    InputProps={{
-                      startAdornment: <InputAdornment position="start">R$</InputAdornment>,
-                    }}
                   />
                 </Grid>
-              </Grid>
+              </Grid> */}
 
               {/* third row */}
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              {/* <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={12}>
                   <CustomFormLabel htmlFor="payment_method">Forma de pagamento</CustomFormLabel>
                   <TextField
@@ -221,49 +220,20 @@ function LeadProposalPage({ leadId = null }) {
                     <MenuItem value="4">4x</MenuItem>
                   </TextField>
                 </>
-              )}
-
-              {/* fourth row */}
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="seller_id">Vendedor Responsável</CustomFormLabel>
-                  <TextField
-                    select
-                    name="seller_id"
-                    value={formData.seller_id}
-                    onChange={handleChange}
-                    fullWidth
-                  >
-                    <MenuItem value="F">Fulano</MenuItem>
-                    <MenuItem value="C">Ciclano</MenuItem>
-                    <MenuItem value="B">Beltrano</MenuItem>
-                  </TextField>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="proposal_validity">
-                    Validade da proposta
-                  </CustomFormLabel>
-                  <TextField
-                    name="proposal_validity"
-                    value={formData.proposal_validity}
-                    onChange={handleChange}
-                    fullWidth
-                  />
-                </Grid>
-              </Grid>
+              )} */}
 
               {/* fifth row */}
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={12}>
                   <CustomFormLabel htmlFor="description">Descrição</CustomFormLabel>
-                  <TextField
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    fullWidth
+                  <CustomTextArea
+                    name="observation"
                     multiline
-                    rows={2}
+                    rows={4}
+                    minRows={10}
+                    value={formData.observation}
+                    onChange={(e) => handleChange('observation', e.target.value)}
+                    {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
                   />
                 </Grid>
               </Grid>
@@ -276,7 +246,7 @@ function LeadProposalPage({ leadId = null }) {
               md={7}
               sx={{ display: 'flex', flexDirection: 'column', marginTop: 2, gap: 2 }}
             >
-              <ProductList />
+              <ProductList leadId={leadId} />
             </Grid>
           </Grid>
 
@@ -306,13 +276,16 @@ function LeadProposalPage({ leadId = null }) {
             </Button>
 
             <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button variant="outlined" color="error" sx={{ px: 3 }}>
+              <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>
                 <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
                 <DeleteOutlinedIcon />
               </Button>
 
-              <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }}>
-                <Typography variant="body1">Gerar proposta</Typography>
+              <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSave} disabled={formLoading}
+                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
+                <Typography variant="body1" color="white">
+                  {formLoading ? 'Gerando proposta...' : 'Gerar proposta'}
+                </Typography>
               </Button>
             </Box>
           </Grid>
