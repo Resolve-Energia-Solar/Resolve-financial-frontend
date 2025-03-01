@@ -83,7 +83,7 @@ const scheduleFilterConfig = [
     type: "async-multiselect",
     endpoint: "/api/services/",
     queryParam: "name__icontains",
-    extraParams: {},
+    extraParams: { limit: 10 },
     mapResponse: (data) =>
       data.results.map((service) => ({
         label: service.name,
@@ -114,7 +114,7 @@ const scheduleFilterConfig = [
       data.results.map((branch) => ({
         label: branch.name,
         value: branch.id,
-    })),
+      })),
   },
   {
     key: "service_opinion__in",
