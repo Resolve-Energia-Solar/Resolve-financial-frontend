@@ -13,10 +13,7 @@ import {
     TablePagination,
     Box,
 } from "@mui/material";
-import { Edit, Visibility } from "@mui/icons-material";
 import TableSkeleton from '@/app/components/apps/comercial/sale/components/TableSkeleton';
-import leadService from '@/services/leadService';
-import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import { IconEye, IconPencil } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -48,15 +45,6 @@ const TableComponent = ({ columns, fetchData, actions }) => {
 
     }, [page, rowsPerPage]);
 
-    const handlePageChange = (event, newPage) => {
-        setPage(newPage)
-    };
-
-    const handleRowsPerPageChange = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
-
 
     return (
         <TableContainer sx={{ borderRadius: '12px' }}>
@@ -64,7 +52,7 @@ const TableComponent = ({ columns, fetchData, actions }) => {
                 <TableHead>
                     <TableRow>
                         {columns.map((column) => (
-                            <TableCell key={column.field} sx={{ fontWeight: 600, fontSize: "13px", color: "#303030" }}>
+                            <TableCell key={column.field} sx={{ fontWeight: 600, fontSize: "14px", color: "#303030" }}>
                                 {column.headerName}
                             </TableCell>
                         ))}
@@ -92,7 +80,7 @@ const TableComponent = ({ columns, fetchData, actions }) => {
                                     <Checkbox sx={{ color: "#7E8388" }} />
                                 </TableCell> */}
                                 {columns.map((column) => (
-                                    <TableCell key={column.field} sx={{ fontWeight: column.field === "name" ? 600 : 400, fontSize: "12px", color: "#7E8388" }}>
+                                    <TableCell key={column.field} sx={{ fontWeight: column.field === "name" ? 600 : 400, fontSize: "14px", color: "#7E8388" }}>
                                         {column.render ? column.render(row) : row[column.field] || "-"}
                                     </TableCell>
                                 ))}

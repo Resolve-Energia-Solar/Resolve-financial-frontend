@@ -7,7 +7,7 @@ const TableHeader = ({ title, totalItems, objNameNumberReference, buttonLabel, o
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-            <Typography sx={{ fontSize: '15px' }}>
+            <Typography sx={{ fontSize: '16px' }}>
                 <span style={{ fontWeight: 'bold' }}>{title}: </span> {totalItems} {objNameNumberReference}
             </Typography>
             {onButtonClick && (
