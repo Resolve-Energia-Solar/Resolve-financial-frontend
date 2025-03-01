@@ -66,7 +66,7 @@ function LeadProposalPage({ leadId = null }) {
       enqueueSnackbar('Proposta gerada com sucesso', { variant: 'success' });
       discard_proposal();
     }
-  }, [success,formErrors]);
+  }, [success]);
 
 
   useEffect(() => {
@@ -256,13 +256,13 @@ function LeadProposalPage({ leadId = null }) {
             xs={12}
             sx={{
               display: 'flex',
-              justifyContent: 'space-between',
+              justifyContent: 'end',
               alignItems: 'center',
               mt: 2,
               gap: 2,
             }}
           >
-            <Button
+            {/* <Button
               variant="contained"
               sx={{
                 backgroundColor: 'black',
@@ -273,7 +273,7 @@ function LeadProposalPage({ leadId = null }) {
             >
               <Typography variant="body1">Pré-visualizar proposta</Typography>
               <VisibilityIcon sx={{ ml: 1 }} />
-            </Button>
+            </Button> */}
 
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>

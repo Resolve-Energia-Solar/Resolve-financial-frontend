@@ -160,7 +160,7 @@ function LeadInfoHeader({ leadId }) {
         >
           <CalendarToday fontSize="small" sx={{ color: 'gray', mr: 1 }} />
           <Typography variant="caption" sx={{ color: 'gray' }}>
-            Última atualização: 27/02/2025 10:45
+            Data de criação: {new Date(lead?.created_at).toLocaleDateString('pt-BR')}
           </Typography>
         </Box>
       </Grid>

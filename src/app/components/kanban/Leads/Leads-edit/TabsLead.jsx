@@ -55,7 +55,7 @@ function EditLeadTabs({ leadId }) {
         TabIndicatorProps={{ style: { backgroundColor: 'white' } }}
         sx={{ marginLeft: '25px'}}
       >
-        {["Informações Lead", "Propostas", "Vendas"].map((label, index) => (
+        {["Dados Pessoais", "Propostas", "Vendas"].map((label, index) => (
           <Tab
             key={index}
             label={label}
