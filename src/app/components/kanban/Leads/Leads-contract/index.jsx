@@ -1,73 +1,90 @@
-'use client';
 import {
-    Grid,
+    TablePagination,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
     Typography,
     Box,
-    useTheme,
+    Button,
+    Chip,
+    IconButton,
+    Grid
 } from '@mui/material';
 
-import { useEffect, useState } from 'react';
-import leadService from '@/services/leadService';
-import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
-import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
+import React, { useState, useEffect } from 'react';
+import leadService from '@/services/leadService';
+import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
 import TableComponent from '@/app/components/kanban/Leads/components/TableComponent'
+import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
+import formatPhoneNumber from '@/utils/formatPhoneNumber';
 
-function LeadsContractPage({ leadId = null }) {
+
+const LeadsContractPage = ({ leadId = null }) => {
     const router = useRouter();
-    const theme = useTheme();
-    const [lead, setLead] = useState(null);
+    const [data, setData] = useState([]);
     const [loadingLeads, setLoadingLeads] = useState(true);
-    const { enqueueSnackbar } = useSnackbar();
-
-    const [formData, setFormData] = useState({
-        proposal_name: '',
-        amount: '',
-        ref_amount: '',
-        entry_amount: '',
-        payment_method: '',
-        financing_type: '',
-        seller_id: '',
-        proposal_validity: '',
-        proposal_status: '',
-        description: '',
-        created_at: '',
-        installments_num: '',
-    });
+    const [error, setError] = useState(null);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [totalRows, setTotalRows] = useState(0);
+    const columns = [
+        { field: 'name', headerName: 'Nome' },
+        { field: 'first_document', headerName: 'CPF/CNPJ' },
+        { field: 'origin?.name', headerName: 'Origem' },
+        { field: 'kwp', headerName: 'KwP' },
+        {
+            field: 'address',
+            headerName: 'Endereço',
+            render: (row) =>
+                `${row?.addresses[0]?.number || '-'} - ${row?.addresses[0]?.city || '-'}`
+        },
+        {
+            field: 'phone',
+            headerName: 'Fone',
+            render: (row) =>
+                formatPhoneNumber(row?.phone)
+        },
+        {
+            field: 'column.name',
+            headerName: 'Status',
+            render: (row) => (
+                <Chip
+                    label={row?.column?.name || '-'}
+                    sx={{
+                        border: `1px solid ${row?.column?.color || 'transparent'}`,
+                        backgroundColor: 'transparent',
+                        color: "#7E8388"
+                    }}
+                />
+            )
+        },
+    ];
 
     useEffect(() => {
-        const fetchLead = async () => {
-            try {
-                const response = await leadService.getLeadById(leadId);
-                setFormData(response);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        if (leadId) fetchLead();
-    }, [leadId]);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [name]: value }));
-    };
-
-    useEffect(() => {
-        const fetchLead = async () => {
+        const fetchLeads = async () => {
             setLoadingLeads(true);
             try {
-                const data = await leadService.getLeadById(leadId);
-                setLead(data);
-                console.log(data);
+                const data = await leadService.getLeads({
+                    params: {
+                        page: page + 1,
+                        limit: rowsPerPage,
+                    },
+                });
+                setData(data.results);
+                setTotalRows(data.count);
             } catch (err) {
-                enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
+                setError('Erro ao carregar Leads');
             } finally {
                 setLoadingLeads(false);
             }
         };
-        fetchLead();
-    }, []);
+
+        fetchLeads();
+    }, [page, rowsPerPage]);
 
     return (
         <Grid container spacing={0}>
@@ -86,14 +103,30 @@ function LeadsContractPage({ leadId = null }) {
                         <LeadInfoHeader leadId={leadId} />
                     </Grid>
 
-                    <Grid container spacing={4} sx={{px: 7, mt: 2, mb: 1}}>
+                    <Grid container spacing={4} sx={{ px: 7, mt: 2, mb: 1 }}>
                         <Typography variant="h5" fontWeight={"bold"}>
                             Contratos
                         </Typography>
-                        
+
                     </Grid>
 
-                    <TableComponent/>                    
+                    <TableComponent
+                        columns={columns}
+                        data={data}
+                        totalRows={totalRows}
+                        loading={loadingLeads}
+                        page={page}
+                        rowsPerPage={rowsPerPage}
+                        onPageChange={(newPage) => setPage(newPage)}
+                        onRowsPerPageChange={(newRows) => {
+                            setRowsPerPage(newRows);
+                            setPage(0);
+                        }}
+                        actions={{
+                            edit: (row) => router.push(`/apps/leads/${row.id}/edit`),
+                            view: (row) => router.push(`/apps/leads/${row.id}/view`),
+                        }}
+                    />
 
                 </Box>
             </Grid>
