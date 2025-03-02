@@ -19,6 +19,8 @@ function ViewLeadPage({ leadId = null }) {
     const { enqueueSnackbar } = useSnackbar();
     const [proposals, setProposals] = useState([]);
 
+    const [lastInspetion, setLastInspetion] = useState(null);
+
     const proposalStatus = {
         "A": { label: "Aceita", color: "#E9F9E6" },
         "R": { label: "Recusada", color: "#FEEFEE" },
@@ -48,6 +50,7 @@ function ViewLeadPage({ leadId = null }) {
             try {
                 const data = await leadService.getLeadById(leadId);
                 setLead(data);
+                setLastInspetion(data.inspections[0]);
                 console.log(data);
             } catch (err) {
                 enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
@@ -58,6 +61,8 @@ function ViewLeadPage({ leadId = null }) {
         fetchLead();
 
     }, []);
+
+    console.log('lastInspetion:', lastInspetion);
 
     return (
         <Grid container spacing={0}>
@@ -148,7 +153,10 @@ function ViewLeadPage({ leadId = null }) {
                                         whiteSpace: 'nowrap', // Impede que a data e hora quebrem
                                     }}
                                 >
-                                    11/02/2025 • 14h
+                                    {lastInspetion && lastInspetion.schedule_date && lastInspetion.schedule_start_time
+                                        ? `${new Date(lastInspetion.schedule_date).toLocaleDateString('pt-BR')} • ${lastInspetion.schedule_start_time}`
+                                        : 'Não há agendamento'}
+
                                 </Box>
                             </Typography>
                         </Box>
