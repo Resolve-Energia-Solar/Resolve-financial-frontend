@@ -53,9 +53,6 @@ function EditLeadPage({ leadId = null }) {
         fetchLead();
     }, [leadId]);
 
-    console.log('formData:', formData);
-
-    // Handling form submit
     const handleSaveLead = async () => {
         const response = await handleSave(formData);
         if (response) {

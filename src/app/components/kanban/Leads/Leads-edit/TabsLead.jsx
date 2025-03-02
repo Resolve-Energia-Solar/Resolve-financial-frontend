@@ -5,6 +5,7 @@ import EditLead from './EditLeads';
 import ViewLeadPage from '../Leads-view';
 import LeadProposalPage from '../Leads-proposal';
 import EditLeadPage from '.';   
+import LeadSchedulePage from '../Leads-schedule';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -55,7 +56,7 @@ function EditLeadTabs({ leadId }) {
         TabIndicatorProps={{ style: { backgroundColor: 'white' } }}
         sx={{ marginLeft: '25px'}}
       >
-        {["Dados Pessoais", "Propostas", "Vendas"].map((label, index) => (
+        {["Dados Pessoais", "Propostas", "Agendamentos"].map((label, index) => (
           <Tab
             key={index}
             label={label}
@@ -85,7 +86,7 @@ function EditLeadTabs({ leadId }) {
       </CustomTabPanel>
 
       <CustomTabPanel value={tabValue} index={2}>
-        <p>Notes content here</p>
+        <LeadSchedulePage leadId={leadId} />
       </CustomTabPanel>
     </Box>
   );

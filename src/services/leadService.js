@@ -101,8 +101,8 @@ const leadService = {
     const response = await apiClient.delete(`/api/leads/${leadId}/`)
     return response.data
   },
-  getLeadById: async leadId => {
-    const response = await apiClient.get(`/api/leads/${leadId}/`)
+  getLeadById: async (leadId, params={}) => {
+    const response = await apiClient.get(`/api/leads/${leadId}/`, { ...params });
     return response.data
   },
 }
