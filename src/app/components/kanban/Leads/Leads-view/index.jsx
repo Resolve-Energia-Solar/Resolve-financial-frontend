@@ -3,12 +3,13 @@ import { Grid, Typography, Chip, Divider, Box, Rating, useTheme, IconButton, Car
 import { AccountCircle, CalendarToday, CalendarViewWeek, WbSunny } from '@mui/icons-material';
 import BlankCard from '@/app/components/shared/BlankCard';
 import { IconCalendarWeek, IconEye, IconPencil, IconTrash } from '@tabler/icons-react';
-import MediaControlCard from '../../components/CardProposal';
 import { useEffect, useState } from 'react';
 import leadService from '@/services/leadService';
 import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
+import ProposalService from '@/services/proposalService';
+import ProposalCard from '../../components/CardProposal';
 
 function ViewLeadPage({ leadId = null }) {
     const router = useRouter();
@@ -16,9 +17,32 @@ function ViewLeadPage({ leadId = null }) {
     const [lead, setLead] = useState(null);
     const [loadingLeads, setLoadingLeads] = useState(true);
     const { enqueueSnackbar } = useSnackbar();
+    const [proposals, setProposals] = useState([]);
+
+    const proposalStatus = {
+        "A": { label: "Aceita", color: "#E9F9E6" },
+        "R": { label: "Recusada", color: "#FEEFEE" },
+        "P": { label: "Pendente", color: "#FFF7E5" },
+    };
+
 
 
     useEffect(() => {
+        const fetchProposals = async () => {
+            try {
+                const data = await ProposalService.getProposals({
+                    params: {
+                        lead: leadId,
+                    },
+                });
+                setProposals(data.results);
+            } catch (err) {
+                enqueueSnackbar('Não foi possível carregar as propostas', { variant: 'error' });
+            }
+        }
+        fetchProposals();
+
+
         const fetchLead = async () => {
             setLoadingLeads(true);
             try {
@@ -34,7 +58,6 @@ function ViewLeadPage({ leadId = null }) {
         fetchLead();
 
     }, []);
-
 
     return (
         <Grid container spacing={0}>
@@ -219,27 +242,47 @@ function ViewLeadPage({ leadId = null }) {
                         </Typography>
                     </Grid>
 
-                    <Grid item>
-                        <MediaControlCard />
-                    </Grid>
+                    {proposals.length > 0 && (
+                        <Grid item>
+                            <ProposalCard
+                                image="https://cdn-icons-png.flaticon.com/512/5047/5047881.png"
+                                price={new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(proposals[0].value)}
+                                status={proposalStatus[proposals[0].status]?.label}
+                                statusColor={proposalStatus[proposals[0].status]?.color}
+                                description={proposals[0].description}
+                                reference={`Validate: ${proposals[0].due_date}`}
+                                onEdit={() => console.log('Editar')}
+                                onDelete={() => console.log('Deletar')}
+                            />
+                        </Grid>
+                    )}
 
-                    <Grid item>
-                        <Typography variant="body1" gutterBottom sx={{ fontSize: 14, color: '#7E92A2' }}>
-                            Outras propostas
-                        </Typography>
-                    </Grid>
+                    {proposals.length > 1 && (
+                        <Grid item>
+                            <Typography variant="body1" gutterBottom sx={{ fontSize: 14, color: '#7E92A2' }}>
+                                Outras propostas
+                            </Typography>
+                        </Grid>
+                    )}
 
-                    <Grid item>
-                        <MediaControlCard />
-                    </Grid>
-
-                    <Grid item>
-                        <MediaControlCard />
-                    </Grid>
+                    {proposals.slice(1).map((proposal, index) => (
+                        <Grid item key={index}>
+                            <ProposalCard
+                                image="https://cdn-icons-png.flaticon.com/512/5047/5047881.png"
+                                price={new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(proposal.value)}
+                                status={proposalStatus[proposal.status]?.label}
+                                statusColor={proposalStatus[proposal.status]?.color}
+                                description={proposal.description}
+                                reference={`Validate: ${proposal.due_date}`}
+                                onEdit={() => console.log('Editar')}
+                                onDelete={() => console.log('Deletar')}
+                            />
+                        </Grid>
+                    ))}
                 </Grid>
             </Grid>
 
-        </Grid>
+        </Grid >
     );
 }
 
