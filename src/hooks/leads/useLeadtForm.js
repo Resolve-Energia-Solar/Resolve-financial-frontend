@@ -93,10 +93,12 @@ const useLeadForm = (initialData, id) => {
       setDataReceived(response);
       setFormErrors({});
       setSuccess(true);
+      return true;
     } catch (err) {
       setSuccess(false);
       setFormErrors(err.response?.data || {});
       console.log(err.response?.data || err);
+      return false;
     } finally {
       setLoading(false);
     }

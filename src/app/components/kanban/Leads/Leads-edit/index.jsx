@@ -1,5 +1,5 @@
 'use client';
-import { Grid, Typography, Chip, Divider, Box, Rating, useTheme, IconButton, Card, MenuItem, InputAdornment, TextField } from '@mui/material';
+import { Grid, Typography, Chip, Divider, Box, Rating, useTheme, IconButton, Card, MenuItem, InputAdornment, TextField, Checkbox, Radio, Button, CircularProgress } from '@mui/material';
 import { AccountCircle, CalendarToday, CalendarViewWeek, Email, Phone, WbSunny } from '@mui/icons-material';
 import BlankCard from '@/app/components/shared/BlankCard';
 import { IconCalendarWeek, IconEye, IconPencil, IconTrash } from '@tabler/icons-react';
@@ -11,6 +11,14 @@ import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AutoCompleteOrigin from '@/app/components/apps/leads/auto-input-origin';
+import LeadInfoHeader from '../components/HeaderCard';
+
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import useLead from '@/hooks/leads/useLead';
+import useLeadForm from '@/hooks/leads/useLeadtForm';
 
 function EditLeadPage({ leadId = null }) {
     const router = useRouter();
@@ -19,34 +27,15 @@ function EditLeadPage({ leadId = null }) {
     const [loadingLeads, setLoadingLeads] = useState(true);
     const { enqueueSnackbar } = useSnackbar();
 
-    const [formData, setFormData] = useState({
-        name: '',
-        type: '',
-        funnel: '',
-        origin_id: '',
-        first_document: '',
-        phone: '',
-        contact_email: '',
-        created_at: ''
-    });
-
-    useEffect(() => {
-        const fetchLead = async () => {
-            try {
-                const response = await leadService.getLeadById(leadId);
-                setFormData(response);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        if (leadId) fetchLead();
-    }, [leadId]);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [name]: value }));
-    };
+    const { loading, error, leadData } = useLead(leadId);
+    const {
+        formData,
+        handleChange,
+        handleSave,
+        loading: formLoading,
+        formErrors,
+        success,
+    } = useLeadForm(leadData, leadId);
 
     useEffect(() => {
         const fetchLead = async () => {
@@ -62,72 +51,63 @@ function EditLeadPage({ leadId = null }) {
             }
         }
         fetchLead();
+    }, [leadId]);
 
-    }, []);
+    console.log('formData:', formData);
 
+    // Handling form submit
+    const handleSaveLead = async () => {
+        const response = await handleSave(formData);
+        if (response) {
+            enqueueSnackbar('Lead salvo com sucesso', { variant: 'success' });
+        }
+    };
 
     return (
         <Grid container spacing={0}>
             <Grid item xs={12}>
                 <BlankCard sx={{ borderRadius: "20px", boxShadow: 3, p: 0, display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                     <Grid container spacing={2} alignItems="center" sx={{ p: 3 }}>
-                        <Grid item xs={12} md={5} container alignItems="center" spacing={2}>
-                            <Grid item>
-                                <AccountCircle sx={{ fontSize: 62 }} />
-                            </Grid>
-                            <Grid item>
-                                <Typography variant="body1" gutterBottom sx={{ fontSize: 12, color: '#ADADAD', margin: 0 }}>
-                                    Cliente
-                                </Typography>
-                                <Typography variant="h6" gutterBottom sx={{ fontSize: 16 }}>
-                                    {lead?.name}
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                        <Grid item xs={12} md={7}>
-                            <Grid container spacing={2} alignItems="center" justifyContent="flex-end">
-                                <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                                    <Typography variant="body1" gutterBottom sx={{ fontSize: 12, color: '#ADADAD' }}>
-                                        Nível de interesse
-                                    </Typography>
-                                    <Rating
-                                        name="qualification"
-                                        value={lead?.qualification}
-                                        max={5}
-                                        readOnly
-                                        size="normal"
-                                        icon={<WbSunny fontSize="inherit" sx={{ color: theme.palette.warning.main }} />}
-                                        emptyIcon={
-                                            <WbSunny fontSize="inherit" sx={{ color: theme.palette.action.disabled }} />
-                                        }
-                                    />
-                                </Grid>
-                            </Grid>
-                        </Grid>
+                        <LeadInfoHeader leadId={leadId} />
                     </Grid>
 
-                    <Divider sx={{ my: 0 }} />
+                    <Grid container spacing={1} sx={{ padding: '0px 20px 20px 20px' }}>
+                        <Grid item xs={12}>
+                            <FormControl>
+                                <FormLabel id="demo-radio-buttons-group-label">Tipo de Lead</FormLabel>
+                                <RadioGroup
+                                    aria-labelledby="demo-radio-buttons-group-label"
+                                    name="type"
+                                    value={formData.type}
+                                    defaultValue="pf"
+                                    sx={{ display: 'flex', flexDirection: 'row' }}
+                                    onChange={(e) => handleChange('type', e.target.value)}
+                                >
+                                    <FormControlLabel value="PF" control={<Radio sx={{
+                                        color: "#E4B400",
+                                        '&.Mui-checked': {
+                                            color: "#E4B400",
+                                        },
+                                    }} />} label="Pessoa Física" />
+                                    <FormControlLabel value="PJ" control={<Radio sx={{
+                                        color: "#E4B400",
+                                        '&.Mui-checked': {
+                                            color: "#E4B400",
+                                        },
+                                    }} />} label="Pessoa Jurídica" />
+                                </RadioGroup>
+                            </FormControl>
+                        </Grid>
 
-                    <Grid container spacing={2} sx={{ p: 3.5 }}>
-
-                        <Grid item xs={12} sm={4}>
+                        <Grid item xs={12} sm={6}>
                             <CustomFormLabel htmlFor="name">Nome Completo</CustomFormLabel>
-                            <TextField name="name" value={formData.name} onChange={handleChange} fullWidth
+                            <TextField name="name" value={formData.name} onChange={(e) => handleChange('name', e.target.value)} fullWidth
                                 InputProps={{ startAdornment: (<InputAdornment position="start"><AccountCircle /></InputAdornment>) }} />
                         </Grid>
 
-                        <Grid item xs={12} sm={4}>
-                            <CustomFormLabel htmlFor="name">Tipo</CustomFormLabel>
-
-                            <TextField select name="type"value={formData.type} onChange={handleChange} fullWidth>
-                                <MenuItem value="PF">Pessoa Física</MenuItem>
-                                <MenuItem value="PJ">Pessoa Jurídica</MenuItem>
-                            </TextField>
-                        </Grid>
-
-                        <Grid item xs={12} sm={4}>
+                        <Grid item xs={12} sm={6}>
                             <CustomFormLabel htmlFor="funnel">Funil</CustomFormLabel>
-                            <TextField select name="funnel" value={formData.funnel} onChange={handleChange} fullWidth>
+                            <TextField select name="funnel" value={formData.funnel} onChange={(e) => handleChange('funnel', e.target.value)} fullWidth>
                                 <MenuItem value="N">Não Interessado</MenuItem>
                                 <MenuItem value="P">Pouco Interessado</MenuItem>
                                 <MenuItem value="I">Interessado</MenuItem>
@@ -138,26 +118,47 @@ function EditLeadPage({ leadId = null }) {
 
                         <Grid item xs={12} sm={6}>
                             <CustomFormLabel htmlFor="origin_id">Origem</CustomFormLabel>
-                            <AutoCompleteOrigin value={formData.origin_id} onChange={(value) => setFormData({ ...formData, origin_id: value })} />
+                            <AutoCompleteOrigin value={formData.origin_id} onChange={(id) => handleChange('origin_id', id)} />
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
                             <CustomFormLabel htmlFor="first_document">CPF/CNPJ</CustomFormLabel>
-                            <TextField name="first_document" value={formData.first_document} onChange={handleChange} fullWidth />
+                            <TextField name="first_document" value={formData.first_document} onChange={(e) => handleChange('first_document', e.target.value)} fullWidth />
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
                             <CustomFormLabel htmlFor="phone">Telefone com DDD</CustomFormLabel>
-                            <TextField name="phone" value={formData.phone} onChange={handleChange} fullWidth
+                            <TextField name="phone" value={formData.phone} onChange={(e) => handleChange('phone', e.target.value)} fullWidth
                                 InputProps={{ startAdornment: (<InputAdornment position="start"><Phone /></InputAdornment>) }} />
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
                             <CustomFormLabel htmlFor="contact_email">E-mail</CustomFormLabel>
-                            <TextField name="contact_email" value={formData.contact_email} onChange={handleChange} fullWidth
+                            <TextField name="contact_email" value={formData.contact_email} onChange={(e) => handleChange('contact_email', e.target.value)} fullWidth
                                 InputProps={{ startAdornment: (<InputAdornment position="start"><Email /></InputAdornment>) }} />
                         </Grid>
 
+                        {/* Add a Save Button */}
+                        <Grid
+                            item
+                            xs={12}
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'end',
+                                alignItems: 'center',
+                                mt: 2,
+                                gap: 2,
+                            }}
+                        >
+                            <Box sx={{ display: 'flex', gap: 2 }}>
+                                <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSaveLead} disabled={formLoading}
+                                    endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
+                                    <Typography variant="body1" color="white">
+                                        {formLoading ? 'Salvando...' : 'Salvar'}
+                                    </Typography>
+                                </Button>
+                            </Box>
+                        </Grid>
                     </Grid>
                 </BlankCard>
             </Grid>

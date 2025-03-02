@@ -1,8 +1,8 @@
 import apiClient from './apiClient'
 
 const ProposalService = {
-  getProposals: async (ordering = '') => {
-    const response = await apiClient.get(`/api/comercial-proposals/?ordering=${ordering}`)
+  getProposals: async (params = {}) => {
+    const response = await apiClient.get(`/api/comercial-proposals/`, { ...params });
     return response.data
   },
   getProposalByFullName: async fullName => {
