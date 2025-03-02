@@ -5,6 +5,10 @@ import {
   Box,
   Stack,
   CircularProgress,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogActions,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import leadService from '@/services/leadService';
@@ -13,11 +17,14 @@ import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard'
 import ScheduleCard from '../components/CardSchedule';
 import BasicDateCalendar from '../components/BasicDateCalendar';
 import ScheduleCardSkeleton from '../components/ScheduleCardSkeleton';
+import { Add } from '@mui/icons-material';
+import LeadAddSchedulePage from './Add-Schedule';
 
 function LeadSchedulePage({ leadId = null }) {
   const { enqueueSnackbar } = useSnackbar();
   const [loadingInspections, setLoadingInspections] = useState(true);
   const [inspections, setInspections] = useState([]);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchLead = async () => {
@@ -57,9 +64,30 @@ function LeadSchedulePage({ leadId = null }) {
           <LeadInfoHeader leadId={leadId} />
 
           <Stack spacing={3} sx={{ mt: 3 }}>
-            <Typography variant="h6" sx={{ fontWeight: 800 }}>
-              Vistorias Técnicas: <span style={{ fontWeight: 400 }}>{inspections.length}</span>
-            </Typography>
+            <Stack direction="row" justifyContent="space-between" sx={{ mt: 3 }}>
+              <Typography variant="h6" sx={{ fontWeight: 800 }}>
+                Vistorias Técnicas: <span style={{ fontWeight: 400 }}>{inspections.length}</span>
+              </Typography>
+
+              <Button
+                startIcon={<Add />}
+                onClick={() => setEditModalOpen(true)}
+                sx={{
+                  fontSize: '0.75rem',
+                  p: '5px 10px',
+                  borderRadius: '4px',
+                  backgroundColor: '#FFCC00',
+                  color: '#000',
+                  '&:hover': {
+                    backgroundColor: '#FFB800',
+                    color: '#000',
+                  },
+                }}
+              >
+                Criar agendamento
+              </Button>
+            </Stack>
+
             <Stack spacing={2} direction={{ xs: 'column', md: 'row' }}>
               <Stack spacing={2} sx={{ flex: 1 }}>
                 {loadingInspections ? (
@@ -83,6 +111,17 @@ function LeadSchedulePage({ leadId = null }) {
           </Stack>
         </Box>
       </Grid>
+
+      <Dialog
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogContent sx={{ p: 10 }}>
+          <LeadAddSchedulePage leadId={leadId} />
+        </DialogContent>
+      </Dialog>
     </Grid>
   );
 }
