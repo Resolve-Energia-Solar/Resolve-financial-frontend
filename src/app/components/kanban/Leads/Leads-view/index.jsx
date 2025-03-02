@@ -11,6 +11,8 @@ import { useRouter } from 'next/navigation';
 import ProposalService from '@/services/proposalService';
 import ProposalCard from '../../components/CardProposal';
 
+const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID
+
 function ViewLeadPage({ leadId = null }) {
     const router = useRouter();
     const theme = useTheme();
@@ -50,7 +52,7 @@ function ViewLeadPage({ leadId = null }) {
             try {
                 const data = await leadService.getLeadById(leadId);
                 setLead(data);
-                setLastInspetion(data.inspections[0]);
+                setLastInspetion(data.inspections.filter(i => i.service === parseInt(SERVICE_INSPECTION_ID)).sort((a, b) => new Date(b.schedule_date) - new Date(a.schedule_date))[0]);
                 console.log(data);
             } catch (err) {
                 enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
