@@ -299,6 +299,27 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                     />
                   </Grid>
                 </HasPermission>
+                
+                {(formData.status === 'D' || formData.status === 'C') && (
+                  <Grid item xs={12} sm={12} lg={4}>
+                    <CustomFormLabel htmlFor="Motivo">Motivo do {formData.status === 'C' ? 'Cancelamento' : 'Distrato'}</CustomFormLabel>
+                    <CustomTextField
+                      name="cancellation_reason"
+                      placeholder="Digite o motivo"
+                      variant="outlined"
+                      fullWidth
+                      multiline
+                      rows={4}
+                      value={formData.cancellation_reason}
+                      onChange={(e) => handleChange('cancellation_reason', e.target.value)}
+                      {...(formErrors.cancellation_reason && {
+                        error: true,
+                        helperText: formErrors.cancellation_reason,
+                      })}
+                    />
+                  </Grid>
+                )}
+
                 <HasPermission
                   permissions={['accounts.change_pre_sale_field']}
                   userPermissions={userPermissions}
