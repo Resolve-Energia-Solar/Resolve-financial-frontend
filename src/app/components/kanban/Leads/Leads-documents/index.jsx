@@ -11,6 +11,7 @@ import {
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import { ExpandMore } from '@mui/icons-material';
 import AttachmentCard from '../components/CardAttachment';
+import LeadAttachmentsAccordion from '../components/LeadAttachmentsAccordion';
 
 function LeadDocumentPage({ leadId = null }) {
   return (
@@ -29,41 +30,7 @@ function LeadDocumentPage({ leadId = null }) {
           <LeadInfoHeader leadId={leadId} />
 
           <Box sx={{ mt: 2 }}>
-            <Accordion expanded={true}>
-              <AccordionSummary
-                expandIcon={<ExpandMore />}
-                aria-controls="panel1-content"
-                id="panel1-header"
-              >
-                <Typography variant="h6" sx={{ fontWeight: 800 }}>
-                  Anexos da venda - RSOL0001
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Box sx={{ mt: 2 }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                      <AttachmentCard />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <AttachmentCard />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <AttachmentCard />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <AttachmentCard />
-                    </Grid>
-                  </Grid>
-                </Box>
-
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="p" sx={{ fontWeight: 400, color: '#092C4C', cursor: 'pointer',fontSize: '14px' }}>
-                    + Anexar novo documento
-                  </Typography>
-                </Box>
-              </AccordionDetails>
-            </Accordion>
+            <LeadAttachmentsAccordion />
           </Box>
         </Box>
       </Grid>
