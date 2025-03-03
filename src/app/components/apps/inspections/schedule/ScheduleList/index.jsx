@@ -76,6 +76,16 @@ const scheduleFilterConfig = [
     ],
   },
   {
+    key: "service_opnion_is_null",
+    label: "Parecer do Serviço Pendente",
+    type: "select",
+    options: [
+      { value: 'null', label: "Todos" },
+      { value: true, label: "Pendente" },
+      { value: 'false', label: "Concluído" },
+    ],
+  },
+  {
     key: "schedule_agent__in",
     label: "Agente de Campo",
     type: "async-multiselect",
