@@ -32,29 +32,41 @@ const LeadsContractPage = ({ leadId = null }) => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalRows, setTotalRows] = useState(0);
     const columns = [
+        { field: 'name', headerName: 'Cliente' },
+        { field: 'contract.name', headerName: 'Proposta' },
         { field: 'name', headerName: 'Nome' },
-        { field: 'product.name', headerName: 'Produto' },
-        { field: 'product.product_value', headerName: 'Total' },
-        { field: 'kwp', headerName: 'Vendedor' },
+        { field: 'contract.product_value', headerName: 'Valor' },
+        { field: 'kwp', headerName: 'Responsável' },
         { field: 'contractSubmission.status', headerName: 'Data' },
         {
             field: 'column.name',
             headerName: 'Status',
-            render: (row) => (
-                <Chip
-                    label={row?.column?.name || '-'}
-                    // label={"Aprovada" || '-'}
-                    sx={{
-                        border: `1px solid ${row?.column?.color || 'transparent'}`,
-                        // backgroundColor: '#000000',
-                        // color: "#FFFFFF",
-                        px: 2,
-                        fontSize: 10,
-                        // width: 95,
-                        // height: 27
-                    }}
-                />
-            )
+            render: (row) => {
+                const statusColors = {
+                    "Assinado": { bg: "#000000", text: "#FFFFFF"},
+                    "Cancelado": { bg: "#FEEFED", text: "#303030"},
+                    "Enviado": { bg: "#F9F7E6", text: "#303030"},
+                    "Pendente": { bg: "#F9F0E6", text: "#303030"},
+                }
+
+                const status = row?.column?.headerName || "-";
+                const { bg, text } = statusColors[status] || { bg: "#E0E0E0", text: "#000000" };
+
+                return (
+                    <Chip
+                        label={status}
+                        sx={{
+                            backgroundColor: bg,
+                            color: text,
+                            fontSize: "10px",
+                            fontWeight: 400,
+                            borderRadius: "15px",
+                            px: 2,
+                            height: 24,
+                        }}
+                    />
+                );
+            }
         },
     ];
 
