@@ -12,25 +12,17 @@ import {
 import { useEffect, useState } from 'react';
 import leadService from '@/services/leadService';
 import { useSnackbar } from 'notistack';
-import { useRouter } from 'next/navigation';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import ProductList from '@/app/components/kanban/Leads/components/ProposalProductsCard';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import Button from "@mui/material/Button";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import theme from '@/utils/theme';
-
 
 const LeadsProposalList = ( { leadId = null } ) => {
-  const router = useRouter();
   const theme = useTheme();
-  const [data, setData] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
   const [loadingProposals, setLoadingProposals] = useState(true);
-  const [error, setError] = useState(null);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [totalRows, setTotalRows] = useState(0);
 
   const columns = [
     { field: 'name', headerName: 'Cliente' },
@@ -90,15 +82,15 @@ const LeadsProposalList = ( { leadId = null } ) => {
 
   useEffect(() => {
     const fetchLead = async () => {
-      setLoadingLeads(true);
+      setLoadingProposals(true);
       try {
         const data = await leadService.getLeadById(leadId);
         setLead(data);
         console.log(data);
       } catch (err) {
-        enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
+        enqueueSnackbar('Não foi possível carregar a proposta', { variant: 'error' });
       } finally {
-        setLoadingLeads(false);
+        setLoadingProposals(false);
       }
     };
     fetchLead();
