@@ -43,6 +43,8 @@ import History from '@/app/components/apps/history';
 import Comment from '../../../comment';
 import useSendContract from '@/hooks/contract/useSendContract';
 import TagList from '@/app/components/tags/TagList';
+import AutoCompleteReasons from '../components/auto-complete/Auto-Input-Reasons';
+import AutoCompleteReasonMultiple from '../components/auto-complete/Auto-Input-Reasons';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -138,6 +140,8 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
       }
     }
   }, [successData, success]);
+
+  console.log('formErrors', formErrors);
 
   return (
     <Box {...props}>
@@ -260,13 +264,20 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                   />
                 </Grid>
                 <Grid item xs={12} sm={12} lg={4}>
-                  <FormSelect
-                    label="Status da Venda"
-                    options={statusOptions}
-                    value={formData.status}
-                    onChange={(e) => handleChange('status', e.target.value)}
-                    disabled={!hasPermission(['accounts.change_status_sale_field'])}
-                  />
+                <FormSelect
+                  label="Status da Venda"
+                  options={statusOptions}
+                  value={formData.status}
+                  onChange={(e) => {
+                    const newStatus = e.target.value;
+                    handleChange('status', newStatus);
+                    if (newStatus !== 'C' && newStatus !== 'D') {
+                      // Limpa os motivos quando o status não é "C" nem "D"
+                      handleChange('cancellation_reasons_ids', []);
+                    }
+                  }}
+                  disabled={!hasPermission(['accounts.change_status_sale_field'])}
+                />
                 </Grid>
                 <Grid item xs={12} sm={12} lg={4}>
                   <FormSelect
@@ -301,20 +312,18 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                 </HasPermission>
                 
                 {(formData.status === 'D' || formData.status === 'C') && (
-                  <Grid item xs={12} sm={12} lg={4}>
-                    <CustomFormLabel htmlFor="Motivo">Motivo do {formData.status === 'C' ? 'Cancelamento' : 'Distrato'}</CustomFormLabel>
-                    <CustomTextField
-                      name="cancellation_reason"
-                      placeholder="Digite o motivo"
-                      variant="outlined"
-                      fullWidth
-                      multiline
-                      rows={4}
-                      value={formData.cancellation_reason}
-                      onChange={(e) => handleChange('cancellation_reason', e.target.value)}
-                      {...(formErrors.cancellation_reason && {
+                  <Grid item xs={12} sm={12} lg={8}>
+                    <CustomFormLabel htmlFor="Motivo">
+                      Motivo do {formData.status === 'C' ? 'Cancelamento' : 'Distrato'}
+                    </CustomFormLabel>
+                    <AutoCompleteReasonMultiple
+                      onChange={(id) =>
+                        handleChange('cancellation_reasons_ids', id)
+                      }
+                      value={formData.cancellation_reasons_ids}
+                      {...(formErrors.cancellation_reasons_ids && {
                         error: true,
-                        helperText: formErrors.cancellation_reason,
+                        helperText: formErrors.cancellation_reasons_ids,
                       })}
                     />
                   </Grid>
