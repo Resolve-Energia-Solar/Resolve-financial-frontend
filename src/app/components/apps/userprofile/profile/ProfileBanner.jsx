@@ -1,4 +1,5 @@
 'use client';
+import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -15,13 +16,14 @@ import {
   IconBrandYoutube,
   IconFileDescription,
   IconUserCheck,
-  IconUserCircle,
 } from '@tabler/icons-react';
 import ProfileTab from './ProfileTab';
 import BlankCard from '../../../shared/BlankCard';
-import React from 'react';
+import employeeService from '@/services/employeeService';
 
-const ProfileBanner = () => {
+const ProfileBanner = ({ user }) => {
+  const [departmentCount, setDepartmentCount] = useState(0);
+
   const ProfileImage = styled(Box)(() => ({
     backgroundImage: 'linear-gradient(#50b2fc,#f44c66)',
     borderRadius: '50%',
@@ -33,150 +35,154 @@ const ProfileBanner = () => {
     margin: "0 auto"
   }));
 
+
+  useEffect(() => {
+    async function fetchCount() {
+      if (user?.employee_data?.department) {
+        try {
+          const data = await employeeService.getEmployee({
+            filters: { department: user.employee?.department?.id },
+          });
+          setDepartmentCount(data.count || data.length || 0);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
+    fetchCount();
+  }, [user]);
+
   return (
-    <>
-      <BlankCard>
-        <CardMedia component="img" image={'/images/backgrounds/profilebg.jpg'} alt={"profilecover"} width="100%" height="330px" />
-        <Grid container spacing={0} justifyContent="center" alignItems="center">
-          {/* Post | Followers | Following */}
-          <Grid
-            item
-            lg={4}
-            sm={12}
-            md={5}
-            xs={12}
+    <BlankCard>
+      <CardMedia component="img" image={'/images/backgrounds/profilebg.jpg'} alt={"profilecover"} width="100%" height="330px" />
+      <Grid container spacing={0} justifyContent="center" alignItems="center">
+        {/* Post | Followers | Following */}
+        <Grid
+          item
+          lg={4}
+          sm={12}
+          md={5}
+          xs={12}
+          sx={{
+            order: {
+              xs: '2',
+              sm: '2',
+              lg: '1',
+            },
+          }}
+        >
+          <Stack direction="row" textAlign="center" justifyContent="center" gap={6} m={3}>
+            <Box>
+              <Typography color="text.secondary">
+                <IconFileDescription width="20" />
+              </Typography>
+              <Typography variant="h4" fontWeight="600">
+                0
+              </Typography>
+              <Typography color="textSecondary" variant="h6" fontWeight={400}>
+                Postagens
+              </Typography>
+            </Box>
+            <Box>
+              <Typography color="text.secondary">
+                <IconUserCheck width="20" />
+              </Typography>
+              <Typography variant="h4" fontWeight="600">
+                {departmentCount}
+              </Typography>
+              <Typography color="textSecondary" variant="h6" fontWeight={400}>
+                Colegas
+              </Typography>
+            </Box>
+          </Stack>
+        </Grid>
+        {/* about profile */}
+        <Grid
+          item
+          lg={4}
+          sm={12}
+          xs={12}
+          sx={{
+            order: {
+              xs: '1',
+              sm: '1',
+              lg: '2',
+            },
+          }}
+        >
+          <Box
+            display="flex"
+            alignItems="center"
+            textAlign="center"
+            justifyContent="center"
             sx={{
-              order: {
-                xs: '2',
-                sm: '2',
-                lg: '1',
-              },
+              mt: '-85px',
             }}
           >
-            <Stack direction="row" textAlign="center" justifyContent="center" gap={6} m={3}>
-              <Box>
-                <Typography color="text.secondary">
-                  <IconFileDescription width="20" />
+            <Box>
+              <ProfileImage>
+                <Avatar
+                  src={user?.profile_picture || '/images/default-avatar.png'}
+                  alt={user?.complete_name || 'Usuário'}
+                  sx={{
+                    borderRadius: '50%',
+                    width: '100px',
+                    height: '100px',
+                    border: '4px solid #fff',
+                  }}
+                />
+              </ProfileImage>
+              <Box mt={1}>
+                <Typography fontWeight={600} variant="h5">
+                  {user?.complete_name || 'Nome do Usuário'}
                 </Typography>
-                <Typography variant="h4" fontWeight="600">
-                  938
+                <Typography
+                  color="textSecondary"
+                  variant="h6"
+                  fontWeight={400}
+                >
+                  {user?.employee_data?.role || 'Cargo'}
                 </Typography>
-                <Typography color="textSecondary" variant="h6" fontWeight={400}>
-                  Posts
-                </Typography>
-              </Box>
-              <Box>
-                <Typography color="text.secondary">
-                  <IconUserCircle width="20" />
-                </Typography>
-                <Typography variant="h4" fontWeight="600">
-                  3,586
-                </Typography>
-                <Typography color="textSecondary" variant="h6" fontWeight={400}>
-                  Followers
-                </Typography>
-              </Box>
-              <Box>
-                <Typography color="text.secondary">
-                  <IconUserCheck width="20" />
-                </Typography>
-                <Typography variant="h4" fontWeight="600">
-                  2,659
-                </Typography>
-                <Typography color="textSecondary" variant="h6" fontWeight={400}>
-                  Following
-                </Typography>
-              </Box>
-            </Stack>
-          </Grid>
-          {/* about profile */}
-          <Grid
-            item
-            lg={4}
-            sm={12}
-            xs={12}
-            sx={{
-              order: {
-                xs: '1',
-                sm: '1',
-                lg: '2',
-              },
-            }}
-          >
-            <Box
-              display="flex"
-              alignItems="center"
-              textAlign="center"
-              justifyContent="center"
-              sx={{
-                mt: '-85px',
-              }}
-            >
-              <Box>
-                <ProfileImage>
-                  <Avatar
-                    src={"/images/profile/user-1.jpg"}
-                    alt="profileImage"
-                    sx={{
-                      borderRadius: '50%',
-                      width: '100px',
-                      height: '100px',
-                      border: '4px solid #fff',
-                    }}
-                  />
-                </ProfileImage>
-                <Box mt={1}>
-                  <Typography fontWeight={600} variant="h5">
-                    Mathew Anderson
-                  </Typography>
-                  <Typography
-                    color="textSecondary"
-                    variant="h6"
-                    fontWeight={400}
-                  >
-                    Designer
-                  </Typography>
-                </Box>
               </Box>
             </Box>
-          </Grid>
-          {/* friends following buttons */}
-          <Grid
-            item
-            lg={4}
-            sm={12}
-            xs={12}
-            sx={{
-              order: {
-                xs: '3',
-                sm: '3',
-                lg: '3',
-              },
-            }}
-          >
-            <Stack direction={'row'} gap={2} alignItems="center" justifyContent="center" my={2}>
-              <Fab size="small" color="primary" sx={{ backgroundColor: '#1877F2' }}>
-                <IconBrandFacebook size="16" />
-              </Fab>
-              <Fab size="small" color="primary" sx={{ backgroundColor: '#1DA1F2' }}>
-                <IconBrandTwitter size="18" />
-              </Fab>
-              <Fab size="small" color="success" sx={{ backgroundColor: '#EA4C89' }}>
-                <IconBrandDribbble size="18" />
-              </Fab>
-              <Fab size="small" color="error" sx={{ backgroundColor: '#CD201F' }}>
-                <IconBrandYoutube size="18" />
-              </Fab>
-              <Button color="primary" variant="contained">
-                Add To Story
-              </Button>
-            </Stack>
-          </Grid>
+          </Box>
         </Grid>
-        {/**TabbingPart**/}
-        <ProfileTab />
-      </BlankCard>
-    </>
+        {/* friends following buttons */}
+        <Grid
+          item
+          lg={4}
+          sm={12}
+          xs={12}
+          sx={{
+            order: {
+              xs: '3',
+              sm: '3',
+              lg: '3',
+            },
+          }}
+        >
+          <Stack direction={'row'} gap={2} alignItems="center" justifyContent="center" my={2}>
+            <Fab size="small" color="primary" sx={{ backgroundColor: '#1877F2' }}>
+              <IconBrandFacebook size="16" />
+            </Fab>
+            <Fab size="small" color="primary" sx={{ backgroundColor: '#1DA1F2' }}>
+              <IconBrandTwitter size="18" />
+            </Fab>
+            <Fab size="small" color="success" sx={{ backgroundColor: '#EA4C89' }}>
+              <IconBrandDribbble size="18" />
+            </Fab>
+            <Fab size="small" color="error" sx={{ backgroundColor: '#CD201F' }}>
+              <IconBrandYoutube size="18" />
+            </Fab>
+            <Button color="primary" variant="contained">
+              Adicionar Story
+            </Button>
+          </Stack>
+        </Grid>
+      </Grid>
+      {/**TabbingPart**/}
+      <ProfileTab />
+    </BlankCard>
   );
 };
 

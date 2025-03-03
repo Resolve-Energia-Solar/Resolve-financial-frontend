@@ -1,5 +1,5 @@
-
-"use client"
+"use client";
+import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
@@ -11,10 +11,9 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import React, { useEffect } from 'react';
+import Skeleton from '@mui/material/Skeleton';
 import BlankCard from '../../../../components/shared/BlankCard';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchFollwores } from '@/store/apps/userProfile/UserProfileSlice';
+import { useSelector } from 'react-redux';
 import {
   IconBrandFacebook,
   IconBrandGithub,
@@ -22,106 +21,142 @@ import {
   IconBrandTwitter,
   IconSearch,
 } from '@tabler/icons-react';
+import employeeService from '@/services/employeeService';
+import { capitalizeWords } from '@/utils/capitalizeWords';
 
 const SocialIcons = [
-  {
-    name: 'Facebook',
-    icon: <IconBrandFacebook size="18" color="#1877F2" />,
-  },
-  {
-    name: 'Instagram',
-    icon: <IconBrandInstagram size="18" color="#D7336D" />,
-  },
-  {
-    name: 'Github',
-    icon: <IconBrandGithub size="18" color="#006097" />,
-  },
-  {
-    name: 'Twitter',
-    icon: <IconBrandTwitter size="18" color="#1C9CEA" />,
-  },
+  { name: 'Facebook', icon: <IconBrandFacebook size="18" color="#1877F2" /> },
+  { name: 'Instagram', icon: <IconBrandInstagram size="18" color="#D7336D" /> },
+  { name: 'Github', icon: <IconBrandGithub size="18" color="#006097" /> },
+  { name: 'Twitter', icon: <IconBrandTwitter size="18" color="#1C9CEA" /> },
 ];
 
 const FriendsCard = () => {
-  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.user?.user);
+  const [employees, setEmployees] = useState([]);
+  const [employeesCount, setEmployeesCount] = useState([]);
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+
   useEffect(() => {
-    dispatch(fetchFollwores());
-  }, [dispatch]);
+    fetchEmployees();
+  }, [currentUser, page]);
 
-  const filterFriends = (friends, cSearch) => {
-    if (friends)
-      return friends.filter((t) =>
-        t.name.toLocaleLowerCase().includes(cSearch.toLocaleLowerCase()),
-      );
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 100) {
+        if (hasMore && !loading) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      }
+    };
 
-    return friends;
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [hasMore, loading]);
+
+  const fetchEmployees = async () => {
+    if (currentUser && currentUser.employee?.department?.id) {
+      try {
+        setLoading(true);
+        const data = await employeeService.getEmployee({
+          filters: { department: currentUser.employee?.department?.id },
+          page: page,
+          limit: 10,
+        });
+        setEmployeesCount(data.count)
+        setEmployees((prevEmployees) => [...prevEmployees, ...data.results]);
+        setHasMore(data.next !== null);
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+        setLoading(false);
+      }
+    }
   };
-  const [search, setSearch] = React.useState('');
-  const getFriends = useSelector((state) =>
-    filterFriends(state.userpostsReducer.followers, search),
+
+  const filteredEmployees = employees.filter((profile) =>
+    profile.user.complete_name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <>
-      <Grid container spacing={3}>
-        <Grid item sm={12} lg={12}>
-          <Stack direction="row" alignItems={'center'} mt={2}>
-            <Box>
-              <Typography variant="h3">
-                Friends &nbsp;
-                <Chip label={getFriends.length} color="secondary" size="small" />
-              </Typography>
-            </Box>
-            <Box ml="auto">
-              <TextField
-                id="outlined-search"
-                placeholder="Search Friends"
-                size="small"
-                type="search"
-                variant="outlined"
-                inputProps={{ 'aria-label': 'Search Followers' }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <IconSearch size="14" />
-                    </InputAdornment>
-                  ),
-                }}
-                fullWidth
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </Box>
-          </Stack>
-        </Grid>
-        {getFriends.map((profile) => {
-          return (
-            <Grid item sm={12} lg={4} key={profile.id}>
-              <BlankCard className="hoverCard">
-                <CardContent>
-                  <Stack direction={'column'} gap={2} alignItems="center">
-                    <Avatar
-                      alt="Remy Sharp"
-                      src={profile.avatar}
-                      sx={{ width: '80px', height: '80px' }}
-                    />
-                    <Box textAlign={'center'}>
-                      <Typography variant="h5">{profile.name}</Typography>
-                      <Typography variant="caption">{profile.role}</Typography>
-                    </Box>
-                  </Stack>
-                </CardContent>
-                <Divider />
-                <Box p={2} py={1} textAlign={'center'} sx={{ backgroundColor: 'grey.100' }}>
-                  {SocialIcons.map((sicon) => {
-                    return <IconButton key={sicon.name}>{sicon.icon}</IconButton>;
-                  })}
-                </Box>
-              </BlankCard>
-            </Grid>
-          );
-        })}
+    <Grid container spacing={3}>
+      <Grid item sm={12} lg={12}>
+        <Stack direction="row" alignItems={'center'} mt={2}>
+          <Box>
+            <Typography variant="h3">
+              Colegas &nbsp;
+              <Chip label={employeesCount} color="secondary" size="small" />
+            </Typography>
+          </Box>
+          <Box ml="auto">
+            <TextField
+              id="outlined-search"
+              placeholder="Pesquisar Colegas"
+              size="small"
+              type="search"
+              variant="outlined"
+              inputProps={{ 'aria-label': 'Search Friends' }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconSearch size="14" />
+                  </InputAdornment>
+                ),
+              }}
+              fullWidth
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </Box>
+        </Stack>
       </Grid>
-    </>
+      {filteredEmployees.map((profile) => (
+        <Grid item sm={12} lg={4} key={profile.id}>
+          <BlankCard className="hoverCard" sx={{ height: '300px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <CardContent>
+              <Stack direction={'column'} gap={2} alignItems="center">
+                <Avatar
+                  alt={profile.user.complete_name}
+                  src={profile.user.profile_picture || '/images/default-avatar.png'}
+                  sx={{ width: '80px', height: '80px' }}
+                />
+                <Box textAlign={'center'}>
+                  <Typography variant="h5">{capitalizeWords(profile.user.complete_name)}</Typography>
+                  <Typography variant="caption">
+                    {profile.user.employee_data?.role || 'Cargo'}
+                  </Typography>
+                </Box>
+              </Stack>
+            </CardContent>
+            <Divider />
+            <Box
+              p={2}
+              py={1}
+              textAlign={'center'}
+              sx={{ backgroundColor: 'grey.100' }}
+            >
+              {SocialIcons.map((sicon) => (
+                <IconButton key={sicon.name}>{sicon.icon}</IconButton>
+              ))}
+            </Box>
+          </BlankCard>
+        </Grid>
+      ))}
+      {loading && (
+        Array.from(new Array(6)).map((_, index) => (
+          <Grid item sm={12} lg={4} key={index}>
+            <Skeleton variant="rectangular" width="100%" height={300} />
+          </Grid>
+        ))
+      )}
+      {!hasMore && !loading && (
+        <Typography variant="body2" color="textSecondary" align="center" sx={{ width: '100%' }}>
+          Você chegou ao fim!
+        </Typography>
+      )}
+    </Grid>
   );
 };
 
