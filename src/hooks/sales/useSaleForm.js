@@ -53,6 +53,21 @@ const useSaleForm = (initialData, id) => {
 
   const handleSave = async () => {
     setLoading(true);
+
+    let errors = { ...formErrors };
+
+    if ((formData.status === 'D' || formData.status === 'C') && !formData.cancellation_reason) {
+      errors.cancellation_reason = ['O motivo é obrigatório.'];
+    } else {
+      delete errors.cancellation_reason;
+    }
+  
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      setLoading(false);
+      return;
+    }
+
     const dataToSend = {
       customer_id: formData.customerId,
       seller_id: formData.sellerId,
