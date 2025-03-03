@@ -32,9 +32,8 @@ const LeadsContractPage = ({ leadId = null }) => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalRows, setTotalRows] = useState(0);
     const columns = [
-        { field: 'name', headerName: 'Cliente' },
+        { field: 'leadName', headerName: 'Cliente' },
         { field: 'contract.name', headerName: 'Proposta' },
-        { field: 'name', headerName: 'Nome' },
         { field: 'contract.product_value', headerName: 'Valor' },
         { field: 'kwp', headerName: 'Responsável' },
         { field: 'contractSubmission.status', headerName: 'Data' },

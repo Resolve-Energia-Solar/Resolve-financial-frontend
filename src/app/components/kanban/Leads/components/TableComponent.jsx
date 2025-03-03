@@ -185,8 +185,6 @@ const TableComponent = ({
                     "& .MuiDataGrid-cell[data-field='name']": {
                         fontWeight: 600,
                     },
-
-
                 }}
             />
         </Box>
