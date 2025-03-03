@@ -15,11 +15,8 @@ import {
     TablePagination,
     Box,
 } from "@mui/material";
-import TableSkeleton from '@/app/components/apps/comercial/sale/components/TableSkeleton';
-import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import { IconEye, IconPencil } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar, GridLogicOperator } from '@mui/x-data-grid';
 
 const TableComponent = ({
     columns,
@@ -35,42 +32,42 @@ const TableComponent = ({
 
     const gridColumns = [
         ...columns.map((col) => ({
-          field: col.field,
-          headerName: col.headerName,
-          flex: 1, 
-          renderCell: (params) =>
-            col.render ? col.render(params.row) : params.value || "-",
+            field: col.field,
+            headerName: col.headerName,
+            flex: 1,
+            renderCell: (params) =>
+                col.render ? col.render(params.row) : params.value || "-",
         })),
         {
-          field: "actions",
-          headerName: "Editar / Ver",
-          sortable: false,
-          filterable: false,
-          width: 120,
-          renderCell: (params) => (
-            <Box sx={{ display: "flex", gap: 1 }}>
-              {actions?.edit && (
-                <IconButton
-                  size="small"
-                  onClick={() => actions.edit(params.row)}
-                  sx={{ color: "#7E8388" }}
-                >
-                  <IconPencil fontSize="small" />
-                </IconButton>
-              )}
-              {actions?.view && (
-                <IconButton
-                  size="small"
-                  onClick={() => actions.view(params.row)}
-                  sx={{ color: "#7E8388" }}
-                >
-                  <IconEye fontSize="small" />
-                </IconButton>
-              )}
-            </Box>
-          ),
+            field: "actions",
+            headerName: "Editar / Ver",
+            sortable: false,
+            filterable: false,
+            width: 120,
+            renderCell: (params) => (
+                <Box sx={{ display: "flex", gap: 1 }}>
+                    {actions?.edit && (
+                        <IconButton
+                            size="small"
+                            onClick={() => actions.edit(params.row)}
+                            sx={{ color: "#7E8388" }}
+                        >
+                            <IconPencil fontSize="small" />
+                        </IconButton>
+                    )}
+                    {actions?.view && (
+                        <IconButton
+                            size="small"
+                            onClick={() => actions.view(params.row)}
+                            sx={{ color: "#7E8388" }}
+                        >
+                            <IconEye fontSize="small" />
+                        </IconButton>
+                    )}
+                </Box>
+            ),
         },
-      ];
+    ];
 
     return (
         // <TableContainer sx={{ borderRadius: '12px' }}>
@@ -159,6 +156,38 @@ const TableComponent = ({
                 onPageSizeChange={onRowsPerPageChange}
                 disableSelectionOnClick
                 slots={{ toolbar: GridToolbar }}
+                sx={{
+                    borderRadius: "12px",
+                    border: "none",
+                    "& .MuiDataGrid-cell": {
+                        borderBottom: "none",
+                    },
+                    "& .MuiDataGrid-columnHeaders": {
+                        fontWeight: "600",
+                        fontSize: "14px",
+                        color: "#303030",
+                    },
+                    "& .MuiDataGrid-row": {
+                        "&:hover": {
+                            backgroundColor: "rgba(236, 242, 255, 0.35)",
+                        },
+                        fontSize: '14px',
+                        color: '#7E8388'
+                    },
+                    "& .MuiDataGrid-footerContainer": {
+                        borderTop: "none",
+                    },
+                    "& .Mui-selected": {
+                        backgroundColor: "#FFCC00 !important",
+                        color: "#7E8388",
+                        borderRadius: "6px",
+                    },
+                    "& .MuiDataGrid-cell[data-field='name']": {
+                        fontWeight: 600,
+                    },
+
+
+                }}
             />
         </Box>
     );
