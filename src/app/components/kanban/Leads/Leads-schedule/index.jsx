@@ -21,10 +21,16 @@ import { Add } from '@mui/icons-material';
 import LeadAddSchedulePage from './Add-Schedule';
 
 function LeadSchedulePage({ leadId = null }) {
+  const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
   const { enqueueSnackbar } = useSnackbar();
   const [loadingInspections, setLoadingInspections] = useState(true);
   const [inspections, setInspections] = useState([]);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+
+  const handleRefresh = () => {
+    setRefresh(!refresh);
+  };
 
   useEffect(() => {
     const fetchLead = async () => {
@@ -32,11 +38,12 @@ function LeadSchedulePage({ leadId = null }) {
       try {
         const data = await leadService.getLeadById(leadId, {
           params: {
-            fields: 'inspections'
+            fields: 'schedules',
+            expand: 'schedules',
           }
         });
         console.log("API Response:", data);
-        setInspections(Array.isArray(data?.inspections) ? data.inspections : []);
+        setInspections(Array.isArray(data?.schedules) ? data.schedules : []);
       } catch (err) {
         enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
       } finally {
@@ -46,7 +53,7 @@ function LeadSchedulePage({ leadId = null }) {
     if (leadId) {
       fetchLead();
     }
-  }, [leadId]);
+  }, [leadId, refresh]);
 
   return (
     <Grid container spacing={0}>
@@ -119,7 +126,7 @@ function LeadSchedulePage({ leadId = null }) {
         fullWidth
       >
         <DialogContent sx={{ p: 10 }}>
-          <LeadAddSchedulePage leadId={leadId} />
+          <LeadAddSchedulePage leadId={leadId} serviceId={SERVICE_INSPECTION_ID} onClose={() => setEditModalOpen(false)} onRefresh={handleRefresh} />
         </DialogContent>
       </Dialog>
     </Grid>

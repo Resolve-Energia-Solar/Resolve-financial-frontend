@@ -20,6 +20,7 @@ const useScheduleForm = (initialData, id) => {
     service_id: null || SERVICE_INSPECTION_ID,
     parent_schedules_id	: [],
     customer_id: null,
+    leads_ids: [],
     project_id: null,
     schedule_agent_id: null,
     products: [],
@@ -50,6 +51,7 @@ const useScheduleForm = (initialData, id) => {
         service_id: initialData.service?.id || SERVICE_INSPECTION_ID,
         parent_schedules_id: initialData.parent_schedules?.map(schedule => schedule.id) || [],
         customer_id: initialData?.customer?.id || null,
+        leads_ids: initialData.leads?.map(lead => lead.id) || [],
         project_id: initialData.project?.id || null,
         schedule_agent_id: initialData.schedule_agent?.id || null,
         products: initialData.products || [],
@@ -283,6 +285,7 @@ const useScheduleForm = (initialData, id) => {
       service_id: formData.service_id,
       parent_schedules_id: formData.parent_schedules_id || undefined,
       customer_id: formData.customer_id,
+      leads_ids: formData.leads_ids,
       project_id: formData.project_id,
       products: normalizedProductsIds,
       schedule_agent_id: formData.schedule_agent_id || null, 
@@ -311,10 +314,12 @@ const useScheduleForm = (initialData, id) => {
       }
       setFormErrors({})
       setSuccess(true)
+      return true
     } catch (err) {
       setSuccess(false)
       setFormErrors(err.response?.data || {})
       console.error(err.response?.data || err)
+      return false
     } finally {
       setLoading(false)
     }
