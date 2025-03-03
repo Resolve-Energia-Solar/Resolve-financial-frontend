@@ -5,8 +5,8 @@ import campaignService from '@/services/campaignService';
 const useCampaignForm = (initialData, id) => {
   const [formData, setFormData] = useState({
     name: '',
-    start_datetime: null,
-    end_datetime: null,
+    start_date: null,
+    end_date: null,
     description: '',
     banner: [],
   });
@@ -18,8 +18,8 @@ const useCampaignForm = (initialData, id) => {
     if (initialData) {
       setFormData({
         name: initialData.name || '',
-        start_datetime: initialData.start_datetime || null,
-        end_datetime: initialData.end_datetime || null,
+        start_date: initialData.start_date || null,
+        end_date: initialData.end_date || null,
         description: initialData.description || '',
         banner: initialData.banner || '',
       });
@@ -35,8 +35,8 @@ const useCampaignForm = (initialData, id) => {
     const is_file = formData.banner instanceof File || (formData.banner instanceof FileList && formData.banner.length > 0);
 
     dataToSend.append('name', formData.name);
-    dataToSend.append('start_datetime', formData.start_datetime ? formatDate(formData.start_datetime) : null);
-    dataToSend.append('end_datetime', formData.end_datetime ? formatDate(formData.end_datetime) : null);
+    dataToSend.append('start_date', formData.start_date ? formatDate(formData.start_date) : null);
+    dataToSend.append('end_date', formData.end_date ? formatDate(formData.end_date) : null);
     dataToSend.append('description', formData.description);
     
     if (is_file) {
