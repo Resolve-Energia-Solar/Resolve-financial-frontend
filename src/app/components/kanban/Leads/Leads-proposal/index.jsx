@@ -107,4 +107,4 @@ const LeadsProposalList = () => {
   );
 };
 
-export default LeadProposalList;
+export default LeadsProposalList;

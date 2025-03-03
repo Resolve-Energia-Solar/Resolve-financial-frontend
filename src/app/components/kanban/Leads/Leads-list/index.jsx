@@ -108,8 +108,8 @@ const LeadList = () => {
           setPage(0); 
         }}
         actions={{
-          edit: (row) => router.push(`/apps/leads/${row.id}/edit`),
-          view: (row) => router.push(`/apps/leads/${row.id}/view`),
+          edit: (row) => router.push("/apps/leads/${row.id}/edit"),
+          view: (row) => router.push("/apps/leads/${row.id}/view"),
         }}
       />
 
