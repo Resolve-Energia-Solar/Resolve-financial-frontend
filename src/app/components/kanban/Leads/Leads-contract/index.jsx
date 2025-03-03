@@ -42,12 +42,12 @@ const LeadsContractPage = ({ leadId = null }) => {
             headerName: 'Status',
             render: (row) => (
                 <Chip
-                    // label={row?.column?.name || '-'}
-                    label={"Aprovada" || '-'}
+                    label={row?.column?.name || '-'}
+                    // label={"Aprovada" || '-'}
                     sx={{
                         border: `1px solid ${row?.column?.color || 'transparent'}`,
-                        backgroundColor: '#000000',
-                        color: "#FFFFFF",
+                        // backgroundColor: '#000000',
+                        // color: "#FFFFFF",
                         px: 2,
                         fontSize: 10,
                         // width: 95,
