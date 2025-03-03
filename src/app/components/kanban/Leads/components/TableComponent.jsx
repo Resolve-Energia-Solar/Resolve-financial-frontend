@@ -45,12 +45,12 @@ const TableComponent = ({
             filterable: false,
             width: 120,
             renderCell: (params) => (
-                <Box sx={{ display: "flex", gap: 1 }}>
+                <Box sx={{ display: "flex", gap: 1, justifyContent: 'center', alignItems: 'center' }}>
                     {actions?.edit && (
                         <IconButton
                             size="small"
                             onClick={() => actions.edit(params.row)}
-                            sx={{ color: "#7E8388" }}
+                            sx={{ color: "#7E8388", mt: 1 }}
                         >
                             <IconPencil fontSize="small" />
                         </IconButton>
@@ -59,7 +59,7 @@ const TableComponent = ({
                         <IconButton
                             size="small"
                             onClick={() => actions.view(params.row)}
-                            sx={{ color: "#7E8388" }}
+                            sx={{ color: "#7E8388", mt: 1 }}
                         >
                             <IconEye fontSize="small" />
                         </IconButton>
@@ -70,79 +70,7 @@ const TableComponent = ({
     ];
 
     return (
-        // <TableContainer sx={{ borderRadius: '12px' }}>
-        //     <Table sx={{ borderCollapse: 'separate', borderSpacing: '0px 8px' }}>
-        //         <TableHead>
-        //             <TableRow>
-        //                 {columns.map((column) => (
-        //                     <TableCell key={column.field} sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
-        //                         {column.headerName}
-        //                     </TableCell>
-        //                 ))}
-        //             </TableRow>
-        //         </TableHead>
-
-        //         {loading ? (
-        //             <TableSkeleton rows={rowsPerPage} columns={columns.length} />
-        //         ) : (
-        //             <TableBody>
-        //                 {data.length > 0 ? (
-        //                     data.map((row) => (
-        //                         <TableRow key={row.id} sx={{ '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' }, borderBottom: 'none' }}>
-        //                             {columns.map((column) => (
-        //                                 <TableCell key={column.field} sx={{ fontWeight: column.field === 'name' ? 600 : 400, fontSize: '14px', color: '#7E8388' }}>
-        //                                     {column.render ? column.render(row) : row[column.field] || '-'}
-        //                                 </TableCell>
-        //                             ))}
-        //                             {actions && (
-        //                                 <TableCell sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        //                                     {actions.edit && (
-        //                                         <IconButton size="small" onClick={() => actions.edit(row)} sx={{ color: '#7E8388' }}>
-        //                                             <IconPencil fontSize="small" />
-        //                                         </IconButton>
-        //                                     )}
-        //                                     {actions.view && (
-        //                                         <IconButton size="small" onClick={() => actions.view(row)} sx={{ color: '#7E8388' }}>
-        //                                             <IconEye fontSize="small" />
-        //                                         </IconButton>
-        //                                     )}
-        //                                 </TableCell>
-        //                             )}
-        //                         </TableRow>
-        //                     ))
-        //                 ) : (
-        //                     <TableRow>
-        //                         <TableCell colSpan={columns.length} align="center">
-        //                             <Typography variant="body2" color="textSecondary">
-        //                                 Nenhum lead encontrado.
-        //                             </Typography>
-        //                         </TableCell>
-        //                     </TableRow>
-        //                 )}
-        //             </TableBody>
-        //         )}
-        //     </Table>
-
-
-        //     <TablePagination
-        //         rowsPerPageOptions={[5, 10, 25]}
-        //         component="div"
-        //         count={totalRows}
-        //         rowsPerPage={rowsPerPage}
-        //         page={page}
-        //         onPageChange={(_, newPage) => onPageChange(newPage)}
-        //         onRowsPerPageChange={(e) => onRowsPerPageChange(parseInt(e.target.value, 10))}
-        //         labelRowsPerPage="Linhas por página"
-        //         sx={{
-        //             '& .Mui-selected': {
-        //                 backgroundColor: '#FFCC00 !important',
-        //                 color: '#7E8388',
-        //                 borderRadius: '6px',
-        //             },
-        //         }}
-        //     />
-        // </TableContainer>
-        <Box sx={{ height: 500, width: "100%" }}>
+        <Box sx={{ minHeight: 750, width: "100%" }}>
             <DataGrid
                 rows={data}
                 columns={gridColumns}
