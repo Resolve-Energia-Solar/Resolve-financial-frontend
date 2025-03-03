@@ -21,17 +21,20 @@ import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 
-import { parseISO, format } from 'date-fns';
+import { parseISO, format, isBefore} from 'date-fns';
 import HasPermission from '@/app/components/permissions/HasPermissions';
 import { useSelector } from 'react-redux';
 import AutoCompleteUser from '@/app/components/apps/invoice/components/auto-complete/Auto-Input-User';
 
 
-function LeadAddSchedulePage({ leadId = null, serviceId = null }) {
+function LeadAddSchedulePage({ leadId = null, serviceId = null, onRefresh = null, onClose = null }) {
   const { enqueueSnackbar } = useSnackbar();
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const { formData, handleChange, handleSave, loading: formLoading, formErrors, success } = useScheduleForm();
+  formData.leads_ids = [...new Set([...(formData.leads_ids || []), leadId])];
+
+  const MIN_SCHEDULE_DATE = '2022-01-17T00:00:00';
 
   const timeOptions = [
     { value: '08:30:00', label: '08:30' },
@@ -47,16 +50,6 @@ function LeadAddSchedulePage({ leadId = null, serviceId = null }) {
     { value: 'Cancelado', label: 'Cancelado' },
   ];
 
-  const showAlert = (message, type) => {
-    setAlertMessage(message);
-    setAlertType(type);
-    setAlertOpen(true);
-  };
-
-  const handleAlertClose = () => {
-    setAlertOpen(false);
-  };
-
   const validateChange = (field, newValue) => {
     if (field === 'schedule_date') {
       try {
@@ -64,13 +57,14 @@ function LeadAddSchedulePage({ leadId = null, serviceId = null }) {
         const minDate = parseISO(MIN_SCHEDULE_DATE);
 
         if (isBefore(selectedDate, minDate)) {
-          showAlert('A data selecionada não pode ser anterior a 17/01.', 'error');
+
+          enqueueSnackbar('A data selecionada não pode ser anterior a 17/01.', { variant: 'error' });
           handleChange(field, '');
           return;
         }
       } catch (error) {
         console.error('Erro ao processar a data:', error);
-        showAlert('Por favor, insira uma data válida.', 'error');
+        enqueueSnackbar('Por favor, insira uma data válida.', { variant: 'error' });
         handleChange(field, '');
         return;
       }
@@ -88,14 +82,14 @@ function LeadAddSchedulePage({ leadId = null, serviceId = null }) {
           const formattedTime = format(today, 'HH:mm:ss');
 
           if (selectedTime < formattedTime) {
-            showAlert('O horário selecionado não pode ser anterior ao horário atual.', 'error');
+            enqueueSnackbar('O horário selecionado não pode ser anterior ao horário atual.', { variant: 'error' });
             handleChange(field, '');
             return;
           }
         }
       } catch (error) {
         console.error('Erro ao processar o horário:', error);
-        showAlert('Por favor, insira um horário válido.', 'error');
+        enqueueSnackbar('Por favor, insira um horário válido.', { variant: 'error' });
         handleChange(field, '');
         return;
       }
@@ -103,6 +97,15 @@ function LeadAddSchedulePage({ leadId = null, serviceId = null }) {
 
     handleChange(field, newValue);
   };
+
+  const handleSaveForm = async () => {
+    const response = await handleSave();
+    if (response) {
+      enqueueSnackbar('Agendamento salvo com sucesso', { variant: 'success' });
+      if (onRefresh) onRefresh();
+      if (onClose) onClose();
+    }
+  }
 
   return (
     <Grid container spacing={1}>
@@ -126,18 +129,6 @@ function LeadAddSchedulePage({ leadId = null, serviceId = null }) {
           />
         </Grid>
       )}
-
-      <Grid item xs={12}>
-        <CustomFormLabel htmlFor="client">Cliente</CustomFormLabel>
-        <AutoCompleteUser
-          onChange={(id) => handleChange('customer_id', id)}
-          value={formData.customer_id}
-          {...(formErrors.customer_id && {
-            error: true,
-            helperText: formErrors.customer_id,
-          })}
-        />
-      </Grid>
 
       <Grid item xs={12}>
         <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
@@ -211,7 +202,7 @@ function LeadAddSchedulePage({ leadId = null, serviceId = null }) {
           <Button
             variant="contained"
             sx={{ backgroundColor: '#FFCC00', color: '#000', px: 3 }}
-            onClick={handleSave}
+            onClick={handleSaveForm}
             disabled={formLoading}
             endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
           >

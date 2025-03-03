@@ -50,9 +50,13 @@ function ViewLeadPage({ leadId = null }) {
         const fetchLead = async () => {
             setLoadingLeads(true);
             try {
-                const data = await leadService.getLeadById(leadId);
+                const data = await leadService.getLeadById(leadId, {
+                    params: {
+                        expand: 'schedules',
+                    }
+                });
                 setLead(data);
-                setLastInspetion(data.inspections.filter(i => i.service === parseInt(SERVICE_INSPECTION_ID)).sort((a, b) => new Date(b.schedule_date) - new Date(a.schedule_date))[0]);
+                setLastInspetion(data.schedules.filter(i => i.service.id === parseInt(SERVICE_INSPECTION_ID)).sort((a, b) => new Date(b.schedule_date) - new Date(a.schedule_date))[0]);
                 console.log(data);
             } catch (err) {
                 enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
