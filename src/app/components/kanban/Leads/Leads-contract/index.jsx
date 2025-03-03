@@ -26,7 +26,7 @@ import formatPhoneNumber from '@/utils/formatPhoneNumber';
 const LeadsContractPage = ({ leadId = null }) => {
     const router = useRouter();
     const [data, setData] = useState([]);
-    const [loadingLeads, setLoadingLeads] = useState(true);
+    const [loadingContracts, setLoadingContracts] = useState(true);
     const [error, setError] = useState(null);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -60,7 +60,7 @@ const LeadsContractPage = ({ leadId = null }) => {
 
     useEffect(() => {
         const fetchLeads = async () => {
-            setLoadingLeads(true);
+            setLoadingContracts(true);
             try {
                 const data = await leadService.getLeads({
                     params: {
@@ -73,7 +73,7 @@ const LeadsContractPage = ({ leadId = null }) => {
             } catch (err) {
                 setError('Erro ao carregar Leads');
             } finally {
-                setLoadingLeads(false);
+                setLoadingContracts(false);
             }
         };
 
@@ -108,7 +108,7 @@ const LeadsContractPage = ({ leadId = null }) => {
                         columns={columns}
                         data={data}
                         totalRows={totalRows}
-                        loading={loadingLeads}
+                        loading={loadingContracts}
                         page={page}
                         rowsPerPage={rowsPerPage}
                         onPageChange={(newPage) => setPage(newPage)}
@@ -117,8 +117,8 @@ const LeadsContractPage = ({ leadId = null }) => {
                             setPage(0);
                         }}
                         actions={{
-                            edit: (row) => router.push(`/apps/leads/${row.id}/edit`),
-                            view: (row) => router.push(`/apps/leads/${row.id}/view`),
+                            edit: (row) => router.push("/apps/leads/${row.id}/edit"),
+                            view: (row) => router.push("/apps/leads/${row.id}/view"),
                         }}
                     />
 

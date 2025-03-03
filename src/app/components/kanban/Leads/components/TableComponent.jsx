@@ -43,7 +43,7 @@ const TableComponent = ({
         })),
         {
           field: "actions",
-          headerName: "Ações",
+          headerName: "Editar / Ver",
           sortable: false,
           filterable: false,
           width: 120,
@@ -148,7 +148,7 @@ const TableComponent = ({
         <Box sx={{ height: 500, width: "100%" }}>
             <DataGrid
                 rows={data}
-                columns={columns}
+                columns={gridColumns}
                 loading={loading}
                 paginationMode="server"
                 rowCount={totalRows}
