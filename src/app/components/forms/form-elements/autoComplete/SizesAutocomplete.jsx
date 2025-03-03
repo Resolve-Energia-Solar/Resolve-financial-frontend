@@ -139,6 +139,8 @@ const SizesAutocomplete = () => (
       id="medium-combo-box-demo"
       options={top100Films}
       fullWidth
+      loadingText="Carregando..."
+      noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
       sx={{
         mb: 2,
       }}

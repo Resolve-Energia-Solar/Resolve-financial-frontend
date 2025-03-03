@@ -82,6 +82,8 @@ export default function AutoCompleteInversor({
       loading={loading}
       value={selectedMaterial}
       disabled={disabled}
+      loadingText="Carregando..."
+      noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
       onInputChange={(event, newInputValue) => fetchMaterialsByName(newInputValue)}
       onChange={handleChange}
       isOptionEqualToValue={(option, value) => option.id === value.id}

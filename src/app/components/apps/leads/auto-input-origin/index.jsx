@@ -37,6 +37,8 @@ export default function AutoCompleteOrigin({ onChange, value, error, labeltitle,
         loading={loading}
         value={selectedOrigin}
         onChange={handleChange}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         renderInput={(params) => (
           <CustomTextField
             label={labeltitle}

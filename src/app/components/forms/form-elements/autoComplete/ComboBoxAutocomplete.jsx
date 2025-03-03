@@ -139,6 +139,8 @@ const ComboBoxAutocomplete = () => (
       id="combo-box-demo"
       options={top100Films}
       fullWidth
+      loadingText="Carregando..."
+      noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
       renderInput={(params) => (
         <CustomTextField {...params} placeholder="Select movie" aria-label="Select movie" />
       )}

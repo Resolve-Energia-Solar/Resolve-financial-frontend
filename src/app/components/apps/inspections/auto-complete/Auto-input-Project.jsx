@@ -92,6 +92,8 @@ export default function AutoCompleteProject({ onChange, value, error, helperText
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         isOptionEqualToValue={(option, value) => option.project_number === value.project_number}
         getOptionLabel={(option) =>
           `${option.project_number} - ${option.customerName || ''}`

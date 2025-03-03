@@ -121,6 +121,8 @@ export default function AutoCompleteSituation({
         options={options}
         loading={loading}
         value={selectedSituations}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         onInputChange={(event, newInputValue) => {
           fetchSituationsByName(newInputValue);
         }}

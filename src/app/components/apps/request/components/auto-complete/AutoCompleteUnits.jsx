@@ -106,6 +106,8 @@ export default function AutoCompleteUnits({ onChange, value, error, helperText, 
         options={options}
         loading={loading}
         value={selectedUnit}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         {...rest}
         onInputChange={(event, newInputValue) => {
           fetchUnitsByName(newInputValue);

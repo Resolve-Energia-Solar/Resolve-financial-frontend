@@ -67,6 +67,8 @@ export default function AutoCompleteDepartament({ onChange, value, error, helper
         loading={loading}
         value={selectedDepartament}
         onChange={handleChange}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         renderInput={(params) => (
           <CustomTextField
             error={error}

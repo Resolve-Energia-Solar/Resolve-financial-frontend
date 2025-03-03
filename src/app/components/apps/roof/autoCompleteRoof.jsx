@@ -82,6 +82,8 @@ export default function AutoCompleteRoofType({ onChange, value, error, helperTex
         options={options}
         loading={loading}
         value={selectedRoofType}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         onInputChange={(event, newInputValue) => {
           fetchRoofTypesByName(newInputValue);
         }}

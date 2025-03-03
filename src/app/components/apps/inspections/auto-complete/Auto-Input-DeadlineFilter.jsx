@@ -96,6 +96,8 @@ export default function AutoCompleteDeadlineFilter({
         noOptionsText={noOptionsText}
         loading={loading}
         value={selectedDeadline}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         onInputChange={(event, newInputValue) => {
           fetchDeadlinesByName(newInputValue);
         }}

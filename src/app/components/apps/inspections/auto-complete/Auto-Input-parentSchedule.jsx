@@ -132,6 +132,8 @@ export default function AutoCompleteParentSchedule({
         onOpen={handleOpen}
         onClose={handleClose}
         isOptionEqualToValue={(option, value) => option.id === value.id}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         getOptionLabel={(option) =>
           option.name && option.serviceName && option.status
             ? `${option.name} - ${option.serviceName} | Status: ${option.status}`

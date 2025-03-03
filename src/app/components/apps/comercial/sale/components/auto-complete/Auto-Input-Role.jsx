@@ -100,6 +100,8 @@ export default function AutoCompleteRole({ onChange, value, error, helperText })
         options={options}
         loading={loading}
         value={selectedRole}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         onInputChange={(event, newInputValue) => {
           fetchRolesByName(newInputValue);
         }}

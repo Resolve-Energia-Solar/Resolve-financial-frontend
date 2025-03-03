@@ -100,11 +100,13 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.id === value.id} // Compara pelos IDs
+        isOptionEqualToValue={(option, value) => option.id === value.id}
         getOptionLabel={(option) => option.name}
         options={options}
         loading={loading}
         value={selectedSale}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         {...rest}
         onInputChange={(event, newInputValue) => {
           fetchSalesByName(newInputValue);

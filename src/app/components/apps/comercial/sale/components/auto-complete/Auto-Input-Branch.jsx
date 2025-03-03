@@ -99,6 +99,8 @@ export default function AutoCompleteBranch({ onChange, value, error, helperText,
         loading={loading}
         value={selectedBranch}
         disabled={disabled}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         onInputChange={(event, newInputValue) => {
           fetchBranchesByName(newInputValue);
         }}

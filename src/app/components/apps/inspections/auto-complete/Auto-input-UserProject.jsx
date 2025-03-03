@@ -16,7 +16,7 @@ export default function AutoCompleteUserProject({
   error,
   helperText,
   selectedClient,
-  noTextOptions,
+  noTextOptions="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.",
 }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
@@ -113,6 +113,7 @@ export default function AutoCompleteUserProject({
         onClose={handleClose}
         isOptionEqualToValue={(option, value) => option.id === value.id}
         getOptionLabel={(option) => option.project_number?.toString() || ''}
+        loadingText="Carregando..."
         renderOption={(props, option) => (
           <li {...props}>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>

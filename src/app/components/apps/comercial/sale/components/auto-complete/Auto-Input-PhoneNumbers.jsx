@@ -138,6 +138,8 @@ export default function AutoCompletePhoneNumbers({
         options={options}
         loading={loading}
         value={selectedPhoneNumbers}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         onInputChange={(event, newInputValue) => {
           fetchPhoneNumbersByName(newInputValue);
         }}

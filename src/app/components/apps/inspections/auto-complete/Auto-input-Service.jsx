@@ -12,7 +12,7 @@ export default function AutoCompleteServiceCatalog({
   value,
   error,
   helperText,
-  noOptionsText,
+  noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.",
 }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
@@ -87,6 +87,7 @@ export default function AutoCompleteServiceCatalog({
         options={options}
         loading={loading}
         value={selectedServiceCatalog}
+        loadingText="Carregando..."
         noOptionsText={noOptionsText}
         onInputChange={(event, newInputValue) => {
           fetchServiceCatalogsByName(newInputValue);

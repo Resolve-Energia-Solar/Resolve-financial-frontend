@@ -106,6 +106,7 @@ export default function AutoCompleteUserSchedule({
         loading={loading}
         disabled={disabled}
         noOptionsText="Não há agentes disponíveis para a região, data e horário selecionados. Por favor, escolha outra data e horário ou entre em contato com o setor de vistoria."
+        loadingText="Carregando..."
         value={selectedUser}
         onInputChange={(event, newInputValue) => {
           fetchUsersByName(newInputValue);

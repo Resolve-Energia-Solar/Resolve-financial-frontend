@@ -122,6 +122,8 @@ export default function AutoCompletePhoneNumber({
         options={options}
         loading={loading}
         value={selectedPhone}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         {...props}
         onInputChange={(event, newInputValue) => {
           if (!disableSuggestions) {

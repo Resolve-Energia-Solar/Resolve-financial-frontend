@@ -132,6 +132,8 @@ const LateralForm = ({ isEditing, formData, due_date, handleInputChange, options
                         value={multiSelectValues}
                         onChange={handleChangeSituation}
                         disabled={!isEditing}
+                        loadingText="Carregando..."
+                        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."                  
                         renderInput={(params) => (
                             <CustomTextField {...params} label="Selecione opções" variant="outlined" />
                         )}

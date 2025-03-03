@@ -194,8 +194,9 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
           return `${nome_fantasia} - ${cnpj_cpf}`.trim();
         }}
         options={options}
-        noOptionsText="Digite algo para buscar..."
-        loading={loading}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
+          loading={loading}
         disabled={disabled}
         value={selectedBeneficiary || value}
         onInputChange={handleInputChange}

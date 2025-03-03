@@ -106,6 +106,8 @@ export default function AutoCompleteCompanies({ onChange, value, error, helperTe
         options={options}
         loading={loading}
         value={selectedCompany}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         {...rest}
         onInputChange={(event, newInputValue) => {
           fetchCompaniesByName(newInputValue);

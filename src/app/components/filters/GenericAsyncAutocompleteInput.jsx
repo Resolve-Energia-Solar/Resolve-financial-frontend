@@ -58,6 +58,8 @@ const GenericAsyncAutocompleteInput = ({
       onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
       onChange={(event, newValue) => onChange(newValue)}
       value={value}
+      loadingText="Carregando..."
+      noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
       {...props}
       renderInput={(params) => (
         <TextField
