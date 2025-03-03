@@ -6,7 +6,7 @@ import PageContainer from '@/app/components/container/PageContainer';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import ParentCard from '@/app/components/shared/ParentCard';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
-import FormDateTime from '@/app/components/forms/form-custom/FormDateTime';
+import FormDate from '@/app/components/forms/form-custom/FormDate';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import useCampaignForm from '@/hooks/campaign/useCampaignForm';
 import useCampaign from '@/hooks/campaign/useCampaign';
@@ -62,23 +62,23 @@ export default function CampaignForm() {
 
           {/* Data de Início */}
           <Grid item xs={12} sm={12} lg={4}>
-            <FormDateTime
+            <FormDate
               label="Data de Início"
-              name="start_datetime"
-              value={formData.start_datetime}
-              onChange={(newValue) => handleChange('start_datetime', newValue)}
-              {...(formErrors.start_datetime && { error: true, helperText: formErrors.start_datetime })}
+              name="start_date"
+              value={formData.start_date}
+              onChange={(newValue) => handleChange('start_date', newValue)}
+              {...(formErrors.start_date && { error: true, helperText: formErrors.start_date })}
             />
           </Grid>
 
           {/* Data de Término */}
           <Grid item xs={12} sm={12} lg={4}>
-            <FormDateTime
+            <FormDate
               label="Data de Término"
-              name="end_datetime"
-              value={formData.end_datetime}
-              onChange={(newValue) => handleChange('end_datetime', newValue)}
-              {...(formErrors.end_datetime && { error: true, helperText: formErrors.end_datetime })}
+              name="end_date"
+              value={formData.end_date}
+              onChange={(newValue) => handleChange('end_date', newValue)}
+              {...(formErrors.end_date && { error: true, helperText: formErrors.end_date })}
             />
           </Grid>
 
