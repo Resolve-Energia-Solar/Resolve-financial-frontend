@@ -9,11 +9,29 @@ import {
   AccordionDetails,
 } from '@mui/material';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
-import { ExpandMore } from '@mui/icons-material';
-import AttachmentCard from '../components/CardAttachment';
 import LeadAttachmentsAccordion from '../components/LeadAttachmentsAccordion';
+import documentTypeService from '@/services/documentTypeService';
+import { useEffect, useState } from 'react';
 
 function LeadDocumentPage({ leadId = null }) {
+  const [documentTypes, setDocumentTypes] = useState([]);
+
+  const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
+
+  const id_sale = 2070;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await documentTypeService.getDocumentTypeFromContract();
+        setDocumentTypes(response.results);
+      } catch (error) {
+        console.log('Error: ', error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <Grid container spacing={0}>
       <Grid item xs={12} sx={{ overflow: 'scroll' }}>
@@ -30,7 +48,11 @@ function LeadDocumentPage({ leadId = null }) {
           <LeadInfoHeader leadId={leadId} />
 
           <Box sx={{ mt: 2 }}>
-            <LeadAttachmentsAccordion />
+            <LeadAttachmentsAccordion
+              contentType={CONTEXT_TYPE_SALE_ID}
+              objectId={id_sale}
+              documentTypes={documentTypes}
+            />
           </Box>
         </Box>
       </Grid>
