@@ -12,17 +12,42 @@ import AttachmentCard from '../components/CardAttachment';
 import { useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import attachmentService from '@/services/attachmentService';
+import AddAttachmentModal from '../Leads-documents/AddAttachmentModal';
 
 function LeadAttachmentsAccordion({ objectId, contentType, documentTypes }) {
     const theme = useTheme();
     const [loading, setLoading] = useState(false);
     const [attachments, setAttachments] = useState([]);
+    const [openModal, setOpenModal] = useState(false);
+    const [selectedAttachment, setSelectedAttachment] = useState(null);
+    const [refresh, setRefresh] = useState(false);
+
+    const handleRefresh = () => {
+        setRefresh(!refresh);
+    };
+
+    console.log('selectedAttachment teste: ', selectedAttachment);
+
+    const options_document_types = documentTypes.map((docType) => ({
+        value: docType.id,
+        label: docType.name,
+    }));
 
     const statusDoc = [
         { value: 'EA', label: 'Em Análise', color: theme.palette.info.main },
         { value: 'A', label: 'Aprovado', color: theme.palette.success.main },
         { value: 'R', label: 'Reprovado', color: theme.palette.error.main },
     ];
+
+    const handleSelectAttachment = (attachment) => {
+        setSelectedAttachment(attachment);
+        setOpenModal(true);
+    };
+
+    const handleClosedModal = () => {
+        setSelectedAttachment(null);
+        setOpenModal(false);
+    };
 
     useEffect(() => {
         setLoading(true);
@@ -35,7 +60,7 @@ function LeadAttachmentsAccordion({ objectId, contentType, documentTypes }) {
                     .filter(docType => !fetchedAttachments.some(att => att.document_type.id === docType.id))
                     .map(docType => ({
                         id: `pending-${docType.id}`,
-                        document_type: { name: `${docType.name}` },
+                        document_type: { name: `${docType.name}`, id: docType.id },
                         pending: true
                     }));
 
@@ -49,49 +74,64 @@ function LeadAttachmentsAccordion({ objectId, contentType, documentTypes }) {
             }
         };
         fetchData();
-    }, [objectId, contentType, documentTypes]);
+    }, [objectId, contentType, documentTypes, refresh]);
 
     return (
-        <Accordion defaultExpanded>
-            <AccordionSummary
-                expandIcon={<ExpandMore />}
-                aria-controls="panel1-content"
-                id="panel1-header"
-            >
-                <Typography variant="h6" sx={{ fontWeight: 800 }}>
-                    Anexos da venda - RSOL0001
-                </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-                <Box sx={{ mt: 2 }}>
-                    <Grid container spacing={2}>
-                        {loading ? (
-                            <Typography
-                                variant="body2"
-                                sx={{ fontWeight: 400, color: '#092C4C', fontSize: '14px' }}
-                            >
-                                Carregando...
-                            </Typography>
-                        ) : (
-                            attachments.map((attachment) => (
-                                <Grid item xs={12} md={6} key={attachment.id}>
-                                    <AttachmentCard filename={attachment.document_type.name} pending={attachment.pending} onClick={() => console.log('Clicked on attachment:', attachment)} />
-                                </Grid>
-                            ))
-                        )}
-                    </Grid>
-                </Box>
-
-                <Box sx={{ mt: 2 }}>
-                    <Typography
-                        variant="body2"
-                        sx={{ fontWeight: 400, color: '#092C4C', cursor: 'pointer', fontSize: '14px' }}
-                    >
-                        + Anexar novo documento
+        <>
+            <Accordion defaultExpanded>
+                <AccordionSummary
+                    expandIcon={<ExpandMore />}
+                    aria-controls="panel1-content"
+                    id="panel1-header"
+                >
+                    <Typography variant="h6" sx={{ fontWeight: 800 }}>
+                        Anexos da venda - RSOL0001
                     </Typography>
-                </Box>
-            </AccordionDetails>
-        </Accordion>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Box sx={{ mt: 2 }}>
+                        <Grid container spacing={2}>
+                            {loading ? (
+                                <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 400, color: '#092C4C', fontSize: '14px' }}
+                                >
+                                    Carregando...
+                                </Typography>
+                            ) : (
+                                attachments.map((attachment) => (
+                                    <Grid item xs={12} md={6} key={attachment.id}>
+                                        <AttachmentCard filename={attachment.document_type.name} pending={attachment.pending} onClick={() => handleSelectAttachment(attachment)} onEdit={() => handleSelectAttachment(attachment)} />
+                                    </Grid>
+                                ))
+                            )}
+                        </Grid>
+                    </Box>
+
+                    <Box sx={{ mt: 2 }}>
+                        <Typography
+                            variant="body2"
+                            sx={{ fontWeight: 400, color: '#092C4C', cursor: 'pointer', fontSize: '14px' }}
+                            onClick={() => handleSelectAttachment(null)}
+                        >
+                            + Anexar novo documento
+                        </Typography>
+
+                    </Box>
+                </AccordionDetails>
+
+            </Accordion>
+
+            <AddAttachmentModal
+                objectId={parseInt(objectId)}
+                contentType={parseInt(contentType)}
+                openModal={openModal}
+                onCloseModal={handleClosedModal}
+                selectedAttachment={selectedAttachment}
+                options_document_types={options_document_types}
+                onRefresh={handleRefresh}
+            />
+        </>
     );
 }
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PictureAsPdf } from '@mui/icons-material';
+import { PendingActionsOutlined, PictureAsPdf } from '@mui/icons-material';
 import { IconPencil, IconTrash } from '@tabler/icons-react';
 import { Box, Card, Typography, IconButton } from '@mui/material';
 
@@ -37,7 +37,7 @@ export default function AttachmentCard({ filename, filesize, onEdit, onDelete, p
                     <Box>
                         <IconButton
                             onClick={(e) => {
-                                e.stopPropagation(); 
+                                e.stopPropagation();
                                 onDelete();
                             }}
                         >
@@ -51,6 +51,15 @@ export default function AttachmentCard({ filename, filesize, onEdit, onDelete, p
                             }}
                         >
                             <IconPencil size={20} />
+                        </IconButton>
+                    </Box>
+                )}
+
+                {pending && (
+                    <Box>
+                        <IconButton
+                        >
+                            <PendingActionsOutlined size={20} />
                         </IconButton>
                     </Box>
                 )}
