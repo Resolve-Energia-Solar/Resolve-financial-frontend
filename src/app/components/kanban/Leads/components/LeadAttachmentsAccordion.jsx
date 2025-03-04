@@ -14,7 +14,7 @@ import { useTheme } from '@emotion/react';
 import attachmentService from '@/services/attachmentService';
 import AddAttachmentModal from '../Leads-documents/AddAttachmentModal';
 
-function LeadAttachmentsAccordion({ objectId, contentType, documentTypes }) {
+function LeadAttachmentsAccordion({ objectId, contentType, documentTypes, title }) {
     const theme = useTheme();
     const [loading, setLoading] = useState(false);
     const [attachments, setAttachments] = useState([]);
@@ -25,8 +25,6 @@ function LeadAttachmentsAccordion({ objectId, contentType, documentTypes }) {
     const handleRefresh = () => {
         setRefresh(!refresh);
     };
-
-    console.log('selectedAttachment teste: ', selectedAttachment);
 
     const options_document_types = documentTypes.map((docType) => ({
         value: docType.id,
@@ -85,7 +83,7 @@ function LeadAttachmentsAccordion({ objectId, contentType, documentTypes }) {
                     id="panel1-header"
                 >
                     <Typography variant="h6" sx={{ fontWeight: 800 }}>
-                        Anexos da venda - RSOL0001
+                        {title || 'Documentos'}
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>

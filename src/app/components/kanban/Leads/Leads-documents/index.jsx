@@ -18,7 +18,7 @@ function LeadDocumentPage({ leadId = null }) {
 
   const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
-  const id_sale = 2070;
+  const id_sale = 2070; // apenas um ID de exemplo
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,6 +51,7 @@ function LeadDocumentPage({ leadId = null }) {
             <LeadAttachmentsAccordion
               contentType={CONTEXT_TYPE_SALE_ID}
               objectId={id_sale}
+              title="Anexos da Venda"
               documentTypes={documentTypes}
             />
           </Box>

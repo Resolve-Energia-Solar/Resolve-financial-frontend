@@ -35,14 +35,16 @@ export default function AttachmentCard({ filename, filesize, onEdit, onDelete, p
                 </Box>
                 {!pending && (
                     <Box>
-                        <IconButton
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onDelete();
-                            }}
-                        >
-                            <IconTrash size={20} />
-                        </IconButton>
+                        {onDelete && (
+                            <IconButton
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onDelete();
+                                }}
+                            >
+                                <IconTrash size={20} />
+                            </IconButton>
+                        )}
 
                         <IconButton
                             onClick={(e) => {
