@@ -133,7 +133,6 @@ export default function AutoCompleteParentSchedule({
         onClose={handleClose}
         isOptionEqualToValue={(option, value) => option.id === value.id}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         getOptionLabel={(option) =>
           option.name && option.serviceName && option.status
             ? `${option.name} - ${option.serviceName} | Status: ${option.status}`
@@ -142,7 +141,7 @@ export default function AutoCompleteParentSchedule({
         options={options}
         loading={loading}
         value={selectedSchedules}
-        noOptionsText={noOptionsText}
+        noOptionsText={noOptionsText || 'Nenhum agendamento encontrado'}
         onInputChange={(event, newInputValue) => {
           fetchSchedulesByName(newInputValue);
         }}
