@@ -3,7 +3,7 @@ import apiClient from './apiClient';
 const serviceOpinionsService = {
   getServiceOpinions: async ({ ordering, nextPage, limit = 5, page = 1, ...rest }) => {
 
-    
+
     const params = {
       ordering: ordering || '',
       page: nextPage || page,
@@ -23,9 +23,9 @@ const serviceOpinionsService = {
       throw error;
     }
   },
-  getServiceOpinionsByName: async (name) => {
+  getServiceOpinionsByName: async (name, params = { limit: 60 }) => {
     try {
-      const response = await apiClient.get(`/api/service-opinions/?name=${name}`);
+      const response = await apiClient.get(`/api/service-opinions/?name__icontains=${name}`, params);
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar parecer com id ${name}:`, error);
