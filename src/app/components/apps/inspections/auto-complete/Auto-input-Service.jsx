@@ -12,7 +12,7 @@ export default function AutoCompleteServiceCatalog({
   value,
   error,
   helperText,
-  noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.",
+  noOptionsText = 'Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.',
 }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
@@ -27,7 +27,8 @@ export default function AutoCompleteServiceCatalog({
           if (serviceCatalogValue) {
             setSelectedServiceCatalog({
               id: serviceCatalogValue.id,
-              name: serviceCatalogValue.name,
+              name__icontains: serviceCatalogValue.name,
+              limit: 15,
             });
           }
         } catch (error) {
