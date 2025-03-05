@@ -31,7 +31,6 @@ export default function AutoCompleteReasonMultiple({
   // Busca as razões padrão pelo ID para popular o "selectedReasons"
   useEffect(() => {
     const fetchDefaultReasons = async () => {
-      console.log('value', value);
       if (valuesDefault.length > 0) {
         try {
           // Utiliza findOne para buscar um único registro
