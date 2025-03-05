@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Link from 'next/link';
 import CardMedia from '@mui/material/CardMedia';
 import Fab from '@mui/material/Fab';
 import Grid from '@mui/material/Grid';
@@ -174,9 +175,11 @@ const ProfileBanner = ({ user }) => {
             <Fab size="small" color="error" sx={{ backgroundColor: '#CD201F' }}>
               <IconBrandYoutube size="18" />
             </Fab>
-            <Button color="primary" variant="contained">
-              Adicionar Story
-            </Button>
+            <Link href={`/apps/users/${user.id}/update`}>
+              <Button color="primary" variant="contained">
+                Alterar Cadastro
+              </Button>
+            </Link>
           </Stack>
         </Grid>
       </Grid>
