@@ -439,6 +439,7 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
         saleId={id_sale}
       /> */}
       <Snackbar
+        open={snackbarOpen} 
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
