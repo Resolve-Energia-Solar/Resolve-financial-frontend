@@ -148,7 +148,7 @@ const scheduleFilterConfig = [
     },
     mapResponse: (data) =>
       data.results.map((opinion) => ({
-        label: opinion.name,
+        label: `${opinion.name} - ${opinion.service?.name}`,
         value: opinion.id,
       })),
   },
@@ -163,7 +163,7 @@ const scheduleFilterConfig = [
     },
     mapResponse: (data) =>
       data.results.map((opinion) => ({
-        label: opinion.name,
+        label: `${opinion.name} - ${opinion.service?.name}`,
         value: opinion.id,
       })),
   },
