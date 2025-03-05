@@ -272,8 +272,7 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                     const newStatus = e.target.value;
                     handleChange('status', newStatus);
                     if (newStatus !== 'C' && newStatus !== 'D') {
-                      // Limpa os motivos quando o status não é "C" nem "D"
-                      handleChange('cancellation_reasons_ids', []);
+                      handleChange('cancellationReasonsIds', []);
                     }
                   }}
                   disabled={!hasPermission(['accounts.change_status_sale_field'])}
@@ -318,12 +317,12 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                     </CustomFormLabel>
                     <AutoCompleteReasonMultiple
                       onChange={(id) =>
-                        handleChange('cancellation_reasons_ids', id)
+                        handleChange('cancellationReasonsIds', id)
                       }
-                      value={formData.cancellation_reasons_ids}
-                      {...(formErrors.cancellation_reasons_ids && {
+                      value={formData.cancellationReasonsIds}
+                      {...(formErrors.cancellationReasonsIds && {
                         error: true,
-                        helperText: formErrors.cancellation_reasons_ids,
+                        helperText: formErrors.cancellationReasonsIds,
                       })}
                     />
                   </Grid>

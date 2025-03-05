@@ -1,3 +1,4 @@
+import { find } from 'lodash';
 import apiClient from './apiClient';
 
 const serviceReason = {
@@ -12,6 +13,16 @@ const serviceReason = {
 
     const response = await apiClient.get(`/api/reasons/`, { params });
     return response.data;
+  },
+
+  findReason: async (id) => {
+    try {
+      const response = await apiClient.get(`/api/reasons/${id}/`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar parecer com id ${id}:`, error);
+      throw error;
+    }
   },
 
   updateReason: async (id, data) => {

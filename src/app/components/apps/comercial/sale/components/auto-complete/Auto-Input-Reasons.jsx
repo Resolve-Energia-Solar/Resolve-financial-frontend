@@ -31,11 +31,12 @@ export default function AutoCompleteReasonMultiple({
   // Busca as razões padrão pelo ID para popular o "selectedReasons"
   useEffect(() => {
     const fetchDefaultReasons = async () => {
+      console.log('value', value);
       if (valuesDefault.length > 0) {
         try {
           // Utiliza findOne para buscar um único registro
           const reasons = await Promise.all(
-            valuesDefault.map((id) => serviceReason.findOne(id))
+            valuesDefault.map((id) => serviceReason.findReason(id))
           );
           const formattedReasons = reasons.map((reason) => ({
             id: reason.id,
@@ -45,9 +46,7 @@ export default function AutoCompleteReasonMultiple({
         } catch (error) {
           console.error('Erro ao buscar reasons:', error);
         }
-      } else {
-        setSelectedReasons([]);
-      }
+      } 
     };
 
     fetchDefaultReasons();
