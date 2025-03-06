@@ -19,7 +19,7 @@ const SortingFilter = ({ label, onSortChanges }) => {
                 backgroundColor: "transparent",
                 border: "none",
                 fontWeight: 500,
-                "&:hover": { backgroundColor: "transparent" },
+                "&:hover": { backgroundColor: "transparent", color: "#7E8388" },
                 "& .MuiOutlinedInput-notchedOutline": { border: "none" }, 
               }}
               endIcon={sortOrder === "asc" ? <ArrowUpward fontSize="small" /> : <ArrowDownward fontSize="small" />}
