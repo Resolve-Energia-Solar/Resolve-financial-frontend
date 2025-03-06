@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
@@ -8,15 +8,15 @@ import Box from '@mui/material/Box';
 import EditCustomer from '@/app/components/apps/users/Edit-user/customer/customer';
 import ListAddresses from '@/app/components/apps/users/Edit-user/customer/Addresses';
 import ListPhones from '@/app/components/apps/users/Edit-user/customer/Phones';
+import EmployeeData from '../employee/EmployeeData';
 import PersonIcon from '@mui/icons-material/Person';
 import HomeIcon from '@mui/icons-material/Home';
 import PhoneIcon from '@mui/icons-material/Phone';
+import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import { useParams } from 'next/navigation';
-
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
-
   return (
     <div
       role="tabpanel"
@@ -50,9 +50,7 @@ function a11yProps(index) {
 
 export default function CustomerTabs({ userId = null }) {
   const params = useParams();
-  let id = userId;
-  if (!userId) id = params.id;
-
+  const id = userId || params.id;
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -60,9 +58,7 @@ export default function CustomerTabs({ userId = null }) {
   };
 
   return (
-    <Box
-      sx={{ bgcolor: 'background.paper', display: 'flex', padding: 0 }}
-    >
+    <Box sx={{ bgcolor: 'background.paper', display: 'flex', padding: 0 }}>
       <Tabs
         orientation="vertical"
         value={value}
@@ -71,8 +67,9 @@ export default function CustomerTabs({ userId = null }) {
         sx={{ borderRight: 1, borderColor: 'divider', minWidth: '50px' }}
       >
         <Tab label={<PersonIcon />} sx={{ p: 0, minWidth: '40px' }} {...a11yProps(0)} />
-        <Tab label={<HomeIcon />} sx={{ p: 0, minWidth: '40px' }}  {...a11yProps(1)} />
-        <Tab label={<PhoneIcon />} sx={{ p: 0, minWidth: '40px' }}   {...a11yProps(2)} />
+        <Tab label={<HomeIcon />} sx={{ p: 0, minWidth: '40px' }} {...a11yProps(1)} />
+        <Tab label={<PhoneIcon />} sx={{ p: 0, minWidth: '40px' }} {...a11yProps(2)} />
+        <Tab label={<WorkOutlineIcon />} sx={{ p: 0, minWidth: '40px' }} {...a11yProps(3)} />
       </Tabs>
       <TabPanel value={value} index={0}>
         <EditCustomer userId={id} />
@@ -83,7 +80,9 @@ export default function CustomerTabs({ userId = null }) {
       <TabPanel value={value} index={2}>
         <ListPhones userId={id} />
       </TabPanel>
+      <TabPanel value={value} index={3}>
+        <EmployeeData userId={id} />
+      </TabPanel>
     </Box>
   );
 }
-
