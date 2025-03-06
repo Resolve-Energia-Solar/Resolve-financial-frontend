@@ -50,7 +50,10 @@ const TableComponent = ({
                             </TableCell>
                         ))}
                         <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
-                            Editar/Ver
+                            Editar
+                        </TableCell>
+                        <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
+                            Ver
                         </TableCell>
                     </TableRow>
                 </TableHead>
@@ -59,44 +62,51 @@ const TableComponent = ({
                     <TableSkeleton rows={rowsPerPage} columns={columns.length} />
                 ) : (
                     <TableBody>
-                    {loading ? (
-                        <TableRow>
-                            <TableCell colSpan={columns.length + 1} align="center">
-                                Carregando...
-                            </TableCell>
-                        </TableRow>
-                    ) : filteredData.length > 0 ? (
-                        filteredData.map((row) => (
-                            <TableRow key={row.id}>
-                                {columns.map((column) => (
-                                    <TableCell key={column.field}>
-                                        {column.render ? column.render(row) : row[column.field] || '-'}
+                        {data.length > 0 ? (
+                            data.map((row) => (
+                                <TableRow key={row.id} sx={{ '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' }, borderBottom: 'none' }}>
+                                    {columns.map((column) => (
+                                        <TableCell key={column.field} sx={{ fontWeight: column.field === 'name' ? 600 : 400, fontSize: '14px', color: '#7E8388' }}>
+                                            {column.render ? column.render(row) : row[column.field] || '-'}
+                                        </TableCell>
+                                    ))}
+
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        {actions?.edit && (
+                                            <IconButton
+                                                size="small"
+                                                onClick={() => actions.edit(row)}
+                                                sx={{ color: '#7E8388' }}
+                                            >
+                                                <IconPencil fontSize="small" />
+                                            </IconButton>
+                                        )}
                                     </TableCell>
-                                ))}
-                                <TableCell>
-                                    {actions.edit && (
-                                        <IconButton onClick={() => actions.edit(row)}>
-                                            <IconPencil />
-                                        </IconButton>
-                                    )}
-                                    {actions.view && (
-                                        <IconButton onClick={() => actions.view(row)}>
-                                            <IconEye />
-                                        </IconButton>
-                                    )}
+                                    
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        {actions?.view && (
+                                            <IconButton
+                                                size="small"
+                                                onClick={() => actions.view(row)}
+                                                sx={{ color: '#7E8388' }}
+                                            >
+                                                <IconEye fontSize="small" />
+                                            </IconButton>
+                                        )}
+                                    </TableCell>
+
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={columns.length} align="center">
+                                    <Typography variant="body2" color="textSecondary">
+                                        Nenhum lead encontrado.
+                                    </Typography>
                                 </TableCell>
                             </TableRow>
-                        ))
-                    ) : (
-                        <TableRow>
-                            <TableCell colSpan={columns.length + 1} align="center">
-                                <Typography variant="body2" color="textSecondary">
-                                    Nenhum lead encontrado.
-                                </Typography>
-                            </TableCell>
-                        </TableRow>
-                    )}
-                </TableBody>
+                        )}
+                    </TableBody>
                 )}
             </Table>
 
