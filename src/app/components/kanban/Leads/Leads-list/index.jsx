@@ -1,16 +1,5 @@
 import {
-  TablePagination,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-  Box,
-  Button,
   Chip,
-  IconButton
 } from '@mui/material';
 
 import { useRouter } from 'next/navigation';
@@ -89,7 +78,7 @@ const LeadList = () => {
     setFilters((prevFilters) => ({
       ...prevFilters,
       [field]: val
-    }));s
+    }));
   };
 
 

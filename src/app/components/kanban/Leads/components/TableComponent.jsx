@@ -16,7 +16,6 @@ import {
 import TableSkeleton from '@/app/components/apps/comercial/sale/components/TableSkeleton';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import { IconEye, IconPencil } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
 
 const TableComponent = ({
     columns,
@@ -27,8 +26,18 @@ const TableComponent = ({
     rowsPerPage,
     onPageChange,
     onRowsPerPageChange,
-    actions
+    actions,
+    filters
 }) => {
+
+    const filteredData = data.filter((row) => {
+        const activeFilters = filters || {};
+
+        return Object.keys(activeFilters).every((key) => {
+            if (!filters[key]) return true;
+            return row[key]?.toString().toLowerCase().includes(filters[key].toLowerCase());
+        });
+    });
 
     return (
         <TableContainer sx={{ borderRadius: '12px' }}>
@@ -53,51 +62,44 @@ const TableComponent = ({
                     <TableSkeleton rows={rowsPerPage} columns={columns.length} />
                 ) : (
                     <TableBody>
-                        {data.length > 0 ? (
-                            data.map((row) => (
-                                <TableRow key={row.id} sx={{ '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' }, borderBottom: 'none' }}>
-                                    {columns.map((column) => (
-                                        <TableCell key={column.field} sx={{ fontWeight: column.field === 'name' ? 600 : 400, fontSize: '14px', color: '#7E8388' }}>
-                                            {column.render ? column.render(row) : row[column.field] || '-'}
-                                        </TableCell>
-                                    ))}
-
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        {actions?.edit && (
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => actions.edit(row)}
-                                                sx={{ color: '#7E8388' }}
-                                            >
-                                                <IconPencil fontSize="small" />
-                                            </IconButton>
-                                        )}
+                    {loading ? (
+                        <TableRow>
+                            <TableCell colSpan={columns.length + 1} align="center">
+                                Carregando...
+                            </TableCell>
+                        </TableRow>
+                    ) : filteredData.length > 0 ? (
+                        filteredData.map((row) => (
+                            <TableRow key={row.id}>
+                                {columns.map((column) => (
+                                    <TableCell key={column.field}>
+                                        {column.render ? column.render(row) : row[column.field] || '-'}
                                     </TableCell>
-                                    
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        {actions?.view && (
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => actions.view(row)}
-                                                sx={{ color: '#7E8388' }}
-                                            >
-                                                <IconEye fontSize="small" />
-                                            </IconButton>
-                                        )}
-                                    </TableCell>
-
-                                </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={columns.length} align="center">
-                                    <Typography variant="body2" color="textSecondary">
-                                        Nenhum lead encontrado.
-                                    </Typography>
+                                ))}
+                                <TableCell>
+                                    {actions.edit && (
+                                        <IconButton onClick={() => actions.edit(row)}>
+                                            <IconPencil />
+                                        </IconButton>
+                                    )}
+                                    {actions.view && (
+                                        <IconButton onClick={() => actions.view(row)}>
+                                            <IconEye />
+                                        </IconButton>
+                                    )}
                                 </TableCell>
                             </TableRow>
-                        )}
-                    </TableBody>
+                        ))
+                    ) : (
+                        <TableRow>
+                            <TableCell colSpan={columns.length + 1} align="center">
+                                <Typography variant="body2" color="textSecondary">
+                                    Nenhum lead encontrado.
+                                </Typography>
+                            </TableCell>
+                        </TableRow>
+                    )}
+                </TableBody>
                 )}
             </Table>
 
