@@ -35,7 +35,7 @@ export default function AutoCompleteReasonMultiple({
         try {
           // Utiliza findOne para buscar um único registro
           const reasons = await Promise.all(
-            valuesDefault.map((id) => serviceReason.findOne(id))
+            valuesDefault.map((id) => serviceReason.findReason(id))
           );
           const formattedReasons = reasons.map((reason) => ({
             id: reason.id,
@@ -45,9 +45,7 @@ export default function AutoCompleteReasonMultiple({
         } catch (error) {
           console.error('Erro ao buscar reasons:', error);
         }
-      } else {
-        setSelectedReasons([]);
-      }
+      } 
     };
 
     fetchDefaultReasons();

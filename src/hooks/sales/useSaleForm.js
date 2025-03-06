@@ -20,7 +20,7 @@ const useSaleForm = (initialData, id) => {
     status: null,
     completedDocument: false,
     billing_date: null,
-    cancellation_reasons_ids: []
+    cancellationReasonsIds: []
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -44,7 +44,7 @@ const useSaleForm = (initialData, id) => {
         status: initialData.status || null,
         completedDocument: initialData.completed_document || false,
         billing_date: initialData.billing_date || null,
-        cancellation_reasons_ids: initialData.cancellation_reasons?.map((reason) => reason.id) || []
+        cancellationReasonsIds: initialData.cancellation_reasons || []
       });
     }
   }, [initialData]);
@@ -58,10 +58,10 @@ const useSaleForm = (initialData, id) => {
 
     let errors = { ...formErrors };
 
-    if ((formData.status === 'D' || formData.status === 'C') && !formData.cancellation_reasons_ids.length) {
-      errors.cancellation_reasons_ids = ['O motivo é obrigatório.'];
+    if ((formData.status === 'D' || formData.status === 'C') && !formData.cancellationReasonsIds.length) {
+      errors.cancellationReasonsIds = ['O motivo é obrigatório.'];
     } else {
-      delete errors.cancellation_reasons_ids;
+      delete errors.cancellationReasonsIds;
     }
   
     if (Object.keys(errors).length > 0) {
@@ -84,7 +84,7 @@ const useSaleForm = (initialData, id) => {
       status: formData.status,
       completed_document: formData.completedDocument,
       billing_date: formData.billing_date || null,
-      cancellation_reasons_ids: formData.cancellation_reasons_ids
+      cancellation_reasons_ids: formData.cancellationReasonsIds
     };
 
     try {

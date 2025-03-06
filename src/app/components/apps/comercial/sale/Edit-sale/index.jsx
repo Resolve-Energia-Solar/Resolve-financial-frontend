@@ -9,9 +9,8 @@ import {
   Box,
   Typography,
   CircularProgress,
-  Alert,
-  Snackbar,
 } from '@mui/material';
+import { useSnackbar } from 'notistack';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
@@ -32,7 +31,7 @@ import PaymentCard from '@/app/components/apps/invoice/components/paymentList/ca
 import documentTypeService from '@/services/documentTypeService';
 import Attachments from '@/app/components/shared/Attachments';
 import CustomerTabs from '@/app/components/apps/users/Edit-user/customer/tabs';
-import { CheckCircle, Error, Preview } from '@mui/icons-material';
+import { CheckCircle, Error } from '@mui/icons-material';
 import PreviewContractModal from '@/app/components/apps/contractSubmissions/Preview-contract';
 import ChecklistSales from '../../../checklist/Checklist-list/ChecklistSales';
 import HasPermission from '@/app/components/permissions/HasPermissions';
@@ -53,7 +52,7 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
   let id = saleId;
   if (!saleId) id = params.id;
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const formatFieldName = (fieldName) => {
     const fieldLabels = {
@@ -65,10 +64,6 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
     };
 
     return fieldLabels[fieldName] || fieldName;
-  };
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
   };
 
   const userPermissions = useSelector((state) => state.user.permissions);
@@ -264,20 +259,19 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                   />
                 </Grid>
                 <Grid item xs={12} sm={12} lg={4}>
-                <FormSelect
-                  label="Status da Venda"
-                  options={statusOptions}
-                  value={formData.status}
-                  onChange={(e) => {
-                    const newStatus = e.target.value;
-                    handleChange('status', newStatus);
-                    if (newStatus !== 'C' && newStatus !== 'D') {
-                      // Limpa os motivos quando o status não é "C" nem "D"
-                      handleChange('cancellation_reasons_ids', []);
-                    }
-                  }}
-                  disabled={!hasPermission(['accounts.change_status_sale_field'])}
-                />
+                  <FormSelect
+                    label="Status da Venda"
+                    options={statusOptions}
+                    value={formData.status}
+                    onChange={(e) => {
+                      const newStatus = e.target.value;
+                      handleChange('status', newStatus);
+                      if (newStatus !== 'C' && newStatus !== 'D') {
+                        handleChange('cancellationReasonsIds', []);
+                      }
+                    }}
+                    disabled={!hasPermission(['accounts.change_status_sale_field'])}
+                  />
                 </Grid>
                 <Grid item xs={12} sm={12} lg={4}>
                   <FormSelect
@@ -288,7 +282,6 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                     disabled={!hasPermission(['financial.change_status_financial'])}
                   />
                 </Grid>
-
                 <HasPermission
                   permissions={['resolve_crm.can_change_billing_date']}
                   userPermissions={userPermissions}
@@ -318,12 +311,12 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                     </CustomFormLabel>
                     <AutoCompleteReasonMultiple
                       onChange={(id) =>
-                        handleChange('cancellation_reasons_ids', id)
+                        handleChange('cancellationReasonsIds', id)
                       }
-                      value={formData.cancellation_reasons_ids}
-                      {...(formErrors.cancellation_reasons_ids && {
+                      value={formData.cancellationReasonsIds}
+                      {...(formErrors.cancellationReasonsIds && {
                         error: true,
-                        helperText: formErrors.cancellation_reasons_ids,
+                        helperText: formErrors.cancellationReasonsIds,
                       })}
                     />
                   </Grid>
@@ -365,9 +358,7 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
 
           {value === 5 && <ChecklistSales saleId={id_sale} />}
           {value === 6 && <ContractSubmissions sale={saleData} />}
-
           {value === 7 && <History contentType={CONTEXT_TYPE_SALE_ID} objectId={id_sale} />}
-
           {value === 8 && <Comment appLabel={'resolve_crm'} model={'sale'} objectId={id_sale} />}
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
@@ -397,7 +388,14 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                     color="primary"
                     onClick={async () => {
                       await handleSave();
-                      setSnackbarOpen(true);
+                      if (formErrors && Object.keys(formErrors).length > 0) {
+                        const errorMessages = Object.entries(formErrors)
+                          .map(([field, messages]) => `${formatFieldName(field)}: ${messages.join(', ')}`)
+                          .join(', ');
+                        enqueueSnackbar(errorMessages, { variant: 'error' });
+                      } else {
+                        enqueueSnackbar('Alterações salvas com sucesso!', { variant: 'success' });
+                      }
                     }}
                     disabled={formLoading}
                     endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
@@ -410,73 +408,6 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
           </Stack>
         </Box>
       )}
-
-      {/* <Box
-        p={3}
-        backgroundColor="primary.light"
-        mt={3}
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Stack direction="row" spacing={2}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => setOpenPreview(true)}
-            startIcon={<Preview />}
-            sx={{
-              borderRadius: '8px',
-              paddingX: 3,
-            }}
-          >
-            Preview do Contrato
-          </Button>
-
-          <SendContractButton sale={saleData} />
-        </Stack>
-      </Box> */}
-      {/* <PreviewContractModal
-        saleId={id_sale}
-      /> */}
-      <Snackbar
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={formErrors && Object.keys(formErrors).length > 0 ? 'error' : 'success'}
-          sx={{ width: '100%', display: 'flex', alignItems: 'center' }}
-          iconMapping={{
-            error: <Error style={{ verticalAlign: 'middle' }} />,
-            success: <CheckCircle style={{ verticalAlign: 'middle' }} />,
-          }}
-        >
-          {formErrors && Object.keys(formErrors).length > 0 ? (
-            <ul
-              style={{
-                margin: '10px 0',
-                paddingLeft: '20px',
-                listStyleType: 'disc',
-              }}
-            >
-              {Object.entries(formErrors).map(([field, messages]) => (
-                <li
-                  key={field}
-                  style={{
-                    marginBottom: '8px',
-                  }}
-                >
-                  {`${formatFieldName(field)}: ${messages.join(', ')}`}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            'Alterações salvas com sucesso!'
-          )}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };
