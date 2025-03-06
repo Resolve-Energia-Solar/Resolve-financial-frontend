@@ -33,7 +33,7 @@ const TableHeader = ({
             </Typography>
 
             {/* finters@@@ and create button!!!@*/}
-            <Box sx={{ display: 'flex', gap: 2 }}>
+            <Box sx={{ display: 'flex', gap: 2, alignItems: "center" }}>
 
                 <FilterSelect
                     label="Status"

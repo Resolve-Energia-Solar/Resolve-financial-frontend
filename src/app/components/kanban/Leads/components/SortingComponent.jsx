@@ -26,7 +26,7 @@ const SortingFilter = ({ label, onSortChanges }) => {
         >
             {label}
         </Button>
-    )
+    );
 }
 
 export default SortingFilter;
