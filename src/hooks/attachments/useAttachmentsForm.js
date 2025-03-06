@@ -80,10 +80,12 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
       setFormErrors({});
       setSuccess(true);
       refreshSuccessState();
+      return true;
     } catch (err) {
       setSuccess(false);
       setFormErrors(err.response?.data || {});
       console.log(err.response?.data || err);
+      return false;
     } finally {
       setLoading(false);
     }

@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { Tabs, Tab, Box } from '@mui/material';
 import PropTypes from 'prop-types';
-import EditLead from './EditLeads';
-import ViewLeadPage from '../Leads-view';
 import LeadProposalPage from '../Leads-proposal';
 import EditLeadPage from '.';   
 import LeadSchedulePage from '../Leads-schedule';
+import LeadDocumentPage from '../Leads-documents';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -56,7 +55,7 @@ function EditLeadTabs({ leadId }) {
         TabIndicatorProps={{ style: { backgroundColor: 'white' } }}
         sx={{ marginLeft: '25px'}}
       >
-        {["Dados Pessoais", "Propostas", "Agendamentos"].map((label, index) => (
+        {["Dados Pessoais", "Propostas", "Documentos", "Agendamentos"].map((label, index) => (
           <Tab
             key={index}
             label={label}
@@ -86,6 +85,10 @@ function EditLeadTabs({ leadId }) {
       </CustomTabPanel>
 
       <CustomTabPanel value={tabValue} index={2}>
+        <LeadDocumentPage leadId={leadId} />
+      </CustomTabPanel>
+
+      <CustomTabPanel value={tabValue} index={3}>
         <LeadSchedulePage leadId={leadId} />
       </CustomTabPanel>
     </Box>
