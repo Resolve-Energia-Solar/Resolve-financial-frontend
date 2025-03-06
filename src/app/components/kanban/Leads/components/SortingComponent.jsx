@@ -28,3 +28,5 @@ const SortingFilter = ({ label, onSortChanges }) => {
         </Button>
     )
 }
+
+export default SortingFilter;

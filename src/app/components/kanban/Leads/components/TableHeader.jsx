@@ -2,6 +2,7 @@ import { Box, Typography, Button, Select, MenuItem, FormControl, InputLabel } fr
 import { Add } from '@mui/icons-material';
 import { useState } from 'react';
 import FilterSelect from "./FiltersSelection";
+import SortingFilter from "./SortingComponent";
 
 const TableHeader = ({
     title,
@@ -62,6 +63,11 @@ const TableHeader = ({
                         { label: "Squad 1", value: "squad1" },
                         { label: "Squad 2", value: "squad2" },
                     ]}
+                />
+
+                <SortingFilter 
+                    label="Ordenar por data"
+                    onSortChanges={(order) => console.log("sorting:", order)}
                 />
 
                 {onButtonClick && (
