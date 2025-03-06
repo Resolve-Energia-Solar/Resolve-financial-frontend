@@ -42,10 +42,10 @@ const LeadsContractPage = ({ leadId = null }) => {
             headerName: 'Status',
             render: (row) => {
                 const statusColors = {
-                    "Assinado": { bg: "#000000", text: "#FFFFFF"},
-                    "Cancelado": { bg: "#FEEFED", text: "#303030"},
-                    "Enviado": { bg: "#F9F7E6", text: "#303030"},
-                    "Pendente": { bg: "#F9F0E6", text: "#303030"},
+                    "Assinado": { bg: "#000000", text: "#FFFFFF" },
+                    "Cancelado": { bg: "#FEEFED", text: "#303030" },
+                    "Enviado": { bg: "#F9F7E6", text: "#303030" },
+                    "Pendente": { bg: "#F9F0E6", text: "#303030" },
                 }
 
                 const status = row?.column?.headerName || "-";
@@ -128,8 +128,9 @@ const LeadsContractPage = ({ leadId = null }) => {
                             setPage(0);
                         }}
                         actions={{
-                            edit: (row) => router.push("/apps/leads/${row.id}/edit"),
-                            view: (row) => router.push("/apps/leads/${row.id}/view"),
+                            edit: (row) => router.push(`/apps/leads/${row.id}/edit`),
+                            view: (row) => router.push(`/apps/leads/${row.id}/view`),
+
                         }}
                     />
 

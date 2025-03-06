@@ -22,7 +22,7 @@ import formatPhoneNumber from '@/utils/formatPhoneNumber';
 
 
 const LeadList = () => {
-  const router = useRouter(); 
+  const router = useRouter();
   const [data, setData] = useState([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
   const [error, setError] = useState(null);
@@ -97,19 +97,20 @@ const LeadList = () => {
 
       <TableComponent
         columns={columns}
-        data={data} 
-        totalRows={totalRows} 
-        loading={loadingLeads} 
+        data={data}
+        totalRows={totalRows}
+        loading={loadingLeads}
         page={page}
-        rowsPerPage={rowsPerPage} 
-        onPageChange={(newPage) => setPage(newPage)} 
+        rowsPerPage={rowsPerPage}
+        onPageChange={(newPage) => setPage(newPage)}
         onRowsPerPageChange={(newRows) => {
           setRowsPerPage(newRows);
-          setPage(0); 
+          setPage(0);
         }}
         actions={{
-          edit: (row) => router.push("/apps/leads/${row.id}/edit"),
-          view: (row) => router.push("/apps/leads/${row.id}/view"),
+          edit: (row) => router.push(`/apps/leads/${row.id}/edit`),
+          view: (row) => router.push(`/apps/leads/${row.id}/view`),
+
         }}
       />
 
