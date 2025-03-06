@@ -29,6 +29,7 @@ const LeadList = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
+  const [filters, setFilters] = useState({});
   const columns = [
     { field: 'name', headerName: 'Nome' },
     { field: 'first_document', headerName: 'CPF/CNPJ' },
@@ -84,6 +85,13 @@ const LeadList = () => {
     fetchLeads();
   }, [page, rowsPerPage]);
 
+  const handleFilterChange = (field, val) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [field]: val
+    }));s
+  };
+
 
   return (
     <>
@@ -93,6 +101,7 @@ const LeadList = () => {
         objNameNumberReference={"Leads"}
         buttonLabel="Criar"
         onButtonClick={() => console.log('Go to create lead')}
+        onFilterChange={handleFilterChange}
       />
 
       <TableComponent
