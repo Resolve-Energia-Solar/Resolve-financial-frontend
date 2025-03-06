@@ -1,28 +1,23 @@
 import apiClient from './apiClient';
 
 const documentTypeService = {
-    getDocumentTypes: async ({ page = 1, limit = 10 } = {}) => { 
-        const response = await apiClient.get(`/api/document-types/`, {
-            params: { 
-                page, 
-                limit 
-            },
-        });
+    getDocumentTypes: async ({ page = 1, limit = 50 } = {}) => {
+        const response = await apiClient.get(`/api/document-types/?limit=${limit}&page=${page}`);
         return response.data;
     },
-    getDocumentTypeById: async (id) => { 
+    getDocumentTypeById: async (id) => {
         const response = await apiClient.get(`/api/document-types/${id}/`);
         return response.data;
     },
-    getDocumentTypeFromEngineering: async () => {
+    getDocumentTypeFromEngineering: async (limit = 30) => {
         const response = await apiClient.get(`/api/document-types/`, {
-            params: { app_label__in: 'engineering' },
+            params: { app_label__in: 'engineering', limit: 30 },
         });
         return response.data;
     },
-    getDocumentTypeFromContract: async () => {
+    getDocumentTypeFromContract: async (limit = 30) => {
         const response = await apiClient.get(`/api/document-types/`, {
-            params: { app_label__in: 'contracts' },
+            params: { app_label__in: 'contracts', limit: 30 },
         });
         return response.data;
     },
