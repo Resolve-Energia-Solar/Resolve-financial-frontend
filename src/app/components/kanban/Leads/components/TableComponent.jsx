@@ -40,6 +40,12 @@ const TableComponent = ({
                                 {column.headerName}
                             </TableCell>
                         ))}
+                        <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
+                            Editar
+                        </TableCell>
+                        <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
+                            Ver
+                        </TableCell>
                     </TableRow>
                 </TableHead>
 
@@ -55,20 +61,31 @@ const TableComponent = ({
                                             {column.render ? column.render(row) : row[column.field] || '-'}
                                         </TableCell>
                                     ))}
-                                    {actions && (
-                                        <TableCell sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            {actions.edit && (
-                                                <IconButton size="small" onClick={() => actions.edit(row)} sx={{ color: '#7E8388' }}>
-                                                    <IconPencil fontSize="small" />
-                                                </IconButton>
-                                            )}
-                                            {actions.view && (
-                                                <IconButton size="small" onClick={() => actions.view(row)} sx={{ color: '#7E8388' }}>
-                                                    <IconEye fontSize="small" />
-                                                </IconButton>
-                                            )}
-                                        </TableCell>
-                                    )}
+
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        {actions?.edit && (
+                                            <IconButton
+                                                size="small"
+                                                onClick={() => actions.edit(row)}
+                                                sx={{ color: '#7E8388' }}
+                                            >
+                                                <IconPencil fontSize="small" />
+                                            </IconButton>
+                                        )}
+                                    </TableCell>
+                                    
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        {actions?.view && (
+                                            <IconButton
+                                                size="small"
+                                                onClick={() => actions.view(row)}
+                                                sx={{ color: '#7E8388' }}
+                                            >
+                                                <IconEye fontSize="small" />
+                                            </IconButton>
+                                        )}
+                                    </TableCell>
+
                                 </TableRow>
                             ))
                         ) : (
