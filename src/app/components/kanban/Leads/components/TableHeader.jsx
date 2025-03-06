@@ -34,7 +34,6 @@ const TableHeader = ({
             {/* finters@@@ and create button!!!@*/}
             <Box sx={{ display: 'flex', gap: 2 }}>
 
-
                 <FilterSelect
                     label="Status"
                     value={filters.status || ""}
@@ -55,18 +54,15 @@ const TableHeader = ({
                     ]}
                 />
 
-                <FormControl sx={{ minWidth: 120 }} size="small">
-                    <InputLabel>Squad</InputLabel>
-                    <Select
-                        value={filters.squad}
-                        onChange={(e) => handleFilterChange("squad", e.target.value)}
-                        displayEmpty
-                    >
-                        <MenuItem value="">Todos</MenuItem>
-                        <MenuItem value="squad1">Squad 1</MenuItem>
-                        <MenuItem value="squad2">Squad 2</MenuItem>
-                    </Select>
-                </FormControl>
+                <FilterSelect
+                    label="Squad"
+                    value={filters.squad || ""}
+                    onChange={(e) => setFilters({ ...filters, responsavel: e.target.value })}
+                    options={[
+                        { label: "Squad 1", value: "squad1" },
+                        { label: "Squad 2", value: "squad2" },
+                    ]}
+                />
 
                 {onButtonClick && (
                     <Button
@@ -89,25 +85,6 @@ const TableHeader = ({
                 )}
             </Box>
 
-            {/* {onButtonClick && (
-                <Button 
-                    startIcon={<Add />} 
-                    onClick={onButtonClick} 
-                    sx={{
-                        width: 74, 
-                        height: 28, 
-                        fontSize: '0.75rem', 
-                        p: '4px 8px',
-                        minWidth: 'unset', 
-                        borderRadius: '4px', 
-                        color: '#000', 
-                        '&:hover': { backgroundColor: '#FFB800', color: '#000' },
-                    }}
-                >
-                    {buttonLabel}
-
-                </Button>
-            )} */}
 
         </Box>
 
