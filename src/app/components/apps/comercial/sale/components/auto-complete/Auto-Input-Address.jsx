@@ -120,6 +120,8 @@ export default function AutoCompleteAddress({
         options={options}
         loading={loading}
         value={selectedAddress}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         {...props}
         onInputChange={(event, newInputValue) => {
           if (!disableSuggestions) fetchAddressesByName(newInputValue); // Chama a função de busca apenas se sugestões não estiverem desativadas

@@ -81,6 +81,8 @@ export default function AutoCompleteCategory({ onChange, value, error, helperTex
         options={options}
         loading={loading}
         value={selectedCategory}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         onInputChange={(event, newInputValue) => {
           fetchCategoriesByName(newInputValue);
         }}

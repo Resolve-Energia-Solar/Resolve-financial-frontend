@@ -107,6 +107,8 @@ export default function AutoCompleteFormBuilder({
         loading={loading}
         disabled={disabled}
         value={selectedForm}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         onInputChange={(event, newInputValue) => {
           fetchFormsByTitle(newInputValue);
         }}

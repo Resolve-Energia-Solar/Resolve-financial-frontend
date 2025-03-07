@@ -11,7 +11,7 @@ export default function AutoCompleteUserFilter({
   helperText,
   disabled,
   labeltitle,
-  noOptionsText,
+  noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.",
 }) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
@@ -91,6 +91,7 @@ export default function AutoCompleteUserFilter({
         loading={loading}
         disabled={disabled}
         value={selectedUser}
+        loadingText="Carregando..."
         onInputChange={(event, newInputValue) => {
           fetchUsersByName(newInputValue);
         }}

@@ -17,6 +17,8 @@ export default function CheckboxesTags({ options, label, placeholder, value, onC
       options={options}
       disableCloseOnSelect
       getOptionLabel={(option) => option.label}
+      loadingText="Carregando..."
+      noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
       onChange={(event, newValue) => {
         onChange(event, newValue);
       }}

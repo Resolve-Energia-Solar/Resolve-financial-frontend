@@ -72,33 +72,35 @@ const Profile = () => {
         }}
       >
         <Typography variant="h5">Perfil</Typography>
-        <Stack direction="row" py={3} spacing={2} alignItems="center">
-          <Avatar
-            src={user?.profile_picture || '/images/profile/user-1.jpg'}
-            alt={user?.first_name}
-            sx={{ width: 95, height: 95 }}
-          />
-          <Box>
-            <Typography variant="subtitle2" color="textPrimary" fontWeight={600}>
-              {user?.first_name || ''} {user?.last_name || ''}
-            </Typography>
-            <Typography variant="subtitle2" color="textSecondary">
-              {user?.role?.name || ''}
-            </Typography>
-            <Typography
-              variant="subtitle2"
-              color="textSecondary"
-              display="flex"
-              alignItems="center"
-              gap={1}
-            >
-              <IconMail width={15} height={15} />
-              {user?.email || ''}
-            </Typography>
-          </Box>
-        </Stack>
+        <Link href={"/apps/user-profile/profile"}>
+          <Stack direction="row" py={3} spacing={2} alignItems="center">
+            <Avatar
+              src={user?.profile_picture || '/images/profile/user-1.jpg'}
+              alt={user?.first_name}
+              sx={{ width: 95, height: 95 }}
+            />
+            <Box>
+              <Typography variant="subtitle2" color="textPrimary" fontWeight={600}>
+                {user?.first_name || ''} {user?.last_name || ''}
+              </Typography>
+              <Typography variant="subtitle2" color="textSecondary">
+                {user?.role?.name || ''}
+              </Typography>
+              <Typography
+                variant="subtitle2"
+                color="textSecondary"
+                display="flex"
+                alignItems="center"
+                gap={1}
+              >
+                <IconMail width={15} height={15} />
+                {user?.email || ''}
+              </Typography>
+            </Box>
+          </Stack>
+        </Link>
         <Divider />
-       {/*  {dropdownData.profile.map((profile) => (
+        {/*  {dropdownData.profile.map((profile) => (
           <Box key={profile.title}>
             <Box sx={{ py: 2, px: 0 }} className="hover-text-primary">
               <Link href={profile.href}>

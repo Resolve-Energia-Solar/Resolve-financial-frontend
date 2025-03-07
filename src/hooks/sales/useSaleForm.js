@@ -19,7 +19,8 @@ const useSaleForm = (initialData, id) => {
     totalValue: '',
     status: null,
     completedDocument: false,
-    billing_date: null
+    billing_date: null,
+    cancellationReasonsIds: []
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -42,7 +43,8 @@ const useSaleForm = (initialData, id) => {
         totalValue: initialData.total_value || '',
         status: initialData.status || null,
         completedDocument: initialData.completed_document || false,
-        billing_date: initialData.billing_date || null
+        billing_date: initialData.billing_date || null,
+        cancellationReasonsIds: initialData.cancellation_reasons || []
       });
     }
   }, [initialData]);
@@ -53,6 +55,21 @@ const useSaleForm = (initialData, id) => {
 
   const handleSave = async () => {
     setLoading(true);
+
+    let errors = { ...formErrors };
+
+    if ((formData.status === 'D' || formData.status === 'C') && !formData.cancellationReasonsIds.length) {
+      errors.cancellationReasonsIds = ['O motivo é obrigatório.'];
+    } else {
+      delete errors.cancellationReasonsIds;
+    }
+  
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      setLoading(false);
+      return;
+    }
+
     const dataToSend = {
       customer_id: formData.customerId,
       seller_id: formData.sellerId,
@@ -66,7 +83,8 @@ const useSaleForm = (initialData, id) => {
       total_value: formData.totalValue,
       status: formData.status,
       completed_document: formData.completedDocument,
-      billing_date: formData.billing_date || null
+      billing_date: formData.billing_date || null,
+      cancellation_reasons_ids: formData.cancellationReasonsIds
     };
 
     try {

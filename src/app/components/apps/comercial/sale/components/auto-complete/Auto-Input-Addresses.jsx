@@ -142,6 +142,8 @@ export default function AutoCompleteAddresses({
         options={options}
         loading={loading}
         value={selectedAddresses}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         onInputChange={(event, newInputValue) => {
           if (!disableSuggestions) {
             fetchAddressesByName(newInputValue);

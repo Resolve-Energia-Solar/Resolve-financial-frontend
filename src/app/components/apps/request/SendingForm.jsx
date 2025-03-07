@@ -29,6 +29,8 @@ const SendingForm = ({ formData, due_date, handleInputChange, options, handleCha
                         getOptionLabel={(option) => option.name}
                         value={multiSelectValues}
                         onChange={handleChangeSituation}
+                        loadingText="Carregando..."
+                        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."                  
                         renderInput={(params) => (
                             <CustomTextField {...params} label="Selecione opções" variant="outlined" />
                         )}
@@ -128,6 +130,8 @@ const SendingForm = ({ formData, due_date, handleInputChange, options, handleCha
                         getOptionLabel={(option) => option.name}
                         value={multiSelectValues}
                         onChange={handleChangeSituation}
+                        loadingText="Carregando..."
+                        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."                  
                         renderInput={(params) => (
                             <CustomTextField {...params} label="Selecione opções" variant="outlined" />
                         )}

@@ -12,6 +12,8 @@ const CheckboxesAutocomplete = () => (
     options={top100Films}
     disableCloseOnSelect
     getOptionLabel={(option) => option.title}
+    loadingText="Carregando..."
+    noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
     renderOption={(props, option, { selected }) => (
       <li {...props}>
         <CustomCheckbox style={{ marginRight: 8 }} checked={selected} />

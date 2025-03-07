@@ -127,6 +127,8 @@ export default function AutoCompleteUserTest({ onChange, value }) {
         options={options}
         loading={loading}
         value={selectedUser}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         onInputChange={(event, newInputValue) => {
           fetchUsersByName(newInputValue);
         }}

@@ -108,6 +108,8 @@ export default function AutoCompleteLead({ onChange, value, error, helperText, d
         loading={loading}
         disabled={disabled}
         value={selectedLead}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         onInputChange={(event, newInputValue) => {
           fetchLeadsByName(newInputValue);
         }}

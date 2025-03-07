@@ -1,3 +1,4 @@
+'use client'
 import {
   Box,
   Typography,
@@ -5,22 +6,61 @@ import {
   IconButton,
   TextField,
   InputAdornment,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogActions,
+  Button,
 } from '@mui/material';
 
 import { Search } from '@mui/icons-material';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-
-const products = [
-  { id: 1, name: 'HANERSUN 585W', quantity: 6 },
-  { id: 2, name: 'GOODWE 3,3KW', quantity: 1 },
-  { id: 3, name: 'Cabo Solar Flexível 6MM 1,8KV CC RL 25 Vermelho', quantity: 25 },
-  { id: 4, name: 'Cabo Solar Flexível 6MM 1,8KV CC RL 25 Preto', quantity: 25 },
-  { id: 5, name: 'Estrutura Solar Romagnole 412210 RS223 Kit Fixação 4 Painéis', quantity: 6 },
-];
+import CreateProduct from '@/app/components/apps/product/Add-product';
+import { useState } from 'react';
+import { addProduct, removeProductsByIds, associateProductWithLead, selectProductsByLead } from '@/store/products/customProducts';
+import { useDispatch, useSelector } from 'react-redux';
+import ProductService from '@/services/productsService';
+import ListProducts from './ListProducts';
 
 
-export function ProductList() {
+
+export function ProductList({ leadId = null }) {
+  const dispatch = useDispatch();
+  const [dialogProductOpen, setDialogProductOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const [dialogExistingProductOpen, setDialogExistingProductOpen] = useState(false);
+
+
+  const customProducts = useSelector(selectProductsByLead(leadId));
+
+  console.log("customProdutos: ", customProducts)
+
+  const addCustomProduct = (product) => {
+    dispatch(addProduct(product));
+    dispatch(associateProductWithLead({ leadId: leadId, productId: product.id }));
+  };
+
+  const confirmDelete = async () => {
+    try {
+      const productToDelete = customProducts.find(product => product.id === selectedProduct);
+      if (productToDelete && productToDelete.default === "N") {
+        await ProductService.deleteProduct(selectedProduct);
+      }
+      dispatch(removeProductsByIds([selectedProduct]));
+      setDeleteModalOpen(false);
+    } catch (error) {
+      console.log('Error: ', error);
+    }
+  };
+
+  const handleDeleteClick = (id) => {
+    setDeleteModalOpen(true);
+    setSelectedProduct(id);
+  };
+
   return (
     <Grid
       container
@@ -88,19 +128,18 @@ export function ProductList() {
             <Typography variant="h6">Produto</Typography>
           </Grid>
           <Grid item xs={3}>
-            <Typography variant="h6">Quantidade</Typography>
+            <Typography variant="h6">Valor</Typography>
           </Grid>
         </Grid>
 
         {/* TABLE BODY */}
-        {products.map((product, index) => (
+        {customProducts.map((product, index) => (
           <Grid
             container
             key={product.id}
             alignItems="center"
             rowSpacing={1}
             sx={{
-              borderBottom: index !== products.length - 1 ? '1px solid #e0e0e0' : 'none',
               paddingY: 1.5,
             }}
           >
@@ -112,42 +151,121 @@ export function ProductList() {
               xs={3}
               sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              <Typography variant="body2">{product.quantity}</Typography>
+              <Typography variant="body2">
+                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.product_value)}
+              </Typography>
             </Grid>
             <Grid
               item
               xs={1}
               sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              <IconButton size="small" color="#00000">
+              <IconButton size="small" color="#00000" onClick={() => handleDeleteClick(product.id)}>
                 <DeleteOutlinedIcon />
               </IconButton>
             </Grid>
           </Grid>
         ))}
 
+        { customProducts.length === 0 && (
+          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Typography variant="body2">Nenhum produto adicionado</Typography>
+          </Grid>
+        )}
+
         {/* ADD PRODUCT!*/}
-        <Grid item sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Grid item sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
           <IconButton
             sx={{
               mt: 2,
-              color: '#7E8388', 
+              color: '#7E8388',
               fontSize: 14,
               display: 'flex',
               alignItems: 'center',
               gap: 0.5,
-              transition: '0.3s', 
+              transition: '0.3s',
               '&:hover': {
-                transform: 'scale(1.05)', 
+                transform: 'scale(1.05)',
                 backgroundColor: 'rgba(0, 0, 0, 0.00)',
               },
             }}
+            onClick={() => setDialogProductOpen(true)}
           >
             <AddOutlinedIcon sx={{ fontSize: 18 }} />
             <Typography variant="body2">Adicionar produto</Typography>
           </IconButton>
+
+          {/* Botão para adicionar produto existente */}
+          <IconButton
+            sx={{
+              mt: 2,
+              color: '#7E8388',
+              fontSize: 14,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.5,
+              transition: '0.3s',
+              '&:hover': {
+                transform: 'scale(1.05)',
+                backgroundColor: 'rgba(0, 0, 0, 0.00)',
+              },
+            }}
+            onClick={() => { setDialogExistingProductOpen(true) }}
+          >
+            <Search sx={{ fontSize: 18 }} />
+            <Typography variant="body2">Adicionar existente</Typography>
+          </IconButton>
         </Grid>
+
       </Grid>
+
+
+      <Dialog
+        open={dialogExistingProductOpen}
+        onClose={() => setDialogExistingProductOpen(false)}
+        maxWidth="lg"
+        fullWidth
+      >
+        <DialogContent>
+          <ListProducts onAddProduct={addCustomProduct} onClosedModal={() => setDialogExistingProductOpen(false)} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={dialogProductOpen}
+        onClose={() => setDialogProductOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogContent>
+          <CreateProduct
+            onAddProduct={addCustomProduct}
+            onClosedModal={() => setDialogProductOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Confirmar Exclusão</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Tem certeza de que deseja excluir este produto? Esta ação não pode ser desfeita em produtos personalizados.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteModalOpen(false)} color="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={confirmDelete} color="error" variant="contained">
+            Excluir
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 }

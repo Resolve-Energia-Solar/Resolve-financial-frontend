@@ -14,6 +14,8 @@ const ControlledStateAutocomplete = () => {
     <>
       <Autocomplete
         value={value}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         onChange={(event, newValue) => {
           setValue(newValue);
         }}

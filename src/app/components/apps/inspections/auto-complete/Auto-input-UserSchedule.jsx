@@ -1,6 +1,8 @@
 import * as React from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import userService from '@/services/userService';
 import { debounce } from 'lodash';
@@ -60,16 +62,16 @@ export default function AutoCompleteUserSchedule({
           ...query,
           complete_name: name, // Passa o nome para o campo `complete_name__icontains`
         };
-  
+
         const users = await userService.getUsersBySchedule(updatedQuery);
-  
+
         const formattedUsers = users.results.map((user) => ({
           id: user.id,
           name: user.complete_name,
           distance: (user.distance || 0).toFixed(2),
           daily_schedules_count: user.daily_schedules_count || '0',
         }));
-  
+
         setOptions(formattedUsers);
       } catch (error) {
         console.error('Erro ao buscar usuários:', error);
@@ -77,10 +79,8 @@ export default function AutoCompleteUserSchedule({
         setLoading(false);
       }
     }, 300),
-    [query], // query original como dependência
+    [query],
   );
-  
-  
 
   const handleOpen = () => {
     setOpen(true);
@@ -106,12 +106,23 @@ export default function AutoCompleteUserSchedule({
         loading={loading}
         disabled={disabled}
         noOptionsText="Não há agentes disponíveis para a região, data e horário selecionados. Por favor, escolha outra data e horário ou entre em contato com o setor de vistoria."
+        loadingText="Carregando..."
         value={selectedUser}
         onInputChange={(event, newInputValue) => {
           fetchUsersByName(newInputValue);
         }}
         onChange={handleChange}
         onFocus={() => fetchUsersByName('')}
+        renderOption={(props, option) => (
+          <li {...props}>
+            <Box>
+              <Typography variant="body1">{option.name}</Typography>
+              <Typography variant="body2" color="textSecondary">
+                {`Distância: ${option.distance} KMs | Agendamentos: ${option.daily_schedules_count}`}
+              </Typography>
+            </Box>
+          </li>
+        )}
         renderInput={(params) => (
           <CustomTextField
             {...params}

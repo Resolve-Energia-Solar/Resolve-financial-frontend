@@ -110,6 +110,8 @@ export default function AutoCompleteUser({ onChange, value, error, helperText, d
         loading={loading}
         disabled={disabled}
         value={selectedUser}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         onInputChange={(event, newInputValue) => {
           fetchUsersByName(newInputValue);
         }}

@@ -106,6 +106,8 @@ export default function AutoCompleteRequestType({ onChange, value, error, helper
         options={options}
         loading={loading}
         value={selectedRequestType}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         {...rest}
         onInputChange={(event, newInputValue) => {
           fetchRequestTypesByName(newInputValue);

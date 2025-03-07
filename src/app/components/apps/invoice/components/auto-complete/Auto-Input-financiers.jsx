@@ -29,7 +29,26 @@ export default function AutoCompleteFinancier({ onChange, value, error, helperTe
     fetchDefaultFinancier();
   }, [value]);
 
-  const handleChange = (event, newValue) => {
+  useEffect(() => {
+    const fetchInitialFinanciers = async () => {
+      setLoading(true);
+      try {
+        const financiers = await financierService.getFinanciers();
+        const formattedFinanciers = financiers.results.map(financier => ({
+          id: financier.id,
+          name: financier.name,
+        }));
+        setOptions(formattedFinanciers);
+      } catch (error) {
+        console.error('Erro ao buscar os financiers:', error);
+      }
+      setLoading(false);
+    };
+
+    fetchInitialFinanciers();
+  }, []);
+
+  const handleChange = (newValue) => {
     setSelectedFinancier(newValue);
     if (newValue) {
       onChange(newValue.id);
@@ -43,11 +62,8 @@ export default function AutoCompleteFinancier({ onChange, value, error, helperTe
       if (!name) return;
       setLoading(true);
       try {
-        const financiers = await financierService.getFinanciers();
-        const filteredFinanciers = financiers.results.filter(financier =>
-          financier.name.toLowerCase().includes(name.toLowerCase())
-        );
-        const formattedFinanciers = filteredFinanciers.map(financier => ({
+        const financiers = await financierService.getFinanciers({ name__icontains: name });
+        const formattedFinanciers = financiers.results.map(financier => ({
           id: financier.id,
           name: financier.name,
         }));
@@ -84,7 +100,7 @@ export default function AutoCompleteFinancier({ onChange, value, error, helperTe
         onInputChange={(event, newInputValue) => {
           fetchFinanciersByName(newInputValue);
         }}
-        onChange={handleChange}
+        onChange={(event, newValue) => handleChange(newValue)}
         renderInput={(params) => (
           <CustomTextField
             error={error}

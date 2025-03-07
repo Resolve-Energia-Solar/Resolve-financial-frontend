@@ -83,6 +83,8 @@ export default function AutoCompleteSquads({ onChange, value = [], error, helper
         options={options}
         loading={loading}
         value={selectedSquads}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         onInputChange={(event, newInputValue) => {
           fetchSquadsByName(newInputValue);
         }}

@@ -15,22 +15,17 @@ const ProfileTab = () => {
   };
   const ProfileTabs = [
     {
-      label: 'Profile',
+      label: 'Perfil',
       icon: <IconUserCircle size="20" />,
       to: '/apps/user-profile/profile',
     },
     {
-      label: 'Followers',
-      icon: <IconHeart size="20" />,
-      to: '/apps/user-profile/followers',
-    },
-    {
-      label: 'Friends',
+      label: 'Colegas',
       icon: <IconUserCircle size="20" />,
       to: '/apps/user-profile/friends',
     },
     {
-      label: 'Gallery',
+      label: 'Galeria',
       icon: <IconPhoto size="20" />,
       to: '/apps/user-profile/gallery',
     },

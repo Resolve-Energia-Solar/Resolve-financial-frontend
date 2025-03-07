@@ -45,6 +45,7 @@ import ScheduleView from '../ScheduleView';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
 import { ScheduleDataContext } from '@/app/context/Inspection/ScheduleContext';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
+import { options } from 'numeral';
 
 // Configuração dos filtros para agendamentos
 const scheduleFilterConfig = [
@@ -65,9 +66,29 @@ const scheduleFilterConfig = [
     ],
   },
   {
-    key: "schedule_agent",
+    key: "final_service_is_null",
+    label: "Parecer Final do Serviço Pendente",
+    type: "select",
+    options: [
+      { value: 'null', label: "Todos" },
+      { value: true, label: "Pendente" },
+      { value: 'false', label: "Concluído" },
+    ],
+  },
+  {
+    key: "service_opnion_is_null",
+    label: "Parecer do Serviço Pendente",
+    type: "select",
+    options: [
+      { value: 'null', label: "Todos" },
+      { value: true, label: "Pendente" },
+      { value: 'false', label: "Concluído" },
+    ],
+  },
+  {
+    key: "schedule_agent__in",
     label: "Agente de Campo",
-    type: "async-autocomplete",
+    type: "async-multiselect",
     endpoint: "/api/users/",
     queryParam: "complete_name__icontains",
     extraParams: {},
@@ -78,12 +99,12 @@ const scheduleFilterConfig = [
       })),
   },
   {
-    key: "service",
+    key: "service__in",
     label: "Serviço",
-    type: "async-autocomplete",
+    type: "async-multiselect",
     endpoint: "/api/services/",
     queryParam: "name__icontains",
-    extraParams: {},
+    extraParams: { limit: 10 },
     mapResponse: (data) =>
       data.results.map((service) => ({
         label: service.name,
@@ -104,15 +125,30 @@ const scheduleFilterConfig = [
       })),
   },
   {
+    key: "branch__in",
+    label: "Unidade",
+    type: "async-multiselect",
+    endpoint: "/api/branches/",
+    queryParam: "name__icontains",
+    extraParams: {},
+    mapResponse: (data) =>
+      data.results.map((branch) => ({
+        label: branch.name,
+        value: branch.id,
+      })),
+  },
+  {
     key: "service_opinion__in",
     label: "Parecer do Serviço",
     type: "async-multiselect",
     endpoint: "/api/service-opinions/",
     queryParam: "name__icontains",
-    extraParams: {},
+    extraParams: {
+      is_final_opinion: false,
+    },
     mapResponse: (data) =>
       data.results.map((opinion) => ({
-        label: opinion.name,
+        label: `${opinion.name} - ${opinion.service?.name}`,
         value: opinion.id,
       })),
   },
@@ -122,10 +158,12 @@ const scheduleFilterConfig = [
     type: "async-multiselect",
     endpoint: "/api/service-opinions/",
     queryParam: "name__icontains",
-    extraParams: {},
+    extraParams: {
+      is_final_opinion: true,
+    },
     mapResponse: (data) =>
       data.results.map((opinion) => ({
-        label: opinion.name,
+        label: `${opinion.name} - ${opinion.service?.name}`,
         value: opinion.id,
       })),
   },

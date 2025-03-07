@@ -106,6 +106,8 @@ export default function AutoCompleteMaterial({ onChange, value, error, helperTex
         options={options}
         loading={loading}
         value={selectedMaterial}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         onInputChange={(event, newInputValue) => {
           fetchMaterialsByName(newInputValue);
         }}

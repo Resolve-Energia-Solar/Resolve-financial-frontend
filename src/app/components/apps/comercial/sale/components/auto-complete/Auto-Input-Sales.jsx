@@ -104,6 +104,8 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
         options={options}
         loading={loading}
         value={selectedSale}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         {...rest}
         onInputChange={(event, newInputValue) => {
           fetchSalesByName(newInputValue);

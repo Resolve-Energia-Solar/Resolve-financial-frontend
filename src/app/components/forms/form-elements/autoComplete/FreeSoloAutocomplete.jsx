@@ -13,6 +13,8 @@ const FreeSoloAutocomplete = () => {
         id="free-solo-demo"
         freeSolo
         fullWidth
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         sx={{
           mb: 2,
         }}
@@ -27,6 +29,8 @@ const FreeSoloAutocomplete = () => {
         id="free-solo-2-demo"
         disableClearable
         options={top100Films.map((option) => option.title)}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         renderInput={(params) => (
           <CustomTextField
             {...params}

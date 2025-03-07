@@ -4,18 +4,18 @@ const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 const CONTENT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
 const attachmentService = {
-  getAttachments: async () => {
+  getAttachments: async (limit = 30) => {
     try {
-      const response = await apiClient.get('/api/attachments/');
+      const response = await apiClient.get(`/api/attachments/limit=${limit}`);
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar anexos:', error);
       throw error;
     }
   },
-  getAttachmentsByObjectIdAndContentType: async (object_id, content_type) => {
+  getAttachmentsByObjectIdAndContentType: async (object_id, content_type, limit = 30) => {
     try {
-      const response = await apiClient.get(`/api/attachments/?object_id=${object_id}&content_type=${content_type}`);
+      const response = await apiClient.get(`/api/attachments/?object_id=${object_id}&content_type=${content_type}&limit=${limit}`);
       console.log(response.data);
       return response.data;
     } catch (error) {
@@ -47,12 +47,12 @@ const attachmentService = {
       return response.data;
     } catch (error) {
       console.error(`Erro ao atualizar anexo com id ${id}:`, error);
-      throw error;  
+      throw error;
     }
   },
-  getAttachmentByIdSale: async (id) => {
+  getAttachmentByIdSale: async (id, limit = 30) => {
     try {
-      const response = await apiClient.get(`/api/attachments/?object_id=${id}&content_type=${CONTENT_TYPE_SALE_ID}`);
+      const response = await apiClient.get(`/api/attachments/?object_id=${id}&content_type=${CONTENT_TYPE_SALE_ID}&limit=${limit}`);
       console.log(response.data);
       return response.data;
     } catch (error) {
@@ -60,9 +60,9 @@ const attachmentService = {
       throw error;
     }
   },
-  getAttachment: async (id, content_type) => {
+  getAttachment: async (id, content_type, limit = 30) => {
     try {
-      const response = await apiClient.get(`/api/attachments/?object_id=${id}&content_type=${content_type}`);
+      const response = await apiClient.get(`/api/attachments/?object_id=${id}&content_type=${content_type}&limit=${limit}`);
       console.log(response.data);
       return response.data;
     } catch (error) {
@@ -70,9 +70,9 @@ const attachmentService = {
       throw error;
     }
   },
-  getAttanchmentByIdProject: async (id) => {
+  getAttanchmentByIdProject: async (id, limit = 30) => {
     try {
-      const response = await apiClient.get(`/api/attachments/?object_id=${id}&content_type=${CONTENT_TYPE_PROJECT_ID}`);
+      const response = await apiClient.get(`/api/attachments/?object_id=${id}&content_type=${CONTENT_TYPE_PROJECT_ID}&limit=${limit}`);
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar anexo com id ${id}:`, error);

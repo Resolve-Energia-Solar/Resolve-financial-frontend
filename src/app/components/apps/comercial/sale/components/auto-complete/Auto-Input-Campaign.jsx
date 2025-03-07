@@ -99,6 +99,8 @@ export default function AutoCompleteCampaign({ onChange, value, error, helperTex
         loading={loading}
         value={selectedCampaign}
         disabled={disabled}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         onInputChange={(event, newInputValue) => {
           fetchCampaignsByName(newInputValue);
         }}

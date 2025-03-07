@@ -19,6 +19,8 @@ const CountrySelectAutocomplete = () => {
       fullWidth
       options={countryData}
       autoHighlight
+      loadingText="Carregando..."
+      noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
       getOptionLabel={(option) => option.label}
       renderOption={(props, option) => (
         <Box

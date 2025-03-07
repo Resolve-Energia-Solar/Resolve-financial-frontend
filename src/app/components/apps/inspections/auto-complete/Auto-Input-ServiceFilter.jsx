@@ -13,7 +13,7 @@ export default function AutoCompleteServiceCatalogFilter({
   helperText,
   disabled,
   labeltitle,
-  noOptionsText,
+  noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.",
 }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);

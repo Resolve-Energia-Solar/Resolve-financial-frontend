@@ -7,6 +7,8 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import projectService from '@/services/projectService';
 import { debounce } from 'lodash';
 import saleService from '@/services/saleService';
+import { formatDate } from '@/utils/dateUtils';
+import { Box, Typography } from '@mui/material';
 
 export default function AutoCompleteUserProject({
   onChange,
@@ -14,18 +16,12 @@ export default function AutoCompleteUserProject({
   error,
   helperText,
   selectedClient,
-  noTextOptions,
+  noTextOptions="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.",
 }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
-
-  function formatDate(date) {
-    const dateObj = new Date(date);
-    dateObj.setDate(dateObj.getDate() + 1);
-    return dateObj.toLocaleDateString();
-  }
 
   useEffect(() => {
     const fetchDefaultProject = async () => {
@@ -38,7 +34,7 @@ export default function AutoCompleteUserProject({
               project_number: projectValue.project_number,
               sale: projectValue.sale,
               homologator: projectValue.homologator,
-              start_date:projectValue.start_date,
+              start_date: projectValue.start_date,
             });
           }
         } catch (error) {
@@ -65,7 +61,7 @@ export default function AutoCompleteUserProject({
       try {
         if (selectedClient) {
           const responseSales = await saleService.getSales({
-            customer: selectedClient ,
+            customer: selectedClient,
           });
 
           const projectsSet = new Set();
@@ -116,14 +112,32 @@ export default function AutoCompleteUserProject({
         onOpen={handleOpen}
         onClose={handleClose}
         isOptionEqualToValue={(option, value) => option.id === value.id}
-        getOptionLabel={(option) => {
-          const date = new Date(option.start_date);
-          date.setDate(date.getDate() + 1);
-          const formattedDate = date.toLocaleDateString();
-          return `${option.project_number} | Valor total: ${option.sale?.total_value || 'Sem valor Total'
-          } | Contrato: ${option.sale?.contract_number || 'Contrato não Disponível'} | Homologador: ${option.homologator?.complete_name || 'Homologador não Disponível'} | Data de Contrato: ${formattedDate || 'Data de Contrato não Disponível'}` || ''
-        }
-        }
+        getOptionLabel={(option) => option.project_number?.toString() || ''}
+        loadingText="Carregando..."
+        renderOption={(props, option) => (
+          <li {...props}>
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Typography variant="body2">
+                <strong>Projeto:</strong> {option.project_number}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Valor total:</strong> {option.sale?.total_value || 'Sem valor Total'}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Contrato:</strong> {option.sale?.contract_number || 'Contrato não Disponível'}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Homologador:</strong> {option.homologator?.complete_name || 'Homologador não Disponível'}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Data de Contrato:</strong> {formatDate(option.sale?.signature_date) || 'Data de Contrato não Disponível'}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Endereço:</strong> {option?.address?.str || 'Endereço não Disponível'}
+              </Typography>
+            </Box>
+          </li>
+        )}
         options={options}
         noOptionsText={noTextOptions}
         loading={loading}
@@ -143,10 +157,10 @@ export default function AutoCompleteUserProject({
             InputProps={{
               ...params.InputProps,
               endAdornment: (
-                <Fragment>
+                <>
                   {loading ? <CircularProgress color="inherit" size={20} /> : null}
                   {params.InputProps.endAdornment}
-                </Fragment>
+                </>
               ),
             }}
           />

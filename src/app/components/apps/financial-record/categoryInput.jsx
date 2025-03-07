@@ -82,6 +82,8 @@ export default function AutoCompleteCategory({ onChange, value, error, helperTex
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
         isOptionEqualToValue={(option, value) => {
           if (typeof value === 'object' && value !== null) {
             return option.codigo === value.codigo;

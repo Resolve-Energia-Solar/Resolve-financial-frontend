@@ -25,7 +25,7 @@ const TagList = ({ appLabel, model, objectId }) => {
   }, [appLabel, model, objectId]);
 
   return (
-    <Grid container spacing={1} xs={12}>
+    <Grid container spacing={1}>
       {tags?.map(({ id, tag, color }) => (
         <Grid item key={id}>
           <Chip
@@ -36,9 +36,15 @@ const TagList = ({ appLabel, model, objectId }) => {
               color: color,
               backgroundColor: 'transparent',
               textTransform: 'capitalize',
+              borderRadius: '16px',
+              fontWeight: 600,
+              fontSize: '0.875rem',
+              padding: '4px 12px',
+              transition: 'all 0.3s ease',
               '&:hover': {
                 backgroundColor: color,
                 color: '#fff',
+                boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)',
               },
             }}
           />
