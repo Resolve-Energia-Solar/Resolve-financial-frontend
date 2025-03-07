@@ -16,7 +16,6 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
-  FormControlLabel,
   FormControl,
   MenuItem,
   Select,
@@ -35,43 +34,21 @@ import useProjectForm from '@/hooks/projects/useProjectForm';
 import FormPageSkeleton from '../../../comercial/sale/components/FormPageSkeleton';
 import ProductChip from '../../../product/components/ProductChip';
 import { CheckCircle, Error } from '@mui/icons-material';
-import { useState } from 'react';
-import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
-import { useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import projectMaterialsService from '@/services/projectMaterialService';
+import { useSelector } from 'react-redux';
+
 
 export default function EditProjectTab({ projectId = null, detail = false }) {
   const params = useParams();
-  let id = projectId;
-  if (!projectId) id = params.id;
+  const id = projectId || params.id;
 
-  const userPermissions = useSelector((state) => state.user.permissions);
-
+  const [materials, setMaterials] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
-  const formatFieldName = (fieldName) => {
-    const fieldLabels = {
-      designer_id: 'Projetista',
-      sale_id: 'Venda',
-      homologator_id: 'Homologador',
-      project_number: 'Número do Projeto',
-      start_date: 'Data de Início',
-      end_date: 'Data de Término',
-      status: 'Status de Homologação',
-      designer_status: 'Status do Projeto',
-    };
-
-    return fieldLabels[fieldName] || fieldName;
-  };
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
-
+  const userPermissions = useSelector((state) => state.user.permissions);
   const { loading, error, projectData } = useProject(id);
-
-  console.log('produtos/materiais', projectData?.product?.materials);
-
   const {
     formData,
     handleChange,
@@ -81,6 +58,10 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
     loading: formLoading,
   } = useProjectForm(projectData, id);
 
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
   const status_options = [
     { value: 'P', label: 'Pendente' },
     { value: 'CO', label: 'Concluído' },
@@ -88,6 +69,21 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
     { value: 'C', label: 'Cancelado' },
     { value: 'D', label: 'Distrato' },
   ];
+
+  const fetchMaterials = async () => {
+    try {
+      const response = await projectMaterialsService.getProjectMaterials({ project: projectId });
+      setMaterials(response.results);
+    } catch (error) {
+      console.log('Erro ao buscar materiais do projeto:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (projectData) {
+      fetchMaterials();
+    }
+  }, [projectData]);
 
   if (loading) return <FormPageSkeleton />;
   if (error) return <div>{error}</div>;
@@ -133,14 +129,14 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {projectData?.product?.materials.length === 0 ? (
+                    {materials.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={2} align="center">
-                          <Typography variant="body2">Nenhuma material cadastrado</Typography>
+                          <Typography variant="body2">Nenhum material cadastrado</Typography>
                         </TableCell>
                       </TableRow>
                     ) : (
-                      projectData?.product?.materials.map((material) => (
+                      materials.map((material) => (
                         <TableRow key={material.id}>
                           <TableCell align="center">
                             <Typography variant="body2">{material?.material?.name}</Typography>

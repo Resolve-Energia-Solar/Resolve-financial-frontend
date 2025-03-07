@@ -61,15 +61,23 @@ const UploadDocument = ({ projectId }) => {
     try {
       const response = await projectService.getProjectById(projectId);
       setProject(response);
-      setMaterials(response.materials || []);
     } catch (error) {
       console.log('Erro ao carregar projeto:', error);
     }
   };
-
-  useEffect(() => {
-    fetchProject();
-  }, [projectId, refresh]);
+  const fetchMaterials = async () => {
+    try {
+      const response = await projectMaterialsService.getProjectMaterials({ project: projectId });
+      setMaterials(response);
+    } catch (error) {
+      console.log('Erro ao buscar materiais do projeto:', error);
+    }
+  };
+  +
+    useEffect(() => {
+      fetchProject();
+      fetchMaterials();
+    }, [projectId, refresh]);
 
   const handleUpload = (event) => {
     const selectedFile = event.target.files[0];
