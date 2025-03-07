@@ -17,7 +17,7 @@ const ChipDeadLine = ({ status, sx }) => {
   };
   const { label, color, labelColor } = getChipProps(status);
 
-  return <Chip label={label} sx={{ backgroundColor: color, color: labelColor, borderRadius: 4.73, fontWeight: 400, ...sx }} size="small" />;
+  return <Chip label={label} sx={{ backgroundColor: color, color: labelColor, borderRadius: "4.73px", fontSize: "9px", ...sx }} size="small" />;
 };
 
 

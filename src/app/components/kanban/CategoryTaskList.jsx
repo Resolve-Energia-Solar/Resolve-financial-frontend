@@ -159,9 +159,9 @@ function CategoryTaskList({ id }) {
   };
 
 
-  const getStatusCount = (tasks = []) => { // Default empty array to avoid undefined errors
+  const getStatusCount = (tasks = []) => {
     return tasks.reduce((acc, task) => {
-      const status = getDeadlineStatus(task); // Function that determines the status
+      const status = getDeadlineStatus(task);
       if (!acc[status]) {
         acc[status] = 0;
       }
@@ -192,37 +192,39 @@ function CategoryTaskList({ id }) {
             {/* Header fixo */}
             <Box px={3} py={2} position="sticky" top={0} zIndex={1} >
               <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Stack direction="column" spacing={0.5}>
+                <Stack direction="column">
 
 
-                  <Box display="flex" alignItems="center" sx={{ mb: 34 }}>
-                    <Box sx={{ fontSize: "9px", fontWeight: "400", display: "flex", gap: 1 }}>
+                  <Box display="flex" alignItems="center" sx={{ gap: 7 }}>
+                    <Box sx={{ fontSize: "9px", fontWeight: "400", display: "flex" }}>
                       {Object.entries(getStatusCount(allTasks || [])).map(([status, count]) => (
                         <ChipDeadLine
                           key={status}
                           status={status}
                           label={`${count}`}
-                          sx={{ fontSize: "9px", fontWeight: "400", padding: "2px 6px" }} // ✅ Apply styles directly
+                          sx={{ fontSize: "9px", fontWeight: "400", padding: "2px 6px" }}
                         />
                       ))}
                     </Box>
 
-                    <Typography variant="body1" sx={{ fontWeight: "400", fontSize: "12px", color: "#828282", ml: 4 }}>
+                    <Typography variant="body1" sx={{ fontWeight: "400", fontSize: "12px", color: "#828282" }}>
                       {/* Valor total <strong>R${totalAmount.toLocaleString()}</strong> */}
                       {/* Valor total: {task?.value ? `R$ ${task.value}` : "Sem valor"} */}
                       Valor total:
                     </Typography>
                   </Box>
 
-                  <Typography variant="caption" className="fw-semibold" sx={{ fontWeight: "400", fontSize: "9px", color: "#303030" }}>
-                    Etapa
-                  </Typography>
-                  <Typography variant="h6" className="fw-semibold" sx={{ fontWeight: "400", fontSize: "14px", color: "#303030" }}>
-                    {category.name}
-                    <Typography variant="body1" component="span" color="text.secondary" ml={0.2} sx={{ fontWeight: "400", fontSize: "14px", color: "#828282" }}>
-                      {category.count ? ` (${category.count})` : ''}
+                  <Box sx={{ alignItems: "center", gap: 1, mt: 1 }}>
+                    <Typography variant="caption" className="fw-semibold" sx={{ fontWeight: "400", fontSize: "9px", color: "#303030" }}>
+                      Etapa
                     </Typography>
-                  </Typography>
+                    <Typography variant="h6" className="fw-semibold" sx={{ fontWeight: "400", fontSize: "14px", color: "#303030" }}>
+                      {category.name}
+                      <Typography variant="body1" component="span" color="text.secondary" ml={0.2} sx={{ fontWeight: "400", fontSize: "14px", color: "#828282" }}>
+                        {category.count ? ` (${category.count})` : ''}
+                      </Typography>
+                    </Typography>
+                  </Box>
                 </Stack>
 
                 <Stack direction="row">
