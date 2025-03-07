@@ -2,14 +2,9 @@
 import {
   Grid,
   Typography,
-  Box,
   Stack,
   CircularProgress,
   Button,
-  Dialog,
-  DialogContent,
-  DialogActions,
-  Divider,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
@@ -201,12 +196,13 @@ function LeadAddSchedulePage({ leadId = null, serviceId = null, onRefresh = null
         <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
           <Button
             variant="contained"
-            sx={{ backgroundColor: '#FFCC00', color: '#000', px: 3 }}
+            sx={{ backgroundColor: '#FFCC00', color: '#000', p: 1 }}
+            fullWidth
             onClick={handleSaveForm}
             disabled={formLoading}
             endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
           >
-            Salvar
+            Agendar visita
           </Button>
         </Stack>
       </Grid>
