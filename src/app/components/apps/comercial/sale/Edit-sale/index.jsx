@@ -93,6 +93,8 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
 
   const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.totalValue);
 
+  console.log('formData.isSale', formData.isSale);
+
   const statusOptions = [
     { value: 'P', label: 'Pendente' },
     { value: 'F', label: 'Finalizado' },
@@ -304,7 +306,7 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                   </Grid>
                 </HasPermission>
                 
-                {(formData.status === 'D' || formData.status === 'C') && (
+                {(formData.status === 'D' || formData.status === 'C') && formData.isSale == false && (
                   <Grid item xs={12} sm={12} lg={8}>
                     <CustomFormLabel htmlFor="Motivo">
                       Motivo do {formData.status === 'C' ? 'Cancelamento' : 'Distrato'}
