@@ -60,6 +60,8 @@ const TaskData = ({ task, index }) => {
             ref={provided.innerRef}
             onClick={() => setShowEditModal(true)}
             boxShadow={1}
+            border= {1}
+            borderColor={theme.palette.grey[100]}
           >
             <BlankCard>
               {loadingLeadsIds.includes(taskId) && (
