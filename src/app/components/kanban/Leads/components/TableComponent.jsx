@@ -50,10 +50,7 @@ const TableComponent = ({
                             </TableCell>
                         ))}
                         <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
-                            Editar
-                        </TableCell>
-                        <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
-                            Ver
+                            Editar/Ver
                         </TableCell>
                     </TableRow>
                 </TableHead>
