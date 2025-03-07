@@ -82,8 +82,8 @@ const TaskData = ({ task, index }) => {
                   sx={{ color: 'text.secondary' }}
                 >
                   <ChipDeadLine status={'P'} />
-                  <AccessTime fontSize="10" />
-                  <Typography variant="body2" sx={{ fontSize: 11 }}>
+                  <AccessTime fontSize="8px" />
+                  <Typography variant="body2" sx={{ fontSize: "9px" }}>
                     {editedTask.created_at
                       ? new Intl.DateTimeFormat('pt-BR', {
                         day: '2-digit',
