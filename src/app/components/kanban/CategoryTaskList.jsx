@@ -196,7 +196,7 @@ function CategoryTaskList({ id }) {
 
 
                   <Box display="flex" alignItems="center" sx={{ gap: 7 }}>
-                    <Box sx={{ fontSize: "9px", fontWeight: "400", display: "flex" }}>
+                    <Box sx={{ fontSize: "9px", fontWeight: "400", display: "flex" }} xs={4}>
                       {Object.entries(getStatusCount(allTasks || [])).map(([status, count]) => (
                         <ChipDeadLine
                           key={status}
@@ -206,12 +206,13 @@ function CategoryTaskList({ id }) {
                         />
                       ))}
                     </Box>
-
-                    <Typography variant="body1" sx={{ fontWeight: "400", fontSize: "12px", color: "#828282" }}>
-                      {/* Valor total <strong>R${totalAmount.toLocaleString()}</strong> */}
-                      {/* Valor total: {task?.value ? `R$ ${task.value}` : "Sem valor"} */}
-                      Valor total:
-                    </Typography>
+                    <Box xs={8}>
+                      <Typography variant="body1" sx={{ fontWeight: "400", fontSize: "12px", color: "#828282" }}>
+                        {/* Valor total <strong>R${totalAmount.toLocaleString()}</strong> */}
+                        {/* Valor total: {task?.value ? `R$ ${task.value}` : "Sem valor"} */}
+                        Valor total:
+                      </Typography>
+                    </Box>
                   </Box>
 
                   <Box sx={{ alignItems: "center", gap: 1, mt: 1 }}>
