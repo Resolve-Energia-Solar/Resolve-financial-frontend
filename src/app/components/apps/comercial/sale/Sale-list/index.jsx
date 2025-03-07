@@ -9,23 +9,17 @@ import {
   TableRow,
   Paper,
   Typography,
-  IconButton,
-  Tooltip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   Button,
-  Menu,
-  MenuItem,
   Snackbar,
   Alert,
   CircularProgress,
   Backdrop,
   Box,
-  Drawer,
-  CardContent,
   TablePagination,
   Chip,
 } from '@mui/material';
@@ -39,7 +33,7 @@ import {
   ArrowDropDown as ArrowDropDownIcon,
   ArrowDropUp as ArrowDropUpIcon,
   Lock as LockIcon,
-  LockOpen as LockOpenIcon
+  LockOpen as LockOpenIcon,
 } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import saleService from '@/services/saleService';
@@ -133,6 +127,20 @@ const SaleList = () => {
           ordering: orderingParam,
           limit: rowsPerPage,
           page: page + 1,
+          fields: [
+            'id',
+            'documents_under_analysis',
+            'customer',
+            'contract_number',
+            'signature_date',
+            'total_value',
+            'signature_status',
+            'status',
+            'is_pre_sale',
+            'created_at',
+            'final_service_opinion',
+            'branch',
+          ],
           ...filters,
         });
 
@@ -460,10 +468,7 @@ const SaleList = () => {
                   </Box>
                 </TableCell>
 
-                <TableCell>
-                  Liberado p/Engenharia
-                </TableCell>
-
+                <TableCell>Liberado p/Engenharia</TableCell>
 
                 <TableCell
                   sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
@@ -493,7 +498,7 @@ const SaleList = () => {
                     key={item.id}
                     onClick={() => handleRowClick(item)}
                     hover
-                    sx={{ backgroundColor: rowSelected?.id === item.id && '#ECF2FF' }}
+                    sx={{ backgroundColor: rowSelected?.id === item.id && '#cecece' }}
                   >
                     <TableCell align="center">
                       {item.documents_under_analysis?.length > 0 && <PulsingBadge />}
@@ -502,7 +507,9 @@ const SaleList = () => {
                     <TableCell>{item.contract_number}</TableCell>
                     <TableCell>
                       {item?.signature_date
-                        ? new Date(item.signature_date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
+                        ? new Date(item.signature_date).toLocaleDateString('pt-BR', {
+                            timeZone: 'UTC',
+                          })
                         : '\u2014'}
                     </TableCell>
                     <TableCell>
@@ -511,9 +518,7 @@ const SaleList = () => {
                         currency: 'BRL',
                       })}
                     </TableCell>
-                    <TableCell>
-                      {<ChipSigned status={item?.signature_status} />}
-                    </TableCell>
+                    <TableCell>{<ChipSigned status={item?.signature_status} />}</TableCell>
                     <TableCell>
                       <StatusPreSale status={item.is_pre_sale} />
                     </TableCell>
@@ -524,7 +529,9 @@ const SaleList = () => {
                       {item.final_service_opinion[0] ? (
                         <Chip
                           label={item.final_service_opinion[0]}
-                          color={item.final_service_opinion[0] === 'Aprovado' ? 'success' : 'default'}
+                          color={
+                            item.final_service_opinion[0] === 'Aprovado' ? 'success' : 'default'
+                          }
                         />
                       ) : (
                         <Chip label="Sem P.F" color="warning" />
@@ -532,78 +539,21 @@ const SaleList = () => {
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={item.is_released_to_engineering === true ? 'Liberado' : 'Não-Liberado'}
+                        label={
+                          item.is_released_to_engineering === true ? 'Liberado' : 'Não-Liberado'
+                        }
                         color={item.is_released_to_engineering === true ? 'success' : 'default'}
-                        icon={item.is_released_to_engineering === true ? <LockOpenIcon /> : <LockIcon />}
+                        icon={
+                          item.is_released_to_engineering === true ? <LockOpenIcon /> : <LockIcon />
+                        }
                       />
                     </TableCell>
                     <TableCell>
-                      {item?.created_at ? new Date(item.created_at).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '-'}
+                      {item?.created_at
+                        ? new Date(item.created_at).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
+                        : '-'}
                     </TableCell>
                     <TableCell>{item.branch.name}</TableCell>
-                    {/* <TableCell>
-                      <Tooltip title="Ações">
-                        <IconButton
-                          size="small"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleMenuClick(event, item.id);
-                          }}
-                        >
-                          <MoreVertIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Menu
-                        anchorEl={menuAnchorEl}
-                        open={menuOpenRowId === item.id}
-                        onClose={handleMenuClose}
-                        anchorOrigin={{
-                          vertical: 'top',
-                          horizontal: 'right',
-                        }}
-                        transformOrigin={{
-                          vertical: 'top',
-                          horizontal: 'right',
-                        }}
-                      >
-                        <MenuItem
-                          onClick={() => {
-                            handleEditClick(item.id);
-                            handleMenuClose();
-                          }}
-                        >
-                          <EditIcon fontSize="small" sx={{ mr: 1 }} />
-                          Editar
-                        </MenuItem>
-                        <MenuItem
-                          onClick={() => {
-                            handleViewClick(item.id);
-                            handleMenuClose();
-                          }}
-                        >
-                          <IconEyeglass fontSize="small" sx={{ mr: 1 }} />
-                          Visualizar
-                        </MenuItem>
-                        <MenuItem
-                          onClick={() => {
-                            handleDeleteClick(item.id);
-                            handleMenuClose();
-                          }}
-                        >
-                          <DeleteIcon fontSize="small" sx={{ mr: 1 }} />
-                          Excluir
-                        </MenuItem>
-                        <MenuItem
-                          onClick={() => {
-                            handleGenerateProposal(item);
-                            handleMenuClose();
-                          }}
-                        >
-                          <DescriptionIcon fontSize="small" sx={{ mr: 1 }} />
-                          Gerar Proposta
-                        </MenuItem>
-                      </Menu>
-                    </TableCell> */}
                   </TableRow>
                 ))}
                 {loading && page > 1 && (
@@ -717,7 +667,7 @@ const SaleList = () => {
         onClose={() => toggleDrawerClosed(false)}
         title="Detalhamento da Venda"
       >
-        <EditSaleTabs saleId={rowSelected?.id} />
+        <EditSaleTabs saleId={rowSelected?.id} data={rowSelected?.customer} />
       </SideDrawer>
     </Box>
   );

@@ -176,7 +176,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
 
   useEffect(() => {
     if (success && successData) {
-      const product_ids = successData.sale_products.map((item) => item.product.id);
+      const product_ids = successData.sale_products;
       dispatch(removeProductsByIds(product_ids));
     }
   }, [success, successData]);

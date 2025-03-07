@@ -1,11 +1,12 @@
 import apiClient from './apiClient'
 
 const saleService = {
-  getSales: async ({ ordering, nextPage, userRole, limit = 5, page = 1, ...filters }) => {
+  getSales: async ({ ordering, nextPage, userRole, limit = 5, page = 1, fields = [], ...filters }) => {
     const params = {
       ordering: ordering || '',
       page: nextPage || page,
       limit,
+      fields,
       ...filters,
     }
 
