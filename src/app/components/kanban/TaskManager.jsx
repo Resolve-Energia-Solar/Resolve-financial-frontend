@@ -30,9 +30,9 @@ function TaskManager() {
   return (
     <>
       <KanbanHeader />
-      <SimpleBar>
+      <SimpleBar style={{ maxWidth: '100%', overflowX: 'auto', whiteSpace: 'nowrap' }}>
         <DragDropContext onDragEnd={onDragEnd}>
-          <Box display="flex" gap={2} p={1}>
+          <Box display="flex" gap={2} p={1} sx={{ minWidth: 'max-content', maxHeight: '75vh' }}>
             {loadingCategories
               ? Array.from({ length: 4 }).map((_, index) => (
                   <CategoryTaskListSkeleton key={index} />
