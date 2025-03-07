@@ -5,7 +5,7 @@ import EditLead from './EditLeads';
 import ViewLeadPage from '../Leads-view';
 import LeadsContractPage from '../Leads-contract';
 import LeadProposalPage from '../Leads-proposal';
-import EditLeadPage from '.';   
+import EditLeadPage from '.';
 import LeadSchedulePage from '../Leads-schedule';
 import LeadDocumentPage from '../Leads-documents';
 
@@ -57,9 +57,9 @@ function EditLeadTabs({ leadId }) {
         onChange={handleChange}
         aria-label="lead edit tabs"
         TabIndicatorProps={{ style: { backgroundColor: 'white' } }}
-        sx={{ marginLeft: '25px'}}
+        sx={{ marginLeft: '25px' }}
       >
-        {["Dados Pessoais", "Propostas", "Documentos", "Agendamentos","Contrato"].map((label, index) => (
+        {["Dados Pessoais", "Propostas", "Documentos", "Contrato", "Agendamentos"].map((label, index) => (
           <Tab
             key={index}
             label={label}
@@ -67,13 +67,13 @@ function EditLeadTabs({ leadId }) {
             sx={
               tabValue === index
                 ? {
-                    backgroundColor: '#FFCC00',
-                    color: 'black',
-                    borderTopLeftRadius: '10px',
-                    borderTopRightRadius: '10px',
-                    fontWeight: '500',
-                    '&.Mui-selected': { color: 'black' },
-                  }
+                  backgroundColor: '#FFCC00',
+                  color: 'black',
+                  borderTopLeftRadius: '10px',
+                  borderTopRightRadius: '10px',
+                  fontWeight: '500',
+                  '&.Mui-selected': { color: 'black' },
+                }
                 : {}
             }
           />
@@ -93,11 +93,11 @@ function EditLeadTabs({ leadId }) {
       </CustomTabPanel>
 
       <CustomTabPanel value={tabValue} index={3}>
-        <LeadSchedulePage leadId={leadId} />
-      </CustomTabPanel>
-      
-       <CustomTabPanel value={tabValue} index={4}>
         <LeadsContractPage leadId={leadId} />
+      </CustomTabPanel>
+
+      <CustomTabPanel value={tabValue} index={4}>
+        <LeadSchedulePage leadId={leadId} />
       </CustomTabPanel>
     </Box>
   );
