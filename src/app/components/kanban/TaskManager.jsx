@@ -30,23 +30,36 @@ function TaskManager() {
   return (
     <>
       <KanbanHeader />
-      <SimpleBar style={{ maxWidth: '100%', overflowX: 'auto', whiteSpace: 'nowrap' }}>
+      <SimpleBar
+        style={{
+          maxWidth: '100%',
+          overflowX: 'auto',
+          whiteSpace: 'nowrap',
+        }}
+        forceVisible="x"
+        autoHide={false}
+      >
         <DragDropContext onDragEnd={onDragEnd}>
-          <Box display="flex" gap={2} p={1} sx={{ minWidth: 'max-content', maxHeight: '75vh' }}>
+          <Box display="flex" gap={2} p={1} 
+            sx={{
+              minWidth: 'max-content',
+              maxHeight: '75vh', 
+            }}
+          >
             {loadingCategories
               ? Array.from({ length: 4 }).map((_, index) => (
-                  <CategoryTaskListSkeleton key={index} />
-                ))
+                <CategoryTaskListSkeleton key={index} />
+              ))
               : todoCategories.map((category) => (
-                  <Droppable droppableId={category.id.toString()} key={category.id}>
-                    {(provided) => (
-                      <div ref={provided.innerRef} {...provided.droppableProps} style={{ flex: 1 }}>
-                        <CategoryTaskList id={category.id} />
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                ))}
+                <Droppable droppableId={category.id.toString()} key={category.id}>
+                  {(provided) => (
+                    <div ref={provided.innerRef} {...provided.droppableProps} style={{ flex: 1 }}>
+                      <CategoryTaskList id={category.id} />
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              ))}
           </Box>
         </DragDropContext>
       </SimpleBar>
