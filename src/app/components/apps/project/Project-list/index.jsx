@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import {
   TablePagination,
   Table,
@@ -18,7 +18,6 @@ import {
 } from '@mui/material';
 import { IconListDetails } from '@tabler/icons-react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { AddBoxRounded } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import projectService from '@/services/projectService';
 import DrawerFiltersProject from '../components/DrawerFilters/DrawerFiltersProject';
@@ -29,7 +28,6 @@ import TableSkeleton from '../../comercial/sale/components/TableSkeleton';
 import ChipProject from '../components/ChipProject';
 import ProjectCards from '../../inforCards/InforQuantity';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import { on } from 'events';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import { useSelector } from 'react-redux';
@@ -45,17 +43,14 @@ function useAnimatedNumber(targetValue, duration = 800) {
 
   useEffect(() => {
     let startTime;
-
     const animate = (timestamp) => {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / duration, 1);
-      const currentValue = Math.floor(progress * targetValue);
-      setDisplayValue(currentValue);
+      setDisplayValue(Math.floor(progress * targetValue));
       if (progress < 1) {
         requestAnimationFrame(animate);
       }
     };
-
     requestAnimationFrame(animate);
   }, [targetValue, duration]);
 
@@ -76,10 +71,10 @@ const ProjectList = ({ onClick }) => {
   const userPermissions = useSelector((state) => state.user.permissions);
   const { filters, setFilters, refresh } = useContext(ProjectDataContext);
 
-  const hasPermission = (permissions) => {
+  const hasPermission = useCallback((permissions) => {
     if (!permissions) return true;
-    return permissions.some(permission => userPermissions?.includes(permission));
-  };
+    return permissions.some((permission) => userPermissions?.includes(permission));
+  }, [userPermissions]);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -89,9 +84,9 @@ const ProjectList = ({ onClick }) => {
           page: page + 1,
           limit: rowsPerPage,
           expand: 'sale.customer',
+          fields: 'id,sale.id,sale.customer.complete_name,homologator.complete_name,designer_status,material_list_is_completed,trt_pending,peding_request,access_opnion,product.name,product.params,status,sale.status,is_released_to_engineering',
           ...filters,
         });
-        console.log('data: ', data);
         setProjectsList(data.results.results);
         setTotalRows(data.count);
       } catch (err) {
@@ -104,11 +99,8 @@ const ProjectList = ({ onClick }) => {
     const fetchIndicators = async () => {
       setLoadingIndicators(true);
       try {
-        const data = await projectService.getProjectsIndicators({
-          ...filters,
-        });
+        const data = await projectService.getProjectsIndicators({ ...filters });
         setIndicators(data.indicators);
-        console.log('indicators: ', data.indicators);
       } catch (err) {
         setError('Erro ao carregar Indicadores');
       } finally {
@@ -120,16 +112,14 @@ const ProjectList = ({ onClick }) => {
     fetchProjects();
   }, [page, rowsPerPage, filters, refresh]);
 
-  const handlePageChange = (event, newPage) => {
+  const handlePageChange = useCallback((event, newPage) => {
     setPage(newPage);
-  };
+  }, []);
 
-  const handleRowsPerPageChange = (event) => {
+  const handleRowsPerPageChange = useCallback((event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
-
-
+  }, []);
 
   const trtStatusMap = {
     'Bloqueado': { label: 'Bloqueado', color: theme.palette.error.light, icon: <CancelIcon sx={{ color: '#fff' }} /> },
@@ -140,16 +130,8 @@ const ProjectList = ({ onClick }) => {
   };
 
   const accessOpinionStatusMap = {
-    'Liberado': { 
-      label: 'Liberado', 
-      color: theme.palette.success.light, 
-      icon: <CheckCircleIcon sx={{ color: '#fff' }} /> 
-    },
-    'Bloqueado': { 
-      label: 'Bloqueado', 
-      color: theme.palette.warning.light, 
-      icon: <HourglassEmptyIcon sx={{ color: '#fff' }} /> 
-    },
+    'Liberado': { label: 'Liberado', color: theme.palette.success.light, icon: <CheckCircleIcon sx={{ color: '#fff' }} /> },
+    'Bloqueado': { label: 'Bloqueado', color: theme.palette.warning.light, icon: <HourglassEmptyIcon sx={{ color: '#fff' }} /> },
   };
 
   const blockedToEngineering = useAnimatedNumber(indicators?.blocked_to_engineering || 0);
@@ -170,10 +152,8 @@ const ProjectList = ({ onClick }) => {
           <Typography variant="h6">Indicadores</Typography>
           <Tooltip
             title={
-              <React.Fragment>
-                <Typography variant="body2">
-                  <strong>ATENÇÃO</strong>
-                </Typography>
+              <>
+                <Typography variant="body2"><strong>ATENÇÃO</strong></Typography>
                 <Typography variant="body2">
                   Para que o <strong>PROJETO</strong> seja liberado para a engenharia, é necessário que:
                 </Typography>
@@ -186,7 +166,7 @@ const ProjectList = ({ onClick }) => {
                 <Typography variant="body2" sx={{ ml: 2 }}>
                   • A vistoria principal esteja com PARECER FINAL <strong>APROVADO</strong>.
                 </Typography>
-              </React.Fragment>
+              </>
             }
           >
             <Box sx={{ ml: 2, display: 'flex', alignItems: 'center' }}>
@@ -196,7 +176,6 @@ const ProjectList = ({ onClick }) => {
         </AccordionSummary>
         <AccordionDetails>
           {false && loadingIndicators ? (
-            /* Mantemos o código do Skeleton, porém não renderizamos nada, evitando remover qualquer trecho */
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Box sx={{ display: 'flex', gap: 2 }}>
                 <Skeleton variant="rectangular" width={200} height={100} />
@@ -229,7 +208,8 @@ const ProjectList = ({ onClick }) => {
                     title: 'Pendente',
                     subtitle: 'Lista de Materiais',
                     count: pendingMaterialList,
-                    onClick: () => setFilters({ ...filters, material_list_is_completed: false, is_released_to_engineering: true, designer_status__in: 'CO' }),
+                    onClick: () =>
+                      setFilters({ ...filters, material_list_is_completed: false, is_released_to_engineering: true, designer_status__in: 'CO' }),
                   },
                   {
                     backgroundColor: 'secondary.light',
@@ -242,7 +222,6 @@ const ProjectList = ({ onClick }) => {
                   },
                 ]}
               />
-
               <ProjectCards
                 cardsData={[
                   {
@@ -278,26 +257,15 @@ const ProjectList = ({ onClick }) => {
           )}
         </AccordionDetails>
       </Accordion>
-
       <Typography variant="h6" gutterBottom>
         Lista de Projetos
       </Typography>
-
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2, mb: 2 }}>
         <Box>
-          {/* Exemplo: Botão para criar projeto */}
-          {/* <Button
-            variant="outlined"
-            startIcon={<AddBoxRounded />}
-            onClick={() => router.push('/apps/project/create')}
-            sx={{ marginBottom: 2 }}
-          >
-            Criar Projeto
-          </Button> */}
+          {/* Botão para criar projeto pode ser adicionado aqui se necessário */}
         </Box>
         <DrawerFiltersProject />
       </Box>
-
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -331,19 +299,11 @@ const ProjectList = ({ onClick }) => {
                     sx={{
                       opacity: canEdit ? 1 : 0.5,
                       pointerEvents: canEdit ? 'auto' : 'none',
-                      '&:hover': canEdit
-                        ? {
-                            backgroundColor: 'rgba(236, 242, 255, 0.35)',
-                          }
-                        : {},
+                      '&:hover': canEdit ? { backgroundColor: 'rgba(236, 242, 255, 0.35)' } : {},
                     }}
                   >
                     <TableCell>
-                      {item.is_released_to_engineering ? (
-                        <CheckIcon color="success" />
-                      ) : (
-                        <CloseIcon color="error" />
-                      )}
+                      {item.is_released_to_engineering ? <CheckIcon color="success" /> : <CloseIcon color="error" />}
                     </TableCell>
                     <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                     <TableCell>{item.homologator?.complete_name || '-'}</TableCell>
@@ -351,21 +311,13 @@ const ProjectList = ({ onClick }) => {
                       <ChipProject status={item.designer_status} />
                     </TableCell>
                     <TableCell>
-                      {item.material_list_is_completed ? (
-                        <CheckIcon color="success" />
-                      ) : (
-                        <CloseIcon color="error" />
-                      )}
+                      {item.material_list_is_completed ? <CheckIcon color="success" /> : <CloseIcon color="error" />}
                     </TableCell>
                     <TableCell>
                       <GenericChip status={item.trt_pending} statusMap={trtStatusMap} />
                     </TableCell>
                     <TableCell>
-                      {item.peding_request ? (
-                        <CheckIcon color="success" />
-                      ) : (
-                        <CloseIcon color="error" />
-                      )}
+                      {item.peding_request ? <CheckIcon color="success" /> : <CloseIcon color="error" />}
                     </TableCell>
                     <TableCell>
                       <GenericChip status={item.access_opnion} statusMap={accessOpinionStatusMap} />

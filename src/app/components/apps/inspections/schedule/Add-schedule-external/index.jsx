@@ -114,6 +114,10 @@ const ScheduleFormCreateExternal = () => {
     handleChange(field, newValue);
   };
 
+  const hasProduct = Array.isArray(formData.products)
+  ? formData.products.length > 0
+  : !!formData.products;
+
   return (
     <>
       <Grid container spacing={3}>
@@ -136,19 +140,6 @@ const ScheduleFormCreateExternal = () => {
         </HasPermission>
 
         <Grid item xs={12} sm={12} lg={6}>
-          <CustomFormLabel htmlFor="products">Produtos</CustomFormLabel>
-          <AutoCompleteProduct
-            onChange={(id) => handleChange('products', id)}
-            value={formData.products}
-            {...(formErrors.products && {
-              error: true,
-              helperText: formErrors.products,
-            })}
-            noOptionsText={'Nenhum produto encontrado'}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={12} lg={6}>
           <CustomFormLabel htmlFor="client">Cliente</CustomFormLabel>
           <AutoCompleteUser
             onChange={(id) => handleChange('customer_id', id)}
@@ -161,19 +152,64 @@ const ScheduleFormCreateExternal = () => {
         </Grid>
 
         {formData.customer_id && (
-          <Grid item xs={12} sm={12} lg={12}>
-            <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
-            <AutoCompleteUserProject
-              onChange={(id) => handleChange('project_id', id)}
-              value={formData.project_id}
-              selectedClient={formData.customer_id}
-              noTextOptions={'O cliente não possui projetos atualmente'}
-              {...(formErrors.project_id && {
-                error: true,
-                helperText: formErrors.project_id,
-              })}
-            />
-          </Grid>
+          <>
+            {hasProduct ? (
+              <Grid item xs={12} sm={12} lg={6}>
+                <CustomFormLabel htmlFor="products">Produtos</CustomFormLabel>
+                <AutoCompleteProduct
+                  onChange={(id) => handleChange('products', id)}
+                  value={formData.products}
+                  {...(formErrors.products && {
+                    error: true,
+                    helperText: formErrors.products,
+                  })}
+                  noOptionsText={'Nenhum produto encontrado'}
+                />
+              </Grid>
+            ) : formData.project_id ? (
+              <Grid item xs={12} sm={12} lg={6}>
+                <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
+                <AutoCompleteUserProject
+                  onChange={(id) => handleChange('project_id', id)}
+                  value={formData.project_id}
+                  selectedClient={formData.customer_id}
+                  noTextOptions={'O cliente não possui projetos atualmente'}
+                  {...(formErrors.project_id && {
+                    error: true,
+                    helperText: formErrors.project_id,
+                  })}
+                />
+              </Grid>
+            ) : (
+              <>
+                <Grid item xs={12} sm={12} lg={6}>
+                  <CustomFormLabel htmlFor="products">Produtos</CustomFormLabel>
+                  <AutoCompleteProduct
+                    onChange={(id) => handleChange('products', id)}
+                    value={formData.products}
+                    {...(formErrors.products && {
+                      error: true,
+                      helperText: formErrors.products,
+                    })}
+                    noOptionsText={'Nenhum produto encontrado'}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} lg={6}>
+                  <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
+                  <AutoCompleteUserProject
+                    onChange={(id) => handleChange('project_id', id)}
+                    value={formData.project_id}
+                    selectedClient={formData.customer_id}
+                    noTextOptions={'O cliente não possui projetos atualmente'}
+                    {...(formErrors.project_id && {
+                      error: true,
+                      helperText: formErrors.project_id,
+                    })}
+                  />
+                </Grid>
+              </>
+            )}
+          </>
         )}
 
         <Grid item xs={12} sm={12} lg={6}>

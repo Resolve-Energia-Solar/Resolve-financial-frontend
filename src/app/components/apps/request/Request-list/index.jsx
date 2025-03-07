@@ -36,7 +36,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-const RequestList = ({ projectId = null, enableFilters = true }) => {
+const RequestList = ({ projectId = null, enableFilters = true, enableIndicators = true }) => {
   const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -162,7 +162,7 @@ const RequestList = ({ projectId = null, enableFilters = true }) => {
     <>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Typography variant="h4">Solicitações</Typography>
-
+        {enableIndicators == true &&(
         <Accordion>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -175,7 +175,7 @@ const RequestList = ({ projectId = null, enableFilters = true }) => {
             <InforCards cardsData={cardsData} />
           </AccordionDetails>
         </Accordion>
-
+        )}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
           <Button
             variant="outlined"
