@@ -119,6 +119,7 @@ function CategoryTaskList({ id }) {
 
     fetchData();
     console.log("task data: ", allTasks)
+    console.log("status count:", getStatusCount(allTasks || []))
   }, [id, page, reload]);
 
   useEffect(() => {
@@ -161,7 +162,7 @@ function CategoryTaskList({ id }) {
 
   const getStatusCount = (tasks = []) => {
     return tasks.reduce((acc, task) => {
-      const status = getDeadlineStatus(task);
+      const status = getDeadlineStatus(task) || "Desconhecido";
       if (!acc[status]) {
         acc[status] = 0;
       }
@@ -199,11 +200,12 @@ function CategoryTaskList({ id }) {
                     <Box sx={{ fontSize: "9px", fontWeight: "400", display: "flex" }} xs={4}>
                       {Object.entries(getStatusCount(allTasks || [])).map(([status, count]) => (
                         <ChipDeadLine
-                          key={status}
-                          status={status}
-                          label={`${count}`}
-                          sx={{ fontSize: "9px", fontWeight: "400", padding: "2px 6px" }}
-                        />
+                        key={status}
+                        status={status}
+                        sx={{ fontSize: "9px", fontWeight: "400", padding: "2px 6px" }}
+                      >
+                        {status} ({count}) {/* ✅ Fix: Show count inside the chip */}
+                      </ChipDeadLine>
                       ))}
                     </Box>
                     <Box xs={8}>

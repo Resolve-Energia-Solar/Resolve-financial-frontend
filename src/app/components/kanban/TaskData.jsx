@@ -59,6 +59,7 @@ const TaskData = ({ task, index }) => {
             {...provided.dragHandleProps}
             ref={provided.innerRef}
             onClick={() => setShowEditModal(true)}
+            boxShadow={1}
           >
             <BlankCard>
               {loadingLeadsIds.includes(taskId) && (
