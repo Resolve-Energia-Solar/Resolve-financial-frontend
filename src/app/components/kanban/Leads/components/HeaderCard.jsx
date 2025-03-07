@@ -33,8 +33,6 @@ function LeadInfoHeader({ leadId }) {
     fetchLead();
   }, [leadId]);
 
-  console.log('lead:', lead);
-
   if (!lead) return <Typography>Carregando informações do lead...</Typography>;
 
   return (
