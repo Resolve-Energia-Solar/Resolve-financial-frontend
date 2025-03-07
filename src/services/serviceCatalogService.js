@@ -23,7 +23,7 @@ const serviceCatalogService = {
 
   getServiceCatalogByName: async (name) => {
     try {
-      const response = await apiClient.get(`/api/services/?name=${name}`);
+      const response = await apiClient.get(`/api/services/?name__icontains=${name}&limit=15`);
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar serviço com nome ${name}:`, error);

@@ -68,6 +68,9 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     { value: '16:00:00', label: '16:00' },
   ];
 
+  console.log('formData', formData);
+  console.log('formData.parent_schedules_id', formData.parent_schedules_id);
+
   useEffect(() => {
     const fetchInitialAgent = async () => {
       if (formData.schedule_agent_id) {
@@ -232,7 +235,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
               <CustomFormLabel htmlFor="client">Cliente</CustomFormLabel>
               <AutoCompleteUser
                 onChange={(id) => handleChange('customer_id', id)}
-                value={formData.customer_id}
+              value={formData.customer_id}
                 {...(formErrors.customer_id && {
                   error: true,
                   helperText: formErrors.customer_id,

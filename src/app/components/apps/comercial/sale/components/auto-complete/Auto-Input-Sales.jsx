@@ -12,6 +12,8 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
   const [loading, setLoading] = useState(false);
   const [selectedSale, setSelectedSale] = useState(null);
 
+  console.log('value', value);
+
   useEffect(() => {
     const fetchDefaultSale = async () => {
       if (value) {
@@ -48,7 +50,7 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
       try {
         const sales = await saleService.getSaleByFullName(name);
         if (sales && sales.results) {
-          const formattedSales = sales.results.map(sale => ({
+          const formattedSales = sales.results.results.map(sale => ({
             id: sale.id,
             name: `${sale.contract_number} - ${sale.customer.complete_name}`,
           }));
@@ -67,6 +69,7 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
     try {
       const sales = await saleService.getSales({ limit: 5, page: 1 });
       if (sales && sales.results) {
+        console.log('sales', sales);
         const formattedSales = sales.results.map(sale => ({
           id: sale.id,
           name: `${sale.contract_number} - ${sale.customer.complete_name}`,

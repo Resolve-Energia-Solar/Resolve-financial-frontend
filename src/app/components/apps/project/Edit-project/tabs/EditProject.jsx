@@ -88,6 +88,8 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
   if (loading) return <FormPageSkeleton />;
   if (error) return <div>{error}</div>;
 
+  console.log('formErrors', formErrors);
+
   return (
     <>
       <Box mt={3}>
@@ -282,14 +284,14 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
       >
         <Alert
           onClose={handleSnackbarClose}
-          severity={formErrors && Object.keys(formErrors).length > 0 ? 'error' : 'success'}
+          severity={formErrors && typeof formErrors === 'object' && Object.keys(formErrors).length > 0 ? 'error' : 'success'}
           sx={{ width: '100%', display: 'flex', alignItems: 'center' }}
           iconMapping={{
             error: <Error style={{ verticalAlign: 'middle' }} />,
             success: <CheckCircle style={{ verticalAlign: 'middle' }} />,
           }}
         >
-          {formErrors && Object.keys(formErrors).length > 0 ? (
+          {formErrors && typeof formErrors === 'object' && Object.keys(formErrors).length > 0 ? (
             <ul
               style={{
                 margin: '10px 0',
@@ -304,15 +306,16 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
                     marginBottom: '8px',
                   }}
                 >
-                  {`${formatFieldName(field)}: ${messages.join(', ')}`}
+                  {`${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`}
                 </li>
               ))}
             </ul>
           ) : (
-            'Alterações salvas com sucesso!'
+            formErrors ? 'Ocorreu um erro ao salvar as alterações.' : 'Alterações salvas com sucesso!'
           )}
         </Alert>
       </Snackbar>
+
     </>
   );
 }
