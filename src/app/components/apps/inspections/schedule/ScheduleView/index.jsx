@@ -20,15 +20,18 @@ import answerService from '@/services/answerService';
 import userService from '@/services/userService';
 import AnswerForm from '../../form-builder/AnswerForm';
 import HasPermission from '@/app/components/permissions/HasPermissions';
-
+import scheduleService from '@/services/scheduleService';
+import saleService from '@/services/saleService';
+import ProductService from '@/services/productsService';
 
 export default function ScheduleView({ open, onClose, selectedSchedule }) {
   const router = useRouter();
-  const [creator, setCreator] = useState(null);
+  const [scheduleData, setScheduleData] = useState(null);
   const [answerData, setAnswerData] = useState(null);
   const [loadingAnswer, setLoadingAnswer] = useState(true);
   const [seller, setSeller] = useState(null);
-  const [supervisor, setSupervisor] = useState(null);
+  const [productName, setProductName] = useState(null);
+  
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const hasPermission = (permissions) => {
@@ -48,65 +51,81 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
     }).format(date);
   };
 
-  console.log('SELECIONADA:', selectedSchedule);
 
+  // Busca os dados completos do agendamento
   useEffect(() => {
-    async function fetchCreator() {
-      if (selectedSchedule?.schedule_creator) {
-        try {
-          const creatorData = await userService.getUserById(selectedSchedule.schedule_creator);
-          setCreator(creatorData);
-        } catch (error) {}
+    async function fetchFullSchedule() {
+      try {
+        const data = await scheduleService.getScheduleById(selectedSchedule.id, {
+          fields:
+            'id,schedule_date,customer,address,service,project,schedule_agent,created_at,observation,status,products,schedule_creator',
+        });
+        setScheduleData(data);
+      } catch (error) {
+        console.error('Erro ao buscar agendamento completo:', error);
       }
     }
-
-    fetchCreator();
+    if (selectedSchedule) {
+      fetchFullSchedule();
+    }
   }, [selectedSchedule]);
-  
 
+  // Busca as respostas associadas ao agendamento
   useEffect(() => {
     const fetchAnswer = async () => {
       setLoadingAnswer(true);
       try {
-        const data = await answerService.getAnswerBySchedule(selectedSchedule.id);
-        setAnswerData(data);
-      } catch (err) {} finally {
+        if (scheduleData?.id) {
+          const data = await answerService.getAnswerBySchedule(scheduleData.id);
+          setAnswerData(data);
+        }
+      } catch (err) {
+        console.error('Erro ao buscar respostas:', err);
+      } finally {
         setLoadingAnswer(false);
       }
     };
 
-    if (selectedSchedule) {
+    if (scheduleData) {
       fetchAnswer();
     }
-  }, [selectedSchedule]);
+  }, [scheduleData]);
 
   useEffect(() => {
-    const fetchSeller = async () => {
-      if (selectedSchedule?.project?.sale?.seller) {
+    async function fetchSaleAndSeller() {
+      console.log('scheduleData:', scheduleData);
+      if (scheduleData?.project?.sale) {
         try {
-          const data = await userService.getUserById(selectedSchedule.project.sale.seller);
-          setSeller(data);
-        } catch (err) {}
+          const saleData = await saleService.getSaleById(scheduleData.project.sale);
+          if (saleData?.seller) {
+            const sellerData = await userService.getUserById(saleData.seller.id);
+            setSeller(sellerData);
+          }
+        } catch (err) {
+          console.error('Erro ao buscar venda ou vendedor:', err);
+        }
       }
-    };
+    }
+    fetchSaleAndSeller();
+  }, [scheduleData]);
 
-    fetchSeller();
-  }, [selectedSchedule]);
-
-  // useEffect(() => {
-  //   const fetchSupervisor = async () => {
-  //     if (seller?.employee?.user_manager) {
-  //       try {
-  //         const data = await userService.getUserById(seller.employee.user_manager);
-  //         setSupervisor(data);
-  //       } catch (err) {}
-  //     }
-  //   };
-
-  //   if (seller) {
-  //     fetchSupervisor();
-  //   }
-  // }, [seller]);
+  useEffect(() => {
+    async function fetchProductName() {
+      if (scheduleData?.project?.product) {
+        try {
+          const productId =
+            typeof scheduleData.project.product === 'object'
+              ? scheduleData.project.product.id
+              : scheduleData.project.product;
+          const productData = await ProductService.getProductById(productId);
+          setProductName(productData.name);
+        } catch (error) {
+          console.error('Erro ao buscar produto:', error);
+        }
+      }
+    }
+    fetchProductName();
+  }, [scheduleData?.project?.product]);
 
   const handleEditClick = (id) => {
     router.push(`/apps/inspections/schedule/${id}/update`);
@@ -128,28 +147,26 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
           }}
         >
           <CardContent>
-            <Box
-              sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}
-            >
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
               <Typography variant="h5">Detalhes do Agendamento</Typography>
               <Close onClick={onClose} sx={{ cursor: 'pointer' }} />
             </Box>
 
-            {selectedSchedule && (
+            {scheduleData && (
               <>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
                   <Box>
-                    <Typography variant="h4">#{selectedSchedule.id}</Typography>
+                    <Typography variant="h4">#{scheduleData.id}</Typography>
                     <Chip
                       size="small"
                       color="secondary"
                       variant="outlined"
-                      label={formatDate(selectedSchedule.schedule_date)}
+                      label={formatDate(scheduleData.schedule_date)}
                       sx={{ mt: 1 }}
                     />
                   </Box>
                   <Logo />
-                  <ScheduleStatusChip status={selectedSchedule.status} />
+                  <ScheduleStatusChip status={scheduleData.status} />
                 </Stack>
                 <Divider />
 
@@ -158,11 +175,11 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                     Cliente Contratante
                   </Typography>
                   <Typography variant="body1">
-                    <strong>Nome:</strong> {selectedSchedule.customer.complete_name}
+                    <strong>Nome:</strong> {scheduleData.customer?.complete_name}
                   </Typography>
                   <Typography variant="body1">
                     <strong>Endereço:</strong>{' '}
-                    {`${selectedSchedule.address.street}, ${selectedSchedule.address.number}, ${selectedSchedule.address.neighborhood}, ${selectedSchedule.address.city} - ${selectedSchedule.address.state}`}
+                    {`${scheduleData.address?.street}, ${scheduleData.address?.number}, ${scheduleData.address?.neighborhood}, ${scheduleData.address?.city} - ${scheduleData.address?.state}`}
                   </Typography>
                 </Paper>
 
@@ -171,17 +188,16 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                     Detalhes do Serviço
                   </Typography>
                   <Typography variant="body1">
-                    <strong>Serviço:</strong> {selectedSchedule.service.name}
+                    <strong>Serviço:</strong> {scheduleData.service?.name}
                   </Typography>
                   <Typography variant="body1">
                     <strong>Kit:</strong>{' '}
-                    {selectedSchedule.project?.product?.name || 'Sem kit associado'}
+                    {/* Caso exista um nome no produto já buscado, exibe-o; senão, tenta usar o que vier do scheduleData */}
+                    {productName || scheduleData.project?.product?.name || 'Sem kit associado'}
                   </Typography>
                   <Typography variant="body1">
                     <strong>Agente:</strong>{' '}
-                    {selectedSchedule.schedule_agent
-                      ? selectedSchedule.schedule_agent.complete_name
-                      : 'Sem agente associado'}
+                    {scheduleData.schedule_agent ? scheduleData.schedule_agent?.complete_name : 'Sem agente associado'}
                   </Typography>
                   <Typography variant="body1">
                     <strong>Vendedor:</strong>{' '}
@@ -194,7 +210,7 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                   <Typography variant="body1">
                     <strong>Número do Supervisor:</strong>{' '}
                     {seller?.employee?.manager?.phone_numbers?.length > 0
-                      ? `+${seller?.employee?.manager?.phone_numbers[0]?.country_code} (${seller?.employee?.manager?.phone_numbers[0]?.area_code}) ${seller?.employee?.manager?.phone_numbers[0]?.phone_number}`
+                      ? `+${seller.employee.manager.phone_numbers[0]?.country_code} (${seller.employee.manager.phone_numbers[0]?.area_code}) ${seller.employee.manager.phone_numbers[0]?.phone_number}`
                       : 'Sem número associado'}
                   </Typography>
                   <Typography variant="body1">
@@ -207,13 +223,13 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                   >
                     <Typography variant="body1">
                       <strong>Nome do Vistoriador:</strong>{' '}
-                      {selectedSchedule?.schedule_agent?.complete_name || 'Sem nome associada'}
+                      {scheduleData?.schedule_agent?.complete_name || 'Sem nome associada'}
                     </Typography>
                     <Typography variant="body1">
                       <strong>Telefone do Vistoriador:</strong>{' '}
-                      {selectedSchedule?.schedule_agent?.phone_numbers?.length > 0
-                        ? selectedSchedule.schedule_agent.phone_numbers
-                            .map(phone => `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`)
+                      {scheduleData?.schedule_agent?.phone_numbers?.length > 0
+                        ? scheduleData.schedule_agent.phone_numbers
+                            .map((phone) => `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`)
                             .join(', ')
                         : 'Sem telefone associado'}
                     </Typography>
@@ -225,17 +241,13 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                     Informações do Agendamento
                   </Typography>
                   <Typography variant="body1">
-                    <strong>Agendado por:</strong> {creator?.complete_name || 'Não identificado'}
+                    <strong>Agendado por:</strong> {scheduleData?.schedule_creator?.complete_name || 'Não identificado'}
                   </Typography>
                   <Typography variant="body1">
-                    <Typography variant="body1">
-                      <strong>Criado em:</strong> {formatDateTime(selectedSchedule?.created_at)}
-                    </Typography>{' '}
+                    <strong>Criado em:</strong> {formatDateTime(scheduleData?.created_at)}
                   </Typography>
                   <Typography variant="body1">
-                    <Typography variant="body1">
-                      <strong>Observação do comercial:</strong> {selectedSchedule?.observation || ' - '}
-                    </Typography>
+                    <strong>Observação do comercial:</strong> {scheduleData?.observation || ' - '}
                   </Typography>
                 </Paper>
 
@@ -247,7 +259,7 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => handleEditClick(selectedSchedule.id)}
+                    onClick={() => handleEditClick(scheduleData.id)}
                   >
                     Editar Agendamento
                   </Button>

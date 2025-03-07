@@ -41,9 +41,9 @@ const scheduleService = {
       throw error
     }
   },
-  getScheduleById: async id => {
+  getScheduleById: async (id, params = {}) => {
     try {
-      const response = await apiClient.get(`/api/schedule/${id}/`)
+      const response = await apiClient.get(`/api/schedule/${id}/`, { params })
       return response.data
     } catch (error) {
       console.error(`Erro ao buscar agendamento com id ${id}:`, error)
