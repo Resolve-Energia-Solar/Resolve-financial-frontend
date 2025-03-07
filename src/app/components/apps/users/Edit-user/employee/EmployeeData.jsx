@@ -1,15 +1,15 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
 import {
   Grid,
-  Button,
-  Stack,
-  Alert,
   RadioGroup,
   FormControlLabel,
   Radio,
+  Button,
+  Stack,
+  Alert,
 } from '@mui/material';
+import { useParams } from 'next/navigation';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import AutoCompleteDepartament from '../../../comercial/sale/components/auto-complete/Auto-Input-Departament';
@@ -17,10 +17,11 @@ import AutoCompleteBranch from '../../../comercial/sale/components/auto-complete
 import AutoCompleteRole from '../../../comercial/sale/components/auto-complete/Auto-Input-Role';
 import RelatedBranchesSelect from '@/app/components/forms/RelatedBranches';
 import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
-import employeeService from '@/services/employeeService';
 import userService from '@/services/userService';
+import employeeService from '@/services/employeeService';
 
-function EmployeeForm({ employee, onChange }) {
+function EmployeeForm({ employee, onChange, errors }) {
+  // Removemos o campo "user" do estado, pois não é necessário
   const [formData, setFormData] = useState({
     contract_type: employee?.contract_type || '',
     hire_date: employee?.hire_date || '',
@@ -63,9 +64,10 @@ function EmployeeForm({ employee, onChange }) {
           value={formData.contract_type}
           onChange={e => handleChange('contract_type', e.target.value)}
         >
-          <FormControlLabel value="PJ" control={<Radio />} label="Pessoa Jurídica" />
-          <FormControlLabel value="PF" control={<Radio />} label="Pessoa Física" />
+          <FormControlLabel value="P" control={<Radio />} label="Pessoa Jurídica" />
+          <FormControlLabel value="C" control={<Radio />} label="Celetista" />
         </RadioGroup>
+        {errors.contract_type && <Alert severity="error">{errors.contract_type[0]}</Alert>}
       </Grid>
       <Grid item xs={12} sm={12} lg={4}>
         <FormDate
@@ -73,6 +75,8 @@ function EmployeeForm({ employee, onChange }) {
           name="hire_date"
           value={formData.hire_date}
           onChange={newValue => handleChange('hire_date', newValue)}
+          error={!!errors.hire_date}
+          helperText={errors.hire_date ? errors.hire_date[0] : ''}
         />
       </Grid>
       <Grid item xs={12} sm={12} lg={4}>
@@ -81,6 +85,8 @@ function EmployeeForm({ employee, onChange }) {
           name="resignation_date"
           value={formData.resignation_date}
           onChange={newValue => handleChange('resignation_date', newValue)}
+          error={!!errors.resignation_date}
+          helperText={errors.resignation_date ? errors.resignation_date[0] : ''}
         />
       </Grid>
 
@@ -91,6 +97,8 @@ function EmployeeForm({ employee, onChange }) {
           value={formData.user_manager}
           onChange={newValue => handleChange('user_manager', newValue)}
           fullWidth
+          error={!!errors.user_manager}
+          helperText={errors.user_manager ? errors.user_manager[0] : ''}
         />
       </Grid>
       <Grid item xs={12} sm={12} lg={4}>
@@ -100,6 +108,8 @@ function EmployeeForm({ employee, onChange }) {
           value={formData.department_id}
           onChange={newValue => handleChange('department_id', newValue)}
           fullWidth
+          error={!!errors.department_id}
+          helperText={errors.department_id ? errors.department_id[0] : ''}
         />
       </Grid>
       <Grid item xs={12} sm={12} lg={4}>
@@ -109,6 +119,8 @@ function EmployeeForm({ employee, onChange }) {
           value={formData.branch_id}
           onChange={newValue => handleChange('branch_id', newValue)}
           fullWidth
+          error={!!errors.branch_id}
+          helperText={errors.branch_id ? errors.branch_id[0] : ''}
         />
       </Grid>
 
@@ -120,6 +132,8 @@ function EmployeeForm({ employee, onChange }) {
           value={formData.role_id}
           onChange={newValue => handleChange('role_id', newValue)}
           fullWidth
+          error={!!errors.role_id}
+          helperText={errors.role_id ? errors.role_id[0] : ''}
         />
       </Grid>
       <Grid item xs={12} sm={12} lg={8} margin={0}>
@@ -127,6 +141,8 @@ function EmployeeForm({ employee, onChange }) {
         <RelatedBranchesSelect
           value={formData.related_branches}
           onChange={newValue => handleChange('related_branches', newValue)}
+          error={!!errors.related_branches}
+          helperText={errors.related_branches ? errors.related_branches[0] : ''}
         />
       </Grid>
     </Grid>
@@ -148,6 +164,7 @@ export default function EmployeeData() {
   });
   const [loadingSave, setLoadingSave] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (id) {
@@ -181,20 +198,40 @@ export default function EmployeeData() {
 
   const handleSave = async () => {
     setLoadingSave(true);
+    setErrors({});
     try {
+      const payload = {
+        ...employeeData,
+        user_id: userData.id,
+        contract_type:
+          employeeData.contract_type === 'PJ'
+            ? 'P'
+            : employeeData.contract_type === 'CLT'
+              ? 'C'
+              : employeeData.contract_type,
+        hire_date: employeeData.hire_date ? employeeData.hire_date : null,
+        resignation_date: employeeData.resignation_date ? employeeData.resignation_date : null,
+        user: {},
+      };
+
       if (userData && userData.employee) {
-        await employeeService.putEmployee(userData.employee.id, employeeData);
+        await employeeService.putEmployee(userData.employee.id, payload);
       } else {
-        await employeeService.createEmployee(employeeData);
+        await employeeService.createEmployee(payload);
       }
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (error) {
-      console.error(error);
+      if (error.response && error.response.data) {
+        setErrors(error.response.data);
+      } else {
+        console.error(error);
+      }
     } finally {
       setLoadingSave(false);
     }
   };
+
 
   if (!userData) return <div>Carregando...</div>;
 
@@ -205,7 +242,7 @@ export default function EmployeeData() {
           Funcionário salvo com sucesso!
         </Alert>
       )}
-      <EmployeeForm employee={employeeData} onChange={handleEmployeeChange} />
+      <EmployeeForm employee={employeeData} onChange={handleEmployeeChange} errors={errors} />
       <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
         <Button variant="contained" color="primary" onClick={handleSave} disabled={loadingSave}>
           {loadingSave ? 'Salvando...' : 'Salvar Funcionário'}
