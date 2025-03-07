@@ -216,7 +216,6 @@ function CategoryTaskList({ id }) {
               flex={1}
               overflow="auto"
               px={3}
-              py={2}
               maxHeight="calc(100vh - 160px)"
               onScroll={handleScroll} // Adiciona o evento de rolagem
             >
