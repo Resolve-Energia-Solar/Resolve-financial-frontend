@@ -1,6 +1,5 @@
 'use client';
 import { Fragment, useCallback, useEffect, useState } from 'react';
-
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
@@ -19,6 +18,8 @@ export default function AutoCompleteServiceCatalog({
   const [loading, setLoading] = useState(false);
   const [selectedServiceCatalog, setSelectedServiceCatalog] = useState(null);
 
+  console.log('value', value);
+
   useEffect(() => {
     const fetchDefaultServiceCatalog = async () => {
       if (value) {
@@ -27,8 +28,7 @@ export default function AutoCompleteServiceCatalog({
           if (serviceCatalogValue) {
             setSelectedServiceCatalog({
               id: serviceCatalogValue.id,
-              name__icontains: serviceCatalogValue.name,
-              limit: 15,
+              name: serviceCatalogValue.name,
             });
           }
         } catch (error) {
@@ -56,7 +56,7 @@ export default function AutoCompleteServiceCatalog({
         const response = await serviceCatalogService.getServiceCatalogByName(name);
         const formattedServiceCatalogs = response.results.map((serviceCatalog) => ({
           id: serviceCatalog.id,
-          name: serviceCatalog.name,
+          name: serviceCatalog.name, // Mantendo o mesmo formato do selectedServiceCatalog
         }));
         setOptions(formattedServiceCatalogs);
       } catch (error) {
@@ -83,8 +83,8 @@ export default function AutoCompleteServiceCatalog({
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.name === value.name}
-        getOptionLabel={(option) => option.name || ''}
+        isOptionEqualToValue={(option, value) => option.id === value.id} // Comparação pelo id
+        getOptionLabel={(option) => option.name || ''} // Usa "name"
         options={options}
         loading={loading}
         value={selectedServiceCatalog}
