@@ -162,7 +162,7 @@ function CategoryTaskList({ id }) {
             <Box px={3} py={2} position="sticky" top={0} zIndex={1}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Stack direction="column" spacing={0.5}>
-                  <Typography variant="caption" className="fw-semibold">
+                  <Typography variant="caption" className="fw-semibold" sx={{ fontWeight: "400", fontSize: "9px", color: "#303030" }}>
                     Etapa
                   </Typography>
                   <Typography variant="h6" className="fw-semibold" sx={{ fontWeight: "400", fontSize: "14px", color: "#303030" }}>
