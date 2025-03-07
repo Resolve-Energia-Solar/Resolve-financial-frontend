@@ -68,7 +68,7 @@ const UploadDocument = ({ projectId }) => {
   const fetchMaterials = async () => {
     try {
       const response = await projectMaterialsService.getProjectMaterials({ project: projectId });
-      setMaterials(response);
+      setMaterials(response.results);
     } catch (error) {
       console.log('Erro ao buscar materiais do projeto:', error);
     }
