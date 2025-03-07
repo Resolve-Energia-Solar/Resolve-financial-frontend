@@ -165,9 +165,9 @@ function CategoryTaskList({ id }) {
                   <Typography variant="caption" className="fw-semibold">
                     Etapa
                   </Typography>
-                  <Typography variant="h6" className="fw-semibold" sx={{ fontWeight: "400", fontSize: "17px", }}>
+                  <Typography variant="h6" className="fw-semibold" sx={{ fontWeight: "400", fontSize: "14px", color: "#303030" }}>
                     {category.name} 
-                    <Typography variant="body1" component="span" color="text.secondary" ml={0.2}>
+                    <Typography variant="body1" component="span" color="text.secondary" ml={0.2} sx={{ fontWeight: "400", fontSize: "14px", color: "#828282" }}>
                       {category.count ? ` (${category.count})` : ''}
                     </Typography>
                   </Typography>
