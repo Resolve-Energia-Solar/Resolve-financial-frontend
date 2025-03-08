@@ -6,7 +6,7 @@ import PageContainer from '@/app/components/container/PageContainer';
 import ParentCard from '@/app/components/shared/ParentCard';
 
 import { useParams } from 'next/navigation';
-import EditLeadTabs from "@/app/components/kanban/Leads/Leads-edit/TabsLead";
+import EditLeadTabs from "@/app/components/kanban/Leads/Leads";
 
 
 
