@@ -17,6 +17,7 @@ import { debounce } from 'lodash';
 
 import { Chip } from "@mui/material";
 import { format, isBefore } from "date-fns";
+import SimpleBar from 'simplebar-react';
 
 function CategoryTaskList({ id }) {
   const theme = useTheme();
@@ -270,10 +271,25 @@ function CategoryTaskList({ id }) {
             {/* Conteúdo com scroll */}
             <Box
               flex={1}
+              component={SimpleBar}
               overflow="auto"
               px={3}
               maxHeight="calc(100vh - 160px)"
               onScroll={handleScroll} // Adiciona o evento de rolagem
+              sx={{
+                '& .simplebar-scrollbar::before': {
+                  backgroundColor: '#7E8388 !important',
+                  opacity: '1 !important', 
+                  borderRadius: '8px',
+                },
+                '& .simplebar-track': {
+                  backgroundColor: '#D9D9D9 !important', 
+                  borderRadius: '8px',
+                },
+                '& .simplebar-track.simplebar-vertical': {
+                  backgroundColor: '#ccc !important', 
+                },
+              }}
             >
               {loading && page === 1 ? (
                 <Stack spacing={2}>
