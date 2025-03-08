@@ -1,6 +1,14 @@
 import AttachmentDetails from '@/app/components/shared/AttachmentDetails';
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
+} from '@mui/material';
 import scheduleService from '@/services/scheduleService';
 import AttachmentDetailsSchedule from '../../components/AttachmentDetails';
 import { useSelector } from 'react-redux';
@@ -14,10 +22,7 @@ function AttachmentSchedule({ scheduleId }) {
   const [saleId, setSaleId] = useState(null);
   const [projectId, setProjectId] = useState(null);
 
-  console.log('attachments: ', attachments);
-
   const userPermissions = useSelector((state) => state.user.permissions);
-
 
   const handleOpen = () => setOpenModalAddAttachment(true);
   const handleClose = () => setOpenModalAddAttachment(false);

@@ -1,4 +1,3 @@
-'use client';
 import {
   Button,
   Typography,
@@ -18,7 +17,6 @@ import {
   DialogActions,
   Chip,
   Grid,
-  Checkbox,
   Switch,
 } from '@mui/material';
 import { ArrowBack, Edit, KeyboardArrowRight } from '@mui/icons-material';
@@ -44,65 +42,65 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
   const [confirmAssociateModalOpen, setConfirmAssociateModalOpen] = useState(false);
   const [customer, setCustomer] = useState(null);
   const [loadingInspections, setLoadingInspections] = useState(true);
-
-  useEffect(() => {
-    setCustomer(customerId);
-  }, [customerId]);
-
   const [inspectionSelected, setInspectionSelected] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const [inspectionsNotAssociated, setInspectionsNotAssociated] = useState([]);
-
   const [reload, setReload] = useState(false);
+  const [schedules, setschedules] = useState([]);
 
   const reloadPage = () => {
     setReload(!reload);
   };
 
   useEffect(() => {
+    setCustomer(customerId);
+  }, [customerId]);
+
+  useEffect(() => {
     const fetchSchedules = async () => {
       try {
-        setLoading(true); // Garantir que o loading seja ativado no início
+        setLoading(true);
         const response = await scheduleService.getAllSchedulesInspectionByProject(projectId);
         console.log('response', response.results);
 
         // Obter os detalhes do projeto para verificar a vistoria principal
         const projectResponse = await projectService.getProjectById(projectId);
+        console.log('projectResponse', projectResponse);
 
         // Extrair o ID da vistoria principal
         const inspectionIdPrincipal = projectResponse.inspection?.id || null;
 
-        // Atualizar o estado das unidades para refletir qual deve ser marcada como principal
+        // Atualiza os schedules marcando a vistoria principal
         const updatedschedules = response.results.map((schedule) => ({
           ...schedule,
-          isChecked: schedule.id === inspectionIdPrincipal, // Marca apenas a vistoria correta
+          isChecked: schedule.id === inspectionIdPrincipal,
         }));
 
         setschedules(updatedschedules);
       } catch (error) {
         console.error('Erro ao buscar unidades: ', error);
       } finally {
-        setLoading(false); // Garantir que o loading seja desativado mesmo em caso de erro
+        setLoading(false);
       }
     };
 
     if (projectId) {
       fetchSchedules();
     }
-  }, [projectId, reload]); // Adicionar dependências específicas
+  }, [projectId, reload]);
 
   useEffect(() => {
     const fetch = async () => {
-      setLoadingInspections(true); // Garantir que loadingInspections seja true no início
+      setLoadingInspections(true);
       try {
         const response = await scheduleService.getAllSchedulesInspectionByCustomer(customer);
-        const filteredResults = response.results.filter((item) => item.project?.sale_id === null);
-        setInspectionsNotAssociated(filteredResults);
+        console.log('response', response.results);
+        // Se necessário, você pode filtrar os resultados aqui
+        setInspectionsNotAssociated(response.results);
       } catch (error) {
         console.error('Erro ao buscar agendamentos:', error);
       } finally {
-        setLoadingInspections(false); // Garantir que loadingInspections seja desativado
+        setLoadingInspections(false);
       }
     };
 
@@ -111,13 +109,8 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
     }
   }, [customer, reload]);
 
-  const [schedules, setschedules] = useState([]);
-
   const handleSwitchChange = async (checked, scheduleId) => {
-    // Salva o estado atual das unidades para possível reversão
     const previousschedules = [...schedules];
-
-    // Atualiza o estado localmente antes da requisição
     const updatedschedules = schedules.map((schedule) =>
       schedule.id === scheduleId
         ? { ...schedule, isChecked: checked }
@@ -127,17 +120,15 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
 
     try {
       if (checked) {
-        // Atualiza o projeto na API com a vistoria marcada como principal
         await projectService.partialUpdateProject(projectId, { inspection_id: scheduleId });
         console.log('Vistoria principal atualizada com sucesso.');
-        console.log('scheduleId:', scheduleId);
       } else {
         console.log('Não é possível desmarcar a vistoria principal diretamente.');
-        setschedules(previousschedules); // Reverte caso o usuário tente desmarcar
+        setschedules(previousschedules);
       }
     } catch (error) {
       console.error('Erro ao atualizar o projeto:', error);
-      setschedules(previousschedules); // Reverte em caso de erro na requisição
+      setschedules(previousschedules);
     }
   };
 
@@ -224,17 +215,17 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                 </TableCell>
               </TableRow>
             </TableHead>
-            {loading ? (
-              <TableSkeleton rows={5} columns={6} />
-            ) : schedules.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} align="center">
-                  <Typography variant="body2">Nenhuma vistoria agendada</Typography>
-                </TableCell>
-              </TableRow>
-            ) : (
-              <TableBody>
-                {schedules.map((schedule) => (
+            <TableBody>
+              {loading ? (
+              <TableSkeleton rows={1} columns={6} />
+              ) : schedules.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">
+                    <Typography variant="body2">Nenhuma vistoria agendada</Typography>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                schedules.map((schedule) => (
                   <TableRow key={schedule.id}>
                     <TableCell align="center">
                       <Typography variant="body2">{schedule?.schedule_date}</Typography>
@@ -275,12 +266,12 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                       </Tooltip>
                     </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            )}
+                ))
+              )}
+            </TableBody>
           </Table>
           <Grid container justifyContent="center" align="center" mt={1}>
-            <Button variant="contained" color="primary" onClick={() => handleAdd()}>
+            <Button variant="contained" color="primary" onClick={handleAdd}>
               Agendar Vistoria
             </Button>
           </Grid>
@@ -405,10 +396,7 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Associar Item">
-                            <IconButton
-                              color="success"
-                              onClick={() => openAssociateModal(schedule.id)}
-                            >
+                            <IconButton color="success" onClick={() => openAssociateModal(schedule.id)}>
                               <KeyboardArrowRight width={22} />
                             </IconButton>
                           </Tooltip>
@@ -454,8 +442,7 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
         <DialogTitle>Confirmar Associação</DialogTitle>
         <DialogContent>
           <Typography variant="body2">
-            Tem certeza que deseja associar esta vistoria ao projeto? Esta ação não pode ser
-            desfeita.
+            Tem certeza que deseja associar esta vistoria ao projeto? Esta ação não pode ser desfeita.
           </Typography>
         </DialogContent>
         <DialogActions>

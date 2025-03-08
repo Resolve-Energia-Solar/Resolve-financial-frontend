@@ -62,6 +62,7 @@ export default function AutoCompleteUserProject({
         if (selectedClient) {
           const responseSales = await saleService.getSales({
             customer: selectedClient,
+            expand: 'projects',
           });
 
           const projectsSet = new Set();
@@ -76,8 +77,6 @@ export default function AutoCompleteUserProject({
               }
             });
           });
-
-          console.log('allProjects', allProjects);
 
           const formattedProjects = await Promise.all(
             allProjects.map((project) => projectService.getProjectById(project.id)),
@@ -101,8 +100,6 @@ export default function AutoCompleteUserProject({
     setOpen(false);
     setOptions([]);
   };
-
-  console.log('selectedClient', selectedClient);
 
   return (
     <Fragment>

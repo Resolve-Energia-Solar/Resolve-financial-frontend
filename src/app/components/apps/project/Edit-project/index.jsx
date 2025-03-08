@@ -1,13 +1,12 @@
 'use client';
-import { Tabs, Tab, Box, Button, Drawer, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { Tabs, Tab, Box, Typography } from '@mui/material';
+import { useEffect, useState, useCallback } from 'react';
 import EditProjectTab from '@/app/components/apps/project/Edit-project/tabs/EditProject';
 import { useParams } from 'next/navigation';
 import CheckListRateio from '@/app/components/apps/checklist/Checklist-list';
 import Attachments from '@/app/components/shared/Attachments';
 import documentTypeService from '@/services/documentTypeService';
 import projectService from '@/services/projectService';
-
 import History from '@/app/components/apps/history';
 import ListInspection from '../components/SchedulesInspections/list-Inspections';
 import RequestList from '../../request/Request-list';
@@ -18,48 +17,62 @@ import Comment from '../../comment';
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 const CONTENT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
+function TabPanel({ children, value, index, ...other }) {
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`tabpanel-${index}`}
+      aria-labelledby={`tab-${index}`}
+      {...other}
+    >
+      {children}
+    </div>
+  );
+}
+
 export default function EditProject({ projectId = null }) {
   const params = useParams();
-  let id = projectId;
-  if (!projectId) id = params.id;
+  const id = projectId || params.id;
 
   const [value, setValue] = useState(0);
   const [documentTypes, setDocumentTypes] = useState([]);
   const [projectData, setProjectData] = useState(null);
 
-  console.log('projectData: ', projectData);
-
-  const handleChangeTab = (event, newValue) => {
+  const handleChangeTab = useCallback((event, newValue) => {
     setValue(newValue);
-  };
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await documentTypeService.getDocumentTypeFromEngineering();
         setDocumentTypes(response.results);
-        console.log('Document Types: ', response.results);
       } catch (error) {
-        console.log('Error: ', error);
+        console.error('Error fetching document types:', error);
       }
     };
     fetchData();
     fetchProject();
-  }, []);
+  }, [id]);
 
-  async function fetchProject() {
+  const fetchProject = async () => {
     try {
       const response = await projectService.getProjectById(id);
       setProjectData(response);
-      console.log('Project: ', response);
     } catch (error) {
-      console.log('Error: ', error);
+      console.error('Error fetching project:', error);
     }
-  }
+  };
 
   return (
     <>
-      <Tabs value={value} onChange={handleChangeTab} variant="scrollable" scrollButtons="auto">
+      <Tabs
+        value={value}
+        onChange={handleChangeTab}
+        variant="scrollable"
+        scrollButtons="auto"
+      >
         <Tab label="Informações Adicionais" />
         <Tab label="Vistoria" />
         <Tab label="Checklist Rateio" />
@@ -71,9 +84,11 @@ export default function EditProject({ projectId = null }) {
         <Tab label="Comentários do Projeto" />
       </Tabs>
 
-      {value === 0 && <EditProjectTab projectId={id} />}
+      <TabPanel value={value} index={0}>
+        <EditProjectTab projectId={id} />
+      </TabPanel>
 
-      {value === 1 && (
+      <TabPanel value={value} index={1}>
         <Box mt={2}>
           <ListInspection
             projectId={id}
@@ -81,15 +96,15 @@ export default function EditProject({ projectId = null }) {
             customerId={projectData?.sale?.customer?.id}
           />
         </Box>
-      )}
+      </TabPanel>
 
-      {value === 2 && (
+      <TabPanel value={value} index={2}>
         <Box mt={2}>
           <CheckListRateio projectId={id} />
         </Box>
-      )}
+      </TabPanel>
 
-      {value === 3 && (
+      <TabPanel value={value} index={3}>
         <>
           <Typography variant="h6" sx={{ mt: 3 }}>
             Anexos do Projeto
@@ -99,7 +114,6 @@ export default function EditProject({ projectId = null }) {
             objectId={id}
             documentTypes={documentTypes}
           />
-
           <Typography variant="h6" sx={{ mt: 2 }}>
             Anexos da Venda
           </Typography>
@@ -109,36 +123,47 @@ export default function EditProject({ projectId = null }) {
             documentTypes={documentTypes}
           />
         </>
-      )}
+      </TabPanel>
 
-      {value === 4 && (
+      <TabPanel value={value} index={4}>
         <Box mt={2}>
-          <RequestList projectId={id} enableFilters={false} />
+          <RequestList projectId={id} enableFilters={false} enableIndicators={false} />
         </Box>
-      )}
+      </TabPanel>
 
-      {value === 5 && (
-        <div>
+      <TabPanel value={value} index={5}>
+        <Box mt={2}>
           <UploadDocument projectId={id} project={projectData} />
-        </div>
-      )}
-      {value === 6 && (
-        <div>
-          <History contentType={CONTENT_TYPE_PROJECT_ID} objectId={id} />
-        </div>
-      )}
-      
-      {value === 7 && (
-        <div>
-          <Comment appLabel={'resolve_crm'} model={'sale'} objectId={projectData?.sale?.id} label='Comentários da Venda' />
-        </div>
-      )}
-      {value === 8 && (
-        <div>
-          <Comment appLabel={'resolve_crm'} model={'project'} objectId={id} label='Comentários do Projeto' />
-        </div>
-      )}
+        </Box>
+      </TabPanel>
 
+      <TabPanel value={value} index={6}>
+        <Box mt={2}>
+          <History contentType={CONTENT_TYPE_PROJECT_ID} objectId={id} />
+        </Box>
+      </TabPanel>
+
+      <TabPanel value={value} index={7}>
+        <Box mt={2}>
+          <Comment
+            appLabel="resolve_crm"
+            model="sale"
+            objectId={projectData?.sale?.id}
+            label="Comentários da Venda"
+          />
+        </Box>
+      </TabPanel>
+
+      <TabPanel value={value} index={8}>
+        <Box mt={2}>
+          <Comment
+            appLabel="resolve_crm"
+            model="project"
+            objectId={id}
+            label="Comentários do Projeto"
+          />
+        </Box>
+      </TabPanel>
     </>
   );
 }

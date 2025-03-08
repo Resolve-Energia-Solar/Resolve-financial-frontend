@@ -65,7 +65,6 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
   const [attachments, setAttachments] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-  
 
   const handleOpenModal = (attachment, documentType) => {
     setOpenModal(true);
@@ -107,8 +106,6 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
       try {
         const response = await attachmentService.getAttachment(objectId, contentType);
         setAttachments(response.results);
-
-        console.log('Attachments: ', response.results);
       } catch (error) {
         console.log('Error: ', error);
       } finally {

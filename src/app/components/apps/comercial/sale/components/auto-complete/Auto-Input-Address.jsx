@@ -9,13 +9,13 @@ import { IconButton, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
 
-export default function AutoCompleteAddress({ 
-  onChange, 
-  value, 
-  error, 
-  helperText, 
+export default function AutoCompleteAddress({
+  onChange,
+  value,
+  error,
+  helperText,
   disableSuggestions = false,
-  ...props 
+  ...props
 }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
@@ -26,9 +26,7 @@ export default function AutoCompleteAddress({
   const fetchDefaultAddress = async (addressId) => {
     if (addressId) {
       try {
-        console.log('addressId', addressId);
         const addressValue = await addressService.getAddressById(addressId);
-        console.log('addressValue', addressValue);
         if (addressValue) {
           setSelectedAddress({
             id: addressValue.id,
@@ -36,7 +34,6 @@ export default function AutoCompleteAddress({
           });
           if (!value) onChange(addressValue.id);
         }
-        console.log('selectedAddress', selectedAddress);
       } catch (error) {
         console.error('Erro ao buscar address:', error);
       }
@@ -121,7 +118,7 @@ export default function AutoCompleteAddress({
         loading={loading}
         value={selectedAddress}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         {...props}
         onInputChange={(event, newInputValue) => {
           if (!disableSuggestions) fetchAddressesByName(newInputValue); // Chama a função de busca apenas se sugestões não estiverem desativadas

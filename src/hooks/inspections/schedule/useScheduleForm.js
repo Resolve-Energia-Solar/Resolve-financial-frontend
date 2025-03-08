@@ -14,6 +14,10 @@ const useScheduleForm = (initialData, id, service_id) => {
   const [serviceData, setServiceData] = useState(null)
   const [addressData, setAddressData] = useState(null)
 
+  console.log('user?.user?.id', user?.user?.id)
+  console.log('user?.user', user?.user)
+  console.log('user', user)
+
   const [formData, setFormData] = useState({
     schedule_creator: user?.user?.id,
     category_id: null,
@@ -179,12 +183,12 @@ const useScheduleForm = (initialData, id, service_id) => {
             .getHours()
             .toString()
             .padStart(2, '0')}:${formData.schedule_start_time
-            .getMinutes()
-            .toString()
-            .padStart(2, '0')}:${formData.schedule_start_time
-            .getSeconds()
-            .toString()
-            .padStart(2, '0')}`
+              .getMinutes()
+              .toString()
+              .padStart(2, '0')}:${formData.schedule_start_time
+                .getSeconds()
+                .toString()
+                .padStart(2, '0')}`
         } else {
           throw new Error('Formato inválido de schedule_start_time')
         }
@@ -277,18 +281,35 @@ const useScheduleForm = (initialData, id, service_id) => {
   }
 
   const handleSave = async () => {
-    setLoading(true)
-    const normalizedProductsIds = Array.isArray(formData.products) ? formData.products : [formData.products];
-  
+    setLoading(true);
+
+    // Validação: deve ter um produto ou um projeto selecionado
+    const hasProduct = Array.isArray(formData.products)
+      ? formData.products.length > 0
+      : !!formData.products;
+    if (!hasProduct && !formData.project_id) {
+      setFormErrors(prev => ({
+        ...prev,
+        products: ['Selecione um produto ou projeto'],
+        project_id: ['Selecione um produto ou projeto'],
+      }));
+      setLoading(false);
+      return false;
+    }
+
+    const normalizedProductsIds = Array.isArray(formData.products)
+      ? formData.products
+      : [formData.products];
+
     const dataToSend = {
-      schedule_creator: formData.schedule_creator,
+      schedule_creator_id: formData.schedule_creator,
       service_id: formData.service_id,
       parent_schedules_id: formData.parent_schedules_id || undefined,
       customer_id: formData.customer_id,
       leads_ids: formData.leads_ids,
       project_id: formData.project_id,
       products: normalizedProductsIds,
-      schedule_agent_id: formData.schedule_agent_id || null, 
+      schedule_agent_id: formData.schedule_agent_id || null,
       schedule_date: formData.schedule_date,
       schedule_start_time: formData.schedule_start_time,
       schedule_end_date: formData.schedule_end_date,
@@ -302,28 +323,27 @@ const useScheduleForm = (initialData, id, service_id) => {
       going_to_location_at: formData.going_to_location_at,
       execution_started_at: formData.execution_started_at,
       execution_finished_at: formData.execution_finished_at,
-    }
-  
-  
+    };
+
     try {
       if (id) {
-        await scheduleService.updateSchedule(id, dataToSend)
+        await scheduleService.updateSchedule(id, dataToSend);
       } else {
-        await scheduleService.createSchedule(dataToSend)
+        await scheduleService.createSchedule(dataToSend);
       }
-      setFormErrors({})
-      setSuccess(true)
-      return true
+      setFormErrors({});
+      setSuccess(true);
+      return true;
     } catch (err) {
-      setSuccess(false)
-      setFormErrors(err.response?.data || {})
-      console.error(err.response?.data || err)
-      return false
+      setSuccess(false);
+      setFormErrors(err.response?.data || {});
+      console.error(err.response?.data || err);
+      return false;
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
-  
+  };
+
 
   return {
     formData,

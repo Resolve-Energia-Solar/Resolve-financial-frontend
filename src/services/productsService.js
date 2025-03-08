@@ -54,8 +54,8 @@ const ProductService = {
     return response.data;
   },
 
-  getProductById: async (id) => {
-    const response = await apiClient.get(`/api/products/${id}/`);
+  getProductById: async (id, params = {}) => {
+    const response = await apiClient.get(`/api/products/${id}/`, { params });
     return response.data;
   },
 

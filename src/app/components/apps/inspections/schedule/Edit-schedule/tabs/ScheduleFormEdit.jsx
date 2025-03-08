@@ -4,12 +4,20 @@ import { useRouter, useParams } from 'next/navigation';
 import { parseISO, format } from 'date-fns';
 
 /* material */
-import { Grid, Button, Stack, Alert, Tooltip, Snackbar, Chip, CircularProgress } from '@mui/material';
+import {
+  Grid,
+  Button,
+  Stack,
+  Alert,
+  Tooltip,
+  Snackbar,
+  Chip,
+  CircularProgress,
+} from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 
 /* components */
 import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
-import AutoCompleteServiceCatalog from '@/app/components/apps/inspections/auto-complete/Auto-input-Service';
 import AutoCompleteUserSchedule from '@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
@@ -47,12 +55,10 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     success,
   } = useScheduleForm(scheduleData, id, scheduleData?.service?.id);
 
-
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
   const [alertType, setAlertType] = React.useState('success');
   const [initialAgent, setInitialAgent] = useState(null); // Estado para o vistoriador inicial
-
 
   const statusOptions = [
     { value: 'Pendente', label: 'Pendente' },
@@ -107,7 +113,6 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
       showAlert('Ordem de serviço editada com sucesso', 'success');
     }
   };
-  
 
   const formattedServiceOpinions = (opinions) => {
     const formattedOpinions = [];
@@ -122,7 +127,6 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     return formattedOpinions;
   };
 
-
   useEffect(() => {
     const fetchServiceOpinions = async () => {
       try {
@@ -130,8 +134,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         const response = await serviceOpinionsService.getServiceOpinions({
           service: formData.service_id,
           is_final_opinion: true,
-        }
-        );
+        });
 
         setServiceOpinions(formattedServiceOpinions(response.results));
       } catch (error) {
@@ -362,7 +365,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
           />
         </Grid>
 
-          {/* Parecer final de Serviço */}
+        {/* Parecer final de Serviço */}
         <HasPermission
           permissions={['field_services.change_final_service_opinion']}
           userPermissions={userPermissions}

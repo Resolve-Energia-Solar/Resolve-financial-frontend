@@ -90,32 +90,33 @@ export default function FormCustom() {
   };
 
   useEffect(() => {
-    if (formData.value && formData.category_code) {
-      try {
-        const now = new Date();
-        const amount = parseFloat(String(formData.value).replace('.', '').replace(',', '.'));
-        const department = user?.employee?.department?.id || '';
-        const category = formData.category_code;
-        const computedDueDate = calculateDueDate({
-          now,
-          amount,
-          category,
-          department,
-          requestTime: now,
-        });
-        const formattedComputedDueDate = computedDueDate.toISOString().split('T')[0];
+    const debounceTimer = setTimeout(() => {
+      if (formData.value && formData.category_code) {
+        try {
+          const now = new Date();
+          const amount = formData.value;
+          const department = user?.employee?.department?.id || '';
+          const category = formData.category_code;
+          const computedDueDate = calculateDueDate({
+            now,
+            amount,
+            category,
+            department,
+            requestTime: now,
+          });
+          const formattedComputedDueDate = computedDueDate.toISOString().split('T')[0];
 
-        setMinDueDate(formattedComputedDueDate);
-
-        // Atualiza se estiver vazio ou se a data informada for inferior à mínima
-        if (!formData.due_date || new Date(formData.due_date) < new Date(formattedComputedDueDate)) {
+          setMinDueDate(formattedComputedDueDate);
           handleChange('due_date', formattedComputedDueDate);
+        } catch (error) {
+          console.error('Erro ao calcular a data de vencimento:', error);
         }
-      } catch (error) {
-        console.error('Erro ao calcular a data de vencimento:', error);
       }
-    }
-  }, [formData.value, formData.category_code, user?.employee?.department?.id, formData.due_date, handleChange]);
+    }, 500); // debounce de 500ms
+
+    return () => clearTimeout(debounceTimer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.value, formData.category_code, user?.employee?.department?.id]);
 
   const handleSubmit = async () => {
     setLoading(true);

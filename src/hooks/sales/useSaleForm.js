@@ -37,14 +37,14 @@ const useSaleForm = (initialData, id) => {
         salesManagerId: initialData.sales_manager?.id || null,
         branchId: initialData.branch?.id || '',
         marketingCampaignId: initialData.marketing_campaign?.id || null,
-        productIds: initialData.products?.map((product) => product) || [],
+        productIds: initialData.products?.map((product) => product.id) || [],
         payment_status: initialData.payment_status || null,
         isSale: initialData.is_pre_sale || false,
         totalValue: initialData.total_value || '',
         status: initialData.status || null,
         completedDocument: initialData.completed_document || false,
         billing_date: initialData.billing_date || null,
-        cancellationReasonsIds: initialData.cancellation_reasons || []
+        cancellationReasonsIds: initialData.cancellation_reasons?.map(cancellation_reason => cancellation_reason.id) || []
       });
     }
   }, [initialData]);
@@ -58,7 +58,7 @@ const useSaleForm = (initialData, id) => {
 
     let errors = { ...formErrors };
 
-    if ((formData.status === 'D' || formData.status === 'C') && !formData.cancellationReasonsIds.length) {
+    if ((formData.status === 'D' || formData.status === 'C') && formData.isSale == false && !formData.cancellationReasonsIds.length) {
       errors.cancellationReasonsIds = ['O motivo é obrigatório.'];
     } else {
       delete errors.cancellationReasonsIds;

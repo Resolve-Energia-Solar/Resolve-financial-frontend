@@ -1,11 +1,12 @@
 import apiClient from './apiClient'
 
 const saleService = {
-  getSales: async ({ ordering, nextPage, userRole, limit = 5, page = 1, ...filters }) => {
+  getSales: async ({ ordering, nextPage, userRole, limit = 5, page = 1, fields = [], ...filters }) => {
     const params = {
       ordering: ordering || '',
       page: nextPage || page,
       limit,
+      fields,
       ...filters,
     }
 
@@ -42,8 +43,8 @@ const saleService = {
     const response = await apiClient.post(`/api/generate-pre-sale/`, data)
     return response.data
   },
-  getSaleById: async id => {
-    const response = await apiClient.get(`/api/sales/${id}/`)
+  getSaleById: async (id, params = {}) => {
+    const response = await apiClient.get(`/api/sales/${id}/`, { params })
     return response.data
   },
 

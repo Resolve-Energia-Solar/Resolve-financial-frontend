@@ -61,8 +61,6 @@ const ScheduleFormCreate = ({
     { value: '16:00:00', label: '16:00' },
   ];
 
-  console.log('formData', formData);
-
   useEffect(() => {
     if (success) {
       if (onClosedModal) {
