@@ -14,6 +14,10 @@ const useScheduleForm = (initialData, id, service_id) => {
   const [serviceData, setServiceData] = useState(null)
   const [addressData, setAddressData] = useState(null)
 
+  console.log('user?.user?.id', user?.user?.id)
+  console.log('user?.user', user?.user)
+  console.log('user', user)
+
   const [formData, setFormData] = useState({
     schedule_creator: user?.user?.id,
     category_id: null,
@@ -298,7 +302,7 @@ const useScheduleForm = (initialData, id, service_id) => {
       : [formData.products];
 
     const dataToSend = {
-      schedule_creator_id: formData.schedule_creator.id,
+      schedule_creator_id: formData.schedule_creator,
       service_id: formData.service_id,
       parent_schedules_id: formData.parent_schedules_id || undefined,
       customer_id: formData.customer_id,
