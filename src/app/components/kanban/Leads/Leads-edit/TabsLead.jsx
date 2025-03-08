@@ -8,6 +8,7 @@ import LeadProposalPage from '../Leads-proposal';
 import EditLeadPage from '.';
 import LeadSchedulePage from '../Leads-schedule';
 import LeadDocumentPage from '../Leads-documents';
+import LeadsProposalListPage from '../Leads-proposal';
 
 
 function CustomTabPanel(props) {
@@ -59,7 +60,7 @@ function EditLeadTabs({ leadId }) {
         TabIndicatorProps={{ style: { backgroundColor: 'white' } }}
         sx={{ marginLeft: '25px' }}
       >
-        {["Dados Pessoais", "Propostas", "Documentos", "Contrato", "Agendamentos"].map((label, index) => (
+        {["Dados Pessoais", "Propostas", "Documentos", "Agendamentos"].map((label, index) => (
           <Tab
             key={index}
             label={label}
@@ -85,7 +86,7 @@ function EditLeadTabs({ leadId }) {
       </CustomTabPanel>
 
       <CustomTabPanel value={tabValue} index={1}>
-        <LeadProposalPage leadId={leadId} />
+        <LeadsProposalListPage leadId={leadId} />
       </CustomTabPanel>
 
       <CustomTabPanel value={tabValue} index={2}>
@@ -93,10 +94,6 @@ function EditLeadTabs({ leadId }) {
       </CustomTabPanel>
 
       <CustomTabPanel value={tabValue} index={3}>
-        <LeadsContractPage leadId={leadId} />
-      </CustomTabPanel>
-
-      <CustomTabPanel value={tabValue} index={4}>
         <LeadSchedulePage leadId={leadId} />
       </CustomTabPanel>
     </Box>

@@ -68,6 +68,7 @@ export function ProductList({ leadId = null }) {
       sx={{
         borderRadius: '12px',
         border: '1px solid #E0E0E0',
+        m: 0,
         p: 3,
       }}
     >
