@@ -9,7 +9,6 @@ import {
     Typography,
     Box,
     Grid,
-    Checkbox,
     IconButton,
     Chip
 } from '@mui/material';
@@ -98,7 +97,12 @@ const LeadsContractPage = ({ leadId = null }) => {
                                             <TableCell>
                                                 <CustomCheckbox checked={selected.includes(contract.id)} onChange={() => handleSelect(contract.id)} />
                                             </TableCell>
-                                            <TableCell>{contract?.products.map(product => product.name).join(', ')}</TableCell>
+                                            <TableCell>
+                                                <Typography sx={{ whiteSpace: 'pre-line' }}>
+                                                    {contract?.products.map(product => product.name).join('\n')}
+                                                </Typography>
+                                            </TableCell>
+
                                             <TableCell>#{contract.id}</TableCell>
                                             <TableCell>{contract.value}</TableCell>
                                             <TableCell>{contract.created_by?.first_name} {contract.created_by?.last_name}</TableCell>
@@ -106,7 +110,7 @@ const LeadsContractPage = ({ leadId = null }) => {
                                             <TableCell>
                                                 <Chip label={proposalStatus[contract.status]?.label} sx={{ backgroundColor: proposalStatus[contract.status]?.color }} />
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell align="center" display="flex">
                                                 <IconButton onClick={() => actions.edit(row)}>
                                                     <IconPencil />
                                                 </IconButton>
@@ -125,6 +129,14 @@ const LeadsContractPage = ({ leadId = null }) => {
                                         </TableCell>
                                     </TableRow>
                                 )}
+
+                                <TableRow>
+                                    <TableCell colSpan={7} align="center">
+                                        <Typography variant="body2" color="textSecondary">
+                                            + Adicionar proposta
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
                             </TableBody>
                         </Table>
                     </TableContainer>
