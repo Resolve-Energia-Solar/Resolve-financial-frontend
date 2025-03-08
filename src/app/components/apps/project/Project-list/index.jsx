@@ -100,6 +100,7 @@ const ProjectList = ({ onClick }) => {
       setLoadingIndicators(true);
       try {
         const data = await projectService.getProjectsIndicators({ ...filters });
+        console.log(data.indicators);
         setIndicators(data.indicators);
       } catch (err) {
         setError('Erro ao carregar Indicadores');
@@ -136,10 +137,10 @@ const ProjectList = ({ onClick }) => {
 
   const blockedToEngineering = useAnimatedNumber(indicators?.blocked_to_engineering || 0);
   const pendingMaterialList = useAnimatedNumber(indicators?.pending_material_list || 0);
-  const releasedToEngineering = useAnimatedNumber(indicators?.is_released_to_engineering || 0);
-  const designerInProgress = useAnimatedNumber(indicators?.designer?.in_progress || 0);
-  const designerComplete = useAnimatedNumber(indicators?.designer?.complete || 0);
-  const designerCanceled = useAnimatedNumber(indicators?.designer?.canceled || 0);
+  const releasedToEngineering = useAnimatedNumber(indicators?.is_released_to_engineering_count || 0);
+  const designerInProgress = useAnimatedNumber(indicators?.designer_in_progress_count || 0);
+  const designerComplete = useAnimatedNumber(indicators?.designer_complete_count || 0);
+  const designerCanceled = useAnimatedNumber(indicators?.designer_canceled_count || 0);
 
   return (
     <>
