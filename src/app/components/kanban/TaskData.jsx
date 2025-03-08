@@ -23,6 +23,7 @@ import ChipDeadLine from './components/Chipdead-line';
 import leadService from '@/services/leadService';
 import { useSnackbar } from 'notistack';
 import EditLeadModal from './TaskModal/EditLeadModal';
+import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
 
 const TaskData = ({ task, index }) => {
   const theme = useTheme();
@@ -48,6 +49,8 @@ const TaskData = ({ task, index }) => {
       setLoadingLeadsIds((prev) => prev.filter((id) => id !== taskId));
     }
   };
+
+  console.log("editedTask obj", editedTask);
 
   return (
     <Draggable draggableId={taskId} index={index}>
@@ -146,6 +149,14 @@ const TaskData = ({ task, index }) => {
                 <Box px={2} py={0.5} display="flex" alignItems="center" gap={0.5}>
                   <LocalPhone fontSize="10" />
                   <Typography variant="body2">{editedTask?.phone}</Typography>
+                </Box>
+            
+              )}
+              {/* to be kwp */}
+              {editedTask?.name && (
+                <Box px={2} py={0.5} display="flex" alignItems="center" gap={0.5}>
+                  <BoltOutlinedIcon fontSize="10" />
+                  <Typography variant="body2">200 kWp</Typography>
                 </Box>
               )}
 
