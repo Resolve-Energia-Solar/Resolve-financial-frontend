@@ -99,6 +99,7 @@ function CategoryTaskList({ id }) {
           params: {
             fields: 'id,name,phone,created_at,qualification,origin',
             column: id,
+            
             ordering: '-created_at',
             page: page,
             limit: perPage,
