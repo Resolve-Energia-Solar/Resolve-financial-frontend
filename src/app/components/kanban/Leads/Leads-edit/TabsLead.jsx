@@ -6,7 +6,7 @@ import ViewLeadPage from '../Leads-view';
 import LeadsContractPage from '../Leads-contract';
 import LeadProposalPage from '../Leads-proposal';
 import EditLeadPage from '.';
-import LeadSchedulePage from '../Leads-schedule';
+import LeadSchedulePage from '../Leads-schedule/index';
 import LeadDocumentPage from '../Leads-documents';
 
 

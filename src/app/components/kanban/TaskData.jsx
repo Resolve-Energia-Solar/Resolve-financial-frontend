@@ -62,6 +62,9 @@ const TaskData = ({ task, index }) => {
             {...provided.dragHandleProps}
             ref={provided.innerRef}
             onClick={() => setShowEditModal(true)}
+            boxShadow={1}
+            border= {1}
+            borderColor={theme.palette.grey[100]}
           >
             <BlankCard>
               {loadingLeadsIds.includes(taskId) && (
@@ -80,12 +83,14 @@ const TaskData = ({ task, index }) => {
                 <Stack
                   direction="row"
                   alignItems="center"
-                  spacing={1}
+                  spacing={1.5}
                   sx={{ color: 'text.secondary' }}
                 >
                   <ChipDeadLine status={'P'} />
-                  <AccessTime fontSize="10" />
-                  <Typography variant="body2" sx={{ fontSize: 11 }}>
+
+                  <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center" gap={0.5}>
+                  <AccessTime sx={{ fontSize: "9px", color: "#ADADAD" }} />
+                  <Typography variant="body2" sx={{ fontSize: "9px", color: "#ADADAD" }}>
                     {editedTask.created_at
                       ? new Intl.DateTimeFormat('pt-BR', {
                         day: '2-digit',
@@ -94,6 +99,7 @@ const TaskData = ({ task, index }) => {
                       }).format(new Date(editedTask.created_at))
                       : '-'}
                   </Typography>
+                  </Box>
                 </Stack>
 
                 <Box>
