@@ -63,15 +63,13 @@ function TaskManager() {
         autoHide={false}
       > */}
       <Box
-
         component={SimpleBar}
         overflow="auto"
         px={3}
-        maxHeight="calc(100vh - 160px)"
         onScroll={handleScroll} // Adiciona o evento de rolagem
         forceVisible="x"
         autoHide={false}
-        sx={{
+        sx={{ 
           maxWidth: '100%',
           overflowX: 'auto',
           whiteSpace: 'nowrap',
@@ -81,7 +79,7 @@ function TaskManager() {
             borderRadius: '8px',
           },
           '& .simplebar-track': {
-            backgroundColor: '#D9D9D9 !important',
+            backgroundColor: '#7E8388 !important',
             borderRadius: '8px',
           },
           '& .simplebar-track.simplebar-horizontal': {
@@ -90,10 +88,13 @@ function TaskManager() {
         }}
       >
         <DragDropContext onDragEnd={onDragEnd}>
-          <Box display="flex" gap={2} p={1}
+          <Box 
+            display="flex" 
+            gap={2} 
+            p={1}
             sx={{
               minWidth: 'max-content',
-              maxHeight: '75vh',
+              maxHeight: '80vh',
             }}
           >
             {loadingCategories

@@ -185,14 +185,14 @@ function CategoryTaskList({ id }) {
         flexDirection="column"
         sx={{
           borderTop: (theme) => `7px solid ${category?.color}`,
-          maxHeight: '100%',
+          maxHeight: '95%',
           minHeight: allTasks?.length === 0 ? '150px' : undefined,
         }}
       >
         {category && (
           <>
             {/* Header fixo */}
-            <Box px={3} py={2} position="sticky" top={0} zIndex={1} >
+            <Box px={3} py={2} position="sticky" top={0} zIndex={1}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Stack direction="column">
 
@@ -283,11 +283,11 @@ function CategoryTaskList({ id }) {
                   borderRadius: '8px',
                 },
                 '& .simplebar-track': {
-                  backgroundColor: '#D9D9D9 !important', 
+                  backgroundColor: '#7E8388 !important', 
                   borderRadius: '8px',
                 },
                 '& .simplebar-track.simplebar-vertical': {
-                  backgroundColor: '#ccc !important', 
+                  backgroundColor: '#D9D9D9 !important', 
                 },
               }}
             >
