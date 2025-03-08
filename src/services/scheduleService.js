@@ -3,15 +3,16 @@ import apiClient from './apiClient'
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID
 
 const scheduleService = {
-  getSchedules: async ({ ordering, nextPage, limit = 5, page = 1, ...filters }) => {
+  getSchedules: async ({ ordering, nextPage, limit = 5, page = 1, expand, ...filters }) => {
     try {
       const params = {
         ordering: ordering || '',
         page: nextPage || page,
         limit,
+        expand,
         ...filters,
       };
-  
+
       const response = await apiClient.get('/api/schedule/', { params });
       return response.data;
     } catch (error) {
@@ -41,9 +42,9 @@ const scheduleService = {
       throw error
     }
   },
-  getScheduleById: async id => {
+  getScheduleById: async (id, params) => {
     try {
-      const response = await apiClient.get(`/api/schedule/${id}/`)
+      const response = await apiClient.get(`/api/schedule/${id}/`, { params })
       return response.data
     } catch (error) {
       console.error(`Erro ao buscar agendamento com id ${id}:`, error)
@@ -64,8 +65,7 @@ const scheduleService = {
     const urlNextPage = nextPage ? `&page=${nextPage}` : ''
     try {
       const response = await apiClient.get(
-        `/api/schedule/?schedule_agent=${userId}&ordering=${
-          ordering || ''
+        `/api/schedule/?schedule_agent=${userId}&ordering=${ordering || ''
         }${urlParams}${urlNextPage}`,
       )
       return response.data

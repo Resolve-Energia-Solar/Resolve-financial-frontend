@@ -179,12 +179,12 @@ const useScheduleForm = (initialData, id, service_id) => {
             .getHours()
             .toString()
             .padStart(2, '0')}:${formData.schedule_start_time
-            .getMinutes()
-            .toString()
-            .padStart(2, '0')}:${formData.schedule_start_time
-            .getSeconds()
-            .toString()
-            .padStart(2, '0')}`
+              .getMinutes()
+              .toString()
+              .padStart(2, '0')}:${formData.schedule_start_time
+                .getSeconds()
+                .toString()
+                .padStart(2, '0')}`
         } else {
           throw new Error('Formato inválido de schedule_start_time')
         }
@@ -278,7 +278,7 @@ const useScheduleForm = (initialData, id, service_id) => {
 
   const handleSave = async () => {
     setLoading(true);
-  
+
     // Validação: deve ter um produto ou um projeto selecionado
     const hasProduct = Array.isArray(formData.products)
       ? formData.products.length > 0
@@ -292,13 +292,13 @@ const useScheduleForm = (initialData, id, service_id) => {
       setLoading(false);
       return false;
     }
-  
+
     const normalizedProductsIds = Array.isArray(formData.products)
       ? formData.products
       : [formData.products];
-  
+
     const dataToSend = {
-      schedule_creator_id: formData.schedule_creator,
+      schedule_creator_id: formData.schedule_creator.id,
       service_id: formData.service_id,
       parent_schedules_id: formData.parent_schedules_id || undefined,
       customer_id: formData.customer_id,
@@ -320,7 +320,7 @@ const useScheduleForm = (initialData, id, service_id) => {
       execution_started_at: formData.execution_started_at,
       execution_finished_at: formData.execution_finished_at,
     };
-  
+
     try {
       if (id) {
         await scheduleService.updateSchedule(id, dataToSend);
@@ -339,7 +339,7 @@ const useScheduleForm = (initialData, id, service_id) => {
       setLoading(false);
     }
   };
-  
+
 
   return {
     formData,
