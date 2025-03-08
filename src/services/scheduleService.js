@@ -42,7 +42,7 @@ const scheduleService = {
       throw error
     }
   },
-  getScheduleById: async (id, params) => {
+  getScheduleById: async (id, params = {}) => {
     try {
       const response = await apiClient.get(`/api/schedule/${id}/`, { params })
       return response.data

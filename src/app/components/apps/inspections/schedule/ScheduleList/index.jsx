@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useRef, useContext, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Box,
@@ -17,35 +17,27 @@ import {
   TableRow,
   TableBody,
   Typography,
-  Tooltip,
-  IconButton,
   Paper,
   TablePagination,
   CircularProgress,
-  Drawer,
-  TextField,
-  MenuItem,
-  Chip
+  Chip,
+  DialogActions as DlgActions,
 } from '@mui/material';
 import {
   AddBoxRounded,
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-  FilterAlt,
   ArrowDropDown as ArrowDropDownIcon,
-  ArrowDropUp as ArrowDropUpIcon
+  ArrowDropUp as ArrowDropUpIcon,
+  FilterAlt,
 } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import { format } from 'date-fns';
 
-// Serviços e contextos
 import scheduleService from '@/services/scheduleService';
 import ScheduleStatusChip from '../StatusChip';
 import ScheduleView from '../ScheduleView';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
 import { ScheduleDataContext } from '@/app/context/Inspection/ScheduleContext';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
-import { options } from 'numeral';
 
 // Configuração dos filtros para agendamentos
 const scheduleFilterConfig = [
@@ -143,9 +135,7 @@ const scheduleFilterConfig = [
     type: "async-multiselect",
     endpoint: "/api/service-opinions/",
     queryParam: "name__icontains",
-    extraParams: {
-      is_final_opinion: false,
-    },
+    extraParams: { is_final_opinion: false },
     mapResponse: (data) =>
       data.results.map((opinion) => ({
         label: `${opinion.name} - ${opinion.service?.name}`,
@@ -158,9 +148,7 @@ const scheduleFilterConfig = [
     type: "async-multiselect",
     endpoint: "/api/service-opinions/",
     queryParam: "name__icontains",
-    extraParams: {
-      is_final_opinion: true,
-    },
+    extraParams: { is_final_opinion: true },
     mapResponse: (data) =>
       data.results.map((opinion) => ({
         label: `${opinion.name} - ${opinion.service?.name}`,
@@ -169,16 +157,30 @@ const scheduleFilterConfig = [
   },
 ];
 
+// Hook para debouncing de valores
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+  return debouncedValue;
+}
+
 const SchedulingList = () => {
   const router = useRouter();
   const userPermissions = useSelector((state) => state.user.permissions);
-  const hasPermission = (permissions) => {
-    if (!permissions) return true;
-    return permissions.some(permission => userPermissions?.includes(permission));
-  };
+  const hasPermission = useCallback(
+    (permissions) => {
+      if (!permissions) return true;
+      return permissions.some((permission) => userPermissions?.includes(permission));
+    },
+    [userPermissions]
+  );
 
   // Obtém filtros e refresh do contexto de agendamentos
   const { filters, setFilters, refresh } = useContext(ScheduleDataContext);
+  const debouncedFilters = useDebounce(filters, 500);
 
   const [scheduleList, setScheduleList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -194,78 +196,93 @@ const SchedulingList = () => {
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
-  // Sempre que os filtros, order ou refresh mudarem, reinicializa página e lista
+  // Cache para resultados já obtidos
+  const cacheRef = useRef({});
+
+  // Reinicializa a página e a lista sempre que filtros, ordenação ou refresh mudarem
   useEffect(() => {
     setPage(1);
     setScheduleList([]);
-  }, [order, orderDirection, filters, refresh]);
+  }, [order, orderDirection, debouncedFilters, refresh]);
 
   useEffect(() => {
     const fetchSchedules = async () => {
       setLoading(true);
       setError(null);
       const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
-      try {
-        const data = await scheduleService.getSchedules({
-          ordering: orderingParam,
-          nextPage: page,
-          limit: rowsPerPage,
-          page: page + 1,
-          ...filters,
-        });
+      const queryParams = {
+        ordering: orderingParam,
+        nextPage: page,
+        limit: rowsPerPage,
+        fields: 'id,customer,service,service_opinion,final_service_opinion,schedule_date,schedule_start_time,schedule_agent,address,observation,status,created_at',
+        page: page + 1,
+        ...debouncedFilters,
+      };
+      const cacheKey = JSON.stringify(queryParams);
+
+      if (cacheRef.current[cacheKey]) {
+        const data = cacheRef.current[cacheKey];
         setScheduleList(data.results);
         setTotalRows(data.count);
-      } catch (err) {
-        setError('Erro ao carregar agendamentos');
-      } finally {
         setLoading(false);
+      } else {
+        try {
+          const data = await scheduleService.getSchedules(queryParams);
+          setScheduleList(data.results);
+          setTotalRows(data.count);
+          cacheRef.current[cacheKey] = data;
+        } catch (err) {
+          setError('Erro ao carregar agendamentos');
+        } finally {
+          setLoading(false);
+        }
       }
     };
+
     fetchSchedules();
-  }, [page, rowsPerPage, order, orderDirection, filters, refresh]);
+  }, [page, rowsPerPage, order, orderDirection, debouncedFilters, refresh]);
 
-  const handlePageChange = (event, newPage) => {
+  const handlePageChange = useCallback((event, newPage) => {
     setPage(newPage);
-  };
+  }, []);
 
-  const handleRowsPerPageChange = (event) => {
+  const handleRowsPerPageChange = useCallback((event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
+  }, []);
 
-  const handleCreateClick = () => {
+  const handleCreateClick = useCallback(() => {
     router.push('/apps/inspections/schedule/create');
-  };
+  }, [router]);
 
-  const handleEditClick = (id) => {
+  const handleEditClick = useCallback((id) => {
     router.push(`/apps/inspections/schedule/${id}/update`);
-  };
+  }, [router]);
 
-  const handleRowClick = (schedule) => {
+  const handleRowClick = useCallback((schedule) => {
     setSelectedSchedule(schedule);
     setDrawerOpen(true);
-  };
+  }, []);
 
-  const handleDrawerClose = () => {
+  const handleDrawerClose = useCallback(() => {
     setDrawerOpen(false);
     setSelectedSchedule(null);
-  };
+  }, []);
 
-  const handleDeleteClick = (id) => {
+  const handleDeleteClick = useCallback((id) => {
     setScheduleToDelete(id);
     setIsDialogOpen(true);
-  };
+  }, []);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setIsDialogOpen(false);
     setScheduleToDelete(null);
-  };
+  }, []);
 
   const handleConfirmDelete = async () => {
     try {
       await scheduleService.deleteSchedule(scheduleToDelete);
-      setScheduleList(scheduleList.filter((item) => item.id !== scheduleToDelete));
-      // Exiba alertas conforme sua implementação
+      setScheduleList((prev) => prev.filter((item) => item.id !== scheduleToDelete));
     } catch (err) {
       setError('Erro ao excluir agendamento');
     } finally {
@@ -273,24 +290,27 @@ const SchedulingList = () => {
     }
   };
 
-  const handleSort = (field) => {
-    if (order === field) {
-      setOrderDirection(orderDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setOrder(field);
-      setOrderDirection('asc');
-    }
-  };
+  const handleSort = useCallback(
+    (field) => {
+      if (order === field) {
+        setOrderDirection(orderDirection === 'asc' ? 'desc' : 'asc');
+      } else {
+        setOrder(field);
+        setOrderDirection('asc');
+      }
+    },
+    [order, orderDirection]
+  );
 
-  const formatDate = (dateString) => {
+  const formatDate = useCallback((dateString) => {
     const [year, month, day] = dateString.split('-');
     return `${day}/${month}/${year}`;
-  };
+  }, []);
 
-  const formatTime = (timeString) => {
+  const formatTime = useCallback((timeString) => {
     const [hours, minutes] = timeString.split(':');
     return `${hours}:${minutes}`;
-  };
+  }, []);
 
   return (
     <Box>
@@ -315,13 +335,10 @@ const SchedulingList = () => {
           Filtros
         </Button>
       </Box>
-      {/* Integração direta do GenericFilterDrawer */}
       <GenericFilterDrawer
         filters={scheduleFilterConfig}
         initialValues={filters}
-        onApply={(newFilters) => {
-          setFilters(newFilters);
-        }}
+        onApply={(newFilters) => setFilters(newFilters)}
         open={filterDrawerOpen}
         onClose={() => setFilterDrawerOpen(false)}
       />
@@ -336,21 +353,13 @@ const SchedulingList = () => {
           sx={{
             overflowX: 'auto',
             scrollbarWidth: 'none',
-            '&::-webkit-scrollbar': {
-              display: 'none',
-            },
-            '&-ms-overflow-style:': {
-              display: 'none',
-            },
+            '&::-webkit-scrollbar': { display: 'none' },
           }}
         >
           <Table stickyHeader aria-label="schedule table">
             <TableHead>
               <TableRow>
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('created_at')}
-                >
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('created_at')}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Criado Em
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -360,10 +369,7 @@ const SchedulingList = () => {
                   </Box>
                 </TableCell>
 
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('customer.complete_name')}
-                >
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Contratante
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -372,10 +378,7 @@ const SchedulingList = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('status')}
-                >
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('status')}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Status Agendamento
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -384,12 +387,8 @@ const SchedulingList = () => {
                     </Box>
                   </Box>
                 </TableCell>
-
                 {hasPermission(['field_services.view_service_opinion']) && (
-                  <TableCell
-                    sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                    onClick={() => handleSort('service_opinion')}
-                  >
+                  <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('service_opinion')}>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       Parecer do Serviço
                       <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -399,11 +398,7 @@ const SchedulingList = () => {
                     </Box>
                   </TableCell>
                 )}
-
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('final_service_opinion')}
-                >
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('final_service_opinion')}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Parecer Final do Serviço
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -412,11 +407,7 @@ const SchedulingList = () => {
                     </Box>
                   </Box>
                 </TableCell>
-
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('schedule_date')}
-                >
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('schedule_date')}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Data
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -425,11 +416,7 @@ const SchedulingList = () => {
                     </Box>
                   </Box>
                 </TableCell>
-
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('schedule_start_time')}
-                >
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('schedule_start_time')}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Hora
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -438,11 +425,7 @@ const SchedulingList = () => {
                     </Box>
                   </Box>
                 </TableCell>
-
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('service.name')}
-                >
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('service.name')}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Serviço
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -451,12 +434,8 @@ const SchedulingList = () => {
                     </Box>
                   </Box>
                 </TableCell>
-
                 {hasPermission(['field_services.view_agent_info']) && (
-                  <TableCell
-                    sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                    onClick={() => handleSort('schedule_agent.complete_name')}
-                  >
+                  <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('schedule_agent.complete_name')}>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       Agente
                       <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -466,11 +445,7 @@ const SchedulingList = () => {
                     </Box>
                   </TableCell>
                 )}
-
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('address.street')}
-                >
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('address.street')}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Endereço
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -479,11 +454,7 @@ const SchedulingList = () => {
                     </Box>
                   </Box>
                 </TableCell>
-
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('observation')}
-                >
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('observation')}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Descrição
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -501,64 +472,39 @@ const SchedulingList = () => {
             ) : (
               <TableBody>
                 {scheduleList.map((schedule) => (
-                  <TableRow key={schedule.id} hover>
-                    <TableCell onClick={() => handleRowClick(schedule)}>
+                  <TableRow key={schedule.id} hover onClick={() => handleRowClick(schedule)}>
+                    <TableCell>
                       {format(new Date(schedule.created_at), 'dd/MM/yyyy HH:mm:ss')}
                     </TableCell>
-                    <TableCell onClick={() => handleRowClick(schedule)}>
-                      {schedule?.customer?.complete_name}
-                    </TableCell>
-                    <TableCell onClick={() => handleRowClick(schedule)}>
+                    <TableCell>{schedule?.customer?.complete_name}</TableCell>
+                    <TableCell>
                       <ScheduleStatusChip status={schedule.status} />
                     </TableCell>
                     {hasPermission(['field_services.view_service_opinion']) && (
-                      <TableCell onClick={() => handleRowClick(schedule)}>
-                        {schedule.service_opinion ? (
-                          schedule.service_opinion.name
-                        ) : (
-                          <Chip label="Sem Parecer" color="error" />
-                        )}
+                      <TableCell>
+                        {schedule.service_opinion ? schedule.service_opinion.name : <Chip label="Sem Parecer" color="error" />}
                       </TableCell>
                     )}
-                    <TableCell onClick={() => handleRowClick(schedule)}>
-                      {schedule.final_service_opinion ? (
-                        schedule.final_service_opinion.name
-                      ) : (
-                        <Chip label="Em Análise" color="warning" />
-                      )}
+                    <TableCell>
+                      {schedule.final_service_opinion ? schedule.final_service_opinion.name : <Chip label="Em Análise" color="warning" />}
                     </TableCell>
-                    <TableCell onClick={() => handleRowClick(schedule)}>
-                      {formatDate(schedule.schedule_date)}
-                    </TableCell>
-                    <TableCell onClick={() => handleRowClick(schedule)}>
-                      {formatTime(schedule.schedule_start_time)}
-                    </TableCell>
-                    <TableCell onClick={() => handleRowClick(schedule)}>
-                      {schedule.service.name}
-                    </TableCell>
+                    <TableCell>{formatDate(schedule.schedule_date)}</TableCell>
+                    <TableCell>{formatTime(schedule.schedule_start_time)}</TableCell>
+                    <TableCell>{schedule.service.name}</TableCell>
                     {hasPermission(['field_services.view_agent_info']) && (
-                      <TableCell onClick={() => handleRowClick(schedule)}>
-                        {schedule.schedule_agent ? (
-                          schedule.schedule_agent.complete_name
-                        ) : (
-                          <Chip label="Sem Agente" color="error" />
-                        )}
+                      <TableCell>
+                        {schedule.schedule_agent ? schedule.schedule_agent.complete_name : <Chip label="Sem Agente" color="error" />}
                       </TableCell>
                     )}
-                    <TableCell onClick={() => handleRowClick(schedule)}>
+                    <TableCell>
                       {`${schedule.address.street}, ${schedule.address.number}, ${schedule.address.neighborhood}, ${schedule.address.city} - ${schedule.address.state}`}
                     </TableCell>
-
-                    <TableCell onClick={() => handleRowClick(schedule)}>
-                      {schedule.observation ? (
-                        schedule.observation.length > 50 ? (
-                          `${schedule.observation.substring(0, 50)}...`
-                        ) : (
-                          schedule.observation
-                        )
-                      ) : (
-                        <Chip label="Sem Observação" color="warning" />
-                      )}
+                    <TableCell>
+                      {schedule.observation
+                        ? schedule.observation.length > 50
+                          ? `${schedule.observation.substring(0, 50)}...`
+                          : schedule.observation
+                        : <Chip label="Sem Observação" color="warning" />}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -573,7 +519,6 @@ const SchedulingList = () => {
             )}
           </Table>
         </TableContainer>
-
       )}
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
@@ -597,11 +542,7 @@ const SchedulingList = () => {
           <Button color="error" onClick={handleConfirmDelete}>Excluir</Button>
         </DialogActions>
       </Dialog>
-      <ScheduleView
-        open={drawerOpen}
-        onClose={handleDrawerClose}
-        selectedSchedule={selectedSchedule}
-      />
+      <ScheduleView open={drawerOpen} onClose={handleDrawerClose} selectedSchedule={selectedSchedule} />
     </Box>
   );
 };

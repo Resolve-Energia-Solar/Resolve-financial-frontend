@@ -3,8 +3,8 @@ import theme from '@/utils/theme';
 import { useTheme } from '@emotion/react';
 
 
-const ChipDeadLine = ({ status }) => {
-  const  theme = useTheme();
+const ChipDeadLine = ({ status, count, sx }) => {
+  const theme = useTheme();
   const getChipProps = (status) => {
     switch (status) {
       case 'P':
@@ -16,8 +16,21 @@ const ChipDeadLine = ({ status }) => {
     }
   };
   const { label, color, labelColor } = getChipProps(status);
-  
-  return <Chip label={label} sx={{backgroundColor: color, color: labelColor, borderRadius: 1, fontWeight: 400}} size="small" />;
+
+  // return <Chip label={label} sx={{ backgroundColor: color, color: labelColor, borderRadius: "4.73px", fontSize: "9px", ...sx }} size="small" />;
+  return (
+    <Chip
+      label={`${label} ${count ? `(${count})` : ''}`} 
+      sx={{
+        backgroundColor: color,
+        color: labelColor,
+        borderRadius: "4.73px",
+        fontSize: "9px",
+        ...sx
+      }}
+      size="small"
+    />
+  );
 };
 
 
