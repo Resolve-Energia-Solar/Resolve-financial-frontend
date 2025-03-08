@@ -10,7 +10,8 @@ import {
     Box,
     Grid,
     Checkbox,
-    IconButton
+    IconButton,
+    Chip
 } from '@mui/material';
 
 import { useRouter } from 'next/navigation';
@@ -25,6 +26,13 @@ const LeadsContractPage = ({ leadId = null }) => {
     const [data, setData] = useState([]);
     const [loadingContracts, setLoadingContracts] = useState(true);
     const [selected, setSelected] = useState([]);
+
+    const proposalStatus = {
+        "A": { label: "Aceita", color: "#E9F9E6" },
+        "R": { label: "Recusada", color: "#FEEFEE" },
+        "P": { label: "Pendente", color: "#FFF7E5" },
+    };
+
 
     useEffect(() => {
         const fetchLeads = async () => {
@@ -95,7 +103,9 @@ const LeadsContractPage = ({ leadId = null }) => {
                                             <TableCell>{contract.value}</TableCell>
                                             <TableCell>{contract.created_by?.first_name} {contract.created_by?.last_name}</TableCell>
                                             <TableCell>{contract.due_date}</TableCell>
-                                            <TableCell>{contract.status}</TableCell>
+                                            <TableCell>
+                                                <Chip label={proposalStatus[contract.status]?.label} sx={{ backgroundColor: proposalStatus[contract.status]?.color }} />
+                                            </TableCell>
                                             <TableCell>
                                                 <IconButton onClick={() => actions.edit(row)}>
                                                     <IconPencil />
