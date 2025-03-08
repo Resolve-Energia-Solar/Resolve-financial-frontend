@@ -84,8 +84,8 @@ function TaskManager() {
             backgroundColor: '#D9D9D9 !important',
             borderRadius: '8px',
           },
-          '& .simplebar-track.simplebar-vertical': {
-            backgroundColor: '#ccc !important',
+          '& .simplebar-track.simplebar-horizontal': {
+            backgroundColor: '#D9D9D9 !important',
           },
         }}
       >
