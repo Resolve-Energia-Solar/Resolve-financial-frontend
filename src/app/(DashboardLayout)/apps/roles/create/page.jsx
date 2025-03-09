@@ -8,14 +8,18 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import useRoleForm from '@/hooks/role/useRoleForm';
 import { useRouter } from 'next/navigation';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Criar Cargos',
+  },
+];
+
 export default function FormCustom() {
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success
-  } = useRoleForm();
+  const { formData, handleChange, handleSave, formErrors, success } = useRoleForm();
 
   const router = useRouter();
 
@@ -25,7 +29,7 @@ export default function FormCustom() {
 
   return (
     <PageContainer title="Criação de Cargo" description="Editor de Cargos">
-      <Breadcrumb title="Criar Cargo" />
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           O cargo foi criado com sucesso!

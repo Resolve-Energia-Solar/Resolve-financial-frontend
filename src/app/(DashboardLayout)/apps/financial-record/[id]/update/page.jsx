@@ -12,6 +12,16 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import useFinancialRecord from '@/hooks/financial_record/useFinancialRecord';
 import useFinancialRecordForm from '@/hooks/financial_record/useFinancialRecordForm';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Editar Contas a pagar',
+  },
+];
+
 export default function FormCustom() {
   const params = useParams();
   const { id } = params;
@@ -32,7 +42,7 @@ export default function FormCustom() {
 
   return (
     <PageContainer title="Edição de Contas a Receber/Pagar" description="Editor de Departamentos">
-      <Breadcrumb title="Editar Contas a Receber/Pagar" />
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           A Conta a Receber/Pagar foi atualizada com sucesso!

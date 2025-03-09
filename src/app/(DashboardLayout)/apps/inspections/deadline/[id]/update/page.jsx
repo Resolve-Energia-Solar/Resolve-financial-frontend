@@ -18,6 +18,16 @@ import useDeadlineForm from '@/hooks/inspections/deadline/useDeadlineForm';
 import ParentCard from '@/app/components/shared/ParentCard';
 import ReactInputMask from 'react-input-mask';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Editar Prazo de Serviço',
+  },
+];
+
 const DeadlineForm = () => {
   const params = useParams();
   const { id } = params;
@@ -34,7 +44,7 @@ const DeadlineForm = () => {
 
   return (
     <PageContainer title={'Edição de Prazo'} description={'Editor de Prazo'}>
-      <Breadcrumb title={'Editar Prazo'} />
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           Prazo atualizado com sucesso!

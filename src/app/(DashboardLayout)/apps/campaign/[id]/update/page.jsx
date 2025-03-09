@@ -12,16 +12,23 @@ import useCampaignForm from '@/hooks/campaign/useCampaignForm';
 import useCampaign from '@/hooks/campaign/useCampaign';
 import { useParams } from 'next/navigation';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Editar Campanha',
+  },
+];
+
 export default function CampaignForm() {
   const { id } = useParams();
   const { loading, error, campaignData } = useCampaign(id);
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success
-  } = useCampaignForm(campaignData, id);
+  const { formData, handleChange, handleSave, formErrors, success } = useCampaignForm(
+    campaignData,
+    id,
+  );
   const [bannerFile, setBannerFile] = useState(null);
 
   const handleBannerChange = (event) => {
@@ -41,12 +48,18 @@ export default function CampaignForm() {
   if (error) return <div>{error}</div>;
 
   return (
-    <PageContainer title="Edição de Campanha de Marketing" description="Editor de Campanhas de Marketing">
-      <Breadcrumb title="Editar Campanha" />
-      {success && <Alert severity="success" sx={{ marginBottom: 3 }}>A campanha foi atualizada com sucesso!</Alert>}
+    <PageContainer
+      title="Edição de Campanha de Marketing"
+      description="Editor de Campanhas de Marketing"
+    >
+      <Breadcrumb items={BCrumb} />
+      {success && (
+        <Alert severity="success" sx={{ marginBottom: 3 }}>
+          A campanha foi atualizada com sucesso!
+        </Alert>
+      )}
       <ParentCard title="Campanha de Marketing">
         <Grid container spacing={2}>
-
           {/* Nome da Campanha */}
           <Grid item xs={12} sm={12} lg={4}>
             <CustomFormLabel htmlFor="campaign">Campanha</CustomFormLabel>
@@ -98,46 +111,49 @@ export default function CampaignForm() {
             />
           </Grid>
 
-{/* Campo: Upload do Banner */}
-<Grid item xs={12}>
-  <CustomFormLabel htmlFor="banner">Banner</CustomFormLabel>
-  
-  {/* Container com borda cinza */}
-  <Stack direction="row" spacing={2} alignItems="center" sx={{ border: '1px solid #ccc', borderRadius: '4px', padding: '10px' }}>
-    
-    {/* Botão para upload */}
-    <Button
-      variant="contained"
-      component="label"
-      color="primary"
-      sx={{ flexShrink: 0 }} // Garante que o botão não encolha
-    >
-      {bannerFile ? 'Alterar Banner' : 'Selecionar Banner'}
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleBannerChange}
-        hidden
-      />
-    </Button>
+          {/* Campo: Upload do Banner */}
+          <Grid item xs={12}>
+            <CustomFormLabel htmlFor="banner">Banner</CustomFormLabel>
 
-    {/* Exibe o nome do arquivo ou o nome do banner existente */}
-    <div style={{ flexGrow: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-      {bannerFile ? (
-        <strong>{bannerFile.name}</strong>
-      ) : formData.banner ? (
-        <strong>{formData.banner.name || formData.banner}</strong>
-      ) : (
-        <span>Nenhum banner selecionado</span>
-      )}
-    </div>
-  </Stack>
-  
-  {formErrors.banner && <Alert severity="error">{formErrors.banner}</Alert>}
-</Grid>
+            {/* Container com borda cinza */}
+            <Stack
+              direction="row"
+              spacing={2}
+              alignItems="center"
+              sx={{ border: '1px solid #ccc', borderRadius: '4px', padding: '10px' }}
+            >
+              {/* Botão para upload */}
+              <Button
+                variant="contained"
+                component="label"
+                color="primary"
+                sx={{ flexShrink: 0 }} // Garante que o botão não encolha
+              >
+                {bannerFile ? 'Alterar Banner' : 'Selecionar Banner'}
+                <input type="file" accept="image/*" onChange={handleBannerChange} hidden />
+              </Button>
 
+              {/* Exibe o nome do arquivo ou o nome do banner existente */}
+              <div
+                style={{
+                  flexGrow: 1,
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                {bannerFile ? (
+                  <strong>{bannerFile.name}</strong>
+                ) : formData.banner ? (
+                  <strong>{formData.banner.name || formData.banner}</strong>
+                ) : (
+                  <span>Nenhum banner selecionado</span>
+                )}
+              </div>
+            </Stack>
 
-
+            {formErrors.banner && <Alert severity="error">{formErrors.banner}</Alert>}
+          </Grid>
 
           {/* Botão de Ação */}
           <Grid item xs={12} md={12}>
@@ -147,7 +163,6 @@ export default function CampaignForm() {
               </Button>
             </Stack>
           </Grid>
-
         </Grid>
       </ParentCard>
     </PageContainer>

@@ -46,7 +46,7 @@ const ServiceOpinionsForm = () => {
       title={'Criação de Parecer do Serviço'}
       description={'Formulário para criar novo Parecer do Serviço'}
     >
-      <Breadcrumb title="Criar Parecer do Serviço" items={BCrumb} />
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           O parecer do serviço foi criado com sucesso!

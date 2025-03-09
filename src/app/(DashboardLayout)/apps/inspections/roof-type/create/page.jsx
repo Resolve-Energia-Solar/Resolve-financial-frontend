@@ -3,12 +3,7 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 /* material */
-import {
-  Grid,
-  Button,
-  Stack,
-  Alert
-} from '@mui/material';
+import { Grid, Button, Stack, Alert } from '@mui/material';
 
 /* components */
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
@@ -20,16 +15,20 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 /* hooks */
 import useRoofTypeForm from '@/hooks/inspections/roof-type/useRoofTypeForm';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Criar Tipo de Tenhado',
+  },
+];
+
 const RoofTypeForm = () => {
   const router = useRouter();
 
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success
-  } = useRoofTypeForm();
+  const { formData, handleChange, handleSave, formErrors, success } = useRoofTypeForm();
 
   useEffect(() => {
     if (success) {
@@ -38,10 +37,17 @@ const RoofTypeForm = () => {
   }, [success, router]);
 
   return (
-    <PageContainer title="Criação de Tipo de Telhado" description="Formulário para criar novo Tipo de Telhado">
-      <Breadcrumb title="Criar Tipo de Telhado" />
-      {success && <Alert severity="success" sx={{ marginBottom: 3 }}>O tipo de telhado foi criado com sucesso!</Alert>}
-      <ParentCard title='Novo Tipo de Telhado'>
+    <PageContainer
+      title="Criação de Tipo de Telhado"
+      description="Formulário para criar novo Tipo de Telhado"
+    >
+      <Breadcrumb items={BCrumb} />
+      {success && (
+        <Alert severity="success" sx={{ marginBottom: 3 }}>
+          O tipo de telhado foi criado com sucesso!
+        </Alert>
+      )}
+      <ParentCard title="Novo Tipo de Telhado">
         <Grid container spacing={2}>
           {/* Nome do Tipo de Telhado */}
           <Grid item xs={12}>

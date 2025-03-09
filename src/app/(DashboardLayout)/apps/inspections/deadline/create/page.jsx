@@ -17,6 +17,16 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
 import ReactInputMask from 'react-input-mask';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Criar prazo',
+  },
+];
+
 const DeadlineForm = () => {
   const router = useRouter();
 
@@ -30,7 +40,7 @@ const DeadlineForm = () => {
 
   return (
     <PageContainer title="Criação de Prazo">
-      <Breadcrumb title="Criar Prazo" description="Criador de Prazos" />
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           Prazo criado com sucesso!

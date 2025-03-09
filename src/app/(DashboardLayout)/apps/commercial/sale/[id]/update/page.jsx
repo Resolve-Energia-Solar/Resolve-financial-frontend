@@ -1,26 +1,25 @@
-import { CardContent } from "@mui/material";
+import { CardContent } from '@mui/material';
 
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
 import ParentCard from '@/app/components/shared/ParentCard';
 
-import EditSaleTabs from "@/app/components/apps/comercial/sale/Edit-sale";
-
+import EditSaleTabs from '@/app/components/apps/comercial/sale/Edit-sale';
 
 const EditSale = () => {
   const BCrumb = [
     {
-        to: "/",
-        title: "Home",
+      to: '/',
+      title: 'Home',
     },
     {
-        title: "Editar Venda",
+      title: 'Editar Venda',
     },
-];
+  ];
 
   return (
     <PageContainer title="Edição de venda" description="Editor de Vendas">
-      <Breadcrumb title="Editar Venda" items={BCrumb} />
+      <Breadcrumb items={BCrumb} />
 
       <ParentCard title="Venda">
         <CardContent>
@@ -29,6 +28,6 @@ const EditSale = () => {
       </ParentCard>
     </PageContainer>
   );
-}
+};
 
 export default EditSale;

@@ -13,6 +13,16 @@ import useCategory from '@/hooks/inspections/category/useCategory';
 import useCategoryForm from '@/hooks/inspections/category/useCategoryForm';
 import AutoCompleteUsers from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Users';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Editar Categoria',
+  },
+];
+
 const CategoryForm = () => {
   const params = useParams();
   const { id } = params;
@@ -29,7 +39,7 @@ const CategoryForm = () => {
 
   return (
     <PageContainer title="Edição de Categoria" description="Editor de Categoria">
-      <Breadcrumb title="Editar Categoria" />
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           A categoria foi atualizada com sucesso!

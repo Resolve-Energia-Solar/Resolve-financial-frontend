@@ -33,6 +33,15 @@ import financialRecordService from '@/services/financialRecordService';
 import attachmentService from '@/services/attachmentService';
 import getContentType from '@/utils/getContentType';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Criar Contas a Pagar',
+  },
+];
 
 export default function FormCustom() {
   const router = useRouter();
@@ -51,14 +60,14 @@ export default function FormCustom() {
         const id = await getContentType('financial', 'financialrecord');
         setContentTypeId(id);
       } catch (error) {
-        console.error("Erro ao buscar content type:", error);
+        console.error('Erro ao buscar content type:', error);
       }
     }
     fetchContentTypeId();
   }, []);
 
   useEffect(() => {
-    if (!userPermissions.includes("financial.add_financialrecord")) {
+    if (!userPermissions.includes('financial.add_financialrecord')) {
       enqueueSnackbar('Você não tem permissão para acessar essa página!', { variant: 'error' });
       router.push('/apps/financial-record');
     } else if (user?.employee?.department?.name === 'Tecnologia' && !user?.is_staff) {
@@ -128,28 +137,32 @@ export default function FormCustom() {
       await Promise.all(
         attachments.map(async (attachment) => {
           const formDataAttachment = new FormData();
-          formDataAttachment.append("file", attachment.file);
-          formDataAttachment.append("description", attachment.description);
-          formDataAttachment.append("object_id", recordId);
-          formDataAttachment.append("content_type_id", contentTypeId);
-          formDataAttachment.append("document_type_id", "");
-          formDataAttachment.append("document_subtype_id", "");
-          formDataAttachment.append("status", "");
+          formDataAttachment.append('file', attachment.file);
+          formDataAttachment.append('description', attachment.description);
+          formDataAttachment.append('object_id', recordId);
+          formDataAttachment.append('content_type_id', contentTypeId);
+          formDataAttachment.append('document_type_id', '');
+          formDataAttachment.append('document_subtype_id', '');
+          formDataAttachment.append('status', '');
           await attachmentService.createAttachment(formDataAttachment);
-        })
+        }),
       );
-      router.push("/apps/financial-record");
+      router.push('/apps/financial-record');
     } catch (error) {
-      console.error("Erro ao salvar registro ou anexos:", error);
+      console.error('Erro ao salvar registro ou anexos:', error);
       if (error.response && error.response.data) {
         const errors = error.response.data;
         setFormErrors(errors);
         Object.keys(errors).forEach((field) => {
           const label = fieldLabels[field] || field;
-          enqueueSnackbar(`Erro no campo ${label}: ${errors[field].join(', ')}`, { variant: 'error' });
+          enqueueSnackbar(`Erro no campo ${label}: ${errors[field].join(', ')}`, {
+            variant: 'error',
+          });
         });
       } else {
-        enqueueSnackbar("Erro ao salvar registro ou anexos: " + error.message, { variant: 'error' });
+        enqueueSnackbar('Erro ao salvar registro ou anexos: ' + error.message, {
+          variant: 'error',
+        });
       }
     } finally {
       setLoading(false);
@@ -161,8 +174,11 @@ export default function FormCustom() {
   }
 
   return (
-    <PageContainer title="Criação de Contas a Receber/Pagar" description="Formulário para criar nova conta a receber/pagar">
-      <Breadcrumb title="Criar Contas a Receber/Pagar" />
+    <PageContainer
+      title="Criação de Contas a Receber/Pagar"
+      description="Formulário para criar nova conta a receber/pagar"
+    >
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           A conta a receber/pagar foi criada com sucesso!
@@ -178,7 +194,12 @@ export default function FormCustom() {
           </Grid>
           <Grid item xs={12} md={6}>
             <CustomFormLabel>Responsável pela Aprovação</CustomFormLabel>
-            <Select variant="outlined" fullWidth value={user?.employee?.manager?.complete_name || ''} disabled>
+            <Select
+              variant="outlined"
+              fullWidth
+              value={user?.employee?.manager?.complete_name || ''}
+              disabled
+            >
               <MenuItem value={user?.employee?.manager?.complete_name || ''}>
                 {user?.employee?.manager?.complete_name}
               </MenuItem>
@@ -198,7 +219,9 @@ export default function FormCustom() {
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            <CustomFormLabel htmlFor="requesting_department_id">Departamento Solicitante</CustomFormLabel>
+            <CustomFormLabel htmlFor="requesting_department_id">
+              Departamento Solicitante
+            </CustomFormLabel>
             <AutoCompleteDepartament
               onChange={(value) => handleChange('requesting_department_id', value)}
               value={formData.requesting_department_id || user?.employee?.department?.id}
@@ -207,7 +230,9 @@ export default function FormCustom() {
             />
           </Grid>
           <Grid item xs={12}>
-            <CustomFormLabel htmlFor="client_supplier_code">Beneficiário (Nome/CPF/CNPJ)</CustomFormLabel>
+            <CustomFormLabel htmlFor="client_supplier_code">
+              Beneficiário (Nome/CPF/CNPJ)
+            </CustomFormLabel>
             <AutoCompleteBeneficiary
               name="client_supplier_code"
               value={formData.client_supplier_code}
@@ -274,7 +299,9 @@ export default function FormCustom() {
               <MenuItem value="C">Cartão de Crédito</MenuItem>
               <MenuItem value="P">Pix</MenuItem>
             </Select>
-            {formErrors.payment_method && <FormHelperText>{formErrors.payment_method}</FormHelperText>}
+            {formErrors.payment_method && (
+              <FormHelperText>{formErrors.payment_method}</FormHelperText>
+            )}
           </Grid>
           <Grid item xs={12} md={6}>
             <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>

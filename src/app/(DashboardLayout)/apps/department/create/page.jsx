@@ -11,6 +11,16 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 
 import useDepartmentForm from '@/hooks/department/useDepartmentForm';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Criar Departamento',
+  },
+];
+
 export default function FormCustom() {
   const router = useRouter();
   const { formData, handleChange, handleSave, formErrors, success } = useDepartmentForm();
@@ -20,8 +30,11 @@ export default function FormCustom() {
   }
 
   return (
-    <PageContainer title="Criação de Departamento" description="Formulário para criar novo departamento">
-      <Breadcrumb title="Criar Departamento" />
+    <PageContainer
+      title="Criação de Departamento"
+      description="Formulário para criar novo departamento"
+    >
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           O departamento foi criado com sucesso!

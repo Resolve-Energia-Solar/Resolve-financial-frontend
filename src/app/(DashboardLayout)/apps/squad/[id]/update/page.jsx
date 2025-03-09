@@ -12,23 +12,30 @@ import AutoCompleteUsers from '@/app/components/apps/comercial/sale/components/a
 import useSquad from '@/hooks/squad/useSquad';
 import useSquadForm from '@/hooks/squad/useSquadForm';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Editar Squad',
+  },
+];
+
 export default function SquadForm() {
   const params = useParams();
   const { id } = params;
 
   const { loading, error, squadData } = useSquad(id);
 
-  const { formData, handleChange, handleSave, formErrors, success } = useSquadForm(
-    squadData,
-    id,
-  );
+  const { formData, handleChange, handleSave, formErrors, success } = useSquadForm(squadData, id);
 
   if (loading) return <div>Carregando...</div>;
   if (error) return <div>{error}</div>;
 
   return (
     <PageContainer title="Edição de Squad" description="Editor de Squads">
-      <Breadcrumb title="Editar Squad" />
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           O squad foi atualizado com sucesso!

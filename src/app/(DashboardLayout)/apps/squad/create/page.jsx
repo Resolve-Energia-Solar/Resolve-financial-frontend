@@ -10,12 +10,22 @@ import AutoCompleteUsers from '@/app/components/apps/comercial/sale/components/a
 import useSquad from '@/hooks/squad/useSquad';
 import useSquadForm from '@/hooks/squad/useSquadForm';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Criar Squad',
+  },
+];
+
 export default function SquadForm() {
   const { formData, handleChange, handleSave, formErrors, success } = useSquadForm();
 
   return (
     <PageContainer title="Criação de Squad" description="Criador de Squads">
-      <Breadcrumb title="Criar Squad" />
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           O squad foi criado com sucesso!

@@ -5,11 +5,19 @@ import PageContainer from '@/app/components/container/PageContainer';
 import ParentCard from '@/app/components/shared/ParentCard';
 import { CardContent } from '@mui/material';
 import CreateProjectPage from '@/app/components/apps/project/Add-project';
-
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Criar Projeto',
+  },
+];
 const CreateProject = () => {
   return (
     <PageContainer title="Criação de projeto" description="Criador de Projeto">
-      <Breadcrumb title="Criar projeto" />
+      <Breadcrumb items={BCrumb} />
       <ParentCard title="Projeto">
         <CardContent>
           <CreateProjectPage />
@@ -17,6 +25,6 @@ const CreateProject = () => {
       </ParentCard>
     </PageContainer>
   );
-}
+};
 
 export default CreateProject;

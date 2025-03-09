@@ -11,15 +11,20 @@ import Alert from '@mui/material/Alert';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AutoCompleteUsers from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Users';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Unidades',
+  },
+];
+
 export default function BranchForm() {
   const router = useRouter();
 
-  const {
-    handleChange,
-    handleSave,
-    formErrors,
-    success
-  } = useBranchForm();
+  const { handleChange, handleSave, formErrors, success } = useBranchForm();
 
   if (success) {
     router.push('/apps/branch');
@@ -27,8 +32,12 @@ export default function BranchForm() {
 
   return (
     <PageContainer title="Criação de Franquias" description="Criador de Franquias">
-      <Breadcrumb title="Criar Franquias" />
-      {success && <Alert severity="success" sx={{ marginBottom: 3 }}>A franquia foi criada com sucesso!</Alert>}
+      <Breadcrumb items={BCrumb} />
+      {success && (
+        <Alert severity="success" sx={{ marginBottom: 3 }}>
+          A franquia foi criada com sucesso!
+        </Alert>
+      )}
       <ParentCard title="Franquias">
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12} lg={6}>
@@ -44,7 +53,7 @@ export default function BranchForm() {
 
           <Grid item xs={12} sm={12} lg={6}>
             <CustomFormLabel htmlFor="address">Endereço</CustomFormLabel>
-            <AutoCompleteAddress 
+            <AutoCompleteAddress
               fullWidth
               onChange={(id) => handleChange('address_id', id)}
               {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
@@ -53,7 +62,7 @@ export default function BranchForm() {
 
           <Grid item xs={12} sm={12} lg={12}>
             <CustomFormLabel htmlFor="owners">Proprietários</CustomFormLabel>
-            <AutoCompleteUsers 
+            <AutoCompleteUsers
               fullWidth
               onChange={(ids) => handleChange('owners_ids', ids)}
               {...(formErrors.owners_ids && { error: true, helperText: formErrors.owners_ids })}

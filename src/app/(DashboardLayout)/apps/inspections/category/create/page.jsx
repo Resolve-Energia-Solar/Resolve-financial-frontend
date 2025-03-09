@@ -15,6 +15,15 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import PageContainer from '@/app/components/container/PageContainer';
 import ParentCard from '@/app/components/shared/ParentCard';
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Criar Categoria de Serviço',
+  },
+];
 
 const CategoryForm = () => {
   const router = useRouter();
@@ -30,7 +39,7 @@ const CategoryForm = () => {
       title={'Criação de Categoria'}
       description={'Formulário para criar nova Categoria'}
     >
-      <Breadcrumb title="Criar Categoria" />
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           A categoria foi criada com sucesso!

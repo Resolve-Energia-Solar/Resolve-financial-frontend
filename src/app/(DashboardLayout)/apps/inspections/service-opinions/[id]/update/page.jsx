@@ -25,7 +25,7 @@ const ServiceOpinionsEdit = () => {
       title={'Edição de Parecer do Serviço'}
       description={'Editor de Parecer do Serviço'}
     >
-      <Breadcrumb title={'Editar Parecer do Serviço'} items={BCrumb} />
+      <Breadcrumb items={BCrumb} />
       <ServiceOpinionsFormEdit />
     </PageContainer>
   );

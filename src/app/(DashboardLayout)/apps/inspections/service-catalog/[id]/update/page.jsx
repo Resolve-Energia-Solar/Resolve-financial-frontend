@@ -17,6 +17,16 @@ import useServiceCatalog from '@/hooks/inspections/service-catalog/useServiceCat
 import useServiceCatalogForm from '@/hooks/inspections/service-catalog/useServiceCatalogForm';
 import AutoCompleteFormBuilder from '@/app/components/apps/inspections/auto-complete/Auto-Input-FormBuilder';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Editar Serviço de Campo',
+  },
+];
+
 const ServiceCatalogForm = () => {
   const params = useParams();
   const { id } = params;
@@ -33,7 +43,7 @@ const ServiceCatalogForm = () => {
 
   return (
     <PageContainer title="Edição de Serviço" description="Editor de Serviço">
-      <Breadcrumb title="Editar Serviço" />
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           O serviço foi atualizado com sucesso!
