@@ -22,6 +22,7 @@ import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard'
 import { IconEye, IconPencil } from '@tabler/icons-react';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import LeadProposalPage from './Add-Proposal';
+import LeadsViewProposal from './View-Proposal';
 
 const LeadsProposalListPage = ({ leadId = null }) => {
     const [data, setData] = useState([]);
@@ -30,7 +31,10 @@ const LeadsProposalListPage = ({ leadId = null }) => {
     const [loadingProposal, setLoadingProposal] = useState(true);
 
     const [openAddProposal, setOpenAddProposal] = useState(false);
+    const [openDetailProposal, setOpenDetailProposal] = useState(false);
     const [selectedProposalId, setSelectedProposalId] = useState(null);
+
+
 
     const proposalStatus = {
         "A": { label: "Aceita", color: "#E9F9E6" },
@@ -75,6 +79,11 @@ const LeadsProposalListPage = ({ leadId = null }) => {
         return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
     };
 
+    const handleRowClick = (contractId) => {
+        setSelectedProposalId(contractId);
+        setOpenDetailProposal(true);
+    };
+
     return (
         <Grid container spacing={0}>
             <Grid item xs={12} sx={{ overflow: 'scroll' }}>
@@ -106,7 +115,11 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                             <TableBody>
                                 {data.length > 0 ? (
                                     data.map((contract) => (
-                                        <TableRow key={contract.id}>
+                                        <TableRow
+                                            key={contract.id}
+                                            onClick={() => handleRowClick(contract.id)}
+                                            sx={{ cursor: 'pointer' }}
+                                        >
                                             <TableCell>
                                                 <CustomCheckbox checked={selected.includes(contract.id)} onChange={() => handleSelect(contract.id)} />
                                             </TableCell>
@@ -124,12 +137,12 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                                                 <Chip label={proposalStatus[contract.status]?.label} sx={{ backgroundColor: proposalStatus[contract.status]?.color }} />
                                             </TableCell>
                                             <TableCell align="center" display="flex">
-                                                <IconButton onClick={() => actions.edit(row)}>
+                                                <IconButton onClick={() => console.log('Editando proposta')}>
                                                     <IconPencil />
                                                 </IconButton>
-                                                <IconButton onClick={() => actions.view(row)}>
+                                                {/* <IconButton onClick={() => actions.view(row)}>
                                                     <IconEye />
-                                                </IconButton>
+                                                </IconButton> */}
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -145,7 +158,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
 
                                 <TableRow>
                                     <TableCell colSpan={8} align="center">
-                                        <Typography variant="body2" color="textSecondary" onClick={() => setOpenAddProposal(true)} sx={{ cursor: 'pointer', fontWeight: 'bold',fontSize: '14px' }}>
+                                        <Typography variant="body2" color="textSecondary" onClick={() => setOpenAddProposal(true)} sx={{ cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>
                                             + Adicionar proposta
                                         </Typography>
                                     </TableCell>
@@ -164,6 +177,22 @@ const LeadsProposalListPage = ({ leadId = null }) => {
             >
                 <DialogContent>
                     <LeadProposalPage leadId={leadId} onClose={() => setOpenAddProposal(false)} onRefresh={handleRefresh} />
+                </DialogContent>
+            </Dialog>
+
+            <Dialog
+                open={openDetailProposal}
+                onClose={() => setOpenDetailProposal(false)}
+                maxWidth="lg"
+                fullWidth
+            >
+                <DialogContent>
+                    <LeadsViewProposal 
+                        leadId={leadId} 
+                        proposalId={selectedProposalId}
+                        onClose={() => setOpenDetailProposal(false)} 
+                        onRefresh={handleRefresh} 
+                    />
                 </DialogContent>
             </Dialog>
         </Grid>
