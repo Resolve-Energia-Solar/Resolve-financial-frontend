@@ -5,6 +5,7 @@ import EditLeadPage from './Edit-Lead';
 import LeadSchedulePage from '../Leads-schedule';
 import LeadDocumentPage from '../Leads-documents';
 import LeadsProposalListPage from '../Leads-proposal';
+import EditCustomerPage from '../Leads-customer/Edit-Customer';
 
 
 function CustomTabPanel(props) {
@@ -82,7 +83,7 @@ function EditLeadTabs({ leadId }) {
       </CustomTabPanel>
 
       <CustomTabPanel value={tabValue} index={1}>
-        N/D
+        <EditCustomerPage leadId={leadId} />
       </CustomTabPanel>
 
       <CustomTabPanel value={tabValue} index={2}>
