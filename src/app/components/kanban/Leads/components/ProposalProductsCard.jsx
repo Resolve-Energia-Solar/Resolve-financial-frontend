@@ -36,8 +36,6 @@ export function ProductList({ leadId = null }) {
 
   const customProducts = useSelector(selectProductsByLead(leadId));
 
-  console.log("customProdutos: ", customProducts)
-
   const addCustomProduct = (product) => {
     dispatch(addProduct(product));
     dispatch(associateProductWithLead({ leadId: leadId, productId: product.id }));
