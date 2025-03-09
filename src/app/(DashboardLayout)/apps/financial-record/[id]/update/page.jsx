@@ -18,7 +18,7 @@ const BCrumb = [
     title: 'Home',
   },
   {
-    title: 'Editar Contas a pagar',
+    title: 'Editar Contas a Pagar',
   },
 ];
 
