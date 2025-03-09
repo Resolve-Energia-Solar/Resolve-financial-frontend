@@ -14,13 +14,14 @@ const Breadcrumb = ({ subtitle, items, title, children }) => (
     sx={{
       backgroundColor: 'secondary.main',
       borderRadius: (theme) => theme.shape.borderRadius / 4,
-      p: '20px',
+      paddingBlock: '10px',
+      paddingInline: '20px',
       marginBottom: '30px',
       position: 'relative',
       overflow: 'hidden',
     }}
   >
-    <Grid item xs={12} sm={6} lg={8} mb={1}>
+    <Box item xs={12} sm={6} lg={8} mb={1}>
       <Typography variant="h6" color="primary.contrastText">
         {title}
       </Typography>
@@ -53,7 +54,7 @@ const Breadcrumb = ({ subtitle, items, title, children }) => (
             ))
           : ''}
       </Breadcrumbs>
-    </Grid>
+    </Box>
     <Grid item xs={12} sm={6} lg={4} display="flex" alignItems="flex-end">
       <Box
         sx={{

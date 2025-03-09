@@ -22,7 +22,7 @@ const SaleListing = () => {
   return (
     <SaleDataContextProvider>
       <PageContainer title="Vendas" description="Lista de Vendas">
-        <Breadcrumb title="Vendas" items={BCrumb} />
+        <Breadcrumb items={BCrumb} />
         <BlankCard>
           <CardContent>
             <SaleList />
