@@ -1,61 +1,73 @@
 'use client';
 import { Grid, Typography, Chip, Divider, Box, Rating, useTheme, IconButton, Card, MenuItem, InputAdornment, TextField, Checkbox, Radio, Button, CircularProgress } from '@mui/material';
-import { AccountCircle, CalendarToday, CalendarViewWeek, Email, Person, Phone, WbSunny } from '@mui/icons-material';
+import { Email, Person } from '@mui/icons-material';
 import BlankCard from '@/app/components/shared/BlankCard';
-import { IconCalendarWeek, IconEye, IconPencil, IconTrash } from '@tabler/icons-react';
-import MediaControlCard from '../../components/CardProposal';
 import { useEffect, useState } from 'react';
 import leadService from '@/services/leadService';
-import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import { useSnackbar } from 'notistack';
-import { useRouter } from 'next/navigation';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import AutoCompleteOrigin from '@/app/components/apps/leads/auto-input-origin';
 import LeadInfoHeader from '../components/HeaderCard';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import useLead from '@/hooks/leads/useLead';
-import useLeadForm from '@/hooks/leads/useLeadtForm';
+import FormDate from '@/app/components/forms/form-custom/FormDate';
+import FormSelect from '@/app/components/forms/form-custom/FormSelect';
+import useUser from '@/hooks/users/useUser';
+import useUserForm from '@/hooks/users/useUserForm';
 
 function EditCustomerPage({ leadId = null }) {
-    const router = useRouter();
-    const theme = useTheme();
     const [lead, setLead] = useState(null);
-    const [loadingLeads, setLoadingLeads] = useState(true);
+    const [customerId, setCustomerId] = useState(null);
     const { enqueueSnackbar } = useSnackbar();
 
-    const { loading, error, leadData } = useLead(leadId);
+    useEffect(() => {
+        const fetchLead = async () => {
+            try {
+                const data = await leadService.getLeadById(leadId, {
+                    params: {
+                        fields: 'id,customer,name,first_document,contact_email',
+                    },
+                })
+                setLead(data);
+                setCustomerId(data?.customer?.id);
+            } catch (err) {
+                enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
+            }
+        };
+        fetchLead();
+    }, [leadId]);
+
+
+    const { loading, error, userData } = useUser(customerId);
+
     const {
         formData,
         handleChange,
         handleSave,
-        loading: formLoading,
         formErrors,
+        loading: formLoading,
+        dataReceived,
         success,
-    } = useLeadForm(leadData, leadId);
+    } = useUserForm(userData, customerId);
 
-    useEffect(() => {
-        const fetchLead = async () => {
-            setLoadingLeads(true);
-            try {
-                const data = await leadService.getLeadById(leadId);
-                setLead(data);
-                console.log(data);
-            } catch (err) {
-                enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
-            } finally {
-                setLoadingLeads(false);
-            }
-        };
-        fetchLead();
-    }, [leadId, enqueueSnackbar]);
+    formData.complete_name ? (formData.complete_name = formData.complete_name) : (formData.complete_name = lead?.name);
+    formData.first_document ? (formData.first_document = formData.first_document) : (formData.first_document = lead?.first_document);
+    formData.email ? (formData.email = formData.email) : (formData.email = lead?.contact_email);
+    formData.phone_numbers_ids = []
 
-    const handleSaveLead = async () => {
 
-            enqueueSnackbar('Essa tab está em manutenção', { variant: 'warning' });
+    const handleSaveCustomer = async () => {
+        const response = await handleSave(formData);
+        if (response) {
+            associateCustomerToLead(dataReceived.id);
+            enqueueSnackbar('Cliente salvo com sucesso', { variant: 'success' });
+        }
     };
+
+    const associateCustomerToLead = async (customerId) => {
+        try {
+            await leadService.patchLead(leadId, { customer: customerId });
+        } catch (err) {
+            enqueueSnackbar('Não foi possível associar o cliente ao lead', { variant: 'error' });
+        }
+    }
 
     return (
         <Grid container spacing={3}>
@@ -79,9 +91,10 @@ function EditCustomerPage({ leadId = null }) {
                             <CustomFormLabel htmlFor="name">Nome Completo</CustomFormLabel>
                             <TextField
                                 name="name"
-                                value={formData.name}
-                                onChange={(e) => handleChange('name', e.target.value)}
                                 fullWidth
+                                value={formData.complete_name}
+                                onChange={(e) => handleChange('complete_name', e.target.value)}
+                                {...(formErrors.complete_name && { error: true, helperText: formErrors.complete_name })}
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
@@ -95,18 +108,23 @@ function EditCustomerPage({ leadId = null }) {
                             <CustomFormLabel htmlFor="first_document">CPF/CNPJ</CustomFormLabel>
                             <TextField
                                 name="first_document"
+                                fullWidth
                                 value={formData.first_document}
                                 onChange={(e) => handleChange('first_document', e.target.value)}
-                                fullWidth
+                                {...(formErrors.first_document && {
+                                    error: true,
+                                    helperText: formErrors.first_document,
+                                })}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
                             <CustomFormLabel htmlFor="contact_email">E-mail</CustomFormLabel>
                             <TextField
                                 name="contact_email"
-                                value={formData.contact_email}
-                                onChange={(e) => handleChange('contact_email', e.target.value)}
                                 fullWidth
+                                value={formData.email}
+                                onChange={(e) => handleChange('email', e.target.value)}
+                                {...(formErrors.email && { error: true, helperText: formErrors.email })}
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
@@ -114,6 +132,29 @@ function EditCustomerPage({ leadId = null }) {
                                         </InputAdornment>
                                     ),
                                 }}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={12} lg={4}>
+                            <FormDate
+                                label="Data de Nascimento"
+                                name="birth_date"
+                                value={formData.birth_date}
+                                onChange={(newValue) => handleChange('birth_date', newValue)}
+                                {...(formErrors.birth_date && { error: true, helperText: formErrors.birth_date })}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12} lg={4}>
+                            <FormSelect
+                                label="Gênero"
+                                options={[
+                                    { value: 'M', label: 'Masculino' },
+                                    { value: 'F', label: 'Feminino' },
+                                    { value: 'O', label: 'Outro' },
+                                ]}
+                                value={formData.gender}
+                                onChange={(e) => handleChange('gender', e.target.value)}
+                                {...(formErrors.gender && { error: true, helperText: formErrors.gender })}
                             />
                         </Grid>
                     </Grid>
@@ -129,8 +170,6 @@ function EditCustomerPage({ leadId = null }) {
                             <CustomFormLabel htmlFor="cep">CEP</CustomFormLabel>
                             <TextField
                                 name="cep"
-                                value={formData.cep || ''}
-                                onChange={(e) => handleChange('cep', e.target.value)}
                                 fullWidth
                             />
                         </Grid>
@@ -138,8 +177,6 @@ function EditCustomerPage({ leadId = null }) {
                             <CustomFormLabel htmlFor="logradouro">Logradouro</CustomFormLabel>
                             <TextField
                                 name="logradouro"
-                                value={formData.logradouro || ''}
-                                onChange={(e) => handleChange('logradouro', e.target.value)}
                                 fullWidth
                             />
                         </Grid>
@@ -147,8 +184,6 @@ function EditCustomerPage({ leadId = null }) {
                             <CustomFormLabel htmlFor="numero">Nº</CustomFormLabel>
                             <TextField
                                 name="numero"
-                                value={formData.numero || ''}
-                                onChange={(e) => handleChange('numero', e.target.value)}
                                 fullWidth
                             />
                         </Grid>
@@ -156,8 +191,6 @@ function EditCustomerPage({ leadId = null }) {
                             <CustomFormLabel htmlFor="complemento">Complemento</CustomFormLabel>
                             <TextField
                                 name="complemento"
-                                value={formData.complemento || ''}
-                                onChange={(e) => handleChange('complemento', e.target.value)}
                                 fullWidth
                             />
                         </Grid>
@@ -165,8 +198,6 @@ function EditCustomerPage({ leadId = null }) {
                             <CustomFormLabel htmlFor="bairro">Bairro</CustomFormLabel>
                             <TextField
                                 name="bairro"
-                                value={formData.bairro || ''}
-                                onChange={(e) => handleChange('bairro', e.target.value)}
                                 fullWidth
                             />
                         </Grid>
@@ -174,8 +205,6 @@ function EditCustomerPage({ leadId = null }) {
                             <CustomFormLabel htmlFor="cidade">Cidade</CustomFormLabel>
                             <TextField
                                 name="cidade"
-                                value={formData.cidade || ''}
-                                onChange={(e) => handleChange('cidade', e.target.value)}
                                 fullWidth
                             />
                         </Grid>
@@ -183,8 +212,6 @@ function EditCustomerPage({ leadId = null }) {
                             <CustomFormLabel htmlFor="estado">Estado</CustomFormLabel>
                             <TextField
                                 name="estado"
-                                value={formData.estado || ''}
-                                onChange={(e) => handleChange('estado', e.target.value)}
                                 fullWidth
                             />
                         </Grid>
@@ -196,9 +223,9 @@ function EditCustomerPage({ leadId = null }) {
                             <Button
                                 variant="contained"
                                 sx={{ backgroundColor: '#FFCC00', color: '#303030', px: 4 }}
-                                onClick={handleSaveLead}
                                 disabled={formLoading}
                                 endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                                onClick={handleSaveCustomer}
                             >
                                 <Typography variant="body1">
                                     {formLoading ? 'Salvando...' : 'Salvar'}
