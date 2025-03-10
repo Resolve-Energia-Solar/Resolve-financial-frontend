@@ -51,7 +51,7 @@ function EditLeadTabs({ leadId }) {
 
   return (
     <Box sx={{ overflow: 'hidden', height: '100%' }}>
-      <LeadInfoHeader leadId={leadId} />
+
       <Tabs
         value={tabValue}
         onChange={handleChange}
