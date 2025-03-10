@@ -1,7 +1,6 @@
 'use client';
 
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Box, IconButton, InputAdornment } from '@mui/material';
 import Button from '@mui/material/Button';
@@ -35,7 +34,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => event.preventDefault();
-  
+
   return (
     <>
       {title && (
