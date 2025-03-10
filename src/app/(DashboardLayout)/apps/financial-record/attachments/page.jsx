@@ -184,7 +184,7 @@ const attachmentList = () => {
     useEffect(() => {
         if (!userPermissions.includes("core.view_attachment") || !userPermissions.includes("financial.view_financialrecord_attachment")) {
             enqueueSnackbar('Você não tem permissão para acessar essa página!', { variant: 'error' });
-            router.push('commercial/sale');
+            router.push('/apps/commercial/sale');
         }
     }, [userPermissions, router]);
 
