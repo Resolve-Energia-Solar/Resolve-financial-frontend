@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import Box from '@mui/material/Box';
+import { Box, IconButton, InputAdornment } from '@mui/material';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
@@ -18,6 +19,7 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import useLoginForm from '@/hooks/users/useLoginForm';
 import Cookies from 'js-cookie';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Visibility, VisibilityOff, Lock } from '@mui/icons-material';
 
 const AuthLogin = ({ title, subtitle, subtext }) => {
   const dispatch = useDispatch();
@@ -30,6 +32,10 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
     await handleSubmit(event, dispatch, Cookies);
   };
 
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (event) => event.preventDefault();
+  
   return (
     <>
       {title && (
@@ -48,6 +54,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             id="email"
             name="email"
             variant="outlined"
+            placeholder="Ex: fulano@email.com"
             fullWidth
             value={formData.email}
             onChange={handleInputChange}
@@ -62,13 +69,32 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           <CustomTextField
             id="password"
             name="password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             variant="outlined"
+            placeholder="******"
             fullWidth
             value={formData.password}
             onChange={handleInputChange}
             error={!!formErrors.password}
             helperText={formErrors.password}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Lock sx={{ color: '#A3A3A3' }} />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         </Box>
 
