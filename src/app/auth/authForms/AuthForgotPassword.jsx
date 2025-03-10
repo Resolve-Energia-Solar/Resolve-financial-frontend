@@ -54,7 +54,9 @@ export default function AuthForgotPassword() {
   return (
     <>
       <Stack mt={4} spacing={2}>
-        <CustomFormLabel htmlFor="reset-email">E-mail</CustomFormLabel>
+        <CustomFormLabel htmlFor="reset-email" sx={{ fontWeight: "700", fontSize: "16px" }}>
+          E-mail<span style={{ color: '#EA3209' }}>*</span>
+        </CustomFormLabel>
         <CustomTextField
           id="reset-email"
           variant="outlined"
