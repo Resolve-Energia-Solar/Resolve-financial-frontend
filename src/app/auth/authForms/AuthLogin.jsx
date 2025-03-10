@@ -18,7 +18,7 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import useLoginForm from '@/hooks/users/useLoginForm';
 import Cookies from 'js-cookie';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { Visibility, VisibilityOff, Lock } from '@mui/icons-material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import EmailIcon from '@mui/icons-material/Email';
 import GppGoodIcon from '@mui/icons-material/GppGood';
 
