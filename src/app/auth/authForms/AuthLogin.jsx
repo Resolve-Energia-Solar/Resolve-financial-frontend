@@ -103,6 +103,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
                 </InputAdornment>
               ),
             }}
+
           />
         </Box>
 
@@ -196,7 +197,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           display="flex"
           alignItems="center"
           justifyContent="center"
-          bgcolor="rgba(255, 255, 255, 0.7)"
+          bgcolor="rgba(255, 255, 255)"
           zIndex={9999}
         >
           <Box display="flex" flexDirection="column" alignItems="center">
