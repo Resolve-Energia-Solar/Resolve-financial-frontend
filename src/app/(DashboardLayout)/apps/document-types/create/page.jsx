@@ -1,5 +1,14 @@
 'use client';
-import { Grid, Button, Stack, Alert, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import {
+  Grid,
+  Button,
+  Stack,
+  Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from '@mui/material';
 import { CheckCircle, Cancel } from '@mui/icons-material';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
@@ -10,17 +19,20 @@ import useDocumentTypeForm from '@/hooks/document-types/useDocumentTypeForm';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Criar tipos de documentos',
+  },
+];
+
 export default function FormCustom() {
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success
-  } = useDocumentTypeForm();
+  const { formData, handleChange, handleSave, formErrors, success } = useDocumentTypeForm();
 
   const router = useRouter();
-
 
   const appLabels = [
     { label: 'Contas', value: 'accounts' },
@@ -32,18 +44,18 @@ export default function FormCustom() {
   ];
 
   useEffect(() => {
-      if (success) {
-        const timer = setTimeout(() => {
-          router.push('/apps/document-types');
-        }, 2000); // 2 segundos para exibir a mensagem
-  
-        return () => clearTimeout(timer); // Limpa o timer ao desmontar o componente
-      }
-    }, [success, router]);
+    if (success) {
+      const timer = setTimeout(() => {
+        router.push('/apps/document-types');
+      }, 2000); // 2 segundos para exibir a mensagem
+
+      return () => clearTimeout(timer); // Limpa o timer ao desmontar o componente
+    }
+  }, [success, router]);
 
   return (
     <PageContainer title="Criação de Cargo" description="Editor de Cargos">
-      <Breadcrumb title="Criar Cargo" />
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           O Tipo de document foi criado com sucesso!
@@ -65,7 +77,9 @@ export default function FormCustom() {
 
           <Grid item xs={12} sm={12} lg={12}>
             <FormControl fullWidth>
-              <CustomFormLabel id="app_label" htmlFor="Setor">Setor</CustomFormLabel>
+              <CustomFormLabel id="app_label" htmlFor="Setor">
+                Setor
+              </CustomFormLabel>
               <Select
                 labelId="app-label"
                 id="app_label"
@@ -83,38 +97,38 @@ export default function FormCustom() {
           </Grid>
 
           <Grid item xs={12} sm={12} lg={12}>
-  <CustomFormLabel htmlFor="isReusable">É Reutilizável?</CustomFormLabel>
-  <Stack direction="row" spacing={2}>
-    <Button
-      variant={formData.reusable ? "contained" : "outlined"}
-      color="success"
-      startIcon={<CheckCircle />}
-      onClick={() => handleChange('reusable', true)}
-      sx={{
-        minWidth: 120, // Para garantir que os botões tenham tamanho consistente
-      }}
-    >
-      Sim
-    </Button>
-    <Button
-      variant={!formData.reusable ? "contained" : "outlined"}
-      color="error"
-      startIcon={<Cancel />}
-      onClick={() => handleChange('reusable', false)}
-      sx={{
-        minWidth: 120,
-      }}
-    >
-      Não
-    </Button>
-  </Stack>
+            <CustomFormLabel htmlFor="isReusable">É Reutilizável?</CustomFormLabel>
+            <Stack direction="row" spacing={2}>
+              <Button
+                variant={formData.reusable ? 'contained' : 'outlined'}
+                color="success"
+                startIcon={<CheckCircle />}
+                onClick={() => handleChange('reusable', true)}
+                sx={{
+                  minWidth: 120, // Para garantir que os botões tenham tamanho consistente
+                }}
+              >
+                Sim
+              </Button>
+              <Button
+                variant={!formData.reusable ? 'contained' : 'outlined'}
+                color="error"
+                startIcon={<Cancel />}
+                onClick={() => handleChange('reusable', false)}
+                sx={{
+                  minWidth: 120,
+                }}
+              >
+                Não
+              </Button>
+            </Stack>
           </Grid>
 
           <Grid item xs={12} sm={12} lg={12}>
             <CustomFormLabel htmlFor="isRequired">É Obrigatório?</CustomFormLabel>
             <Stack direction="row" spacing={2}>
               <Button
-                variant={formData.required ? "contained" : "outlined"}
+                variant={formData.required ? 'contained' : 'outlined'}
                 color="success"
                 startIcon={<CheckCircle />}
                 onClick={() => handleChange('required', true)}
@@ -125,7 +139,7 @@ export default function FormCustom() {
                 Sim
               </Button>
               <Button
-                variant={!formData.required ? "contained" : "outlined"}
+                variant={!formData.required ? 'contained' : 'outlined'}
                 color="error"
                 startIcon={<Cancel />}
                 onClick={() => handleChange('required', false)}
@@ -149,4 +163,4 @@ export default function FormCustom() {
       </ParentCard>
     </PageContainer>
   );
-};
+}

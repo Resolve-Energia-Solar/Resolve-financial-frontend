@@ -12,6 +12,16 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import useDepartment from '@/hooks/department/useDepartment';
 import useDepartmentForm from '@/hooks/department/useDepartmentForm';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Editar Departamento',
+  },
+];
+
 export default function FormCustom() {
   const params = useParams();
   const { id } = params;
@@ -32,7 +42,7 @@ export default function FormCustom() {
 
   return (
     <PageContainer title="Edição de Departamento" description="Editor de Departamentos">
-      <Breadcrumb title="Editar Departamento" />
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           O departamento foi atualizado com sucesso!

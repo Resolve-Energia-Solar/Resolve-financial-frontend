@@ -24,7 +24,7 @@ const ScheduleEdit = () => {
   return (
     <InvoiceProvider>
       <PageContainer title="Editar de Agendamento" description="Essa é o Editor de Agendamento">
-        <Breadcrumb title="Editar de Agendamento" items={BCrumb} />
+        <Breadcrumb items={BCrumb} />
         <BlankCard>
           <CardContent>
             <ScheduleFormEdit />

@@ -8,7 +8,7 @@ import {
   DialogActions,
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import EditLeadTabs from '../Leads/Leads-edit/TabsLead';
+import EditLeadTabs from '../Leads/Leads';
 
 function EditLeadModal({ showModal, onClose, leadId }) {
 

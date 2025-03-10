@@ -14,20 +14,20 @@ import { ProjectDataContextProvider } from '@/app/context/ProjectContext';
 const ProjectListing = () => {
   const { openDrawer, toggleDrawerClosed, handleRowClick, rowSelected } = useProject();
 
-  const BCrumb = [
-    { to: '/', title: 'Home' },
-    { title: 'Projetos' },
-  ];
+  const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Projetos' }];
 
   // Encapsula a função para evitar recriações desnecessárias
-  const onRowClick = useCallback((row) => {
-    handleRowClick(row);
-  }, [handleRowClick]);
+  const onRowClick = useCallback(
+    (row) => {
+      handleRowClick(row);
+    },
+    [handleRowClick],
+  );
 
   return (
     <ProjectDataContextProvider>
       <PageContainer title="Projetos" description="Lista de Projetos">
-        <Breadcrumb title="Projetos" items={BCrumb} />
+        <Breadcrumb items={BCrumb} />
         <BlankCard>
           <CardContent>
             <ProjectList onClick={onRowClick} />

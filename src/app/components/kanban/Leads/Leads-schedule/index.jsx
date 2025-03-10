@@ -15,7 +15,7 @@ import leadService from '@/services/leadService';
 import { useSnackbar } from 'notistack';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import ScheduleCard from '../components/CardSchedule';
-import BasicDateCalendar from '../components/BasicDateCalendar';
+import BasicDateCalendar from '@/app/components/kanban/Leads/components/BasicDateCalendar';
 import ScheduleCardSkeleton from '../components/ScheduleCardSkeleton';
 import { Add } from '@mui/icons-material';
 import LeadAddSchedulePage from './Add-Schedule';

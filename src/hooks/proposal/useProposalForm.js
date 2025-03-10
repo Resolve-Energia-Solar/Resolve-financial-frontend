@@ -57,10 +57,12 @@ const useProposalForm = (initialData, id) => {
       }
       setFormErrors({});
       setSuccess(true);
+      return true;
     } catch (err) {
       setSuccess(false);
       setFormErrors(err.response?.data || {});
       console.error(err.response?.data || err);
+      return false;
     } finally {
       setLoading(false);
     }

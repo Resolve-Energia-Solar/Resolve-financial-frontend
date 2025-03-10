@@ -22,6 +22,16 @@ import FBSelectType from '@/app/components/apps/inspections/form-builder/FBSelec
 import useFormBuilder from '@/hooks/inspections/form-builder/useFormBuilder';
 import useFormBuilderForm from '@/hooks/inspections/form-builder/useFormBuilderForm';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Editar Formulário',
+  },
+];
+
 const FormBuilderForm = () => {
   const params = useParams();
   const { id } = params;
@@ -70,7 +80,7 @@ const FormBuilderForm = () => {
 
   return (
     <PageContainer title={'Edição de Formulário'} description={'Editor de Formulário'}>
-      <Breadcrumb title={'Editar Formulário'} />
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           Formulário atualizado com sucesso!

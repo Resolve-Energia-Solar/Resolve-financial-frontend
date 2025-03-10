@@ -6,10 +6,20 @@ import ParentCard from '@/app/components/shared/ParentCard';
 import { CardContent } from '@mui/material';
 import CreateSaleApp from '@/app/components/apps/comercial/sale/Add-sale';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Criar Venda',
+  },
+];
+
 const CreateSale = () => {
   return (
     <PageContainer title="Criação de venda" description="Criador de Vendas">
-      <Breadcrumb title="Criar venda" />
+      <Breadcrumb items={BCrumb} />
       <ParentCard title="Venda">
         <CardContent>
           <CreateSaleApp />
@@ -17,6 +27,6 @@ const CreateSale = () => {
       </ParentCard>
     </PageContainer>
   );
-}
+};
 
 export default CreateSale;

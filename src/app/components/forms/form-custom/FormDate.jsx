@@ -9,23 +9,12 @@ import { ptBR } from 'date-fns/locale';
 import { format, parseISO, isValid } from 'date-fns';
 
 const FormDate = ({ label, value, onChange, error, helperText, ...rest }) => {
-
   return (
     <div>
-      {label && (
-      <CustomFormLabel htmlFor="date">{label}</CustomFormLabel>
-      )}
+      {label && <CustomFormLabel htmlFor="date">{label}</CustomFormLabel>}
+
       <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
         <DatePicker
-          renderInput={(props) => (
-            <CustomTextField
-              {...props}
-              {...rest}
-              fullWidth
-              error={error}
-              helperText={helperText}
-            />
-          )}
           value={value && isValid(parseISO(value)) ? parseISO(value) : null}
           onChange={(newValue) => {
             if (newValue && isValid(newValue)) {
@@ -34,9 +23,16 @@ const FormDate = ({ label, value, onChange, error, helperText, ...rest }) => {
               onChange('');
             }
           }}
-          inputFormat="dd/MM/yyyy"
+          format="dd/MM/yyyy"
+          slotProps={{
+            textField: {
+              fullWidth: true,
+              error: !!error,
+              helperText: helperText,
+              ...rest,
+            },
+          }}
         />
-
       </LocalizationProvider>
     </div>
   );

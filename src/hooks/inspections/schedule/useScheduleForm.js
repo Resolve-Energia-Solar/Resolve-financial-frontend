@@ -301,8 +301,10 @@ const useScheduleForm = (initialData, id, service_id) => {
       ? formData.products
       : [formData.products];
 
+    console.log('max', formData)
+
     const dataToSend = {
-      schedule_creator_id: formData.schedule_creator,
+      schedule_creator_id: formData.schedule_creator.id,
       service_id: formData.service_id,
       parent_schedules_id: formData.parent_schedules_id || undefined,
       customer_id: formData.customer_id,

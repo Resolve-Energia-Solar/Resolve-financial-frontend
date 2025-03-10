@@ -7,7 +7,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   Typography,
   Dialog,
   DialogActions,
@@ -23,30 +22,18 @@ import {
   TablePagination,
   Chip,
 } from '@mui/material';
-import {
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  AddBoxRounded,
-  Description as DescriptionIcon,
-  Send as SendIcon,
-  MoreVert as MoreVertIcon,
-  ArrowDropDown as ArrowDropDownIcon,
-  ArrowDropUp as ArrowDropUpIcon,
-  Lock as LockIcon,
-  LockOpen as LockOpenIcon,
-} from '@mui/icons-material';
+import { AddBoxRounded, Lock as LockIcon, LockOpen as LockOpenIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import saleService from '@/services/saleService';
 import useSendContract from '@/hooks/clicksign/useClickSign';
 import TableSkeleton from '../components/TableSkeleton';
-import DrawerFilters from '../components/DrawerFilters/DrawerFilters';
 import { SaleDataContext } from '@/app/context/SaleContext';
-import ActionFlash from '../components/flashAction/actionFlash';
 import StatusPreSale from '../components/StatusPreSale';
 import OnboardingCreateSale from '../Add-sale/onboarding';
 import { useSelector } from 'react-redux';
 import useSale from '@/hooks/sales/useSale';
 import EditSaleTabs from '../Edit-sale';
+import DrawerFilters from '../components/DrawerFilters/DrawerFilters';
 import SideDrawer from '@/app/components/shared/SideDrawer';
 import InforCards from '../../../inforCards/InforCards';
 import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
@@ -55,6 +42,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import StatusChip from '@/utils/status/DocumentStatusIcon';
 import ChipSigned from '@/utils/status/ChipSigned';
 import PulsingBadge from '@/app/components/shared/PulsingBadge';
+import TableSortLabel from '@/app/components/shared/TableSortLabel';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -78,16 +66,11 @@ const SaleList = () => {
 
   const {
     isSendingContract,
-    loading: loadingContract,
     error: errorContract,
     setError: setErrorContract,
     success: successContract,
     setSuccess: setSuccessContract,
-    sendContract,
   } = useSendContract();
-
-  const [menuAnchorEl, setMenuAnchorEl] = useState(null);
-  const [menuOpenRowId, setMenuOpenRowId] = useState(null);
 
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('success');
@@ -98,8 +81,6 @@ const SaleList = () => {
 
   const [order, setOrder] = useState('asc');
   const [orderDirection, setOrderDirection] = useState('asc');
-
-  const [selectedSales, setSelectedSales] = useState([]);
 
   const [open, setOpen] = useState(false);
   const [saleToDelete, setSaleToDelete] = useState(null);
@@ -114,8 +95,6 @@ const SaleList = () => {
     setSalesList([]);
   }, [order, orderDirection, filters, refresh]);
 
-  console.log('filters', filters);
-
   useEffect(() => {
     const fetchSales = async () => {
       const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
@@ -127,10 +106,11 @@ const SaleList = () => {
           ordering: orderingParam,
           limit: rowsPerPage,
           page: page + 1,
+          expand: ['customer', 'branch', 'documents_under_analysis'],
           fields: [
             'id',
             'documents_under_analysis',
-            'customer',
+            'customer.complete_name',
             'contract_number',
             'signature_date',
             'total_value',
@@ -140,8 +120,9 @@ const SaleList = () => {
             'final_service_opinion',
             'is_released_to_engineering',
             'created_at',
-            'branch',
+            'branch.name',
           ],
+
           ...filters,
         });
 
@@ -178,21 +159,8 @@ const SaleList = () => {
     setAlertOpen(false);
   };
 
-  const handleCreateClick = () => {
-    router.push('/apps/commercial/sale/create');
-  };
-
   const handleEditClick = (id) => {
     router.push(`/apps/commercial/sale/${id}/update`);
-  };
-
-  const handleViewClick = (id) => {
-    router.push(`/apps/commercial/sale/${id}/view`);
-  };
-
-  const handleDeleteClick = (id) => {
-    setSaleToDelete(id);
-    setOpen(true);
   };
 
   const handleCloseModal = () => {
@@ -214,47 +182,9 @@ const SaleList = () => {
     }
   };
 
-  const handleGenerateProposal = async (item) => {
-    try {
-      const response = await fetch('/api/proposal', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          customer: item?.customer?.complete_name,
-          total_value: Number(item.total_value).toLocaleString('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-          }),
-        }),
-      });
-
-      const data = await response.text();
-      setProposalHTML(data);
-      setDialogOpen(true);
-    } catch (err) {
-      setError('Erro ao gerar proposta');
-    }
-  };
-
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setProposalHTML('');
-  };
-
-  const handleSendContract = async (sale) => {
-    sendContract(sale);
-  };
-
-  const handleMenuClick = (event, id) => {
-    setMenuAnchorEl(event.currentTarget);
-    setMenuOpenRowId(id);
-  };
-
-  const handleMenuClose = () => {
-    setMenuAnchorEl(null);
-    setMenuOpenRowId(null);
   };
 
   const handleSort = (field) => {
@@ -266,8 +196,6 @@ const SaleList = () => {
     }
   };
 
-  console.log('salesList', salesList);
-
   return (
     <Box>
       <Accordion defaultExpanded sx={{ marginBottom: 4 }}>
@@ -277,7 +205,7 @@ const SaleList = () => {
           id="sale-cards-header"
         >
           <Typography variant="h6">
-            Status
+            Total
             <Chip
               sx={{ marginLeft: 1 }}
               label={Number(indicators?.total_value_sum || 0).toLocaleString('pt-BR', {
@@ -352,149 +280,139 @@ const SaleList = () => {
         >
           Adicionar Venda
         </Button>
-
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          {selectedSales.length > 0 && <ActionFlash value={selectedSales} />}
           <DrawerFilters />
         </Box>
       </Box>
 
       <Box>
-        <TableContainer component={Paper} elevation={10} sx={{ overflowX: 'auto' }}>
+        <TableContainer sx={{ overflowX: 'auto' }}>
           <Table stickyHeader aria-label="sales table">
             <TableHead>
               <TableRow>
                 <TableCell>Doc.</TableCell>
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('customer.complete_name')}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    Nome contratante
-                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                      {order === 'customer.complete_name' &&
-                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                    </Box>
-                  </Box>
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                  <TableSortLabel
+                    label="Nome contratante"
+                    orderBy={order}
+                    headCell="customer.complete_name"
+                    onRequestSort={() => handleSort('customer.complete_name')}
+                    orderDirection={orderDirection}
+                  />
                 </TableCell>
 
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('contract_number')}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    Número de contrato
-                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                      {order === 'contract_number' &&
-                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                    </Box>
-                  </Box>
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                  <TableSortLabel
+                    label="Número de contrato"
+                    orderBy={order}
+                    headCell="contract_number"
+                    onRequestSort={() => handleSort('contract_number')}
+                    orderDirection={orderDirection}
+                  />
                 </TableCell>
 
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('signature_date')}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    Data de Assinatura
-                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                      {order === 'signature_date' &&
-                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                    </Box>
-                  </Box>
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                  <TableSortLabel
+                    label="Data de Assinatura"
+                    orderBy={order}
+                    headCell="signature_date"
+                    onRequestSort={() => handleSort('signature_date')}
+                    orderDirection={orderDirection}
+                  />
                 </TableCell>
 
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('total_value')}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    Valor Total (R$)
-                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                      {order === 'total_value' &&
-                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                    </Box>
-                  </Box>
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                  <TableSortLabel
+                    label=" Valor Total (R$)"
+                    orderBy={order}
+                    headCell="total_value"
+                    onRequestSort={() => handleSort('total_value')}
+                    orderDirection={orderDirection}
+                  />
                 </TableCell>
 
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('signature_date')}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    Assinatura
-                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                      {order === 'signature_date' &&
-                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                    </Box>
-                  </Box>
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                  <TableSortLabel
+                    label="Status da Assinatura"
+                    orderBy={order}
+                    headCell="signature_status"
+                    onRequestSort={() => handleSort('signature_status')}
+                    orderDirection={orderDirection}
+                  />
                 </TableCell>
 
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('is_pre_sale')}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    Venda
-                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                      {order === 'is_pre_sale' &&
-                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                    </Box>
-                  </Box>
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                  <TableSortLabel
+                    label="Venda / Pré-venda"
+                    orderBy={order}
+                    headCell="is_pre_sale"
+                    onRequestSort={() => handleSort('is_pre_sale')}
+                    orderDirection={orderDirection}
+                  />
                 </TableCell>
 
                 <TableCell
                   sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                   onClick={() => handleSort('status')}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    Status
-                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                      {order === 'status' &&
-                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                    </Box>
-                  </Box>
+                  <TableSortLabel
+                    label="Status da Venda"
+                    orderBy={order}
+                    headCell="status"
+                    onRequestSort={() => handleSort('status')}
+                    orderDirection={orderDirection}
+                  />
                 </TableCell>
 
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('final_service_opinion')}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    P.F Vistoria
-                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                      {order === 'final_service_opinion' &&
-                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                    </Box>
-                  </Box>
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                  <TableSortLabel
+                    label="Parecer da Vistoria"
+                    orderBy={order}
+                    headCell="final_service_opinion"
+                    onRequestSort={() => handleSort('final_service_opinion')}
+                    orderDirection={orderDirection}
+                  />
                 </TableCell>
 
-                <TableCell>Liberado p/Engenharia</TableCell>
-
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('created_at')}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    Data de Criação
-                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                      {order === 'created_at' &&
-                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                    </Box>
-                  </Box>
+                <TableCell>
+                  <TableSortLabel
+                    label="Liberado p/Engenharia"
+                    orderBy={order}
+                    headCell="is_released_to_engineering"
+                    onRequestSort={() => handleSort('is_released_to_engineering')}
+                    orderDirection={orderDirection}
+                  />
                 </TableCell>
 
-                <TableCell>Unidade</TableCell>
-                {/* <TableCell>Ações</TableCell> */}
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                  <TableSortLabel
+                    label="Data de Criação"
+                    orderBy={order}
+                    headCell="created_at"
+                    onRequestSort={() => handleSort('created_at')}
+                    orderDirection={orderDirection}
+                  />
+                </TableCell>
+
+                <TableCell>
+                  <TableSortLabel
+                    label="Unidade"
+                    orderBy={order}
+                    headCell="branch.name"
+                    onRequestSort={() => handleSort('branch.name')}
+                    orderDirection={orderDirection}
+                  />
+                </TableCell>
               </TableRow>
             </TableHead>
-            {loading ? (
-              <TableSkeleton rows={rowsPerPage} cols={11} />
-            ) : error && page === 1 ? (
-              <Typography color="error">{error}</Typography>
-            ) : (
-              <TableBody>
-                {salesList.map((item) => (
+
+            <TableBody>
+              {loading ? (
+                <TableSkeleton rows={rowsPerPage} columns={12} />
+              ) : error && page === 1 ? (
+                <Typography color="error">{error}</Typography>
+              ) : (
+                salesList.map((item) => (
                   <TableRow
                     key={item.id}
                     onClick={() => handleRowClick(item)}
@@ -556,16 +474,9 @@ const SaleList = () => {
                     </TableCell>
                     <TableCell>{item.branch.name}</TableCell>
                   </TableRow>
-                ))}
-                {loading && page > 1 && (
-                  <TableRow>
-                    <TableCell colSpan={9} align="center">
-                      <CircularProgress />
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            )}
+                ))
+              )}
+            </TableBody>
           </Table>
         </TableContainer>
 
@@ -668,7 +579,7 @@ const SaleList = () => {
         onClose={() => toggleDrawerClosed(false)}
         title="Detalhamento da Venda"
       >
-        <EditSaleTabs saleId={rowSelected?.id} data={rowSelected?.customer} />
+        <EditSaleTabs saleId={rowSelected?.id} />
       </SideDrawer>
     </Box>
   );

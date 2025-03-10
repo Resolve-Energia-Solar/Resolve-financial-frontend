@@ -17,6 +17,16 @@ import PageContainer from '@/app/components/container/PageContainer';
 import ParentCard from '@/app/components/shared/ParentCard';
 import AutoCompleteFormBuilder from '@/app/components/apps/inspections/auto-complete/Auto-Input-FormBuilder';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Criar Tipo de Serviço de Campo',
+  },
+];
+
 const ServiceCatalogForm = () => {
   const router = useRouter();
 
@@ -28,7 +38,7 @@ const ServiceCatalogForm = () => {
 
   return (
     <PageContainer title={'Criação de Serviço'} description={'Formulário para criar novo Serviço'}>
-      <Breadcrumb title="Criar Serviço" />
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           O serviço foi criado com sucesso!

@@ -91,7 +91,7 @@ const BlogDetail = () => {
 
   return (
     <Box>
-      <Breadcrumb title="Blog Detail" items={BCrumb} />
+      <Breadcrumb items={BCrumb} />
       {post ? (
         <>
           <BlankCard>
@@ -120,7 +120,8 @@ const BlogDetail = () => {
                     sx={{
                       marginLeft: 'auto',
                       marginTop: '-21px',
-                      backgroundColor: (theme) => theme.palette.mode === 'dark' ? theme.palette.background.dark : 'white',
+                      backgroundColor: (theme) =>
+                        theme.palette.mode === 'dark' ? theme.palette.background.dark : 'white',
                     }}
                     label="2 min Read"
                     size="small"

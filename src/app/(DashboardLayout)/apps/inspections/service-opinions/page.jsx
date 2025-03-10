@@ -25,7 +25,7 @@ const ServiceOpinionsListing = () => {
   return (
     <ServiceOpinionsContextProvider>
       <PageContainer title={'Parecer do Serviço'} description={'Lista de Pareceres do Serviço'}>
-        <Breadcrumb title={'Parecer do Serviço'} items={BCrumb} />
+        <Breadcrumb items={BCrumb} />
         <BlankCard>
           <CardContent>
             <ServiceOpinionsList />

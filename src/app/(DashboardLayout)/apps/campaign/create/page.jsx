@@ -11,15 +11,18 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import useCampaignForm from '@/hooks/campaign/useCampaignForm';
 import { useRouter } from 'next/navigation';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Criar Campanha',
+  },
+];
 export default function CampaignForm() {
   const router = useRouter();
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success
-  } = useCampaignForm();
+  const { formData, handleChange, handleSave, formErrors, success } = useCampaignForm();
   const [bannerFile, setBannerFile] = useState(null);
 
   const handleBannerChange = (event) => {
@@ -40,12 +43,18 @@ export default function CampaignForm() {
   }, [success, router]);
 
   return (
-    <PageContainer title="Criação de Campanha de Marketing" description="Criador de Campanhas de Marketing">
-      <Breadcrumb title="Criar Campanha" />
-      {success && <Alert severity="success" sx={{ marginBottom: 3 }}>A campanha foi criada com sucesso!</Alert>}
+    <PageContainer
+      title="Criação de Campanha de Marketing"
+      description="Criador de Campanhas de Marketing"
+    >
+      <Breadcrumb items={BCrumb} />
+      {success && (
+        <Alert severity="success" sx={{ marginBottom: 3 }}>
+          A campanha foi criada com sucesso!
+        </Alert>
+      )}
       <ParentCard title="Campanha de Marketing">
         <Grid container spacing={2}>
-
           {/* Nome da Campanha */}
           <Grid item xs={12} sm={12} lg={4}>
             <CustomFormLabel htmlFor="campaign">Nome da Campanha</CustomFormLabel>
@@ -66,7 +75,10 @@ export default function CampaignForm() {
               name="start_datetime"
               value={formData.start_datetime}
               onChange={(newValue) => handleChange('start_datetime', newValue)}
-              {...(formErrors.start_datetime && { error: true, helperText: formErrors.start_datetime })}
+              {...(formErrors.start_datetime && {
+                error: true,
+                helperText: formErrors.start_datetime,
+              })}
             />
           </Grid>
 
@@ -100,7 +112,12 @@ export default function CampaignForm() {
           {/* Campo: Upload do Banner */}
           <Grid item xs={12}>
             <CustomFormLabel htmlFor="banner">Banner</CustomFormLabel>
-            <Stack direction="row" spacing={2} alignItems="center" sx={{ border: '1px solid #ccc', borderRadius: '4px', padding: '10px' }}>
+            <Stack
+              direction="row"
+              spacing={2}
+              alignItems="center"
+              sx={{ border: '1px solid #ccc', borderRadius: '4px', padding: '10px' }}
+            >
               <Button
                 variant="contained"
                 component="label"
@@ -108,14 +125,16 @@ export default function CampaignForm() {
                 sx={{ flexShrink: 0 }} // Garante que o botão não encolha
               >
                 {bannerFile ? 'Alterar Banner' : 'Selecionar Banner'}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleBannerChange}
-                  hidden
-                />
+                <input type="file" accept="image/*" onChange={handleBannerChange} hidden />
               </Button>
-              <div style={{ flexGrow: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+              <div
+                style={{
+                  flexGrow: 1,
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                }}
+              >
                 {bannerFile ? (
                   <strong>{bannerFile.name}</strong>
                 ) : formData.banner ? (

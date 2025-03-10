@@ -26,7 +26,7 @@ const CategoryListing = () => {
   return (
     <CategoryDataContextProvider>
       <PageContainer title={'Categorias'} description={'Lista de Categorias'}>
-        <Breadcrumb title={'Categorias'} items={BCrumb} />
+        <Breadcrumb items={BCrumb} />
         <BlankCard>
           <CardContent>
             <CategoryList />

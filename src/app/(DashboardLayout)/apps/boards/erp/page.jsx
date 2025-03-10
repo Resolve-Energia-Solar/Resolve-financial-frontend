@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import KanbanBoard from '@/app/components/apps/kanban/erp/KanbanBoard';
 import PageContainer from '@/app/components/container/PageContainer';
@@ -20,7 +20,6 @@ import Footer from '@/app/components/apps/kanban/erp/GeneralDetails/Footer';
 import EditProject from '@/app/components/apps/project/Edit-project';
 import useProject from '@/hooks/projects/useProject';
 export default function Kanban() {
-
   const {
     board,
     boards,
@@ -50,10 +49,7 @@ export default function Kanban() {
     openNewTask,
     setOpenNewTask,
     saveNewTask,
-  } = boardOperation()
-
-
-
+  } = boardOperation();
 
   const BCrumb = [
     {
@@ -65,31 +61,33 @@ export default function Kanban() {
     },
   ];
 
-
   return (
     <PageContainer title="Kanban" description="Kanban Operacional">
-      <Breadcrumb title="Kanban" items={BCrumb} />
+      <Breadcrumb items={BCrumb} />
       <BlankCard>
         <CardContent>
           {/* Header do Kanban */}
-          <Header boardSelected={board?.id}
+          <Header
+            boardSelected={board?.id}
             boards={boards}
             onBoardChange={handleChangeBoard}
             searchTerm={searchTerm}
             onSearchChange={handleSearch}
             viewMode={viewMode}
-            onClickViewMode={onClickViewMode} />
+            onClickViewMode={onClickViewMode}
+          />
 
           <Divider sx={{ my: 3 }} />
 
-          {viewMode === 'kanban' ?
+          {viewMode === 'kanban' ? (
             <KanbanBoard
               columns={board?.columns}
               onClickCard={handleCardClick}
               viewMode={viewMode}
             />
-            : <TasksList data={tasks} onClickRow={handleCardClick} />
-          }
+          ) : (
+            <TasksList data={tasks} onClickRow={handleCardClick} />
+          )}
           {/* Detalhamento do Card */}
           <ModalCardDetail
             open={isModalOpen}
@@ -103,27 +101,35 @@ export default function Kanban() {
           />
           {/* Detalhamento Lateral Condicional */}
 
-
-          <SideDrawer open={isDrawerOpen} onClose={handleDrawerClose} title={'Detalhamento'} footer={
-            cardSelected?.column?.name != 'Feito' && <Footer options={optionsFooter} onClick={onClickFooter} />
-          }>
-            {isDrawerOpen &&
-              <EditProject projectId={cardSelected?.project?.id} data={cardSelected?.project} />
+          <SideDrawer
+            open={isDrawerOpen}
+            onClose={handleDrawerClose}
+            title={'Detalhamento'}
+            footer={
+              cardSelected?.column?.name != 'Feito' && (
+                <Footer options={optionsFooter} onClick={onClickFooter} />
+              )
             }
-
+          >
+            {isDrawerOpen && (
+              <EditProject projectId={cardSelected?.project?.id} data={cardSelected?.project} />
+            )}
           </SideDrawer>
 
           <BasicModal
             open={openModalMessage}
             onClose={() => setOpenModalMessage(false)}
             {...message}
-            IconComponent={message.type ?
-              <CheckCircleIcon /> :
-              <CancelIcon />
-            } />
-          <NewTask tasksTemplate={tasksTemplate} open={openNewTask} onClose={() => setOpenNewTask(false)} saveTask={saveNewTask}  />
+            IconComponent={message.type ? <CheckCircleIcon /> : <CancelIcon />}
+          />
+          <NewTask
+            tasksTemplate={tasksTemplate}
+            open={openNewTask}
+            onClose={() => setOpenNewTask(false)}
+            saveTask={saveNewTask}
+          />
         </CardContent>
       </BlankCard>
-    </PageContainer >
+    </PageContainer>
   );
 }

@@ -12,20 +12,26 @@ import useDocumentTypeForm from '@/hooks/document-types/useDocumentTypeForm';
 import useDocumentType from '@/hooks/document-types/useDocumentType';
 import { useEffect, useState } from 'react';
 
-export default function FormCustom() {
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Editar Tipo de Documento',
+  },
+];
 
+export default function FormCustom() {
   const params = useParams();
   const { id } = params;
 
   const { loading, error, documentTypeData } = useDocumentType(id);
 
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    success
-  } = useDocumentTypeForm(documentTypeData, id);
+  const { formData, handleChange, handleSave, formErrors, success } = useDocumentTypeForm(
+    documentTypeData,
+    id,
+  );
 
   const router = useRouter();
 
@@ -73,13 +79,13 @@ export default function FormCustom() {
         </Grid>
       </Grid>
     );
-  };
+  }
 
   if (error) return <div>{error}</div>;
 
   return (
     <PageContainer title="Edição de Tipo de Documento" description="Editor de Tipos de Documentos">
-      <Breadcrumb title="Editar Tipo de Documento" />
+      <Breadcrumb items={BCrumb} />
       {success && (
         <Alert severity="success" sx={{ marginBottom: 3 }}>
           A Tipo de Documento foi atualizada com sucesso!
@@ -101,7 +107,9 @@ export default function FormCustom() {
 
           <Grid item xs={12} sm={12} lg={12}>
             <FormControl fullWidth>
-              <CustomFormLabel id="app_label" htmlFor="Setor">Setor</CustomFormLabel>
+              <CustomFormLabel id="app_label" htmlFor="Setor">
+                Setor
+              </CustomFormLabel>
               <Select
                 labelId="app-label"
                 id="app_label"
@@ -122,7 +130,7 @@ export default function FormCustom() {
             <CustomFormLabel htmlFor="isReusable">É Reutilizável?</CustomFormLabel>
             <Stack direction="row" spacing={2}>
               <Button
-                variant={formData.reusable ? "contained" : "outlined"}
+                variant={formData.reusable ? 'contained' : 'outlined'}
                 color="success"
                 startIcon={<CheckCircle />}
                 onClick={() => handleChange('reusable', true)}
@@ -133,7 +141,7 @@ export default function FormCustom() {
                 Sim
               </Button>
               <Button
-                variant={!formData.reusable ? "contained" : "outlined"}
+                variant={!formData.reusable ? 'contained' : 'outlined'}
                 color="error"
                 startIcon={<Cancel />}
                 onClick={() => handleChange('reusable', false)}
@@ -150,7 +158,7 @@ export default function FormCustom() {
             <CustomFormLabel htmlFor="isRequired">É Obrigatório?</CustomFormLabel>
             <Stack direction="row" spacing={2}>
               <Button
-                variant={formData.required ? "contained" : "outlined"}
+                variant={formData.required ? 'contained' : 'outlined'}
                 color="success"
                 startIcon={<CheckCircle />}
                 onClick={() => handleChange('required', true)}
@@ -161,7 +169,7 @@ export default function FormCustom() {
                 Sim
               </Button>
               <Button
-                variant={!formData.required ? "contained" : "outlined"}
+                variant={!formData.required ? 'contained' : 'outlined'}
                 color="error"
                 startIcon={<Cancel />}
                 onClick={() => handleChange('required', false)}

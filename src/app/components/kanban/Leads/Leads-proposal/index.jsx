@@ -1,299 +1,202 @@
-'use client';
 import {
-  Grid,
-  Typography,
-  Box,
-  useTheme,
-  MenuItem,
-  InputAdornment,
-  TextField,
-  CircularProgress,
+    TablePagination,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography,
+    Box,
+    Grid,
+    IconButton,
+    Chip,
+    Dialog,
+    DialogContent
 } from '@mui/material';
 
-import { useEffect, useState } from 'react';
-import leadService from '@/services/leadService';
-import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
-import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import ProductList from '@/app/components/kanban/Leads/components/ProposalProductsCard';
+import React, { useState, useEffect } from 'react';
+import leadService from '@/services/leadService';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
-import Button from "@mui/material/Button";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import useProposalForm from '@/hooks/proposal/useProposalForm';
-import FormDate from '@/app/components/forms/form-custom/FormDate';
-import CustomFieldMoney from '@/app/components/apps/invoice/components/CustomFieldMoney';
-import CustomTextArea from '@/app/components/forms/theme-elements/CustomTextArea';
-import { useSelector } from 'react-redux';
-import { removeProductFromLead, selectProductsByLead } from '@/store/products/customProducts';
-import { useDispatch } from 'react-redux';
+import { IconEye, IconPencil } from '@tabler/icons-react';
+import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
+import LeadProposalPage from './Add-Proposal';
+import LeadsViewProposal from './View-Proposal';
 
-function LeadProposalPage({ leadId = null }) {
-  const router = useRouter();
-  const theme = useTheme();
-  const [lead, setLead] = useState(null);
-  const [loadingLeads, setLoadingLeads] = useState(true);
-  const { enqueueSnackbar } = useSnackbar();
-  const user = useSelector((state) => state.user);
-  const dispatch = useDispatch();
+const LeadsProposalListPage = ({ leadId = null }) => {
+    const [data, setData] = useState([]);
+    const [selected, setSelected] = useState([]);
+    const [refresh, setRefresh] = useState(false);
+    const [loadingProposal, setLoadingProposal] = useState(true);
 
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    formErrors,
-    loading: formLoading,
-    success,
-  } = useProposalForm();
-
-  const customProducts = useSelector(selectProductsByLead(leadId));
-
-  formData.commercial_products_ids = customProducts.map((product) => product.id);
-  formData.lead_id ? null : (formData.lead_id = leadId);
-  formData.status ? null : (formData.status = 'P');
-  user?.user ? (formData.created_by_id = user.user.id) : null;
-
-  const discard_proposal = () => {
-    dispatch(removeProductFromLead({ leadId, productIds: customProducts.map((product) => product.id) }));
-    handleChange('due_date', null);
-    handleChange('value', null);
-    handleChange('observation', '');
-  };
-  
-
-  useEffect(() => {
-    if (success) {
-      enqueueSnackbar('Proposta gerada com sucesso', { variant: 'success' });
-      discard_proposal();
-    }
-  }, [success]);
+    const [openAddProposal, setOpenAddProposal] = useState(false);
+    const [openDetailProposal, setOpenDetailProposal] = useState(false);
+    const [selectedProposalId, setSelectedProposalId] = useState(null);
 
 
-  useEffect(() => {
-    const fetchLead = async () => {
-      setLoadingLeads(true);
-      try {
-        const data = await leadService.getLeadById(leadId);
-        setLead(data);
-        console.log(data);
-      } catch (err) {
-        enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
-      } finally {
-        setLoadingLeads(false);
-      }
+
+    const proposalStatus = {
+        "A": { label: "Aceita", color: "#E9F9E6" },
+        "R": { label: "Recusada", color: "#FEEFEE" },
+        "P": { label: "Pendente", color: "#FFF7E5" },
     };
-    fetchLead();
-  }, []);
 
-  return (
-    <Grid container spacing={0}>
-      <Grid item xs={12} sx={{ overflow: 'scroll' }}>
-        <Box
-          sx={{
-            borderRadius: '20px',
-            boxShadow: 13,
-            p: 3,
-            m: 0.1,
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          {/* HEEEEEEEEEEEEADER */}
-          <Grid item spacing={2} alignItems="center" xs={12}>
-            <LeadInfoHeader leadId={leadId} />
-          </Grid>
+    const handleRefresh = () => {
+        setRefresh(!refresh);
+    };
 
-          {/* <Divider sx={{ my: 2 }} /> */}
+    useEffect(() => {
+        const fetchLeads = async () => {
+            setLoadingProposal(true);
+            try {
+                const response = await leadService.getLeadById(leadId, {
+                    params: {
+                        expand: 'proposals',
+                        fields: 'id,proposals',
+                    },
+                });
+                setData(response.proposals || []);
+            } catch (err) {
+                console.error('Erro ao buscar contratos');
+            } finally {
+                setLoadingProposal(false);
+            }
+        };
 
-          <Grid container spacing={4}>
-            {/* LEEEEEEEEEEEFT */}
-            <Grid
-              item
-              xs={12}
-              md={5}
-              sx={{ display: 'flex', flexDirection: 'column', marginTop: 2 }}
-            >
-              <Grid item xs={12} sm={4}>
-                <Typography variant="h6">Nova proposta</Typography>
-              </Grid>
+        fetchLeads();
+    }, [leadId, refresh]);
 
-              {/* first row */}
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="amount">Valor da proposta</CustomFormLabel>
-                  <CustomFieldMoney
-                    name="value"
-                    fullWidth
-                    value={formData.value}
-                    onChange={(value) => handleChange('value', value)}
-                    {...(formErrors.value && { error: true, helperText: formErrors.value })}
-                  />
-                </Grid>
+    const handleSelect = (id) => {
+        setSelected(prevSelected =>
+            prevSelected.includes(id)
+                ? prevSelected.filter(item => item !== id)
+                : [...prevSelected, id]
+        );
+    };
 
-                <Grid item xs={6}>
-                  <FormDate
-                    name="due_date"
-                    label="Data de Vencimento"
-                    value={formData.due_date}
-                    onChange={(value) => handleChange('due_date', value)}
-                    {...(formErrors.due_date && { error: true, helperText: formErrors.due_date })}
-                  />
-                </Grid>
-              </Grid>
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+    };
 
-              {/* second row */}
-              {/* <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="ref_amount">Valor de referência</CustomFormLabel>
-                  <TextField
-                    name="ref_amount"
-                    value={formData.ref_amount}
-                    onChange={handleChange}
-                    fullWidth
-                  />
-                </Grid>
+    const handleRowClick = (contractId) => {
+        setSelectedProposalId(contractId);
+        setOpenDetailProposal(true);
+    };
 
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="entry_amount">Valor de entrada</CustomFormLabel>
-                  <TextField
-                    name="entry_amount"
-                    value={formData.entry_amount}
-                    onChange={handleChange}
-                    fullWidth
-                  />
-                </Grid>
-              </Grid> */}
+    return (
+        <Grid container spacing={0}>
+            <Grid item xs={12} sx={{ overflow: 'scroll' }}>
+                <Box sx={{ borderRadius: '20px', boxShadow: 3, p: 3, display: 'flex', flexDirection: 'column' }}>
+                    <Grid item spacing={2} alignItems="center" xs={12}>
+                        <LeadInfoHeader leadId={leadId} />
+                    </Grid>
+                    <Grid container spacing={4} sx={{ mt: 2, mb: 1, ml: 1.5 }}>
+                        <Typography variant="h5" fontWeight={"bold"}>Propostas</Typography>
+                    </Grid>
+                    <TableContainer sx={{ borderRadius: '12px' }}>
+                        <Table sx={{ borderCollapse: 'separate', borderSpacing: '0px 8px' }}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>
+                                        <CustomCheckbox checked={selected.length === data.length} onChange={() => setSelected(selected.length === data.length ? [] : data.map(item => item.id))} />
+                                    </TableCell>
+                                    <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Nome</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Proposta</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Valor</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Responsável</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Data</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Status</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
+                                        Editar/Ver
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {data.length > 0 ? (
+                                    data.map((contract) => (
+                                        <TableRow
+                                            key={contract.id}
+                                            onClick={() => handleRowClick(contract.id)}
+                                            sx={{ cursor: 'pointer' }}
+                                        >
+                                            <TableCell>
+                                                <CustomCheckbox checked={selected.includes(contract.id)} onChange={() => handleSelect(contract.id)} />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography sx={{ whiteSpace: 'pre-line' }}>
+                                                    {contract?.products.length > 0 ? contract.products.map(product => product.name).join('\n') : 'Nenhum produto vinculado'}
+                                                </Typography>
+                                            </TableCell>
 
-              {/* third row */}
-              {/* <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={12}>
-                  <CustomFormLabel htmlFor="payment_method">Forma de pagamento</CustomFormLabel>
-                  <TextField
-                    select
-                    name="payment_method"
-                    value={formData.payment_method}
-                    onChange={handleChange}
-                    fullWidth
-                  >
-                    <MenuItem value="credit">Crédito</MenuItem>
-                    <MenuItem value="debit">Débito</MenuItem>
-                    <MenuItem value="bank_slip">Boleto</MenuItem>
-                    <MenuItem value="financing">Financiamento</MenuItem>
-                    <MenuItem value="internal_installments">Parcelamento Interno</MenuItem>
-                    <MenuItem value="pix">Pix</MenuItem>
-                    <MenuItem value="bank_transfer">Transferência</MenuItem>
-                    <MenuItem value="cash">Dinheiro</MenuItem>
-                    <MenuItem value="auxiliar">Poste Auxiliar</MenuItem>
-                    <MenuItem value="construction">Repasse de Obra</MenuItem>
-                  </TextField>
-                </Grid>
-              </Grid>
+                                            <TableCell>#{contract.id}</TableCell>
+                                            <TableCell>{formatCurrency(contract.value)}</TableCell>
+                                            <TableCell>{contract.created_by?.first_name} {contract.created_by?.last_name}</TableCell>
+                                            <TableCell>{contract.due_date}</TableCell>
+                                            <TableCell>
+                                                <Chip label={proposalStatus[contract.status]?.label} sx={{ backgroundColor: proposalStatus[contract.status]?.color }} />
+                                            </TableCell>
+                                            <TableCell align="center" display="flex">
+                                                <IconButton onClick={() => console.log('Editando proposta')}>
+                                                    <IconPencil />
+                                                </IconButton>
+                                                {/* <IconButton onClick={() => actions.view(row)}>
+                                                    <IconEye />
+                                                </IconButton> */}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={8} align="center">
+                                            <Typography variant="body2" color="textSecondary">
+                                                Nenhum contrato encontrado.
+                                            </Typography>
+                                        </TableCell>
+                                    </TableRow>
+                                )}
 
-              {formData.payment_method === 'financing' && (
-                <>
-                  <CustomFormLabel htmlFor="financing_type">Financiadoras</CustomFormLabel>
-                  <TextField
-                    select
-                    name="financing_type"
-                    value={formData.financing_type}
-                    onChange={handleChange}
-                    fullWidth
-                  >
-                    <MenuItem value="2">Moon</MenuItem>
-                    <MenuItem value="3">Sun</MenuItem>
-                  </TextField>
-                </>
-              )}
-
-              {formData.payment_method === 'credit' && (
-                <>
-                  <CustomFormLabel htmlFor="installments_num">Parcelas</CustomFormLabel>
-                  <TextField
-                    select
-                    name="installments_num"
-                    value={formData.installments_num}
-                    onChange={handleChange}
-                    fullWidth
-                  >
-                    <MenuItem value="2">2x</MenuItem>
-                    <MenuItem value="3">3x</MenuItem>
-                    <MenuItem value="4">4x</MenuItem>
-                  </TextField>
-                </>
-              )} */}
-
-              {/* fifth row */}
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={12}>
-                  <CustomFormLabel htmlFor="description">Descrição</CustomFormLabel>
-                  <CustomTextArea
-                    name="observation"
-                    multiline
-                    rows={4}
-                    minRows={10}
-                    value={formData.observation}
-                    onChange={(e) => handleChange('observation', e.target.value)}
-                    {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
-                  />
-                </Grid>
-              </Grid>
+                                <TableRow>
+                                    <TableCell colSpan={8} align="center">
+                                        <Typography variant="body2" color="textSecondary" onClick={() => setOpenAddProposal(true)} sx={{ cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>
+                                            + Adicionar proposta
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Box>
             </Grid>
 
-            {/* RIIIIIIIIIIIIIIIIIIIGHT */}
-            <Grid
-              item
-              xs={12}
-              md={7}
-              sx={{ display: 'flex', flexDirection: 'column', marginTop: 2, gap: 2 }}
+            <Dialog
+                open={openAddProposal}
+                onClose={() => setOpenAddProposal(false)}
+                maxWidth="lg"
+                fullWidth
             >
-              <ProductList leadId={leadId} />
-            </Grid>
-          </Grid>
+                <DialogContent>
+                    <LeadProposalPage leadId={leadId} onClose={() => setOpenAddProposal(false)} onRefresh={handleRefresh} />
+                </DialogContent>
+            </Dialog>
 
-          {/* BUTTONS! */}
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: 'flex',
-              justifyContent: 'end',
-              alignItems: 'center',
-              mt: 2,
-              gap: 2,
-            }}
-          >
-            {/* <Button
-              variant="contained"
-              sx={{
-                backgroundColor: 'black',
-                color: 'white',
-                '&:hover': { backgroundColor: '#333' },
-                px: 3,
-              }}
+            <Dialog
+                open={openDetailProposal}
+                onClose={() => setOpenDetailProposal(false)}
+                maxWidth="lg"
+                fullWidth
             >
-              <Typography variant="body1">Pré-visualizar proposta</Typography>
-              <VisibilityIcon sx={{ ml: 1 }} />
-            </Button> */}
-
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>
-                <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
-                <DeleteOutlinedIcon />
-              </Button>
-
-              <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSave} disabled={formLoading}
-                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
-                <Typography variant="body1" color="white">
-                  {formLoading ? 'Gerando proposta...' : 'Gerar proposta'}
-                </Typography>
-              </Button>
-            </Box>
-          </Grid>
-
-        </Box>
-      </Grid>
-    </Grid>
-  );
+                <DialogContent>
+                    <LeadsViewProposal 
+                        leadId={leadId} 
+                        proposalId={selectedProposalId}
+                        onClose={() => setOpenDetailProposal(false)} 
+                        onRefresh={handleRefresh} 
+                    />
+                </DialogContent>
+            </Dialog>
+        </Grid>
+    );
 }
 
-export default LeadProposalPage;
+export default LeadsProposalListPage;

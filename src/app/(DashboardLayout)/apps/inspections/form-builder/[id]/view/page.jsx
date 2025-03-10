@@ -112,7 +112,7 @@ const FormBuilderView = () => {
       title="Visualização de Formulário"
       description="Página de visualização de formulários"
     >
-      <Breadcrumb title="Formulário" items={BCrumb} />
+      <Breadcrumb items={BCrumb} />
       <ParentCard
         title="Visualização de Formulário"
         footer={

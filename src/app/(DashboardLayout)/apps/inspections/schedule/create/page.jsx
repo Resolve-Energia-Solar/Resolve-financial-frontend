@@ -20,7 +20,7 @@ const CreateSchedule = () => {
   return (
     <InvoiceProvider>
       <PageContainer title="Criar Agendamento" description="Criar Agendamento">
-        <Breadcrumb title="Criar Agendamento" items={BCrumb} />
+        <Breadcrumb items={BCrumb} />
         <BlankCard>
           <CardContent>
             <ScheduleFormCreateExternal />

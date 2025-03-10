@@ -3,12 +3,20 @@ import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcr
 import AppCard from '@/app/components/shared/AppCard';
 import ContactApp from '@/app/components/apps/contacts';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Contatos',
+  },
+];
+
 const Contacts = () => {
-
-
   return (
     <PageContainer title="Contact" description="this is Contact">
-      <Breadcrumb title="Contact app" subtitle="List Your Contacts" />
+      <Breadcrumb items={BCrumb} />
       <AppCard>
         <ContactApp />
       </AppCard>

@@ -11,22 +11,22 @@ import { DeadlineDataContextProvider } from '@/app/context/Inspection/DeadlineCo
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import DeadlineList from '@/app/components/apps/inspections/deadline/DeadlineList';
 
+const BCrumb = [
+  {
+    to: '/',
+    title: 'Home',
+  },
+  {
+    title: 'Prazos',
+  },
+];
 const DeadlineListing = () => {
   // Breadcrumb
-  const BCrumb = [
-    {
-      to: '/',
-      title: 'Home',
-    },
-    {
-      title: 'Prazos',
-    },
-  ];
 
   return (
     <DeadlineDataContextProvider>
       <PageContainer title={'Prazos'} description={'Lista de Prazos'}>
-        <Breadcrumb title={'Prazos'} items={BCrumb} />
+        <Breadcrumb items={BCrumb} />
         <BlankCard>
           <CardContent>
             <DeadlineList />

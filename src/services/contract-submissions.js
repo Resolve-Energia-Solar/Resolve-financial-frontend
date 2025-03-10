@@ -10,9 +10,9 @@ const logError = (operation, error, additionalInfo = null) => {
 };
 
 const contractService = {
-  getContracts: async () => {
+  getContracts: async (params = {}) => {
     try {
-      const response = await apiClient.get('/api/contract-submissions/');
+      const response = await apiClient.get('/api/contract-submissions/', { ...params });
       return response.data;
     } catch (error) {
       logError('buscar contratos', error);
