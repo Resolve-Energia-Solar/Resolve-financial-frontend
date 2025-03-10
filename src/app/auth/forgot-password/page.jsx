@@ -104,7 +104,7 @@ export default function ForgotPassword() {
               Esqueceu sua senha?
             </Typography>
 
-            <Typography color="textSecondary" variant="subtitle2" fontWeight="400" mt={2}>
+            <Typography color="textSecondary" variant="subtitle2" fontWeight="400" mt={0.5}>
               Por favor, insira o endereço de e-mail associado à sua conta e enviaremos um link para
               redefinir sua senha.
             </Typography>
