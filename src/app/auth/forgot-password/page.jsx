@@ -73,13 +73,33 @@ export default function ForgotPassword() {
           item
           xs={12}
           sm={12}
-          lg={4}
-          xl={3}
+          lg={5}
+          xl={4}
           display="flex"
           justifyContent="center"
           alignItems="center"
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 1,
+          }}
         >
-          <Box p={4}>
+          <Box
+            sx={{
+              width: "527px",
+              height: "491px",
+              backgroundColor: "#FFFFFF",
+              borderRadius: 2,
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.15)",
+              padding: "48px",
+              gap: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+            }}
+          >
             <Typography variant="h4" fontWeight="700">
               Esqueceu sua senha?
             </Typography>
