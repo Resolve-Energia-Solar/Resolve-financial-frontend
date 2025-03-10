@@ -10,6 +10,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import PasswordService from '@/services/PasswordService';
+import EmailIcon from '@mui/icons-material/Email';
+import { InputAdornment } from '@mui/material';
 
 
 export default function AuthForgotPassword() {
@@ -65,6 +67,13 @@ export default function AuthForgotPassword() {
           onChange={handleEmailChange}
           error={!!error}
           helperText={error}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <EmailIcon sx={{ color: '#ADADAD' }} />
+              </InputAdornment>
+            ),
+          }}
         />
 
         <Button
@@ -84,7 +93,7 @@ export default function AuthForgotPassword() {
 
         <Button
           color="primary"
-          size="large"
+          size="medium"
           fullWidth
           component={Link}
           href="/auth/login"
