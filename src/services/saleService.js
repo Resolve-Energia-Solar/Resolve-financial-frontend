@@ -1,12 +1,32 @@
 import apiClient from './apiClient'
 
 const saleService = {
+  index: async (params) => {
+    try {
+      const response = await apiClient.get(`/api/sales/`, { params: { ...params, format: 'json' } })
+      return response.data
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  },
+  find: async (id, params) => {
+    try {
+      const response = await apiClient.get(`/api/sales/${id}/`, { params: { ...params, format: 'json' } })
+      return response.data
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  },
+
   getSales: async ({ ordering, nextPage, userRole, limit = 5, page = 1, fields = [], ...filters }) => {
     const params = {
       ordering: ordering || '',
       page: nextPage || page,
       limit,
       fields,
+      format: 'json',
       ...filters,
     }
 
