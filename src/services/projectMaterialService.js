@@ -1,7 +1,7 @@
 import apiClient from './apiClient'
 
 const projectMaterialsService = {
-  getProjectMaterials: async ({ page = 1, limit = 50, ...filters } = {}) => {
+  getProjectMaterials: async ({ page = 1, limit = 100, ...filters } = {}) => {
     try {
       const url = `/api/project-materials/`
       const response = await apiClient.get(url, {

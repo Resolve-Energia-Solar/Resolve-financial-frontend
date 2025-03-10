@@ -150,6 +150,7 @@ const AttachmentTable = ({
         </TableBody>
       </Table>
       <AddAttachmentModal
+        appLabel={appLabel}
         open={openAttachmentModal}
         onClose={() => setOpenAttachmentModal(false)}
         objectId={objectId}

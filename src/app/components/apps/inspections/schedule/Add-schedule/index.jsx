@@ -45,8 +45,6 @@ const ScheduleFormCreate = ({
   customerId ? (formData.customer_id = customerId) : null;
   products.length > 0 ? (formData.products_ids = products) : null;
 
-  console.log('customerId', customerId);
-
   const statusOptions = [
     { value: 'Pendente', label: 'Pendente' },
     { value: 'Confirmado', label: 'Confirmado' },
