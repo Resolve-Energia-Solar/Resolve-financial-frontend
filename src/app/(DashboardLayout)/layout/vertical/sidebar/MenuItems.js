@@ -24,6 +24,7 @@ import {
   IconUserPin,
 } from '@tabler/icons-react';
 import { permission } from 'process';
+import { id } from 'date-fns/locale';
 
 const Menuitems = [
   {
@@ -77,7 +78,7 @@ const Menuitems = [
     title: 'Financeiro',
     icon: IconCurrencyDollar,
     href: '/',
-    permissions: ['financial.view_payment'],
+    permissions: ['financial.view_payment', 'financial.view_financialrecord'],
     children: [
       {
         id: uniqueId(),
@@ -93,15 +94,22 @@ const Menuitems = [
         href: '/apps/invoice/installments',
         permissions: ['financial.view_payment']
       },
+      {
+        id: uniqueId(),
+        title: 'Solicitação de Pagamento',
+        icon: IconPoint,
+        href: '/apps/financial-record',
+        permissions: ['financial.view_financialrecord'],
+      },
+      {
+        id: uniqueId(),
+        title: 'Anexos',
+        icon: IconPoint,
+        href: '/apps/financial-record/attachments',
+      }
     ],
   },
-  {
-    id: uniqueId(),
-    title: 'Solicitação de Pagamento',
-    icon: IconCurrencyDollar,
-    href: '/apps/financial-record',
-    permissions: ['financial.view_financialrecord'],
-  },
+
   {
     id: uniqueId(),
     title: 'Comissionamento',

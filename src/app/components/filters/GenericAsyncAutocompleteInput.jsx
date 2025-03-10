@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Autocomplete, TextField, CircularProgress } from "@mui/material";
 import apiClient from "@/services/apiClient";
 
@@ -17,23 +17,26 @@ const GenericAsyncAutocompleteInput = ({
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Memorizando os objetos para evitar que mudem a cada render
+  const stableExtraParams = useMemo(() => extraParams, [JSON.stringify(extraParams)]);
+  const stableMapResponse = useMemo(() => mapResponse, [mapResponse]);
+
   useEffect(() => {
     let active = true;
     setLoading(true);
     const handler = setTimeout(async () => {
       try {
         const params = new URLSearchParams({
-          [queryParam]: inputValue, // Pode ser vazio
-          ...extraParams,
+          [queryParam]: inputValue, // Mesmo que seja vazio, a busca será feita
+          ...stableExtraParams,
         });
         const page = 1;
         const limit = 10;
-        const response = await apiClient.get(
-          `${endpoint}?${params.toString()}`,
-          { params: { page, limit } }
-        );
+        const response = await apiClient.get(`${endpoint}?${params.toString()}`, {
+          params: { page, limit },
+        });
         const data = response.data;
-        const fetchedOptions = mapResponse ? mapResponse(data) : data.results || [];
+        const fetchedOptions = stableMapResponse ? stableMapResponse(data) : data.results || [];
         if (active) {
           setOptions(fetchedOptions);
         }
@@ -47,8 +50,8 @@ const GenericAsyncAutocompleteInput = ({
       active = false;
       clearTimeout(handler);
     };
-  }, [inputValue, endpoint, queryParam, extraParams, mapResponse, debounceTime]);
-  
+  }, [inputValue, endpoint, queryParam, stableExtraParams, stableMapResponse, debounceTime]);
+
   return (
     <Autocomplete
       freeSolo
