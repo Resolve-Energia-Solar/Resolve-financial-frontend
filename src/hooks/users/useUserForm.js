@@ -8,8 +8,10 @@ const useUserForm = (initialData, id) => {
     department_id: null,
     role_id: null,
     user_manager_id: null,
-    addresses_ids: [],
-    user_types_ids: [],
+    addresses: [],
+    addresses_ids: [2],
+    user_types: [],
+    user_types_ids: [2],
     groups_ids: [],
     last_login: null,
     is_superuser: false,
@@ -43,8 +45,10 @@ const useUserForm = (initialData, id) => {
         department_id: initialData.department?.id || null,
         role_id: initialData.role?.id || null,
         user_manager_id: initialData.user_manager?.id || null,
+        addresses: initialData.addresses?.map((item) => item.id) || [],
         addresses_ids: initialData.addresses?.map((item) => item.id) || [],
-        user_types_ids: initialData.user_types?.map((item) => item.id) || [],
+        user_types: initialData.user_types?.map((item) => item.id) || [2],
+        user_types_ids: initialData.user_types?.map((item) => item.id) || [2],
         groups_ids: initialData.groups?.map((item) => item.id) || [],
         last_login: initialData.last_login || null,
         is_superuser: initialData.is_superuser || false,
@@ -66,8 +70,8 @@ const useUserForm = (initialData, id) => {
         phone_numbers_ids: Array.isArray(initialData.phone_numbers)
           ? initialData.phone_numbers.map((item) => item.id)
           : initialData.phone_numbers
-          ? [initialData.phone_numbers]
-          : [],
+            ? [initialData.phone_numbers]
+            : [],
       });
     }
   }, [initialData]);
@@ -85,6 +89,8 @@ const useUserForm = (initialData, id) => {
       department_id: formData.department_id,
       role_id: formData.role_id,
       user_manager_id: formData.user_manager_id,
+      addresses: formData.addresses_ids,
+      user_types: formData.user_types_ids,
       addresses_ids: formData.addresses_ids,
       user_types_ids: formData.user_types_ids,
       groups_ids: formData.groups_ids,
@@ -109,8 +115,8 @@ const useUserForm = (initialData, id) => {
       phone_numbers_ids: Array.isArray(formData.phone_numbers_ids)
         ? formData.phone_numbers_ids
         : formData.phone_numbers_ids
-        ? [formData.phone_numbers_ids]
-        : [],
+          ? [formData.phone_numbers_ids]
+          : [],
     };
 
     console.log('dataToSend', dataToSend);
