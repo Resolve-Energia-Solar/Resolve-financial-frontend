@@ -19,6 +19,8 @@ import useLoginForm from '@/hooks/users/useLoginForm';
 import Cookies from 'js-cookie';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Visibility, VisibilityOff, Lock } from '@mui/icons-material';
+import EmailIcon from '@mui/icons-material/Email';
+import GppGoodIcon from '@mui/icons-material/GppGood';
 
 const AuthLogin = ({ title, subtitle, subtext }) => {
   const dispatch = useDispatch();
@@ -59,6 +61,13 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             onChange={handleInputChange}
             error={!!formErrors.email}
             helperText={formErrors.email}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <EmailIcon sx={{ color: '#ADADAD' }} />
+                </InputAdornment>
+              ),
+            }}
           />
         </Box>
         <Box>
@@ -79,7 +88,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Lock sx={{ color: '#A3A3A3' }} />
+                  <GppGoodIcon sx={{ color: '#ADADAD' }} />
                 </InputAdornment>
               ),
               endAdornment: (
@@ -89,7 +98,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
                     onMouseDown={handleMouseDownPassword}
                     edge="end"
                   >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                    {showPassword ? <VisibilityOff sx={{ color: '#ADADAD' }} /> : <Visibility sx={{ color: '#ADADAD' }} />}
                   </IconButton>
                 </InputAdornment>
               ),
