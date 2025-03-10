@@ -100,7 +100,7 @@ export default function ForgotPassword() {
               justifyContent: 'center',
             }}
           >
-            <Typography variant="h4" fontWeight="700">
+            <Typography fontWeight="700" fontSize="24px">
               Esqueceu sua senha?
             </Typography>
 
