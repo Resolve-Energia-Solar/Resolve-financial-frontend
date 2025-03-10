@@ -41,7 +41,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
 
       <Stack>
         <Box>
-          <CustomFormLabel htmlFor="email">Usuário</CustomFormLabel>
+          <CustomFormLabel htmlFor="email">E-mail</CustomFormLabel>
           <CustomTextField
             id="email"
             name="email"
@@ -54,7 +54,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           />
         </Box>
         <Box>
-          <CustomFormLabel htmlFor="password">Senha</CustomFormLabel>
+          <CustomFormLabel htmlFor="password" >Senha</CustomFormLabel>
           <CustomTextField
             id="password"
             name="password"
