@@ -10,9 +10,11 @@ import {
 } from "@mui/material";
 import { UploadFile } from "@mui/icons-material";
 import { useSnackbar } from 'notistack';
+import DocumentTypeSelect from "@/app/components/apps/attachment/documentTypeSelect";
 import attachmentService from "@/services/attachmentService";
 
 const AddAttachmentModal = ({
+    appLabel,
     open,
     onClose,
     objectId,
@@ -57,6 +59,10 @@ const AddAttachmentModal = ({
     };
 
     const handleSaveAttachment = async () => {
+        if (!newAttachment.file || !newAttachment.document_type_id) {
+            enqueueSnackbar("O tipo de documento e o arquivo são obrigatórios.", { variant: 'warning' });
+            return;
+        }
         if (newAttachment.file) {
             setLoading(true);
             if (objectId) {
@@ -82,6 +88,10 @@ const AddAttachmentModal = ({
             onClose();
             setNewAttachment({ file: null, description: "" });
         }
+    };
+
+    const handleAttachmentChange = (key, value) => {
+        setNewAttachment(prev => ({ ...prev, [key]: value }));
     };
 
     return (
@@ -133,7 +143,7 @@ const AddAttachmentModal = ({
                         Arquivo selecionado: {newAttachment.file.name}
                     </Typography>
                 )}
-
+                <DocumentTypeSelect appLabel={appLabel} formData={newAttachment} handleChange={handleAttachmentChange} />
                 {/* Exibe o campo de descrição apenas se estiver ativado */}
                 {showFields.description && (
                     <TextField

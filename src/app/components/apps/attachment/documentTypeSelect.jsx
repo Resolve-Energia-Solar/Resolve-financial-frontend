@@ -36,6 +36,8 @@ const DocumentTypeSelect = ({ appLabel, formData, handleChange }) => {
         options={documentTypes}
         getOptionLabel={(option) => option.name || ""}
         value={documentTypes.find(dt => dt.id === formData.document_type_id) || null}
+        noOptionsText="Nenhum tipo de documento encontrado, mude a busca ou digite algo."
+        loadingText="Carregando..."
         onChange={(event, newValue) => {
           setSelectedDocType(newValue);
           handleChange('document_type_id', newValue ? newValue.id : "");
