@@ -79,7 +79,7 @@ export default function AuthForgotPassword() {
         <Button
           color="primary"
           variant="contained"
-          size="large"
+          size="medium"
           fullWidth
           disabled={isSubmitting || !email}
           onClick={handleSubmit}
