@@ -6,6 +6,7 @@ import LeadSchedulePage from '../Leads-schedule';
 import LeadDocumentPage from '../Leads-documents';
 import LeadsProposalListPage from '../Leads-proposal';
 import EditCustomerPage from '../Leads-customer/Edit-Customer';
+import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 
 
 function CustomTabPanel(props) {
@@ -50,6 +51,7 @@ function EditLeadTabs({ leadId }) {
 
   return (
     <Box sx={{ overflow: 'hidden', height: '100%' }}>
+      <LeadInfoHeader leadId={leadId} />
       <Tabs
         value={tabValue}
         onChange={handleChange}
