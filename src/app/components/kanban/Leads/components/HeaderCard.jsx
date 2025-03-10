@@ -23,8 +23,9 @@ import { usePathname } from 'next/navigation';
 import leadService from '@/services/leadService';
 
 function LeadInfoHeader({ leadId, tabValue }) {
-  // const [projects, setProjects] = useState([]);
   const [lead, setLead] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [selectedProject, setSelectedProject] = useState('');
   const [loadingLeads, setLoadingLeads] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
