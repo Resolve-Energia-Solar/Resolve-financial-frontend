@@ -19,7 +19,7 @@ const useScheduleForm = (initialData, id, service_id) => {
   console.log('user', user)
 
   const [formData, setFormData] = useState({
-    schedule_creator: user?.user?.id,
+    schedule_creator: user?.user,
     category_id: null,
     service_id: service_id || SERVICE_INSPECTION_ID,
     parent_schedules_id: [],
