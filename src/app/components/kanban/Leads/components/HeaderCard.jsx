@@ -22,12 +22,12 @@ import { useSnackbar } from 'notistack';
 import { usePathname } from 'next/navigation';
 import leadService from '@/services/leadService';
 
-function LeadInfoHeader({ leadId }) {
+function LeadInfoHeader({ leadId, tabValue }) {
+  // const [projects, setProjects] = useState([]);
   const [lead, setLead] = useState(null);
   const [loadingLeads, setLoadingLeads] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
-  const pathname = usePathname();
 
   useEffect(() => {
     const fetchLead = async () => {
@@ -176,7 +176,7 @@ function LeadInfoHeader({ leadId }) {
             Data de criação: {new Date(lead?.created_at).toLocaleDateString('pt-BR')}
           </Typography>
         </Box> */}
-        {pathname.includes('/proposta') && (
+        {tabValue === 2 && (
           <Box sx={{ minWidth: 200 }}>
             <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
               Projeto
