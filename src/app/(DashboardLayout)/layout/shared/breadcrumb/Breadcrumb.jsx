@@ -21,7 +21,7 @@ const Breadcrumb = ({ subtitle, items, title, children }) => (
       overflow: 'hidden',
     }}
   >
-    <Box item xs={12} sm={6} lg={8} mb={1}>
+    <Box xs={12} sm={6} lg={8} mb={1}>
       <Typography variant="h6" color="primary.contrastText">
         {title}
       </Typography>
