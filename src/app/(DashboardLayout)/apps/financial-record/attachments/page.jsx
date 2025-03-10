@@ -97,10 +97,12 @@ const attachmentList = () => {
         }
     }, [attachmentList]);
 
+    /*
     const handleDeleteClick = (id) => {
         setAttachmentToDelete(id);
         setOpen(true);
     };
+    */
 
     const handleCloseModal = () => {
         setOpen(false);
@@ -180,7 +182,7 @@ const attachmentList = () => {
     const userPermissions = user?.permissions || user?.user_permissions || [];
 
     useEffect(() => {
-        if (!userPermissions.includes("core.add_attachment")) {
+        if (!userPermissions.includes("core.view_attachment") || !userPermissions.includes("financial.view_financialrecord_attachment")) {
             enqueueSnackbar('Você não tem permissão para acessar essa página!', { variant: 'error' });
             router.push('commercial/sale');
         }

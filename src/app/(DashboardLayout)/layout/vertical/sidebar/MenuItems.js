@@ -106,6 +106,7 @@ const Menuitems = [
         title: 'Anexos',
         icon: IconPoint,
         href: '/apps/financial-record/attachments',
+        permissions: ['financial.view_financialrecord_attachment'],
       }
     ],
   },
