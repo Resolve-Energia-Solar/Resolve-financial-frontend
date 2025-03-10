@@ -43,6 +43,7 @@ function LeadInfoHeader({ leadId }) {
         borderRadius: '0px',
         padding: '16px',
         display: 'flex',
+        mb: 2.5,
       }}
       spacing={2}
     >
