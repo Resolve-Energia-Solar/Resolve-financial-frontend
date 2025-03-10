@@ -1,13 +1,25 @@
 'use client';
 
-import { Grid, Typography, Box, Rating, IconButton, useTheme, Avatar, Chip } from '@mui/material';
+import {
+  Grid,
+  Typography,
+  Box,
+  Rating,
+  IconButton,
+  useTheme,
+  Avatar,
+  Chip,
+  Select,
+  MenuItem,
+  CircularProgress,
+} from '@mui/material';
 
 import { CalendarToday, WbSunny } from '@mui/icons-material';
 
 import EditIcon from '@mui/icons-material/Edit';
 import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
-
+import { usePathname } from 'next/navigation';
 import leadService from '@/services/leadService';
 
 function LeadInfoHeader({ leadId }) {
@@ -15,6 +27,7 @@ function LeadInfoHeader({ leadId }) {
   const [loadingLeads, setLoadingLeads] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
+  const pathname = usePathname();
 
   useEffect(() => {
     const fetchLead = async () => {
@@ -23,6 +36,8 @@ function LeadInfoHeader({ leadId }) {
       try {
         const data = await leadService.getLeadById(leadId);
         setLead(data);
+        setProjects(data?.projects || []);
+        setSelectedProject(data?.projects[0]?.id || '');
       } catch (err) {
         enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
       } finally {
@@ -43,7 +58,6 @@ function LeadInfoHeader({ leadId }) {
         borderRadius: '0px',
         padding: '16px',
         display: 'flex',
-        mb: 2.5,
       }}
       spacing={2}
     >
@@ -146,7 +160,7 @@ function LeadInfoHeader({ leadId }) {
         xs={4}
         sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flexGrow: 1 }}
       >
-        <Box
+        {/* <Box
           sx={{
             display: 'flex',
             flexDirection: 'row',
@@ -161,7 +175,27 @@ function LeadInfoHeader({ leadId }) {
           <Typography variant="caption" sx={{ color: 'gray' }}>
             Data de criação: {new Date(lead?.created_at).toLocaleDateString('pt-BR')}
           </Typography>
-        </Box>
+        </Box> */}
+        {pathname.includes('/proposta') && (
+          <Box sx={{ minWidth: 200 }}>
+            <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
+              Projeto
+            </Typography>
+            <Select
+              value={selectedProject}
+              onChange={(e) => setSelectedProject(e.target.value)}
+              fullWidth
+              size="small"
+              sx={{ backgroundColor: '#F5F5F5', borderRadius: '8px' }}
+            >
+              {projects.map((project) => (
+                <MenuItem key={project.id} value={project.id}>
+                  {project.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
+        )}
       </Grid>
     </Box>
   );
