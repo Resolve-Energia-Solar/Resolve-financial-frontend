@@ -33,7 +33,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
   return (
     <>
       {title && (
-        <Typography fontWeight="700" variant="h3" mb={1}>
+        <Typography fontWeight="700" fontSize="24px" >
           {title}
         </Typography>
       )}
@@ -41,7 +41,9 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
 
       <Stack>
         <Box>
-          <CustomFormLabel htmlFor="email" sx={{ fontWeight: "700", fontSize: "16px" }} >E-mail</CustomFormLabel>
+          <CustomFormLabel htmlFor="email" sx={{ fontWeight: "700", fontSize: "16px" }} >
+            E-mail<span style={{ color: '#EA3209' }}>*</span>
+          </CustomFormLabel>
           <CustomTextField
             id="email"
             name="email"
@@ -54,7 +56,9 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           />
         </Box>
         <Box>
-          <CustomFormLabel htmlFor="password" sx={{ fontWeight: "700", fontSize: "16px" }} >Senha</CustomFormLabel>
+          <CustomFormLabel htmlFor="password" sx={{ fontWeight: "700", fontSize: "16px" }} >
+            Senha<span style={{ color: '#EA3209' }}>*</span>
+          </CustomFormLabel>
           <CustomTextField
             id="password"
             name="password"
@@ -67,6 +71,34 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             helperText={formErrors.password}
           />
         </Box>
+
+        <Stack justifyContent="space-between" direction="row" alignItems="center" my={2}>
+          <Typography
+            sx={{
+              textDecoration: 'none',
+              color: '#EA3209',
+              fontWeight: "500",
+              fontSize: "12px"
+            }}
+          >
+            *Obrigatório
+          </Typography>
+
+          <Typography
+            component={Link}
+            href="/auth/forgot-password"
+            
+            sx={{
+              textDecoration: 'underline',
+              color: 'primary.main',
+              fontWeight: "500",
+              fontSize: "12px"
+            }}
+          >
+            Esqueci a senha
+          </Typography>
+        </Stack>
+
         <Stack justifyContent="space-between" direction="row" alignItems="center" my={2}>
           <FormGroup>
             <FormControlLabel
@@ -74,17 +106,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
               label="Lembrar deste dispositivo"
             />
           </FormGroup>
-          <Typography
-            component={Link}
-            href="/auth/forgot-password"
-            fontWeight="500"
-            sx={{
-              textDecoration: 'none',
-              color: 'primary.main',
-            }}
-          >
-            Mudar senha?
-          </Typography>
+          
         </Stack>
       </Stack>
 
@@ -129,7 +151,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
         </Alert>
       </Snackbar>
 
-     
+
       {success && (
         <Box
           position="fixed"
