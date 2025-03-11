@@ -3,13 +3,14 @@ import apiClient from './apiClient'
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID
 
 const scheduleService = {
-  getSchedules: async ({ ordering, nextPage, limit = 5, page = 1, expand, ...filters }) => {
+  getSchedules: async ({ ordering, nextPage, limit = 5, page = 1, expand, fields, ...filters }) => {
     try {
       const params = {
         ordering: ordering || '',
         page: nextPage || page,
         limit,
         expand,
+        fields,
         ...filters,
       };
 
@@ -20,10 +21,10 @@ const scheduleService = {
       throw error;
     }
   },
-  getAllSchedulesInspectionByProject: async projectId => {
+  getAllSchedulesInspectionByProject: async (projectId, fields) => {
     try {
       const response = await apiClient.get(
-        `/api/schedule/?service=${SERVICE_INSPECTION_ID}&project=${projectId}`,
+        `/api/schedule/?service=${SERVICE_INSPECTION_ID}&project=${projectId}&fields=${fields}`,
       )
       return response.data
     } catch (error) {
@@ -31,10 +32,10 @@ const scheduleService = {
       throw error
     }
   },
-  getAllSchedulesInspectionByCustomer: async customerId => {
+  getAllSchedulesInspectionByCustomer: async (customerId, fields) => {
     try {
       const response = await apiClient.get(
-        `/api/schedule/?service=${SERVICE_INSPECTION_ID}&customer=${customerId}`,
+        `/api/schedule/?service=${SERVICE_INSPECTION_ID}&customer=${customerId}&fields=${fields}`,
       )
       return response.data
     } catch (error) {
@@ -60,13 +61,13 @@ const scheduleService = {
       throw error
     }
   },
-  getMySchedules: async ({ ordering, params, nextPage, userId }) => {
+  getMySchedules: async ({ ordering, params, nextPage, userId, fields }) => {
     const urlParams = params ? `&${params}` : ''
     const urlNextPage = nextPage ? `&page=${nextPage}` : ''
     try {
       const response = await apiClient.get(
         `/api/schedule/?schedule_agent=${userId}&ordering=${ordering || ''
-        }${urlParams}${urlNextPage}`,
+        }${urlParams}${urlNextPage}&fields=${fields}`,
       )
       return response.data
     } catch (error) {

@@ -83,7 +83,7 @@ const scheduleFilterConfig = [
     type: "async-multiselect",
     endpoint: "/api/users/",
     queryParam: "complete_name__icontains",
-    extraParams: {},
+    extraParams: { fields: ['id', 'complete_name'] },
     mapResponse: (data) =>
       data.results.map((user) => ({
         label: user.complete_name,
@@ -96,7 +96,7 @@ const scheduleFilterConfig = [
     type: "async-multiselect",
     endpoint: "/api/services/",
     queryParam: "name__icontains",
-    extraParams: { limit: 10 },
+    extraParams: { limit: 10, fields: ['id', 'name'] },
     mapResponse: (data) =>
       data.results.map((service) => ({
         label: service.name,
@@ -109,7 +109,7 @@ const scheduleFilterConfig = [
     type: "async-autocomplete",
     endpoint: "/api/users/",
     queryParam: "complete_name__icontains",
-    extraParams: {},
+    extraParams: { fields: ['id', 'complete_name'] },
     mapResponse: (data) =>
       data.results.map((customer) => ({
         label: customer.complete_name,
@@ -122,7 +122,7 @@ const scheduleFilterConfig = [
     type: "async-multiselect",
     endpoint: "/api/branches/",
     queryParam: "name__icontains",
-    extraParams: {},
+    extraParams: {  limit: 10, fields: ['id', 'name'] },
     mapResponse: (data) =>
       data.results.map((branch) => ({
         label: branch.name,
@@ -135,7 +135,7 @@ const scheduleFilterConfig = [
     type: "async-multiselect",
     endpoint: "/api/service-opinions/",
     queryParam: "name__icontains",
-    extraParams: { is_final_opinion: false },
+    extraParams: { is_final_opinion: false, limit: 10, fields: ['id', 'name', 'service.name'], expand: 'service' },
     mapResponse: (data) =>
       data.results.map((opinion) => ({
         label: `${opinion.name} - ${opinion.service?.name}`,
@@ -148,7 +148,7 @@ const scheduleFilterConfig = [
     type: "async-multiselect",
     endpoint: "/api/service-opinions/",
     queryParam: "name__icontains",
-    extraParams: { is_final_opinion: true },
+    extraParams: { is_final_opinion: true, limit: 10, fields: ['id', 'name', 'service.name'], expand: 'service' },
     mapResponse: (data) =>
       data.results.map((opinion) => ({
         label: `${opinion.name} - ${opinion.service?.name}`,
