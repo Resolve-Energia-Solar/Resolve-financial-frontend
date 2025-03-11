@@ -143,7 +143,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
 
     return (
         <>
-            <Grid container spacing={0}>
+            <Grid container spacing={0} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", p: 3}} >
                 <Grid item xs={12} sx={{ overflow: 'scroll' }}>
                     <Box sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
                         <Grid item spacing={2} alignItems="center" xs={12}>
@@ -151,7 +151,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                         </Grid>
                     </Box>
 
-                    <Grid container xs={12} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", p: 3}} >
+                    <Grid container xs={12} >
                         <Grid item xs={12}  >
                             <TableHeader
                                 title={"Total"}
