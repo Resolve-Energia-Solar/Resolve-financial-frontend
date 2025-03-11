@@ -18,6 +18,7 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import ProductList from '@/app/components/kanban/Leads/components/ProposalProductsCard';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import Button from "@mui/material/Button";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import useProposalForm from '@/hooks/proposal/useProposalForm';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
@@ -122,26 +123,30 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               </Grid>
 
               {/* first row */}
-              <Grid container spacing={1}>
+              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="amount">Valor da proposta</CustomFormLabel>
-                  <CustomFieldMoney
-                    name="value"
+                  <CustomFormLabel htmlFor="proposal_name">Nome da Proposta</CustomFormLabel>
+                  <TextField
+                    select
+                    name="proposal_name"
+                    value={formData.proposal_name}
+                    onChange={handleChange}
                     fullWidth
-                    value={formData.value}
-                    onChange={(value) => handleChange('value', value)}
-                    {...(formErrors.value && { error: true, helperText: formErrors.value })}
-                  />
+                  >
+                    <MenuItem value="K1">Kit Solar 2034</MenuItem>
+                  </TextField>
                 </Grid>
 
                 <Grid item xs={6}>
-                  <FormDate
-                    name="due_date"
-                    label="Data de Vencimento"
+                  <CustomFormLabel htmlFor="amount">Valor da proposta</CustomFormLabel>
+                  <TextField
+                    name="amount"
+                    value={formData.amount}
+                    onChange={handleChange}
                     fullWidth
-                    value={formData.due_date}
-                    onChange={(value) => handleChange('due_date', value)}
-                    {...(formErrors.due_date && { error: true, helperText: formErrors.due_date })}
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                    }}
                   />
                 </Grid>
               </Grid>
@@ -227,6 +232,36 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 </>
               )}
 
+              {/* fourth row */}
+              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                <Grid item xs={6}>
+                  <CustomFormLabel htmlFor="seller_id">Vendedor Responsável</CustomFormLabel>
+                  <TextField
+                    select
+                    name="seller_id"
+                    value={formData.seller_id}
+                    onChange={handleChange}
+                    fullWidth
+                  >
+                    <MenuItem value="F">Fulano</MenuItem>
+                    <MenuItem value="C">Ciclano</MenuItem>
+                    <MenuItem value="B">Beltrano</MenuItem>
+                  </TextField>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <CustomFormLabel htmlFor="proposal_validity">
+                    Validade da proposta
+                  </CustomFormLabel>
+                  <TextField
+                    name="proposal_validity"
+                    value={formData.proposal_validity}
+                    onChange={handleChange}
+                    fullWidth
+                  />
+                </Grid>
+              </Grid>
+
               {/* fifth row */}
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={12}>
@@ -266,7 +301,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               gap: 2,
             }}
           >
-            {/* <Button
+            <Button
               variant="contained"
               sx={{
                 backgroundColor: 'black',
@@ -277,7 +312,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             >
               <Typography variant="body1">Pré-visualizar proposta</Typography>
               <VisibilityIcon sx={{ ml: 1 }} />
-            </Button> */}
+            </Button>
 
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>
