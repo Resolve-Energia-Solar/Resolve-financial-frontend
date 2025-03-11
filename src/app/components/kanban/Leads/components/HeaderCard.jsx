@@ -196,6 +196,7 @@ function LeadInfoHeader({ leadId, tabValue }) {
                 value=""
                 sx={{ color: '#7E8388' }}
                 disabled
+                
               >
                 Selecione um projeto
               </MenuItem>
