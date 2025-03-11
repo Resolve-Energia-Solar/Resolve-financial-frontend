@@ -29,17 +29,19 @@ import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard'
 const SalesListPage = ({ leadId = null }) => {
     const router = useRouter();
     const [data, setData] = useState([]);
-    const [loadingProposals, setLoadingProposals] = useState(true);
+    const [loadingSales, setLoadingSales] = useState(true);
     const [refresh, setRefresh] = useState(false);
     const [error, setError] = useState(null);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalRows, setTotalRows] = useState(0);
 
-    const proposalStatus = {
-        "A": { label: "Aceita", color: "#E9F9E6" },
-        "R": { label: "Recusada", color: "#FEEFEE" },
-        "P": { label: "Pendente", color: "#FFF7E5" },
+    const saleStatus = {
+        "C": { label: "Canelada", color: "#FFEBEE" },     
+        "D": { label: "Destrato", color: "#FFCDD2" },    
+        "F": { label: "Finalizada", color: "#E8F5E9" },   
+        "P": { label: "Pendente", color: "#FFF8E1" },    
+        "E": { label: "Em Andamento", color: "#E3F2FD" }, 
     };
 
     const columns = [
@@ -85,16 +87,16 @@ const SalesListPage = ({ leadId = null }) => {
             flex: 1,
             render: (row) => (
                 <Chip
-                    label={proposalStatus[row.status]?.label || 'Desconhecido'}
-                    sx={{ backgroundColor: proposalStatus[row.status]?.color }}
+                    label={saleStatus[row.status]?.label || 'Desconhecido'}
+                    sx={{ backgroundColor: saleStatus[row.status]?.color }}
                 />
             ),
         },
     ];
 
-    const [openAddProposal, setOpenAddProposal] = useState(false);
-    const [openDetailProposal, setOpenDetailProposal] = useState(false);
-    const [selectedProposalId, setSelectedProposalId] = useState(null);
+    const [openAddSale, setOpenAddSale] = useState(false);
+    const [openDetailSale, setOpenDetailSale] = useState(false);
+    const [selectedSaleId, setSelectedSaleId] = useState(null);
 
     const handleRefresh = () => {
         setRefresh(!refresh);
@@ -102,7 +104,7 @@ const SalesListPage = ({ leadId = null }) => {
 
     useEffect(() => {
         const fetchProposals = async () => {
-            setLoadingProposals(true);
+            setLoadingSales(true);
             try {
                 const response = await leadService.getLeadById(leadId, {
                     params: {
@@ -118,7 +120,7 @@ const SalesListPage = ({ leadId = null }) => {
             } catch (err) {
                 console.error('Erro ao buscar contratos');
             } finally {
-                setLoadingProposals(false);
+                setLoadingSales(false);
             }
         };
 
@@ -144,7 +146,7 @@ const SalesListPage = ({ leadId = null }) => {
                                 totalItems={totalRows}
                                 objNameNumberReference={"Propostas"}
                                 buttonLabel="Criar"
-                                onButtonClick={() => setOpenAddProposal(true)}
+                                onButtonClick={() => setOpenAddSale(true)}
                             />
                         </Grid>
 
@@ -153,7 +155,7 @@ const SalesListPage = ({ leadId = null }) => {
                                 columns={columns}
                                 data={data}
                                 totalRows={totalRows}
-                                loading={loadingProposals}
+                                loading={loadingSales}
                                 page={page}
                                 rowsPerPage={rowsPerPage}
                                 onPageChange={(newPage) => setPage(newPage)}
@@ -164,37 +166,37 @@ const SalesListPage = ({ leadId = null }) => {
                                 actions={{
                                     edit: (row) => router.push(`/apps/leads/${row.id}/edit`),
                                     view: (row) => {
-                                        setSelectedProposalId(row.id);
-                                        setOpenDetailProposal(true); 
+                                        setSelectedSaleId(row.id);
+                                        setOpenDetailSale(true); 
                                     },
                                 }}
                             />
 
                             {/* <Dialog
-                                open={openAddProposal}
-                                onClose={() => setOpenAddProposal(false)}
+                                open={openAddSale}
+                                onClose={() => setOpenAddSale(false)}
                                 maxWidth="lg"
                                 fullWidth
                             >
                                 <DialogContent>
                                     <LeadProposalPage 
                                         leadId={leadId} 
-                                        onClose={() => setOpenAddProposal(false)} 
+                                        onClose={() => setOpenAddSale(false)} 
                                         onRefresh={handleRefresh} />
                                 </DialogContent>
                             </Dialog>
 
                             <Dialog
-                                open={openDetailProposal}
-                                onClose={() => setOpenDetailProposal(false)}
+                                open={openDetailSale}
+                                onClose={() => setOpenDetailSale(false)}
                                 maxWidth="lg"
                                 fullWidth
                             >
                                 <DialogContent>
                                     <LeadsViewProposal
                                         leadId={leadId}
-                                        proposalId={selectedProposalId}
-                                        onClose={() => setOpenDetailProposal(false)}
+                                        proposalId={selectedSaleId}
+                                        onClose={() => setOpenDetailSale(false)}
                                         onRefresh={handleRefresh}
                                     />
                                 </DialogContent>
