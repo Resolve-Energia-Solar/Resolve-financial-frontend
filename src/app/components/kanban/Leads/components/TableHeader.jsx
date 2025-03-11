@@ -27,7 +27,7 @@ const TableHeader = ({
     };
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2, p: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
             <Typography sx={{ fontSize: '16px', color: "#092C4C" }}>
                 <span style={{ fontWeight: 'bold' }}>{title}: </span> {totalItems} {objNameNumberReference}
             </Typography>
