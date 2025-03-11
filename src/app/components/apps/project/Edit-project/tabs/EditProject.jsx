@@ -114,8 +114,8 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
                 </Stack>
               </Stack>
 
-              <TableContainer sx={{ whiteSpace: { xs: 'nowrap', md: 'unset' } }}>
-                <Table>
+              <TableContainer sx={{ whiteSpace: { xs: 'nowrap', md: 'unset' }, maxHeight: 300 }}>
+                <Table stickyHeader>
                   <TableHead>
                     <TableRow>
                       <TableCell align="center">

@@ -170,6 +170,8 @@ function useDebounce(value, delay) {
 const SchedulingList = () => {
   const router = useRouter();
   const userPermissions = useSelector((state) => state.user.permissions);
+  const user = useSelector((state) => state.user);
+  
   const hasPermission = useCallback(
     (permissions) => {
       if (!permissions) return true;
@@ -199,12 +201,20 @@ const SchedulingList = () => {
   // Cache para resultados já obtidos
   const cacheRef = useRef({});
 
+  // Limpa o cache e reinicia a lista ao trocar de usuário
+  useEffect(() => {
+    cacheRef.current = {};
+    setScheduleList([]);
+    setLoading(true);
+  }, [user.id]);
+
   // Reinicializa a página e a lista sempre que filtros, ordenação ou refresh mudarem
   useEffect(() => {
     setPage(1);
     setScheduleList([]);
   }, [order, orderDirection, debouncedFilters, refresh]);
 
+  // Busca os agendamentos
   useEffect(() => {
     const fetchSchedules = async () => {
       setLoading(true);
@@ -218,7 +228,7 @@ const SchedulingList = () => {
         page: page + 1,
         ...debouncedFilters,
       };
-      const cacheKey = JSON.stringify(queryParams);
+      const cacheKey = JSON.stringify({ userId: user.id, ...queryParams });
 
       if (cacheRef.current[cacheKey]) {
         const data = cacheRef.current[cacheKey];
@@ -240,7 +250,7 @@ const SchedulingList = () => {
     };
 
     fetchSchedules();
-  }, [page, rowsPerPage, order, orderDirection, debouncedFilters, refresh]);
+  }, [page, rowsPerPage, order, orderDirection, debouncedFilters, refresh, user.id]);
 
   const handlePageChange = useCallback((event, newPage) => {
     setPage(newPage);
@@ -343,7 +353,7 @@ const SchedulingList = () => {
         onClose={() => setFilterDrawerOpen(false)}
       />
       {loading ? (
-        <Typography>Carregando...</Typography>
+        <TableSkeleton rows={rowsPerPage} columns={11} />
       ) : error ? (
         <Typography color="error">{error}</Typography>
       ) : (
@@ -368,7 +378,6 @@ const SchedulingList = () => {
                     </Box>
                   </Box>
                 </TableCell>
-
                 <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Contratante

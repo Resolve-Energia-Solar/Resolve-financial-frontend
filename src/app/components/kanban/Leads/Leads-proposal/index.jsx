@@ -8,33 +8,34 @@ import {
     TableRow,
     Typography,
     Box,
-    Grid,
-    IconButton,
+    Button,
     Chip,
+    IconButton,
+    Grid,
     Dialog,
-    DialogContent
+    DialogContent,
 } from '@mui/material';
 
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import leadService from '@/services/leadService';
+import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
+import TableComponent from '@/app/components/kanban/Leads/components/TableComponent'
+import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
-import { IconEye, IconPencil } from '@tabler/icons-react';
-import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import LeadProposalPage from './Add-Proposal';
 import LeadsViewProposal from './View-Proposal';
 
+
 const LeadsProposalListPage = ({ leadId = null }) => {
+    const router = useRouter();
     const [data, setData] = useState([]);
-    const [selected, setSelected] = useState([]);
+    const [loadingProposals, setLoadingProposals] = useState(true);
     const [refresh, setRefresh] = useState(false);
-    const [loadingProposal, setLoadingProposal] = useState(true);
-
-    const [openAddProposal, setOpenAddProposal] = useState(false);
-    const [openDetailProposal, setOpenDetailProposal] = useState(false);
-    const [selectedProposalId, setSelectedProposalId] = useState(null);
-
-
+    const [error, setError] = useState(null);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [totalRows, setTotalRows] = useState(0);
 
     const proposalStatus = {
         "A": { label: "Aceita", color: "#E9F9E6" },
@@ -42,161 +43,190 @@ const LeadsProposalListPage = ({ leadId = null }) => {
         "P": { label: "Pendente", color: "#FFF7E5" },
     };
 
+    const columns = [
+        {
+            field: 'name',
+            headerName: 'Nome',
+            flex: 1,
+            render: (row) =>
+                row?.products.length > 0
+                    ? row.products.map((product) => product.name).join(', ')
+                    : 'Nenhum produto vinculado',
+        },
+        {
+            field: 'id',
+            headerName: 'Proposta',
+            flex: 1,
+        },
+        {
+            field: 'value',
+            headerName: 'Valor',
+            flex: 1,
+            render: (row) =>
+                new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                }).format(row.value),
+        },
+        {
+            field: 'responsible',
+            headerName: 'Responsável',
+            flex: 1,
+            render: (row) =>
+                `${row.created_by?.first_name || ''} ${row.created_by?.last_name || ''}`,
+        },
+        {
+            field: 'due_date',
+            headerName: 'Data',
+            flex: 1,
+        },
+        {
+            field: 'status',
+            headerName: 'Status',
+            flex: 1,
+            render: (row) => (
+                <Chip
+                    label={proposalStatus[row.status]?.label || 'Desconhecido'}
+                    sx={{ backgroundColor: proposalStatus[row.status]?.color }}
+                />
+            ),
+        },
+    ];
+
+    const [openAddProposal, setOpenAddProposal] = useState(false);
+    const [openEditProposal, setOpenEditProposal] = useState(false);
+    const [openDetailProposal, setOpenDetailProposal] = useState(false);
+    const [selectedProposalId, setSelectedProposalId] = useState(null);
+
     const handleRefresh = () => {
         setRefresh(!refresh);
     };
 
     useEffect(() => {
-        const fetchLeads = async () => {
-            setLoadingProposal(true);
+        const fetchProposals = async () => {
+            setLoadingProposals(true);
             try {
                 const response = await leadService.getLeadById(leadId, {
                     params: {
                         expand: 'proposals',
                         fields: 'id,proposals',
+                        page: page + 1,
+                        limit: rowsPerPage,
                     },
                 });
                 setData(response.proposals || []);
+                setTotalRows(response.proposals?.length || 0);
+                
             } catch (err) {
                 console.error('Erro ao buscar contratos');
             } finally {
-                setLoadingProposal(false);
+                setLoadingProposals(false);
             }
         };
 
-        fetchLeads();
-    }, [leadId, refresh]);
+        fetchProposals();
+    }, [leadId, refresh, page, rowsPerPage]);
 
-    const handleSelect = (id) => {
-        setSelected(prevSelected =>
-            prevSelected.includes(id)
-                ? prevSelected.filter(item => item !== id)
-                : [...prevSelected, id]
-        );
-    };
 
-    const formatCurrency = (value) => {
-        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-    };
-
-    const handleRowClick = (contractId) => {
-        setSelectedProposalId(contractId);
-        setOpenDetailProposal(true);
-    };
 
     return (
-        <Grid container spacing={0}>
-            <Grid item xs={12} sx={{ overflow: 'scroll' }}>
-                <Box sx={{ borderRadius: '20px', boxShadow: 3, p: 3, display: 'flex', flexDirection: 'column' }}>
-                    <Grid item spacing={2} alignItems="center" xs={12}>
-                        <LeadInfoHeader leadId={leadId} tabValue={2} />
-                    </Grid>
-                    <Grid container spacing={4} sx={{ mt: 2, mb: 1, ml: 1.5 }}>
-                        <Typography variant="h5" fontWeight={"bold"}>Propostas</Typography>
-                    </Grid>
-                    <TableContainer sx={{ borderRadius: '12px' }}>
-                        <Table sx={{ borderCollapse: 'separate', borderSpacing: '0px 8px' }}>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>
-                                        <CustomCheckbox checked={selected.length === data.length} onChange={() => setSelected(selected.length === data.length ? [] : data.map(item => item.id))} />
-                                    </TableCell>
-                                    <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Nome</TableCell>
-                                    <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Proposta</TableCell>
-                                    <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Valor</TableCell>
-                                    <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Responsável</TableCell>
-                                    <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Data</TableCell>
-                                    <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Status</TableCell>
-                                    <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
-                                        Editar/Ver
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {data.length > 0 ? (
-                                    data.map((contract) => (
-                                        <TableRow
-                                            key={contract.id}
-                                            onClick={() => handleRowClick(contract.id)}
-                                            sx={{ cursor: 'pointer' }}
-                                        >
-                                            <TableCell>
-                                                <CustomCheckbox checked={selected.includes(contract.id)} onChange={() => handleSelect(contract.id)} />
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography sx={{ whiteSpace: 'pre-line' }}>
-                                                    {contract?.products.length > 0 ? contract.products.map(product => product.name).join('\n') : 'Nenhum produto vinculado'}
-                                                </Typography>
-                                            </TableCell>
+        <>
+            <Grid container spacing={0} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", p: 3 }} >
+                <Grid item xs={12} sx={{ overflow: 'scroll' }}>
+                    <Box sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
+                        <Grid item spacing={2} alignItems="center" xs={12}>
+                            <LeadInfoHeader leadId={leadId} tabValue={2} />
+                        </Grid>
+                    </Box>
 
-                                            <TableCell>#{contract.id}</TableCell>
-                                            <TableCell>{formatCurrency(contract.value)}</TableCell>
-                                            <TableCell>{contract.created_by?.first_name} {contract.created_by?.last_name}</TableCell>
-                                            <TableCell>{contract.due_date}</TableCell>
-                                            <TableCell>
-                                                <Chip label={proposalStatus[contract.status]?.label} sx={{ backgroundColor: proposalStatus[contract.status]?.color }} />
-                                            </TableCell>
-                                            <TableCell align="center" display="flex">
-                                                <IconButton onClick={() => console.log('Editando proposta')}>
-                                                    <IconPencil />
-                                                </IconButton>
-                                                {/* <IconButton onClick={() => actions.view(row)}>
-                                                    <IconEye />
-                                                </IconButton> */}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={8} align="center">
-                                            <Typography variant="body2" color="textSecondary">
-                                                Nenhum contrato encontrado.
-                                            </Typography>
-                                        </TableCell>
-                                    </TableRow>
-                                )}
+                    <Grid container xs={12} >
+                        <Grid item xs={12}  >
+                            <TableHeader
+                                title={"Total"}
+                                totalItems={totalRows}
+                                objNameNumberReference={"Propostas"}
+                                buttonLabel="Criar"
+                                onButtonClick={() => setOpenAddProposal(true)}
+                            />
+                        </Grid>
 
-                                <TableRow>
-                                    <TableCell colSpan={8} align="center">
-                                        <Typography variant="body2" color="textSecondary" onClick={() => setOpenAddProposal(true)} sx={{ cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>
-                                            + Adicionar proposta
-                                        </Typography>
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Box>
+                        <Grid item xs={12} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", }} >
+                            <TableComponent
+                                columns={columns}
+                                data={data}
+                                totalRows={totalRows}
+                                loading={loadingProposals}
+                                page={page}
+                                rowsPerPage={rowsPerPage}
+                                onPageChange={(newPage) => setPage(newPage)}
+                                onRowsPerPageChange={(newRows) => {
+                                    setRowsPerPage(newRows);
+                                    setPage(0);
+                                }}
+                                actions={{
+                                    edit: (row) => {
+                                        setSelectedProposalId(row.id);
+                                        setOpenEditProposal(true);
+                                    },
+                                    view: (row) => {
+                                        setSelectedProposalId(row.id);
+                                        setOpenDetailProposal(true); 
+                                    },
+                                }}
+                            />
+
+                            <Dialog
+                                open={openAddProposal}
+                                onClose={() => setOpenAddProposal(false)}
+                                maxWidth="lg"
+                                fullWidth
+                            >
+                                <DialogContent>
+                                    <LeadProposalPage 
+                                        leadId={leadId} 
+                                        onClose={() => setOpenAddProposal(false)} 
+                                        onRefresh={handleRefresh} />
+                                </DialogContent>
+                            </Dialog>
+
+                            <Dialog
+                                open={openEditProposal}
+                                onClose={() => setOpenEditProposal(false)}
+                                maxWidth="lg"
+                                fullWidth
+                            >
+                                <DialogContent>
+                                    <LeadProposalPage 
+                                        leadId={leadId} 
+                                        onClose={() => setOpenEditProposal(false)} 
+                                        onRefresh={handleRefresh} />
+                                </DialogContent>
+                            </Dialog>
+
+                            <Dialog
+                                open={openDetailProposal}
+                                onClose={() => setOpenDetailProposal(false)}
+                                maxWidth="lg"
+                                fullWidth
+                            >
+                                <DialogContent>
+                                    <LeadsViewProposal
+                                        leadId={leadId}
+                                        proposalId={selectedProposalId}
+                                        onClose={() => setOpenDetailProposal(false)}
+                                        onRefresh={handleRefresh}
+                                    />
+                                </DialogContent>
+                            </Dialog>
+
+                        </Grid>
+
+                    </Grid>
+                </Grid>
             </Grid>
 
-            <Dialog
-                open={openAddProposal}
-                onClose={() => setOpenAddProposal(false)}
-                maxWidth="lg"
-                fullWidth
-            >
-                <DialogContent>
-                    <LeadProposalPage leadId={leadId} onClose={() => setOpenAddProposal(false)} onRefresh={handleRefresh} />
-                </DialogContent>
-            </Dialog>
-
-            <Dialog
-                open={openDetailProposal}
-                onClose={() => setOpenDetailProposal(false)}
-                maxWidth="lg"
-                fullWidth
-            >
-                <DialogContent>
-                    <LeadsViewProposal 
-                        leadId={leadId} 
-                        proposalId={selectedProposalId}
-                        onClose={() => setOpenDetailProposal(false)} 
-                        onRefresh={handleRefresh} 
-                    />
-                </DialogContent>
-            </Dialog>
-        </Grid>
+        </>
     );
-}
+};
 
 export default LeadsProposalListPage;

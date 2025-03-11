@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
@@ -10,6 +11,7 @@ import {
   Paper,
   Stack,
   Typography,
+  Skeleton, // Importa o Skeleton do MUI
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
@@ -51,6 +53,13 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
     }).format(date);
   };
 
+  // Reseta os estados quando o agendamento selecionado mudar
+  useEffect(() => {
+    setScheduleData(null);
+    setAnswerData(null);
+    setSeller(null);
+    setProductName(null);
+  }, [selectedSchedule]);
 
   // Busca os dados completos do agendamento
   useEffect(() => {
@@ -58,7 +67,8 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
       try {
         const data = await scheduleService.getScheduleById(selectedSchedule.id, {
           fields:
-            'id,schedule_date,customer,address,service,project,schedule_agent,created_at,observation,status,products,schedule_creator',
+            'id,schedule_date,customer,address,service,project,schedule_agent,created_at,observation,status,products,schedule_creator,products.name',
+          expand: 'products'
         });
         setScheduleData(data);
       } catch (error) {
@@ -93,7 +103,6 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
 
   useEffect(() => {
     async function fetchSaleAndSeller() {
-      console.log('scheduleData:', scheduleData);
       if (scheduleData?.project?.sale) {
         try {
           const saleData = await saleService.getSaleById(scheduleData.project.sale);
@@ -136,6 +145,8 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
     return `${day}/${month}/${year}`;
   };
 
+  console.log('scheduleData', scheduleData);
+
   return (
     <Box sx={{ display: 'flex' }}>
       <Drawer anchor="right" open={open} onClose={onClose}>
@@ -152,7 +163,18 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
               <Close onClick={onClose} sx={{ cursor: 'pointer' }} />
             </Box>
 
-            {scheduleData && (
+            {!scheduleData ? (
+              <Stack spacing={2}>
+                <Skeleton variant="text" width="40%" height={40} />
+                <Skeleton variant="text" width="20%" height={30} />
+                <Divider />
+                <Skeleton variant="text" width="60%" height={30} />
+                <Skeleton variant="text" width="80%" height={30} />
+                <Skeleton variant="text" width="70%" height={30} />
+                <Divider />
+                <Skeleton variant="rectangular" width="100%" height={150} />
+              </Stack>
+            ) : (
               <>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
                   <Box>
@@ -192,8 +214,9 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                   </Typography>
                   <Typography variant="body1">
                     <strong>Kit:</strong>{' '}
-                    {/* Caso exista um nome no produto já buscado, exibe-o; senão, tenta usar o que vier do scheduleData */}
-                    {productName || scheduleData.project?.product?.name || 'Sem kit associado'}
+                    {Array.isArray(scheduleData.products) && scheduleData.products.length > 0
+                      ? scheduleData.products.map((prod) => prod.name).join(', ')
+                      : productName || scheduleData.project?.product?.name || 'Sem kit associado'}
                   </Typography>
                   <Typography variant="body1">
                     <strong>Agente:</strong>{' '}
