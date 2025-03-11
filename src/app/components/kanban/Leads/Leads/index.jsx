@@ -59,7 +59,7 @@ function EditLeadTabs({ leadId }) {
         TabIndicatorProps={{ style: { backgroundColor: 'white' } }}
         sx={{ marginLeft: '25px' }}
       >
-        {["Informações Lead", "Dados Pessoais", "Propostas", "Documentos", "Agendamentos"].map((label, index) => (
+        {["Informações Lead", "Dados Pessoais", "Propostas", "Vendas", "Documentos", "Projetos", "Agendamentos"].map((label, index) => (
           <Tab
             key={index}
             label={label}
@@ -80,25 +80,41 @@ function EditLeadTabs({ leadId }) {
         ))}
       </Tabs>
 
+          {/* infos do lead */}
       <CustomTabPanel value={tabValue} index={0}>
         <EditLeadPage leadId={leadId} />
       </CustomTabPanel>
 
+          {/* dados pessoais */}
       <CustomTabPanel value={tabValue} index={1}>
         <EditCustomerPage leadId={leadId} />
       </CustomTabPanel>
 
+          {/* propostas */}
       <CustomTabPanel value={tabValue} index={2}>
         <LeadsProposalListPage leadId={leadId} />
       </CustomTabPanel>
 
+          {/* vendas */}
       <CustomTabPanel value={tabValue} index={3}>
+        {/* <LeadsProposalListPage leadId={leadId} /> */}
+      </CustomTabPanel>
+
+          {/* docs a ser retirado futuramente e integrado à page de projetos */}
+      <CustomTabPanel value={tabValue} index={4}>
         <LeadDocumentPage leadId={leadId} />
       </CustomTabPanel>
 
-      <CustomTabPanel value={tabValue} index={4}>
+          {/* contratos */}
+      <CustomTabPanel value={tabValue} index={5}>
+        {/* <LeadSchedulePage leadId={leadId} /> */}
+      </CustomTabPanel>
+
+          {/* agendamentos */}
+      <CustomTabPanel value={tabValue} index={6}>   
         <LeadSchedulePage leadId={leadId} />
       </CustomTabPanel>
+
     </Box>
   );
 }
