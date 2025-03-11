@@ -133,12 +133,6 @@ const LeadsProposalListPage = ({ leadId = null }) => {
     };
 
 
-    const handleRowClick = (contractId) => {
-        setSelectedProposalId(contractId);
-        setOpenDetailProposal(true);
-    };
-
-
     return (
         <>
             <Grid container spacing={0} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", p: 3 }} >
