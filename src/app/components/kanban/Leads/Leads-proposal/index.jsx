@@ -124,13 +124,6 @@ const LeadsProposalListPage = ({ leadId = null }) => {
         fetchProposals();
     }, [leadId, refresh, page, rowsPerPage]);
 
-    const handleSelect = (id) => {
-        setSelected(prevSelected =>
-            prevSelected.includes(id)
-                ? prevSelected.filter(item => item !== id)
-                : [...prevSelected, id]
-        );
-    };
 
 
     return (
