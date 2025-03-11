@@ -15,7 +15,7 @@ const TableHeader = ({
     const [filters, setFilters] = useState({
         status: '',
         responsavel: '',
-        squad: '',
+        client: '',
     });
 
     const handleFilterChange = (field, value) => {
@@ -27,7 +27,7 @@ const TableHeader = ({
     };
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
             <Typography sx={{ fontSize: '16px', color: "#092C4C" }}>
                 <span style={{ fontWeight: 'bold' }}>{title}: </span> {totalItems} {objNameNumberReference}
             </Typography>
@@ -56,12 +56,12 @@ const TableHeader = ({
                 />
 
                 <FilterSelect
-                    label="Squad"
-                    value={filters.squad || ""}
+                    label="Cliente"
+                    value={filters.client || ""}
                     onChange={(e) => setFilters({ ...filters, responsavel: e.target.value })}
                     options={[
-                        { label: "Squad 1", value: "squad1" },
-                        { label: "Squad 2", value: "squad2" },
+                        { label: "Cliente 1", value: "client1" },
+                        { label: "Cliente 2", value: "client2" },
                     ]}
                 />
 
