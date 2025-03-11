@@ -180,21 +180,30 @@ function LeadInfoHeader({ leadId, tabValue }) {
         </Box> */}
 
         {tabValue === 2 && (
-          <Box sx={{ minWidth: 200 }}>
+          <Box sx={{ minWidth: 385 }}>
             <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
               Projeto
             </Typography>
             <Select
-              value={selectedProject}
+              value={selectedProject || ''}
               onChange={(e) => setSelectedProject(e.target.value)}
               fullWidth
               size="small"
               sx={{ backgroundColor: '#F4F5F7', borderRadius: '8px',  }}
             >
               {/* {projects.map((project) => ( */}
+              <MenuItem
+                value=""
+                sx={{ color: '#7E8388' }}
+                disabled
+              >
+                Selecione um projeto
+              </MenuItem>
+
                 <MenuItem 
                   // key={project.id} 
                   // value={project.id} 
+                  value="project-1"
                   sx={{ color: '#7E8388' }}
                 >
                   {/* {project.name} */}
