@@ -114,6 +114,8 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                     },
                 });
                 setData(response.proposals || []);
+                setTotalRows(response.proposals?.length || 0);
+                
             } catch (err) {
                 console.error('Erro ao buscar contratos');
             } finally {
