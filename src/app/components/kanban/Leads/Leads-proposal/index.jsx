@@ -162,8 +162,10 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                                 }}
                                 actions={{
                                     edit: (row) => router.push(`/apps/leads/${row.id}/edit`),
-                                    view: (row) => router.push(`/apps/leads/${row.id}/view`),
-
+                                    view: (row) => {
+                                        setSelectedProposalId(row.id);
+                                        setOpenDetailProposal(true); 
+                                    },
                                 }}
                             />
 
@@ -198,7 +200,6 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                             </Dialog>
 
                         </Grid>
-
 
                     </Grid>
                 </Grid>
