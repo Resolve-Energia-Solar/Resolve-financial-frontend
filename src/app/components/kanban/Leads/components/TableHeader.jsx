@@ -15,7 +15,7 @@ const TableHeader = ({
     const [filters, setFilters] = useState({
         status: '',
         responsavel: '',
-        squad: '',
+        client: '',
     });
 
     const handleFilterChange = (field, value) => {
@@ -52,6 +52,16 @@ const TableHeader = ({
                     options={[
                         { label: "Manuela", value: "manu" },
                         { label: "Sandra", value: "sandra" },
+                    ]}
+                />
+
+                <FilterSelect
+                    label="Cliente"
+                    value={filters.client || ""}
+                    onChange={(e) => setFilters({ ...filters, responsavel: e.target.value })}
+                    options={[
+                        { label: "Cliente 1", value: "client1" },
+                        { label: "Cliente 2", value: "client2" },
                     ]}
                 />
 
