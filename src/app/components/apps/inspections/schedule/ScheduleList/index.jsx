@@ -214,7 +214,7 @@ const SchedulingList = () => {
     setScheduleList([]);
   }, [order, orderDirection, debouncedFilters, refresh]);
 
-  // Busca os agendamentos (incluindo user.id no array de dependências)
+  // Busca os agendamentos
   useEffect(() => {
     const fetchSchedules = async () => {
       setLoading(true);

@@ -67,7 +67,8 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
       try {
         const data = await scheduleService.getScheduleById(selectedSchedule.id, {
           fields:
-            'id,schedule_date,customer,address,service,project,schedule_agent,created_at,observation,status,products,schedule_creator',
+            'id,schedule_date,customer,address,service,project,schedule_agent,created_at,observation,status,products,schedule_creator,products.name',
+          expand: 'products'
         });
         setScheduleData(data);
       } catch (error) {
@@ -162,7 +163,6 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
               <Close onClick={onClose} sx={{ cursor: 'pointer' }} />
             </Box>
 
-            {/* Se os dados ainda não foram carregados, mostra um skeleton detalhado */}
             {!scheduleData ? (
               <Stack spacing={2}>
                 <Skeleton variant="text" width="40%" height={40} />
