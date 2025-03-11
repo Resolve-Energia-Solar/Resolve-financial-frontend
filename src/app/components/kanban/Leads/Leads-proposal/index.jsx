@@ -23,8 +23,9 @@ import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
 import TableComponent from '@/app/components/kanban/Leads/components/TableComponent'
 import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
-import LeadProposalPage from './Add-Proposal';
+// import LeadProposalPage from './Edit-Proposal';
 import LeadsViewProposal from './View-Proposal';
+import AddProposalPage from './Add-Proposal';
 
 
 const LeadsProposalListPage = ({ leadId = null }) => {
@@ -182,7 +183,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                                 fullWidth
                             >
                                 <DialogContent>
-                                    <LeadProposalPage 
+                                    <AddProposalPage 
                                         leadId={leadId} 
                                         onClose={() => setOpenAddProposal(false)} 
                                         onRefresh={handleRefresh} />
@@ -196,7 +197,8 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                                 fullWidth
                             >
                                 <DialogContent>
-                                    <LeadProposalPage 
+                                    {/* add a new edit page in the future */}
+                                    <AddProposalPage 
                                         leadId={leadId} 
                                         onClose={() => setOpenEditProposal(false)} 
                                         onRefresh={handleRefresh} />

@@ -27,7 +27,7 @@ import { useSelector } from 'react-redux';
 import { removeProductFromLead, selectProductsByLead } from '@/store/products/customProducts';
 import { useDispatch } from 'react-redux';
 
-function LeadProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
+function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
   const theme = useTheme();
   const [lead, setLead] = useState(null);
@@ -111,10 +111,7 @@ function LeadProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             <LeadInfoHeader leadId={leadId} />
           </Grid>
 
-          {/* <Divider sx={{ my: 2 }} /> */}
-
           <Grid container spacing={4}>
-            {/* LEEEEEEEEEEEFT */}
             <Grid
               item
               xs={12}
@@ -150,7 +147,7 @@ function LeadProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               </Grid>
 
               {/* second row */}
-              {/* <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
                   <CustomFormLabel htmlFor="ref_amount">Valor de referência</CustomFormLabel>
                   <TextField
@@ -170,10 +167,10 @@ function LeadProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     fullWidth
                   />
                 </Grid>
-              </Grid> */}
+              </Grid>
 
               {/* third row */}
-              {/* <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={12}>
                   <CustomFormLabel htmlFor="payment_method">Forma de pagamento</CustomFormLabel>
                   <TextField
@@ -228,7 +225,7 @@ function LeadProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     <MenuItem value="4">4x</MenuItem>
                   </TextField>
                 </>
-              )} */}
+              )}
 
               {/* fifth row */}
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
@@ -303,4 +300,4 @@ function LeadProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   );
 }
 
-export default LeadProposalPage;
+export default AddProposalPage;
