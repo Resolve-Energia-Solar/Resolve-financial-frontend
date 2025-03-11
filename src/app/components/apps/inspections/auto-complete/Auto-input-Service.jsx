@@ -24,7 +24,9 @@ export default function AutoCompleteServiceCatalog({
     const fetchDefaultServiceCatalog = async () => {
       if (value) {
         try {
-          const serviceCatalogValue = await serviceCatalogService.getServiceCatalogById(value);
+          const serviceCatalogValue = await serviceCatalogService.getServiceCatalogById(value, {
+            fields: 'id,name',
+          });
           if (serviceCatalogValue) {
             setSelectedServiceCatalog({
               id: serviceCatalogValue.id,
@@ -40,23 +42,16 @@ export default function AutoCompleteServiceCatalog({
     fetchDefaultServiceCatalog();
   }, [value]);
 
-  const handleChange = (event, newValue) => {
-    setSelectedServiceCatalog(newValue);
-    if (newValue) {
-      onChange(newValue.id);
-    } else {
-      onChange(null);
-    }
-  };
-
   const fetchServiceCatalogsByName = useCallback(
     debounce(async (name) => {
       setLoading(true);
       try {
-        const response = await serviceCatalogService.getServiceCatalogByName(name);
+        const response = await serviceCatalogService.getServiceCatalogByName(name, {
+          fields: 'id,name',
+        });
         const formattedServiceCatalogs = response.results.map((serviceCatalog) => ({
           id: serviceCatalog.id,
-          name: serviceCatalog.name, // Mantendo o mesmo formato do selectedServiceCatalog
+          name: serviceCatalog.name,
         }));
         setOptions(formattedServiceCatalogs);
       } catch (error) {
@@ -66,6 +61,15 @@ export default function AutoCompleteServiceCatalog({
     }, 300),
     [],
   );
+
+  const handleChange = (event, newValue) => {
+    setSelectedServiceCatalog(newValue);
+    if (newValue) {
+      onChange(newValue.id);
+    } else {
+      onChange(null);
+    }
+  };
 
   const handleOpen = () => {
     setOpen(true);
@@ -83,8 +87,8 @@ export default function AutoCompleteServiceCatalog({
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.id === value.id} // Comparação pelo id
-        getOptionLabel={(option) => option.name || ''} // Usa "name"
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+        getOptionLabel={(option) => option.name || ''}
         options={options}
         loading={loading}
         value={selectedServiceCatalog}
