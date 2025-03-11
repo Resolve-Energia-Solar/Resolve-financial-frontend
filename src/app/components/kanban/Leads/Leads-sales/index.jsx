@@ -103,28 +103,28 @@ const SalesListPage = ({ leadId = null }) => {
     };
 
     useEffect(() => {
-        const fetchProposals = async () => {
+        const fetchSales = async () => {
             setLoadingSales(true);
             try {
                 const response = await leadService.getLeadById(leadId, {
                     params: {
-                        expand: 'proposals',
-                        fields: 'id,proposals',
+                        expand: 'sales',
+                        fields: 'id,sales',
                         page: page + 1,
                         limit: rowsPerPage,
                     },
                 });
-                setData(response.proposals || []);
-                setTotalRows(response.proposals?.length || 0);
+                setData(response.sales || []);
+                setTotalRows(response.sales?.length || 0);
                 
             } catch (err) {
-                console.error('Erro ao buscar contratos');
+                console.error('Erro ao buscar vendas');
             } finally {
                 setLoadingSales(false);
             }
         };
 
-        fetchProposals();
+        fetchSales();
     }, [leadId, refresh, page, rowsPerPage]);
 
 
