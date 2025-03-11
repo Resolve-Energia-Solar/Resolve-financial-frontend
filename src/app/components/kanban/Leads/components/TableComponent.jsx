@@ -111,23 +111,25 @@ const TableComponent = ({
             </Table>
 
 
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={totalRows}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={(_, newPage) => onPageChange(newPage)}
-                onRowsPerPageChange={(e) => onRowsPerPageChange(parseInt(e.target.value, 10))}
-                labelRowsPerPage="Linhas por página"
-                sx={{
-                    '& .Mui-selected': {
-                        backgroundColor: '#FFCC00 !important',
-                        color: '#7E8388',
-                        borderRadius: '6px',
-                    },
-                }}
-            />
+            {data.length > 5 && (
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={totalRows}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={(_, newPage) => onPageChange(newPage)}
+                    onRowsPerPageChange={(e) => onRowsPerPageChange(parseInt(e.target.value, 10))}
+                    labelRowsPerPage="Linhas por página"
+                    sx={{
+                        '& .Mui-selected': {
+                            backgroundColor: '#FFCC00 !important',
+                            color: '#7E8388',
+                            borderRadius: '6px',
+                        },
+                    }}
+                />
+            )}
         </TableContainer>
     );
 };
