@@ -24,12 +24,20 @@ function TabPanel({ children, value, index, ...other }) {
       hidden={value !== index}
       id={`tabpanel-${index}`}
       aria-labelledby={`tab-${index}`}
+      style={{
+        display: value === index ? 'block' : 'none',
+        flexGrow: 1,
+        height: 'calc(100vh - 120px)',
+        overflowY: 'auto',
+        padding: '16px', 
+      }}
       {...other}
     >
       {children}
     </div>
   );
 }
+
 
 export default function EditProject({ projectId = null }) {
   const params = useParams();

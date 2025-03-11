@@ -14,10 +14,6 @@ const useScheduleForm = (initialData, id, service_id) => {
   const [serviceData, setServiceData] = useState(null)
   const [addressData, setAddressData] = useState(null)
 
-  console.log('user?.user?.id', user?.user?.id)
-  console.log('user?.user', user?.user)
-  console.log('user', user)
-
   const [formData, setFormData] = useState({
     schedule_creator: user?.user,
     category_id: null,
@@ -250,7 +246,6 @@ const useScheduleForm = (initialData, id, service_id) => {
       ? formData.products
       : [formData.products]
 
-    console.log('max', formData)
 
     const dataToSend = {
       schedule_creator_id: formData.schedule_creator?.id,
