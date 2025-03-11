@@ -54,10 +54,13 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
 
   const handlePaymentStatusChange = async (status) => {
     try {
-      await financialRecordService.updateFinancialRecordResponsibleStatus(currentRecord.id, {
-        status
+      const newStatus = status === 'PG' ? 'P' : status === 'C' ? 'C' : currentRecord.status;
+      await financialRecordService.updateFinancialRecordPartial(currentRecord.id, {
+        payment_status: status,
+        status: newStatus,
+        paid_at: new Date().toISOString()
       });
-      setCurrentRecord((prev) => ({ ...prev, payment_status: status }));
+      setCurrentRecord((prev) => ({ ...prev, payment_status: status, status: newStatus }));
     } catch (error) {
       console.error(error);
       alert(`Erro ao atualizar status de pagamento: ${error.message}`);
