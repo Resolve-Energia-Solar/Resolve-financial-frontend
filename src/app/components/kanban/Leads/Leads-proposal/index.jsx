@@ -13,6 +13,7 @@ import {
     IconButton,
     Grid,
     Dialog,
+    DialogContent,
 } from '@mui/material';
 
 import { useRouter } from 'next/navigation';
@@ -143,7 +144,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
 
     return (
         <>
-            <Grid container spacing={0} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", p: 3}} >
+            <Grid container spacing={0} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", p: 3 }} >
                 <Grid item xs={12} sx={{ overflow: 'scroll' }}>
                     <Box sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
                         <Grid item spacing={2} alignItems="center" xs={12}>
@@ -158,11 +159,11 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                                 totalItems={totalRows}
                                 objNameNumberReference={"Propostas"}
                                 buttonLabel="Criar"
-                                onButtonClick={() => console.log('Go to create proposal')}
+                                onButtonClick={() => setOpenAddProposal(true)}
                             />
                         </Grid>
 
-                        <Grid item xs={12} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA",}} >
+                        <Grid item xs={12} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", }} >
                             <TableComponent
                                 columns={columns}
                                 data={data}
@@ -181,6 +182,36 @@ const LeadsProposalListPage = ({ leadId = null }) => {
 
                                 }}
                             />
+
+                            <Dialog
+                                open={openAddProposal}
+                                onClose={() => setOpenAddProposal(false)}
+                                maxWidth="lg"
+                                fullWidth
+                            >
+                                <DialogContent>
+                                    <LeadProposalPage 
+                                        leadId={leadId} 
+                                        onClose={() => setOpenAddProposal(false)} 
+                                        onRefresh={handleRefresh} />
+                                </DialogContent>
+                            </Dialog>
+
+                            <Dialog
+                                open={openDetailProposal}
+                                onClose={() => setOpenDetailProposal(false)}
+                                maxWidth="lg"
+                                fullWidth
+                            >
+                                <DialogContent>
+                                    <LeadsViewProposal
+                                        leadId={leadId}
+                                        proposalId={selectedProposalId}
+                                        onClose={() => setOpenDetailProposal(false)}
+                                        onRefresh={handleRefresh}
+                                    />
+                                </DialogContent>
+                            </Dialog>
 
                         </Grid>
 
