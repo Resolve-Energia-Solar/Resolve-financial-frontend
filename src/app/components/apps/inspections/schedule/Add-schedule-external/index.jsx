@@ -10,6 +10,7 @@ import AutoCompleteServiceCatalog from '@/app/components/apps/inspections/auto-c
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import userService from '@/services/userService';
 
 import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
 import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
@@ -25,7 +26,7 @@ const ScheduleFormCreateExternal = () => {
 
   const userPermissions = useSelector((state) => state.user.permissions);
   const hasPermission = (permissions) => {
-    if (!permissions) return true; 
+    if (!permissions) return true;
     return permissions.some(permission => userPermissions?.includes(permission));
   };
 
@@ -56,6 +57,16 @@ const ScheduleFormCreateExternal = () => {
       router.push('/apps/inspections/schedule');
     }
   }, [success, router]);
+
+  const handleUserSelect = async (userId) => {
+    console.log('Usuário selecionado:', userId);
+    handleChange('customer_id', userId);
+    const user = await userService.getUserById(userId, 'addresses', 'id,complete_name,addresses,name');
+    console.log('Dados do usuário:', user);
+    if (user.addresses && user.addresses.length > 0) {
+      handleChange('address_id', user.addresses[0].id);
+    }
+  };
 
   const showAlert = (message, type) => {
     setAlertMessage(message);
@@ -115,39 +126,36 @@ const ScheduleFormCreateExternal = () => {
   };
 
   const hasProduct = Array.isArray(formData.products)
-  ? formData.products.length > 0
-  : !!formData.products;
+    ? formData.products.length > 0
+    : !!formData.products;
 
   return (
     <>
       <Grid container spacing={3}>
-        <HasPermission 
-        permissions={['field_services.can_change_service']}
-        userPermissions={userPermissions}
+        <HasPermission
+          permissions={['field_services.can_change_service']}
+          userPermissions={userPermissions}
         >
-        <Grid item xs={12} sm={12} lg={6}>
-          <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
-          <AutoCompleteServiceCatalog
-            onChange={(id) => handleChange('service_id', id)}
-            value={formData.service_id}
-            {...(formErrors.service_id && {
-              error: true,
-              helperText: formErrors.service_id,
-            })}
-            noOptionsText={'Nenhum serviço encontrado'}
-          />
-        </Grid>
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
+            <AutoCompleteServiceCatalog
+              onChange={(id) => handleChange('service_id', id)}
+              value={formData.service_id}
+              {...(formErrors.service_id && {
+                error: true,
+                helperText: formErrors.service_id,
+              })}
+              noOptionsText={'Nenhum serviço encontrado'}
+            />
+          </Grid>
         </HasPermission>
 
         <Grid item xs={12} sm={12} lg={6}>
           <CustomFormLabel htmlFor="client">Cliente</CustomFormLabel>
           <AutoCompleteUser
-            onChange={(id) => handleChange('customer_id', id)}
+            onChange={(id) => handleUserSelect(id)}
             value={formData.customer_id}
-            {...(formErrors.customer_id && {
-              error: true,
-              helperText: formErrors.customer_id,
-            })}
+            labeltitle="Cliente"
           />
         </Grid>
 
@@ -259,9 +267,9 @@ const ScheduleFormCreateExternal = () => {
                     .getHours()
                     .toString()
                     .padStart(2, '0')}:${newValue
-                    .getMinutes()
-                    .toString()
-                    .padStart(2, '0')}:${newValue.getSeconds().toString().padStart(2, '0')}`;
+                      .getMinutes()
+                      .toString()
+                      .padStart(2, '0')}:${newValue.getSeconds().toString().padStart(2, '0')}`;
                   validateChange('schedule_start_time', formattedTime);
                 }
               }}

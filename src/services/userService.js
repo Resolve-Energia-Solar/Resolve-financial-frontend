@@ -33,11 +33,12 @@ const userService = {
       throw error;
     }
   },
-  getUserById: async (id) => {
+  getUserById: async (id, expand = 'employee', fields = '') => {
     try {
       const response = await apiClient.get(`/api/users/${id}/`, {
         params: {
-          expand: 'employee',
+          expand,
+          fields,
         },
       });
       return response.data;
@@ -46,7 +47,7 @@ const userService = {
       throw error;
     }
   },
-  getAddressByUserId: async (id) => {
+  getAddressByUserId: async (id, expand = 'addresses', fields = 'addresses') => {
     try {
       const response = await apiClient.get(`/api/users/${id}/?expand=addresses&fields=addresses`);
       return response.data;
