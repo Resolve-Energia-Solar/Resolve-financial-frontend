@@ -7,8 +7,10 @@ import useAddressForm from '@/hooks/address/useAddressForm';
 import { useEffect, useState } from 'react';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import userService from '@/services/userService';
+import { useSnackbar } from 'notistack';
 
 const CreateAddressPage = ({ selectedAddressId = null, onClosedModal = null, userId = null, onRefresh = null }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const userPermissions = useSelector((state) => state.user.permissions);
   const [fileLoading, setFileLoading] = useState(false);
 
@@ -77,6 +79,7 @@ const CreateAddressPage = ({ selectedAddressId = null, onClosedModal = null, use
       handleChange('street', data.street);
     } catch (error) {
       console.error('Erro ao buscar endereço:', error);
+      enqueueSnackbar(`Erro ao buscar endereço: ${error.message}`, { variant: 'error' });
     }
   };
 
@@ -214,4 +217,3 @@ const CreateAddressPage = ({ selectedAddressId = null, onClosedModal = null, use
 };
 
 export default CreateAddressPage;
-

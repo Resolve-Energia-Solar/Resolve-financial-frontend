@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import addressService from '@/services/addressService';
+import { useSnackbar } from 'notistack';
 
 const useAddressForm = (initialData, id) => {
+  const { enqueueSnackbar } = useSnackbar();
   const [formData, setFormData] = useState({
     zip_code: '',
     country: '',
@@ -62,10 +64,13 @@ const useAddressForm = (initialData, id) => {
       }
       setFormErrors({});
       setSuccess(true);
+      enqueueSnackbar("Endereço salvo com sucesso!", { variant: "success" });
     } catch (err) {
       setSuccess(false);
       setFormErrors(err.response?.data || {});
       console.log(err.response?.data || err);
+      const errorMessage = err.response?.data?.detail || "Erro ao salvar endereço";
+      enqueueSnackbar(errorMessage, { variant: "error" });
     } finally {
       setLoading(false);
     }

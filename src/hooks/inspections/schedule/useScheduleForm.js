@@ -5,6 +5,7 @@ import addressService from '@/services/addressService'
 import userService from '@/services/userService'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
+import { useSnackbar } from 'notistack';
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID
@@ -13,10 +14,7 @@ const useScheduleForm = (initialData, id, service_id) => {
   const user = useSelector(state => state.user)
   const [serviceData, setServiceData] = useState(null)
   const [addressData, setAddressData] = useState(null)
-
-  console.log('user?.user?.id', user?.user?.id)
-  console.log('user?.user', user?.user)
-  console.log('user', user)
+  const { enqueueSnackbar } = useSnackbar();
 
   const [formData, setFormData] = useState({
     schedule_creator: user?.user,
@@ -91,11 +89,12 @@ const useScheduleForm = (initialData, id, service_id) => {
           }))
         } catch (error) {
           console.error(`Erro ao buscar serviço com id ${formData.service_id}:`, error)
+          enqueueSnackbar(`Erro ao buscar serviço com id ${formData.service_id}: ${error.message}`, { variant: 'error' });
         }
       }
     }
     fetchServiceDetails()
-  }, [formData.service_id])
+  }, [formData.service_id, enqueueSnackbar])
 
   useEffect(() => {
     const fetchCustomerDetails = async () => {
@@ -110,11 +109,12 @@ const useScheduleForm = (initialData, id, service_id) => {
           }
         } catch (error) {
           console.error(`Erro ao buscar cliente com id ${formData.customer_id}:`, error)
+          enqueueSnackbar(`Erro ao buscar cliente com id ${formData.customer_id}: ${error.message}`, { variant: 'error' });
         }
       }
     }
     fetchCustomerDetails()
-  }, [formData.customer_id])
+  }, [formData.customer_id, enqueueSnackbar])
 
   useEffect(() => {
     const fetchAddressDetails = async () => {
@@ -124,11 +124,12 @@ const useScheduleForm = (initialData, id, service_id) => {
           setAddressData(addressInfo)
         } catch (error) {
           console.error(`Erro ao buscar endereço com id ${formData.address_id}:`, error)
+          enqueueSnackbar(`Erro ao buscar endereço com id ${formData.address_id}: ${error.message}`, { variant: 'error' });
         }
       }
     }
     fetchAddressDetails()
-  }, [formData.address_id])
+  }, [formData.address_id, enqueueSnackbar])
 
   useEffect(() => {
     const fetchCoordinates = async () => {
@@ -149,15 +150,17 @@ const useScheduleForm = (initialData, id, service_id) => {
               longitude: location.lng,
             }))
           } else {
-            console.error('Erro ao obter coordenadas:', response.data.status)
+            console.error('Erro ao obter coordenadas:', response.data.error_message || response.data.status)
+            enqueueSnackbar(`Erro ao obter coordenadas: ${response.data.error_message || response.data.status}`, { variant: 'error' });
           }
         } catch (error) {
           console.error('Erro ao buscar coordenadas:', error)
+          enqueueSnackbar(`Erro ao buscar coordenadas: ${error.message}`, { variant: 'error' });
         }
       }
     }
     fetchCoordinates()
-  }, [addressData])
+  }, [addressData, enqueueSnackbar])
 
   useEffect(() => {
     if (formData.schedule_date && formData.schedule_start_time && serviceData?.deadline?.hours) {
@@ -204,9 +207,10 @@ const useScheduleForm = (initialData, id, service_id) => {
         }))
       } catch (error) {
         console.error('Erro ao calcular a data de agendamento:', error.message)
+        enqueueSnackbar(`Erro ao calcular a data de agendamento: ${error.message}`, { variant: 'error' });
       }
     }
-  }, [formData.schedule_date, formData.schedule_start_time, serviceData])
+  }, [formData.schedule_date, formData.schedule_start_time, serviceData, enqueueSnackbar])
 
   useEffect(() => {
     if (initialData) {
@@ -230,27 +234,24 @@ const useScheduleForm = (initialData, id, service_id) => {
   const handleSave = async () => {
     setLoading(true)
 
-    // Se estiver criando (id não existe), realiza a validação de produto/projeto
     if (!id) {
       const hasProduct = Array.isArray(formData.products)
         ? formData.products.length > 0
-        : !!formData.products
+        : !!formData.products;
       if (!hasProduct && !formData.project_id) {
         setFormErrors(prev => ({
           ...prev,
           products: ['Selecione um produto ou projeto'],
           project_id: ['Selecione um produto ou projeto'],
-        }))
-        setLoading(false)
-        return false
+        }));
+        setLoading(false);
+        return false;
       }
     }
 
     const normalizedProductsIds = Array.isArray(formData.products)
       ? formData.products
       : [formData.products]
-
-    console.log('max', formData)
 
     const dataToSend = {
       schedule_creator_id: formData.schedule_creator?.id,
@@ -274,26 +275,29 @@ const useScheduleForm = (initialData, id, service_id) => {
       going_to_location_at: formData.going_to_location_at,
       execution_started_at: formData.execution_started_at,
       execution_finished_at: formData.execution_finished_at,
-    }
+    };
 
     try {
       if (id) {
-        await scheduleService.updateSchedule(id, dataToSend)
+        await scheduleService.updateSchedule(id, dataToSend);
       } else {
-        await scheduleService.createSchedule(dataToSend)
+        await scheduleService.createSchedule(dataToSend);
       }
-      setFormErrors({})
-      setSuccess(true)
-      return true
+      setFormErrors({});
+      setSuccess(true);
+      enqueueSnackbar("Agendamento salvo com sucesso!", { variant: "success" });
+      return true;
     } catch (err) {
-      setSuccess(false)
-      setFormErrors(err.response?.data || {})
-      console.error(err.response?.data || err)
-      return false
+      setSuccess(false);
+      setFormErrors(err.response?.data || {});
+      console.error(err.response?.data || err);
+      const errorMessage = err.response?.data?.detail || "Erro ao salvar agendamento";
+      enqueueSnackbar(errorMessage, { variant: "error" });
+      return false;
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return {
     formData,
@@ -302,7 +306,7 @@ const useScheduleForm = (initialData, id, service_id) => {
     loading,
     formErrors,
     success,
-  }
+  };
 }
 
-export default useScheduleForm
+export default useScheduleForm;

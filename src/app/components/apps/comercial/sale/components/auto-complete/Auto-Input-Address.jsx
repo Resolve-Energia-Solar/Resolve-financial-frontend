@@ -8,6 +8,7 @@ import { debounce } from 'lodash';
 import { IconButton, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
+import { useSnackbar } from 'notistack';
 
 export default function AutoCompleteAddress({
   onChange,
@@ -17,6 +18,7 @@ export default function AutoCompleteAddress({
   disableSuggestions = false,
   ...props
 }) {
+  const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -36,6 +38,7 @@ export default function AutoCompleteAddress({
         }
       } catch (error) {
         console.error('Erro ao buscar address:', error);
+        enqueueSnackbar(`Erro ao buscar endereço: ${error.message}`, { variant: 'error' });
       }
     }
   };
@@ -51,7 +54,7 @@ export default function AutoCompleteAddress({
 
   const fetchAddressesByName = useCallback(
     debounce(async (name) => {
-      if (!name || disableSuggestions) return; // Verifica a prop para desabilitar as sugestões
+      if (!name || disableSuggestions) return;
       setLoading(true);
       try {
         const response = await addressService.getAddressByFullAddress(name);
@@ -62,14 +65,15 @@ export default function AutoCompleteAddress({
         setOptions(formattedAddresses);
       } catch (error) {
         console.error('Erro ao buscar endereços:', error);
+        enqueueSnackbar(`Erro ao buscar endereços: ${error.message}`, { variant: 'error' });
       }
       setLoading(false);
     }, 300),
-    [disableSuggestions], // Dependência da prop disableSuggestions
+    [disableSuggestions, enqueueSnackbar]
   );
 
   const fetchInitialAddresses = useCallback(async () => {
-    if (disableSuggestions) return; // Não busca sugestões se a prop estiver ativada
+    if (disableSuggestions) return;
     setLoading(true);
     try {
       const response = await addressService.getAddresses({ limit: 5 });
@@ -80,12 +84,12 @@ export default function AutoCompleteAddress({
       setOptions(formattedAddresses);
     } catch (error) {
       console.error('Erro ao buscar endereços:', error);
+      enqueueSnackbar(`Erro ao buscar endereços: ${error.message}`, { variant: 'error' });
     }
     setLoading(false);
-  }, [disableSuggestions]);
+  }, [disableSuggestions, enqueueSnackbar]);
 
   const handleOpen = () => {
-    console.log('open');
     setOpen(true);
     if (options.length === 0 && !disableSuggestions) {
       fetchInitialAddresses();
@@ -121,7 +125,7 @@ export default function AutoCompleteAddress({
         noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         {...props}
         onInputChange={(event, newInputValue) => {
-          if (!disableSuggestions) fetchAddressesByName(newInputValue); // Chama a função de busca apenas se sugestões não estiverem desativadas
+          if (!disableSuggestions) fetchAddressesByName(newInputValue);
         }}
         onChange={handleChange}
         renderInput={(params) => (
@@ -153,7 +157,6 @@ export default function AutoCompleteAddress({
         )}
       />
 
-      {/* Modal para adicionar endereço */}
       <Dialog open={openModal} onClose={handleCloseModal} maxWidth="lg">
         <DialogTitle>Adicionar Novo Endereço</DialogTitle>
         <DialogContent>
