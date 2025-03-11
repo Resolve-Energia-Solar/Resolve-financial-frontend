@@ -108,14 +108,14 @@ const SalesListPage = ({ leadId = null }) => {
             try {
                 const response = await leadService.getLeadById(leadId, {
                     params: {
-                        expand: 'sales',
-                        fields: 'id,sales',
+                        expand: 'sale',
+                        fields: 'id,sale',
                         page: page + 1,
                         limit: rowsPerPage,
                     },
                 });
                 setData(response.sales || []);
-                setTotalRows(response.sales?.length || 0);
+                setTotalRows(response.sale?.length || 0);
                 
             } catch (err) {
                 console.error('Erro ao buscar vendas');
@@ -144,7 +144,7 @@ const SalesListPage = ({ leadId = null }) => {
                             <TableHeader
                                 title={"Total"}
                                 totalItems={totalRows}
-                                objNameNumberReference={"Propostas"}
+                                objNameNumberReference={"Vendas"}
                                 buttonLabel="Criar"
                                 onButtonClick={() => setOpenAddSale(true)}
                             />
