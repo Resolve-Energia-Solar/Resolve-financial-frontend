@@ -1,9 +1,14 @@
 import apiClient from './apiClient';
 
 const serviceCatalogService = {
-  getServicesCatalog: async () => {
+  getServicesCatalog: async (options = {}) => {
+    const { filters, expand, fields, ...rest } = options;
+    const params = { ...rest };
+    if (filters) Object.assign(params, filters);
+    if (expand) params.expand = expand;
+    if (fields) params.fields = fields;
     try {
-      const response = await apiClient.get('/api/services/');
+      const response = await apiClient.get('/api/services/', { params });
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar catálogo de serviços:', error);
@@ -11,9 +16,14 @@ const serviceCatalogService = {
     }
   },
 
-  getServiceCatalogById: async (id) => {
+  getServiceCatalogById: async (id, options = {}) => {
+    const { filters, expand, fields, ...rest } = options;
+    const params = { ...rest };
+    if (filters) Object.assign(params, filters);
+    if (expand) params.expand = expand;
+    if (fields) params.fields = fields;
     try {
-      const response = await apiClient.get(`/api/services/${id}/`);
+      const response = await apiClient.get(`/api/services/${id}/`, { params });
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar serviço com id ${id}:`, error);
@@ -21,9 +31,14 @@ const serviceCatalogService = {
     }
   },
 
-  getServiceCatalogByName: async (name) => {
+  getServiceCatalogByName: async (name, options = {}) => {
+    const { filters, expand, fields, ...rest } = options;
+    const params = { name__icontains: name, ...rest };
+    if (filters) Object.assign(params, filters);
+    if (expand) params.expand = expand;
+    if (fields) params.fields = fields;
     try {
-      const response = await apiClient.get(`/api/services/?name__icontains=${name}&limit=15`);
+      const response = await apiClient.get('/api/services/', { params });
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar serviço com nome ${name}:`, error);
@@ -31,9 +46,14 @@ const serviceCatalogService = {
     }
   },
 
-  getServiceCatalogByFormId: async (formId) => {
+  getServiceCatalogByFormId: async (formId, options = {}) => {
+    const { filters, expand, fields, ...rest } = options;
+    const params = { form: formId, ...rest };
+    if (filters) Object.assign(params, filters);
+    if (expand) params.expand = expand;
+    if (fields) params.fields = fields;
     try {
-      const response = await apiClient.get(`/api/services/?form=${formId}`);
+      const response = await apiClient.get('/api/services/', { params });
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar serviço com form_id ${formId}:`, error);
