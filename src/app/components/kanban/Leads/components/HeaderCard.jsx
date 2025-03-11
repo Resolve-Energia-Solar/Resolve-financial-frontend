@@ -161,6 +161,7 @@ function LeadInfoHeader({ leadId, tabValue }) {
         xs={4}
         sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flexGrow: 1 }}
       >
+
         {/* <Box
           sx={{
             display: 'flex',
@@ -177,6 +178,7 @@ function LeadInfoHeader({ leadId, tabValue }) {
             Data de criação: {new Date(lead?.created_at).toLocaleDateString('pt-BR')}
           </Typography>
         </Box> */}
+
         {tabValue === 2 && (
           <Box sx={{ minWidth: 200 }}>
             <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
@@ -187,13 +189,18 @@ function LeadInfoHeader({ leadId, tabValue }) {
               onChange={(e) => setSelectedProject(e.target.value)}
               fullWidth
               size="small"
-              sx={{ backgroundColor: '#F5F5F5', borderRadius: '8px' }}
+              sx={{ backgroundColor: '#F4F5F7', borderRadius: '8px',  }}
             >
-              {projects.map((project) => (
-                <MenuItem key={project.id} value={project.id}>
-                  {project.name}
+              {/* {projects.map((project) => ( */}
+                <MenuItem 
+                  // key={project.id} 
+                  // value={project.id} 
+                  sx={{ color: '#7E8388' }}
+                >
+                  {/* {project.name} */}
+                  Rua Antônio Barreto, 1198
                 </MenuItem>
-              ))}
+              {/* ))} */}
             </Select>
           </Box>
         )}
