@@ -306,18 +306,33 @@
 // export default AddSalePage;
 
 'use client';
-
-import React, { useState } from 'react';
 import {
-    Box,
-    Button,
-    TextField,
-    Typography,
-    CircularProgress,
-    Grid,
+  Grid,
+  Typography,
+  Box,
+  useTheme,
+  MenuItem,
+  InputAdornment,
+  TextField,
+  CircularProgress,
 } from '@mui/material';
-import { useSnackbar } from 'notistack';
+
+import { useEffect, useState } from 'react';
 import leadService from '@/services/leadService';
+import { useSnackbar } from 'notistack';
+import { useRouter } from 'next/navigation';
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import ProductList from '@/app/components/kanban/Leads/components/ProposalProductsCard';
+import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
+import Button from "@mui/material/Button";
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import useSaleForm from '@/hooks/sales/useSaleForm';
+import FormDate from '@/app/components/forms/form-custom/FormDate';
+import CustomFieldMoney from '@/app/components/apps/invoice/components/CustomFieldMoney';
+import CustomTextArea from '@/app/components/forms/theme-elements/CustomTextArea';
+import { useSelector } from 'react-redux';
+import { removeProductFromLead, selectProductsByLead } from '@/store/products/customProducts';
+import { useDispatch } from 'react-redux';
 
 const AddSalePage = ({ leadId, onClose, onRefresh }) => {
     const { enqueueSnackbar } = useSnackbar();
