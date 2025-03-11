@@ -55,16 +55,6 @@ const TableHeader = ({
                     ]}
                 />
 
-                <FilterSelect
-                    label="Squad"
-                    value={filters.squad || ""}
-                    onChange={(e) => setFilters({ ...filters, responsavel: e.target.value })}
-                    options={[
-                        { label: "Squad 1", value: "squad1" },
-                        { label: "Squad 2", value: "squad2" },
-                    ]}
-                />
-
                 <SortingFilter 
                     label="Ordenar por data"
                     onSortChanges={(order) => console.log("sorting:", order)}
