@@ -94,6 +94,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
     ];
 
     const [openAddProposal, setOpenAddProposal] = useState(false);
+    const [openEditProposal, setOpenEditProposal] = useState(false);
     const [openDetailProposal, setOpenDetailProposal] = useState(false);
     const [selectedProposalId, setSelectedProposalId] = useState(null);
 
@@ -163,7 +164,10 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                                     setPage(0);
                                 }}
                                 actions={{
-                                    edit: (row) => router.push(`/apps/leads/${row.id}/edit`),
+                                    edit: (row) => {
+                                        setSelectedProposalId(row.id);
+                                        setOpenEditProposal(true);
+                                    },
                                     view: (row) => {
                                         setSelectedProposalId(row.id);
                                         setOpenDetailProposal(true); 
@@ -181,6 +185,20 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                                     <LeadProposalPage 
                                         leadId={leadId} 
                                         onClose={() => setOpenAddProposal(false)} 
+                                        onRefresh={handleRefresh} />
+                                </DialogContent>
+                            </Dialog>
+
+                            <Dialog
+                                open={openEditProposal}
+                                onClose={() => setOpenEditProposal(false)}
+                                maxWidth="lg"
+                                fullWidth
+                            >
+                                <DialogContent>
+                                    <LeadProposalPage 
+                                        leadId={leadId} 
+                                        onClose={() => setOpenEditProposal(false)} 
                                         onRefresh={handleRefresh} />
                                 </DialogContent>
                             </Dialog>
