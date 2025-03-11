@@ -99,9 +99,9 @@ const TableComponent = ({
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={columns.length} align="center">
-                                    <Typography variant="body2" color="textSecondary">
-                                        Nenhum lead encontrado.
+                                <TableCell colSpan={columns.length} align="center" sx={{ borderBottom: 'none', justifyContent: 'center' }}>
+                                    <Typography variant="body2" color="textSecondary" sx={{ py: 2 , alignItems: 'center' }}>
+                                        Nenhuma informação encontrada.
                                     </Typography>
                                 </TableCell>
                             </TableRow>
