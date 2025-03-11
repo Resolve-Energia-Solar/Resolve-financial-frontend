@@ -89,7 +89,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                         </Grid>
                     </Box>
 
-                    <Grid container spacing={4} sx={{ mt: 2, mb: 1, ml: 1.5, p: 3 }}>
+                    <Grid container spacing={4} sx={{ mt: 2, mb: 1, ml: 1.5 }}>
                         <TableHeader
                             title={"Total"}
                             totalItems={totalRows}
