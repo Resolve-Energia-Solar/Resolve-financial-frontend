@@ -304,3 +304,100 @@
 // }
 
 // export default AddSalePage;
+
+'use client';
+
+import React, { useState } from 'react';
+import {
+    Box,
+    Button,
+    TextField,
+    Typography,
+    CircularProgress,
+    Grid,
+} from '@mui/material';
+import { useSnackbar } from 'notistack';
+import leadService from '@/services/leadService';
+
+const AddSalePage = ({ leadId, onClose, onRefresh }) => {
+    const { enqueueSnackbar } = useSnackbar();
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        value: '',
+        responsible: '',
+        due_date: '',
+    });
+
+    const handleChange = (field, value) => {
+        setFormData((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
+
+    const handleSubmit = async () => {
+        setLoading(true);
+        try {
+            await leadService.createSale(leadId, formData);
+            enqueueSnackbar('Venda criada com sucesso!', { variant: 'success' });
+            onRefresh();
+            onClose();
+        } catch (error) {
+            enqueueSnackbar('Erro ao criar venda.', { variant: 'error' });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <Box>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+                Criar Nova Venda
+            </Typography>
+            <Grid container spacing={2}>
+                <Grid item xs={12}>
+                    <TextField
+                        label="Valor"
+                        fullWidth
+                        value={formData.value}
+                        onChange={(e) => handleChange('value', e.target.value)}
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        label="Responsável"
+                        fullWidth
+                        value={formData.responsible}
+                        onChange={(e) => handleChange('responsible', e.target.value)}
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        label="Data de Vencimento"
+                        type="date"
+                        fullWidth
+                        InputLabelProps={{ shrink: true }}
+                        value={formData.due_date}
+                        onChange={(e) => handleChange('due_date', e.target.value)}
+                    />
+                </Grid>
+            </Grid>
+
+            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+                <Button onClick={onClose} sx={{ mr: 2 }}>
+                    Cancelar
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={handleSubmit}
+                    disabled={loading}
+                >
+                    {loading ? <CircularProgress size={24} /> : 'Salvar'}
+                </Button>
+            </Box>
+        </Box>
+    );
+};
+
+export default AddSalePage;
+// Compare this snippet from src/app/components/kanban/Leads/Leads-proposal/Edit-Proposal.jsx:
