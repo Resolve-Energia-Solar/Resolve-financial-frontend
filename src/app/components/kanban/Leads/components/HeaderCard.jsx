@@ -196,7 +196,6 @@ function LeadInfoHeader({ leadId, tabValue }) {
                 value=""
                 sx={{ color: '#7E8388' }}
                 disabled
-                
               >
                 Selecione um projeto
               </MenuItem>
@@ -210,6 +209,21 @@ function LeadInfoHeader({ leadId, tabValue }) {
                   {/* {project.name} */}
                   Rua Antônio Barreto, 1198
                 </MenuItem>
+
+                <MenuItem 
+                  value="project-2"
+                  sx={{ color: '#7E8388' }}
+                >
+                  Rua dos Mundurucus, 2500
+                </MenuItem>
+
+                <MenuItem 
+                  value="project-3"
+                  sx={{ color: '#7E8388' }}
+                >
+                  Tv. Padre Eutíquio, 87
+                </MenuItem>
+
               {/* ))} */}
             </Select>
           </Box>
