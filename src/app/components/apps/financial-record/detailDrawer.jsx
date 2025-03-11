@@ -23,6 +23,7 @@ import { useSelector } from 'react-redux';
 import financialRecordService from '@/services/financialRecordService';
 import { IconPdf } from '@tabler/icons-react';
 import { formatDate } from '@/utils/dateUtils';
+import { useSnackbar } from 'notistack';
 
 const statusMap = {
   S: <Chip label="Solicitada" color="warning" size="small" />,
@@ -47,6 +48,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
   const user = useSelector((state) => state.user?.user);
   const [tabIndex, setTabIndex] = useState(0);
   const [currentRecord, setCurrentRecord] = useState(record);
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     setCurrentRecord(record);
@@ -63,7 +65,8 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
       setCurrentRecord((prev) => ({ ...prev, payment_status: status, status: newStatus }));
     } catch (error) {
       console.error(error);
-      alert(`Erro ao atualizar status de pagamento: ${error.message}`);
+      const errorMessages = error.response?.data ? Object.values(error.response.data).flat() : [error.message];
+      errorMessages.forEach((msg) => enqueueSnackbar(`Erro ao atualizar status de pagamento: ${msg}`, { variant: 'error' }));
     }
   };
 
@@ -82,7 +85,8 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
       }));
     } catch (error) {
       console.error(error);
-      alert(`Erro ao atualizar status do responsável: ${error.message}`);
+      const errorMessages = error.response?.data ? Object.values(error.response.data).flat() : [error.message];
+      errorMessages.forEach((msg) => enqueueSnackbar(`Erro ao atualizar status do gestor: ${msg}`, { variant: 'error' }));
     }
   };
 
