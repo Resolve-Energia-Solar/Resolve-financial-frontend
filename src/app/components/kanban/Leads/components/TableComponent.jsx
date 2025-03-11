@@ -111,7 +111,7 @@ const TableComponent = ({
             </Table>
 
 
-            {data.length > 5 && (
+            {data.length >= 5 && (
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
