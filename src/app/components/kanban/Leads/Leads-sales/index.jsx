@@ -23,8 +23,7 @@ import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
 import TableComponent from '@/app/components/kanban/Leads/components/TableComponent'
 import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
-import LeadProposalPage from './Add-Proposal';
-import LeadsViewProposal from './View-Proposal';
+
 
 
 const SalesListPage = ({ leadId = null }) => {
@@ -134,7 +133,7 @@ const SalesListPage = ({ leadId = null }) => {
                 <Grid item xs={12} sx={{ overflow: 'scroll' }}>
                     <Box sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
                         <Grid item spacing={2} alignItems="center" xs={12}>
-                            <LeadInfoHeader leadId={leadId} tabValue={2} />
+                            <LeadInfoHeader leadId={leadId} />
                         </Grid>
                     </Box>
 
@@ -171,7 +170,7 @@ const SalesListPage = ({ leadId = null }) => {
                                 }}
                             />
 
-                            <Dialog
+                            {/* <Dialog
                                 open={openAddProposal}
                                 onClose={() => setOpenAddProposal(false)}
                                 maxWidth="lg"
@@ -199,7 +198,7 @@ const SalesListPage = ({ leadId = null }) => {
                                         onRefresh={handleRefresh}
                                     />
                                 </DialogContent>
-                            </Dialog>
+                            </Dialog> */}
 
                         </Grid>
 
