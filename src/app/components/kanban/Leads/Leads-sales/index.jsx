@@ -23,6 +23,7 @@ import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
 import TableComponent from '@/app/components/kanban/Leads/components/TableComponent'
 import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
+import AddSalePage from './Add-Sale';
 
 
 
@@ -172,21 +173,21 @@ const SalesListPage = ({ leadId = null }) => {
                                 }}
                             />
 
-                            {/* <Dialog
+                            <Dialog
                                 open={openAddSale}
                                 onClose={() => setOpenAddSale(false)}
                                 maxWidth="lg"
                                 fullWidth
                             >
                                 <DialogContent>
-                                    <LeadProposalPage 
+                                    <AddSalePage 
                                         leadId={leadId} 
                                         onClose={() => setOpenAddSale(false)} 
                                         onRefresh={handleRefresh} />
                                 </DialogContent>
                             </Dialog>
 
-                            <Dialog
+                            {/* <Dialog
                                 open={openDetailSale}
                                 onClose={() => setOpenDetailSale(false)}
                                 maxWidth="lg"
