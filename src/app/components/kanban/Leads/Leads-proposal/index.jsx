@@ -190,6 +190,20 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                             </Dialog>
 
                             <Dialog
+                                open={openEditProposal}
+                                onClose={() => setOpenEditProposal(false)}
+                                maxWidth="lg"
+                                fullWidth
+                            >
+                                <DialogContent>
+                                    <LeadProposalPage 
+                                        leadId={leadId} 
+                                        onClose={() => setOpenEditProposal(false)} 
+                                        onRefresh={handleRefresh} />
+                                </DialogContent>
+                            </Dialog>
+
+                            <Dialog
                                 open={openDetailProposal}
                                 onClose={() => setOpenDetailProposal(false)}
                                 maxWidth="lg"
