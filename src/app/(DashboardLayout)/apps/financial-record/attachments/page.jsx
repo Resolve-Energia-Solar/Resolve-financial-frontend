@@ -81,7 +81,7 @@ const attachmentList = () => {
             for (const item of attachmentList) {
                 if (item.object_id && !newMap[item.object_id]) {
                     try {
-                        const record = await financialRecordService.getFinancialRecordById(item.object_id);
+                        const record = await financialRecordService.getFinancialRecordById(item.object_id, 'protocol');
                         newMap[item.object_id] = record.protocol;
                     } catch (error) {
                         console.error("Erro ao buscar protocolo para object_id", item.object_id, error);
