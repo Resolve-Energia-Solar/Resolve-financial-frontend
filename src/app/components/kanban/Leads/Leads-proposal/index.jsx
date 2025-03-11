@@ -151,8 +151,8 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                         </Grid>
                     </Box>
 
-                    <Grid container xs={12} >
-                        <Grid item xs={12} >
+                    <Grid container xs={12} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", p: 3}} >
+                        <Grid item xs={12}  >
                             <TableHeader
                                 title={"Total"}
                                 totalItems={totalRows}
@@ -162,7 +162,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', }} >
+                        <Grid item xs={12} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA",}} >
                             <TableComponent
                                 columns={columns}
                                 data={data}
@@ -183,6 +183,8 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                             />
 
                         </Grid>
+
+
                     </Grid>
                 </Grid>
             </Grid>
