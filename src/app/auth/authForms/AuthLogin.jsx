@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import Box from '@mui/material/Box';
+import { Box, IconButton, InputAdornment } from '@mui/material';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
@@ -18,6 +18,9 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import useLoginForm from '@/hooks/users/useLoginForm';
 import Cookies from 'js-cookie';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import EmailIcon from '@mui/icons-material/Email';
+import GppGoodIcon from '@mui/icons-material/GppGood';
 
 const AuthLogin = ({ title, subtitle, subtext }) => {
   const dispatch = useDispatch();
@@ -30,10 +33,14 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
     await handleSubmit(event, dispatch, Cookies);
   };
 
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (event) => event.preventDefault();
+
   return (
     <>
       {title && (
-        <Typography fontWeight="700" variant="h3" mb={1}>
+        <Typography fontWeight="700" fontSize="24px" >
           {title}
         </Typography>
       )}
@@ -41,32 +48,92 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
 
       <Stack>
         <Box>
-          <CustomFormLabel htmlFor="email">Usuário</CustomFormLabel>
+          <CustomFormLabel htmlFor="email" sx={{ fontWeight: "700", fontSize: "16px" }} >
+            E-mail<span style={{ color: '#EA3209' }}>*</span>
+          </CustomFormLabel>
           <CustomTextField
             id="email"
             name="email"
             variant="outlined"
+            placeholder="Ex: fulano@email.com"
             fullWidth
             value={formData.email}
             onChange={handleInputChange}
             error={!!formErrors.email}
             helperText={formErrors.email}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <EmailIcon sx={{ color: '#ADADAD' }} />
+                </InputAdornment>
+              ),
+            }}
           />
         </Box>
         <Box>
-          <CustomFormLabel htmlFor="password">Senha</CustomFormLabel>
+          <CustomFormLabel htmlFor="password" sx={{ fontWeight: "700", fontSize: "16px" }} >
+            Senha<span style={{ color: '#EA3209' }}>*</span>
+          </CustomFormLabel>
           <CustomTextField
             id="password"
             name="password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             variant="outlined"
+            placeholder="******"
             fullWidth
             value={formData.password}
             onChange={handleInputChange}
             error={!!formErrors.password}
             helperText={formErrors.password}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <GppGoodIcon sx={{ color: '#ADADAD' }} />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff sx={{ color: '#ADADAD' }} /> : <Visibility sx={{ color: '#ADADAD' }} />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+
           />
         </Box>
+
+        <Stack justifyContent="space-between" direction="row" alignItems="center" my={2}>
+          <Typography
+            sx={{
+              textDecoration: 'none',
+              color: '#EA3209',
+              fontWeight: "500",
+              fontSize: "12px"
+            }}
+          >
+            *Obrigatório
+          </Typography>
+
+          <Typography
+            component={Link}
+            href="/auth/forgot-password"
+            
+            sx={{
+              textDecoration: 'underline',
+              color: 'primary.main',
+              fontWeight: "500",
+              fontSize: "12px"
+            }}
+          >
+            Esqueci a senha
+          </Typography>
+        </Stack>
+
         <Stack justifyContent="space-between" direction="row" alignItems="center" my={2}>
           <FormGroup>
             <FormControlLabel
@@ -74,17 +141,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
               label="Lembrar deste dispositivo"
             />
           </FormGroup>
-          <Typography
-            component={Link}
-            href="/auth/forgot-password"
-            fontWeight="500"
-            sx={{
-              textDecoration: 'none',
-              color: 'primary.main',
-            }}
-          >
-            Mudar senha?
-          </Typography>
+          
         </Stack>
       </Stack>
 
@@ -129,7 +186,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
         </Alert>
       </Snackbar>
 
-     
+
       {success && (
         <Box
           position="fixed"
@@ -140,7 +197,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           display="flex"
           alignItems="center"
           justifyContent="center"
-          bgcolor="rgba(255, 255, 255, 0.7)"
+          bgcolor="rgba(255, 255, 255)"
           zIndex={9999}
         >
           <Box display="flex" flexDirection="column" alignItems="center">

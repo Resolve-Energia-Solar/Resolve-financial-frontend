@@ -10,7 +10,7 @@ const formatTime = (time) => {
 const userService = {
   getUser: async ({ page = 1, limit = 10 } = {}) => {
     try {
-      const response = await apiClient.get('/api/users/', {
+      const response = await apiClient.get('/api/users/?expand=employee', {
         params: {
           page,
           limit,
@@ -33,7 +33,7 @@ const userService = {
   },
   getUserById: async (id) => {
     try {
-      const response = await apiClient.get(`/api/users/${id}/`);
+      const response = await apiClient.get(`/api/users/${id}/?expand=employee`);
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar usuário com id ${id}:`, error);

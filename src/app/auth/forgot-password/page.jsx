@@ -9,69 +9,102 @@ import Image from 'next/image';
 export default function ForgotPassword() {
   return (
     <PageContainer title="Página de Esqueci a Senha" description="esta é uma página de exemplo">
-      <Grid container justifyContent="center" spacing={0} sx={{ overflowX: 'hidden' }}>
-        <Grid
+      <Grid container spacing={0} sx={{ height: '100vh', posistion: "relative" }}>
+      <Grid
           item
           xs={12}
           sm={12}
-          lg={8}
-          xl={9}
+          lg={7}
+          xl={8}
           sx={{
             position: 'relative',
+            height: '100%',
+
+
             '&:before': {
-              content: '""',
-              background: 'radial-gradient(#d2f1df, #d3d7fa, #bad8f4)',
+
+              background: '#F9F9F9',
               backgroundSize: '400% 400%',
               animation: 'gradient 15s ease infinite',
               position: 'absolute',
               height: '100%',
               width: '100%',
-              opacity: '0.3',
+
             },
           }}
         >
-          <Box position="relative">
-            <Box px={3}>
-              <Logo />
-            </Box>
-            <Box
-              alignItems="center"
-              justifyContent="center"
-              height={'calc(100vh - 75px)'}
-              sx={{
-                display: {
-                  xs: 'none',
-                  lg: 'flex',
-                },
-              }}
-            >
-              <Image
-                src={"/images/backgrounds/login-bg.svg"}
-                alt="bg" width={500} height={500}
-                style={{
-                  width: '100%',
-                  maxWidth: '500px', maxHeight: '500px',
-                }}
-              />
-            </Box>
-          </Box>
+
+          <Box
+            component="div"
+            sx={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              left: 0,
+              top: 0,
+              backgroundImage: 'url("/images/backgrounds/login-bg-img-handshake-yellow.svg")',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              zIndex: 1,
+              borderRadius: 0
+            }}
+          />
+          <Box
+            component="div"
+            sx={{
+              position: "absolute",
+              width: "99px",
+              height: "27.4px",
+              left: 128,
+              top: 57,
+              backgroundImage: 'url("/images/logos/black-resolve-logo.svg")',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              zIndex: 1,
+              borderRadius: 0
+            }}
+          />
+
+
         </Grid>
         <Grid
           item
           xs={12}
           sm={12}
-          lg={4}
-          xl={3}
+          lg={5}
+          xl={4}
           display="flex"
           justifyContent="center"
           alignItems="center"
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 1,
+          }}
         >
-          <Box p={4}>
-            <Typography variant="h4" fontWeight="700">
+          <Box
+            sx={{
+              width: "527px",
+              height: "491px",
+              backgroundColor: "#FFFFFF",
+              borderRadius: 2,
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.15)",
+              padding: "48px",
+              gap: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography fontWeight="700" fontSize="24px">
               Esqueceu sua senha?
             </Typography>
 
-            <Typography color="textSecondary" variant="subtitle2" fontWeight="400" mt={2}>
+            <Typography color="textSecondary" variant="subtitle2" fontWeight="400" mt={0.5}>
               Por favor, insira o endereço de e-mail associado à sua conta e enviaremos um link para
               redefinir sua senha.
             </Typography>

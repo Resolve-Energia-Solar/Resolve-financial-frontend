@@ -1,17 +1,31 @@
 'use client';
 
-import { Grid, Typography, Box, Rating, IconButton, useTheme, Avatar, Chip } from '@mui/material';
+import {
+  Grid,
+  Typography,
+  Box,
+  Rating,
+  IconButton,
+  useTheme,
+  Avatar,
+  Chip,
+  Select,
+  MenuItem,
+  CircularProgress,
+} from '@mui/material';
 
 import { CalendarToday, WbSunny } from '@mui/icons-material';
 
 import EditIcon from '@mui/icons-material/Edit';
 import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
-
+import { usePathname } from 'next/navigation';
 import leadService from '@/services/leadService';
 
-function LeadInfoHeader({ leadId }) {
+function LeadInfoHeader({ leadId, tabValue }) {
   const [lead, setLead] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [selectedProject, setSelectedProject] = useState('');
   const [loadingLeads, setLoadingLeads] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
@@ -23,6 +37,8 @@ function LeadInfoHeader({ leadId }) {
       try {
         const data = await leadService.getLeadById(leadId);
         setLead(data);
+        setProjects(data?.projects || []);
+        setSelectedProject(data?.projects[0]?.id || '');
       } catch (err) {
         enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
       } finally {
@@ -145,7 +161,8 @@ function LeadInfoHeader({ leadId }) {
         xs={4}
         sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flexGrow: 1 }}
       >
-        <Box
+
+        {/* <Box
           sx={{
             display: 'flex',
             flexDirection: 'row',
@@ -160,7 +177,58 @@ function LeadInfoHeader({ leadId }) {
           <Typography variant="caption" sx={{ color: 'gray' }}>
             Data de criação: {new Date(lead?.created_at).toLocaleDateString('pt-BR')}
           </Typography>
-        </Box>
+        </Box> */}
+
+        {tabValue === 2 && (
+          <Box sx={{ minWidth: 385 }}>
+            <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
+              Projeto
+            </Typography>
+            <Select
+              value={selectedProject || ''}
+              onChange={(e) => setSelectedProject(e.target.value)}
+              fullWidth
+              size="small"
+              sx={{ backgroundColor: '#F4F5F7', borderRadius: '8px',  }}
+              displayEmpty
+            >
+              {/* {projects.map((project) => ( */}
+                <MenuItem
+                  value=""
+                  sx={{ color: '#7E8388' }}
+                  disabled
+                >
+                  Selecione um projeto
+                </MenuItem>
+
+                  <MenuItem 
+                    // key={project.id} 
+                    // value={project.id} 
+                    value="project-1"
+                    sx={{ color: '#7E8388' }}
+                  >
+                    {/* {project.name} */}
+                    Rua Antônio Barreto, 1198
+                  </MenuItem>
+
+                  <MenuItem 
+                    value="project-2"
+                    sx={{ color: '#7E8388' }}
+                  >
+                    Rua dos Mundurucus, 2500
+                  </MenuItem>
+
+                  <MenuItem 
+                    value="project-3"
+                    sx={{ color: '#7E8388' }}
+                  >
+                    Tv. Padre Eutíquio, 87
+                  </MenuItem>
+
+              {/* ))} */}
+            </Select>
+          </Box>
+        )}
       </Grid>
     </Box>
   );

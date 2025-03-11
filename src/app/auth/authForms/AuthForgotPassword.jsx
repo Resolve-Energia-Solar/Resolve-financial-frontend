@@ -10,6 +10,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import PasswordService from '@/services/PasswordService';
+import EmailIcon from '@mui/icons-material/Email';
+import { InputAdornment } from '@mui/material';
 
 
 export default function AuthForgotPassword() {
@@ -54,7 +56,9 @@ export default function AuthForgotPassword() {
   return (
     <>
       <Stack mt={4} spacing={2}>
-        <CustomFormLabel htmlFor="reset-email">E-mail</CustomFormLabel>
+        <CustomFormLabel htmlFor="reset-email" sx={{ fontWeight: "700", fontSize: "16px" }}>
+          E-mail<span style={{ color: '#EA3209' }}>*</span>
+        </CustomFormLabel>
         <CustomTextField
           id="reset-email"
           variant="outlined"
@@ -63,12 +67,19 @@ export default function AuthForgotPassword() {
           onChange={handleEmailChange}
           error={!!error}
           helperText={error}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <EmailIcon sx={{ color: '#ADADAD' }} />
+              </InputAdornment>
+            ),
+          }}
         />
 
         <Button
           color="primary"
           variant="contained"
-          size="large"
+          size="medium"
           fullWidth
           disabled={isSubmitting || !email}
           onClick={handleSubmit}
@@ -82,7 +93,7 @@ export default function AuthForgotPassword() {
 
         <Button
           color="primary"
-          size="large"
+          size="medium"
           fullWidth
           component={Link}
           href="/auth/login"
