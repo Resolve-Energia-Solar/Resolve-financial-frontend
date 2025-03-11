@@ -96,9 +96,7 @@ function EditLeadTabs({ leadId }) {
       </CustomTabPanel>
 
           {/* vendas */}
-      <CustomTabPanel value={tabValue} index={3}>
-        {/* <LeadsProposalListPage leadId={leadId} /> */}
-      </CustomTabPanel>
+      <CustomTabPanel value={tabValue} index={3}></CustomTabPanel>
 
           {/* docs a ser retirado futuramente e integrado à page de projetos */}
       <CustomTabPanel value={tabValue} index={4}>
@@ -106,9 +104,7 @@ function EditLeadTabs({ leadId }) {
       </CustomTabPanel>
 
           {/* contratos */}
-      <CustomTabPanel value={tabValue} index={5}>
-        {/* <LeadSchedulePage leadId={leadId} /> */}
-      </CustomTabPanel>
+      <CustomTabPanel value={tabValue} index={5}></CustomTabPanel>
 
           {/* agendamentos */}
       <CustomTabPanel value={tabValue} index={6}>   

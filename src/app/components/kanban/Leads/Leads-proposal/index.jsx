@@ -41,7 +41,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
         "R": { label: "Recusada", color: "#FEEFEE" },
         "P": { label: "Pendente", color: "#FFF7E5" },
     };
-    
+
     const columns = [
         {
             field: 'name',
@@ -147,7 +147,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                 <Grid item xs={12} sx={{ overflow: 'scroll' }}>
                     <Box sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
                         <Grid item spacing={2} alignItems="center" xs={12}>
-                            <LeadInfoHeader leadId={leadId} />
+                            <LeadInfoHeader leadId={leadId} tabValue={2} />
                         </Grid>
                     </Box>
 
