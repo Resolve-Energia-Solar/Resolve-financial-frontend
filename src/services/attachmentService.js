@@ -4,18 +4,20 @@ const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 const CONTENT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
 const attachmentService = {
-  getAttachments: async (limit = 30) => {
+  getAttachments: async (limit = 30, page = 1, content_type = '', filters = {},) => {
     try {
-      const response = await apiClient.get(`/api/attachments/limit=${limit}`);
+      const query = new URLSearchParams({ limit, page, content_type, ...filters }).toString();
+      const response = await apiClient.get(`/api/attachments/?${query}`);
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar anexos:', error);
       throw error;
     }
   },
-  getAttachmentsByObjectIdAndContentType: async (object_id, content_type, limit = 30) => {
+  getAttachmentsByObjectIdAndContentType: async (object_id, content_type, limit = 30, filters = {}) => {
     try {
-      const response = await apiClient.get(`/api/attachments/?object_id=${object_id}&content_type=${content_type}&limit=${limit}`);
+      const query = new URLSearchParams({ object_id, content_type, limit, ...filters }).toString();
+      const response = await apiClient.get(`/api/attachments/?${query}`);
       console.log(response.data);
       return response.data;
     } catch (error) {

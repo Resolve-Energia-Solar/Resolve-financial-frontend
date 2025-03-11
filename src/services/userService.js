@@ -42,7 +42,7 @@ const userService = {
   },
   getAddressByUserId: async (id) => {
     try {
-      const response = await apiClient.get(`/api/users/${id}/?fields=addresses`);
+      const response = await apiClient.get(`/api/users/${id}/?expand=addresses&fields=addresses`);
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar endereço do usuário com id ${id}:`, error);
@@ -51,7 +51,7 @@ const userService = {
   },
   getPhoneByUserId: async (id) => {
     try {
-      const response = await apiClient.get(`/api/users/${id}/?fields=phone_numbers`);
+      const response = await apiClient.get(`/api/users/${id}/?expand=phone_numbers&fields=phone_numbers`);
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar telefone do usuário com id ${id}:`, error);
@@ -64,19 +64,19 @@ const userService = {
       const params = id
         ? {} // Sem parâmetros se `id` existir
         : {
-            category: query?.category || null,
-            date: query?.scheduleDate || null,
-            start_time: formatTime(query?.scheduleStartTime),
-            end_time: formatTime(query?.scheduleEndTime),
-            latitude: query?.scheduleLatitude || null,
-            longitude: query?.scheduleLongitude || null,
-            complete_name__icontains: query?.complete_name || null,
-          };
-  
+          category: query?.category || null,
+          date: query?.scheduleDate || null,
+          start_time: formatTime(query?.scheduleStartTime),
+          end_time: formatTime(query?.scheduleEndTime),
+          latitude: query?.scheduleLatitude || null,
+          longitude: query?.scheduleLongitude || null,
+          complete_name__icontains: query?.complete_name || null,
+        };
+
       const response = await apiClient.get(`/api/users/${id || ''}/`, {
         params,
       });
-  
+
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar usuário com id ${id}:`, error);

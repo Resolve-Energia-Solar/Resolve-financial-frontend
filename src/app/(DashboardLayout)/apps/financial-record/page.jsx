@@ -378,7 +378,7 @@ const financialRecordList = () => {
     useEffect(() => {
         if (!userPermissions.includes("financial.add_financialrecord")) {
             enqueueSnackbar('Você não tem permissão para acessar essa página!', { variant: 'error' });
-            router.push('commercial/sale');
+            router.push('/apps/commercial/sale');
         }
     }, [userPermissions, router]);
 
