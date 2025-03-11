@@ -89,34 +89,37 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                         </Grid>
                     </Box>
 
-                    <Grid container spacing={4} sx={{ mt: 2, mb: 1, ml: 1.5 }}>
-                        <TableHeader
-                            title={"Total"}
-                            totalItems={totalRows}
-                            objNameNumberReference={"Propostas"}
-                            buttonLabel="Criar"
-                            onButtonClick={() => console.log('Go to create proposal')}
-                        />
-                    
+                    <Grid container xs={12} >
+                        <Grid item xs={12} >
+                            <TableHeader
+                                title={"Total"}
+                                totalItems={totalRows}
+                                objNameNumberReference={"Propostas"}
+                                buttonLabel="Criar"
+                                onButtonClick={() => console.log('Go to create proposal')}
+                            />
+                        </Grid>
 
-                        <TableComponent
-                            columns={columns}
-                            data={data}
-                            totalRows={totalRows}
-                            loading={loadingProposals}
-                            page={page}
-                            rowsPerPage={rowsPerPage}
-                            onPageChange={(newPage) => setPage(newPage)}
-                            onRowsPerPageChange={(newRows) => {
-                                setRowsPerPage(newRows);
-                                setPage(0);
-                            }}
-                            actions={{
-                                edit: (row) => router.push(`/apps/leads/${row.id}/edit`),
-                                view: (row) => router.push(`/apps/leads/${row.id}/view`),
+                        <Grid item xs={12} >
+                            <TableComponent
+                                columns={columns}
+                                data={data}
+                                totalRows={totalRows}
+                                loading={loadingProposals}
+                                page={page}
+                                rowsPerPage={rowsPerPage}
+                                onPageChange={(newPage) => setPage(newPage)}
+                                onRowsPerPageChange={(newRows) => {
+                                    setRowsPerPage(newRows);
+                                    setPage(0);
+                                }}
+                                actions={{
+                                    edit: (row) => router.push(`/apps/leads/${row.id}/edit`),
+                                    view: (row) => router.push(`/apps/leads/${row.id}/view`),
 
-                            }}
-                        />
+                                }}
+                            />
+                        </Grid>
                     </Grid>
                 </Grid>
             </Grid>
