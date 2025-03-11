@@ -173,7 +173,7 @@ const SalesListPage = ({ leadId = null }) => {
                                 }}
                             />
 
-                            <Dialog
+                            {/* <Dialog
                                 open={openAddSale}
                                 onClose={() => setOpenAddSale(false)}
                                 maxWidth="lg"
@@ -185,7 +185,7 @@ const SalesListPage = ({ leadId = null }) => {
                                         onClose={() => setOpenAddSale(false)} 
                                         onRefresh={handleRefresh} />
                                 </DialogContent>
-                            </Dialog>
+                            </Dialog> */}
 
                             {/* <Dialog
                                 open={openDetailSale}

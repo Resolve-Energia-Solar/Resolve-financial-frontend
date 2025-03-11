@@ -20,6 +20,7 @@
 // import Button from "@mui/material/Button";
 // import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 // import useProposalForm from '@/hooks/proposal/useProposalForm';
+// import useSaleForm from '@/hooks/sales/useSaleForm';
 // import FormDate from '@/app/components/forms/form-custom/FormDate';
 // import CustomFieldMoney from '@/app/components/apps/invoice/components/CustomFieldMoney';
 // import CustomTextArea from '@/app/components/forms/theme-elements/CustomTextArea';
@@ -43,7 +44,7 @@
 //     formErrors,
 //     loading: formLoading,
 //     success,
-//   } = useProposalForm();
+//   } = useSaleForm();
 
 //   const customProducts = useSelector(selectProductsByLead(leadId));
 
@@ -305,114 +306,114 @@
 
 // export default AddSalePage;
 
-'use client';
-import {
-  Grid,
-  Typography,
-  Box,
-  useTheme,
-  MenuItem,
-  InputAdornment,
-  TextField,
-  CircularProgress,
-} from '@mui/material';
+// 'use client';
+// import {
+//   Grid,
+//   Typography,
+//   Box,
+//   useTheme,
+//   MenuItem,
+//   InputAdornment,
+//   TextField,
+//   CircularProgress,
+// } from '@mui/material';
 
-import { useEffect, useState } from 'react';
-import leadService from '@/services/leadService';
-import { useSnackbar } from 'notistack';
-import { useRouter } from 'next/navigation';
-import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import ProductList from '@/app/components/kanban/Leads/components/ProposalProductsCard';
-import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
-import Button from "@mui/material/Button";
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import useSaleForm from '@/hooks/sales/useSaleForm';
-import FormDate from '@/app/components/forms/form-custom/FormDate';
-import CustomFieldMoney from '@/app/components/apps/invoice/components/CustomFieldMoney';
-import CustomTextArea from '@/app/components/forms/theme-elements/CustomTextArea';
-import { useSelector } from 'react-redux';
-import { removeProductFromLead, selectProductsByLead } from '@/store/products/customProducts';
-import { useDispatch } from 'react-redux';
+// import { useEffect, useState } from 'react';
+// import leadService from '@/services/leadService';
+// import { useSnackbar } from 'notistack';
+// import { useRouter } from 'next/navigation';
+// import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+// import ProductList from '@/app/components/kanban/Leads/components/ProposalProductsCard';
+// import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
+// import Button from "@mui/material/Button";
+// import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+// import useSaleForm from '@/hooks/sales/useSaleForm';
+// import FormDate from '@/app/components/forms/form-custom/FormDate';
+// import CustomFieldMoney from '@/app/components/apps/invoice/components/CustomFieldMoney';
+// import CustomTextArea from '@/app/components/forms/theme-elements/CustomTextArea';
+// import { useSelector } from 'react-redux';
+// import { removeProductFromLead, selectProductsByLead } from '@/store/products/customProducts';
+// import { useDispatch } from 'react-redux';
 
-const AddSalePage = ({ leadId, onClose, onRefresh }) => {
-    const { enqueueSnackbar } = useSnackbar();
-    const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState({
-        value: '',
-        responsible: '',
-        due_date: '',
-    });
+// const AddSalePage = ({ leadId, onClose, onRefresh }) => {
+//     const { enqueueSnackbar } = useSnackbar();
+//     const [loading, setLoading] = useState(false);
+//     const [formData, setFormData] = useState({
+//         value: '',
+//         responsible: '',
+//         due_date: '',
+//     });
 
-    const handleChange = (field, value) => {
-        setFormData((prev) => ({
-            ...prev,
-            [field]: value,
-        }));
-    };
+//     const handleChange = (field, value) => {
+//         setFormData((prev) => ({
+//             ...prev,
+//             [field]: value,
+//         }));
+//     };
 
-    const handleSubmit = async () => {
-        setLoading(true);
-        try {
-            await leadService.createSale(leadId, formData);
-            enqueueSnackbar('Venda criada com sucesso!', { variant: 'success' });
-            onRefresh();
-            onClose();
-        } catch (error) {
-            enqueueSnackbar('Erro ao criar venda.', { variant: 'error' });
-        } finally {
-            setLoading(false);
-        }
-    };
+//     const handleSubmit = async () => {
+//         setLoading(true);
+//         try {
+//             await leadService.createSale(leadId, formData);
+//             enqueueSnackbar('Venda criada com sucesso!', { variant: 'success' });
+//             onRefresh();
+//             onClose();
+//         } catch (error) {
+//             enqueueSnackbar('Erro ao criar venda.', { variant: 'error' });
+//         } finally {
+//             setLoading(false);
+//         }
+//     };
 
-    return (
-        <Box>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-                Criar Nova Venda
-            </Typography>
-            <Grid container spacing={2}>
-                <Grid item xs={12}>
-                    <TextField
-                        label="Valor"
-                        fullWidth
-                        value={formData.value}
-                        onChange={(e) => handleChange('value', e.target.value)}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
-                        label="Responsável"
-                        fullWidth
-                        value={formData.responsible}
-                        onChange={(e) => handleChange('responsible', e.target.value)}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
-                        label="Data de Vencimento"
-                        type="date"
-                        fullWidth
-                        InputLabelProps={{ shrink: true }}
-                        value={formData.due_date}
-                        onChange={(e) => handleChange('due_date', e.target.value)}
-                    />
-                </Grid>
-            </Grid>
+//     return (
+//         <Box>
+//             <Typography variant="h6" sx={{ mb: 2 }}>
+//                 Criar Nova Venda
+//             </Typography>
+//             <Grid container spacing={2}>
+//                 <Grid item xs={12}>
+//                     <TextField
+//                         label="Valor"
+//                         fullWidth
+//                         value={formData.value}
+//                         onChange={(e) => handleChange('value', e.target.value)}
+//                     />
+//                 </Grid>
+//                 <Grid item xs={12}>
+//                     <TextField
+//                         label="Responsável"
+//                         fullWidth
+//                         value={formData.responsible}
+//                         onChange={(e) => handleChange('responsible', e.target.value)}
+//                     />
+//                 </Grid>
+//                 <Grid item xs={12}>
+//                     <TextField
+//                         label="Data de Vencimento"
+//                         type="date"
+//                         fullWidth
+//                         InputLabelProps={{ shrink: true }}
+//                         value={formData.due_date}
+//                         onChange={(e) => handleChange('due_date', e.target.value)}
+//                     />
+//                 </Grid>
+//             </Grid>
 
-            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-                <Button onClick={onClose} sx={{ mr: 2 }}>
-                    Cancelar
-                </Button>
-                <Button
-                    variant="contained"
-                    onClick={handleSubmit}
-                    disabled={loading}
-                >
-                    {loading ? <CircularProgress size={24} /> : 'Salvar'}
-                </Button>
-            </Box>
-        </Box>
-    );
-};
+//             <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+//                 <Button onClick={onClose} sx={{ mr: 2 }}>
+//                     Cancelar
+//                 </Button>
+//                 <Button
+//                     variant="contained"
+//                     onClick={handleSubmit}
+//                     disabled={loading}
+//                 >
+//                     {loading ? <CircularProgress size={24} /> : 'Salvar'}
+//                 </Button>
+//             </Box>
+//         </Box>
+//     );
+// };
 
-export default AddSalePage;
-// Compare this snippet from src/app/components/kanban/Leads/Leads-proposal/Edit-Proposal.jsx:
+// export default AddSalePage;
+// // Compare this snippet from src/app/components/kanban/Leads/Leads-proposal/Edit-Proposal.jsx:
