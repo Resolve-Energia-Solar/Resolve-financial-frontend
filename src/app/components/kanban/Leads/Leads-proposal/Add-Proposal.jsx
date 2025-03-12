@@ -146,7 +146,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     onChange={(e) => handleChange('amount', e.target.value)}
                     fullWidth
                     InputProps={{
-                      startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                      startAdornment: <InputAdornment position="start" sx={{color: "#7E92A2", fontWeight: "400", fontSize: "12px"}}>R$</InputAdornment>,
                     }}
                   />
                 </Grid>
@@ -190,7 +190,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     onChange={(e) => handleChange('ref_amount', e.target.value)}
                     fullWidth
                     InputProps={{
-                      startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                      startAdornment: <InputAdornment position="start" sx={{color: "#7E92A2", fontWeight: "400", fontSize: "12px"}}>R$</InputAdornment>,
                     }}
                   />
                 </Grid>
@@ -203,7 +203,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     onChange={(e) => handleChange('entry_amount', e.target.value)}
                     fullWidth
                     InputProps={{
-                      startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                      startAdornment: <InputAdornment position="start" sx={{color: "#7E92A2", fontWeight: "400", fontSize: "12px"}}>R$</InputAdornment>,
                     }}
                   />
                 </Grid>
