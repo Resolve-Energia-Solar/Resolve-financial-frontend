@@ -7,6 +7,7 @@ import LeadDocumentPage from '../Leads-documents';
 import LeadsProposalListPage from '../Leads-proposal';
 import EditCustomerPage from '../Leads-customer/Edit-Customer';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
+import SalesListPage from '../Leads-sales';
 
 
 function CustomTabPanel(props) {
@@ -96,7 +97,9 @@ function EditLeadTabs({ leadId }) {
       </CustomTabPanel>
 
           {/* vendas */}
-      <CustomTabPanel value={tabValue} index={3}></CustomTabPanel>
+      <CustomTabPanel value={tabValue} index={3}>
+        <SalesListPage leadId={leadId} />
+      </CustomTabPanel>
 
           {/* docs a ser retirado futuramente e integrado à page de projetos */}
       <CustomTabPanel value={tabValue} index={4}>
