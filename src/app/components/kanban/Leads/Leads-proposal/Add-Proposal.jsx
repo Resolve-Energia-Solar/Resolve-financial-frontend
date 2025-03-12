@@ -159,9 +159,10 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 </Grid>
 
                 {/* add consumo energético dialog box right here */}
-                <Grid item xs={6}>
+                <Grid item xs={8}>
                   <Button
                     variant="contained"
+                    onClick={() => console.log('open consumo energético dialog box')}
                     sx={{
                       backgroundColor: '#F4F5F7',
                       color: '#303030',
@@ -170,9 +171,10 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                       // '&:hover': { backgroundColor: '#333' },
                       px: 3,
                     }}
+                    endIcon={<ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} />}
                   >
                     <Typography variant="body1">Consumo Energético</Typography>
-                    <ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} />
+                    {/* <ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} /> */}
                   </Button>
                 </Grid>
               </Grid>
