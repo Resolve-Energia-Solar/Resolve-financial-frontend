@@ -7,12 +7,17 @@ const useUser = (id) => {
   const [userData, setUserData] = useState(null);
 
   const fetchUser = useCallback(async () => {
+
     if (!id) return;
 
     setLoading(true);
     setError(null);
     try {
-      const data = await userService.getUserById(id);
+      const data = await userService.find(id, {
+        expand: ['addresses', 'user_types'],
+        fields: ['*', 'addresses']
+
+      });
       setUserData(data);
     } catch (err) {
       setError('Erro ao carregar o usuário');
