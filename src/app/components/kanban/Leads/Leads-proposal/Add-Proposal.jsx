@@ -307,7 +307,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     </CustomFormLabel>
                     <TextField
                       select
-                      name="payment_method"
+                      name={`payment_method_${payment.id}`}
                       value={formData.payment_method}
                       onChange={(e) => handleMethodChange(payment.id, e.target.value)}
                       fullWidth
