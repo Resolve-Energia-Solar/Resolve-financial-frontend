@@ -188,7 +188,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     select
                     name="payment_method"
                     value={formData.payment_method}
-                    onChange={handleChange}
+                    onChange={(e) => handleChange('payment_method', e.target.value)}
                     fullWidth
                   >
                     <MenuItem value="credit">Crédito</MenuItem>
@@ -206,13 +206,13 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               </Grid>
 
               {formData.payment_method === 'financing' && (
-                <Grid item xs={6}>
+                <Grid item xs={12}>
                   <CustomFormLabel htmlFor="financing_type">Financiadoras</CustomFormLabel>
                   <TextField
                     select
                     name="financing_type"
                     value={formData.financing_type}
-                    onChange={handleChange}
+                    onChange={(e) => handleChange('financing_type', e.target.value)}
                     fullWidth
                   >
                     <MenuItem value="2">Moon</MenuItem>
@@ -222,13 +222,13 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               )}
 
               {formData.payment_method === 'credit' && (
-                <Grid item xs={6}>
+                <Grid item xs={12}>
                   <CustomFormLabel htmlFor="installments_num">Parcelas</CustomFormLabel>
                   <TextField
                     select
                     name="installments_num"
                     value={formData.installments_num}
-                    onChange={handleChange}
+                    onChange={(e) => handleChange('installments_num', e.target.value)}
                     fullWidth
                   >
                     <MenuItem value="2">2x</MenuItem>
