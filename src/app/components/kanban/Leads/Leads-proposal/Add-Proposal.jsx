@@ -28,6 +28,7 @@ import { useSelector } from 'react-redux';
 import { removeProductFromLead, selectProductsByLead } from '@/store/products/customProducts';
 import { useDispatch } from 'react-redux';
 import { color } from 'framer-motion';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 
 function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
@@ -158,6 +159,20 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 </Grid>
 
                 {/* add consumo energético dialog box right here */}
+                <Grid item xs={6}>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      backgroundColor: 'black',
+                      color: 'white',
+                      '&:hover': { backgroundColor: '#333' },
+                      px: 3,
+                    }}
+                  >
+                    <Typography variant="body1">Consumo Energético</Typography>
+                    <ManageSearchIcon sx={{ ml: 1 }} />
+                  </Button>
+                </Grid>
               </Grid>
 
               {/* new row with geração de energia estimada and consumo médio */}
