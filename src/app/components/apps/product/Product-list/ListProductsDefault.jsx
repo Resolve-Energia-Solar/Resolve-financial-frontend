@@ -130,7 +130,7 @@ const ListProductsDefault = () => {
           is_default: true,
           is_deleted: false,
           kwp_in: kwpRange.join(','),
-          limit: 9,
+          limit: 20,
           // ordering: 'product_value',
         });
         setProductsList([...customProducts, ...responseDefault.results]);
