@@ -123,7 +123,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     setPaymentMethods([...paymentMethods, { id: Date.now(), method: '', financing_type: '', installments_num: '' }]);
   };
 
-  const removePaymentMethos = (id) => {
+  const removePaymentMethod = (id) => {
     setPaymentMethods(paymentMethods.filter((method) => method.id !== id));
   }
 
@@ -304,54 +304,55 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               </Grid>
 
 
-              <Grid container rowSpacing={1} xs={12} >
+              <Grid container rowSpacing={1} xs={12}>
                 {paymentMethods.map((payment, index) => (
-                  <Grid container spacing={2} key={payment.id}>
-                    <Grid item xs={8}>
+                  <Grid container spacing={2} key={payment.id} alignItems="center">
+                    <Grid item xs={6}>
                       <CustomFormLabel
                         htmlFor={`payment_method_${payment.id}`}
                         sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
                       >
                         Forma de pagamento {index + 1}
                       </CustomFormLabel>
-                      <TextField
-                        select
-                        name={`payment_method_${payment.id}`}
-                        value={payment.method}
-                        onChange={(e) => handleMethodChange(payment.id, 'method', e.target.value)}
-                        fullWidth
-                      >
-                        <MenuItem value="credit">Crédito</MenuItem>
-                        <MenuItem value="debit">Débito</MenuItem>
-                        <MenuItem value="bank_slip">Boleto</MenuItem>
-                        <MenuItem value="financing">Financiamento</MenuItem>
-                        <MenuItem value="internal_installments">Parcelamento Interno</MenuItem>
-                        <MenuItem value="pix">Pix</MenuItem>
-                        <MenuItem value="bank_transfer">Transferência</MenuItem>
-                        <MenuItem value="cash">Dinheiro</MenuItem>
-                        <MenuItem value="auxiliar">Poste Auxiliar</MenuItem>
-                        <MenuItem value="construction">Repasse de Obra</MenuItem>
-                      </TextField>
-                    </Grid>
 
-                    <Grid itme xs={1}>
-                      {index > 0 && (
-                        <IconButton
-                          onClick={() => removePaymentMethos(payment.id)}
-                          sx={{
-                            color: '#FF5A5F',
-                            '&:hover': {
-                              transform: 'scale(1.1)',
-                            },
-                          }}
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <TextField
+                          select
+                          name={`payment_method_${payment.id}`}
+                          value={payment.method}
+                          onChange={(e) => handleMethodChange(payment.id, 'method', e.target.value)}
+                          fullWidth
                         >
-                          <RemoveCircleIcon />
-                        </IconButton>
-                      )}
+                          <MenuItem value="credit">Crédito</MenuItem>
+                          <MenuItem value="debit">Débito</MenuItem>
+                          <MenuItem value="bank_slip">Boleto</MenuItem>
+                          <MenuItem value="financing">Financiamento</MenuItem>
+                          <MenuItem value="internal_installments">Parcelamento Interno</MenuItem>
+                          <MenuItem value="pix">Pix</MenuItem>
+                          <MenuItem value="bank_transfer">Transferência</MenuItem>
+                          <MenuItem value="cash">Dinheiro</MenuItem>
+                          <MenuItem value="auxiliar">Poste Auxiliar</MenuItem>
+                          <MenuItem value="construction">Repasse de Obra</MenuItem>
+                        </TextField>
+
+                        {index > 0 && (
+                          <IconButton
+                            onClick={() => removePaymentMethod(payment.id)}
+                            sx={{
+                              color: '#FF5A5F',
+                              '&:hover': {
+                                transform: 'scale(1.1)',
+                              },
+                            }}
+                          >
+                            <RemoveCircleIcon />
+                          </IconButton>
+                        )}
+                      </Box>
                     </Grid>
 
                     {payment.method === 'financing' && (
-                      <Grid item xs={12}>
+                      <Grid item xs={6}>
                         <CustomFormLabel
                           htmlFor={`financing_type_${payment.id}`}
                           sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
@@ -382,7 +383,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     )}
 
                     {payment.method === 'credit' && (
-                      <Grid item xs={12}>
+                      <Grid item xs={6}>
                         <CustomFormLabel
                           htmlFor={`installments_num_${payment.id}`}
                           sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
@@ -428,6 +429,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   </IconButton>
                 </Grid>
               </Grid>
+
 
 
 
