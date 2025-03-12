@@ -281,31 +281,6 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   />
                 </Grid>
 
-                <Grid item xs={4} sx={{ justifyContent: 'flex-start', alignItems: 'center' }}>
-                  <IconButton
-                    sx={{
-                      mt: 2,
-                      color: '#7E8388',
-
-                      display: 'flex-start',
-                      justifyContent: 'flex-start',
-                      alignItems: 'center',
-                      gap: 0.5,
-                      transition: '0.3s',
-                      '&:hover': {
-                        transform: 'scale(1.05)',
-                        backgroundColor: 'rgba(0, 0, 0, 0.00)',
-                      },
-                    }}
-                    onClick={() => setDialogProductOpen(true)}
-                  >
-                    <AddOutlinedIcon sx={{ fontSize: 18 }} />
-                    <Typography variant="body2" sx={{
-                      fontSize: 12,
-                      fontWeight: 600,
-                    }}>Adicionar forma de pagamento</Typography>
-                  </IconButton>
-                </Grid>
               </Grid>
 
 
@@ -331,6 +306,33 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     <MenuItem value="construction">Repasse de Obra</MenuItem>
                   </TextField>
                 </Grid>
+
+                <Grid item xs={4} sx={{ justifyContent: 'flex-start', alignItems: 'center' }}>
+                  <IconButton
+                    sx={{
+                      mt: 2,
+                      color: '#7E8388',
+
+                      display: 'flex-start',
+                      justifyContent: 'flex-start',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      transition: '0.3s',
+                      '&:hover': {
+                        transform: 'scale(1.05)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.00)',
+                      },
+                    }}
+                    onClick={() => setDialogProductOpen(true)}
+                  >
+                    <AddOutlinedIcon sx={{ fontSize: 18 }} />
+                    <Typography variant="body2" sx={{
+                      fontSize: 12,
+                      fontWeight: 600,
+                    }}>Adicionar forma de pagamento</Typography>
+                  </IconButton>
+                </Grid>
+                
               </Grid>
 
               {formData.payment_method === 'financing' && (
