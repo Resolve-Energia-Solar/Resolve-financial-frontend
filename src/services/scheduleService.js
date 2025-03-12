@@ -32,10 +32,11 @@ const scheduleService = {
       throw error
     }
   },
-  getAllSchedulesInspectionByCustomer: async (customerId, fields) => {
+  getAllSchedulesInspectionByCustomer: async (customerId, fields, params = {}) => {
     try {
       const response = await apiClient.get(
         `/api/schedule/?service=${SERVICE_INSPECTION_ID}&customer=${customerId}&fields=${fields}`,
+        { params }
       )
       return response.data
     } catch (error) {

@@ -93,7 +93,10 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
     const fetch = async () => {
       setLoadingInspections(true);
       try {
-        const response = await scheduleService.getAllSchedulesInspectionByCustomer(customer);
+        const fields = 'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name';
+        const response = await scheduleService.getAllSchedulesInspectionByCustomer(customer, fields, {
+          expand: 'final_service_opinion',
+        });
         console.log('response', response.results);
         // Se necessário, você pode filtrar os resultados aqui
         setInspectionsNotAssociated(response.results);
