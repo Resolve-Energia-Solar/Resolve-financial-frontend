@@ -173,10 +173,11 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                       color: '#303030',
                       border: "1px solid",
                       borderColor: "#ADADAD",
-                      // '&:hover': { backgroundColor: '#333' },
                       px: 3,
                       width: "483px",
                       justifyContent: "space-between",
+                      alignItems: "center",
+                      '&:hover': { boxShadow: '0', '& .MuiSvgIcon-root': { color: '#303030' } },
                     }}
                     endIcon={<ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} />}
                   >
