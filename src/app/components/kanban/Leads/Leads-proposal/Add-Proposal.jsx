@@ -164,7 +164,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 </Grid>
 
                 {/* add consumo energético dialog box right here */}
-                <Grid item xs={8}>
+                <Grid item xs={6}>
                   <Button
                     variant="contained"
                     onButtonClick={() => setOpenEnergyConsumption(true)}
@@ -175,6 +175,8 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                       borderColor: "#ADADAD",
                       // '&:hover': { backgroundColor: '#333' },
                       px: 3,
+                      width: "483px",
+                      justifyContent: "flex-start"
                     }}
                     endIcon={<ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} />}
                   >
