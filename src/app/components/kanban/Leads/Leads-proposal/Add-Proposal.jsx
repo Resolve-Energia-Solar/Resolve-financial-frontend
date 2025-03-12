@@ -176,7 +176,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                       // '&:hover': { backgroundColor: '#333' },
                       px: 3,
                       width: "483px",
-                      justifyContent: "flex-start"
+                      justifyContent: "space-between",
                     }}
                     endIcon={<ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} />}
                   >
