@@ -106,7 +106,9 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     }
   }
 
-  const [paymentMethods, setPaymentMethods] = useState([{ id: Date.now(), method: '' }]);
+  const [paymentMethods, setPaymentMethods] = useState([
+    { id: Date.now(), method: '', financing_type: '', installments_num: '' }
+  ]);
 
   const handleMethodChange = (id, value) => {
     setPaymentMethods((prevMethods) =>
