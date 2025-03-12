@@ -206,7 +206,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               </Grid>
 
               {formData.payment_method === 'financing' && (
-                <>
+                <Grid item xs={6}>
                   <CustomFormLabel htmlFor="financing_type">Financiadoras</CustomFormLabel>
                   <TextField
                     select
@@ -218,11 +218,11 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     <MenuItem value="2">Moon</MenuItem>
                     <MenuItem value="3">Sun</MenuItem>
                   </TextField>
-                </>
+                </Grid>
               )}
 
               {formData.payment_method === 'credit' && (
-                <>
+                <Grid item xs={6}>
                   <CustomFormLabel htmlFor="installments_num">Parcelas</CustomFormLabel>
                   <TextField
                     select
@@ -235,7 +235,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     <MenuItem value="3">3x</MenuItem>
                     <MenuItem value="4">4x</MenuItem>
                   </TextField>
-                </>
+                </Grid>
               )}
 
               {/* fourth row */}
