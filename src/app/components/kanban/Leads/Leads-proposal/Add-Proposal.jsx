@@ -317,8 +317,18 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     onChange={(e) => handleChange('financing_type', e.target.value)}
                     fullWidth
                   >
-                    <MenuItem value="2">Moon</MenuItem>
-                    <MenuItem value="3">Sun</MenuItem>
+                    <MenuItem value="1">Sol Agora</MenuItem>
+                    <MenuItem value="2">BV</MenuItem>
+                    <MenuItem value="3">Sicoob</MenuItem>
+                    <MenuItem value="4">Bradesco</MenuItem>
+                    <MenuItem value="5">BanPará</MenuItem>
+                    <MenuItem value="6">SICREDI</MenuItem>
+                    <MenuItem value="7">BTG</MenuItem>
+                    <MenuItem value="8">Sol Fácil</MenuItem>
+                    <MenuItem value="9">Santander</MenuItem>
+                    <MenuItem value="10">Itaú</MenuItem>
+                    <MenuItem value="11">Banco do Brasil</MenuItem>
+                    <MenuItem value="12">Losango</MenuItem>
                   </TextField>
                 </Grid>
               )}
