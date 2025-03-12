@@ -116,7 +116,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             flexDirection: 'column',
           }}
         >
-          {/* HEEEEEEEEEEEEADER */}
+ 
           <Grid item spacing={2} alignItems="center" xs={12}>
             <LeadInfoHeader leadId={leadId} />
           </Grid>
@@ -281,13 +281,14 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   />
                 </Grid>
 
-                <Grid item xs={6} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                <Grid item xs={4} sx={{ justifyContent: 'flex-start', alignItems: 'center' }}>
                   <IconButton
                     sx={{
                       mt: 2,
                       color: '#7E8388',
-                      fontSize: 14,
-                      display: 'flex',
+
+                      display: 'flex-start',
+                      justifyContent: 'flex-start',
                       alignItems: 'center',
                       gap: 0.5,
                       transition: '0.3s',
@@ -299,7 +300,10 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     onClick={() => setDialogProductOpen(true)}
                   >
                     <AddOutlinedIcon sx={{ fontSize: 18 }} />
-                    <Typography variant="body2">Adicionar forma de pagamento</Typography>
+                    <Typography variant="body2" sx={{
+                      fontSize: 12,
+                      fontWeight: 600,
+                    }}>Adicionar forma de pagamento</Typography>
                   </IconButton>
                 </Grid>
               </Grid>
