@@ -45,7 +45,7 @@ const userService = {
       throw error;
     }
   },
-  getUserById: async (id, expand = 'employee', fields = '') => {
+  getUserById: async (id, expand = 'employee', fields = '*') => {
     try {
       const response = await apiClient.get(`/api/users/${id}/`, {
         params: {
