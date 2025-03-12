@@ -119,7 +119,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   };
 
   const addPaymentMethod = () => {
-    setPaymentMethods([...paymentMethods, { id: Date.now(), method: '' }]);
+    setPaymentMethods([...paymentMethods, { id: Date.now(), method: '', financing_type: '', installments_num: '' }]);
   };
 
 
