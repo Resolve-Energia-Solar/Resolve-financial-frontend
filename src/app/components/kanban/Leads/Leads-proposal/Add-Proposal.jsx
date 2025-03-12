@@ -309,7 +309,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                       select
                       name={`payment_method_${payment.id}`}
                       value={payment.method}
-                      onChange={(e) => handleMethodChange(payment.id, e.target.value)}
+                      onChange={(e) => handleMethodChange(payment.id, 'method', e.target.value)}
                       fullWidth
                     >
                       <MenuItem value="credit">Crédito</MenuItem>
