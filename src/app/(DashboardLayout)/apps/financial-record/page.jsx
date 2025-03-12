@@ -13,16 +13,12 @@ import {
     TablePagination,
     Paper,
     Typography,
-    IconButton,
-    Tooltip,
     Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle,
-    Divider,
-    Grid,
+    DialogTitle
 } from "@mui/material";
 import {
     Edit as EditIcon,
@@ -43,6 +39,7 @@ import GenericFilterDrawer from "@/app/components/filters/GenericFilterDrawer";
 import AutoCompleteBeneficiary from "@/app/components/apps/financial-record/beneficiaryInput";
 import AutoCompleteDepartment from "@/app/components/apps/financial-record/departmentInput";
 import AutoCompleteCategory from "@/app/components/apps/financial-record/categoryInput";
+import AutoCompleteProject from "@/app/components/apps/inspections/auto-complete/Auto-input-Project";
 import SaleCards from "@/app/components/apps/inforCards/InforCards";
 import { useSnackbar } from 'notistack';
 import { formatDate } from "@/utils/dateUtils";
@@ -83,6 +80,7 @@ const financialRecordList = () => {
                 const data = await financialRecordService.getFinancialRecordList({
                     limit: rowsPerPage,
                     page: page + 1,
+                    // fields: "protocol,client_supplier_name,value,due_date,status",
                     ...filters,
                 });
                 setFinancialRecordList(data.results);
@@ -100,7 +98,8 @@ const financialRecordList = () => {
         const fetchKPIs = async () => {
             try {
                 const kpiData = await financialRecordService.getFinancialRecordList({
-                    ...filters, // Apenas filtros, sem limite de página
+                    fields: "value,responsible_status,payment_status,integration_code",
+                    ...filters,
                 });
 
                 setTotalRequests(kpiData.count); // Total de registros
@@ -207,6 +206,14 @@ const financialRecordList = () => {
                 value && typeof value === 'object' ? value.codigo_cliente : value,
         },
         {
+            key: 'project',
+            label: 'Projeto',
+            type: 'custom',
+            customComponent: AutoCompleteProject,
+            customTransform: (value) =>
+                value && typeof value === 'object' ? value.id : value,
+        },
+        {
             key: 'department_code__icontains',
             label: 'Departamento Causador (Omie)',
             type: 'custom',
@@ -223,20 +230,17 @@ const financialRecordList = () => {
                 value && typeof value === 'object' ? value.codigo : value,
         },
         {
-            key: "integration_code",
-            label: "Código de Integração",
-            type: "async-autocomplete",
+            key: "Protocolo",
+            label: "Lista de Protocolos",
+            type: "async-multiselect",
             endpoint: "/api/financial-records/",
-            queryParam: "integration_code__exact",
-            extraParams: {},
+            queryParam: "protocol__icontains",
+            extraParams: { fields: "protocol,id" },
             mapResponse: (data) => data.results.map(financialRecord => ({
                 label: financialRecord.protocol,
                 value: financialRecord.id
             }))
         },
-        { key: "integration_code__in", label: "Código de Integração (Lista)", type: "multiselect", options: [] },
-        { key: "protocol__icontains", label: "Protocolo (Contém)", type: "text" },
-        { key: "protocol__in", label: "Protocolo (Lista)", type: "multiselect", options: [] },
         { key: "status__in", label: "Status (Lista)", type: "multiselect", options: [] },
         {
             key: "value_range",
@@ -261,7 +265,7 @@ const financialRecordList = () => {
             type: "async-autocomplete",
             endpoint: "/api/users/",
             queryParam: "complete_name__icontains",
-            extraParams: {},
+            extraParams: { fields: "complete_name,id" },
             mapResponse: (data) => data.results.map(user => ({
                 label: user.complete_name,
                 value: user.id
@@ -274,7 +278,7 @@ const financialRecordList = () => {
             type: "async-autocomplete",
             endpoint: "/api/users/",
             queryParam: "complete_name__icontains",
-            extraParams: {},
+            extraParams: { fields: "complete_name,id" },
             mapResponse: (data) => data.results.map(user => ({
                 label: user.complete_name,
                 value: user.id
@@ -300,9 +304,8 @@ const financialRecordList = () => {
     ];
 
     // Função para lidar com o clique nos KPIs e aplicar filtros,
-    // zerando todos os outros filtros.
     const handleKPIClick = (kpiType) => {
-        let newFilters = {}; // Zera todos os filtros
+        let newFilters = {};
 
         switch (kpiType) {
             case 'inProgress':
@@ -317,7 +320,6 @@ const financialRecordList = () => {
                 };
                 break;
             case 'totalRequests':
-                // Para totalRequests, não aplicamos nenhum filtro.
                 break;
             default:
                 break;
@@ -333,10 +335,9 @@ const financialRecordList = () => {
             iconColor: "#1976d2",
             IconComponent: AssignmentIcon,
             title: "Solicitações",
-            // Exemplo: valor e contagem são iguais, mas sem formatação monetária
             value: totalRequests,
             count: null,
-            isCurrency: false,  // <--- Falso, pois não queremos exibir em R$
+            isCurrency: false,
             onClick: () => handleKPIClick("totalRequests"),
         },
         {
@@ -451,7 +452,7 @@ const financialRecordList = () => {
                                                 })}
                                             </TableCell>
                                             <TableCell>
-                                            {formatDate(item.due_date)}
+                                                {formatDate(item.due_date)}
                                             </TableCell>
                                             <TableCell>{getStatusLabel(item.status)}</TableCell>
                                         </TableRow>
