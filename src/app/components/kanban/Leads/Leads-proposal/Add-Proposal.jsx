@@ -10,6 +10,7 @@ import {
   CircularProgress,
   Dialog,
   DialogContent,
+  IconButton,
 } from '@mui/material';
 
 import { useEffect, useState } from 'react';
@@ -31,6 +32,7 @@ import { removeProductFromLead, selectProductsByLead } from '@/store/products/cu
 import { useDispatch } from 'react-redux';
 import { color } from 'framer-motion';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
@@ -239,7 +241,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               </Grid>
 
 
-           
+
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
                   <CustomFormLabel htmlFor="ref_amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor de referência</CustomFormLabel>
@@ -278,9 +280,31 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     }}
                   />
                 </Grid>
+
+                <Grid item xs={6} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                  <IconButton
+                    sx={{
+                      mt: 2,
+                      color: '#7E8388',
+                      fontSize: 14,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      transition: '0.3s',
+                      '&:hover': {
+                        transform: 'scale(1.05)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.00)',
+                      },
+                    }}
+                    onClick={() => setDialogProductOpen(true)}
+                  >
+                    <AddOutlinedIcon sx={{ fontSize: 18 }} />
+                    <Typography variant="body2">Adicionar forma de pagamento</Typography>
+                  </IconButton>
+                </Grid>
               </Grid>
 
-              
+
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={12}>
                   <CustomFormLabel htmlFor="payment_method" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Forma de pagamento</CustomFormLabel>
@@ -348,7 +372,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 </Grid>
               )}
 
-             
+
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
                   <CustomFormLabel htmlFor="seller_id" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Vendedor Responsável</CustomFormLabel>
@@ -378,7 +402,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 </Grid>
               </Grid>
 
-         
+
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={12}>
                   <CustomFormLabel htmlFor="description" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Descrição</CustomFormLabel>
@@ -395,7 +419,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               </Grid>
             </Grid>
 
-            
+
             <Grid
               item
               xs={12}
@@ -405,7 +429,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             </Grid>
           </Grid>
 
-         
+
           <Grid
             item
             xs={12}
