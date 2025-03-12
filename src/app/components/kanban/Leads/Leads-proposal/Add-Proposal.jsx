@@ -308,7 +308,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     <TextField
                       select
                       name={`payment_method_${payment.id}`}
-                      value={formData.payment_method}
+                      value={payment.method}
                       onChange={(e) => handleMethodChange(payment.id, e.target.value)}
                       fullWidth
                     >
