@@ -106,6 +106,20 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     }
   }
 
+  const [paymentMethods, setPaymentMethods] = useState([{ id: Date.now(), method: '' }]);
+
+  const handleMethodChange = (id, value) => {
+    setPaymentMethods((prevMethods) =>
+      prevMethods.map((method) =>
+        method.id === id ? { ...method, method: value } : method
+      )
+    );
+  };
+
+  const addPaymentMethod = () => {
+    setPaymentMethods([...paymentMethods, { id: Date.now(), method: '' }]);
+  };
+
 
   return (
     <Grid container spacing={0}>
@@ -116,7 +130,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             flexDirection: 'column',
           }}
         >
- 
+
           <Grid item spacing={2} alignItems="center" xs={12}>
             <LeadInfoHeader leadId={leadId} />
           </Grid>
@@ -241,7 +255,6 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               </Grid>
 
 
-
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
                   <CustomFormLabel htmlFor="ref_amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor de referência</CustomFormLabel>
@@ -285,35 +298,35 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={12}>
-                  <CustomFormLabel htmlFor="payment_method" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Forma de pagamento</CustomFormLabel>
-                  <TextField
-                    select
-                    name="payment_method"
-                    value={formData.payment_method}
-                    onChange={(e) => handleChange('payment_method', e.target.value)}
-                    fullWidth
-                  >
-                    <MenuItem value="credit">Crédito</MenuItem>
-                    <MenuItem value="debit">Débito</MenuItem>
-                    <MenuItem value="bank_slip">Boleto</MenuItem>
-                    <MenuItem value="financing">Financiamento</MenuItem>
-                    <MenuItem value="internal_installments">Parcelamento Interno</MenuItem>
-                    <MenuItem value="pix">Pix</MenuItem>
-                    <MenuItem value="bank_transfer">Transferência</MenuItem>
-                    <MenuItem value="cash">Dinheiro</MenuItem>
-                    <MenuItem value="auxiliar">Poste Auxiliar</MenuItem>
-                    <MenuItem value="construction">Repasse de Obra</MenuItem>
-                  </TextField>
-                </Grid>
+                {paymentMethods.map((payment, index) => (
+                  <Grid item xs={12} key={payment.id}>
+                    <CustomFormLabel htmlFor="payment_method" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Forma de pagamento</CustomFormLabel>
+                    <TextField
+                      select
+                      name="payment_method"
+                      value={formData.payment_method}
+                      onChange={(e) => handleMethodChange(payment.id, e.target.value)}
+                      fullWidth
+                    >
+                      <MenuItem value="credit">Crédito</MenuItem>
+                      <MenuItem value="debit">Débito</MenuItem>
+                      <MenuItem value="bank_slip">Boleto</MenuItem>
+                      <MenuItem value="financing">Financiamento</MenuItem>
+                      <MenuItem value="internal_installments">Parcelamento Interno</MenuItem>
+                      <MenuItem value="pix">Pix</MenuItem>
+                      <MenuItem value="bank_transfer">Transferência</MenuItem>
+                      <MenuItem value="cash">Dinheiro</MenuItem>
+                      <MenuItem value="auxiliar">Poste Auxiliar</MenuItem>
+                      <MenuItem value="construction">Repasse de Obra</MenuItem>
+                    </TextField>
+                  </Grid>
+                ))}
 
-                <Grid item xs={4} sx={{ justifyContent: 'flex-start', alignItems: 'center' }}>
+                <Grid item xs={4}>
                   <IconButton
                     sx={{
                       mt: 2,
                       color: '#7E8388',
-
-                      display: 'flex-start',
                       justifyContent: 'flex-start',
                       alignItems: 'center',
                       gap: 0.5,
@@ -323,16 +336,14 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                         backgroundColor: 'rgba(0, 0, 0, 0.00)',
                       },
                     }}
-                    onClick={() => setDialogProductOpen(true)}
+                    onClick={addPaymentMethod}
                   >
                     <AddOutlinedIcon sx={{ fontSize: 18 }} />
-                    <Typography variant="body2" sx={{
-                      fontSize: 12,
-                      fontWeight: 600,
-                    }}>Adicionar forma de pagamento</Typography>
+                    <Typography variant="body2" sx={{ fontSize: 12, fontWeight: 600 }}>
+                      Adicionar forma de pagamento
+                    </Typography>
                   </IconButton>
                 </Grid>
-                
               </Grid>
 
               {formData.payment_method === 'financing' && (
