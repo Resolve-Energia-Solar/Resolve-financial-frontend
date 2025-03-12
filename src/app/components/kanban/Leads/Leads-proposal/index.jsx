@@ -14,6 +14,7 @@ import {
     Grid,
     Dialog,
     DialogContent,
+    Drawer,
 } from '@mui/material';
 
 import { useRouter } from 'next/navigation';
@@ -23,8 +24,9 @@ import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
 import TableComponent from '@/app/components/kanban/Leads/components/TableComponent'
 import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
-import LeadProposalPage from './Add-Proposal';
+// import LeadProposalPage from './Edit-Proposal';
 import LeadsViewProposal from './View-Proposal';
+import AddProposalPage from './Add-Proposal';
 
 
 const LeadsProposalListPage = ({ leadId = null }) => {
@@ -175,19 +177,26 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                                 }}
                             />
 
-                            <Dialog
+                            <Drawer
+                                anchor="right"
                                 open={openAddProposal}
                                 onClose={() => setOpenAddProposal(false)}
-                                maxWidth="lg"
-                                fullWidth
+                                // maxWidth="lg"
+                                sx={{ zIndex: 1300 }}
+                                PaperProps={{
+                                    sx: {
+                                        width: "60vw",
+                                        p: 4,
+                                    }
+                                }}
                             >
                                 <DialogContent>
-                                    <LeadProposalPage 
+                                    <AddProposalPage 
                                         leadId={leadId} 
                                         onClose={() => setOpenAddProposal(false)} 
                                         onRefresh={handleRefresh} />
                                 </DialogContent>
-                            </Dialog>
+                            </Drawer>
 
                             <Dialog
                                 open={openEditProposal}
@@ -196,7 +205,8 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                                 fullWidth
                             >
                                 <DialogContent>
-                                    <LeadProposalPage 
+                                    {/* add a new edit page in the future */}
+                                    <AddProposalPage 
                                         leadId={leadId} 
                                         onClose={() => setOpenEditProposal(false)} 
                                         onRefresh={handleRefresh} />
