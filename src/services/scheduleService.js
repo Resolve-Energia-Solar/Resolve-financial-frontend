@@ -3,7 +3,7 @@ import apiClient from './apiClient'
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID
 
 const scheduleService = {
-  getSchedules: async ({ ordering, nextPage, limit = 5, page = 1, expand, fields, ...filters }) => {
+  getSchedules: async ({ ordering, nextPage, limit = 5, page = 1, expand, fields='*', ...filters }) => {
     try {
       const params = {
         ordering: ordering || '',
@@ -21,7 +21,7 @@ const scheduleService = {
       throw error;
     }
   },
-  getAllSchedulesInspectionByProject: async (projectId, fields) => {
+  getAllSchedulesInspectionByProject: async (projectId, fields='*') => {
     try {
       const response = await apiClient.get(
         `/api/schedule/?service=${SERVICE_INSPECTION_ID}&project=${projectId}&fields=${fields}`,
@@ -32,7 +32,7 @@ const scheduleService = {
       throw error
     }
   },
-  getAllSchedulesInspectionByCustomer: async (customerId, fields, params = {}) => {
+  getAllSchedulesInspectionByCustomer: async (customerId, fields='*', params = {}) => {
     try {
       const response = await apiClient.get(
         `/api/schedule/?service=${SERVICE_INSPECTION_ID}&customer=${customerId}&fields=${fields}`,
@@ -62,7 +62,7 @@ const scheduleService = {
       throw error
     }
   },
-  getMySchedules: async ({ ordering, params, nextPage, userId, fields }) => {
+  getMySchedules: async ({ ordering, params, nextPage, userId, fields='*' }) => {
     const urlParams = params ? `&${params}` : ''
     const urlNextPage = nextPage ? `&page=${nextPage}` : ''
     try {
