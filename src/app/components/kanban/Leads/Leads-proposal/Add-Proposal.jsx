@@ -160,6 +160,9 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     value={formData.ref_amount}
                     onChange={handleChange}
                     fullWidth
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                    }}
                   />
                 </Grid>
 
@@ -170,6 +173,9 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     value={formData.entry_amount}
                     onChange={handleChange}
                     fullWidth
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                    }}
                   />
                 </Grid>
               </Grid>
