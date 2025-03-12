@@ -8,6 +8,18 @@ const formatTime = (time) => {
 };
 
 const userService = {
+  find: async (id, params) => {
+
+    try {
+      const response = await apiClient.get(`/api/users/${id}/`, {
+        params
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar usuário com id ${id}:`, error);
+      throw error;
+    }
+  },
   getUser: async ({ page = 1, limit = 10, filters = {} } = {}) => {
     try {
       const response = await apiClient.get('/api/users/', {
@@ -33,11 +45,12 @@ const userService = {
       throw error;
     }
   },
-  getUserById: async (id) => {
+  getUserById: async (id, expand = 'employee', fields = '') => {
     try {
       const response = await apiClient.get(`/api/users/${id}/`, {
         params: {
-          expand: 'employee',
+          expand,
+          fields,
         },
       });
       return response.data;
@@ -46,7 +59,7 @@ const userService = {
       throw error;
     }
   },
-  getAddressByUserId: async (id) => {
+  getAddressByUserId: async (id, expand = 'addresses', fields = 'addresses') => {
     try {
       const response = await apiClient.get(`/api/users/${id}/?expand=addresses&fields=addresses`);
       return response.data;

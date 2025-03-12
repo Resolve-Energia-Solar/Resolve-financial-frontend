@@ -16,11 +16,12 @@ export default function AutoCompleteAddress({
   error,
   helperText,
   disableSuggestions = false,
+  options = [],
   ...props
 }) {
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState([]);
+  const [internalOptions, setInternalOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -62,7 +63,7 @@ export default function AutoCompleteAddress({
           id: address.id,
           name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
         }));
-        setOptions(formattedAddresses);
+        setInternalOptions(formattedAddresses);
       } catch (error) {
         console.error('Erro ao buscar endereços:', error);
         enqueueSnackbar(`Erro ao buscar endereços: ${error.message}`, { variant: 'error' });
@@ -70,7 +71,7 @@ export default function AutoCompleteAddress({
       setLoading(false);
     }, 300),
     [disableSuggestions, enqueueSnackbar]
-  );
+  );  
 
   const fetchInitialAddresses = useCallback(async () => {
     if (disableSuggestions) return;
@@ -81,7 +82,7 @@ export default function AutoCompleteAddress({
         id: address.id,
         name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
       }));
-      setOptions(formattedAddresses);
+      setInternalOptions(formattedAddresses);
     } catch (error) {
       console.error('Erro ao buscar endereços:', error);
       enqueueSnackbar(`Erro ao buscar endereços: ${error.message}`, { variant: 'error' });
@@ -89,36 +90,28 @@ export default function AutoCompleteAddress({
     setLoading(false);
   }, [disableSuggestions, enqueueSnackbar]);
 
-  const handleOpen = () => {
-    setOpen(true);
-    if (options.length === 0 && !disableSuggestions) {
-      fetchInitialAddresses();
-    }
-  };
-
   const handleClose = () => {
     setOpen(false);
-    setOptions([]);
+    setInternalOptions([]);
   };
 
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
+  const displayOptions = options.length > 0 ? options : internalOptions;
 
   return (
     <div>
       <Autocomplete
         sx={{ width: '100%' }}
         open={open}
-        onOpen={handleOpen}
+        onOpen={() => {
+          setOpen(true);
+          if (options.length === 0 && !disableSuggestions) {
+            fetchInitialAddresses();
+          }
+        }}
         onClose={handleClose}
         isOptionEqualToValue={(option, value) => option.name === value.name}
         getOptionLabel={(option) => option.name || ''}
-        options={options}
+        options={displayOptions}  // Usa as opções combinadas
         loading={loading}
         value={selectedAddress}
         loadingText="Carregando..."
@@ -138,11 +131,11 @@ export default function AutoCompleteAddress({
             InputProps={{
               ...params.InputProps,
               endAdornment: (
-                <Fragment>
+                <>
                   {loading ? <CircularProgress color="inherit" size={20} /> : null}
                   {params.InputProps.endAdornment}
                   <IconButton
-                    onClick={handleOpenModal}
+                    onClick={() => setOpenModal(true)}
                     aria-label="Adicionar endereço"
                     edge="end"
                     size="small"
@@ -150,18 +143,18 @@ export default function AutoCompleteAddress({
                   >
                     <AddIcon fontSize="small" />
                   </IconButton>
-                </Fragment>
+                </>
               ),
             }}
           />
         )}
       />
 
-      <Dialog open={openModal} onClose={handleCloseModal} maxWidth="lg">
+      <Dialog open={openModal} onClose={() => setOpenModal(false)} maxWidth="lg">
         <DialogTitle>Adicionar Novo Endereço</DialogTitle>
         <DialogContent>
           <CreateAddressPage
-            onClosedModal={handleCloseModal}
+            onClosedModal={() => setOpenModal(false)}
             selectedAddressId={fetchDefaultAddress}
           />
         </DialogContent>
