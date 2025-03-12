@@ -162,23 +162,19 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                       value={formData.estimated_power_generation}
                       onChange={(e) => handleChange('estimated_power_generation', e.target.value)}
                       fullWidth
-                      InputProps={{
-                        startAdornment: <InputAdornment position="start">R$</InputAdornment>,
-                      }}
+                      placeholder='2500 kWh'
                     />
                 </Grid>
 
                 <Grid item xs={6}>
                   <CustomFormLabel htmlFor="medium_energy_val">Consumo médio de energia</CustomFormLabel>
                   <TextField
-                    select
                     name="medium_energy_val"
                     value={formData.medium_energy_val}
                     onChange={(e) => handleChange('medium_energy_val', e.target.value)}
                     fullWidth
-                  >
-                    <MenuItem value="K1">Kit Solar 2034</MenuItem>
-                  </TextField>
+                    placeholder='1800 kWh'
+                  />
                 </Grid>
               </Grid>
 
