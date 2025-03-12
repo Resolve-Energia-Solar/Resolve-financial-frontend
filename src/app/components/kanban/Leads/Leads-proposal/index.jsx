@@ -14,6 +14,7 @@ import {
     Grid,
     Dialog,
     DialogContent,
+    Drawer,
 } from '@mui/material';
 
 import { useRouter } from 'next/navigation';
@@ -176,7 +177,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                                 }}
                             />
 
-                            <Dialog
+                            <Drawer
                                 open={openAddProposal}
                                 onClose={() => setOpenAddProposal(false)}
                                 maxWidth="lg"
@@ -188,7 +189,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                                         onClose={() => setOpenAddProposal(false)} 
                                         onRefresh={handleRefresh} />
                                 </DialogContent>
-                            </Dialog>
+                            </Drawer>
 
                             <Dialog
                                 open={openEditProposal}
