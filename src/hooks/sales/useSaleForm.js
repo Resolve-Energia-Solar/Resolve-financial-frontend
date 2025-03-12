@@ -20,7 +20,8 @@ const useSaleForm = (initialData, id) => {
     status: null,
     completedDocument: false,
     billing_date: null,
-    cancellationReasonsIds: []
+    cancellationReasonsIds: [],
+    reference_table: null
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -44,7 +45,8 @@ const useSaleForm = (initialData, id) => {
         status: initialData.status || null,
         completedDocument: initialData.completed_document || false,
         billing_date: initialData.billing_date || null,
-        cancellationReasonsIds: initialData.cancellation_reasons?.map(cancellation_reason => cancellation_reason.id) || []
+        cancellationReasonsIds: initialData.cancellation_reasons?.map(cancellation_reason => cancellation_reason.id) || [],
+        reference_table: initialData.reference_table || ''
       });
     }
   }, [initialData]);
@@ -84,7 +86,8 @@ const useSaleForm = (initialData, id) => {
       status: formData.status,
       completed_document: formData.completedDocument,
       billing_date: formData.billing_date || null,
-      cancellation_reasons_ids: formData.cancellationReasonsIds
+      cancellation_reasons_ids: formData.cancellationReasonsIds,
+      reference_table: formData.reference_table
     };
 
     try {

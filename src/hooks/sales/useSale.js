@@ -59,7 +59,8 @@ const useSale = (id) => {
             "status",
             "billing_date",
             "cancellation_reasons",
-            "is_pre_sale"
+            "is_pre_sale",
+            "reference_table",
           ],
           format: "json",
           limit: 1
