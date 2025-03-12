@@ -110,10 +110,10 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     { id: Date.now(), method: '', financing_type: '', installments_num: '' }
   ]);
 
-  const handleMethodChange = (id, value) => {
+  const handleMethodChange = (id, field, value) => {
     setPaymentMethods((prevMethods) =>
       prevMethods.map((method) =>
-        method.id === id ? { ...method, method: value } : method
+        method.id === id ? { ...method, [field]: value } : method
       )
     );
   };
