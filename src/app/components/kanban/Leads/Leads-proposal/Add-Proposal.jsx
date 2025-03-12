@@ -57,9 +57,9 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     dispatch(removeProductFromLead({ leadId, productIds: customProducts.map((product) => product.id) }));
     handleChange('due_date', null);
     handleChange('value', null);
-    handleChange('observation', '');
+    handleChange('proposal_description', '');
   };
-  
+
 
   useEffect(() => {
     if (success) {
@@ -93,8 +93,8 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
       if (onRefresh) onRefresh();
       if (onClose) onClose();
     } else {
-        enqueueSnackbar('Erro ao salvar agendamento', { variant: 'error' });
-        console.log('Form Errors:', formErrors);
+      enqueueSnackbar('Erro ao salvar agendamento', { variant: 'error' });
+      console.log('Form Errors:', formErrors);
     }
   }
 
@@ -130,7 +130,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     select
                     name="proposal_name"
                     value={formData.proposal_name}
-                    onChange={handleChange}
+                    onChange={(e) => handleChange('proposal_name', e.target.value)}
                     fullWidth
                   >
                     <MenuItem value="K1">Kit Solar 2034</MenuItem>
@@ -142,14 +142,19 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   <TextField
                     name="amount"
                     value={formData.amount}
-                    onChange={handleChange}
+                    onChange={(e) => handleChange('amount', e.target.value)}
                     fullWidth
                     InputProps={{
                       startAdornment: <InputAdornment position="start">R$</InputAdornment>,
                     }}
                   />
                 </Grid>
+
+                {/* add consumo energético dialog boz right here */}
               </Grid>
+
+              {/* new row with geração de energia estimada and consumo médio */}
+
 
               {/* second row */}
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
@@ -158,7 +163,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   <TextField
                     name="ref_amount"
                     value={formData.ref_amount}
-                    onChange={handleChange}
+                    onChange={(e) => handleChange('ref_amount', e.target.value)}
                     fullWidth
                     InputProps={{
                       startAdornment: <InputAdornment position="start">R$</InputAdornment>,
@@ -171,7 +176,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   <TextField
                     name="entry_amount"
                     value={formData.entry_amount}
-                    onChange={handleChange}
+                    onChange={(e) => handleChange('entry_amount', e.target.value)}
                     fullWidth
                     InputProps={{
                       startAdornment: <InputAdornment position="start">R$</InputAdornment>,
@@ -246,7 +251,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     select
                     name="seller_id"
                     value={formData.seller_id}
-                    onChange={handleChange}
+                    onChange={(e) => handleChange('seller_id', e.target.value)}
                     fullWidth
                   >
                     <MenuItem value="F">Fulano</MenuItem>
@@ -262,7 +267,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   <TextField
                     name="proposal_validity"
                     value={formData.proposal_validity}
-                    onChange={handleChange}
+                    onChange={(e) => handleChange('proposal_validity', e.target.value)}
                     fullWidth
                   />
                 </Grid>
@@ -273,13 +278,13 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 <Grid item xs={12}>
                   <CustomFormLabel htmlFor="description">Descrição</CustomFormLabel>
                   <CustomTextArea
-                    name="observation"
+                    name="proposal_description"
                     multiline
                     rows={4}
                     minRows={3}
-                    value={formData.observation}
-                    onChange={(e) => handleChange('observation', e.target.value)}
-                    {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
+                    value={formData.proposal_description}
+                    onChange={(e) => handleChange('proposal_description', e.target.value)}
+                    {...(formErrors.proposal_description && { error: true, helperText: formErrors.proposal_description })}
                   />
                 </Grid>
               </Grid>
