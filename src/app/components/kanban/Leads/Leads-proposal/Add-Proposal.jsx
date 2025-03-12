@@ -33,6 +33,7 @@ import { useDispatch } from 'react-redux';
 import { color } from 'framer-motion';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 
 function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
@@ -121,6 +122,10 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const addPaymentMethod = () => {
     setPaymentMethods([...paymentMethods, { id: Date.now(), method: '', financing_type: '', installments_num: '' }]);
   };
+
+  const removePaymentMethos = (id) => {
+    setPaymentMethods(paymentMethods.filter((method) => method.id !== id));
+  }
 
 
   return (
@@ -302,7 +307,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               <Grid container rowSpacing={1} xs={12} >
                 {paymentMethods.map((payment, index) => (
                   <Grid container spacing={2} key={payment.id}>
-                    <Grid item xs={12}>
+                    <Grid item xs={8}>
                       <CustomFormLabel
                         htmlFor={`payment_method_${payment.id}`}
                         sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
@@ -327,6 +332,22 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                         <MenuItem value="auxiliar">Poste Auxiliar</MenuItem>
                         <MenuItem value="construction">Repasse de Obra</MenuItem>
                       </TextField>
+                    </Grid>
+
+                    <Grid itme xs={1}>
+                      {index > 0 && (
+                        <IconButton
+                          onClick={() => removePaymentMethos(payment.id)}
+                          sx={{
+                            color: '#FF5A5F',
+                            '&:hover': {
+                              transform: 'scale(1.1)',
+                            },
+                          }}
+                        >
+                          <RemoveCircleIcon />
+                        </IconButton>
+                      )}
                     </Grid>
 
                     {payment.method === 'financing' && (
