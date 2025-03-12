@@ -178,9 +178,11 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                             />
 
                             <Drawer
+                                anchor="bottom"
                                 open={openAddProposal}
                                 onClose={() => setOpenAddProposal(false)}
-                                maxWidth="lg"
+                                // maxWidth="lg"
+                                sx={{ zIndex: 1300 }}
                                 fullWidth
                             >
                                 <DialogContent>
