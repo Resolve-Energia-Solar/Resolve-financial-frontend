@@ -262,48 +262,6 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               </Grid>
 
 
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="ref_amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor de referência</CustomFormLabel>
-                  <TextField
-                    name="ref_amount"
-                    value={formData.ref_amount}
-                    onChange={(e) => handleChange('ref_amount', e.target.value)}
-                    fullWidth
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
-                            R$
-                          </Box>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="entry_amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor de entrada</CustomFormLabel>
-                  <TextField
-                    name="entry_amount"
-                    value={formData.entry_amount}
-                    onChange={(e) => handleChange('entry_amount', e.target.value)}
-                    fullWidth
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
-                            R$
-                          </Box>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-
-              </Grid>
-
-
               <Grid container rowSpacing={1} xs={12}>
                 {paymentMethods.map((payment, index) => (
                   <Grid container spacing={2} key={payment.id} alignItems="center">
