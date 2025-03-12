@@ -8,6 +8,8 @@ import {
   InputAdornment,
   TextField,
   CircularProgress,
+  Dialog,
+  DialogContent,
 } from '@mui/material';
 
 import { useEffect, useState } from 'react';
@@ -38,6 +40,8 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const { enqueueSnackbar } = useSnackbar();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+
+  const [openEnergyConsumption, setOpenEnergyConsumption] = useState(false);
 
   const {
     formData,
@@ -99,6 +103,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
       console.log('Form Errors:', formErrors);
     }
   }
+
 
   return (
     <Grid container spacing={0}>
@@ -162,7 +167,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 <Grid item xs={8}>
                   <Button
                     variant="contained"
-                    onClick={() => console.log('open consumo energético dialog box')}
+                    onButtonClick={() => setOpenEnergyConsumption(true)}
                     sx={{
                       backgroundColor: '#F4F5F7',
                       color: '#303030',
@@ -174,7 +179,6 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     endIcon={<ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} />}
                   >
                     <Typography variant="body1">Consumo Energético</Typography>
-                    {/* <ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} /> */}
                   </Button>
                 </Grid>
               </Grid>
@@ -429,6 +433,21 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               </Button>
             </Box>
           </Grid>
+
+          <Dialog
+            open={openEnergyConsumption}
+            onClose={() => setOpenEnergyConsumption(false)}
+            maxWidth="lg"
+            fullWidth
+          >
+            <DialogContent>
+              {/* add consumo energético dialog */}
+              <AddProposalPage
+                leadId={leadId}
+                onClose={() => setOpenEditProposal(false)}
+                onRefresh={onRefresh} />
+            </DialogContent>
+          </Dialog>
 
         </Box>
       </Grid>
