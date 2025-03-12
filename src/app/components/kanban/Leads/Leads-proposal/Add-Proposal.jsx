@@ -302,7 +302,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 {paymentMethods.map((payment, index) => (
                   <Grid item xs={12} key={payment.id}>
-                    <CustomFormLabel htmlFor="payment_method" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Forma de pagamento</CustomFormLabel>
+                    <CustomFormLabel htmlFor={`payment_method_${payment.id}`} sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Forma de pagamento</CustomFormLabel>
                     <TextField
                       select
                       name="payment_method"
