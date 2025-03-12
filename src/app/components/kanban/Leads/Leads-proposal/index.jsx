@@ -183,7 +183,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                                 onClose={() => setOpenAddProposal(false)}
                                 // maxWidth="lg"
                                 sx={{ zIndex: 1300 }}
-                                fullWidth
+                                
                             >
                                 <DialogContent>
                                     <AddProposalPage 
