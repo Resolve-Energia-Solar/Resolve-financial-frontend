@@ -496,7 +496,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             xs={12}
             sx={{
               display: 'flex',
-              justifyContent: 'end',
+              justifyContent: 'space-between',
               alignItems: 'center',
               mt: 2,
               gap: 2,
