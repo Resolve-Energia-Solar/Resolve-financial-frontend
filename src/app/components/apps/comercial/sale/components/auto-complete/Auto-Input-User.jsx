@@ -30,9 +30,9 @@ export default function AutoCompleteUser({
   const fetchDefaultUser = async (userId) => {
     if (userId) {
       try {
-        const user = await userService.getUserById(userId);
+        const user = await userService.getUserById(userId, '', 'complete_name');
         if (user) {
-          setSelectedUser({ id: user.id, name: user.complete_name });
+          setSelectedUser({ id: user.id, name: user.complete_name || user.name || 'Nome indisponível' });
           if (!value) onChange(user.id);
         }
       } catch (error) {

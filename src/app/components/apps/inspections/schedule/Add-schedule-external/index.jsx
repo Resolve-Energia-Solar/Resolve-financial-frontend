@@ -58,13 +58,25 @@ const ScheduleFormCreateExternal = () => {
     }
   }, [success, router]);
 
+  const [userAddresses, setUserAddresses] = React.useState([]);
+
   const handleUserSelect = async (userId) => {
     console.log('Usuário selecionado:', userId);
     handleChange('customer_id', userId);
+
     const user = await userService.getUserById(userId, 'addresses', 'id,complete_name,addresses,name');
     console.log('Dados do usuário:', user);
+
     if (user.addresses && user.addresses.length > 0) {
-      handleChange('address_id', user.addresses[0].id);
+      const formattedAddresses = user.addresses.map(addr => ({
+        ...addr,
+        name: `${addr.street}, ${addr.number}, ${addr.city}, ${addr.state}`,
+      }));
+      setUserAddresses(formattedAddresses);
+      handleChange('address_id', formattedAddresses[0].id);
+    } else {
+      setUserAddresses([]);
+      handleChange('address_id', null);
     }
   };
 
@@ -281,14 +293,17 @@ const ScheduleFormCreateExternal = () => {
           </Grid>
         )}
 
-        <Grid item xs={12} sm={12} lg={6}>
-          <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
-          <AutoCompleteAddress
-            onChange={(id) => handleChange('address_id', id)}
-            value={formData.address_id}
-            {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
-          />
-        </Grid>
+        {formData.customer_id && userAddresses.length > 0 && (
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
+            <AutoCompleteAddress
+              onChange={(id) => handleChange('address_id', id)}
+              value={formData.address_id}
+              options={userAddresses.map(addr => ({ id: addr.id, name: addr.name }))}
+              {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
+            />
+          </Grid>
+        )}
 
         <Grid item xs={12} sm={12} lg={6}>
           <FormSelect
