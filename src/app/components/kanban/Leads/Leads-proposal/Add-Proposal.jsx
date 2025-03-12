@@ -163,14 +163,16 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   <Button
                     variant="contained"
                     sx={{
-                      backgroundColor: 'black',
-                      color: 'white',
-                      '&:hover': { backgroundColor: '#333' },
+                      backgroundColor: '#F4F5F7',
+                      color: '#303030',
+                      border: "1px solid",
+                      borderColor: "#ADADAD",
+                      // '&:hover': { backgroundColor: '#333' },
                       px: 3,
                     }}
                   >
                     <Typography variant="body1">Consumo Energético</Typography>
-                    <ManageSearchIcon sx={{ ml: 1 }} />
+                    <ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} />
                   </Button>
                 </Grid>
               </Grid>
