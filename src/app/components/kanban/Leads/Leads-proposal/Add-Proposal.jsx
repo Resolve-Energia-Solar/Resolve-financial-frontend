@@ -301,28 +301,86 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 {paymentMethods.map((payment, index) => (
-                  <Grid item xs={12} key={payment.id}>
-                    <CustomFormLabel htmlFor={`payment_method_${payment.id}`} sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
-                      Forma de pagamento {index + 1}
-                    </CustomFormLabel>
-                    <TextField
-                      select
-                      name={`payment_method_${payment.id}`}
-                      value={payment.method}
-                      onChange={(e) => handleMethodChange(payment.id, 'method', e.target.value)}
-                      fullWidth
-                    >
-                      <MenuItem value="credit">Crédito</MenuItem>
-                      <MenuItem value="debit">Débito</MenuItem>
-                      <MenuItem value="bank_slip">Boleto</MenuItem>
-                      <MenuItem value="financing">Financiamento</MenuItem>
-                      <MenuItem value="internal_installments">Parcelamento Interno</MenuItem>
-                      <MenuItem value="pix">Pix</MenuItem>
-                      <MenuItem value="bank_transfer">Transferência</MenuItem>
-                      <MenuItem value="cash">Dinheiro</MenuItem>
-                      <MenuItem value="auxiliar">Poste Auxiliar</MenuItem>
-                      <MenuItem value="construction">Repasse de Obra</MenuItem>
-                    </TextField>
+                  <Grid container spacing={2} key={payment.id}>
+                    <Grid item xs={12}>
+                      <CustomFormLabel
+                        htmlFor={`payment_method_${payment.id}`}
+                        sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
+                      >
+                        Forma de pagamento {index + 1}
+                      </CustomFormLabel>
+                      <TextField
+                        select
+                        name={`payment_method_${payment.id}`}
+                        value={payment.method}
+                        onChange={(e) => handleMethodChange(payment.id, 'method', e.target.value)}
+                        fullWidth
+                      >
+                        <MenuItem value="credit">Crédito</MenuItem>
+                        <MenuItem value="debit">Débito</MenuItem>
+                        <MenuItem value="bank_slip">Boleto</MenuItem>
+                        <MenuItem value="financing">Financiamento</MenuItem>
+                        <MenuItem value="internal_installments">Parcelamento Interno</MenuItem>
+                        <MenuItem value="pix">Pix</MenuItem>
+                        <MenuItem value="bank_transfer">Transferência</MenuItem>
+                        <MenuItem value="cash">Dinheiro</MenuItem>
+                        <MenuItem value="auxiliar">Poste Auxiliar</MenuItem>
+                        <MenuItem value="construction">Repasse de Obra</MenuItem>
+                      </TextField>
+                    </Grid>
+
+                    {payment.method === 'financing' && (
+                      <Grid item xs={12}>
+                        <CustomFormLabel
+                          htmlFor={`financing_type_${payment.id}`}
+                          sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
+                        >
+                          Financiadoras
+                        </CustomFormLabel>
+                        <TextField
+                          select
+                          name={`financing_type_${payment.id}`}
+                          value={payment.financing_type}
+                          onChange={(e) => handleMethodChange(payment.id, 'financing_type', e.target.value)}
+                          fullWidth
+                        >
+                          <MenuItem value="1">Sol Agora</MenuItem>
+                          <MenuItem value="2">BV</MenuItem>
+                          <MenuItem value="3">Sicoob</MenuItem>
+                          <MenuItem value="4">Bradesco</MenuItem>
+                          <MenuItem value="5">BanPará</MenuItem>
+                          <MenuItem value="6">SICREDI</MenuItem>
+                          <MenuItem value="7">BTG</MenuItem>
+                          <MenuItem value="8">Sol Fácil</MenuItem>
+                          <MenuItem value="9">Santander</MenuItem>
+                          <MenuItem value="10">Itaú</MenuItem>
+                          <MenuItem value="11">Banco do Brasil</MenuItem>
+                          <MenuItem value="12">Losango</MenuItem>
+                        </TextField>
+                      </Grid>
+                    )}
+
+                    {payment.method === 'credit' && (
+                      <Grid item xs={12}>
+                        <CustomFormLabel
+                          htmlFor={`installments_num_${payment.id}`}
+                          sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
+                        >
+                          Parcelas
+                        </CustomFormLabel>
+                        <TextField
+                          select
+                          name={`installments_num_${payment.id}`}
+                          value={payment.installments_num}
+                          onChange={(e) => handleMethodChange(payment.id, 'installments_num', e.target.value)}
+                          fullWidth
+                        >
+                          <MenuItem value="2">2x</MenuItem>
+                          <MenuItem value="3">3x</MenuItem>
+                          <MenuItem value="4">4x</MenuItem>
+                        </TextField>
+                      </Grid>
+                    )}
                   </Grid>
                 ))}
 
@@ -350,48 +408,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 </Grid>
               </Grid>
 
-              {formData.payment_method === 'financing' && (
-                <Grid item xs={12}>
-                  <CustomFormLabel htmlFor="financing_type" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Financiadoras</CustomFormLabel>
-                  <TextField
-                    select
-                    name="financing_type"
-                    value={formData.financing_type}
-                    onChange={(e) => handleChange('financing_type', e.target.value)}
-                    fullWidth
-                  >
-                    <MenuItem value="1">Sol Agora</MenuItem>
-                    <MenuItem value="2">BV</MenuItem>
-                    <MenuItem value="3">Sicoob</MenuItem>
-                    <MenuItem value="4">Bradesco</MenuItem>
-                    <MenuItem value="5">BanPará</MenuItem>
-                    <MenuItem value="6">SICREDI</MenuItem>
-                    <MenuItem value="7">BTG</MenuItem>
-                    <MenuItem value="8">Sol Fácil</MenuItem>
-                    <MenuItem value="9">Santander</MenuItem>
-                    <MenuItem value="10">Itaú</MenuItem>
-                    <MenuItem value="11">Banco do Brasil</MenuItem>
-                    <MenuItem value="12">Losango</MenuItem>
-                  </TextField>
-                </Grid>
-              )}
 
-              {formData.payment_method === 'credit' && (
-                <Grid item xs={12}>
-                  <CustomFormLabel htmlFor="installments_num" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Parcelas</CustomFormLabel>
-                  <TextField
-                    select
-                    name="installments_num"
-                    value={formData.installments_num}
-                    onChange={(e) => handleChange('installments_num', e.target.value)}
-                    fullWidth
-                  >
-                    <MenuItem value="2">2x</MenuItem>
-                    <MenuItem value="3">3x</MenuItem>
-                    <MenuItem value="4">4x</MenuItem>
-                  </TextField>
-                </Grid>
-              )}
 
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
