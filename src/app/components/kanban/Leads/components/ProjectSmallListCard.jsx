@@ -254,12 +254,12 @@ export function ProjectCard({ leadId = null }) {
             display: 'flex',
             alignItems: 'center',
             gap: 1,
-            color: '#FF5A5F',
-            fontWeight: 'bold',
+            color: '#FA896B',
+            fontWeight: '700',
             fontSize: '18px',
           }}
         >
-          <WarningAmberIcon sx={{ color: '#FF5A5F', fontSize: '26px' }} />
+          <WarningAmberIcon sx={{ color: '#FA896B', fontSize: '26px' }} />
           Confirmar Exclusão
         </DialogTitle>
 
