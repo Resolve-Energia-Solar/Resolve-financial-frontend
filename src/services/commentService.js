@@ -3,16 +3,28 @@ import apiClient from "./apiClient";
 
 
 const commentService = {
-  getComment: async (id, content_type) => {
-      try {
-          const response = await apiClient.get(`/api/comments/?object_id=${id}&content_type=${content_type}&ordering=created_at`);
-          console.log(response.data);
-          return response.data;
-      } catch (error) {
-          console.error(`Erro ao buscar anexo com id ${id}:`, error);
-          throw error;
-      }
-      },
+  getComments: async (id, content_type, params = {}) => {
+    try {
+      const response = await apiClient.get(
+        `/api/comments/`,
+        { params: { object_id: id, content_type, ordering: 'created_at', ...params } }
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar comentários para objeto com ${id} e content type ${content_type}:`, error);
+      throw error;
+    }
+  },
+  getComment: async (id) => {
+    try {
+      const response = await apiClient.get(`/api/comments/${id}/`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar comentário com id ${id}:`, error);
+      throw error;
+    }
+  },
   createComment: async (data) => {
     try {
       const response = await apiClient.post('/api/comments/', data);
@@ -37,7 +49,7 @@ const commentService = {
       return response.data;
     } catch (error) {
       console.error(`Erro ao atualizar anexo com id ${id}:`, error);
-      throw error;  
+      throw error;
     }
   },
   deleteComment: async (id) => {
