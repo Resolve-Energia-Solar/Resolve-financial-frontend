@@ -37,7 +37,7 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import BackupOutlinedIcon from '@mui/icons-material/BackupOutlined';
 import RotateLeftOutlinedIcon from '@mui/icons-material/RotateLeftOutlined';
 import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
-import { Switch } from 'formik-mui';
+import { Switch } from '@mui/material';
 
 function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null }) {
     const router = useRouter();
@@ -47,6 +47,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
     const { enqueueSnackbar } = useSnackbar();
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
+    const [checked, setChecked] = useState(false);
 
     const {
         formData,
@@ -168,15 +169,11 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                             "&:hover": {
                                                 backgroundColor: theme.palette.primary.main,
                                                 borderColor: "#FFFFFF",
-                                                "& .MuiTypography-root": {
-                                                    color: "#FFFFFF",
-                                                },
-                                                "& .MuiSvgIcon-root": {
-                                                    color: "#FFFFFF",
-                                                },
+                                                "& .MuiTypography-root": { color: "#FFFFFF" },
+                                                "& .MuiSvgIcon-root": { color: "#FFFFFF" },
                                             },
                                         }}
-                                        onClick={console.log("uploading file")}
+                                        onClick={() => console.log("Uploading file")}
                                     >
                                         <BackupOutlinedIcon sx={{ fontSize: "36px" }} />
                                         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, p: 1 }}>
@@ -424,7 +421,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                             </Grid>
 
                             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                                <Grid item xs={4}>
+                                <Grid item xs={1.5}>
                                     <CustomFormLabel
                                         htmlFor="shadowing"
                                         sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
@@ -433,10 +430,24 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     </CustomFormLabel>
 
                                     <Switch
-                                        checked={formData.shadowing || false}
-                                        onChange={(e) => handleChange('shadowing', e.target.checked)}
+                                        checked={checked}
+                                        onChange={(e) => setChecked(e.target.checked)}
                                         color="primary"
+                                        sx={{
+                                            '& .MuiSwitch-switchBase.Mui-checked': {
+                                                color: '#FDCB02', 
+                                            },
+                                            '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                                backgroundColor: '#FDCB02', 
+                                            },
+                                            '& .MuiSwitch-track': {
+                                                backgroundColor: '#ccc', 
+                                            },
+                                        }}
                                     />
+                                    <Typography sx={{ color: '#7E92A2', fontSize: '32px', fontWeight: 400 }}>
+                                        {checked ? 'Sim' : 'Não'}
+                                    </Typography>
 
                                 </Grid>
 
@@ -491,12 +502,22 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
                                 <Grid item xs={4}>
                                     <Box sx={{ display: 'flex', gap: 2 }}>
-                                        <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSaveForm} disabled={formLoading}
-                                            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
+                                        <Button
+                                            variant="contained"
+                                            sx={{
+                                                backgroundColor: theme.palette.primary.Button,
+                                                color: '#303030',
+                                                px: 3
+                                            }}
+                                            onClick={handleSaveForm}
+                                            disabled={formLoading}
+                                            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                                        >
                                             <Typography variant="body1" color="#303030">
                                                 {formLoading ? 'Salvando proposta...' : 'Salvar'}
                                             </Typography>
                                         </Button>
+
                                     </Box>
                                 </Grid>
 
