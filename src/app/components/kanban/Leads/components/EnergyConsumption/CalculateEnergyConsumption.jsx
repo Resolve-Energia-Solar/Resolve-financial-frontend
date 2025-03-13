@@ -165,7 +165,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         }}
                                         onClick={discard_proposal}
                                     >
-                                        <BackupOutlinedIcon />
+                                        <BackupOutlinedIcon sx={{ fontSize: "36px" }} />
                                         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, p: 1 }}>
                                             <Typography sx={{ fontSize: '14px', fontWeight: "400", color: "#0B0B0B" }}>
                                                 Carregar conta de luz
