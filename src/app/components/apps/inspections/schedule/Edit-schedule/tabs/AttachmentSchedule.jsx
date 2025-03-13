@@ -12,33 +12,28 @@ import {
 import scheduleService from '@/services/scheduleService';
 import AttachmentDetailsSchedule from '../../components/AttachmentDetails';
 import { useSelector } from 'react-redux';
-
-const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
-const CONTEXT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
+import getContentType from '@/utils/getContentType';
 
 function AttachmentSchedule({ scheduleId }) {
   const [attachments, setAttachments] = useState([]);
   const [openModalAddAttachment, setOpenModalAddAttachment] = useState(false);
   const [saleId, setSaleId] = useState(null);
   const [projectId, setProjectId] = useState(null);
+  const [saleContentType, setSaleContentType] = useState(null);
+  const [projectContentType, setProjectContentType] = useState(null);
 
   const userPermissions = useSelector((state) => state.user.permissions);
-
   const handleOpen = () => setOpenModalAddAttachment(true);
   const handleClose = () => setOpenModalAddAttachment(false);
-
   const [refresh, setRefresh] = useState(false);
-
-  const handleRefresh = () => {
-    setRefresh(!refresh);
-  };
+  const handleRefresh = () => setRefresh(!refresh);
 
   useEffect(() => {
     const fetchAttachments = async () => {
       try {
         const response = await scheduleService.getScheduleByIdAttachments(scheduleId);
         setAttachments(response.attachments);
-        setSaleId(response?.project?.sale?.id);
+        setSaleId(response?.project?.sale);
         setProjectId(response?.project?.id);
       } catch (error) {
         console.error('Error fetching attachments:', error);
@@ -46,6 +41,20 @@ function AttachmentSchedule({ scheduleId }) {
     };
     fetchAttachments();
   }, [scheduleId, refresh]);
+
+  useEffect(() => {
+    async function fetchContentTypes() {
+      try {
+        const saleType = await getContentType('resolve_crm', 'sale');
+        const projectType = await getContentType('resolve_crm', 'project');
+        setSaleContentType(saleType);
+        setProjectContentType(projectType);
+      } catch (error) {
+        console.error('Erro ao buscar content types:', error);
+      }
+    }
+    fetchContentTypes();
+  }, []);
 
   return (
     <>
@@ -55,7 +64,7 @@ function AttachmentSchedule({ scheduleId }) {
             Adicionar Anexos
           </Button>
         )}
-
+        {/* Exibe anexos gerais (se houver) */}
         <AttachmentDetailsSchedule objectIds={attachments} />
       </Box>
 
@@ -65,24 +74,32 @@ function AttachmentSchedule({ scheduleId }) {
           <Typography variant="h6" gutterBottom>
             Anexos da Venda
           </Typography>
-          <AttachmentDetailsSchedule
-            objectIds={attachments}
-            scheduleId={scheduleId}
-            contentType={CONTEXT_TYPE_SALE_ID}
-            objectId={saleId}
-            onRefresh={handleRefresh}
-          />
+          {saleContentType && saleId ? (
+            <AttachmentDetailsSchedule
+              objectIds={attachments}
+              scheduleId={scheduleId}
+              contentType={saleContentType}
+              objectId={saleId}
+              onRefresh={handleRefresh}
+            />
+          ) : (
+            <Typography variant="body2">Carregando anexos da venda...</Typography>
+          )}
 
           <Typography variant="h6" gutterBottom>
             Anexos do Projeto
           </Typography>
-          <AttachmentDetailsSchedule
-            objectIds={attachments}
-            scheduleId={scheduleId}
-            contentType={CONTEXT_TYPE_PROJECT_ID}
-            objectId={projectId}
-            onRefresh={handleRefresh}
-          />
+          {projectContentType && projectId ? (
+            <AttachmentDetailsSchedule
+              objectIds={attachments}
+              scheduleId={scheduleId}
+              contentType={projectContentType}
+              objectId={projectId}
+              onRefresh={handleRefresh}
+            />
+          ) : (
+            <Typography variant="body2">Carregando anexos do projeto...</Typography>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="secondary">
