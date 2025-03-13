@@ -182,7 +182,7 @@ export function ProjectCard({ leadId = null }) {
             onClick={() => setDialogProductOpen(true)}
           >
             <AddOutlinedIcon sx={{ fontSize: 18 }} />
-            <Typography variant="body2">Adicionar produto</Typography>
+            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar produto</Typography>
           </IconButton>
 
           <IconButton
@@ -201,7 +201,7 @@ export function ProjectCard({ leadId = null }) {
             onClick={() => { setDialogExistingProductOpen(true) }}
           >
             <Search sx={{ fontSize: 18 }} />
-            <Typography variant="body2">Adicionar existente</Typography>
+            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar existente</Typography>
           </IconButton>
         </Grid>
 
