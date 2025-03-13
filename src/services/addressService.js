@@ -18,6 +18,16 @@ const addressService = {
     }
   },
 
+  getAddress: async (params = {}) => {
+    try {
+      const response = await apiClient.get('/api/addresses/', { params });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar endereços:', error);
+      throw error;
+    }
+  },
+
   getAddressById: async (id) => {
     try {
       const response = await apiClient.get(`/api/addresses/${id}/`);

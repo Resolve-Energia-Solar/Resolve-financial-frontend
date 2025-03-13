@@ -22,6 +22,7 @@ const CreateAddressPage = ({
   userId = null,
   onRefresh = null,
   setAddress,
+  onAdd, // <-- Adicione essa prop para receber o callback onAdd
 }) => {
   const { enqueueSnackbar } = useSnackbar();
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -43,6 +44,10 @@ const CreateAddressPage = ({
   useEffect(() => {
     if (success) {
       enqueueSnackbar('Endereço salvo com sucesso!', { variant: 'success' });
+      // Chama onAdd passando o novo endereço (pode ser formData ou outro objeto formatado)
+      if (onAdd) {
+        onAdd(formData);
+      }
       if (onClosedModal) onClosedModal();
       if (onRefresh) onRefresh();
     } else if (formErrors && Object.keys(formErrors).length > 0) {
@@ -173,17 +178,17 @@ const CreateAddressPage = ({
   return (
     <Box
       sx={{
-        width: { xs: '95%', md: '90vw' },
-        maxWidth: { xs: '100%', md: 1000 },
+        width: '100%',
+        maxWidth: '600px',
         mx: 'auto',
-        p: { xs: 0, md: 2 },
+        p: 2,
       }}
     >
       <Paper
         elevation={0}
         sx={{
           width: '100%',
-          p: { xs: 0, md: 2 },
+          p: { xs: 0, md: 0 },
           backgroundColor: 'background.paper',
           borderRadius: 1,
         }}

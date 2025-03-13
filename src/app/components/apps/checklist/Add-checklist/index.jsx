@@ -4,8 +4,6 @@ import {
   Button,
   Stack,
   FormControlLabel,
-  Tabs,
-  Tab,
   Box,
   Typography,
   CircularProgress,
@@ -15,26 +13,22 @@ import {
 } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
-
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import { useSelector } from 'react-redux';
-
 import useUnitForm from '@/hooks/units/useUnitForm';
-import AutoCompleteAddress from '../../comercial/sale/components/auto-complete/Auto-Input-Address';
+import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
 import AutoCompleteSupplyAds from '../components/auto-complete/Auto-Input-SupplyAds';
 import supplyService from '@/services/supplyAdequanceService';
 import { useEffect, useState } from 'react';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import HasPermission from '@/app/components/permissions/HasPermissions';
+import addressService from '@/services/addressService';
+import CreateAddressPage from '@/app/components/apps/address/Add-address';
 
 const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh = null }) => {
   const userPermissions = useSelector((state) => state.user.permissions);
   const [fileLoading, setFileLoading] = useState(false);
-
-  const hasPermission = (permissions) => {
-    if (!permissions) return true;
-    return permissions.some((permission) => userPermissions.includes(permission));
-  };
+  const [selectedAddress, setSelectedAddress] = useState(null);
 
   const {
     formData,
@@ -53,6 +47,7 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
     { value: 'T', label: 'Trifásico' },
   ];
 
+  // Atualiza os campos do form com o id do projeto
   formData.project_id = projectId;
   formData.project = projectId;
 
@@ -62,6 +57,30 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
       onClosedModal();
     }
   }, [success]);
+
+  // Função para buscar opções de endereço
+  const fetchAddress = async (search) => {
+    try {
+      const response = await addressService.getAddress({ q: search, limit: 20 });
+      return response.results;
+    } catch (error) {
+      console.error('Erro na busca de opções:', error);
+      return [];
+    }
+  };
+
+  // Se já houver um endereço selecionado (formData.address_id), busca o objeto completo
+  useEffect(() => {
+    if (formData.address_id) {
+      addressService.getAddressById(formData.address_id)
+        .then((address) => {
+          setSelectedAddress(address);
+        })
+        .catch((error) => {
+          console.error('Erro ao buscar endereço:', error);
+        });
+    }
+  }, [formData.address_id]);
 
   useEffect(() => {
     if (formData.bill_file) {
@@ -198,10 +217,24 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
             )}
 
             <Grid item xs={12} sm={12} lg={6}>
-              <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
-              <AutoCompleteAddress
-                onChange={(id) => handleChange('address_id', id)}
-                value={formData.address_id}
+              <CustomFormLabel htmlFor="address_id">Endereço</CustomFormLabel>
+              <GenericAutocomplete
+                label="Endereço"
+                fetchOptions={fetchAddress}
+                onChange={(option) => {
+                  setSelectedAddress(option);
+                  handleChange('address_id', option ? option.id : null);
+                }}
+                getOptionLabel={(option) =>
+                  `${option.street}, ${option.number}, ${option.city}, ${option.state}`
+                }
+                value={selectedAddress}
+                AddComponent={CreateAddressPage}
+                onAdd={(newAddress) => {
+                  setSelectedAddress(newAddress);
+                  handleChange('address_id', newAddress.id);
+                }}
+                addTitle="Adicionar Novo Endereço"
                 {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
               />
             </Grid>
@@ -247,7 +280,6 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
                       )}
                     </Typography>
 
-                    {/* Loading do arquivo */}
                     {fileLoading && (
                       <Box display="flex" alignItems="center" mt={1}>
                         <CircularProgress size={20} color="inherit" />
