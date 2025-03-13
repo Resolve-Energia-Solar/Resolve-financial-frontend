@@ -44,8 +44,6 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
-  const [openEnergyConsumption, setOpenEnergyConsumption] = useState(false);
-
   const {
     formData,
     handleChange,
@@ -509,7 +507,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
             </Box>
           </Grid>
 
-          <Dialog
+          {/* <Dialog
             open={openEnergyConsumption}
             onClose={() => setOpenEnergyConsumption(false)}
             maxWidth="lg"
@@ -521,8 +519,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                 leadId={leadId}
                 onClose={() => setOpenEditProposal(false)}
                 onRefresh={onRefresh} /> */}
-            </DialogContent>
-          </Dialog>
+            {/* </DialogContent> */}
+          {/* </Dialog> */} 
 
         </Box>
       </Grid>
