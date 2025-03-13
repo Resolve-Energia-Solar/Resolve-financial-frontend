@@ -98,11 +98,11 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const handleSaveForm = async () => {
     const response = await handleSave();
     if (response) {
-      enqueueSnackbar('Agendamento salvo com sucesso', { variant: 'success' });
+      enqueueSnackbar('Proposta salva com sucesso', { variant: 'success' });
       if (onRefresh) onRefresh();
       if (onClose) onClose();
     } else {
-      enqueueSnackbar('Erro ao salvar agendamento', { variant: 'error' });
+      enqueueSnackbar('Erro ao salvar proposta', { variant: 'error' });
       console.log('Form Errors:', formErrors);
     }
   }
