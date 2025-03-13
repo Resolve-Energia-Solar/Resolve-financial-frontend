@@ -1,4 +1,7 @@
 export const capitalizeWords = (str, minLength = 2) => {
+    if (typeof str !== 'string') {
+        return '';
+    }
     return str.toLocaleLowerCase('pt-BR').replace(/\b[\p{L}]+\b/gu, (word) => {
       if (word.length <= minLength) {
         return word;
