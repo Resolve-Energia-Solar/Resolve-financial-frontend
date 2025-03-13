@@ -27,6 +27,7 @@ import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard'
 // import LeadProposalPage from './Edit-Proposal';
 import LeadsViewProposal from './View-Proposal';
 import AddProposalPage from './Add-Proposal';
+import EditProposalPage from './Edit-Proposal';
 
 
 const LeadsProposalListPage = ({ leadId = null }) => {
@@ -206,7 +207,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                             >
                                 <DialogContent>
                                     {/* add a new edit page in the future */}
-                                    <AddProposalPage 
+                                    <EditProposalPage 
                                         leadId={leadId} 
                                         onClose={() => setOpenEditProposal(false)} 
                                         onRefresh={handleRefresh} />
