@@ -149,8 +149,20 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
-                <Grid item xs={12} >
-                    <Button variant="outlined" sx={{ border: "2px solid", borderStyle: "dashed", borderColor: theme.palette.primary.main, borderRadius: 1, p: 4 }} onClick={discard_proposal}>
+                <Grid item xs={12} sx={{ mt: "24px" }} >
+                    <Button 
+                        variant="outlined" 
+                        sx={{ 
+                            border: "2px solid", 
+                            borderStyle: "dashed", 
+                            borderColor: theme.palette.primary.main, 
+                            borderRadius: 1, 
+                            p: 4,
+                            width: "100%",
+                            height: "100%"
+                        }} 
+                        onClick={discard_proposal}
+                    >
                     <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
                     <DeleteOutlinedIcon />
                 </Button>
