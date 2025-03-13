@@ -287,7 +287,7 @@ const SaleList = () => {
 
       <Box>
         <TableContainer sx={{ overflowX: 'auto' }}>
-          <Table stickyHeader aria-label="sales table">
+          <Table>
             <TableHead>
               <TableRow>
                 <TableCell>Doc.</TableCell>
@@ -579,7 +579,7 @@ const SaleList = () => {
         onClose={() => toggleDrawerClosed(false)}
         title="Detalhamento da Venda"
       >
-        <EditSaleTabs saleId={rowSelected?.id} />
+        <EditSaleTabs saleId={rowSelected?.id} onRefresh={fetchSales} />
       </SideDrawer>
     </Box>
   );
