@@ -123,11 +123,11 @@ export function ProjectCard({ leadId = null }) {
 
         {/* TABLE HEADER */}
         <Grid container xs={12} sx={{ mb: 1, mt: 2 }}>
-          <Grid item xs={9}>
-            <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Produto</Typography>
+          <Grid item xs={11}>
+            <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Kit Sol Feliz</Typography>
           </Grid>
-          <Grid item xs={3}>
-            <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Valor</Typography>
+          <Grid item xs={1}>
+            <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Quantidade</Typography>
           </Grid>
         </Grid>
 
@@ -142,13 +142,13 @@ export function ProjectCard({ leadId = null }) {
               paddingY: 1.5,
             }}
           >
-            <Grid item xs={8} sx={{ display: 'flex', alignItems: 'center' }}>
+            <Grid item xs={8} sx={{ display: 'flex', alignItems: 'flex-start' }}>
               <Typography sx={{ fontWeight: '500', fontSize: "12px" }}>{product.name}</Typography>
             </Grid>
             <Grid
               item
               xs={3}
-              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}
             >
               <Typography sx={{ fontWeight: '500', fontSize: "12px" }}>
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.product_value)}
@@ -168,7 +168,7 @@ export function ProjectCard({ leadId = null }) {
 
         { customProducts.length === 0 && (
           <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Typography variant="body2">Nenhum produto adicionado</Typography>
+            <Typography sx={{ fontWeight: '200', fontSize: "12px" }}>Nenhum produto adicionado</Typography>
           </Grid>
         )}
 
