@@ -22,6 +22,7 @@ import { addProduct, removeProductsByIds, associateProductWithLead, selectProduc
 import { useDispatch, useSelector } from 'react-redux';
 import ProductService from '@/services/productsService';
 import ListProducts from './ListProducts';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 
 
@@ -149,7 +150,7 @@ export function ProjectCard({ leadId = null }) {
           </Grid>
         ))}
 
-        { customProducts.length === 0 && (
+        {customProducts.length === 0 && (
           <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Typography sx={{ fontWeight: '200', fontSize: "12px" }}>Nenhum produto adicionado</Typography>
           </Grid>
@@ -235,27 +236,82 @@ export function ProjectCard({ leadId = null }) {
         </DialogContent>
       </Dialog>
 
+      import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+
       <Dialog
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        maxWidth="md"
+        maxWidth="sm"
         fullWidth
+        sx={{
+          '& .MuiPaper-root': {
+            borderRadius: '12px',
+            padding: '16px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+          },
+        }}
       >
-        <DialogTitle>Confirmar Exclusão</DialogTitle>
+        <DialogTitle
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            color: '#FF5A5F',
+            fontWeight: 'bold',
+            fontSize: '18px',
+          }}
+        >
+          <WarningAmberIcon sx={{ color: '#FF5A5F', fontSize: '26px' }} />
+          Confirmar Exclusão
+        </DialogTitle>
+
         <DialogContent>
-          <Typography>
-            Tem certeza de que deseja excluir este produto? Esta ação não pode ser desfeita em produtos personalizados.
-          </Typography>
+          <Box
+            sx={{
+              backgroundColor: '#FFF7F7',
+              padding: '16px',
+              borderRadius: '8px',
+              border: '1px solid #FFCDD2',
+            }}
+          >
+            <Typography sx={{ fontSize: '14px', color: '#333' }}>
+              Tem certeza de que deseja excluir este produto?{' '}
+              <strong>Esta ação não pode ser desfeita em produtos personalizados.</strong>
+            </Typography>
+          </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteModalOpen(false)} color="secondary">
+
+        <DialogActions sx={{ padding: '16px' }}>
+          <Button
+            onClick={() => setDeleteModalOpen(false)}
+            variant="outlined"
+            sx={{
+              // borderColor: 'secondary',
+              color: 'secondary',
+              // '&:hover': {
+              //   backgroundColor: '#F0F0F0',
+              //   borderColor: '#7E8388',
+              // },
+            }}
+          >
             Cancelar
           </Button>
-          <Button onClick={confirmDelete} color="error" variant="contained">
+          <Button
+            onClick={confirmDelete}
+            color="error"
+            variant="contained"
+            // sx={{
+            //   backgroundColor: '#FF5A5F',
+            //   '&:hover': {
+            //     backgroundColor: '#E0484C',
+            //   },
+            // }}
+          >
             Excluir
           </Button>
         </DialogActions>
       </Dialog>
+
     </Grid>
   );
 }
