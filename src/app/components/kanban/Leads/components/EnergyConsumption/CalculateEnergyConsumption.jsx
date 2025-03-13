@@ -35,6 +35,8 @@ import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import BackupOutlinedIcon from '@mui/icons-material/BackupOutlined';
+import RotateLeftOutlinedIcon from '@mui/icons-material/RotateLeftOutlined';
+import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
 
 function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null }) {
     const router = useRouter();
@@ -430,22 +432,103 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                 </Grid>
                             </Grid>
 
+                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                <Grid item xs={4}>
+                                    <CustomFormLabel htmlFor="public_lighting_charge" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Sombreamento</CustomFormLabel>
+                                    <TextField
+                                        name="public_lighting_charge"
+                                        value={formData.public_lighting_charge}
+                                        onChange={(e) => handleChange('public_lighting_charge', e.target.value)}
+                                        fullWidth
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
+                                                        R$
+                                                    </Box>
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
+                                </Grid>
+
+                                <Grid item xs={2}>
+                                    <CustomFormLabel htmlFor="power_phase" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                                        Tipo de telhado
+                                    </CustomFormLabel>
+                                    <TextField
+                                        select
+                                        name="power_phase"
+                                        value={formData.power_phase}
+                                        onChange={(e) => handleChange('power_phase', e.target.value)}
+                                        fullWidth
+                                    >
+                                        <MenuItem value="bi">Normal</MenuItem>
+
+                                    </TextField>
+                                </Grid>
+
+                                <Grid item xs={4}>
+                                    <CustomFormLabel htmlFor="b_wire_value" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Geração de energia estimada</CustomFormLabel>
+                                    <TextField
+                                        name="b_wire_value"
+                                        value={formData.b_wire_value}
+                                        onChange={(e) => handleChange('b_wire_value', e.target.value)}
+                                        fullWidth
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <RotateLeftOutlinedIcon />
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
+                                </Grid>
+
+                                <Grid item xs={4}>
+                                    <Button
+                                        variant="contained"
+                                        sx={{
+                                            backgroundColor: 'black',
+                                            color: 'white',
+                                            '&:hover': { backgroundColor: '#333' },
+                                            px: 3,
+                                        }}
+                                    >
+                                        <Typography variant="body1">Calcular geração de energia estimada</Typography>
+                                        <BoltOutlinedIcon sx={{ ml: 1 }} />
+                                    </Button>
+                                </Grid>
+
+                                <Grid item xs={4}>
+                                    <Box sx={{ display: 'flex', gap: 2 }}>
+                                        <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSaveForm} disabled={formLoading}
+                                            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
+                                            <Typography variant="body1" color="#303030">
+                                                {formLoading ? 'Salvando proposta...' : 'Salvar'}
+                                            </Typography>
+                                        </Button>
+                                    </Box>
+                                </Grid>
+
+                            </Grid>
+
 
 
                         </Grid>
 
-
+                        {/* 
                         <Grid
                             item
                             xs={12}
                             sx={{ display: 'flex', flexDirection: 'column', marginTop: 2, gap: 2 }}
                         >
                             <ProjectCard leadId={leadId} />
-                        </Grid>
+                        </Grid> */}
                     </Grid>
 
 
-                    <Grid
+                    {/* <Grid
                         item
                         xs={12}
                         sx={{
@@ -482,7 +565,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                 </Typography>
                             </Button>
                         </Box>
-                    </Grid>
+                    </Grid> */}
 
                     {/* <Dialog
             open={openEnergyConsumption}
