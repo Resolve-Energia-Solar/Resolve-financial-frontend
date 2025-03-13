@@ -34,6 +34,7 @@ import { color } from 'framer-motion';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import EnergyConsumptionCalc from '../components/EnergyConsumption/CalculateEnergyConsumption';
 
 function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
@@ -516,9 +517,9 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
           >
             <DialogContent>
               {/* add consumo energético dialog */}
-              <AddProposalPage
+              <EnergyConsumptionCalc
                 leadId={leadId}
-                onClose={() => setOpenEditProposal(false)}
+                onClose={() => setOpenEnergyConsumption(false)}
                 onRefresh={onRefresh} />
             </DialogContent>
           </Dialog>
