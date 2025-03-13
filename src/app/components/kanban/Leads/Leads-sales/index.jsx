@@ -14,7 +14,6 @@ import {
     Grid,
     Dialog,
     DialogContent,
-    Drawer,
 } from '@mui/material';
 
 import { useRouter } from 'next/navigation';
@@ -24,25 +23,26 @@ import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
 import TableComponent from '@/app/components/kanban/Leads/components/TableComponent'
 import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
-// import LeadProposalPage from './Edit-Proposal';
-import LeadsViewProposal from './View-Proposal';
-import AddProposalPage from './Add-Proposal';
+import AddSalePage from './Add-Sale';
 
 
-const LeadsProposalListPage = ({ leadId = null }) => {
+
+const SalesListPage = ({ leadId = null }) => {
     const router = useRouter();
     const [data, setData] = useState([]);
-    const [loadingProposals, setLoadingProposals] = useState(true);
+    const [loadingSales, setLoadingSales] = useState(true);
     const [refresh, setRefresh] = useState(false);
     const [error, setError] = useState(null);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalRows, setTotalRows] = useState(0);
 
-    const proposalStatus = {
-        "A": { label: "Aceita", color: "#E9F9E6" },
-        "R": { label: "Recusada", color: "#FEEFEE" },
-        "P": { label: "Pendente", color: "#FFF7E5" },
+    const saleStatus = {
+        "C": { label: "Canelada", color: "#FFEBEE" },     
+        "D": { label: "Destrato", color: "#FFCDD2" },    
+        "F": { label: "Finalizada", color: "#E8F5E9" },   
+        "P": { label: "Pendente", color: "#FFF8E1" },    
+        "E": { label: "Em Andamento", color: "#E3F2FD" }, 
     };
 
     const columns = [
@@ -88,45 +88,44 @@ const LeadsProposalListPage = ({ leadId = null }) => {
             flex: 1,
             render: (row) => (
                 <Chip
-                    label={proposalStatus[row.status]?.label || 'Desconhecido'}
-                    sx={{ backgroundColor: proposalStatus[row.status]?.color }}
+                    label={saleStatus[row.status]?.label || 'Desconhecido'}
+                    sx={{ backgroundColor: saleStatus[row.status]?.color }}
                 />
             ),
         },
     ];
 
-    const [openAddProposal, setOpenAddProposal] = useState(false);
-    const [openEditProposal, setOpenEditProposal] = useState(false);
-    const [openDetailProposal, setOpenDetailProposal] = useState(false);
-    const [selectedProposalId, setSelectedProposalId] = useState(null);
+    const [openAddSale, setOpenAddSale] = useState(false);
+    const [openDetailSale, setOpenDetailSale] = useState(false);
+    const [selectedSaleId, setSelectedSaleId] = useState(null);
 
     const handleRefresh = () => {
         setRefresh(!refresh);
     };
 
     useEffect(() => {
-        const fetchProposals = async () => {
-            setLoadingProposals(true);
+        const fetchSales = async () => {
+            setLoadingSales(true);
             try {
                 const response = await leadService.getLeadById(leadId, {
                     params: {
-                        expand: 'proposals',
-                        fields: 'id,proposals',
+                        expand: 'sale',
+                        fields: 'id,sale',
                         page: page + 1,
                         limit: rowsPerPage,
                     },
                 });
-                setData(response.proposals || []);
-                setTotalRows(response.proposals?.length || 0);
+                setData(response.sales || []);
+                setTotalRows(response.sale?.length || 0);
                 
             } catch (err) {
-                console.error('Erro ao buscar contratos');
+                console.error('Erro ao buscar vendas');
             } finally {
-                setLoadingProposals(false);
+                setLoadingSales(false);
             }
         };
 
-        fetchProposals();
+        fetchSales();
     }, [leadId, refresh, page, rowsPerPage]);
 
 
@@ -137,7 +136,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                 <Grid item xs={12} sx={{ overflow: 'scroll' }}>
                     <Box sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
                         <Grid item spacing={2} alignItems="center" xs={12}>
-                            <LeadInfoHeader leadId={leadId} tabValue={2} />
+                            <LeadInfoHeader leadId={leadId} />
                         </Grid>
                     </Box>
 
@@ -146,9 +145,9 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                             <TableHeader
                                 title={"Total"}
                                 totalItems={totalRows}
-                                objNameNumberReference={"Propostas"}
+                                objNameNumberReference={"Vendas"}
                                 buttonLabel="Criar"
-                                onButtonClick={() => setOpenAddProposal(true)}
+                                onButtonClick={() => setOpenAddSale(true)}
                             />
                         </Grid>
 
@@ -157,7 +156,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                                 columns={columns}
                                 data={data}
                                 totalRows={totalRows}
-                                loading={loadingProposals}
+                                loading={loadingSales}
                                 page={page}
                                 rowsPerPage={rowsPerPage}
                                 onPageChange={(newPage) => setPage(newPage)}
@@ -166,68 +165,43 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                                     setPage(0);
                                 }}
                                 actions={{
-                                    edit: (row) => {
-                                        setSelectedProposalId(row.id);
-                                        setOpenEditProposal(true);
-                                    },
+                                    edit: (row) => router.push(`/apps/leads/${row.id}/edit`),
                                     view: (row) => {
-                                        setSelectedProposalId(row.id);
-                                        setOpenDetailProposal(true); 
+                                        setSelectedSaleId(row.id);
+                                        setOpenDetailSale(true); 
                                     },
                                 }}
                             />
 
-                            <Drawer
-                                anchor="right"
-                                open={openAddProposal}
-                                onClose={() => setOpenAddProposal(false)}
-                                // maxWidth="lg"
-                                sx={{ zIndex: 1300 }}
-                                PaperProps={{
-                                    sx: {
-                                        width: "60vw",
-                                        p: 4,
-                                    }
-                                }}
-                            >
-                                <DialogContent>
-                                    <AddProposalPage 
-                                        leadId={leadId} 
-                                        onClose={() => setOpenAddProposal(false)} 
-                                        onRefresh={handleRefresh} />
-                                </DialogContent>
-                            </Drawer>
-
-                            <Dialog
-                                open={openEditProposal}
-                                onClose={() => setOpenEditProposal(false)}
+                            {/* <Dialog
+                                open={openAddSale}
+                                onClose={() => setOpenAddSale(false)}
                                 maxWidth="lg"
                                 fullWidth
                             >
                                 <DialogContent>
-                                    {/* add a new edit page in the future */}
-                                    <AddProposalPage 
+                                    <AddSalePage 
                                         leadId={leadId} 
-                                        onClose={() => setOpenEditProposal(false)} 
+                                        onClose={() => setOpenAddSale(false)} 
                                         onRefresh={handleRefresh} />
                                 </DialogContent>
-                            </Dialog>
+                            </Dialog> */}
 
-                            <Dialog
-                                open={openDetailProposal}
-                                onClose={() => setOpenDetailProposal(false)}
+                            {/* <Dialog
+                                open={openDetailSale}
+                                onClose={() => setOpenDetailSale(false)}
                                 maxWidth="lg"
                                 fullWidth
                             >
                                 <DialogContent>
                                     <LeadsViewProposal
                                         leadId={leadId}
-                                        proposalId={selectedProposalId}
-                                        onClose={() => setOpenDetailProposal(false)}
+                                        proposalId={selectedSaleId}
+                                        onClose={() => setOpenDetailSale(false)}
                                         onRefresh={handleRefresh}
                                     />
                                 </DialogContent>
-                            </Dialog>
+                            </Dialog> */}
 
                         </Grid>
 
@@ -239,4 +213,4 @@ const LeadsProposalListPage = ({ leadId = null }) => {
     );
 };
 
-export default LeadsProposalListPage;
+export default SalesListPage;

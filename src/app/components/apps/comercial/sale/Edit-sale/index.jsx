@@ -9,6 +9,8 @@ import {
   Box,
   Typography,
   CircularProgress,
+  Autocomplete,
+  TextField
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
@@ -79,6 +81,8 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
 
   const { loading, error, saleData } = useSale(id);
 
+  console.log('saleData', saleData);
+
   const {
     formData,
     handleChange,
@@ -139,6 +143,8 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
   }, [successData, success]);
 
   console.log('formErrors', formErrors);
+  console.log('formData:', formData);
+  console.log('reference_table', formData.reference_table);
 
   return (
     <Box {...props}>
@@ -284,6 +290,7 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                     disabled={!hasPermission(['financial.change_status_financial'])}
                   />
                 </Grid>
+
                 <HasPermission
                   permissions={['resolve_crm.can_change_billing_date']}
                   userPermissions={userPermissions}
@@ -323,6 +330,27 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                     />
                   </Grid>
                 )}
+
+                <Grid item xs={12} sm={12} lg={4}>
+                  <CustomFormLabel htmlFor="reference_table">Tabela de Referência</CustomFormLabel>
+                    <Autocomplete
+                      freeSolo
+                      options={[
+                        '1º Feirão 2025 - Pará',
+                        '1º Feirão 2025 - Nordeste',
+                        '1º Feirão 2025 - Amapá',
+                        'Retenção 12%',
+                        'Retenção 15%',
+                        'Retenção 17%',
+                      ]}
+                      value={formData.reference_table || ''}
+                      onChange={(event, newValue) => handleChange('reference_table', newValue)}
+                      renderInput={(params) => (
+                        <TextField {...params} label="Tabela de Referência" variant="outlined" />
+                      )}
+                      disabled={!hasPermission(['resolve_crm.can_change_billing_date'])}
+                    />
+                </Grid>
 
                 <HasPermission
                   permissions={['accounts.change_pre_sale_field']}
