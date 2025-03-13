@@ -1,18 +1,29 @@
 'use client';
-import { Grid, Button, Stack, Alert, CircularProgress, Box } from '@mui/material';
+import React, { useEffect } from 'react';
+import {
+  Box,
+  Button,
+  Stack,
+  Alert,
+  CircularProgress,
+  Paper,
+  Tooltip,
+  IconButton,
+} from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import { useSelector } from 'react-redux';
-import useAddressForm from '@/hooks/address/useAddressForm';
-import { useEffect, useState } from 'react';
-import FormSelect from '@/app/components/forms/form-custom/FormSelect';
-import userService from '@/services/userService';
 import { useSnackbar } from 'notistack';
+import AddressAutocomplete from '@/app/components/auto-completes/AddressSearch';
+import useAddressForm from '@/hooks/address/useAddressForm';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
-const CreateAddressPage = ({ selectedAddressId = null, onClosedModal = null, userId = null, onRefresh = null }) => {
+const CreateAddressPage = ({
+  onClosedModal = null,
+  userId = null,
+  onRefresh = null,
+}) => {
   const { enqueueSnackbar } = useSnackbar();
-  const userPermissions = useSelector((state) => state.user.permissions);
-  const [fileLoading, setFileLoading] = useState(false);
+
+  const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   const {
     formData,
@@ -21,197 +32,152 @@ const CreateAddressPage = ({ selectedAddressId = null, onClosedModal = null, use
     formErrors,
     loading: formLoading,
     success,
-    dataReceived,
   } = useAddressForm();
 
+  // Define o user_id no formulário
   formData.user_id = userId;
 
   useEffect(() => {
     if (success) {
-      if (onClosedModal) {
-        onClosedModal();
-        if (onRefresh) onRefresh();
-      }
-      if (selectedAddressId) {
-        selectedAddressId(dataReceived.id);
-      }
+      enqueueSnackbar('Endereço salvo com sucesso!', { variant: 'success' });
+      if (onClosedModal) onClosedModal();
+      if (onRefresh) onRefresh();
+    } else if (formErrors && Object.keys(formErrors).length > 0) {
+      const errorMessage = Object.values(formErrors).join(', ');
+      enqueueSnackbar(`Erro ao salvar endereço: ${errorMessage}`, { variant: 'error' });
     }
   }, [success]);
 
-  const stateOptions = [
-    { value: 'AC', label: 'AC' },
-    { value: 'AL', label: 'AL' },
-    { value: 'AP', label: 'AP' },
-    { value: 'AM', label: 'AM' },
-    { value: 'BA', label: 'BA' },
-    { value: 'CE', label: 'CE' },
-    { value: 'DF', label: 'DF' },
-    { value: 'ES', label: 'ES' },
-    { value: 'GO', label: 'GO' },
-    { value: 'MA', label: 'MA' },
-    { value: 'MT', label: 'MT' },
-    { value: 'MS', label: 'MS' },
-    { value: 'MG', label: 'MG' },
-    { value: 'PA', label: 'PA' },
-    { value: 'PB', label: 'PB' },
-    { value: 'PR', label: 'PR' },
-    { value: 'PE', label: 'PE' },
-    { value: 'PI', label: 'PI' },
-    { value: 'RJ', label: 'RJ' },
-    { value: 'RN', label: 'RN' },
-    { value: 'RS', label: 'RS' },
-    { value: 'RO', label: 'RO' },
-    { value: 'RR', label: 'RR' },
-    { value: 'SC', label: 'SC' },
-    { value: 'SP', label: 'SP' },
-    { value: 'SE', label: 'SE' },
-    { value: 'TO', label: 'TO' },
-  ];
-
-  const fetchAddressByCep = async (cep) => {
-    try {
-      const response = await fetch(`https://brasilapi.com.br/api/cep/v1/${cep}`);
-      if (!response.ok) throw new Error('CEP não encontrado');
-      const data = await response.json();
-      handleChange('state', data.state);
-      handleChange('city', data.city);
-      handleChange('neighborhood', data.neighborhood);
-      handleChange('street', data.street);
-    } catch (error) {
-      console.error('Erro ao buscar endereço:', error);
-      enqueueSnackbar(`Erro ao buscar endereço: ${error.message}`, { variant: 'error' });
-    }
+  // Mapeamento para converter o nome completo do estado em sigla
+  const stateMapping = {
+    "Acre": "AC",
+    "Alagoas": "AL",
+    "Amapá": "AP",
+    "Amazonas": "AM",
+    "Bahia": "BA",
+    "Ceará": "CE",
+    "Distrito Federal": "DF",
+    "Espírito Santo": "ES",
+    "Goiás": "GO",
+    "Maranhão": "MA",
+    "Mato Grosso": "MT",
+    "Mato Grosso do Sul": "MS",
+    "Minas Gerais": "MG",
+    "Pará": "PA",
+    "Paraíba": "PB",
+    "Paraná": "PR",
+    "Pernambuco": "PE",
+    "Piauí": "PI",
+    "Rio de Janeiro": "RJ",
+    "Rio Grande do Norte": "RN",
+    "Rio Grande do Sul": "RS",
+    "Rondônia": "RO",
+    "Roraima": "RR",
+    "Santa Catarina": "SC",
+    "São Paulo": "SP",
+    "Sergipe": "SE",
+    "Tocantins": "TO",
   };
 
-  const handleCepBlur = (e) => {
-    const cep = e.target.value;
-    if (cep.length === 8) {
-      fetchAddressByCep(cep);
-    }
+  // Callback que atualiza o formulário com os dados selecionados via autocomplete
+  const handleAddressSelect = (addressData) => {
+    const formatedZipCode = addressData.zip_code.replace('-', '');
+    handleChange('zip_code', formatedZipCode);
+    handleChange('country', addressData.country);
+    handleChange('state', stateMapping[addressData.state] || addressData.state);
+    handleChange('city', addressData.city);
+    handleChange('neighborhood', addressData.neighborhood);
+    handleChange('street', addressData.street);
+    handleChange('number', addressData.number);
+    handleChange('latitude', addressData.latitude);
+    handleChange('longitude', addressData.longitude);
+  };
+
+  const handleSubmit = () => {
+    handleSave();
   };
 
   return (
-    <Box>
-      {success && (
-        <Alert severity="success" sx={{ mt: 2 }}>
-          Endereço criado com sucesso!
-        </Alert>
-      )}
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="zip_code">CEP</CustomFormLabel>
-          <CustomTextField
-            fullWidth
-            variant="outlined"
-            value={formData.zip_code}
-            onChange={(e) => handleChange('zip_code', e.target.value)}
-            onBlur={handleCepBlur}
-            error={!!formErrors.zip_code}
-            helperText={formErrors.zip_code}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="country">País</CustomFormLabel>
-          <CustomTextField
-            fullWidth
-            variant="outlined"
-            value={formData.country}
-            onChange={(e) => handleChange('country', e.target.value)}
-            error={!!formErrors.country}
-            helperText={formErrors.country}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={12} lg={4}>
-          <FormSelect
-            label="Estado"
-            name="state"
-            options={stateOptions}
-            value={formData.state}
-            onChange={(e) => handleChange('state', e.target.value)}
-            error={!!formErrors.state}
-            helperText={formErrors.state}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="city">Cidade</CustomFormLabel>
-          <CustomTextField
-            fullWidth
-            variant="outlined"
-            value={formData.city}
-            onChange={(e) => handleChange('city', e.target.value)}
-            error={!!formErrors.city}
-            helperText={formErrors.city}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="neighborhood">Bairro</CustomFormLabel>
-          <CustomTextField
-            fullWidth
-            variant="outlined"
-            value={formData.neighborhood}
-            onChange={(e) => handleChange('neighborhood', e.target.value)}
-            error={!!formErrors.neighborhood}
-            helperText={formErrors.neighborhood}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="street">Rua</CustomFormLabel>
-          <CustomTextField
-            fullWidth
-            variant="outlined"
-            value={formData.street}
-            onChange={(e) => handleChange('street', e.target.value)}
-            error={!!formErrors.street}
-            helperText={formErrors.street}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="number">Número</CustomFormLabel>
-          <CustomTextField
-            fullWidth
-            variant="outlined"
-            value={formData.number}
-            onChange={(e) => handleChange('number', e.target.value)}
-            error={!!formErrors.number}
-            helperText={formErrors.number}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="complement">Complemento</CustomFormLabel>
-          <CustomTextField
-            fullWidth
-            variant="outlined"
-            value={formData.complement}
-            onChange={(e) => handleChange('complement', e.target.value)}
-            error={!!formErrors.complement}
-            helperText={formErrors.complement}
-          />
-        </Grid>
-      </Grid>
-
-      <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-        {onClosedModal && (
-          <Button variant="contained" color="primary" onClick={onClosedModal}>
-            Fechar
-          </Button>
+    <Box
+      sx={{
+        width: '90vw',
+        maxWidth: 1000,
+        height: '50vh',
+        mx: 'auto',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        p: { xs: 2, md: 4 },
+      }}
+    >
+      <Paper
+        elevation={0}
+        sx={{
+          width: '100%',
+          p: { xs: 3, md: 4 },
+          backgroundColor: 'background.paper',
+          borderRadius: 1,
+        }}
+      >
+        {Object.keys(formErrors).length > 0 && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {Object.keys(formErrors).map((field) => (
+              <div key={field}>
+                <strong>{field}:</strong> {formErrors[field]}
+              </div>
+            ))}
+          </Alert>
         )}
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSave}
-          disabled={formLoading}
-          endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-        >
-          {formLoading ? 'Salvando...' : 'Criar'}
-        </Button>
-      </Stack>
+
+        <Stack spacing={3} sx={{ width: '100%' }}>
+          {/* Campo de pesquisa de endereço com tooltip no ícone */}
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%' }}>
+            <Box sx={{ flexGrow: 1 }}>
+              <AddressAutocomplete
+                apiKey={API_KEY}
+                onAddressSelect={handleAddressSelect}
+              />
+            </Box>
+            <Tooltip title="Digite seu endereço com NÚMERO da casa e selecione uma das opções sugeridas." placement="top">
+              <IconButton size="small">
+                <HelpOutlineIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Stack>
+
+          {/* Campo para complemento com tooltip no ícone */}
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%' }}>
+            <Box sx={{ flexGrow: 1 }}>
+              <CustomTextField
+                fullWidth
+                label="Complemento"
+                variant="outlined"
+                value={formData.complement}
+                onChange={(e) => handleChange('complement', e.target.value)}
+                error={!!formErrors.complement}
+                helperText={formErrors.complement}
+              />
+            </Box>
+            <Tooltip title="Informe informações adicionais, ex: apto, bloco, complemento." placement="top">
+              <IconButton size="small">
+                <HelpOutlineIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Stack>
+
+          {/* Botão para salvar */}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+            disabled={formLoading}
+            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+            sx={{ alignSelf: 'flex-end' }}
+          >
+            {formLoading ? 'Salvando...' : 'Criar Endereço'}
+          </Button>
+        </Stack>
+      </Paper>
     </Box>
   );
 };

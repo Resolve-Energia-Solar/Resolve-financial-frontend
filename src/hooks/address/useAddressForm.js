@@ -1,3 +1,4 @@
+// useAddressForm.js
 import { useState, useEffect } from 'react';
 import addressService from '@/services/addressService';
 import { useSnackbar } from 'notistack';
@@ -13,6 +14,8 @@ const useAddressForm = (initialData, id) => {
     street: '',
     number: '',
     complement: '',
+    latitude: '',
+    longitude: '',
     user_id: ''
   });
 
@@ -32,6 +35,9 @@ const useAddressForm = (initialData, id) => {
         street: initialData.street || '',
         number: initialData.number || '',
         complement: initialData.complement || '',
+        latitude: initialData.latitude || '',
+        longitude: initialData.longitude || '',
+        user_id: initialData.user_id || '',
       });
     }
   }, [initialData]);
@@ -51,6 +57,8 @@ const useAddressForm = (initialData, id) => {
       street: formData.street,
       number: formData.number,
       complement: formData.complement,
+      latitude: formData.latitude,
+      longitude: formData.longitude,
       user_id: formData.user_id ? formData.user_id : undefined,
     };
 
@@ -68,7 +76,6 @@ const useAddressForm = (initialData, id) => {
     } catch (err) {
       setSuccess(false);
       setFormErrors(err.response?.data || {});
-      console.log(err.response?.data || err);
       const errorMessage = err.response?.data?.detail || "Erro ao salvar endereço";
       enqueueSnackbar(errorMessage, { variant: "error" });
     } finally {

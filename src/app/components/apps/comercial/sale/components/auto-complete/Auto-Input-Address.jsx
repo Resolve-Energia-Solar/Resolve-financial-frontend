@@ -150,7 +150,18 @@ export default function AutoCompleteAddress({
         )}
       />
 
-      <Dialog open={openModal} onClose={() => setOpenModal(false)} maxWidth="lg">
+      <Dialog
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        fullWidth
+        maxWidth={false} // remove limite de largura
+        sx={{
+          '& .MuiDialog-paper': {
+            width: '80%',      // ou o valor que desejar
+            maxWidth: '1000px' // se quiser um limite
+          }
+        }}
+      >
         <DialogTitle>Adicionar Novo Endereço</DialogTitle>
         <DialogContent>
           <CreateAddressPage
@@ -159,6 +170,7 @@ export default function AutoCompleteAddress({
           />
         </DialogContent>
       </Dialog>
+
     </div>
   );
 }
