@@ -201,66 +201,26 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     </Button>
                                 </Grid>
 
-                                <Grid item xs={12} sm={4}>
-                                    <Typography variant="h6" sx={{ color: "#000000", fontWeight: "400", fontSize: "18px", py: 2 }}>Consumo energético</Typography>
-                                </Grid>
-
-                                <Grid item xs={6}>
-                                    <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor da proposta</CustomFormLabel>
-                                    <TextField
-                                        name="amount"
-                                        value={formData.amount}
-                                        onChange={(e) => handleChange('amount', e.target.value)}
-                                        fullWidth
-                                        InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment position="start">
-                                                    <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
-                                                        R$
-                                                    </Box>
-                                                </InputAdornment>
-                                            ),
-                                        }}
-                                    />
-                                </Grid>
-
-                                <Grid item xs={6}>
-                                    <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor de referência</CustomFormLabel>
-                                    <TextField
-                                        disabled
-                                        name="amount"
-                                        value={formData.amount}
-                                        onChange={(e) => handleChange('amount', e.target.value)}
-                                        fullWidth
-                                        InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment position="start">
-                                                    <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
-                                                        R$
-                                                    </Box>
-                                                </InputAdornment>
-                                            ),
-                                        }}
-                                    />
-                                </Grid>
-
 
                             </Grid>
 
                             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                <Grid item xs={12}>
+                                    <Typography sx={{ color: "#000000", fontWeight: "400", fontSize: "18px", py: 2 }}>Consumo energético</Typography>
+                                </Grid>
+
                                 <Grid item xs={6}>
                                     <CustomFormLabel
                                         htmlFor="estimated_power_generation"
                                         sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
                                     >
-                                        Geração de energia estimada
+                                        Consumo médio mensal
                                     </CustomFormLabel>
                                     <TextField
                                         name="estimated_power_generation"
                                         value={formData.estimated_power_generation}
                                         onChange={(e) => handleChange('estimated_power_generation', e.target.value)}
                                         fullWidth
-                                        disabled
                                         // placeholder="2500 kWh"
                                         InputProps={{
                                             sx: {
@@ -277,13 +237,14 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                 </Grid>
 
                                 <Grid item xs={6}>
-                                    <CustomFormLabel htmlFor="medium_energy_val" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Consumo médio de energia</CustomFormLabel>
+                                    <CustomFormLabel htmlFor="medium_energy_val" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                                        Unidade consumidora
+                                    </CustomFormLabel>
                                     <TextField
                                         name="medium_energy_val"
                                         value={formData.medium_energy_val}
                                         onChange={(e) => handleChange('medium_energy_val', e.target.value)}
                                         fullWidth
-                                        disabled
                                         // placeholder='1800 kWh'
                                         InputProps={{
                                             sx: {
@@ -298,26 +259,55 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         }}
                                     />
                                 </Grid>
+
                                 <Grid item xs={6}>
-                                    <Button
-                                        variant="contained"
-                                        onButtonClick={() => setOpenEnergyConsumption(true)}
-                                        sx={{
-                                            backgroundColor: '#F4F5F7',
-                                            color: '#303030',
-                                            border: "1px solid",
-                                            borderColor: "#ADADAD",
-                                            px: 3,
-                                            width: "100%",
-                                            justifyContent: "space-between",
-                                            alignItems: "center",
-                                            '&:hover': { boxShadow: '0', '& .MuiSvgIcon-root': { color: '#303030' } },
+                                    <CustomFormLabel htmlFor="medium_energy_val" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                                        Número do medidor
+                                    </CustomFormLabel>
+                                    <TextField
+                                        name="medium_energy_val"
+                                        value={formData.medium_energy_val}
+                                        onChange={(e) => handleChange('medium_energy_val', e.target.value)}
+                                        fullWidth
+                                        // placeholder='1800 kWh'
+                                        InputProps={{
+                                            sx: {
+                                                input: {
+                                                    color: "#7E92A2",
+                                                    fontWeight: "400",
+                                                    fontSize: "12px",
+                                                    opacity: 1,
+
+                                                },
+                                            },
                                         }}
-                                        endIcon={<ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} />}
-                                    >
-                                        <Typography variant="body1">Consumo Energético</Typography>
-                                    </Button>
+                                    />
                                 </Grid>
+
+                                <Grid item xs={6}>
+                                    <CustomFormLabel htmlFor="medium_energy_val" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                                        Concessionária
+                                    </CustomFormLabel>
+                                    <TextField
+                                        select
+                                        name=""
+                                        value={formData.created_by_id}
+                                        onChange={console.log("concessionaria selected")}
+                                        fullWidth
+                                    >
+                                        <MenuItem value="credit">Crédito</MenuItem>
+                                        <MenuItem value="debit">Débito</MenuItem>
+                                        <MenuItem value="bank_slip">Boleto</MenuItem>
+                                        <MenuItem value="financing">Financiamento</MenuItem>
+                                        <MenuItem value="internal_installments">Parcelamento Interno</MenuItem>
+                                        <MenuItem value="pix">Pix</MenuItem>
+                                        <MenuItem value="bank_transfer">Transferência</MenuItem>
+                                        <MenuItem value="cash">Dinheiro</MenuItem>
+                                        <MenuItem value="auxiliar">Poste Auxiliar</MenuItem>
+                                        <MenuItem value="construction">Repasse de Obra</MenuItem>
+                                    </TextField>
+                                </Grid>
+
                             </Grid>
 
 
