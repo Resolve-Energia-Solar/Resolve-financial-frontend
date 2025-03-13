@@ -35,7 +35,7 @@ import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 
-function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
+function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
   const theme = useTheme();
   const [lead, setLead] = useState(null);
@@ -98,11 +98,11 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const handleSaveForm = async () => {
     const response = await handleSave();
     if (response) {
-      enqueueSnackbar('Proposta salva com sucesso', { variant: 'success' });
+      enqueueSnackbar('Proposta atualizada com sucesso', { variant: 'success' });
       if (onRefresh) onRefresh();
       if (onClose) onClose();
     } else {
-      enqueueSnackbar('Erro ao salvar proposta', { variant: 'error' });
+      enqueueSnackbar('Erro ao atualizar proposta', { variant: 'error' });
       console.log('Form Errors:', formErrors);
     }
   }
@@ -149,7 +149,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               sx={{ display: 'flex', flexDirection: 'column', marginTop: 2 }}
             >
               <Grid item xs={12} sm={4}>
-                <Typography variant="h6" sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Nova proposta</Typography>
+                <Typography variant="h6" sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Atualizar proposta</Typography>
               </Grid>
 
 
@@ -281,6 +281,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   </Button>
                 </Grid>
               </Grid>
+
 
               <Grid container rowSpacing={1} xs={12}>
                 {paymentMethods.map((payment, index) => (
@@ -502,7 +503,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSaveForm} disabled={formLoading}
                 endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
                 <Typography variant="body1" color="white">
-                  {formLoading ? 'Gerando proposta...' : 'Gerar proposta'}
+                  {formLoading ? 'Atualizando proposta...' : 'Atualizar proposta'}
                 </Typography>
               </Button>
             </Box>
@@ -516,10 +517,10 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
           >
             <DialogContent>
               {/* add consumo energético dialog */}
-              <AddProposalPage
+              {/* <EditProposalPage
                 leadId={leadId}
                 onClose={() => setOpenEditProposal(false)}
-                onRefresh={onRefresh} />
+                onRefresh={onRefresh} /> */}
             </DialogContent>
           </Dialog>
 
@@ -529,4 +530,4 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   );
 }
 
-export default AddProposalPage;
+export default EditProposalPage;
