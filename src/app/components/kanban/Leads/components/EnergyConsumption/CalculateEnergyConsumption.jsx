@@ -159,17 +159,21 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                             borderRadius: 1,
                                             p: 4,
                                             width: "100%",
-                                            height: "100%"
+                                            height: "100%",
+                                            display: "flex",
+                                            flexDirection: "column"
                                         }}
                                         onClick={discard_proposal}
                                     >
                                         <BackupOutlinedIcon />
-                                        <Typography sx={{ fontSize: '14px', fontWeight: "400", color: "#0B0B0B", mr: 0.5 }}>
-                                            Carregar conta de luz
-                                        </Typography>
-                                        <Typography sx={{ fontSize: '14px', fontWeight: "600", color: theme.palette.primary.main }}>
-                                            Upload
-                                        </Typography>
+                                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                                            <Typography sx={{ fontSize: '14px', fontWeight: "400", color: "#0B0B0B" }}>
+                                                Carregar conta de luz
+                                            </Typography>
+                                            <Typography sx={{ fontSize: '14px', fontWeight: "600", color: theme.palette.primary.main }}>
+                                                Upload
+                                            </Typography>
+                                        </Box>
 
                                     </Button>
                                 </Grid>
