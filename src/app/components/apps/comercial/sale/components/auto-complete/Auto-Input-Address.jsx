@@ -1,12 +1,17 @@
 'use client';
-import { Fragment, useCallback, useEffect, useState } from 'react';
-import Autocomplete from '@mui/material/Autocomplete';
-import CircularProgress from '@mui/material/CircularProgress';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  Autocomplete,
+  CircularProgress,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import { debounce } from 'lodash';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import addressService from '@/services/addressService';
-import { debounce } from 'lodash';
-import { IconButton, Dialog, DialogTitle, DialogContent } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
 import { useSnackbar } from 'notistack';
 
@@ -26,21 +31,25 @@ export default function AutoCompleteAddress({
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [openModal, setOpenModal] = useState(false);
 
+  // Cria um label formatado para exibição
+  const createLabelAddress = (address) => ({
+    id: address.id,
+    name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
+  });
+
+  // Busca o endereço padrão pelo ID e atualiza o estado
   const fetchDefaultAddress = async (addressId) => {
-    if (addressId) {
-      try {
-        const addressValue = await addressService.getAddressById(addressId);
-        if (addressValue) {
-          setSelectedAddress({
-            id: addressValue.id,
-            name: `${addressValue.street}, ${addressValue.number}, ${addressValue.city}, ${addressValue.state}`,
-          });
-          if (!value) onChange(addressValue.id);
-        }
-      } catch (error) {
-        console.error('Erro ao buscar address:', error);
-        enqueueSnackbar(`Erro ao buscar endereço: ${error.message}`, { variant: 'error' });
+    if (!addressId) return;
+    try {
+      const addressValue = await addressService.getAddressById(addressId);
+      if (addressValue) {
+        const formatted = createLabelAddress(addressValue);
+        setSelectedAddress(formatted);
+        onChange(formatted.id);
       }
+    } catch (error) {
+      console.error('Erro ao buscar address:', error);
+      enqueueSnackbar(`Erro ao buscar endereço: ${error.message}`, { variant: 'error' });
     }
   };
 
@@ -48,22 +57,24 @@ export default function AutoCompleteAddress({
     fetchDefaultAddress(value);
   }, [value]);
 
+  // Atualiza o valor selecionado e retorna o ID
   const handleChange = (event, newValue) => {
     setSelectedAddress(newValue);
     onChange(newValue ? newValue.id : null);
   };
 
-  const fetchAddressesByName = useCallback(
-    debounce(async (name) => {
-      if (!name || disableSuggestions) return;
+  // Função debounced para buscar endereços conforme o usuário digita
+  const fetchAddresses = useCallback(
+    debounce(async (query) => {
+      if (!query || disableSuggestions) {
+        setInternalOptions([]);
+        return;
+      }
       setLoading(true);
       try {
-        const response = await addressService.getAddressByFullAddress(name);
-        const formattedAddresses = response.results.map((address) => ({
-          id: address.id,
-          name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
-        }));
-        setInternalOptions(formattedAddresses);
+        const response = await addressService.getAddressByFullAddress(query);
+        const formatted = response.results.map(createLabelAddress);
+        setInternalOptions(formatted);
       } catch (error) {
         console.error('Erro ao buscar endereços:', error);
         enqueueSnackbar(`Erro ao buscar endereços: ${error.message}`, { variant: 'error' });
@@ -71,28 +82,32 @@ export default function AutoCompleteAddress({
       setLoading(false);
     }, 300),
     [disableSuggestions, enqueueSnackbar]
-  );  
-
-  const fetchInitialAddresses = useCallback(async () => {
-    if (disableSuggestions) return;
-    setLoading(true);
-    try {
-      const response = await addressService.getAddresses({ limit: 5 });
-      const formattedAddresses = response.results.map((address) => ({
-        id: address.id,
-        name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
-      }));
-      setInternalOptions(formattedAddresses);
-    } catch (error) {
-      console.error('Erro ao buscar endereços:', error);
-      enqueueSnackbar(`Erro ao buscar endereços: ${error.message}`, { variant: 'error' });
-    }
-    setLoading(false);
-  }, [disableSuggestions, enqueueSnackbar]);
+  );
 
   const handleClose = () => {
     setOpen(false);
     setInternalOptions([]);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
+  // Ao criar um novo endereço, busca e atualiza automaticamente o endereço selecionado
+  const addAddress = async (newId) => {
+    if (!newId) return;
+    try {
+      const addressValue = await addressService.getAddressById(newId);
+      if (addressValue) {
+        const formatted = createLabelAddress(addressValue);
+        setSelectedAddress(formatted);
+        onChange(formatted.id);
+        setOpenModal(false);
+      }
+    } catch (error) {
+      console.error('Erro ao adicionar endereço:', error);
+      enqueueSnackbar(`Erro ao adicionar endereço: ${error.message}`, { variant: 'error' });
+    }
   };
 
   const displayOptions = options.length > 0 ? options : internalOptions;
@@ -102,23 +117,20 @@ export default function AutoCompleteAddress({
       <Autocomplete
         sx={{ width: '100%' }}
         open={open}
-        onOpen={() => {
-          setOpen(true);
-          if (options.length === 0 && !disableSuggestions) {
-            fetchInitialAddresses();
-          }
-        }}
+        onOpen={() => setOpen(true)}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.name === value.name}
+        isOptionEqualToValue={(option, val) => option.name === val.name}
         getOptionLabel={(option) => option.name || ''}
-        options={displayOptions}  // Usa as opções combinadas
+        options={displayOptions}
         loading={loading}
         value={selectedAddress}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo."
         {...props}
         onInputChange={(event, newInputValue) => {
-          if (!disableSuggestions) fetchAddressesByName(newInputValue);
+          if (!disableSuggestions) {
+            fetchAddresses(newInputValue);
+          }
         }}
         onChange={handleChange}
         renderInput={(params) => (
@@ -132,7 +144,7 @@ export default function AutoCompleteAddress({
               ...params.InputProps,
               endAdornment: (
                 <>
-                  {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                  {loading && <CircularProgress color="inherit" size={20} />}
                   {params.InputProps.endAdornment}
                   <IconButton
                     onClick={() => setOpenModal(true)}
@@ -152,29 +164,28 @@ export default function AutoCompleteAddress({
 
       <Dialog
         open={openModal}
-        onClose={() => setOpenModal(false)}
+        onClose={handleCloseModal}
         fullWidth
-        maxWidth={false} // remove limite de largura
+        maxWidth={false}
         sx={{
           '& .MuiDialog-paper': {
-            width: '80%',      // ou o valor que desejar
-            maxWidth: '1000px' // se quiser um limite
-          }
+            width: { xs: '95%', md: '80%' },
+            maxWidth: '1000px',
+            m: 0,
+            p: 0,
+          },
         }}
       >
-        <DialogTitle>Adicionar Novo Endereço</DialogTitle>
-        <DialogContent>
+        <DialogTitle sx={{ p: 1, fontSize: '1rem' }}>
+          Adicionar Novo Endereço
+        </DialogTitle>
+        <DialogContent sx={{ p: 0 }}>
           <CreateAddressPage
-              onClosedModal={handleCloseModal}
-              selectedAddressId={addAddress}
-              onRefresh={refreshAddresses}
-              setAddress={(address) => {
-                setSelectedAddresses([createLabelAddress(address)]);
-              }}
-            />
+            onClosedModal={handleCloseModal}
+            selectedAddressId={addAddress}
+          />
         </DialogContent>
       </Dialog>
-
     </div>
   );
 }
