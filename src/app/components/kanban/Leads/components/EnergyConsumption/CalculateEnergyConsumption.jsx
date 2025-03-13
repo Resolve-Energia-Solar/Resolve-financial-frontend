@@ -201,6 +201,10 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     </Button>
                                 </Grid>
 
+                                <Grid item xs={12} sm={4}>
+                                    <Typography variant="h6" sx={{ color: "#000000", fontWeight: "400", fontSize: "18px", py: 2 }}>Consumo energético</Typography>
+                                </Grid>
+
                                 <Grid item xs={6}>
                                     <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor da proposta</CustomFormLabel>
                                     <TextField
