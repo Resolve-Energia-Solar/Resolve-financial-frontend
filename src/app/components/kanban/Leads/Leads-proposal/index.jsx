@@ -199,20 +199,26 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                                 </DialogContent>
                             </Drawer>
 
-                            <Dialog
+                            <Drawer
+                                anchor="right"
                                 open={openEditProposal}
                                 onClose={() => setOpenEditProposal(false)}
-                                maxWidth="lg"
-                                fullWidth
+                                // maxWidth="lg"
+                                sx={{ zIndex: 1300 }}
+                                PaperProps={{
+                                    sx: {
+                                        width: "60vw",
+                                        p: 4,
+                                    }
+                                }}
                             >
                                 <DialogContent>
-                                    {/* add a new edit page in the future */}
                                     <EditProposalPage 
                                         leadId={leadId} 
                                         onClose={() => setOpenEditProposal(false)} 
                                         onRefresh={handleRefresh} />
                                 </DialogContent>
-                            </Dialog>
+                            </Drawer>
 
                             <Dialog
                                 open={openDetailProposal}
