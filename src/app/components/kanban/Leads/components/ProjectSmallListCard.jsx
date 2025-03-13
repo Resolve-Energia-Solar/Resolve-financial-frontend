@@ -22,10 +22,11 @@ import { addProduct, removeProductsByIds, associateProductWithLead, selectProduc
 import { useDispatch, useSelector } from 'react-redux';
 import ProductService from '@/services/productsService';
 import ListProducts from './ListProducts';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 
 
-export function ProductList({ leadId = null }) {
+export function ProjectCard({ leadId = null }) {
   const dispatch = useDispatch();
   const [dialogProductOpen, setDialogProductOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -67,7 +68,7 @@ export function ProductList({ leadId = null }) {
         borderRadius: '12px',
         border: '1px solid #E0E0E0',
         m: 0,
-        p: 3,
+        p: 4,
       }}
     >
       <Grid
@@ -75,16 +76,15 @@ export function ProductList({ leadId = null }) {
         alignItems={'center'}
         spacing={0}
         justifyContent={'space-between'}
-        sx={{ mb: 2, minHeight: 300 }}
+        sx={{ minHeight: 300 }}
       >
-        {/* CARD HEADER!!!!!!!!!!!!! */}
         <Grid
           item
           xs={12}
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'center',
             gap: 1,
             mb: 1,
           }}
@@ -102,36 +102,20 @@ export function ProductList({ leadId = null }) {
             />
           </Grid>
 
-          <Grid item xs={8} sx={{ fontWeight: 'bold', ml: 1 }}>
-            <Typography variant="h5">Produtos da Proposta</Typography>
-          </Grid>
-
-          <Grid item xs={8} sx={{ justifyContent: 'flex-end' }}>
-            <TextField
-              fullWidth
-              placeholder="Pesquisar produto"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <Search />
-                  </InputAdornment>
-                ),
-              }}
-            />
+          <Grid item xs={11} >
+            <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Projeto 01</Typography>
           </Grid>
         </Grid>
 
-        {/* TABLE HEADER */}
-        <Grid container xs={12} sx={{ fontWeight: 'bold', mb: 1, mt: 2 }}>
-          <Grid item xs={9}>
-            <Typography variant="h6">Produto</Typography>
+        <Grid container xs={12} sx={{ mb: 1, mt: 2 }}>
+          <Grid item xs={10}>
+            <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Kit Sol Feliz</Typography>
           </Grid>
-          <Grid item xs={3}>
-            <Typography variant="h6">Valor</Typography>
+          <Grid item xs={2} sx={{ justifyContent: 'flex-end', alignItems: 'center', display: 'flex' }}>
+            <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Quantidade</Typography>
           </Grid>
         </Grid>
 
-        {/* TABLE BODY */}
         {customProducts.map((product, index) => (
           <Grid
             container
@@ -142,15 +126,15 @@ export function ProductList({ leadId = null }) {
               paddingY: 1.5,
             }}
           >
-            <Grid item xs={8} sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant="body2">{product.name}</Typography>
+            <Grid item xs={8} sx={{ display: 'flex', alignItems: 'flex-start' }}>
+              <Typography sx={{ fontWeight: '500', fontSize: "12px" }}>{product.name}</Typography>
             </Grid>
             <Grid
               item
               xs={3}
-              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}
             >
-              <Typography variant="body2">
+              <Typography sx={{ fontWeight: '500', fontSize: "12px" }}>
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.product_value)}
               </Typography>
             </Grid>
@@ -166,17 +150,26 @@ export function ProductList({ leadId = null }) {
           </Grid>
         ))}
 
-        { customProducts.length === 0 && (
+        {customProducts.length === 0 && (
           <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Typography variant="body2">Nenhum produto adicionado</Typography>
+            <Typography sx={{ fontWeight: '200', fontSize: "12px" }}>Nenhum produto adicionado</Typography>
           </Grid>
         )}
 
-        {/* ADD PRODUCT!*/}
-        <Grid item sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+        <Grid container xs={12} sx={{ mb: 1, mt: 2, justifyContent: 'space-between' }}>
+          <Grid item xs={10}>
+            <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Energia gerada pelo Kit</Typography>
+          </Grid>
+          <Grid item xs={2} sx={{ justifyContent: 'flex-end', alignItems: 'center', display: 'flex' }}>
+            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>2500 kWh</Typography>
+          </Grid>
+        </Grid>
+
+
+        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 2 }}>
           <IconButton
             sx={{
-              mt: 2,
+              p: 0,
               color: '#7E8388',
               fontSize: 14,
               display: 'flex',
@@ -191,13 +184,12 @@ export function ProductList({ leadId = null }) {
             onClick={() => setDialogProductOpen(true)}
           >
             <AddOutlinedIcon sx={{ fontSize: 18 }} />
-            <Typography variant="body2">Adicionar produto</Typography>
+            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar novo</Typography>
           </IconButton>
 
-          {/* Botão para adicionar produto existente */}
           <IconButton
             sx={{
-              mt: 2,
+              p: 0,
               color: '#7E8388',
               fontSize: 14,
               display: 'flex',
@@ -212,7 +204,7 @@ export function ProductList({ leadId = null }) {
             onClick={() => { setDialogExistingProductOpen(true) }}
           >
             <Search sx={{ fontSize: 18 }} />
-            <Typography variant="body2">Adicionar existente</Typography>
+            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar existente</Typography>
           </IconButton>
         </Grid>
 
@@ -247,26 +239,79 @@ export function ProductList({ leadId = null }) {
       <Dialog
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        maxWidth="md"
+        maxWidth="sm"
         fullWidth
+        sx={{
+          '& .MuiPaper-root': {
+            borderRadius: '12px',
+            padding: '16px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+          },
+        }}
       >
-        <DialogTitle>Confirmar Exclusão</DialogTitle>
+        <DialogTitle
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            color: '#FA896B',
+            fontWeight: '700',
+            fontSize: '18px',
+          }}
+        >
+          <WarningAmberIcon sx={{ color: '#FA896B', fontSize: '26px' }} />
+          Confirmar Exclusão
+        </DialogTitle>
+
         <DialogContent>
-          <Typography>
-            Tem certeza de que deseja excluir este produto? Esta ação não pode ser desfeita em produtos personalizados.
-          </Typography>
+          <Box
+            sx={{
+              backgroundColor: '#FFF7F7',
+              padding: '16px',
+              borderRadius: '8px',
+              border: '1px solid #FFCDD2',
+            }}
+          >
+            <Typography sx={{ fontSize: '14px', color: '#333' }}>
+              Tem certeza de que deseja excluir este produto?{' '}
+              <strong>Esta ação não pode ser desfeita em produtos personalizados.</strong>
+            </Typography>
+          </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteModalOpen(false)} color="secondary">
+
+        <DialogActions sx={{ padding: '16px' }}>
+          <Button
+            onClick={() => setDeleteModalOpen(false)}
+            variant="outlined"
+            sx={{
+              // borderColor: 'secondary',
+              color: 'secondary',
+              // '&:hover': {
+              //   backgroundColor: '#F0F0F0',
+              //   borderColor: '#7E8388',
+              // },
+            }}
+          >
             Cancelar
           </Button>
-          <Button onClick={confirmDelete} color="error" variant="contained">
+          <Button
+            onClick={confirmDelete}
+            color="error"
+            variant="contained"
+            // sx={{
+            //   backgroundColor: '#FF5A5F',
+            //   '&:hover': {
+            //     backgroundColor: '#E0484C',
+            //   },
+            // }}
+          >
             Excluir
           </Button>
         </DialogActions>
       </Dialog>
+
     </Grid>
   );
 }
 
-export default ProductList;
+export default ProjectCard;
