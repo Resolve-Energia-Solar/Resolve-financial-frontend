@@ -123,10 +123,10 @@ export function ProjectCard({ leadId = null }) {
 
         {/* TABLE HEADER */}
         <Grid container xs={12} sx={{ mb: 1, mt: 2 }}>
-          <Grid item xs={11}>
+          <Grid item xs={10}>
             <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Kit Sol Feliz</Typography>
           </Grid>
-          <Grid item xs={1}>
+          <Grid item xs={2} sx={{ justifyContent: 'flex-end', alignItems: 'center', display: 'flex' }}>
             <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Quantidade</Typography>
           </Grid>
         </Grid>
