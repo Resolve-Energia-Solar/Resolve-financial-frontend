@@ -443,7 +443,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     </CustomFormLabel>
 
                                     <Switch
-                                        checked={formData.shadowing}
+                                        checked={formData.shadowing || false}
                                         onChange={(e) => handleChange('shadowing', e.target.checked)}
                                         color="primary"
                                     />
@@ -516,70 +516,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
                         </Grid>
 
-                        {/* 
-                        <Grid
-                            item
-                            xs={12}
-                            sx={{ display: 'flex', flexDirection: 'column', marginTop: 2, gap: 2 }}
-                        >
-                            <ProjectCard leadId={leadId} />
-                        </Grid> */}
                     </Grid>
-
-
-                    {/* <Grid
-                        item
-                        xs={12}
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            mt: 2,
-                            gap: 2,
-                        }}
-                    >
-                        <Button
-                            variant="contained"
-                            sx={{
-                                backgroundColor: 'black',
-                                color: 'white',
-                                '&:hover': { backgroundColor: '#333' },
-                                px: 3,
-                            }}
-                        >
-                            <Typography variant="body1">Pré-visualizar proposta</Typography>
-                            <VisibilityIcon sx={{ ml: 1 }} />
-                        </Button>
-
-                        <Box sx={{ display: 'flex', gap: 2 }}>
-                            <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>
-                                <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
-                                <DeleteOutlinedIcon />
-                            </Button>
-
-                            <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSaveForm} disabled={formLoading}
-                                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
-                                <Typography variant="body1" color="white">
-                                    {formLoading ? 'Atualizando proposta...' : 'Atualizar proposta'}
-                                </Typography>
-                            </Button>
-                        </Box>
-                    </Grid> */}
-
-                    {/* <Dialog
-            open={openEnergyConsumption}
-            onClose={() => setOpenEnergyConsumption(false)}
-            maxWidth="lg"
-            fullWidth
-          >
-            <DialogContent>
-              {/* add consumo energético dialog */}
-                    {/* <EditProposalPage
-                leadId={leadId}
-                onClose={() => setOpenEditProposal(false)}
-                onRefresh={onRefresh} /> */}
-                    {/* </DialogContent> */}
-                    {/* </Dialog> */}
 
                 </Box>
             </Grid>
