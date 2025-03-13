@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Box,
   Button,
@@ -15,6 +15,7 @@ import { useSnackbar } from 'notistack';
 import AddressAutocomplete from '@/app/components/auto-completes/AddressSearch';
 import useAddressForm from '@/hooks/address/useAddressForm';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 
 const CreateAddressPage = ({
   onClosedModal = null,
@@ -23,7 +24,6 @@ const CreateAddressPage = ({
   setAddress,
 }) => {
   const { enqueueSnackbar } = useSnackbar();
-
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   const {
@@ -33,11 +33,12 @@ const CreateAddressPage = ({
     formErrors,
     loading: formLoading,
     success,
-    dataReceived,
   } = useAddressForm();
 
   // Define o user_id no formulário
   formData.user_id = userId;
+
+  const [addressInput, setAddressInput] = useState('');
 
   useEffect(() => {
     if (success) {
@@ -81,7 +82,6 @@ const CreateAddressPage = ({
     Tocantins: 'TO',
   };
 
-  // Callback que atualiza o formulário com os dados selecionados via autocomplete
   const handleAddressSelect = (addressData) => {
     const formatedZipCode = addressData.zip_code.replace('-', '');
     handleChange('zip_code', formatedZipCode);
@@ -93,36 +93,97 @@ const CreateAddressPage = ({
     handleChange('number', addressData.number);
     handleChange('latitude', addressData.latitude);
     handleChange('longitude', addressData.longitude);
+    setAddressInput(addressData.address);
   };
 
   const handleSubmit = () => {
     handleSave();
   };
 
+  const { isLoaded: isMapLoaded, loadError: mapLoadError } = useJsApiLoader({
+    googleMapsApiKey: API_KEY,
+    libraries: ['places'],
+    language: 'pt-BR',
+    region: 'BR',
+  });
+
+  const defaultCenter = {
+    lat: formData.latitude ? parseFloat(formData.latitude) : -1.455833,
+    lng: formData.longitude ? parseFloat(formData.longitude) : -48.504444,
+  };
+
+  const [markerPosition, setMarkerPosition] = useState(defaultCenter);
+
+  const handleMapClick = useCallback((e) => {
+    const lat = e.latLng.lat();
+    const lng = e.latLng.lng();
+    setMarkerPosition({ lat, lng });
+    handleChange('latitude', lat);
+    handleChange('longitude', lng);
+
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+      if (status === 'OK' && results[0]) {
+        const placeResult = results[0];
+
+        const extractFromComponents = (components, type) => {
+          const comp = components.find((c) => c.types.includes(type));
+          return comp ? comp.long_name : '';
+        };
+
+        function extractCity(components) {
+          let cityComp = components.find((c) => c.types.includes('locality'));
+          if (!cityComp) {
+            cityComp = components.find((c) => c.types.includes('administrative_area_level_2'));
+          }
+          return cityComp ? cityComp.long_name : '';
+        }
+
+        const detailedAddress = {
+          address: placeResult.formatted_address,
+          zip_code: extractFromComponents(placeResult.address_components, 'postal_code').replace('-', ''),
+          country: extractFromComponents(placeResult.address_components, 'country'),
+          state: extractFromComponents(placeResult.address_components, 'administrative_area_level_1'),
+          city: extractCity(placeResult.address_components),
+          neighborhood: extractFromComponents(placeResult.address_components, 'sublocality_level_1'),
+          street: extractFromComponents(placeResult.address_components, 'route'),
+          number: extractFromComponents(placeResult.address_components, 'street_number'),
+          complement: '',
+          latitude: lat,
+          longitude: lng,
+        };
+
+        handleAddressSelect(detailedAddress);
+      } else {
+        console.error("Erro na geocodificação reversa:", status);
+      }
+    });
+  }, [handleAddressSelect, handleChange]);
+
+  // Atualiza o marcador quando os valores do formulário mudam
   useEffect(() => {
-    if (dataReceived) {
-      setAddress(formData);
+    if (formData.latitude && formData.longitude) {
+      setMarkerPosition({
+        lat: parseFloat(formData.latitude),
+        lng: parseFloat(formData.longitude),
+      });
     }
-  }, [dataReceived]);
+  }, [formData.latitude, formData.longitude]);
 
   return (
     <Box
       sx={{
-        width: '90vw',
-        maxWidth: 1000,
-        height: '50vh',
+        width: { xs: '95%', md: '90vw' },
+        maxWidth: { xs: '100%', md: 1000 },
         mx: 'auto',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        p: { xs: 2, md: 4 },
+        p: { xs: 0, md: 2 },
       }}
     >
       <Paper
         elevation={0}
         sx={{
           width: '100%',
-          p: { xs: 3, md: 4 },
+          p: { xs: 0, md: 2 },
           backgroundColor: 'background.paper',
           borderRadius: 1,
         }}
@@ -141,12 +202,14 @@ const CreateAddressPage = ({
           {/* Campo de pesquisa de endereço com tooltip no ícone */}
           <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%' }}>
             <Box sx={{ flexGrow: 1 }}>
-              <AddressAutocomplete apiKey={API_KEY} onAddressSelect={handleAddressSelect} />
+              <AddressAutocomplete
+                apiKey={API_KEY}
+                onAddressSelect={handleAddressSelect}
+                inputValue={addressInput}
+                onInputChange={setAddressInput}
+              />
             </Box>
-            <Tooltip
-              title="Digite seu endereço com NÚMERO da casa e selecione uma das opções sugeridas."
-              placement="top"
-            >
+            <Tooltip title="Digite seu endereço com NÚMERO e selecione uma opção." placement="top">
               <IconButton size="small">
                 <HelpOutlineIcon fontSize="small" />
               </IconButton>
@@ -166,15 +229,33 @@ const CreateAddressPage = ({
                 helperText={formErrors.complement}
               />
             </Box>
-            <Tooltip
-              title="Informe informações adicionais, ex: apto, bloco, complemento."
-              placement="top"
-            >
+            <Tooltip title="Informe informações adicionais, ex: apto, bloco, complemento." placement="top">
               <IconButton size="small">
                 <HelpOutlineIcon fontSize="small" />
               </IconButton>
             </Tooltip>
           </Stack>
+
+          {/* Mapa para marcar o endereço */}
+          <Box sx={{ width: '100%', height: '300px', mt: 2 }}>
+            {mapLoadError && <div>Erro ao carregar o mapa</div>}
+            {!isMapLoaded ? (
+              <CircularProgress />
+            ) : (
+              <GoogleMap
+                center={markerPosition}
+                zoom={14}
+                mapContainerStyle={{ width: '100%', height: '100%' }}
+                onClick={handleMapClick}
+              >
+                <Marker
+                  position={markerPosition}
+                  draggable
+                  onDragEnd={handleMapClick}
+                />
+              </GoogleMap>
+            )}
+          </Box>
 
           {/* Botão para salvar */}
           <Button
