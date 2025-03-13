@@ -43,6 +43,7 @@ import StatusChip from '@/utils/status/DocumentStatusIcon';
 import ChipSigned from '@/utils/status/ChipSigned';
 import PulsingBadge from '@/app/components/shared/PulsingBadge';
 import TableSortLabel from '@/app/components/shared/TableSortLabel';
+import DetailsTabs from '../../../sale/DetailsTabs';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -95,48 +96,47 @@ const SaleList = () => {
     setSalesList([]);
   }, [order, orderDirection, filters, refresh]);
 
+  const fetchSales = async () => {
+    const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
+    try {
+      setLoading(true);
+
+      const data = await saleService.getSales({
+        userRole: userRole,
+        ordering: orderingParam,
+        limit: rowsPerPage,
+        page: page + 1,
+        expand: ['customer', 'branch', 'documents_under_analysis'],
+        fields: [
+          'id',
+          'documents_under_analysis',
+          'customer.complete_name',
+          'contract_number',
+          'signature_date',
+          'total_value',
+          'signature_status',
+          'is_pre_sale',
+          'status',
+          'final_service_opinion',
+          'is_released_to_engineering',
+          'created_at',
+          'branch.name',
+        ],
+
+        ...filters,
+      });
+
+      setIndicators(data?.results?.indicators);
+      setSalesList(data?.results?.results);
+      setTotalRows(data.count);
+    } catch (err) {
+      setError('Erro ao carregar Vendas');
+      showAlert('Erro ao carregar Vendas', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchSales = async () => {
-      const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
-      try {
-        setLoading(true);
-
-        const data = await saleService.getSales({
-          userRole: userRole,
-          ordering: orderingParam,
-          limit: rowsPerPage,
-          page: page + 1,
-          expand: ['customer', 'branch', 'documents_under_analysis'],
-          fields: [
-            'id',
-            'documents_under_analysis',
-            'customer.complete_name',
-            'contract_number',
-            'signature_date',
-            'total_value',
-            'signature_status',
-            'is_pre_sale',
-            'status',
-            'final_service_opinion',
-            'is_released_to_engineering',
-            'created_at',
-            'branch.name',
-          ],
-
-          ...filters,
-        });
-
-        setIndicators(data?.results?.indicators);
-        setSalesList(data?.results?.results);
-        setTotalRows(data.count);
-      } catch (err) {
-        setError('Erro ao carregar Vendas');
-        showAlert('Erro ao carregar Vendas', 'error');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchSales();
   }, [page, rowsPerPage, order, orderDirection, filters, refresh]);
 
@@ -287,7 +287,7 @@ const SaleList = () => {
 
       <Box>
         <TableContainer sx={{ overflowX: 'auto' }}>
-          <Table stickyHeader aria-label="sales table">
+          <Table>
             <TableHead>
               <TableRow>
                 <TableCell>Doc.</TableCell>
@@ -579,7 +579,7 @@ const SaleList = () => {
         onClose={() => toggleDrawerClosed(false)}
         title="Detalhamento da Venda"
       >
-        <EditSaleTabs saleId={rowSelected?.id} />
+        <EditSaleTabs saleId={rowSelected?.id} onRefresh={fetchSales} />
       </SideDrawer>
     </Box>
   );

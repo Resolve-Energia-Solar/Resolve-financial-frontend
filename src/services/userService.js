@@ -20,6 +20,20 @@ const userService = {
       throw error;
     }
   },
+
+
+  update: async (id, body) => {
+    try {
+      const response = await apiClient.patch(`/api/users/${id}/`, body);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar usuário com id ${id}:`, error);
+      throw error;
+    }
+  },
+
+
+
   getUser: async ({ page = 1, limit = 10, filters = {} } = {}) => {
     try {
       const response = await apiClient.get('/api/users/', {
