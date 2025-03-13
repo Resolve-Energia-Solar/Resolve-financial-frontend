@@ -65,7 +65,9 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
         console.log('response', response.results);
 
         // Obter os detalhes do projeto para verificar a vistoria principal
-        const projectResponse = await projectService.getProjectById(projectId);
+        const projectResponse = await projectService.getProjectById(projectId, {
+          fields: '*',
+        });
         console.log('projectResponse', projectResponse);
 
         // Extrair o ID da vistoria principal

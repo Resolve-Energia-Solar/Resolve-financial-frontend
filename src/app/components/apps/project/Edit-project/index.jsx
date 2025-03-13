@@ -13,6 +13,7 @@ import RequestList from '../../request/Request-list';
 import UploadDocument from '../UploadDocument';
 import AttachmentDetails from '@/app/components/shared/AttachmentDetails';
 import Comment from '../../comment';
+import useDocumentTypesByFilter from '@/hooks/document-types/useDocumenTypeByFilter';
 
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 const CONTENT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
@@ -39,39 +40,18 @@ function TabPanel({ children, value, index, ...other }) {
 }
 
 
-export default function EditProject({ projectId = null }) {
+export default function EditProject({ projectId = null, projectData = null }) {
   const params = useParams();
   const id = projectId || params.id;
 
+  console.log('EditProject', id);
+
   const [value, setValue] = useState(0);
-  const [documentTypes, setDocumentTypes] = useState([]);
-  const [projectData, setProjectData] = useState(null);
+  const { documentTypes } = useDocumentTypesByFilter({ app_label__in: 'engineering' });
 
   const handleChangeTab = useCallback((event, newValue) => {
     setValue(newValue);
   }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await documentTypeService.getDocumentTypeFromEngineering();
-        setDocumentTypes(response.results);
-      } catch (error) {
-        console.error('Error fetching document types:', error);
-      }
-    };
-    fetchData();
-    fetchProject();
-  }, [id]);
-
-  const fetchProject = async () => {
-    try {
-      const response = await projectService.getProjectById(id);
-      setProjectData(response);
-    } catch (error) {
-      console.error('Error fetching project:', error);
-    }
-  };
 
   return (
     <>

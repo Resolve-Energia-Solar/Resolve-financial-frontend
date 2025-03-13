@@ -43,7 +43,11 @@ const CheckListRateio = ({ projectId = null }) => {
   useEffect(() => {
     const fetchUnits = async () => {
       try {
-        const response = await unitService.getUnitByIdProject(projectId);
+        if (!projectId) return;
+        const response = await unitService.getUnitByIdProject(projectId, {
+          fields: 'id,name,type,main_unit,supply_adquance.name,supply_adquance.id',
+          expand: 'supply_adquance',
+        });
         setUnits(response.results);
       } catch (error) {
         console.log('Error: ', error);
