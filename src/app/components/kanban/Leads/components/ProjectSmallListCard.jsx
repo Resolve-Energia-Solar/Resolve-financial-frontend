@@ -77,7 +77,6 @@ export function ProjectCard({ leadId = null }) {
         justifyContent={'space-between'}
         sx={{ mb: 2, minHeight: 300 }}
       >
-        {/* CARD HEADER!!!!!!!!!!!!! */}
         <Grid
           item
           xs={12}
@@ -105,23 +104,8 @@ export function ProjectCard({ leadId = null }) {
           <Grid item xs={11} >
             <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Projeto 01</Typography>
           </Grid>
-
-          {/* <Grid item xs={8} sx={{ justifyContent: 'flex-end' }}>
-            <TextField
-              fullWidth
-              placeholder="Pesquisar produto"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <Search />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid> */}
         </Grid>
 
-        {/* TABLE HEADER */}
         <Grid container xs={12} sx={{ mb: 1, mt: 2 }}>
           <Grid item xs={10}>
             <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Kit Sol Feliz</Typography>
@@ -131,7 +115,6 @@ export function ProjectCard({ leadId = null }) {
           </Grid>
         </Grid>
 
-        {/* TABLE BODY */}
         {customProducts.map((product, index) => (
           <Grid
             container
@@ -181,7 +164,7 @@ export function ProjectCard({ leadId = null }) {
           </Grid>
         </Grid>
 
-        {/* ADD PRODUCT!*/}
+
         <Grid item sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
           <IconButton
             sx={{
@@ -203,7 +186,6 @@ export function ProjectCard({ leadId = null }) {
             <Typography variant="body2">Adicionar produto</Typography>
           </IconButton>
 
-          {/* Botão para adicionar produto existente */}
           <IconButton
             sx={{
               mt: 2,
