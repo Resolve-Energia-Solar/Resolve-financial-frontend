@@ -161,7 +161,17 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                             width: "100%",
                                             height: "100%",
                                             display: "flex",
-                                            flexDirection: "column"
+                                            flexDirection: "column",
+                                            "&:hover": {
+                                                backgroundColor: theme.palette.primary.main,
+                                                borderColor: "#FFFFFF",
+                                                "& .MuiTypography-root": {
+                                                    color: "#FFFFFF",
+                                                },
+                                                "& .MuiSvgIcon-root": {
+                                                    color: "#FFFFFF",
+                                                },
+                                            },
                                         }}
                                         onClick={discard_proposal}
                                     >
@@ -175,8 +185,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                             </Typography>
                                         </Box>
                                         <Typography sx={{ fontSize: '14px', fontWeight: "400", color: "#6D6D6D" }}>
-                                        Tamanho máximo do arquivo 10 MB
-                                            </Typography>
+                                            Tamanho máximo do arquivo 10 MB
+                                        </Typography>
 
                                     </Button>
                                 </Grid>
