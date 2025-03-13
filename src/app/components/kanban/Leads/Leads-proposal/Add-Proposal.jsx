@@ -34,6 +34,7 @@ import { color } from 'framer-motion';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import EnergyConsumptionCalc from '../components/EnergyConsumption/CalculateEnergyConsumption';
 
 function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
@@ -154,20 +155,8 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={12}>
-                  <CustomFormLabel htmlFor="proposal_name" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Nome da Proposta</CustomFormLabel>
-                  <TextField
-                    select
-                    name="proposal_name"
-                    value={formData.proposal_name}
-                    onChange={(e) => handleChange('proposal_name', e.target.value)}
-                    fullWidth
-                  >
-                    <MenuItem value="K1">Kit Solar 2034</MenuItem>
-                  </TextField>
-                </Grid>
 
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor da proposta</CustomFormLabel>
                   <TextField
                     name="amount"
@@ -186,106 +175,39 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   />
                 </Grid>
 
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor de referência</CustomFormLabel>
+                <Grid item xs={4}>
+                  <CustomFormLabel htmlFor="seller_id" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Vendedor Responsável</CustomFormLabel>
                   <TextField
-                    disabled
-                    name="amount"
-                    value={formData.amount}
-                    onChange={(e) => handleChange('amount', e.target.value)}
+                    select
+                    name="seller_id"
+                    value={formData.seller_id}
+                    onChange={(e) => handleChange('seller_id', e.target.value)}
                     fullWidth
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
-                            R$
-                          </Box>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
+                  >
+                    <MenuItem value="F">Fulano</MenuItem>
+                    <MenuItem value="C">Ciclano</MenuItem>
+                    <MenuItem value="B">Beltrano</MenuItem>
+                  </TextField>
                 </Grid>
 
-                
-              </Grid>
-
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={6}>
-                  <CustomFormLabel
-                    htmlFor="estimated_power_generation"
-                    sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
-                  >
-                    Geração de energia estimada
+                <Grid item xs={4}>
+                  <CustomFormLabel htmlFor="proposal_validity" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                    Validade da proposta
                   </CustomFormLabel>
                   <TextField
-                    name="estimated_power_generation"
-                    value={formData.estimated_power_generation}
-                    onChange={(e) => handleChange('estimated_power_generation', e.target.value)}
+                    name="proposal_validity"
+                    value={formData.proposal_validity}
+                    onChange={(e) => handleChange('proposal_validity', e.target.value)}
                     fullWidth
-                    placeholder="2500 kWh"
-                    InputProps={{
-                      sx: {
-                        input: {
-                          '::placeholder': {
-                            color: "#7E92A2",
-                            fontWeight: "400",
-                            fontSize: "12px",
-                            opacity: 1,
-                          },
-                        },
-                      },
-                    }}
                   />
                 </Grid>
-
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="medium_energy_val" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Consumo médio de energia</CustomFormLabel>
-                  <TextField
-                    name="medium_energy_val"
-                    value={formData.medium_energy_val}
-                    onChange={(e) => handleChange('medium_energy_val', e.target.value)}
-                    fullWidth
-                    placeholder='1800 kWh'
-                    InputProps={{
-                      sx: {
-                        input: {
-                          '::placeholder': {
-                            color: "#7E92A2",
-                            fontWeight: "400",
-                            fontSize: "12px",
-                            opacity: 1,
-                          },
-                        },
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <Button
-                    variant="contained"
-                    onButtonClick={() => setOpenEnergyConsumption(true)}
-                    sx={{
-                      backgroundColor: '#F4F5F7',
-                      color: '#303030',
-                      border: "1px solid",
-                      borderColor: "#ADADAD",
-                      px: 3,
-                      width: "100%",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      '&:hover': { boxShadow: '0', '& .MuiSvgIcon-root': { color: '#303030' } },
-                    }}
-                    endIcon={<ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} />}
-                  >
-                    <Typography variant="body1">Consumo Energético</Typography>
-                  </Button>
-                </Grid>
+                
               </Grid>
 
               <Grid container rowSpacing={1} xs={12}>
                 {paymentMethods.map((payment, index) => (
                   <Grid container spacing={2} key={payment.id} alignItems="center">
-                    <Grid item xs={6}>
+                    <Grid item xs={12}>
                       <CustomFormLabel
                         htmlFor={`payment_method_${payment.id}`}
                         sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
@@ -330,7 +252,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     </Grid>
 
                     {payment.method === 'financing' && (
-                      <Grid item xs={6}>
+                      <Grid item xs={12}>
                         <CustomFormLabel
                           htmlFor={`financing_type_${payment.id}`}
                           sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
@@ -361,7 +283,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     )}
 
                     {payment.method === 'credit' && (
-                      <Grid item xs={6}>
+                      <Grid item xs={12}>
                         <CustomFormLabel
                           htmlFor={`installments_num_${payment.id}`}
                           sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
@@ -405,39 +327,6 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                       Adicionar forma de pagamento
                     </Typography>
                   </IconButton>
-                </Grid>
-              </Grid>
-
-
-
-
-
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="seller_id" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Vendedor Responsável</CustomFormLabel>
-                  <TextField
-                    select
-                    name="seller_id"
-                    value={formData.seller_id}
-                    onChange={(e) => handleChange('seller_id', e.target.value)}
-                    fullWidth
-                  >
-                    <MenuItem value="F">Fulano</MenuItem>
-                    <MenuItem value="C">Ciclano</MenuItem>
-                    <MenuItem value="B">Beltrano</MenuItem>
-                  </TextField>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <CustomFormLabel htmlFor="proposal_validity" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
-                    Validade da proposta
-                  </CustomFormLabel>
-                  <TextField
-                    name="proposal_validity"
-                    value={formData.proposal_validity}
-                    onChange={(e) => handleChange('proposal_validity', e.target.value)}
-                    fullWidth
-                  />
                 </Grid>
               </Grid>
 
@@ -513,12 +402,20 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             onClose={() => setOpenEnergyConsumption(false)}
             maxWidth="lg"
             fullWidth
+            PaperProps={{
+              sx: {
+                borderRadius: '20px',
+                padding: "24px",
+                gap: "24px",
+                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                backgroundColor: '#FFFFFF', 
+              },
+            }}
           >
             <DialogContent>
-              {/* add consumo energético dialog */}
-              <AddProposalPage
+              <EnergyConsumptionCalc
                 leadId={leadId}
-                onClose={() => setOpenEditProposal(false)}
+                onClose={() => setOpenEnergyConsumption(false)}
                 onRefresh={onRefresh} />
             </DialogContent>
           </Dialog>
