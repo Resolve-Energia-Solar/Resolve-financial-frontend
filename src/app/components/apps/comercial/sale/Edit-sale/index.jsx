@@ -10,7 +10,7 @@ import {
   Typography,
   CircularProgress,
   Autocomplete,
-  TextField
+  TextField,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
@@ -46,10 +46,19 @@ import useSendContract from '@/hooks/contract/useSendContract';
 import TagList from '@/app/components/tags/TagList';
 import AutoCompleteReasons from '../components/auto-complete/Auto-Input-Reasons';
 import AutoCompleteReasonMultiple from '../components/auto-complete/Auto-Input-Reasons';
+import Customer from '../../../sale/Customer';
+import Phones from '../../../sale/phones';
+import Addresses from '../../../sale/Adresses';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
-const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...props }) => {
+const EditSaleTabs = ({
+  saleId = null,
+  onClosedModal = null,
+  refresh = null,
+  onRefresh,
+  ...props
+}) => {
   const params = useParams();
   let id = saleId;
   if (!saleId) id = params.id;
@@ -79,7 +88,7 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
 
   const id_sale = id;
 
-  const { loading, error, saleData } = useSale(id);
+  const { loading, error, saleData, fetchSale } = useSale(id);
 
   console.log('saleData', saleData);
 
@@ -149,7 +158,7 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
   return (
     <Box {...props}>
       <Tabs value={value} onChange={handleChangeTab} variant="scrollable" scrollButtons="auto">
-        <Tab label="Cliente" />
+        <Tab label="Info. Gerais" />
         <Tab label="Vistoria" />
         <Tab label="Venda" />
         <Tab label="Anexos" />
@@ -164,10 +173,27 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
       ) : error ? (
         <Typography color="error">{error}</Typography>
       ) : (
-        <Box>
+        <Box sx={{ overflowY: 'auto', height: '90vh' }}>
           {value === 0 && (
-            <Box sx={{ mt: 3 }}>
-              <CustomerTabs userId={saleData.customer.id} />
+            <Box
+              sx={{
+                bgcolor: 'background.paper',
+                display: 'flex',
+                padding: 0,
+                flexDirection: 'column',
+              }}
+            >
+              <Customer data={saleData.customer} onRefresh={onRefresh} />
+              <Phones
+                data={saleData.customer.phone_numbers}
+                onRefresh={fetchSale}
+                userId={saleData.customer.id}
+              />
+              <Addresses
+                data={saleData.customer.addresses}
+                onRefresh={fetchSale}
+                userId={saleData.customer.id}
+              />
             </Box>
           )}
 
@@ -312,44 +338,43 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                     />
                   </Grid>
                 </HasPermission>
-                
-                {(formData.status === 'D' || formData.status === 'C') && formData.isSale == false && (
-                  <Grid item xs={12} sm={12} lg={8}>
-                    <CustomFormLabel htmlFor="Motivo">
-                      Motivo do {formData.status === 'C' ? 'Cancelamento' : 'Distrato'}
-                    </CustomFormLabel>
-                    <AutoCompleteReasonMultiple
-                      onChange={(id) =>
-                        handleChange('cancellationReasonsIds', id)
-                      }
-                      value={formData.cancellationReasonsIds}
-                      {...(formErrors.cancellationReasonsIds && {
-                        error: true,
-                        helperText: formErrors.cancellationReasonsIds,
-                      })}
-                    />
-                  </Grid>
-                )}
+
+                {(formData.status === 'D' || formData.status === 'C') &&
+                  formData.isSale == false && (
+                    <Grid item xs={12} sm={12} lg={8}>
+                      <CustomFormLabel htmlFor="Motivo">
+                        Motivo do {formData.status === 'C' ? 'Cancelamento' : 'Distrato'}
+                      </CustomFormLabel>
+                      <AutoCompleteReasonMultiple
+                        onChange={(id) => handleChange('cancellationReasonsIds', id)}
+                        value={formData.cancellationReasonsIds}
+                        {...(formErrors.cancellationReasonsIds && {
+                          error: true,
+                          helperText: formErrors.cancellationReasonsIds,
+                        })}
+                      />
+                    </Grid>
+                  )}
 
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="reference_table">Tabela de Referência</CustomFormLabel>
-                    <Autocomplete
-                      freeSolo
-                      options={[
-                        '1º Feirão 2025 - Pará',
-                        '1º Feirão 2025 - Nordeste',
-                        '1º Feirão 2025 - Amapá',
-                        'Retenção 12%',
-                        'Retenção 15%',
-                        'Retenção 17%',
-                      ]}
-                      value={formData.reference_table || ''}
-                      onChange={(event, newValue) => handleChange('reference_table', newValue)}
-                      renderInput={(params) => (
-                        <TextField {...params} label="Tabela de Referência" variant="outlined" />
-                      )}
-                      disabled={!hasPermission(['resolve_crm.can_change_billing_date'])}
-                    />
+                  <Autocomplete
+                    freeSolo
+                    options={[
+                      '1º Feirão 2025 - Pará',
+                      '1º Feirão 2025 - Nordeste',
+                      '1º Feirão 2025 - Amapá',
+                      'Retenção 12%',
+                      'Retenção 15%',
+                      'Retenção 17%',
+                    ]}
+                    value={formData.reference_table || ''}
+                    onChange={(event, newValue) => handleChange('reference_table', newValue)}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Tabela de Referência" variant="outlined" />
+                    )}
+                    disabled={!hasPermission(['resolve_crm.can_change_billing_date'])}
+                  />
                 </Grid>
 
                 <HasPermission
@@ -420,7 +445,10 @@ const EditSaleTabs = ({ saleId = null, onClosedModal = null, refresh = null, ...
                       await handleSave();
                       if (formErrors && Object.keys(formErrors).length > 0) {
                         const errorMessages = Object.entries(formErrors)
-                          .map(([field, messages]) => `${formatFieldName(field)}: ${messages.join(', ')}`)
+                          .map(
+                            ([field, messages]) =>
+                              `${formatFieldName(field)}: ${messages.join(', ')}`,
+                          )
                           .join(', ');
                         enqueueSnackbar(errorMessages, { variant: 'error' });
                       } else {
