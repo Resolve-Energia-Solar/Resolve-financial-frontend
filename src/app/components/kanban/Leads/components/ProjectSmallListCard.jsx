@@ -103,7 +103,7 @@ export function ProjectCard({ leadId = null }) {
           </Grid>
 
           <Grid item xs={8} sx={{ fontWeight: 'bold', ml: 1 }}>
-            <Typography variant="h5">Produtos da Proposta</Typography>
+            <Typography variant="h5">Projeto 01</Typography>
           </Grid>
 
           <Grid item xs={8} sx={{ justifyContent: 'flex-end' }}>
