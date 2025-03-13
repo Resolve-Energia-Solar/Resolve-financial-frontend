@@ -23,7 +23,6 @@ function AttachmentSchedule({ scheduleId }) {
   const [projectContentType, setProjectContentType] = useState(null);
 
   const userPermissions = useSelector((state) => state.user.permissions);
-
   const handleOpen = () => setOpenModalAddAttachment(true);
   const handleClose = () => setOpenModalAddAttachment(false);
   const [refresh, setRefresh] = useState(false);
@@ -34,7 +33,7 @@ function AttachmentSchedule({ scheduleId }) {
       try {
         const response = await scheduleService.getScheduleByIdAttachments(scheduleId);
         setAttachments(response.attachments);
-        setSaleId(response?.project?.sale?.id);
+        setSaleId(response?.project?.sale);
         setProjectId(response?.project?.id);
       } catch (error) {
         console.error('Error fetching attachments:', error);
@@ -46,8 +45,8 @@ function AttachmentSchedule({ scheduleId }) {
   useEffect(() => {
     async function fetchContentTypes() {
       try {
-        const saleType = await getContentType('sale', 'sale');
-        const projectType = await getContentType('project', 'project');
+        const saleType = await getContentType('resolve_crm', 'sale');
+        const projectType = await getContentType('resolve_crm', 'project');
         setSaleContentType(saleType);
         setProjectContentType(projectType);
       } catch (error) {
@@ -65,7 +64,7 @@ function AttachmentSchedule({ scheduleId }) {
             Adicionar Anexos
           </Button>
         )}
-
+        {/* Exibe anexos gerais (se houver) */}
         <AttachmentDetailsSchedule objectIds={attachments} />
       </Box>
 
@@ -75,7 +74,7 @@ function AttachmentSchedule({ scheduleId }) {
           <Typography variant="h6" gutterBottom>
             Anexos da Venda
           </Typography>
-          {saleContentType && (
+          {saleContentType && saleId ? (
             <AttachmentDetailsSchedule
               objectIds={attachments}
               scheduleId={scheduleId}
@@ -83,12 +82,14 @@ function AttachmentSchedule({ scheduleId }) {
               objectId={saleId}
               onRefresh={handleRefresh}
             />
+          ) : (
+            <Typography variant="body2">Carregando anexos da venda...</Typography>
           )}
 
           <Typography variant="h6" gutterBottom>
             Anexos do Projeto
           </Typography>
-          {projectContentType && (
+          {projectContentType && projectId ? (
             <AttachmentDetailsSchedule
               objectIds={attachments}
               scheduleId={scheduleId}
@@ -96,6 +97,8 @@ function AttachmentSchedule({ scheduleId }) {
               objectId={projectId}
               onRefresh={handleRefresh}
             />
+          ) : (
+            <Typography variant="body2">Carregando anexos do projeto...</Typography>
           )}
         </DialogContent>
         <DialogActions>
