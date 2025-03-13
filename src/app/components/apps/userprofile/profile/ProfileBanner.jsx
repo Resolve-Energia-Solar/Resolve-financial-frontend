@@ -21,8 +21,11 @@ import {
 import ProfileTab from './ProfileTab';
 import BlankCard from '../../../shared/BlankCard';
 import employeeService from '@/services/employeeService';
+import commentService from '@/services/commentService';
+import getContentType from '@/utils/getContentType';
 
 const ProfileBanner = ({ user }) => {
+  const [postsCount, setPostsCount] = useState(0);
   const [departmentCount, setDepartmentCount] = useState(0);
 
   const ProfileImage = styled(Box)(() => ({
@@ -33,29 +36,57 @@ const ProfileBanner = ({ user }) => {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: "0 auto"
+    margin: '0 auto'
   }));
-
 
   useEffect(() => {
     async function fetchCount() {
+      // Verifica se user.id está definido
+      if (!user?.id) return;
+      
+      // Busca dados de departamento
       if (user?.employee_data?.department) {
         try {
           const data = await employeeService.getEmployee({
-            filters: { department: user.employee?.department?.id },
+            filters: { department: user.employee?.department?.id, fields: 'id' },
           });
           setDepartmentCount(data.count || data.length || 0);
         } catch (error) {
-          console.error(error);
+          console.error('Erro ao buscar dados do departamento:', error);
         }
       }
+
+      // Busca comentários (postagens)
+      try {
+        const contentType = await getContentType('accounts', 'user');
+        console.log('contentType:', contentType);
+        const commentsData = await commentService.getComments(user.id, contentType, { 
+          ordering: '-created_at', 
+          author: user.id, 
+          fields: 'id' 
+        });
+        console.log('commentsData:', commentsData);
+        setPostsCount(commentsData.count || commentsData.results?.length || 0);
+      } catch (error) {
+        console.error('Erro ao buscar comentários:', error);
+      }
     }
-    fetchCount();
-  }, [user]);
+
+    // Dependência agora é user.id para garantir que a requisição seja feita assim que o id estiver disponível
+    if (user?.id) {
+      fetchCount();
+    }
+  }, [user?.id]);
 
   return (
     <BlankCard>
-      <CardMedia component="img" image={'/images/backgrounds/profilebg.jpg'} alt={"profilecover"} width="100%" height="330px" />
+      <CardMedia
+        component="img"
+        image={'/images/backgrounds/profilebg.jpg'}
+        alt="profilecover"
+        width="100%"
+        height="330px"
+      />
       <Grid container spacing={0} justifyContent="center" alignItems="center">
         {/* Post | Followers | Following */}
         <Grid
@@ -64,13 +95,7 @@ const ProfileBanner = ({ user }) => {
           sm={12}
           md={5}
           xs={12}
-          sx={{
-            order: {
-              xs: '2',
-              sm: '2',
-              lg: '1',
-            },
-          }}
+          sx={{ order: { xs: '2', sm: '2', lg: '1' } }}
         >
           <Stack direction="row" textAlign="center" justifyContent="center" gap={6} m={3}>
             <Box>
@@ -78,7 +103,7 @@ const ProfileBanner = ({ user }) => {
                 <IconFileDescription width="20" />
               </Typography>
               <Typography variant="h4" fontWeight="600">
-                0
+                {postsCount}
               </Typography>
               <Typography color="textSecondary" variant="h6" fontWeight={400}>
                 Postagens
@@ -98,27 +123,13 @@ const ProfileBanner = ({ user }) => {
           </Stack>
         </Grid>
         {/* about profile */}
-        <Grid
-          item
-          lg={4}
-          sm={12}
-          xs={12}
-          sx={{
-            order: {
-              xs: '1',
-              sm: '1',
-              lg: '2',
-            },
-          }}
-        >
+        <Grid item lg={4} sm={12} xs={12} sx={{ order: { xs: '1', sm: '1', lg: '2' } }}>
           <Box
             display="flex"
             alignItems="center"
             textAlign="center"
             justifyContent="center"
-            sx={{
-              mt: '-85px',
-            }}
+            sx={{ mt: '-85px' }}
           >
             <Box>
               <ProfileImage>
@@ -129,19 +140,15 @@ const ProfileBanner = ({ user }) => {
                     borderRadius: '50%',
                     width: '100px',
                     height: '100px',
-                    border: '4px solid #fff',
+                    border: '4px solid #fff'
                   }}
                 />
               </ProfileImage>
               <Box mt={1}>
-                <Typography fontWeight={600} variant="h5">
+                <Typography fontWeight="600" variant="h5">
                   {user?.complete_name || 'Nome do Usuário'}
                 </Typography>
-                <Typography
-                  color="textSecondary"
-                  variant="h6"
-                  fontWeight={400}
-                >
+                <Typography color="textSecondary" variant="h6" fontWeight="400">
                   {user?.employee_data?.role || 'Cargo'}
                 </Typography>
               </Box>
@@ -149,20 +156,8 @@ const ProfileBanner = ({ user }) => {
           </Box>
         </Grid>
         {/* friends following buttons */}
-        <Grid
-          item
-          lg={4}
-          sm={12}
-          xs={12}
-          sx={{
-            order: {
-              xs: '3',
-              sm: '3',
-              lg: '3',
-            },
-          }}
-        >
-          <Stack direction={'row'} gap={2} alignItems="center" justifyContent="center" my={2}>
+        <Grid item lg={4} sm={12} xs={12} sx={{ order: { xs: '3', sm: '3', lg: '3' } }}>
+          <Stack direction="row" gap={2} alignItems="center" justifyContent="center" my={2}>
             <Fab size="small" color="primary" sx={{ backgroundColor: '#1877F2' }}>
               <IconBrandFacebook size="16" />
             </Fab>
@@ -183,7 +178,6 @@ const ProfileBanner = ({ user }) => {
           </Stack>
         </Grid>
       </Grid>
-      {/**TabbingPart**/}
       <ProfileTab />
     </BlankCard>
   );
