@@ -175,16 +175,6 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                     color: "#FFFFFF",
                                                 },
                                             },
-                                            // "&:hover": {
-                                            //     backgroundColor: theme.palette.primary.main,
-                                            //     borderColor: "#000000",
-                                            //     "& .MuiTypography-root": {
-                                            //         color: "#000000",
-                                            //     },
-                                            //     "& .MuiSvgIcon-root": {
-                                            //         color: "#000000",
-                                            //     },
-                                            // },
                                         }}
                                         onClick={console.log("uploading file")}
                                     >
