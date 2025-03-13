@@ -183,7 +183,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                             //     },
                                             // },
                                         }}
-                                        onClick={discard_proposal}
+                                        onClick={console.log("uploading file")}
                                     >
                                         <BackupOutlinedIcon sx={{ fontSize: "36px" }} />
                                         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, p: 1 }}>
