@@ -67,7 +67,7 @@ export function ProjectCard({ leadId = null }) {
         borderRadius: '12px',
         border: '1px solid #E0E0E0',
         m: 0,
-        p: 3,
+        p: 4,
       }}
     >
       <Grid
@@ -84,7 +84,7 @@ export function ProjectCard({ leadId = null }) {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'center',
             gap: 1,
             mb: 1,
           }}
@@ -122,12 +122,12 @@ export function ProjectCard({ leadId = null }) {
         </Grid>
 
         {/* TABLE HEADER */}
-        <Grid container xs={12} sx={{ fontWeight: 'bold', mb: 1, mt: 2 }}>
+        <Grid container xs={12} sx={{ mb: 1, mt: 2 }}>
           <Grid item xs={9}>
-            <Typography variant="h6">Produto</Typography>
+            <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Produto</Typography>
           </Grid>
           <Grid item xs={3}>
-            <Typography variant="h6">Valor</Typography>
+            <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Valor</Typography>
           </Grid>
         </Grid>
 
