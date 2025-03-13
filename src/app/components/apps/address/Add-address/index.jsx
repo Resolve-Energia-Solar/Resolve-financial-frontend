@@ -20,6 +20,7 @@ const CreateAddressPage = ({
   onClosedModal = null,
   userId = null,
   onRefresh = null,
+  setAddress,
 }) => {
   const { enqueueSnackbar } = useSnackbar();
 
@@ -32,6 +33,7 @@ const CreateAddressPage = ({
     formErrors,
     loading: formLoading,
     success,
+    dataReceived,
   } = useAddressForm();
 
   // Define o user_id no formulário
@@ -50,33 +52,33 @@ const CreateAddressPage = ({
 
   // Mapeamento para converter o nome completo do estado em sigla
   const stateMapping = {
-    "Acre": "AC",
-    "Alagoas": "AL",
-    "Amapá": "AP",
-    "Amazonas": "AM",
-    "Bahia": "BA",
-    "Ceará": "CE",
-    "Distrito Federal": "DF",
-    "Espírito Santo": "ES",
-    "Goiás": "GO",
-    "Maranhão": "MA",
-    "Mato Grosso": "MT",
-    "Mato Grosso do Sul": "MS",
-    "Minas Gerais": "MG",
-    "Pará": "PA",
-    "Paraíba": "PB",
-    "Paraná": "PR",
-    "Pernambuco": "PE",
-    "Piauí": "PI",
-    "Rio de Janeiro": "RJ",
-    "Rio Grande do Norte": "RN",
-    "Rio Grande do Sul": "RS",
-    "Rondônia": "RO",
-    "Roraima": "RR",
-    "Santa Catarina": "SC",
-    "São Paulo": "SP",
-    "Sergipe": "SE",
-    "Tocantins": "TO",
+    Acre: 'AC',
+    Alagoas: 'AL',
+    Amapá: 'AP',
+    Amazonas: 'AM',
+    Bahia: 'BA',
+    Ceará: 'CE',
+    'Distrito Federal': 'DF',
+    'Espírito Santo': 'ES',
+    Goiás: 'GO',
+    Maranhão: 'MA',
+    'Mato Grosso': 'MT',
+    'Mato Grosso do Sul': 'MS',
+    'Minas Gerais': 'MG',
+    Pará: 'PA',
+    Paraíba: 'PB',
+    Paraná: 'PR',
+    Pernambuco: 'PE',
+    Piauí: 'PI',
+    'Rio de Janeiro': 'RJ',
+    'Rio Grande do Norte': 'RN',
+    'Rio Grande do Sul': 'RS',
+    Rondônia: 'RO',
+    Roraima: 'RR',
+    'Santa Catarina': 'SC',
+    'São Paulo': 'SP',
+    Sergipe: 'SE',
+    Tocantins: 'TO',
   };
 
   // Callback que atualiza o formulário com os dados selecionados via autocomplete
@@ -96,6 +98,12 @@ const CreateAddressPage = ({
   const handleSubmit = () => {
     handleSave();
   };
+
+  useEffect(() => {
+    if (dataReceived) {
+      setAddress(formData);
+    }
+  }, [dataReceived]);
 
   return (
     <Box
@@ -133,12 +141,12 @@ const CreateAddressPage = ({
           {/* Campo de pesquisa de endereço com tooltip no ícone */}
           <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%' }}>
             <Box sx={{ flexGrow: 1 }}>
-              <AddressAutocomplete
-                apiKey={API_KEY}
-                onAddressSelect={handleAddressSelect}
-              />
+              <AddressAutocomplete apiKey={API_KEY} onAddressSelect={handleAddressSelect} />
             </Box>
-            <Tooltip title="Digite seu endereço com NÚMERO da casa e selecione uma das opções sugeridas." placement="top">
+            <Tooltip
+              title="Digite seu endereço com NÚMERO da casa e selecione uma das opções sugeridas."
+              placement="top"
+            >
               <IconButton size="small">
                 <HelpOutlineIcon fontSize="small" />
               </IconButton>
@@ -158,7 +166,10 @@ const CreateAddressPage = ({
                 helperText={formErrors.complement}
               />
             </Box>
-            <Tooltip title="Informe informações adicionais, ex: apto, bloco, complemento." placement="top">
+            <Tooltip
+              title="Informe informações adicionais, ex: apto, bloco, complemento."
+              placement="top"
+            >
               <IconButton size="small">
                 <HelpOutlineIcon fontSize="small" />
               </IconButton>
