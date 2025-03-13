@@ -155,7 +155,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                   <CustomFormLabel htmlFor="proposal_name" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Nome da Proposta</CustomFormLabel>
                   <TextField
                     select
@@ -166,9 +166,9 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   >
                     <MenuItem value="K1">Kit Solar 2034</MenuItem>
                   </TextField>
-                </Grid>
+                </Grid> */}
 
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor da proposta</CustomFormLabel>
                   <TextField
                     name="amount"
@@ -187,7 +187,34 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   />
                 </Grid>
 
-                <Grid item xs={6}>
+                <Grid item xs={4}>
+                  <CustomFormLabel htmlFor="seller_id" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Vendedor Responsável</CustomFormLabel>
+                  <TextField
+                    select
+                    name="seller_id"
+                    value={formData.seller_id}
+                    onChange={(e) => handleChange('seller_id', e.target.value)}
+                    fullWidth
+                  >
+                    <MenuItem value="F">Fulano</MenuItem>
+                    <MenuItem value="C">Ciclano</MenuItem>
+                    <MenuItem value="B">Beltrano</MenuItem>
+                  </TextField>
+                </Grid>
+
+                <Grid item xs={4}>
+                  <CustomFormLabel htmlFor="proposal_validity" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                    Validade da proposta
+                  </CustomFormLabel>
+                  <TextField
+                    name="proposal_validity"
+                    value={formData.proposal_validity}
+                    onChange={(e) => handleChange('proposal_validity', e.target.value)}
+                    fullWidth
+                  />
+                </Grid>
+
+                {/* <Grid item xs={6}>
                   <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor de referência</CustomFormLabel>
                   <TextField
                     disabled
@@ -205,12 +232,12 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                       ),
                     }}
                   />
-                </Grid>
+                </Grid> */}
 
                 
               </Grid>
 
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              {/* <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
                   <CustomFormLabel
                     htmlFor="estimated_power_generation"
@@ -281,12 +308,12 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     <Typography variant="body1">Consumo Energético</Typography>
                   </Button>
                 </Grid>
-              </Grid>
+              </Grid> */}
 
               <Grid container rowSpacing={1} xs={12}>
                 {paymentMethods.map((payment, index) => (
                   <Grid container spacing={2} key={payment.id} alignItems="center">
-                    <Grid item xs={6}>
+                    <Grid item xs={12}>
                       <CustomFormLabel
                         htmlFor={`payment_method_${payment.id}`}
                         sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
@@ -331,7 +358,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     </Grid>
 
                     {payment.method === 'financing' && (
-                      <Grid item xs={6}>
+                      <Grid item xs={12}>
                         <CustomFormLabel
                           htmlFor={`financing_type_${payment.id}`}
                           sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
@@ -362,7 +389,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     )}
 
                     {payment.method === 'credit' && (
-                      <Grid item xs={6}>
+                      <Grid item xs={12}>
                         <CustomFormLabel
                           htmlFor={`installments_num_${payment.id}`}
                           sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
@@ -413,7 +440,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
 
 
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              {/* <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
                   <CustomFormLabel htmlFor="seller_id" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Vendedor Responsável</CustomFormLabel>
                   <TextField
@@ -440,7 +467,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     fullWidth
                   />
                 </Grid>
-              </Grid>
+              </Grid> */}
 
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
