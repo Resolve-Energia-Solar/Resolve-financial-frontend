@@ -514,9 +514,17 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             onClose={() => setOpenEnergyConsumption(false)}
             maxWidth="lg"
             fullWidth
+            PaperProps={{
+              sx: {
+                borderRadius: '20px',
+                padding: "24px",
+                gap: "24px",
+                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                backgroundColor: '#FFFFFF', 
+              },
+            }}
           >
             <DialogContent>
-              {/* add consumo energético dialog */}
               <EnergyConsumptionCalc
                 leadId={leadId}
                 onClose={() => setOpenEnergyConsumption(false)}

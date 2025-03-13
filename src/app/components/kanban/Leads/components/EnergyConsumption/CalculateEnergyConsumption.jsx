@@ -133,7 +133,6 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            borderRadius: "20px" 
           }}
         >
 
