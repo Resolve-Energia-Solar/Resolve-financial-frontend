@@ -168,6 +168,7 @@ export function ProjectCard({ leadId = null }) {
         <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 2 }}>
           <IconButton
             sx={{
+              p: 0,
               color: '#7E8388',
               fontSize: 14,
               display: 'flex',
@@ -187,6 +188,7 @@ export function ProjectCard({ leadId = null }) {
 
           <IconButton
             sx={{
+              p: 0,
               color: '#7E8388',
               fontSize: 14,
               display: 'flex',
