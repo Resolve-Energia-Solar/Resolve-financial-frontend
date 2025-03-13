@@ -133,12 +133,9 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
           sx={{
             display: 'flex',
             flexDirection: 'column',
+            borderRadius: "20px" 
           }}
         >
-
-          <Grid item spacing={2} alignItems="center" xs={12}>
-            <LeadInfoHeader leadId={leadId} />
-          </Grid>
 
           <Grid container spacing={4}>
             <Grid
@@ -147,7 +144,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
               sx={{ display: 'flex', flexDirection: 'column', marginTop: 2 }}
             >
               <Grid item xs={12} sm={4}>
-                <Typography variant="h6" sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Atualizar proposta</Typography>
+                <Typography variant="h6" sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Calcular consumo energético</Typography>
               </Grid>
 
 
