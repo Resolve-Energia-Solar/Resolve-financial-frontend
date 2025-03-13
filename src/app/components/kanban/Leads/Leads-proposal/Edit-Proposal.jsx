@@ -154,7 +154,7 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={6}>
+                <Grid item xs={12}>
                   <CustomFormLabel htmlFor="proposal_name" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Nome da Proposta</CustomFormLabel>
                   <TextField
                     select
@@ -187,25 +187,26 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 </Grid>
 
                 <Grid item xs={6}>
-                  <Button
-                    variant="contained"
-                    onButtonClick={() => setOpenEnergyConsumption(true)}
-                    sx={{
-                      backgroundColor: '#F4F5F7',
-                      color: '#303030',
-                      border: "1px solid",
-                      borderColor: "#ADADAD",
-                      px: 3,
-                      width: "483px",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      '&:hover': { boxShadow: '0', '& .MuiSvgIcon-root': { color: '#303030' } },
+                  <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor de referência</CustomFormLabel>
+                  <TextField
+                    disabled
+                    name="amount"
+                    value={formData.amount}
+                    onChange={(e) => handleChange('amount', e.target.value)}
+                    fullWidth
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
+                            R$
+                          </Box>
+                        </InputAdornment>
+                      ),
                     }}
-                    endIcon={<ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} />}
-                  >
-                    <Typography variant="body1">Consumo Energético</Typography>
-                  </Button>
+                  />
                 </Grid>
+
+                
               </Grid>
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
@@ -258,6 +259,26 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                       },
                     }}
                   />
+                </Grid>
+                <Grid item xs={6}>
+                  <Button
+                    variant="contained"
+                    onButtonClick={() => setOpenEnergyConsumption(true)}
+                    sx={{
+                      backgroundColor: '#F4F5F7',
+                      color: '#303030',
+                      border: "1px solid",
+                      borderColor: "#ADADAD",
+                      px: 3,
+                      width: "100%",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      '&:hover': { boxShadow: '0', '& .MuiSvgIcon-root': { color: '#303030' } },
+                    }}
+                    endIcon={<ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} />}
+                  >
+                    <Typography variant="body1">Consumo Energético</Typography>
+                  </Button>
                 </Grid>
               </Grid>
 
