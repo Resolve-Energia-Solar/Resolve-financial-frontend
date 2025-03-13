@@ -58,9 +58,9 @@ const unitService = {
       throw error;
     }
   },
-  getUnitByIdProject: async (id) => {
+  getUnitByIdProject: async (id, params = {}) => {
     try {
-      const response = await apiClient.get(`/api/units/?project=${id}`);
+      const response = await apiClient.get(`/api/units/?project=${id}`, { params });
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar unit com nome ${id}:`, error);

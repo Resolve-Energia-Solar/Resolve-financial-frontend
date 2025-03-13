@@ -165,9 +165,13 @@ export default function AutoCompleteAddress({
         <DialogTitle>Adicionar Novo Endereço</DialogTitle>
         <DialogContent>
           <CreateAddressPage
-            onClosedModal={() => setOpenModal(false)}
-            selectedAddressId={fetchDefaultAddress}
-          />
+              onClosedModal={handleCloseModal}
+              selectedAddressId={addAddress}
+              onRefresh={refreshAddresses}
+              setAddress={(address) => {
+                setSelectedAddresses([createLabelAddress(address)]);
+              }}
+            />
         </DialogContent>
       </Dialog>
 

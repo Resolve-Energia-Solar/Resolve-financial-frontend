@@ -1,3 +1,4 @@
+'use client';
 import { Box, CardContent, Drawer, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ParentCard from './ParentCard';

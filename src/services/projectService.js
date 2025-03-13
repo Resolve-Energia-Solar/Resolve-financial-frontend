@@ -12,6 +12,12 @@ const projectService = {
     const response = await apiClient.get(`/api/projects/indicators/${query}`);
     return response.data;
   },
+  findOneProject: async (id, params = {}) => {
+    const query = qs.stringify({ ...params }, { addQueryPrefix: true });
+    console.log('findOneProject - Query:', query);
+    const response = await apiClient.get(`/api/projects/${id}/${query}`);
+    return response.data;
+  },
   getProjectById: async (id) => {
     const query = qs.stringify({ expand: 'units' }, { addQueryPrefix: true });
     const response = await apiClient.get(`/api/projects/${id}/${query}`);

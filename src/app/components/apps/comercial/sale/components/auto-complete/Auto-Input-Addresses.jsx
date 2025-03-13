@@ -16,7 +16,7 @@ export default function AutoCompleteAddresses({
   helperText,
   labeltitle,
   disabled,
-  disableSuggestions = false, 
+  disableSuggestions = false,
 }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
@@ -95,8 +95,15 @@ export default function AutoCompleteAddresses({
       }
       setLoading(false);
     }, 300),
-    [disableSuggestions]
+    [disableSuggestions],
   );
+
+  const createLabelAddress = (address) => {
+    return {
+      id: address.id,
+      name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
+    };
+  };
 
   const fetchInitialAddresses = useCallback(async () => {
     if (disableSuggestions) {
@@ -106,10 +113,7 @@ export default function AutoCompleteAddresses({
     setLoading(true);
     try {
       const addresses = await addressService.getAddresses({ limit: 5 });
-      const formattedAddresses = addresses.results.map((address) => ({
-        id: address.id,
-        name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
-      }));
+      const formattedAddresses = addresses.results.map(createLabelAddress);
       setOptions(formattedAddresses);
     } catch (error) {
       console.error('Erro ao buscar endereços:', error);
@@ -143,7 +147,7 @@ export default function AutoCompleteAddresses({
         loading={loading}
         value={selectedAddresses}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           if (!disableSuggestions) {
             fetchAddressesByName(newInputValue);
@@ -187,6 +191,9 @@ export default function AutoCompleteAddresses({
             onClosedModal={handleCloseModal}
             selectedAddressId={addAddress}
             onRefresh={refreshAddresses}
+            setAddress={(address) => {
+              setSelectedAddresses([createLabelAddress(address)]);
+            }}
           />
         </DialogContent>
       </Dialog>
