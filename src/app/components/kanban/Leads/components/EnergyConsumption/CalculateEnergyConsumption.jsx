@@ -292,7 +292,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         select
                                         name="dealership"
                                         value={formData.dealership}
-                                        onChange={console.log("dealership selected")}
+                                        onChange={(e) => handleChange('dealership', e.target.value)}
                                         fullWidth
                                     >
                                         <MenuItem value="enel">ENEL</MenuItem>
@@ -305,29 +305,29 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
                             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                                 <Grid item xs={2}>
-                                    <CustomFormLabel htmlFor="dealership" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                                    <CustomFormLabel htmlFor="power_phase" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
                                         Fase energética
                                     </CustomFormLabel>
                                     <TextField
                                         select
-                                        name="dealership"
-                                        value={formData.dealership}
-                                        onChange={console.log("dealership selected")}
+                                        name="power_phase"
+                                        value={formData.power_phase}
+                                        onChange={(e) => handleChange('power_phase', e.target.value)}
                                         fullWidth
                                     >
-                                        <MenuItem value="enel">Bifásica</MenuItem>
+                                        <MenuItem value="bi">Bifásica</MenuItem>
 
                                     </TextField>
                                 </Grid>
 
                                 <Grid item xs={5}>
-                                    <CustomFormLabel htmlFor="consumer_unity" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                                    <CustomFormLabel htmlFor="kwh_value" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
                                         Valor do kWh
                                     </CustomFormLabel>
                                     <TextField
-                                        name="consumer_unity"
+                                        name="kwh_value"
                                         value={formData.medium_energy_val}
-                                        onChange={(e) => handleChange('consumer_unity', e.target.value)}
+                                        onChange={(e) => handleChange('kwh_value', e.target.value)}
                                         fullWidth
                                         // placeholder='1800 kWh'
                                         InputProps={{
@@ -345,13 +345,13 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                 </Grid>
 
                                 <Grid item xs={5}>
-                                    <CustomFormLabel htmlFor="meter_number" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                                    <CustomFormLabel htmlFor="electricity_bill" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
                                         Valor da Conta de Energia
                                     </CustomFormLabel>
                                     <TextField
-                                        name="meter_number"
-                                        value={formData.meter_number}
-                                        onChange={(e) => handleChange('meter_number', e.target.value)}
+                                        name="electricity_bill"
+                                        value={formData.electricity_bill}
+                                        onChange={(e) => handleChange('electricity_bill', e.target.value)}
                                         fullWidth
                                         // placeholder='1800 kWh'
                                         InputProps={{
