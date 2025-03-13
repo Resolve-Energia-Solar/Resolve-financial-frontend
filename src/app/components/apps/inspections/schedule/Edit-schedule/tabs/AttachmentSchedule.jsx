@@ -13,8 +13,10 @@ import scheduleService from '@/services/scheduleService';
 import AttachmentDetailsSchedule from '../../components/AttachmentDetails';
 import { useSelector } from 'react-redux';
 import getContentType from '@/utils/getContentType';
+import { useSnackbar } from 'notistack';
 
 function AttachmentSchedule({ scheduleId }) {
+  const { enqueueSnackbar } = useSnackbar();
   const [attachments, setAttachments] = useState([]);
   const [openModalAddAttachment, setOpenModalAddAttachment] = useState(false);
   const [saleId, setSaleId] = useState(null);
@@ -37,10 +39,11 @@ function AttachmentSchedule({ scheduleId }) {
         setProjectId(response?.project?.id);
       } catch (error) {
         console.error('Error fetching attachments:', error);
+        enqueueSnackbar(`Erro ao buscar anexos: ${error.message}`, { variant: 'error' });
       }
     };
     fetchAttachments();
-  }, [scheduleId, refresh]);
+  }, [scheduleId, refresh, enqueueSnackbar]);
 
   useEffect(() => {
     async function fetchContentTypes() {
@@ -51,10 +54,11 @@ function AttachmentSchedule({ scheduleId }) {
         setProjectContentType(projectType);
       } catch (error) {
         console.error('Erro ao buscar content types:', error);
+        enqueueSnackbar(`Erro ao buscar content types: ${error.message}`, { variant: 'error' });
       }
     }
     fetchContentTypes();
-  }, []);
+  }, [enqueueSnackbar]);
 
   return (
     <>
