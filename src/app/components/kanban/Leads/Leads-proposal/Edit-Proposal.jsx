@@ -496,10 +496,10 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
           >
             <DialogContent>
               {/* add consumo energético dialog */}
-              <AddProposalPage
+              {/* <EditProposalPage
                 leadId={leadId}
                 onClose={() => setOpenEditProposal(false)}
-                onRefresh={onRefresh} />
+                onRefresh={onRefresh} /> */}
             </DialogContent>
           </Dialog>
 
