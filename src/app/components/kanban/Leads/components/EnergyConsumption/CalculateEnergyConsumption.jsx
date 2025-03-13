@@ -296,136 +296,76 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         fullWidth
                                     >
                                         <MenuItem value="enel">ENEL</MenuItem>
-                                        
+
                                     </TextField>
                                 </Grid>
 
                             </Grid>
 
 
-                            <Grid container rowSpacing={1} xs={12}>
-                                {paymentMethods.map((payment, index) => (
-                                    <Grid container spacing={2} key={payment.id} alignItems="center">
-                                        <Grid item xs={6}>
-                                            <CustomFormLabel
-                                                htmlFor={`payment_method_${payment.id}`}
-                                                sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
-                                            >
-                                                Forma de pagamento {index + 1}
-                                            </CustomFormLabel>
-
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                                <TextField
-                                                    select
-                                                    name={`payment_method_${payment.id}`}
-                                                    value={payment.method}
-                                                    onChange={(e) => handleMethodChange(payment.id, 'method', e.target.value)}
-                                                    fullWidth
-                                                >
-                                                    <MenuItem value="credit">Crédito</MenuItem>
-                                                    <MenuItem value="debit">Débito</MenuItem>
-                                                    <MenuItem value="bank_slip">Boleto</MenuItem>
-                                                    <MenuItem value="financing">Financiamento</MenuItem>
-                                                    <MenuItem value="internal_installments">Parcelamento Interno</MenuItem>
-                                                    <MenuItem value="pix">Pix</MenuItem>
-                                                    <MenuItem value="bank_transfer">Transferência</MenuItem>
-                                                    <MenuItem value="cash">Dinheiro</MenuItem>
-                                                    <MenuItem value="auxiliar">Poste Auxiliar</MenuItem>
-                                                    <MenuItem value="construction">Repasse de Obra</MenuItem>
-                                                </TextField>
-
-                                                {index > 0 && (
-                                                    <IconButton
-                                                        onClick={() => removePaymentMethod(payment.id)}
-                                                        sx={{
-                                                            color: '#FF5A5F',
-                                                            '&:hover': {
-                                                                transform: 'scale(1.1)',
-                                                            },
-                                                        }}
-                                                    >
-                                                        <RemoveCircleIcon />
-                                                    </IconButton>
-                                                )}
-                                            </Box>
-                                        </Grid>
-
-                                        {payment.method === 'financing' && (
-                                            <Grid item xs={6}>
-                                                <CustomFormLabel
-                                                    htmlFor={`financing_type_${payment.id}`}
-                                                    sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
-                                                >
-                                                    Financiadoras
-                                                </CustomFormLabel>
-                                                <TextField
-                                                    select
-                                                    name={`financing_type_${payment.id}`}
-                                                    value={payment.financing_type}
-                                                    onChange={(e) => handleMethodChange(payment.id, 'financing_type', e.target.value)}
-                                                    fullWidth
-                                                >
-                                                    <MenuItem value="1">Sol Agora</MenuItem>
-                                                    <MenuItem value="2">BV</MenuItem>
-                                                    <MenuItem value="3">Sicoob</MenuItem>
-                                                    <MenuItem value="4">Bradesco</MenuItem>
-                                                    <MenuItem value="5">BanPará</MenuItem>
-                                                    <MenuItem value="6">SICREDI</MenuItem>
-                                                    <MenuItem value="7">BTG</MenuItem>
-                                                    <MenuItem value="8">Sol Fácil</MenuItem>
-                                                    <MenuItem value="9">Santander</MenuItem>
-                                                    <MenuItem value="10">Itaú</MenuItem>
-                                                    <MenuItem value="11">Banco do Brasil</MenuItem>
-                                                    <MenuItem value="12">Losango</MenuItem>
-                                                </TextField>
-                                            </Grid>
-                                        )}
-
-                                        {payment.method === 'credit' && (
-                                            <Grid item xs={6}>
-                                                <CustomFormLabel
-                                                    htmlFor={`installments_num_${payment.id}`}
-                                                    sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
-                                                >
-                                                    Parcelas
-                                                </CustomFormLabel>
-                                                <TextField
-                                                    select
-                                                    name={`installments_num_${payment.id}`}
-                                                    value={payment.installments_num}
-                                                    onChange={(e) => handleMethodChange(payment.id, 'installments_num', e.target.value)}
-                                                    fullWidth
-                                                >
-                                                    <MenuItem value="2">2x</MenuItem>
-                                                    <MenuItem value="3">3x</MenuItem>
-                                                    <MenuItem value="4">4x</MenuItem>
-                                                </TextField>
-                                            </Grid>
-                                        )}
-                                    </Grid>
-                                ))}
-
+                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                                 <Grid item xs={4}>
-                                    <IconButton
-                                        sx={{
-                                            mt: 2,
-                                            color: '#7E8388',
-                                            justifyContent: 'flex-start',
-                                            alignItems: 'center',
-                                            gap: 0.5,
-                                            transition: '0.3s',
-                                            '&:hover': {
-                                                transform: 'scale(1.05)',
-                                                backgroundColor: 'rgba(0, 0, 0, 0.00)',
+                                    <CustomFormLabel htmlFor="dealership" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                                        Fase energética
+                                    </CustomFormLabel>
+                                    <TextField
+                                        select
+                                        name="dealership"
+                                        value={formData.dealership}
+                                        onChange={console.log("dealership selected")}
+                                        fullWidth
+                                    >
+                                        <MenuItem value="enel">Bifásica</MenuItem>
+
+                                    </TextField>
+                                </Grid>
+
+                                <Grid item xs={3}>
+                                    <CustomFormLabel htmlFor="consumer_unity" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                                        Valor do kWh
+                                    </CustomFormLabel>
+                                    <TextField
+                                        name="consumer_unity"
+                                        value={formData.medium_energy_val}
+                                        onChange={(e) => handleChange('consumer_unity', e.target.value)}
+                                        fullWidth
+                                        // placeholder='1800 kWh'
+                                        InputProps={{
+                                            sx: {
+                                                input: {
+                                                    color: "#7E92A2",
+                                                    fontWeight: "400",
+                                                    fontSize: "12px",
+                                                    opacity: 1,
+
+                                                },
                                             },
                                         }}
-                                        onClick={addPaymentMethod}
-                                    >
-                                        <AddOutlinedIcon sx={{ fontSize: 18 }} />
-                                        <Typography variant="body2" sx={{ fontSize: 12, fontWeight: 600 }}>
-                                            Adicionar forma de pagamento
-                                        </Typography>
-                                    </IconButton>
+                                    />
+                                </Grid>
+
+                                <Grid item xs={2}>
+                                    <CustomFormLabel htmlFor="meter_number" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                                        Valor da Conta de Energia
+                                    </CustomFormLabel>
+                                    <TextField
+                                        name="meter_number"
+                                        value={formData.meter_number}
+                                        onChange={(e) => handleChange('meter_number', e.target.value)}
+                                        fullWidth
+                                        // placeholder='1800 kWh'
+                                        InputProps={{
+                                            sx: {
+                                                input: {
+                                                    color: "#7E92A2",
+                                                    fontWeight: "400",
+                                                    fontSize: "12px",
+                                                    opacity: 1,
+
+                                                },
+                                            },
+                                        }}
+                                    />
                                 </Grid>
                             </Grid>
 
