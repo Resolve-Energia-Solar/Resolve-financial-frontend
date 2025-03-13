@@ -25,7 +25,7 @@ import ListProducts from './ListProducts';
 
 
 
-export function ProductList({ leadId = null }) {
+export function ProjectCard({ leadId = null }) {
   const dispatch = useDispatch();
   const [dialogProductOpen, setDialogProductOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -269,4 +269,4 @@ export function ProductList({ leadId = null }) {
   );
 }
 
-export default ProductList;
+export default ProjectCard;
