@@ -236,8 +236,6 @@ export function ProjectCard({ leadId = null }) {
         </DialogContent>
       </Dialog>
 
-      import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-
       <Dialog
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
