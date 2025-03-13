@@ -420,7 +420,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                 </Grid>
                             </Grid>
 
-                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ alignItems: "flex-end", justifyContent: "center" }}>
                                 <Grid item xs={1.5}>
                                     <CustomFormLabel
                                         htmlFor="shadowing"
@@ -452,7 +452,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                 </Grid>
 
 
-                                <Grid item xs={2}>
+                                <Grid item xs={2.5}>
                                     <CustomFormLabel htmlFor="roof_type" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
                                         Tipo de telhado
                                     </CustomFormLabel>
@@ -468,7 +468,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     </TextField>
                                 </Grid>
 
-                                <Grid item xs={4}>
+                                <Grid item xs={3}>
                                     <CustomFormLabel htmlFor="estimated_generation" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Geração de energia estimada</CustomFormLabel>
                                     <TextField
                                         name="estimated_generation"
@@ -500,7 +500,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     </Button>
                                 </Grid>
 
-                                <Grid item xs={4}>
+                                <Grid item xs={1}>
                                     <Box sx={{ display: 'flex', gap: 2 }}>
                                         <Button
                                             variant="contained"
