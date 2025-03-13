@@ -183,7 +183,7 @@ export function ProjectCard({ leadId = null }) {
             onClick={() => setDialogProductOpen(true)}
           >
             <AddOutlinedIcon sx={{ fontSize: 18 }} />
-            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar produto</Typography>
+            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar novo</Typography>
           </IconButton>
 
           <IconButton
