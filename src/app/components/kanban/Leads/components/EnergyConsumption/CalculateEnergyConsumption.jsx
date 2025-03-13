@@ -445,9 +445,9 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                             },
                                         }}
                                     />
-                                    <Typography sx={{ color: '#7E92A2', fontSize: '32px', fontWeight: 400 }}>
+                                    {/* <Typography sx={{ color: '#7E92A2', fontSize: '14px', fontWeight: 400 }}>
                                         {checked ? 'Sim' : 'Não'}
-                                    </Typography>
+                                    </Typography> */}
 
                                 </Grid>
 
