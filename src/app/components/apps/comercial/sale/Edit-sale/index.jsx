@@ -52,7 +52,6 @@ import Addresses from '../../../sale/Adresses';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
-// Componente auxiliar TabPanel para manter as abas montadas no front
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
@@ -63,7 +62,6 @@ function TabPanel(props) {
       aria-labelledby={`tab-${index}`}
       {...other}
     >
-      {/* Mesmo quando oculto, o conteúdo permanece montado */}
       <Box>{children}</Box>
     </div>
   );
