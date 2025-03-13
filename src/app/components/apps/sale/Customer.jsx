@@ -7,6 +7,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import EditIcon from '@mui/icons-material/Edit';
 import userService from '@/services/userService';
 import { useEffect, useState } from 'react';
+import { enqueueSnackbar } from 'notistack';
 export default function Customer({ data, onRefresh }) {
   const [formData, setFormData] = useState();
   const [loading, setLoading] = useState(false);
@@ -36,11 +37,12 @@ export default function Customer({ data, onRefresh }) {
       setFormData(response);
       onRefresh();
       setDisabled(true);
+      enqueueSnackbar('Salvo com sucesso!', { variant: 'success' });
     } catch (error) {
       setFormData(data);
       setDisabled(false);
       console.log(error);
-      throw error;
+      enqueueSnackbar(`Erro ao salvar contate o suporte: ${error.message}`, { variant: 'error' });
     } finally {
       setLoading(false);
     }

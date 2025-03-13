@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import phoneNumberService from '@/services/phoneNumberService';
+import { enqueueSnackbar } from 'notistack';
 
 const usePhoneNumberForm = (initialData, id) => {
   const [formData, setFormData] = useState({
@@ -54,10 +55,12 @@ const usePhoneNumberForm = (initialData, id) => {
       setFormErrors({});
       setSuccess(true);
       setDataReceived(response);
+      enqueueSnackbar("Salvo com sucesso!", { variant: "success" });
     } catch (err) {
       setSuccess(false);
       setFormErrors(err.response?.data || {});
       console.log(err.response?.data || err);
+      enqueueSnackbar(`Erro ao salvar, contate o suporte: ${err}`, { variant: 'error' });
     } finally {
       setLoading(false);
     }
