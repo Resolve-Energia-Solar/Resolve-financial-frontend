@@ -34,6 +34,7 @@ import { color } from 'framer-motion';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import EnergyConsumptionCalc from '../components/EnergyConsumption/CalculateEnergyConsumption';
 
 function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
@@ -514,13 +515,21 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             onClose={() => setOpenEnergyConsumption(false)}
             maxWidth="lg"
             fullWidth
+            PaperProps={{
+              sx: {
+                borderRadius: '20px',
+                padding: "24px",
+                gap: "24px",
+                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                backgroundColor: '#FFFFFF', 
+              },
+            }}
           >
             <DialogContent>
-              {/* add consumo energético dialog */}
-              {/* <EditProposalPage
+              <EnergyConsumptionCalc
                 leadId={leadId}
-                onClose={() => setOpenEditProposal(false)}
-                onRefresh={onRefresh} /> */}
+                onClose={() => setOpenEnergyConsumption(false)}
+                onRefresh={onRefresh} />
             </DialogContent>
           </Dialog>
 
