@@ -60,7 +60,8 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
     const fetchSchedules = async () => {
       try {
         setLoading(true);
-        const response = await scheduleService.getAllSchedulesInspectionByProject(projectId);
+        const fields = 'id,schedule_date,schedule_start_time,status,final_service_opinion';
+        const response = await scheduleService.getAllSchedulesInspectionByProject(projectId, fields);
         console.log('response', response.results);
 
         // Obter os detalhes do projeto para verificar a vistoria principal
