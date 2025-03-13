@@ -75,7 +75,7 @@ export function ProjectCard({ leadId = null }) {
         alignItems={'center'}
         spacing={0}
         justifyContent={'space-between'}
-        sx={{ mb: 2, minHeight: 300 }}
+        sx={{ minHeight: 300 }}
       >
         <Grid
           item
