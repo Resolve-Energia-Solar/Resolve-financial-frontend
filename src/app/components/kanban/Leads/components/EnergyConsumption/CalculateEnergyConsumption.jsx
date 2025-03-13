@@ -373,11 +373,11 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
                             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                                 <Grid item xs={4}>
-                                    <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor da Iluminação Pública</CustomFormLabel>
+                                    <CustomFormLabel htmlFor="public_lighting_charge" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor da Iluminação Pública</CustomFormLabel>
                                     <TextField
-                                        name="amount"
-                                        value={formData.amount}
-                                        onChange={(e) => handleChange('amount', e.target.value)}
+                                        name="public_lighting_charge"
+                                        value={formData.public_lighting_charge}
+                                        onChange={(e) => handleChange('public_lighting_charge', e.target.value)}
                                         fullWidth
                                         InputProps={{
                                             startAdornment: (
@@ -392,11 +392,11 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                 </Grid>
 
                                 <Grid item xs={4}>
-                                    <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor da Disponibilidade</CustomFormLabel>
+                                    <CustomFormLabel htmlFor="availability_charge" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor da Disponibilidade</CustomFormLabel>
                                     <TextField
-                                        name="amount"
-                                        value={formData.amount}
-                                        onChange={(e) => handleChange('amount', e.target.value)}
+                                        name="availability_charge"
+                                        value={formData.availability_charge}
+                                        onChange={(e) => handleChange('availability_charge', e.target.value)}
                                         fullWidth
                                         InputProps={{
                                             startAdornment: (
@@ -411,11 +411,11 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                 </Grid>
 
                                 <Grid item xs={4}>
-                                    <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor do TUSD Fio B</CustomFormLabel>
+                                    <CustomFormLabel htmlFor="b_wire_value" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor do TUSD Fio B</CustomFormLabel>
                                     <TextField
-                                        name="amount"
-                                        value={formData.amount}
-                                        onChange={(e) => handleChange('amount', e.target.value)}
+                                        name="b_wire_value"
+                                        value={formData.b_wire_value}
+                                        onChange={(e) => handleChange('b_wire_value', e.target.value)}
                                         fullWidth
                                         InputProps={{
                                             startAdornment: (
