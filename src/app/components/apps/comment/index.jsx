@@ -52,7 +52,7 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const data = await CommentService.getComment(objectId, contentTypeId);
+                const data = await CommentService.getComments(objectId, contentTypeId);
                 setComments(data.results || []);
 
             } catch (err) {
