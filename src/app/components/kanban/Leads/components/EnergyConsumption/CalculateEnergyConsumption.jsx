@@ -164,9 +164,11 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         onClick={discard_proposal}
                                     >
                                         <BackupOutlinedIcon />
-                                        <Typography sx={{ fontSize: '14px', fontWeight: "400" }}>
-                                            Tem certeza de que deseja excluir este produto?{' '}
-                                            <strong>Esta ação não pode ser desfeita em produtos personalizados.</strong>
+                                        <Typography sx={{ fontSize: '14px', fontWeight: "400", color: "#0B0B0B", mr: 0.5 }}>
+                                            Carregar conta de luz
+                                        </Typography>
+                                        <Typography sx={{ fontSize: '14px', fontWeight: "600", color: theme.palette.primary.main }}>
+                                            Upload
                                         </Typography>
 
                                     </Button>
