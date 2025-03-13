@@ -304,7 +304,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
 
                             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                                <Grid item xs={4}>
+                                <Grid item xs={2}>
                                     <CustomFormLabel htmlFor="dealership" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
                                         Fase energética
                                     </CustomFormLabel>
@@ -320,7 +320,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     </TextField>
                                 </Grid>
 
-                                <Grid item xs={3}>
+                                <Grid item xs={5}>
                                     <CustomFormLabel htmlFor="consumer_unity" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
                                         Valor do kWh
                                     </CustomFormLabel>
@@ -344,7 +344,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     />
                                 </Grid>
 
-                                <Grid item xs={2}>
+                                <Grid item xs={5}>
                                     <CustomFormLabel htmlFor="meter_number" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
                                         Valor da Conta de Energia
                                     </CustomFormLabel>
