@@ -143,14 +143,14 @@ export function ProjectCard({ leadId = null }) {
             }}
           >
             <Grid item xs={8} sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant="body2">{product.name}</Typography>
+              <Typography sx={{ fontWeight: '500', fontSize: "12px" }}>{product.name}</Typography>
             </Grid>
             <Grid
               item
               xs={3}
               sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              <Typography variant="body2">
+              <Typography sx={{ fontWeight: '500', fontSize: "12px" }}>
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.product_value)}
               </Typography>
             </Grid>
