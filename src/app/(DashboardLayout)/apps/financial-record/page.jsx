@@ -230,15 +230,15 @@ const financialRecordList = () => {
                 value && typeof value === 'object' ? value.codigo : value,
         },
         {
-            key: "Protocolo",
+            key: "protocol__in",
             label: "Lista de Protocolos",
             type: "async-multiselect",
             endpoint: "/api/financial-records/",
             queryParam: "protocol__icontains",
-            extraParams: { fields: "protocol,id" },
+            extraParams: { fields: "protocol,client_supplier_name" },
             mapResponse: (data) => data.results.map(financialRecord => ({
-                label: financialRecord.protocol,
-                value: financialRecord.id
+                label: `${financialRecord.protocol} - ${financialRecord.client_supplier_name}`,
+                value: financialRecord.protocol
             }))
         },
         { key: "status__in", label: "Status (Lista)", type: "multiselect", options: [] },

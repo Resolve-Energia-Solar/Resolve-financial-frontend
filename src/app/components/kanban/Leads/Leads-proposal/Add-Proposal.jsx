@@ -18,7 +18,7 @@ import leadService from '@/services/leadService';
 import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import ProductList from '@/app/components/kanban/Leads/components/ProposalProductsCard';
+import ProjectCard from '@/app/components/kanban/Leads/components/ProjectSmallListCard';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import Button from "@mui/material/Button";
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -444,7 +444,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               xs={12}
               sx={{ display: 'flex', flexDirection: 'column', marginTop: 2, gap: 2 }}
             >
-              <ProductList leadId={leadId} />
+              <ProjectCard leadId={leadId} />
             </Grid>
           </Grid>
 
