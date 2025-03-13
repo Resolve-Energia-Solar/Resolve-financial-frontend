@@ -222,19 +222,19 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     value={formData.estimated_power_generation}
                     onChange={(e) => handleChange('estimated_power_generation', e.target.value)}
                     fullWidth
-                    placeholder="2500 kWh"
+                    disabled
+                    // placeholder="2500 kWh"
                     InputProps={{
-                      sx: {
-                        input: {
-                          '::placeholder': {
-                            color: "#7E92A2",
-                            fontWeight: "400",
-                            fontSize: "12px",
-                            opacity: 1,
+                        sx: {
+                          input: {
+                              color: "#7E92A2",
+                              fontWeight: "400",
+                              fontSize: "12px",
+                              opacity: 1,
+                            
                           },
                         },
-                      },
-                    }}
+                      }}
                   />
                 </Grid>
 
@@ -245,16 +245,16 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     value={formData.medium_energy_val}
                     onChange={(e) => handleChange('medium_energy_val', e.target.value)}
                     fullWidth
-                    placeholder='1800 kWh'
+                    disabled
+                    // placeholder='1800 kWh'
                     InputProps={{
                       sx: {
                         input: {
-                          '::placeholder': {
                             color: "#7E92A2",
                             fontWeight: "400",
                             fontSize: "12px",
                             opacity: 1,
-                          },
+                          
                         },
                       },
                     }}
