@@ -34,6 +34,7 @@ import { color } from 'framer-motion';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import BackupOutlinedIcon from '@mui/icons-material/BackupOutlined';
 
 function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
@@ -148,7 +149,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
-                <Grid item xs={12} sx={{ border: "2px solid", borderStyle: "dashed", borderColor: theme.palette.primary.main, borderRadius: 1 }}>
+                <Grid item xs={12} sx={{ border: "2px solid", borderStyle: "dashed", borderColor: theme.palette.primary.main, borderRadius: 1, p: 4 }}>
                   <CustomFormLabel htmlFor="proposal_name" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Nome da Proposta</CustomFormLabel>
                   <TextField
                     select
