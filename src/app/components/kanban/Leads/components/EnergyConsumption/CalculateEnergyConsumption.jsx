@@ -166,7 +166,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         onClick={discard_proposal}
                                     >
                                         <BackupOutlinedIcon />
-                                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, p: 1 }}>
                                             <Typography sx={{ fontSize: '14px', fontWeight: "400", color: "#0B0B0B" }}>
                                                 Carregar conta de luz
                                             </Typography>
@@ -174,6 +174,9 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                 Upload
                                             </Typography>
                                         </Box>
+                                        <Typography sx={{ fontSize: '14px', fontWeight: "400", color: "#6D6D6D" }}>
+                                        Tamanho máximo do arquivo 10 MB
+                                            </Typography>
 
                                     </Button>
                                 </Grid>
