@@ -149,17 +149,11 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
-                <Grid item xs={12} sx={{ border: "2px solid", borderStyle: "dashed", borderColor: theme.palette.primary.main, borderRadius: 1, p: 4 }}>
-                  <CustomFormLabel htmlFor="proposal_name" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Nome da Proposta</CustomFormLabel>
-                  <TextField
-                    select
-                    name="proposal_name"
-                    value={formData.proposal_name}
-                    onChange={(e) => handleChange('proposal_name', e.target.value)}
-                    fullWidth
-                  >
-                    <MenuItem value="K1">Kit Solar 2034</MenuItem>
-                  </TextField>
+                <Grid item xs={12} >
+                    <Button variant="outlined" sx={{ border: "2px solid", borderStyle: "dashed", borderColor: theme.palette.primary.main, borderRadius: 1, p: 4 }} onClick={discard_proposal}>
+                    <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
+                    <DeleteOutlinedIcon />
+                </Button>
                 </Grid>
 
                 <Grid item xs={6}>
