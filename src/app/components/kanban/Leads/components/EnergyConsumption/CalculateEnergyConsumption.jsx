@@ -209,17 +209,17 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     <Typography sx={{ color: "#000000", fontWeight: "400", fontSize: "18px", py: 2 }}>Consumo energético</Typography>
                                 </Grid>
 
-                                <Grid item xs={6}>
+                                <Grid item xs={3}>
                                     <CustomFormLabel
-                                        htmlFor="estimated_power_generation"
+                                        htmlFor="medimum_consumption"
                                         sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
                                     >
                                         Consumo médio mensal
                                     </CustomFormLabel>
                                     <TextField
-                                        name="estimated_power_generation"
-                                        value={formData.estimated_power_generation}
-                                        onChange={(e) => handleChange('estimated_power_generation', e.target.value)}
+                                        name="medimum_consumption"
+                                        value={formData.medimum_consumption}
+                                        onChange={(e) => handleChange('medimum_consumption', e.target.value)}
                                         fullWidth
                                         // placeholder="2500 kWh"
                                         InputProps={{
@@ -236,14 +236,14 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     />
                                 </Grid>
 
-                                <Grid item xs={6}>
-                                    <CustomFormLabel htmlFor="medium_energy_val" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                                <Grid item xs={3}>
+                                    <CustomFormLabel htmlFor="consumer_unity" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
                                         Unidade consumidora
                                     </CustomFormLabel>
                                     <TextField
-                                        name="medium_energy_val"
+                                        name="consumer_unity"
                                         value={formData.medium_energy_val}
-                                        onChange={(e) => handleChange('medium_energy_val', e.target.value)}
+                                        onChange={(e) => handleChange('consumer_unity', e.target.value)}
                                         fullWidth
                                         // placeholder='1800 kWh'
                                         InputProps={{
@@ -260,14 +260,14 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     />
                                 </Grid>
 
-                                <Grid item xs={6}>
-                                    <CustomFormLabel htmlFor="medium_energy_val" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                                <Grid item xs={2}>
+                                    <CustomFormLabel htmlFor="meter_number" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
                                         Número do medidor
                                     </CustomFormLabel>
                                     <TextField
-                                        name="medium_energy_val"
-                                        value={formData.medium_energy_val}
-                                        onChange={(e) => handleChange('medium_energy_val', e.target.value)}
+                                        name="meter_number"
+                                        value={formData.meter_number}
+                                        onChange={(e) => handleChange('meter_number', e.target.value)}
                                         fullWidth
                                         // placeholder='1800 kWh'
                                         InputProps={{
@@ -284,27 +284,19 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     />
                                 </Grid>
 
-                                <Grid item xs={6}>
-                                    <CustomFormLabel htmlFor="medium_energy_val" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                                <Grid item xs={4}>
+                                    <CustomFormLabel htmlFor="dealership" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
                                         Concessionária
                                     </CustomFormLabel>
                                     <TextField
                                         select
-                                        name=""
-                                        value={formData.created_by_id}
-                                        onChange={console.log("concessionaria selected")}
+                                        name="dealership"
+                                        value={formData.dealership}
+                                        onChange={console.log("dealership selected")}
                                         fullWidth
                                     >
-                                        <MenuItem value="credit">Crédito</MenuItem>
-                                        <MenuItem value="debit">Débito</MenuItem>
-                                        <MenuItem value="bank_slip">Boleto</MenuItem>
-                                        <MenuItem value="financing">Financiamento</MenuItem>
-                                        <MenuItem value="internal_installments">Parcelamento Interno</MenuItem>
-                                        <MenuItem value="pix">Pix</MenuItem>
-                                        <MenuItem value="bank_transfer">Transferência</MenuItem>
-                                        <MenuItem value="cash">Dinheiro</MenuItem>
-                                        <MenuItem value="auxiliar">Poste Auxiliar</MenuItem>
-                                        <MenuItem value="construction">Repasse de Obra</MenuItem>
+                                        <MenuItem value="enel">ENEL</MenuItem>
+                                        
                                     </TextField>
                                 </Grid>
 
