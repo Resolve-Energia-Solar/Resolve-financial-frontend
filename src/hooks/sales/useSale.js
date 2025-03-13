@@ -36,6 +36,7 @@ const useSale = (id) => {
             "payments",
             "contract-submissions",
             "customer.addresses",
+            "customer.phone_numbers",
             "projects.units",
             "comments"
           ],
@@ -45,6 +46,10 @@ const useSale = (id) => {
             "customer.email",
             "customer.first_document",
             "customer.birth_date",
+            "customer.phone_numbers",
+            "customer.addresses",
+            "customer.gender",
+            "customer.person_type",
             "id",
             "total_value",
             "branch.id",
@@ -62,8 +67,7 @@ const useSale = (id) => {
             "is_pre_sale",
             "reference_table",
           ],
-          format: "json",
-          limit: 1
+          format: "json"
         }
       );
       setSaleData(data);
@@ -83,7 +87,7 @@ const useSale = (id) => {
     fetchSale();
   };
 
-  return { loading, error, saleData, handleRowClick, openDrawer, setOpenDrawer, rowSelected, toggleDrawerClosed, reload };
+  return { loading, fetchSale, error, saleData, handleRowClick, openDrawer, setOpenDrawer, rowSelected, toggleDrawerClosed, reload };
 };
 
 export default useSale;
