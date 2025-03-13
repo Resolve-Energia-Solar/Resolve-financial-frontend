@@ -148,7 +148,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
-                <Grid item xs={12} sx={{ border: "2px solid", borderStyle: "dashed", }}>
+                <Grid item xs={12} sx={{ border: "2px solid", borderStyle: "dashed", borderColor: theme.palette.primary.main}}>
                   <CustomFormLabel htmlFor="proposal_name" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Nome da Proposta</CustomFormLabel>
                   <TextField
                     select
