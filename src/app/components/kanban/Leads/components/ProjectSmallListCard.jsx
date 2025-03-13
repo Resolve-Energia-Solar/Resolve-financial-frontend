@@ -106,7 +106,7 @@ export function ProjectCard({ leadId = null }) {
             <Typography variant="h5">Projeto 01</Typography>
           </Grid>
 
-          <Grid item xs={8} sx={{ justifyContent: 'flex-end' }}>
+          {/* <Grid item xs={8} sx={{ justifyContent: 'flex-end' }}>
             <TextField
               fullWidth
               placeholder="Pesquisar produto"
@@ -118,7 +118,7 @@ export function ProjectCard({ leadId = null }) {
                 ),
               }}
             />
-          </Grid>
+          </Grid> */}
         </Grid>
 
         {/* TABLE HEADER */}
