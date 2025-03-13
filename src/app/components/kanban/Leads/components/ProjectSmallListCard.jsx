@@ -172,6 +172,15 @@ export function ProjectCard({ leadId = null }) {
           </Grid>
         )}
 
+        <Grid container xs={12} sx={{ mb: 1, mt: 2, justifyContent: 'space-between' }}>
+          <Grid item xs={10}>
+            <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Energia gerada pelo Kit</Typography>
+          </Grid>
+          <Grid item xs={2} sx={{ justifyContent: 'flex-end', alignItems: 'center', display: 'flex' }}>
+            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>2500 kWh</Typography>
+          </Grid>
+        </Grid>
+
         {/* ADD PRODUCT!*/}
         <Grid item sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
           <IconButton
