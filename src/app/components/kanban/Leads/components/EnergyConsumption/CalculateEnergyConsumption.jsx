@@ -371,52 +371,67 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
 
 
-
-
                             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                                <Grid item xs={6}>
-                                    <CustomFormLabel htmlFor="seller_id" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Vendedor Responsável</CustomFormLabel>
+                                <Grid item xs={4}>
+                                    <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor da Iluminação Pública</CustomFormLabel>
                                     <TextField
-                                        select
-                                        name="seller_id"
-                                        value={formData.seller_id}
-                                        onChange={(e) => handleChange('seller_id', e.target.value)}
+                                        name="amount"
+                                        value={formData.amount}
+                                        onChange={(e) => handleChange('amount', e.target.value)}
                                         fullWidth
-                                    >
-                                        <MenuItem value="F">Fulano</MenuItem>
-                                        <MenuItem value="C">Ciclano</MenuItem>
-                                        <MenuItem value="B">Beltrano</MenuItem>
-                                    </TextField>
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
+                                                        R$
+                                                    </Box>
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
                                 </Grid>
 
-                                <Grid item xs={6}>
-                                    <CustomFormLabel htmlFor="proposal_validity" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
-                                        Validade da proposta
-                                    </CustomFormLabel>
+                                <Grid item xs={4}>
+                                    <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor da Disponibilidade</CustomFormLabel>
                                     <TextField
-                                        name="proposal_validity"
-                                        value={formData.proposal_validity}
-                                        onChange={(e) => handleChange('proposal_validity', e.target.value)}
+                                        name="amount"
+                                        value={formData.amount}
+                                        onChange={(e) => handleChange('amount', e.target.value)}
                                         fullWidth
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
+                                                        R$
+                                                    </Box>
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
+                                </Grid>
+
+                                <Grid item xs={4}>
+                                    <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor do TUSD Fio B</CustomFormLabel>
+                                    <TextField
+                                        name="amount"
+                                        value={formData.amount}
+                                        onChange={(e) => handleChange('amount', e.target.value)}
+                                        fullWidth
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
+                                                        R$
+                                                    </Box>
+                                                </InputAdornment>
+                                            ),
+                                        }}
                                     />
                                 </Grid>
                             </Grid>
 
 
-                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                                <Grid item xs={12}>
-                                    <CustomFormLabel htmlFor="description" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Descrição</CustomFormLabel>
-                                    <CustomTextArea
-                                        name="proposal_description"
-                                        multiline
-                                        rows={4}
-                                        minRows={3}
-                                        value={formData.proposal_description}
-                                        onChange={(e) => handleChange('proposal_description', e.target.value)}
-                                        {...(formErrors.proposal_description && { error: true, helperText: formErrors.proposal_description })}
-                                    />
-                                </Grid>
-                            </Grid>
+
                         </Grid>
 
 
