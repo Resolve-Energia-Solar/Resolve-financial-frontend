@@ -264,7 +264,7 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 <Grid item xs={6}>
                   <Button
                     variant="contained"
-                    onButtonClick={() => setOpenEnergyConsumption(true)}
+                    onClick={() => setOpenEnergyConsumption(true)}
                     sx={{
                       backgroundColor: '#F4F5F7',
                       color: '#303030',
