@@ -233,7 +233,7 @@ function ViewLeadPage({ leadId = null }) {
                     {proposals.length > 0 && (
                         <Grid item>
                             <ProposalCard
-                                image="/images/products/yellow-projects-file-icon.png"
+                                image="/images/products/projects-file-icon.png"
                                 alt="Project Icon"
                                 price={new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(proposals[0].value)}
                                 status={proposalStatus[proposals[0].status]?.label}
@@ -257,7 +257,7 @@ function ViewLeadPage({ leadId = null }) {
                     {proposals.slice(1).map((proposal, index) => (
                         <Grid item key={index}>
                             <ProposalCard
-                                image="/images/products/yellow-projects-file-icon.png"
+                                image="/images/products/projects-file-icon.png"
                                 alt="Project Icon"
                                 price={new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(proposal.value)}
                                 status={proposalStatus[proposal.status]?.label}
