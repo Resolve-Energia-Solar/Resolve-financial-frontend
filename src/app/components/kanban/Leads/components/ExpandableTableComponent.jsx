@@ -11,6 +11,7 @@ import {
   ListItemSecondaryAction,
   Chip,
   Box,
+  Grid,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IconEye, IconPencil } from '@tabler/icons-react';
@@ -46,11 +47,16 @@ const ExpandableListComponent = ({
         >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-            <Grid item>
-                <DomainIcon />
-            </Grid>
-              <Typography sx={{ fontWeight: 700, fontSize: "14px" }}>{sale.name}</Typography>
-              <Chip label={sale.status} color="primary" variant="outlined" />
+                <Grid item xs={2}>
+                    <DomainIcon />
+                </Grid>
+                <Grid item xs={8}>
+                    <Typography sx={{ fontWeight: 700, fontSize: "14px" }}>{sale.name}</Typography>
+                </Grid>
+                <Grid item xs={2}>
+                    <Chip label={sale.status} color="primary" variant="outlined" />
+                </Grid>
+              
             </Box>
           </AccordionSummary>
 
