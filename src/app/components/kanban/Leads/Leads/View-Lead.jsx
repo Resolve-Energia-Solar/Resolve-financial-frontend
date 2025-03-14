@@ -100,7 +100,7 @@ function ViewLeadPage({ leadId = null }) {
                         </Grid>
                     </Grid>
 
-                    <Box sx={{ p: 3.5 }}>
+                    <Box sx={{ p: 3.5, borderBottom: "1px solid", borderRadius: 0, borderColor: "#F4F5F7" }}>
                         <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#ADADAD" }}>
                             Agendamento
                         </Typography>
@@ -142,7 +142,6 @@ function ViewLeadPage({ leadId = null }) {
                             </Typography>
                         </Box>
                     </Box>
-                    <Divider sx={{ my: 0 }} />
 
                     <Grid container spacing={6} sx={{ p: 3.5 }}>
                         <Grid item xs={12} md={4} >
