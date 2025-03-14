@@ -99,7 +99,6 @@ function ViewLeadPage({ leadId = null }) {
                         </Grid>
                     </Grid>
 
-                    <Divider sx={{ my: 0 }} />
                     <Box sx={{ p: 3.5 }}>
                         <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
                             Agendamento
