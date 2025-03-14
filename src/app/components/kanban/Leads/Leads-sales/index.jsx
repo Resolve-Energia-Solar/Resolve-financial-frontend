@@ -50,51 +50,56 @@ const SalesListPage = ({ leadId = null }) => {
     const columns = [
         {
             field: 'name',
-            headerName: 'Nome',
+            headerName: 'Projeto',
             flex: 1,
-            render: (row) =>
-                row?.products.length > 0
-                    ? row.products.map((product) => product.name).join(', ')
-                    : 'Nenhum produto vinculado',
+            // render: (row) =>
+            //     row?.products.length > 0
+            //         ? row.products.map((product) => product.name).join(', ')
+            //         : 'Nenhum produto vinculado',
         },
         {
-            field: 'id',
-            headerName: 'Proposta',
+            field: 'type',
+            headerName: 'Tipo de projeto',
             flex: 1,
         },
-        {
-            field: 'value',
-            headerName: 'Valor',
-            flex: 1,
-            render: (row) =>
-                new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                }).format(row.value),
-        },
+        // {
+        //     field: 'value',
+        //     headerName: 'Valor',
+        //     flex: 1,
+        //     render: (row) =>
+        //         new Intl.NumberFormat('pt-BR', {
+        //             style: 'currency',
+        //             currency: 'BRL',
+        //         }).format(row.value),
+        // },
         {
             field: 'responsible',
-            headerName: 'Responsável',
+            headerName: 'Vendedor Responsável',
             flex: 1,
             render: (row) =>
                 `${row.created_by?.first_name || ''} ${row.created_by?.last_name || ''}`,
         },
         {
-            field: 'due_date',
-            headerName: 'Data',
+            field: 'sdr',
+            headerName: 'SDR',
             flex: 1,
         },
         {
-            field: 'status',
-            headerName: 'Status',
+            field: 'franchise',
+            headerName: 'Franquia',
             flex: 1,
-            render: (row) => (
-                <Chip
-                    label={saleStatus[row.status]?.label || 'Desconhecido'}
-                    sx={{ backgroundColor: saleStatus[row.status]?.color }}
-                />
-            ),
         },
+        // {
+        //     field: 'status',
+        //     headerName: 'Status',
+        //     flex: 1,
+        //     render: (row) => (
+        //         <Chip
+        //             label={saleStatus[row.status]?.label || 'Desconhecido'}
+        //             sx={{ backgroundColor: saleStatus[row.status]?.color }}
+        //         />
+        //     ),
+        // },
     ];
 
     const [openAddSale, setOpenAddSale] = useState(false);
