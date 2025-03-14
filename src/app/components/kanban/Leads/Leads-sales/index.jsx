@@ -157,7 +157,7 @@ const SalesListPage = ({ leadId = null }) => {
                 <Grid item xs={12} sx={{ overflow: 'scroll' }}>
                     <Box sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
                         <Grid item spacing={2} alignItems="center" xs={12}>
-                            <LeadInfoHeader leadId={leadId} />
+                            <Typography sx={{ fontSize: "18px", fontWeight: "700", color: "#000000"}}>Contratos do cliente</Typography>
                         </Grid>
                     </Box>
 
