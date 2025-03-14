@@ -225,7 +225,7 @@ function ViewLeadPage({ leadId = null }) {
                         <Typography gutterBottom sx={{ fontSize: '18px', fontWeight: "700", color: "#303030" }}>
                             Propostas
                         </Typography>
-                        <Typography variant="body1" gutterBottom sx={{ fontSize: 14, color: '#7E92A2' }}>
+                        <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E92A2" }}>
                             Última proposta enviada
                         </Typography>
                     </Grid>
