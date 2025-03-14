@@ -26,6 +26,7 @@ import { useEffect, useState } from 'react';
 import AttachmentDrawer from '../../attachment/AttachmentDrawer';
 import attachmentService from '@/services/attachmentService';
 import userService from '@/services/userService';
+import { useSelector } from 'react-redux';
 
 const BCrumb = [
   {
@@ -38,6 +39,10 @@ const BCrumb = [
 ];
 
 export default function Sicoob() {
+  const user = useSelector((state) => state.user?.user);
+
+  console.log(user);
+
   const [rows, setRows] = useState([]);
   const [row, setRow] = useState();
   const [openSideDrawer, setOpenSideDrawer] = useState(false);
@@ -47,6 +52,7 @@ export default function Sicoob() {
   const [rFormData, setRFormData] = useState({});
   const [attachments, setAttachments] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
   const handleAddAttachment = (attachment) => {
     setAttachments((prev) => [...prev, attachment]);
   };
@@ -63,7 +69,7 @@ export default function Sicoob() {
           email: formData.email,
           first_document: formData.first_document,
           person_type: formData.person_type,
-          addresses: [3582],
+          addresses: [320],
           user_types: [2],
         });
 
@@ -76,7 +82,7 @@ export default function Sicoob() {
           person_type: formDataManaging.person_type,
           birth_date: formDataManaging.birth_date,
           gender: formDataManaging.gender,
-          addresses: [3582],
+          addresses: [320],
           user_types: [2],
           user_types: [2],
         });
@@ -90,17 +96,18 @@ export default function Sicoob() {
           person_type: formData.person_type,
           gender: formData.gender,
           birth_date: formData.birth_date,
-          addresses: [3582],
+          addresses: [320],
           user_types: [2],
         });
         customer = userResponse.id;
       }
 
       const recordResponse = await requestSicoob.create({
-        occupation: rFormData.occupation,
+        occupation: (formData.person_type = 'PJ' ? 'Empresa' : formData.occupation),
         monthly_income: rFormData.monthly_income,
         customer: customer,
         managing_partner: managing_partner,
+        requested_by: user.id,
       });
       const recordId = recordResponse.id;
       // Envia cada anexo pendente
@@ -117,7 +124,8 @@ export default function Sicoob() {
           await attachmentService.createAttachment(formDataAttachment);
         }),
       );
-      router.push('/apps/funding-request/sicoob');
+      setOpenSideDrawerCreate(false);
+      fetchRequestSicoob();
     } catch (error) {
       console.error('Erro ao salvar registro ou anexos:', error);
       if (error.response && error.response.data) {
