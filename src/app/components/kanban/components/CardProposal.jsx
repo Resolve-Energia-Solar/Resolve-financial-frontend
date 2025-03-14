@@ -10,6 +10,7 @@ import Chip from '@mui/material/Chip';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { IconEye, IconPencil } from '@tabler/icons-react';
+import { Grid } from '@mui/material';
 
 export default function ProposalCard({
     image,
@@ -42,29 +43,35 @@ export default function ProposalCard({
 
             <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <CardContent sx={{ flex: '1 0 auto', p: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography component="div" sx={{ fontSize: '24px', fontWeight: "700", color: "#303030" }}>
-                            {price}
+                    <Grid item xs={6}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography component="div" sx={{ fontSize: '24px', fontWeight: "700", color: "#303030" }}>
+                                {price}
+                            </Typography>
+                            
+                        </Box>
+
+                        <Typography component="div" sx={{ fontSize: '12px', fontWeight: "400", color: "#303030" }}>
+                            {description}
                         </Typography>
-                        <Chip label={status} sx={{ backgroundColor: statusColor, color: '#303030', fontSize: '10px' }} />
-                    </Box>
 
-                    <Typography component="div" sx={{ fontSize: '12px', fontWeight: "400", color: "#303030" }}>
-                        {description}
-                    </Typography>
+                        <Typography component="p" sx={{ fontSize: '12px', fontWeight: "400", color: "#ADADAD" }}>
+                            {reference}
+                        </Typography>
+                    </Grid>
 
-                    <Typography component="p" sx={{ fontSize: '12px', fontWeight: "400", color: "#ADADAD" }}>
-                        {reference}
-                    </Typography>
+                    <Grid item xs={4}>
+                        <Box xs={2} sx={{ display: 'flex', justifyContent: 'flex-end'}}>
+                            <Chip label={status} sx={{ backgroundColor: statusColor, color: '#303030', fontSize: '10px' }} />
 
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end'}}>
-                        <IconButton aria-label="editar" size="small" onClick={onEdit}>
-                            <IconPencil fontSize="small" />
-                        </IconButton>
-                        <IconButton aria-label="deletar" size="small" onClick={onDelete}>
-                            <IconEye fontSize="small" />
-                        </IconButton>
-                    </Box>
+                            <IconButton aria-label="editar" size="small" onClick={onEdit} sx={{ color: "#ADADAD"}}>
+                                <IconPencil fontSize="small" />
+                            </IconButton>
+                            <IconButton aria-label="deletar" size="small" onClick={onDelete} sx={{ color: "#ADADAD"}}>
+                                <IconEye fontSize="small" />
+                            </IconButton>
+                        </Box>
+                    </Grid>
                 </CardContent>
             </Box>
         </Card>
