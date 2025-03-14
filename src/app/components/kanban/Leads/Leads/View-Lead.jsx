@@ -74,13 +74,29 @@ function ViewLeadPage({ leadId = null }) {
     return (
         <Grid container spacing={0}>
             <Grid item xs={12} md={8} sx={{ padding: '0px 10px 10px 10px' }}>
-                <BlankCard sx={{ borderRadius: "20px", boxShadow: 3, p: 0, display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
-                    <Grid container spacing={2} alignItems="center" sx={{ p: 3 }}>
-                        <Box sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
-                            <Grid item spacing={2} alignItems="center" xs={12}>
+                <BlankCard 
+                    sx={{ 
+                        borderRadius: "20px", 
+                        boxShadow: 3, 
+                        p: 3, 
+                        display: 'flex', 
+                        justifyContent: 'center', 
+                        flexDirection: 'column' 
+                    }}
+                >
+                    <Grid container spacing={2} alignItems="center" sx={{ width: "100%" }}>
+                        <Grid item xs={12}>
+                            <Box 
+                                sx={{ 
+                                    borderRadius: '20px', 
+                                    display: 'flex', 
+                                    flexDirection: 'column', 
+                                    width: "100%" 
+                                }}
+                            >
                                 <LeadInfoHeader leadId={leadId} tabValue={10} />
-                            </Grid>
-                        </Box>
+                            </Box>
+                        </Grid>
                     </Grid>
 
                     <Divider sx={{ my: 0 }} />
