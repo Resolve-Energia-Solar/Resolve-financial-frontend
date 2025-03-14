@@ -30,9 +30,9 @@ const CreateFundingRequest = ({
             />
           </Grid>
           <Grid item xs={12} sm={12} lg={4}>
-            <CustomFormLabel htmlFor="complete_name">E-mail</CustomFormLabel>
+            <CustomFormLabel htmlFor="email">E-mail</CustomFormLabel>
             <CustomTextField
-              name="complete_name"
+              name="email"
               variant="outlined"
               value={formData.email}
               fullWidth

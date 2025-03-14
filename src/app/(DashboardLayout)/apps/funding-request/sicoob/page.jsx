@@ -63,6 +63,7 @@ export default function Sicoob() {
           email: formData.email,
           first_document: formData.first_document,
           person_type: formData.person_type,
+          addresses: [3582],
         });
 
         customer = userResponse.id;
@@ -74,6 +75,7 @@ export default function Sicoob() {
           person_type: formDataManaging.person_type,
           birth_date: formDataManaging.birth_date,
           gender: formDataManaging.gender,
+          addresses: [3582],
         });
 
         managing_partner = userResponseManaging.id;
@@ -85,6 +87,7 @@ export default function Sicoob() {
           person_type: formData.person_type,
           gender: formData.gender,
           birth_date: formData.birth_date,
+          addresses: [3582],
         });
         customer = userResponse.id;
       }
