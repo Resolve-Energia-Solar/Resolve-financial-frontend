@@ -36,44 +36,45 @@ export default function ProposalCard({
         }}>
             <CardMedia
                 component="img"
-                sx={{ width: 80, height: 80, m: 1 }}
+                sx={{ width: 60, height: 60, m: 1 }}
                 image={image}
                 alt="proposal image"
             />
-
+        
             <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <CardContent sx={{ flex: '1 0 auto', p: 2 }}>
-                    <Grid item xs={6}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Typography component="div" sx={{ fontSize: '24px', fontWeight: "700", color: "#303030" }}>
+                    <Grid container spacing={2} alignItems="center">
+                        {/* Left Column: Price and Description */}
+                        <Grid item xs={8}>
+                            <Typography sx={{ fontSize: '24px', fontWeight: "700", color: "#303030" }}>
                                 {price}
                             </Typography>
-                            
-                        </Box>
-
-                        <Typography component="div" sx={{ fontSize: '12px', fontWeight: "400", color: "#303030" }}>
-                            {description}
-                        </Typography>
-
-                        <Typography component="p" sx={{ fontSize: '12px', fontWeight: "400", color: "#ADADAD" }}>
-                            {reference}
-                        </Typography>
-                    </Grid>
-
-                    <Grid item xs={4}>
-                        <Box xs={2} sx={{ display: 'flex', justifyContent: 'flex-end'}}>
-                            <Chip label={status} sx={{ backgroundColor: statusColor, color: '#303030', fontSize: '10px' }} />
-
-                            <IconButton aria-label="editar" size="small" onClick={onEdit} sx={{ color: "#ADADAD"}}>
-                                <IconPencil fontSize="small" />
-                            </IconButton>
-                            <IconButton aria-label="deletar" size="small" onClick={onDelete} sx={{ color: "#ADADAD"}}>
-                                <IconEye fontSize="small" />
-                            </IconButton>
-                        </Box>
+                            <Typography sx={{ fontSize: '12px', fontWeight: "400", color: "#303030", mt: 0.5 }}>
+                                {description}
+                            </Typography>
+                            <Typography sx={{ fontSize: '12px', fontWeight: "400", color: "#ADADAD", mt: 0.5 }}>
+                                {reference}
+                            </Typography>
+                        </Grid>
+        
+                        {/* Right Column: Status and Icons */}
+                        <Grid item xs={4} sx={{ display: 'flex', flexDirection: "column", alignItems: 'center', gap: 1 }}>
+                            <Grid item xs={12}>
+                                <Chip label={status} sx={{ backgroundColor: statusColor, color: '#303030', fontSize: '10px' }} />
+                            </Grid>
+                            <Grid item xs={12} sx={{ display: 'flex', flexDirection: "row", alignItems: 'center', gap: 1 }}>
+                                <IconButton aria-label="editar" size="small" onClick={onEdit} sx={{ color: "#ADADAD" }}>
+                                    <IconPencil fontSize="small" />
+                                </IconButton>
+                                <IconButton aria-label="deletar" size="small" onClick={onDelete} sx={{ color: "#ADADAD" }}>
+                                    <IconEye fontSize="small" />
+                                </IconButton>
+                            </Grid>
+                        </Grid>
                     </Grid>
                 </CardContent>
             </Box>
         </Card>
+        
     );
 }
