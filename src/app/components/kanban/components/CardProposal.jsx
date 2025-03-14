@@ -42,9 +42,10 @@ export default function ProposalCard({
             />
         
             <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <CardContent sx={{ flex: '1 0 auto', p: 2 }}>
+
+                <CardContent sx={{ flex: '1 0 auto', p: 1 }}>
+                    
                     <Grid container spacing={2} alignItems="center">
-                        {/* Left Column: Price and Description */}
                         <Grid item xs={8}>
                             <Typography sx={{ fontSize: '24px', fontWeight: "700", color: "#303030" }}>
                                 {price}
@@ -57,7 +58,7 @@ export default function ProposalCard({
                             </Typography>
                         </Grid>
         
-                        {/* Right Column: Status and Icons */}
+                      
                         <Grid item xs={4} sx={{ display: 'flex', flexDirection: "column", alignItems: 'center', gap: 1 }}>
                             <Grid item xs={12}>
                                 <Chip label={status} sx={{ backgroundColor: statusColor, color: '#303030', fontSize: '10px' }} />
