@@ -25,12 +25,13 @@ import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import AddSalePage from './Add-Sale';
 import ExpandableTableComponent from '../components/ExpandableTableComponent';
+import ExpandableListComponent from '../components/ExpandableTableComponent';
 
 
 
 const SalesListPage = ({ leadId = null }) => {
     const router = useRouter();
-    const [data, setData] = useState([]);
+    // const [data, setData] = useState([]);
     const [loadingSales, setLoadingSales] = useState(true);
     const [refresh, setRefresh] = useState(false);
     const [error, setError] = useState(null);
@@ -39,11 +40,11 @@ const SalesListPage = ({ leadId = null }) => {
     const [totalRows, setTotalRows] = useState(0);
 
     const saleStatus = {
-        "C": { label: "Canelada", color: "#FFEBEE" },     
-        "D": { label: "Destrato", color: "#FFCDD2" },    
-        "F": { label: "Finalizada", color: "#E8F5E9" },   
-        "P": { label: "Pendente", color: "#FFF8E1" },    
-        "E": { label: "Em Andamento", color: "#E3F2FD" }, 
+        "C": { label: "Canelada", color: "#FFEBEE" },
+        "D": { label: "Destrato", color: "#FFCDD2" },
+        "F": { label: "Finalizada", color: "#E8F5E9" },
+        "P": { label: "Pendente", color: "#FFF8E1" },
+        "E": { label: "Em Andamento", color: "#E3F2FD" },
     };
 
     const columns = [
@@ -118,7 +119,7 @@ const SalesListPage = ({ leadId = null }) => {
                 });
                 setData(response.sales || []);
                 setTotalRows(response.sale?.length || 0);
-                
+
             } catch (err) {
                 console.error('Erro ao buscar vendas');
             } finally {
@@ -128,6 +129,25 @@ const SalesListPage = ({ leadId = null }) => {
 
         fetchSales();
     }, [leadId, refresh, page, rowsPerPage]);
+
+    const data = [
+        {
+            id: 1,
+            name: 'Venda 01',
+            status: 'Assinado',
+            projects: [
+                { id: 101, name: 'Projeto A', type: 'Comercial', seller: 'Beatriz Silva' },
+                { id: 102, name: 'Projeto B', type: 'Residencial', seller: 'Carlos Souza' },
+            ],
+        },
+        {
+            id: 2,
+            name: 'Venda 02',
+            status: 'Pendente',
+            projects: [],
+        },
+    ]; // adds mock data
+
 
 
 
@@ -153,24 +173,11 @@ const SalesListPage = ({ leadId = null }) => {
                         </Grid>
 
                         <Grid item xs={12} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", }} >
-                            <ExpandableTableComponent
-                                columns={columns}
+                            <ExpandableListComponent
                                 data={data}
-                                totalRows={totalRows}
-                                loading={loadingSales}
-                                page={page}
-                                rowsPerPage={rowsPerPage}
-                                onPageChange={(newPage) => setPage(newPage)}
-                                onRowsPerPageChange={(newRows) => {
-                                    setRowsPerPage(newRows);
-                                    setPage(0);
-                                }}
                                 actions={{
-                                    edit: (row) => router.push(`/apps/leads/${row.id}/edit`),
-                                    view: (row) => {
-                                        setSelectedSaleId(row.id);
-                                        setOpenDetailSale(true); 
-                                    },
+                                    edit: (project) => console.log('Editar', project),
+                                    view: (project) => console.log('Ver', project),
                                 }}
                             />
 

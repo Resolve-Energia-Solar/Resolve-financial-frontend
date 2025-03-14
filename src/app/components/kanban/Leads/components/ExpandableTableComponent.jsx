@@ -1,138 +1,85 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState } from 'react';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Checkbox,
-    Typography,
-    Chip,
-    IconButton,
-    TablePagination,
-    Box,
-} from "@mui/material";
-import TableSkeleton from '@/app/components/apps/comercial/sale/components/TableSkeleton';
-import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+  Chip,
+  Box,
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IconEye, IconPencil } from '@tabler/icons-react';
 
-const ExpandableTableComponent = ({
-    columns,
-    data,
-    totalRows,
-    loading,
-    page,
-    rowsPerPage,
-    onPageChange,
-    onRowsPerPageChange,
-    actions,
-    filters
+const ExpandableListComponent = ({
+  data,
+  actions,
 }) => {
+  const [expanded, setExpanded] = useState(false);
 
-    const filteredData = data.filter((row) => {
-        const activeFilters = filters || {};
+  const handleChange = (panel) => (_, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
 
-        return Object.keys(activeFilters).every((key) => {
-            if (!filters[key]) return true;
-            return row[key]?.toString().toLowerCase().includes(filters[key].toLowerCase());
-        });
-    });
+  return (
+    <Box>
+      {data.map((sale) => (
+        <Accordion
+          key={sale.id}
+          expanded={expanded === sale.id}
+          onChange={handleChange(sale.id)}
+          sx={{ borderRadius: '12px', mb: 1, boxShadow: 3 }}
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+              <Typography sx={{ fontWeight: 600 }}>{sale.name}</Typography>
+              <Chip label={sale.status} color="primary" variant="outlined" />
+            </Box>
+          </AccordionSummary>
 
-    return (
-        <TableContainer sx={{ borderRadius: '12px' }}>
-            <Table sx={{ borderCollapse: 'separate', borderSpacing: '0px 8px' }}>
-                <TableHead>
-                    <TableRow>
-                        {columns.map((column) => (
-                            <TableCell key={column.field} sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
-                                {column.headerName}
-                            </TableCell>
-                        ))}
-                        <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
-                            Editar
-                        </TableCell>
-                        <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
-                            Ver
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-
-                {loading ? (
-                    <TableSkeleton rows={rowsPerPage} columns={columns.length} />
-                ) : (
-                    <TableBody>
-                        {data.length > 0 ? (
-                            data.map((row) => (
-                                <TableRow key={row.id} sx={{ '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' }, borderBottom: 'none' }}>
-                                    {columns.map((column) => (
-                                        <TableCell key={column.field} sx={{ fontWeight: column.field === 'name' ? 600 : 400, fontSize: '14px', color: '#7E8388' }}>
-                                            {column.render ? column.render(row) : row[column.field] || '-'}
-                                        </TableCell>
-                                    ))}
-
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        {actions?.edit && (
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => actions.edit(row)}
-                                                sx={{ color: '#7E8388' }}
-                                            >
-                                                <IconPencil fontSize="small" />
-                                            </IconButton>
-                                        )}
-                                    </TableCell>
-                                    
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        {actions?.view && (
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => actions.view(row)}
-                                                sx={{ color: '#7E8388' }}
-                                            >
-                                                <IconEye fontSize="small" />
-                                            </IconButton>
-                                        )}
-                                    </TableCell>
-
-                                </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={columns.length} align="center" sx={{ borderBottom: 'none', justifyContent: 'center' }}>
-                                    <Typography variant="body2" color="textSecondary" sx={{ py: 2 , alignItems: 'center' }}>
-                                        Nenhuma informação encontrada.
-                                    </Typography>
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                )}
-            </Table>
-
-
-            {data.length >= 5 && (
-                <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={totalRows}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={(_, newPage) => onPageChange(newPage)}
-                    onRowsPerPageChange={(e) => onRowsPerPageChange(parseInt(e.target.value, 10))}
-                    labelRowsPerPage="Linhas por página"
-                    sx={{
-                        '& .Mui-selected': {
-                            backgroundColor: '#FFCC00 !important',
-                            color: '#7E8388',
-                            borderRadius: '6px',
-                        },
-                    }}
-                />
-            )}
-            
-        </TableContainer>
-    );
+          <AccordionDetails>
+            <List>
+              {sale.projects && sale.projects.length > 0 ? (
+                sale.projects.map((project) => (
+                  <ListItem key={project.id} sx={{ borderBottom: '1px solid #E0E0E0' }}>
+                    <ListItemText
+                      primary={project.name}
+                      secondary={`Tipo: ${project.type || 'N/A'} | Responsável: ${project.seller || 'N/A'}`}
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        edge="end"
+                        onClick={() => actions?.edit && actions.edit(project)}
+                        sx={{ color: '#7E8388' }}
+                      >
+                        <IconPencil size="18" />
+                      </IconButton>
+                      <IconButton
+                        edge="end"
+                        onClick={() => actions?.view && actions.view(project)}
+                        sx={{ color: '#7E8388' }}
+                      >
+                        <IconEye size="18" />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))
+              ) : (
+                <Typography sx={{ color: '#ADADAD', pl: 2 }}>Nenhum projeto disponível.</Typography>
+              )}
+            </List>
+            <Typography sx={{ color: '#1976d2', mt: 1, cursor: 'pointer' }}>
+              + Adicionar Novo Projeto
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
+      ))}
+    </Box>
+  );
 };
 
-export default ExpandableTableComponent;
+export default ExpandableListComponent;
