@@ -233,7 +233,8 @@ function ViewLeadPage({ leadId = null }) {
                     {proposals.length > 0 && (
                         <Grid item>
                             <ProposalCard
-                                image="https://cdn-icons-png.flaticon.com/512/5047/5047881.png"
+                                image="/images/products/yellow-projects-file-icon.png"
+                                alt="Project Icon"
                                 price={new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(proposals[0].value)}
                                 status={proposalStatus[proposals[0].status]?.label}
                                 statusColor={proposalStatus[proposals[0].status]?.color}
@@ -256,7 +257,8 @@ function ViewLeadPage({ leadId = null }) {
                     {proposals.slice(1).map((proposal, index) => (
                         <Grid item key={index}>
                             <ProposalCard
-                                image="https://cdn-icons-png.flaticon.com/512/5047/5047881.png"
+                                image="/images/products/yellow-projects-file-icon.png"
+                                alt="Project Icon"
                                 price={new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(proposal.value)}
                                 status={proposalStatus[proposal.status]?.label}
                                 statusColor={proposalStatus[proposal.status]?.color}
