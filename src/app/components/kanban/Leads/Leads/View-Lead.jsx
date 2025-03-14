@@ -145,7 +145,7 @@ function ViewLeadPage({ leadId = null }) {
 
                     <Grid container spacing={6} sx={{ p: 3.5 }}>
                         <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 CPF
                             </Typography>
                             <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
@@ -154,7 +154,7 @@ function ViewLeadPage({ leadId = null }) {
                         </Grid>
 
                         <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 Fone
                             </Typography>
                             <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
@@ -163,7 +163,7 @@ function ViewLeadPage({ leadId = null }) {
                         </Grid>
 
                         <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 E-mail
                             </Typography>
                             <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
@@ -172,7 +172,7 @@ function ViewLeadPage({ leadId = null }) {
                         </Grid>
 
                         <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 Endereço
                             </Typography>
                             <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
@@ -181,7 +181,7 @@ function ViewLeadPage({ leadId = null }) {
                         </Grid>
 
                         <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 Origem/Campanha
                             </Typography>
                             <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
@@ -190,7 +190,7 @@ function ViewLeadPage({ leadId = null }) {
                         </Grid>
 
                         <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 kWp
                             </Typography>
                             <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
@@ -199,7 +199,7 @@ function ViewLeadPage({ leadId = null }) {
                         </Grid>
 
                         <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 Responsável
                             </Typography>
                             <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
@@ -208,7 +208,7 @@ function ViewLeadPage({ leadId = null }) {
                         </Grid>
 
                         <Grid item xs={12} md={8} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 Observações
                             </Typography>
                             <Typography variant="body1" gutterBottom sx={{ color: '#303030', fontSize: '14px' }}>
