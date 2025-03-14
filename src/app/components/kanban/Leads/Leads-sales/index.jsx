@@ -24,7 +24,7 @@ import TableComponent from '@/app/components/kanban/Leads/components/TableCompon
 import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import AddSalePage from './Add-Sale';
-import AdditionalInfoTableComponent from '../components/ExpandableTableComponent';
+import ExpandableTableComponent from '../components/ExpandableTableComponent';
 
 
 
