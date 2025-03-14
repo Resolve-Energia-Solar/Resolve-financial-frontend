@@ -18,11 +18,11 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 
 const CreateAddressPage = ({
-  onClosedModal = null,
+  onClose,
   userId = null,
   onRefresh = null,
   setAddress,
-  onAdd, // <-- Adicione essa prop para receber o callback onAdd
+  onAdd,
 }) => {
   const { enqueueSnackbar } = useSnackbar();
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -34,27 +34,32 @@ const CreateAddressPage = ({
     formErrors,
     loading: formLoading,
     success,
+    dataReceived,
   } = useAddressForm();
 
   // Define o user_id no formulário
   formData.user_id = userId;
 
   const [addressInput, setAddressInput] = useState('');
+  const [hasHandledSuccess, setHasHandledSuccess] = useState(false);
 
   useEffect(() => {
-    if (success) {
+    if (success && !hasHandledSuccess) {
+      setHasHandledSuccess(true);
       enqueueSnackbar('Endereço salvo com sucesso!', { variant: 'success' });
-      // Chama onAdd passando o novo endereço (pode ser formData ou outro objeto formatado)
-      if (onAdd) {
+      console.log('formData criado:', formData);
+      if (onAdd && formData.id) {
         onAdd(formData);
+      } else if (onAdd) {
+        console.warn('O endereço foi salvo, mas o ID não foi retornado.');
       }
-      if (onClosedModal) onClosedModal();
+      if (onClose) onClose();
       if (onRefresh) onRefresh();
     } else if (formErrors && Object.keys(formErrors).length > 0) {
       const errorMessage = Object.values(formErrors).join(', ');
       enqueueSnackbar(`Erro ao salvar endereço: ${errorMessage}`, { variant: 'error' });
     }
-  }, [success]);
+  }, [success, hasHandledSuccess, formData, formErrors, onAdd, onClose, onRefresh, enqueueSnackbar]);
 
   // Mapeamento para converter o nome completo do estado em sigla
   const stateMapping = {
@@ -102,6 +107,7 @@ const CreateAddressPage = ({
   };
 
   const handleSubmit = () => {
+    console.log('Salvando endereço...');
     handleSave();
   };
 
@@ -119,53 +125,55 @@ const CreateAddressPage = ({
 
   const [markerPosition, setMarkerPosition] = useState(defaultCenter);
 
-  const handleMapClick = useCallback((e) => {
-    const lat = e.latLng.lat();
-    const lng = e.latLng.lng();
-    setMarkerPosition({ lat, lng });
-    handleChange('latitude', lat);
-    handleChange('longitude', lng);
+  const handleMapClick = useCallback(
+    (e) => {
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
+      setMarkerPosition({ lat, lng });
+      handleChange('latitude', lat);
+      handleChange('longitude', lng);
 
-    const geocoder = new window.google.maps.Geocoder();
-    geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-      if (status === 'OK' && results[0]) {
-        const placeResult = results[0];
+      const geocoder = new window.google.maps.Geocoder();
+      geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+        if (status === 'OK' && results[0]) {
+          const placeResult = results[0];
 
-        const extractFromComponents = (components, type) => {
-          const comp = components.find((c) => c.types.includes(type));
-          return comp ? comp.long_name : '';
-        };
+          const extractFromComponents = (components, type) => {
+            const comp = components.find((c) => c.types.includes(type));
+            return comp ? comp.long_name : '';
+          };
 
-        function extractCity(components) {
-          let cityComp = components.find((c) => c.types.includes('locality'));
-          if (!cityComp) {
-            cityComp = components.find((c) => c.types.includes('administrative_area_level_2'));
+          function extractCity(components) {
+            let cityComp = components.find((c) => c.types.includes('locality'));
+            if (!cityComp) {
+              cityComp = components.find((c) => c.types.includes('administrative_area_level_2'));
+            }
+            return cityComp ? cityComp.long_name : '';
           }
-          return cityComp ? cityComp.long_name : '';
+
+          const detailedAddress = {
+            address: placeResult.formatted_address,
+            zip_code: extractFromComponents(placeResult.address_components, 'postal_code').replace('-', ''),
+            country: extractFromComponents(placeResult.address_components, 'country'),
+            state: extractFromComponents(placeResult.address_components, 'administrative_area_level_1'),
+            city: extractCity(placeResult.address_components),
+            neighborhood: extractFromComponents(placeResult.address_components, 'sublocality_level_1'),
+            street: extractFromComponents(placeResult.address_components, 'route'),
+            number: extractFromComponents(placeResult.address_components, 'street_number'),
+            complement: '',
+            latitude: lat,
+            longitude: lng,
+          };
+
+          handleAddressSelect(detailedAddress);
+        } else {
+          console.error("Erro na geocodificação reversa:", status);
         }
+      });
+    },
+    [handleAddressSelect, handleChange]
+  );
 
-        const detailedAddress = {
-          address: placeResult.formatted_address,
-          zip_code: extractFromComponents(placeResult.address_components, 'postal_code').replace('-', ''),
-          country: extractFromComponents(placeResult.address_components, 'country'),
-          state: extractFromComponents(placeResult.address_components, 'administrative_area_level_1'),
-          city: extractCity(placeResult.address_components),
-          neighborhood: extractFromComponents(placeResult.address_components, 'sublocality_level_1'),
-          street: extractFromComponents(placeResult.address_components, 'route'),
-          number: extractFromComponents(placeResult.address_components, 'street_number'),
-          complement: '',
-          latitude: lat,
-          longitude: lng,
-        };
-
-        handleAddressSelect(detailedAddress);
-      } else {
-        console.error("Erro na geocodificação reversa:", status);
-      }
-    });
-  }, [handleAddressSelect, handleChange]);
-
-  // Atualiza o marcador quando os valores do formulário mudam
   useEffect(() => {
     if (formData.latitude && formData.longitude) {
       setMarkerPosition({
@@ -178,8 +186,7 @@ const CreateAddressPage = ({
   return (
     <Box
       sx={{
-        width: '100vw',
-        maxWidth: '80vw',
+        maxWidth: '100vw',
         mx: 'auto',
         p: 2,
       }}
@@ -204,7 +211,7 @@ const CreateAddressPage = ({
         )}
 
         <Stack spacing={3} sx={{ width: '100%' }}>
-          {/* Campo de pesquisa de endereço com tooltip no ícone */}
+          {/* Campo de pesquisa de endereço */}
           <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%' }}>
             <Box sx={{ flexGrow: 1 }}>
               <AddressAutocomplete
@@ -221,7 +228,7 @@ const CreateAddressPage = ({
             </Tooltip>
           </Stack>
 
-          {/* Campo para complemento com tooltip no ícone */}
+          {/* Campo para complemento */}
           <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%' }}>
             <Box sx={{ flexGrow: 1 }}>
               <CustomTextField
@@ -253,11 +260,7 @@ const CreateAddressPage = ({
                 mapContainerStyle={{ width: '100%', height: '100%' }}
                 onClick={handleMapClick}
               >
-                <Marker
-                  position={markerPosition}
-                  draggable
-                  onDragEnd={handleMapClick}
-                />
+                <Marker position={markerPosition} draggable onDragEnd={handleMapClick} />
               </GoogleMap>
             )}
           </Box>

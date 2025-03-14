@@ -63,21 +63,27 @@ const useAddressForm = (initialData, id) => {
     };
 
     try {
+      let request;
       if (id) {
-        const request = await addressService.updateAddress(id, dataToSend);
-        setDataReceived(request);
+        request = await addressService.updateAddress(id, dataToSend);
       } else {
-        const request = await addressService.createAddress(dataToSend);
-        setDataReceived(request);
+        request = await addressService.createAddress(dataToSend);
       }
+      // Se a API estiver usando Axios, os dados estarão em request.data
+      const responseData = request.data ? request.data : request;
+      setDataReceived(responseData);
+      // Atualiza o formData com os dados reais retornados (incluindo o id)
+      setFormData(responseData);
       setFormErrors({});
       setSuccess(true);
       enqueueSnackbar("Endereço salvo com sucesso!", { variant: "success" });
+      return responseData;
     } catch (err) {
       setSuccess(false);
       setFormErrors(err.response?.data || {});
       const errorMessage = err.response?.data?.detail || "Erro ao salvar endereço";
       enqueueSnackbar(errorMessage, { variant: "error" });
+      throw err;
     } finally {
       setLoading(false);
     }

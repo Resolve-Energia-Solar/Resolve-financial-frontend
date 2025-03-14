@@ -181,7 +181,7 @@ export default function AutoCompleteAddress({
         </DialogTitle>
         <DialogContent sx={{ p: 0 }}>
           <CreateAddressPage
-            onClosedModal={handleCloseModal}
+            onClose={handleCloseModal}
             selectedAddressId={addAddress}
           />
         </DialogContent>

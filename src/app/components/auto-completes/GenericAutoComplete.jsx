@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useCallback, useEffect } from 'react';
 import {
   Autocomplete,
@@ -13,14 +14,14 @@ import { debounce } from 'lodash';
 
 const GenericAutocomplete = ({
   label = 'Selecione uma opção',
-  fetchOptions, // Função assíncrona que recebe o termo e retorna um array de opções
-  onChange,     // Callback acionado quando uma opção é selecionada
+  fetchOptions,
+  onChange,
   getOptionLabel = (option) => (option.label ? option.label : option.toString()),
   debounceTime = 300,
   minQueryLength = 1,
-  AddComponent,               // (Opcional) Componente para adicionar um novo item
-  onAdd,                      // Callback acionado quando um novo item é criado
-  addTitle = 'Adicionar Novo Item', // Título para o modal
+  AddComponent,
+  onAdd,
+  addTitle = 'Adicionar Novo Item', 
   ...props
 }) => {
   const [open, setOpen] = useState(false);
@@ -29,7 +30,6 @@ const GenericAutocomplete = ({
   const [loading, setLoading] = useState(false);
   const [openAddModal, setOpenAddModal] = useState(false);
 
-  // Cria uma função debounced para buscar as opções
   const debouncedFetch = useCallback(
     debounce(async (query) => {
       if (query.length < minQueryLength) {
@@ -40,6 +40,7 @@ const GenericAutocomplete = ({
       try {
         const newOptions = await fetchOptions(query);
         setOptions(newOptions);
+        console.log('Opções:', newOptions);
       } catch (err) {
         console.error('Erro na busca de opções:', err);
         setOptions([]);
@@ -49,7 +50,6 @@ const GenericAutocomplete = ({
     [fetchOptions, debounceTime, minQueryLength]
   );
 
-  // Atualiza as opções sempre que o inputValue mudar
   useEffect(() => {
     if (inputValue.trim() !== '') {
       debouncedFetch(inputValue);
@@ -62,27 +62,31 @@ const GenericAutocomplete = ({
     setOpenAddModal(false);
   };
 
-  // Aqui acontece a "mágica": ao criar o item, adicionamos às opções e selecionamos
+  const isMultiple = props.multiple;
+
   const handleOnAdd = (newItem) => {
     setOpenAddModal(false);
 
     console.log('Novo item criado:', newItem);
     console.log('openAddModal:', openAddModal);
 
-    // 1) Adiciona o novo item às opções
     setOptions((prevOptions) => [newItem, ...prevOptions]);
 
-    // 2) Seleciona o novo item no autocomplete
-    onChange(newItem);
+    if (isMultiple) {
+      const currentValue = Array.isArray(props.value) ? props.value : [];
+      onChange([newItem, ...currentValue]);
+    } else {
+      onChange(newItem);
+    }
 
-    // 3) Ajusta o texto no input para o label do item criado
     setInputValue(getOptionLabel(newItem));
 
-    // 4) (Opcional) Dispara callback externo
     if (onAdd) {
       onAdd(newItem);
     }
   };
+
+  const valueProp = isMultiple ? (props.value || []) : props.value || null;
 
   return (
     <>
@@ -92,6 +96,7 @@ const GenericAutocomplete = ({
         onClose={() => setOpen(false)}
         options={options}
         loading={loading}
+        value={valueProp}
         onChange={(event, value) => onChange(value)}
         inputValue={inputValue}
         onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
@@ -140,7 +145,6 @@ const GenericAutocomplete = ({
         >
           <DialogTitle>{addTitle}</DialogTitle>
           <DialogContent dividers>
-            {/* O componente de adicionar deve aceitar as props onClose e onAdd */}
             <AddComponent onClose={handleAddModalClose} onAdd={handleOnAdd} />
           </DialogContent>
         </Dialog>
