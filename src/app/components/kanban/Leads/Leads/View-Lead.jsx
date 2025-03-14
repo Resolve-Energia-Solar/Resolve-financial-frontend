@@ -120,7 +120,7 @@ function ViewLeadPage({ leadId = null }) {
                                 <Box
                                     component="span"
                                     sx={{
-                                        fontWeight: 'bold',
+                                        fontWeight: '700',
                                         fontSize: '24px',
                                         marginLeft: { xs: 0, sm: 1 },
                                         whiteSpace: 'nowrap', // Impede que a data e hora quebrem
