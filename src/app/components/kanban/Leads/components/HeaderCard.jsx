@@ -21,6 +21,7 @@ import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { usePathname } from 'next/navigation';
 import leadService from '@/services/leadService';
+import { IconCalendarWeek, IconEye, IconPencil, IconTrash } from '@tabler/icons-react';
 
 function LeadInfoHeader({ leadId, tabValue }) {
   const [lead, setLead] = useState(null);
@@ -231,54 +232,21 @@ function LeadInfoHeader({ leadId, tabValue }) {
         )}
 
         {tabValue === 10 && (
-          <Box sx={{ minWidth: 385 }}>
-            <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
-              Projeto
-            </Typography>
-            <Select
-              value={selectedProject || ''}
-              onChange={(e) => setSelectedProject(e.target.value)}
-              fullWidth
+          <Grid item xs={12} md={2}>
+            <IconButton
               size="small"
-              sx={{ backgroundColor: '#F4F5F7', borderRadius: '8px', }}
-              displayEmpty
+              onClick={() => router.push(`/apps/leads/${leadId}/edit`)}
             >
-              {/* {projects.map((project) => ( */}
-              <MenuItem
-                value=""
-                sx={{ color: '#7E8388' }}
-                disabled
-              >
-                Selecione um projeto
-              </MenuItem>
+              <IconPencil fontSize="small" />
+            </IconButton>
 
-              <MenuItem
-                // key={project.id} 
-                // value={project.id} 
-                value="project-1"
-                sx={{ color: '#7E8388' }}
-              >
-                {/* {project.name} */}
-                Rua Antônio Barreto, 1198
-              </MenuItem>
-
-              <MenuItem
-                value="project-2"
-                sx={{ color: '#7E8388' }}
-              >
-                Rua dos Mundurucus, 2500
-              </MenuItem>
-
-              <MenuItem
-                value="project-3"
-                sx={{ color: '#7E8388' }}
-              >
-                Tv. Padre Eutíquio, 87
-              </MenuItem>
-
-              {/* ))} */}
-            </Select>
-          </Box>
+            <IconButton
+              size="small"
+            // onClick={() => router.push(`/apps/leads/${item.id}/view`)}
+            >
+              <IconTrash fontSize="small" />
+            </IconButton>
+          </Grid>
         )}
 
       </Grid>
