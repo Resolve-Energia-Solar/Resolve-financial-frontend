@@ -57,7 +57,7 @@ export default function ProposalCard({
                         {reference}
                     </Typography>
 
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end'}}>
                         <IconButton aria-label="editar" size="small" onClick={onEdit}>
                             <IconPencil fontSize="small" />
                         </IconButton>
