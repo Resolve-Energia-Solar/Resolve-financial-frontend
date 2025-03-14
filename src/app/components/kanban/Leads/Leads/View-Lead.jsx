@@ -114,8 +114,8 @@ function ViewLeadPage({ leadId = null }) {
                                 textAlign: { xs: 'center', md: 'left' }, // Centraliza o texto em telas pequenas
                             }}
                         >
-                            <IconCalendarWeek size={28} style={{ verticalAlign: 'middle' }} />
-                            <Typography variant="body1" sx={{ color: '#000000', fontSize: '24px' }}>
+                            <IconCalendarWeek size={28} style={{ verticalAlign: 'middle', color: "#303030" }} />
+                            <Typography sx={{ color: '#000000', fontSize: '24px', fontWeight: "400", color: "#303030" }}>
                                 Vistoria técnica{' '}
                                 <Box
                                     component="span"
