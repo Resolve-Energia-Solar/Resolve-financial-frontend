@@ -44,7 +44,7 @@ export default function Sicoob() {
   const [formData, setFormData] = useState({});
   const [formDataManaging, setFormDataManaging] = useState({});
   const [openSideDrawerCreate, setOpenSideDrawerCreate] = useState();
-  const [rFormData, setRrFormData] = useState({});
+  const [rFormData, setRFormData] = useState({});
   const [attachments, setAttachments] = useState([]);
   const [loading, setLoading] = useState(false);
   const handleAddAttachment = (attachment) => {
@@ -169,6 +169,10 @@ export default function Sicoob() {
 
   const handleChangeManaging = (event) => {
     setFormDataManaging((prevData) => ({ ...prevData, [event.target.name]: event.target.value }));
+  };
+
+  const handleChangeRFormData = (event) => {
+    setRFormData((prevData) => ({ ...prevData, [event.target.name]: event.target.value }));
   };
 
   const handleChangeStatus = async (status, id) => {
