@@ -59,7 +59,7 @@ export default function ProposalCard({
                         </Grid>
         
                       
-                        <Grid item xs={4} sx={{ display: 'flex', flexDirection: "column", alignItems: 'center', gap: 1 }}>
+                        <Grid item xs={4} sx={{ display: 'flex', flexDirection: "column", alignItems: 'center', gap: 1, mt: 1 }}>
                             <Grid item xs={12}>
                                 <Chip label={status} sx={{ backgroundColor: statusColor, color: '#303030', fontSize: '10px' }} />
                             </Grid>
