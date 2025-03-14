@@ -178,8 +178,8 @@ const CreateAddressPage = ({
   return (
     <Box
       sx={{
-        width: '100%',
-        maxWidth: '600px',
+        width: '100vw',
+        maxWidth: '80vw',
         mx: 'auto',
         p: 2,
       }}

@@ -17,7 +17,6 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import { useParams } from 'next/navigation';
-
 import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-User';
 import AutoCompleteBranch from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Branch';
 import AutoCompleteCampaign from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Campaign';
@@ -25,16 +24,12 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import { useSelector } from 'react-redux';
 import FormPageSkeleton from '@/app/components/apps/comercial/sale/components/FormPageSkeleton';
-
 import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
 import { useEffect, useState } from 'react';
 import PaymentCard from '@/app/components/apps/invoice/components/paymentList/card';
 import documentTypeService from '@/services/documentTypeService';
 import Attachments from '@/app/components/shared/Attachments';
-import CustomerTabs from '@/app/components/apps/users/Edit-user/customer/tabs';
-import { CheckCircle, Error } from '@mui/icons-material';
-import PreviewContractModal from '@/app/components/apps/contractSubmissions/Preview-contract';
 import ChecklistSales from '../../../checklist/Checklist-list/ChecklistSales';
 import HasPermission from '@/app/components/permissions/HasPermissions';
 import SendContractButton from '../../../contractSubmissions/Send-contract';
@@ -42,9 +37,7 @@ import ContractSubmissions from '../../../contractSubmissions/contract-list';
 import SchedulesInspections from '../../../project/components/SchedulesInspections';
 import History from '@/app/components/apps/history';
 import Comment from '../../../comment';
-import useSendContract from '@/hooks/contract/useSendContract';
 import TagList from '@/app/components/tags/TagList';
-import AutoCompleteReasons from '../components/auto-complete/Auto-Input-Reasons';
 import AutoCompleteReasonMultiple from '../components/auto-complete/Auto-Input-Reasons';
 import Customer from '../../../sale/Customer';
 import Phones from '../../../sale/phones';
