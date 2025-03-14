@@ -75,7 +75,7 @@ function EditLeadTabs({ leadId }) {
                   borderTopLeftRadius: '10px',
                   borderTopRightRadius: '10px',
                   fontWeight: '500',
-                  '&.Mui-selected': { backgroundColor: theme.palette.primary.main, color: 'black' },
+                  '&.Mui-selected': { backgroundColor: theme.palette.primary.main, color: '#303030' },
                 }
                 : {}
             }
