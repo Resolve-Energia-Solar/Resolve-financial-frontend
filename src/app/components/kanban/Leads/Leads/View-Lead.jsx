@@ -239,7 +239,7 @@ function ViewLeadPage({ leadId = null }) {
                                 status={proposalStatus[proposals[0].status]?.label}
                                 statusColor={proposalStatus[proposals[0].status]?.color}
                                 description={proposals[0].description}
-                                reference={`Validate: ${proposals[0].due_date}`}
+                                reference={`Validade: ${proposals[0].due_date}`}
                                 onEdit={() => console.log('Editar')}
                                 onDelete={() => console.log('Deletar')}
                             />
@@ -263,7 +263,7 @@ function ViewLeadPage({ leadId = null }) {
                                 status={proposalStatus[proposal.status]?.label}
                                 statusColor={proposalStatus[proposal.status]?.color}
                                 description={proposal.description}
-                                reference={`Validate: ${proposal.due_date}`}
+                                reference={`Validade: ${proposal.due_date}`}
                                 onEdit={() => console.log('Editar')}
                                 onDelete={() => console.log('Deletar')}
                             />
