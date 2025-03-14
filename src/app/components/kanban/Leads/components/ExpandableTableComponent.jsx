@@ -46,15 +46,15 @@ const ExpandableListComponent = ({
           sx={{ borderRadius: '12px', mb: 1, boxShadow: 3 }}
         >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Box sx={{ display: 'flex', width: '100%', alignItems: "center"  }}>
-                <Grid item xs={2} sx={{ justifyContent: "flex-start" }}>
-                    <DomainIcon sx={{ verticalAlign: 'middle' }}/>
+            <Box sx={{ display: 'flex', width: '100%', alignItems: "center" }}>
+                <Grid item xs={1} sx={{ justifyContent: "flex-start" }}>
+                    <DomainIcon sx={{ verticalAlign: 'middle', color: "#7E8388" }}/>
                 </Grid>
                 <Grid item xs={8} sx={{ justifyContent: "flex-start", display: "flex", flexDirection: "column" }}>
                     <Typography sx={{ fontWeight: 700, fontSize: "14px" }}>Venda</Typography>
                     <Typography sx={{ fontWeight: 500, fontSize: "16px", color: "#303030" }}>{sale.name}</Typography>
                 </Grid>
-                <Grid item xs={2}>
+                <Grid item xs={3}>
                     <Chip label={sale.status} color="primary" variant="outlined" />
                 </Grid>
               
