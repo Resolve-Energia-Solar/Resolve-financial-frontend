@@ -101,7 +101,7 @@ function ViewLeadPage({ leadId = null }) {
                     </Grid>
 
                     <Box sx={{ p: 3.5 }}>
-                        <Typography gutterBottom sx={{ color: '#7E8388', fontSize: '14px', fontWeight: "400", color: "#ADADAD" }}>
+                        <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#ADADAD" }}>
                             Agendamento
                         </Typography>
                         <Box
