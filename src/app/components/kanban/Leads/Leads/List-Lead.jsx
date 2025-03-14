@@ -8,6 +8,7 @@ import leadService from '@/services/leadService';
 import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
 import TableComponent from '@/app/components/kanban/Leads/components/TableComponent'
 import formatPhoneNumber from '@/utils/formatPhoneNumber';
+import ExpandableTableComponent from '../components/ExpandableTableComponent';
 
 
 const LeadList = () => {
@@ -93,7 +94,7 @@ const LeadList = () => {
         onFilterChange={handleFilterChange}
       />
 
-      <TableComponent
+      <ExpandableTableComponent
         columns={columns}
         data={data}
         totalRows={totalRows}
