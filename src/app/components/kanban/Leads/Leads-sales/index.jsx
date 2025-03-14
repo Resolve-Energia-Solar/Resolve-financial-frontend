@@ -153,7 +153,7 @@ const SalesListPage = ({ leadId = null }) => {
                         </Grid>
 
                         <Grid item xs={12} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", }} >
-                            <AdditionalInfoTableComponent
+                            <ExpandableTableComponent
                                 columns={columns}
                                 data={data}
                                 totalRows={totalRows}

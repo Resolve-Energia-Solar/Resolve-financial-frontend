@@ -17,7 +17,7 @@ import TableSkeleton from '@/app/components/apps/comercial/sale/components/Table
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import { IconEye, IconPencil } from '@tabler/icons-react';
 
-const AdditionalInfoTableComponent = ({
+const ExpandableTableComponent = ({
     columns,
     data,
     totalRows,
@@ -135,4 +135,4 @@ const AdditionalInfoTableComponent = ({
     );
 };
 
-export default AdditionalInfoTableComponent;
+export default ExpandableTableComponent;
