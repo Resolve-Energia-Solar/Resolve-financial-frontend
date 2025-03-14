@@ -53,13 +53,13 @@ function EditLeadTabs({ leadId }) {
   const theme = useTheme();
 
   return (
-    <Box sx={{ overflow: 'hidden', height: '100%' }}>
+    <Box sx={{ overflow: 'hidden', height: '100%', p: 0, margin: 0 }}>
 
       <Tabs
         value={tabValue}
         onChange={handleChange}
         aria-label="lead edit tabs"
-        TabIndicatorProps={{ style: { backgroundColor: 'white' } }}
+        TabIndicatorProps={{ style: { display: 'none' } }}
         sx={{ marginLeft: '25px' }}
       >
         {["Informações Lead", "Dados Pessoais", "Propostas", "Vendas", "Documentos", "Projetos", "Agendamentos"].map((label, index) => (
