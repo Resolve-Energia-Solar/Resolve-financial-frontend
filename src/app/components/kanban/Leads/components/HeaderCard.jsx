@@ -232,7 +232,7 @@ function LeadInfoHeader({ leadId, tabValue }) {
         )}
 
         {tabValue === 10 && (
-          <Grid item md={2} sx={{ display: "flex", flexDirection: "row"}}>
+          <Grid item sx={{ display: "flex", flexDirection: "row"}}>
             <IconButton
               size="small"
               onClick={() => router.push(`/apps/leads/${leadId}/edit`)}
