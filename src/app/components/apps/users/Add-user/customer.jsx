@@ -2,17 +2,16 @@
 import { Grid, Button, Stack, FormControlLabel, CircularProgress } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
-
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import AutoCompleteAddresses from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Addresses';
+import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import { useRouter } from 'next/navigation';
-
-import { useEffect } from 'react';
-
+import { useEffect, useState } from 'react';
 import useUserForm from '@/hooks/users/useUserForm';
 import AutoCompletePhoneNumber from '../../comercial/sale/components/auto-complete/AutoCompletePhoneNumber';
 import { IconDeviceFloppy } from '@tabler/icons-react';
+import addressService from '@/services/addressService';
+import CreateAddressPage from '../../address/Add-address';
 
 export default function CreateCustomer({ onClosedModal = null, selectedUserId = null }) {
   const {
@@ -35,15 +34,6 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
     { value: 'O', label: 'Outro' },
   ];
 
-  const status_options = [
-    { value: true, label: 'Ativo' },
-    { value: false, label: 'Inativo' },
-  ];
-
-  const contract_type_options = [
-    { value: 'P', label: 'PJ' },
-    { value: 'C', label: 'CLT' },
-  ];
 
   useEffect(() => {
     if (success) {
@@ -56,30 +46,21 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
     }
   }, [success]);
 
+  const fetchAddress = async (search) => {
+    try {
+      const response = await addressService.getAddress({ q: search, limit: 40, fields: 'id,street,number,city,state' });
+      return response.results;
+    } catch (error) {
+      console.error('Erro na busca de endereços:', error);
+      return [];
+    }
+  };
+
+  const [selectedAddresses, setSelectedAddresses] = useState([]);
+
   return (
     <Grid container spacing={3}>
-      {/* <Grid item xs={12} sm={12} lg={4}>
-        <CustomFormLabel htmlFor="username">Usuário</CustomFormLabel>
-        <CustomTextField
-          name="username"
-          variant="outlined"
-          fullWidth
-          value={formData.username}
-          onChange={(e) => handleChange('username', e.target.value)}
-          {...(formErrors.username && { error: true, helperText: formErrors.username })}
-        />
-      </Grid> */}
-      {/* <Grid item xs={12} sm={12} lg={4}>
-        <CustomFormLabel htmlFor="first_name">Nome</CustomFormLabel>
-        <CustomTextField
-          name="first_name"
-          variant="outlined"
-          fullWidth
-          value={formData.first_name}
-          onChange={(e) => handleChange('first_name', e.target.value)}
-          {...(formErrors.first_name && { error: true, helperText: formErrors.first_name })}
-        />
-      </Grid> */}
+      {/* Campo de Email */}
       <Grid item xs={12} sm={12} lg={4}>
         <CustomFormLabel htmlFor="email">Email</CustomFormLabel>
         <CustomTextField
@@ -91,8 +72,10 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
           {...(formErrors.email && { error: true, helperText: formErrors.email })}
         />
       </Grid>
+
+      {/* Campo de Nome Completo */}
       <Grid item xs={12} sm={12} lg={4}>
-        <CustomFormLabel htmlFor="email">Nome Completo</CustomFormLabel>
+        <CustomFormLabel htmlFor="complete_name">Nome Completo</CustomFormLabel>
         <CustomTextField
           name="complete_name"
           variant="outlined"
@@ -102,8 +85,10 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
           {...(formErrors.complete_name && { error: true, helperText: formErrors.complete_name })}
         />
       </Grid>
+
+      {/* Campo de CPF */}
       <Grid item xs={12} sm={12} lg={4}>
-        <CustomFormLabel htmlFor="email">CPF</CustomFormLabel>
+        <CustomFormLabel htmlFor="first_document">CPF</CustomFormLabel>
         <CustomTextField
           name="first_document"
           variant="outlined"
@@ -113,6 +98,8 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
           {...(formErrors.first_document && { error: true, helperText: formErrors.first_document })}
         />
       </Grid>
+
+      {/* Campo de Gênero */}
       <Grid item xs={12} sm={12} lg={4}>
         <FormSelect
           label="Gênero"
@@ -122,15 +109,8 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
           {...(formErrors.gender && { error: true, helperText: formErrors.gender })}
         />
       </Grid>
-      {/* <Grid item xs={12} sm={12} lg={4}>
-        <FormSelect
-          label="Status"
-          options={status_options}
-          value={formData.is_active}
-          onChange={(e) => handleChange('is_active', e.target.value)}
-          {...(formErrors.is_active && { error: true, helperText: formErrors.is_active })}
-        />
-      </Grid> */}
+
+      {/* Campo de Data de Nascimento */}
       <Grid item xs={12} sm={12} lg={4}>
         <FormDate
           label="Data de Nascimento"
@@ -140,8 +120,10 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
           {...(formErrors.birth_date && { error: true, helperText: formErrors.birth_date })}
         />
       </Grid>
+
+      {/* Campo de Número de Telefone */}
       <Grid item xs={12} sm={12} lg={4}>
-        <CustomFormLabel htmlFor="name">Número</CustomFormLabel>
+        <CustomFormLabel htmlFor="phone_numbers">Número</CustomFormLabel>
         <AutoCompletePhoneNumber
           onChange={(id) => handleChange('phone_numbers_ids', id)}
           value={formData.phone_numbers_ids ? formData.phone_numbers_ids[0] : null}
@@ -151,15 +133,30 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
           })}
         />
       </Grid>
+
+      {/* Campo de Endereço com seleção múltipla */}
       <Grid item xs={12} sm={12} lg={4}>
         <CustomFormLabel htmlFor="address">Endereço</CustomFormLabel>
-        <AutoCompleteAddresses
-          onChange={(id) => handleChange('addresses_ids', id)}
-          value={formData.addresses_ids}
+        <GenericAutocomplete
+          label="Endereço"
+          fetchOptions={fetchAddress}
+          multiple
+          AddComponent={CreateAddressPage}
+          getOptionLabel={(option) =>
+            `${option.street}, ${option.number} - ${option.city}, ${option.state}`
+          }
+          onChange={(selected) => {
+            setSelectedAddresses(selected);
+            console.log(selected);
+            const ids = Array.isArray(selected) ? selected.map((item) => item.id) : [];
+            handleChange('addresses_ids', ids);
+          }}
+          value={selectedAddresses}
           {...(formErrors.addresses_ids && { error: true, helperText: formErrors.addresses_ids })}
         />
       </Grid>
 
+      {/* Botão de Criar */}
       <Grid item xs={12} sm={12} lg={12}>
         <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
           <Button

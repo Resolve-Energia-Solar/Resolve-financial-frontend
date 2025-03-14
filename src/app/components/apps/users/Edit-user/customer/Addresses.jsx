@@ -129,7 +129,7 @@ export default function ListAddresses({ userId = null }) {
         <DialogTitle>Adicionar Novo Endereço</DialogTitle>
         <DialogContent>
           <CreateAddressPage
-            onClosedModal={() => setOpenModal(false)}
+            onClose={() => setOpenModal(false)}
             userId={userId}
             onRefresh={handleRefresh}
           />

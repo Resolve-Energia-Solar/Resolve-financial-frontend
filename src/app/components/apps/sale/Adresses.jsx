@@ -100,7 +100,7 @@ export default function Addresses({ userId, data, onRefresh }) {
         <DialogTitle>Novo Endereço</DialogTitle>
         <DialogContent>
           <CreateAddressPage
-            onClosedModal={() => setOpenModal(false)}
+            onClose={() => setOpenModal(false)}
             userId={userId}
             onRefresh={onRefresh}
           />

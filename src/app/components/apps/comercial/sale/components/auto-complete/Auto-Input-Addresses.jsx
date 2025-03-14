@@ -188,7 +188,7 @@ export default function AutoCompleteAddresses({
         <DialogTitle>Adicionar Novo Endereço</DialogTitle>
         <DialogContent>
           <CreateAddressPage
-            onClosedModal={handleCloseModal}
+            onClose={handleCloseModal}
             selectedAddressId={addAddress}
             onRefresh={refreshAddresses}
             setAddress={(address) => {
