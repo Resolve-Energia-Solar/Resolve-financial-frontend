@@ -64,26 +64,26 @@ const CreateFundingRequest = ({
               onChange={handleChange}
             />
           </Grid>
+          {formData.person_type === 'PF' && (
+            <Grid item xs={12} sm={12} lg={4}>
+              <CustomFormLabel htmlFor="occupation">Ocupação</CustomFormLabel>
+              <CustomTextField
+                name="occupation"
+                variant="outlined"
+                value={rFormData.occupation}
+                fullWidth
+                onChange={handleChangeRFormData}
+              />
+            </Grid>
+          )}
           <Grid item xs={12} sm={12} lg={4}>
-            <CustomFormLabel htmlFor="first_document">
-              {formData.person_type === 'PF' ? 'CPF' : 'CNPJ'}
+            <CustomFormLabel htmlFor="monthly_income">
+              {formData.person_type === 'PF' ? 'Renda Comprovada' : 'Faturamento Médio'}
             </CustomFormLabel>
             <CustomTextField
-              name="first_document"
+              name="monthly_income"
               variant="outlined"
-              value={rFormData.first_document}
-              fullWidth
-              onChange={handleChangeRFormData}
-            />
-          </Grid>
-          <Grid item xs={12} sm={12} lg={4}>
-            <CustomFormLabel htmlFor="first_document">
-              {formData.person_type === 'PF' ? 'CPF' : 'CNPJ'}
-            </CustomFormLabel>
-            <CustomTextField
-              name="first_document"
-              variant="outlined"
-              value={rFormData.first_document}
+              value={rFormData.monthly_income}
               fullWidth
               onChange={handleChangeRFormData}
             />
