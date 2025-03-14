@@ -38,8 +38,6 @@ import CustomFieldMoney from '../components/CustomFieldMoney';
 import CustomSwitch from '@/app/components/forms/theme-elements/CustomSwitch';
 import AutoCompleteUser from '../../comercial/sale/components/auto-complete/Auto-Input-User';
 import { useSelector } from 'react-redux';
-import userService from '@/services/userService';
-import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 
 const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) => {
   const {
@@ -170,19 +168,10 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
         )}
         <Grid item xs={12} sm={6}>
           <CustomFormLabel htmlFor="name">Tomador</CustomFormLabel>
-          <GenericAsyncAutocompleteInput
-            value={formData.borrower}
-            onChange={(selected) => {
-              handleChange('borrower_id', selected?.id);
-            }}
-            endpoint="api/users/"
-            extraParams={{ limit: 30, fields: 'id,complete_name,email' }}
-            queryParam="name"
-            mapResponse={(data) => {
-              console.log('dados', data.results);
-              return data.results;
-            }}
-            getOptionLabel={(option) => option.complete_name || option.email}
+          <AutoCompleteUser
+             onChange={(id) => handleChange('borrower_id', id)}
+             value={formData.borrower_id}
+             {...(formErrors.borrower_id && { error: true, helperText: formErrors.borrower_id })}
           />
         </Grid>
         {formData.payment_type === 'F' && (
