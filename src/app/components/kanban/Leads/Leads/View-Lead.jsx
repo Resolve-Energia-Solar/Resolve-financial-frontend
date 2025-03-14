@@ -211,7 +211,7 @@ function ViewLeadPage({ leadId = null }) {
                             <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 Observações
                             </Typography>
-                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "700", color: "#000000" }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#303030" }}>
                                 -
                             </Typography>
                         </Grid>
