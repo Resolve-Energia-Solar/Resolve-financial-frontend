@@ -222,7 +222,7 @@ function ViewLeadPage({ leadId = null }) {
             <Grid item xs={12} md={4} sx={{ padding: '0px 10px 10px 10px' }}>
                 <Grid container direction="column" spacing={2}>
                     <Grid item>
-                        <Typography variant="h6" gutterBottom sx={{ fontSize: 18, fontWeight: 700 }}>
+                        <Typography gutterBottom sx={{ fontSize: '18px', fontWeight: "700", color: "#303030" }}>
                             Propostas
                         </Typography>
                         <Typography variant="body1" gutterBottom sx={{ fontSize: 14, color: '#7E92A2' }}>
