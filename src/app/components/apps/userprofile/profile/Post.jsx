@@ -18,6 +18,8 @@ const Post = () => {
     const data = await commentService.getComments(userId, userContentType, {
       author: userId,
       ordering: '-created_at',
+      fields: 'id,text,author.id,author.profile_picture,author.complete_name,created_at',
+      expand: 'author',
     });
     setPosts(data.results);
   }, [userId]);

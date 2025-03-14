@@ -9,6 +9,7 @@ const PostComments = ({ comment, post }) => {
   const [replyTxt, setReplyTxt] = useState('');
   const [showReply, setShowReply] = useState(false);
   const [replies, setReplies] = useState([]);
+  const [repliesCount, setRepliesCount] = useState(0);
   const user = useSelector(state => state.user?.user);
   const [commentContentType, setCommentContentType] = useState(null);
 
@@ -24,12 +25,10 @@ const PostComments = ({ comment, post }) => {
     if (commentContentType === null) return;
     const fetchReplies = async () => {
       try {
-        const fetchedReplies = await commentService.getComments(comment.id, commentContentType);
-        // Verifica se o retorno é um array ou um objeto com os comentários na propriedade 'results'
-        const repliesArray = Array.isArray(fetchedReplies)
-          ? fetchedReplies
-          : fetchedReplies.results || [];
-        setReplies(repliesArray);
+        const response = await commentService.getComments(comment.id, commentContentType, { fields: 'id,text,author.id,author.profile_picture,author.complete_name,created_at', expand: 'author' });
+        const fetchedReplies = response.results || [];
+        setReplies(fetchedReplies);
+        setRepliesCount(response.count);
       } catch (error) {
         console.error('Erro ao buscar respostas:', error);
       }
@@ -40,11 +39,11 @@ const PostComments = ({ comment, post }) => {
   const onSubmit = async () => {
     try {
       const replyData = {
-        object_id: comment.id,              // id do comentário respondido
-        content_type_id: commentContentType, // content_type do comentário (retorna um número)
+        object_id: comment.id,
+        content_type_id: commentContentType,
         author_id: user.id,
         text: replyTxt,
-        parent_id: comment.id,              // vincula a resposta ao comentário original
+        parent_id: comment.id,
       };
 
       const novoReply = await commentService.createComment(replyData);
@@ -97,7 +96,7 @@ const PostComments = ({ comment, post }) => {
             </Fab>
           </Tooltip>
           <Typography variant="body1" fontWeight={600}>
-            {replies.length}
+            {repliesCount}
           </Typography>
         </Stack>
       </Box>
