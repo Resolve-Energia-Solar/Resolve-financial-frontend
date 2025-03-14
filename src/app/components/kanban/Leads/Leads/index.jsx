@@ -71,7 +71,9 @@ function EditLeadTabs({ leadId }) {
               tabValue === index
                 ? {
                   backgroundColor: theme.palette.primary.main,
-                  color: 'black',
+                  color: '#303030',
+                  fontWeight: 600,
+                  fontSize: "12px",
                   borderTopLeftRadius: '10px',
                   borderTopRightRadius: '10px',
                   fontWeight: '500',
