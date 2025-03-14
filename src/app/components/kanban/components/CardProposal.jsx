@@ -53,7 +53,7 @@ export default function ProposalCard({
                         {description}
                     </Typography>
 
-                    <Typography variant="subtitle1" component="p" sx={{ color: '#ADADAD', fontSize: '12px' }}>
+                    <Typography component="p" sx={{ fontSize: '12px', fontWeight: "400", color: "#ADADAD" }}>
                         {reference}
                     </Typography>
 
