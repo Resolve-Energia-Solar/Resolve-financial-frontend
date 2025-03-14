@@ -242,6 +242,7 @@ function ViewLeadPage({ leadId = null }) {
                                 reference={`Validade: ${proposals[0].due_date}`}
                                 onEdit={() => console.log('Editar')}
                                 onDelete={() => console.log('Deletar')}
+                                typographyType={1}
                             />
                         </Grid>
                     )}
@@ -266,6 +267,7 @@ function ViewLeadPage({ leadId = null }) {
                                 reference={`Validade: ${proposal.due_date}`}
                                 onEdit={() => console.log('Editar')}
                                 onDelete={() => console.log('Deletar')}
+                                typographyType={2}
                             />
                         </Grid>
                     ))}

@@ -20,7 +20,8 @@ export default function ProposalCard({
     description,
     reference,
     onEdit,
-    onDelete
+    onDelete,
+    typographyType,
 }) {
     const theme = useTheme();
 
