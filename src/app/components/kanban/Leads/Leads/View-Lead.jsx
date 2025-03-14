@@ -131,7 +131,7 @@ function ViewLeadPage({ leadId = null }) {
                                     {lastInspetion && lastInspetion.schedule_date && lastInspetion.schedule_start_time ? (
                                             <>
                                                 {new Date(lastInspetion.schedule_date).toLocaleDateString('pt-BR')} 
-                                                <CircleIcon sx={{ fontSize: "8px"}} /> 
+                                                <CircleIcon sx={{ fontSize: "8px", verticalAlign: 'middle', mx: 1}} /> 
                                                 {lastInspetion.schedule_start_time}
                                             </>
                                         )
