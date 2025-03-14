@@ -148,7 +148,7 @@ function ViewLeadPage({ leadId = null }) {
                             <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 CPF
                             </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "700", color: "#000000" }}>
                                 {lead?.first_document || '-'}
                             </Typography>
                         </Grid>
@@ -157,7 +157,7 @@ function ViewLeadPage({ leadId = null }) {
                             <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 Fone
                             </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "700", color: "#000000" }}>
                                 {formatPhoneNumber(lead?.phone)}
                             </Typography>
                         </Grid>
@@ -166,7 +166,7 @@ function ViewLeadPage({ leadId = null }) {
                             <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 E-mail
                             </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "700", color: "#000000" }}>
                                 {lead?.contact_email || '-'}
                             </Typography>
                         </Grid>
@@ -175,7 +175,7 @@ function ViewLeadPage({ leadId = null }) {
                             <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 Endereço
                             </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "700", color: "#000000" }}>
                                 {lead?.addresses[0]?.street || '-'}, {lead?.addresses[0]?.number || '-'}
                             </Typography>
                         </Grid>
@@ -184,7 +184,7 @@ function ViewLeadPage({ leadId = null }) {
                             <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 Origem/Campanha
                             </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "700", color: "#000000" }}>
                                 {lead?.origin?.name || '-'} / -
                             </Typography>
                         </Grid>
@@ -193,7 +193,7 @@ function ViewLeadPage({ leadId = null }) {
                             <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 kWp
                             </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "700", color: "#000000" }}>
                                 {lead?.kwp || '-'}
                             </Typography>
                         </Grid>
@@ -202,7 +202,7 @@ function ViewLeadPage({ leadId = null }) {
                             <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 Responsável
                             </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "700", color: "#000000" }}>
                                 -
                             </Typography>
                         </Grid>
@@ -211,7 +211,7 @@ function ViewLeadPage({ leadId = null }) {
                             <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 Observações
                             </Typography>
-                            <Typography variant="body1" gutterBottom sx={{ color: '#303030', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "700", color: "#000000" }}>
                                 -
                             </Typography>
                         </Grid>
