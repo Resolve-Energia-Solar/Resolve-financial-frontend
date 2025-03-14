@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Tabs, Tab, Box } from '@mui/material';
+import { Tabs, Tab, Box, useTheme, } from '@mui/material';
 import PropTypes from 'prop-types';
 import EditLeadPage from './Edit-Lead';
 import LeadSchedulePage from '../Leads-schedule';
@@ -8,12 +8,10 @@ import LeadsProposalListPage from '../Leads-proposal';
 import EditCustomerPage from '../Leads-customer/Edit-Customer';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import SalesListPage from '../Leads-sales';
-import { useTheme } from '@emotion/react';
 
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
-  const theme = useTheme();
 
   return (
     <div
@@ -52,6 +50,8 @@ function EditLeadTabs({ leadId }) {
     setTabValue(newValue);
   };
 
+  const theme = useTheme();
+
   return (
     <Box sx={{ overflow: 'hidden', height: '100%' }}>
 
@@ -70,12 +70,12 @@ function EditLeadTabs({ leadId }) {
             sx={
               tabValue === index
                 ? {
-                  backgroundColor: '#FFCC00',
+                  backgroundColor: theme.palette.primary.main,
                   color: 'black',
                   borderTopLeftRadius: '10px',
                   borderTopRightRadius: '10px',
                   fontWeight: '500',
-                  '&.Mui-selected': { color: 'black' },
+                  '&.Mui-selected': { backgroundColor: theme.palette.primary.main, color: 'black' },
                 }
                 : {}
             }
