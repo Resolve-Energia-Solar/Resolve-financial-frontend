@@ -47,10 +47,10 @@ const ExpandableListComponent = ({
         >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                <Grid item xs={2}>
+                <Grid item xs={2} sx={{ justifyContent: "flex-start" }}>
                     <DomainIcon />
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={8} >
                     <Typography sx={{ fontWeight: 700, fontSize: "14px" }}>{sale.name}</Typography>
                 </Grid>
                 <Grid item xs={2}>
