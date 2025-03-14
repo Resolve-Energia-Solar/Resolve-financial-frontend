@@ -56,7 +56,7 @@ export default function Sicoob() {
     let managing_partner;
     let customer;
     try {
-      if ((formData.person_type = 'PJ')) {
+      if (formData.person_type == 'PJ') {
         // Cria o registro e obtém o object_id
         const userResponse = await userService.createUser({
           complete_name: formData.complete_name,
@@ -64,6 +64,7 @@ export default function Sicoob() {
           first_document: formData.first_document,
           person_type: formData.person_type,
           addresses: [3582],
+          user_types: [2],
         });
 
         customer = userResponse.id;
@@ -76,6 +77,8 @@ export default function Sicoob() {
           birth_date: formDataManaging.birth_date,
           gender: formDataManaging.gender,
           addresses: [3582],
+          user_types: [2],
+          user_types: [2],
         });
 
         managing_partner = userResponseManaging.id;
@@ -88,6 +91,7 @@ export default function Sicoob() {
           gender: formData.gender,
           birth_date: formData.birth_date,
           addresses: [3582],
+          user_types: [2],
         });
         customer = userResponse.id;
       }
