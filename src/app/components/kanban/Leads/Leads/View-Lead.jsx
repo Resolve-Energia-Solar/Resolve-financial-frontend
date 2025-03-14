@@ -247,7 +247,7 @@ function ViewLeadPage({ leadId = null }) {
 
                     {proposals.length > 1 && (
                         <Grid item>
-                            <Typography variant="body1" gutterBottom sx={{ fontSize: 14, color: '#7E92A2' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E92A2" }}>
                                 Outras propostas
                             </Typography>
                         </Grid>
