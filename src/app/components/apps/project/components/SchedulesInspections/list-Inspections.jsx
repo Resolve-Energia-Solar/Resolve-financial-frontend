@@ -60,8 +60,12 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
     const fetchSchedules = async () => {
       try {
         setLoading(true);
-        const fields = 'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name';
-        const response = await scheduleService.getAllSchedulesInspectionByProject(projectId, fields);
+        const fields =
+          'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name';
+        const response = await scheduleService.getAllSchedulesInspectionByProject(
+          projectId,
+          fields,
+        );
         console.log('response', response.results);
 
         // Obter os detalhes do projeto para verificar a vistoria principal
@@ -96,10 +100,15 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
     const fetch = async () => {
       setLoadingInspections(true);
       try {
-        const fields = 'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name';
-        const response = await scheduleService.getAllSchedulesInspectionByCustomer(customer, fields, {
-          expand: 'final_service_opinion',
-        });
+        const fields =
+          'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name';
+        const response = await scheduleService.getAllSchedulesInspectionByCustomer(
+          customer,
+          fields,
+          {
+            expand: 'final_service_opinion',
+          },
+        );
         console.log('response', response.results);
         // Se necessário, você pode filtrar os resultados aqui
         setInspectionsNotAssociated(response.results);
@@ -127,13 +136,10 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
     try {
       if (checked) {
         await projectService.partialUpdateProject(projectId, { inspection_id: scheduleId });
-        console.log('Vistoria principal atualizada com sucesso.');
       } else {
-        console.log('Não é possível desmarcar a vistoria principal diretamente.');
-        setschedules(previousschedules);
+        await projectService.partialUpdateProject(projectId, { inspection_id: null });
       }
     } catch (error) {
-      console.error('Erro ao atualizar o projeto:', error);
       setschedules(previousschedules);
     }
   };
@@ -150,6 +156,12 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
   const handleDelete = async (scheduleId) => {
     try {
       await scheduleService.patchSchedule(scheduleId, { project_id: null });
+
+      const scheduleRemoved = schedules.find((schedule) => schedule.id === scheduleId);
+      if (scheduleRemoved && scheduleRemoved.isChecked) {
+        await projectService.partialUpdateProject(projectId, { inspection_id: null });
+      }
+
       reloadPage();
       setConfirmDeleteModalOpen(false);
     } catch (error) {
@@ -177,10 +189,6 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
     setInspectionSelected(scheduleId);
     setConfirmAssociateModalOpen(true);
   };
-
-  console.log('projectId:', projectId);
-  console.log('schedules:', schedules);
-  console.log('customer:', customer);
 
   return (
     <Box>
@@ -223,7 +231,7 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
             </TableHead>
             <TableBody>
               {loading ? (
-              <TableSkeleton rows={1} columns={6} />
+                <TableSkeleton rows={1} columns={6} />
               ) : schedules.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} align="center">
@@ -402,7 +410,10 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Associar Item">
-                            <IconButton color="success" onClick={() => openAssociateModal(schedule.id)}>
+                            <IconButton
+                              color="success"
+                              onClick={() => openAssociateModal(schedule.id)}
+                            >
                               <KeyboardArrowRight width={22} />
                             </IconButton>
                           </Tooltip>
@@ -426,7 +437,8 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
         <DialogTitle>Confirmar Desassociação</DialogTitle>
         <DialogContent>
           <Typography variant="body2">
-            Tem certeza que deseja desassociar esta vistoria do projeto? Esta ação não pode ser desfeita.
+            Tem certeza que deseja desassociar esta vistoria do projeto? Esta ação não pode ser
+            desfeita.
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -448,7 +460,8 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
         <DialogTitle>Confirmar Associação</DialogTitle>
         <DialogContent>
           <Typography variant="body2">
-            Tem certeza que deseja associar esta vistoria ao projeto? Esta ação não pode ser desfeita.
+            Tem certeza que deseja associar esta vistoria ao projeto? Esta ação não pode ser
+            desfeita.
           </Typography>
         </DialogContent>
         <DialogActions>

@@ -37,7 +37,6 @@ const CreateAddressPage = ({
     dataReceived,
   } = useAddressForm();
 
-  // Define o user_id no formulário
   formData.user_id = userId;
 
   const [addressInput, setAddressInput] = useState('');
@@ -61,7 +60,6 @@ const CreateAddressPage = ({
     }
   }, [success, hasHandledSuccess, formData, formErrors, onAdd, onClose, onRefresh, enqueueSnackbar]);
 
-  // Mapeamento para converter o nome completo do estado em sigla
   const stateMapping = {
     Acre: 'AC',
     Alagoas: 'AL',
