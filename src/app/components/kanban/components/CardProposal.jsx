@@ -48,9 +48,16 @@ export default function ProposalCard({
                     
                     <Grid container spacing={2} alignItems="center">
                         <Grid item xs={8}>
-                            <Typography sx={{ fontSize: '24px', fontWeight: "700", color: "#303030" }}>
-                                {price}
-                            </Typography>
+                            {typographyType == 1 && (
+                                <Typography sx={{ fontSize: '24px', fontWeight: "700", color: "#303030" }}>
+                                    {price}
+                                </Typography>
+                            )}
+                            {typographyType == 2 && (
+                                <Typography sx={{ fontSize: '16px', fontWeight: "700", color: "#303030" }}>
+                                    {price}
+                                </Typography>
+                            )}
                             <Typography sx={{ fontSize: '12px', fontWeight: "400", color: "#303030", mt: 0.5 }}>
                                 {description}
                             </Typography>
