@@ -45,7 +45,7 @@ const ExpandableListComponent = ({
         >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-              <Typography sx={{ fontWeight: 600 }}>{sale.name}</Typography>
+              <Typography sx={{ fontWeight: 700, fontSize: "14px" }}>{sale.name}</Typography>
               <Chip label={sale.status} color="primary" variant="outlined" />
             </Box>
           </AccordionSummary>

@@ -156,8 +156,6 @@ const SalesListPage = ({ leadId = null }) => {
     ]; // adds mock data
 
 
-
-
     return (
         <>
             <Grid container spacing={0} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", p: 3 }} >
