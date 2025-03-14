@@ -10,6 +10,8 @@ import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
 import ProposalService from '@/services/proposalService';
 import ProposalCard from '../../components/CardProposal';
+import LeadInfoHeader from '../components/HeaderCard';
+import CircleIcon from '@mui/icons-material/Circle';
 
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID
 
@@ -73,68 +75,33 @@ function ViewLeadPage({ leadId = null }) {
     return (
         <Grid container spacing={0}>
             <Grid item xs={12} md={8} sx={{ padding: '0px 10px 10px 10px' }}>
-                <BlankCard sx={{ borderRadius: "20px", boxShadow: 3, p: 0, display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
-                    <Grid container spacing={2} alignItems="center" sx={{ p: 3 }}>
-                        <Grid item xs={12} md={5} container alignItems="center" spacing={2}>
-                            <Grid item>
-                                <AccountCircle sx={{ fontSize: 62 }} />
-                            </Grid>
-                            <Grid item>
-                                <Typography variant="body1" gutterBottom sx={{ fontSize: 12, color: '#ADADAD' }}>
-                                    Cliente
-                                </Typography>
-                                <Typography variant="h6" gutterBottom sx={{ fontSize: 16 }}>
-                                    {lead?.name?.length > 20 ? `${lead.name.substring(0, 20)}...` : lead?.name}
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                        <Grid item xs={12} md={7}>
-                            <Grid container spacing={2} alignItems="center" justifyContent="flex-end">
-                                <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                                    <Typography variant="body1" gutterBottom sx={{ fontSize: 12, color: '#ADADAD' }}>
-                                        Nível de interesse
-                                    </Typography>
-                                    <Rating
-                                        name="qualification"
-                                        value={lead?.qualification}
-                                        max={5}
-                                        readOnly
-                                        size="small"
-                                        sx={{ ml: 1 }}
-                                        icon={<WbSunny fontSize="inherit" sx={{ color: theme.palette.warning.main }} />}
-                                        emptyIcon={
-                                            <WbSunny fontSize="inherit" sx={{ color: theme.palette.action.disabled }} />
-                                        }
-                                    />
-                                </Grid>
-                                <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                                    <Typography variant="body1" gutterBottom sx={{ fontSize: 12, color: '#ADADAD' }}>
-                                        Status
-                                    </Typography>
-                                    <Chip label={lead?.column?.name} size="small" sx={{ width: '100%', p: 2, backgroundColor: 'transparent', border: `1px solid ${lead?.column?.color}`, color: '#ADADAD' }} />
-                                </Grid>
-                                <Grid item xs={12} md={2}>
-                                    <IconButton
-                                        size="small"
-                                        onClick={() => router.push(`/apps/leads/${leadId}/edit`)}
-                                    >
-                                        <IconPencil fontSize="small" />
-                                    </IconButton>
-
-                                    <IconButton
-                                        size="small"
-                                    // onClick={() => router.push(`/apps/leads/${item.id}/view`)}
-                                    >
-                                        <IconTrash fontSize="small" />
-                                    </IconButton>
-                                </Grid>
-                            </Grid>
+                <BlankCard 
+                    sx={{ 
+                        borderRadius: "20px", 
+                        boxShadow: 3, 
+                        p: 3, 
+                        display: 'flex', 
+                        justifyContent: 'center', 
+                        flexDirection: 'column' 
+                    }}
+                >
+                    <Grid container spacing={2} alignItems="center" sx={{ width: "100%" }}>
+                        <Grid item xs={12}>
+                            <Box 
+                                sx={{ 
+                                    borderRadius: '20px', 
+                                    display: 'flex', 
+                                    flexDirection: 'column', 
+                                    width: "100%" 
+                                }}
+                            >
+                                <LeadInfoHeader leadId={leadId} tabValue={10} />
+                            </Box>
                         </Grid>
                     </Grid>
 
-                    <Divider sx={{ my: 0 }} />
-                    <Box sx={{ p: 3.5 }}>
-                        <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                    <Box sx={{ p: 3.5, borderBottom: "1px solid", borderRadius: 0, borderColor: "#F4F5F7" }}>
+                        <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#ADADAD" }}>
                             Agendamento
                         </Typography>
                         <Box
@@ -147,97 +114,104 @@ function ViewLeadPage({ leadId = null }) {
                                 textAlign: { xs: 'center', md: 'left' }, // Centraliza o texto em telas pequenas
                             }}
                         >
-                            <IconCalendarWeek size={28} style={{ verticalAlign: 'middle' }} />
-                            <Typography variant="body1" sx={{ color: '#000000', fontSize: '24px' }}>
+                            <IconCalendarWeek size={28} style={{ verticalAlign: 'middle', color: "#303030" }} />
+                            <Typography sx={{ color: '#000000', fontSize: '24px', fontWeight: "400", color: "#303030" }}>
                                 Vistoria técnica{' '}
                                 <Box
                                     component="span"
                                     sx={{
-                                        fontWeight: 'bold',
+                                        fontWeight: '700',
                                         fontSize: '24px',
                                         marginLeft: { xs: 0, sm: 1 },
                                         whiteSpace: 'nowrap', // Impede que a data e hora quebrem
+                                        alignItems: "center",
+                                        justifyContent: "center"
                                     }}
                                 >
-                                    {lastInspetion && lastInspetion.schedule_date && lastInspetion.schedule_start_time
-                                        ? `${new Date(lastInspetion.schedule_date).toLocaleDateString('pt-BR')} • ${lastInspetion.schedule_start_time}`
-                                        : 'Não há agendamento'}
+                                    {lastInspetion && lastInspetion.schedule_date && lastInspetion.schedule_start_time ? (
+                                            <>
+                                                {new Date(lastInspetion.schedule_date).toLocaleDateString('pt-BR')} 
+                                                <CircleIcon sx={{ fontSize: "8px", verticalAlign: 'middle', mx: 1}} /> 
+                                                {lastInspetion.schedule_start_time}
+                                            </>
+                                        )
+                                            
+                                        : ('Não há agendamento')}
 
                                 </Box>
                             </Typography>
                         </Box>
                     </Box>
-                    <Divider sx={{ my: 0 }} />
 
                     <Grid container spacing={6} sx={{ p: 3.5 }}>
                         <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 CPF
                             </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "700", color: "#000000" }}>
                                 {lead?.first_document || '-'}
                             </Typography>
                         </Grid>
 
                         <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 Fone
                             </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "700", color: "#000000" }}>
                                 {formatPhoneNumber(lead?.phone)}
                             </Typography>
                         </Grid>
 
                         <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 E-mail
                             </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "700", color: "#000000" }}>
                                 {lead?.contact_email || '-'}
                             </Typography>
                         </Grid>
 
                         <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 Endereço
                             </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "700", color: "#000000" }}>
                                 {lead?.addresses[0]?.street || '-'}, {lead?.addresses[0]?.number || '-'}
                             </Typography>
                         </Grid>
 
                         <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 Origem/Campanha
                             </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "700", color: "#000000" }}>
                                 {lead?.origin?.name || '-'} / -
                             </Typography>
                         </Grid>
 
                         <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 kWp
                             </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "700", color: "#000000" }}>
                                 {lead?.kwp || '-'}
                             </Typography>
                         </Grid>
 
                         <Grid item xs={12} md={4} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 Responsável
                             </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ color: '#000000', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "700", color: "#000000" }}>
                                 -
                             </Typography>
                         </Grid>
 
                         <Grid item xs={12} md={8} >
-                            <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E8388" }}>
                                 Observações
                             </Typography>
-                            <Typography variant="body1" gutterBottom sx={{ color: '#303030', fontSize: '14px' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#303030" }}>
                                 -
                             </Typography>
                         </Grid>
@@ -248,10 +222,10 @@ function ViewLeadPage({ leadId = null }) {
             <Grid item xs={12} md={4} sx={{ padding: '0px 10px 10px 10px' }}>
                 <Grid container direction="column" spacing={2}>
                     <Grid item>
-                        <Typography variant="h6" gutterBottom sx={{ fontSize: 18, fontWeight: 700 }}>
+                        <Typography gutterBottom sx={{ fontSize: '18px', fontWeight: "700", color: "#303030" }}>
                             Propostas
                         </Typography>
-                        <Typography variant="body1" gutterBottom sx={{ fontSize: 14, color: '#7E92A2' }}>
+                        <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E92A2" }}>
                             Última proposta enviada
                         </Typography>
                     </Grid>
@@ -259,21 +233,23 @@ function ViewLeadPage({ leadId = null }) {
                     {proposals.length > 0 && (
                         <Grid item>
                             <ProposalCard
-                                image="https://cdn-icons-png.flaticon.com/512/5047/5047881.png"
+                                image="/images/products/projects-file-icon.png"
+                                alt="Project Icon"
                                 price={new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(proposals[0].value)}
                                 status={proposalStatus[proposals[0].status]?.label}
                                 statusColor={proposalStatus[proposals[0].status]?.color}
                                 description={proposals[0].description}
-                                reference={`Validate: ${proposals[0].due_date}`}
+                                reference={`Validade: ${proposals[0].due_date}`}
                                 onEdit={() => console.log('Editar')}
                                 onDelete={() => console.log('Deletar')}
+                                typographyType={1}
                             />
                         </Grid>
                     )}
 
                     {proposals.length > 1 && (
                         <Grid item>
-                            <Typography variant="body1" gutterBottom sx={{ fontSize: 14, color: '#7E92A2' }}>
+                            <Typography gutterBottom sx={{ fontSize: '14px', fontWeight: "400", color: "#7E92A2" }}>
                                 Outras propostas
                             </Typography>
                         </Grid>
@@ -282,14 +258,16 @@ function ViewLeadPage({ leadId = null }) {
                     {proposals.slice(1).map((proposal, index) => (
                         <Grid item key={index}>
                             <ProposalCard
-                                image="https://cdn-icons-png.flaticon.com/512/5047/5047881.png"
+                                image="/images/products/projects-file-icon.png"
+                                alt="Project Icon"
                                 price={new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(proposal.value)}
                                 status={proposalStatus[proposal.status]?.label}
                                 statusColor={proposalStatus[proposal.status]?.color}
                                 description={proposal.description}
-                                reference={`Validate: ${proposal.due_date}`}
+                                reference={`Validade: ${proposal.due_date}`}
                                 onEdit={() => console.log('Editar')}
                                 onDelete={() => console.log('Deletar')}
+                                typographyType={2}
                             />
                         </Grid>
                     ))}

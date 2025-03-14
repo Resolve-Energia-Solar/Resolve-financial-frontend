@@ -21,6 +21,7 @@ import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { usePathname } from 'next/navigation';
 import leadService from '@/services/leadService';
+import { IconCalendarWeek, IconEye, IconPencil, IconTrash } from '@tabler/icons-react';
 
 function LeadInfoHeader({ leadId, tabValue }) {
   const [lead, setLead] = useState(null);
@@ -62,7 +63,7 @@ function LeadInfoHeader({ leadId, tabValue }) {
       }}
       spacing={2}
     >
-      <Grid container xs={8} alignItems="center">
+      <Grid container xs={12} alignItems="center">
         <Grid item sx={{ position: 'relative', display: 'inline-block', mr: 2 }}>
           <Avatar
             sx={{
@@ -140,7 +141,7 @@ function LeadInfoHeader({ leadId, tabValue }) {
               alignItems: 'flex-start',
             }}
           >
-            <Typography variant="caption" sx={{ color: 'gray', mr: 1, mb: 0.5 }}>
+            <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
               Status
             </Typography>
             <Chip
@@ -189,46 +190,65 @@ function LeadInfoHeader({ leadId, tabValue }) {
               onChange={(e) => setSelectedProject(e.target.value)}
               fullWidth
               size="small"
-              sx={{ backgroundColor: '#F4F5F7', borderRadius: '8px',  }}
+              sx={{ backgroundColor: '#F4F5F7', borderRadius: '8px', }}
               displayEmpty
             >
               {/* {projects.map((project) => ( */}
-                <MenuItem
-                  value=""
-                  sx={{ color: '#7E8388' }}
-                  disabled
-                >
-                  Selecione um projeto
-                </MenuItem>
+              <MenuItem
+                value=""
+                sx={{ color: '#7E8388' }}
+                disabled
+              >
+                Selecione um projeto
+              </MenuItem>
 
-                  <MenuItem 
-                    // key={project.id} 
-                    // value={project.id} 
-                    value="project-1"
-                    sx={{ color: '#7E8388' }}
-                  >
-                    {/* {project.name} */}
-                    Rua Antônio Barreto, 1198
-                  </MenuItem>
+              <MenuItem
+                // key={project.id} 
+                // value={project.id} 
+                value="project-1"
+                sx={{ color: '#7E8388' }}
+              >
+                {/* {project.name} */}
+                Rua Antônio Barreto, 1198
+              </MenuItem>
 
-                  <MenuItem 
-                    value="project-2"
-                    sx={{ color: '#7E8388' }}
-                  >
-                    Rua dos Mundurucus, 2500
-                  </MenuItem>
+              <MenuItem
+                value="project-2"
+                sx={{ color: '#7E8388' }}
+              >
+                Rua dos Mundurucus, 2500
+              </MenuItem>
 
-                  <MenuItem 
-                    value="project-3"
-                    sx={{ color: '#7E8388' }}
-                  >
-                    Tv. Padre Eutíquio, 87
-                  </MenuItem>
+              <MenuItem
+                value="project-3"
+                sx={{ color: '#7E8388' }}
+              >
+                Tv. Padre Eutíquio, 87
+              </MenuItem>
 
               {/* ))} */}
             </Select>
           </Box>
         )}
+
+        {tabValue === 10 && (
+          <Grid item sx={{ display: "flex", flexDirection: "row"}}>
+            <IconButton
+              size="small"
+              onClick={() => router.push(`/apps/leads/${leadId}/edit`)}
+            >
+              <IconPencil fontSize="small" />
+            </IconButton>
+
+            <IconButton
+              size="small"
+            // onClick={() => router.push(`/apps/leads/${item.id}/view`)}
+            >
+              <IconTrash fontSize="small" />
+            </IconButton>
+          </Grid>
+        )}
+
       </Grid>
     </Box>
   );

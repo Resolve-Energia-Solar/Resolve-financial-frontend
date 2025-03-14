@@ -10,6 +10,7 @@ import Chip from '@mui/material/Chip';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { IconEye, IconPencil } from '@tabler/icons-react';
+import { Grid } from '@mui/material';
 
 export default function ProposalCard({
     image,
@@ -19,7 +20,8 @@ export default function ProposalCard({
     description,
     reference,
     onEdit,
-    onDelete
+    onDelete,
+    typographyType,
 }) {
     const theme = useTheme();
 
@@ -35,38 +37,53 @@ export default function ProposalCard({
         }}>
             <CardMedia
                 component="img"
-                sx={{ width: 80, height: 80, m: 1 }}
+                sx={{ width: 60, height: 60 }}
                 image={image}
                 alt="proposal image"
             />
-
+        
             <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <CardContent sx={{ flex: '1 0 auto', p: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography component="div" variant="h5">
-                            {price}
-                        </Typography>
-                        <Chip label={status} sx={{ backgroundColor: statusColor, color: '#303030', fontSize: '10px' }} />
-                    </Box>
 
-                    <Typography variant="subtitle1" component="div" sx={{ color: 'text.secondary' }}>
-                        {description}
-                    </Typography>
-
-                    <Typography variant="subtitle1" component="p" sx={{ color: '#ADADAD', fontSize: '12px' }}>
-                        {reference}
-                    </Typography>
-
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                        <IconButton aria-label="editar" size="small" onClick={onEdit}>
-                            <IconPencil fontSize="small" />
-                        </IconButton>
-                        <IconButton aria-label="deletar" size="small" onClick={onDelete}>
-                            <IconEye fontSize="small" />
-                        </IconButton>
-                    </Box>
+                <CardContent sx={{ flex: '1 0 auto', p: 1 }}>
+                    
+                    <Grid container spacing={2} alignItems="center">
+                        <Grid item xs={8}>
+                            {typographyType == 1 && (
+                                <Typography sx={{ fontSize: '24px', fontWeight: "700", color: "#303030" }}>
+                                    {price}
+                                </Typography>
+                            )}
+                            {typographyType == 2 && (
+                                <Typography sx={{ fontSize: '16px', fontWeight: "700", color: "#303030" }}>
+                                    {price}
+                                </Typography>
+                            )}
+                            <Typography sx={{ fontSize: '12px', fontWeight: "400", color: "#303030", mt: 0.5 }}>
+                                {description}
+                            </Typography>
+                            <Typography sx={{ fontSize: '12px', fontWeight: "400", color: "#ADADAD", mt: 0.5 }}>
+                                {reference}
+                            </Typography>
+                        </Grid>
+        
+                      
+                        <Grid item xs={4} sx={{ display: 'flex', flexDirection: "column", alignItems: 'center', gap: 1, mt: 1 }}>
+                            <Grid item xs={12}>
+                                <Chip label={status} sx={{ backgroundColor: statusColor, color: '#303030', fontSize: '10px' }} />
+                            </Grid>
+                            <Grid item xs={12} sx={{ display: 'flex', flexDirection: "row", alignItems: 'center', gap: 1 }}>
+                                <IconButton aria-label="editar" size="small" onClick={onEdit} sx={{ color: "#ADADAD" }}>
+                                    <IconPencil fontSize="small" />
+                                </IconButton>
+                                <IconButton aria-label="deletar" size="small" onClick={onDelete} sx={{ color: "#ADADAD" }}>
+                                    <IconEye fontSize="small" />
+                                </IconButton>
+                            </Grid>
+                        </Grid>
+                    </Grid>
                 </CardContent>
             </Box>
         </Card>
+        
     );
 }
