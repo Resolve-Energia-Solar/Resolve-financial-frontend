@@ -15,6 +15,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IconEye, IconPencil } from '@tabler/icons-react';
 import TableComponent from './TableComponent';
+import DomainIcon from '@mui/icons-material/Domain';
 
 const ExpandableListComponent = ({
     columns,
@@ -45,6 +46,9 @@ const ExpandableListComponent = ({
         >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+            <Grid item>
+                <DomainIcon />
+            </Grid>
               <Typography sx={{ fontWeight: 700, fontSize: "14px" }}>{sale.name}</Typography>
               <Chip label={sale.status} color="primary" variant="outlined" />
             </Box>
