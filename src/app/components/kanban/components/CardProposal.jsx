@@ -36,7 +36,7 @@ export default function ProposalCard({
         }}>
             <CardMedia
                 component="img"
-                sx={{ width: 60, height: 60, m: 1 }}
+                sx={{ width: 60, height: 60 }}
                 image={image}
                 alt="proposal image"
             />
