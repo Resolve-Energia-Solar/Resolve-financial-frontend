@@ -82,14 +82,14 @@ function EditCustomerPage({ leadId = null }) {
   const handleSaveCustomer = async () => {
     const response = await handleSave(formData);
     if (response) {
-      associateCustomerToLead(dataReceived.id);
+      associateCustomerToLead(leadId, response.id);
       enqueueSnackbar('Cliente salvo com sucesso', { variant: 'success' });
     }
   };
 
-  const associateCustomerToLead = async (customerId) => {
+  const associateCustomerToLead = async (leadId, customerId) => {
     try {
-      await leadService.patchLead(leadId, { customer: customerId });
+      await leadService.patchLead(leadId, { customer_id: customerId });
     } catch (err) {
       enqueueSnackbar('Não foi possível associar o cliente ao lead', { variant: 'error' });
     }
