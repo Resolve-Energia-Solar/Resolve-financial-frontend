@@ -141,7 +141,7 @@ function LeadInfoHeader({ leadId, tabValue }) {
               alignItems: 'flex-start',
             }}
           >
-            <Typography variant="caption" sx={{ color: 'gray', mr: 1, mb: 0.5 }}>
+            <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
               Status
             </Typography>
             <Chip
