@@ -8,10 +8,12 @@ import LeadsProposalListPage from '../Leads-proposal';
 import EditCustomerPage from '../Leads-customer/Edit-Customer';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import SalesListPage from '../Leads-sales';
+import { useTheme } from '@emotion/react';
 
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
+  const theme = useTheme();
 
   return (
     <div
