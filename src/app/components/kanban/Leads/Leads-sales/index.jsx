@@ -138,7 +138,7 @@ const SalesListPage = ({ leadId = null }) => {
     const data = [
         {
             id: 1,
-            name: 'Venda 01',
+            name: 'Supermercado Matheus',
             status: 'Assinado',
             projects: [
                 { id: 101, name: 'Projeto A', type: 'Comercial', seller: 'Beatriz Silva', sdr: '123', franchise: 'Belém - Centro' },
@@ -147,13 +147,20 @@ const SalesListPage = ({ leadId = null }) => {
         },
         {
             id: 2,
-            name: 'Venda 02',
+            name: 'Supermercado Líder',
             status: 'Pendente',
             projects: [
                 { id: 101, name: 'Projeto A', type: 'Comercial', seller: 'Yasmin de Albuquerque', sdr: '189', franchise: 'Belém - Centro' },
             ],
         },
+        {
+            id: 2,
+            name: 'Supermercado Formosa',
+            status: 'Pendente',
+            projects: [],
+        },
     ]; // adds mock data
+
 
 
     return (
