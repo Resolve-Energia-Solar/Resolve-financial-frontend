@@ -16,8 +16,16 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IconEye, IconPencil } from '@tabler/icons-react';
 
 const ExpandableListComponent = ({
-  data,
-  actions,
+    columns,
+    data,
+    totalRows,
+    loading,
+    page,
+    rowsPerPage,
+    onPageChange,
+    onRowsPerPageChange,
+    actions,
+    filters
 }) => {
   const [expanded, setExpanded] = useState(false);
 

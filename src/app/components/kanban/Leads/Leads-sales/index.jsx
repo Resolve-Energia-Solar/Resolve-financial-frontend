@@ -133,7 +133,7 @@ const SalesListPage = ({ leadId = null }) => {
     const data = [
         {
             id: 1,
-            name: 'Projeto 01',
+            name: 'Venda 01',
             status: 'Assinado',
             projects: [
                 { id: 101, name: 'Projeto A', type: 'Comercial', seller: 'Beatriz Silva' },
@@ -142,7 +142,7 @@ const SalesListPage = ({ leadId = null }) => {
         },
         {
             id: 2,
-            name: 'Projeto 02',
+            name: 'Venda 02',
             status: 'Pendente',
             projects: [],
         },
@@ -166,7 +166,7 @@ const SalesListPage = ({ leadId = null }) => {
                             <TableHeader
                                 title={"Total"}
                                 totalItems={totalRows}
-                                objNameNumberReference={"Projetos"}
+                                objNameNumberReference={"Vendas"}
                                 buttonLabel="Criar"
                                 onButtonClick={() => setOpenAddSale(true)}
                             />

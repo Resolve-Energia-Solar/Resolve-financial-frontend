@@ -62,7 +62,7 @@ function EditLeadTabs({ leadId }) {
         TabIndicatorProps={{ style: { display: 'none' } }}
         sx={{ marginLeft: '25px', marginBottom: "-1px" }}
       >
-        {["Informações Lead", "Dados Pessoais", "Propostas", "Projetos", "Documentos", "Projetos", "Agendamentos"].map((label, index) => (
+        {["Informações Lead", "Dados Pessoais", "Propostas", "Vendas", "Documentos", "Projetos", "Agendamentos"].map((label, index) => (
           <Tab
             key={index}
             label={label}
@@ -105,7 +105,7 @@ function EditLeadTabs({ leadId }) {
         <LeadsProposalListPage leadId={leadId} />
       </CustomTabPanel>
 
-          {/* projetos */}
+          {/* vendas */}
       <CustomTabPanel value={tabValue} index={3}>
         <SalesListPage leadId={leadId} />
       </CustomTabPanel>
