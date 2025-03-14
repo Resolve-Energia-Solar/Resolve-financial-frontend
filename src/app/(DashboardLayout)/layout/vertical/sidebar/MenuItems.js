@@ -1,15 +1,9 @@
 import { uniqueId } from 'lodash';
 
 import {
-  IconBoxMultiple,
-  IconCalendar,
-  IconClockQuestion,
   IconCurrencyDollar,
   IconFileDescription,
-  IconStar,
   IconLayoutKanban,
-  IconChartLine,
-  IconBox,
   IconShoppingCart,
   IconUser,
   IconUsers,
@@ -18,13 +12,11 @@ import {
   IconUserScan,
   IconTools,
   IconHomeQuestion,
-  IconMailFast,
   IconUserDollar,
   IconPoint,
+  IconBuildingBank,
   IconUserPin,
 } from '@tabler/icons-react';
-import { permission } from 'process';
-import { id } from 'date-fns/locale';
 
 const Menuitems = [
   {
@@ -65,6 +57,20 @@ const Menuitems = [
     icon: IconUser,
     href: '/apps/leads',
     permissions: ['resolve_crm.view_lead'],
+  },
+  {
+    id: uniqueId(),
+    title: 'Solic. Financiomento',
+    icon: IconBuildingBank,
+    href: '/apps/funding-request',
+    permissions: ['resolve_crm.view_lead'],
+    children: [
+      {
+        id: uniqueId(),
+        title: 'Sicoob',
+        icon: IconPoint,
+        href: '/apps/funding-request/sicoob',
+      }]
   },
   {
     id: uniqueId(),
