@@ -26,7 +26,7 @@ const ExpandableListComponent = ({
   };
 
   return (
-    <Box>
+    <Box sx={{ borderRadius: '12px', mb: 1, p: 3}}>
       {data.map((sale) => (
         <Accordion
           key={sale.id}
