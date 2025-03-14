@@ -24,6 +24,7 @@ import TableComponent from '@/app/components/kanban/Leads/components/TableCompon
 import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import AddSalePage from './Add-Sale';
+import AdditionalInfoTableComponent from '../components/AdditionalInfoTable';
 
 
 
@@ -152,7 +153,7 @@ const SalesListPage = ({ leadId = null }) => {
                         </Grid>
 
                         <Grid item xs={12} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", }} >
-                            <TableComponent
+                            <AdditionalInfoTableComponent
                                 columns={columns}
                                 data={data}
                                 totalRows={totalRows}
