@@ -63,7 +63,7 @@ function LeadInfoHeader({ leadId, tabValue }) {
       }}
       spacing={2}
     >
-      <Grid container xs={8} alignItems="center">
+      <Grid container xs={12} alignItems="center">
         <Grid item sx={{ position: 'relative', display: 'inline-block', mr: 2 }}>
           <Avatar
             sx={{
@@ -232,7 +232,7 @@ function LeadInfoHeader({ leadId, tabValue }) {
         )}
 
         {tabValue === 10 && (
-          <Grid item xs={6} md={2} sx={{ display: "flex", flexDirection: "row", width: "100%"}}>
+          <Grid item md={2} sx={{ display: "flex", flexDirection: "row"}}>
             <IconButton
               size="small"
               onClick={() => router.push(`/apps/leads/${leadId}/edit`)}
