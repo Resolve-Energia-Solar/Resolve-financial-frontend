@@ -79,7 +79,7 @@ const ExpandableListComponent = ({
               />
             ) : (
               <Typography sx={{ color: '#7E8388' }}>
-                Nenhum projeto associado a este contrato.
+                Nenhum projeto associado a esta enda.
               </Typography>
             )}
           </AccordionDetails>
