@@ -166,7 +166,7 @@ const SalesListPage = ({ leadId = null }) => {
                             <TableHeader
                                 title={"Total"}
                                 totalItems={totalRows}
-                                objNameNumberReference={"Vendas"}
+                                objNameNumberReference={"Projetos"}
                                 buttonLabel="Criar"
                                 onButtonClick={() => setOpenAddSale(true)}
                             />
