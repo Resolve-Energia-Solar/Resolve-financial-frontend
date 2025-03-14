@@ -14,12 +14,11 @@ const PostItem = ({ post }) => {
   const [showComments, setShowComments] = useState(false);
   const likes = post.likes || { like: false, value: 0 };
 
-  // Busca os comentários via commentService.getComments
   useEffect(() => {
     const fetchComments = async () => {
       try {
         const commentContentType = await getContentType('core', 'comment');
-        const commentsData = await commentService.getComments(post.id, commentContentType);
+        const commentsData = await commentService.getComments(post.id, commentContentType, { fields: 'id,text,author.id,author.profile_picture,author.complete_name,created_at', expand: 'author' });
         setComments(commentsData.results || commentsData);
       } catch (error) {
         console.error('Erro ao buscar comentários:', error);
