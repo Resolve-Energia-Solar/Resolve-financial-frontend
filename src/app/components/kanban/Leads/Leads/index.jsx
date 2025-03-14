@@ -67,20 +67,25 @@ function EditLeadTabs({ leadId }) {
             key={index}
             label={label}
             {...a11yProps(index)}
-            sx={
-              tabValue === index
-                ? {
-                  backgroundColor: theme.palette.primary.main,
-                  color: '#303030',
-                  fontWeight: 600,
-                  fontSize: "12px",
-                  borderTopLeftRadius: '10px',
-                  borderTopRightRadius: '10px',
-                  fontWeight: '500',
-                  '&.Mui-selected': { backgroundColor: theme.palette.primary.main, color: '#303030' },
-                }
-                : {}
-            }
+            sx={{
+              backgroundColor: tabValue === index ? theme.palette.primary.main : 'transparent',
+              color: '#303030',
+              fontWeight: 600,
+              fontSize: '12px',
+              borderTopLeftRadius: '10px',
+              borderTopRightRadius: '10px',
+              '&.Mui-selected': {
+                backgroundColor: theme.palette.primary.main,
+                color: '#303030',
+                fontWeight: 600,
+                fontSize: '12px',
+              },
+              '&:not(.Mui-selected)': {
+                fontWeight: 600,
+                fontSize: '12px',
+                color: '#7E8388', 
+              },
+            }}
           />
         ))}
       </Tabs>
