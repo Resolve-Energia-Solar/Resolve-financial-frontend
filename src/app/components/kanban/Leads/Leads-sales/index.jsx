@@ -150,11 +150,11 @@ const SalesListPage = ({ leadId = null }) => {
             name: 'Supermercado Líder',
             status: 'Pendente',
             projects: [
-                { id: 101, name: 'Projeto A', type: 'Comercial', seller: 'Yasmin de Albuquerque', sdr: '189', franchise: 'Belém - Centro' },
+                { id: 103, name: 'Projeto A', type: 'Comercial', seller: 'Yasmin de Albuquerque', sdr: '189', franchise: 'Belém - Centro' },
             ],
         },
         {
-            id: 2,
+            id: 3,
             name: 'Supermercado Formosa',
             status: 'Pendente',
             projects: [],

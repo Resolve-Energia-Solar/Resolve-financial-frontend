@@ -65,7 +65,7 @@ const ExpandableListComponent = ({
             {sale.projects.length > 0 ? (
               <TableComponent
                 columns={columns}
-                data={data}
+                data={sale.projects}
                 totalRows={totalRows}
                 loading={false}
                 page={0}
