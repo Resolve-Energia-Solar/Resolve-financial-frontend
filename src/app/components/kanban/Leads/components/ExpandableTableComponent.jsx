@@ -52,7 +52,7 @@ const ExpandableListComponent = ({
                 </Grid>
                 <Grid item xs={8} sx={{ justifyContent: "flex-start", display: "flex", flexDirection: "column" }}>
                     <Typography sx={{ fontWeight: 700, fontSize: "14px" }}>Venda</Typography>
-                    <Typography sx={{ fontWeight: 700, fontSize: "14px" }}>{sale.name}</Typography>
+                    <Typography sx={{ fontWeight: 500, fontSize: "16px", color: "#303030" }}>{sale.name}</Typography>
                 </Grid>
                 <Grid item xs={2}>
                     <Chip label={sale.status} color="primary" variant="outlined" />
