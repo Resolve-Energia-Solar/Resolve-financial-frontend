@@ -78,7 +78,7 @@ function ViewLeadPage({ leadId = null }) {
                     <Grid container spacing={2} alignItems="center" sx={{ p: 3 }}>
                         <Box sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
                             <Grid item spacing={2} alignItems="center" xs={12}>
-                                <LeadInfoHeader leadId={leadId} tabValue={3} />
+                                <LeadInfoHeader leadId={leadId} tabValue={10} />
                             </Grid>
                         </Box>
                     </Grid>
