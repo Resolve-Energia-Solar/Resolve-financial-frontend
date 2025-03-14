@@ -141,15 +141,17 @@ const SalesListPage = ({ leadId = null }) => {
             name: 'Venda 01',
             status: 'Assinado',
             projects: [
-                { id: 101, name: 'Projeto A', type: 'Comercial', seller: 'Beatriz Silva' },
-                { id: 102, name: 'Projeto B', type: 'Residencial', seller: 'Carlos Souza' },
+                { id: 101, name: 'Projeto A', type: 'Comercial', seller: 'Beatriz Silva', sdr: '123', franchise: 'Belém - Centro' },
+                { id: 102, name: 'Projeto B', type: 'Residencial', seller: 'Carlos Souza', sdr: '1246', franchise: 'Belém - Centro' },
             ],
         },
         {
             id: 2,
             name: 'Venda 02',
             status: 'Pendente',
-            projects: [],
+            projects: [
+                { id: 101, name: 'Projeto A', type: 'Comercial', seller: 'Yasmin de Albuquerque', sdr: '189', franchise: 'Belém - Centro' },
+            ],
         },
     ]; // adds mock data
 
