@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import ProposalService from '@/services/proposalService';
 import ProposalCard from '../../components/CardProposal';
 import LeadInfoHeader from '../components/HeaderCard';
+import CircleIcon from '@mui/icons-material/Circle';
 
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID
 
@@ -100,7 +101,7 @@ function ViewLeadPage({ leadId = null }) {
                     </Grid>
 
                     <Box sx={{ p: 3.5 }}>
-                        <Typography variant="body1" gutterBottom sx={{ color: '#7E8388', fontSize: '14px' }}>
+                        <Typography gutterBottom sx={{ color: '#7E8388', fontSize: '14px', fontWeight: "400", color: "#ADADAD" }}>
                             Agendamento
                         </Typography>
                         <Box
@@ -123,11 +124,19 @@ function ViewLeadPage({ leadId = null }) {
                                         fontSize: '24px',
                                         marginLeft: { xs: 0, sm: 1 },
                                         whiteSpace: 'nowrap', // Impede que a data e hora quebrem
+                                        alignItems: "center",
+                                        justifyContent: "center"
                                     }}
                                 >
-                                    {lastInspetion && lastInspetion.schedule_date && lastInspetion.schedule_start_time
-                                        ? `${new Date(lastInspetion.schedule_date).toLocaleDateString('pt-BR')} • ${lastInspetion.schedule_start_time}`
-                                        : 'Não há agendamento'}
+                                    {lastInspetion && lastInspetion.schedule_date && lastInspetion.schedule_start_time ? (
+                                            <>
+                                                {new Date(lastInspetion.schedule_date).toLocaleDateString('pt-BR')} 
+                                                <CircleIcon sx={{ fontSize: "8px"}} /> 
+                                                {lastInspetion.schedule_start_time}
+                                            </>
+                                        )
+                                            
+                                        : ('Não há agendamento')}
 
                                 </Box>
                             </Typography>
