@@ -43,13 +43,13 @@ export default function ProposalCard({
             <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <CardContent sx={{ flex: '1 0 auto', p: 2 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography component="div" variant="h5">
+                        <Typography component="div" sx={{ fontSize: '24px', fontWeight: "700", color: "#303030" }}>
                             {price}
                         </Typography>
                         <Chip label={status} sx={{ backgroundColor: statusColor, color: '#303030', fontSize: '10px' }} />
                     </Box>
 
-                    <Typography variant="subtitle1" component="div" sx={{ color: 'text.secondary' }}>
+                    <Typography component="div" sx={{ fontSize: '12px', fontWeight: "400", color: "#303030" }}>
                         {description}
                     </Typography>
 
