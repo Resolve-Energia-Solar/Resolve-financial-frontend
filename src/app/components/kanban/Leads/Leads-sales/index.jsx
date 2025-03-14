@@ -179,11 +179,27 @@ const SalesListPage = ({ leadId = null }) => {
 
                         <Grid item xs={12} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", }} >
                             <ExpandableListComponent
+                                columns={columns}
                                 data={data}
-                                actions={{
-                                    edit: (project) => console.log('Editar', project),
-                                    view: (project) => console.log('Ver', project),
+                                totalRows={totalRows}
+                                loading={loadingSales}
+                                page={page}
+                                rowsPerPage={rowsPerPage}
+                                onPageChange={(newPage) => setPage(newPage)}
+                                onRowsPerPageChange={(newRows) => {
+                                    setRowsPerPage(newRows);
+                                    setPage(0);
                                 }}
+                                // actions={{
+                                //     edit: (row) => {
+                                //         setSelectedProposalId(row.id);
+                                //         setOpenEditProposal(true);
+                                //     },
+                                //     view: (row) => {
+                                //         setSelectedProposalId(row.id);
+                                //         setOpenDetailProposal(true); 
+                                //     },
+                                // }}
                             />
 
                             {/* <Dialog

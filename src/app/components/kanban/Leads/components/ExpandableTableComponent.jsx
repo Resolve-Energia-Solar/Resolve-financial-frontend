@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IconEye, IconPencil } from '@tabler/icons-react';
+import TableComponent from './TableComponent';
 
 const ExpandableListComponent = ({
     columns,
@@ -50,39 +51,26 @@ const ExpandableListComponent = ({
           </AccordionSummary>
 
           <AccordionDetails>
-            <List>
-              {sale.projects && sale.projects.length > 0 ? (
-                sale.projects.map((project) => (
-                  <ListItem key={project.id} sx={{ borderBottom: '1px solid #E0E0E0' }}>
-                    <ListItemText
-                      primary={project.name}
-                      secondary={`Tipo: ${project.type || 'N/A'} | Responsável: ${project.seller || 'N/A'}`}
-                    />
-                    <ListItemSecondaryAction>
-                      <IconButton
-                        edge="end"
-                        onClick={() => actions?.edit && actions.edit(project)}
-                        sx={{ color: '#7E8388' }}
-                      >
-                        <IconPencil size="18" />
-                      </IconButton>
-                      <IconButton
-                        edge="end"
-                        onClick={() => actions?.view && actions.view(project)}
-                        sx={{ color: '#7E8388' }}
-                      >
-                        <IconEye size="18" />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                ))
-              ) : (
-                <Typography sx={{ color: '#ADADAD', pl: 2 }}>Nenhum projeto disponível.</Typography>
-              )}
-            </List>
-            <Typography sx={{ color: '#1976d2', mt: 1, cursor: 'pointer' }}>
-              + Adicionar Novo Projeto
-            </Typography>
+            {sale.projects.length > 0 ? (
+              <TableComponent
+                columns={columns}
+                data={data}
+                totalRows={totalRows}
+                loading={false}
+                page={0}
+                rowsPerPage={5}
+                onPageChange={() => {}}
+                onRowsPerPageChange={() => {}}
+                // actions={{
+                //   edit: onEdit,
+                //   view: onView,
+                // }}
+              />
+            ) : (
+              <Typography sx={{ color: '#7E8388' }}>
+                Nenhum projeto associado a este contrato.
+              </Typography>
+            )}
           </AccordionDetails>
         </Accordion>
       ))}
