@@ -15,7 +15,7 @@ export default function EditSchedule({ scheduleId = null }) {
   useEffect(() => {
     async function fetchSchedule() {
       try {
-        const data = await scheduleService.getScheduleById(id);
+        const data = await scheduleService.getScheduleById(id, { fields: 'id,project' });
         setSchedule(data);
       } catch (error) {
         console.error('Erro ao buscar agendamento:', error);
