@@ -10,6 +10,7 @@ import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
 import ProposalService from '@/services/proposalService';
 import ProposalCard from '../../components/CardProposal';
+import LeadInfoHeader from '../components/HeaderCard';
 
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID
 
@@ -75,61 +76,11 @@ function ViewLeadPage({ leadId = null }) {
             <Grid item xs={12} md={8} sx={{ padding: '0px 10px 10px 10px' }}>
                 <BlankCard sx={{ borderRadius: "20px", boxShadow: 3, p: 0, display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                     <Grid container spacing={2} alignItems="center" sx={{ p: 3 }}>
-                        <Grid item xs={12} md={5} container alignItems="center" spacing={2}>
-                            <Grid item>
-                                <AccountCircle sx={{ fontSize: 62 }} />
+                        <Box sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
+                            <Grid item spacing={2} alignItems="center" xs={12}>
+                                <LeadInfoHeader leadId={leadId} tabValue={3} />
                             </Grid>
-                            <Grid item>
-                                <Typography variant="body1" gutterBottom sx={{ fontSize: 12, color: '#ADADAD' }}>
-                                    Cliente
-                                </Typography>
-                                <Typography variant="h6" gutterBottom sx={{ fontSize: 16 }}>
-                                    {lead?.name?.length > 20 ? `${lead.name.substring(0, 20)}...` : lead?.name}
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                        <Grid item xs={12} md={7}>
-                            <Grid container spacing={2} alignItems="center" justifyContent="flex-end">
-                                <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                                    <Typography variant="body1" gutterBottom sx={{ fontSize: 12, color: '#ADADAD' }}>
-                                        Nível de interesse
-                                    </Typography>
-                                    <Rating
-                                        name="qualification"
-                                        value={lead?.qualification}
-                                        max={5}
-                                        readOnly
-                                        size="small"
-                                        sx={{ ml: 1 }}
-                                        icon={<WbSunny fontSize="inherit" sx={{ color: theme.palette.warning.main }} />}
-                                        emptyIcon={
-                                            <WbSunny fontSize="inherit" sx={{ color: theme.palette.action.disabled }} />
-                                        }
-                                    />
-                                </Grid>
-                                <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                                    <Typography variant="body1" gutterBottom sx={{ fontSize: 12, color: '#ADADAD' }}>
-                                        Status
-                                    </Typography>
-                                    <Chip label={lead?.column?.name} size="small" sx={{ width: '100%', p: 2, backgroundColor: 'transparent', border: `1px solid ${lead?.column?.color}`, color: '#ADADAD' }} />
-                                </Grid>
-                                <Grid item xs={12} md={2}>
-                                    <IconButton
-                                        size="small"
-                                        onClick={() => router.push(`/apps/leads/${leadId}/edit`)}
-                                    >
-                                        <IconPencil fontSize="small" />
-                                    </IconButton>
-
-                                    <IconButton
-                                        size="small"
-                                    // onClick={() => router.push(`/apps/leads/${item.id}/view`)}
-                                    >
-                                        <IconTrash fontSize="small" />
-                                    </IconButton>
-                                </Grid>
-                            </Grid>
-                        </Grid>
+                        </Box>
                     </Grid>
 
                     <Divider sx={{ my: 0 }} />
