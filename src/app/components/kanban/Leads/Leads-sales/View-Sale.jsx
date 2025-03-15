@@ -2,7 +2,7 @@
 
 
 import React, { useState } from 'react';
-import { Tabs, Tab, Box, useTheme, } from '@mui/material';
+import { Tabs, Tab, Box, useTheme, Grid, } from '@mui/material';
 import PropTypes from 'prop-types';
 import EditLeadPage from '../Leads/Edit-Lead';
 import EditCustomerPage from '../Leads-customer/Edit-Customer';
@@ -10,6 +10,7 @@ import LeadsProposalListPage from '../Leads-proposal';
 import SalesListPage from '.';
 import LeadDocumentPage from '../Leads-documents';
 import LeadSchedulePage from '../Leads-schedule';
+import LeadInfoHeader from '../components/HeaderCard';
 
 
 function CustomTabPanel(props) {
@@ -55,7 +56,12 @@ function LeadsViewSale({ leadId }) {
   const theme = useTheme();
 
   return (
-    <Box sx={{ overflow: 'hidden', height: '100%', p: 0, margin: 0 }}>
+    <Grid item xs={12} sx={{ overflow: 'scroll' }}>
+      <Box sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
+        <Grid item spacing={2} alignItems="center" xs={12}>
+          <LeadInfoHeader leadId={leadId} tabValue={2} />
+        </Grid>
+      </Box>
 
       <Tabs
         value={tabValue}
@@ -85,47 +91,47 @@ function LeadsViewSale({ leadId }) {
               '&:not(.Mui-selected)': {
                 fontWeight: 600,
                 fontSize: '12px',
-                color: '#7E8388', 
+                color: '#7E8388',
               },
             }}
           />
         ))}
       </Tabs>
 
-          {/* infos do lead */}
+      {/* infos do lead */}
       <CustomTabPanel value={tabValue} index={0}>
         <EditLeadPage leadId={leadId} />
       </CustomTabPanel>
 
-          {/* dados pessoais */}
+      {/* dados pessoais */}
       <CustomTabPanel value={tabValue} index={1}>
         <EditCustomerPage leadId={leadId} />
       </CustomTabPanel>
 
-          {/* propostas */}
+      {/* propostas */}
       <CustomTabPanel value={tabValue} index={2}>
         <LeadsProposalListPage leadId={leadId} />
       </CustomTabPanel>
 
-          {/* vendas */}
+      {/* vendas */}
       <CustomTabPanel value={tabValue} index={3}>
         <SalesListPage leadId={leadId} />
       </CustomTabPanel>
 
-          {/* docs a ser retirado futuramente e integrado à page de projetos */}
+      {/* docs a ser retirado futuramente e integrado à page de projetos */}
       <CustomTabPanel value={tabValue} index={4}>
         <LeadDocumentPage leadId={leadId} />
       </CustomTabPanel>
 
-          {/* contratos */}
+      {/* contratos */}
       <CustomTabPanel value={tabValue} index={5}></CustomTabPanel>
 
-          {/* agendamentos */}
-      <CustomTabPanel value={tabValue} index={6}>   
+      {/* agendamentos */}
+      <CustomTabPanel value={tabValue} index={6}>
         <LeadSchedulePage leadId={leadId} />
       </CustomTabPanel>
 
-    </Box>
+    </Grid>
   );
 }
 
