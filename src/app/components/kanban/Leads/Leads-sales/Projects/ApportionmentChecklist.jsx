@@ -5,7 +5,9 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    DialogActions
+    DialogActions,
+    CardContent, 
+    CardActions,
 } from '@mui/material';
 
 import { Email, Person, Search } from '@mui/icons-material';
@@ -16,7 +18,7 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import leadService from '@/services/leadService';
@@ -29,6 +31,7 @@ import useUserForm from '@/hooks/users/useUserForm';
 import CreateProduct from '@/app/components/apps/product/Add-product';
 import ListProducts from '../../components/ListProducts';
 import { useSnackbar } from 'notistack';
+import { AttachFile, Delete, Visibility, Add } from '@mui/icons-material';
 
 
 
@@ -128,7 +131,7 @@ function ApportionmentChecklist({ leadId = null }) {
         if (file) {
             const newDoc = {
                 name: file.name,
-                size: (file.size / 1024).toFixed(2) + " KB", // Convert bytes to KB
+                size: (file.size / 1024).toFixed(2) + " KB",
                 type: file.type,
             };
             setDocuments([...documents, newDoc]);
@@ -190,7 +193,7 @@ function ApportionmentChecklist({ leadId = null }) {
                                         value={formData.zip_code}
                                         onChange={(e) => handleChange('zip_code', e.target.value)}
                                         fullWidth
-                                       
+
                                     />
                                 </Grid>
 
@@ -224,7 +227,7 @@ function ApportionmentChecklist({ leadId = null }) {
                                         value={formData.complement}
                                         onChange={(e) => handleChange('cep', e.target.value)}
                                         fullWidth
-                                       
+
                                     />
                                 </Grid>
 
@@ -258,6 +261,58 @@ function ApportionmentChecklist({ leadId = null }) {
                                     />
                                 </Grid>
 
+                            </Grid>
+
+                            <Grid container spacing={2} sx={{ mt: 3 }}>
+                    
+                                <Grid item xs={12}>
+                                    <Typography sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                                        Conta de Luz
+                                    </Typography>
+                                </Grid>
+
+                                {documents.map((doc, index) => (
+                                    <Grid item xs={12} key={index}>
+                                        <Card sx={{ display: 'flex', alignItems: 'center', p: 2, borderRadius: "10px", border: "1px solid #E0E0E0" }}>
+                                            <AttachFile sx={{ color: "#FF3D00", mr: 2 }} /> 
+
+                                            <CardContent sx={{ flexGrow: 1, p: 0 }}>
+                                                <Typography sx={{ fontWeight: 500, fontSize: "14px" }}>{doc.name}</Typography>
+                                                <Typography sx={{ fontSize: "12px", color: "#7E8388" }}>{doc.size}</Typography>
+                                            </CardContent>
+
+                                         
+                                            <CardActions>
+                                                <IconButton sx={{ color: "#7E8388" }} onClick={() => console.log("Preview file:", doc.name)}>
+                                                    <Visibility />
+                                                </IconButton>
+
+                                                <IconButton sx={{ color: "#7E8388" }} onClick={() => handleRemoveDocument(index)}>
+                                                    <Delete />
+                                                </IconButton>
+                                            </CardActions>
+                                        </Card>
+                                    </Grid>
+                                ))}
+
+                              
+                                <Grid item xs={12}>
+                                    <input
+                                        type="file"
+                                        id="file-upload"
+                                        style={{ display: "none" }}
+                                        onChange={handleFileUpload}
+                                    />
+                                    <label htmlFor="file-upload">
+                                        <Button
+                                            startIcon={<Add />}
+                                            component="span"
+                                            sx={{ fontSize: "14px", textTransform: "none" }}
+                                        >
+                                            Anexar documento
+                                        </Button>
+                                    </label>
+                                </Grid>
                             </Grid>
 
 
