@@ -28,47 +28,54 @@ const TableHeader = ({
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
-            <Typography sx={{ fontSize: '16px', color: "#092C4C" }}>
-                <span style={{ fontWeight: 'bold' }}>{title}: </span> {totalItems} {objNameNumberReference}
-            </Typography>
+            {title && (
+                <Typography sx={{ fontSize: '16px', color: "#092C4C" }}>
+                    <span style={{ fontWeight: 'bold' }}>{title}: </span> {totalItems} {objNameNumberReference}
+                </Typography>
+            )}
 
             {/* finters@@@ and create button!!!@*/}
             <Box sx={{ display: 'flex', gap: 2, alignItems: "center" }}>
 
-                <FilterSelect
-                    label="Status"
-                    value={filters.status || ""}
-                    onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                    options={[
-                        { label: "Novo Lead", value: "new" },
-                        { label: "1º Contato", value: "first" },
-                    ]}
-                />
+                {onFilterChange && (
+                    <>
+                        <FilterSelect
+                            label="Status"
+                            value={filters.status || ""}
+                            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                            options={[
+                                { label: "Novo Lead", value: "new" },
+                                { label: "1º Contato", value: "first" },
+                            ]}
+                        />
 
-                <FilterSelect
-                    label="Responsável"
-                    value={filters.responsavel || ""}
-                    onChange={(e) => setFilters({ ...filters, responsavel: e.target.value })}
-                    options={[
-                        { label: "Manuela", value: "manu" },
-                        { label: "Sandra", value: "sandra" },
-                    ]}
-                />
+                        <FilterSelect
+                            label="Responsável"
+                            value={filters.responsavel || ""}
+                            onChange={(e) => setFilters({ ...filters, responsavel: e.target.value })}
+                            options={[
+                                { label: "Manuela", value: "manu" },
+                                { label: "Sandra", value: "sandra" },
+                            ]}
+                        />
 
-                <FilterSelect
-                    label="Cliente"
-                    value={filters.client || ""}
-                    onChange={(e) => setFilters({ ...filters, responsavel: e.target.value })}
-                    options={[
-                        { label: "Cliente 1", value: "client1" },
-                        { label: "Cliente 2", value: "client2" },
-                    ]}
-                />
+                        <FilterSelect
+                            label="Cliente"
+                            value={filters.client || ""}
+                            onChange={(e) => setFilters({ ...filters, client: e.target.value })}
+                            options={[
+                                { label: "Cliente 1", value: "client1" },
+                                { label: "Cliente 2", value: "client2" },
+                            ]}
+                        />
 
-                <SortingFilter 
-                    label="Ordenar por data"
-                    onSortChanges={(order) => console.log("sorting:", order)}
-                />
+                        <SortingFilter
+                            label="Ordenar por data"
+                            onSortChanges={(order) => console.log("sorting:", order)}
+                        />
+                    </>
+                )}
+
 
                 {onButtonClick && (
                     <Button
