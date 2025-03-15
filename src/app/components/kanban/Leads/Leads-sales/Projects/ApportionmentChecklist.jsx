@@ -405,41 +405,55 @@ function ApportionmentChecklist({ leadId = null }) {
 
                 <Grid
                     container
-                    xs={12}
                     sx={{
                         display: 'flex',
+                        flexDirection: "row",
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        mt: 2,
+                        mt: 4,
                         gap: 2,
                     }}
                 >
-                    <Grid
-                        container xs={8} sx={{ gap: 1 }}>
-                        <Box sx={{ display: 'flex', gap: 2 }}>
-                            <Button
-                                variant="outlined"
-                                sx={{
-                                    color: "black",
-                                    borderColor: "black",
-                                    '&:hover': { backgroundColor: '#333', borderColor: "black", },
-                                    px: 3,
-                                }}
-                            >
-                                <Typography variant="body1">Voltar</Typography>
-                            </Button>
-                        </Box>
+                    
+                    <Grid item sx={{ flexGrow: 1 }}>
+                        <Button
+                            startIcon={<Add />}
+                            component="span"
+                            sx={{ fontSize: "14px", textTransform: "none" }}
+                        >
+                            Adicionar novo beneficiário
+                        </Button>
+                    </Grid>
 
-                        <Box sx={{ display: 'flex', gap: 2 }}>
-                            <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSaveForm} disabled={formLoading}
-                                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
-                                <Typography variant="body1" color="white">
-                                    {formLoading ? 'Salvando...' : 'Salvar'}
-                                </Typography>
-                            </Button>
-                        </Box>
+                    {/* Right Side - Buttons */}
+                    <Grid item sx={{ display: 'flex', gap: 2 }}>
+                        <Button
+                            variant="outlined"
+                            sx={{
+                                color: "black",
+                                borderColor: "black",
+                                '&:hover': { backgroundColor: '#333', borderColor: "black" },
+                                px: 3,
+                            }}
+                        >
+                            <Typography variant="body1">Voltar</Typography>
+                        </Button>
+
+                        <Button
+                            variant="contained"
+                            sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }}
+                            onClick={handleSaveForm}
+                            disabled={formLoading}
+                            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                        >
+                            <Typography variant="body1" color="white">
+                                {formLoading ? 'Salvando...' : 'Salvar'}
+                            </Typography>
+                        </Button>
                     </Grid>
                 </Grid>
+
+
 
                 <Dialog
                     open={dialogExistingProductOpen}
