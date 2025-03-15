@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 
 import { Email, Person, Search } from '@mui/icons-material';
-import { DeleteOutlined as DeleteOutlinedIcon, AddOutlined as AddOutlinedIcon, WarningAmber as WarningAmberIcon } from '@mui/icons-material';
+import { DeleteOutlined as DeleteOutlinedIcon, AddOutlined as AddOutlinedIcon, WarningAmber as WarningAmberIcon, VisibilityIcon } from '@mui/icons-material';
 
 import BlankCard from '@/app/components/shared/BlankCard';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
@@ -142,6 +142,12 @@ function ApportionmentChecklist({ leadId = null }) {
         const updatedDocs = documents.filter((_, i) => i !== index);
         setDocuments(updatedDocs);
     };
+
+    const [isVisible, setIsVisible] = useState(true);
+    const discard_proposal = () => {
+        setIsVisible(false); 
+    };
+    
 
     return (
         <Grid container >
