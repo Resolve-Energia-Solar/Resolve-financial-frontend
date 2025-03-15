@@ -70,7 +70,7 @@ function LeadsViewSale({ leadId }) {
         TabIndicatorProps={{ style: { display: 'none' } }}
         sx={{ marginLeft: '25px', marginBottom: "-1px" }}
       >
-        {["Informações Lead", "Dados Pessoais", "Propostas", "Vendas", "Documentos", "Projetos", "Agendamentos"].map((label, index) => (
+        {["Dados Cliente", "Checklist de Rateio", "Kits do Projeto", "Documentações"].map((label, index) => (
           <Tab
             key={index}
             label={label}
