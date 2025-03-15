@@ -1,48 +1,55 @@
 'use client';
+
 import React, { useState, useEffect, useContext } from "react";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
+import { useSnackbar } from "notistack";
+
 import {
     Box,
+    Button,
     CardContent,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Paper,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
-    TableRow,
     TablePagination,
-    Paper,
-    Typography,
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle
+    TableRow,
+    Typography
 } from "@mui/material";
+
 import {
-    Edit as EditIcon,
-    Delete as DeleteIcon,
     AddBoxRounded,
+    Edit as EditIcon,
+    Delete as DeleteIcon
 } from "@mui/icons-material";
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import AutorenewIcon from '@mui/icons-material/Autorenew';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import { useRouter } from "next/navigation";
-import { FilterContext } from "@/context/FilterContext";
-import BlankCard from "@/app/components/shared/BlankCard";
-import PageContainer from "@/app/components/container/PageContainer";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+
+import { formatDate } from "@/utils/dateUtils";
 import financialRecordService from "@/services/financialRecordService";
-import FinancialRecordDetailDrawer from "@/app/components/apps/financial-record/detailDrawer";
-import GenericFilterDrawer from "@/app/components/filters/GenericFilterDrawer";
+
+import { FilterContext } from "@/context/FilterContext";
+
 import AutoCompleteBeneficiary from "@/app/components/apps/financial-record/beneficiaryInput";
 import AutoCompleteDepartment from "@/app/components/apps/financial-record/departmentInput";
 import AutoCompleteCategory from "@/app/components/apps/financial-record/categoryInput";
 import AutoCompleteProject from "@/app/components/apps/inspections/auto-complete/Auto-input-Project";
+import FinancialRecordDetailDrawer from "@/app/components/apps/financial-record/detailDrawer";
+import GenericFilterDrawer from "@/app/components/filters/GenericFilterDrawer";
+import PulsingBadge from "@/app/components/shared/PulsingBadge";
+import BlankCard from "@/app/components/shared/BlankCard";
+import PageContainer from "@/app/components/container/PageContainer";
 import SaleCards from "@/app/components/apps/inforCards/InforCards";
-import { useSnackbar } from 'notistack';
-import { formatDate } from "@/utils/dateUtils";
 
 const financialRecordList = () => {
     const router = useRouter();
@@ -432,6 +439,7 @@ const financialRecordList = () => {
                             <Table aria-label="table">
                                 <TableHead>
                                     <TableRow>
+                                        <TableCell></TableCell>
                                         <TableCell>Protocolo</TableCell>
                                         <TableCell>Beneficiário</TableCell>
                                         <TableCell>Valor</TableCell>
@@ -442,8 +450,8 @@ const financialRecordList = () => {
                                 <TableBody>
                                     {financialRecordList.map((item) => (
                                         <TableRow key={item.id} hover onClick={() => handleRowClick(item)}>
+                                            <TableCell>{(item.responsible_status === "A" && item.payment_status === "P" && item.integration_code === null) && <PulsingBadge color="#FF2C2C" />}</TableCell>
                                             <TableCell>{item.protocol}</TableCell>
-
                                             <TableCell>{item.client_supplier_name}</TableCell>
                                             <TableCell>
                                                 R$ {parseFloat(item.value).toLocaleString('pt-BR', {
