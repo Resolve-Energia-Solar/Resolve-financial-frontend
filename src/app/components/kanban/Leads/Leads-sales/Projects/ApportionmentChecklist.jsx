@@ -11,7 +11,8 @@ import {
 } from '@mui/material';
 
 import { Email, Person, Search } from '@mui/icons-material';
-import { DeleteOutlined as DeleteOutlinedIcon, AddOutlined as AddOutlinedIcon, WarningAmber as WarningAmberIcon, VisibilityIcon } from '@mui/icons-material';
+import { DeleteOutlined as DeleteOutlinedIcon, AddOutlined as AddOutlinedIcon, WarningAmber as WarningAmberIcon } from '@mui/icons-material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 import BlankCard from '@/app/components/shared/BlankCard';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
@@ -401,13 +402,6 @@ function ApportionmentChecklist({ leadId = null }) {
                                                     <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
                                                     <DeleteOutlinedIcon />
                                                 </Button>
-
-                                                <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSaveForm} disabled={formLoading}
-                                                    endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
-                                                    <Typography variant="body1" color="white">
-                                                        {formLoading ? 'Gerando proposta...' : 'Gerar proposta'}
-                                                    </Typography>
-                                                </Button>
                                             </Box>
                                         </Grid>
 
@@ -448,7 +442,7 @@ function ApportionmentChecklist({ leadId = null }) {
                                             <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSaveForm} disabled={formLoading}
                                                 endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
                                                 <Typography variant="body1" color="white">
-                                                    {formLoading ? 'Gerando proposta...' : 'Gerar proposta'}
+                                                    {formLoading ? 'Salvando...' : 'Salvar'}
                                                 </Typography>
                                             </Button>
                                         </Box>
