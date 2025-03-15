@@ -246,6 +246,11 @@ const SalesListPage = ({ leadId = null }) => {
                                 onClose={() => setOpenDetailSale(false)}
                                 maxWidth="lg"
                                 fullWidth
+                                PaperProps={{
+                                    sx: {
+                                        borderRadius: "20px",
+                                    },
+                                }}
                             >
                                 <DialogContent>
                                     <LeadsViewSale
