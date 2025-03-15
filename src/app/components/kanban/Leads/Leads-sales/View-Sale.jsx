@@ -110,12 +110,12 @@ function LeadsViewSale({ leadId }) {
 
       {/* Kits do Projeto */}
       <CustomTabPanel value={tabValue} index={2}>
-        <LeadsProposalListPage leadId={leadId} />
+        {/* <LeadsProposalListPage leadId={leadId} /> */}
       </CustomTabPanel>
 
       {/* Documentações */}
       <CustomTabPanel value={tabValue} index={3}>
-        <SalesListPage leadId={leadId} />
+        {/* <SalesListPage leadId={leadId} /> */}
       </CustomTabPanel>
 
     </Grid>
