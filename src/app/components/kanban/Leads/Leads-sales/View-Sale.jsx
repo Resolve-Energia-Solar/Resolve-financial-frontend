@@ -57,7 +57,7 @@ function LeadsViewSale({ leadId = null, proposalId = null, onClose=null, onRefre
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
-        <LeadInfoHeader leadId={leadId} />
+        <LeadInfoHeader leadId={leadId} tabValue={20} />
       </Grid>
 
       <Grid item xs={12}>
