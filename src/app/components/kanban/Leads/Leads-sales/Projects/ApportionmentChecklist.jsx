@@ -379,9 +379,8 @@ function ApportionmentChecklist({ leadId = null }) {
                                         sx={{
                                             display: 'flex',
                                             justifyContent: 'space-between',
-                                            alignItems: 'center',
-                                            mt: 2,
-                                            gap: 2,
+                                            alignItems: 'flex-end',
+                                            justifyContent: "flex-end",
                                         }}
                                     >
 
