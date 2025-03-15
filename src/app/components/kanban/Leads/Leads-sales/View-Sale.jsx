@@ -95,54 +95,6 @@ function LeadsViewSale({ leadId = null, proposalId = null, onClose=null, onRefre
         </Grid>
       </Grid>
 
-      <Grid item xs={12} md={6}>
-        <Card sx={{ borderRadius: '12px', boxShadow: 3, p: 3, minHeight: '300px' }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <img
-                  src={'/images/svgs/solar-panel-icon-with-circle.png'}
-                  alt={'solar panel icon'}
-                  sx={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 0,
-                    mr: 1,
-                  }}
-                />
-                <Typography variant="h5" sx={{ marginLeft: 3, fontSize: '14px', fontWeight: '800' }}>Produtos da Proposta</Typography>
-              </Box>
-            </Grid>
-
-            <Grid item xs={12}>
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={{ fontWeight: 800 }}>Produto</TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>Quantidade</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {proposalData?.products?.map((product, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{product.name}</TableCell>
-                        <TableCell>{product.quantity}</TableCell>
-                      </TableRow>
-                    ))}
-                    {proposalData?.products && proposalData.products.length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={2}>Nenhum produto vinculado</TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Grid>
-
-          </Grid>
-        </Card>
-      </Grid>
 
       <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2, gap: 2 }}>
         <Box>
