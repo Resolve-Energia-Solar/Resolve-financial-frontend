@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import leadService from '@/services/leadService';
 import { useSnackbar } from 'notistack';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import LeadInfoHeader from '../components/HeaderCard';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import useUser from '@/hooks/users/useUser';
@@ -73,12 +72,7 @@ function ApportionmentChecklist({ leadId = null }) {
         <Grid container spacing={3}>
             <Grid item xs={12}>
                 <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, p: 3 }}>
-                    {/* Header */}
-                    <Grid container spacing={2} alignItems="center">
-                        <Grid item xs={12}>
-                            <LeadInfoHeader leadId={leadId} />
-                        </Grid>
-                    </Grid>
+                
 
                     {/* Dados Pessoais */}
                     <Grid container spacing={2} sx={{ mt: 2 }}>
