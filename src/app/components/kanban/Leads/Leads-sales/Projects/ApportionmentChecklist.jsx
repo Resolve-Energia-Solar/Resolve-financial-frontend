@@ -121,6 +121,25 @@ function ApportionmentChecklist({ leadId = null }) {
         }
     }
 
+    const [documents, setDocuments] = useState([]);
+
+    const handleFileUpload = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const newDoc = {
+                name: file.name,
+                size: (file.size / 1024).toFixed(2) + " KB", // Convert bytes to KB
+                type: file.type,
+            };
+            setDocuments([...documents, newDoc]);
+        }
+    };
+
+    const handleRemoveDocument = (index) => {
+        const updatedDocs = documents.filter((_, i) => i !== index);
+        setDocuments(updatedDocs);
+    };
+
     return (
         <Grid container >
             <Grid item xs={12}>
