@@ -412,6 +412,7 @@ function ApportionmentChecklist({ leadId = null }) {
                         alignItems: 'center',
                         mt: 4,
                         gap: 2,
+                        p: 1
                     }}
                 >
                     
@@ -419,7 +420,21 @@ function ApportionmentChecklist({ leadId = null }) {
                         <Button
                             startIcon={<Add />}
                             component="span"
-                            sx={{ fontSize: "14px", textTransform: "none" }}
+                            sx={{
+                                backgroundColor: "transparent",
+                                p: 0,
+                                color: '#7E8388',
+                                fontSize: 14,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: "flex-start",
+                                gap: 0.5,
+                                transition: '0.3s',
+                                '&:hover': {
+                                  backgroundColor: "transparent",
+                                  color: "black"
+                                },
+                              }}
                         >
                             Adicionar novo beneficiário
                         </Button>
