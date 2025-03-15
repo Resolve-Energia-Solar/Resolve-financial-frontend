@@ -1,15 +1,36 @@
 'use client';
-import { Grid, Typography, Chip, Divider, Box, Rating, useTheme, IconButton, Card, MenuItem, InputAdornment, TextField, Checkbox, Radio, Button, CircularProgress } from '@mui/material';
-import { Email, Person } from '@mui/icons-material';
+import { 
+    Grid, Typography, Chip, Divider, Box, Rating, useTheme, IconButton, Card, 
+    MenuItem, InputAdornment, TextField, Checkbox, Radio, Button, CircularProgress, 
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions
+} from '@mui/material';
+
+import { Email, Person, Search } from '@mui/icons-material';
+import { DeleteOutlined as DeleteOutlinedIcon, AddOutlined as AddOutlinedIcon, WarningAmber as WarningAmberIcon } from '@mui/icons-material';
+
 import BlankCard from '@/app/components/shared/BlankCard';
-import { useEffect, useState } from 'react';
-import leadService from '@/services/leadService';
-import { useSnackbar } from 'notistack';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
+
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import leadService from '@/services/leadService';
+import ProductService from '@/services/productsService';
+import { addProduct, removeProductsByIds, associateProductWithLead, selectProductsByLead } from '@/store/products/customProducts';
+
 import useUser from '@/hooks/users/useUser';
 import useUserForm from '@/hooks/users/useUserForm';
+
+import CreateProduct from '@/app/components/apps/product/Add-product';
+import ListProducts from '../../components/ListProducts';
+import { useSnackbar } from 'notistack';
+
+
 
 function ApportionmentChecklist({ leadId = null }) {
     const dispatch = useDispatch();
