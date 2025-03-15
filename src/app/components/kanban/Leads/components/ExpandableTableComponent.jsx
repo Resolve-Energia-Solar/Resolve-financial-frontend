@@ -55,7 +55,8 @@ const ExpandableListComponent = ({
                     <Typography sx={{ fontWeight: 500, fontSize: "16px", color: "rgba(48, 48, 48, 0.5)" }}>{sale.name}</Typography>
                 </Grid>
                 <Grid item xs={7} sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end"}}>
-                    <Grid item xs={4} sx={{ alignItems: "center"}}>
+                    <Grid item xs={4} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+                        <Typography sx={{ fontWeight: 700, fontSize: "14px" }}>Status</Typography>
                         <Chip label={sale.status} color="primary" variant="outlined" />
                     </Grid>
                     <Grid item xs={4}>
