@@ -37,7 +37,7 @@ const TableHeader = ({
             {/* finters@@@ and create button!!!@*/}
             <Box sx={{ display: 'flex', gap: 2, alignItems: "center" }}>
 
-                {buttonLabel && (
+                {onFilterChange && (
                     <>
                         <FilterSelect
                             label="Status"

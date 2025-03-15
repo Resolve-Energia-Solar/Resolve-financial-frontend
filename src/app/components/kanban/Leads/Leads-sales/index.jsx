@@ -179,9 +179,6 @@ const SalesListPage = ({ leadId = null }) => {
                     <Grid container xs={12} >
                         <Grid item xs={12}  >
                             <TableHeader
-                                title={"Total"}
-                                totalItems={totalRows}
-                                objNameNumberReference={"Vendas"}
                                 buttonLabel="Criar"
                                 onButtonClick={() => setOpenAddSale(true)}
                             />
