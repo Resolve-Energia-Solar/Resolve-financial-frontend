@@ -161,7 +161,7 @@ function ApportionmentChecklist({ leadId = null }) {
 
                 <Grid container sx={{ mt: 1 }}>
 
-                    {isVisible && ( 
+                    {isVisible && (
                         <Grid item xs={12}>
                             <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, px: 4 }}>
 
@@ -414,26 +414,31 @@ function ApportionmentChecklist({ leadId = null }) {
                         gap: 2,
                     }}
                 >
-                    <Button
-                        variant="outlined"
-                        sx={{
-                            color: "black",
-                            borderColor: "black",
-                            '&:hover': { backgroundColor: '#333', borderColor: "black", },
-                            px: 3,
-                        }}
-                    >
-                        <Typography variant="body1">Voltar</Typography>
-                    </Button>
+                    <Grid
+                        container xs={8} sx={{ gap: 1 }}>
+                        <Box sx={{ display: 'flex', gap: 2 }}>
+                            <Button
+                                variant="outlined"
+                                sx={{
+                                    color: "black",
+                                    borderColor: "black",
+                                    '&:hover': { backgroundColor: '#333', borderColor: "black", },
+                                    px: 3,
+                                }}
+                            >
+                                <Typography variant="body1">Voltar</Typography>
+                            </Button>
+                        </Box>
 
-                    <Box sx={{ display: 'flex', gap: 2 }}>
-                        <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSaveForm} disabled={formLoading}
-                            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
-                            <Typography variant="body1" color="white">
-                                {formLoading ? 'Salvando...' : 'Salvar'}
-                            </Typography>
-                        </Button>
-                    </Box>
+                        <Box sx={{ display: 'flex', gap: 2 }}>
+                            <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSaveForm} disabled={formLoading}
+                                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
+                                <Typography variant="body1" color="white">
+                                    {formLoading ? 'Salvando...' : 'Salvar'}
+                                </Typography>
+                            </Button>
+                        </Box>
+                    </Grid>
                 </Grid>
 
                 <Dialog
