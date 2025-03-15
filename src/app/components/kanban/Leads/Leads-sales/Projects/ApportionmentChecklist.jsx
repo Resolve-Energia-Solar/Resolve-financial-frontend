@@ -12,6 +12,38 @@ import useUser from '@/hooks/users/useUser';
 import useUserForm from '@/hooks/users/useUserForm';
 
 function ApportionmentChecklist({ leadId = null }) {
+    const dispatch = useDispatch();
+    const [dialogProductOpen, setDialogProductOpen] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+
+    const [dialogExistingProductOpen, setDialogExistingProductOpen] = useState(false);
+
+
+    const customProducts = useSelector(selectProductsByLead(leadId));
+
+    const addCustomProduct = (product) => {
+        dispatch(addProduct(product));
+        dispatch(associateProductWithLead({ leadId: leadId, productId: product.id }));
+    };
+
+    const confirmDelete = async () => {
+        try {
+            const productToDelete = customProducts.find(product => product.id === selectedProduct);
+            if (productToDelete && productToDelete.default === "N") {
+                await ProductService.deleteProduct(selectedProduct);
+            }
+            dispatch(removeProductsByIds([selectedProduct]));
+            setDeleteModalOpen(false);
+        } catch (error) {
+            console.log('Error: ', error);
+        }
+    };
+
+    const handleDeleteClick = (id) => {
+        setDeleteModalOpen(true);
+        setSelectedProduct(id);
+    };
     const [lead, setLead] = useState(null);
     const [customerId, setCustomerId] = useState(null);
     const { enqueueSnackbar } = useSnackbar();
