@@ -170,21 +170,36 @@ const SalesListPage = ({ leadId = null }) => {
         <>
             <Grid container spacing={0} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", p: 3 }} >
                 <Grid item xs={12} sx={{ overflow: 'scroll' }}>
-                    <Grid item sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'row' }}>
-                        
-                        <Grid item spacing={2} alignItems="center" xs={12}>
-                            <Typography sx={{ fontSize: "18px", fontWeight: "700", color: "#000000"}}>Contratos do cliente</Typography>
-                        </Grid>
-                        <Grid item xs={12}  >
-                            <TableHeader
-                                buttonLabel="Criar"
-                                onButtonClick={() => setOpenAddSale(true)}
-                            />
-                        </Grid>
+                    <Grid item xs={12} sx={{
+                        borderRadius: '20px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'nowrap'
+                    }}>
+
+                        <Typography
+                            sx={{
+                                fontSize: "18px",
+                                fontWeight: "700",
+                                color: "#000000",
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis'
+                            }}
+                        >
+                            Contratos do cliente
+                        </Typography>
+
+                        <TableHeader
+                            buttonLabel="Criar"
+                            onButtonClick={() => setOpenAddSale(true)}
+                        />
+
                     </Grid>
 
+
                     <Grid container xs={12} >
-                        
+
 
                         <Grid item xs={12} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", }} >
                             <ExpandableListComponent
@@ -206,7 +221,7 @@ const SalesListPage = ({ leadId = null }) => {
                                     },
                                     view: (row) => {
                                         setSelectedSaleId(row.id);
-                                        setOpenDetailSale(true); 
+                                        setOpenDetailSale(true);
                                     },
                                 }}
                             />
@@ -223,7 +238,7 @@ const SalesListPage = ({ leadId = null }) => {
                                         onClose={() => setOpenAddSale(false)} 
                                         onRefresh={handleRefresh} /> */}
                                 </DialogContent>
-                            </Dialog> 
+                            </Dialog>
 
                             <Dialog
                                 open={openDetailSale}
