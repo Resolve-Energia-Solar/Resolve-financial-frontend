@@ -71,8 +71,8 @@ function ApportionmentChecklist({ leadId = null }) {
     return (
         <Grid container spacing={3}>
             <Grid item xs={12}>
-                <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, px: 4}}>
-        
+                <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, px: 4 }}>
+
                     {/* Dados Pessoais */}
                     <Grid container spacing={2} sx={{ mt: 2 }}>
                         <Grid item xs={12}>
@@ -80,152 +80,246 @@ function ApportionmentChecklist({ leadId = null }) {
                                 Dados Pessoais
                             </Typography>
                         </Grid>
-                        <Grid item xs={12} sm={6} md={4}>
-                            <CustomFormLabel htmlFor="name">Nome Completo</CustomFormLabel>
-                            <TextField
-                                name="name"
-                                fullWidth
-                                value={formData.complete_name}
-                                onChange={(e) => handleChange('complete_name', e.target.value)}
-                                {...(formErrors.complete_name && { error: true, helperText: formErrors.complete_name })}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Person sx={{ color: '#ADADAD' }} />
-                                        </InputAdornment>
-                                    ),
+                        <Grid
+                            container
+                            alignItems={'center'}
+                            spacing={0}
+                            justifyContent={'space-between'}
+                            sx={{ minHeight: 300 }}
+                        >
+                            <Grid
+                                item
+                                xs={12}
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: 1,
+                                    mb: 1,
                                 }}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={4}>
-                            <CustomFormLabel htmlFor="first_document">CPF/CNPJ</CustomFormLabel>
-                            <TextField
-                                name="first_document"
-                                fullWidth
-                                value={formData.first_document}
-                                onChange={(e) => handleChange('first_document', e.target.value)}
-                                {...(formErrors.first_document && {
-                                    error: true,
-                                    helperText: formErrors.first_document,
-                                })}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={4}>
-                            <CustomFormLabel htmlFor="contact_email">E-mail</CustomFormLabel>
-                            <TextField
-                                name="contact_email"
-                                fullWidth
-                                value={formData.email}
-                                onChange={(e) => handleChange('email', e.target.value)}
-                                {...(formErrors.email && { error: true, helperText: formErrors.email })}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Email />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={12} lg={4}>
-                            <FormDate
-                                label="Data de Nascimento"
-                                name="birth_date"
-                                value={formData.birth_date}
-                                onChange={(newValue) => handleChange('birth_date', newValue)}
-                                {...(formErrors.birth_date && { error: true, helperText: formErrors.birth_date })}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={12} lg={4}>
-                            <FormSelect
-                                label="Gênero"
-                                options={[
-                                    { value: 'M', label: 'Masculino' },
-                                    { value: 'F', label: 'Feminino' },
-                                    { value: 'O', label: 'Outro' },
-                                ]}
-                                value={formData.gender}
-                                onChange={(e) => handleChange('gender', e.target.value)}
-                                {...(formErrors.gender && { error: true, helperText: formErrors.gender })}
-                            />
-                        </Grid>
-                    </Grid>
-
-                    {/* Endereço */}
-                    <Grid container spacing={2} sx={{ mt: 2 }}>
-                        <Grid item xs={12}>
-                            <Typography variant="h6" sx={{ fontWeight: '400', color: '#303030' }}>
-                                Endereço
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={4}>
-                            <CustomFormLabel htmlFor="cep">CEP</CustomFormLabel>
-                            <TextField
-                                name="cep"
-                                fullWidth
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={4}>
-                            <CustomFormLabel htmlFor="logradouro">Logradouro</CustomFormLabel>
-                            <TextField
-                                name="logradouro"
-                                fullWidth
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={4}>
-                            <CustomFormLabel htmlFor="numero">Nº</CustomFormLabel>
-                            <TextField
-                                name="numero"
-                                fullWidth
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={3}>
-                            <CustomFormLabel htmlFor="complemento">Complemento</CustomFormLabel>
-                            <TextField
-                                name="complemento"
-                                fullWidth
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={3}>
-                            <CustomFormLabel htmlFor="bairro">Bairro</CustomFormLabel>
-                            <TextField
-                                name="bairro"
-                                fullWidth
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={3}>
-                            <CustomFormLabel htmlFor="cidade">Cidade</CustomFormLabel>
-                            <TextField
-                                name="cidade"
-                                fullWidth
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={3}>
-                            <CustomFormLabel htmlFor="estado">Estado</CustomFormLabel>
-                            <TextField
-                                name="estado"
-                                fullWidth
-                            />
-                        </Grid>
-                    </Grid>
-
-                    {/* Botão Salvar */}
-                    <Grid container spacing={2} sx={{ mt: 4 }}>
-                        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Button
-                                variant="contained"
-                                sx={{ backgroundColor: '#FFCC00', color: '#303030', px: 4 }}
-                                disabled={formLoading}
-                                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-                                onClick={handleSaveCustomer}
                             >
-                                <Typography variant="body1">
-                                    {formLoading ? 'Salvando...' : 'Salvar'}
-                                </Typography>
-                            </Button>
+                                <Grid item xs={1}>
+                                    <img
+                                        src={'/images/svgs/solar-panel-icon-with-circle.png'}
+                                        alt={'solar panel icon'}
+                                        sx={{
+                                            width: 36,
+                                            height: 36,
+                                            borderRadius: 0,
+                                            mr: 1,
+                                        }}
+                                    />
+                                </Grid>
+
+                                <Grid item xs={11} >
+                                    <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Projeto 01</Typography>
+                                </Grid>
+                            </Grid>
+
+                            <Grid container xs={12} sx={{ mb: 1, mt: 2 }}>
+                                <Grid item xs={10}>
+                                    <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Kit Sol Feliz</Typography>
+                                </Grid>
+                                <Grid item xs={2} sx={{ justifyContent: 'flex-end', alignItems: 'center', display: 'flex' }}>
+                                    <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Quantidade</Typography>
+                                </Grid>
+                            </Grid>
+
+                            {customProducts.map((product, index) => (
+                                <Grid
+                                    container
+                                    key={product.id}
+                                    alignItems="center"
+                                    rowSpacing={1}
+                                    sx={{
+                                        paddingY: 1.5,
+                                    }}
+                                >
+                                    <Grid item xs={8} sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                                        <Typography sx={{ fontWeight: '500', fontSize: "12px" }}>{product.name}</Typography>
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={3}
+                                        sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}
+                                    >
+                                        <Typography sx={{ fontWeight: '500', fontSize: "12px" }}>
+                                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.product_value)}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={1}
+                                        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                    >
+                                        <IconButton size="small" color="#00000" onClick={() => handleDeleteClick(product.id)}>
+                                            <DeleteOutlinedIcon />
+                                        </IconButton>
+                                    </Grid>
+                                </Grid>
+                            ))}
+
+                            {customProducts.length === 0 && (
+                                <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <Typography sx={{ fontWeight: '200', fontSize: "12px" }}>Nenhum produto adicionado</Typography>
+                                </Grid>
+                            )}
+
+                            <Grid container xs={12} sx={{ mb: 1, mt: 2, justifyContent: 'space-between' }}>
+                                <Grid item xs={10}>
+                                    <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Energia gerada pelo Kit</Typography>
+                                </Grid>
+                                <Grid item xs={2} sx={{ justifyContent: 'flex-end', alignItems: 'center', display: 'flex' }}>
+                                    <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>2500 kWh</Typography>
+                                </Grid>
+                            </Grid>
+
+
+                            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 2 }}>
+                                <IconButton
+                                    sx={{
+                                        p: 0,
+                                        color: '#7E8388',
+                                        fontSize: 14,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 0.5,
+                                        transition: '0.3s',
+                                        '&:hover': {
+                                            transform: 'scale(1.05)',
+                                            backgroundColor: 'rgba(0, 0, 0, 0.00)',
+                                        },
+                                    }}
+                                    onClick={() => setDialogProductOpen(true)}
+                                >
+                                    <AddOutlinedIcon sx={{ fontSize: 18 }} />
+                                    <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar novo</Typography>
+                                </IconButton>
+
+                                <IconButton
+                                    sx={{
+                                        p: 0,
+                                        color: '#7E8388',
+                                        fontSize: 14,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 0.5,
+                                        transition: '0.3s',
+                                        '&:hover': {
+                                            transform: 'scale(1.05)',
+                                            backgroundColor: 'rgba(0, 0, 0, 0.00)',
+                                        },
+                                    }}
+                                    onClick={() => { setDialogExistingProductOpen(true) }}
+                                >
+                                    <Search sx={{ fontSize: 18 }} />
+                                    <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar existente</Typography>
+                                </IconButton>
+                            </Grid>
+
                         </Grid>
+
+
+                        <Dialog
+                            open={dialogExistingProductOpen}
+                            onClose={() => setDialogExistingProductOpen(false)}
+                            maxWidth="lg"
+                            fullWidth
+                        >
+                            <DialogContent>
+                                <ListProducts onAddProduct={addCustomProduct} onClosedModal={() => setDialogExistingProductOpen(false)} />
+                            </DialogContent>
+                        </Dialog>
+
+                        <Dialog
+                            open={dialogProductOpen}
+                            onClose={() => setDialogProductOpen(false)}
+                            maxWidth="md"
+                            fullWidth
+                        >
+                            <DialogContent>
+                                <CreateProduct
+                                    onAddProduct={addCustomProduct}
+                                    onClosedModal={() => setDialogProductOpen(false)}
+                                />
+                            </DialogContent>
+                        </Dialog>
+
+                        <Dialog
+                            open={deleteModalOpen}
+                            onClose={() => setDeleteModalOpen(false)}
+                            maxWidth="sm"
+                            fullWidth
+                            sx={{
+                                '& .MuiPaper-root': {
+                                    borderRadius: '12px',
+                                    padding: '16px',
+                                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                                },
+                            }}
+                        >
+                            <DialogTitle
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1,
+                                    color: '#FA896B',
+                                    fontWeight: '700',
+                                    fontSize: '18px',
+                                }}
+                            >
+                                <WarningAmberIcon sx={{ color: '#FA896B', fontSize: '26px' }} />
+                                Confirmar Exclusão
+                            </DialogTitle>
+
+                            <DialogContent>
+                                <Box
+                                    sx={{
+                                        backgroundColor: '#FFF7F7',
+                                        padding: '16px',
+                                        borderRadius: '8px',
+                                        border: '1px solid #FFCDD2',
+                                    }}
+                                >
+                                    <Typography sx={{ fontSize: '14px', color: '#333' }}>
+                                        Tem certeza de que deseja excluir este produto?{' '}
+                                        <strong>Esta ação não pode ser desfeita em produtos personalizados.</strong>
+                                    </Typography>
+                                </Box>
+                            </DialogContent>
+
+                            <DialogActions sx={{ padding: '16px' }}>
+                                <Button
+                                    onClick={() => setDeleteModalOpen(false)}
+                                    variant="outlined"
+                                    sx={{
+                                        // borderColor: 'secondary',
+                                        color: 'secondary',
+                                        // '&:hover': {
+                                        //   backgroundColor: '#F0F0F0',
+                                        //   borderColor: '#7E8388',
+                                        // },
+                                    }}
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    onClick={confirmDelete}
+                                    color="error"
+                                    variant="contained"
+                                // sx={{
+                                //   backgroundColor: '#FF5A5F',
+                                //   '&:hover': {
+                                //     backgroundColor: '#E0484C',
+                                //   },
+                                // }}
+                                >
+                                    Excluir
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
                     </Grid>
+
                 </BlankCard>
             </Grid>
         </Grid>
