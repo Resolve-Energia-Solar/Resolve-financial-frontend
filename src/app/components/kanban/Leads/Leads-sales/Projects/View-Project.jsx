@@ -11,6 +11,7 @@ import SalesListPage from '..';
 import LeadDocumentPage from '../../Leads-documents';
 import LeadSchedulePage from '../../Leads-schedule';
 import LeadInfoHeader from '../../components/HeaderCard';
+import ApportionmentChecklist from './ApportionmentChecklist';
 
 
 function CustomTabPanel(props) {
@@ -105,7 +106,7 @@ function LeadsViewSale({ leadId }) {
 
       {/* Checklist de Rateio */}
       <CustomTabPanel value={tabValue} index={1}>
-        <EditCustomerPage leadId={leadId} />
+        <ApportionmentChecklist leadId={leadId} />
       </CustomTabPanel>
 
       {/* Kits do Projeto */}
