@@ -1,7 +1,7 @@
 'use client';
-import { 
-    Grid, Typography, Chip, Divider, Box, Rating, useTheme, IconButton, Card, 
-    MenuItem, InputAdornment, TextField, Checkbox, Radio, Button, CircularProgress, 
+import {
+    Grid, Typography, Chip, Divider, Box, Rating, useTheme, IconButton, Card,
+    MenuItem, InputAdornment, TextField, Checkbox, Radio, Button, CircularProgress,
     Dialog,
     DialogTitle,
     DialogContent,
@@ -122,12 +122,12 @@ function ApportionmentChecklist({ leadId = null }) {
     }
 
     return (
-        <Grid container spacing={3}>
+        <Grid container >
             <Grid item xs={12}>
                 <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, px: 4 }}>
 
-                    <Grid container spacing={2} sx={{ mt: 1 }}>
-                        
+                    <Grid container sx={{ mt: 1 }}>
+
                         <Grid
                             container
                             alignItems={'center'}
@@ -164,62 +164,53 @@ function ApportionmentChecklist({ leadId = null }) {
                                 </Grid>
                             </Grid>
 
-                            <Grid container xs={12} sx={{ mb: 1, mt: 2 }}>
-                                <Grid item xs={10}>
-                                    <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Kit Sol Feliz</Typography>
+                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                <Grid item xs={4}>
+                                    <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor da proposta</CustomFormLabel>
+                                    <TextField
+                                        name="amount"
+                                        value={formData.amount}
+                                        onChange={(e) => handleChange('amount', e.target.value)}
+                                        fullWidth
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
+                                                        R$
+                                                    </Box>
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
                                 </Grid>
-                                <Grid item xs={2} sx={{ justifyContent: 'flex-end', alignItems: 'center', display: 'flex' }}>
-                                    <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Quantidade</Typography>
-                                </Grid>
-                            </Grid>
 
-                            {customProducts.map((product, index) => (
-                                <Grid
-                                    container
-                                    key={product.id}
-                                    alignItems="center"
-                                    rowSpacing={1}
-                                    sx={{
-                                        paddingY: 1.5,
-                                    }}
-                                >
-                                    <Grid item xs={8} sx={{ display: 'flex', alignItems: 'flex-start' }}>
-                                        <Typography sx={{ fontWeight: '500', fontSize: "12px" }}>{product.name}</Typography>
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs={3}
-                                        sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}
+                                <Grid item xs={4}>
+                                    <CustomFormLabel htmlFor="seller_id" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Vendedor Responsável</CustomFormLabel>
+                                    <TextField
+                                        select
+                                        name="seller_id"
+                                        value={formData.seller_id}
+                                        onChange={(e) => handleChange('seller_id', e.target.value)}
+                                        fullWidth
                                     >
-                                        <Typography sx={{ fontWeight: '500', fontSize: "12px" }}>
-                                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.product_value)}
-                                        </Typography>
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs={1}
-                                        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                                    >
-                                        <IconButton size="small" color="#00000" onClick={() => handleDeleteClick(product.id)}>
-                                            <DeleteOutlinedIcon />
-                                        </IconButton>
-                                    </Grid>
+                                        <MenuItem value="F">Fulano</MenuItem>
+                                        <MenuItem value="C">Ciclano</MenuItem>
+                                        <MenuItem value="B">Beltrano</MenuItem>
+                                    </TextField>
                                 </Grid>
-                            ))}
 
-                            {customProducts.length === 0 && (
-                                <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Typography sx={{ fontWeight: '200', fontSize: "12px" }}>Nenhum produto adicionado</Typography>
+                                <Grid item xs={4}>
+                                    <CustomFormLabel htmlFor="proposal_validity" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                                        Validade da proposta
+                                    </CustomFormLabel>
+                                    <TextField
+                                        name="proposal_validity"
+                                        value={formData.proposal_validity}
+                                        onChange={(e) => handleChange('proposal_validity', e.target.value)}
+                                        fullWidth
+                                    />
                                 </Grid>
-                            )}
 
-                            <Grid container xs={12} sx={{ mb: 1, mt: 2, justifyContent: 'space-between' }}>
-                                <Grid item xs={10}>
-                                    <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Energia gerada pelo Kit</Typography>
-                                </Grid>
-                                <Grid item xs={2} sx={{ justifyContent: 'flex-end', alignItems: 'center', display: 'flex' }}>
-                                    <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>2500 kWh</Typography>
-                                </Grid>
                             </Grid>
 
 
