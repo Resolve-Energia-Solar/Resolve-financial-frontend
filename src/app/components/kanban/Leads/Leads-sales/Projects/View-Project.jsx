@@ -12,6 +12,7 @@ import LeadDocumentPage from '../../Leads-documents';
 import LeadSchedulePage from '../../Leads-schedule';
 import LeadInfoHeader from '../../components/HeaderCard';
 import ApportionmentChecklist from './ApportionmentChecklist';
+import ClientDataPage from './ClientDataPage';
 
 
 function CustomTabPanel(props) {
@@ -101,7 +102,7 @@ function LeadsViewProject({ leadId }) {
 
       {/* Dados Cliente */}
       <CustomTabPanel value={tabValue} index={0}>
-        {/* <EditLeadPage leadId={leadId} /> */}
+        <ClientDataPage leadId={leadId} />
       </CustomTabPanel>
 
       {/* Checklist de Rateio */}
