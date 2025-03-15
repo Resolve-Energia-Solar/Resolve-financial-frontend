@@ -103,8 +103,10 @@ const SalesListPage = ({ leadId = null }) => {
     ];
 
     const [openAddSale, setOpenAddSale] = useState(false);
+    const [openEditSale, setOpenEditSale] = useState(false);
     const [openDetailSale, setOpenDetailSale] = useState(false);
     const [selectedSaleId, setSelectedSaleId] = useState(null);
+
 
     const handleRefresh = () => {
         setRefresh(!refresh);
@@ -197,19 +199,19 @@ const SalesListPage = ({ leadId = null }) => {
                                     setRowsPerPage(newRows);
                                     setPage(0);
                                 }}
-                                // actions={{
-                                //     edit: (row) => {
-                                //         setSelectedProposalId(row.id);
-                                //         setOpenEditProposal(true);
-                                //     },
-                                //     view: (row) => {
-                                //         setSelectedProposalId(row.id);
-                                //         setOpenDetailProposal(true); 
-                                //     },
-                                // }}
+                                actions={{
+                                    edit: (row) => {
+                                        setSelectedSaleId(row.id);
+                                        setOpenEditSale(true);
+                                    },
+                                    view: (row) => {
+                                        setSelectedSaleId(row.id);
+                                        setOpenDetailSale(true); 
+                                    },
+                                }}
                             />
 
-                            {/* <Dialog
+                            <Dialog
                                 open={openAddSale}
                                 onClose={() => setOpenAddSale(false)}
                                 maxWidth="lg"
@@ -221,9 +223,9 @@ const SalesListPage = ({ leadId = null }) => {
                                         onClose={() => setOpenAddSale(false)} 
                                         onRefresh={handleRefresh} />
                                 </DialogContent>
-                            </Dialog> */}
+                            </Dialog> 
 
-                            {/* <Dialog
+                            <Dialog
                                 open={openDetailSale}
                                 onClose={() => setOpenDetailSale(false)}
                                 maxWidth="lg"
@@ -237,7 +239,7 @@ const SalesListPage = ({ leadId = null }) => {
                                         onRefresh={handleRefresh}
                                     />
                                 </DialogContent>
-                            </Dialog> */}
+                            </Dialog>
 
                         </Grid>
 
