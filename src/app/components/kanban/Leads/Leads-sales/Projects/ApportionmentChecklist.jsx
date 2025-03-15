@@ -420,16 +420,15 @@ function ApportionmentChecklist({ leadId = null }) {
                                         }}
                                     >
                                         <Button
-                                            variant="contained"
+                                            variant="outlined"
                                             sx={{
-                                                backgroundColor: 'black',
-                                                color: 'white',
-                                                '&:hover': { backgroundColor: '#333' },
+                                                color:"black",
+                                                borderColor: "black",
+                                                '&:hover': { backgroundColor: '#333', borderColor: "black", },
                                                 px: 3,
                                             }}
                                         >
-                                            <Typography variant="body1">Pré-visualizar proposta</Typography>
-                                            <VisibilityIcon sx={{ ml: 1 }} />
+                                            <Typography variant="body1">Voltar</Typography>
                                         </Button>
 
                                         <Box sx={{ display: 'flex', gap: 2 }}>
