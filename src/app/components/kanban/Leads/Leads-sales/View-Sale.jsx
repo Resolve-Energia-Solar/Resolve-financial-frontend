@@ -57,7 +57,7 @@ function LeadsViewSale({ leadId }) {
 
   return (
     <Grid item xs={12} sx={{ overflow: 'scroll' }}>
-      <Box sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', mb: 2 }}>
         <Grid item spacing={2} alignItems="center" xs={12}>
           <LeadInfoHeader leadId={leadId} tabValue={20} />
         </Grid>
