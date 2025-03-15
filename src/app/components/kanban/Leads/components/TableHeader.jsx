@@ -1,4 +1,4 @@
-import { Box, Typography, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Box, Typography, Button, Select, MenuItem, FormControl, InputLabel, Grid } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useState } from 'react';
 import FilterSelect from "./FiltersSelection";
@@ -27,18 +27,19 @@ const TableHeader = ({
     };
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
+        <Grid container xs={12} sx={{ display: 'flex', flexDirection: "row", justifyContent: 'flex-end', width: '100%', alignItems: 'center', p: 2 }}>
             {title && (
-                <Typography sx={{ fontSize: '16px', color: "#092C4C" }}>
-                    <span style={{ fontWeight: 'bold' }}>{title}: </span> {totalItems} {objNameNumberReference}
-                </Typography>
+                <Grid item xs={5}>
+                    <Typography sx={{ fontSize: '16px', color: "#092C4C" }}>
+                        <span style={{ fontWeight: 'bold' }}>{title}: </span> {totalItems} {objNameNumberReference}
+                    </Typography>
+                </Grid>
             )}
 
             {/* finters@@@ and create button!!!@*/}
-            <Box sx={{ display: 'flex', gap: 2, alignItems: "center" }}>
-
-                {onFilterChange && (
-                    <>
+            {onFilterChange && (
+                <Grid item xs={6} sx={{ display: 'flex', flexDirection: "row", justifyContent: "flex-end", width: '100%', alignItems: 'center' }}>
+                    <Grid item xs={1.5} sx={{ display: 'flex', justifyContent: "flex-end",}}>
                         <FilterSelect
                             label="Status"
                             value={filters.status || ""}
@@ -48,7 +49,8 @@ const TableHeader = ({
                                 { label: "1º Contato", value: "first" },
                             ]}
                         />
-
+                    </Grid>
+                    <Grid item xs={3} sx={{ display: 'flex', justifyContent: "flex-end",}}>
                         <FilterSelect
                             label="Responsável"
                             value={filters.responsavel || ""}
@@ -58,7 +60,9 @@ const TableHeader = ({
                                 { label: "Sandra", value: "sandra" },
                             ]}
                         />
+                    </Grid>
 
+                    <Grid item xs={2} sx={{ display: 'flex', justifyContent: "flex-end",}}>
                         <FilterSelect
                             label="Cliente"
                             value={filters.client || ""}
@@ -68,16 +72,20 @@ const TableHeader = ({
                                 { label: "Cliente 2", value: "client2" },
                             ]}
                         />
+                    </Grid>
 
+                    <Grid item xs={3.5} sx={{ display: 'flex', justifyContent: "flex-end",}}>
                         <SortingFilter
                             label="Ordenar por data"
                             onSortChanges={(order) => console.log("sorting:", order)}
                         />
-                    </>
-                )}
+                    </Grid>
+                </Grid>
+            )}
 
 
-                {onButtonClick && (
+            {onButtonClick && (
+                <Grid item xs={1} sx={{display: 'flex', flexDirection: "row", justifyContent: 'flex-end'}}>
                     <Button
                         startIcon={<Add />}
                         onClick={onButtonClick}
@@ -95,11 +103,12 @@ const TableHeader = ({
                         {buttonLabel}
 
                     </Button>
-                )}
-            </Box>
+                </Grid>
+            )}
 
 
-        </Box>
+
+        </Grid>
 
 
 
