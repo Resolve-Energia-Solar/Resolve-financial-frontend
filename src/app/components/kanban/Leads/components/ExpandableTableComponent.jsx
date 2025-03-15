@@ -47,7 +47,7 @@ const ExpandableListComponent = ({
         >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Box sx={{ display: 'flex', width: '100%', alignItems: "center" }}>
-                <Grid item xs={1} sx={{ justifyContent: "flex-start" }}>
+                <Grid item xs={0.5} sx={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", }}>
                     <DomainIcon sx={{ verticalAlign: 'middle', color: "#7E8388" }}/>
                 </Grid>
                 <Grid item xs={5} sx={{ justifyContent: "flex-start", display: "flex", flexDirection: "column" }}>
@@ -55,9 +55,9 @@ const ExpandableListComponent = ({
                     <Typography sx={{ fontWeight: 500, fontSize: "16px", color: "rgba(48, 48, 48, 0.5)" }}>{sale.name}</Typography>
                 </Grid>
                 <Grid item xs={7} sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end"}}>
-                    <Grid item xs={4} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+                    <Grid item xs={4} sx={{ display: "flex", flexDirection: "column", justifyContent: "flex-end",  }}>
                         <Typography sx={{ fontWeight: 700, fontSize: "14px" }}>Status</Typography>
-                        <Chip label={sale.status} color="primary" variant="outlined" />
+                        <Chip label={sale.status} color="primary" variant="outlined" sx={{width: "95px" }} />
                     </Grid>
                     <Grid item xs={4}>
                         <Typography sx={{ fontWeight: 700, fontSize: "14px" }}>Data de Upload</Typography>
