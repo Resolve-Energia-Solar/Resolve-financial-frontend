@@ -146,7 +146,7 @@ function ApportionmentChecklist({ leadId = null }) {
                                     mb: 1,
                                 }}
                             >
-                                <Grid item xs={1}>
+                                <Grid item xs={0.5}>
                                     <img
                                         src={'/images/svgs/solar-panel-icon-with-circle.png'}
                                         alt={'solar panel icon'}
@@ -159,8 +159,8 @@ function ApportionmentChecklist({ leadId = null }) {
                                     />
                                 </Grid>
 
-                                <Grid item xs={11} >
-                                    <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Projeto 01</Typography>
+                                <Grid item xs={11.5} >
+                                    <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Unidade Geradora</Typography>
                                 </Grid>
                             </Grid>
 
