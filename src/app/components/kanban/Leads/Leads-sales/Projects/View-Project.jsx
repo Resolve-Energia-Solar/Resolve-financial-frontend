@@ -47,7 +47,7 @@ function a11yProps(index) {
   };
 }
 
-function LeadsViewSale({ leadId }) {
+function LeadsViewProject({ leadId }) {
   const [tabValue, setTabValue] = useState(0);
 
   const handleChange = (event, newValue) => {
@@ -123,8 +123,8 @@ function LeadsViewSale({ leadId }) {
   );
 }
 
-LeadsViewSale.propTypes = {
+LeadsViewProject.propTypes = {
   leadId: PropTypes.string.isRequired,
 };
 
-export default LeadsViewSale;
+export default LeadsViewProject;
