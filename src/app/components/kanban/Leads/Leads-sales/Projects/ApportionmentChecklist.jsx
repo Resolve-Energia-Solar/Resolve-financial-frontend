@@ -164,7 +164,7 @@ function ApportionmentChecklist({ leadId = null }) {
                             </Grid>
 
                             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                                <Grid item xs={4}>
+                                <Grid item xs={2}>
                                     <CustomFormLabel htmlFor="cep" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>CEP</CustomFormLabel>
                                     <TextField
                                         name="cep"
@@ -175,7 +175,7 @@ function ApportionmentChecklist({ leadId = null }) {
                                     />
                                 </Grid>
 
-                                <Grid item xs={4}>
+                                <Grid item xs={8}>
                                     <CustomFormLabel htmlFor="address" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Logradouro</CustomFormLabel>
                                     <TextField
                                         name="address"
@@ -185,7 +185,7 @@ function ApportionmentChecklist({ leadId = null }) {
                                     />
                                 </Grid>
 
-                                <Grid item xs={4}>
+                                <Grid item xs={2}>
                                     <CustomFormLabel htmlFor="address_number" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Nº</CustomFormLabel>
                                     <TextField
                                         name="address_number"
