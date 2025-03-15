@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { act, useState } from 'react';
 import {
   Accordion,
   AccordionSummary,
@@ -83,10 +83,7 @@ const ExpandableListComponent = ({
                 rowsPerPage={5}
                 onPageChange={() => {}}
                 onRowsPerPageChange={() => {}}
-                actions={{
-                  edit: onEdit,
-                  view: onView,
-                }}
+                actions={actions}
               />
             ) : (
                 <>
