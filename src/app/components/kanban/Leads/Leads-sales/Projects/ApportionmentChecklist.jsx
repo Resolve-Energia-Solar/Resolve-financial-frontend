@@ -71,9 +71,8 @@ function ApportionmentChecklist({ leadId = null }) {
     return (
         <Grid container spacing={3}>
             <Grid item xs={12}>
-                <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, p: 3 }}>
-                
-
+                <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, px: 4}}>
+        
                     {/* Dados Pessoais */}
                     <Grid container spacing={2} sx={{ mt: 2 }}>
                         <Grid item xs={12}>
