@@ -89,9 +89,14 @@ const ExpandableListComponent = ({
                 // }}
               />
             ) : (
-              <Typography sx={{ color: '#7E8388' }}>
-                Nenhum projeto associado a esta venda.
-              </Typography>
+                <>
+                    <Grid item xs={12}>
+                        <Typography sx={{ color: '#7E8388', display: "flex", justifyContent: "center", alignItems: "center", mb: 3 }}>
+                            Nenhum projeto associado a esta venda.
+                        </Typography>
+                    </Grid>
+                </>
+              
             )}
           </AccordionDetails>
         </Accordion>
