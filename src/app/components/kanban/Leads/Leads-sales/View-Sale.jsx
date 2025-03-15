@@ -98,22 +98,22 @@ function LeadsViewSale({ leadId }) {
         ))}
       </Tabs>
 
-      {/* infos do lead */}
+      {/* Dados Cliente */}
       <CustomTabPanel value={tabValue} index={0}>
-        <EditLeadPage leadId={leadId} />
+        {/* <EditLeadPage leadId={leadId} /> */}
       </CustomTabPanel>
 
-      {/* dados pessoais */}
+      {/* Checklist de Rateio */}
       <CustomTabPanel value={tabValue} index={1}>
         <EditCustomerPage leadId={leadId} />
       </CustomTabPanel>
 
-      {/* propostas */}
+      {/* Kits do Projeto */}
       <CustomTabPanel value={tabValue} index={2}>
         <LeadsProposalListPage leadId={leadId} />
       </CustomTabPanel>
 
-      {/* vendas */}
+      {/* Documentações */}
       <CustomTabPanel value={tabValue} index={3}>
         <SalesListPage leadId={leadId} />
       </CustomTabPanel>
