@@ -331,7 +331,7 @@ function ApportionmentChecklist({ leadId = null }) {
                                     </Grid>
 
 
-                                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 2 }}>
+                                    {/* <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 2 }}>
                                         <IconButton
                                             sx={{
                                                 p: 0,
@@ -371,7 +371,7 @@ function ApportionmentChecklist({ leadId = null }) {
                                             <Search sx={{ fontSize: 18 }} />
                                             <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar existente</Typography>
                                         </IconButton>
-                                    </Grid>
+                                    </Grid> */}
 
                                     <Grid
                                         item
