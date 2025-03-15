@@ -165,32 +165,32 @@ function ApportionmentChecklist({ leadId = null }) {
 
                             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                                 <Grid item xs={2}>
-                                    <CustomFormLabel htmlFor="cep" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>CEP</CustomFormLabel>
+                                    <CustomFormLabel htmlFor="zip_code" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>CEP</CustomFormLabel>
                                     <TextField
-                                        name="cep"
-                                        value={formData.cep}
-                                        onChange={(e) => handleChange('cep', e.target.value)}
+                                        name="zip_code"
+                                        value={formData.zip_code}
+                                        onChange={(e) => handleChange('zip_code', e.target.value)}
                                         fullWidth
                                        
                                     />
                                 </Grid>
 
                                 <Grid item xs={8}>
-                                    <CustomFormLabel htmlFor="address" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Logradouro</CustomFormLabel>
+                                    <CustomFormLabel htmlFor="street" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Logradouro</CustomFormLabel>
                                     <TextField
-                                        name="address"
-                                        value={formData.address}
-                                        onChange={(e) => handleChange('address', e.target.value)}
+                                        name="street"
+                                        value={formData.street}
+                                        onChange={(e) => handleChange('street', e.target.value)}
                                         fullWidth
                                     />
                                 </Grid>
 
                                 <Grid item xs={2}>
-                                    <CustomFormLabel htmlFor="address_number" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Nº</CustomFormLabel>
+                                    <CustomFormLabel htmlFor="number" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Nº</CustomFormLabel>
                                     <TextField
-                                        name="address_number"
-                                        value={formData.address_number}
-                                        onChange={(e) => handleChange('address_number', e.target.value)}
+                                        name="number"
+                                        value={formData.number}
+                                        onChange={(e) => handleChange('number', e.target.value)}
                                         fullWidth
                                     />
                                 </Grid>
@@ -199,10 +199,10 @@ function ApportionmentChecklist({ leadId = null }) {
 
                             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                                 <Grid item xs={4}>
-                                    <CustomFormLabel htmlFor="cep" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Complemento</CustomFormLabel>
+                                    <CustomFormLabel htmlFor="complement" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Complemento</CustomFormLabel>
                                     <TextField
-                                        name="cep"
-                                        value={formData.cep}
+                                        name="complement"
+                                        value={formData.complement}
                                         onChange={(e) => handleChange('cep', e.target.value)}
                                         fullWidth
                                        
@@ -210,31 +210,31 @@ function ApportionmentChecklist({ leadId = null }) {
                                 </Grid>
 
                                 <Grid item xs={4}>
-                                    <CustomFormLabel htmlFor="address" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Bairro</CustomFormLabel>
+                                    <CustomFormLabel htmlFor="neighborhood" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Bairro</CustomFormLabel>
                                     <TextField
-                                        name="address"
-                                        value={formData.address}
-                                        onChange={(e) => handleChange('address', e.target.value)}
+                                        name="neighborhood"
+                                        value={formData.neighborhood}
+                                        onChange={(e) => handleChange('neighborhood', e.target.value)}
                                         fullWidth
                                     />
                                 </Grid>
 
                                 <Grid item xs={3}>
-                                    <CustomFormLabel htmlFor="address_number" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Cidade</CustomFormLabel>
+                                    <CustomFormLabel htmlFor="city" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Cidade</CustomFormLabel>
                                     <TextField
-                                        name="address_number"
-                                        value={formData.address_number}
-                                        onChange={(e) => handleChange('address_number', e.target.value)}
+                                        name="city"
+                                        value={formData.city}
+                                        onChange={(e) => handleChange('city', e.target.value)}
                                         fullWidth
                                     />
                                 </Grid>
 
                                 <Grid item xs={1}>
-                                    <CustomFormLabel htmlFor="address_number" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Estado</CustomFormLabel>
+                                    <CustomFormLabel htmlFor="state" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Estado</CustomFormLabel>
                                     <TextField
-                                        name="address_number"
-                                        value={formData.address_number}
-                                        onChange={(e) => handleChange('address_number', e.target.value)}
+                                        name="state"
+                                        value={formData.state}
+                                        onChange={(e) => handleChange('state', e.target.value)}
                                         fullWidth
                                     />
                                 </Grid>
