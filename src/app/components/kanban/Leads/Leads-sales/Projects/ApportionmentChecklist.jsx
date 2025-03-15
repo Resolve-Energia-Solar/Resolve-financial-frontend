@@ -126,13 +126,8 @@ function ApportionmentChecklist({ leadId = null }) {
             <Grid item xs={12}>
                 <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, px: 4 }}>
 
-                    {/* Dados Pessoais */}
                     <Grid container spacing={2} sx={{ mt: 2 }}>
-                        <Grid item xs={12}>
-                            <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#303030' }}>
-                                Dados Pessoais
-                            </Typography>
-                        </Grid>
+                        
                         <Grid
                             container
                             alignItems={'center'}
