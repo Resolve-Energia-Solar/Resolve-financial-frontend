@@ -73,11 +73,11 @@ const SalesListPage = ({ leadId = null }) => {
         //         }).format(row.value),
         // },
         {
-            field: 'responsible',
+            field: 'seller',
             headerName: 'Vendedor Responsável',
             flex: 1,
-            render: (row) =>
-                `${row.created_by?.first_name || ''} ${row.created_by?.last_name || ''}`,
+            // render: (row) =>
+            //     `${row.created_by?.first_name || ''} ${row.created_by?.last_name || ''}`,
         },
         {
             field: 'sdr',
