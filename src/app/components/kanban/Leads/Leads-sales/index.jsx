@@ -188,7 +188,7 @@ const SalesListPage = ({ leadId = null }) => {
                                 textOverflow: 'ellipsis'
                             }}
                         >
-                            Contratos do cliente
+                            Vendas do cliente
                         </Typography>
 
                         <TableHeader
