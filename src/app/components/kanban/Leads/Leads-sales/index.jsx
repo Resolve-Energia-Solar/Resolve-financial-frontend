@@ -175,7 +175,8 @@ const SalesListPage = ({ leadId = null }) => {
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        flexWrap: 'nowrap'
+                        flexWrap: 'nowrap',
+                        px: 1.5,
                     }}>
 
                         <Typography
