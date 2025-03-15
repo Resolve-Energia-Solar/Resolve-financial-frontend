@@ -433,12 +433,6 @@ function ApportionmentChecklist({ leadId = null }) {
                                         </Button>
 
                                         <Box sx={{ display: 'flex', gap: 2 }}>
-                                            {/* Discard button */}
-                                            <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>
-                                                <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
-                                                <DeleteOutlinedIcon />
-                                            </Button>
-
                                             <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSaveForm} disabled={formLoading}
                                                 endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
                                                 <Typography variant="body1" color="white">
