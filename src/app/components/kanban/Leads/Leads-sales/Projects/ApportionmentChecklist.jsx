@@ -126,14 +126,14 @@ function ApportionmentChecklist({ leadId = null }) {
             <Grid item xs={12}>
                 <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, px: 4 }}>
 
-                    <Grid container spacing={2} sx={{ mt: 2 }}>
+                    <Grid container spacing={2} sx={{ mt: 1 }}>
                         
                         <Grid
                             container
                             alignItems={'center'}
                             spacing={0}
                             justifyContent={'space-between'}
-                            sx={{ minHeight: 300 }}
+                            sx={{ minHeight: 300, p: 3 }}
                         >
                             <Grid
                                 item
