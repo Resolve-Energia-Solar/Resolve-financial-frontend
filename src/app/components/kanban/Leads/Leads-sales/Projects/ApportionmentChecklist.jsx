@@ -113,14 +113,14 @@ function ApportionmentChecklist({ leadId = null }) {
     const handleSaveForm = async () => {
         const response = await handleSave();
         if (response) {
-          enqueueSnackbar('Proposta salva com sucesso', { variant: 'success' });
-          if (onRefresh) onRefresh();
-          if (onClose) onClose();
+            enqueueSnackbar('Proposta salva com sucesso', { variant: 'success' });
+            if (onRefresh) onRefresh();
+            if (onClose) onClose();
         } else {
-          enqueueSnackbar('Erro ao salvar proposta', { variant: 'error' });
-          console.log('Form Errors:', formErrors);
+            enqueueSnackbar('Erro ao salvar proposta', { variant: 'error' });
+            console.log('Form Errors:', formErrors);
         }
-      }
+    }
 
     const associateCustomerToLead = async (customerId) => {
         try {
@@ -158,254 +158,219 @@ function ApportionmentChecklist({ leadId = null }) {
     return (
         <Grid container >
             <Grid item xs={12}>
-                
-                    <Grid container sx={{ mt: 1 }}>
 
-                        {isVisible && ( // Conditionally render the card
-                            <Grid item xs={12}>
-                                <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, px: 4 }}>
+                <Grid container sx={{ mt: 1 }}>
 
+                    {isVisible && ( 
+                        <Grid item xs={12}>
+                            <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, px: 4 }}>
+
+                                <Grid
+                                    container
+                                    alignItems={'center'}
+                                    spacing={0}
+                                    justifyContent={'space-between'}
+                                    sx={{ minHeight: 300, p: 3 }}
+                                >
                                     <Grid
-                                        container
-                                        alignItems={'center'}
-                                        spacing={0}
-                                        justifyContent={'space-between'}
-                                        sx={{ minHeight: 300, p: 3 }}
+                                        item
+                                        xs={12}
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: 1,
+                                        }}
                                     >
-                                        <Grid
-                                            item
-                                            xs={12}
-                                            sx={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                gap: 1,
-                                            }}
-                                        >
-                                            <Grid item xs={0.5}>
-                                                <img
-                                                    src={'/images/svgs/solar-panel-icon-with-circle.png'}
-                                                    alt={'solar panel icon'}
-                                                    sx={{
-                                                        width: 36,
-                                                        height: 36,
-                                                        borderRadius: 0,
-                                                        mr: 1,
-                                                    }}
-                                                />
-                                            </Grid>
-
-                                            <Grid item xs={11.5} >
-                                                <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Unidade Geradora</Typography>
-                                            </Grid>
-                                        </Grid>
-
-                                        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                                            <Grid item xs={2}>
-                                                <CustomFormLabel htmlFor="zip_code" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>CEP</CustomFormLabel>
-                                                <TextField
-                                                    name="zip_code"
-                                                    value={formData.zip_code}
-                                                    onChange={(e) => handleChange('zip_code', e.target.value)}
-                                                    fullWidth
-
-                                                />
-                                            </Grid>
-
-                                            <Grid item xs={8}>
-                                                <CustomFormLabel htmlFor="street" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Logradouro</CustomFormLabel>
-                                                <TextField
-                                                    name="street"
-                                                    value={formData.street}
-                                                    onChange={(e) => handleChange('street', e.target.value)}
-                                                    fullWidth
-                                                />
-                                            </Grid>
-
-                                            <Grid item xs={2}>
-                                                <CustomFormLabel htmlFor="number" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Nº</CustomFormLabel>
-                                                <TextField
-                                                    name="number"
-                                                    value={formData.number}
-                                                    onChange={(e) => handleChange('number', e.target.value)}
-                                                    fullWidth
-                                                />
-                                            </Grid>
-
-                                        </Grid>
-
-                                        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                                            <Grid item xs={4}>
-                                                <CustomFormLabel htmlFor="complement" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Complemento</CustomFormLabel>
-                                                <TextField
-                                                    name="complement"
-                                                    value={formData.complement}
-                                                    onChange={(e) => handleChange('cep', e.target.value)}
-                                                    fullWidth
-
-                                                />
-                                            </Grid>
-
-                                            <Grid item xs={4}>
-                                                <CustomFormLabel htmlFor="neighborhood" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Bairro</CustomFormLabel>
-                                                <TextField
-                                                    name="neighborhood"
-                                                    value={formData.neighborhood}
-                                                    onChange={(e) => handleChange('neighborhood', e.target.value)}
-                                                    fullWidth
-                                                />
-                                            </Grid>
-
-                                            <Grid item xs={3}>
-                                                <CustomFormLabel htmlFor="city" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Cidade</CustomFormLabel>
-                                                <TextField
-                                                    name="city"
-                                                    value={formData.city}
-                                                    onChange={(e) => handleChange('city', e.target.value)}
-                                                    fullWidth
-                                                />
-                                            </Grid>
-
-                                            <Grid item xs={1}>
-                                                <CustomFormLabel htmlFor="state" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Estado</CustomFormLabel>
-                                                <TextField
-                                                    name="state"
-                                                    value={formData.state}
-                                                    onChange={(e) => handleChange('state', e.target.value)}
-                                                    fullWidth
-                                                />
-                                            </Grid>
-
-                                        </Grid>
-
-                                        <Grid container spacing={2} sx={{ mt: 3 }}>
-
-                                            <Grid item xs={12}>
-                                                <Typography sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
-                                                    Conta de Luz
-                                                </Typography>
-                                            </Grid>
-
-                                            {documents.map((doc, index) => (
-                                                <Grid item xs={12} key={index}>
-                                                    <Card sx={{ display: 'flex', alignItems: 'center', p: 2, borderRadius: "10px", border: "1px solid #E0E0E0" }}>
-                                                        <AttachFile sx={{ color: "#FF3D00", mr: 2 }} />
-
-                                                        <CardContent sx={{ flexGrow: 1, p: 0 }}>
-                                                            <Typography sx={{ fontWeight: 500, fontSize: "14px" }}>{doc.name}</Typography>
-                                                            <Typography sx={{ fontSize: "12px", color: "#7E8388" }}>{doc.size}</Typography>
-                                                        </CardContent>
-
-
-                                                        <CardActions>
-                                                            <IconButton sx={{ color: "#7E8388" }} onClick={() => console.log("Preview file:", doc.name)}>
-                                                                <Visibility />
-                                                            </IconButton>
-
-                                                            <IconButton sx={{ color: "#7E8388" }} onClick={() => handleRemoveDocument(index)}>
-                                                                <Delete />
-                                                            </IconButton>
-                                                        </CardActions>
-                                                    </Card>
-                                                </Grid>
-                                            ))}
-
-
-                                            <Grid item xs={12}>
-                                                <input
-                                                    type="file"
-                                                    id="file-upload"
-                                                    style={{ display: "none" }}
-                                                    onChange={handleFileUpload}
-                                                />
-                                                <label htmlFor="file-upload">
-                                                    <Button
-                                                        startIcon={<Add />}
-                                                        component="span"
-                                                        sx={{ fontSize: "14px", textTransform: "none" }}
-                                                    >
-                                                        Anexar documento
-                                                    </Button>
-                                                </label>
-                                            </Grid>
-                                        </Grid>
-
-
-                                        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 2 }}>
-                                            <IconButton
+                                        <Grid item xs={0.5}>
+                                            <img
+                                                src={'/images/svgs/solar-panel-icon-with-circle.png'}
+                                                alt={'solar panel icon'}
                                                 sx={{
-                                                    p: 0,
-                                                    color: '#7E8388',
-                                                    fontSize: 14,
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 0.5,
-                                                    transition: '0.3s',
-                                                    '&:hover': {
-                                                        transform: 'scale(1.05)',
-                                                        backgroundColor: 'rgba(0, 0, 0, 0.00)',
-                                                    },
+                                                    width: 36,
+                                                    height: 36,
+                                                    borderRadius: 0,
+                                                    mr: 1,
                                                 }}
-                                                onClick={() => setDialogProductOpen(true)}
-                                            >
-                                                <AddOutlinedIcon sx={{ fontSize: 18 }} />
-                                                <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar novo</Typography>
-                                            </IconButton>
-
-                                            <IconButton
-                                                sx={{
-                                                    p: 0,
-                                                    color: '#7E8388',
-                                                    fontSize: 14,
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 0.5,
-                                                    transition: '0.3s',
-                                                    '&:hover': {
-                                                        transform: 'scale(1.05)',
-                                                        backgroundColor: 'rgba(0, 0, 0, 0.00)',
-                                                    },
-                                                }}
-                                                onClick={() => { setDialogExistingProductOpen(true) }}
-                                            >
-                                                <Search sx={{ fontSize: 18 }} />
-                                                <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar existente</Typography>
-                                            </IconButton>
+                                            />
                                         </Grid>
 
-                                        <Grid
-                                            item
-                                            xs={12}
-                                            sx={{
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                                mt: 2,
-                                                gap: 2,
-                                            }}
-                                        >
-                                            <Button
-                                                variant="contained"
-                                                sx={{
-                                                    backgroundColor: 'black',
-                                                    color: 'white',
-                                                    '&:hover': { backgroundColor: '#333' },
-                                                    px: 3,
-                                                }}
-                                            >
-                                                <Typography variant="body1">Pré-visualizar proposta</Typography>
-                                                <VisibilityIcon sx={{ ml: 1 }} />
-                                            </Button>
+                                        <Grid item xs={11.5} >
+                                            <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Unidade Geradora</Typography>
+                                        </Grid>
+                                    </Grid>
 
-                                            <Box sx={{ display: 'flex', gap: 2 }}>
-                                                <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>
-                                                    <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
-                                                    <DeleteOutlinedIcon />
+                                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                        <Grid item xs={2}>
+                                            <CustomFormLabel htmlFor="zip_code" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>CEP</CustomFormLabel>
+                                            <TextField
+                                                name="zip_code"
+                                                value={formData.zip_code}
+                                                onChange={(e) => handleChange('zip_code', e.target.value)}
+                                                fullWidth
+
+                                            />
+                                        </Grid>
+
+                                        <Grid item xs={8}>
+                                            <CustomFormLabel htmlFor="street" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Logradouro</CustomFormLabel>
+                                            <TextField
+                                                name="street"
+                                                value={formData.street}
+                                                onChange={(e) => handleChange('street', e.target.value)}
+                                                fullWidth
+                                            />
+                                        </Grid>
+
+                                        <Grid item xs={2}>
+                                            <CustomFormLabel htmlFor="number" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Nº</CustomFormLabel>
+                                            <TextField
+                                                name="number"
+                                                value={formData.number}
+                                                onChange={(e) => handleChange('number', e.target.value)}
+                                                fullWidth
+                                            />
+                                        </Grid>
+
+                                    </Grid>
+
+                                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                        <Grid item xs={4}>
+                                            <CustomFormLabel htmlFor="complement" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Complemento</CustomFormLabel>
+                                            <TextField
+                                                name="complement"
+                                                value={formData.complement}
+                                                onChange={(e) => handleChange('cep', e.target.value)}
+                                                fullWidth
+
+                                            />
+                                        </Grid>
+
+                                        <Grid item xs={4}>
+                                            <CustomFormLabel htmlFor="neighborhood" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Bairro</CustomFormLabel>
+                                            <TextField
+                                                name="neighborhood"
+                                                value={formData.neighborhood}
+                                                onChange={(e) => handleChange('neighborhood', e.target.value)}
+                                                fullWidth
+                                            />
+                                        </Grid>
+
+                                        <Grid item xs={3}>
+                                            <CustomFormLabel htmlFor="city" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Cidade</CustomFormLabel>
+                                            <TextField
+                                                name="city"
+                                                value={formData.city}
+                                                onChange={(e) => handleChange('city', e.target.value)}
+                                                fullWidth
+                                            />
+                                        </Grid>
+
+                                        <Grid item xs={1}>
+                                            <CustomFormLabel htmlFor="state" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Estado</CustomFormLabel>
+                                            <TextField
+                                                name="state"
+                                                value={formData.state}
+                                                onChange={(e) => handleChange('state', e.target.value)}
+                                                fullWidth
+                                            />
+                                        </Grid>
+
+                                    </Grid>
+
+                                    <Grid container spacing={2} sx={{ mt: 3 }}>
+
+                                        <Grid item xs={12}>
+                                            <Typography sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
+                                                Conta de Luz
+                                            </Typography>
+                                        </Grid>
+
+                                        {documents.map((doc, index) => (
+                                            <Grid item xs={12} key={index}>
+                                                <Card sx={{ display: 'flex', alignItems: 'center', p: 2, borderRadius: "10px", border: "1px solid #E0E0E0" }}>
+                                                    <AttachFile sx={{ color: "#FF3D00", mr: 2 }} />
+
+                                                    <CardContent sx={{ flexGrow: 1, p: 0 }}>
+                                                        <Typography sx={{ fontWeight: 500, fontSize: "14px" }}>{doc.name}</Typography>
+                                                        <Typography sx={{ fontSize: "12px", color: "#7E8388" }}>{doc.size}</Typography>
+                                                    </CardContent>
+
+
+                                                    <CardActions>
+                                                        <IconButton sx={{ color: "#7E8388" }} onClick={() => console.log("Preview file:", doc.name)}>
+                                                            <Visibility />
+                                                        </IconButton>
+
+                                                        <IconButton sx={{ color: "#7E8388" }} onClick={() => handleRemoveDocument(index)}>
+                                                            <Delete />
+                                                        </IconButton>
+                                                    </CardActions>
+                                                </Card>
+                                            </Grid>
+                                        ))}
+
+
+                                        <Grid item xs={12}>
+                                            <input
+                                                type="file"
+                                                id="file-upload"
+                                                style={{ display: "none" }}
+                                                onChange={handleFileUpload}
+                                            />
+                                            <label htmlFor="file-upload">
+                                                <Button
+                                                    startIcon={<Add />}
+                                                    component="span"
+                                                    sx={{ fontSize: "14px", textTransform: "none" }}
+                                                >
+                                                    Anexar documento
                                                 </Button>
-                                            </Box>
+                                            </label>
                                         </Grid>
+                                    </Grid>
 
 
+                                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 2 }}>
+                                        <IconButton
+                                            sx={{
+                                                p: 0,
+                                                color: '#7E8388',
+                                                fontSize: 14,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 0.5,
+                                                transition: '0.3s',
+                                                '&:hover': {
+                                                    transform: 'scale(1.05)',
+                                                    backgroundColor: 'rgba(0, 0, 0, 0.00)',
+                                                },
+                                            }}
+                                            onClick={() => setDialogProductOpen(true)}
+                                        >
+                                            <AddOutlinedIcon sx={{ fontSize: 18 }} />
+                                            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar novo</Typography>
+                                        </IconButton>
+
+                                        <IconButton
+                                            sx={{
+                                                p: 0,
+                                                color: '#7E8388',
+                                                fontSize: 14,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 0.5,
+                                                transition: '0.3s',
+                                                '&:hover': {
+                                                    transform: 'scale(1.05)',
+                                                    backgroundColor: 'rgba(0, 0, 0, 0.00)',
+                                                },
+                                            }}
+                                            onClick={() => { setDialogExistingProductOpen(true) }}
+                                        >
+                                            <Search sx={{ fontSize: 18 }} />
+                                            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar existente</Typography>
+                                        </IconButton>
                                     </Grid>
 
                                     <Grid
@@ -419,133 +384,159 @@ function ApportionmentChecklist({ leadId = null }) {
                                             gap: 2,
                                         }}
                                     >
-                                        <Button
-                                            variant="outlined"
-                                            sx={{
-                                                color:"black",
-                                                borderColor: "black",
-                                                '&:hover': { backgroundColor: '#333', borderColor: "black", },
-                                                px: 3,
-                                            }}
-                                        >
-                                            <Typography variant="body1">Voltar</Typography>
-                                        </Button>
+
 
                                         <Box sx={{ display: 'flex', gap: 2 }}>
-                                            <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSaveForm} disabled={formLoading}
-                                                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
-                                                <Typography variant="body1" color="white">
-                                                    {formLoading ? 'Salvando...' : 'Salvar'}
-                                                </Typography>
+                                            <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>
+                                                <Typography variant="body1" sx={{ mr: 1 }}>Excluir</Typography>
+                                                <DeleteOutlinedIcon />
                                             </Button>
                                         </Box>
                                     </Grid>
-                                </BlankCard>
-                            </Grid>
-                        )}
 
 
-                        <Dialog
-                            open={dialogExistingProductOpen}
-                            onClose={() => setDialogExistingProductOpen(false)}
-                            maxWidth="lg"
-                            fullWidth
-                        >
-                            <DialogContent>
-                                <ListProducts onAddProduct={addCustomProduct} onClosedModal={() => setDialogExistingProductOpen(false)} />
-                            </DialogContent>
-                        </Dialog>
+                                </Grid>
 
-                        <Dialog
-                            open={dialogProductOpen}
-                            onClose={() => setDialogProductOpen(false)}
-                            maxWidth="md"
-                            fullWidth
-                        >
-                            <DialogContent>
-                                <CreateProduct
-                                    onAddProduct={addCustomProduct}
-                                    onClosedModal={() => setDialogProductOpen(false)}
-                                />
-                            </DialogContent>
-                        </Dialog>
 
-                        <Dialog
-                            open={deleteModalOpen}
-                            onClose={() => setDeleteModalOpen(false)}
-                            maxWidth="sm"
-                            fullWidth
+                            </BlankCard>
+                        </Grid>
+                    )}
+
+                </Grid>
+
+                <Grid
+                    container
+                    xs={12}
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        mt: 2,
+                        gap: 2,
+                    }}
+                >
+                    <Button
+                        variant="outlined"
+                        sx={{
+                            color: "black",
+                            borderColor: "black",
+                            '&:hover': { backgroundColor: '#333', borderColor: "black", },
+                            px: 3,
+                        }}
+                    >
+                        <Typography variant="body1">Voltar</Typography>
+                    </Button>
+
+                    <Box sx={{ display: 'flex', gap: 2 }}>
+                        <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSaveForm} disabled={formLoading}
+                            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
+                            <Typography variant="body1" color="white">
+                                {formLoading ? 'Salvando...' : 'Salvar'}
+                            </Typography>
+                        </Button>
+                    </Box>
+                </Grid>
+
+                <Dialog
+                    open={dialogExistingProductOpen}
+                    onClose={() => setDialogExistingProductOpen(false)}
+                    maxWidth="lg"
+                    fullWidth
+                >
+                    <DialogContent>
+                        <ListProducts onAddProduct={addCustomProduct} onClosedModal={() => setDialogExistingProductOpen(false)} />
+                    </DialogContent>
+                </Dialog>
+
+                <Dialog
+                    open={dialogProductOpen}
+                    onClose={() => setDialogProductOpen(false)}
+                    maxWidth="md"
+                    fullWidth
+                >
+                    <DialogContent>
+                        <CreateProduct
+                            onAddProduct={addCustomProduct}
+                            onClosedModal={() => setDialogProductOpen(false)}
+                        />
+                    </DialogContent>
+                </Dialog>
+
+                <Dialog
+                    open={deleteModalOpen}
+                    onClose={() => setDeleteModalOpen(false)}
+                    maxWidth="sm"
+                    fullWidth
+                    sx={{
+                        '& .MuiPaper-root': {
+                            borderRadius: '12px',
+                            padding: '16px',
+                            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                        },
+                    }}
+                >
+                    <DialogTitle
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1,
+                            color: '#FA896B',
+                            fontWeight: '700',
+                            fontSize: '18px',
+                        }}
+                    >
+                        <WarningAmberIcon sx={{ color: '#FA896B', fontSize: '26px' }} />
+                        Confirmar Exclusão
+                    </DialogTitle>
+
+                    <DialogContent>
+                        <Box
                             sx={{
-                                '& .MuiPaper-root': {
-                                    borderRadius: '12px',
-                                    padding: '16px',
-                                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                                },
+                                backgroundColor: '#FFF7F7',
+                                padding: '16px',
+                                borderRadius: '8px',
+                                border: '1px solid #FFCDD2',
                             }}
                         >
-                            <DialogTitle
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 1,
-                                    color: '#FA896B',
-                                    fontWeight: '700',
-                                    fontSize: '18px',
-                                }}
-                            >
-                                <WarningAmberIcon sx={{ color: '#FA896B', fontSize: '26px' }} />
-                                Confirmar Exclusão
-                            </DialogTitle>
+                            <Typography sx={{ fontSize: '14px', color: '#333' }}>
+                                Tem certeza de que deseja excluir este produto?{' '}
+                                <strong>Esta ação não pode ser desfeita em produtos personalizados.</strong>
+                            </Typography>
+                        </Box>
+                    </DialogContent>
 
-                            <DialogContent>
-                                <Box
-                                    sx={{
-                                        backgroundColor: '#FFF7F7',
-                                        padding: '16px',
-                                        borderRadius: '8px',
-                                        border: '1px solid #FFCDD2',
-                                    }}
-                                >
-                                    <Typography sx={{ fontSize: '14px', color: '#333' }}>
-                                        Tem certeza de que deseja excluir este produto?{' '}
-                                        <strong>Esta ação não pode ser desfeita em produtos personalizados.</strong>
-                                    </Typography>
-                                </Box>
-                            </DialogContent>
-
-                            <DialogActions sx={{ padding: '16px' }}>
-                                <Button
-                                    onClick={() => setDeleteModalOpen(false)}
-                                    variant="outlined"
-                                    sx={{
-                                        // borderColor: 'secondary',
-                                        color: 'secondary',
-                                        // '&:hover': {
-                                        //   backgroundColor: '#F0F0F0',
-                                        //   borderColor: '#7E8388',
-                                        // },
-                                    }}
-                                >
-                                    Cancelar
-                                </Button>
-                                <Button
-                                    onClick={confirmDelete}
-                                    color="error"
-                                    variant="contained"
-                                // sx={{
-                                //   backgroundColor: '#FF5A5F',
-                                //   '&:hover': {
-                                //     backgroundColor: '#E0484C',
-                                //   },
-                                // }}
-                                >
-                                    Excluir
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
-                    </Grid>
-
+                    <DialogActions sx={{ padding: '16px' }}>
+                        <Button
+                            onClick={() => setDeleteModalOpen(false)}
+                            variant="outlined"
+                            sx={{
+                                // borderColor: 'secondary',
+                                color: 'secondary',
+                                // '&:hover': {
+                                //   backgroundColor: '#F0F0F0',
+                                //   borderColor: '#7E8388',
+                                // },
+                            }}
+                        >
+                            Cancelar
+                        </Button>
+                        <Button
+                            onClick={confirmDelete}
+                            color="error"
+                            variant="contained"
+                        // sx={{
+                        //   backgroundColor: '#FF5A5F',
+                        //   '&:hover': {
+                        //     backgroundColor: '#E0484C',
+                        //   },
+                        // }}
+                        >
+                            Excluir
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Grid>
+
         </Grid>
     );
 }
