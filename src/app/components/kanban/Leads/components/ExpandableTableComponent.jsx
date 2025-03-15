@@ -83,10 +83,10 @@ const ExpandableListComponent = ({
                 rowsPerPage={5}
                 onPageChange={() => {}}
                 onRowsPerPageChange={() => {}}
-                // actions={{
-                //   edit: onEdit,
-                //   view: onView,
-                // }}
+                actions={{
+                  edit: onEdit,
+                  view: onView,
+                }}
               />
             ) : (
                 <>
