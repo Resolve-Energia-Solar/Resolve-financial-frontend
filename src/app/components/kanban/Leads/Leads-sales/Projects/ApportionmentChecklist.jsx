@@ -6,7 +6,7 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
-    CardContent, 
+    CardContent,
     CardActions,
 } from '@mui/material';
 
@@ -264,7 +264,7 @@ function ApportionmentChecklist({ leadId = null }) {
                             </Grid>
 
                             <Grid container spacing={2} sx={{ mt: 3 }}>
-                    
+
                                 <Grid item xs={12}>
                                     <Typography sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
                                         Conta de Luz
@@ -274,14 +274,14 @@ function ApportionmentChecklist({ leadId = null }) {
                                 {documents.map((doc, index) => (
                                     <Grid item xs={12} key={index}>
                                         <Card sx={{ display: 'flex', alignItems: 'center', p: 2, borderRadius: "10px", border: "1px solid #E0E0E0" }}>
-                                            <AttachFile sx={{ color: "#FF3D00", mr: 2 }} /> 
+                                            <AttachFile sx={{ color: "#FF3D00", mr: 2 }} />
 
                                             <CardContent sx={{ flexGrow: 1, p: 0 }}>
                                                 <Typography sx={{ fontWeight: 500, fontSize: "14px" }}>{doc.name}</Typography>
                                                 <Typography sx={{ fontSize: "12px", color: "#7E8388" }}>{doc.size}</Typography>
                                             </CardContent>
 
-                                         
+
                                             <CardActions>
                                                 <IconButton sx={{ color: "#7E8388" }} onClick={() => console.log("Preview file:", doc.name)}>
                                                     <Visibility />
@@ -295,7 +295,7 @@ function ApportionmentChecklist({ leadId = null }) {
                                     </Grid>
                                 ))}
 
-                              
+
                                 <Grid item xs={12}>
                                     <input
                                         type="file"
@@ -357,6 +357,46 @@ function ApportionmentChecklist({ leadId = null }) {
                                     <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar existente</Typography>
                                 </IconButton>
                             </Grid>
+
+                            <Grid
+                                item
+                                xs={12}
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    mt: 2,
+                                    gap: 2,
+                                }}
+                            >
+                                <Button
+                                    variant="contained"
+                                    sx={{
+                                        backgroundColor: 'black',
+                                        color: 'white',
+                                        '&:hover': { backgroundColor: '#333' },
+                                        px: 3,
+                                    }}
+                                >
+                                    <Typography variant="body1">Pré-visualizar proposta</Typography>
+                                    <VisibilityIcon sx={{ ml: 1 }} />
+                                </Button>
+
+                                <Box sx={{ display: 'flex', gap: 2 }}>
+                                    <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>
+                                        <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
+                                        <DeleteOutlinedIcon />
+                                    </Button>
+
+                                    <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSaveForm} disabled={formLoading}
+                                        endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
+                                        <Typography variant="body1" color="white">
+                                            {formLoading ? 'Gerando proposta...' : 'Gerar proposta'}
+                                        </Typography>
+                                    </Button>
+                                </Box>
+                            </Grid>
+
 
                         </Grid>
 
