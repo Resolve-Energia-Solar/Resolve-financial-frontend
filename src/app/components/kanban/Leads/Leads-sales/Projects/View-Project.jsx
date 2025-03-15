@@ -4,13 +4,13 @@
 import React, { useState } from 'react';
 import { Tabs, Tab, Box, useTheme, Grid, } from '@mui/material';
 import PropTypes from 'prop-types';
-import EditLeadPage from '../Leads/Edit-Lead';
-import EditCustomerPage from '../Leads-customer/Edit-Customer';
-import LeadsProposalListPage from '../Leads-proposal';
-import SalesListPage from '.';
-import LeadDocumentPage from '../Leads-documents';
-import LeadSchedulePage from '../Leads-schedule';
-import LeadInfoHeader from '../components/HeaderCard';
+import EditLeadPage from '../../Leads/Edit-Lead';
+import EditCustomerPage from '../../Leads-customer/Edit-Customer';
+import LeadsProposalListPage from '../../Leads-proposal';
+import SalesListPage from '..';
+import LeadDocumentPage from '../../Leads-documents';
+import LeadSchedulePage from '../../Leads-schedule';
+import LeadInfoHeader from '../../components/HeaderCard';
 
 
 function CustomTabPanel(props) {
