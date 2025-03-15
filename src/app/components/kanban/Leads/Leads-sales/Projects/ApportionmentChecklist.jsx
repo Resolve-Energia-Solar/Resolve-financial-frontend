@@ -143,7 +143,6 @@ function ApportionmentChecklist({ leadId = null }) {
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     gap: 1,
-                                    mb: 1,
                                 }}
                             >
                                 <Grid item xs={0.5}>
@@ -166,43 +165,28 @@ function ApportionmentChecklist({ leadId = null }) {
 
                             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                                 <Grid item xs={4}>
-                                    <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor da proposta</CustomFormLabel>
+                                    <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>CEP</CustomFormLabel>
                                     <TextField
                                         name="amount"
                                         value={formData.amount}
                                         onChange={(e) => handleChange('amount', e.target.value)}
                                         fullWidth
-                                        InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment position="start">
-                                                    <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
-                                                        R$
-                                                    </Box>
-                                                </InputAdornment>
-                                            ),
-                                        }}
+                                       
                                     />
                                 </Grid>
 
                                 <Grid item xs={4}>
-                                    <CustomFormLabel htmlFor="seller_id" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Vendedor Responsável</CustomFormLabel>
+                                    <CustomFormLabel htmlFor="seller_id" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Logradouro</CustomFormLabel>
                                     <TextField
-                                        select
                                         name="seller_id"
                                         value={formData.seller_id}
                                         onChange={(e) => handleChange('seller_id', e.target.value)}
                                         fullWidth
-                                    >
-                                        <MenuItem value="F">Fulano</MenuItem>
-                                        <MenuItem value="C">Ciclano</MenuItem>
-                                        <MenuItem value="B">Beltrano</MenuItem>
-                                    </TextField>
+                                    />
                                 </Grid>
 
                                 <Grid item xs={4}>
-                                    <CustomFormLabel htmlFor="proposal_validity" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
-                                        Validade da proposta
-                                    </CustomFormLabel>
+                                    <CustomFormLabel htmlFor="proposal_validity" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Nº</CustomFormLabel>
                                     <TextField
                                         name="proposal_validity"
                                         value={formData.proposal_validity}
