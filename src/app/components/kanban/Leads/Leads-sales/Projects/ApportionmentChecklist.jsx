@@ -163,7 +163,7 @@ function ApportionmentChecklist({ leadId = null }) {
 
                     {isVisible && (
                         <Grid item xs={12}>
-                            <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, px: 4 }}>
+                            {/* <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, px: 4 }}>
 
                                 <Grid
                                     container
@@ -354,7 +354,9 @@ function ApportionmentChecklist({ leadId = null }) {
                                 </Grid>
 
 
-                            </BlankCard>
+                            </BlankCard> */}
+
+                            
                         </Grid>
                     )}
 
