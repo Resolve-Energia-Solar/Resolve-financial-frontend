@@ -162,7 +162,12 @@ function ApportionmentChecklist({ leadId = null }) {
     };
 
     const [isVisible, setIsVisible] = useState(true);
-    const [beneficiaries, setbeneficiaries] = useState([initialBeneficiary]);
+    const [beneficiaries, setBeneficiaries] = useState([initialBeneficiary]);
+    const handleAddBeneficiaries = () => {
+        setBeneficiaries([...beneficiaries, {...initialBeneficiary}]);
+
+    };
+    
 
 
     return (
