@@ -13,12 +13,14 @@ import {
   Chip,
   CircularProgress,
   Stack,
+  Tab,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Tabs,
   Typography,
 } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
@@ -27,6 +29,8 @@ import AttachmentDrawer from '../../attachment/AttachmentDrawer';
 import attachmentService from '@/services/attachmentService';
 import userService from '@/services/userService';
 import { useSelector } from 'react-redux';
+import { TabPanel } from '@/app/components/shared/TabPanel';
+import Comment from '@/app/components/apps/comment';
 
 const BCrumb = [
   {
@@ -56,6 +60,8 @@ export default function Sicoob() {
   const [customer, setCustomer] = useState();
   const [managingPartner, setManagingPartner] = useState();
 
+  const [value, setValue] = useState(0);
+
   const payloadClear = {
     complete_name: '',
     email: '',
@@ -66,6 +72,10 @@ export default function Sicoob() {
   };
   const handleAddAttachment = (attachment) => {
     setAttachments((prev) => [...prev, attachment]);
+  };
+
+  const handleChangeTab = (event, newValue) => {
+    setValue(newValue);
   };
 
   const handleSubmit = async () => {
@@ -163,7 +173,7 @@ export default function Sicoob() {
   const fetchRequestSicoob = async () => {
     try {
       const response = await requestSicoob.index({
-        expand: ['customer', 'managing_partner'],
+        expand: ['customer', 'managing_partner', 'requested_by.phone_numbers'],
         fields: [
           '*',
           'customer.complete_name',
@@ -173,6 +183,14 @@ export default function Sicoob() {
           'customer.gender',
           'customer.birth_date',
           'managing_partner.complete_name',
+          'managing_partner.person_type',
+          'managing_partner.email',
+          'managing_partner.first_document',
+          'managing_partner.gender',
+          'managing_partner.birth_date',
+          'requested_by.complete_name',
+          'requested_by.phone_numbers.area_code',
+          'requested_by.phone_numbers.number',
         ],
         format: 'json',
       });
@@ -335,7 +353,20 @@ export default function Sicoob() {
         </TableContainer>
       </BlankCard>
       <SideDrawer open={openSideDrawer} onClose={() => setOpenSideDrawer(false)} title="Detalhes">
-        {row && <DetailsFundingRequest data={row} handleChangeStatus={handleChangeStatus} />}
+        {row && (
+          <>
+            <Tabs value={value} onChange={handleChangeTab}>
+              <Tab label="Solicitação" value={0} />
+              <Tab label="Comentários" value={1} />
+            </Tabs>
+            <TabPanel value={value} index={0}>
+              <DetailsFundingRequest data={row} handleChangeStatus={handleChangeStatus} />
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              <Comment appLabel={'contracts'} model={'sicoobrequest'} objectId={row.id} />
+            </TabPanel>
+          </>
+        )}
       </SideDrawer>
       <SideDrawer open={openSideDrawerCreate} onClose={onCloseDrawer} title="Detalhes">
         <>
