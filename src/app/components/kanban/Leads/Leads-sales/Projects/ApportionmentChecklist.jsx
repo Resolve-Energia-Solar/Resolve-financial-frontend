@@ -36,8 +36,6 @@ import { AttachFile, Delete, Visibility, Add } from '@mui/icons-material';
 import UnitiesCardComponent from '../../components/Projects/UnitiesCard';
 
 
-
-
 const initialBeneficiary = {
     zip_code: '',
     address: '',
@@ -61,6 +59,7 @@ function ApportionmentChecklist({ leadId = null }) {
         documents: [],
     });
     const [beneficiaries, setBeneficiaries] = useState([initialBeneficiary]);
+    const [generators, setGenerators] = useState([initialGenerator]);
     const dispatch = useDispatch();
     const theme = useTheme();
     const [dialogProductOpen, setDialogProductOpen] = useState(false);
@@ -174,21 +173,20 @@ function ApportionmentChecklist({ leadId = null }) {
     const [isVisible, setIsVisible] = useState(true);
     const handleAddBeneficiaries = () => {
         setBeneficiaries((prev) => [
-            ...prev,
-            {
-                id: Date.now(),
-                zip_code: '',
-                address: '',
-                number: '',
-                complement: '',
-                neighborhood: '',
-                city: '',
-                state: '',
-                documents: [],
-            },
+          ...prev,
+          {
+            id: Date.now(),
+            zip_code: '',
+            address: '',
+            number: '',
+            complement: '',
+            neighborhood: '',
+            city: '',
+            state: '',
+            documents: [],
+          },
         ]);
-    };
-
+      };
 
     const handleBeneficiaryChange = (id, key, value) => {
         setBeneficiaries((prev) =>
@@ -202,18 +200,18 @@ function ApportionmentChecklist({ leadId = null }) {
             setBeneficiaries((prev) =>
                 prev.map((beneficiary) =>
                     beneficiary.id === id
-                        ? {
-                              ...beneficiary,
-                              documents: [...beneficiary.documents, file],
-                          }
+                        ? { ...beneficiary, documents: [...beneficiary.documents, file] }
                         : beneficiary
                 )
             );
         } else {
-            setInitialGenerator((prev) => ({
-                ...prev,
-                documents: [...prev.documents, file],
-            }));
+            setGenerators((prev) => ([
+                ...prev.map(generator =>
+                    generator.id === id
+                        ? { ...generator, documents: [...generator.documents, file] }
+                        : generator
+                )
+            ]));
         }
     };
     
@@ -226,19 +224,23 @@ function ApportionmentChecklist({ leadId = null }) {
                 prev.map((beneficiary) =>
                     beneficiary.id === id
                         ? {
-                              ...beneficiary,
-                              documents: beneficiary.documents.filter((_, i) => i !== docIndex),
-                          }
+                            ...beneficiary,
+                            documents: beneficiary.documents.filter((_, i) => i !== docIndex),
+                        }
                         : beneficiary
                 )
             );
         } else {
-            setInitialGenerator((prev) => ({
-                ...prev,
-                documents: prev.documents.filter((_, i) => i !== docIndex),
-            }));
+            setGenerators((prev) => ([
+                ...prev.map(generator =>
+                    generator.id === id
+                        ? { ...generator, documents: generator.documents.filter((_, i) => i !== docIndex) }
+                        : generator
+                )
+            ]));
         }
     };
+    
     
 
 
@@ -254,10 +256,10 @@ function ApportionmentChecklist({ leadId = null }) {
                             <Grid item xs={12}>
                                 <UnitiesCardComponent
                                     title={"Unidade Geradora"}
-                                    formData={formData}
+                                    formData={generators}
                                     onChange={handleChange}
                                     documents={initialGenerator.documents}
-                                    handleFileUpload={(e) => handleDocumentUpload(0, e.target.files[0], false)}
+                                    handleFileUpload={(e) => handleDocumentUpload(0, e.target.files[0], false)} 
                                     handleRemoveDocument={(index) => handleRemoveDocument(0, index, false)}
                                 />
                             </Grid>
@@ -265,11 +267,11 @@ function ApportionmentChecklist({ leadId = null }) {
                             {beneficiaries.map((beneficiary) => (
                                 <Grid item xs={12} key={beneficiary.id}>
                                     <UnitiesCardComponent
-                                        title={`Unidade Beneficiária ${beneficiary.id}`}
+                                        title={`Unidade Beneficiária`}
                                         formData={beneficiary}
                                         onChange={(key, value) => handleBeneficiaryChange(beneficiary.id, key, value)}
                                         documents={beneficiary.documents}
-                                        handleFileUpload={(e) => handleDocumentUpload(beneficiary.id, e.target.files[0], true)} 
+                                        handleFileUpload={(e) => handleDocumentUpload(beneficiary.id, e.target.files[0], true)}
                                         handleRemoveDocument={(docIndex) => handleRemoveDocument(beneficiary.id, docIndex, true)} 
                                         discardCard={() => handleDeleteClick(beneficiary.id)}
                                     />
