@@ -160,37 +160,37 @@ function ApportionmentChecklist({ leadId = null }) {
         <Grid container >
             <Grid item xs={12}>
 
-            <Grid container sx={{ mt: 1 }}>
+                <Grid container sx={{ mt: 1 }}>
 
-{isVisible && (
-    <Grid container spacing={3}>
-        <Grid item xs={12}>
-            <UnitiesCardComponent
-                title={"Unidade Geradora"}
-                formData={formData}
-                onChange={handleChange}
-                documents={documents}
-                handleFileUpload={handleFileUpload}
-                handleRemoveDocument={handleRemoveDocument}
-                discardCard={discard_proposal}
-            />
-        </Grid>
+                    {isVisible && (
+                        <Grid container spacing={3}>
+                            <Grid item xs={12}>
+                                <UnitiesCardComponent
+                                    title={"Unidade Geradora"}
+                                    formData={formData}
+                                    onChange={handleChange}
+                                    documents={documents}
+                                    handleFileUpload={handleFileUpload}
+                                    handleRemoveDocument={handleRemoveDocument}
+                                    discardCard={discard_proposal}
+                                />
+                            </Grid>
 
-        <Grid item xs={12}>
-            <UnitiesCardComponent
-                title={"Unidade Beneficiária"}
-                formData={formData}
-                onChange={handleChange}
-                documents={documents}
-                handleFileUpload={handleFileUpload}
-                handleRemoveDocument={handleRemoveDocument}
-                discardCard={discard_proposal}
-            />
-        </Grid>
-    </Grid>
-)}
+                            <Grid item xs={12}>
+                                <UnitiesCardComponent
+                                    title={"Unidade Beneficiária"}
+                                    formData={formData}
+                                    onChange={handleChange}
+                                    documents={documents}
+                                    handleFileUpload={handleFileUpload}
+                                    handleRemoveDocument={handleRemoveDocument}
+                                    discardCard={discard_proposal}
+                                />
+                            </Grid>
+                        </Grid>
+                    )}
 
-</Grid>
+                </Grid>
 
 
                 <Grid
