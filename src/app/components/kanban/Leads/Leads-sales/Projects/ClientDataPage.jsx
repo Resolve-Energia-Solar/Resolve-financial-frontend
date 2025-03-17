@@ -174,7 +174,7 @@ function ClientDataPage({ leadId = null }) {
                             >
 
                                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                                    <Grid item xs={4}>
+                                    <Grid item xs={3}>
                                         <CustomFormLabel htmlFor="complement" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Homologador</CustomFormLabel>
                                         <TextField
                                             name="complement"
@@ -185,7 +185,7 @@ function ClientDataPage({ leadId = null }) {
                                         />
                                     </Grid>
 
-                                    <Grid item xs={4}>
+                                    <Grid item xs={3}>
                                         <CustomFormLabel htmlFor="neighborhood" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Vendedor responsável</CustomFormLabel>
                                         <TextField
                                             name="neighborhood"
@@ -214,7 +214,7 @@ function ClientDataPage({ leadId = null }) {
                                         />
                                     </Grid>
 
-                                    <Grid item xs={1}>
+                                    <Grid item xs={3}>
                                         <CustomFormLabel htmlFor="state" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Data do contrato</CustomFormLabel>
                                         <TextField
                                             name="state"
