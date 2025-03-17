@@ -33,6 +33,7 @@ import CreateProduct from '@/app/components/apps/product/Add-product';
 import ListProducts from '../../components/ListProducts';
 import { useSnackbar } from 'notistack';
 import { AttachFile, Delete, Visibility, Add } from '@mui/icons-material';
+import UnitiesCardComponent from '../../components/Projects/UnitiesCard';
 
 
 
@@ -355,8 +356,29 @@ function ApportionmentChecklist({ leadId = null }) {
 
 
                             </BlankCard> */}
+                            <UnitiesCardComponent 
+                                title={"Unidade Geradora"}
+                                formData={formData}
+                                onChange={handleChange}
+                                documents={documents}
+                                handleFileUpload={handleFileUpload}
+                                handleRemoveDocument={handleRemoveDocument}
+                                discardCard={discard_proposal}
 
-                            
+                            />
+
+<UnitiesCardComponent 
+                                title={"Unidade Beneficiária"}
+                                formData={formData}
+                                onChange={handleChange}
+                                documents={documents}
+                                handleFileUpload={handleFileUpload}
+                                handleRemoveDocument={handleRemoveDocument}
+                                discardCard={discard_proposal}
+
+                            />
+
+
                         </Grid>
                     )}
 
