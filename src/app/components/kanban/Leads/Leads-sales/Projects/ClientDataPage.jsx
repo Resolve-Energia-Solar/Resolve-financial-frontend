@@ -241,7 +241,7 @@ function ClientDataPage({ leadId = null }) {
 
                                     <Box sx={{ display: 'flex', gap: 2 }}>
                                         <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>
-                                            <Typography variant="body1" sx={{ mr: 1 }}>Excluir</Typography>
+                                            <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
                                             <DeleteOutlinedIcon />
                                         </Button>
                                     </Box>
