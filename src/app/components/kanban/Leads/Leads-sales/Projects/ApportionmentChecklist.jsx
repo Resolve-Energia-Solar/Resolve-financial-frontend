@@ -246,7 +246,7 @@ function ApportionmentChecklist({ leadId = null }) {
                     <Grid item sx={{ flexGrow: 1 }}>
                         <Button
                             startIcon={<Add />}
-                            onClick={     }
+                            onClick={handleAddBeneficiaries}
                             component="span"
                             sx={{
                                 backgroundColor: "transparent",
