@@ -165,7 +165,7 @@ const UnitiesCardComponent = ({
                 <Grid item xs={12}>
                     <input type="file" id="file-upload" style={{ display: 'none' }} onChange={handleFileUpload} />
                     <label htmlFor="file-upload">
-                        <Button startIcon={<Add />} component="span" sx={{ fontSize: '14px', textTransform: 'none' }}>
+                        <Button startIcon={<Add />} component="span" sx={{ fontSize: '14px', textTransform: 'none', mt: 2 }}>
                             Anexar documento
                         </Button>
                     </label>
