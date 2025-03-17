@@ -219,7 +219,7 @@ function ApportionmentChecklist({ leadId = null }) {
                                         documents={beneficiary.documents}
                                         handleFileUpload={(e) => handleDocumentUpload(index, e.target.files[0])}
                                         handleRemoveDocument={(docIndex) => handleRemoveDocument(index, docIndex)}
-                                        discardCard={() => handleRemoveBeneficiary(index)}
+                                        discardCard={() => handleBeneficiaryDeletion(index)}
                                     />
                                 </Grid>
                             ))}
