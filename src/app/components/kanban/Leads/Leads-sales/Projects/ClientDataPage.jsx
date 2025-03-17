@@ -161,18 +161,18 @@ function ClientDataPage({ leadId = null }) {
 
                 <Grid container sx={{ mt: 1 }}>
 
-                    
-                        <Grid item xs={12}>
-                            <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, px: 4 }}>
 
-                                <Grid
-                                    container
-                                    alignItems={'center'}
-                                    spacing={0}
-                                    justifyContent={'space-between'}
-                                    sx={{ minHeight: 300, p: 3 }}
-                                >
-                                    {/* <Grid
+                    <Grid item xs={12}>
+                        <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, px: 4 }}>
+
+                            <Grid
+                                container
+                                alignItems={'center'}
+                                spacing={0}
+                                justifyContent={'space-between'}
+                                sx={{ minHeight: 300, p: 3 }}
+                            >
+                                {/* <Grid
                                         item
                                         xs={12}
                                         sx={{
@@ -234,78 +234,87 @@ function ClientDataPage({ leadId = null }) {
 
                                     </Grid> */}
 
-                                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                                        <Grid item xs={4}>
-                                            <CustomFormLabel htmlFor="complement" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Complemento</CustomFormLabel>
-                                            <TextField
-                                                name="complement"
-                                                value={formData.complement}
-                                                onChange={(e) => handleChange('cep', e.target.value)}
-                                                fullWidth
+                                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                    <Grid item xs={4}>
+                                        <CustomFormLabel htmlFor="complement" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Homologador</CustomFormLabel>
+                                        <TextField
+                                            name="complement"
+                                            value={formData.complement}
+                                            onChange={(e) => handleChange('cep', e.target.value)}
+                                            fullWidth
 
-                                            />
-                                        </Grid>
-
-                                        <Grid item xs={4}>
-                                            <CustomFormLabel htmlFor="neighborhood" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Bairro</CustomFormLabel>
-                                            <TextField
-                                                name="neighborhood"
-                                                value={formData.neighborhood}
-                                                onChange={(e) => handleChange('neighborhood', e.target.value)}
-                                                fullWidth
-                                            />
-                                        </Grid>
-
-                                        <Grid item xs={3}>
-                                            <CustomFormLabel htmlFor="city" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Cidade</CustomFormLabel>
-                                            <TextField
-                                                name="city"
-                                                value={formData.city}
-                                                onChange={(e) => handleChange('city', e.target.value)}
-                                                fullWidth
-                                            />
-                                        </Grid>
-
-                                        <Grid item xs={1}>
-                                            <CustomFormLabel htmlFor="state" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Estado</CustomFormLabel>
-                                            <TextField
-                                                name="state"
-                                                value={formData.state}
-                                                onChange={(e) => handleChange('state', e.target.value)}
-                                                fullWidth
-                                            />
-                                        </Grid>
-
+                                        />
                                     </Grid>
 
-                                    
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        sx={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'flex-end',
-                                            justifyContent: "flex-end",
-                                        }}
-                                    >
-
-
-                                        <Box sx={{ display: 'flex', gap: 2 }}>
-                                            <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>
-                                                <Typography variant="body1" sx={{ mr: 1 }}>Excluir</Typography>
-                                                <DeleteOutlinedIcon />
-                                            </Button>
-                                        </Box>
+                                    <Grid item xs={4}>
+                                        <CustomFormLabel htmlFor="neighborhood" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Vendedor responsável</CustomFormLabel>
+                                        <TextField
+                                            name="neighborhood"
+                                            value={formData.neighborhood}
+                                            onChange={(e) => handleChange('neighborhood', e.target.value)}
+                                            fullWidth
+                                        />
                                     </Grid>
 
+                                    <Grid item xs={3}>
+                                        <CustomFormLabel htmlFor="city" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor do projeto</CustomFormLabel>
+                                        <TextField
+                                            name="amount"
+                                            value={formData.amount}
+                                            onChange={(e) => handleChange('amount', e.target.value)}
+                                            fullWidth
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
+                                                            R$
+                                                        </Box>
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                        />
+                                    </Grid>
+
+                                    <Grid item xs={1}>
+                                        <CustomFormLabel htmlFor="state" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Data do contrato</CustomFormLabel>
+                                        <TextField
+                                            name="state"
+                                            value={formData.state}
+                                            onChange={(e) => handleChange('state', e.target.value)}
+                                            fullWidth
+                                        />
+                                    </Grid>
 
                                 </Grid>
 
 
-                            </BlankCard>
-                        </Grid>
-            
+                                <Grid
+                                    item
+                                    xs={12}
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'flex-end',
+                                        justifyContent: "flex-end",
+                                    }}
+                                >
+
+
+                                    <Box sx={{ display: 'flex', gap: 2 }}>
+                                        <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>
+                                            <Typography variant="body1" sx={{ mr: 1 }}>Excluir</Typography>
+                                            <DeleteOutlinedIcon />
+                                        </Button>
+                                    </Box>
+                                </Grid>
+
+
+                            </Grid>
+
+
+                        </BlankCard>
+                    </Grid>
+
 
                 </Grid>
 
@@ -321,7 +330,7 @@ function ClientDataPage({ leadId = null }) {
                         p: 1
                     }}
                 >
-                    
+
                     <Grid item sx={{ display: 'flex', gap: 2 }}>
                         <Button
                             variant="outlined"
