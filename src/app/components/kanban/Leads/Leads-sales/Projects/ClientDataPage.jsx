@@ -161,7 +161,7 @@ function ClientDataPage({ leadId = null }) {
 
                 <Grid container sx={{ mt: 1 }}>
 
-                    {isVisible && (
+                    
                         <Grid item xs={12}>
                             <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, px: 4 }}>
 
@@ -278,101 +278,7 @@ function ClientDataPage({ leadId = null }) {
 
                                     </Grid>
 
-                                    <Grid container spacing={2} sx={{ mt: 3 }}>
-
-                                        <Grid item xs={12}>
-                                            <Typography sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
-                                                Conta de Luz
-                                            </Typography>
-                                        </Grid>
-
-                                        {documents.map((doc, index) => (
-                                            <Grid item xs={12} key={index}>
-                                                <Card sx={{ display: 'flex', alignItems: 'center', p: 2, borderRadius: "10px", border: "1px solid #E0E0E0" }}>
-                                                    <AttachFile sx={{ color: "#FF3D00", mr: 2 }} />
-
-                                                    <CardContent sx={{ flexGrow: 1, p: 0 }}>
-                                                        <Typography sx={{ fontWeight: 500, fontSize: "14px" }}>{doc.name}</Typography>
-                                                        <Typography sx={{ fontSize: "12px", color: "#7E8388" }}>{doc.size}</Typography>
-                                                    </CardContent>
-
-
-                                                    <CardActions>
-                                                        <IconButton sx={{ color: "#7E8388" }} onClick={() => console.log("Preview file:", doc.name)}>
-                                                            <Visibility />
-                                                        </IconButton>
-
-                                                        <IconButton sx={{ color: "#7E8388" }} onClick={() => handleRemoveDocument(index)}>
-                                                            <Delete />
-                                                        </IconButton>
-                                                    </CardActions>
-                                                </Card>
-                                            </Grid>
-                                        ))}
-
-
-                                        <Grid item xs={12}>
-                                            <input
-                                                type="file"
-                                                id="file-upload"
-                                                style={{ display: "none" }}
-                                                onChange={handleFileUpload}
-                                            />
-                                            <label htmlFor="file-upload">
-                                                <Button
-                                                    startIcon={<Add />}
-                                                    component="span"
-                                                    sx={{ fontSize: "14px", textTransform: "none" }}
-                                                >
-                                                    Anexar documento
-                                                </Button>
-                                            </label>
-                                        </Grid>
-                                    </Grid>
-
-
-                                    {/* <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 2 }}>
-                                        <IconButton
-                                            sx={{
-                                                p: 0,
-                                                color: '#7E8388',
-                                                fontSize: 14,
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: 0.5,
-                                                transition: '0.3s',
-                                                '&:hover': {
-                                                    transform: 'scale(1.05)',
-                                                    backgroundColor: 'rgba(0, 0, 0, 0.00)',
-                                                },
-                                            }}
-                                            onClick={() => setDialogProductOpen(true)}
-                                        >
-                                            <AddOutlinedIcon sx={{ fontSize: 18 }} />
-                                            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar novo</Typography>
-                                        </IconButton>
-
-                                        <IconButton
-                                            sx={{
-                                                p: 0,
-                                                color: '#7E8388',
-                                                fontSize: 14,
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: 0.5,
-                                                transition: '0.3s',
-                                                '&:hover': {
-                                                    transform: 'scale(1.05)',
-                                                    backgroundColor: 'rgba(0, 0, 0, 0.00)',
-                                                },
-                                            }}
-                                            onClick={() => { setDialogExistingProductOpen(true) }}
-                                        >
-                                            <Search sx={{ fontSize: 18 }} />
-                                            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar existente</Typography>
-                                        </IconButton>
-                                    </Grid> */}
-
+                                    
                                     <Grid
                                         item
                                         xs={12}
@@ -399,7 +305,7 @@ function ClientDataPage({ leadId = null }) {
 
                             </BlankCard>
                         </Grid>
-                    )}
+            
 
                 </Grid>
 
@@ -416,31 +322,6 @@ function ClientDataPage({ leadId = null }) {
                     }}
                 >
                     
-                    <Grid item sx={{ flexGrow: 1 }}>
-                        <Button
-                            startIcon={<Add />}
-                            component="span"
-                            sx={{
-                                backgroundColor: "transparent",
-                                p: 0,
-                                color: '#7E8388',
-                                fontSize: 14,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: "flex-start",
-                                gap: 0.5,
-                                transition: '0.3s',
-                                '&:hover': {
-                                  backgroundColor: "transparent",
-                                  color: "black"
-                                },
-                              }}
-                        >
-                            Adicionar novo beneficiário
-                        </Button>
-                    </Grid>
-
-                    {/* Right Side - Buttons */}
                     <Grid item sx={{ display: 'flex', gap: 2 }}>
                         <Button
                             variant="outlined"
