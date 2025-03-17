@@ -80,7 +80,7 @@ function ApportionmentChecklist({ leadId = null }) {
     const handleDeleteClick = (id) => {
         setDeleteModalOpen(true);
         setSelectedProduct(id);
-        
+
     };
     const [lead, setLead] = useState(null);
     const [customerId, setCustomerId] = useState(null);
@@ -156,15 +156,15 @@ function ApportionmentChecklist({ leadId = null }) {
         }
     };
 
-    const handleRemoveDocument = (index) => {
-        const updatedDocs = documents.filter((_, i) => i !== index);
-        setDocuments(updatedDocs);
-    };
+    // const handleRemoveDocument = (index) => {
+    //     const updatedDocs = documents.filter((_, i) => i !== index);
+    //     setDocuments(updatedDocs);
+    // };
 
     const [isVisible, setIsVisible] = useState(true);
     const [beneficiaries, setBeneficiaries] = useState([initialBeneficiary]);
     const handleAddBeneficiaries = () => {
-        setBeneficiaries([...beneficiaries, {...initialBeneficiary}]);
+        setBeneficiaries([...beneficiaries, { ...initialBeneficiary }]);
 
     };
     const handleBeneficiaryChange = (index, key, value) => {
@@ -172,6 +172,22 @@ function ApportionmentChecklist({ leadId = null }) {
         updated[index][key] = value;
         setBeneficiaries(updated);
 
+    };
+
+    const handleBeneficiaryDeletion = (index) => {
+        setBeneficiaries(beneficiaries.filter((_, i) => i !== index));
+    }
+
+    const handleDocumentUpload = (index, file) => {
+        const updated = [...beneficiaries];
+        updated[index].documents.push(file);
+        setBeneficiaries(updated);
+    };
+
+    const handleRemoveDocument = (index, docIndex) => {
+        const updated = [...beneficiaries];
+        updated[index].documents = updated[index].documents.filter((_, i) => i !== docIndex);
+        setBeneficiaries(updated);
     };
 
 
@@ -189,22 +205,25 @@ function ApportionmentChecklist({ leadId = null }) {
                                     formData={formData}
                                     onChange={handleChange}
                                     documents={documents}
-                                    handleFileUpload={handleFileUpload}
-                                    handleRemoveDocument={handleRemoveDocument}
+                                    handleFileUpload={(e) => handleDocumentUpload(0, e.target.files[0])}
+                                    handleRemoveDocument={(index) => handleRemoveDocument(0, index)}
                                 />
                             </Grid>
 
-                            <Grid item xs={12}>
-                                <UnitiesCardComponent
-                                    title={"Unidade Beneficiária"}
-                                    formData={formData}
-                                    onChange={handleChange}
-                                    documents={documents}
-                                    handleFileUpload={handleFileUpload}
-                                    handleRemoveDocument={handleRemoveDocument}
-                                    discardCard={handleDeleteClick}
-                                />
-                            </Grid>
+                            {beneficiaries.map((beneficiary, index) => (
+                                <Grid item xs={12} key={index}>
+                                    <UnitiesCardComponent
+                                        title={`Unidade Beneficiária ${index + 1}`}
+                                        formData={beneficiary}
+                                        onChange={(e) => handleBeneficiaryChange(index, e.target.name, e.target.value)}
+                                        documents={beneficiary.documents}
+                                        handleFileUpload={(e) => handleDocumentUpload(index, e.target.files[0])}
+                                        handleRemoveDocument={(docIndex) => handleRemoveDocument(index, docIndex)}
+                                        discardCard={() => handleRemoveBeneficiary(index)}
+                                    />
+                                </Grid>
+                            ))}
+
                         </Grid>
                     )}
 
@@ -227,6 +246,7 @@ function ApportionmentChecklist({ leadId = null }) {
                     <Grid item sx={{ flexGrow: 1 }}>
                         <Button
                             startIcon={<Add />}
+                            onClick={     }
                             component="span"
                             sx={{
                                 backgroundColor: "transparent",
