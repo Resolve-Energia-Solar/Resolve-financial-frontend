@@ -47,7 +47,7 @@ const Menuitems = [
         title: 'Ordem de Serviço',
         icon: IconPoint,
         href: '/apps/inspections/schedule',
-      }
+      },
     ],
     permissions: ['field_services.view_schedule'],
   },
@@ -60,7 +60,7 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Solic. Financiomento',
+    title: 'Solic. Financiamento',
     icon: IconBuildingBank,
     href: '/apps/funding-request',
 
@@ -70,7 +70,8 @@ const Menuitems = [
         title: 'Sicoob',
         icon: IconPoint,
         href: '/apps/funding-request/sicoob',
-      }]
+      },
+    ],
   },
   {
     id: uniqueId(),
@@ -91,14 +92,14 @@ const Menuitems = [
         title: 'Pagamentos',
         icon: IconPoint,
         href: '/apps/invoice',
-        permissions: ['financial.view_payment']
+        permissions: ['financial.view_payment'],
       },
       {
         id: uniqueId(),
         title: 'Parcelas',
         icon: IconPoint,
         href: '/apps/invoice/installments',
-        permissions: ['financial.view_payment']
+        permissions: ['financial.view_payment'],
       },
       {
         id: uniqueId(),
@@ -113,7 +114,7 @@ const Menuitems = [
         icon: IconPoint,
         href: '/apps/financial-record/attachments',
         permissions: ['financial.view_financialrecord_attachment'],
-      }
+      },
     ],
   },
 
