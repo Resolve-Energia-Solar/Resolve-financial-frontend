@@ -235,6 +235,7 @@ function ClientDataPage({ leadId = null }) {
                                         justifyContent: 'space-between',
                                         alignItems: 'flex-end',
                                         justifyContent: "flex-end",
+                                        gap: 2
                                     }}
                                 >
 
@@ -243,6 +244,20 @@ function ClientDataPage({ leadId = null }) {
                                         <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>
                                             <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
                                             <DeleteOutlinedIcon />
+                                        </Button>
+                                    </Box>
+
+                                    <Box sx={{ display: 'flex', gap: 2 }}>
+                                        <Button
+                                            variant="contained"
+                                            sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }}
+                                            onClick={handleSaveForm}
+                                            disabled={formLoading}
+                                            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                                        >
+                                            <Typography variant="body1" color="white">
+                                                {formLoading ? 'Salvando...' : 'Salvar'}
+                                            </Typography>
                                         </Button>
                                     </Box>
                                 </Grid>
