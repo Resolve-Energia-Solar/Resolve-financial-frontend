@@ -122,6 +122,16 @@ const CreateFundingRequest = ({
               onChange={handleChangeRFormData}
             />
           </Grid>
+          <Grid item xs={12} sm={12} lg={4}>
+            <CustomFormLabel htmlFor="project_value">Valor do Projeto</CustomFormLabel>
+            <CustomTextField
+              name="project_value"
+              variant="outlined"
+              value={rFormData?.project_value}
+              fullWidth
+              onChange={handleChangeRFormData}
+            />
+          </Grid>
         </Grid>
       </Box>
       {formData?.person_type == 'PJ' && (
