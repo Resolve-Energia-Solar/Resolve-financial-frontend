@@ -77,7 +77,7 @@ function ApportionmentChecklist({ leadId = null }) {
     const confirmDelete = () => {
         if (selectedBeneficiaryIndex !== null) {
             setBeneficiaries((prev) =>
-                prev.filter((_, i) => i !== selectedBeneficiaryIndex)
+                prev.filter((b) => b.id !== selectedBeneficiaryIndex)
             );
             setDeleteModalOpen(false);
             setSelectedBeneficiaryIndex(null);
@@ -87,7 +87,6 @@ function ApportionmentChecklist({ leadId = null }) {
     const handleDeleteClick = (id) => {
         setSelectedBeneficiaryIndex(id);
         setDeleteModalOpen(true);
-
     };
 
     const [lead, setLead] = useState(null);
@@ -188,6 +187,7 @@ function ApportionmentChecklist({ leadId = null }) {
         ]);
     };
 
+
     const handleBeneficiaryChange = (id, key, value) => {
         setBeneficiaries((prev) =>
             prev.map((b) => (b.id === id ? { ...b, [key]: value } : b))
@@ -257,6 +257,7 @@ function ApportionmentChecklist({ leadId = null }) {
                                     />
                                 </Grid>
                             ))}
+
 
 
                         </Grid>
@@ -406,12 +407,7 @@ function ApportionmentChecklist({ leadId = null }) {
                             onClick={() => setDeleteModalOpen(false)}
                             variant="outlined"
                             sx={{
-                                // borderColor: 'secondary',
                                 color: 'secondary',
-                                // '&:hover': {
-                                //   backgroundColor: '#F0F0F0',
-                                //   borderColor: '#7E8388',
-                                // },
                             }}
                         >
                             Cancelar
@@ -420,12 +416,6 @@ function ApportionmentChecklist({ leadId = null }) {
                             onClick={confirmDelete}
                             color="error"
                             variant="contained"
-                        // sx={{
-                        //   backgroundColor: '#FF5A5F',
-                        //   '&:hover': {
-                        //     backgroundColor: '#E0484C',
-                        //   },
-                        // }}
                         >
                             Excluir
                         </Button>
