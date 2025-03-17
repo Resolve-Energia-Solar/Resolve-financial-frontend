@@ -430,6 +430,7 @@ function ApportionmentChecklist({ leadId = null }) {
                                 justifyContent: "flex-start",
                                 gap: 0.5,
                                 transition: '0.3s',
+                                width: '210px',
                                 '&:hover': {
                                   backgroundColor: "transparent",
                                   color: "black"
