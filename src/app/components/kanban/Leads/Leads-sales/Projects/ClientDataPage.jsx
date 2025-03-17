@@ -272,46 +272,6 @@ function ClientDataPage({ leadId = null }) {
 
                 </Grid>
 
-                <Grid
-                    container
-                    sx={{
-                        display: 'flex',
-                        flexDirection: "row",
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        mt: 4,
-                        gap: 2,
-                        p: 1
-                    }}
-                >
-
-                    <Grid item sx={{ display: 'flex', gap: 2 }}>
-                        <Button
-                            variant="outlined"
-                            sx={{
-                                color: "black",
-                                borderColor: "black",
-                                '&:hover': { backgroundColor: '#333', borderColor: "black" },
-                                px: 3,
-                            }}
-                        >
-                            <Typography variant="body1">Voltar</Typography>
-                        </Button>
-
-                        <Button
-                            variant="contained"
-                            sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }}
-                            onClick={handleSaveForm}
-                            disabled={formLoading}
-                            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-                        >
-                            <Typography variant="body1" color="white">
-                                {formLoading ? 'Salvando...' : 'Salvar'}
-                            </Typography>
-                        </Button>
-                    </Grid>
-                </Grid>
-
 
 
                 <Dialog
