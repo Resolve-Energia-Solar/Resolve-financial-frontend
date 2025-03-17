@@ -172,12 +172,14 @@ const UnitiesCardComponent = ({
                 </Grid>
 
      
-                <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discardCard}>
-                        <Typography variant="body1" sx={{ mr: 1 }}>Excluir</Typography>
-                        <DeleteOutlinedIcon />
-                    </Button>
-                </Grid>
+                {discardCard && (
+                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discardCard}>
+                            <Typography variant="body1" sx={{ mr: 1 }}>Excluir</Typography>
+                            <DeleteOutlinedIcon />
+                        </Button>
+                    </Grid>
+                )}
             </Grid>
         </BlankCard>
     );

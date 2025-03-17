@@ -172,7 +172,7 @@ function ApportionmentChecklist({ leadId = null }) {
                                     documents={documents}
                                     handleFileUpload={handleFileUpload}
                                     handleRemoveDocument={handleRemoveDocument}
-                                    discardCard={discard_proposal}
+                                   
                                 />
                             </Grid>
 
