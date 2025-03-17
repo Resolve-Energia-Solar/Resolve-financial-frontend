@@ -41,8 +41,6 @@ const BCrumb = [
 export default function Sicoob() {
   const user = useSelector((state) => state.user?.user);
 
-  console.log(user);
-
   const [rows, setRows] = useState([]);
   const [row, setRow] = useState();
   const [openSideDrawer, setOpenSideDrawer] = useState(false);
@@ -53,18 +51,29 @@ export default function Sicoob() {
   const [attachments, setAttachments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const [disabled, setDisabled] = useState(true);
+  const [disabledManaging, setDisabledManaging] = useState(true);
+  const [customer, setCustomer] = useState();
+  const [managingPartner, setManagingPartner] = useState();
+
+  const payloadClear = {
+    complete_name: '',
+    email: '',
+    first_document: '',
+    person_type: '',
+    gender: '',
+    birth_date: '',
+  };
   const handleAddAttachment = (attachment) => {
     setAttachments((prev) => [...prev, attachment]);
   };
 
   const handleSubmit = async () => {
     setLoading(true);
-    let managing_partner;
-    let customer;
     try {
       if (formData.person_type == 'PJ') {
         // Cria o registro e obtém o object_id
-        const userResponse = await userService.createUser({
+        const userResponse = await userService.upInsert(customer.id, {
           complete_name: formData.complete_name,
           email: formData.email,
           first_document: formData.first_document,
@@ -73,9 +82,9 @@ export default function Sicoob() {
           user_types: [2],
         });
 
-        customer = userResponse.id;
+        setCustomer(userResponse);
 
-        const userResponseManaging = await userService.createUser({
+        const userResponseManaging = await userService.upInsert(managingPartner.id, {
           complete_name: formDataManaging.complete_name,
           email: formDataManaging.email,
           first_document: formDataManaging.first_document,
@@ -87,9 +96,9 @@ export default function Sicoob() {
           user_types: [2],
         });
 
-        managing_partner = userResponseManaging.id;
+        setManagingPartner(userResponseManaging);
       } else {
-        const userResponse = await userService.createUser({
+        const userResponse = await userService.upInsert(customer.id, {
           complete_name: formData.complete_name,
           email: formData.email,
           first_document: formData.first_document,
@@ -99,17 +108,18 @@ export default function Sicoob() {
           addresses: [320],
           user_types: [2],
         });
-        customer = userResponse.id;
+        setCustomer(userResponse);
       }
 
       const recordResponse = await requestSicoob.create({
-        occupation: (formData.person_type = 'PJ' ? 'Empresa' : formData.occupation),
+        occupation: formData.person_type == 'PJ' ? 'Empresa' : rFormData.occupation,
         monthly_income: rFormData.monthly_income,
-        customer: customer,
-        managing_partner: managing_partner,
-        requested_by: user.id,
+        customer: customer?.id,
+        managing_partner: managingPartner?.id,
+        requested_by: user?.id,
       });
       const recordId = recordResponse.id;
+
       // Envia cada anexo pendente
       await Promise.all(
         attachments.map(async (attachment) => {
@@ -117,7 +127,7 @@ export default function Sicoob() {
           formDataAttachment.append('file', attachment.file);
           formDataAttachment.append('description', attachment.description);
           formDataAttachment.append('object_id', recordId);
-          formDataAttachment.append('content_type_id', contentTypeId);
+          formDataAttachment.append('content_type_id', 121);
           formDataAttachment.append('document_type_id', '');
           formDataAttachment.append('document_subtype_id', '');
           formDataAttachment.append('status', '');
@@ -173,17 +183,78 @@ export default function Sicoob() {
     }
   };
 
+  const verifyUser = async (first_document) => {
+    try {
+      const response = await userService.index({
+        first_document__icontains: first_document,
+        fields: ['id', 'first_document', 'email', 'complete_name', 'gender', 'birth_date'],
+      });
+
+      return response.results;
+    } catch (error) {
+      enqueueSnackbar(`Erro ao buscar contate o suporte: ${error}`, { variant: 'error' });
+      console.log(error);
+    }
+  };
+
   const itemSelected = (row) => {
     setRow(row);
     setOpenSideDrawer(true);
   };
 
-  const handleChange = (event) => {
-    setFormData((prevData) => ({ ...prevData, [event.target.name]: event.target.value }));
+  const onCloseDrawer = () => {
+    setOpenSideDrawerCreate(false);
+    setFormData(null);
+    setFormDataManaging(null);
   };
 
-  const handleChangeManaging = (event) => {
-    setFormDataManaging((prevData) => ({ ...prevData, [event.target.name]: event.target.value }));
+  const handleChange = async (event) => {
+    const { name, value } = event.target;
+
+    console.log(name, value);
+
+    if (
+      name === 'first_document' &&
+      ((value.length == 11 && formData.person_type == 'PF') ||
+        (value.length == 14 && formData.person_type == 'PJ'))
+    ) {
+      const user = await verifyUser(value);
+
+      if (user.length == 0) {
+        enqueueSnackbar('Nenhum registro encontrado com este CPF ou CNPJ. Complete o Cadastro', {
+          variant: 'warning',
+        });
+        setDisabled(false);
+      } else {
+        setFormData((prevData) => ({ ...prevData, ...user[0] }));
+        setCustomer(user[0]);
+      }
+    }
+
+    if (name === 'person_type') {
+      setFormData(payloadClear);
+    }
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleChangeManaging = async (event) => {
+    const { name, value } = event.target;
+    if (name === 'first_document' && value.length == 11) {
+      const user = await verifyUser(value);
+      if (user.length == 0) {
+        enqueueSnackbar('Nenhum registro encontrado com este CPF ou CNPJ. Complete o Cadastro', {
+          variant: 'warning',
+        });
+        setDisabledManaging(false);
+      } else {
+        setFormDataManaging((prevData) => ({ ...prevData, ...user[0] }));
+        setManagingPartner(user[0]);
+      }
+    }
+    if (name === 'person_type') {
+      setFormDataManaging(payloadClear);
+    }
+    setFormDataManaging((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleChangeRFormData = (event) => {
@@ -204,7 +275,6 @@ export default function Sicoob() {
     }
   };
 
-  const handleSave = async () => {};
   const getStatus = (status) => {
     switch (status) {
       case 'A':
@@ -267,20 +337,17 @@ export default function Sicoob() {
       <SideDrawer open={openSideDrawer} onClose={() => setOpenSideDrawer(false)} title="Detalhes">
         {row && <DetailsFundingRequest data={row} handleChangeStatus={handleChangeStatus} />}
       </SideDrawer>
-      <SideDrawer
-        open={openSideDrawerCreate}
-        onClose={() => setOpenSideDrawerCreate(false)}
-        title="Detalhes"
-      >
+      <SideDrawer open={openSideDrawerCreate} onClose={onCloseDrawer} title="Detalhes">
         <>
           <CreateFundingRequest
             formData={formData}
             formDataManaging={formDataManaging}
-            handleSave={handleSave}
             handleChange={handleChange}
             handleChangeManaging={handleChangeManaging}
             rFormData={rFormData}
             handleChangeRFormData={handleChangeRFormData}
+            disabled={disabled}
+            disabledManaging={disabledManaging}
           >
             <Stack direction="row" spacing={2} justifyContent="space-between" mt={2}>
               <AttachmentDrawer

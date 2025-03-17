@@ -91,7 +91,7 @@ const DetailsFundingRequest = ({ data, handleChangeStatus }) => {
                     disabled={true}
                     name="complete_name"
                     variant="outlined"
-                    value={data.customer.complete_name}
+                    value={data?.managing_partner.complete_name}
                     fullWidth
                   />
                 </Grid>
@@ -101,7 +101,7 @@ const DetailsFundingRequest = ({ data, handleChangeStatus }) => {
                     disabled={true}
                     name="complete_name"
                     variant="outlined"
-                    value={data.customer.email}
+                    value={data?.managing_partner.email}
                     fullWidth
                   />
                 </Grid>
@@ -110,7 +110,7 @@ const DetailsFundingRequest = ({ data, handleChangeStatus }) => {
                     disabled={true}
                     label="Data de Nascimento"
                     name="birth_date"
-                    value={data.customer.birth_date}
+                    value={data?.managing_partner.birth_date}
                   />
                 </Grid>
                 <Grid item xs={12} sm={12} lg={4}>
@@ -119,7 +119,7 @@ const DetailsFundingRequest = ({ data, handleChangeStatus }) => {
                     disabled={true}
                     name="complete_name"
                     variant="outlined"
-                    value={data.customer.first_document}
+                    value={data?.managing_partner.first_document}
                     fullWidth
                   />
                 </Grid>
@@ -132,7 +132,7 @@ const DetailsFundingRequest = ({ data, handleChangeStatus }) => {
                       { value: 'M', label: 'Masculino' },
                       { value: 'F', label: 'Feminino' },
                     ]}
-                    value={data.customer.gender}
+                    value={data?.managing_partner.gender}
                   />
                 </Grid>
                 <Grid item xs={12} sm={12} lg={4}>
@@ -141,21 +141,17 @@ const DetailsFundingRequest = ({ data, handleChangeStatus }) => {
                     disabled={true}
                     name="complete_name"
                     variant="outlined"
-                    value={data.customer.person_type}
+                    value={data?.managing_partner.person_type}
                     fullWidth
                   />
                 </Grid>
               </Grid>
             </Box>
-            <Box sx={{ marginTop: 4 }}>
-              <AttachmentTable
-                appLabel={'financial'}
-                model={'financialrecord'}
-                objectId={data.id}
-              />
-            </Box>
           </>
         )}
+        <Box sx={{ marginTop: 4 }}>
+          <AttachmentTable appLabel={'contracts'} model={'sicoobrequest'} objectId={data.id} />
+        </Box>
       </Box>
       <Box
         sx={{
