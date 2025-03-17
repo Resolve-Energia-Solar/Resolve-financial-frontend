@@ -35,7 +35,16 @@ import { useSnackbar } from 'notistack';
 import { AttachFile, Delete, Visibility, Add } from '@mui/icons-material';
 import UnitiesCardComponent from '../../components/Projects/UnitiesCard';
 
-
+const initialBeneficiary = {
+    zip_code: '',
+    address: '',
+    number: '',
+    complement: '',
+    neighborhood: '',
+    city: '',
+    state: '',
+    documents: [],
+}
 
 function ApportionmentChecklist({ leadId = null }) {
     const dispatch = useDispatch();
@@ -172,7 +181,6 @@ function ApportionmentChecklist({ leadId = null }) {
                                     documents={documents}
                                     handleFileUpload={handleFileUpload}
                                     handleRemoveDocument={handleRemoveDocument}
-                                    discardCard={discard_proposal}
                                 />
                             </Grid>
 
