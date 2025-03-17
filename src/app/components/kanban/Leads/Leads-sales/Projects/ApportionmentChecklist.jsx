@@ -240,7 +240,7 @@ function ApportionmentChecklist({ leadId = null }) {
                                             <TextField
                                                 name="complement"
                                                 value={formData.complement}
-                                                onChange={(e) => handleChange('cep', e.target.value)}
+                                                onChange={(e) => handleChange('complement', e.target.value)}
                                                 fullWidth
 
                                             />
