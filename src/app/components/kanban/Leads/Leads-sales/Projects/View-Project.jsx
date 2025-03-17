@@ -72,7 +72,12 @@ function LeadsViewProject({ leadId }) {
         TabIndicatorProps={{ style: { display: 'none' } }}
         sx={{ marginLeft: '25px', marginBottom: "-1px" }}
       >
-        {["Dados Cliente", "Checklist de Rateio", "Kits do Projeto", "Documentações"].map((label, index) => (
+        {[
+          // "Dados Cliente", 
+          "Checklist de Rateio", 
+          "Kits do Projeto", 
+          "Documentações"
+        ].map((label, index) => (
           <Tab
             key={index}
             label={label}
@@ -101,22 +106,22 @@ function LeadsViewProject({ leadId }) {
       </Tabs>
 
       {/* Dados Cliente */}
-      <CustomTabPanel value={tabValue} index={0}>
+      {/* <CustomTabPanel value={tabValue} index={0}>
         <ClientDataPage leadId={leadId} />
-      </CustomTabPanel>
+      </CustomTabPanel> */}
 
       {/* Checklist de Rateio */}
-      <CustomTabPanel value={tabValue} index={1}>
+      <CustomTabPanel value={tabValue} index={0}>
         <ApportionmentChecklist leadId={leadId} />
       </CustomTabPanel>
 
       {/* Kits do Projeto */}
-      <CustomTabPanel value={tabValue} index={2}>
+      <CustomTabPanel value={tabValue} index={1}>
         {/* <LeadsProposalListPage leadId={leadId} /> */}
       </CustomTabPanel>
 
       {/* Documentações */}
-      <CustomTabPanel value={tabValue} index={3}>
+      <CustomTabPanel value={tabValue} index={2}>
         {/* <SalesListPage leadId={leadId} /> */}
       </CustomTabPanel>
 

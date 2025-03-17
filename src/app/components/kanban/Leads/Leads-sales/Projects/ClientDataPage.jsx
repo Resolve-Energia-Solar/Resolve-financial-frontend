@@ -175,28 +175,28 @@ function ClientDataPage({ leadId = null }) {
 
                                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                                     <Grid item xs={3}>
-                                        <CustomFormLabel htmlFor="complement" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Homologador</CustomFormLabel>
+                                        <CustomFormLabel htmlFor="homologator" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Homologador</CustomFormLabel>
                                         <TextField
-                                            name="complement"
-                                            value={formData.complement}
-                                            onChange={(e) => handleChange('cep', e.target.value)}
+                                            name="homologator"
+                                            value={formData.homologator}
+                                            onChange={(e) => handleChange('homologator', e.target.value)}
                                             fullWidth
 
                                         />
                                     </Grid>
 
                                     <Grid item xs={3}>
-                                        <CustomFormLabel htmlFor="neighborhood" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Vendedor responsável</CustomFormLabel>
+                                        <CustomFormLabel htmlFor="seller" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Vendedor responsável</CustomFormLabel>
                                         <TextField
-                                            name="neighborhood"
-                                            value={formData.neighborhood}
-                                            onChange={(e) => handleChange('neighborhood', e.target.value)}
+                                            name="seller"
+                                            value={formData.seller}
+                                            onChange={(e) => handleChange('seller', e.target.value)}
                                             fullWidth
                                         />
                                     </Grid>
 
                                     <Grid item xs={3}>
-                                        <CustomFormLabel htmlFor="city" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor do projeto</CustomFormLabel>
+                                        <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor do projeto</CustomFormLabel>
                                         <TextField
                                             name="amount"
                                             value={formData.amount}
@@ -215,7 +215,7 @@ function ClientDataPage({ leadId = null }) {
                                     </Grid>
 
                                     <Grid item xs={3}>
-                                        <CustomFormLabel htmlFor="state" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Data do contrato</CustomFormLabel>
+                                        <CustomFormLabel htmlFor="contract_date" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Data do contrato</CustomFormLabel>
                                         <TextField
                                             name="state"
                                             value={formData.state}
