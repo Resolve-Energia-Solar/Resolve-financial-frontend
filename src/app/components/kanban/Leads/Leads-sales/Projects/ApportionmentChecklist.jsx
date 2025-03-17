@@ -71,6 +71,7 @@ function ApportionmentChecklist({ leadId = null }) {
             }
             dispatch(removeProductsByIds([selectedProduct]));
             setDeleteModalOpen(false);
+            setIsVisible(false);
         } catch (error) {
             console.log('Error: ', error);
         }
@@ -79,6 +80,7 @@ function ApportionmentChecklist({ leadId = null }) {
     const handleDeleteClick = (id) => {
         setDeleteModalOpen(true);
         setSelectedProduct(id);
+        
     };
     const [lead, setLead] = useState(null);
     const [customerId, setCustomerId] = useState(null);
