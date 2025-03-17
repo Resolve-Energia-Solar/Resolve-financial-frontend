@@ -162,9 +162,6 @@ function ApportionmentChecklist({ leadId = null }) {
     };
 
     const [isVisible, setIsVisible] = useState(true);
-    const discard_proposal = () => {
-        setIsVisible(false);
-    };
 
 
     return (
