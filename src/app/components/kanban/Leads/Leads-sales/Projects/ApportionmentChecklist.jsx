@@ -167,7 +167,12 @@ function ApportionmentChecklist({ leadId = null }) {
         setBeneficiaries([...beneficiaries, {...initialBeneficiary}]);
 
     };
-    
+    const handleBeneficiaryChange = (index, key, value) => {
+        const updated = [...beneficiaries];
+        updated[index][key] = value;
+        setBeneficiaries(updated);
+
+    };
 
 
     return (
