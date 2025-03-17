@@ -63,7 +63,7 @@ const Menuitems = [
     title: 'Solic. Financiomento',
     icon: IconBuildingBank,
     href: '/apps/funding-request',
-    permissions: ['resolve_crm.view_lead'],
+
     children: [
       {
         id: uniqueId(),
