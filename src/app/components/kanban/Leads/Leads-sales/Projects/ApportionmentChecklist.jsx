@@ -163,35 +163,35 @@ function ApportionmentChecklist({ leadId = null }) {
                 <Grid container sx={{ mt: 1 }}>
 
                     {isVisible && (
-                        <Grid item xs={12}>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12}>
+                                <UnitiesCardComponent
+                                    title={"Unidade Geradora"}
+                                    formData={formData}
+                                    onChange={handleChange}
+                                    documents={documents}
+                                    handleFileUpload={handleFileUpload}
+                                    handleRemoveDocument={handleRemoveDocument}
+                                    discardCard={discard_proposal}
+                                />
+                            </Grid>
 
-                            <UnitiesCardComponent
-                                title={"Unidade Geradora"}
-                                formData={formData}
-                                onChange={handleChange}
-                                documents={documents}
-                                handleFileUpload={handleFileUpload}
-                                handleRemoveDocument={handleRemoveDocument}
-                                discardCard={discard_proposal}
-
-                            />
-
-                            <UnitiesCardComponent
-                                title={"Unidade Beneficiária"}
-                                formData={formData}
-                                onChange={handleChange}
-                                documents={documents}
-                                handleFileUpload={handleFileUpload}
-                                handleRemoveDocument={handleRemoveDocument}
-                                discardCard={discard_proposal}
-
-                            />
-
-
+                            <Grid item xs={12}>
+                                <UnitiesCardComponent
+                                    title={"Unidade Beneficiária"}
+                                    formData={formData}
+                                    onChange={handleChange}
+                                    documents={documents}
+                                    handleFileUpload={handleFileUpload}
+                                    handleRemoveDocument={handleRemoveDocument}
+                                    discardCard={discard_proposal}
+                                />
+                            </Grid>
                         </Grid>
                     )}
 
                 </Grid>
+
 
                 <Grid
                     container
@@ -230,7 +230,7 @@ function ApportionmentChecklist({ leadId = null }) {
                             Adicionar novo beneficiário
                         </Button>
                     </Grid>
-                    
+
 
                     <Grid item sx={{ display: 'flex', gap: 2 }}>
                         <Button
