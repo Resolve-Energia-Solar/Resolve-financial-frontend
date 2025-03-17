@@ -192,7 +192,7 @@ function ApportionmentChecklist({ leadId = null }) {
                                     documents={documents}
                                     handleFileUpload={handleFileUpload}
                                     handleRemoveDocument={handleRemoveDocument}
-                                    discardCard={discard_proposal}
+                                    discardCard={handleDeleteClick}
                                 />
                             </Grid>
                         </Grid>
@@ -330,8 +330,8 @@ function ApportionmentChecklist({ leadId = null }) {
                             }}
                         >
                             <Typography sx={{ fontSize: '14px', color: '#333' }}>
-                                Tem certeza de que deseja excluir este produto?{' '}
-                                <strong>Esta ação não pode ser desfeita em produtos personalizados.</strong>
+                                Tem certeza de que deseja excluir esta unidade?{' '}
+                                <strong>Esta ação não pode ser desfeita.</strong>
                             </Typography>
                         </Box>
                     </DialogContent>
