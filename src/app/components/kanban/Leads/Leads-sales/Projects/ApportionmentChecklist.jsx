@@ -330,49 +330,6 @@ function ApportionmentChecklist({ leadId = null }) {
                                         </Grid>
                                     </Grid>
 
-
-                                    {/* <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 2 }}>
-                                        <IconButton
-                                            sx={{
-                                                p: 0,
-                                                color: '#7E8388',
-                                                fontSize: 14,
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: 0.5,
-                                                transition: '0.3s',
-                                                '&:hover': {
-                                                    transform: 'scale(1.05)',
-                                                    backgroundColor: 'rgba(0, 0, 0, 0.00)',
-                                                },
-                                            }}
-                                            onClick={() => setDialogProductOpen(true)}
-                                        >
-                                            <AddOutlinedIcon sx={{ fontSize: 18 }} />
-                                            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar novo</Typography>
-                                        </IconButton>
-
-                                        <IconButton
-                                            sx={{
-                                                p: 0,
-                                                color: '#7E8388',
-                                                fontSize: 14,
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: 0.5,
-                                                transition: '0.3s',
-                                                '&:hover': {
-                                                    transform: 'scale(1.05)',
-                                                    backgroundColor: 'rgba(0, 0, 0, 0.00)',
-                                                },
-                                            }}
-                                            onClick={() => { setDialogExistingProductOpen(true) }}
-                                        >
-                                            <Search sx={{ fontSize: 18 }} />
-                                            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar existente</Typography>
-                                        </IconButton>
-                                    </Grid> */}
-
                                     <Grid
                                         item
                                         xs={12}
