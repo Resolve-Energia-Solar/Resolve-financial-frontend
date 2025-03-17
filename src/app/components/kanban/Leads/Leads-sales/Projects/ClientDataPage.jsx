@@ -172,67 +172,6 @@ function ClientDataPage({ leadId = null }) {
                                 justifyContent={'space-between'}
                                 sx={{ minHeight: 300, p: 3 }}
                             >
-                                {/* <Grid
-                                        item
-                                        xs={12}
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            gap: 1,
-                                        }}
-                                    >
-                                        <Grid item xs={0.5}>
-                                            <img
-                                                src={'/images/svgs/solar-panel-icon-with-circle.png'}
-                                                alt={'solar panel icon'}
-                                                sx={{
-                                                    width: 36,
-                                                    height: 36,
-                                                    borderRadius: 0,
-                                                    mr: 1,
-                                                }}
-                                            />
-                                        </Grid>
-
-                                        <Grid item xs={11.5} >
-                                            <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Unidade Geradora</Typography>
-                                        </Grid>
-                                    </Grid>
-
-                                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                                        <Grid item xs={2}>
-                                            <CustomFormLabel htmlFor="zip_code" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>CEP</CustomFormLabel>
-                                            <TextField
-                                                name="zip_code"
-                                                value={formData.zip_code}
-                                                onChange={(e) => handleChange('zip_code', e.target.value)}
-                                                fullWidth
-
-                                            />
-                                        </Grid>
-
-                                        <Grid item xs={8}>
-                                            <CustomFormLabel htmlFor="street" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Logradouro</CustomFormLabel>
-                                            <TextField
-                                                name="street"
-                                                value={formData.street}
-                                                onChange={(e) => handleChange('street', e.target.value)}
-                                                fullWidth
-                                            />
-                                        </Grid>
-
-                                        <Grid item xs={2}>
-                                            <CustomFormLabel htmlFor="number" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Nº</CustomFormLabel>
-                                            <TextField
-                                                name="number"
-                                                value={formData.number}
-                                                onChange={(e) => handleChange('number', e.target.value)}
-                                                fullWidth
-                                            />
-                                        </Grid>
-
-                                    </Grid> */}
 
                                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                                     <Grid item xs={4}>
