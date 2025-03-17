@@ -35,16 +35,8 @@ import { useSnackbar } from 'notistack';
 import { AttachFile, Delete, Visibility, Add } from '@mui/icons-material';
 import UnitiesCardComponent from '../../components/Projects/UnitiesCard';
 
-const initialGenerator = {
-    zip_code: '',
-    address: '',
-    number: '',
-    complement: '',
-    neighborhood: '',
-    city: '',
-    state: '',
-    documents: [],
-}
+
+
 
 const initialBeneficiary = {
     zip_code: '',
@@ -58,6 +50,17 @@ const initialBeneficiary = {
 }
 
 function ApportionmentChecklist({ leadId = null }) {
+    const [initialGenerator, setInitialGenerator] = useState({
+        zip_code: '',
+        address: '',
+        number: '',
+        complement: '',
+        neighborhood: '',
+        city: '',
+        state: '',
+        documents: [],
+    });
+    const [beneficiaries, setBeneficiaries] = useState([initialBeneficiary]);
     const dispatch = useDispatch();
     const theme = useTheme();
     const [dialogProductOpen, setDialogProductOpen] = useState(false);
@@ -169,7 +172,6 @@ function ApportionmentChecklist({ leadId = null }) {
     // };
 
     const [isVisible, setIsVisible] = useState(true);
-    const [beneficiaries, setBeneficiaries] = useState([initialBeneficiary]);
     const handleAddBeneficiaries = () => {
         setBeneficiaries((prev) => [
             ...prev,
@@ -195,28 +197,50 @@ function ApportionmentChecklist({ leadId = null }) {
     };
 
 
-    const handleDocumentUpload = (id, file) => {
-        setBeneficiaries((prev) =>
-            prev.map((b) =>
-                b.id === id
-                    ? { ...b, documents: [...(b.documents || []), file] }
-                    : b
-            )
-        );
+    const handleDocumentUpload = (id, file, isBeneficiary = true) => {
+        if (isBeneficiary) {
+            setBeneficiaries((prev) =>
+                prev.map((beneficiary) =>
+                    beneficiary.id === id
+                        ? {
+                              ...beneficiary,
+                              documents: [...beneficiary.documents, file],
+                          }
+                        : beneficiary
+                )
+            );
+        } else {
+            setInitialGenerator((prev) => ({
+                ...prev,
+                documents: [...prev.documents, file],
+            }));
+        }
     };
+    
 
-    const handleRemoveDocument = (id, docIndex) => {
-        setBeneficiaries((prev) =>
-            prev.map((b) =>
-                b.id === id
-                    ? {
-                        ...b,
-                        documents: b.documents.filter((_, i) => i !== docIndex),
-                    }
-                    : b
-            )
-        );
+
+
+    const handleRemoveDocument = (id, docIndex, isBeneficiary = true) => {
+        if (isBeneficiary) {
+            setBeneficiaries((prev) =>
+                prev.map((beneficiary) =>
+                    beneficiary.id === id
+                        ? {
+                              ...beneficiary,
+                              documents: beneficiary.documents.filter((_, i) => i !== docIndex),
+                          }
+                        : beneficiary
+                )
+            );
+        } else {
+            setInitialGenerator((prev) => ({
+                ...prev,
+                documents: prev.documents.filter((_, i) => i !== docIndex),
+            }));
+        }
     };
+    
+
 
 
     return (
@@ -233,26 +257,20 @@ function ApportionmentChecklist({ leadId = null }) {
                                     formData={formData}
                                     onChange={handleChange}
                                     documents={initialGenerator.documents}
-                                    handleFileUpload={(e) => handleDocumentUpload(0, e.target.files[0])}
-                                    handleRemoveDocument={(index) => handleRemoveDocument(0, index)}
+                                    handleFileUpload={(e) => handleDocumentUpload(0, e.target.files[0], false)}
+                                    handleRemoveDocument={(index) => handleRemoveDocument(0, index, false)}
                                 />
                             </Grid>
 
                             {beneficiaries.map((beneficiary) => (
                                 <Grid item xs={12} key={beneficiary.id}>
                                     <UnitiesCardComponent
-                                        title={`Unidade Beneficiária`}
+                                        title={`Unidade Beneficiária ${beneficiary.id}`}
                                         formData={beneficiary}
-                                        onChange={(key, value) =>
-                                            handleBeneficiaryChange(beneficiary.id, key, value)
-                                        }
+                                        onChange={(key, value) => handleBeneficiaryChange(beneficiary.id, key, value)}
                                         documents={beneficiary.documents}
-                                        handleFileUpload={(e) =>
-                                            handleDocumentUpload(beneficiary.id, e.target.files[0])
-                                        }
-                                        handleRemoveDocument={(docIndex) =>
-                                            handleRemoveDocument(beneficiary.id, docIndex)
-                                        }
+                                        handleFileUpload={(e) => handleDocumentUpload(beneficiary.id, e.target.files[0], true)} 
+                                        handleRemoveDocument={(docIndex) => handleRemoveDocument(beneficiary.id, docIndex, true)} 
                                         discardCard={() => handleDeleteClick(beneficiary.id)}
                                     />
                                 </Grid>
