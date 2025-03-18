@@ -48,18 +48,18 @@ function LeadsViewProposal({ leadId = null, proposalId = null, onClose = null, o
         lead_id: leadId,
         commercial_proposal_id: proposalId,
       });
-  
+
       await ProposalService.updateProposalPartial(proposalId, { status });
-  
+
       enqueueSnackbar(`Proposta ${status === 'A' ? 'aceita' : 'recusada'} com sucesso!`, {
         variant: 'success',
       });
-  
+
       if (onRefresh) onRefresh();
       if (onClose) onClose();
     } catch (error) {
       const errors = error?.response?.data;
-  
+
       if (typeof errors === 'object' && errors !== null) {
         Object.entries(errors).forEach(([field, messages]) => {
           if (Array.isArray(messages)) {
@@ -75,7 +75,6 @@ function LeadsViewProposal({ leadId = null, proposalId = null, onClose = null, o
       }
     }
   };
-  
 
   return (
     <Grid container spacing={3}>
@@ -197,24 +196,26 @@ function LeadsViewProposal({ leadId = null, proposalId = null, onClose = null, o
             <Typography variant="body1">Visualizar PDF</Typography>
           </Button>
         </Box>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: '#FFEBE4', color: '#FF532E', fontSize: '14px', p: 1.2 }}
-            endIcon={<ThumbDownOffAlt />}
-            onClick={() => handleUpdateProposal('R')}
-          >
-            <Typography variant="body1">Proposta recusada</Typography>
-          </Button>
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: '#FFCC00', color: 'black', fontSize: '14px', p: 1.2 }}
-            endIcon={<TaskAlt />}
-            onClick={() => handleUpdateProposal('A')}
-          >
-            <Typography variant="body1">Proposta fechada</Typography>
-          </Button>
-        </Box>
+        {proposalData?.status === 'P' && (
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: '#FFEBE4', color: '#FF532E', fontSize: '14px', p: 1.2 }}
+              endIcon={<ThumbDownOffAlt />}
+              onClick={() => handleUpdateProposal('R')}
+            >
+              <Typography variant="body1">Proposta recusada</Typography>
+            </Button>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: '#FFCC00', color: 'black', fontSize: '14px', p: 1.2 }}
+              endIcon={<TaskAlt />}
+              onClick={() => handleUpdateProposal('A')}
+            >
+              <Typography variant="body1">Proposta fechada</Typography>
+            </Button>
+          </Box>
+        )}
       </Grid>
     </Grid>
   );
