@@ -122,7 +122,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
       const script = pdfWindow.document.createElement("script");
       script.innerHTML = `
         const ProposalLayout = ${ProposalLayout.toString()};
-        ReactDOM.render(React.createElement(${ProposalLayout.name}), document.getElementById('proposal-layout'));
+        ReactDOM.render(React.createElement(${ProposalLayout}), document.getElementById('proposal-layout'));
       `;
     }
     
