@@ -388,7 +388,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 <PictureAsPdfIcon sx={{ color: "#1C1B1F", }} />
               }
               variant="outlined"
-              onClick={console.log("open proposal pdf as new page")}
+              onClick={handleOpenProposalPdf}
               sx={{
                 borderColor: 'black',
                 color: '#303030',
