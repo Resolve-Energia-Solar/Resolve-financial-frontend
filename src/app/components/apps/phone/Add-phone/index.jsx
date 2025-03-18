@@ -56,8 +56,6 @@ const CreatePhonePage = ({
 
   formData.country_code = 55;
 
-  console.log('formData', formData);
-
   useEffect(() => {
     if (success) {
       if (onClosedModal) {
@@ -68,7 +66,6 @@ const CreatePhonePage = ({
       }
 
       if (selectedPhoneNumberId) {
-        console.log('dataReceived?.id: ', dataReceived?.id);
         selectedPhoneNumberId(dataReceived?.id);
       }
     }

@@ -106,6 +106,7 @@ const GenericAutocomplete = ({
             {...params}
             label={label}
             variant="outlined"
+            {...(props.error && { error: true, helperText: props.helperText })}
             InputProps={{
               ...params.InputProps,
               endAdornment: (

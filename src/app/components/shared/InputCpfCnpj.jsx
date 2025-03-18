@@ -2,7 +2,7 @@ import React from "react";
 import { mask } from "@/utils/cpfCnpjMask";
 import CustomTextField from "../forms/theme-elements/CustomTextField";
 
-function InputCpfCnpj({ value, onChange }) {
+function InputCpfCnpj({ value, onChange, onBlur }) {
   const handleChange = (e) => {
     // Aplica a máscara e passa o valor mascarado para o onChange
     const maskedValue = mask(e.target.value);
@@ -25,6 +25,7 @@ function InputCpfCnpj({ value, onChange }) {
       variant="outlined"
       fullWidth
       margin="normal"
+      onBlur={onBlur}
     />
   );
 }

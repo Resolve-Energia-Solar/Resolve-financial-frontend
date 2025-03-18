@@ -39,7 +39,7 @@ function LeadInfoHeader({ leadId, tabValue }) {
         const data = await leadService.getLeadById(leadId);
         setLead(data);
         setProjects(data?.projects || []);
-        setSelectedProject(data?.projects[0]?.id || '');
+        // setSelectedProject(data?.projects[0]?.id || '');
       } catch (err) {
         enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
       } finally {
@@ -180,7 +180,7 @@ function LeadInfoHeader({ leadId, tabValue }) {
           </Typography>
         </Box> */}
 
-        {tabValue === 2 && (
+        {tabValue === 2 || tabValue === 20  && (
           <Box sx={{ minWidth: 385 }}>
             <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
               Projeto
