@@ -11,7 +11,7 @@ const financialRecordService = {
     return response.data
   },
 
-  getFinancialRecordById: async (id, fields = '') => {
+  getFinancialRecordById: async (id, fields = '*') => {
     const response = await apiClient.get(`/api/financial-records/${id}/`, { params: { fields } })
     return response.data
   },

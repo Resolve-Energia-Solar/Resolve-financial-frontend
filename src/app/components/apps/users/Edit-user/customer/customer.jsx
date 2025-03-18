@@ -1,5 +1,5 @@
 'use client';
-import { Grid, Button, Stack, Alert, CircularProgress } from '@mui/material';
+import { Grid, Button, Stack, Alert, CircularProgress, TextField } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import { useParams } from 'next/navigation';
@@ -10,8 +10,11 @@ import FormDate from '@/app/components/forms/form-custom/FormDate';
 import useUser from '@/hooks/users/useUser';
 import useUserForm from '@/hooks/users/useUserForm';
 import FormPageSkeleton from '@/app/components/apps/comercial/sale/components/FormPageSkeleton';
+import { useSelector } from 'react-redux';
 
 export default function EditCustomer({ userId = null }) {
+  const loggedUser = useSelector(state => state.user?.user);
+  const isSuperUser = loggedUser?.is_superuser;
   const params = useParams();
   let id = userId;
   if (!userId) id = params.id;
@@ -41,6 +44,26 @@ export default function EditCustomer({ userId = null }) {
   if (loading) return <FormPageSkeleton />;
   if (error) return <div>{error}</div>;
 
+  const formatDocument = (value) => {
+    const numeric = value.replace(/\D/g, '');
+    if (numeric.length <= 11) {
+      // Formata como CPF: 000.000.000-00
+      return numeric
+        .substring(0, 3) + (numeric.length > 3 ? '.' : '') +
+        numeric.substring(3, 6) + (numeric.length > 6 ? '.' : '') +
+        numeric.substring(6, 9) + (numeric.length > 9 ? '-' : '') +
+        numeric.substring(9, 11);
+    } else {
+      // Formata como CNPJ: 00.000.000/0000-00
+      return numeric
+        .substring(0, 2) + (numeric.length > 2 ? '.' : '') +
+        numeric.substring(2, 5) + (numeric.length > 5 ? '.' : '') +
+        numeric.substring(5, 8) + (numeric.length > 8 ? '/' : '') +
+        numeric.substring(8, 12) + (numeric.length > 12 ? '-' : '') +
+        numeric.substring(12, 14);
+    }
+  };
+
   return (
     <>
       {success && (
@@ -49,39 +72,24 @@ export default function EditCustomer({ userId = null }) {
         </Alert>
       )}
       <Grid container spacing={3}>
-        {/* <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="username">Usuário</CustomFormLabel>
-          <CustomTextField
-            name="username"
-            variant="outlined"
-            fullWidth
-            value={formData.username}
-            onChange={(e) => handleChange('username', e.target.value)}
-            {...(formErrors.username && { error: true, helperText: formErrors.username })}
-          />
-        </Grid> */}
-        {/* <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="first_name">Nome</CustomFormLabel>
-          <CustomTextField
-            name="first_name"
-            variant="outlined"
-            fullWidth
-            value={formData.first_name}
-            onChange={(e) => handleChange('first_name', e.target.value)}
-            {...(formErrors.first_name && { error: true, helperText: formErrors.first_name })}
-          />
-        </Grid> */}
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="email">Email</CustomFormLabel>
-          <CustomTextField
-            name="email"
-            variant="outlined"
-            fullWidth
-            value={formData.email}
-            onChange={(e) => handleChange('email', e.target.value)}
-            {...(formErrors.email && { error: true, helperText: formErrors.email })}
-          />
-        </Grid>
+        {isSuperUser ? (
+          <Grid item xs={12} sm={12} lg={4}>
+            <CustomFormLabel htmlFor="email">E-mail</CustomFormLabel>
+            <CustomTextField
+              name="email"
+              variant="outlined"
+              fullWidth
+              value={formData.email}
+              onChange={(e) => handleChange('email', e.target.value)}
+              {...(formErrors.email && { error: true, helperText: formErrors.email })}
+            />
+          </Grid>
+        ) : (
+          <Grid item xs={12} sm={12} lg={4}>
+            <CustomFormLabel htmlFor="email">E-mail</CustomFormLabel>
+            <TextField fullWidth value={formData.email} disabled />
+          </Grid>
+        )}
         <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="email">Nome Completo</CustomFormLabel>
           <CustomTextField
@@ -93,20 +101,28 @@ export default function EditCustomer({ userId = null }) {
             {...(formErrors.complete_name && { error: true, helperText: formErrors.complete_name })}
           />
         </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="email">CPF</CustomFormLabel>
-          <CustomTextField
-            name="first_document"
-            variant="outlined"
-            fullWidth
-            value={formData.first_document}
-            onChange={(e) => handleChange('first_document', e.target.value)}
-            {...(formErrors.first_document && {
-              error: true,
-              helperText: formErrors.first_document,
-            })}
-          />
-        </Grid>
+        {isSuperUser ? (
+          <Grid item xs={12} sm={12} lg={4}>
+            <CustomFormLabel htmlFor="first_document">CPF</CustomFormLabel>
+            <CustomTextField
+              name="first_document"
+              variant="outlined"
+              fullWidth
+              value={formData.first_document}
+              onChange={(e) => handleChange('first_document', e.target.value)}
+              disabled={!isSuperUser}
+              {...(formErrors.first_document && {
+                error: true,
+                helperText: formErrors.first_document,
+              })}
+            />
+          </Grid>
+        ) : (
+          <Grid item xs={12} sm={12} lg={4}>
+            <CustomFormLabel htmlFor="first_document">CPF</CustomFormLabel>
+            <TextField fullWidth value={formatDocument(formData.first_document)} disabled />
+          </Grid>
+        )}
         <Grid item xs={12} sm={12} lg={4}>
           <FormSelect
             label="Gênero"
@@ -134,7 +150,6 @@ export default function EditCustomer({ userId = null }) {
             {...(formErrors.birth_date && { error: true, helperText: formErrors.birth_date })}
           />
         </Grid>
-
         <Grid item xs={12} sm={12} lg={12}>
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             <Button

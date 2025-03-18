@@ -27,7 +27,7 @@ const requestConcessionaireService = {
     }
   },
 
-  getAllByProject: async ({ page = 1, limit = 10, projectId , ...filters} = {}) => {
+  getAllByProject: async ({ page = 1, limit = 10, projectId, ...filters } = {}) => {
     const params = { page, limit, ...filters };
     if (projectId) {
       params.project = projectId;

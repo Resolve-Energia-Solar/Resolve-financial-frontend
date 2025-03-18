@@ -1,15 +1,19 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useParams } from 'next/navigation';
+
 import {
   Grid,
   RadioGroup,
   FormControlLabel,
   Radio,
-  Button,
-  Stack,
   Alert,
+  Stack,
+  Button,
 } from '@mui/material';
-import { useParams } from 'next/navigation';
+
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import AutoCompleteDepartament from '../../../comercial/sale/components/auto-complete/Auto-Input-Departament';
@@ -17,11 +21,13 @@ import AutoCompleteBranch from '../../../comercial/sale/components/auto-complete
 import AutoCompleteRole from '../../../comercial/sale/components/auto-complete/Auto-Input-Role';
 import RelatedBranchesSelect from '@/app/components/forms/RelatedBranches';
 import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/Auto-Input-User';
+
 import userService from '@/services/userService';
 import employeeService from '@/services/employeeService';
 
 function EmployeeForm({ employee, onChange, errors }) {
-  // Removemos o campo "user" do estado, pois não é necessário
+  const loggedUser = useSelector(state => state.user?.user);
+  const isSuperUser = loggedUser?.is_superuser;
   const [formData, setFormData] = useState({
     contract_type: employee?.contract_type || '',
     hire_date: employee?.hire_date || '',
@@ -47,6 +53,8 @@ function EmployeeForm({ employee, onChange, errors }) {
   }, [employee]);
 
   const handleChange = (field, value) => {
+    // Permite alteração somente se for superusuário
+    if (!isSuperUser) return;
     setFormData(prev => {
       const newData = { ...prev, [field]: value };
       onChange(newData);
@@ -64,8 +72,18 @@ function EmployeeForm({ employee, onChange, errors }) {
           value={formData.contract_type}
           onChange={e => handleChange('contract_type', e.target.value)}
         >
-          <FormControlLabel value="P" control={<Radio />} label="Pessoa Jurídica" />
-          <FormControlLabel value="C" control={<Radio />} label="Celetista" />
+          <FormControlLabel
+            disabled={!isSuperUser}
+            value="P"
+            control={<Radio disabled={!isSuperUser} />}
+            label="Pessoa Jurídica"
+          />
+          <FormControlLabel
+            disabled={!isSuperUser}
+            value="C"
+            control={<Radio disabled={!isSuperUser} />}
+            label="Celetista"
+          />
         </RadioGroup>
         {errors.contract_type && <Alert severity="error">{errors.contract_type[0]}</Alert>}
       </Grid>
@@ -77,18 +95,22 @@ function EmployeeForm({ employee, onChange, errors }) {
           onChange={newValue => handleChange('hire_date', newValue)}
           error={!!errors.hire_date}
           helperText={errors.hire_date ? errors.hire_date[0] : ''}
+          disabled={!isSuperUser}
         />
       </Grid>
-      <Grid item xs={12} sm={12} lg={4}>
-        <FormDate
-          label="Data de Demissão"
-          name="resignation_date"
-          value={formData.resignation_date}
-          onChange={newValue => handleChange('resignation_date', newValue)}
-          error={!!errors.resignation_date}
-          helperText={errors.resignation_date ? errors.resignation_date[0] : ''}
-        />
-      </Grid>
+      {isSuperUser && (
+        <Grid item xs={12} sm={12} lg={4}>
+          <FormDate
+            label="Data de Demissão"
+            name="resignation_date"
+            value={formData.resignation_date}
+            onChange={newValue => handleChange('resignation_date', newValue)}
+            error={!!errors.resignation_date}
+            helperText={errors.resignation_date ? errors.resignation_date[0] : ''}
+            disabled={!isSuperUser}
+          />
+        </Grid>
+      )}
 
       {/* Linha 2 */}
       <Grid item xs={12} sm={12} lg={4}>
@@ -99,6 +121,7 @@ function EmployeeForm({ employee, onChange, errors }) {
           fullWidth
           error={!!errors.user_manager}
           helperText={errors.user_manager ? errors.user_manager[0] : ''}
+          disabled={!isSuperUser}
         />
       </Grid>
       <Grid item xs={12} sm={12} lg={4}>
@@ -110,6 +133,7 @@ function EmployeeForm({ employee, onChange, errors }) {
           fullWidth
           error={!!errors.department_id}
           helperText={errors.department_id ? errors.department_id[0] : ''}
+          disabled={!isSuperUser}
         />
       </Grid>
       <Grid item xs={12} sm={12} lg={4}>
@@ -121,6 +145,7 @@ function EmployeeForm({ employee, onChange, errors }) {
           fullWidth
           error={!!errors.branch_id}
           helperText={errors.branch_id ? errors.branch_id[0] : ''}
+          disabled={!isSuperUser}
         />
       </Grid>
 
@@ -128,29 +153,38 @@ function EmployeeForm({ employee, onChange, errors }) {
       <Grid item xs={12} sm={12} lg={4}>
         <CustomFormLabel>Cargo</CustomFormLabel>
         <AutoCompleteRole
-          label="Função"
+          label="Cargo"
           value={formData.role_id}
           onChange={newValue => handleChange('role_id', newValue)}
           fullWidth
           error={!!errors.role_id}
           helperText={errors.role_id ? errors.role_id[0] : ''}
+          disabled={!isSuperUser}
         />
       </Grid>
-      <Grid item xs={12} sm={12} lg={8} margin={0}>
-        <CustomFormLabel>Unidades Relacionadas</CustomFormLabel>
-        <RelatedBranchesSelect
-          value={formData.related_branches}
-          onChange={newValue => handleChange('related_branches', newValue)}
-          error={!!errors.related_branches}
-          helperText={errors.related_branches ? errors.related_branches[0] : ''}
-        />
-      </Grid>
+      {isSuperUser && (
+        <Grid item xs={12} sm={12} lg={8}>
+          <CustomFormLabel>Unidades Relacionadas</CustomFormLabel>
+          <RelatedBranchesSelect
+            value={formData.related_branches}
+            onChange={newValue => handleChange('related_branches', newValue)}
+            error={!!errors.related_branches}
+            helperText={errors.related_branches ? errors.related_branches[0] : ''}
+            disabled={!isSuperUser}
+          />
+        </Grid>
+      )}
     </Grid>
   );
 }
 
+export { EmployeeForm };
+
+
 export default function EmployeeData() {
   const { id } = useParams();
+  const loggedUser = useSelector(state => state.user?.user);
+  const isSuperUser = loggedUser?.is_superuser;
   const [userData, setUserData] = useState(null);
   const [employeeData, setEmployeeData] = useState({
     contract_type: '',
@@ -232,7 +266,6 @@ export default function EmployeeData() {
     }
   };
 
-
   if (!userData) return <div>Carregando...</div>;
 
   return (
@@ -244,9 +277,11 @@ export default function EmployeeData() {
       )}
       <EmployeeForm employee={employeeData} onChange={handleEmployeeChange} errors={errors} />
       <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-        <Button variant="contained" color="primary" onClick={handleSave} disabled={loadingSave}>
-          {loadingSave ? 'Salvando...' : 'Salvar Funcionário'}
-        </Button>
+        {isSuperUser && (
+          <Button variant="contained" color="primary" onClick={handleSave} disabled={loadingSave}>
+            {loadingSave ? 'Salvando...' : 'Salvar Funcionário'}
+          </Button>
+        )}
       </Stack>
     </>
   );

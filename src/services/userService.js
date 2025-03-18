@@ -1,3 +1,4 @@
+import { indexOf } from 'lodash';
 import apiClient from './apiClient';
 
 const formatTime = (time) => {
@@ -21,6 +22,20 @@ const userService = {
     }
   },
 
+  index: async (params) => {
+
+    try {
+      const response = await apiClient.get(`/api/users/`, {
+        params
+      });
+      return response.data;
+
+    } catch (error) {
+      console.error(`Erro ao buscar usuários`, error);
+      throw error;
+    }
+  },
+
 
   update: async (id, body) => {
     try {
@@ -30,6 +45,27 @@ const userService = {
       console.error(`Erro ao buscar usuário com id ${id}:`, error);
       throw error;
     }
+  },
+
+  upInsert: async (id, body) => {
+
+    console.log('afahjsdfjagsd', id)
+
+    try {
+
+      if (id) {
+        const response = await apiClient.put(`/api/users/${id}/`, body);
+        return response.data;
+
+      } else {
+        const response = await apiClient.post(`/api/users/`, body);
+        return response.data;
+      }
+    } catch (error) {
+      console.error(`Erro:`, error);
+      throw error;
+    }
+
   },
 
 

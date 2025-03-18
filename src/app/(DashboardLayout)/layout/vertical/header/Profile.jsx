@@ -72,7 +72,7 @@ const Profile = () => {
         }}
       >
         <Typography variant="h5">Perfil</Typography>
-        <Link href={"/apps/user-profile/profile"}>
+        <Link href={`/apps/user-profile/${user?.username}`} passHref>
           <Stack direction="row" py={3} spacing={2} alignItems="center">
             <Avatar
               src={user?.profile_picture || '/images/profile/user-1.jpg'}

@@ -15,7 +15,6 @@ import {
   TableRow,
 } from '@mui/material';
 
-import { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
@@ -23,20 +22,20 @@ import { useSelector, useDispatch } from 'react-redux';
 import useProposal from '@/hooks/proposal/useProposal';
 import { PictureAsPdfTwoTone, TaskAlt, ThumbDownOffAlt } from '@mui/icons-material';
 import ProposalService from '@/services/proposalService';
+import saleService from '@/services/saleService';
 
-function LeadsViewProposal({ leadId = null, proposalId = null, onClose=null, onRefresh=null }) {
+function LeadsViewProposal({ leadId = null, proposalId = null, onClose = null, onRefresh = null }) {
   const router = useRouter();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const user = useSelector((state) => state.user);
-  const dispatch = useDispatch();
 
   const { proposalData } = useProposal(proposalId);
 
   const proposalStatus = {
-    "A": { label: "Aceita", color: "#E9F9E6" },
-    "R": { label: "Recusada", color: "#FEEFEE" },
-    "P": { label: "Pendente", color: "#FFF7E5" },
+    A: { label: 'Aceita', color: '#E9F9E6' },
+    R: { label: 'Recusada', color: '#FEEFEE' },
+    P: { label: 'Pendente', color: '#FFF7E5' },
   };
 
   const formatCurrency = (value) => {
@@ -45,14 +44,38 @@ function LeadsViewProposal({ leadId = null, proposalId = null, onClose=null, onR
 
   const handleUpdateProposal = async (status) => {
     try {
+      await saleService.createPreSale({
+        lead_id: leadId,
+        commercial_proposal_id: proposalId,
+      });
+  
       await ProposalService.updateProposalPartial(proposalId, { status });
-      enqueueSnackbar(`Proposta ${status === 'A' ? 'aceita' : 'recusada'} com sucesso!`, { variant: 'success' });
+  
+      enqueueSnackbar(`Proposta ${status === 'A' ? 'aceita' : 'recusada'} com sucesso!`, {
+        variant: 'success',
+      });
+  
       if (onRefresh) onRefresh();
       if (onClose) onClose();
     } catch (error) {
-      enqueueSnackbar('Erro ao atualizar a proposta.', { variant: 'error' });
+      const errors = error?.response?.data;
+  
+      if (typeof errors === 'object' && errors !== null) {
+        Object.entries(errors).forEach(([field, messages]) => {
+          if (Array.isArray(messages)) {
+            messages.forEach((message) => {
+              enqueueSnackbar(`${field}: ${message}`, { variant: 'error' });
+            });
+          } else {
+            enqueueSnackbar(`${field}: ${messages}`, { variant: 'error' });
+          }
+        });
+      } else {
+        enqueueSnackbar('Ocorreu um erro inesperado. Tente novamente.', { variant: 'error' });
+      }
     }
   };
+  
 
   return (
     <Grid container spacing={3}>
@@ -110,7 +133,12 @@ function LeadsViewProposal({ leadId = null, proposalId = null, onClose=null, onR
                     mr: 1,
                   }}
                 />
-                <Typography variant="h5" sx={{ marginLeft: 3, fontSize: '14px', fontWeight: '800' }}>Produtos da Proposta</Typography>
+                <Typography
+                  variant="h5"
+                  sx={{ marginLeft: 3, fontSize: '14px', fontWeight: '800' }}
+                >
+                  Produtos da Proposta
+                </Typography>
               </Box>
             </Grid>
 
@@ -139,16 +167,33 @@ function LeadsViewProposal({ leadId = null, proposalId = null, onClose=null, onR
                 </Table>
               </TableContainer>
             </Grid>
-
           </Grid>
         </Card>
       </Grid>
 
-      <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2, gap: 2 }}>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mt: 2,
+          gap: 2,
+        }}
+      >
         <Box>
-          <Button variant="contained" sx={{
-            backgroundColor: 'transparent', color: '#303030', p: 1.2, border: '1px solid #303030', fontSize: '14px',
-          }} startIcon={<PictureAsPdfTwoTone />}>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: 'transparent',
+              color: '#303030',
+              p: 1.2,
+              border: '1px solid #303030',
+              fontSize: '14px',
+            }}
+            startIcon={<PictureAsPdfTwoTone />}
+          >
             <Typography variant="body1">Visualizar PDF</Typography>
           </Button>
         </Box>
