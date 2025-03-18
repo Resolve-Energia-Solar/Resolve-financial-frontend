@@ -35,6 +35,7 @@ import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import EnergyConsumptionCalc from '../components/EnergyConsumption/CalculateEnergyConsumption';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
@@ -379,7 +380,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               }}
             >
               <Typography variant="body1">Visualizar PDF</Typography>
-              <VisibilityIcon sx={{ ml: 1 }} />
+              <PictureAsPdfIcon sx={{ ml: 1 }} />
             </Button>
 
             <Box sx={{ display: 'flex', gap: 2 }}>
