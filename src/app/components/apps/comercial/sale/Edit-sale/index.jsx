@@ -179,10 +179,12 @@ const EditSaleTabs = ({
       ) : error ? (
         <Typography color="error">{error}</Typography>
       ) : (
-        <Box sx={{ 
-          maxHeight: '80vh',
-          overflowY: 'auto',
-          }}>
+        <Box
+          sx={{
+            maxHeight: '80vh',
+            overflowY: 'auto',
+          }}
+        >
           <TabPanel value={value} index={0}>
             <Box
               sx={{
@@ -211,7 +213,7 @@ const EditSaleTabs = ({
           </TabPanel>
 
           <TabPanel value={value} index={2}>
-          <Box
+            <Box
               sx={{
                 bgcolor: 'background.paper',
                 display: 'flex',
@@ -219,201 +221,201 @@ const EditSaleTabs = ({
                 flexDirection: 'column',
               }}
             >
-            <TagList appLabel="resolve_crm" model="sale" objectId={id_sale} />
-            <Grid container spacing={1} sx={{ mt: 0 }}>
-              <Grid item xs={12} sm={12} lg={4}>
-                <CustomFormLabel htmlFor="name">Cliente</CustomFormLabel>
-                <AutoCompleteUser
-                  onChange={(id) => handleChange('customerId', id)}
-                  value={formData.customerId}
-                  {...(formErrors.customer_id && {
-                    error: true,
-                    helperText: formErrors.customer_id,
-                  })}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} lg={4}>
-                <CustomFormLabel htmlFor="branch">Franquia</CustomFormLabel>
-                <AutoCompleteBranch
-                  onChange={(id) => handleChange('branchId', id)}
-                  disabled={!hasPermission(['accounts.change_branch_field'])}
-                  value={formData.branchId}
-                  {...(formErrors.branch_id && { error: true, helperText: formErrors.branch_id })}
-                />
-              </Grid>
-              <HasPermission
-                permissions={['accounts.change_seller_field']}
-                userPermissions={userPermissions}
-              >
+              <TagList appLabel="resolve_crm" model="sale" objectId={id_sale} />
+              <Grid container spacing={1} sx={{ mt: 0 }}>
                 <Grid item xs={12} sm={12} lg={4}>
-                  <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
+                  <CustomFormLabel htmlFor="name">Cliente</CustomFormLabel>
                   <AutoCompleteUser
-                    onChange={(id) => handleChange('sellerId', id)}
-                    value={formData.sellerId}
-                    disabled={!hasPermission(['accounts.change_seller_field'])}
-                    {...(formErrors.seller_id && {
+                    onChange={(id) => handleChange('customerId', id)}
+                    value={formData.customerId}
+                    {...(formErrors.customer_id && {
                       error: true,
-                      helperText: formErrors.seller_id,
+                      helperText: formErrors.customer_id,
                     })}
                   />
                 </Grid>
-              </HasPermission>
-              <Grid item xs={12} sm={12} lg={4}>
-                <CustomFormLabel htmlFor="name">Supervisor de Vendas</CustomFormLabel>
-                <AutoCompleteUser
-                  onChange={(id) => handleChange('salesSupervisorId', id)}
-                  value={formData.salesSupervisorId}
-                  disabled={!hasPermission(['accounts.change_supervisor_field'])}
-                  {...(formErrors.sales_supervisor_id && {
-                    error: true,
-                    helperText: formErrors.sales_supervisor_id,
-                  })}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} lg={4}>
-                <CustomFormLabel htmlFor="name">Gerente de Vendas</CustomFormLabel>
-                <AutoCompleteUser
-                  onChange={(id) => handleChange('salesManagerId', id)}
-                  value={formData.salesManagerId}
-                  disabled={!hasPermission(['accounts.change_usermanager_field'])}
-                  {...(formErrors.sales_manager_id && {
-                    error: true,
-                    helperText: formErrors.sales_manager_id,
-                  })}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} lg={4}>
-                <CustomFormLabel htmlFor="branch">Campanha de Marketing</CustomFormLabel>
-                <AutoCompleteCampaign
-                  onChange={(id) => handleChange('marketingCampaignId', id)}
-                  value={formData.marketingCampaignId}
-                  disabled={!hasPermission(['resolve_crm.change_marketing_campaign_field'])}
-                  {...(formErrors.marketing_campaign_id && {
-                    error: true,
-                    helperText: formErrors.marketing_campaign_id,
-                  })}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} lg={4}>
-                <CustomFormLabel htmlFor="valor">Valor</CustomFormLabel>
-                <CustomTextField
-                  name="total_value"
-                  placeholder="R$ 20.000,00"
-                  variant="outlined"
-                  fullWidth
-                  value={formattedValue}
-                  disabled={!hasPermission(['accounts.change_total_value_field'])}
-                  onChange={(e) => handleValueChange(e, handleChange)}
-                  {...(formErrors.total_value && {
-                    error: true,
-                    helperText: formErrors.total_value,
-                  })}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} lg={4}>
-                <FormSelect
-                  label="Status da Venda"
-                  options={statusOptions}
-                  value={formData.status}
-                  onChange={(e) => {
-                    const newStatus = e.target.value;
-                    handleChange('status', newStatus);
-                    if (newStatus !== 'C' && newStatus !== 'D') {
-                      handleChange('cancellationReasonsIds', []);
-                    }
-                  }}
-                  disabled={!hasPermission(['accounts.change_status_sale_field'])}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} lg={4}>
-                <FormSelect
-                  label="Status Financeiro"
-                  options={financialOptions}
-                  value={formData.payment_status}
-                  onChange={(e) => handleChange('payment_status', e.target.value)}
-                  disabled={!hasPermission(['financial.change_status_financial'])}
-                />
-              </Grid>
-
-              <HasPermission
-                permissions={['resolve_crm.can_change_billing_date']}
-                userPermissions={userPermissions}
-              >
                 <Grid item xs={12} sm={12} lg={4}>
-                  <CustomFormLabel htmlFor="billing_date">Data de competência</CustomFormLabel>
-                  <CustomTextField
-                    type="date"
-                    name="billing_date"
-                    variant="outlined"
-                    fullWidth
-                    value={formData.billing_date}
-                    onChange={(e) => handleChange('billing_date', e.target.value)}
-                    disabled={!hasPermission(['resolve_crm.can_change_billing_date'])}
-                    {...(formErrors.billing_date && {
-                      error: true,
-                      helperText: formErrors.billing_date,
-                    })}
+                  <CustomFormLabel htmlFor="branch">Franquia</CustomFormLabel>
+                  <AutoCompleteBranch
+                    onChange={(id) => handleChange('branchId', id)}
+                    disabled={!hasPermission(['accounts.change_branch_field'])}
+                    value={formData.branchId}
+                    {...(formErrors.branch_id && { error: true, helperText: formErrors.branch_id })}
                   />
                 </Grid>
-              </HasPermission>
-
-              {(formData.status === 'D' || formData.status === 'C') &&
-                formData.isSale === false && (
-                  <Grid item xs={12} sm={12} lg={8}>
-                    <CustomFormLabel htmlFor="Motivo">
-                      Motivo do {formData.status === 'C' ? 'Cancelamento' : 'Distrato'}
-                    </CustomFormLabel>
-                    <AutoCompleteReasonMultiple
-                      onChange={(id) => handleChange('cancellationReasonsIds', id)}
-                      value={formData.cancellationReasonsIds}
-                      {...(formErrors.cancellationReasonsIds && {
+                <HasPermission
+                  permissions={['accounts.change_seller_field']}
+                  userPermissions={userPermissions}
+                >
+                  <Grid item xs={12} sm={12} lg={4}>
+                    <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
+                    <AutoCompleteUser
+                      onChange={(id) => handleChange('sellerId', id)}
+                      value={formData.sellerId}
+                      disabled={!hasPermission(['accounts.change_seller_field'])}
+                      {...(formErrors.seller_id && {
                         error: true,
-                        helperText: formErrors.cancellationReasonsIds,
+                        helperText: formErrors.seller_id,
                       })}
                     />
                   </Grid>
-                )}
-
-              <Grid item xs={12} sm={12} lg={4}>
-                <CustomFormLabel htmlFor="reference_table">Tabela de Referência</CustomFormLabel>
-                <Autocomplete
-                  freeSolo
-                  options={[
-                    '1º Feirão 2025 - Pará',
-                    '1º Feirão 2025 - Nordeste',
-                    '1º Feirão 2025 - Amapá',
-                    'Retenção 12%',
-                    'Retenção 15%',
-                    'Retenção 17%',
-                  ]}
-                  value={formData.reference_table || ''}
-                  onChange={(event, newValue) => handleChange('reference_table', newValue)}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Tabela de Referência" variant="outlined" />
-                  )}
-                  disabled={!hasPermission(['resolve_crm.can_change_billing_date'])}
-                />
-              </Grid>
-
-              <HasPermission
-                permissions={['accounts.change_pre_sale_field']}
-                userPermissions={userPermissions}
-              >
-                <Grid item xs={12} sm={12} lg={12}>
-                  <CustomFormLabel>Venda</CustomFormLabel>
-                  <FormControlLabel
-                    control={
-                      <CustomSwitch
-                        checked={formData.isSale}
-                        onChange={(e) => handleChange('isSale', e.target.checked)}
-                      />
-                    }
-                    label={formData.isSale ? 'Pré-Venda' : 'Venda'}
+                </HasPermission>
+                <Grid item xs={12} sm={12} lg={4}>
+                  <CustomFormLabel htmlFor="name">Supervisor de Vendas</CustomFormLabel>
+                  <AutoCompleteUser
+                    onChange={(id) => handleChange('salesSupervisorId', id)}
+                    value={formData.salesSupervisorId}
+                    disabled={!hasPermission(['accounts.change_supervisor_field'])}
+                    {...(formErrors.sales_supervisor_id && {
+                      error: true,
+                      helperText: formErrors.sales_supervisor_id,
+                    })}
                   />
                 </Grid>
-              </HasPermission>
-            </Grid>
-          </Box>
+                <Grid item xs={12} sm={12} lg={4}>
+                  <CustomFormLabel htmlFor="name">Gerente de Vendas</CustomFormLabel>
+                  <AutoCompleteUser
+                    onChange={(id) => handleChange('salesManagerId', id)}
+                    value={formData.salesManagerId}
+                    disabled={!hasPermission(['accounts.change_usermanager_field'])}
+                    {...(formErrors.sales_manager_id && {
+                      error: true,
+                      helperText: formErrors.sales_manager_id,
+                    })}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} lg={4}>
+                  <CustomFormLabel htmlFor="branch">Campanha de Marketing</CustomFormLabel>
+                  <AutoCompleteCampaign
+                    onChange={(id) => handleChange('marketingCampaignId', id)}
+                    value={formData.marketingCampaignId}
+                    disabled={!hasPermission(['resolve_crm.change_marketing_campaign_field'])}
+                    {...(formErrors.marketing_campaign_id && {
+                      error: true,
+                      helperText: formErrors.marketing_campaign_id,
+                    })}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} lg={4}>
+                  <CustomFormLabel htmlFor="valor">Valor</CustomFormLabel>
+                  <CustomTextField
+                    name="total_value"
+                    placeholder="R$ 20.000,00"
+                    variant="outlined"
+                    fullWidth
+                    value={formattedValue}
+                    disabled={!hasPermission(['accounts.change_total_value_field'])}
+                    onChange={(e) => handleValueChange(e, handleChange)}
+                    {...(formErrors.total_value && {
+                      error: true,
+                      helperText: formErrors.total_value,
+                    })}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} lg={4}>
+                  <FormSelect
+                    label="Status da Venda"
+                    options={statusOptions}
+                    value={formData.status}
+                    onChange={(e) => {
+                      const newStatus = e.target.value;
+                      handleChange('status', newStatus);
+                      if (newStatus !== 'C' && newStatus !== 'D') {
+                        handleChange('cancellationReasonsIds', []);
+                      }
+                    }}
+                    disabled={!hasPermission(['accounts.change_status_sale_field'])}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} lg={4}>
+                  <FormSelect
+                    label="Status Financeiro"
+                    options={financialOptions}
+                    value={formData.payment_status}
+                    onChange={(e) => handleChange('payment_status', e.target.value)}
+                    disabled={!hasPermission(['financial.change_status_financial'])}
+                  />
+                </Grid>
+
+                <HasPermission
+                  permissions={['resolve_crm.can_change_billing_date']}
+                  userPermissions={userPermissions}
+                >
+                  <Grid item xs={12} sm={12} lg={4}>
+                    <CustomFormLabel htmlFor="billing_date">Data de competência</CustomFormLabel>
+                    <CustomTextField
+                      type="date"
+                      name="billing_date"
+                      variant="outlined"
+                      fullWidth
+                      value={formData.billing_date}
+                      onChange={(e) => handleChange('billing_date', e.target.value)}
+                      disabled={!hasPermission(['resolve_crm.can_change_billing_date'])}
+                      {...(formErrors.billing_date && {
+                        error: true,
+                        helperText: formErrors.billing_date,
+                      })}
+                    />
+                  </Grid>
+                </HasPermission>
+
+                {(formData.status === 'D' || formData.status === 'C') &&
+                  formData.isSale === false && (
+                    <Grid item xs={12} sm={12} lg={8}>
+                      <CustomFormLabel htmlFor="Motivo">
+                        Motivo do {formData.status === 'C' ? 'Cancelamento' : 'Distrato'}
+                      </CustomFormLabel>
+                      <AutoCompleteReasonMultiple
+                        onChange={(id) => handleChange('cancellationReasonsIds', id)}
+                        value={formData.cancellationReasonsIds}
+                        {...(formErrors.cancellationReasonsIds && {
+                          error: true,
+                          helperText: formErrors.cancellationReasonsIds,
+                        })}
+                      />
+                    </Grid>
+                  )}
+
+                <Grid item xs={12} sm={12} lg={4}>
+                  <CustomFormLabel htmlFor="reference_table">Tabela de Referência</CustomFormLabel>
+                  <Autocomplete
+                    freeSolo
+                    options={[
+                      '1º Feirão 2025 - Pará',
+                      '1º Feirão 2025 - Nordeste',
+                      '1º Feirão 2025 - Amapá',
+                      'Retenção 12%',
+                      'Retenção 15%',
+                      'Retenção 17%',
+                    ]}
+                    value={formData.reference_table || ''}
+                    onChange={(event, newValue) => handleChange('reference_table', newValue)}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Tabela de Referência" variant="outlined" />
+                    )}
+                    disabled={!hasPermission(['resolve_crm.can_change_billing_date'])}
+                  />
+                </Grid>
+
+                <HasPermission
+                  permissions={['accounts.change_pre_sale_field']}
+                  userPermissions={userPermissions}
+                >
+                  <Grid item xs={12} sm={12} lg={12}>
+                    <CustomFormLabel>Venda</CustomFormLabel>
+                    <FormControlLabel
+                      control={
+                        <CustomSwitch
+                          checked={formData.isSale}
+                          onChange={(e) => handleChange('isSale', e.target.checked)}
+                        />
+                      }
+                      label={formData.isSale ? 'Pré-Venda' : 'Venda'}
+                    />
+                  </Grid>
+                </HasPermission>
+              </Grid>
+            </Box>
           </TabPanel>
 
           <TabPanel value={value} index={3}>

@@ -15,7 +15,7 @@ const SupplyChip = ({ status }) => {
       case 'T':
         return { label: 'Trifásico', color: 'success', icon: <CheckCircleIcon /> };
       default:
-        return { label: status };
+        return { label: 'Pendente', color: 'warning', icon: <HourglassEmptyIcon /> };
     }
   };
 
