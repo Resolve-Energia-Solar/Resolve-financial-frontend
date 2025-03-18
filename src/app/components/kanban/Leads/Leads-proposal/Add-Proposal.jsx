@@ -378,7 +378,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 px: 3,
               }}
             >
-              <Typography variant="body1">Pré-visualizar proposta</Typography>
+              <Typography variant="body1">Visualizar PDF</Typography>
               <VisibilityIcon sx={{ ml: 1 }} />
             </Button>
 
