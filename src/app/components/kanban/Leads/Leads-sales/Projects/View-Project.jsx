@@ -4,13 +4,15 @@
 import React, { useState } from 'react';
 import { Tabs, Tab, Box, useTheme, Grid, } from '@mui/material';
 import PropTypes from 'prop-types';
-import EditLeadPage from '../Leads/Edit-Lead';
-import EditCustomerPage from '../Leads-customer/Edit-Customer';
-import LeadsProposalListPage from '../Leads-proposal';
-import SalesListPage from '.';
-import LeadDocumentPage from '../Leads-documents';
-import LeadSchedulePage from '../Leads-schedule';
-import LeadInfoHeader from '../components/HeaderCard';
+import EditLeadPage from '../../Leads/Edit-Lead';
+import EditCustomerPage from '../../Leads-customer/Edit-Customer';
+import LeadsProposalListPage from '../../Leads-proposal';
+import SalesListPage from '..';
+import LeadDocumentPage from '../../Leads-documents';
+import LeadSchedulePage from '../../Leads-schedule';
+import LeadInfoHeader from '../../components/HeaderCard';
+import ApportionmentChecklist from './ApportionmentChecklist';
+import ClientDataPage from './ClientDataPage';
 
 
 function CustomTabPanel(props) {
@@ -46,7 +48,7 @@ function a11yProps(index) {
   };
 }
 
-function LeadsViewSale({ leadId }) {
+function LeadsViewProject({ leadId }) {
   const [tabValue, setTabValue] = useState(0);
 
   const handleChange = (event, newValue) => {
@@ -70,7 +72,12 @@ function LeadsViewSale({ leadId }) {
         TabIndicatorProps={{ style: { display: 'none' } }}
         sx={{ marginLeft: '25px', marginBottom: "-1px" }}
       >
-        {["Dados Cliente", "Checklist de Rateio", "Kits do Projeto", "Documentações"].map((label, index) => (
+        {[
+          // "Dados Cliente", 
+          "Checklist de Rateio", 
+          "Kits do Projeto", 
+          "Documentações"
+        ].map((label, index) => (
           <Tab
             key={index}
             label={label}
@@ -99,22 +106,22 @@ function LeadsViewSale({ leadId }) {
       </Tabs>
 
       {/* Dados Cliente */}
-      <CustomTabPanel value={tabValue} index={0}>
-        {/* <EditLeadPage leadId={leadId} /> */}
-      </CustomTabPanel>
+      {/* <CustomTabPanel value={tabValue} index={0}>
+        <ClientDataPage leadId={leadId} />
+      </CustomTabPanel> */}
 
       {/* Checklist de Rateio */}
-      <CustomTabPanel value={tabValue} index={1}>
-        <EditCustomerPage leadId={leadId} />
+      <CustomTabPanel value={tabValue} index={0}>
+        <ApportionmentChecklist leadId={leadId} />
       </CustomTabPanel>
 
       {/* Kits do Projeto */}
-      <CustomTabPanel value={tabValue} index={2}>
+      <CustomTabPanel value={tabValue} index={1}>
         {/* <LeadsProposalListPage leadId={leadId} /> */}
       </CustomTabPanel>
 
       {/* Documentações */}
-      <CustomTabPanel value={tabValue} index={3}>
+      <CustomTabPanel value={tabValue} index={2}>
         {/* <SalesListPage leadId={leadId} /> */}
       </CustomTabPanel>
 
@@ -122,8 +129,8 @@ function LeadsViewSale({ leadId }) {
   );
 }
 
-LeadsViewSale.propTypes = {
+LeadsViewProject.propTypes = {
   leadId: PropTypes.string.isRequired,
 };
 
-export default LeadsViewSale;
+export default LeadsViewProject;

@@ -26,7 +26,7 @@ import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard'
 import AddSalePage from './Add-Sale';
 import ExpandableTableComponent from '../components/ExpandableTableComponent';
 import ExpandableListComponent from '../components/ExpandableTableComponent';
-import LeadsViewSale from './View-Sale';
+import LeadsViewSale from './Projects/View-Project';
 
 
 
