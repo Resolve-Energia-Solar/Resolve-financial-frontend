@@ -379,7 +379,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 px: 3,
               }}
             >
-              <Typography variant="body1">Visualizar PDF</Typography>
+              <Typography sx={{ fontWeight: "400", fontSize: "14px"}} >Visualizar PDF</Typography>
               <PictureAsPdfIcon sx={{ ml: 1 }} />
             </Button>
 
