@@ -18,6 +18,7 @@ export default function ProposalLayout() {
         });
 
         pdf.addImage(dataImg, 'PNG', 0, 0, 100, 100);
+        pdf.save("proposta.pdf")
 
     }
 
