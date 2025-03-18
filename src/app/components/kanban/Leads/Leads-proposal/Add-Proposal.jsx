@@ -124,9 +124,10 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
         const ProposalLayout = ${ProposalLayout.toString()};
         ReactDOM.render(React.createElement(${ProposalLayout}), document.getElementById('proposal-layout'));
       `;
+      pdfWindow.document.body.appendChild(script);
     }
     
-    pdfWindow.document.body.appendChild(script);
+    
   }
 
   const [paymentMethods, setPaymentMethods] = useState([
