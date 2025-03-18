@@ -88,7 +88,6 @@ export default function Sicoob() {
           email: formData.email,
           first_document: formData.first_document,
           person_type: formData.person_type,
-          addresses: [320],
           user_types: [2],
         });
 
@@ -101,8 +100,6 @@ export default function Sicoob() {
           person_type: formDataManaging.person_type,
           birth_date: formDataManaging.birth_date,
           gender: formDataManaging.gender,
-          addresses: [320],
-          user_types: [2],
           user_types: [2],
         });
 
@@ -115,7 +112,6 @@ export default function Sicoob() {
           person_type: formData.person_type,
           gender: formData.gender,
           birth_date: formData.birth_date,
-          addresses: [320],
           user_types: [2],
         });
         setCustomer(userResponse);
@@ -127,6 +123,7 @@ export default function Sicoob() {
         customer: customer?.id,
         managing_partner: managingPartner?.id,
         requested_by: user?.id,
+        project_value: rFormData.project_value,
       });
       const recordId = recordResponse.id;
 

@@ -8,7 +8,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ptBR } from 'date-fns/locale';
 import { format, parseISO, isValid } from 'date-fns';
 
-const FormDate = ({ label, value, onChange, error, helperText, ...rest }) => {
+const FormDate = ({ label, value, onChange, error, helperText, disabled, ...rest }) => {
   return (
     <div>
       {label && <CustomFormLabel htmlFor="date">{label}</CustomFormLabel>}
@@ -24,6 +24,7 @@ const FormDate = ({ label, value, onChange, error, helperText, ...rest }) => {
             }
           }}
           format="dd/MM/yyyy"
+          disabled={disabled}
           slotProps={{
             textField: {
               fullWidth: true,

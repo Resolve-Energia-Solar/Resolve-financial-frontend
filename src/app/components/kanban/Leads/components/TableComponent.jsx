@@ -14,7 +14,6 @@ import {
     Box,
 } from "@mui/material";
 import TableSkeleton from '@/app/components/apps/comercial/sale/components/TableSkeleton';
-import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import { IconEye, IconPencil } from '@tabler/icons-react';
 
 const TableComponent = ({
@@ -49,10 +48,10 @@ const TableComponent = ({
                                 {column.headerName}
                             </TableCell>
                         ))}
-                        <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
+                        <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030', textAlign: 'center' }}>
                             Editar
                         </TableCell>
-                        <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
+                        <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030', textAlign: 'center' }}>
                             Ver
                         </TableCell>
                     </TableRow>
