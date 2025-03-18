@@ -409,7 +409,6 @@ const financialRecordList = () => {
                         onApply={(newFilters) => setFilters(newFilters)}
                     />
 
-
                     {loading ? (
                         <Typography>Carregando...</Typography>
                     ) : error ? (
@@ -470,6 +469,7 @@ const financialRecordList = () => {
                             </Table>
                         </TableContainer>
                     )}
+
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
@@ -480,6 +480,34 @@ const financialRecordList = () => {
                         onRowsPerPageChange={handleRowsPerPageChange}
                         labelRowsPerPage="Linhas por página"
                     />
+
+                    {/* Legenda explicativa */}
+                    <Box sx={{ mt: 3 }}>
+                        <Typography variant="body2" color="textSecondary" sx={{ fontSize: '0.75rem' }}>
+                            <strong>Legenda</strong>
+                        </Typography>
+                        <Table sx={{ mt: 2, tableLayout: 'fixed', fontSize: '0.75rem', width: 'min-content', textWrap: 'nowrap' }} aria-label="Legenda">
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell sx={{ padding: '4px' }}><PulsingBadge noPulse /></TableCell>
+                                    <TableCell sx={{ padding: '4px' }}>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Solicitação paga.</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ padding: '4px' }}><PulsingBadge /></TableCell>
+                                    <TableCell sx={{ padding: '4px' }}>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Solicitação paga hoje.</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ padding: '4px' }}><PulsingBadge color="#FF2C2C" /></TableCell>
+                                    <TableCell sx={{ padding: '4px' }}>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Solicitação com Erro</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ padding: '4px' }}><PulsingBadge color="#FFC008" /></TableCell>
+                                    <TableCell sx={{ padding: '4px' }}>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pendente de sua aprovação</TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </Box>
+
                 </CardContent>
             </BlankCard>
 
@@ -507,6 +535,7 @@ const financialRecordList = () => {
             />
         </PageContainer>
     );
+
 };
 
 export default financialRecordList;
