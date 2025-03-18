@@ -21,6 +21,9 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import AutoCompleteProject from '../../auto-complete/Auto-input-Project';
 import { useSelector } from 'react-redux';
 import HasPermission from '@/app/components/permissions/HasPermissions';
+import CreateAddressPage from '../../../address/Add-address';
+import addressService from '@/services/addressService';
+import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
 
 const ScheduleFormCreate = ({
   serviceId = null,
@@ -39,11 +42,14 @@ const ScheduleFormCreate = ({
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
   const [alertType, setAlertType] = React.useState('success');
+  const [selectedAddresses, setSelectedAddress] = React.useState();
 
   serviceId ? (formData.service_id = serviceId) : null;
   projectId ? (formData.project_id = projectId) : null;
   customerId ? (formData.customer_id = customerId) : null;
   products.length > 0 ? (formData.products_ids = products) : null;
+
+  console.log('customerId', customerId);
 
   const statusOptions = [
     { value: 'Pendente', label: 'Pendente' },
@@ -129,6 +135,21 @@ const ScheduleFormCreate = ({
     handleChange(field, newValue);
   };
 
+  const fetchAddress = async (search) => {
+    try {
+      const response = await addressService.getAddress({
+        q: search,
+        customer_id: customerId,
+        limit: 40,
+        fields: 'id,street,number,city,state',
+      });
+      return response.results;
+    } catch (error) {
+      console.error('Erro na busca de endereços:', error);
+      return [];
+    }
+  };
+
   return (
     <>
       <Grid container spacing={3}>
@@ -174,32 +195,48 @@ const ScheduleFormCreate = ({
           />
         </Grid>
 
-        {/* Hora do Agendamento */}
-        <Grid item xs={12} sm={12} lg={6}>
-          <FormSelect
-            options={timeOptions}
-            onChange={(e) => validateChange('schedule_start_time', e.target.value)}
-            disabled={!formData.schedule_date}
-            value={formData.schedule_start_time || ''}
-            {...(formErrors.schedule_start_time && {
-              error: true,
-              helperText: formErrors.schedule_start_time,
-            })}
-            label={'Hora do Agendamento'}
-          />
-        </Grid>
+          <Grid item xs={12} sm={12} lg={6}>
+            <FormSelect
+              options={timeOptions}
+              onChange={(e) => validateChange('schedule_start_time', e.target.value)}
+              disabled={!formData.schedule_date}
+              value={formData.schedule_start_time || ''}
+              {...(formErrors.schedule_start_time && {
+                error: true,
+                helperText: formErrors.schedule_start_time,
+              })}
+              label={'Hora do Agendamento'}
+            />
+          </Grid>
 
-        {/* Endereço */}
-        <Grid item xs={12} sm={12} lg={6}>
-          <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
-          <AutoCompleteAddress
-            onChange={(id) => handleChange('address_id', id)}
-            value={formData.address_id}
-            {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
-          />
-        </Grid>
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel htmlFor="name">
+              Endereço
+              <Tooltip title="Somente endereços vinculados ao usuário serão exibidos." arrow>
+                <HelpIcon sx={{ ml: 1, cursor: 'pointer' }} />
+              </Tooltip>
+            </CustomFormLabel>
+            <GenericAutocomplete
+              addTitle="Adicionar Endereço"
+              label="Endereço"
+              fetchOptions={fetchAddress}
+              AddComponent={CreateAddressPage}
+              getOptionLabel={(option) =>
+                `${option.street}, ${option.number} - ${option.city}, ${option.state}`
+              }
+              onChange={(selected) => {
+                setSelectedAddress(selected);
+                console.log('selected', selected);
+                handleChange('address_id', selected?.id);
+              }}
+              value={selectedAddresses}
+              {...(formErrors.address_id && {
+                error: true,
+                helperText: formErrors.address_id,
+              })}
+            />
+          </Grid>
 
-        {/* Status do Agendamento */}
         <HasPermission
           permissions={['field_services.change_status_schedule_field']}
           userPermissions={userPermissions}
