@@ -117,7 +117,9 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
       <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
     `);
     
-    const script = document.createElement("script");
+    pdfWindow.onload = () => {
+      pdfWindow.document.body.innerHTML = '<div id="proposal-layout"></div>';
+    }
     script.innerHTML = `
       const React = window.React;
       const ReactDOM = window.ReactDOM;
