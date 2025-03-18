@@ -48,10 +48,10 @@ const TableComponent = ({
                                 {column.headerName}
                             </TableCell>
                         ))}
-                        <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
+                        <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030', textAlign: 'center' }}>
                             Editar
                         </TableCell>
-                        <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
+                        <TableCell sx={{ fontWeight: 600, fontSize: '14px', color: '#303030', textAlign: 'center' }}>
                             Ver
                         </TableCell>
                     </TableRow>
