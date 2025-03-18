@@ -112,7 +112,11 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
   const handleOpenProposalPdf = () => {
     const pdfWindow = window.open('', "_blank", "width=800,height=600");
-    pdfWindow.document.body.innerHTML = '<div id="proposal-layout"></div>';
+    pdfWindow.document.write(`
+      <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+      <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    `);
+    
     const script = document.createElement("script");
     script.innerHTML = `
       const React = window.React;
