@@ -8,9 +8,7 @@ const useUserForm = (initialData, id) => {
     department_id: null,
     role_id: null,
     user_manager_id: null,
-    addresses: [],
     addresses_ids: [],
-    user_types: [2],
     user_types_ids: [2],
     groups_ids: [],
     last_login: null,
@@ -46,7 +44,6 @@ const useUserForm = (initialData, id) => {
         role_id: initialData.role?.id || null,
         user_manager_id: initialData.user_manager?.id || null,
         addresses: initialData.addresses?.map((item) => item.id) || [],
-        addresses_ids: initialData.addresses?.map((item) => item.id) || [],
         user_types: initialData.user_types?.map((item) => item.id) || [2],
         user_types_ids: initialData.user_types?.map((item) => item.id) || [2],
         groups_ids: initialData.groups?.map((item) => item.id) || [],
@@ -80,58 +77,113 @@ const useUserForm = (initialData, id) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  console.log('formData', formData);
-
   const handleSave = async () => {
     setLoading(true);
-    const dataToSend = {
-      branch_id: formData.branch_id,
-      department_id: formData.department_id,
-      role_id: formData.role_id,
-      user_manager_id: formData.user_manager_id,
-      addresses: formData.addresses_ids,
-      user_types: formData.user_types_ids,
-      addresses_ids: formData.addresses_ids,
-      user_types_ids: formData.user_types_ids,
-      groups_ids: formData.groups_ids,
-      last_login: formData.last_login ? formatDate(formData.last_login) : null,
-      is_superuser: formData.is_superuser,
-      username: formData.username,
-      first_name: formData.first_name,
-      is_staff: formData.is_staff,
-      is_active: formData.is_active,
-      date_joined: formData.date_joined ? formatDate(formData.date_joined) : formatDate(new Date()),
-      complete_name: formData.complete_name,
-      birth_date: formData.birth_date ? formatDate(formData.birth_date) : null,
-      gender: formData.gender,
-      first_document: formData.first_document,
-      email: formData.email,
-      contract_type: formData.contract_type,
-      hire_date: formData.hire_date ? formatDate(formData.hire_date) : null,
-      resignation_date: formData.resignation_date ? formatDate(formData.resignation_date) : null,
-      person_type: formData.person_type,
-      second_document: formData.second_document,
-      // Aqui garantimos que phone_numbers_ids seja enviado como array
-      phone_numbers_ids: Array.isArray(formData.phone_numbers_ids)
-        ? formData.phone_numbers_ids
-        : formData.phone_numbers_ids
+    let patchData;
+  
+    if (initialData && initialData.id) {
+      // Estamos atualizando: cria um objeto apenas com os campos alterados.
+      patchData = {};
+      const keysToCheck = [
+        'branch_id',
+        'department_id',
+        'role_id',
+        'user_manager_id',
+        'addresses',
+        'user_types',
+        'groups_ids',
+        'last_login',
+        'is_superuser',
+        'username',
+        'first_name',
+        'is_staff',
+        'is_active',
+        'date_joined',
+        'complete_name',
+        'birth_date',
+        'gender',
+        'first_document',
+        'email',
+        'contract_type',
+        'hire_date',
+        'resignation_date',
+        'person_type',
+        'second_document',
+        'phone_numbers_ids',
+      ];
+  
+      keysToCheck.forEach((key) => {
+        let newValue;
+        if (['last_login', 'date_joined', 'birth_date', 'hire_date', 'resignation_date'].includes(key)) {
+          newValue = formData[key] ? formatDate(formData[key]) : null;
+        } else {
+          newValue = formData[key];
+        }
+        
+        if (Array.isArray(newValue)) {
+          const initialArray = initialData[key] || [];
+          const arraysEqual =
+            newValue.length === initialArray.length &&
+            newValue.every((item, index) => item === initialArray[index]);
+          if (!arraysEqual) {
+            patchData[key] = newValue;
+          }
+        } else {
+          // Se o valor novo for diferente do valor inicial, adiciona ao patch
+          if (newValue !== initialData[key]) {
+            patchData[key] = newValue;
+          }
+        }
+      });
+    } else {
+      // Se não estiver em modo de edição, envia todos os dados
+      patchData = {
+        branch_id: formData.branch_id,
+        department_id: formData.department_id,
+        role_id: formData.role_id,
+        user_manager_id: formData.user_manager_id,
+        addresses: formData.addresses_ids,
+        user_types: formData.user_types_ids,
+        groups_ids: formData.groups_ids,
+        last_login: formData.last_login ? formatDate(formData.last_login) : null,
+        is_superuser: formData.is_superuser,
+        username: formData.username,
+        first_name: formData.first_name,
+        is_staff: formData.is_staff,
+        is_active: formData.is_active,
+        date_joined: formData.date_joined ? formatDate(formData.date_joined) : formatDate(new Date()),
+        complete_name: formData.complete_name,
+        birth_date: formData.birth_date ? formatDate(formData.birth_date) : null,
+        gender: formData.gender,
+        first_document: formData.first_document,
+        email: formData.email,
+        contract_type: formData.contract_type,
+        hire_date: formData.hire_date ? formatDate(formData.hire_date) : null,
+        resignation_date: formData.resignation_date ? formatDate(formData.resignation_date) : null,
+        person_type: formData.person_type,
+        second_document: formData.second_document,
+        phone_numbers_ids: Array.isArray(formData.phone_numbers_ids)
+          ? formData.phone_numbers_ids
+          : formData.phone_numbers_ids
           ? [formData.phone_numbers_ids]
           : [],
-    };
-
-    console.log('dataToSend', dataToSend);
+      };
+    }
+  
     try {
-      if (id) {
-        const request = await userService.updateUser(id, dataToSend);
+      let request;
+      if (id || (initialData && initialData.id)) {
+        const userId = id || initialData.id;
+        request = await userService.updateUser(userId, patchData);
         setDataReceived(request);
       } else {
-        const request = await userService.createUser(dataToSend);
+        request = await userService.createUser(patchData);
         setDataReceived(request);
       }
       setFormErrors({});
       setSuccess(true);
       setLoading(false);
-      return true;
+      return request;
     } catch (err) {
       setSuccess(false);
       setFormErrors(err.response?.data || {});

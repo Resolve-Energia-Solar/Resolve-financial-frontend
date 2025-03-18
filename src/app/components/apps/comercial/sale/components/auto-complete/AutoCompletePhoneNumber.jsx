@@ -10,11 +10,13 @@ import AddIcon from '@mui/icons-material/Add';
 import CreatePhonePage from '@/app/components/apps/phone/Add-phone';
 
 export default function AutoCompletePhoneNumber({
+  placeholder = 'Telefone',
   onChange,
   value,
   error,
   helperText,
-  disableSuggestions=false,
+  disabled = false,
+  disableSuggestions = false,
   ...props
 }) {
   const [open, setOpen] = useState(false);
@@ -117,13 +119,14 @@ export default function AutoCompletePhoneNumber({
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
-        isOptionEqualToValue={(option, value) => option.label === value.label}
+        isOptionEqualToValue={(option, val) => option.label === val.label}
         getOptionLabel={(option) => option.label || ''}
         options={options}
+        disabled={disabled}
         loading={loading}
         value={selectedPhone}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         {...props}
         onInputChange={(event, newInputValue) => {
           if (!disableSuggestions) {
@@ -133,9 +136,10 @@ export default function AutoCompletePhoneNumber({
         onChange={handleChange}
         renderInput={(params) => (
           <CustomTextField
+            {...params}
             error={error}
             helperText={helperText}
-            {...params}
+            placeholder={placeholder}
             size="small"
             variant="outlined"
             InputProps={{
