@@ -1,3 +1,4 @@
+import html2canvas from "html2canvas";
 import React from "react";
 
 export default function ProposalLayout() {
@@ -6,7 +7,9 @@ export default function ProposalLayout() {
         const printRef = React.useRef(null);
         const element = printRef.current;
 
+        const canvas = await html2canvas(element);
         
+
     }
 
     return (
