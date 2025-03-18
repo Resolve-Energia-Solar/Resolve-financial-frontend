@@ -1,24 +1,36 @@
 'use client';
 import {
   Grid,
-  Typography,
   Box,
-  Stack,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
+  Typography,
 } from '@mui/material';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import LeadAttachmentsAccordion from '../components/LeadAttachmentsAccordion';
 import documentTypeService from '@/services/documentTypeService';
 import { useEffect, useState } from 'react';
+import saleService from '@/services/saleService';
 
-function LeadDocumentPage({ leadId = null }) {
+function LeadDocumentPage({ leadId = null, customer = null }) {
   const [documentTypes, setDocumentTypes] = useState([]);
+  const [saleIds, setSaleIds] = useState([]);
 
   const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
-  const id_sale = 2070; // apenas um ID de exemplo
+  useEffect(() => {
+    const fetchSales = async () => {
+      try {
+        const response = await saleService.index({
+          customer__in: customer.id,
+          fields: 'id,str'
+        });
+        setSaleIds(response.results.results || []);
+      } catch (err) {
+        console.error('Erro ao buscar as vendas:', err);
+      }
+    };
+
+    fetchSales();
+  }, [customer]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,14 +59,22 @@ function LeadDocumentPage({ leadId = null }) {
         >
           <LeadInfoHeader leadId={leadId} />
 
-          <Box sx={{ mt: 2 }}>
-            <LeadAttachmentsAccordion
-              contentType={CONTEXT_TYPE_SALE_ID}
-              objectId={id_sale}
-              title="Anexos da Venda"
-              documentTypes={documentTypes}
-            />
-          </Box>
+          {saleIds.length > 0 ? (
+            saleIds.map((sale) => (
+              <Box key={sale.id} sx={{ mt: 2 }}>
+                <LeadAttachmentsAccordion
+                  contentType={CONTEXT_TYPE_SALE_ID}
+                  objectId={sale.id}
+                  title={`#${sale.str} - Anexos`}
+                  documentTypes={documentTypes}
+                />
+              </Box>
+            ))
+          ) : (
+            <Typography sx={{ mt: 2, textAlign: 'center' }}>
+              Nenhuma venda encontrada para este cliente.
+            </Typography>
+          )}
         </Box>
       </Grid>
     </Grid>

@@ -24,10 +24,11 @@ import TableComponent from '@/app/components/kanban/Leads/components/TableCompon
 import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import AddSalePage from './Add-Sale';
+import saleService from '@/services/saleService';
 
 
 
-const SalesListPage = ({ leadId = null }) => {
+const SalesListPage = ({ customer = null, lead }) => {
     const router = useRouter();
     const [data, setData] = useState([]);
     const [loadingSales, setLoadingSales] = useState(true);
@@ -36,6 +37,7 @@ const SalesListPage = ({ leadId = null }) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalRows, setTotalRows] = useState(0);
+
 
     const saleStatus = {
         "C": { label: "Canelada", color: "#FFEBEE" },     
@@ -47,39 +49,37 @@ const SalesListPage = ({ leadId = null }) => {
 
     const columns = [
         {
-            field: 'name',
-            headerName: 'Nome',
+            field: 'customer',
+            headerName: 'Nome do cliente',
             flex: 1,
             render: (row) =>
-                row?.products.length > 0
-                    ? row.products.map((product) => product.name).join(', ')
-                    : 'Nenhum produto vinculado',
+                `${row.complete_name || ''}`,
         },
         {
-            field: 'id',
-            headerName: 'Proposta',
+            field: 'contract_number',
+            headerName: 'Número de Contrato',
             flex: 1,
         },
         {
-            field: 'value',
+            field: 'total_value',
             headerName: 'Valor',
             flex: 1,
             render: (row) =>
                 new Intl.NumberFormat('pt-BR', {
                     style: 'currency',
                     currency: 'BRL',
-                }).format(row.value),
+                }).format(row.total_value),
         },
         {
-            field: 'responsible',
-            headerName: 'Responsável',
+            field: 'seller',
+            headerName: 'Vendedor',
             flex: 1,
             render: (row) =>
-                `${row.created_by?.first_name || ''} ${row.created_by?.last_name || ''}`,
+                `${row.complete_name || ''}`,
         },
         {
-            field: 'due_date',
-            headerName: 'Data',
+            field: 'signature_status',
+            headerName: 'Status da assinatura',
             flex: 1,
         },
         {
@@ -107,15 +107,11 @@ const SalesListPage = ({ leadId = null }) => {
         const fetchSales = async () => {
             setLoadingSales(true);
             try {
-                const response = await leadService.getLeadById(leadId, {
-                    params: {
-                        expand: 'sale',
-                        fields: 'id,sale',
-                        page: page + 1,
-                        limit: rowsPerPage,
-                    },
-                });
-                setData(response.sales || []);
+                const response = await saleService.index({
+                    customer__in: customer.id,
+                })
+                console.log('response: ',response)
+                setData(response.results.results || []);
                 setTotalRows(response.sale?.length || 0);
                 
             } catch (err) {
@@ -126,9 +122,9 @@ const SalesListPage = ({ leadId = null }) => {
         };
 
         fetchSales();
-    }, [leadId, refresh, page, rowsPerPage]);
+    }, [lead, refresh, page, rowsPerPage]);
 
-
+    console.log('data: ', data)
 
     return (
         <>
@@ -136,7 +132,7 @@ const SalesListPage = ({ leadId = null }) => {
                 <Grid item xs={12} sx={{ overflow: 'scroll' }}>
                     <Box sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
                         <Grid item spacing={2} alignItems="center" xs={12}>
-                            <LeadInfoHeader leadId={leadId} />
+                            <LeadInfoHeader leadId={lead?.id} />
                         </Grid>
                     </Box>
 
