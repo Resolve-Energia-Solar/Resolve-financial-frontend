@@ -82,7 +82,6 @@ const useUserForm = (initialData, id) => {
     let patchData;
   
     if (initialData && initialData.id) {
-      // Estamos atualizando: cria um objeto apenas com os campos alterados.
       patchData = {};
       const keysToCheck = [
         'branch_id',
@@ -129,14 +128,12 @@ const useUserForm = (initialData, id) => {
             patchData[key] = newValue;
           }
         } else {
-          // Se o valor novo for diferente do valor inicial, adiciona ao patch
           if (newValue !== initialData[key]) {
             patchData[key] = newValue;
           }
         }
       });
     } else {
-      // Se não estiver em modo de edição, envia todos os dados
       patchData = {
         branch_id: formData.branch_id,
         department_id: formData.department_id,
