@@ -1,16 +1,5 @@
 import {
-    TablePagination,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
     Typography,
-    Box,
-    Button,
-    Chip,
-    IconButton,
     Grid,
     Dialog,
     DialogContent,
@@ -27,6 +16,7 @@ import AddSalePage from './Add-Sale';
 import ExpandableTableComponent from '../components/ExpandableTableComponent';
 import ExpandableListComponent from '../components/ExpandableTableComponent';
 import LeadsViewSale from './Projects/View-Project';
+import LeadsViewProposal from '../Leads-proposal/View-Proposal';
 
 
 
