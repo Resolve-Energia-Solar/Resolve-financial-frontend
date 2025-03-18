@@ -12,9 +12,9 @@ export default function ProposalLayout() {
         const dataImg = canvas.toDataURL("image/png");
 
         const pdf = new jsPDF({
-            orientation: "landscape",
-            unit: "in",
-            format: [4, 2]
+            orientation: "portrait",
+            unit: "px",
+            format: ["a4"]
           });
 
     }
