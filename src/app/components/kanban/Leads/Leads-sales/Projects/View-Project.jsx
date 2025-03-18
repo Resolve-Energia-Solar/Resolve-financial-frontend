@@ -1,14 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Tabs, Tab, Box, useTheme } from '@mui/material';
+'use client';
+
+
+import React, { useState } from 'react';
+import { Tabs, Tab, Box, useTheme, Grid, } from '@mui/material';
 import PropTypes from 'prop-types';
-import EditLeadPage from './Edit-Lead';
-import LeadSchedulePage from '../Leads-schedule';
-import LeadDocumentPage from '../Leads-documents';
-import LeadsProposalListPage from '../Leads-proposal';
-import EditCustomerPage from '../Leads-customer/Edit-Customer';
-import SalesListPage from '../Leads-sales';
-import { useSnackbar } from 'notistack';
-import leadService from '@/services/leadService';
+import EditLeadPage from '../../Leads/Edit-Lead';
+import EditCustomerPage from '../../Leads-customer/Edit-Customer';
+import LeadsProposalListPage from '../../Leads-proposal';
+import SalesListPage from '..';
+import LeadDocumentPage from '../../Leads-documents';
+import LeadSchedulePage from '../../Leads-schedule';
+import LeadInfoHeader from '../../components/HeaderCard';
+import ApportionmentChecklist from './ApportionmentChecklist';
+import ClientDataPage from './ClientDataPage';
+
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -43,22 +48,8 @@ function a11yProps(index) {
   };
 }
 
-function EditLeadTabs({ leadId }) {
+function LeadsViewProject({ leadId }) {
   const [tabValue, setTabValue] = useState(0);
-  const [lead, setLead] = useState(null);
-  const { enqueueSnackbar } = useSnackbar();
-  
-  useEffect(() => {
-    const fetchLead = async () => {
-      try {
-        const data = await leadService.getLeadById(leadId);
-        setLead(data);
-      } catch (err) {
-        enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
-      }
-    };
-    fetchLead();
-  }, [leadId]);
 
   const handleChange = (event, newValue) => {
     setTabValue(newValue);
@@ -67,7 +58,13 @@ function EditLeadTabs({ leadId }) {
   const theme = useTheme();
 
   return (
-    <Box sx={{ overflow: 'hidden', height: '100%', p: 0, margin: 0 }}>
+    <Grid item xs={12} sx={{ overflow: 'scroll' }}>
+      <Box sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', mb: 2 }}>
+        <Grid item spacing={2} alignItems="center" xs={12}>
+          <LeadInfoHeader leadId={leadId} tabValue={20} />
+        </Grid>
+      </Box>
+
       <Tabs
         value={tabValue}
         onChange={handleChange}
@@ -76,13 +73,10 @@ function EditLeadTabs({ leadId }) {
         sx={{ marginLeft: '25px', marginBottom: "-1px" }}
       >
         {[
-          'Informações Lead',
-          'Dados Pessoais',
-          'Propostas',
-          'Vendas',
-          'Documentos',
-          'Projetos',
-          'Agendamentos',
+          // "Dados Cliente", 
+          "Checklist de Rateio", 
+          "Kits do Projeto", 
+          "Documentações"
         ].map((label, index) => (
           <Tab
             key={index}
@@ -104,51 +98,39 @@ function EditLeadTabs({ leadId }) {
               '&:not(.Mui-selected)': {
                 fontWeight: 600,
                 fontSize: '12px',
-                color: '#7E8388', 
+                color: '#7E8388',
               },
             }}
           />
         ))}
       </Tabs>
 
-      {/* infos do lead */}
+      {/* Dados Cliente */}
+      {/* <CustomTabPanel value={tabValue} index={0}>
+        <ClientDataPage leadId={leadId} />
+      </CustomTabPanel> */}
+
+      {/* Checklist de Rateio */}
       <CustomTabPanel value={tabValue} index={0}>
-        <EditLeadPage leadId={leadId} />
+        <ApportionmentChecklist leadId={leadId} />
       </CustomTabPanel>
 
-      {/* dados pessoais */}
+      {/* Kits do Projeto */}
       <CustomTabPanel value={tabValue} index={1}>
-        <EditCustomerPage leadId={leadId} />
+        {/* <LeadsProposalListPage leadId={leadId} /> */}
       </CustomTabPanel>
 
-      {/* propostas */}
+      {/* Documentações */}
       <CustomTabPanel value={tabValue} index={2}>
-        <LeadsProposalListPage leadId={leadId} />
+        {/* <SalesListPage leadId={leadId} /> */}
       </CustomTabPanel>
 
-      {/* vendas */}
-      <CustomTabPanel value={tabValue} index={3}>
-        <SalesListPage lead={lead} customer={lead?.customer} />
-      </CustomTabPanel>
-
-      {/* docs a ser retirado futuramente e integrado à page de projetos */}
-      <CustomTabPanel value={tabValue} index={4}>
-        <LeadDocumentPage leadId={leadId} customer={lead?.customer} />
-      </CustomTabPanel>
-
-      {/* contratos */}
-      <CustomTabPanel value={tabValue} index={5}></CustomTabPanel>
-
-      {/* agendamentos */}
-      <CustomTabPanel value={tabValue} index={6}>
-        <LeadSchedulePage leadId={leadId} />
-      </CustomTabPanel>
-    </Box>
+    </Grid>
   );
 }
 
-EditLeadTabs.propTypes = {
+LeadsViewProject.propTypes = {
   leadId: PropTypes.string.isRequired,
 };
 
-export default EditLeadTabs;
+export default LeadsViewProject;
