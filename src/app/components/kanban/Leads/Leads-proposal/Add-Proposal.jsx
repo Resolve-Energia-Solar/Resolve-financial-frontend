@@ -36,6 +36,7 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import EnergyConsumptionCalc from '../components/EnergyConsumption/CalculateEnergyConsumption';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import ProposalLayout from '../components/ProposalLayout';
 
 function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
@@ -107,6 +108,18 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
       enqueueSnackbar('Erro ao salvar proposta', { variant: 'error' });
       console.log('Form Errors:', formErrors);
     }
+  }
+
+  handleOpenProposalPdf = async () => {
+    const pdfWindow = window.open('', "_blank", "width=800,height=600");
+    pdfWindow.document.body.innerHTML = '<div id="proposal-layout"></div>';
+    const script = document.createElement("script");
+    script.innerHTML = `
+      const React = window.React;
+      const ReactDOM = window.ReactDOM;
+      ReactDOM.render(React.createElement(${ProposalLayout.name}), document.getElementById('proposal-layout'));
+    `;
+    pdfWindow.document.body.appendChild(script);
   }
 
   const [paymentMethods, setPaymentMethods] = useState([
@@ -375,6 +388,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 <PictureAsPdfIcon sx={{ color: "#1C1B1F", }} />
               }
               variant="outlined"
+              onClick={console.log("open proposal pdf as new page")}
               sx={{
                 borderColor: 'black',
                 color: '#303030',
