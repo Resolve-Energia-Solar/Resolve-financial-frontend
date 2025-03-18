@@ -1,14 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import useUserForm from '@/hooks/users/useUserForm';
-import {
-  Grid,
-  Button,
-  TextField,
-  Typography,
-  CircularProgress,
-  Alert,
-} from '@mui/material';
+import { Grid, Button, TextField, Typography, CircularProgress, Alert } from '@mui/material';
 import userService from '@/services/userService';
 import CreateAddressPage from '../../address/Add-address';
 import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
@@ -18,6 +11,8 @@ import FormDate from '@/app/components/forms/form-custom/FormDate';
 import AutoCompletePhoneNumber from '../../comercial/sale/components/auto-complete/AutoCompletePhoneNumber';
 import InputCpfCnpj from '@/app/components/shared/InputCpfCnpj';
 import addressService from '@/services/addressService';
+import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
+import SelectForm from '@/app/components/ui-components/select/GenericSelect';
 
 export default function AddUser({
   label,
@@ -36,18 +31,17 @@ export default function AddUser({
   const [userNotFound, setUserNotFound] = useState(false);
   const [userFound, setUserFound] = useState(false);
 
-    const resetUserFields = () => {
-      handleChange('complete_name', '');
-      handleChange('first_name', '');
-      handleChange('email', '');
-      handleChange('addresses_ids', []);
-      handleChange('phone_numbers_ids', []);
-      handleChange('gender', '');
-      handleChange('birth_date', null);
-      setSelectedAddresses([]);
-      setInitialData(null);
-    };
-
+  const resetUserFields = () => {
+    handleChange('complete_name', '');
+    handleChange('first_name', '');
+    handleChange('email', '');
+    handleChange('addresses_ids', []);
+    handleChange('phone_numbers_ids', []);
+    handleChange('gender', '');
+    handleChange('birth_date', null);
+    setSelectedAddresses([]);
+    setInitialData(null);
+  };
 
   useEffect(() => {
     if (id) {
@@ -228,11 +222,16 @@ export default function AddUser({
         >
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6} md={6}>
-              <InputCpfCnpj value={formData.first_document} onChange={handleCpfChange} onBlur={handleCpfBlur}/>
+              <InputCpfCnpj
+                value={formData.first_document}
+                onChange={handleCpfChange}
+                onBlur={handleCpfBlur}
+              />
             </Grid>
 
             <Grid item xs={12} sm={6} md={6}>
-              <TextField
+              <CustomTextField
+                label="Nome Completo"
                 placeholder="Nome completo"
                 name="complete_name"
                 value={formData.complete_name}
@@ -246,7 +245,8 @@ export default function AddUser({
             </Grid>
 
             <Grid item xs={12} sm={6} md={6}>
-              <TextField
+              <CustomTextField
+                label="Email"
                 placeholder="Email"
                 name="email"
                 type="email"
@@ -261,7 +261,7 @@ export default function AddUser({
             </Grid>
 
             <Grid item xs={12} sm={6} md={6}>
-              <FormSelect
+              <SelectForm
                 placeholder="Gênero"
                 options={gender_options}
                 value={formData.gender}

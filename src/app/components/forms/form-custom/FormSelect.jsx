@@ -20,7 +20,7 @@ const FormSelect = ({
   ...props
 }) => {
   return (
-    <FormControl fullWidth variant="outlined" error={error}>
+    <FormControl fullWidth error={error}>
         {label && <CustomFormLabel style={{ marginBottom: '8px', display: 'block' }}>{label}</CustomFormLabel>}
       <Select
         displayEmpty

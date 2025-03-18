@@ -137,6 +137,7 @@ export default function AutoCompletePhoneNumber({
         renderInput={(params) => (
           <CustomTextField
             {...params}
+            label={placeholder}
             error={error}
             helperText={helperText}
             placeholder={placeholder}

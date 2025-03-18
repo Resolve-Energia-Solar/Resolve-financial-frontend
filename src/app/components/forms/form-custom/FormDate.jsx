@@ -8,13 +8,14 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ptBR } from 'date-fns/locale';
 import { format, parseISO, isValid } from 'date-fns';
 
-const FormDate = ({ label, value, onChange, error, helperText, disabled, ...rest }) => {
+const FormDate = ({ label, value, onChange, error, helperText, disabled, placeholder, ...rest }) => {
   return (
     <div>
       {label && <CustomFormLabel htmlFor="date">{label}</CustomFormLabel>}
 
       <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
         <DatePicker
+          label={placeholder}
           value={value && isValid(parseISO(value)) ? parseISO(value) : null}
           onChange={(newValue) => {
             if (newValue && isValid(newValue)) {
