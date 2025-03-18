@@ -121,8 +121,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
       pdfWindow.document.body.innerHTML = '<div id="proposal-layout"></div>';
       const script = pdfWindow.document.createElement("script");
       script.innerHTML = `
-        const React = window.React;
-        const ReactDOM = window.ReactDOM;
+        const ProposalLayout = ${ProposalLayout.toString()};
         ReactDOM.render(React.createElement(${ProposalLayout.name}), document.getElementById('proposal-layout'));
       `;
     }
