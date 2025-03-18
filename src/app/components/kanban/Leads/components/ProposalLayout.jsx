@@ -1,9 +1,18 @@
+import React from "react";
+
 export default function ProposalLayout() {
+
+    const handleDownloadPdf = async () => {
+        const printRef = React.useRef(null);
+        const element = printRef.current;
+
+        
+    }
 
     return (
         <div className="min-h-screen bg-gray-100 p-8 flex flex-col items-center">
           <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-2xl">
-            
+
             <header className="mt-6 flex justify-center">
               <button
                 onClick={handleDownloadPdf}
