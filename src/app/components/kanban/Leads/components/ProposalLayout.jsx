@@ -1,4 +1,5 @@
 import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import React from "react";
 
 export default function ProposalLayout() {
@@ -9,6 +10,12 @@ export default function ProposalLayout() {
 
         const canvas = await html2canvas(element);
         const dataImg = canvas.toDataURL("image/png");
+
+        const pdf = new jsPDF({
+            orientation: "landscape",
+            unit: "in",
+            format: [4, 2]
+          });
 
     }
 
