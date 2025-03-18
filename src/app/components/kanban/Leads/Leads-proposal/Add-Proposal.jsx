@@ -371,12 +371,14 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             }}
           >
             <Button
-              startIcon={<PictureAsPdfIcon />}
+              startIcon={
+                <PictureAsPdfIcon sx={{ color: "#1C1B1F", }} />
+              }
               variant="outlined"
               sx={{
                 borderColor: 'black',
                 color: '#303030',
-                '&:hover': { backgroundColor: '#333', borderColor: 'black', },
+                '&:hover': { backgroundColor: '#333', borderColor: 'black', '& .MuiSvgIcon-root': { color: "white"} },
                 px: 3,
               }}
             >
