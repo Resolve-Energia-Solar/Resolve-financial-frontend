@@ -374,7 +374,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               sx={{
                 borderColor: 'black',
                 color: '#303030',
-                '&:hover': { backgroundColor: '#333' },
+                '&:hover': { backgroundColor: '#333', borderColor: 'black', },
                 px: 3,
               }}
             >
