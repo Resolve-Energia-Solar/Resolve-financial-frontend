@@ -125,7 +125,7 @@ function EditLeadTabs({ leadId }) {
 
       {/* docs a ser retirado futuramente e integrado à page de projetos */}
       <CustomTabPanel value={tabValue} index={4}>
-        <LeadDocumentPage leadId={leadId} />
+        <LeadDocumentPage leadId={leadId} customer={lead?.customer} />
       </CustomTabPanel>
 
       {/* contratos */}
