@@ -27,9 +27,9 @@ const TableHeader = ({
     };
 
     return (
-        <Grid container xs={12} sx={{ display: 'flex', flexDirection: "row", justifyContent: 'flex-end', width: '100%', alignItems: 'center', p: 2 }}>
+        <Grid container xs={12} sx={{ display: 'flex', flexDirection: "row", justifyContent: 'flex-start', width: '100%', alignItems: 'center', p: 2 }}>
             {title && (
-                <Grid item xs={5}>
+                <Grid item xs={5} sx={{ display: "flex", justifyContent: "flex-start", width: "100%"}}>
                     <Typography sx={{ fontSize: '16px', color: "#092C4C" }}>
                         <span style={{ fontWeight: 'bold' }}>{title}: </span> {totalItems} {objNameNumberReference}
                     </Typography>
