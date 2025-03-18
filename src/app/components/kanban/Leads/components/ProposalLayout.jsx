@@ -15,7 +15,9 @@ export default function ProposalLayout() {
             orientation: "portrait",
             unit: "px",
             format: ["a4"]
-          });
+        });
+
+        pdf.addImage(dataImg, 'PNG', 0, 0, 100, 100);
 
     }
 
