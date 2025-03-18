@@ -2,18 +2,8 @@
 import {
   Grid,
   Typography,
-  Chip,
-  Divider,
-  Box,
-  Rating,
-  useTheme,
-  IconButton,
-  Card,
-  MenuItem,
   InputAdornment,
   TextField,
-  Checkbox,
-  Radio,
   Button,
   CircularProgress,
 } from '@mui/material';
@@ -76,6 +66,7 @@ function EditCustomerPage({ leadId = null }) {
         : (formData.first_document = lead?.first_document);
     formData.email ? (formData.email = formData.email) : (formData.email = lead?.contact_email);
   }
+  formData.user_types = lead?.user_types;
 
   formData.phone_numbers_ids = [];
 
@@ -86,6 +77,7 @@ function EditCustomerPage({ leadId = null }) {
       enqueueSnackbar('Cliente salvo com sucesso', { variant: 'success' });
     }
   };
+
 
   const associateCustomerToLead = async (leadId, customerId) => {
     try {
