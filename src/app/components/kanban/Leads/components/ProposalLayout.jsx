@@ -8,7 +8,7 @@ export default function ProposalLayout() {
         const element = printRef.current;
 
         const canvas = await html2canvas(element);
-        
+        const dataImg = canvas.toDataURL("image/png");
 
     }
 
