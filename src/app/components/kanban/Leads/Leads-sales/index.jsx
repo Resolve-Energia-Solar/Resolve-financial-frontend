@@ -128,11 +128,15 @@ const SalesListPage = ({ customer = null, lead }) => {
         fetchSales();
     }, [lead, refresh, page, rowsPerPage]);
 
-    console.log('data: ', data)
-
     return (
         <>
             <Grid container spacing={0} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", p: 3 }} >
+               
+            <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12}>
+              <LeadInfoHeader leadId={lead?.id} />
+            </Grid>
+          </Grid>
                 <Grid item xs={12} sx={{ overflow: 'scroll' }}>
 
                     <Grid item xs={12} sx={{
