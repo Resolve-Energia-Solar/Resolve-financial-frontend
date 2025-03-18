@@ -119,12 +119,14 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     
     pdfWindow.onload = () => {
       pdfWindow.document.body.innerHTML = '<div id="proposal-layout"></div>';
+      const script = pdfWindow.document.createElement("script");
+      script.innerHTML = `
+        const React = window.React;
+        const ReactDOM = window.ReactDOM;
+        ReactDOM.render(React.createElement(${ProposalLayout.name}), document.getElementById('proposal-layout'));
+      `;
     }
-    script.innerHTML = `
-      const React = window.React;
-      const ReactDOM = window.ReactDOM;
-      ReactDOM.render(React.createElement(${ProposalLayout.name}), document.getElementById('proposal-layout'));
-    `;
+    
     pdfWindow.document.body.appendChild(script);
   }
 
