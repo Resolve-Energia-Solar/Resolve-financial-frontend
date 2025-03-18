@@ -371,6 +371,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             }}
           >
             <Button
+              startIcon={<PictureAsPdfIcon />}
               variant="outlined"
               sx={{
                 borderColor: 'black',
@@ -380,7 +381,6 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               }}
             >
               <Typography sx={{ fontWeight: "400", fontSize: "14px"}} >Visualizar PDF</Typography>
-              <PictureAsPdfIcon sx={{ ml: 1 }} />
             </Button>
 
             <Box sx={{ display: 'flex', gap: 2 }}>
