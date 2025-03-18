@@ -372,7 +372,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             <Button
               variant="outlined"
               sx={{
-                // backgroundColor: 'black',
+                borderColor: 'black',
                 color: '#303030',
                 '&:hover': { backgroundColor: '#333' },
                 px: 3,
