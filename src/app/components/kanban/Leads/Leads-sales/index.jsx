@@ -26,7 +26,7 @@ import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard'
 import AddSalePage from './Add-Sale';
 import ExpandableTableComponent from '../components/ExpandableTableComponent';
 import ExpandableListComponent from '../components/ExpandableTableComponent';
-import LeadsViewProposal from '../Leads-proposal/View-Proposal';
+import LeadsViewSale from './View-Sale';
 
 
 
@@ -220,6 +220,11 @@ const SalesListPage = ({ customer = null, lead }) => {
                                 onClose={() => setOpenDetailSale(false)}
                                 maxWidth="lg"
                                 fullWidth
+                                PaperProps={{
+                                    sx: {
+                                        borderRadius: "20px",
+                                    },
+                                }}
                             >
                                 <DialogContent>
                                     <LeadsViewProposal
