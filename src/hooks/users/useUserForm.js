@@ -121,17 +121,18 @@ const useUserForm = (initialData, id) => {
 
     console.log('dataToSend', dataToSend);
     try {
+      let request;
       if (id) {
-        const request = await userService.updateUser(id, dataToSend);
+        request = await userService.updateUser(id, dataToSend);
         setDataReceived(request);
       } else {
-        const request = await userService.createUser(dataToSend);
+        request = await userService.createUser(dataToSend);
         setDataReceived(request);
       }
       setFormErrors({});
       setSuccess(true);
       setLoading(false);
-      return true;
+      return request;
     } catch (err) {
       setSuccess(false);
       setFormErrors(err.response?.data || {});
