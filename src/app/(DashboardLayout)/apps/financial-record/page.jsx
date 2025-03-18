@@ -35,7 +35,7 @@ import AutorenewIcon from "@mui/icons-material/Autorenew";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
-import { formatDate } from "@/utils/dateUtils";
+import formatDate from "@/utils/formatDate";
 import financialRecordService from "@/services/financialRecordService";
 
 import { FilterContext } from "@/context/FilterContext";
@@ -87,7 +87,7 @@ const financialRecordList = () => {
                 const data = await financialRecordService.getFinancialRecordList({
                     limit: rowsPerPage,
                     page: page + 1,
-                    // fields: "protocol,client_supplier_name,value,due_date,status",
+                    // fields: "protocol,client_supplier_name,value,due_date,status,paid_at",
                     ...filters,
                 });
                 setFinancialRecordList(data.results);
@@ -430,7 +430,28 @@ const financialRecordList = () => {
                                 <TableBody>
                                     {financialRecordList.map((item) => (
                                         <TableRow key={item.id} hover onClick={() => handleRowClick(item)}>
-                                            <TableCell>{(item.responsible_status === "A" && item.payment_status === "P" && item.integration_code === null) && <PulsingBadge color="#FF2C2C" />}</TableCell>
+                                            <TableCell>
+                                                {(item.paid_at &&
+                                                    new Date(item.paid_at).getFullYear() === new Date().getFullYear() &&
+                                                    new Date(item.paid_at).getMonth() === new Date().getMonth() &&
+                                                    new Date(item.paid_at).getDate() === new Date().getDate()
+                                                ) ? (
+                                                    <PulsingBadge />
+                                                ) : (
+                                                    <>
+                                                        {(item.paid_at && new Date() - new Date(item.paid_at) > 86400000) ? (
+                                                            <PulsingBadge noPulse />
+                                                        ) : (
+                                                            <>
+                                                                {(item.responsible_status === "A" && item.payment_status === "P" && item.integration_code === null) &&
+                                                                    <PulsingBadge color="#FF2C2C" />}
+                                                                {(item.responsible_status === "P" && item.payment_status !== "PG" && user.id === item.responsible.id) &&
+                                                                    <PulsingBadge color="#FFC008" />}
+                                                            </>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </TableCell>
                                             <TableCell>{item.protocol}</TableCell>
                                             <TableCell>{item.client_supplier_name}</TableCell>
                                             <TableCell>
