@@ -2,6 +2,7 @@
 import {
   Grid,
   Box,
+  Typography,
 } from '@mui/material';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import LeadAttachmentsAccordion from '../components/LeadAttachmentsAccordion';
@@ -58,16 +59,22 @@ function LeadDocumentPage({ leadId = null, customer = null }) {
         >
           <LeadInfoHeader leadId={leadId} />
 
-          {saleIds.map((sale) => (
-            <Box key={sale.id} sx={{ mt: 2 }}>
-              <LeadAttachmentsAccordion
-                contentType={CONTEXT_TYPE_SALE_ID}
-                objectId={sale.id}
-                title={`#${sale.str} - Anexos`}
-                documentTypes={documentTypes}
-              />
-            </Box>
-          ))}
+          {saleIds.length > 0 ? (
+            saleIds.map((sale) => (
+              <Box key={sale.id} sx={{ mt: 2 }}>
+                <LeadAttachmentsAccordion
+                  contentType={CONTEXT_TYPE_SALE_ID}
+                  objectId={sale.id}
+                  title={`#${sale.str} - Anexos`}
+                  documentTypes={documentTypes}
+                />
+              </Box>
+            ))
+          ) : (
+            <Typography sx={{ mt: 2, textAlign: 'center' }}>
+              Nenhuma venda encontrada para este cliente.
+            </Typography>
+          )}
         </Box>
       </Grid>
     </Grid>
