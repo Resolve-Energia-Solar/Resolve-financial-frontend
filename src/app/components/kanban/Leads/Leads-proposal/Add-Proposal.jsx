@@ -110,7 +110,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     }
   }
 
-  handleOpenProposalPdf = async () => {
+  const handleOpenProposalPdf = () => {
     const pdfWindow = window.open('', "_blank", "width=800,height=600");
     pdfWindow.document.body.innerHTML = '<div id="proposal-layout"></div>';
     const script = document.createElement("script");
