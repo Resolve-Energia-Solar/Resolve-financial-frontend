@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import CardContent from '@mui/material/CardContent';
@@ -31,8 +32,8 @@ const SocialIcons = [
   { name: 'Twitter', icon: <IconBrandTwitter size="18" color="#1C9CEA" /> },
 ];
 
-const FriendsCard = () => {
-  const currentUser = useSelector((state) => state.user?.user);
+const FriendsCard = ({ user }) => {
+  const currentUser = user;
   const [employees, setEmployees] = useState([]);
   const [employeesCount, setEmployeesCount] = useState([]);
   const [search, setSearch] = useState('');
@@ -46,7 +47,10 @@ const FriendsCard = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 100) {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 100
+      ) {
         if (hasMore && !loading) {
           setPage((prevPage) => prevPage + 1);
         }
@@ -62,11 +66,11 @@ const FriendsCard = () => {
       try {
         setLoading(true);
         const data = await employeeService.getEmployee({
-          filters: { department: currentUser.employee?.department?.id },
+          filters: { department: currentUser.employee?.department?.id, expand: 'user,department,role', fields: 'user.complete_name,user.profile_picture,user.username,role.name,department.name' },
           page: page,
           limit: 10,
         });
-        setEmployeesCount(data.count)
+        setEmployeesCount(data.count);
         setEmployees((prevEmployees) => [...prevEmployees, ...data.results]);
         setHasMore(data.next !== null);
         setLoading(false);
@@ -84,7 +88,7 @@ const FriendsCard = () => {
   return (
     <Grid container spacing={3}>
       <Grid item sm={12} lg={12}>
-        <Stack direction="row" alignItems={'center'} mt={2}>
+        <Stack direction="row" alignItems="center" mt={2}>
           <Box>
             <Typography variant="h3">
               Colegas &nbsp;
@@ -114,45 +118,57 @@ const FriendsCard = () => {
       </Grid>
       {filteredEmployees.map((profile) => (
         <Grid item sm={12} lg={4} key={profile.id}>
-          <BlankCard className="hoverCard" sx={{ height: '300px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <CardContent>
-              <Stack direction={'column'} gap={2} alignItems="center">
-                <Avatar
-                  alt={profile.user.complete_name}
-                  src={profile.user.profile_picture || '/images/default-avatar.png'}
-                  sx={{ width: '80px', height: '80px' }}
-                />
-                <Box textAlign={'center'}>
-                  <Typography variant="h5">{capitalizeWords(profile.user.complete_name)}</Typography>
-                  <Typography variant="caption">
-                    {profile.user.employee_data?.role || 'Cargo'}
-                  </Typography>
-                </Box>
-              </Stack>
-            </CardContent>
-            <Divider />
-            <Box
-              p={2}
-              py={1}
-              textAlign={'center'}
-              sx={{ backgroundColor: 'grey.100' }}
+          <Link href={`/apps/user-profile/${profile.user.username}`} style={{ textDecoration: 'none' }}>
+            <BlankCard
+              className="hoverCard"
+              sx={{
+                height: '300px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                cursor: 'pointer'
+              }}
             >
-              {SocialIcons.map((sicon) => (
-                <IconButton key={sicon.name}>{sicon.icon}</IconButton>
-              ))}
-            </Box>
-          </BlankCard>
+              <CardContent>
+                <Stack direction="column" gap={2} alignItems="center">
+                  <Avatar
+                    alt={profile.user.complete_name}
+                    src={profile.user.profile_picture || '/images/default-avatar.png'}
+                    sx={{ width: '80px', height: '80px' }}
+                  />
+                  <Box textAlign="center">
+                    <Typography variant="h5">
+                      {capitalizeWords(profile.user.complete_name)}
+                    </Typography>
+                    <Typography variant="caption">
+                      {profile.user.employee_data?.role || 'Cargo'}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </CardContent>
+              <Divider />
+              <Box p={2} py={1} textAlign="center" sx={{ backgroundColor: 'grey.100' }}>
+                {SocialIcons.map((sicon) => (
+                  <IconButton key={sicon.name}>{sicon.icon}</IconButton>
+                ))}
+              </Box>
+            </BlankCard>
+          </Link>
         </Grid>
       ))}
-      {loading && (
+      {loading &&
         Array.from(new Array(6)).map((_, index) => (
           <Grid item sm={12} lg={4} key={index}>
             <Skeleton variant="rectangular" width="100%" height={300} />
           </Grid>
-        ))
-      )}
+        ))}
       {!hasMore && !loading && (
-        <Typography variant="body2" color="textSecondary" align="center" sx={{ width: '100%' }}>
+        <Typography
+          variant="body2"
+          color="textSecondary"
+          align="center"
+          sx={{ width: '100%' }}
+        >
           Você chegou ao fim!
         </Typography>
       )}

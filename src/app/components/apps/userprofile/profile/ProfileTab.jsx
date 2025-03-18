@@ -3,58 +3,51 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import { IconHeart, IconPhoto, IconUserCircle } from '@tabler/icons-react';
-import { usePathname } from 'next/navigation';
+import { IconUserCircle } from '@tabler/icons-react';
+import { usePathname, useParams } from 'next/navigation';
 import Link from 'next/link';
 
 const ProfileTab = () => {
   const location = usePathname();
+  const { username } = useParams();
   const [value, setValue] = React.useState(location);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  const handleChange = (event, newValue) => setValue(newValue);
+
   const ProfileTabs = [
     {
       label: 'Perfil',
       icon: <IconUserCircle size="20" />,
-      to: '/apps/user-profile/profile',
+      to: `/apps/user-profile/${username}`,
     },
     {
       label: 'Colegas',
       icon: <IconUserCircle size="20" />,
-      to: '/apps/user-profile/friends',
-    },
-    {
-      label: 'Galeria',
-      icon: <IconPhoto size="20" />,
-      to: '/apps/user-profile/gallery',
-    },
+      to: `/apps/user-profile/${username}/friends`,
+    }
   ];
 
   return (
-    <Box mt={1} sx={{ mt: 1, backgroundColor: (theme) => theme.palette.grey[100] }}>
-      <Box justifyContent={'end'} display="flex" sx={{ maxWidth: { xs: 320, sm: '100%' } }}>
+    <Box mt={1} sx={{ backgroundColor: (theme) => theme.palette.grey[100] }}>
+      <Box display="flex" justifyContent="end" sx={{ maxWidth: { xs: 320, sm: '100%' } }}>
         <Tabs
           value={value}
           onChange={handleChange}
           variant="scrollable"
           allowScrollButtonsMobile
-          aria-label="scrollable prevent tabs example"
+          aria-label="Tabs do perfil"
         >
-          {ProfileTabs.map((tab) => {
-            return (
-              <Tab
-                iconPosition="start"
-                label={tab.label}
-                sx={{ minHeight: '50px' }}
-                icon={tab.icon}
-                component={Link}
-                href={tab.to}
-                value={tab.to}
-                key={tab.label}
-              />
-            );
-          })}
+          {ProfileTabs.map((tab) => (
+            <Tab
+              key={tab.label}
+              iconPosition="start"
+              label={tab.label}
+              icon={tab.icon}
+              component={Link}
+              href={tab.to}
+              value={tab.to}
+              sx={{ minHeight: '50px' }}
+            />
+          ))}
         </Tabs>
       </Box>
     </Box>

@@ -1,15 +1,9 @@
 import { uniqueId } from 'lodash';
 
 import {
-  IconBoxMultiple,
-  IconCalendar,
-  IconClockQuestion,
   IconCurrencyDollar,
   IconFileDescription,
-  IconStar,
   IconLayoutKanban,
-  IconChartLine,
-  IconBox,
   IconShoppingCart,
   IconUser,
   IconUsers,
@@ -18,13 +12,11 @@ import {
   IconUserScan,
   IconTools,
   IconHomeQuestion,
-  IconMailFast,
   IconUserDollar,
   IconPoint,
+  IconBuildingBank,
   IconUserPin,
 } from '@tabler/icons-react';
-import { permission } from 'process';
-import { id } from 'date-fns/locale';
 
 const Menuitems = [
   {
@@ -55,7 +47,7 @@ const Menuitems = [
         title: 'Ordem de Serviço',
         icon: IconPoint,
         href: '/apps/inspections/schedule',
-      }
+      },
     ],
     permissions: ['field_services.view_schedule'],
   },
@@ -65,6 +57,21 @@ const Menuitems = [
     icon: IconUser,
     href: '/apps/leads',
     permissions: ['resolve_crm.view_lead'],
+  },
+  {
+    id: uniqueId(),
+    title: 'Solic. Financiamento',
+    icon: IconBuildingBank,
+    href: '/apps/funding-request',
+
+    children: [
+      {
+        id: uniqueId(),
+        title: 'Sicoob',
+        icon: IconPoint,
+        href: '/apps/funding-request/sicoob',
+      },
+    ],
   },
   {
     id: uniqueId(),
@@ -85,14 +92,14 @@ const Menuitems = [
         title: 'Pagamentos',
         icon: IconPoint,
         href: '/apps/invoice',
-        permissions: ['financial.view_payment']
+        permissions: ['financial.view_payment'],
       },
       {
         id: uniqueId(),
         title: 'Parcelas',
         icon: IconPoint,
         href: '/apps/invoice/installments',
-        permissions: ['financial.view_payment']
+        permissions: ['financial.view_payment'],
       },
       {
         id: uniqueId(),
@@ -107,7 +114,7 @@ const Menuitems = [
         icon: IconPoint,
         href: '/apps/financial-record/attachments',
         permissions: ['financial.view_financialrecord_attachment'],
-      }
+      },
     ],
   },
 

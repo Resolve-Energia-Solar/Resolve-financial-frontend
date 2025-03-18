@@ -8,7 +8,7 @@ const pulsate = keyframes`
   100% { transform: scale(1.2); opacity: 0; }
 `;
 
-const PulsingBadge = () => {
+const PulsingBadge = ({ color = '#4BB543' }) => {
   return (
     <Box
       sx={{
@@ -20,7 +20,7 @@ const PulsingBadge = () => {
     >
       <Box
         sx={{
-          border: '3px solid #FFC008',
+          border: `3px solid ${color}`,
           borderRadius: '30px',
           height: '25px',
           width: '25px',
@@ -33,7 +33,7 @@ const PulsingBadge = () => {
         sx={{
           width: '15px',
           height: '15px',
-          backgroundColor: '#FFC008',
+          backgroundColor: color,
           borderRadius: '50%',
           position: 'absolute',
         }}
