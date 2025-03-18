@@ -113,7 +113,7 @@ const GenericAutocomplete = ({
                 <>
                   {loading && <CircularProgress color="inherit" size={20} />}
                   {params.InputProps.endAdornment}
-                  {AddComponent && (
+                  {AddComponent && !props.disabled && (
                     <IconButton
                       onClick={() => setOpenAddModal(true)}
                       aria-label="Adicionar"

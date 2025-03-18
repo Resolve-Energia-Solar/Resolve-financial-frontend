@@ -6,7 +6,6 @@ import userService from '@/services/userService';
 import CreateAddressPage from '../../address/Add-address';
 import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
 import { useParams } from 'next/navigation';
-import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import AutoCompletePhoneNumber from '../../comercial/sale/components/auto-complete/AutoCompletePhoneNumber';
 import InputCpfCnpj from '@/app/components/shared/InputCpfCnpj';
@@ -303,6 +302,7 @@ export default function AddUser({
 
             <Grid item xs={12}>
               <GenericAutocomplete
+                addTitle="Adicionar Endereço"
                 label="Endereço"
                 fetchOptions={fetchAddress}
                 multiple
