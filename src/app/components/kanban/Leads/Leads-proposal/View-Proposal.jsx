@@ -44,10 +44,12 @@ function LeadsViewProposal({ leadId = null, proposalId = null, onClose = null, o
 
   const handleUpdateProposal = async (status) => {
     try {
-      await saleService.createPreSale({
-        lead_id: leadId,
-        commercial_proposal_id: proposalId,
-      });
+      if (status === 'A') {
+        await saleService.createPreSale({
+          lead_id: leadId,
+          commercial_proposal_id: proposalId,
+        });
+      }
 
       await ProposalService.updateProposalPartial(proposalId, { status });
 
