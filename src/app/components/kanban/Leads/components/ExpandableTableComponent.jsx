@@ -12,6 +12,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import TableComponent from './TableComponent';
 import DomainIcon from '@mui/icons-material/Domain';
 import SalesListSkeleton from './SalesListSkeleton';
+import projectService from '@/services/projectService';
 
 const ExpandableListComponent = ({
   columns,
@@ -26,9 +27,15 @@ const ExpandableListComponent = ({
   filters,
 }) => {
   const [expanded, setExpanded] = useState(false);
+  const [projects, setProjects] = useState([]);
 
-  const handleChange = (panel) => (_, isExpanded) => {
+  const handleChange = (panel) => async (_, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
+    if (isExpanded) {
+      await getProjects(panel);
+    } else {
+      setProjects([]);
+    }
   };
 
   const saleStatus = {
@@ -39,12 +46,32 @@ const ExpandableListComponent = ({
     E: { label: 'Em Andamento', color: '#E3F2FD' },
   };
 
-  // Render skeleton when loading
+  const columns_projects = [
+    {
+        field: 'product',
+        headerName: 'Nome do produto',
+        flex: 1,
+        render: (row) =>
+            `${row.product.name || ''}`,
+    },
+    {
+        field: 'project_number',
+        headerName: 'Número do Projeto',
+        flex: 1,
+        render: (row) =>
+            `${row.project_number || ''}`,
+    },
+    {
+        field: 'params',
+        headerName: 'Kwp',
+        flex: 1,
+    },
+];
+
   if (loading) {
     return <SalesListSkeleton itemsCount={3} />;
   }
 
-  // Render empty state if no data
   if (!data || data.length === 0) {
     return (
       <Box sx={{ borderRadius: '12px', mb: 1, p: 3 }}>
@@ -62,6 +89,20 @@ const ExpandableListComponent = ({
       </Box>
     );
   }
+
+  const getProjects = async (saleId) => {
+    try {
+      setProjects([]);
+      const response = await projectService.getProjects({
+        sale: saleId,
+        fields: 'id,product,project_number',
+      });
+      console.log('Projetos:', response);
+      setProjects(response.results.results);
+    } catch (err) {
+      console.error('Erro ao buscar projetos:', err);
+    }
+  };
 
   return (
     <Box sx={{ borderRadius: '12px', mb: 1, p: 3 }}>
@@ -136,10 +177,10 @@ const ExpandableListComponent = ({
           </AccordionSummary>
 
           <AccordionDetails>
-            {sale.projects && sale.projects.length > 0 ? (
+            {projects.length > 0 ? (
               <TableComponent
-                columns={columns}
-                data={sale.projects}
+                columns={columns_projects}
+                data={projects} // Usa os projetos carregados dinamicamente
                 totalRows={totalRows}
                 loading={false}
                 page={0}
@@ -159,7 +200,9 @@ const ExpandableListComponent = ({
                     mb: 3,
                   }}
                 >
-                  Nenhum projeto associado a esta venda.
+                  {expanded === sale.id
+                    ? 'Carregando projetos...'
+                    : 'Nenhum projeto associado a esta venda.'}
                 </Typography>
               </Grid>
             )}

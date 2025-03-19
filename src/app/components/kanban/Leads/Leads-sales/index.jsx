@@ -14,11 +14,9 @@ import LeadsViewProposal from '../Leads-proposal/View-Proposal';
 import saleService from '@/services/saleService';
 
 const SalesListPage = ({ lead }) => {
-    const router = useRouter();
     const [data, setData] = useState([]);
     const [loadingSales, setLoadingSales] = useState(true);
     const [refresh, setRefresh] = useState(false);
-    const [error, setError] = useState(null);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalRows, setTotalRows] = useState(0);
@@ -36,16 +34,6 @@ const SalesListPage = ({ lead }) => {
             headerName: 'Número de Contrato',
             flex: 1,
         },
-        // {
-        //     field: 'value',
-        //     headerName: 'Valor',
-        //     flex: 1,
-        //     render: (row) =>
-        //         new Intl.NumberFormat('pt-BR', {
-        //             style: 'currency',
-        //             currency: 'BRL',
-        //         }).format(row.value),
-        // },
         {
             field: 'total_value',
             headerName: 'Valor',
@@ -68,17 +56,6 @@ const SalesListPage = ({ lead }) => {
             headerName: 'Status da assinatura',
             flex: 1,
         },
-        // {
-        //     field: 'status',
-        //     headerName: 'Status',
-        //     flex: 1,
-        //     render: (row) => (
-        //         <Chip
-        //             label={saleStatus[row.status]?.label || 'Desconhecido'}
-        //             sx={{ backgroundColor: saleStatus[row.status]?.color }}
-        //         />
-        //     ),
-        // },
     ];
 
     const [openAddSale, setOpenAddSale] = useState(false);
