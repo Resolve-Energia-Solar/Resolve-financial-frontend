@@ -32,6 +32,20 @@ const scheduleService = {
       throw error
     }
   },
+
+  getScheduleIspections: async (params = {}) => {
+    try {
+      const response = await apiClient.get(
+        `/api/schedule/?service=${SERVICE_INSPECTION_ID}`,
+        { params }
+      )
+      return response.data
+    } catch (error) {
+      console.error('Erro ao buscar agendamentos:', error)
+      throw error
+    }
+  },
+
   getAllSchedulesInspectionByCustomer: async (customerId, fields='*', params = {}) => {
     try {
       const response = await apiClient.get(

@@ -15,13 +15,13 @@ const CommercialSchedulesListing = () => {
           title: 'Home',
         },
         {
-          title: 'Vendas',
+          title: 'Vistorias',
         },
       ];
     
       return (
         <CommercialScheduleDataContextProvider>
-          <PageContainer title="Vendas" description="Lista de Vendas">
+          <PageContainer title="Vistorias" description="Lista de Vistorias">
             <Breadcrumb items={BCrumb} />
             <BlankCard>
               <CardContent>
