@@ -141,6 +141,9 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     //   pdfWindow.document.body.appendChild(script);
     // }
 
+    const queryParams = new URLSearchParams(formData).toString();
+    const url = `/proposal-layout?${queryParams}`;
+    window.open(url, "_blank", "width=800,height=600");
 
     
     
