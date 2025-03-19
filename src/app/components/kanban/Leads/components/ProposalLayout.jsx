@@ -4,8 +4,9 @@ import React from "react";
 
 export default function ProposalLayout({ formData }) {
 
+  const printRef = React.useRef(null);
+
     const handleDownloadPdf = async () => {
-        const printRef = React.useRef(null);
         const element = printRef.current;
 
         const canvas = await html2canvas(element);
@@ -14,7 +15,7 @@ export default function ProposalLayout({ formData }) {
         const pdf = new jsPDF({
             orientation: "portrait",
             unit: "px",
-            format: ["a4"]
+            format: "a4"
         });
 
         pdf.addImage(dataImg, 'PNG', 0, 0, 100, 100);
