@@ -80,7 +80,7 @@ function LeadDocumentPage({ leadId = null, customer = null }) {
                 <LeadAttachmentsAccordionSkeleton
                   key={index}
                   title={`#Venda ${index + 1} - Anexos`}
-                  itemsCount={4}
+                  itemsCount={2}
                 />
               ))}
             </Box>
