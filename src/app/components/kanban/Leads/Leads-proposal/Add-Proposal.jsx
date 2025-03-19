@@ -50,13 +50,20 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const [openEnergyConsumption, setOpenEnergyConsumption] = useState(false);
 
   const {
-    formData,
     handleChange,
     handleSave,
     formErrors,
     loading: formLoading,
     success,
   } = useProposalForm();
+
+  const [formData, setFormData] = useState({
+    amount: '',
+    seller_id: '',
+    proposal_validity: '',
+    payment: '',
+    description: '',
+  })
 
   const customProducts = useSelector(selectProductsByLead(leadId));
 
@@ -111,21 +118,23 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   }
 
   const handleOpenProposalPdf = () => {
-    const pdfWindow = window.open('', "_blank", "width=800,height=600");
-    pdfWindow.document.write(`
-      <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
-      <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
-    `);
+    // const pdfWindow = window.open('', "_blank", "width=800,height=600");
+    // pdfWindow.document.write(`
+    //   <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    //   <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    // `);
     
-    pdfWindow.onload = () => {
-      pdfWindow.document.body.innerHTML = '<div id="proposal-layout"></div>';
-      const script = pdfWindow.document.createElement("script");
-      script.innerHTML = `
-        const ProposalLayout = ${ProposalLayout.toString()};
-        ReactDOM.render(React.createElement(${ProposalLayout}), document.getElementById('proposal-layout'));
-      `;
-      pdfWindow.document.body.appendChild(script);
-    }
+    // pdfWindow.onload = () => {
+    //   pdfWindow.document.body.innerHTML = '<div id="proposal-layout"></div>';
+    //   const script = pdfWindow.document.createElement("script");
+    //   script.innerHTML = `
+    //     const ProposalLayout = ${ProposalLayout.toString()};
+    //     ReactDOM.render(React.createElement(${ProposalLayout}), document.getElementById('proposal-layout'));
+    //   `;
+    //   pdfWindow.document.body.appendChild(script);
+    // }
+
+
     
     
   }
