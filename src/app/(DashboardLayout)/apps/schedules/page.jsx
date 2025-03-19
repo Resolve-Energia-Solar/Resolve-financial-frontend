@@ -1,23 +1,11 @@
 'use client';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import {
-    Box,
-    CardContent,
-    Chip,
-    CircularProgress,
-    Paper,
-    Tab,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TablePagination,
-    TableRow,
-    Tabs,
-    Typography,
-} from '@mui/material';
+import { 
+    Box, FormControl, InputLabel, Select, MenuItem, Chip, CardContent, Typography, 
+    Table, TableCell, TableContainer, TableHead, TableRow, TableBody, TablePagination, 
+    Paper, CircularProgress 
+  } from '@mui/material';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
@@ -40,7 +28,7 @@ const ScheduleTable = () => {
     const [loading, setLoading] = useState(true);
     const [scheduleList, setScheduleList] = useState([]);
     const [services, setServices] = useState([]);
-    const [selectedService, setSelectedService] = useState(null);
+    const [selectedServices, setSelectedServices] = useState([]);
     const [page, setPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [totalRows, setTotalRows] = useState(0);
@@ -57,36 +45,39 @@ const ScheduleTable = () => {
     // Busca catálogo de serviços
     useEffect(() => {
         serviceCatalogService.getServicesCatalog({ fields: 'id,name' })
-            .then(data => {
-                const list = data.results || [];
-                setServices(list);
-                if (list.length > 0) setSelectedService(list[0].id);
-            })
-            .catch(err => console.error('Erro ao buscar serviços:', err));
-    }, []);
+          .then(data => {
+            const list = data.results || [];
+            setServices(list);
+            if (list.length > 0) {
+              // Seleciona todos por padrão
+              setSelectedServices(list.map(s => s.id));
+            }
+          })
+          .catch(err => console.error('Erro ao buscar serviços:', err));
+      }, []);
 
     // Busca agendamentos filtrando pelo serviço selecionado e retornando somente os campos necessários
     useEffect(() => {
-        if (!selectedService) return;
+        if (selectedServices.length === 0) return;
         setLoading(true);
-        const ordering = orderDirection === 'asc' ? order : `-${order}`;
         scheduleService.getSchedules({
-            page,
-            limit: rowsPerPage,
-            service: selectedService,
-            fields: 'id,created_at,customer.complete_name,status,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,address.street,address.number,address.neighborhood,address.city,address.state,observation',
-            ordering
+          page,
+          limit: rowsPerPage,
+          // Concatena os IDs dos serviços selecionados
+          service__in: selectedServices.join(','),
+          fields: 'id,created_at,customer.complete_name,status,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,address.street,address.number,address.neighborhood,address.city,address.state,observation',
+          ordering: orderDirection === 'asc' ? order : `-${order}`
         })
-            .then(data => {
-                setScheduleList(data.results);
-                setTotalRows(data.count);
-            })
-            .catch(err => {
-                console.error('Erro:', err);
-                setError('Erro ao buscar agendamentos');
-            })
-            .finally(() => setLoading(false));
-    }, [selectedService, page, rowsPerPage, order, orderDirection]);
+          .then(data => {
+            setScheduleList(data.results);
+            setTotalRows(data.count);
+          })
+          .catch(err => {
+            console.error('Erro:', err);
+            setError('Erro ao buscar agendamentos');
+          })
+          .finally(() => setLoading(false));
+      }, [selectedServices, page, rowsPerPage, order, orderDirection]);
 
     const handleSort = useCallback(
         (field) => {
@@ -114,20 +105,35 @@ const ScheduleTable = () => {
             <BlankCard>
                 <CardContent>
                     <Typography variant="h5" gutterBottom>Lista de Agendamentos</Typography>
-                    {/* Tabs para selecionar o serviço */}
-                    <Box sx={{ borderBottom: 1, borderColor: 'divider', marginBottom: 2 }}>
-                        <Tabs
-                            value={selectedService}
-                            onChange={(e, value) => { setSelectedService(value); setPage(1); }}
-                            variant="scrollable"
-                            scrollButtons="auto"
+                    {/* Select para selecionar múltiplos serviços */}
+                    <FormControl sx={{ minWidth: 300, marginBlock: 3 }}>
+                        <InputLabel id="services-select-label">Serviços</InputLabel>
+                        <Select
+                            labelId="services-select-label"
+                            id="services-select"
+                            multiple
+                            value={selectedServices}
+                            onChange={(e) => {
+                                setSelectedServices(e.target.value);
+                                setPage(1);
+                            }}
+                            renderValue={(selected) => (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value) => {
+                                        const service = services.find(s => s.id === value);
+                                        return <Chip key={value} label={service ? service.name : value} />;
+                                    })}
+                                </Box>
+                            )}
+                            label="Serviços"
                         >
                             {services.map(service => (
-                                <Tab key={service.id} value={service.id} label={service.name} />
+                                <MenuItem key={service.id} value={service.id}>
+                                    {service.name}
+                                </MenuItem>
                             ))}
-                        </Tabs>
-                    </Box>
-
+                        </Select>
+                    </FormControl>
                     {loading ? (
                         <TableSkeleton rows={rowsPerPage} columns={11} />
                     ) : error ? (
