@@ -48,6 +48,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const dispatch = useDispatch();
 
   const [openEnergyConsumption, setOpenEnergyConsumption] = useState(false);
+  const [openProposalLayout, setOpenProposalLayout] = useState(false);
 
   const {
     handleSave,
