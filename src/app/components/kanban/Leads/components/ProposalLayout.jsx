@@ -18,7 +18,12 @@ export default function ProposalLayout({ formData }) {
             format: "a4"
         });
 
-        pdf.addImage(dataImg, 'PNG', 0, 0, 100, 100);
+        const imgProperties = pdf.getImageProperties(dataImg);
+        const pdfWidth = pdf.internal.pageSize.getWidth;
+        const pdfHeight = ((imgProperties.height * pdfWidth) / imgProperties.width);
+      
+
+        pdf.addImage(dataImg, 'PNG', 0, 0, pdfWidth, pdfHeight);
         pdf.save("proposta.pdf")
 
     }
