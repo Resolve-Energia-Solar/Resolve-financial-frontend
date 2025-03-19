@@ -13,8 +13,6 @@ import ExpandableListComponent from '../components/ExpandableTableComponent';
 import LeadsViewProposal from '../Leads-proposal/View-Proposal';
 import saleService from '@/services/saleService';
 
-
-
 const SalesListPage = ({ lead }) => {
     const router = useRouter();
     const [data, setData] = useState([]);
@@ -24,15 +22,6 @@ const SalesListPage = ({ lead }) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalRows, setTotalRows] = useState(0);
-
-
-    const saleStatus = {
-        "C": { label: "Canelada", color: "#FFEBEE" },
-        "D": { label: "Destrato", color: "#FFCDD2" },
-        "F": { label: "Finalizada", color: "#E8F5E9" },
-        "P": { label: "Pendente", color: "#FFF8E1" },
-        "E": { label: "Em Andamento", color: "#E3F2FD" },
-    };
 
     const columns = [
         {
@@ -119,9 +108,10 @@ const SalesListPage = ({ lead }) => {
                 setLoadingSales(false);
             }
         };
-
-        fetchSales();
+        if (lead?.customer?.id)
+            fetchSales();
     }, [lead, refresh, page, rowsPerPage]);
+
 
     return (
         <>
