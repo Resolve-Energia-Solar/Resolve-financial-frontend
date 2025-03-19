@@ -2,7 +2,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import React from "react";
 
-export default function ProposalLayout() {
+export default function ProposalLayout({ formData }) {
 
     const handleDownloadPdf = async () => {
         const printRef = React.useRef(null);
