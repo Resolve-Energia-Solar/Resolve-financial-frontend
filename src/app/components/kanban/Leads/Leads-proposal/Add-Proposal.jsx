@@ -50,7 +50,6 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const [openEnergyConsumption, setOpenEnergyConsumption] = useState(false);
 
   const {
-    handleChange,
     handleSave,
     formErrors,
     loading: formLoading,
@@ -64,6 +63,14 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     payment: '',
     description: '',
   })
+
+  const handleChange = (field, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
+  };
+  
 
   const customProducts = useSelector(selectProductsByLead(leadId));
 
