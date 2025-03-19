@@ -11,7 +11,6 @@ import {
   TableHead,
   TableCell,
   TableBody,
-  Paper,
   TableRow,
 } from '@mui/material';
 
