@@ -128,7 +128,7 @@ function EditLeadTabs({ leadId }) {
 
       {/* vendas */}
       <CustomTabPanel value={tabValue} index={3}>
-        <SalesListPage lead={lead} customer={lead?.customer} />
+        <SalesListPage lead={lead} />
       </CustomTabPanel>
 
       {/* docs a ser retirado futuramente e integrado à page de projetos */}
