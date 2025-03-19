@@ -4,17 +4,11 @@ import {
   AccordionSummary,
   AccordionDetails,
   Typography,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
   Chip,
   Box,
   Grid,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { IconEye, IconPencil } from '@tabler/icons-react';
 import TableComponent from './TableComponent';
 import DomainIcon from '@mui/icons-material/Domain';
 
