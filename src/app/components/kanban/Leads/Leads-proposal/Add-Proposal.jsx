@@ -409,9 +409,8 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             </Button>
 
             <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>
+              <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal} endIcon={<DeleteOutlinedIcon />}>
                 <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
-                <DeleteOutlinedIcon />
               </Button>
 
               <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSaveForm} disabled={formLoading}
