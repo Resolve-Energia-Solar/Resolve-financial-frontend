@@ -1,16 +1,6 @@
 import {
-    TablePagination,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Typography,
     Box,
-    Button,
     Chip,
-    IconButton,
     Grid,
     Dialog,
     DialogContent,
@@ -22,7 +12,6 @@ import React, { useState, useEffect } from 'react';
 import leadService from '@/services/leadService';
 import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
 import TableComponent from '@/app/components/kanban/Leads/components/TableComponent'
-import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 // import LeadProposalPage from './Edit-Proposal';
 import LeadsViewProposal from './View-Proposal';
@@ -31,7 +20,6 @@ import EditProposalPage from './Edit-Proposal';
 
 
 const LeadsProposalListPage = ({ leadId = null }) => {
-    const router = useRouter();
     const [data, setData] = useState([]);
     const [loadingProposals, setLoadingProposals] = useState(true);
     const [refresh, setRefresh] = useState(false);

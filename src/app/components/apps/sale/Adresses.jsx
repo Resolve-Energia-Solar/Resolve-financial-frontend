@@ -6,12 +6,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Skeleton from '@mui/material/Skeleton';
-import userService from '@/services/userService';
 import {
   Box,
   Button,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
   IconButton,
@@ -21,15 +20,53 @@ import {
 import { AddBoxRounded, Edit } from '@mui/icons-material';
 import EditAddressPage from '../address/Edit-address';
 import CreateAddressPage from '../address/Add-address';
+import addressService from '@/services/addressService';
+import GenericAutocomplete from '../../auto-completes/GenericAutoComplete';
+import { useSnackbar } from 'notistack';
+import userService from '@/services/userService';
 
 export default function Addresses({ userId, data, onRefresh }) {
+  const { enqueueSnackbar } = useSnackbar();
   const [openModal, setOpenModal] = useState(false);
-
+  const [selectedAddresses, setSelectedAddresses] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
+
   const handleEditClick = (address) => {
-    setSelectedAddress(address); // Define o endereço selecionado
-    setOpenEditModal(true); // Abre o modal de edição
+    setSelectedAddress(address); 
+    setOpenEditModal(true);
+  };
+
+  const fetchAddress = async (search) => {
+    try {
+      const response = await addressService.getAddress({
+        q: search,
+        limit: 40,
+        fields: 'id,street,number,city,state',
+      });
+      return response.results;
+    } catch (error) {
+      console.error('Erro na busca de endereços:', error);
+      return [];
+    }
+  };
+
+  const handleAddAddressToUser = async () => {
+    if (selectedAddresses.length === 0) {
+      enqueueSnackbar('Selecione um endereço antes de adicionar.', { variant: 'warning' });
+      return;
+    }
+
+    try {
+      const addressIds = selectedAddresses.map((a) => a.id);
+      await userService.updateUser(userId, { addresses: addressIds });
+      enqueueSnackbar('Endereço adicionado com sucesso!', { variant: 'success' });
+      setOpenModal(false);
+      onRefresh();
+    } catch (error) {
+      enqueueSnackbar('Erro ao adicionar endereço.', { variant: 'error' });
+      console.error('Erro ao adicionar endereço:', error);
+    }
   };
 
   return (
@@ -53,20 +90,14 @@ export default function Addresses({ userId, data, onRefresh }) {
             {data.length > 0 ? (
               data.map((row) => (
                 <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                  <TableCell component="th" scope="row">
-                    {row.street}
-                  </TableCell>
+                  <TableCell component="th" scope="row">{row.street}</TableCell>
                   <TableCell align="left">{row.number}</TableCell>
                   <TableCell align="right">{row.neighborhood}</TableCell>
                   <TableCell align="right">{row.city}</TableCell>
                   <TableCell align="right">{row.zip_code}</TableCell>
                   <TableCell align="right">
                     <Tooltip title="Editar">
-                      <IconButton
-                        color="primary"
-                        size="small"
-                        onClick={() => handleEditClick(row.id)}
-                      >
+                      <IconButton color="primary" size="small" onClick={() => handleEditClick(row.id)}>
                         <Edit />
                       </IconButton>
                     </Tooltip>
@@ -75,9 +106,7 @@ export default function Addresses({ userId, data, onRefresh }) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} align="center">
-                  Nenhum endereço encontrado.data
-                </TableCell>
+                <TableCell colSpan={6} align="center">Nenhum endereço encontrado.</TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -95,19 +124,39 @@ export default function Addresses({ userId, data, onRefresh }) {
         </Button>
       </Box>
 
-      {/* Criar endereço */}
-      <Dialog open={openModal} onClose={() => setOpenModal(false)} maxWidth="lg">
+      {/* Modal de Adicionar Endereço */}
+      <Dialog
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        fullWidth
+        maxWidth="md"
+        scroll="paper"
+        sx={{ '& .MuiDialog-paper': { maxHeight: '80vh', mb:2 } }}
+      >
         <DialogTitle>Novo Endereço</DialogTitle>
         <DialogContent>
-          <CreateAddressPage
-            onClose={() => setOpenModal(false)}
-            userId={userId}
-            onRefresh={onRefresh}
+          <GenericAutocomplete
+            addTitle="Adicionar Endereço"
+            label="Endereço"
+            fetchOptions={fetchAddress}
+            multiple
+            AddComponent={CreateAddressPage}
+            getOptionLabel={(option) =>
+              `${option.street}, ${option.number} - ${option.city}, ${option.state}`
+            }
+            onChange={(selected) => setSelectedAddresses(selected)}
+            value={selectedAddresses}
           />
         </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenModal(false)} color="secondary">Cancelar</Button>
+          <Button onClick={handleAddAddressToUser} color="primary" variant="contained">
+            Adicionar
+          </Button>
+        </DialogActions>
       </Dialog>
 
-      {/* Editar endereço */}
+      {/* Modal de Editar Endereço */}
       <Dialog open={openEditModal} onClose={() => setOpenEditModal(false)} maxWidth="lg">
         <DialogTitle>Editar Endereço</DialogTitle>
         <DialogContent>

@@ -9,6 +9,14 @@ import {
   Paper,
   Tooltip,
   IconButton,
+  Collapse,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Checkbox,
+  FormControlLabel,
 } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { useSnackbar } from 'notistack';
@@ -16,6 +24,16 @@ import AddressAutocomplete from '@/app/components/auto-completes/AddressSearch';
 import useAddressForm from '@/hooks/address/useAddressForm';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
+
+const fieldLabels = {
+  zip_code: "CEP",
+  country: "País",
+  state: "Estado",
+  city: "Cidade",
+  neighborhood: "Bairro",
+  street: "Rua",
+  number: "Número",
+};
 
 const CreateAddressPage = ({
   onClose,
@@ -34,31 +52,41 @@ const CreateAddressPage = ({
     formErrors,
     loading: formLoading,
     success,
-    dataReceived,
   } = useAddressForm();
 
   formData.user_id = userId;
 
+  const [initialData, setInitialData] = useState({});
   const [addressInput, setAddressInput] = useState('');
   const [hasHandledSuccess, setHasHandledSuccess] = useState(false);
 
-  useEffect(() => {
-    if (success && !hasHandledSuccess) {
-      setHasHandledSuccess(true);
-      enqueueSnackbar('Endereço salvo com sucesso!', { variant: 'success' });
-      console.log('formData criado:', formData);
-      if (onAdd && formData.id) {
-        onAdd(formData);
-      } else if (onAdd) {
-        console.warn('O endereço foi salvo, mas o ID não foi retornado.');
-      }
-      if (onClose) onClose();
-      if (onRefresh) onRefresh();
-    } else if (formErrors && Object.keys(formErrors).length > 0) {
-      const errorMessage = Object.values(formErrors).join(', ');
-      enqueueSnackbar(`Erro ao salvar endereço: ${errorMessage}`, { variant: 'error' });
+  const [openAccordion, setOpenAccordion] = useState(false);
+
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [confirmChecked, setConfirmChecked] = useState(false);
+
+  const [lastError, setLastError] = useState('');
+
+  const handleAddressSelect = (addressData) => {
+    const formatedZipCode = addressData.zip_code.replace('-', '');
+    handleChange('zip_code', formatedZipCode);
+    handleChange('country', addressData.country);
+    handleChange('state', stateMapping[addressData.state] || addressData.state);
+    handleChange('city', addressData.city);
+    handleChange('neighborhood', addressData.neighborhood);
+    handleChange('street', addressData.street);
+    handleChange('number', addressData.number);
+  
+    if (addressData.latitude && addressData.longitude) {
+      handleChange('latitude', addressData.latitude);
+      handleChange('longitude', addressData.longitude);
+      setMarkerPosition({
+        lat: parseFloat(addressData.latitude),
+        lng: parseFloat(addressData.longitude),
+      });
     }
-  }, [success, hasHandledSuccess, formData, formErrors, onAdd, onClose, onRefresh, enqueueSnackbar]);
+    setInitialData(addressData);
+  };
 
   const stateMapping = {
     Acre: 'AC',
@@ -90,22 +118,47 @@ const CreateAddressPage = ({
     Tocantins: 'TO',
   };
 
-  const handleAddressSelect = (addressData) => {
-    const formatedZipCode = addressData.zip_code.replace('-', '');
-    handleChange('zip_code', formatedZipCode);
-    handleChange('country', addressData.country);
-    handleChange('state', stateMapping[addressData.state] || addressData.state);
-    handleChange('city', addressData.city);
-    handleChange('neighborhood', addressData.neighborhood);
-    handleChange('street', addressData.street);
-    handleChange('number', addressData.number);
-    handleChange('latitude', addressData.latitude);
-    handleChange('longitude', addressData.longitude);
-    setAddressInput(addressData.address);
+  useEffect(() => {
+    const addressErrorFields = Object.keys(fieldLabels);
+    const hasAddressErrors = Object.keys(formErrors).some((key) =>
+      addressErrorFields.includes(key)
+    );
+    if (hasAddressErrors) {
+      setOpenAccordion(true);
+    }
+    if (success && !hasHandledSuccess) {
+      setHasHandledSuccess(true);
+      enqueueSnackbar('Endereço salvo com sucesso!', { variant: 'success' });
+      if (onAdd && formData.id) {
+        onAdd(formData);
+      } else if (onAdd) {
+        console.warn('O endereço foi salvo, mas o ID não foi retornado.');
+      }
+      if (onClose) onClose();
+      if (onRefresh) onRefresh();
+    } else if (formErrors && Object.keys(formErrors).length > 0) {
+      const errorStr = JSON.stringify(formErrors);
+      if (errorStr !== lastError) {
+        setLastError(errorStr);
+        const friendlyErrors = Object.entries(formErrors).map(
+          ([field, messages]) => (
+            <div key={field}>
+              <strong>{fieldLabels[field] || field}:</strong> {messages.join(', ')}
+            </div>
+          )
+        );
+        enqueueSnackbar(<div>{friendlyErrors}</div>, { variant: 'error' });
+      }
+    }
+  }, [success, hasHandledSuccess, formData, formErrors, onAdd, onClose, onRefresh, enqueueSnackbar, lastError]);
+
+  const handleOpenConfirmModal = () => {
+    setConfirmModalOpen(true);
+    setConfirmChecked(false);
   };
 
-  const handleSubmit = () => {
-    console.log('Salvando endereço...');
+  const submitAddress = () => {
+    setConfirmModalOpen(false);
     handleSave();
   };
 
@@ -173,6 +226,30 @@ const CreateAddressPage = ({
   );
 
   useEffect(() => {
+    if (
+      formData.street &&
+      formData.number &&
+      formData.city &&
+      formData.state &&
+      formData.country &&
+      window.google
+    ) {
+      const geocoder = new window.google.maps.Geocoder();
+      const fullAddress = `${formData.street}, ${formData.number}, ${formData.city}, ${formData.state}, ${formData.country}`;
+      geocoder.geocode({ address: fullAddress }, (results, status) => {
+        if (status === 'OK' && results[0]) {
+          const location = results[0].geometry.location;
+          const lat = location.lat();
+          const lng = location.lng();
+          setMarkerPosition({ lat, lng });
+          handleChange('latitude', lat);
+          handleChange('longitude', lng);
+        }
+      });
+    }
+  }, [formData.number, formData.street, formData.city, formData.state, formData.country]);
+
+  useEffect(() => {
     if (formData.latitude && formData.longitude) {
       setMarkerPosition({
         lat: parseFloat(formData.latitude),
@@ -181,35 +258,32 @@ const CreateAddressPage = ({
     }
   }, [formData.latitude, formData.longitude]);
 
+  useEffect(() => {
+    setOpenAccordion(Boolean(formData.zip_code));
+  }, [formData.zip_code]);
+
   return (
-    <Box
-      sx={{
-        maxWidth: '100vw',
-        mx: 'auto',
-        p: 2,
-      }}
-    >
+    <Box sx={{ maxWidth: '100vw', mx: 'auto', p: 2 }}>
       <Paper
         elevation={0}
         sx={{
           width: '100%',
-          p: { xs: 0, md: 0 },
+          p: { xs: 2, md: 3 },
           backgroundColor: 'background.paper',
           borderRadius: 1,
         }}
       >
         {Object.keys(formErrors).length > 0 && (
           <Alert severity="error" sx={{ mb: 2 }}>
-            {Object.keys(formErrors).map((field) => (
+            {Object.entries(formErrors).map(([field, messages]) => (
               <div key={field}>
-                <strong>{field}:</strong> {formErrors[field]}
+                <strong>{fieldLabels[field] || field}:</strong> {messages.join(', ')}
               </div>
             ))}
           </Alert>
         )}
 
         <Stack spacing={3} sx={{ width: '100%' }}>
-          {/* Campo de pesquisa de endereço */}
           <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%' }}>
             <Box sx={{ flexGrow: 1 }}>
               <AddressAutocomplete
@@ -226,7 +300,6 @@ const CreateAddressPage = ({
             </Tooltip>
           </Stack>
 
-          {/* Campo para complemento */}
           <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%' }}>
             <Box sx={{ flexGrow: 1 }}>
               <CustomTextField
@@ -246,7 +319,85 @@ const CreateAddressPage = ({
             </Tooltip>
           </Stack>
 
-          {/* Mapa para marcar o endereço */}
+          <Box>
+            <Button
+              variant="outlined"
+              onClick={() => setOpenAccordion(!openAccordion)}
+              fullWidth
+            >
+              {openAccordion ? 'Ocultar informações do endereço' : 'Ver informações do endereço'}
+            </Button>
+            <Collapse in={openAccordion}>
+              <Box sx={{ mt: 2, p: 2, border: '1px solid #ccc', borderRadius: 1 }}>
+                <Stack spacing={2}>
+                  <CustomTextField
+                    fullWidth
+                    placeholder="CEP"
+                    value={formData.zip_code || ''}
+                    onChange={(e) => handleChange('zip_code', e.target.value)}
+                    disabled={
+                      Object.keys(initialData).length === 0 || !!initialData.zip_code
+                    }
+                    />
+                  <CustomTextField
+                    fullWidth
+                    placeholder="País"
+                    value={formData.country || ''}
+                    onChange={(e) => handleChange('country', e.target.value)}
+                    disabled={
+                      Object.keys(initialData).length === 0 || !!initialData.country
+                    }
+                  />
+                  <CustomTextField
+                    fullWidth
+                    placeholder="Estado"
+                    value={formData.state || ''}
+                    onChange={(e) => handleChange('state', e.target.value)}
+                    disabled={
+                      Object.keys(initialData).length === 0 || !!initialData.state
+                    }
+                  />
+                  <CustomTextField
+                    fullWidth
+                    placeholder="Cidade"
+                    value={formData.city || ''}
+                    onChange={(e) => handleChange('city', e.target.value)}
+                    disabled={
+                      Object.keys(initialData).length === 0 || !!initialData.city
+                    }
+                  />
+                  <CustomTextField
+                    fullWidth
+                    placeholder="Bairro"
+                    value={formData.neighborhood || ''}
+                    onChange={(e) => handleChange('neighborhood', e.target.value)}
+                    disabled={
+                      Object.keys(initialData).length === 0 || !!initialData.neighborhood
+                    }
+                  />
+                  <CustomTextField
+                    fullWidth
+                    placeholder="Rua"
+                    value={formData.street || ''}
+                    onChange={(e) => handleChange('street', e.target.value)}
+                    disabled={
+                      Object.keys(initialData).length === 0 || !!initialData.street
+                    }
+                  />
+                  <CustomTextField
+                    fullWidth
+                    placeholder="Número"
+                    value={formData.number || ''}
+                    onChange={(e) => handleChange('number', e.target.value)}
+                    disabled={
+                      Object.keys(initialData).length === 0
+                    }
+                  />
+                </Stack>
+              </Box>
+            </Collapse>
+          </Box>
+
           <Box sx={{ width: '100%', height: '300px', mt: 2 }}>
             {mapLoadError && <div>Erro ao carregar o mapa</div>}
             {!isMapLoaded ? (
@@ -263,11 +414,10 @@ const CreateAddressPage = ({
             )}
           </Box>
 
-          {/* Botão para salvar */}
           <Button
             variant="contained"
             color="primary"
-            onClick={handleSubmit}
+            onClick={() => setConfirmModalOpen(true)}
             disabled={formLoading}
             endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
             sx={{ alignSelf: 'flex-end' }}
@@ -276,6 +426,52 @@ const CreateAddressPage = ({
           </Button>
         </Stack>
       </Paper>
+
+      <Dialog
+        open={confirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+        fullWidth
+        maxWidth="sm"
+        TransitionProps={{
+          onEnter: (node) => {
+            node.style.animation = 'shake 0.5s ease';
+          },
+        }}
+        sx={{
+          '@keyframes shake': {
+            '0%': { transform: 'translateX(0)' },
+            '25%': { transform: 'translateX(-10px)' },
+            '50%': { transform: 'translateX(10px)' },
+            '75%': { transform: 'translateX(-10px)' },
+            '100%': { transform: 'translateX(0)' },
+          },
+        }}
+      >
+        <DialogTitle sx={{ bgcolor: 'warning.main', color: 'white', mb: 2 }}>
+          Confirmação de Endereço
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            <strong style={{ fontSize: '1.3em' }}>Atenção:</strong> este endereço será utilizado exatamente como informado para definir a rota do motorista. Verifique se a localização no mapa está correta.
+          </DialogContentText>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={confirmChecked}
+                onChange={(e) => setConfirmChecked(e.target.checked)}
+                color="warning"
+              />
+            }
+            label="Confirmo que as informações estão corretas e desejo prosseguir."
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmModalOpen(false)}>Cancelar</Button>
+          <Button onClick={submitAddress} disabled={!confirmChecked}>
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
