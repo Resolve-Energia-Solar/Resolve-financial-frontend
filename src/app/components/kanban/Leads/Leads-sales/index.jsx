@@ -7,20 +7,15 @@ import {
 
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
-import leadService from '@/services/leadService';
 import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
-import TableComponent from '@/app/components/kanban/Leads/components/TableComponent'
-import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
-import AddSalePage from './Add-Sale';
-import ExpandableTableComponent from '../components/ExpandableTableComponent';
 import ExpandableListComponent from '../components/ExpandableTableComponent';
-import LeadsViewSale from './Projects/View-Project';
 import LeadsViewProposal from '../Leads-proposal/View-Proposal';
+import saleService from '@/services/saleService';
 
 
 
-const SalesListPage = ({ customer = null, lead }) => {
+const SalesListPage = ({ lead }) => {
     const router = useRouter();
     const [data, setData] = useState([]);
     const [loadingSales, setLoadingSales] = useState(true);
@@ -112,7 +107,7 @@ const SalesListPage = ({ customer = null, lead }) => {
             setLoadingSales(true);
             try {
                 const response = await saleService.index({
-                    customer__in: customer.id,
+                    customer__in: lead?.customer?.id,
                 })
                 console.log('response: ',response)
                 setData(response.results.results || []);
