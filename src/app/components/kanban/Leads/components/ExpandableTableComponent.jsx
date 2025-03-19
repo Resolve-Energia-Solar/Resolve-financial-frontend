@@ -28,6 +28,7 @@ const ExpandableListComponent = ({
 }) => {
   const [expanded, setExpanded] = useState(false);
   const [projects, setProjects] = useState([]);
+  const [isLoadingProjects, setIsLoadingProjects] = useState(false);
 
   const handleChange = (panel) => async (_, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -35,6 +36,7 @@ const ExpandableListComponent = ({
       await getProjects(panel);
     } else {
       setProjects([]);
+      setIsLoadingProjects(false);
     }
   };
 
@@ -48,25 +50,23 @@ const ExpandableListComponent = ({
 
   const columns_projects = [
     {
-        field: 'product',
-        headerName: 'Nome do produto',
-        flex: 1,
-        render: (row) =>
-            `${row.product.name || ''}`,
+      field: 'product',
+      headerName: 'Nome do produto',
+      flex: 1,
+      render: (row) => `${row.product.name || ''}`,
     },
     {
-        field: 'project_number',
-        headerName: 'Número do Projeto',
-        flex: 1,
-        render: (row) =>
-            `${row.project_number || ''}`,
+      field: 'project_number',
+      headerName: 'Número do Projeto',
+      flex: 1,
+      render: (row) => `${row.project_number || ''}`,
     },
     {
-        field: 'params',
-        headerName: 'Kwp',
-        flex: 1,
+      field: 'params',
+      headerName: 'Kwp',
+      flex: 1,
     },
-];
+  ];
 
   if (loading) {
     return <SalesListSkeleton itemsCount={3} />;
@@ -92,15 +92,19 @@ const ExpandableListComponent = ({
 
   const getProjects = async (saleId) => {
     try {
+      setIsLoadingProjects(true);
       setProjects([]);
       const response = await projectService.getProjects({
         sale: saleId,
         fields: 'id,product,project_number',
       });
       console.log('Projetos:', response);
-      setProjects(response.results.results);
+      setProjects(response.results.results || []);
     } catch (err) {
       console.error('Erro ao buscar projetos:', err);
+      setProjects([]);
+    } finally {
+      setIsLoadingProjects(false);
     }
   };
 
@@ -177,10 +181,24 @@ const ExpandableListComponent = ({
           </AccordionSummary>
 
           <AccordionDetails>
-            {projects.length > 0 ? (
+            {expanded === sale.id && isLoadingProjects ? (
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    color: '#7E8388',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    mb: 3,
+                  }}
+                >
+                  Carregando projetos...
+                </Typography>
+              </Grid>
+            ) : projects.length > 0 ? (
               <TableComponent
                 columns={columns_projects}
-                data={projects} // Usa os projetos carregados dinamicamente
+                data={projects}
                 totalRows={totalRows}
                 loading={false}
                 page={0}
@@ -200,9 +218,7 @@ const ExpandableListComponent = ({
                     mb: 3,
                   }}
                 >
-                  {expanded === sale.id
-                    ? 'Carregando projetos...'
-                    : 'Nenhum projeto associado a esta venda.'}
+                  Nenhum projeto associado a esta venda.
                 </Typography>
               </Grid>
             )}
