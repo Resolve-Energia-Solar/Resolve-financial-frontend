@@ -126,8 +126,9 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   }
 
   const handleOpenProposalPdf = () => {
-    const queryParams = new URLSearchParams(formData).toString();
-    window.open(`apps/leads/${leadId}/proposal-layout?${queryParams}`, "_blank", "width=800,height=600");
+    // const queryParams = new URLSearchParams(formData).toString();
+    // window.open(`apps/leads/${leadId}/proposal-layout?${queryParams}`, "_blank", "width=800,height=600");
+    setOpenProposalLayout(true);
     
   }
 
