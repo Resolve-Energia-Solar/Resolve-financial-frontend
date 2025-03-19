@@ -15,7 +15,7 @@ import saleService from '@/services/saleService';
 
 const SalesListPage = ({ lead }) => {
     const [data, setData] = useState([]);
-    const [loadingSales, setLoadingSales] = useState(true);
+    const [loadingSales, setLoadingSales] = useState(false);
     const [refresh, setRefresh] = useState(false);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);

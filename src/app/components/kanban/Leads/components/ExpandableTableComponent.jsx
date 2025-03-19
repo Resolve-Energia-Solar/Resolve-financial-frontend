@@ -68,7 +68,7 @@ const ExpandableListComponent = ({
     },
   ];
 
-  if (loading) {
+  if (loading && (!data || data.length === 0)) {
     return <SalesListSkeleton itemsCount={3} />;
   }
 
