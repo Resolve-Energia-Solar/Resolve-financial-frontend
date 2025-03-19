@@ -125,26 +125,8 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   }
 
   const handleOpenProposalPdf = () => {
-    // const pdfWindow = window.open('', "_blank", "width=800,height=600");
-    // pdfWindow.document.write(`
-    //   <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
-    //   <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
-    // `);
-    
-    // pdfWindow.onload = () => {
-    //   pdfWindow.document.body.innerHTML = '<div id="proposal-layout"></div>';
-    //   const script = pdfWindow.document.createElement("script");
-    //   script.innerHTML = `
-    //     const ProposalLayout = ${ProposalLayout.toString()};
-    //     ReactDOM.render(React.createElement(${ProposalLayout}), document.getElementById('proposal-layout'));
-    //   `;
-    //   pdfWindow.document.body.appendChild(script);
-    // }
-
     const queryParams = new URLSearchParams(formData).toString();
     window.open(`/proposal-layout?${queryParams}`, "_blank", "width=800,height=600");
-
-    
     
   }
 
