@@ -1,4 +1,4 @@
-import React, { act, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Accordion,
   AccordionSummary,
@@ -11,6 +11,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import TableComponent from './TableComponent';
 import DomainIcon from '@mui/icons-material/Domain';
+import SalesListSkeleton from './SalesListSkeleton';
 
 const ExpandableListComponent = ({
   columns,
@@ -38,6 +39,30 @@ const ExpandableListComponent = ({
     E: { label: 'Em Andamento', color: '#E3F2FD' },
   };
 
+  // Render skeleton when loading
+  if (loading) {
+    return <SalesListSkeleton itemsCount={3} />;
+  }
+
+  // Render empty state if no data
+  if (!data || data.length === 0) {
+    return (
+      <Box sx={{ borderRadius: '12px', mb: 1, p: 3 }}>
+        <Typography
+          sx={{
+            color: '#7E8388',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            fontSize: '16px',
+          }}
+        >
+          Nenhuma venda encontrada.
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ borderRadius: '12px', mb: 1, p: 3 }}>
       {data.map((sale) => (
@@ -61,9 +86,7 @@ const ExpandableListComponent = ({
                 xs={5.5}
                 sx={{ justifyContent: 'flex-start', display: 'flex', flexDirection: 'column' }}
               >
-                <Typography sx={{ fontWeight: 700, fontSize: '14px' }}>
-                  Venda
-                </Typography>
+                <Typography sx={{ fontWeight: 700, fontSize: '14px' }}>Venda</Typography>
                 <Typography
                   sx={{ fontWeight: 500, fontSize: '16px', color: 'rgba(48, 48, 48, 0.5)' }}
                 >
@@ -82,7 +105,7 @@ const ExpandableListComponent = ({
                 >
                   <Typography sx={{ fontWeight: 700, fontSize: '14px' }}>Status</Typography>
                   <Chip
-                    label={saleStatus[sale.status]?.label}
+                    label={saleStatus[sale.status]?.label || 'Desconhecido'}
                     color="primary"
                     variant="outlined"
                     sx={{ width: '95px' }}
@@ -105,7 +128,7 @@ const ExpandableListComponent = ({
                   <Typography
                     sx={{ fontWeight: 500, fontSize: '16px', color: 'rgba(48, 48, 48, 0.5)' }}
                   >
-                    {sale.contract_number}
+                    {sale.contract_number || 'N/A'}
                   </Typography>
                 </Grid>
               </Grid>
@@ -126,21 +149,19 @@ const ExpandableListComponent = ({
                 actions={actions}
               />
             ) : (
-              <>
-                <Grid item xs={12}>
-                  <Typography
-                    sx={{
-                      color: '#7E8388',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      mb: 3,
-                    }}
-                  >
-                    Nenhum projeto associado a esta venda.
-                  </Typography>
-                </Grid>
-              </>
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    color: '#7E8388',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    mb: 3,
+                  }}
+                >
+                  Nenhum projeto associado a esta venda.
+                </Typography>
+              </Grid>
             )}
           </AccordionDetails>
         </Accordion>
