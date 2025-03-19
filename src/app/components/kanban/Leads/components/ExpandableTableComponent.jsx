@@ -36,6 +36,14 @@ const ExpandableListComponent = ({
     setExpanded(isExpanded ? panel : false);
   };
 
+  const saleStatus = {
+    "C": { label: "Canelada", color: "#FFEBEE" },
+    "D": { label: "Destrato", color: "#FFCDD2" },
+    "F": { label: "Finalizada", color: "#E8F5E9" },
+    "P": { label: "Pendente", color: "#FFF8E1" },
+    "E": { label: "Em Andamento", color: "#E3F2FD" },
+};
+
   return (
     <Box sx={{ borderRadius: '12px', mb: 1, p: 3}}>
       {data.map((sale) => (
@@ -57,7 +65,7 @@ const ExpandableListComponent = ({
                 <Grid item xs={6} sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end"}}>
                     <Grid item xs={4} sx={{ display: "flex", flexDirection: "column", justifyContent: "flex-end",  }}>
                         <Typography sx={{ fontWeight: 700, fontSize: "14px" }}>Status</Typography>
-                        <Chip label={sale.status} color="primary" variant="outlined" sx={{width: "95px" }} />
+                        <Chip label={saleStatus[sale.status]?.label} color="primary" variant="outlined" sx={{width: "95px" }} />
                     </Grid>
                     <Grid item xs={4}>
                         <Typography sx={{ fontWeight: 700, fontSize: "14px" }}>Data de Upload</Typography>
