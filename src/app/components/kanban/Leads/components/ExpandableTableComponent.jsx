@@ -73,7 +73,7 @@ const ExpandableListComponent = ({
           </AccordionSummary>
 
           <AccordionDetails>
-            {sale.projects.length > 0 ? (
+            {sale.projects && sale.projects.length > 0 ? (
               <TableComponent
                 columns={columns}
                 data={sale.projects}
