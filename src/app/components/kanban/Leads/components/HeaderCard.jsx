@@ -22,6 +22,7 @@ import { useSnackbar } from 'notistack';
 import { usePathname } from 'next/navigation';
 import leadService from '@/services/leadService';
 import { IconCalendarWeek, IconEye, IconPencil, IconTrash } from '@tabler/icons-react';
+import LeadInfoHeaderSkeleton from './LeadInfoHeaderSkeleton';
 
 function LeadInfoHeader({ leadId, tabValue }) {
   const [lead, setLead] = useState(null);
@@ -50,7 +51,7 @@ function LeadInfoHeader({ leadId, tabValue }) {
     fetchLead();
   }, [leadId]);
 
-  if (!lead) return <Typography>Carregando informações do lead...</Typography>;
+  if (!lead) return <LeadInfoHeaderSkeleton />;
 
   return (
     <Box
