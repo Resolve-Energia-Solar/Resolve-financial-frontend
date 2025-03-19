@@ -11,11 +11,7 @@ import {
   Button,
   CircularProgress,
 } from '@mui/material';
-import {
-  AccountCircle,
-  Email,
-  Phone,
-} from '@mui/icons-material';
+import { AccountCircle, Email, Phone } from '@mui/icons-material';
 import BlankCard from '@/app/components/shared/BlankCard';
 import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
@@ -30,6 +26,7 @@ import FormLabel from '@mui/material/FormLabel';
 import useLead from '@/hooks/leads/useLead';
 import useLeadForm from '@/hooks/leads/useLeadtForm';
 import { useSelector } from 'react-redux';
+import AutoCompleteUser from '@/app/components/apps/invoice/components/auto-complete/Auto-Input-User';
 
 function EditLeadPage({ leadId = null }) {
   const theme = useTheme();
@@ -54,7 +51,6 @@ function EditLeadPage({ leadId = null }) {
       enqueueSnackbar('Lead salvo com sucesso', { variant: 'success' });
     }
   };
-
 
   console.log('leadData', formData);
 
@@ -203,6 +199,15 @@ function EditLeadPage({ leadId = null }) {
                     </InputAdornment>
                   ),
                 }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
+              <AutoCompleteUser
+                onChange={(id) => handleChange('seller_id', id)}
+                value={formData.seller_id}
+                {...(formErrors.seller_id && { error: true, helperText: formErrors.seller_id })}
               />
             </Grid>
 
