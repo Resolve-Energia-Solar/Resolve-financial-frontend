@@ -425,11 +425,7 @@ const SaleList = () => {
                     <TableCell>{item.customer.complete_name}</TableCell>
                     <TableCell>{item.contract_number}</TableCell>
                     <TableCell>
-                      {item?.signature_date
-                        ? new Date(item.signature_date).toLocaleDateString('pt-BR', {
-                            timeZone: 'UTC',
-                          })
-                        : '\u2014'}
+                      {new Date(item.signature_date).toLocaleString() || '-'}
                     </TableCell>
                     <TableCell>
                       {Number(item.total_value).toLocaleString('pt-BR', {
@@ -468,9 +464,7 @@ const SaleList = () => {
                       />
                     </TableCell>
                     <TableCell>
-                      {item?.created_at
-                        ? new Date(item.created_at).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
-                        : '-'}
+                      {new Date(item.created_at).toLocaleString() || '-'}
                     </TableCell>
                     <TableCell>{item.branch.name}</TableCell>
                   </TableRow>
