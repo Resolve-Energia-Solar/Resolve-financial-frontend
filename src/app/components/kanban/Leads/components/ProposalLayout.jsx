@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import React, { useState } from "react";
@@ -34,16 +34,19 @@ export default function ProposalLayout({ formData }) {
   }
 
   return (
-    <Grid container className="min-h-screen bg-gray-100 p-8 flex flex-col items-center">
-      <Grid item className="bg-white shadow-lg rounded-lg p-6 w-full max-w-2xl">
+    <Grid container >
+      <Grid container spacing={2}>
 
-        <header className="mt-6 flex justify-center">
+        <Box className="mt-6 flex justify-center">
           <button
             onClick={handleDownloadPdf}
             className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
           >
             Baixar PDF
           </button>
+
+          </Box>
+          <Box>
 
           <button
             onClick={handleDownloadPdf}
@@ -52,8 +55,10 @@ export default function ProposalLayout({ formData }) {
             Alterar proposta
           </button>
 
-        </header>
-        </Grid>
+        </Box>
+
+      </Grid>
+      <Grid item> 
 
         <div ref={printRef} className="p-8 bg-white border border-gray-200">
           <div className="flex justify-between items-center mb-8">
@@ -124,6 +129,7 @@ export default function ProposalLayout({ formData }) {
             </div>
           </div>
         </div>
+        </Grid>
     </Grid>
   );
 }
