@@ -9,7 +9,9 @@ export default function ProposalLayout({ formData }) {
     const handleDownloadPdf = async () => {
         const element = printRef.current;
 
-        const canvas = await html2canvas(element);
+        const canvas = await html2canvas(element, {
+          scale: 2,
+        });
         const dataImg = canvas.toDataURL("image/png");
 
         const pdf = new jsPDF({
