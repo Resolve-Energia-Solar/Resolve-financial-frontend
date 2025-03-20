@@ -420,12 +420,14 @@ const SaleList = () => {
                     sx={{ backgroundColor: rowSelected?.id === item.id && '#cecece' }}
                   >
                     <TableCell align="center">
-                      {item.documents_under_analysis?.length > 0 && <PulsingBadge color='#FFC008' />}
+                      {item.documents_under_analysis?.length > 0 && (
+                        <PulsingBadge color="#FFC008" />
+                      )}
                     </TableCell>
                     <TableCell>{item.customer.complete_name}</TableCell>
                     <TableCell>{item.contract_number}</TableCell>
                     <TableCell>
-                      {new Date(item.signature_date).toLocaleString() || '-'}
+                      {item.signature_date && new Date(item.signature_date).toLocaleString()}
                     </TableCell>
                     <TableCell>
                       {Number(item.total_value).toLocaleString('pt-BR', {
@@ -463,9 +465,7 @@ const SaleList = () => {
                         }
                       />
                     </TableCell>
-                    <TableCell>
-                      {new Date(item.created_at).toLocaleString() || '-'}
-                    </TableCell>
+                    <TableCell>{new Date(item.created_at).toLocaleString() || '-'}</TableCell>
                     <TableCell>{item.branch.name}</TableCell>
                   </TableRow>
                 ))
