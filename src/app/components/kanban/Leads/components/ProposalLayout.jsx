@@ -39,8 +39,16 @@ export default function ProposalLayout({ formData }) {
                 onClick={handleDownloadPdf}
                 className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
               >
-                Download PDF
+                Baixar PDF
               </button>
+
+              <button
+                onClick={handleDownloadPdf}
+                className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
+              >
+                Alterar proposta
+              </button>
+
             </header>
 
             <div ref={printRef} className="p-8 bg-white border border-gray-200">
