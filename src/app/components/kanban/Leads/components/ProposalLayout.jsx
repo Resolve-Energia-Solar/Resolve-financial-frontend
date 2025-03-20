@@ -19,8 +19,8 @@ export default function ProposalLayout({ formData }) {
         });
 
         const imgProperties = pdf.getImageProperties(dataImg);
-        const pdfWidth = pdf.internal.pageSize.getWidth;
-        const pdfHeight = ((imgProperties.height * pdfWidth) / imgProperties.width);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
       
 
         pdf.addImage(dataImg, 'PNG', 0, 0, pdfWidth, pdfHeight);
