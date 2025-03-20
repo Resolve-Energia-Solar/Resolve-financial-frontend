@@ -29,33 +29,39 @@ export default function ProposalLayout({ formData }) {
 
 
     pdf.addImage(dataImg, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.addImage(dataImg, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    
     pdf.save("proposta.pdf")
 
   }
 
   return (
     <Grid container >
-      <Grid container spacing={2}>
+      <Grid container>
 
-        <Box className="mt-6 flex justify-center">
-          <button
-            onClick={handleDownloadPdf}
-            className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
-          >
-            Baixar PDF
-          </button>
+        <Grid item>
+          <Box className="mt-6 flex justify-center">
+            <button
+              onClick={handleDownloadPdf}
+              className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
+            >
+              Baixar PDF
+            </button>
 
           </Box>
-          <Box>
+          </Grid>
+          <Grid item>
+            <Box>
 
-          <button
-            onClick={handleDownloadPdf}
-            className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
-          >
-            Alterar proposta
-          </button>
+            <button
+              onClick={handleDownloadPdf}
+              className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
+            >
+              Alterar proposta
+            </button>
 
-        </Box>
+          </Box>
+        </Grid>
 
       </Grid>
       <Grid item> 
