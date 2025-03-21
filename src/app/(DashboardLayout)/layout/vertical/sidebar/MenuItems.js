@@ -41,11 +41,7 @@ import { permission } from 'process';
 import { id } from 'date-fns/locale';
 
 const Menuitems = [
-  {
-    navlabel: true,
-    subheader: 'Home',
-  },
-  {
+ {
     id: uniqueId(),
     title: 'CRM',
     icon: WorkOutlineOutlinedIcon,
