@@ -30,6 +30,7 @@ import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined
 import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
+import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
 
 
 import { permission } from 'process';
@@ -115,7 +116,7 @@ const Menuitems = [
       {
         id: uniqueId(),
         title: 'Anexos',
-        icon: IconPoint,
+        icon: AttachFileOutlinedIcon,
         href: '/apps/financial-record/attachments',
         permissions: ['financial.view_financialrecord_attachment'],
       }
