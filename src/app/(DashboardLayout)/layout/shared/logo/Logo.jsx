@@ -11,6 +11,7 @@ const Logo = () => {
     width: customizer.isCollapse ? "60px" : "180px",
     overflow: "hidden",
     display: "block",
+    transition: "all 0.3s ease",
     transform: customizer.isCollapse ? "translateX(0)" : "translateX(20px)",
   }));
 
