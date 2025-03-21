@@ -8,34 +8,40 @@ const Logo = () => {
   const customizer = useSelector((state) => state.customizer);
   const LinkStyled = styled(Link)(() => ({
     height: customizer.TopbarHeight,
-    width: customizer.isCollapse ? "180px" : "180px",
+    width: customizer.isCollapse ? "60px" : "180px",
     overflow: "hidden",
     display: "block",
   }));
+
+  const logoImage = customizer.isCollapse
+    ? "/images/logos/resolve-logo-collapsed.png"
+    : "/images/logos/resolve-logo.png";
 
   if (customizer.activeDir === "ltr") {
     return (
       <LinkStyled href="/" width={180}>
         {customizer.activeMode === "dark" ? (
           <Image
-            src="/images/logos/resolve-logo.png"
+            src={logoImage}
             alt="logo"
             height={60}
-            width={180}
+            width={customizer.isCollapse ? 55 : 180}
             priority
           />
         ) : (
           <Image
-            src={"/images/logos/resolve-logo.png"}
+            src={logoImage}
             alt="logo"
             height={60}
-            width={180}
+            width={customizer.isCollapse ? 55 : 180}
             priority
           />
         )}
       </LinkStyled>
     );
   }
+
+  
 
   return (
     <LinkStyled href="/" width={180}>
@@ -44,7 +50,7 @@ const Logo = () => {
           src="/images/logos/dark-rtl-logo.svg"
           alt="logo"
           height={customizer.TopbarHeight}
-          width={174}
+          width={customizer.isCollapse ? 60 : 174}
           priority
         />
       ) : (
@@ -52,7 +58,7 @@ const Logo = () => {
           src="/images/logos/light-logo-rtl.svg"
           alt="logo"
           height={customizer.TopbarHeight}
-          width={174}
+          width={customizer.isCollapse ? 60 : 174}
           priority
         />
       )}
