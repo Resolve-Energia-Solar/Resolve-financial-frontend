@@ -37,7 +37,7 @@ const Menuitems = [
     icon: IconLayoutKanban,
     href: '/',
     children: [
-      { id: uniqueId(), title: 'CRM', icon: IconPoint, href: '/apps/kanban/' },
+      { id: uniqueId(), title: 'Kanban', icon: IconPoint, href: '/apps/kanban/' },
       // { id: uniqueId(), title: 'Operação', icon: IconPoint, href: '/apps/boards/erp' },
     ],
     chip: 'Novo',
