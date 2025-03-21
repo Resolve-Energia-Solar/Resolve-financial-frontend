@@ -31,6 +31,7 @@ import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
+import SquareFootOutlinedIcon from '@mui/icons-material/SquareFootOutlined';
 
 
 import { permission } from 'process';
@@ -140,7 +141,7 @@ const Menuitems = [
       {
         id: uniqueId(),
         title: 'Projetos',
-        icon: IconPoint,
+        icon: SquareFootOutlinedIcon,
         href: '/apps/project',
         permissions: ['resolve_crm.view_project'],
       },
