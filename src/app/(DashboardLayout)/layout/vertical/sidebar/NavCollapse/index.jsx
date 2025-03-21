@@ -62,8 +62,8 @@ export default function NavCollapse({
     '&:hover': {
       backgroundColor:
         pathname.includes(menu.href) || open
-          ? '#000000'
-          : '#000000',
+          ? theme.palette.primary.light
+          : theme.palette.primary.light,
       color: pathname.includes(menu.href) || open ? 'white' : theme.palette.primary.main,
     },
     color:
