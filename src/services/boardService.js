@@ -1,11 +1,8 @@
 import apiClient from './apiClient';
 
-
 const DEFAULT_ROUTER = '/api/boards';
 
 const boardService = {
-
-
   index: function (params) {
     try {
       const response = apiClient.get(`${DEFAULT_ROUTER}/`, { params });
@@ -16,9 +13,9 @@ const boardService = {
     }
   },
 
-  find: async (id) => {
+  find: async (id, params) => {
     try {
-      const response = await apiClient.get(`${DEFAULT_ROUTER}/${id}/`);
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/${id}/`, { params });
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar quadro com id ${id}:`, error);
