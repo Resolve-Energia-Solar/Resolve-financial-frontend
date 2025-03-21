@@ -39,11 +39,13 @@ const SidebarItems = () => {
                 item={item} 
                 hideMenu={hideMenu} 
                 key={item.subheader} 
-                sx={{ 
-                  backgroundColor: 'info.main', 
-                  borderRadius: '4px', 
-                  color: "#7E8388" 
-                }} 
+                sx={{
+                  backgroundColor: 'info.main',
+                  borderRadius: '4px',
+                  color: '#7E8388', 
+                  fontWeight: '500', 
+                  fontSize: '14px',
+                }}
               />
             );
 
@@ -56,11 +58,11 @@ const SidebarItems = () => {
                 pathWithoutLastPart={pathWithoutLastPart}
                 level={1}
                 key={item.id}
-                sx={{ 
-                  backgroundColor: 'secondary.light', 
-                  padding: '10px 20px', 
-                  '& .MuiListItemIcon-root': { color: '#7E8388' }, 
-                  '& .MuiListItemText-primary': { color: '#7E8388' } 
+                sx={{
+                  backgroundColor: 'secondary.light',
+                  padding: '10px 20px',
+                  '& .MuiListItemIcon-root': { color: '#7E8388', fontWeight: 'normal' }, 
+                  '& .MuiListItemText-primary': { color: '#7E8388', fontWeight: 'normal', fontSize: '14px' }, 
                 }}
                 onClick={() => dispatch(toggleMobileSidebar())}
               />
@@ -74,10 +76,9 @@ const SidebarItems = () => {
                 pathDirect={pathDirect} 
                 hideMenu={hideMenu} 
                 sx={{
-                  color: '#7E8388', 
                   padding: '10px 20px',
-                  '& .MuiListItemIcon-root': { color: '#7E8388' },
-                  '& .MuiListItemText-primary': { color: '#7E8388' } 
+                  '& .MuiListItemIcon-root': { color: '#7E8388', fontWeight: 'normal' }, 
+                  '& .MuiListItemText-primary': { color: '#7E8388', fontWeight: 'normal', fontSize: '14px' }, 
                 }}
                 onClick={() => dispatch(toggleMobileSidebar())}
               />
