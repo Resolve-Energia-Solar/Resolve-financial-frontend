@@ -29,6 +29,7 @@ export default function ProposalLayout({ formData }) {
 
 
     pdf.addImage(dataImg, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.addPage();
     pdf.addImage(dataImg, 'PNG', 0, 0, pdfWidth, pdfHeight);
     
     pdf.save("proposta.pdf")
