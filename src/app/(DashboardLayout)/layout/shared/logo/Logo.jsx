@@ -47,18 +47,18 @@ const Logo = () => {
     <LinkStyled href="/" width={180}>
       {customizer.activeMode === "dark" ? (
         <Image
-          src="/images/logos/dark-rtl-logo.svg"
+          src={logoImage}
           alt="logo"
           height={customizer.TopbarHeight}
-          width={customizer.isCollapse ? 60 : 174}
+          width={customizer.isCollapse ? 55 : 180}
           priority
         />
       ) : (
         <Image
-          src="/images/logos/light-logo-rtl.svg"
+          src={logoImage}
           alt="logo"
           height={customizer.TopbarHeight}
-          width={customizer.isCollapse ? 60 : 174}
+          width={customizer.isCollapse ? 55 : 180}
           priority
         />
       )}
