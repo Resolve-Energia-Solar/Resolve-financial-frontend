@@ -23,6 +23,7 @@ import {
   IconPoint,
   IconUserPin,
 } from '@tabler/icons-react';
+import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import { permission } from 'process';
 import { id } from 'date-fns/locale';
 
@@ -34,7 +35,7 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: 'CRM',
-    icon: IconLayoutKanban,
+    icon: WorkOutlineOutlinedIcon,
     href: '/',
     children: [
       { id: uniqueId(), title: 'Kanban', icon: IconLayoutKanban, href: '/apps/kanban/' },
