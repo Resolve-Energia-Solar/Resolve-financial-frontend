@@ -33,7 +33,7 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Quadros',
+    title: 'CRM',
     icon: IconLayoutKanban,
     href: '/',
     children: [
