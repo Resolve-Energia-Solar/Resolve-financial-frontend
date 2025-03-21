@@ -34,7 +34,7 @@ export default function NavItem({ item, level, pathDirect, hideMenu, onClick }) 
     color:
       level > 1 && (pathDirect.includes(item?.href) && item?.href !== '/') 
         ? `${theme.palette.primary.main}!important`
-        : theme.palette.text.secondary,
+        : '#7E8388',
     paddingLeft: hideMenu ? '10px' : level > 2 ? `${level * 15}px` : '10px',
     '&:hover': {
       backgroundColor: theme.palette.primary.light,
