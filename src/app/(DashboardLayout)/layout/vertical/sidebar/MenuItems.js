@@ -28,7 +28,7 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
-
+import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 
 
@@ -108,7 +108,7 @@ const Menuitems = [
       {
         id: uniqueId(),
         title: 'Solicitação de Pagamento',
-        icon: PaymentsOutlinedIcon,
+        icon: RequestQuoteOutlinedIcon,
         href: '/apps/financial-record',
         permissions: ['financial.view_financialrecord'],
       },
