@@ -64,12 +64,15 @@ export default function NavCollapse({
           ? theme.palette.primary.light
           : theme.palette.primary.light,
       color: pathname.includes(menu.href) || open ? theme.palette.primary.main : theme.palette.primary.main,
+      '& .MuiListItemIcon-root': {
+        color: theme.palette.primary.main,
+      },
     },
     color:
       open && level < 2
         ? theme.palette.primary.light
         : `inherit` && level > 1 && open
-        ? '#7E8388' 
+        ? 'white' 
         : '#7E8388',
     borderRadius: `${customizer.borderRadius}px`,
   }));
@@ -98,9 +101,13 @@ export default function NavCollapse({
           hideMenu={hideMenu}
           onClick={lgDown ? onClick : isNull}
           sx={{
-            color: pathname === item?.href ? theme.palette.primary.light : '#7E8388', 
+            color: pathname === item?.href ? 'white' : '#7E8388', 
             '&:hover': {
               backgroundColor: pathname === item?.href ? theme.palette.primary.main : 'transparent',
+              color: theme.palette.primary.light,
+            },
+            '& .MuiListItemIcon-root': {
+              color: pathname === item?.href ? 'white' : '#7E8388', 
             },
           }}
         />
@@ -119,7 +126,7 @@ export default function NavCollapse({
           sx={{
             minWidth: '36px',
             p: '3px 0',
-            color: 'inherit',
+            color: open ? "white" : pathname === menu.href ? "white" : '#7E8388', 
           }}
         >
           {menuIcon}

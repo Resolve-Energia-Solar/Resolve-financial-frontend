@@ -41,11 +41,11 @@ export default function NavItem({ item, level, pathDirect, hideMenu, onClick }) 
       color: theme.palette.primary.main,
     },
     '&.Mui-selected': {
-      color: 'white',
+      color: 'theme.palette.primary.light',
       backgroundColor: theme.palette.primary.main,
       '&:hover': {
         backgroundColor: theme.palette.primary.main,
-        color: 'white',
+        color: 'theme.palette.primary.light',
       },
     },
   }));
