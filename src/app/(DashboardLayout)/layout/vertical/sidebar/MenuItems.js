@@ -143,7 +143,7 @@ const Menuitems = [
       },
       {
         id: uniqueId(),
-        title: 'Solicitações Conce.',
+        title: 'Solicitações',
         icon: NoteAddOutlinedIcon,
         href: '/apps/request',
         permissions: ['resolve_crm.view_project'],
