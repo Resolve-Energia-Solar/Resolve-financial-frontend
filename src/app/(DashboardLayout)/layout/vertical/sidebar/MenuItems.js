@@ -23,6 +23,7 @@ import {
   IconPoint,
   IconUserPin,
 } from '@tabler/icons-react';
+import ViewKanbanOutlinedIcon from '@mui/icons-material/ViewKanbanOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
@@ -50,7 +51,7 @@ const Menuitems = [
     icon: WorkOutlineOutlinedIcon,
     href: '/',
     children: [
-      { id: uniqueId(), title: 'Kanban', icon: IconLayoutKanban, href: '/apps/kanban/' },
+      { id: uniqueId(), title: 'Kanban', icon: ViewKanbanOutlinedIcon, href: '/apps/kanban/' },
       { id: uniqueId(), title: 'Leads', icon: AccountCircleOutlinedIcon, href: '/apps/leads', permissions: ['resolve_crm.view_lead'] },
     ],
     chip: 'Novo',
