@@ -35,6 +35,7 @@ import userService from '@/services/userService';
 import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-User';
 import AutoInputStatusSchedule from '../../../auto-complete/Auto-Input-StatusInspection';
 import AutoCompleteParentSchedule from '../../../auto-complete/Auto-Input-parentSchedule';
+import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
 
 const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh = null }) => {
   const router = useRouter();
@@ -212,6 +213,20 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     handleChange(field, newValue);
   };
 
+  const fetchOpinions = async (search) => {
+    try {
+      const response = await serviceOpinionsService.index({
+        q: search,
+        limit: 15,
+        fields: 'id,name',
+      });
+      return response.results;
+    } catch (error) {
+      console.error('Erro na busca de endereços:', error);
+      return [];
+    }
+  };
+
   return (
     <>
       <Grid container spacing={3}>
@@ -374,6 +389,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
             <CustomFormLabel htmlFor="final_service_opinion_id">
               Parecer final de serviço
             </CustomFormLabel>
+            <GenericAutocomplete fetchOptions={fetchOpinions} />
             <AutoInputStatusSchedule
               onChange={(id) => handleChange('final_service_opinion_id', id)}
               value={formData.final_service_opinion_id}
