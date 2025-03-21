@@ -4,10 +4,12 @@ const campaignService = {
   getCampaigns: async ({ page = 1, limit = 10 } = {}) => {
     try {
       const response = await apiClient.get('/api/marketing-campaigns/',
-        {params: {
+        {
+          params: {
             page,
             limit
-          }}
+          }
+        }
       );
       return response.data;
     } catch (error) {

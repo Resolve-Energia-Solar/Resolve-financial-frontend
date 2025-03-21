@@ -3,7 +3,59 @@ import apiClient from "./apiClient";
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 const CONTENT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
+const DEFAULT_ROUTER = '/api/attachments'
+
 const attachmentService = {
+
+  index: function (params) {
+    try {
+      const response = apiClient.get(`${DEFAULT_ROUTER}/`, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar documentos:', error);
+      throw error;
+    }
+  },
+
+  find: async (id) => {
+    try {
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/${id}/`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar documento com id ${id}:`, error);
+      throw error;
+    }
+  },
+  create: function (data) {
+    try {
+      const response = apiClient.post(`${DEFAULT_ROUTER}`, data);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao criar documento:', error);
+      throw error;
+    }
+  },
+  update: async (id, data) => {
+    try {
+      const response = await apiClient.patch(`${DEFAULT_ROUTER}/${id}/`, data);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao atualizar documento com id ${id}:`, error);
+      throw error;
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      const response = await apiClient.delete(`${DEFAULT_ROUTER}/${id}/`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao deletar documento com id ${id}:`, error);
+      throw error;
+    }
+  },
+
+
   getAttachments: async (limit = 30, page = 1, content_type = '', filters = {},) => {
     try {
       const query = new URLSearchParams({ limit, page, content_type, ...filters }).toString();

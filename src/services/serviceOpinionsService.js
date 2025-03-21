@@ -1,6 +1,19 @@
 import apiClient from './apiClient';
 
 const serviceOpinionsService = {
+
+  index: async (params) => {
+
+    try {
+      const response = await apiClient.get(`/api/service-opinions/`, { params });
+      return response.data;
+    }
+    catch (error) {
+      console.log(error)
+      throw error
+    }
+  },
+
   getServiceOpinions: async ({ ordering, nextPage, limit = 5, page = 1, ...rest }) => {
 
 
