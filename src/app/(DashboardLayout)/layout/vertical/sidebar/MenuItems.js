@@ -32,6 +32,7 @@ import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
 import SquareFootOutlinedIcon from '@mui/icons-material/SquareFootOutlined';
+import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
 
 
 import { permission } from 'process';
@@ -148,7 +149,7 @@ const Menuitems = [
       {
         id: uniqueId(),
         title: 'Solicitações Conce.',
-        icon: IconPoint,
+        icon: NoteAddOutlinedIcon,
         href: '/apps/request',
         permissions: ['resolve_crm.view_project'],
       },
