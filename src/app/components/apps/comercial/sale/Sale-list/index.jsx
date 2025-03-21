@@ -102,7 +102,7 @@ const SaleList = () => {
       setLoading(true);
 
       const data = await saleService.getSales({
-        userRole: userRole,
+        userRole,
         ordering: orderingParam,
         limit: rowsPerPage,
         page: page + 1,
@@ -122,13 +122,13 @@ const SaleList = () => {
           'created_at',
           'branch.name',
         ],
-
         ...filters,
       });
 
-      setIndicators(data?.results?.indicators);
-      setSalesList(data?.results?.results);
-      setTotalRows(data.count);
+      setIndicators(data?.meta?.indicators);
+      setSalesList(data?.results);
+      setTotalRows(data?.meta?.pagination?.total_count);
+
     } catch (err) {
       setError('Erro ao carregar Vendas');
       showAlert('Erro ao carregar Vendas', 'error');
