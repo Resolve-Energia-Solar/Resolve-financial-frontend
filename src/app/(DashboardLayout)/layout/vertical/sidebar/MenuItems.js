@@ -26,6 +26,9 @@ import {
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
+
 import { permission } from 'process';
 import { id } from 'date-fns/locale';
 
@@ -55,8 +58,10 @@ const Menuitems = [
     children: [
       {
         id: uniqueId(),
-        title: 'Ordem de Serviço',
-        icon: IconPoint,
+        // title: 'Ordem de Serviço',
+        // icon: IconPoint,
+        title: 'Agendamentos',
+        icon: CalendarMonthOutlinedIcon,
         href: '/apps/inspections/schedule',
       }
     ],
@@ -86,7 +91,7 @@ const Menuitems = [
       {
         id: uniqueId(),
         title: 'Pagamentos',
-        icon: IconPoint,
+        icon: PaymentsOutlinedIcon,
         href: '/apps/invoice',
         permissions: ['financial.view_payment']
       },
