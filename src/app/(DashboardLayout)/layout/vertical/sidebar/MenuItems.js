@@ -29,6 +29,8 @@ import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
 
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
+
 
 import { permission } from 'process';
 import { id } from 'date-fns/locale';
@@ -99,7 +101,7 @@ const Menuitems = [
       {
         id: uniqueId(),
         title: 'Parcelas',
-        icon: IconPoint,
+        icon: AccountBalanceWalletOutlinedIcon,
         href: '/apps/invoice/installments',
         permissions: ['financial.view_payment']
       },
