@@ -68,7 +68,7 @@ export default function NavCollapse({
     },
     color:
       open && level < 2
-        ? theme.palette.primary.main
+        ? theme.palette.primary.light
         : `inherit` && level > 1 && open
         ? '#7E8388' 
         : '#7E8388',
