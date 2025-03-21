@@ -1,6 +1,55 @@
 import apiClient from './apiClient';
 
+const DEFAULT_ROUTER = '/api/services';
 const serviceCatalogService = {
+  index: function (params) {
+    try {
+      const response = apiClient.get(`${DEFAULT_ROUTER}/`, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar serviços:', error);
+      throw error;
+    }
+  },
+
+  find: async (id, params) => {
+    try {
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/${id}/`, { params });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar serviço com id ${id}:`, error);
+      throw error;
+    }
+  },
+  create: function (data) {
+    try {
+      const response = apiClient.post(`${DEFAULT_ROUTER}`, data);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao criar serviço:', error);
+      throw error;
+    }
+  },
+  update: async (id, data) => {
+    try {
+      const response = await apiClient.patch(`${DEFAULT_ROUTER}/${id}/`, data);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao atualizar serviço com id ${id}:`, error);
+      throw error;
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      const response = await apiClient.delete(`${DEFAULT_ROUTER}/${id}/`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao deletar serviço com id ${id}:`, error);
+      throw error;
+    }
+  },
+
   getServicesCatalog: async (options = {}) => {
     const { filters, expand, fields, ...rest } = options;
     const params = { ...rest };

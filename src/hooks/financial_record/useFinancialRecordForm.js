@@ -30,7 +30,9 @@ export default function useFinancialRecordForm() {
     if (!formData.payment_method) errors.payment_method = 'Forma de pagamento obrigatória';
     if (!formData.service_date) errors.service_date = 'Data de serviço obrigatória';
     if (!formData.due_date) errors.due_date = 'Data de vencimento obrigatória';
-
+    if (!formData.department_code) errors.department_code = 'Código do departamento obrigatório';
+    if (!formData.department_name) errors.department_name = 'Nome do departamento obrigatório';
+    
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };

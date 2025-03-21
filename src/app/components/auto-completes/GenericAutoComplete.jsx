@@ -54,7 +54,17 @@ const GenericAutocomplete = ({
     if (inputValue.trim() !== '') {
       debouncedFetch(inputValue);
     } else {
-      setOptions([]);
+      (async () => {
+        setLoading(true);
+        try {
+          const initialOptions = await fetchOptions('');
+          setOptions(initialOptions.slice(0, 10));
+        } catch (err) {
+          console.error('Erro na busca inicial:', err);
+          setOptions([]);
+        }
+        setLoading(false);
+      })();
     }
   }, [inputValue, debouncedFetch]);
 
@@ -66,9 +76,6 @@ const GenericAutocomplete = ({
 
   const handleOnAdd = (newItem) => {
     setOpenAddModal(false);
-
-    console.log('Novo item criado:', newItem);
-    console.log('openAddModal:', openAddModal);
 
     setOptions((prevOptions) => [newItem, ...prevOptions]);
 
@@ -106,13 +113,14 @@ const GenericAutocomplete = ({
             {...params}
             label={label}
             variant="outlined"
+            {...(props.error && { error: true, helperText: props.helperText })}
             InputProps={{
               ...params.InputProps,
               endAdornment: (
                 <>
                   {loading && <CircularProgress color="inherit" size={20} />}
                   {params.InputProps.endAdornment}
-                  {AddComponent && (
+                  {AddComponent && !props.disabled && (
                     <IconButton
                       onClick={() => setOpenAddModal(true)}
                       aria-label="Adicionar"

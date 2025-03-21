@@ -1,16 +1,15 @@
+// Arquivo: onboarding.jsx
 import React, { Fragment, useContext, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import CreateCustomerSale from '../../../users/Add-user/customerSale';
 import {
   OnboardingSaleContextProvider,
   OnboardingSaleContext,
@@ -33,6 +32,7 @@ import {
 } from '@mui/material';
 import { CheckCircle, Error } from '@mui/icons-material';
 import { removeProductsByIds } from '@/store/products/customProducts';
+import AddUser from '../../../users/Add-user/addUser';
 
 const steps = ['Dados do Cliente', 'Produtos', 'Financeiro', 'Documentos', 'Agendar Vistoria'];
 
@@ -52,8 +52,10 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
   const [isDialogDocumentOpen, setIsDialogDocumentOpen] = useState(false);
   const [totalPayments, setTotalPayments] = useState(0);
   const [loading, setLoading] = useState(false);
-
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  
+  // Nova flag para disparar o save do usuário
+  const [userSubmitTrigger, setUserSubmitTrigger] = useState(false);
 
   const formatFieldName = (fieldName) => {
     const fieldLabels = {
@@ -63,7 +65,6 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
       sales_manager_id: 'Gerente de Vendas',
       branch_id: 'Franquia',
     };
-
     return fieldLabels[fieldName] || fieldName;
   };
 
@@ -73,8 +74,9 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
 
   const user = useSelector((state) => state.user);
 
-  const { customerId, productIds, saleId, setSaleId, totalValue } =
+  const { customerId, productIds, saleId, setSaleId, totalValue, setCustomerId } =
     useContext(OnboardingSaleContext);
+
   const [isDisabledNext, setIsDisabledNext] = useState(false);
 
   const isCompleteFinancial = async (id) => {
@@ -111,7 +113,6 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
     } else {
       setIsDisabledNext(false);
     }
-
     if (activeStep === 1 && productIds.length === 0) {
       setIsDisabledNext(true);
     } else {
@@ -119,23 +120,29 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
     }
   }, [activeStep, customerId, productIds]);
 
+  // Efeito que avança a etapa 0 para a 1 quando o usuário for salvo (customerId definido)
+  useEffect(() => {
+    if (activeStep === 0 && customerId) {
+      setActiveStep(1);
+      setUserSubmitTrigger(false);
+    }
+  }, [customerId, activeStep]);
+
   const handleNext = async () => {
+    if (activeStep === 0 && !customerId) {
+      setUserSubmitTrigger(true);
+      return;
+    }
+
     if (activeStep === 1) {
       setIsDialogOpen(true);
       return;
     }
-
-    if (activeStep === 0 && !customerId) {
-      return;
-    }
-
     if ((activeStep === 1 && productIds.length === 0) || (activeStep === 1 && !saleId)) {
       return;
     }
-
     if (activeStep === 2) {
       const isFinancialComplete = true;
-
       if (!isFinancialComplete) {
         setIsDialogPaymentOpen(true);
         const totalPayments = await totalPaymentsCreated(saleId);
@@ -143,16 +150,13 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
         return;
       }
     }
-
     if (activeStep === 3) {
       const isUnitsComplete = await isCompleteUnits(saleId);
-
       if (!isUnitsComplete) {
         setIsDialogDocumentOpen(true);
         return;
       }
     }
-
     if (activeStep === steps.length - 1) {
       setLoading(true);
       if (onEdit) {
@@ -160,7 +164,6 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
       }
       return;
     }
-
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
@@ -181,19 +184,17 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
     }
   }, [success, successData]);
 
+  // Atualiza os dados do sale form com os dados do contexto
   customerId ? (formData.customerId = customerId) : null;
   totalValue ? (formData.totalValue = totalValue) : null;
   productIds ? (formData.productIds = productIds) : null;
   user?.user ? (formData.sellerId = user.user.id) : null;
-  
-
   user?.user?.employee?.user_manager
     ? (formData.salesSupervisorId = user?.user?.employee?.user_manager)
     : null;
   user?.user?.employee?.user_manager
     ? (formData.salesManagerId = user?.user?.employee?.user_manager)
     : null;
-
   formData.status = 'P';
   formData.payment_status = 'P';
   user?.user?.employee?.branch ? (formData.branchId = user?.user?.employee?.branch?.id) : null;
@@ -225,7 +226,19 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
   const renderStepContent = (step) => {
     switch (step) {
       case 0:
-        return <CreateCustomerSale />;
+        return (
+          <AddUser
+            label="Dados do Cliente"
+            hideSaveButton={true}
+            triggerSave={userSubmitTrigger}
+            onUserSaved={(userData) => {
+              console.log('userData:', userData);
+              if (userData && userData.id) {
+                setCustomerId(userData.id);
+              }
+            }}
+          />
+        );
       case 1:
         return <ListProductsDefault />;
       case 2:
@@ -234,7 +247,6 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
         return <ChecklistSales saleId={saleId} />;
       case 4:
         return <SchedulesInspections userId={customerId} saleId={saleId} />;
-
       default:
         return <div>Parabéns, você finalizou o processo de venda!</div>;
     }
@@ -300,7 +312,6 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
             {useMediaQuery(useTheme().breakpoints.down('md')) && (
               <StepContent>
                 <Box sx={{ flexGrow: 1, mt: 2, mb: 1 }}>{renderStepContent(activeStep)}</Box>
-
                 <StepperButtons
                   activeStep={activeStep}
                   steps={steps}

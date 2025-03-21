@@ -1,12 +1,51 @@
-import apiClient from "./apiClient";
+import apiClient from './apiClient';
 
+const DEFAULT_ROUTER = '/api/requests-energy-companies';
 const requestConcessionaireService = {
-  index: async () => {
+  index: function (params) {
     try {
-      const response = await apiClient.get('/api/requests-energy-companies/');
+      const response = apiClient.get(`${DEFAULT_ROUTER}/`, { params });
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar solicitação:', error);
+      throw error;
+    }
+  },
+
+  find: async (id, params) => {
+    try {
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/${id}/`, { params });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar solicitação com id ${id}:`, error);
+      throw error;
+    }
+  },
+  create: function (data) {
+    try {
+      const response = apiClient.post(`${DEFAULT_ROUTER}`, data);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao criar solicitação:', error);
+      throw error;
+    }
+  },
+  update: async (id, data) => {
+    try {
+      const response = await apiClient.patch(`${DEFAULT_ROUTER}/${id}/`, data);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao atualizar solicitação com id ${id}:`, error);
+      throw error;
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      const response = await apiClient.delete(`${DEFAULT_ROUTER}/${id}/`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao deletar solicitação com id ${id}:`, error);
       throw error;
     }
   },
@@ -27,7 +66,7 @@ const requestConcessionaireService = {
     }
   },
 
-  getAllByProject: async ({ page = 1, limit = 10, projectId , ...filters} = {}) => {
+  getAllByProject: async ({ page = 1, limit = 10, projectId, ...filters } = {}) => {
     const params = { page, limit, ...filters };
     if (projectId) {
       params.project = projectId;
@@ -37,7 +76,7 @@ const requestConcessionaireService = {
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar solicitação:', error);
-      throw error
+      throw error;
     }
   },
   find: async (id) => {
@@ -52,7 +91,7 @@ const requestConcessionaireService = {
   update: async (id, data) => {
     try {
       const response = await apiClient.patch(`/api/requests-energy-companies/${id}/`, data);
-      console.log(response.data)
+      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error(`Erro ao atualizar solicitação com id ${id}:`, error);

@@ -137,20 +137,20 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
               />
             </Grid>
 
+            <Grid item xs={12} sm={12} lg={6}>
+              <CustomFormLabel>Geradora</CustomFormLabel>
+              <FormControlLabel
+                control={
+                  <CustomSwitch
+                    checked={formData.main_unit}
+                    onChange={(e) => handleChange('main_unit', e.target.checked)}
+                  />
+                }
+                label={formData.main_unit ? 'Geradora' : 'Beneficiária'}
+              />
+            </Grid>
             {!formData.new_contract_number && (
               <>
-                <Grid item xs={12} sm={12} lg={6}>
-                  <CustomFormLabel>Geradora</CustomFormLabel>
-                  <FormControlLabel
-                    control={
-                      <CustomSwitch
-                        checked={formData.main_unit}
-                        onChange={(e) => handleChange('main_unit', e.target.checked)}
-                      />
-                    }
-                    label={formData.main_unit ? 'Geradora' : 'Beneficiária'}
-                  />
-                </Grid>
 
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="account_number">Número do medidor</CustomFormLabel>

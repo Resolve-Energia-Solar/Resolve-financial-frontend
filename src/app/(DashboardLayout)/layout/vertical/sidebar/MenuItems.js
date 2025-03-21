@@ -1,15 +1,9 @@
 import { uniqueId } from 'lodash';
 
 import {
-  IconBoxMultiple,
-  IconCalendar,
-  IconClockQuestion,
   IconCurrencyDollar,
   IconFileDescription,
-  IconStar,
   IconLayoutKanban,
-  IconChartLine,
-  IconBox,
   IconShoppingCart,
   IconUser,
   IconUsers,
@@ -18,9 +12,9 @@ import {
   IconUserScan,
   IconTools,
   IconHomeQuestion,
-  IconMailFast,
   IconUserDollar,
   IconPoint,
+  IconBuildingBank,
   IconUserPin,
 } from '@tabler/icons-react';
 import ViewKanbanOutlinedIcon from '@mui/icons-material/ViewKanbanOutlined';
@@ -62,7 +56,7 @@ const Menuitems = [
         title: 'Agendamentos',
         icon: CalendarMonthOutlinedIcon,
         href: '/apps/inspections/schedule',
-      }
+      },
     ],
     permissions: ['field_services.view_schedule'],
   },
@@ -85,14 +79,14 @@ const Menuitems = [
         title: 'Pagamentos',
         icon: PaymentsOutlinedIcon,
         href: '/apps/invoice',
-        permissions: ['financial.view_payment']
+        permissions: ['financial.view_payment'],
       },
       {
         id: uniqueId(),
         title: 'Parcelas',
         icon: AccountBalanceWalletOutlinedIcon,
         href: '/apps/invoice/installments',
-        permissions: ['financial.view_payment']
+        permissions: ['financial.view_payment'],
       },
       {
         id: uniqueId(),
@@ -107,7 +101,7 @@ const Menuitems = [
         icon: AttachFileOutlinedIcon,
         href: '/apps/financial-record/attachments',
         permissions: ['financial.view_financialrecord_attachment'],
-      }
+      },
     ],
   },
 

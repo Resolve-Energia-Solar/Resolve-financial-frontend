@@ -1,16 +1,5 @@
 import {
-    TablePagination,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
     Typography,
-    Box,
-    Button,
-    Chip,
-    IconButton,
     Grid,
     Dialog,
     DialogContent,
@@ -18,89 +7,55 @@ import {
 
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
-import leadService from '@/services/leadService';
 import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
-import TableComponent from '@/app/components/kanban/Leads/components/TableComponent'
-import formatPhoneNumber from '@/utils/formatPhoneNumber';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
-import AddSalePage from './Add-Sale';
-import ExpandableTableComponent from '../components/ExpandableTableComponent';
 import ExpandableListComponent from '../components/ExpandableTableComponent';
-import LeadsViewSale from './Projects/View-Project';
+import LeadsViewProposal from '../Leads-proposal/View-Proposal';
+import saleService from '@/services/saleService';
 
-
-
-const SalesListPage = ({ leadId = null }) => {
-    const router = useRouter();
-    // const [data, setData] = useState([]);
-    const [loadingSales, setLoadingSales] = useState(true);
+const SalesListPage = ({ lead }) => {
+    const [data, setData] = useState([]);
+    const [loadingSales, setLoadingSales] = useState(false);
     const [refresh, setRefresh] = useState(false);
-    const [error, setError] = useState(null);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalRows, setTotalRows] = useState(0);
 
-    const saleStatus = {
-        "C": { label: "Canelada", color: "#FFEBEE" },
-        "D": { label: "Destrato", color: "#FFCDD2" },
-        "F": { label: "Finalizada", color: "#E8F5E9" },
-        "P": { label: "Pendente", color: "#FFF8E1" },
-        "E": { label: "Em Andamento", color: "#E3F2FD" },
-    };
-
     const columns = [
         {
-            field: 'name',
-            headerName: 'Projeto',
+            field: 'customer',
+            headerName: 'Nome do cliente',
             flex: 1,
-            // render: (row) =>
-            //     row?.products.length > 0
-            //         ? row.products.map((product) => product.name).join(', ')
-            //         : 'Nenhum produto vinculado',
+            render: (row) =>
+                `${row.complete_name || ''}`,
         },
         {
-            field: 'type',
-            headerName: 'Tipo de projeto',
+            field: 'contract_number',
+            headerName: 'Número de Contrato',
             flex: 1,
         },
-        // {
-        //     field: 'value',
-        //     headerName: 'Valor',
-        //     flex: 1,
-        //     render: (row) =>
-        //         new Intl.NumberFormat('pt-BR', {
-        //             style: 'currency',
-        //             currency: 'BRL',
-        //         }).format(row.value),
-        // },
+        {
+            field: 'total_value',
+            headerName: 'Valor',
+            flex: 1,
+            render: (row) =>
+                new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                }).format(row.total_value),
+        },
         {
             field: 'seller',
-            headerName: 'Vendedor Responsável',
+            headerName: 'Vendedor',
             flex: 1,
-            // render: (row) =>
-            //     `${row.created_by?.first_name || ''} ${row.created_by?.last_name || ''}`,
+            render: (row) =>
+                `${row.complete_name || ''}`,
         },
         {
-            field: 'sdr',
-            headerName: 'SDR',
+            field: 'signature_status',
+            headerName: 'Status da assinatura',
             flex: 1,
         },
-        {
-            field: 'franchise',
-            headerName: 'Franquia',
-            flex: 1,
-        },
-        // {
-        //     field: 'status',
-        //     headerName: 'Status',
-        //     flex: 1,
-        //     render: (row) => (
-        //         <Chip
-        //             label={saleStatus[row.status]?.label || 'Desconhecido'}
-        //             sx={{ backgroundColor: saleStatus[row.status]?.color }}
-        //         />
-        //     ),
-        // },
     ];
 
     const [openAddSale, setOpenAddSale] = useState(false);
@@ -117,15 +72,10 @@ const SalesListPage = ({ leadId = null }) => {
         const fetchSales = async () => {
             setLoadingSales(true);
             try {
-                const response = await leadService.getLeadById(leadId, {
-                    params: {
-                        expand: 'sale',
-                        fields: 'id,sale',
-                        page: page + 1,
-                        limit: rowsPerPage,
-                    },
-                });
-                setData(response.sales || []);
+                const response = await saleService.index({
+                    customer__in: lead?.customer?.id,
+                })
+                setData(response.results.results || []);
                 setTotalRows(response.sale?.length || 0);
 
             } catch (err) {
@@ -134,42 +84,22 @@ const SalesListPage = ({ leadId = null }) => {
                 setLoadingSales(false);
             }
         };
-
-        fetchSales();
-    }, [leadId, refresh, page, rowsPerPage]);
-
-    const data = [
-        {
-            id: 1,
-            name: 'Supermercado Matheus',
-            status: 'Assinado',
-            projects: [
-                { id: 101, name: 'Projeto A', type: 'Comercial', seller: 'Beatriz Silva', sdr: '123', franchise: 'Belém - Centro' },
-                { id: 102, name: 'Projeto B', type: 'Residencial', seller: 'Carlos Souza', sdr: '1246', franchise: 'Belém - Centro' },
-            ],
-        },
-        {
-            id: 2,
-            name: 'Supermercado Líder',
-            status: 'Pendente',
-            projects: [
-                { id: 103, name: 'Projeto A', type: 'Comercial', seller: 'Yasmin de Albuquerque', sdr: '189', franchise: 'Belém - Centro' },
-            ],
-        },
-        {
-            id: 3,
-            name: 'Supermercado Formosa',
-            status: 'Pendente',
-            projects: [],
-        },
-    ]; // adds mock data
-
+        if (lead?.customer?.id)
+            fetchSales();
+    }, [lead, refresh, page, rowsPerPage]);
 
 
     return (
         <>
             <Grid container spacing={0} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", p: 3 }} >
+               
+            <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12}>
+              <LeadInfoHeader leadId={lead?.id} />
+            </Grid>
+          </Grid>
                 <Grid item xs={12} sx={{ overflow: 'scroll' }}>
+
                     <Grid item xs={12} sx={{
                         borderRadius: '20px',
                         display: 'flex',
@@ -199,7 +129,6 @@ const SalesListPage = ({ leadId = null }) => {
                         </Grid>
 
                     </Grid>
-
 
                     <Grid container xs={12} >
 
@@ -255,8 +184,8 @@ const SalesListPage = ({ leadId = null }) => {
                                 }}
                             >
                                 <DialogContent>
-                                    <LeadsViewSale
-                                        leadId={leadId}
+                                    <LeadsViewProposal
+                                        leadId={lead?.id}
                                         proposalId={selectedSaleId}
                                         onClose={() => setOpenDetailSale(false)}
                                         onRefresh={handleRefresh}

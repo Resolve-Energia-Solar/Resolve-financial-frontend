@@ -8,7 +8,7 @@ const pulsate = keyframes`
   100% { transform: scale(1.2); opacity: 0; }
 `;
 
-const PulsingBadge = () => {
+const PulsingBadge = ({ color = '#4BB543', noPulse = false }) => {
   return (
     <Box
       sx={{
@@ -18,22 +18,24 @@ const PulsingBadge = () => {
         alignItems: 'center',
       }}
     >
-      <Box
-        sx={{
-          border: '3px solid #FFC008',
-          borderRadius: '30px',
-          height: '25px',
-          width: '25px',
-          position: 'absolute',
-          animation: `${pulsate} 1s ease-out infinite`,
-          opacity: 0,
-        }}
-      />
+      {!noPulse && (
+        <Box
+          sx={{
+            border: `3px solid ${color}`,
+            borderRadius: '30px',
+            height: '25px',
+            width: '25px',
+            position: 'absolute',
+            animation: `${pulsate} 1s ease-out infinite`,
+            opacity: 0,
+          }}
+        />
+      )}
       <Box
         sx={{
           width: '15px',
           height: '15px',
-          backgroundColor: '#FFC008',
+          backgroundColor: color,
           borderRadius: '50%',
           position: 'absolute',
         }}

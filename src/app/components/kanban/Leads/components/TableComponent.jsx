@@ -14,7 +14,6 @@ import {
     Box,
 } from "@mui/material";
 import TableSkeleton from '@/app/components/apps/comercial/sale/components/TableSkeleton';
-import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import { IconEye, IconPencil } from '@tabler/icons-react';
 
 const TableComponent = ({

@@ -8,7 +8,7 @@ import useOrigins from '@/hooks/origins/useOrigin';
 export default function AutoCompleteOrigin({ onChange, value, error, labeltitle, helperText }) {
   const [open, setOpen] = useState(false);
   const [selectedOrigin, setSelectedOrigin] = useState(null);
-  const { originsList, loading, originData } = useOrigins();
+  const { originsList, loading, originData } = useOrigins(value);
 
   useEffect(() => {
     if (originData && value) {

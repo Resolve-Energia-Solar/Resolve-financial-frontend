@@ -102,7 +102,7 @@ const SaleList = () => {
       setLoading(true);
 
       const data = await saleService.getSales({
-        userRole: userRole,
+        userRole,
         ordering: orderingParam,
         limit: rowsPerPage,
         page: page + 1,
@@ -122,13 +122,13 @@ const SaleList = () => {
           'created_at',
           'branch.name',
         ],
-
         ...filters,
       });
 
-      setIndicators(data?.results?.indicators);
-      setSalesList(data?.results?.results);
-      setTotalRows(data.count);
+      setIndicators(data?.meta?.indicators);
+      setSalesList(data?.results);
+      setTotalRows(data?.meta?.pagination?.total_count);
+
     } catch (err) {
       setError('Erro ao carregar Vendas');
       showAlert('Erro ao carregar Vendas', 'error');
@@ -420,16 +420,12 @@ const SaleList = () => {
                     sx={{ backgroundColor: rowSelected?.id === item.id && '#cecece' }}
                   >
                     <TableCell align="center">
-                      {item.documents_under_analysis?.length > 0 && <PulsingBadge />}
+                      {item.documents_under_analysis?.length > 0 && <PulsingBadge color='#FFC008' />}
                     </TableCell>
                     <TableCell>{item.customer.complete_name}</TableCell>
                     <TableCell>{item.contract_number}</TableCell>
                     <TableCell>
-                      {item?.signature_date
-                        ? new Date(item.signature_date).toLocaleDateString('pt-BR', {
-                            timeZone: 'UTC',
-                          })
-                        : '\u2014'}
+                      {new Date(item.signature_date).toLocaleString() || '-'}
                     </TableCell>
                     <TableCell>
                       {Number(item.total_value).toLocaleString('pt-BR', {
@@ -468,9 +464,7 @@ const SaleList = () => {
                       />
                     </TableCell>
                     <TableCell>
-                      {item?.created_at
-                        ? new Date(item.created_at).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
-                        : '-'}
+                      {new Date(item.created_at).toLocaleString() || '-'}
                     </TableCell>
                     <TableCell>{item.branch.name}</TableCell>
                   </TableRow>
