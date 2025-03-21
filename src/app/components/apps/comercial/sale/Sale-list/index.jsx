@@ -126,8 +126,8 @@ const SaleList = () => {
         ...filters,
       });
 
-      setIndicators(data?.results?.indicators);
-      setSalesList(data?.results?.results);
+      setIndicators(data?.meta?.indicators);
+      setSalesList(data?.results);
       setTotalRows(data.count);
     } catch (err) {
       setError('Erro ao carregar Vendas');
