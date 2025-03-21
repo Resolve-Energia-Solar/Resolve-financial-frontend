@@ -99,7 +99,7 @@ export default function NavCollapse({
           hideMenu={hideMenu}
           onClick={lgDown ? onClick : isNull}
           sx={{
-            color: pathname === item?.href ? theme.palette.primary.light : '#7E8388', // Change color if selected
+            color: pathname === item?.href ? theme.palette.primary.light : '#7E8388', 
             '&:hover': {
               backgroundColor: pathname === item?.href ? theme.palette.primary.main : 'transparent',
             },
