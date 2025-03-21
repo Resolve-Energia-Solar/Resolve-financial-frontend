@@ -56,7 +56,7 @@ const Menuitems = [
     ],
     // chip: 'Novo',
     // chipColor: 'secondary',
-    permissions: ['core.view_board'],
+    // permissions: ['core.view_board'],
   },
   {
     id: uniqueId(),
