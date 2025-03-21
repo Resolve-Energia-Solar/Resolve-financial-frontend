@@ -60,13 +60,13 @@ const Menuitems = [
     ],
     permissions: ['field_services.view_schedule'],
   },
-  {
-    id: uniqueId(),
-    title: 'Leads',
-    icon: IconUser,
-    href: '/apps/leads',
-    permissions: ['resolve_crm.view_lead'],
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Leads',
+  //   icon: IconUser,
+  //   href: '/apps/leads',
+  //   permissions: ['resolve_crm.view_lead'],
+  // },
   {
     id: uniqueId(),
     title: 'Vendas',
