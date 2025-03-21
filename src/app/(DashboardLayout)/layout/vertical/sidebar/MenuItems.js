@@ -23,6 +23,7 @@ import {
   IconPoint,
   IconUserPin,
 } from '@tabler/icons-react';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
@@ -83,7 +84,7 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: 'Vendas',
-    icon: IconShoppingCart,
+    icon: ShoppingCartOutlinedIcon,
     href: '/apps/commercial/sale',
     permissions: ['resolve_crm.view_sale'],
   },
