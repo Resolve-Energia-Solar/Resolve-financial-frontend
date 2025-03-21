@@ -51,11 +51,11 @@ const Menuitems = [
     icon: WorkOutlineOutlinedIcon,
     href: '/',
     children: [
-      { id: uniqueId(), title: 'Kanban', icon: ViewKanbanOutlinedIcon, href: '/apps/kanban/' },
+      { id: uniqueId(), title: 'Kanban', icon: ViewKanbanOutlinedIcon, href: '/apps/kanban/', permissions: ['core.view_board'] },
       { id: uniqueId(), title: 'Leads', icon: AccountCircleOutlinedIcon, href: '/apps/leads', permissions: ['resolve_crm.view_lead'] },
     ],
-    chip: 'Novo',
-    chipColor: 'secondary',
+    // chip: 'Novo',
+    // chipColor: 'secondary',
     permissions: ['core.view_board'],
   },
   {

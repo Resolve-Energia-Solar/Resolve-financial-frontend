@@ -98,6 +98,12 @@ export default function NavCollapse({
           pathDirect={pathDirect}
           hideMenu={hideMenu}
           onClick={lgDown ? onClick : isNull}
+          sx={{
+            color: pathname === item?.href ? theme.palette.primary.light : '#7E8388', // Change color if selected
+            '&:hover': {
+              backgroundColor: pathname === item?.href ? theme.palette.primary.main : 'transparent',
+            },
+          }}
         />
       );
     }
