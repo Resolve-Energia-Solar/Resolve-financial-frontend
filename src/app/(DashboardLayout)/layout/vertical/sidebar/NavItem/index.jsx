@@ -23,7 +23,7 @@ export default function NavItem({ item, level, pathDirect, hideMenu, onClick }) 
   const theme = useTheme();
   const { t } = useTranslation();
   const itemIcon =
-    level > 1 ? <Icon stroke={1.5} size="1rem" /> : <Icon stroke={1.5} size="1.3rem" />;
+    level > 1 ? <Icon stroke={2} size="1rem" /> : <Icon stroke={2} size="1.3rem" />;
 
   const ListItemStyled = styled(ListItemButton)(() => ({
     whiteSpace: 'nowrap',
