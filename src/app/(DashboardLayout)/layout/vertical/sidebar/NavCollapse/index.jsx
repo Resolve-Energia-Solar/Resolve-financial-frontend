@@ -45,7 +45,6 @@ export default function NavCollapse({
 
   // menu collapse for sub-levels
   React.useEffect(() => {
-    setOpen(false);
     menu?.children?.forEach((item) => {
       if (item?.href === pathname) {
         setOpen(true);
