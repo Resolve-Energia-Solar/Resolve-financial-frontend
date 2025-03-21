@@ -26,7 +26,7 @@ const SidebarItems = () => {
   };
 
   return (
-    <Box sx={{ px: 2 }} width={customizer.isCollapse ? 78 : 270}>
+    <Box sx={{ px: 2.5 }} width={customizer.isCollapse ? 78 : 270}>
       <List sx={{ pt: 0 }} className="sidebarNav">
         {Menuitems.map((item) => {
           if (!hasPermission(item.permissions)) {
