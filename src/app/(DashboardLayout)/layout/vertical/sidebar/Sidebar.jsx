@@ -65,7 +65,7 @@ const Sidebar = () => {
                 height: '100%',
               }}
             >
-              <Box px={3}>
+              <Box p={2}>
                 <Logo />
               </Box>
               <Scrollbar sx={{ height: 'calc(100% - 190px)' }}>
