@@ -64,14 +64,14 @@ export default function NavCollapse({
         pathname.includes(menu.href) || open
           ? theme.palette.primary.light
           : theme.palette.primary.light,
-      color: pathname.includes(menu.href) || open ? 'white' : theme.palette.primary.main,
+      color: pathname.includes(menu.href) || open ? theme.palette.primary.main : theme.palette.primary.main,
     },
     color:
       open && level < 2
-        ? 'white'
+        ? theme.palette.primary.main
         : `inherit` && level > 1 && open
-        ? '#000000'
-        : '#000000',
+        ? '#7E8388' 
+        : '#7E8388',
     borderRadius: `${customizer.borderRadius}px`,
   }));
 
