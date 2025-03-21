@@ -42,10 +42,6 @@ const SidebarItems = () => {
                 sx={{
                   backgroundColor: 'info.main',
                   borderRadius: '4px',
-                  color: '#7E8388', 
-                  fontWeight: '500', 
-                  fontSize: '14px',
-                  '& .MuiListItemIcon-root': { fontSize: '20px', color: '#7E8388' },
                 }}
               />
             );
@@ -62,8 +58,6 @@ const SidebarItems = () => {
                 sx={{
                   backgroundColor: 'info.main',
                   padding: '10px 20px',
-                  '& .MuiListItemIcon-root': { color: '#7E8388', fontWeight: '500' }, 
-                  '& .MuiListItemText-primary': { color: '#7E8388', fontWeight: '500', fontSize: '14px' }, 
                 }}
                 onClick={() => dispatch(toggleMobileSidebar())}
               />
@@ -78,8 +72,6 @@ const SidebarItems = () => {
                 hideMenu={hideMenu} 
                 sx={{
                   padding: '10px 20px',
-                  '& .MuiListItemIcon-root': { color: '#7E8388', fontWeight: 'normal' }, 
-                  '& .MuiListItemText-primary': { color: '#7E8388', fontWeight: 'normal', fontSize: '14px' }, 
                 }}
                 onClick={() => dispatch(toggleMobileSidebar())}
               />
