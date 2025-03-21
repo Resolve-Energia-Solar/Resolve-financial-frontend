@@ -29,6 +29,7 @@ import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
 
+
 import { permission } from 'process';
 import { id } from 'date-fns/locale';
 
@@ -105,7 +106,7 @@ const Menuitems = [
       {
         id: uniqueId(),
         title: 'Solicitação de Pagamento',
-        icon: IconPoint,
+        icon: PaymentsOutlinedIcon,
         href: '/apps/financial-record',
         permissions: ['financial.view_financialrecord'],
       },
