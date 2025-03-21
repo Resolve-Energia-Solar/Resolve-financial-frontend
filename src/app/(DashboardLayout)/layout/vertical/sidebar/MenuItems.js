@@ -25,6 +25,7 @@ import {
 } from '@tabler/icons-react';
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import { permission } from 'process';
 import { id } from 'date-fns/locale';
 
@@ -49,7 +50,7 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: 'Serviços de Campo',
-    icon: IconUserPin,
+    icon: MapOutlinedIcon,
     href: '/',
     children: [
       {
