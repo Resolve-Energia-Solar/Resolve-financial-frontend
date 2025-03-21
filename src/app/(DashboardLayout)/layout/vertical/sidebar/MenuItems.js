@@ -38,7 +38,7 @@ const Menuitems = [
     href: '/',
     children: [
       { id: uniqueId(), title: 'Kanban', icon: IconPoint, href: '/apps/kanban/' },
-      // { id: uniqueId(), title: 'Operação', icon: IconPoint, href: '/apps/boards/erp' },
+      { id: uniqueId(), title: 'Leads', icon: IconPoint, href: '/apps/leads', permissions: ['resolve_crm.view_lead'] },
     ],
     chip: 'Novo',
     chipColor: 'secondary',
