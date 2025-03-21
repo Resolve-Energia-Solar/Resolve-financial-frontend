@@ -40,7 +40,7 @@ export default function ProposalLayout({ formData }) {
     <Grid container >
       <Grid container>
 
-        <Grid item>
+        <Grid item sx={12}>
           <Box className="mt-6 flex justify-center">
             <button
               onClick={handleDownloadPdf}
