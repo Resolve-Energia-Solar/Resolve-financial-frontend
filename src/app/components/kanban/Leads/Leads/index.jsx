@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { Tabs, Tab, Box, useTheme, } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Tabs, Tab, Box, useTheme } from '@mui/material';
 import PropTypes from 'prop-types';
 import EditLeadPage from './Edit-Lead';
 import LeadSchedulePage from '../Leads-schedule';
 import LeadDocumentPage from '../Leads-documents';
 import LeadsProposalListPage from '../Leads-proposal';
 import EditCustomerPage from '../Leads-customer/Edit-Customer';
-import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import SalesListPage from '../Leads-sales';
-
+import { useSnackbar } from 'notistack';
+import leadService from '@/services/leadService';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -45,6 +45,20 @@ function a11yProps(index) {
 
 function EditLeadTabs({ leadId }) {
   const [tabValue, setTabValue] = useState(0);
+  const [lead, setLead] = useState(null);
+  const { enqueueSnackbar } = useSnackbar();
+  
+  useEffect(() => {
+    const fetchLead = async () => {
+      try {
+        const data = await leadService.getLeadById(leadId);
+        setLead(data);
+      } catch (err) {
+        enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
+      }
+    };
+    fetchLead();
+  }, [leadId]);
 
   const handleChange = (event, newValue) => {
     setTabValue(newValue);
@@ -54,7 +68,6 @@ function EditLeadTabs({ leadId }) {
 
   return (
     <Box sx={{ overflow: 'hidden', height: '100%', p: 0, margin: 0 }}>
-
       <Tabs
         value={tabValue}
         onChange={handleChange}
@@ -62,7 +75,15 @@ function EditLeadTabs({ leadId }) {
         TabIndicatorProps={{ style: { display: 'none' } }}
         sx={{ marginLeft: '25px', marginBottom: "-1px" }}
       >
-        {["Informações Lead", "Dados Pessoais", "Propostas", "Vendas", "Documentos", "Projetos", "Agendamentos"].map((label, index) => (
+        {[
+          'Informações Lead',
+          'Dados Pessoais',
+          'Propostas',
+          'Vendas',
+          'Documentos',
+          'Projetos',
+          'Agendamentos',
+        ].map((label, index) => (
           <Tab
             key={index}
             label={label}
@@ -90,39 +111,38 @@ function EditLeadTabs({ leadId }) {
         ))}
       </Tabs>
 
-          {/* infos do lead */}
+      {/* infos do lead */}
       <CustomTabPanel value={tabValue} index={0}>
         <EditLeadPage leadId={leadId} />
       </CustomTabPanel>
 
-          {/* dados pessoais */}
+      {/* dados pessoais */}
       <CustomTabPanel value={tabValue} index={1}>
         <EditCustomerPage leadId={leadId} />
       </CustomTabPanel>
 
-          {/* propostas */}
+      {/* propostas */}
       <CustomTabPanel value={tabValue} index={2}>
         <LeadsProposalListPage leadId={leadId} />
       </CustomTabPanel>
 
-          {/* vendas */}
+      {/* vendas */}
       <CustomTabPanel value={tabValue} index={3}>
-        <SalesListPage leadId={leadId} />
+        <SalesListPage lead={lead} />
       </CustomTabPanel>
 
-          {/* docs a ser retirado futuramente e integrado à page de projetos */}
+      {/* docs a ser retirado futuramente e integrado à page de projetos */}
       <CustomTabPanel value={tabValue} index={4}>
-        <LeadDocumentPage leadId={leadId} />
+        <LeadDocumentPage leadId={leadId} customer={lead?.customer} />
       </CustomTabPanel>
 
-          {/* contratos */}
+      {/* contratos */}
       <CustomTabPanel value={tabValue} index={5}></CustomTabPanel>
 
-          {/* agendamentos */}
-      <CustomTabPanel value={tabValue} index={6}>   
+      {/* agendamentos */}
+      <CustomTabPanel value={tabValue} index={6}>
         <LeadSchedulePage leadId={leadId} />
       </CustomTabPanel>
-
     </Box>
   );
 }

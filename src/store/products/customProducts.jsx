@@ -37,7 +37,7 @@ const customProductsSlice = createSlice({
       const idsToRemove = action.payload;
 
       state.products = state.products.filter(
-        (product) => !idsToRemove.includes(product.id)
+        (product) => Array.isArray(idsToRemove) && !idsToRemove.includes(product.id)
       );
 
       Object.keys(state.leads).forEach((leadId) => {

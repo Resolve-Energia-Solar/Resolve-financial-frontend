@@ -23,8 +23,11 @@ import BlankCard from '../../../shared/BlankCard';
 import employeeService from '@/services/employeeService';
 import commentService from '@/services/commentService';
 import getContentType from '@/utils/getContentType';
+import { useSelector } from 'react-redux';
 
 const ProfileBanner = ({ user }) => {
+  const loggedUser = useSelector((state) => state.user?.user);
+  const isOwner = user?.id === loggedUser?.id;
   const [postsCount, setPostsCount] = useState(0);
   const [departmentCount, setDepartmentCount] = useState(0);
 
@@ -170,15 +173,15 @@ const ProfileBanner = ({ user }) => {
             <Fab size="small" color="error" sx={{ backgroundColor: '#CD201F' }}>
               <IconBrandYoutube size="18" />
             </Fab>
-            <Link href={`/apps/users/${user.id}/update`}>
+            {(isOwner || loggedUser.is_superuser) && <Link href={`/apps/users/${user.id}/update`}>
               <Button color="primary" variant="contained">
                 Alterar Cadastro
               </Button>
-            </Link>
+            </Link>}
           </Stack>
         </Grid>
       </Grid>
-      <ProfileTab />
+      {user.employee?.department && <ProfileTab />}
     </BlankCard>
   );
 };

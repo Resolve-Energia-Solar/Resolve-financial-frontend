@@ -1,4 +1,5 @@
 'use client';
+
 import {
   Accordion,
   AccordionSummary,
@@ -13,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import attachmentService from '@/services/attachmentService';
 import AddAttachmentModal from '../Leads-documents/AddAttachmentModal';
+import LeadAttachmentsAccordionSkeleton from './LeadAttachmentsAccordionSkeleton'; // Adjust path as needed
 
 function LeadAttachmentsAccordion({ objectId, contentType, documentTypes, title }) {
   const theme = useTheme();
@@ -76,52 +78,61 @@ function LeadAttachmentsAccordion({ objectId, contentType, documentTypes, title 
 
   return (
     <>
-      <Accordion defaultExpanded>
-        <AccordionSummary
-          expandIcon={<ExpandMore />}
-          aria-controls="panel1-content"
-          id="panel1-header"
-        >
-          <Typography variant="h6" sx={{ fontWeight: 800 }}>
-            {title || 'Documentos'}
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Box sx={{ mt: 2 }}>
-            <Grid container spacing={2}>
-              {loading ? (
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: 400, color: '#092C4C', fontSize: '14px' }}
-                >
-                  Carregando...
-                </Typography>
-              ) : (
-                attachments.map((attachment) => (
-                  <Grid item xs={12} md={6} key={attachment.id}>
-                    <AttachmentCard
-                      filename={attachment.document_type.name}
-                      pending={attachment.pending}
-                      onClick={() => handleSelectAttachment(attachment)}
-                      onEdit={() => handleSelectAttachment(attachment)}
-                    />
-                  </Grid>
-                ))
-              )}
-            </Grid>
-          </Box>
-
-          <Box sx={{ mt: 2 }}>
-            <Typography
-              variant="body2"
-              sx={{ fontWeight: 400, color: '#092C4C', cursor: 'pointer', fontSize: '14px' }}
-              onClick={() => handleSelectAttachment(null)}
-            >
-              + Anexar novo documento
+      {loading ? (
+        <LeadAttachmentsAccordionSkeleton title={title} itemsCount={4} />
+      ) : (
+        <Accordion defaultExpanded>
+          <AccordionSummary
+            expandIcon={<ExpandMore />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          >
+            <Typography variant="h6" sx={{ fontWeight: 800 }}>
+              {title || 'Documentos'}
             </Typography>
-          </Box>
-        </AccordionDetails>
-      </Accordion>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Box sx={{ mt: 2 }}>
+              <Grid container spacing={2}>
+                {attachments.length === 0 ? (
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 400, color: '#092C4C', fontSize: '14px' }}
+                  >
+                    Nenhum documento encontrado.
+                  </Typography>
+                ) : (
+                  attachments.map((attachment) => (
+                    <Grid item xs={12} md={6} key={attachment.id}>
+                      <AttachmentCard
+                        filename={attachment.document_type.name}
+                        pending={attachment.pending}
+                        onClick={() => handleSelectAttachment(attachment)}
+                        onEdit={() => handleSelectAttachment(attachment)}
+                      />
+                    </Grid>
+                  ))
+                )}
+              </Grid>
+            </Box>
+
+            <Box sx={{ mt: 2 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  fontWeight: 400,
+                  color: '#092C4C',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                }}
+                onClick={() => handleSelectAttachment(null)}
+              >
+                + Anexar novo documento
+              </Typography>
+            </Box>
+          </AccordionDetails>
+        </Accordion>
+      )}
 
       <AddAttachmentModal
         objectId={parseInt(objectId)}

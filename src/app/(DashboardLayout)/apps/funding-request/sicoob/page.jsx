@@ -1,10 +1,9 @@
 'use client';
 
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
-import FormDate from '@/app/components/forms/form-custom/FormDate';
-import FormSelect from '@/app/components/forms/form-custom/FormSelect';
-import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
+import CreateFundingRequest from '@/app/components/apps/funding-request/CreateFundingRequest';
+import DetailsFundingRequest from '@/app/components/apps/funding-request/DetailsFundingRequest';
+
 import BlankCard from '@/app/components/shared/BlankCard';
 import SideDrawer from '@/app/components/shared/SideDrawer';
 import requestSicoob from '@/services/requestSicoobService';
@@ -12,18 +11,26 @@ import {
   Box,
   Button,
   Chip,
-  Divider,
-  Grid,
+  CircularProgress,
+  Stack,
+  Tab,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Tabs,
   Typography,
 } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
+import AttachmentDrawer from '../../attachment/AttachmentDrawer';
+import attachmentService from '@/services/attachmentService';
+import userService from '@/services/userService';
+import { useSelector } from 'react-redux';
+import { TabPanel } from '@/app/components/shared/TabPanel';
+import Comment from '@/app/components/apps/comment';
 
 const BCrumb = [
   {
@@ -31,17 +38,131 @@ const BCrumb = [
     title: 'Home',
   },
   {
-    title: 'Solicicitações de Financiamento',
+    title: 'Solicitações de Financiamento',
   },
 ];
 
 export default function Sicoob() {
+  const user = useSelector((state) => state.user?.user);
+
   const [rows, setRows] = useState([]);
   const [row, setRow] = useState();
   const [openSideDrawer, setOpenSideDrawer] = useState(false);
-  const [disabled, setDisabled] = useState(true);
   const [formData, setFormData] = useState({});
+  const [formDataManaging, setFormDataManaging] = useState({});
+  const [openSideDrawerCreate, setOpenSideDrawerCreate] = useState();
+  const [rFormData, setRFormData] = useState({});
+  const [attachments, setAttachments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const [disabled, setDisabled] = useState(true);
+  const [disabledManaging, setDisabledManaging] = useState(true);
+  const [customer, setCustomer] = useState();
+  const [managingPartner, setManagingPartner] = useState();
 
+  const [value, setValue] = useState(0);
+
+  const payloadClear = {
+    complete_name: '',
+    email: '',
+    first_document: '',
+    person_type: '',
+    gender: '',
+    birth_date: '',
+  };
+  const handleAddAttachment = (attachment) => {
+    setAttachments((prev) => [...prev, attachment]);
+  };
+
+  const handleChangeTab = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      if (formData.person_type == 'PJ') {
+        // Cria o registro e obtém o object_id
+        const userResponse = await userService.upInsert(customer.id, {
+          complete_name: formData.complete_name,
+          email: formData.email,
+          first_document: formData.first_document,
+          person_type: formData.person_type,
+          user_types: [2],
+        });
+
+        setCustomer(userResponse);
+
+        const userResponseManaging = await userService.upInsert(managingPartner.id, {
+          complete_name: formDataManaging.complete_name,
+          email: formDataManaging.email,
+          first_document: formDataManaging.first_document,
+          person_type: formDataManaging.person_type,
+          birth_date: formDataManaging.birth_date,
+          gender: formDataManaging.gender,
+          user_types: [2],
+        });
+
+        setManagingPartner(userResponseManaging);
+      } else {
+        const userResponse = await userService.upInsert(customer.id, {
+          complete_name: formData.complete_name,
+          email: formData.email,
+          first_document: formData.first_document,
+          person_type: formData.person_type,
+          gender: formData.gender,
+          birth_date: formData.birth_date,
+          user_types: [2],
+        });
+        setCustomer(userResponse);
+      }
+
+      const recordResponse = await requestSicoob.create({
+        occupation: formData.person_type == 'PJ' ? 'Empresa' : rFormData.occupation,
+        monthly_income: rFormData.monthly_income,
+        customer: customer?.id,
+        managing_partner: managingPartner?.id,
+        requested_by: user?.id,
+        project_value: rFormData.project_value,
+      });
+      const recordId = recordResponse.id;
+
+      // Envia cada anexo pendente
+      await Promise.all(
+        attachments.map(async (attachment) => {
+          const formDataAttachment = new FormData();
+          formDataAttachment.append('file', attachment.file);
+          formDataAttachment.append('description', attachment.description);
+          formDataAttachment.append('object_id', recordId);
+          formDataAttachment.append('content_type_id', 121);
+          formDataAttachment.append('document_type_id', '');
+          formDataAttachment.append('document_subtype_id', '');
+          formDataAttachment.append('status', '');
+          await attachmentService.createAttachment(formDataAttachment);
+        }),
+      );
+      setOpenSideDrawerCreate(false);
+      fetchRequestSicoob();
+    } catch (error) {
+      console.error('Erro ao salvar registro ou anexos:', error);
+      if (error.response && error.response.data) {
+        const errors = error.response.data;
+        setFormErrors(errors);
+        Object.keys(errors).forEach((field) => {
+          const label = fieldLabels[field] || field;
+          enqueueSnackbar(`Erro no campo ${label}: ${errors[field].join(', ')}`, {
+            variant: 'error',
+          });
+        });
+      } else {
+        enqueueSnackbar('Erro ao salvar registro ou anexos: ' + error.message, {
+          variant: 'error',
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     fetchRequestSicoob();
   }, []);
@@ -49,7 +170,7 @@ export default function Sicoob() {
   const fetchRequestSicoob = async () => {
     try {
       const response = await requestSicoob.index({
-        expand: ['customer', 'managing_partner'],
+        expand: ['customer', 'managing_partner', 'requested_by.phone_numbers'],
         fields: [
           '*',
           'customer.complete_name',
@@ -59,6 +180,14 @@ export default function Sicoob() {
           'customer.gender',
           'customer.birth_date',
           'managing_partner.complete_name',
+          'managing_partner.person_type',
+          'managing_partner.email',
+          'managing_partner.first_document',
+          'managing_partner.gender',
+          'managing_partner.birth_date',
+          'requested_by.complete_name',
+          'requested_by.phone_numbers.area_code',
+          'requested_by.phone_numbers.number',
         ],
         format: 'json',
       });
@@ -69,14 +198,82 @@ export default function Sicoob() {
     }
   };
 
+  const verifyUser = async (first_document) => {
+    try {
+      const response = await userService.index({
+        first_document__icontains: first_document,
+        fields: ['id', 'first_document', 'email', 'complete_name', 'gender', 'birth_date'],
+      });
+
+      return response.results;
+    } catch (error) {
+      enqueueSnackbar(`Erro ao buscar contate o suporte: ${error}`, { variant: 'error' });
+      console.log(error);
+    }
+  };
+
   const itemSelected = (row) => {
-    console.log(row);
     setRow(row);
     setOpenSideDrawer(true);
   };
 
-  const handleChange = (event) => {
-    setFormData((prevData) => ({ ...prevData, [event.target.name]: event.target.value }));
+  const onCloseDrawer = () => {
+    setOpenSideDrawerCreate(false);
+    setFormData(null);
+    setFormDataManaging(null);
+  };
+
+  const handleChange = async (event) => {
+    const { name, value } = event.target;
+
+    console.log(name, value);
+
+    if (
+      name === 'first_document' &&
+      ((value.length == 11 && formData.person_type == 'PF') ||
+        (value.length == 14 && formData.person_type == 'PJ'))
+    ) {
+      const user = await verifyUser(value);
+
+      if (user.length == 0) {
+        enqueueSnackbar('Nenhum registro encontrado com este CPF ou CNPJ. Complete o Cadastro', {
+          variant: 'warning',
+        });
+        setDisabled(false);
+      } else {
+        setFormData((prevData) => ({ ...prevData, ...user[0] }));
+        setCustomer(user[0]);
+      }
+    }
+
+    if (name === 'person_type') {
+      setFormData(payloadClear);
+    }
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleChangeManaging = async (event) => {
+    const { name, value } = event.target;
+    if (name === 'first_document' && value.length == 11) {
+      const user = await verifyUser(value);
+      if (user.length == 0) {
+        enqueueSnackbar('Nenhum registro encontrado com este CPF ou CNPJ. Complete o Cadastro', {
+          variant: 'warning',
+        });
+        setDisabledManaging(false);
+      } else {
+        setFormDataManaging((prevData) => ({ ...prevData, ...user[0] }));
+        setManagingPartner(user[0]);
+      }
+    }
+    if (name === 'person_type') {
+      setFormDataManaging(payloadClear);
+    }
+    setFormDataManaging((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleChangeRFormData = (event) => {
+    setRFormData((prevData) => ({ ...prevData, [event.target.name]: event.target.value }));
   };
 
   const handleChangeStatus = async (status, id) => {
@@ -84,6 +281,7 @@ export default function Sicoob() {
       const response = await requestSicoob.update(id, {
         status,
       });
+
       fetchRequestSicoob();
       enqueueSnackbar(`Salvo com sucesso`, { variant: 'success' });
     } catch (error) {
@@ -94,12 +292,14 @@ export default function Sicoob() {
 
   const getStatus = (status) => {
     switch (status) {
-      case 'PA':
+      case 'A':
+        return <Chip label="Aprovado" color="success" />;
+      case 'P':
         return <Chip label="Em análise" color="warning" />;
-      case 'approved':
-        return <Chip label="Pendente" color="warning" />;
-      case 'rejected':
-        return <Chip label="Pendente" color="warning" />;
+      case 'R':
+        return <Chip label="Reprovado" color="error" />;
+      case 'PA':
+        return <Chip label="Pré-Aprovado" color="success" />;
       default:
         return <Chip label="Pendente" color="warning" />;
     }
@@ -107,6 +307,16 @@ export default function Sicoob() {
   return (
     <Box>
       <Breadcrumb items={BCrumb} />
+      <Box
+        sx={{
+          padding: '22px',
+          borderRadius: '8px',
+          display: 'flex',
+          justifyContent: 'end',
+        }}
+      >
+        <Button onClick={() => setOpenSideDrawerCreate(true)}>Nova Solicitação</Button>
+      </Box>
       <BlankCard>
         <TableContainer>
           <Table aria-label="simple table">
@@ -142,194 +352,45 @@ export default function Sicoob() {
       <SideDrawer open={openSideDrawer} onClose={() => setOpenSideDrawer(false)} title="Detalhes">
         {row && (
           <>
-            <Box sx={{ marginBottom: 4, overflow: 'auto', height: '100vh', paddingBottom: 30 }}>
-              <Box sx={{ marginBottom: 4 }}>
-                <Typography variant="h5">Contratante</Typography>
-                <Divider sx={{ marginTop: 2 }} />
-                <Grid container spacing={3} sx={{ marginBottom: 2 }}>
-                  <Grid item xs={12} sm={12} lg={4}>
-                    <CustomFormLabel htmlFor="complete_name">Nome Contratante</CustomFormLabel>
-                    <CustomTextField
-                      disabled={disabled}
-                      name="complete_name"
-                      variant="outlined"
-                      value={formData.complete_name || row.customer.complete_name}
-                      fullWidth
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={12} lg={4}>
-                    <CustomFormLabel htmlFor="complete_name">E-mail</CustomFormLabel>
-                    <CustomTextField
-                      disabled={disabled}
-                      name="complete_name"
-                      variant="outlined"
-                      value={formData.email || row.customer.email}
-                      fullWidth
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={12} lg={4}>
-                    <FormDate
-                      disabled={disabled}
-                      label="Data de Nascimento"
-                      name="birth_date"
-                      value={formData.birth_date || row.customer.birth_date}
-                      onChange={(newValue) =>
-                        handleChange({ target: { value: newValue, name: 'birth_date' } })
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={12} lg={4}>
-                    <CustomFormLabel htmlFor="complete_name">
-                      {row.person_type === 'PF' ? 'CPF' : 'CNPJ'}
-                    </CustomFormLabel>
-                    <CustomTextField
-                      disabled={disabled}
-                      name="complete_name"
-                      variant="outlined"
-                      value={formData.first_document || row.customer.first_document}
-                      fullWidth
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={12} lg={4}>
-                    <FormSelect
-                      disabled={disabled}
-                      name="gender"
-                      label="Gênero"
-                      options={[
-                        { value: 'M', label: 'Masculino' },
-                        { value: 'F', label: 'Feminino' },
-                      ]}
-                      value={formData.gender || row.customer.gender}
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={12} lg={4}>
-                    <CustomFormLabel htmlFor="complete_name">Natureza</CustomFormLabel>
-                    <CustomTextField
-                      disabled={disabled}
-                      name="complete_name"
-                      variant="outlined"
-                      value={formData.person_type || row.customer.person_type}
-                      fullWidth
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                </Grid>
-              </Box>
-              {row.customer.person_type == 'PJ' && (
-                <Box>
-                  <Typography variant="h5">Sócio Administrador</Typography>
-                  <Divider sx={{ marginTop: 2 }} />
-                  <Grid container spacing={3} sx={{ marginBottom: 2 }}>
-                    <Grid item xs={12} sm={12} lg={4}>
-                      <CustomFormLabel htmlFor="complete_name">Nome Contratante</CustomFormLabel>
-                      <CustomTextField
-                        disabled={disabled}
-                        name="complete_name"
-                        variant="outlined"
-                        value={formData.complete_name || row.customer.complete_name}
-                        fullWidth
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={12} lg={4}>
-                      <CustomFormLabel htmlFor="complete_name">E-mail</CustomFormLabel>
-                      <CustomTextField
-                        disabled={disabled}
-                        name="complete_name"
-                        variant="outlined"
-                        value={formData.email || row.customer.email}
-                        fullWidth
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={12} lg={4}>
-                      <FormDate
-                        disabled={disabled}
-                        label="Data de Nascimento"
-                        name="birth_date"
-                        value={formData.birth_date || row.customer.birth_date}
-                        onChange={(newValue) =>
-                          handleChange({ target: { value: newValue, name: 'birth_date' } })
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={12} lg={4}>
-                      <CustomFormLabel htmlFor="complete_name">CPF</CustomFormLabel>
-                      <CustomTextField
-                        disabled={disabled}
-                        name="complete_name"
-                        variant="outlined"
-                        value={formData.first_document || row.customer.first_document}
-                        fullWidth
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={12} lg={4}>
-                      <FormSelect
-                        disabled={disabled}
-                        name="gender"
-                        label="Gênero"
-                        options={[
-                          { value: 'M', label: 'Masculino' },
-                          { value: 'F', label: 'Feminino' },
-                        ]}
-                        value={formData.gender || row.customer.gender}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={12} lg={4}>
-                      <CustomFormLabel htmlFor="complete_name">Natureza</CustomFormLabel>
-                      <CustomTextField
-                        disabled={disabled}
-                        name="complete_name"
-                        variant="outlined"
-                        value={formData.person_type || row.customer.person_type}
-                        fullWidth
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                  </Grid>
-                </Box>
-              )}
-            </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'end',
-                position: 'absolute',
-                background: '#fff',
-                borderTop: '1px solid #ccc',
-                borderRadius: 0,
-                bottom: 0,
-                width: '85%',
-                paddingBottom: '20px',
-              }}
-            >
-              <Box
-                sx={{
-                  minWidth: '20%',
-                }}
-              >
-                <FormSelect
-                  name="status"
-                  label="Status"
-                  options={[
-                    { value: 'P', label: 'Em Análise' },
-                    { value: 'R', label: 'Reprovado' },
-                    { value: 'PA', label: 'Pré-Aprovado' },
-                    { value: 'A', label: 'Aprovado' },
-                  ]}
-                  value={formData.status || row.status}
-                  onChange={(event) => handleChangeStatus(event.target.value, row.id)}
-                />
-              </Box>
-            </Box>
+            <Tabs value={value} onChange={handleChangeTab}>
+              <Tab label="Solicitação" value={0} />
+              <Tab label="Comentários" value={1} />
+            </Tabs>
+            <TabPanel value={value} index={0}>
+              <DetailsFundingRequest data={row} handleChangeStatus={handleChangeStatus} />
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              <Comment appLabel={'contracts'} model={'sicoobrequest'} objectId={row.id} />
+            </TabPanel>
           </>
         )}
+      </SideDrawer>
+      <SideDrawer open={openSideDrawerCreate} onClose={onCloseDrawer} title="Detalhes">
+        <>
+          <CreateFundingRequest
+            formData={formData}
+            formDataManaging={formDataManaging}
+            handleChange={handleChange}
+            handleChangeManaging={handleChangeManaging}
+            rFormData={rFormData}
+            handleChangeRFormData={handleChangeRFormData}
+            disabled={disabled}
+            disabledManaging={disabledManaging}
+          >
+            <Stack direction="row" spacing={2} justifyContent="space-between" mt={2}>
+              <AttachmentDrawer
+                objectId={null}
+                attachments={attachments}
+                onAddAttachment={handleAddAttachment}
+                appLabel={'contracts'}
+                model={'sicoobrequest'}
+              />
+              <Button variant="contained" color="primary" onClick={handleSubmit} disabled={loading}>
+                {loading ? <CircularProgress size={24} /> : 'Criar'}
+              </Button>
+            </Stack>
+          </CreateFundingRequest>
+        </>
       </SideDrawer>
     </Box>
   );

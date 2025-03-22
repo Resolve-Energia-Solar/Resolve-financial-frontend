@@ -27,7 +27,7 @@ export default function Customer({ data, onRefresh }) {
     try {
       const response = await userService.update(id, {
         complete_name: formData.complete_name,
-        emai: formData.email,
+        email: formData.email,
         gender: formData.gender,
         birth_date: formData.birth_date,
         first_document: formData.first_document,

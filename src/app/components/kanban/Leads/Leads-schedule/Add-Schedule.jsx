@@ -1,11 +1,5 @@
 'use client';
-import {
-  Grid,
-  Typography,
-  Stack,
-  CircularProgress,
-  Button,
-} from '@mui/material';
+import { Grid, Typography, Stack, CircularProgress, Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
@@ -16,17 +10,30 @@ import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 
-import { parseISO, format, isBefore} from 'date-fns';
+import { parseISO, format, isBefore } from 'date-fns';
 import HasPermission from '@/app/components/permissions/HasPermissions';
 import { useSelector } from 'react-redux';
 import AutoCompleteUser from '@/app/components/apps/invoice/components/auto-complete/Auto-Input-User';
+import CreateAddressPage from '@/app/components/apps/address/Add-address';
+import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
 
-
-function LeadAddSchedulePage({ leadId = null, serviceId = null, onRefresh = null, onClose = null }) {
+function LeadAddSchedulePage({
+  leadId = null,
+  serviceId = null,
+  onRefresh = null,
+  onClose = null,
+}) {
   const { enqueueSnackbar } = useSnackbar();
   const userPermissions = useSelector((state) => state.user.permissions);
 
-  const { formData, handleChange, handleSave, loading: formLoading, formErrors, success } = useScheduleForm();
+  const {
+    formData,
+    handleChange,
+    handleSave,
+    loading: formLoading,
+    formErrors,
+    success,
+  } = useScheduleForm();
   formData.leads_ids = [...new Set([...(formData.leads_ids || []), leadId])];
 
   const MIN_SCHEDULE_DATE = '2022-01-17T00:00:00';
@@ -52,8 +59,9 @@ function LeadAddSchedulePage({ leadId = null, serviceId = null, onRefresh = null
         const minDate = parseISO(MIN_SCHEDULE_DATE);
 
         if (isBefore(selectedDate, minDate)) {
-
-          enqueueSnackbar('A data selecionada não pode ser anterior a 17/01.', { variant: 'error' });
+          enqueueSnackbar('A data selecionada não pode ser anterior a 17/01.', {
+            variant: 'error',
+          });
           handleChange(field, '');
           return;
         }
@@ -77,7 +85,9 @@ function LeadAddSchedulePage({ leadId = null, serviceId = null, onRefresh = null
           const formattedTime = format(today, 'HH:mm:ss');
 
           if (selectedTime < formattedTime) {
-            enqueueSnackbar('O horário selecionado não pode ser anterior ao horário atual.', { variant: 'error' });
+            enqueueSnackbar('O horário selecionado não pode ser anterior ao horário atual.', {
+              variant: 'error',
+            });
             handleChange(field, '');
             return;
           }
@@ -100,7 +110,23 @@ function LeadAddSchedulePage({ leadId = null, serviceId = null, onRefresh = null
       if (onRefresh) onRefresh();
       if (onClose) onClose();
     }
-  }
+  };
+
+    const fetchAddress = async (search) => {
+      try {
+        const response = await addressService.getAddress({
+          q: search,
+          limit: 40,
+          fields: 'id,street,number,city,state',
+        });
+        return response.results;
+      } catch (error) {
+        console.error('Erro na busca de endereços:', error);
+        return [];
+      }
+    };
+  
+    const [selectedAddresses, setSelectedAddresses] = useState([]);
 
   return (
     <Grid container spacing={1}>
@@ -126,11 +152,26 @@ function LeadAddSchedulePage({ leadId = null, serviceId = null, onRefresh = null
       )}
 
       <Grid item xs={12}>
-        <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
-        <AutoCompleteAddress
-          onChange={(id) => handleChange('address_id', id)}
-          value={formData.address_id}
-          {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
+        <CustomFormLabel htmlFor="address">Endereço</CustomFormLabel>
+        <GenericAutocomplete
+          label="Endereço"
+          fetchOptions={fetchAddress}
+          multiple
+          AddComponent={CreateAddressPage}
+          getOptionLabel={(option) =>
+            `${option.street}, ${option.number} - ${option.city}, ${option.state}`
+          }
+          onChange={(selected) => {
+            setSelectedAddresses(selected);
+            console.log(selected);
+            const ids = Array.isArray(selected) ? selected.map((item) => item.id) : [];
+            handleChange('addresses_ids', ids);
+          }}
+          value={selectedAddresses}
+          {...(formErrors.addresses && {
+            error: true,
+            helperText: formErrors.addresses,
+          })}
         />
       </Grid>
 
