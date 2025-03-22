@@ -37,8 +37,6 @@ const Logo = () => {
             alt="logo"
             height={60}
             width={customizer.isCollapse ? 55 : 180}
-            layout='intrinsic'
-            objectFit='contain'
             priority
           />
         )}
