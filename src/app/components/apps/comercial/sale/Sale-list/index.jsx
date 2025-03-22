@@ -128,7 +128,6 @@ const SaleList = () => {
       setIndicators(data?.meta?.indicators);
       setSalesList(data?.results);
       setTotalRows(data?.meta?.pagination?.total_count);
-
     } catch (err) {
       setError('Erro ao carregar Vendas');
       showAlert('Erro ao carregar Vendas', 'error');
@@ -224,8 +223,8 @@ const SaleList = () => {
                 IconComponent: IconListDetails,
                 title: 'Em andamento',
                 onClick: () => setFilters({ ...filters, status__in: 'EA' }),
-                value: indicators?.in_progress?.total_value || 0,
-                count: indicators?.in_progress?.count || '-',
+                value: indicators?.pending_total_value || 0,
+                count: indicators?.pending_count || '-',
               },
               {
                 backgroundColor: 'success.light',
@@ -233,8 +232,8 @@ const SaleList = () => {
                 IconComponent: IconListDetails,
                 title: 'Finalizado',
                 onClick: () => setFilters({ ...filters, status__in: 'F' }),
-                value: indicators?.finalized?.total_value || 0,
-                count: indicators?.finalized?.count || '-',
+                value: indicators?.finalized_total_value || 0,
+                count: indicators?.finalized_count || '-',
               },
               {
                 backgroundColor: 'secondary.light',
@@ -242,8 +241,8 @@ const SaleList = () => {
                 IconComponent: IconPaperclip,
                 title: 'Pendente',
                 onClick: () => setFilters({ ...filters, status__in: 'P' }),
-                value: indicators?.pending?.total_value || 0,
-                count: indicators?.pending?.count || '-',
+                value: indicators?.pending_total_value || 0,
+                count: indicators?.pending_count || '-',
               },
               {
                 backgroundColor: 'warning.light',
@@ -251,8 +250,8 @@ const SaleList = () => {
                 IconComponent: IconSortAscending,
                 title: 'Cancelado',
                 onClick: () => setFilters({ status__in: 'C' }),
-                value: indicators?.canceled?.total_value || 0,
-                count: indicators?.canceled?.count || '-',
+                value: indicators?.canceled_total_value || 0,
+                count: indicators?.canceled_count || '-',
               },
               {
                 backgroundColor: 'warning.light',
@@ -260,8 +259,8 @@ const SaleList = () => {
                 IconComponent: IconSortAscending,
                 title: 'Distrato',
                 onClick: () => setFilters({ status__in: 'D' }),
-                value: indicators?.terminated?.total_value || 0,
-                count: indicators?.terminated?.count || '-',
+                value: indicators?.terminated_total_value || 0,
+                count: indicators?.terminated_count || '-',
               },
             ]}
           />
