@@ -100,11 +100,12 @@ export default function ProposalLayout({ formData }) {
                 fontSize: "24px",
                 fontWeight: "bold",
                 display: "flex",
+                flexDirection: "column",
                 justifyContent: "flex-start", 
-                width: "100%"
+                
               }}
             >
-              <Typography sx={{fontSize: "47px", fontWeight: "400", color: "#000000"}}>
+              <Typography sx={{fontSize: "47px", fontWeight: "400", color: "#000000", mb: 3}}>
                 PROPOSTA
               </Typography>
               <Typography sx={{fontSize: "47px", fontWeight: "700", color: "#000000"}}>
