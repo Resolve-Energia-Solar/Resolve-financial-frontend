@@ -46,9 +46,12 @@ const HorizontalHeader = () => {
       <ToolbarStyled
         sx={{
           maxWidth: customizer.isLayout === 'boxed' ? 'lg' : '100%!important',
+          display: "flex",
+          alignItems: "center", 
+          justifyContent: "center"
         }}
       >
-        <Box sx={{ width: '215px', overflow: 'hidden', alignItems: "center", justifyContent: "center" }}>
+        <Box sx={{ minWidth: '230px', overflow: 'hidden', display: "flex", alignItems: "center", justifyContent: "flex-start", height: "100%", paddingTop: 1 }}>
           <Logo />
         </Box>
         {/* ------------------------------------------- */}
