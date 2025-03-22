@@ -6,6 +6,7 @@ import Image from "next/image";
 
 const Logo = () => {
   const customizer = useSelector((state) => state.customizer);
+  const layout = useSelector((state) => state.layout);
   const LinkStyled = styled(Link)(() => ({
     height: customizer.TopbarHeight,
     width: customizer.isCollapse ? "60px" : "180px",
@@ -36,6 +37,8 @@ const Logo = () => {
             alt="logo"
             height={60}
             width={customizer.isCollapse ? 55 : 180}
+            layout='intrinsic'
+            objectFit='contain'
             priority
           />
         )}
