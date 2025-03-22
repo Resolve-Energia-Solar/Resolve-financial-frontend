@@ -27,19 +27,7 @@ import {
   IconFileArrowRight
 } from '@tabler/icons-react';
 import { uniqueId } from 'lodash';
-import ViewKanbanOutlinedIcon from '@mui/icons-material/ViewKanbanOutlined';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
-import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
-import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
-import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
-import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
-import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
-import SquareFootOutlinedIcon from '@mui/icons-material/SquareFootOutlined';
-import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
-import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
+
 
 const Menuitems = [
   {
