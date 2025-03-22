@@ -83,21 +83,6 @@ const Menuitems = [
   // },
   {
     id: uniqueId(),
-    title: 'Serviços de Campo',
-    icon: IconMapRoute,
-    href: '/',
-    children: [
-      {
-        id: uniqueId(),
-        title: 'Agendamentos',
-        icon: IconCalendarStar,
-        href: '/apps/inspections/schedule',
-      },
-    ],
-    permissions: ['field_services.view_schedule'],
-  },
-  {
-    id: uniqueId(),
     title: 'Financeiro',
     icon: IconCurrencyDollar,
     href: '/',
@@ -135,7 +120,22 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Solic. Financiamento',
+    title: 'Serviços de Campo',
+    icon: IconMapRoute,
+    href: '/',
+    children: [
+      {
+        id: uniqueId(),
+        title: 'Agendamentos',
+        icon: IconCalendarStar,
+        href: '/apps/inspections/schedule',
+      },
+    ],
+    permissions: ['field_services.view_schedule'],
+  },
+  {
+    id: uniqueId(),
+    title: 'Financiamento',
     icon: IconBuildingBank,
     href: '/apps/funding-request',
     // permissions: ['contracts.view_payment',],

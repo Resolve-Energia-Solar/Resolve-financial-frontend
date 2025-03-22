@@ -75,24 +75,6 @@ const Menuitems = [
       },
     ],
   },
-
-  {
-    id: uniqueId(),
-    title: 'Serviço de Campo',
-    icon: IconMapRoute,
-    href: '/apps/inspections/schedule',
-    permissions: ['field_services.view_schedule'],
-    children: [
-      {
-        id: uniqueId(),
-        title: 'Agendamentos',
-        icon: IconCalendarStar,
-        href: '/apps/inspections/schedule',
-        permissions: ['field_services.view_schedule'],
-      },
-    ],
-  },
-
   {
     id: uniqueId(),
     title: 'Financeiro',
@@ -132,7 +114,23 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Solic. Financiamento',
+    title: 'Serviço de Campo',
+    icon: IconMapRoute,
+    href: '/apps/inspections/schedule',
+    permissions: ['field_services.view_schedule'],
+    children: [
+      {
+        id: uniqueId(),
+        title: 'Agendamentos',
+        icon: IconCalendarStar,
+        href: '/apps/inspections/schedule',
+        permissions: ['field_services.view_schedule'],
+      },
+    ],
+  },
+  {
+    id: uniqueId(),
+    title: 'Financiamento',
     icon: IconBuildingBank,
     href: '/apps/funding-request',
     // permissions: ['contracts.view_payment',],
