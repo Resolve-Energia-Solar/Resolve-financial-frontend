@@ -13,9 +13,9 @@ const columnService = {
     }
   },
 
-  find: async (id) => {
+  find: async (id, params) => {
     try {
-      const response = await apiClient.get(`${DEFAULT_ROUTER}/${id}/`);
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/${id}/`, { params });
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar coluna com id ${id}:`, error);
