@@ -355,18 +355,15 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={12}>
-                  <CustomFormLabel htmlFor="description">Descrição</CustomFormLabel>
+                  <CustomFormLabel htmlFor="description" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Descrição</CustomFormLabel>
                   <CustomTextArea
-                    name="observation"
+                    name="description"
                     multiline
                     rows={4}
                     minRows={3}
-                    value={formData.observation}
-                    onChange={(e) => handleChange('observation', e.target.value)}
-                    {...(formErrors.observation && {
-                      error: true,
-                      helperText: formErrors.observation,
-                    })}
+                    value={formData.description}
+                    onChange={(e) => handleChange('description', e.target.value)}
+                    {...(formErrors.description && { error: true, helperText: formErrors.description })}
                   />
                 </Grid>
               </Grid>

@@ -155,27 +155,30 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-
-                <Grid item xs={4}>
-                  <CustomFormLabel htmlFor="amount" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Valor da proposta</CustomFormLabel>
+                <Grid item xs={6}>
+                  <CustomFormLabel htmlFor="seller_id" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Tipo de Projeto</CustomFormLabel>
                   <TextField
-                    name="amount"
-                    value={formData.amount}
-                    onChange={(e) => handleChange('amount', e.target.value)}
+                    select
+                    name="seller_id"
+                    value={formData.seller_id}
+                    onChange={(e) => handleChange('seller_id', e.target.value)}
                     fullWidth
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
-                            R$
-                          </Box>
-                        </InputAdornment>
-                      ),
-                    }}
+                  >
+                    <MenuItem value="C">Comercial</MenuItem>
+                  </TextField>
+                </Grid>
+                <Grid item xs={6}>
+                  <CustomFormLabel htmlFor="amount">Valor da proposta</CustomFormLabel>
+                  <CustomFieldMoney
+                    name="value"
+                    fullWidth
+                    value={formData.value}
+                    onChange={(value) => handleChange('value', value)}
+                    {...(formErrors.value && { error: true, helperText: formErrors.value })}
                   />
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={8}>
                   <CustomFormLabel htmlFor="seller_id" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Vendedor Responsável</CustomFormLabel>
                   <TextField
                     select
@@ -191,20 +194,19 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 </Grid>
 
                 <Grid item xs={4}>
-                  <CustomFormLabel htmlFor="proposal_validity" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
-                    Validade da proposta
-                  </CustomFormLabel>
-                  <TextField
-                    name="proposal_validity"
-                    value={formData.proposal_validity}
-                    onChange={(e) => handleChange('proposal_validity', e.target.value)}
+                  <FormDate
+                    name="due_date"
+                    label="Data de Vencimento"
                     fullWidth
+                    value={formData.due_date}
+                    onChange={(value) => handleChange('due_date', value)}
+                    {...(formErrors.due_date && { error: true, helperText: formErrors.due_date })}
                   />
                 </Grid>
-
               </Grid>
 
-              <Grid container rowSpacing={1} xs={12}>
+
+              {/* <Grid container rowSpacing={1} xs={12}>
                 {paymentMethods.map((payment, index) => (
                   <Grid container spacing={2} key={payment.id} alignItems="center">
                     <Grid item xs={12}>
@@ -329,19 +331,19 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   </IconButton>
                 </Grid>
               </Grid>
-
+ */}
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={12}>
                   <CustomFormLabel htmlFor="description" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Descrição</CustomFormLabel>
                   <CustomTextArea
-                    name="proposal_description"
+                    name="description"
                     multiline
                     rows={4}
                     minRows={3}
-                    value={formData.proposal_description}
-                    onChange={(e) => handleChange('proposal_description', e.target.value)}
-                    {...(formErrors.proposal_description && { error: true, helperText: formErrors.proposal_description })}
+                    value={formData.description}
+                    onChange={(e) => handleChange('description', e.target.value)}
+                    {...(formErrors.description && { error: true, helperText: formErrors.description })}
                   />
                 </Grid>
               </Grid>
