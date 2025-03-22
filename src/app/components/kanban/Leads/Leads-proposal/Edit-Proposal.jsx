@@ -18,7 +18,6 @@ import leadService from '@/services/leadService';
 import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import ProjectCard from '@/app/components/kanban/Leads/components/ProposalSmallListCard';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import Button from "@mui/material/Button";
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -35,6 +34,7 @@ import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import EnergyConsumptionCalc from '../components/EnergyConsumption/CalculateEnergyConsumption';
+import ProposalCard from '../../components/CardProposal';
 
 function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();

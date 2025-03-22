@@ -103,7 +103,7 @@ export function ProposalCard({ leadId = null }) {
           </Grid>
 
           <Grid item xs={11} >
-            <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Projeto 01</Typography>
+            <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Proposta</Typography>
           </Grid>
         </Grid>
 
