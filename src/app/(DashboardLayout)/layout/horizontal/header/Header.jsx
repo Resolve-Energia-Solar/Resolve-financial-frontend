@@ -48,7 +48,7 @@ const HorizontalHeader = () => {
           maxWidth: customizer.isLayout === 'boxed' ? 'lg' : '100%!important',
         }}
       >
-        <Box sx={{ width: lgDown ? '45px' : 'auto', overflow: 'hidden' }}>
+        <Box sx={{ width: '215px', overflow: 'hidden', alignItems: "center", justifyContent: "center" }}>
           <Logo />
         </Box>
         {/* ------------------------------------------- */}
