@@ -1,6 +1,8 @@
 import { Box, Button, Grid } from "@mui/material";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import Image from "next/image";
+import { relative } from "path";
 import React, { useState } from "react";
 
 export default function ProposalLayout({ formData }) {
@@ -38,7 +40,7 @@ export default function ProposalLayout({ formData }) {
 
   return (
     <Grid container>
-      <Grid container xs={12} sx={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", mb: 2}}>
+      <Grid container xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", mb: 2 }}>
         <Grid item xs={2.3}>
           <Box className="mt-6 flex justify-center">
             <Button
@@ -65,9 +67,57 @@ export default function ProposalLayout({ formData }) {
         </Grid>
 
       </Grid>
-      <Grid container ref={printRef}>
+      <Grid container ref={printRef} sx={{ position: "relative" }}>
+
+        <Grid item xs={12} sx={{ position: "relative" }}>
+          <Box sx={{ position: "relative" }}>
+            <img
+              src="/images/proposal/proposal_cover_background.png"
+              alt="header yellow bar"
+              style={{ width: "100%", height: "auto" }}
+            />
+
+            {/* Text over the first image */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%", 
+                left: "50%",
+                transform: "translate(-50%, -50%)", 
+                color: "white", 
+                fontSize: "24px",
+                fontWeight: "bold", 
+              }}
+            >
+              <Image
+                src="/images/logos/resolve-logo.png"
+                alt="logo"
+                height={60}
+                width={180}
+                priority
+              />
+            </Box>
+          </Box>
+        </Grid>
 
         <Grid item xs={12}>
+          <Box sx={{ position: "relative" }}>
+            <img
+              src="/images/proposal/bottom_border.png"
+              alt="header yellow bar"
+              style={{
+                position: "absolute",
+                bottom: 0, 
+                left: 0,
+                width: "100%",
+                height: "auto",
+                // zIndex: -1,
+              }}
+            />
+          </Box>
+        </Grid>
+
+        {/* <Grid item xs={12}>
             <Box>
               <img
                 src="/images/proposal/proposal_cover_background.png"
@@ -85,7 +135,7 @@ export default function ProposalLayout({ formData }) {
                 sx={{ width: "100%", height: "auto" }}
               />
             </Box>
-          </Grid>
+          </Grid>*/}
       </Grid>
     </Grid>
   );
