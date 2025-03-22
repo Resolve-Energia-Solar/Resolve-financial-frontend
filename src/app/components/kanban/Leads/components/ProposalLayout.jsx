@@ -1,4 +1,4 @@
-import { Box, Button, Grid } from "@mui/material";
+import { Box, Button, Grid, Typography } from "@mui/material";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import Image from "next/image";
@@ -70,23 +70,17 @@ export default function ProposalLayout({ formData }) {
       <Grid container ref={printRef} sx={{ position: "relative" }}>
 
         <Grid item xs={12} sx={{ position: "relative" }}>
-          <Box sx={{ position: "relative" }}>
+          <Box sx={{ position: "relative", width: "100%"}}>
             <img
               src="/images/proposal/proposal_cover_background.png"
               alt="header yellow bar"
               style={{ width: "100%", height: "auto" }}
             />
-
-            {/* Text over the first image */}
             <Box
               sx={{
                 position: "absolute",
-                top: "60%", 
-                left: "20%",
-                transform: "translate(-50%, -50%)", 
-                color: "white", 
-                fontSize: "24px",
-                fontWeight: "bold", 
+                top: "55%", 
+                left: "7%",
               }}
             >
               <Image
@@ -96,6 +90,26 @@ export default function ProposalLayout({ formData }) {
                 width={85}
                 priority
               />
+            </Box>
+            <Box
+              sx={{
+                position: "absolute",
+                top: "65%", 
+                left: "7%",
+                color: "white", 
+                fontSize: "24px",
+                fontWeight: "bold",
+                display: "flex",
+                justifyContent: "flex-start", 
+                width: "100%"
+              }}
+            >
+              <Typography sx={{fontSize: "47px", fontWeight: "400", color: "#000000"}}>
+                PROPOSTA
+              </Typography>
+              <Typography sx={{fontSize: "47px", fontWeight: "700", color: "#000000"}}>
+                COMERCIAL
+              </Typography>
             </Box>
           </Box>
         </Grid>
