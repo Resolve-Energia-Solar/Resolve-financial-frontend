@@ -133,7 +133,22 @@ const Menuitems = [
       },
     ],
   },
-
+  {
+    id: uniqueId(),
+    title: 'Solic. Financiamento',
+    icon: IconBuildingBank,
+    href: '/apps/funding-request',
+    // permissions: ['contracts.view_payment',],
+    children: [
+        {
+          id: uniqueId(),
+          title: 'Solicitações Sicoob',
+          icon: IconPigMoney,
+          href: '/apps/funding-request',
+          // permissions: ['financial.view_payment'],
+        },
+    ],
+  },
   {
     id: uniqueId(),
     title: 'Comissionamento',
