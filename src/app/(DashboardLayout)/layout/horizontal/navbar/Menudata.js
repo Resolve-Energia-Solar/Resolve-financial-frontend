@@ -24,7 +24,7 @@ const Menuitems = [
         children: [
           {
             id: uniqueId(),
-            title: 'Quadros',
+            title: 'Kanban',
             icon: IconPoint,
             href: '/apps/kanban/',
             permissions: ['core.view_board'],
@@ -58,28 +58,6 @@ const Menuitems = [
         icon: IconUserPin,
         href: '/apps/inspections/schedule',
         permissions: ['field_services.view_schedule'],
-      },
-      {
-        id: uniqueId(),
-        title: 'CRM',
-        icon: IconPoint,
-        permissions: ['core.view_board', 'resolve_crm.view_lead'],
-        children: [
-          {
-            id: uniqueId(),
-            title: 'Quadros',
-            icon: IconPoint,
-            href: '/apps/kanban/',
-            permissions: ['core.view_board'],
-          },
-          {
-            id: uniqueId(),
-            title: 'Leads',
-            icon: IconUser,
-            href: '/apps/leads',
-            permissions: ['resolve_crm.view_lead'],
-          },
-        ],
       },
     ],
   },
