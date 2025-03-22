@@ -19,7 +19,7 @@ import Navigation from '../../vertical/header/Navigation';
 import Logo from '../../shared/logo/Logo';
 import Cart from '../../vertical/header/Cart';
 
-const Header = () => {
+const HorizontalHeader = () => {
   const lgDown = useMediaQuery((theme) => theme.breakpoints.down('lg'));
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 
@@ -86,4 +86,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default HorizontalHeader;
