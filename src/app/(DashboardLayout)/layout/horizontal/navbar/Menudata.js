@@ -18,6 +18,28 @@ import { uniqueId } from 'lodash';
 const Menuitems = [
   {
     id: uniqueId(),
+        title: 'CRM',
+        icon: IconPoint,
+        permissions: ['core.view_board', 'resolve_crm.view_lead'],
+        children: [
+          {
+            id: uniqueId(),
+            title: 'Quadros',
+            icon: IconPoint,
+            href: '/apps/kanban/',
+            permissions: ['core.view_board'],
+          },
+          {
+            id: uniqueId(),
+            title: 'Leads',
+            icon: IconUser,
+            href: '/apps/leads',
+            permissions: ['resolve_crm.view_lead'],
+          },
+        ],
+  },
+  {
+    id: uniqueId(),
     title: 'Comercial',
     icon: IconShoppingCart,
     href: '/apps/commercial/sale',
