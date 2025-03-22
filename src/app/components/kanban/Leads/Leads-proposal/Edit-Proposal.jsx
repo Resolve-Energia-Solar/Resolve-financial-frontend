@@ -355,7 +355,7 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               xs={12}
               sx={{ display: 'flex', flexDirection: 'column', marginTop: 2, gap: 2 }}
             >
-              <ProjectCard leadId={leadId} />
+              <ProposalCard leadId={leadId} />
             </Grid>
           </Grid>
 
