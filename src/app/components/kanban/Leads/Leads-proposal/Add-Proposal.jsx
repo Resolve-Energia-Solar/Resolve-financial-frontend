@@ -178,6 +178,18 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
+                  <CustomFormLabel htmlFor="seller_id" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Tipo de Projeto</CustomFormLabel>
+                  <TextField
+                    select
+                    name="seller_id"
+                    value={formData.seller_id}
+                    onChange={(e) => handleChange('seller_id', e.target.value)}
+                    fullWidth
+                  >
+                    <MenuItem value="C">Comercial</MenuItem>
+                  </TextField>
+                </Grid>
+                <Grid item xs={6}>
                   <CustomFormLabel htmlFor="amount">Valor da proposta</CustomFormLabel>
                   <CustomFieldMoney
                     name="value"
@@ -188,7 +200,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   />
                 </Grid>
 
-                {/* <Grid item xs={4}>
+                <Grid item xs={8}>
                   <CustomFormLabel htmlFor="seller_id" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Vendedor Responsável</CustomFormLabel>
                   <TextField
                     select
@@ -201,9 +213,9 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     <MenuItem value="C">Ciclano</MenuItem>
                     <MenuItem value="B">Beltrano</MenuItem>
                   </TextField>
-                </Grid> */}
+                </Grid>
 
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <FormDate
                     name="due_date"
                     label="Data de Vencimento"
