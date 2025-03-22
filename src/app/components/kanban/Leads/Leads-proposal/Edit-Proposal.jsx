@@ -18,7 +18,7 @@ import leadService from '@/services/leadService';
 import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import ProjectCard from '@/app/components/kanban/Leads/components/ProjectSmallListCard';
+import ProjectCard from '@/app/components/kanban/Leads/components/ProposalSmallListCard';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import Button from "@mui/material/Button";
 import VisibilityIcon from '@mui/icons-material/Visibility';

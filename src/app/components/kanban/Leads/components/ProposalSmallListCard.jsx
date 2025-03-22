@@ -26,7 +26,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 
 
-export function ProjectCard({ leadId = null }) {
+export function ProposalCard({ leadId = null }) {
   const dispatch = useDispatch();
   const [dialogProductOpen, setDialogProductOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -314,4 +314,4 @@ export function ProjectCard({ leadId = null }) {
   );
 }
 
-export default ProjectCard;
+export default ProposalCard;
