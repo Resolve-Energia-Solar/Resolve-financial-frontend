@@ -22,6 +22,8 @@ export default function ProposalLayout({ formData }) {
       unit: "px",
       format: "a4"
     });
+    let yPosition = 10;
+    const margin = 10;
 
     const imgProperties = pdf.getImageProperties(dataImg);
     const pdfWidth = pdf.internal.pageSize.getWidth();
