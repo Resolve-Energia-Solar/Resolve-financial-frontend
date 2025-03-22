@@ -81,8 +81,8 @@ export default function ProposalLayout({ formData }) {
             <Box
               sx={{
                 position: "absolute",
-                top: "50%", 
-                left: "50%",
+                top: "60%", 
+                left: "20%",
                 transform: "translate(-50%, -50%)", 
                 color: "white", 
                 fontSize: "24px",
@@ -92,8 +92,8 @@ export default function ProposalLayout({ formData }) {
               <Image
                 src="/images/logos/resolve-logo.png"
                 alt="logo"
-                height={60}
-                width={180}
+                height={27}
+                width={85}
                 priority
               />
             </Box>
