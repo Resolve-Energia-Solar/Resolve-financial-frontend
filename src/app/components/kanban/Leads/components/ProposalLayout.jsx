@@ -22,16 +22,15 @@ export default function ProposalLayout({ formData }) {
       unit: "px",
       format: "a4"
     });
-    let yPosition = 10;
-    const margin = 10;
 
-    // const imgProperties = pdf.getImageProperties(dataImg);
-    const pdfWidth = 180;
-    const pdfHeight = 250;
+    const imgProperties = pdf.getImageProperties(dataImg);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
 
 
-    pdf.addImage(dataImg, 'PNG', margin, yPosition, pdfWidth, pdfHeight);
+    pdf.addImage(dataImg, 'PNG', 0, 0, pdfWidth, pdfHeight);
     pdf.addPage();
+    pdf.addImage(dataImg, 'PNG', 0, 0, pdfWidth, pdfHeight);
     
     pdf.save("proposta.pdf")
 
