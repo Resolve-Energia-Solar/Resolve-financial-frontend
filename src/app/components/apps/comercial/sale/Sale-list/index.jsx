@@ -101,7 +101,7 @@ const SaleList = () => {
     try {
       setLoading(true);
 
-      const data = await saleService.getSales({
+      const data = await saleService.index({
         userRole,
         ordering: orderingParam,
         limit: rowsPerPage,
@@ -128,7 +128,6 @@ const SaleList = () => {
       setIndicators(data?.meta?.indicators);
       setSalesList(data?.results);
       setTotalRows(data?.meta?.pagination?.total_count);
-
     } catch (err) {
       setError('Erro ao carregar Vendas');
       showAlert('Erro ao carregar Vendas', 'error');
