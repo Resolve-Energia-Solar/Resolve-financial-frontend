@@ -1,8 +1,3 @@
-import { withSentryConfig } from "@sentry/nextjs";
-
-
-
-
 const nextConfig = {
   experimental: {
     turbo: {
@@ -43,9 +38,4 @@ const nextConfig = {
   },
 }
 
-export default withSentryConfig(nextConfig, {
-  org: "resolve-energia-solar",
-  project: "javascript-nextjs",
-  silent: !process.env.NEXT_PUBLIC_CI,
-  disableLogger: true,
-});
+export default nextConfig
