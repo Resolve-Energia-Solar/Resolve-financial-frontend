@@ -54,7 +54,7 @@ const ScheduleTable = () => {
             }
           })
           .catch(err => console.error('Erro ao buscar serviços:', err));
-      }, []);
+    }, []);
 
     // Busca agendamentos filtrando pelo serviço selecionado e retornando somente os campos necessários
     useEffect(() => {
@@ -63,21 +63,21 @@ const ScheduleTable = () => {
         scheduleService.getSchedules({
           page,
           limit: rowsPerPage,
-          // Concatena os IDs dos serviços selecionados
+          expand: 'customer,service_opinion',
           service__in: selectedServices.join(','),
           fields: 'id,created_at,customer.complete_name,status,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,address.street,address.number,address.neighborhood,address.city,address.state,observation',
           ordering: orderDirection === 'asc' ? order : `-${order}`
         })
           .then(data => {
             setScheduleList(data.results);
-            setTotalRows(data.count);
+            setTotalRows(data.meta.pagination.total_count);
           })
           .catch(err => {
             console.error('Erro:', err);
             setError('Erro ao buscar agendamentos');
           })
           .finally(() => setLoading(false));
-      }, [selectedServices, page, rowsPerPage, order, orderDirection]);
+    }, [selectedServices, page, rowsPerPage, order, orderDirection]);
 
     const handleSort = useCallback(
         (field) => {
