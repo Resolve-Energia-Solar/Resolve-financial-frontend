@@ -51,20 +51,22 @@ const HorizontalHeader = () => {
           justifyContent: "center"
         }}
       >
-        <Box sx={{ minWidth: '230px', overflow: 'hidden', display: "flex", alignItems: "center", justifyContent: "flex-start", height: "100%", paddingTop: 1 }}>
+        <Box sx={{ overflow: 'hidden', display: "flex", alignItems: "center", justifyContent: "flex-start", height: "100%", paddingTop: 1 }}>
           <Logo />
         </Box>
         {/* ------------------------------------------- */}
         {/* Toggle Button Sidebar */}
         {/* ------------------------------------------- */}
         {lgDown ? (
-          <IconButton
-            color="inherit"
-            aria-label="menu"
-            onClick={() => dispatch(toggleMobileSidebar())}
-          >
-            <IconMenu2 />
-          </IconButton>
+          <Box sx={{ overflow: 'hidden', display: "flex", alignItems: "center", justifyContent: "flex-start", height: "100%" }}>
+            <IconButton
+              color="inherit"
+              aria-label="menu"
+              onClick={() => dispatch(toggleMobileSidebar())}
+            >
+              <IconMenu2 />
+            </IconButton>
+          </Box>
         ) : (
           ''
         )}
