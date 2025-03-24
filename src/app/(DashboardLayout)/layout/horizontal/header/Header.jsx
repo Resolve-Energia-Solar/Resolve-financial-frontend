@@ -14,10 +14,8 @@ import Notifications from '../../vertical/header/Notification';
 
 import Profile from '../../vertical/header/Profile';
 import Search from '../../vertical/header/Search';
-import Language from '../../vertical/header/Language';
 import Navigation from '../../vertical/header/Navigation';
 import Logo from '../../shared/logo/Logo';
-import Cart from '../../vertical/header/Cart';
 
 const HorizontalHeader = () => {
   const lgDown = useMediaQuery((theme) => theme.breakpoints.down('lg'));
