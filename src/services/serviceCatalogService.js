@@ -1,6 +1,28 @@
+import { find } from 'lodash';
 import apiClient from './apiClient';
 
 const serviceCatalogService = {
+
+  getServices: async (params = {}) => {
+    try {
+      const response = await apiClient.get('/api/services/', { params });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar serviços:', error);
+      throw error;
+    }
+  },
+
+  findServiceById: async (id, params = {}) => {
+    try {
+      const response = await apiClient.get(`/api/services/${id}/`, { params });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar serviço com id ${id}:`, error);
+      throw error;
+    }
+  },
+
   getServicesCatalog: async (options = {}) => {
     const { filters, expand, fields, ...rest } = options;
     const params = { ...rest };

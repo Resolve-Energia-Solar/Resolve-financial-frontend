@@ -1,33 +1,23 @@
 'use client';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { parseISO, format } from 'date-fns';
-import { 
-  Grid, 
-  Button, 
-  Stack, 
-  Tooltip, 
-  Snackbar, 
-  Alert, 
-  CircularProgress 
-} from '@mui/material';
+import { Grid, Button, Stack, Tooltip, Snackbar, Alert, CircularProgress, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
-
-import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
-import AutoCompleteServiceCatalog from '@/app/components/apps/inspections/auto-complete/Auto-input-Service';
+import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
-import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import AutoCompleteProject from '../../inspections/auto-complete/Auto-input-Project';
-import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
-import CreateAddressPage from '../../address/Add-address';
-
 import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
 import { useSelector } from 'react-redux';
 import HasPermission from '@/app/components/permissions/HasPermissions';
-import addressService from '@/services/addressService';
+
+// Função auxiliar para extrair o id (usada no payload)
+const extractId = (value) => {
+  return (typeof value === 'object' && value !== null && 'value' in value)
+    ? value.value
+    : value;
+};
 
 const timeOptions = [
   { value: '08:30:00', label: '08:30' },
@@ -43,112 +33,43 @@ const statusOptions = [
   { value: 'Cancelado', label: 'Cancelado' },
 ];
 
-const CreateSchedule = ({
-  serviceId = null,
-  projectId = null,
-  customerId = null,
-  onClosedModal = null,
-  products = [],
-  onRefresh = null,
-}) => {
-  const router = useRouter();
-  const {
-    formData,
-    handleChange,
-    handleSave,
-    loading: formLoading,
-    formErrors,
-    success,
-  } = useSheduleForm();
-  const userPermissions = useSelector((state) => state.user.permissions);
+// OptionSelector para escolha entre Projeto ou Produto
+const OptionSelector = ({ selectedOption, handleOptionChange }) => {
+  console.log("OptionSelector - selectedOption:", selectedOption);
+  return (
+    <FormControl component="fieldset" sx={{ marginBottom: 2 }}>
+      <FormLabel component="legend">Selecione Projeto ou Produto</FormLabel>
+      <RadioGroup row name="option" value={selectedOption} onChange={handleOptionChange}>
+        <FormControlLabel value="project" control={<Radio />} label="Projeto" />
+        <FormControlLabel value="product" control={<Radio />} label="Produto" />
+      </RadioGroup>
+    </FormControl>
+  );
+};
 
-  // Alert state
+const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null, onClosedModal = null, products = [], onRefresh = null }) => {
+  const router = useRouter();
+  const { formData, handleChange, handleSave, loading: formLoading, formErrors, success } = useSheduleForm();
+  const userPermissions = useSelector((state) => state.user.permissions);
+  console.log("CreateSchedule - formData:", formData);
+
+  // Estados para OptionSelector e alertas
+  const [selectedOption, setSelectedOption] = useState('');
+  const [clientSelected, setClientSelected] = useState('');
+  const [selectedAddress, setSelectedAddress] = useState(null);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('success');
 
-  // Endereço selecionado
-  const [selectedAddress, setSelectedAddress] = useState(null);
+  // Se props estiverem definidas, atualiza os campos com IDs
+  if (serviceId) handleChange('service', serviceId);
+  if (projectId) handleChange('project', projectId);
+  if (customerId) handleChange('customer', customerId);
+  if (products.length > 0) handleChange('products_ids', products);
 
-  // Preenche o formData com os IDs passados por props
-  if (serviceId) formData.service_id = serviceId;
-  if (projectId) formData.project_id = projectId;
-  if (customerId) formData.customer_id = customerId;
-  if (products.length > 0) formData.products_ids = products;
-
-  // Mostra alerta
-  const showAlert = (message, type) => {
-    setAlertMessage(message);
-    setAlertType(type);
-    setAlertOpen(true);
-  };
-
-  const handleAlertClose = () => {
-    setAlertOpen(false);
-  };
-
-  // Validação para datas e horários
-  const validateChange = (field, newValue) => {
-    if (field === 'schedule_date') {
-      try {
-        const today = new Date();
-        const selectedDate = parseISO(newValue);
-        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        if (selectedDate < todayStart) {
-          showAlert('A data selecionada não pode ser anterior à data atual.', 'error');
-          handleChange(field, '');
-          return;
-        }
-      } catch (error) {
-        console.error('Erro ao processar a data:', error);
-        showAlert('Por favor, insira uma data válida.', 'error');
-        handleChange(field, '');
-        return;
-      }
-    }
-    if (field === 'schedule_start_time') {
-      try {
-        const today = new Date();
-        const selectedTime = newValue;
-        const selectedDate = parseISO(formData.schedule_date);
-        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        if (selectedDate.getTime() === todayStart.getTime()) {
-          const formattedTime = format(today, 'HH:mm:ss');
-          if (selectedTime < formattedTime) {
-            showAlert('O horário selecionado não pode ser anterior ao horário atual.', 'error');
-            handleChange(field, '');
-            return;
-          }
-        }
-      } catch (error) {
-        console.error('Erro ao processar o horário:', error);
-        showAlert('Por favor, insira um horário válido.', 'error');
-        handleChange(field, '');
-        return;
-      }
-    }
-    handleChange(field, newValue);
-  };
-
-  // Busca endereços com base no termo de pesquisa
-  const fetchAddress = async (search) => {
-    try {
-      const response = await addressService.getAddress({
-        q: search,
-        customer_id: customerId,
-        limit: 40,
-        fields: 'id,street,number,city,state',
-      });
-      return response.results;
-    } catch (error) {
-      console.error('Erro na busca de endereços:', error);
-      return [];
-    }
-  };
-
-  // Redireciona ou fecha modal após sucesso
   useEffect(() => {
     if (success) {
+      console.log("Agendamento salvo com sucesso. Redirecionando/fechando modal...");
       if (onClosedModal) {
         onClosedModal();
         onRefresh && onRefresh();
@@ -158,90 +79,200 @@ const CreateSchedule = ({
     }
   }, [success, onClosedModal, onRefresh, router]);
 
+  const handleAlertClose = () => {
+    setAlertOpen(false);
+  };
+
+  const validateChange = (field, newValue) => {
+    console.log(`validateChange: ${field} mudou para:`, newValue);
+    handleChange(field, newValue);
+  };
+
+  const handleOptionChange = (event) => {
+    console.log("Opção selecionada:", event.target.value);
+    setSelectedOption(event.target.value);
+    if (event.target.value === 'project') {
+      handleChange('product', null);
+    } else if (event.target.value === 'product') {
+      handleChange('project', null);
+    }
+  };
+
   return (
     <>
       <Grid container spacing={3}>
-        {/* Serviço */}
-        {!serviceId && (
-          <Grid item xs={12} sm={12} lg={6}>
-            <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
-            <AutoCompleteServiceCatalog
-              onChange={(id) => handleChange('service_id', id)}
-              value={formData.service_id}
-              {...(formErrors.service_id && { error: true, helperText: formErrors.service_id })}
+        {/* Cliente */}
+        {!customerId && (
+          <Grid item xs={12}>
+            <CustomFormLabel htmlFor="customer">Cliente</CustomFormLabel>
+            <GenericAsyncAutocompleteInput
+              label="Cliente"
+              endpoint="/api/users"
+              queryParam="complete_name__icontains"
+              extraParams={{ fields: 'complete_name,id' }}
+              value={formData.customer}
+              onChange={(option) => {
+                console.log("Cliente selecionado:", option);
+                setClientSelected(option ? option.value : '');
+                // Mantém a chamada com o objeto completo
+                handleChange('customer', option || null);
+              }}
+              mapResponse={(data) =>
+                data.results.map(item => ({ label: item.complete_name, value: item.id }))
+              }
+              {...(formErrors.customer && { error: true, helperText: formErrors.customer })}
             />
           </Grid>
         )}
-        {/* Projeto */}
-        {!projectId && (
-          <Grid item xs={12} sm={12} lg={6}>
-            <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
-            <AutoCompleteProject
-              onChange={(id) => handleChange('project_id', id)}
-              value={formData.project_id}
-              {...(formErrors.project_id && { error: true, helperText: formErrors.project_id })}
+        {/* Serviço */}
+        {!serviceId && (
+          <Grid item xs={12}>
+            <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
+            <GenericAsyncAutocompleteInput
+              label="Serviço"
+              endpoint="/api/services"
+              queryParam="name__icontains"
+              extraParams={{ fields: 'name,id' }}
+              value={formData.service}
+              onChange={(option) => {
+                console.log("Serviço selecionado:", option);
+                handleChange('service', option || null);
+              }}
+              mapResponse={(data) =>
+                data.results.map(item => ({ label: item.name, value: item.id }))
+              }
+              {...(formErrors.service && { error: true, helperText: formErrors.service })}
             />
+          </Grid>
+        )}
+        {formData.customer && formData.service ? (
+          <>
+            <Grid item xs={12}>
+              <OptionSelector selectedOption={selectedOption} handleOptionChange={handleOptionChange} />
+            </Grid>
+            {selectedOption === 'project' && (
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
+                <GenericAsyncAutocompleteInput
+                  label="Projeto"
+                  endpoint="/api/projects"
+                  extraParams={{
+                    customer_id: formData.customer,
+                    fields: 'project_number,sale.customer.complete_name,id',
+                    expand: 'sale.customer'
+                  }}
+                  value={formData.project}
+                  onChange={(option) => {
+                    console.log("Projeto selecionado:", option);
+                    handleChange('project', option || null);
+                  }}
+                  mapResponse={(data) =>
+                    data.results.map(item => ({
+                      label: item.project_number || item.sale.customer.complete_name,
+                      value: item.id,
+                    }))
+                  }
+                  {...(formErrors.project && { error: true, helperText: formErrors.project })}
+                />
+              </Grid>
+            )}
+            {selectedOption === 'product' && (
+              <Grid item xs={12}>
+                <CustomFormLabel htmlFor="product">Produto</CustomFormLabel>
+                <GenericAsyncAutocompleteInput
+                  label="Produto"
+                  endpoint="/api/products"
+                  queryParam="name__icontains"
+                  extraParams={{ fields: 'name,id' }}
+                  value={formData.product}
+                  onChange={(option) => {
+                    console.log("Produto selecionado:", option);
+                    handleChange('product', option || null);
+                  }}
+                  mapResponse={(data) =>
+                    data.results.map(item => ({ label: item.name, value: item.id }))
+                  }
+                  {...(formErrors.product && { error: true, helperText: formErrors.product })}
+                />
+              </Grid>
+            )}
+          </>
+        ) : (
+          <Grid item xs={12}>
+            <Alert severity="info">Por favor, selecione Cliente e Serviço para continuar.</Alert>
           </Grid>
         )}
         {/* Data do Agendamento */}
-        <Grid item xs={12} sm={12} lg={6}>
+        <Grid item xs={12} sm={6}>
           <FormDate
             label="Data do agendamento"
             name="schedule_date"
             value={formData.schedule_date}
-            onChange={(newValue) => validateChange('schedule_date', newValue)}
+            onChange={(newValue) => {
+              console.log("Data do agendamento alterada para:", newValue);
+              validateChange('schedule_date', newValue);
+            }}
             {...(formErrors.schedule_date && { error: true, helperText: formErrors.schedule_date })}
           />
         </Grid>
         {/* Hora do Agendamento */}
-        <Grid item xs={12} sm={12} lg={6}>
+        <Grid item xs={12} sm={6}>
           <FormSelect
-            label="Hora do Agendamento"
+            label="Hora do agendamento"
             options={timeOptions}
-            onChange={(e) => validateChange('schedule_start_time', e.target.value)}
+            onChange={(e) => {
+              console.log("Hora do agendamento alterada para:", e.target.value);
+              validateChange('schedule_start_time', e.target.value);
+            }}
             disabled={!formData.schedule_date}
             value={formData.schedule_start_time || ''}
             {...(formErrors.schedule_start_time && { error: true, helperText: formErrors.schedule_start_time })}
           />
         </Grid>
         {/* Endereço */}
-        <Grid item xs={12} sm={12} lg={6}>
+        <Grid item xs={12} sm={6}>
           <CustomFormLabel htmlFor="address">
             Endereço
             <Tooltip title="Somente endereços vinculados ao usuário serão exibidos." arrow>
               <HelpIcon sx={{ ml: 1, cursor: 'pointer' }} />
             </Tooltip>
           </CustomFormLabel>
-          <GenericAutocomplete
-            addTitle="Adicionar Endereço"
+          <GenericAsyncAutocompleteInput
             label="Endereço"
-            fetchOptions={fetchAddress}
-            AddComponent={CreateAddressPage}
-            getOptionLabel={(option) =>
-              `${option.street}, ${option.number} - ${option.city}, ${option.state}`
-            }
-            onChange={(selected) => {
-              setSelectedAddress(selected);
-              handleChange('address_id', selected?.id);
-            }}
+            endpoint="/api/addresses"
+            extraParams={{ customer_id: clientSelected, fields: 'street,number,city,state,id' }}
             value={selectedAddress}
-            {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
+            onChange={(option) => {
+              console.log("Endereço selecionado:", option);
+              setSelectedAddress(option);
+              handleChange('address', option ? option : null);
+            }}
+            mapResponse={(data) =>
+              data.results.map(item => ({
+                label: `${item.street}, ${item.number} - ${item.city}, ${item.state}`,
+                value: item.id,
+              }))
+            }
+            {...(formErrors.address && { error: true, helperText: formErrors.address })}
           />
         </Grid>
-        {/* Status do Agendamento (permitido apenas para usuários com permissão) */}
+        {/* Status */}
         <HasPermission permissions={['field_services.change_status_schedule_field']} userPermissions={userPermissions}>
-          <Grid item xs={12} sm={12} lg={6}>
+          <Grid item xs={12} sm={6}>
             <FormSelect
-              label="Status do Agendamento"
+              label="Status do agendamento"
               options={statusOptions}
-              onChange={(e) => handleChange('status', e.target.value)}
+              onChange={(e) => {
+                console.log("Status alterado para:", e.target.value);
+                handleChange('status', e.target.value);
+              }}
               value={formData.status || ''}
               {...(formErrors.status && { error: true, helperText: formErrors.status })}
             />
           </Grid>
         </HasPermission>
         {/* Observação */}
-        <Grid item xs={12} sm={12} lg={12}>
+        <Grid item xs={12}>
           <CustomFormLabel htmlFor="observation">Observação</CustomFormLabel>
           <CustomTextField
             name="observation"
@@ -251,17 +282,23 @@ const CreateSchedule = ({
             multiline
             rows={4}
             value={formData.observation}
-            onChange={(e) => handleChange('observation', e.target.value)}
+            onChange={(e) => {
+              console.log("Observação alterada:", e.target.value);
+              handleChange('observation', e.target.value);
+            }}
             {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
           />
         </Grid>
-        {/* Botão de Ação */}
-        <Grid item xs={12} sm={12} lg={12}>
+        {/* Botão Salvar */}
+        <Grid item xs={12}>
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             <Button
               variant="contained"
               color="primary"
-              onClick={handleSave}
+              onClick={() => {
+                console.log("Enviando payload:", formData);
+                handleSave();
+              }}
               disabled={formLoading}
               endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
             >
@@ -270,8 +307,6 @@ const CreateSchedule = ({
           </Stack>
         </Grid>
       </Grid>
-
-      {/* Snackbar para Alertas */}
       <Snackbar
         open={alertOpen}
         autoHideDuration={6000}

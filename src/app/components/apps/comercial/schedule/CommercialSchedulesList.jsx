@@ -20,9 +20,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Drawer
+  Drawer,
 } from '@mui/material';
-import { format } from 'date-fns';
 import { ArrowDropUp, ArrowDropDown, AddBoxRounded } from '@mui/icons-material';
 import ScheduleStatusChip from '../../inspections/schedule/StatusChip';
 import CreateSchedule from './CreateSchedule';
@@ -34,8 +33,8 @@ const CommercialSchedulesList = () => {
 
   // Estados para paginação e ordenação
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [order, setOrder] = useState('created_at'); // coluna padrão para ordenar
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [order, setOrder] = useState('created_at');
   const [orderDirection, setOrderDirection] = useState('asc');
 
   // Estados para modal e drawer
@@ -46,21 +45,25 @@ const CommercialSchedulesList = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const response = await scheduleService.getScheduleIspections({
           fields:
             'customer.complete_name,service.name,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,address,status,created_at,id',
           expand: 'customer,service,schedule_agent,address',
+          page: page + 1,
+          limit: rowsPerPage,
         });
-        setSchedules(response.results);
+        setSchedules(response);
       } catch (err) {
         setError(err);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchData();
-  }, []);
+  }, [page, rowsPerPage]);  
+
 
   // Função para formatar o endereço
   const formatAddress = (address) => {
@@ -76,7 +79,11 @@ const CommercialSchedulesList = () => {
   };
 
   // Renderiza um badge para as opiniões
-  const renderOpinionBadge = (opinion, labelSuccess = 'Com Parecer', labelDefault = 'Sem Parecer') => {
+  const renderOpinionBadge = (
+    opinion,
+    labelSuccess = 'Com Parecer',
+    labelDefault = 'Sem Parecer',
+  ) => {
     if (opinion && opinion.name) {
       return <Chip label={labelSuccess} color="success" />;
     }
@@ -106,8 +113,6 @@ const CommercialSchedulesList = () => {
     setSchedules(sorted);
   };
 
-  // Paginação: itens da página atual
-  const paginatedSchedules = schedules.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -138,7 +143,7 @@ const CommercialSchedulesList = () => {
     setSelectedSchedule(null);
   };
 
-  // Funções para formatação de data e hora
+
   const formatDate = useCallback((dateString) => {
     const [year, month, day] = dateString.split('-');
     return `${day}/${month}/${year}`;
@@ -154,7 +159,7 @@ const CommercialSchedulesList = () => {
       const [date, time] = dateTimeString.split('T');
       return `${formatDate(date)} ${formatTime(time)}`;
     },
-    [formatDate, formatTime]
+    [formatDate, formatTime],
   );
 
   return (
@@ -162,7 +167,12 @@ const CommercialSchedulesList = () => {
       {/* Cabeçalho: título e botão para adicionar vistoria (modal) */}
       <Box sx={{ mb: 2 }}>
         <Typography variant="h6">Vistorias</Typography>
-        <Button variant="outlined" sx={{ mt: 1 }} startIcon={<AddBoxRounded />} onClick={handleAddModalOpen}>
+        <Button
+          variant="outlined"
+          sx={{ mt: 1 }}
+          startIcon={<AddBoxRounded />}
+          onClick={handleAddModalOpen}
+        >
           Adicionar Vistoria
         </Button>
       </Box>
@@ -170,7 +180,7 @@ const CommercialSchedulesList = () => {
       {loading && <CircularProgress />}
       {error && <Alert severity="error">Erro ao carregar os agendamentos.</Alert>}
 
-      {!loading && !error && schedules.length > 0 && (
+      {!loading && !error && schedules.meta.pagination.total_count > 0 && (
         <>
           <TableContainer
             component={Paper}
@@ -210,7 +220,8 @@ const CommercialSchedulesList = () => {
                   >
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       Status
-                      {order === 'status' && (orderDirection === 'asc' ? <ArrowDropUp /> : <ArrowDropDown />)}
+                      {order === 'status' &&
+                        (orderDirection === 'asc' ? <ArrowDropUp /> : <ArrowDropDown />)}
                     </Box>
                   </TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Parecer do Serviço</TableCell>
@@ -240,7 +251,7 @@ const CommercialSchedulesList = () => {
                     sx={{ cursor: 'pointer', fontWeight: 'bold' }}
                   >
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      Nome do Serviço
+                      Serviço
                       {order === 'service.name' &&
                         (orderDirection === 'asc' ? <ArrowDropUp /> : <ArrowDropDown />)}
                     </Box>
@@ -259,7 +270,7 @@ const CommercialSchedulesList = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedSchedules.map((schedule) => (
+                {schedules.results.map((schedule) => (
                   <TableRow
                     key={schedule.id}
                     hover
@@ -279,19 +290,29 @@ const CommercialSchedulesList = () => {
                     </TableCell>
                     <TableCell>{renderOpinionBadge(schedule.service_opinion)}</TableCell>
                     <TableCell>
-                      {renderOpinionBadge(schedule.final_service_opinion, 'Com Parecer', 'Em Análise')}
+                      {renderOpinionBadge(
+                        schedule.final_service_opinion,
+                        'Com Parecer',
+                        'Em Análise',
+                      )}
                     </TableCell>
                     <TableCell>
                       {schedule.schedule_date ? formatDate(schedule.schedule_date) : '-'}
                     </TableCell>
-                    <TableCell>{schedule.schedule_start_time ? formatTime(schedule.schedule_start_time) : '-'}</TableCell>
+                    <TableCell>
+                      {schedule.schedule_start_time
+                        ? formatTime(schedule.schedule_start_time)
+                        : '-'}
+                    </TableCell>
                     <TableCell>
                       {schedule.service && schedule.service.name ? schedule.service.name : '-'}
                     </TableCell>
                     <TableCell>
-                      {schedule.schedule_agent
-                        ? schedule.schedule_agent.complete_name
-                        : <Chip label="Sem Agente" color="warning" />}
+                      {schedule.schedule_agent ? (
+                        schedule.schedule_agent.complete_name
+                      ) : (
+                        <Chip label="Sem Agente" color="warning" />
+                      )}
                     </TableCell>
                     <TableCell>{formatAddress(schedule.address)}</TableCell>
                   </TableRow>
@@ -301,7 +322,7 @@ const CommercialSchedulesList = () => {
           </TableContainer>
           <TablePagination
             component="div"
-            count={schedules.length}
+            count={schedules.meta.pagination.total_count}
             page={page}
             onPageChange={handleChangePage}
             rowsPerPage={rowsPerPage}
@@ -311,21 +332,21 @@ const CommercialSchedulesList = () => {
         </>
       )}
 
-      {!loading && schedules.length === 0 && (
+      {!loading && schedules.meta.pagination.total_count === 0 && (
         <Typography>Nenhum agendamento encontrado.</Typography>
       )}
 
-        <Dialog open={addModalOpen} onClose={handleAddModalClose} fullWidth maxWidth="md">
-          <DialogTitle>Adicionar Vistoria</DialogTitle>
-          <DialogContent>
-            <CreateSchedule onClose={handleAddModalClose} />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleAddModalClose}>Fechar</Button>
-          </DialogActions>
-        </Dialog>
+      <Dialog open={addModalOpen} onClose={handleAddModalClose} fullWidth maxWidth="md">
+        <DialogTitle>Adicionar Vistoria</DialogTitle>
+        <DialogContent>
+          <CreateSchedule onClose={handleAddModalClose} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleAddModalClose}>Fechar</Button>
+        </DialogActions>
+      </Dialog>
 
-        {/* Drawer para visualizar os detalhes da vistoria */}
+      {/* Drawer para visualizar os detalhes da vistoria */}
       <Drawer anchor="right" open={viewDrawerOpen} onClose={handleDrawerClose}>
         <Box sx={{ width: 500, p: 2 }}>
           <Typography variant="h6">Detalhes da Vistoria</Typography>
