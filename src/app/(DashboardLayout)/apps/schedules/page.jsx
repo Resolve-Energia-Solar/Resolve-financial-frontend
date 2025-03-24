@@ -1,11 +1,11 @@
 'use client';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { useSelector } from 'react-redux';
-import { 
-    Box, FormControl, InputLabel, Select, MenuItem, Chip, CardContent, Typography, 
-    Table, TableCell, TableContainer, TableHead, TableRow, TableBody, TablePagination, 
-    Paper, CircularProgress 
-  } from '@mui/material';
+import {
+    Box, Button, FormControl, Grid, InputLabel, Select, MenuItem, Chip, CardContent, Typography,
+    Table, TableCell, TableContainer, TableHead, TableRow, TableBody, TablePagination,
+    Paper, CircularProgress
+} from '@mui/material';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
@@ -14,7 +14,9 @@ import PageContainer from '@/app/components/container/PageContainer';
 import BlankCard from '@/app/components/shared/BlankCard';
 import ScheduleStatusChip from '@/app/components/apps/inspections/schedule/StatusChip';
 import TableSkeleton from '@/app/components/apps/comercial/sale/components/TableSkeleton';
+import GenericFilterDrawer from "@/app/components/filters/GenericFilterDrawer";
 
+import { FilterContext } from "@/context/FilterContext";
 import scheduleService from '@/services/scheduleService';
 import serviceCatalogService from '@/services/serviceCatalogService';
 import { formatDate } from '@/utils/dateUtils';
@@ -25,6 +27,7 @@ const BCrumb = [
 ];
 
 const ScheduleTable = () => {
+    const { filters, setFilters, refresh } = useContext(FilterContext);
     const [loading, setLoading] = useState(true);
     const [scheduleList, setScheduleList] = useState([]);
     const [services, setServices] = useState([]);
@@ -36,6 +39,7 @@ const ScheduleTable = () => {
     const [order, setOrder] = useState('created_at');
     const [orderDirection, setOrderDirection] = useState('asc');
     const userPermissions = useSelector((state) => state.user.permissions);
+    const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
     const hasPermission = useCallback(
         (permissions) => !permissions || permissions.some(p => userPermissions?.includes(p)),
@@ -45,15 +49,15 @@ const ScheduleTable = () => {
     // Busca catálogo de serviços
     useEffect(() => {
         serviceCatalogService.getServicesCatalog({ fields: 'id,name' })
-          .then(data => {
-            const list = data.results || [];
-            setServices(list);
-            if (list.length > 0) {
-              // Seleciona todos por padrão
-              setSelectedServices(list.map(s => s.id));
-            }
-          })
-          .catch(err => console.error('Erro ao buscar serviços:', err));
+            .then(data => {
+                const list = data.results || [];
+                setServices(list);
+                if (list.length > 0) {
+                    // Seleciona todos por padrão
+                    setSelectedServices(list.map(s => s.id));
+                }
+            })
+            .catch(err => console.error('Erro ao buscar serviços:', err));
     }, []);
 
     // Busca agendamentos filtrando pelo serviço selecionado e retornando somente os campos necessários
@@ -61,23 +65,24 @@ const ScheduleTable = () => {
         if (selectedServices.length === 0) return;
         setLoading(true);
         scheduleService.getSchedules({
-          page,
-          limit: rowsPerPage,
-          expand: 'customer,service_opinion',
-          service__in: selectedServices.join(','),
-          fields: 'id,created_at,customer.complete_name,status,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,address.street,address.number,address.neighborhood,address.city,address.state,observation',
-          ordering: orderDirection === 'asc' ? order : `-${order}`
+            page,
+            limit: rowsPerPage,
+            expand: 'customer,service_opinion',
+            service__in: selectedServices.join(','),
+            fields: 'id,created_at,customer.complete_name,status,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,address.street,address.number,address.neighborhood,address.city,address.state,observation',
+            ordering: orderDirection === 'asc' ? order : `-${order}`,
+            ...filters,
         })
-          .then(data => {
-            setScheduleList(data.results);
-            setTotalRows(data.meta.pagination.total_count);
-          })
-          .catch(err => {
-            console.error('Erro:', err);
-            setError('Erro ao buscar agendamentos');
-          })
-          .finally(() => setLoading(false));
-    }, [selectedServices, page, rowsPerPage, order, orderDirection]);
+            .then(data => {
+                setScheduleList(data.results);
+                setTotalRows(data.meta.pagination.total_count);
+            })
+            .catch(err => {
+                console.error('Erro:', err);
+                setError('Erro ao buscar agendamentos');
+            })
+            .finally(() => setLoading(false));
+    }, [selectedServices, page, rowsPerPage, order, orderDirection, filters]);
 
     const handleSort = useCallback(
         (field) => {
@@ -99,41 +104,179 @@ const ScheduleTable = () => {
         setRowsPerPage(parseInt(event.target.value, 10));
     }, []);
 
+    const scheduleFilterConfig = [
+        {
+            key: 'schedule_date__range',
+            label: 'Data do Agendamento (Entre)',
+            type: 'range',
+            inputType: 'date',
+        },
+        {
+            key: 'status__in',
+            label: 'Status do Agendamento (Lista)',
+            type: 'multiselect',
+            options: [
+                { value: 'Pendente', label: 'Pendente' },
+                { value: 'Confirmado', label: 'Confirmado' },
+                { value: 'Cancelado', label: 'Cancelado' },
+            ],
+        },
+        {
+            key: 'final_service_is_null',
+            label: 'Parecer Final do Serviço Pendente',
+            type: 'select',
+            options: [
+                { value: 'null', label: 'Todos' },
+                { value: true, label: 'Pendente' },
+                { value: 'false', label: 'Concluído' },
+            ],
+        },
+        {
+            key: 'service_opnion_is_null',
+            label: 'Parecer do Serviço Pendente',
+            type: 'select',
+            options: [
+                { value: 'null', label: 'Todos' },
+                { value: true, label: 'Pendente' },
+                { value: 'false', label: 'Concluído' },
+            ],
+        },
+        {
+            key: 'schedule_agent__in',
+            label: 'Agente de Campo',
+            type: 'async-multiselect',
+            endpoint: '/api/users/',
+            queryParam: 'complete_name__icontains',
+            extraParams: { fields: ['id', 'complete_name'] },
+            mapResponse: (data) =>
+                data.results.map((user) => ({
+                    label: user.complete_name,
+                    value: user.id,
+                })),
+        },
+        {
+            key: 'service__in',
+            label: 'Serviço',
+            type: 'async-multiselect',
+            endpoint: '/api/services/',
+            queryParam: 'name__icontains',
+            extraParams: { limit: 10, fields: ['id', 'name'] },
+            mapResponse: (data) =>
+                data.results.map((service) => ({
+                    label: service.name,
+                    value: service.id,
+                })),
+        },
+        {
+            key: 'customer',
+            label: 'Cliente',
+            type: 'async-autocomplete',
+            endpoint: '/api/users/',
+            queryParam: 'complete_name__icontains',
+            extraParams: { fields: ['id', 'complete_name'] },
+            mapResponse: (data) =>
+                data.results.map((customer) => ({
+                    label: customer.complete_name,
+                    value: customer.id,
+                })),
+        },
+        {
+            key: 'branch__in',
+            label: 'Unidade',
+            type: 'async-multiselect',
+            endpoint: '/api/branches/',
+            queryParam: 'name__icontains',
+            extraParams: { limit: 10, fields: ['id', 'name'] },
+            mapResponse: (data) =>
+                data.results.map((branch) => ({
+                    label: branch.name,
+                    value: branch.id,
+                })),
+        },
+        {
+            key: 'service_opinion__in',
+            label: 'Parecer do Serviço',
+            type: 'async-multiselect',
+            endpoint: '/api/service-opinions/',
+            queryParam: 'name__icontains',
+            extraParams: {
+                is_final_opinion: false,
+                limit: 10,
+                fields: ['id', 'name', 'service.name'],
+                expand: 'service',
+            },
+            mapResponse: (data) =>
+                data.results.map((opinion) => ({
+                    label: `${opinion.name} - ${opinion.service?.name}`,
+                    value: opinion.id,
+                })),
+        },
+        {
+            key: 'final_service_opinion__in',
+            label: 'Parecer Final do Serviço',
+            type: 'async-multiselect',
+            endpoint: '/api/service-opinions/',
+            queryParam: 'name__icontains',
+            extraParams: {
+                is_final_opinion: true,
+                limit: 10,
+                fields: ['id', 'name', 'service.name'],
+                expand: 'service',
+            },
+            mapResponse: (data) =>
+                data.results.map((opinion) => ({
+                    label: `${opinion.name} - ${opinion.service?.name}`,
+                    value: opinion.id,
+                })),
+        },
+    ];
+
     return (
         <PageContainer title="Lista de Agendamentos" description="Listagem de Agendamentos">
             <Breadcrumb items={BCrumb} />
             <BlankCard>
                 <CardContent>
                     <Typography variant="h5" gutterBottom>Lista de Agendamentos</Typography>
-                    {/* Select para selecionar múltiplos serviços */}
-                    <FormControl sx={{ minWidth: 300, marginBlock: 3 }}>
-                        <InputLabel id="services-select-label">Serviços</InputLabel>
-                        <Select
-                            labelId="services-select-label"
-                            id="services-select"
-                            multiple
-                            value={selectedServices}
-                            onChange={(e) => {
-                                setSelectedServices(e.target.value);
-                                setPage(1);
-                            }}
-                            renderValue={(selected) => (
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                    {selected.map((value) => {
-                                        const service = services.find(s => s.id === value);
-                                        return <Chip key={value} label={service ? service.name : value} />;
-                                    })}
-                                </Box>
-                            )}
-                            label="Serviços"
-                        >
-                            {services.map(service => (
-                                <MenuItem key={service.id} value={service.id}>
-                                    {service.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                    <Grid container alignItems="center" justifyContent={"space-between"} my={2}>
+                        <Grid item xs={10}>
+                            <FormControl fullWidth>
+                                <InputLabel id="services-select-label">Serviços</InputLabel>
+                                <Select
+                                    labelId="services-select-label"
+                                    id="services-select"
+                                    multiple
+                                    value={selectedServices}
+                                    onChange={(e) => {
+                                        setSelectedServices(e.target.value);
+                                        setPage(1);
+                                    }}
+                                    renderValue={(selected) => (
+                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                            {selected.map((value) => {
+                                                const service = services.find(s => s.id === value);
+                                                return <Chip key={value} label={service ? service.name : value} />;
+                                            })}
+                                        </Box>
+                                    )}
+                                    label="Serviços"
+                                >
+                                    {services.map(service => (
+                                        <MenuItem key={service.id} value={service.id}>
+                                            {service.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid container xs={2} justifyContent={"flex-end"}>
+                            <Button
+                                variant="outlined"
+                                onClick={() => setFilterDrawerOpen(true)}
+                            >
+                                Abrir Filtros
+                            </Button>
+                        </Grid>
+                    </Grid>
                     {loading ? (
                         <TableSkeleton rows={rowsPerPage} columns={11} />
                     ) : error ? (
@@ -235,6 +378,13 @@ const ScheduleTable = () => {
                     />
                 </CardContent>
             </BlankCard>
+            <GenericFilterDrawer
+                filters={scheduleFilterConfig}
+                initialValues={filters}
+                open={filterDrawerOpen}
+                onClose={() => setFilterDrawerOpen(false)}
+                onApply={(newFilters) => setFilters(newFilters)}
+            />
         </PageContainer>
     );
 };
