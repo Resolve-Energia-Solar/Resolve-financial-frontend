@@ -3,9 +3,9 @@ import serviceCatalogService from './serviceCatalogService';
 
 const DEFAULT_ROUTER = '/api/forms';
 const formBuilderService = {
-  index: function (params) {
+  index: async (params) => {
     try {
-      const response = apiClient.get(`${DEFAULT_ROUTER}/`, { params });
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params });
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar formulários:', error);
@@ -22,7 +22,7 @@ const formBuilderService = {
       throw error;
     }
   },
-  create: function (data) {
+  create: async (data) => {
     try {
       const response = apiClient.post(`${DEFAULT_ROUTER}`, data);
       return response.data;

@@ -2,9 +2,9 @@ import apiClient from './apiClient';
 
 const DEFAULT_ROUTER = '/api/project-materials';
 const projectMaterialsService = {
-  index: function (params) {
+  index: async (params) => {
     try {
-      const response = apiClient.get(`${DEFAULT_ROUTER}/`, { params });
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params });
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar materiais:', error);
@@ -21,7 +21,7 @@ const projectMaterialsService = {
       throw error;
     }
   },
-  create: function (data) {
+  create: async (data) => {
     try {
       const response = apiClient.post(`${DEFAULT_ROUTER}`, data);
       return response.data;
