@@ -20,7 +20,7 @@ const saleService = {
       throw error;
     }
   },
-  create: function (data) {
+  create: async (data) => {
     try {
       const response = apiClient.post(`${DEFAULT_ROUTER}`, data);
       return response.data;

@@ -389,7 +389,6 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
             <CustomFormLabel htmlFor="final_service_opinion_id">
               Parecer final de serviço
             </CustomFormLabel>
-            <GenericAutocomplete fetchOptions={fetchOpinions} />
             <AutoInputStatusSchedule
               onChange={(id) => handleChange('final_service_opinion_id', id)}
               value={formData.final_service_opinion_id}

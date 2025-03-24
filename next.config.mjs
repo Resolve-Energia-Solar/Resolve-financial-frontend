@@ -1,3 +1,8 @@
+import { withSentryConfig } from "@sentry/nextjs";
+
+
+
+
 const nextConfig = {
   experimental: {
     turbo: {
@@ -14,8 +19,8 @@ const nextConfig = {
         hostname: 'res.cloudinary.com',
       },
     ],
-  },  
-  async headers () {
+  },
+  async headers() {
     return [
       {
         source: '/api/:path*',
@@ -38,4 +43,9 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+export default withSentryConfig(nextConfig, {
+  org: "resolve-energia-solar",
+  project: "javascript-nextjs",
+  silent: !process.env.NEXT_PUBLIC_CI,
+  disableLogger: true,
+});

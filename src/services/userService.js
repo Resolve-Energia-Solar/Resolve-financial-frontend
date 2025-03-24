@@ -9,9 +9,9 @@ const formatTime = (time) => {
 };
 const DEFAULT_ROUTER = '/api/users';
 const userService = {
-  index: function (params) {
+  index: async (params) => {
     try {
-      const response = apiClient.get(`${DEFAULT_ROUTER}/`, { params });
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params });
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar usuários:', error);
@@ -28,7 +28,7 @@ const userService = {
       throw error;
     }
   },
-  create: function (data) {
+  create: async (data) => {
     try {
       const response = apiClient.post(`${DEFAULT_ROUTER}`, data);
       return response.data;
@@ -173,14 +173,14 @@ const userService = {
       const params = id
         ? {} // Sem parâmetros se `id` existir
         : {
-            category: query?.category || null,
-            date: query?.scheduleDate || null,
-            start_time: formatTime(query?.scheduleStartTime),
-            end_time: formatTime(query?.scheduleEndTime),
-            latitude: query?.scheduleLatitude || null,
-            longitude: query?.scheduleLongitude || null,
-            complete_name__icontains: query?.complete_name || null,
-          };
+          category: query?.category || null,
+          date: query?.scheduleDate || null,
+          start_time: formatTime(query?.scheduleStartTime),
+          end_time: formatTime(query?.scheduleEndTime),
+          latitude: query?.scheduleLatitude || null,
+          longitude: query?.scheduleLongitude || null,
+          complete_name__icontains: query?.complete_name || null,
+        };
 
       const response = await apiClient.get(`/api/users/${id || ''}/`, {
         params,

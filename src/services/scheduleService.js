@@ -3,9 +3,9 @@ import apiClient from './apiClient';
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
 const DEFAULT_ROUTER = '/api/schedule';
 const scheduleService = {
-  index: function (params) {
+  index: async (params) => {
     try {
-      const response = apiClient.get(`${DEFAULT_ROUTER}/`, { params });
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params });
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar agendamentos:', error);
@@ -22,7 +22,7 @@ const scheduleService = {
       throw error;
     }
   },
-  create: function (data) {
+  create: async (data) => {
     try {
       const response = apiClient.post(`${DEFAULT_ROUTER}`, data);
       return response.data;
@@ -123,8 +123,7 @@ const scheduleService = {
     const urlNextPage = nextPage ? `&page=${nextPage}` : '';
     try {
       const response = await apiClient.get(
-        `/api/schedule/?schedule_agent=${userId}&ordering=${
-          ordering || ''
+        `/api/schedule/?schedule_agent=${userId}&ordering=${ordering || ''
         }${urlParams}${urlNextPage}&fields=${fields}`,
       );
       return response.data;

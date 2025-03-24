@@ -6,11 +6,11 @@ on:
       - main
 
 env:
-  DOCKER_IMAGE: "resourceresolve.azurecr.io/resolve-erp-frontend"
-  AKS_CLUSTER_NAME: "Resolve-AKS-Web"
-  AKS_RESOURCE_GROUP: "Resolve"
-  NAMESPACE: "resolve-frontend-erp"
-  DEPLOYMENT_NAME: "resolve-erp-frontend"
+  DOCKER_IMAGE: 'resourceresolve.azurecr.io/resolve-erp-frontend'
+  AKS_CLUSTER_NAME: 'Resolve-AKS-Web'
+  AKS_RESOURCE_GROUP: 'Resolve'
+  NAMESPACE: 'resolve-frontend-erp'
+  DEPLOYMENT_NAME: 'resolve-erp-frontend'
 
 jobs:
   build-and-deploy:
@@ -43,6 +43,9 @@ jobs:
           echo "NEXT_PUBLIC_SUPABASE_URL=${{ vars.NEXT_PUBLIC_SUPABASE_URL }}" >> .env
           echo "NEXT_PUBLIC_FINANCIAL_RECORD_CONTENT_TYPE=${{ vars.NEXT_PUBLIC_FINANCIAL_RECORD_CONTENT_TYPE }}" >> .env
           echo "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}" >> .env
+          echo "NEXT_PUBLIC_SENTRY_DSN=${{ vars.NEXT_PUBLIC_SENTRY_DSN }}" >> .env
+          echo "NEXT_PUBLIC_CI=${{ vars.NEXT_PUBLIC_CI }}" >> .env
+          echo "NEXT_PUBLIC_RUNTIME=${{ vars.NEXT_PUBLIC_RUNTIME }}" >> .env
 
       # 4. Build e Push da Imagem Docker
       - name: Build and Push Docker Image
@@ -58,11 +61,8 @@ jobs:
       - name: Configure Access to AKS
         run: az aks get-credentials --resource-group "$AKS_RESOURCE_GROUP" --name "$AKS_CLUSTER_NAME" --overwrite-existing
 
-      
       # 7. Atualizar a Imagem do Deployment no AKS
       - name: Update Deployment on AKS
         run: |
           kubectl set image deployment/$DEPLOYMENT_NAME resolve-erp-frontend="${DOCKER_IMAGE}:${{ github.sha }}" -n "$NAMESPACE"
           kubectl rollout status deployment/$DEPLOYMENT_NAME -n "$NAMESPACE"
-
-      
