@@ -37,7 +37,7 @@ export default function NavCollapse({
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const menuIcon =
-    level > 1 ? <Icon stroke={1.5} size="1rem" /> : <Icon stroke={1.5} size="1.3rem" />;
+    level > 1 ? <Icon stroke={2} size="1rem" /> : <Icon stroke={2} size="1.3rem" />;
 
   const handleClick = () => {
     setOpen(!open);
@@ -45,7 +45,6 @@ export default function NavCollapse({
 
   // menu collapse for sub-levels
   React.useEffect(() => {
-    setOpen(false);
     menu?.children?.forEach((item) => {
       if (item?.href === pathname) {
         setOpen(true);
@@ -62,16 +61,19 @@ export default function NavCollapse({
     '&:hover': {
       backgroundColor:
         pathname.includes(menu.href) || open
-          ? '#000000'
-          : '#000000',
-      color: pathname.includes(menu.href) || open ? 'white' : theme.palette.primary.main,
+          ? theme.palette.primary.light
+          : theme.palette.primary.light,
+      color: pathname.includes(menu.href) || open ? theme.palette.primary.main : theme.palette.primary.main,
+      '& .MuiListItemIcon-root': {
+        color: theme.palette.primary.main,
+      },
     },
     color:
       open && level < 2
-        ? 'white'
+        ? theme.palette.primary.light
         : `inherit` && level > 1 && open
-        ? '#000000'
-        : '#000000',
+        ? 'white' 
+        : '#7E8388',
     borderRadius: `${customizer.borderRadius}px`,
   }));
 
@@ -98,6 +100,16 @@ export default function NavCollapse({
           pathDirect={pathDirect}
           hideMenu={hideMenu}
           onClick={lgDown ? onClick : isNull}
+          sx={{
+            color: pathname === item?.href ? 'white' : '#7E8388', 
+            '&:hover': {
+              backgroundColor: pathname === item?.href ? theme.palette.primary.main : 'transparent',
+              color: theme.palette.primary.light,
+            },
+            '& .MuiListItemIcon-root': {
+              color: pathname === item?.href ? 'white' : '#7E8388', 
+            },
+          }}
         />
       );
     }
@@ -114,7 +126,7 @@ export default function NavCollapse({
           sx={{
             minWidth: '36px',
             p: '3px 0',
-            color: 'inherit',
+            color: open ? "white" : pathname === menu.href ? "white" : '#7E8388', 
           }}
         >
           {menuIcon}

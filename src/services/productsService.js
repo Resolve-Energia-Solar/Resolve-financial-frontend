@@ -1,6 +1,56 @@
 import apiClient from './apiClient';
 
+const DEFAULT_ROUTER = '/api/products';
+
 const ProductService = {
+  index: async (params) => {
+    try {
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar produtos:', error);
+      throw error;
+    }
+  },
+
+  find: async (id, params) => {
+    try {
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/${id}/`, { params });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar produto com id ${id}:`, error);
+      throw error;
+    }
+  },
+  create: async (data) => {
+    try {
+      const response = apiClient.post(`${DEFAULT_ROUTER}`, data);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao criar produto:', error);
+      throw error;
+    }
+  },
+  update: async (id, data) => {
+    try {
+      const response = await apiClient.patch(`${DEFAULT_ROUTER}/${id}/`, data);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao atualizar produto com id ${id}:`, error);
+      throw error;
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      const response = await apiClient.delete(`${DEFAULT_ROUTER}/${id}/`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao deletar produto com id ${id}:`, error);
+      throw error;
+    }
+  },
+
   getProducts: async (params = {}) => {
     const response = await apiClient.get(`/api/products/`, { params });
     return response.data;
@@ -25,17 +75,23 @@ const ProductService = {
   },
 
   getProductsByValueRange: async (minValue, maxValue) => {
-    const response = await apiClient.get(`/api/products/?product_value__gte=${minValue}&product_value__lte=${maxValue}`);
+    const response = await apiClient.get(
+      `/api/products/?product_value__gte=${minValue}&product_value__lte=${maxValue}`,
+    );
     return response.data;
   },
 
   getProductsByReferenceValueRange: async (minRefValue, maxRefValue) => {
-    const response = await apiClient.get(`/api/products/?reference_value__gte=${minRefValue}&reference_value__lte=${maxRefValue}`);
+    const response = await apiClient.get(
+      `/api/products/?reference_value__gte=${minRefValue}&reference_value__lte=${maxRefValue}`,
+    );
     return response.data;
   },
 
   getProductsByCostValueRange: async (minCost, maxCost) => {
-    const response = await apiClient.get(`/api/products/?cost_value__gte=${minCost}&cost_value__lte=${maxCost}`);
+    const response = await apiClient.get(
+      `/api/products/?cost_value__gte=${minCost}&cost_value__lte=${maxCost}`,
+    );
     return response.data;
   },
 
@@ -50,7 +106,9 @@ const ProductService = {
   },
 
   getProductsByDateRange: async (startDate, endDate) => {
-    const response = await apiClient.get(`/api/products/?created_at__range=${startDate},${endDate}`);
+    const response = await apiClient.get(
+      `/api/products/?created_at__range=${startDate},${endDate}`,
+    );
     return response.data;
   },
 
@@ -73,7 +131,6 @@ const ProductService = {
     const response = await apiClient.patch(`/api/products/${id}/`, data);
     return response.data;
   },
-
 
   deleteProduct: async (id) => {
     const response = await apiClient.delete(`/api/products/${id}/`);

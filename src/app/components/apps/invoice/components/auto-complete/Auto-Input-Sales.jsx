@@ -18,7 +18,10 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
         try {
           const sale = await saleService.getSaleById(value);
           if (sale) {
-            setSelectedSale({ id: sale.id, name: sale.contract_number + ' - ' + sale.customer.complete_name });
+            setSelectedSale({
+              id: sale.id,
+              name: sale.contract_number + ' - ' + sale.customer.complete_name,
+            });
           }
         } catch (error) {
           console.error('Erro ao buscar venda:', error);
@@ -48,7 +51,7 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
       try {
         const sales = await saleService.getSaleByFullName(name);
         if (sales && sales.results) {
-          const formattedSales = sales.results.results.map(sale => ({
+          const formattedSales = sales.results.results.map((sale) => ({
             id: sale.id,
             name: `${sale.contract_number} - ${sale.customer.complete_name}`,
           }));
@@ -59,16 +62,16 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
 
   const fetchInitialSales = useCallback(async () => {
     setLoading(true);
     try {
-      const sales = await saleService.getSales({ limit: 5, page: 1 });
+      const sales = await saleService.index({ limit: 5, page: 1 });
       console.log('initial sales:', sales);
       if (sales && sales.results) {
-        const formattedSales = sales.results.results.map(sale => ({
+        const formattedSales = sales.results.results.map((sale) => ({
           id: sale.id,
           name: `${sale.contract_number} - ${sale.customer.complete_name}`,
         }));
@@ -78,9 +81,8 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
       console.error('Erro ao buscar vendas:', error);
     }
     setLoading(false);
-  }
-  , []);
-  
+  }, []);
+
   const handleOpen = () => {
     setOpen(true);
     if (options.length === 0) {
@@ -106,7 +108,7 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
         loading={loading}
         value={selectedSale}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         {...rest}
         onInputChange={(event, newInputValue) => {
           fetchSalesByName(newInputValue);

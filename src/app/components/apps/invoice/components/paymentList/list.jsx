@@ -163,7 +163,7 @@ const PaymentList = ({ onClick }) => {
                     </TableCell>
                     <TableCell>
                       <Typography fontSize="14px">
-                        {item?.installments.length}x
+                        {item?.installments.length}
                       </Typography>
                     </TableCell>
                     <TableCell>

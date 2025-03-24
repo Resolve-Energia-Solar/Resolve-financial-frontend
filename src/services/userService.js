@@ -7,13 +7,60 @@ const formatTime = (time) => {
   }
   return time; // Retorna o horário válido
 };
-
+const DEFAULT_ROUTER = '/api/users';
 const userService = {
-  find: async (id, params) => {
+  index: async (params) => {
+    try {
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+      throw error;
+    }
+  },
 
+  find: async (id, params) => {
+    try {
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/${id}/`, { params });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar usuário com id ${id}:`, error);
+      throw error;
+    }
+  },
+  create: async (data) => {
+    try {
+      const response = apiClient.post(`${DEFAULT_ROUTER}`, data);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao criar usuário:', error);
+      throw error;
+    }
+  },
+  update: async (id, data) => {
+    try {
+      const response = await apiClient.patch(`${DEFAULT_ROUTER}/${id}/`, data);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao atualizar usuário com id ${id}:`, error);
+      throw error;
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      const response = await apiClient.delete(`${DEFAULT_ROUTER}/${id}/`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao deletar usuário com id ${id}:`, error);
+      throw error;
+    }
+  },
+
+  find: async (id, params) => {
     try {
       const response = await apiClient.get(`/api/users/${id}/`, {
-        params
+        params,
       });
       return response.data;
     } catch (error) {
@@ -23,19 +70,16 @@ const userService = {
   },
 
   index: async (params) => {
-
     try {
       const response = await apiClient.get(`/api/users/`, {
-        params
+        params,
       });
       return response.data;
-
     } catch (error) {
       console.error(`Erro ao buscar usuários`, error);
       throw error;
     }
   },
-
 
   update: async (id, body) => {
     try {
@@ -48,15 +92,12 @@ const userService = {
   },
 
   upInsert: async (id, body) => {
-
-    console.log('afahjsdfjagsd', id)
+    console.log('afahjsdfjagsd', id);
 
     try {
-
       if (id) {
         const response = await apiClient.put(`/api/users/${id}/`, body);
         return response.data;
-
       } else {
         const response = await apiClient.post(`/api/users/`, body);
         return response.data;
@@ -65,10 +106,7 @@ const userService = {
       console.error(`Erro:`, error);
       throw error;
     }
-
   },
-
-
 
   getUser: async ({ page = 1, limit = 10, filters = {} } = {}) => {
     try {
@@ -120,7 +158,9 @@ const userService = {
   },
   getPhoneByUserId: async (id) => {
     try {
-      const response = await apiClient.get(`/api/users/${id}/?expand=phone_numbers&fields=phone_numbers`);
+      const response = await apiClient.get(
+        `/api/users/${id}/?expand=phone_numbers&fields=phone_numbers`,
+      );
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar telefone do usuário com id ${id}:`, error);
