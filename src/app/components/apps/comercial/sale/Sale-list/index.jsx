@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import {
   Table,
   TableBody,
@@ -96,13 +96,14 @@ const SaleList = () => {
     setSalesList([]);
   }, [order, orderDirection, filters, refresh]);
 
+  
   const fetchSales = async () => {
     const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
     try {
       setLoading(true);
 
       const data = await saleService.getSales({
-        userRole: userRole,
+        userRole,
         ordering: orderingParam,
         limit: rowsPerPage,
         page: page + 1,
@@ -122,13 +123,12 @@ const SaleList = () => {
           'created_at',
           'branch.name',
         ],
-
         ...filters,
       });
 
-      setIndicators(data?.results?.indicators);
-      setSalesList(data?.results?.results);
-      setTotalRows(data.count);
+      setIndicators(data?.meta?.indicators);
+      setSalesList(data?.results);
+      setTotalRows(data?.meta?.pagination?.total_count);
     } catch (err) {
       setError('Erro ao carregar Vendas');
       showAlert('Erro ao carregar Vendas', 'error');
@@ -140,6 +140,7 @@ const SaleList = () => {
     fetchSales();
   }, [page, rowsPerPage, order, orderDirection, filters, refresh]);
 
+ 
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
@@ -412,7 +413,7 @@ const SaleList = () => {
               ) : error && page === 1 ? (
                 <Typography color="error">{error}</Typography>
               ) : (
-                salesList.map((item) => (
+                (salesList || []).map((item)=> ( 
                   <TableRow
                     key={item.id}
                     onClick={() => handleRowClick(item)}
