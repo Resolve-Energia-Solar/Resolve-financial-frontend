@@ -150,7 +150,7 @@ const CreateSchedulePage = () => {
                                             });
                                         }}
                                         endpoint="/api/projects/"
-                                        queryParam="project_number__icontains"
+                                        queryParam="q"
                                         extraParams={{
                                             expand: ['sale.customer', 'sale.branch', 'product'],
                                             fields: [
@@ -167,7 +167,7 @@ const CreateSchedulePage = () => {
                                             ]
                                         }}
                                         mapResponse={(data) =>
-                                            data.results.results.map((p) => ({
+                                            data.results.map((p) => ({
                                                 label: `${p.project_number} - ${p.sale.customer.complete_name}`,
                                                 value: p.id,
                                                 customer: { label: p.sale.customer.complete_name, value: p.sale.customer.id },
