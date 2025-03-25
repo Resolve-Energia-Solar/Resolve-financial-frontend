@@ -50,7 +50,11 @@ export default function AttachmentDetailsSchedule({
 
     const fetchData = async () => {
       try {
-        const response = await attachmentService.getAttachment(objectId, contentType);
+        const response = await attachmentService.find({
+          object_id: objectId,
+          content_type: contentTypeId,
+          limit: 30,
+        });
         setAttachments([...attachments, ...response.results]);
       } catch (error) {
         console.error('Error fetching attachments:', error);
@@ -213,7 +217,7 @@ export default function AttachmentDetailsSchedule({
                   {selectedAttachment.description || 'Sem descrição'}
                 </Typography>
               </ListItem>
-              { scheduleId && (
+              {scheduleId && (
                 <ListItem>
                   <Button
                     variant="contained"
@@ -232,7 +236,6 @@ export default function AttachmentDetailsSchedule({
                   </Button>
                 </ListItem>
               )}
-
             </List>
           ) : (
             <Typography variant="body2">Nenhum detalhe disponível.</Typography>
