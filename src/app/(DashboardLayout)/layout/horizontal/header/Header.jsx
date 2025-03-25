@@ -55,7 +55,7 @@ const HorizontalHeader = () => {
             src={"/images/logos/resolve-logo-collapsed.png"}
             alt="logo"
             height={60}
-            width={60}
+            width={55}
             priority
           />
         </Box>
