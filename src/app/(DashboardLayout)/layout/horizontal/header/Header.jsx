@@ -16,6 +16,7 @@ import Profile from '../../vertical/header/Profile';
 import Search from '../../vertical/header/Search';
 import Navigation from '../../vertical/header/Navigation';
 import Logo from '../../shared/logo/Logo';
+import Image from 'next/image';
 
 const HorizontalHeader = () => {
   const lgDown = useMediaQuery((theme) => theme.breakpoints.down('lg'));
@@ -45,12 +46,18 @@ const HorizontalHeader = () => {
         sx={{
           maxWidth: customizer.isLayout === 'boxed' ? 'lg' : '100%!important',
           display: "flex",
-          alignItems: "center", 
+          alignItems: "center",
           justifyContent: "center"
         }}
       >
         <Box sx={{ overflow: 'hidden', display: "flex", alignItems: "center", justifyContent: "flex-start", height: "100%", paddingTop: 1 }}>
-          <Logo />
+          <Image
+            src={"/images/logos/resolve-logo-collapsed.png"}
+            alt="logo"
+            height={60}
+            width={60}
+            priority
+          />
         </Box>
         {/* ------------------------------------------- */}
         {/* Toggle Button Sidebar */}
