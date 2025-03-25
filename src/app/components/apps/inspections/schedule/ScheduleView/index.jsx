@@ -33,7 +33,7 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
   const [loadingAnswer, setLoadingAnswer] = useState(true);
   const [seller, setSeller] = useState(null);
   const [productName, setProductName] = useState(null);
-  
+
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const hasPermission = (permissions) => {
@@ -68,7 +68,7 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
         const data = await scheduleService.getScheduleById(selectedSchedule.id, {
           fields:
             'id,schedule_date,customer,address,service,project,schedule_agent,created_at,observation,status,products,schedule_creator,products.name',
-          expand: 'products'
+          expand: 'products',
         });
         setScheduleData(data);
       } catch (error) {
@@ -86,7 +86,7 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
       setLoadingAnswer(true);
       try {
         if (scheduleData?.id) {
-          const data = await answerService.getAnswerBySchedule(scheduleData.id);
+          const data = await answerService.find(scheduleData.id);
           setAnswerData(data);
         }
       } catch (err) {
@@ -158,7 +158,9 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
           }}
         >
           <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+            <Box
+              sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}
+            >
               <Typography variant="h5">Detalhes do Agendamento</Typography>
               <Close onClick={onClose} sx={{ cursor: 'pointer' }} />
             </Box>
@@ -220,11 +222,12 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                   </Typography>
                   <Typography variant="body1">
                     <strong>Agente:</strong>{' '}
-                    {scheduleData.schedule_agent ? scheduleData.schedule_agent?.complete_name : 'Sem agente associado'}
+                    {scheduleData.schedule_agent
+                      ? scheduleData.schedule_agent?.complete_name
+                      : 'Sem agente associado'}
                   </Typography>
                   <Typography variant="body1">
-                    <strong>Vendedor:</strong>{' '}
-                    {seller?.complete_name || 'Sem vendedor associado'}
+                    <strong>Vendedor:</strong> {seller?.complete_name || 'Sem vendedor associado'}
                   </Typography>
                   <Typography variant="body1">
                     <strong>Supervisor:</strong>{' '}
@@ -252,7 +255,10 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                       <strong>Telefone do Vistoriador:</strong>{' '}
                       {scheduleData?.schedule_agent?.phone_numbers?.length > 0
                         ? scheduleData.schedule_agent.phone_numbers
-                            .map((phone) => `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`)
+                            .map(
+                              (phone) =>
+                                `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`,
+                            )
                             .join(', ')
                         : 'Sem telefone associado'}
                     </Typography>
@@ -264,7 +270,8 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                     Informações do Agendamento
                   </Typography>
                   <Typography variant="body1">
-                    <strong>Agendado por:</strong> {scheduleData?.schedule_creator?.complete_name || 'Não identificado'}
+                    <strong>Agendado por:</strong>{' '}
+                    {scheduleData?.schedule_creator?.complete_name || 'Não identificado'}
                   </Typography>
                   <Typography variant="body1">
                     <strong>Criado em:</strong> {formatDateTime(scheduleData?.created_at)}
