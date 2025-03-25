@@ -23,7 +23,7 @@ import { formatDate } from '@/utils/dateUtils';
 
 const BCrumb = [
     { to: '/', title: 'Início' },
-    { title: 'Lista de Agendamentos' },
+    { title: 'Agendamentos' },
 ];
 
 const ScheduleTable = () => {
@@ -46,7 +46,6 @@ const ScheduleTable = () => {
         [userPermissions]
     );
 
-    // Busca catálogo de serviços
     useEffect(() => {
         serviceCatalogService.getServicesCatalog({ fields: 'id,name' })
             .then(data => {
@@ -60,7 +59,6 @@ const ScheduleTable = () => {
             .catch(err => console.error('Erro ao buscar serviços:', err));
     }, []);
 
-    // Busca agendamentos filtrando pelo serviço selecionado e retornando somente os campos necessários
     useEffect(() => {
         if (selectedServices.length === 0) return;
         setLoading(true);
