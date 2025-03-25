@@ -145,14 +145,26 @@ const CreateSchedulePage = () => {
                                                 project: newValue,
                                                 customer: newValue.customer,
                                                 branch: newValue.branch,
-                                                address: newValue.address
+                                                address: newValue.address,
+                                                product: newValue.product
                                             });
                                         }}
                                         endpoint="/api/projects/"
                                         queryParam="project_number__icontains"
                                         extraParams={{
-                                            expand: ['sale.customer,sale.branch'],
-                                            fields: ['id', 'project_number', 'address', 'sale.customer.complete_name', 'sale.customer.id', 'sale.branch.id', 'sale.branch.name']
+                                            expand: ['sale.customer', 'sale.branch', 'product'],
+                                            fields: [
+                                                'id',
+                                                'project_number',
+                                                'address',
+                                                'sale.customer.complete_name',
+                                                'sale.customer.id',
+                                                'sale.branch.id',
+                                                'sale.branch.name',
+                                                'product.id',
+                                                'product.name',
+                                                'product.description',
+                                            ]
                                         }}
                                         mapResponse={(data) =>
                                             data.results.results.map((p) => ({
@@ -161,9 +173,12 @@ const CreateSchedulePage = () => {
                                                 customer: { label: p.sale.customer.complete_name, value: p.sale.customer.id },
                                                 branch: { label: p.sale.branch.name, value: p.sale.branch.id },
                                                 address: {
-                                                    label: `${p.address.zip_code} - ${p.address.country} - ${p.address.state} - ${p.address.city} - ${p.address.neighborhood} - ${p.address.street} - ${p.address.number} - ${p.address.complement}`,
-                                                    value: p.address.id
-                                                }
+                                                    label: p.address
+                                                        ? `${p.address.zip_code || ''} - ${p.address.country || ''} - ${p.address.state || ''} - ${p.address.city || ''} - ${p.address.neighborhood || ''} - ${p.address.street || ''} - ${p.address.number || ''} - ${p.address.complement || ''}`
+                                                        : '',
+                                                    value: p.address?.id || null
+                                                },
+                                                product: { label: p.product.name, value: p.product.id }
                                             }))
                                         }
                                         fullWidth
@@ -202,6 +217,23 @@ const CreateSchedulePage = () => {
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
+                                            <GenericAsyncAutocompleteInput
+                                                label="Produto"
+                                                value={formData.product}
+                                                onChange={(newValue) =>
+                                                    setFormData({ ...formData, product: newValue })
+                                                }
+                                                endpoint="/api/products/"
+                                                queryParam="name__icontains"
+                                                extraParams={{ fields: ['id', 'description', 'name'] }}
+                                                mapResponse={(data) =>
+                                                    data.results.map((p) => ({ label: p.description || p.name, value: p.id }))
+                                                }
+                                                fullWidth
+                                                disabled
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
                                             <GenericAsyncAutocompleteInput
                                                 label="Endereço"
                                                 value={formData.address}
@@ -251,7 +283,23 @@ const CreateSchedulePage = () => {
                                         fullWidth
                                     />
                                 </Grid>
-                                <Grid item xs={12}>
+                                <Grid item xs={12} sm={6}>
+                                    <GenericAsyncAutocompleteInput
+                                        label="Produto"
+                                        value={formData.product}
+                                        onChange={(newValue) =>
+                                            setFormData({ ...formData, product: newValue })
+                                        }
+                                        endpoint="/api/products/"
+                                        queryParam="name__icontains"
+                                        extraParams={{ fields: ['id', 'description', 'name'] }}
+                                        mapResponse={(data) =>
+                                            data.results.map((p) => ({ label: p.description || p.name, value: p.id }))
+                                        }
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
                                     <GenericAsyncAutocompleteInput
                                         label="Endereço"
                                         value={formData.address}
@@ -267,6 +315,7 @@ const CreateSchedulePage = () => {
                                 </Grid>
                             </>
                         )}
+
                         <Grid item xs={12}>
                             <TextField
                                 label="Observação"
