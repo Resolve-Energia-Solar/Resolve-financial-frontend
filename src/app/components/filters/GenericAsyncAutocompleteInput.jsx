@@ -11,6 +11,7 @@ const GenericAsyncAutocompleteInput = ({
   extraParams = {},
   mapResponse,
   debounceTime = 300,
+  noOptionsText = "Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.",
   ...props
 }) => {
   const [options, setOptions] = useState([]);
@@ -62,7 +63,7 @@ const GenericAsyncAutocompleteInput = ({
       onChange={(event, newValue) => onChange(newValue)}
       value={value}
       loadingText="Carregando..."
-      noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
+      noOptionsText={noOptionsText}
       {...props}
       renderInput={(params) => (
         <TextField

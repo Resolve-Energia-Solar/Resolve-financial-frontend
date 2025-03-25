@@ -1,8 +1,22 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Grid, Button, Stack, Tooltip, Snackbar, Alert, CircularProgress, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
-import HelpIcon from '@mui/icons-material/Help';
+import {
+  Grid,
+  Button,
+  Stack,
+  Tooltip,
+  Snackbar,
+  Alert,
+  CircularProgress,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Box,
+  Typography
+} from '@mui/material';
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
@@ -20,53 +34,34 @@ const timeOptions = [
   { value: '16:00:00', label: '16:00' },
 ];
 
-const statusOptions = [
-  { value: 'Pendente', label: 'Pendente' },
-  { value: 'Confirmado', label: 'Confirmado' },
-  { value: 'Cancelado', label: 'Cancelado' },
-];
-
-const OptionSelector = ({ selectedOption, handleOptionChange }) => {
-  return (
-    <FormControl component="fieldset" sx={{ marginBottom: 2 }}>
-      <FormLabel component="legend">Selecione Projeto ou Produto</FormLabel>
-      <RadioGroup row name="option" value={selectedOption} onChange={handleOptionChange}>
-        <FormControlLabel value="project" control={<Radio />} label="Projeto" />
-        <FormControlLabel value="product" control={<Radio />} label="Produto" />
-      </RadioGroup>
-    </FormControl>
-  );
-};
-
-const CreateCommercialSchedule = ({ serviceId = null, projectId = null, customerId = null, products = [], open, onClose, onRefresh }) => {
+const CreateCommercialSchedule = ({
+  onClose,
+  onRefresh
+}) => {
   const router = useRouter();
   const { formData, handleChange, handleSave, loading: formLoading, formErrors, success } = useSheduleForm();
-  const userPermissions = useSelector((state) => state.user.permissions);
-
-  // Estados para OptionSelector e alertas
-  const [selectedOption, setSelectedOption] = useState('');
+  const userPermissions = useSelector((state) => state.user.permissions)
+  const [hasSale, setHasSale] = useState(null);
   const [clientSelected, setClientSelected] = useState('');
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('success');
 
-  // Se props estiverem definidas, atualiza os campos com IDs
-  if (serviceId) handleChange('service', serviceId);
-  if (projectId) handleChange('project', projectId);
-  if (customerId) handleChange('customer', customerId);
-  if (products.length > 0) handleChange('products_ids', products);
+  const routerPushOrClose = () => {
+    if (onClose) {
+      onClose();
+      onRefresh && onRefresh();
+    } else {
+      router.push('/apps/inspections/schedule');
+    }
+  };
 
   useEffect(() => {
     if (success) {
-      if (onClose) {
-        onClose();
-        onRefresh && onRefresh();
-      } else {
-        router.push('/apps/inspections/schedule');
-      }
+      routerPushOrClose();
     }
-  }, [success, onClose, onRefresh, router]);
+  }, [success]);
 
   const handleAlertClose = () => {
     setAlertOpen(false);
@@ -76,117 +71,73 @@ const CreateCommercialSchedule = ({ serviceId = null, projectId = null, customer
     handleChange(field, newValue);
   };
 
-  const handleOptionChange = (event) => {
-    setSelectedOption(event.target.value);
-    if (event.target.value === 'project') {
-      handleChange('product', null);
-    } else if (event.target.value === 'product') {
-      handleChange('project', null);
-    }
+  const handleSaleToggle = (event) => {
+    const value = event.target.value === 'true';
+    setHasSale(value);
+    handleChange('project', null);
+    handleChange('product', null);
+    handleChange('address', null);
+    setSelectedAddress(null);
   };
 
+  const handleProjectChange = (option) => {
+    handleChange('project', option || null);
+    if (option && option.address) {
+      // Se o projeto tiver um endereço, preenche automaticamente
+      handleChange('address', option.address.id);
+      setSelectedAddress({ label: option.address.label, value: option.address.id });
+    } else {
+      // Se não tiver, exibe um alerta e permite seleção manual
+      setAlertOpen(true);
+      setAlertMessage('Este projeto não possui endereço associado. Por favor, selecione um endereço manualmente.');
+      setAlertType('warning');
+      handleChange('address', null);
+      setSelectedAddress(null);
+    }
+  };
+  
 
   return (
     <>
       <Grid container spacing={3}>
         {/* Cliente */}
-        {!customerId && (
-          <Grid item xs={12}>
-            <CustomFormLabel htmlFor="customer">Cliente</CustomFormLabel>
-            <GenericAsyncAutocompleteInput
-              label="Cliente"
-              endpoint="/api/users"
-              queryParam="complete_name__icontains"
-              extraParams={{ fields: 'complete_name,id' }}
-              value={formData.customer}
-              onChange={(option) => {
-                setClientSelected(option.value);
-                handleChange('customer', option || null);
-              }}
-              mapResponse={(data) =>
-                data.results.map(item => ({ label: item.complete_name, value: item.id }))
-              }
-              {...(formErrors.customer && { error: true, helperText: formErrors.customer })}
-            />
-          </Grid>
-        )}
+        <Grid item xs={12}>
+          <CustomFormLabel htmlFor="customer">Cliente</CustomFormLabel>
+          <GenericAsyncAutocompleteInput
+            label="Cliente"
+            endpoint="/api/users"
+            queryParam="complete_name__icontains"
+            extraParams={{ fields: 'complete_name,id' }}
+            value={formData.customer}
+            onChange={(option) => {
+              setClientSelected(option ? option.value : '');
+              handleChange('customer', option || null);
+            }}
+            mapResponse={(data) =>
+              data.results.map(item => ({ label: item.complete_name, value: item.id }))
+            }
+            {...(formErrors.customer && { error: true, helperText: formErrors.customer })}
+          />
+        </Grid>
         {/* Serviço */}
-        {!serviceId && (
-          <Grid item xs={12}>
-            <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
-            <GenericAsyncAutocompleteInput
-              label="Serviço"
-              endpoint="/api/services"
-              queryParam="name__icontains"
-              extraParams={{ fields: 'name,id' }}
-              value={formData.service}
-              onChange={(option) => {
-                handleChange('service', option || null);
-              }}
-              mapResponse={(data) =>
-                data.results.map(item => ({ label: item.name, value: item.id }))
-              }
-              {...(formErrors.service && { error: true, helperText: formErrors.service })}
-            />
-          </Grid>
-        )}
-        {formData.customer && formData.service ? (
-          <>
-            <Grid item xs={12}>
-              <OptionSelector selectedOption={selectedOption} handleOptionChange={handleOptionChange} />
-            </Grid>
-            {selectedOption === 'project' && (
-              <Grid item xs={12}>
-                <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
-                <GenericAsyncAutocompleteInput
-                  label="Projeto"
-                  endpoint="/api/projects"
-                  queryParam='project_number__icontains'
-                  extraParams={{
-                    customer: clientSelected,
-                    fields: 'project_number,sale.customer.complete_name,id',
-                    expand: 'sale.customer'
-                  }}
-                  value={formData.project}
-                  onChange={(option) => {
-                    handleChange('project', option || null);
-                  }}
-                  mapResponse={(data) =>
-                    data.results.map(item => ({
-                      label: `${item.project_number} - ${item.sale.customer.complete_name}`,
-                      value: item.id,
-                    }))
-                  }
-                  {...(formErrors.project && { error: true, helperText: formErrors.project })}
-                />
-              </Grid>
-            )}
-            {selectedOption === 'product' && (
-              <Grid item xs={12}>
-                <CustomFormLabel htmlFor="product">Produto</CustomFormLabel>
-                <GenericAsyncAutocompleteInput
-                  label="Produto"
-                  endpoint="/api/products"
-                  queryParam="name__icontains"
-                  extraParams={{ fields: 'name,id' }}
-                  value={formData.product}
-                  onChange={(option) => {
-                    handleChange('product', option || null);
-                  }}
-                  mapResponse={(data) =>
-                    data.results.map(item => ({ label: item.name, value: item.id }))
-                  }
-                  {...(formErrors.product && { error: true, helperText: formErrors.product })}
-                />
-              </Grid>
-            )}
-          </>
-        ) : (
-          <Grid item xs={12}>
-            <Alert severity="info">Por favor, selecione Cliente e Serviço para continuar.</Alert>
-          </Grid>
-        )}
-        {/* Data do Agendamento */}
+        <Grid item xs={12}>
+          <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
+          <GenericAsyncAutocompleteInput
+            label="Serviço"
+            endpoint="/api/services"
+            queryParam="name__icontains"
+            extraParams={{ fields: 'name,id' }}
+            value={formData.service}
+            onChange={(option) => {
+              handleChange('service', option || null);
+            }}
+            mapResponse={(data) =>
+              data.results.map(item => ({ label: item.name, value: item.id }))
+            }
+            {...(formErrors.service && { error: true, helperText: formErrors.service })}
+          />
+        </Grid>
+        {/* Data e Hora */}
         <Grid item xs={12} sm={6}>
           <FormDate
             label="Data do agendamento"
@@ -198,7 +149,6 @@ const CreateCommercialSchedule = ({ serviceId = null, projectId = null, customer
             {...(formErrors.schedule_date && { error: true, helperText: formErrors.schedule_date })}
           />
         </Grid>
-        {/* Hora do Agendamento */}
         <Grid item xs={12} sm={6}>
           <FormSelect
             label="Hora do agendamento"
@@ -211,46 +161,122 @@ const CreateCommercialSchedule = ({ serviceId = null, projectId = null, customer
             {...(formErrors.schedule_start_time && { error: true, helperText: formErrors.schedule_start_time })}
           />
         </Grid>
-        {/* Endereço */}
-        <Grid item xs={12} sm={6}>
-          <CustomFormLabel htmlFor="address">
-            Endereço
-            <Tooltip title="Somente endereços vinculados ao usuário serão exibidos." arrow>
-              <HelpIcon sx={{ ml: 1, cursor: 'pointer' }} />
-            </Tooltip>
-          </CustomFormLabel>
-          <GenericAsyncAutocompleteInput
-            label="Endereço"
-            endpoint="/api/addresses"
-            extraParams={{ customer_id: clientSelected, fields: 'street,number,city,state,id' }}
-            value={selectedAddress}
-            onChange={(option) => {
-              setSelectedAddress(option);
-              handleChange('address', option ? option : null);
-            }}
-            mapResponse={(data) =>
-              data.results.map(item => ({
-                label: `${item.street}, ${item.number} - ${item.city}, ${item.state}`,
-                value: item.id,
-              }))
-            }
-            {...(formErrors.address && { error: true, helperText: formErrors.address })}
-          />
+        {/* Toggle para indicar se o cliente possui venda */}
+        <Grid item xs={12}>
+          <FormControl
+            component="fieldset"
+            disabled={!(formData.customer && formData.service && formData.schedule_date && formData.schedule_start_time)}
+          >
+            <FormLabel component="legend">
+              O cliente já possui Projeto?
+              {!(formData.customer && formData.service && formData.schedule_date && formData.schedule_start_time) && (
+                <Typography variant="caption" color="textSecondary" sx={{ ml: 1 }}>
+                  Preencha Cliente, Serviço, Data e Hora
+                </Typography>
+              )}
+            </FormLabel>
+            <RadioGroup row value={hasSale === null ? '' : hasSale.toString()} onChange={handleSaleToggle}>
+              <FormControlLabel value="true" control={<Radio />} label="Sim" />
+              <FormControlLabel value="false" control={<Radio />} label="Não" />
+            </RadioGroup>
+          </FormControl>
         </Grid>
-        {/* Status */}
-        <HasPermission permissions={['field_services.change_status_schedule_field']} userPermissions={userPermissions}>
-          <Grid item xs={12} sm={6}>
-            <FormSelect
-              label="Status do agendamento"
-              options={statusOptions}
-              onChange={(e) => {
-                handleChange('status', e.target.value);
-              }}
-              value={formData.status || ''}
-              {...(formErrors.status && { error: true, helperText: formErrors.status })}
-            />
+        {/* Se o cliente possui venda: exibe Projeto e Endereço (Endereço desabilitado até selecionar Projeto) */}
+        {hasSale === true && (
+          <>
+            <Grid item xs={12}>
+              <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
+              <GenericAsyncAutocompleteInput
+                label="Projeto"
+                noOptionsText="Nenhum projeto encontrado"
+                endpoint="/api/projects"
+                queryParam="q"
+                extraParams={{
+                  customer: clientSelected,
+                  fields: 'project_number,sale.customer.complete_name,id,address',
+                  expand: 'sale.customer',
+                }}
+                value={formData.project}
+                onChange={(option) => {
+                  handleProjectChange(option);
+                }}
+                mapResponse={(data) =>
+                  data.results.map(item => ({
+                    label: `${item.project_number} - ${item.sale.customer.complete_name}`,
+                    value: item.id,
+                    address: item.address,
+                  }))
+                }
+                {...(formErrors.project && { error: true, helperText: formErrors.project })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomFormLabel htmlFor="address">Endereço</CustomFormLabel>
+              <GenericAsyncAutocompleteInput
+                label="Endereço"
+                endpoint="/api/addresses"
+                queryParam="street__icontains"
+                extraParams={{ customer_id: clientSelected, fields: 'street,number,city,state,id' }}
+                disabled={!formData.project || (formData.project.address !== null)}
+                value={selectedAddress || formData.address}
+                onChange={(option) => {
+                  handleChange('address', option || null);
+                  setSelectedAddress(option);
+                }}
+                mapResponse={(data) =>
+                  data.results.map(item => ({
+                    label: `${item.street}, ${item.number} - ${item.city}, ${item.state}`,
+                    value: item.id,
+                  }))
+                }
+                {...(formErrors.address && { error: true, helperText: formErrors.address })}
+              />
           </Grid>
-        </HasPermission>
+
+          </>
+        )}
+        {/* Se o cliente não possui venda: exibe Produto e Endereço abertos */}
+        {hasSale === false && (
+          <>
+            <Grid item xs={12}>
+              <CustomFormLabel htmlFor="product">Produto</CustomFormLabel>
+              <GenericAsyncAutocompleteInput
+                label="Produto"
+                endpoint="/api/products"
+                queryParam="name__icontains"
+                extraParams={{ fields: 'name,id' }}
+                value={formData.product}
+                onChange={(option) => {
+                  handleChange('product', option || null);
+                }}
+                mapResponse={(data) =>
+                  data.results.map(item => ({ label: item.name, value: item.id }))
+                }
+                {...(formErrors.product && { error: true, helperText: formErrors.product })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomFormLabel htmlFor="address">Endereço</CustomFormLabel>
+              <GenericAsyncAutocompleteInput
+                label="Endereço"
+                endpoint="/api/addresses"
+                queryParam="q"
+                extraParams={{ customer_id: clientSelected , fields: 'street,number,city,state,id' }}
+                value={formData.address}
+                onChange={(option) => {
+                  handleChange('address', option || null);
+                }}
+                mapResponse={(data) =>
+                  data.results.map(item => ({
+                    label: `${item.street}, ${item.number} - ${item.city}, ${item.state}`,
+                    value: item.id,
+                  }))
+                }
+                {...(formErrors.address && { error: true, helperText: formErrors.address })}
+              />
+            </Grid>
+          </>
+        )}
         {/* Observação */}
         <Grid item xs={12}>
           <CustomFormLabel htmlFor="observation">Observação</CustomFormLabel>
