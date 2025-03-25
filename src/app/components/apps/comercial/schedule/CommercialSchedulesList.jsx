@@ -42,9 +42,24 @@ import { CommercialScheduleDataContext } from '@/app/context/Inspection/Commerci
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import { format } from 'date-fns';
 import scheduleService from '@/services/scheduleService';
+import CommercialScheduleDetail from './CommercialScheduleDetail';
 
 const scheduleFilterConfig = [
   {
+    key: 'customer',
+    label: 'Cliente',
+    type: 'async-autocomplete',
+    endpoint: '/api/users/',
+    queryParam: 'complete_name__icontains',
+    extraParams: { fields: ['id', 'complete_name'] },
+    mapResponse: (data) =>
+      data.results.map((customer) => ({
+        label: customer.complete_name,
+        value: customer.id,
+      })),
+  },
+  {
+    
     key: 'schedule_date__range',
     label: 'Data do Agendamento (Entre)',
     type: 'range',
@@ -71,14 +86,22 @@ const scheduleFilterConfig = [
     ],
   },
   {
-    key: 'service_opnion_is_null',
-    label: 'Parecer do Serviço Pendente',
-    type: 'select',
-    options: [
-      { value: 'null', label: 'Todos' },
-      { value: true, label: 'Pendente' },
-      { value: 'false', label: 'Concluído' },
-    ],
+    key: 'final_service_opinion__in',
+    label: 'Parecer Final do Serviço',
+    type: 'async-multiselect',
+    endpoint: '/api/service-opinions/',
+    queryParam: 'name__icontains',
+    extraParams: {
+      is_final_opinion: true,
+      limit: 10,
+      fields: ['id', 'name', 'service.name'],
+      expand: 'service',
+    },
+    mapResponse: (data) =>
+      data.results.map((opinion) => ({
+        label: `${opinion.name} - ${opinion.service?.name}`,
+        value: opinion.id,
+      })),
   },
   {
     key: 'schedule_agent__in',
@@ -106,68 +129,6 @@ const scheduleFilterConfig = [
         value: service.id,
       })),
   },
-  {
-    key: 'customer',
-    label: 'Cliente',
-    type: 'async-autocomplete',
-    endpoint: '/api/users/',
-    queryParam: 'complete_name__icontains',
-    extraParams: { fields: ['id', 'complete_name'] },
-    mapResponse: (data) =>
-      data.results.map((customer) => ({
-        label: customer.complete_name,
-        value: customer.id,
-      })),
-  },
-  {
-    key: 'branch__in',
-    label: 'Unidade',
-    type: 'async-multiselect',
-    endpoint: '/api/branches/',
-    queryParam: 'name__icontains',
-    extraParams: { limit: 10, fields: ['id', 'name'] },
-    mapResponse: (data) =>
-      data.results.map((branch) => ({
-        label: branch.name,
-        value: branch.id,
-      })),
-  },
-  {
-    key: 'service_opinion__in',
-    label: 'Parecer do Serviço',
-    type: 'async-multiselect',
-    endpoint: '/api/service-opinions/',
-    queryParam: 'name__icontains',
-    extraParams: {
-      is_final_opinion: false,
-      limit: 10,
-      fields: ['id', 'name', 'service.name'],
-      expand: 'service',
-    },
-    mapResponse: (data) =>
-      data.results.map((opinion) => ({
-        label: `${opinion.name} - ${opinion.service?.name}`,
-        value: opinion.id,
-      })),
-  },
-  {
-    key: 'final_service_opinion__in',
-    label: 'Parecer Final do Serviço',
-    type: 'async-multiselect',
-    endpoint: '/api/service-opinions/',
-    queryParam: 'name__icontains',
-    extraParams: {
-      is_final_opinion: true,
-      limit: 10,
-      fields: ['id', 'name', 'service.name'],
-      expand: 'service',
-    },
-    mapResponse: (data) =>
-      data.results.map((opinion) => ({
-        label: `${opinion.name} - ${opinion.service?.name}`,
-        value: opinion.id,
-      })),
-  },
 ];
 
 const CommercialSchedulesList = () => {
@@ -193,7 +154,7 @@ const CommercialSchedulesList = () => {
         expand: 'customer,service,schedule_agent,address',
         page: page + 1,
         limit: rowsPerPage,
-        // Caso a ordenação precise ser enviada ao backend, você pode adicionar aqui parâmetros de ordenação
+        ...filters,
       });
       console.log("Dados buscados:", response);
       setSchedules(response);
@@ -206,7 +167,7 @@ const CommercialSchedulesList = () => {
 
   useEffect(() => {
     fetchData();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, filters]);
 
   const handleChangePage = (event, newPage) => setPage(newPage);
   const handleChangeRowsPerPage = (event) => {
@@ -264,10 +225,10 @@ const CommercialSchedulesList = () => {
 
   return (
     <Box sx={{ padding: 3 }}>
-      <Typography variant="h6">Vistorias</Typography>
+      <Typography variant="h6">Agendamentos</Typography>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Button variant="outlined" sx={{ mt: 1 }} startIcon={<AddBoxRounded />} onClick={handleAddModalOpen}>
-          Adicionar Vistoria
+          Adicionar Agendamento
         </Button>
         <Button variant="outlined" startIcon={<FilterAlt />} onClick={() => setFilterDrawerOpen(true)} sx={{ mt: 1, mb: 2 }}>
           Filtros
@@ -276,7 +237,10 @@ const CommercialSchedulesList = () => {
       <GenericFilterDrawer
         filters={scheduleFilterConfig}
         initialValues={filters}
-        onApply={(newFilters) => setFilters(newFilters)}
+        onApply={(newFilters) => {
+          setFilters(newFilters);
+          setPage(0);
+        }}
         open={filterDrawerOpen}
         onClose={() => setFilterDrawerOpen(false)}
       />
@@ -337,7 +301,7 @@ const CommercialSchedulesList = () => {
         <Typography>Nenhum agendamento encontrado.</Typography>
       )}
       <Dialog open={addModalOpen} onClose={handleAddModalClose} fullWidth maxWidth="md">
-        <DialogTitle>Adicionar Vistoria</DialogTitle>
+        <DialogTitle>Adicionar Agendamento</DialogTitle>
         <DialogContent>
           <CreateCommercialSchedule onClose={handleAddModalClose} onRefresh={fetchData} />
         </DialogContent>
@@ -347,13 +311,13 @@ const CommercialSchedulesList = () => {
       </Dialog>
       <Drawer anchor="right" open={viewDrawerOpen} onClose={handleDrawerClose}>
         <Box sx={{ width: 500, p: 2 }}>
-          <Typography variant="h6">Detalhes da Vistoria</Typography>
+          <Typography variant="h6">Detalhes do Agendamento</Typography>
           {selectedSchedule ? (
             <Typography variant="body2" sx={{ mt: 1 }}>
-              Detalhes para a vistoria com ID: {selectedSchedule.id}
+                <CommercialScheduleDetail schedule={selectedSchedule} />
             </Typography>
           ) : (
-            <Typography>Selecione uma vistoria</Typography>
+            <Typography>Selecione um Agendamento</Typography>
           )}
           <Button onClick={handleDrawerClose} variant="outlined" sx={{ mt: 2 }}>
             Fechar

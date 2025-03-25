@@ -41,6 +41,7 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
     async function fetchContentTypeId() {
       try {
         const id = await getContentType(appLabel, model);
+        console.log('Content Type ID:', id);
         setContentTypeId(id);
       } catch (error) {
         console.error("Erro ao buscar content type:", error);
@@ -52,7 +53,10 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const data = await CommentService.getComments(objectId, contentTypeId);
+                const data = await CommentService.getComments(objectId, contentTypeId, {
+                    fields: 'author.complete_name,created_at,text',
+                    expand: 'author',
+                });
                 setComments(data.results || []);
 
             } catch (err) {
@@ -68,20 +72,28 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
     const getInitials = (name) => name?.charAt(0)?.toUpperCase() || '';
 
     const handleSubmit = async () => {
-        console.log('Enviando comentário:', newComment);
         if (!newComment.trim()) return;
         setSubmitting(true);
         try {
             const data = await CommentService.createComment({
+                author: user?.id,
                 object_id: objectId,
-                content_type_id: contentTypeId,
-                text: newComment,
-                author_id: user?.id
+                content_type: contentTypeId,
+                text: newComment
             });
-            // Adiciona a nova mensagem ao final do array
-            setComments(prev => [...prev, data]);
+    
+            const commentWithAuthor = {
+                ...data,
+                author: {
+                    id: user?.id,
+                    complete_name: user?.complete_name,
+                    email: user?.email,
+                    employee_data: user?.employee_data || {},
+                },
+            };
+    
+            setComments(prev => [...prev, commentWithAuthor]);
             setNewComment('');
-
         } catch (err) {
             setError(err.message || 'Erro ao enviar comentário.');
         } finally {
