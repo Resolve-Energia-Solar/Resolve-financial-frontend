@@ -36,7 +36,7 @@ const scheduleService = {
   getScheduleIspections: async (params = {}) => {
     try {
       const response = await apiClient.get(
-        `/api/schedule/?service=${SERVICE_INSPECTION_ID}`,
+        `/api/schedule/`,
         { params }
       )
       return response.data

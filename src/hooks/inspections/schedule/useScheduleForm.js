@@ -171,8 +171,6 @@ const useScheduleForm = (initialData, id, service_id) => {
       execution_finished_at: formData.execution_finished_at,
     };
 
-    console.log("Payload a enviar:", dataToSend);
-
     try {
       if (id) {
         console.log("Atualizando agendamento com id:", id);

@@ -47,7 +47,7 @@ const OptionSelector = ({ selectedOption, handleOptionChange }) => {
   );
 };
 
-const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null, onClosedModal = null, products = [], onRefresh = null }) => {
+const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null, products = [], open, onClose, onRefresh }) => {
   const router = useRouter();
   const { formData, handleChange, handleSave, loading: formLoading, formErrors, success } = useSheduleForm();
   const userPermissions = useSelector((state) => state.user.permissions);
@@ -69,15 +69,15 @@ const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null,
 
   useEffect(() => {
     if (success) {
-      console.log("Agendamento salvo com sucesso. Redirecionando/fechando modal...");
-      if (onClosedModal) {
-        onClosedModal();
+      console.log("Agendamento salvo com sucesso. Fechando modal...");
+      if (onClose) {
+        onClose();
         onRefresh && onRefresh();
       } else {
         router.push('/apps/inspections/schedule');
       }
     }
-  }, [success, onClosedModal, onRefresh, router]);
+  }, [success, onClose, onRefresh, router]);
 
   const handleAlertClose = () => {
     setAlertOpen(false);
@@ -114,7 +114,7 @@ const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null,
               onChange={(option) => {
                 console.log("Cliente selecionado:", option);
                 setClientSelected(option ? option.value : '');
-                // Mantém a chamada com o objeto completo
+                // Mantém o objeto completo para o componente funcionar, mas use extractId no payload
                 handleChange('customer', option || null);
               }}
               mapResponse={(data) =>
