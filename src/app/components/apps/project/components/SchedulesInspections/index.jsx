@@ -15,7 +15,7 @@ function SchedulesInspections({ saleId, userId }) {
     const fetchData = async () => {
       try {
         const response = await projectService.getProjectBySale(saleId);
-        setProjectsList(response.results.results);
+        setProjectsList(response.results);
       } catch (error) {
         console.log('Error: ', error);
       } finally {
@@ -30,7 +30,6 @@ function SchedulesInspections({ saleId, userId }) {
       setCustomerId(userId);
     }
   }, [projectsList]);
-  
 
   if (loading) {
     return <ChecklistSalesSkeleton />;
@@ -60,7 +59,11 @@ function SchedulesInspections({ saleId, userId }) {
                 </Stack>
               </Stack>
 
-              <ListInspection projectId={project?.id} product={project?.product?.id} customerId={customerId} />
+              <ListInspection
+                projectId={project?.id}
+                product={project?.product?.id}
+                customerId={customerId}
+              />
             </CardContent>
           </Card>
         </Box>

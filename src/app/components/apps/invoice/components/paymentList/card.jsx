@@ -89,7 +89,7 @@ const PaymentCard = ({ sale = null }) => {
     const fetchPayments = async () => {
       try {
         const response = await paymentService.index({ sale });
-        setPaymentsList(response.results.results);
+        setPaymentsList(response.results);
       } catch (err) {
         console.error(err);
       } finally {

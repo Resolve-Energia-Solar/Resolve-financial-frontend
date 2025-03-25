@@ -14,8 +14,7 @@ function ChecklistSales({ saleId }) {
     const fetchData = async () => {
       try {
         const response = await projectService.getProjectBySale(saleId);
-        console.log(response.results.results);
-        setProjectsList(response.results.results);
+        setProjectsList(response.results);
       } catch (error) {
         console.log('Error: ', error);
       } finally {
