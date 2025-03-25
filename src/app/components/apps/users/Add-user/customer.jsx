@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import useUserForm from '@/hooks/users/useUserForm';
 import AutoCompletePhoneNumber from '../../comercial/sale/components/auto-complete/AutoCompletePhoneNumber';
 import { IconDeviceFloppy } from '@tabler/icons-react';
-import addressService from '@/services/addressService'; 
+import addressService from '@/services/addressService';
 import CreateAddressPage from '../../address/Add-address';
 
 export default function CreateCustomer({ onClosedModal = null, selectedUserId = null }) {
@@ -34,7 +34,6 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
     { value: 'O', label: 'Outro' },
   ];
 
-
   useEffect(() => {
     if (success) {
       if (onClosedModal) {
@@ -48,7 +47,11 @@ export default function CreateCustomer({ onClosedModal = null, selectedUserId = 
 
   const fetchAddress = async (search) => {
     try {
-      const response = await addressService.getAddress({ q: search, limit: 40, fields: 'id,street,number,city,state' });
+      const response = await addressService.index({
+        q: search,
+        limit: 40,
+        fields: 'id,street,number,city,state',
+      });
       return response.results;
     } catch (error) {
       console.error('Erro na busca de endereços:', error);

@@ -22,7 +22,6 @@ import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComp
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
 import addressService from '@/services/addressService';
 
-
 function EditCustomerPage({ leadId = null }) {
   const [lead, setLead] = useState(null);
   const [customerId, setCustomerId] = useState(null);
@@ -59,11 +58,11 @@ function EditCustomerPage({ leadId = null }) {
 
   if (!customerId) {
     formData.complete_name
-        ? (formData.complete_name = formData.complete_name)
-        : (formData.complete_name = lead?.name);
+      ? (formData.complete_name = formData.complete_name)
+      : (formData.complete_name = lead?.name);
     formData.first_document
-        ? (formData.first_document = formData.first_document)
-        : (formData.first_document = lead?.first_document);
+      ? (formData.first_document = formData.first_document)
+      : (formData.first_document = lead?.first_document);
     formData.email ? (formData.email = formData.email) : (formData.email = lead?.contact_email);
   }
   formData.user_types = lead?.user_types;
@@ -78,7 +77,6 @@ function EditCustomerPage({ leadId = null }) {
     }
   };
 
-
   const associateCustomerToLead = async (leadId, customerId) => {
     try {
       await leadService.patchLead(leadId, { customer_id: customerId });
@@ -89,7 +87,7 @@ function EditCustomerPage({ leadId = null }) {
 
   const fetchAddress = async (search) => {
     try {
-      const response = await addressService.getAddress({
+      const response = await addressService.index({
         q: search,
         limit: 40,
         fields: 'id,street,number,city,state',
@@ -102,7 +100,6 @@ function EditCustomerPage({ leadId = null }) {
   };
 
   const [selectedAddresses, setSelectedAddresses] = useState([]);
-
 
   return (
     <Grid container spacing={3}>

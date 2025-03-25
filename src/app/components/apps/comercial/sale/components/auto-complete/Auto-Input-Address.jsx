@@ -41,7 +41,7 @@ export default function AutoCompleteAddress({
   const fetchDefaultAddress = async (addressId) => {
     if (!addressId) return;
     try {
-      const addressValue = await addressService.getAddressById(addressId);
+      const addressValue = await addressService.find(addressId);
       if (addressValue) {
         const formatted = createLabelAddress(addressValue);
         setSelectedAddress(formatted);
@@ -72,7 +72,7 @@ export default function AutoCompleteAddress({
       }
       setLoading(true);
       try {
-        const response = await addressService.getAddressByFullAddress(query);
+        const response = await addressService.index({ q: query });
         const formatted = response.results.map(createLabelAddress);
         setInternalOptions(formatted);
       } catch (error) {
@@ -81,7 +81,7 @@ export default function AutoCompleteAddress({
       }
       setLoading(false);
     }, 300),
-    [disableSuggestions, enqueueSnackbar]
+    [disableSuggestions, enqueueSnackbar],
   );
 
   const handleClose = () => {
@@ -97,7 +97,7 @@ export default function AutoCompleteAddress({
   const addAddress = async (newId) => {
     if (!newId) return;
     try {
-      const addressValue = await addressService.getAddressById(newId);
+      const addressValue = await addressService.find(newId);
       if (addressValue) {
         const formatted = createLabelAddress(addressValue);
         setSelectedAddress(formatted);
@@ -176,14 +176,9 @@ export default function AutoCompleteAddress({
           },
         }}
       >
-        <DialogTitle sx={{ p: 1, fontSize: '1rem' }}>
-          Adicionar Novo Endereço
-        </DialogTitle>
+        <DialogTitle sx={{ p: 1, fontSize: '1rem' }}>Adicionar Novo Endereço</DialogTitle>
         <DialogContent sx={{ p: 0 }}>
-          <CreateAddressPage
-            onClose={handleCloseModal}
-            selectedAddressId={addAddress}
-          />
+          <CreateAddressPage onClose={handleCloseModal} selectedAddressId={addAddress} />
         </DialogContent>
       </Dialog>
     </div>
