@@ -99,7 +99,7 @@ const RequestList = ({ projectId = null, enableFilters = true, enableIndicators 
 
         const data = await requestConcessionaireService.getAllByProject(params);
         console.log('data', data);
-        setProjectsList(data.results.results);
+        setProjectsList(data.results);
         setTotalRows(data.count);
       } catch (err) {
         setError('Erro ao carregar Solicitações');

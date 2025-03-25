@@ -69,7 +69,7 @@ export default function AutoCompleteUserProject({
           const allProjects = [];
 
 
-          responseSales.results.results.forEach((sale) => {
+          responseSales.results.forEach((sale) => {
             sale.projects.forEach((project) => {
               if (!projectsSet.has(project.id)) {
                 projectsSet.add(project.id);

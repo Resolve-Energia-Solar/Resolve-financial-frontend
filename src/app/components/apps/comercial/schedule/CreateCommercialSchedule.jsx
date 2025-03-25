@@ -12,13 +12,6 @@ import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
 import { useSelector } from 'react-redux';
 import HasPermission from '@/app/components/permissions/HasPermissions';
 
-// Função auxiliar para extrair o id (usada no payload)
-const extractId = (value) => {
-  return (typeof value === 'object' && value !== null && 'value' in value)
-    ? value.value
-    : value;
-};
-
 const timeOptions = [
   { value: '08:30:00', label: '08:30' },
   { value: '10:00:00', label: '10:00' },
@@ -33,9 +26,7 @@ const statusOptions = [
   { value: 'Cancelado', label: 'Cancelado' },
 ];
 
-// OptionSelector para escolha entre Projeto ou Produto
 const OptionSelector = ({ selectedOption, handleOptionChange }) => {
-  console.log("OptionSelector - selectedOption:", selectedOption);
   return (
     <FormControl component="fieldset" sx={{ marginBottom: 2 }}>
       <FormLabel component="legend">Selecione Projeto ou Produto</FormLabel>
@@ -47,11 +38,10 @@ const OptionSelector = ({ selectedOption, handleOptionChange }) => {
   );
 };
 
-const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null, products = [], open, onClose, onRefresh }) => {
+const CreateCommercialSchedule = ({ serviceId = null, projectId = null, customerId = null, products = [], open, onClose, onRefresh }) => {
   const router = useRouter();
   const { formData, handleChange, handleSave, loading: formLoading, formErrors, success } = useSheduleForm();
   const userPermissions = useSelector((state) => state.user.permissions);
-  console.log("CreateSchedule - formData:", formData);
 
   // Estados para OptionSelector e alertas
   const [selectedOption, setSelectedOption] = useState('');
@@ -69,7 +59,6 @@ const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null,
 
   useEffect(() => {
     if (success) {
-      console.log("Agendamento salvo com sucesso. Fechando modal...");
       if (onClose) {
         onClose();
         onRefresh && onRefresh();
@@ -84,12 +73,10 @@ const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null,
   };
 
   const validateChange = (field, newValue) => {
-    console.log(`validateChange: ${field} mudou para:`, newValue);
     handleChange(field, newValue);
   };
 
   const handleOptionChange = (event) => {
-    console.log("Opção selecionada:", event.target.value);
     setSelectedOption(event.target.value);
     if (event.target.value === 'project') {
       handleChange('product', null);
@@ -97,6 +84,7 @@ const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null,
       handleChange('project', null);
     }
   };
+
 
   return (
     <>
@@ -112,9 +100,7 @@ const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null,
               extraParams={{ fields: 'complete_name,id' }}
               value={formData.customer}
               onChange={(option) => {
-                console.log("Cliente selecionado:", option);
-                setClientSelected(option ? option.value : '');
-                // Mantém o objeto completo para o componente funcionar, mas use extractId no payload
+                setClientSelected(option.value);
                 handleChange('customer', option || null);
               }}
               mapResponse={(data) =>
@@ -135,7 +121,6 @@ const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null,
               extraParams={{ fields: 'name,id' }}
               value={formData.service}
               onChange={(option) => {
-                console.log("Serviço selecionado:", option);
                 handleChange('service', option || null);
               }}
               mapResponse={(data) =>
@@ -156,19 +141,19 @@ const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null,
                 <GenericAsyncAutocompleteInput
                   label="Projeto"
                   endpoint="/api/projects"
+                  queryParam='project_number__icontains'
                   extraParams={{
-                    customer_id: formData.customer,
+                    customer: clientSelected,
                     fields: 'project_number,sale.customer.complete_name,id',
                     expand: 'sale.customer'
                   }}
                   value={formData.project}
                   onChange={(option) => {
-                    console.log("Projeto selecionado:", option);
                     handleChange('project', option || null);
                   }}
                   mapResponse={(data) =>
                     data.results.map(item => ({
-                      label: item.project_number || item.sale.customer.complete_name,
+                      label: `${item.project_number} - ${item.sale.customer.complete_name}`,
                       value: item.id,
                     }))
                   }
@@ -186,7 +171,6 @@ const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null,
                   extraParams={{ fields: 'name,id' }}
                   value={formData.product}
                   onChange={(option) => {
-                    console.log("Produto selecionado:", option);
                     handleChange('product', option || null);
                   }}
                   mapResponse={(data) =>
@@ -209,7 +193,6 @@ const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null,
             name="schedule_date"
             value={formData.schedule_date}
             onChange={(newValue) => {
-              console.log("Data do agendamento alterada para:", newValue);
               validateChange('schedule_date', newValue);
             }}
             {...(formErrors.schedule_date && { error: true, helperText: formErrors.schedule_date })}
@@ -221,7 +204,6 @@ const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null,
             label="Hora do agendamento"
             options={timeOptions}
             onChange={(e) => {
-              console.log("Hora do agendamento alterada para:", e.target.value);
               validateChange('schedule_start_time', e.target.value);
             }}
             disabled={!formData.schedule_date}
@@ -243,7 +225,6 @@ const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null,
             extraParams={{ customer_id: clientSelected, fields: 'street,number,city,state,id' }}
             value={selectedAddress}
             onChange={(option) => {
-              console.log("Endereço selecionado:", option);
               setSelectedAddress(option);
               handleChange('address', option ? option : null);
             }}
@@ -263,7 +244,6 @@ const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null,
               label="Status do agendamento"
               options={statusOptions}
               onChange={(e) => {
-                console.log("Status alterado para:", e.target.value);
                 handleChange('status', e.target.value);
               }}
               value={formData.status || ''}
@@ -283,7 +263,6 @@ const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null,
             rows={4}
             value={formData.observation}
             onChange={(e) => {
-              console.log("Observação alterada:", e.target.value);
               handleChange('observation', e.target.value);
             }}
             {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
@@ -296,7 +275,6 @@ const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null,
               variant="contained"
               color="primary"
               onClick={() => {
-                console.log("Enviando payload:", formData);
                 handleSave();
               }}
               disabled={formLoading}
@@ -321,4 +299,4 @@ const CreateSchedule = ({ serviceId = null, projectId = null, customerId = null,
   );
 };
 
-export default CreateSchedule;
+export default CreateCommercialSchedule;

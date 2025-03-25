@@ -55,8 +55,8 @@ const PaymentList = ({ onClick }) => {
           page: page + 1,
           limit: rowsPerPage,
         });
-        setPaymentsList(response.results.results);
-        setTotalCount(response.count || 0);
+        setPaymentsList(response.results);
+        setTotalCount(response.meta.pagination.total_count || 0);
       } catch (err) {
         console.error('Erro ao carregar pagamentos:', err);
         setError('Erro ao carregar pagamentos.');

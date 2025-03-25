@@ -50,7 +50,7 @@ export default function AutoCompleteProject({ onChange, value, error, helperText
           fields: 'project_number,sale.customer.complete_name'
         });
         console.log('response', response);
-        const formattedProjects = response.results.results.map((project) => ({
+        const formattedProjects = response.results.map((project) => ({
           id: project.id,
           project_number: project.project_number,
           customerName: project.sale.customer.complete_name,
