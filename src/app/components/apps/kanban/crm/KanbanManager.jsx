@@ -109,7 +109,7 @@ const KanbanManager = ({
     };
 
     try {
-      const newColumn = await columnService.createColumn(newColumnData);
+      const newColumn = await columnService.create(newColumnData);
       statuses.push(newColumn);
       setSnackbarMessage('Coluna adicionada com sucesso!');
       setSnackbarOpen(true);
@@ -150,8 +150,6 @@ const KanbanManager = ({
     'Quarto Contato': theme.palette.success.light,
     default: theme.palette.grey[200],
   };
-
-  
 
   const filteredLeads = leadsList.filter((lead) =>
     (lead.name?.toLowerCase().trim() || '').includes(searchTerm.toLowerCase().trim()),
@@ -440,10 +438,10 @@ const KanbanManager = ({
                     </>
                   )}
                   {tabIndex === 1 && <ProposalManager selectedLead={selectedLead} />}
-
                   {tabIndex === 2 && <SaleListCards lead={selectedLead} leadId={selectedLead.id} />}
-{/*                   {tabIndex === 3 && <ClicksignLogsPage />}
- */}                  {tabIndex === 3 && <Activities lead={selectedLead} />}
+                  {/*                   {tabIndex === 3 && <ClicksignLogsPage />}
+                   */}{' '}
+                  {tabIndex === 3 && <Activities lead={selectedLead} />}
                 </Box>
               </Grid>
             </Grid>
