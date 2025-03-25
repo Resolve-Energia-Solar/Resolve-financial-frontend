@@ -26,7 +26,7 @@ const useKanban = () => {
   const fetchBoards = async () => {
     setLoading(true);
     try {
-      const data = await boardService.getBoards();
+      const data = await boardService.index();
       setBoards(data);
 
       if (data.results && data.results.length > 0) {
