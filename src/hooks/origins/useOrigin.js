@@ -16,7 +16,7 @@ const useOrigins = (id = null) => {
       setError(null);
       setSuccess(false);
       try {
-        const data = await OriginsService.getOriginById(id);
+        const data = await OriginsService.find(id);
         setOriginData(data);
         setSuccess(true);
       } catch (err) {
@@ -30,13 +30,13 @@ const useOrigins = (id = null) => {
   }, [id]);
 
   const getAllOrigins = async () => {
-    if (originsList.length > 0) return; 
+    if (originsList.length > 0) return;
 
     setLoading(true);
     setError(null);
     setSuccess(false);
     try {
-      const response = await OriginsService.getOriginsList();
+      const response = await OriginsService.index();
       const data = response.data || response.results || response;
 
       if (Array.isArray(data)) {
@@ -57,7 +57,7 @@ const useOrigins = (id = null) => {
     setError(null);
     setSuccess(false);
     try {
-      const data = await OriginsService.updateOrigin(id, updatedData);
+      const data = await OriginsService.update(id, updatedData);
       setOriginData(data);
       setSuccess(true);
     } catch (err) {

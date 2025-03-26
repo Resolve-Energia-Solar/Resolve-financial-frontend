@@ -24,7 +24,7 @@ const branchService = {
   },
   create: async (data) => {
     try {
-      const response = apiClient.post(`${DEFAULT_ROUTER}/`, data);
+      const response = await apiClient.post(`${DEFAULT_ROUTER}/`, data);
       return response.data;
     } catch (error) {
       console.error('Erro ao criar unidade:', error);

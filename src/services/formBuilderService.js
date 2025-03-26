@@ -24,7 +24,7 @@ const formBuilderService = {
   },
   create: async (data) => {
     try {
-      const response = apiClient.post(`${DEFAULT_ROUTER}/`, data);
+      const response = await apiClient.post(`${DEFAULT_ROUTER}/`, data);
       return response.data;
     } catch (error) {
       console.error('Erro ao criar formulário:', error);
