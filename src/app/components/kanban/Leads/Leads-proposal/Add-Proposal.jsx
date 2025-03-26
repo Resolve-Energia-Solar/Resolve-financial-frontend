@@ -371,6 +371,12 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
               <Grid item xs={6}>
+                  <CustomFormLabel
+                    htmlFor="estimated_power_generation"
+                    sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
+                  >
+                    Consumo energético
+                  </CustomFormLabel>
                   <Button
                     variant="contained"
                     onClick={() => setOpenEnergyConsumption(true)}
@@ -381,6 +387,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                       borderColor: "#ADADAD",
                       px: 3,
                       width: "100%",
+                      height: "39px",
                       justifyContent: "space-between",
                       alignItems: "center",
                       '&:hover': { boxShadow: '0', '& .MuiSvgIcon-root': { color: '#303030' } },
