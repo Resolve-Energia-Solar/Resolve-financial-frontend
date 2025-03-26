@@ -86,7 +86,7 @@ export default function AddUser({
 
   const fetchAddress = async (search) => {
     try {
-      const response = await addressService.getAddress({
+      const response = await addressService.index({
         q: search,
         limit: 40,
         fields: 'id,street,number,city,state',
@@ -276,7 +276,7 @@ export default function AddUser({
             <Grid item xs={12} sm={6} md={6}>
               <AutoCompletePhoneNumber
                 placeholder="Número"
-                onChange={(id) => handleChange('phone_numbers_ids', id)}
+                onChange={(id) => handleChange('phone_numbers_ids', [id])}
                 value={formData.phone_numbers_ids ? formData.phone_numbers_ids[0] : null}
                 {...(formErrors.phone_numbers_ids && {
                   error: true,

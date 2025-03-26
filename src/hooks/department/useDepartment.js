@@ -11,7 +11,7 @@ const useDepartment = (id) => {
 
     const fetchDepartment = async () => {
       try {
-        const data = await departmentService.getDepartmentById(id);
+        const data = await departmentService.find(id);
         setDepartmentData(data);
       } catch (err) {
         setError('Erro ao carregar o departamento');

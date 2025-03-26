@@ -1,5 +1,5 @@
-"use client";
-import { useContext, useState } from "react";
+'use client';
+import { useContext, useState } from 'react';
 import {
   Button,
   Dialog,
@@ -7,10 +7,10 @@ import {
   DialogContent,
   DialogActions,
   CircularProgress,
-} from "@mui/material";
-import { KanbanDataContext } from "@/app/context/kanbancontext";
-import columnService from "@/services/boardColumnService";
-import { useSnackbar } from "notistack";
+} from '@mui/material';
+import { KanbanDataContext } from '@/app/context/kanbancontext';
+import columnService from '@/services/boardColumnService';
+import { useSnackbar } from 'notistack';
 
 function DeleteCategoryModal({ showModal, handleCloseModal, column }) {
   const { refresh } = useContext(KanbanDataContext);
@@ -20,16 +20,16 @@ function DeleteCategoryModal({ showModal, handleCloseModal, column }) {
   const handleDelete = async () => {
     try {
       setLoading(true);
-      await columnService.deleteColumn(column.id);
+      await columnService.delete(column.id);
       enqueueSnackbar(`Coluna "${column.name}" deletada com sucesso`, {
-        variant: "success",
+        variant: 'success',
       });
       refresh();
       handleCloseModal();
     } catch (error) {
       console.error(`Erro ao deletar a coluna "${column.name}":`, error.message);
       enqueueSnackbar(`Erro ao deletar a coluna "${column.name}"`, {
-        variant: "error",
+        variant: 'error',
       });
     } finally {
       setLoading(false);
@@ -42,12 +42,10 @@ function DeleteCategoryModal({ showModal, handleCloseModal, column }) {
       onClose={handleCloseModal}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
-      sx={{ ".MuiDialog-paper": { width: "400px" } }}
+      sx={{ '.MuiDialog-paper': { width: '400px' } }}
     >
       <DialogTitle id="alert-dialog-title">Deletar Coluna</DialogTitle>
-      <DialogContent>
-        Tem certeza de que deseja deletar a coluna "{column.name}"?
-      </DialogContent>
+      <DialogContent>Tem certeza de que deseja deletar a coluna "{column.name}"?</DialogContent>
       <DialogActions>
         <Button variant="outlined" color="inherit" onClick={handleCloseModal}>
           Cancelar
@@ -59,7 +57,7 @@ function DeleteCategoryModal({ showModal, handleCloseModal, column }) {
           disabled={loading}
           endIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
         >
-          {loading ? "Deletando..." : "Deletar"}
+          {loading ? 'Deletando...' : 'Deletar'}
         </Button>
       </DialogActions>
     </Dialog>

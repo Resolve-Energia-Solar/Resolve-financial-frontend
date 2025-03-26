@@ -17,7 +17,7 @@ export const PostTextBox = ({ onPostCreated }) => {
 
   const handlePost = async () => {
     if (!text.trim()) {
-      enqueueSnackbar("Digite algo", { variant: "warning" });
+      enqueueSnackbar('Digite algo', { variant: 'warning' });
       return;
     }
     try {
@@ -28,15 +28,15 @@ export const PostTextBox = ({ onPostCreated }) => {
         object_id: user.id,
         author_id: user.id,
       };
-      await commentService.createComment(commentData);
-      enqueueSnackbar("Publicado com sucesso!", { variant: "success" });
+      await commentService.create(commentData);
+      enqueueSnackbar('Publicado com sucesso!', { variant: 'success' });
       setText('');
       // Chama a função para atualizar a lista de posts, se fornecida
       if (onPostCreated) onPostCreated();
     } catch (error) {
-      console.error("Erro ao postar comentário:", error);
-      const errorMessage = error.response?.data?.detail || "Erro ao postar comentário";
-      enqueueSnackbar(errorMessage, { variant: "error" });
+      console.error('Erro ao postar comentário:', error);
+      const errorMessage = error.response?.data?.detail || 'Erro ao postar comentário';
+      enqueueSnackbar(errorMessage, { variant: 'error' });
     }
   };
 

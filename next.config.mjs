@@ -14,8 +14,8 @@ const nextConfig = {
         hostname: 'res.cloudinary.com',
       },
     ],
-  },  
-  async headers () {
+  },
+  async headers() {
     return [
       {
         source: '/api/:path*',

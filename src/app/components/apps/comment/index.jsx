@@ -2,17 +2,17 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import {
-    Box,
-    List,
-    ListItem,
-    ListItemText,
-    Typography,
-    Avatar,
-    ListItemAvatar,
-    TextField,
-    Button,
-    Skeleton,
-    Tooltip
+  Box,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+  Avatar,
+  ListItemAvatar,
+  TextField,
+  Button,
+  Skeleton,
+  Tooltip,
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useSelector } from 'react-redux';
@@ -21,21 +21,20 @@ import getContentType from '@/utils/getContentType';
 import CommentService from '@/services/commentService';
 
 const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
 export default function Comment({ appLabel, model, objectId, label = 'Comentários' }) {
-    const [comments, setComments] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [newComment, setNewComment] = useState('');
-    const [submitting, setSubmitting] = useState(false);
-    const [contentTypeId, setContentTypeId] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [newComment, setNewComment] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [contentTypeId, setContentTypeId] = useState(null);
 
-    const user = useSelector((state) => state?.user?.user);
-    const listRef = useRef(null);
-
+  const user = useSelector((state) => state?.user?.user);
+  const listRef = useRef(null);
 
   useEffect(() => {
     async function fetchContentTypeId() {
@@ -44,7 +43,7 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
         console.log('Content Type ID:', id);
         setContentTypeId(id);
       } catch (error) {
-        console.error("Erro ao buscar content type:", error);
+        console.error('Erro ao buscar content type:', error);
       }
     }
     fetchContentTypeId();
@@ -53,7 +52,9 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const data = await CommentService.getComments(objectId, contentTypeId, {
+                const data = await CommentService.index({
+                    object_id: objectId,
+                    content_type: contentTypeId,
                     fields: 'author.complete_name,created_at,text',
                     expand: 'author',
                 });
@@ -66,10 +67,10 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
             }
         };
 
-        fetchComments();
-    }, [contentTypeId, objectId]);
+    fetchComments();
+  }, [contentTypeId, objectId]);
 
-    const getInitials = (name) => name?.charAt(0)?.toUpperCase() || '';
+  const getInitials = (name) => name?.charAt(0)?.toUpperCase() || '';
 
     const handleSubmit = async () => {
         if (!newComment.trim()) return;
@@ -101,29 +102,26 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
         }
     };
 
-    // Rolagem automática ao final quando as mensagens mudam
-    useEffect(() => {
-        if (listRef.current) {
-            listRef.current.scrollTop = listRef.current.scrollHeight;
-        }
-    }, [comments]);
+  // Rolagem automática ao final quando as mensagens mudam
+  useEffect(() => {
+    if (listRef.current) {
+      listRef.current.scrollTop = listRef.current.scrollHeight;
+    }
+  }, [comments]);
 
-    // Skeleton para placeholder de mensagens
-    const SkeletonList = () => (
-        <>
-            {[1, 2, 3].map((_, i) => (
-                <ListItem key={i} sx={{ maxWidth: '70%', mb: 1, bgcolor: 'grey.200', borderRadius: 2 }}>
-                    <ListItemAvatar>
-                        <Skeleton variant="circular" width={40} height={40} />
-                    </ListItemAvatar>
-                    <ListItemText
-                        primary={<Skeleton width="60%" />}
-                        secondary={<Skeleton width="40%" />}
-                    />
-                </ListItem>
-            ))}
-        </>
-    );
+  // Skeleton para placeholder de mensagens
+  const SkeletonList = () => (
+    <>
+      {[1, 2, 3].map((_, i) => (
+        <ListItem key={i} sx={{ maxWidth: '70%', mb: 1, bgcolor: 'grey.200', borderRadius: 2 }}>
+          <ListItemAvatar>
+            <Skeleton variant="circular" width={40} height={40} />
+          </ListItemAvatar>
+          <ListItemText primary={<Skeleton width="60%" />} secondary={<Skeleton width="40%" />} />
+        </ListItem>
+      ))}
+    </>
+  );
 
     return (
         <Box
@@ -230,27 +228,35 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
                 </List>
             </Box>
 
-            {/* Área de input */}
-            <Box sx={{ display: 'flex', alignItems: 'center', p: 2, borderTop: '1px solid', borderColor: 'divider' }}>
-                <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder="Escreva uma mensagem..."
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    onKeyUp={(e) => e.key === 'Enter' && handleSubmit()}
-                    disabled={loading}
-                />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSubmit}
-                    disabled={submitting || loading}
-                    sx={{ ml: 1 }}
-                >
-                    {submitting ? 'Enviando...' : 'Enviar'}
-                </Button>
-            </Box>
-        </Box>
-    );
+      {/* Área de input */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          p: 2,
+          borderTop: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Escreva uma mensagem..."
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          onKeyUp={(e) => e.key === 'Enter' && handleSubmit()}
+          disabled={loading}
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSubmit}
+          disabled={submitting || loading}
+          sx={{ ml: 1 }}
+        >
+          {submitting ? 'Enviando...' : 'Enviar'}
+        </Button>
+      </Box>
+    </Box>
+  );
 }

@@ -15,13 +15,17 @@ const Navigation = () => {
 
   if (lgUp) {
     return (
-      <Box sx={{ borderBottom: "1px solid rgba(0,0,0,0.05)" }} py={2}>
+      <Box sx={{ borderBottom: "1px solid rgba(0,0,0,0.05)", justifyContent: "center",display: "flex" }} py={2}>
         {/* ------------------------------------------- */}
         {/* Sidebar for desktop */}
         {/* ------------------------------------------- */}
         <Container
           sx={{
-            maxWidth: customizer.isLayout === "boxed" ? "lg" : "100%!important",
+            maxWidth: customizer.isLayout === "boxed" ? "lg" : "100%!important", 
+            display: 'flex',
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            width: '100%' 
           }}
         >
           <NavListing />
@@ -48,7 +52,7 @@ const Navigation = () => {
       {/* Logo */}
       {/* ------------------------------------------- */}
       <Box px={2}>
-        <Logo />
+        {/* <Logo /> */}
       </Box>
       {/* ------------------------------------------- */}
       {/* Sidebar For Mobile */}

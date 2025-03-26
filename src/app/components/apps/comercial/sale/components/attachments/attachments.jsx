@@ -81,7 +81,7 @@ export default function FileUpload({ objectId, contentType }) {
     setLoadingAttachments(true);
     await handleSave();
     if (success) {
-      const updatedAttachments = await attachmentService.getAttachments(objectId);
+      const updatedAttachments = await attachmentService.index({ object_id: objectId });
       setAttachments(updatedAttachments.results);
       setLoadingAttachments(false);
       handleCloseModal();
@@ -94,8 +94,8 @@ export default function FileUpload({ objectId, contentType }) {
     setFileToDelete(attachments.find((attachment) => attachment.id === id));
     setOpenDeleteDialog(true);
     try {
-      await attachmentService.deleteAttachment(id);
-      const updatedAttachments = await attachmentService.getAttachments(objectId);
+      await attachmentService.delete(id);
+      const updatedAttachments = await attachmentService.index({ object_id: objectId });
       setLoadingAttachments(true);
       setAttachments(updatedAttachments.results);
     } catch (error) {
@@ -116,7 +116,6 @@ export default function FileUpload({ objectId, contentType }) {
     handleChange('file', null);
     handleChange('description', '');
   };
-
 
   return (
     <Box sx={{ padding: 3 }}>

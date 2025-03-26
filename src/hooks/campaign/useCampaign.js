@@ -11,7 +11,7 @@ const useCampaign = (id) => {
 
     const fetchCampaign = async () => {
       try {
-        const data = await campaignService.getCampaignById(id);
+        const data = await campaignService.find(id);
         setCampaignData(data);
       } catch (err) {
         setError('Erro ao carregar a campanha');

@@ -108,23 +108,25 @@ const SalesListPage = ({ lead }) => {
                         flexWrap: 'nowrap',
                         px: 1.5,
                     }}>
-
-                        <Typography
-                            sx={{
-                                fontSize: "18px",
-                                fontWeight: "700",
-                                color: "#000000",
-                                whiteSpace: 'nowrap',
-                                textOverflow: 'ellipsis'
-                            }}
-                        >
-                            Vendas do cliente
-                        </Typography>
-
-                        <TableHeader
-                            buttonLabel="Criar"
-                            onButtonClick={() => setOpenAddSale(true)}
-                        />
+                        <Grid item xs={11.5}>
+                            <Typography
+                                sx={{
+                                    fontSize: "18px",
+                                    fontWeight: "700",
+                                    color: "#000000",
+                                    whiteSpace: 'nowrap',
+                                    textOverflow: 'ellipsis'
+                                }}
+                            >
+                                Vendas do cliente
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={0.5}>
+                            <TableHeader
+                                buttonLabel="Criar"
+                                onButtonClick={() => setOpenAddSale(true)}
+                            />
+                        </Grid>
 
                     </Grid>
 

@@ -61,7 +61,7 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
   // Função para buscar opções de endereço
   const fetchAddress = async (search) => {
     try {
-      const response = await addressService.getAddress({ q: search, limit: 20 });
+      const response = await addressService.index({ q: search, limit: 20 });
       return response.results;
     } catch (error) {
       console.error('Erro na busca de opções:', error);
@@ -72,7 +72,8 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
   // Se já houver um endereço selecionado (formData.address_id), busca o objeto completo
   useEffect(() => {
     if (formData.address_id) {
-      addressService.getAddressById(formData.address_id)
+      addressService
+        .getAddressById(formData.address_id)
         .then((address) => {
           setSelectedAddress(address);
         })
@@ -151,7 +152,6 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
             </Grid>
             {!formData.new_contract_number && (
               <>
-
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="account_number">Número do medidor</CustomFormLabel>
                   <CustomTextField

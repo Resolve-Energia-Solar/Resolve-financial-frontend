@@ -51,8 +51,8 @@ const usePaymentForm = (initialData, id) => {
 
   const handleAddItem = () => {
     setFormData((prev) => {
-      const newId = prev.installments.length > 0 
-        ? Math.max(...prev.installments.map(installment => installment.id)) + 1 
+      const newId = prev.installments.length > 0
+        ? Math.max(...prev.installments.map(installment => installment.id)) + 1
         : 1;
 
       return {
@@ -75,9 +75,9 @@ const usePaymentForm = (initialData, id) => {
   const handleSave = async () => {
     setLoading(true);
     let dataToSend = {
-      sale_id: formData.sale_id,
-      borrower_id: formData.borrower_id,
-      financier_id: formData.financier_id ? formData.financier_id : undefined,
+      sale: formData.sale_id,
+      borrower: formData.borrower_id,
+      financier: formData.financier_id ? formData.financier_id : undefined,
       value: formData.value,
       payment_type: formData.payment_type,
       installments_number: formData.installments_number,
@@ -85,13 +85,13 @@ const usePaymentForm = (initialData, id) => {
       create_installments: formData.create_installments,
       invoice_status: formData.invoice_status,
     };
-    
+
     if (!formData.create_installments) {
       dataToSend = { ...dataToSend, installments: formData.installments };
     }
-    
-    
-    
+
+
+
     try {
       if (id) {
         const response = await paymentService.updatePayment(id, dataToSend);
@@ -118,7 +118,7 @@ const usePaymentForm = (initialData, id) => {
     formErrors,
     success,
     response,
-    loading, 
+    loading,
     handleInstallmentChange,
     handleAddItem,
     handleDeleteItem,

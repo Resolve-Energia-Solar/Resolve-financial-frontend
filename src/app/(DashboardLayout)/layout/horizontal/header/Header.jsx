@@ -14,12 +14,11 @@ import Notifications from '../../vertical/header/Notification';
 
 import Profile from '../../vertical/header/Profile';
 import Search from '../../vertical/header/Search';
-import Language from '../../vertical/header/Language';
 import Navigation from '../../vertical/header/Navigation';
 import Logo from '../../shared/logo/Logo';
-import Cart from '../../vertical/header/Cart';
+import Image from 'next/image';
 
-const Header = () => {
+const HorizontalHeader = () => {
   const lgDown = useMediaQuery((theme) => theme.breakpoints.down('lg'));
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 
@@ -46,22 +45,33 @@ const Header = () => {
       <ToolbarStyled
         sx={{
           maxWidth: customizer.isLayout === 'boxed' ? 'lg' : '100%!important',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
         }}
       >
-        <Box sx={{ width: lgDown ? '45px' : 'auto', overflow: 'hidden' }}>
-          <Logo />
+        <Box sx={{ overflow: 'hidden', display: "flex", alignItems: "center", justifyContent: "flex-start", height: "100%", paddingTop: 1 }}>
+          <Image
+            src={"/images/logos/resolve-logo-collapsed.png"}
+            alt="logo"
+            height={60}
+            width={55}
+            priority
+          />
         </Box>
         {/* ------------------------------------------- */}
         {/* Toggle Button Sidebar */}
         {/* ------------------------------------------- */}
         {lgDown ? (
-          <IconButton
-            color="inherit"
-            aria-label="menu"
-            onClick={() => dispatch(toggleMobileSidebar())}
-          >
-            <IconMenu2 />
-          </IconButton>
+          <Box sx={{ overflow: 'hidden', display: "flex", alignItems: "center", justifyContent: "flex-start", height: "100%" }}>
+            <IconButton
+              color="inherit"
+              aria-label="menu"
+              onClick={() => dispatch(toggleMobileSidebar())}
+            >
+              <IconMenu2 />
+            </IconButton>
+          </Box>
         ) : (
           ''
         )}
@@ -86,4 +96,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default HorizontalHeader;

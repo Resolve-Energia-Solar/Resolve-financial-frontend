@@ -16,9 +16,9 @@ export default function AutoCompleteDepartament({ onChange, value, error, helper
     const fetchInitialDepartaments = async () => {
       setLoading(true);
       try {
-        const departaments = await departmentService.getDepartment({ limit: 100 });
+        const departaments = await departmentService.index({ limit: 100 });
         if (departaments && departaments.results) {
-          const formattedDepartaments = departaments.results.map(departament => ({
+          const formattedDepartaments = departaments.results.map((departament) => ({
             id: departament.id,
             name: departament.name,
           }));
@@ -36,14 +36,13 @@ export default function AutoCompleteDepartament({ onChange, value, error, helper
   // Carregar nome do departamento inicial, se houver um valor
   useEffect(() => {
     if (value && options.length > 0) {
-      const initialDepartment = options.find(dept => dept.id === value);
+      const initialDepartment = options.find((dept) => dept.id === value);
       if (initialDepartment) {
         setSelectedDepartament(initialDepartment);
         onChange(initialDepartment.id);
       }
     }
   }, [value, options]); // Atualiza quando os departamentos são carregados
-  
 
   const handleChange = (event, newValue) => {
     setSelectedDepartament(newValue);
@@ -68,7 +67,7 @@ export default function AutoCompleteDepartament({ onChange, value, error, helper
         value={selectedDepartament}
         onChange={handleChange}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         renderInput={(params) => (
           <CustomTextField
             error={error}

@@ -144,7 +144,7 @@ export default function FormCustom() {
           formDataAttachment.append('document_type_id', '');
           formDataAttachment.append('document_subtype_id', '');
           formDataAttachment.append('status', '');
-          await attachmentService.createAttachment(formDataAttachment);
+          await attachmentService.create(formDataAttachment);
         }),
       );
       router.push('/apps/financial-record');

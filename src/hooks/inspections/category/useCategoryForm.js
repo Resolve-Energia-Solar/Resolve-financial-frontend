@@ -35,9 +35,9 @@ const useCategoryForm = (initialData, id) => {
 
     try {
       if (id) {
-        await categoryService.updateCategory(id, dataToSend);
+        await categoryService.update(id, dataToSend);
       } else {
-        await categoryService.createCategory(dataToSend);
+        await categoryService.create(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);

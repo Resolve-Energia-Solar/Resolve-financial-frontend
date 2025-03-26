@@ -43,9 +43,7 @@ export default function AutoCompleteAddresses({
     const fetchDefaultAddresses = async () => {
       if (valuesDefault.length > 0) {
         try {
-          const addresses = await Promise.all(
-            valuesDefault.map((id) => addressService.getAddressById(id)),
-          );
+          const addresses = await Promise.all(valuesDefault.map((id) => addressService.find(id)));
           const formattedAddresses = addresses.map((address) => ({
             id: address.id,
             name: `${address.street}, ${address.number}, ${address.city}, ${address.state}`,
@@ -82,7 +80,7 @@ export default function AutoCompleteAddresses({
       }
       setLoading(true);
       try {
-        const addresses = await addressService.getAddressByFullAddress(name);
+        const addresses = await addressService.index({ q: name });
         if (addresses && addresses.results) {
           const formattedAddresses = addresses.results.map((address) => ({
             id: address.id,
@@ -112,7 +110,7 @@ export default function AutoCompleteAddresses({
     }
     setLoading(true);
     try {
-      const addresses = await addressService.getAddresses({ limit: 5 });
+      const addresses = await addressService.index({ limit: 5 });
       const formattedAddresses = addresses.results.map(createLabelAddress);
       setOptions(formattedAddresses);
     } catch (error) {

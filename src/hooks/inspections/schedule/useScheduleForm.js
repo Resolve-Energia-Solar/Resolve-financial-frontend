@@ -173,15 +173,12 @@ const useScheduleForm = (initialData, id, service_id) => {
 
     try {
       if (id) {
-        console.log("Atualizando agendamento com id:", id);
-        await scheduleService.updateSchedule(id, dataToSend);
+        await scheduleService.update(id, dataToSend);
       } else {
-        console.log("Criando novo agendamento");
-        await scheduleService.createSchedule(dataToSend);
+        await scheduleService.create(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);
-      console.log("Agendamento salvo com sucesso!");
       enqueueSnackbar("Agendamento salvo com sucesso!", { variant: "success" });
       return true;
     } catch (error) {
