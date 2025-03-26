@@ -63,7 +63,6 @@ export function ProposalCard({ leadId = null }) {
   return (
     <Grid
       container
-      spacing={0}
       sx={{
         borderRadius: '12px',
         border: '1px solid #E0E0E0',
@@ -75,7 +74,6 @@ export function ProposalCard({ leadId = null }) {
         container
         alignItems={'center'}
         spacing={0}
-        justifyContent={'space-between'}
         sx={{ minHeight: 300 }}
       >
         <Grid
@@ -84,12 +82,12 @@ export function ProposalCard({ leadId = null }) {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
             gap: 1,
             mb: 1,
           }}
         >
-          <Grid item xs={1}>
+          <Grid item  sx={{ display: "flex", justifyContent: "flex-start"}}>
             <img
               src={'/images/svgs/solar-panel-icon-with-circle.png'}
               alt={'solar panel icon'}
@@ -97,12 +95,11 @@ export function ProposalCard({ leadId = null }) {
                 width: 36,
                 height: 36,
                 borderRadius: 0,
-                mr: 1,
               }}
             />
           </Grid>
 
-          <Grid item xs={11} >
+          <Grid item sx={{ display: "flex", justifyContent: "flex-start"}}>
             <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Proposta</Typography>
           </Grid>
         </Grid>
