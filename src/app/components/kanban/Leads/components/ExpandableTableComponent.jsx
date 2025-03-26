@@ -99,7 +99,7 @@ const ExpandableListComponent = ({
         fields: 'id,product,project_number',
       });
       console.log('Projetos:', response);
-      setProjects(response.results.results || []);
+      setProjects(response.results || []);
     } catch (err) {
       console.error('Erro ao buscar projetos:', err);
       setProjects([]);

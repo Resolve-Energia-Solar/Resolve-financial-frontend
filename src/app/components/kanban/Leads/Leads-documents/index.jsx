@@ -25,7 +25,7 @@ function LeadDocumentPage({ leadId = null, customer = null }) {
           customer__in: customer.id,
           fields: 'id,str',
         });
-        setSaleIds(response.results.results || []);
+        setSaleIds(response.results || []);
       } catch (err) {
         console.error('Erro ao buscar as vendas:', err);
       } finally {
@@ -67,11 +67,7 @@ function LeadDocumentPage({ leadId = null, customer = null }) {
           }}
         >
           {/* Render LeadInfoHeader or its skeleton */}
-          {isLoading ? (
-            <LeadInfoHeaderSkeleton />
-          ) : (
-            <LeadInfoHeader leadId={leadId} />
-          )}
+          {isLoading ? <LeadInfoHeaderSkeleton /> : <LeadInfoHeader leadId={leadId} />}
 
           {/* Render sales or skeleton */}
           {isLoading ? (

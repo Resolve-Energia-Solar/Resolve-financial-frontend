@@ -16,7 +16,7 @@ import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 
 /* hooks */
-import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
+import useScheduleForm2 from '@/hooks/inspections/schedule/useScheduleForm2';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import AutoCompleteProject from '../../auto-complete/Auto-input-Project';
 import { useSelector } from 'react-redux';
@@ -35,7 +35,7 @@ const ScheduleFormCreate = ({
 }) => {
   const router = useRouter();
 
-  const { formData, handleChange, handleSave, loading: formLoading, formErrors, success } = useSheduleForm();
+  const { formData, handleChange, handleSave, loading: formLoading, formErrors, success } = useScheduleForm2();
 
   const userPermissions = useSelector((state) => state.user.permissions);
 
@@ -225,7 +225,7 @@ const ScheduleFormCreate = ({
                 `${option.street}, ${option.number} - ${option.city}, ${option.state}`
               }
               onChange={(selected) => {
-                setSelectedAddress(selected);
+                setSelectedAddress(selected?.id);
                 console.log('selected', selected);
                 handleChange('address_id', selected?.id);
               }}

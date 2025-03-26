@@ -16,7 +16,7 @@ export default function AutoCompleteUserProject({
   error,
   helperText,
   selectedClient,
-  noTextOptions="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.",
+  noTextOptions = 'Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.',
 }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
@@ -68,8 +68,7 @@ export default function AutoCompleteUserProject({
           const projectsSet = new Set();
           const allProjects = [];
 
-
-          responseSales.results.results.forEach((sale) => {
+          responseSales.results.forEach((sale) => {
             sale.projects.forEach((project) => {
               if (!projectsSet.has(project.id)) {
                 projectsSet.add(project.id);
@@ -121,13 +120,16 @@ export default function AutoCompleteUserProject({
                 <strong>Valor total:</strong> {option.sale?.total_value || 'Sem valor Total'}
               </Typography>
               <Typography variant="body2">
-                <strong>Contrato:</strong> {option.sale?.contract_number || 'Contrato não Disponível'}
+                <strong>Contrato:</strong>{' '}
+                {option.sale?.contract_number || 'Contrato não Disponível'}
               </Typography>
               <Typography variant="body2">
-                <strong>Homologador:</strong> {option.homologator?.complete_name || 'Homologador não Disponível'}
+                <strong>Homologador:</strong>{' '}
+                {option.homologator?.complete_name || 'Homologador não Disponível'}
               </Typography>
               <Typography variant="body2">
-                <strong>Data de Contrato:</strong> {formatDate(option.sale?.signature_date) || 'Data de Contrato não Disponível'}
+                <strong>Data de Contrato:</strong>{' '}
+                {formatDate(option.sale?.signature_date) || 'Data de Contrato não Disponível'}
               </Typography>
               <Typography variant="body2">
                 <strong>Endereço:</strong> {option?.address?.str || 'Endereço não Disponível'}

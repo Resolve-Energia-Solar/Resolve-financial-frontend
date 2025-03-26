@@ -72,10 +72,13 @@ const ProjectList = ({ onClick }) => {
   const userPermissions = useSelector((state) => state.user.permissions);
   const { filters, setFilters, refresh } = useContext(ProjectDataContext);
 
-  const hasPermission = useCallback((permissions) => {
-    if (!permissions) return true;
-    return permissions.some((permission) => userPermissions?.includes(permission));
-  }, [userPermissions]);
+  const hasPermission = useCallback(
+    (permissions) => {
+      if (!permissions) return true;
+      return permissions.some((permission) => userPermissions?.includes(permission));
+    },
+    [userPermissions],
+  );
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -85,10 +88,11 @@ const ProjectList = ({ onClick }) => {
           page: page + 1,
           limit: rowsPerPage,
           expand: 'sale.customer',
-          fields: 'id,sale.id,sale.customer.complete_name,homologator.complete_name,designer_status,material_list_is_completed,trt_pending,peding_request,access_opnion,product.name,product.params,status,sale.status,is_released_to_engineering',
+          fields:
+            'id,sale.id,sale.customer.complete_name,homologator.complete_name,designer_status,material_list_is_completed,trt_pending,peding_request,access_opnion,product.name,product.params,status,sale.status,is_released_to_engineering',
           ...filters,
         });
-        setProjectsList(data.results.results);
+        setProjectsList(data.results);
         setTotalRows(data.count);
       } catch (err) {
         setError('Erro ao carregar Projetos');
@@ -124,21 +128,51 @@ const ProjectList = ({ onClick }) => {
   }, []);
 
   const trtStatusMap = {
-    'Bloqueado': { label: 'Bloqueado', color: theme.palette.error.light, icon: <CancelIcon sx={{ color: '#fff' }} /> },
-    'Reprovada': { label: 'Reprovada', color: theme.palette.error.light, icon: <CancelIcon sx={{ color: '#fff' }} /> },
-    'Em Andamento': { label: 'Em Andamento', color: theme.palette.info.light, icon: <HourglassFullIcon sx={{ color: '#fff' }} /> },
-    'Concluída': { label: 'Concluída', color: theme.palette.success.light, icon: <CheckCircleIcon sx={{ color: '#fff' }} /> },
-    'Pendente': { label: 'Pendente', color: theme.palette.warning.light, icon: <HourglassEmptyIcon sx={{ color: '#fff' }} /> },
+    Bloqueado: {
+      label: 'Bloqueado',
+      color: theme.palette.error.light,
+      icon: <CancelIcon sx={{ color: '#fff' }} />,
+    },
+    Reprovada: {
+      label: 'Reprovada',
+      color: theme.palette.error.light,
+      icon: <CancelIcon sx={{ color: '#fff' }} />,
+    },
+    'Em Andamento': {
+      label: 'Em Andamento',
+      color: theme.palette.info.light,
+      icon: <HourglassFullIcon sx={{ color: '#fff' }} />,
+    },
+    Concluída: {
+      label: 'Concluída',
+      color: theme.palette.success.light,
+      icon: <CheckCircleIcon sx={{ color: '#fff' }} />,
+    },
+    Pendente: {
+      label: 'Pendente',
+      color: theme.palette.warning.light,
+      icon: <HourglassEmptyIcon sx={{ color: '#fff' }} />,
+    },
   };
 
   const accessOpinionStatusMap = {
-    'Liberado': { label: 'Liberado', color: theme.palette.success.light, icon: <CheckCircleIcon sx={{ color: '#fff' }} /> },
-    'Bloqueado': { label: 'Bloqueado', color: theme.palette.warning.light, icon: <HourglassEmptyIcon sx={{ color: '#fff' }} /> },
+    Liberado: {
+      label: 'Liberado',
+      color: theme.palette.success.light,
+      icon: <CheckCircleIcon sx={{ color: '#fff' }} />,
+    },
+    Bloqueado: {
+      label: 'Bloqueado',
+      color: theme.palette.warning.light,
+      icon: <HourglassEmptyIcon sx={{ color: '#fff' }} />,
+    },
   };
 
   const blockedToEngineering = useAnimatedNumber(indicators?.blocked_to_engineering || 0);
   const pendingMaterialList = useAnimatedNumber(indicators?.pending_material_list || 0);
-  const releasedToEngineering = useAnimatedNumber(indicators?.is_released_to_engineering_count || 0);
+  const releasedToEngineering = useAnimatedNumber(
+    indicators?.is_released_to_engineering_count || 0,
+  );
   const designerInProgress = useAnimatedNumber(indicators?.designer_in_progress_count || 0);
   const designerComplete = useAnimatedNumber(indicators?.designer_complete_count || 0);
   const designerCanceled = useAnimatedNumber(indicators?.designer_canceled_count || 0);
@@ -155,15 +189,19 @@ const ProjectList = ({ onClick }) => {
           <Tooltip
             title={
               <>
-                <Typography variant="body2"><strong>ATENÇÃO</strong></Typography>
                 <Typography variant="body2">
-                  Para que o <strong>PROJETO</strong> seja liberado para a engenharia, é necessário que:
+                  <strong>ATENÇÃO</strong>
+                </Typography>
+                <Typography variant="body2">
+                  Para que o <strong>PROJETO</strong> seja liberado para a engenharia, é necessário
+                  que:
                 </Typography>
                 <Typography variant="body2" sx={{ ml: 2 }}>
                   • STATUS da VENDA esteja como <strong>FINALIZADO</strong>.
                 </Typography>
                 <Typography variant="body2" sx={{ ml: 2 }}>
-                  • STATUS do FINANCEIRO na venda esteja como <strong>CONCLUÍDO</strong> ou <strong>LIBERADO</strong>.
+                  • STATUS do FINANCEIRO na venda esteja como <strong>CONCLUÍDO</strong> ou{' '}
+                  <strong>LIBERADO</strong>.
                 </Typography>
                 <Typography variant="body2" sx={{ ml: 2 }}>
                   • A vistoria principal esteja com PARECER FINAL <strong>APROVADO</strong>.
@@ -211,7 +249,12 @@ const ProjectList = ({ onClick }) => {
                     subtitle: 'Lista de Materiais',
                     count: pendingMaterialList,
                     onClick: () =>
-                      setFilters({ ...filters, material_list_is_completed: false, is_released_to_engineering: true, designer_status__in: 'CO' }),
+                      setFilters({
+                        ...filters,
+                        material_list_is_completed: false,
+                        is_released_to_engineering: true,
+                        designer_status__in: 'CO',
+                      }),
                   },
                   {
                     backgroundColor: 'secondary.light',
@@ -262,10 +305,16 @@ const ProjectList = ({ onClick }) => {
       <Typography variant="h6" gutterBottom>
         Lista de Projetos
       </Typography>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2, mb: 2 }}>
-        <Box>
-          {/* Botão para criar projeto pode ser adicionado aqui se necessário */}
-        </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mt: 2,
+          mb: 2,
+        }}
+      >
+        <Box>{/* Botão para criar projeto pode ser adicionado aqui se necessário */}</Box>
         <DrawerFiltersProject />
       </Box>
       <TableContainer component={Paper}>
@@ -293,7 +342,9 @@ const ProjectList = ({ onClick }) => {
           ) : (
             <TableBody>
               {projectsList.map((item) => {
-                const canEdit = item.is_released_to_engineering || hasPermission(['resolve_crm.can_change_unready_project']);
+                const canEdit =
+                  item.is_released_to_engineering ||
+                  hasPermission(['resolve_crm.can_change_unready_project']);
                 return (
                   <TableRow
                     key={item.id}
@@ -305,7 +356,11 @@ const ProjectList = ({ onClick }) => {
                     }}
                   >
                     <TableCell>
-                      {item.is_released_to_engineering ? <CheckIcon color="success" /> : <CloseIcon color="error" />}
+                      {item.is_released_to_engineering ? (
+                        <CheckIcon color="success" />
+                      ) : (
+                        <CloseIcon color="error" />
+                      )}
                     </TableCell>
                     <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                     <TableCell>{item.homologator?.complete_name || '-'}</TableCell>
@@ -313,13 +368,21 @@ const ProjectList = ({ onClick }) => {
                       <ChipProject status={item.designer_status} />
                     </TableCell>
                     <TableCell>
-                      {item.material_list_is_completed ? <CheckIcon color="success" /> : <CloseIcon color="error" />}
+                      {item.material_list_is_completed ? (
+                        <CheckIcon color="success" />
+                      ) : (
+                        <CloseIcon color="error" />
+                      )}
                     </TableCell>
                     <TableCell>
                       <GenericChip status={item.trt_pending} statusMap={trtStatusMap} />
                     </TableCell>
                     <TableCell>
-                      {item.peding_request ? <CheckIcon color="success" /> : <CloseIcon color="error" />}
+                      {item.peding_request ? (
+                        <CheckIcon color="success" />
+                      ) : (
+                        <CloseIcon color="error" />
+                      )}
                     </TableCell>
                     <TableCell>
                       <GenericChip status={item.access_opnion} statusMap={accessOpinionStatusMap} />

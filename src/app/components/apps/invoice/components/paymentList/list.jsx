@@ -55,7 +55,7 @@ const PaymentList = ({ onClick }) => {
           page: page + 1,
           limit: rowsPerPage,
         });
-        setPaymentsList(response.results.results);
+        setPaymentsList(response.results);
         setTotalCount(response.count || 0);
       } catch (err) {
         console.error('Erro ao carregar pagamentos:', err);
@@ -152,19 +152,13 @@ const PaymentList = ({ onClick }) => {
                 paymentsList.map((item) => (
                   <TableRow key={item.id} onClick={() => onClick(item)} hover>
                     <TableCell>
-                      <Typography fontSize="14px">
-                        {item?.sale?.customer?.complete_name}
-                      </Typography>
+                      <Typography fontSize="14px">{item?.sale?.customer?.complete_name}</Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography fontSize="14px">
-                        {item?.borrower?.complete_name}
-                      </Typography>
+                      <Typography fontSize="14px">{item?.borrower?.complete_name}</Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography fontSize="14px">
-                        {item?.installments.length}x
-                      </Typography>
+                      <Typography fontSize="14px">{item?.installments.length}x</Typography>
                     </TableCell>
                     <TableCell>
                       <Typography fontSize="14px">

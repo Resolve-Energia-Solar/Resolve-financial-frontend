@@ -18,7 +18,7 @@ export default function AutoCompleteProject({ onChange, value, error, helperText
         try {
           const projectValue = await projectService.getProjectById(value, {
             expand: 'sale.customer',
-            fields: 'project_number,sale.customer.complete_name'
+            fields: 'project_number,sale.customer.complete_name',
           });
           if (projectValue) {
             setSelectedProject({
@@ -47,10 +47,10 @@ export default function AutoCompleteProject({ onChange, value, error, helperText
         // Chama o endpoint já retornando os dados expandidos do cliente
         const response = await projectService.getProjects({
           expand: 'sale.customer',
-          fields: 'project_number,sale.customer.complete_name'
+          fields: 'project_number,sale.customer.complete_name',
         });
-        const filteredProjects = response.results.results.filter((project) =>
-          project.project_number.toLowerCase().includes(codeNumber.toLowerCase())
+        const filteredProjects = response.results.filter((project) =>
+          project.project_number.toLowerCase().includes(codeNumber.toLowerCase()),
         );
         const formattedProjects = filteredProjects.map((project) => ({
           id: project.id,
@@ -63,7 +63,7 @@ export default function AutoCompleteProject({ onChange, value, error, helperText
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
 
   const handleOpen = () => setOpen(true);
@@ -82,9 +82,7 @@ export default function AutoCompleteProject({ onChange, value, error, helperText
         loadingText="Carregando..."
         noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         isOptionEqualToValue={(option, value) => option.project_number === value.project_number}
-        getOptionLabel={(option) =>
-          `${option.project_number} - ${option.customerName || ''}`
-        }
+        getOptionLabel={(option) => `${option.project_number} - ${option.customerName || ''}`}
         options={options}
         loading={loading}
         value={selectedProject}
