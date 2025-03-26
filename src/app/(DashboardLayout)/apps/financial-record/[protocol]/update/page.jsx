@@ -88,14 +88,14 @@ export default function UpdateForm() {
   useEffect(() => {
     (async () => {
       try {
-        const dataList = await financialRecordService.getFinancialRecordList({
+        const dataList = await financialRecordService.index({
           protocol__in: protocol,
           fields: 'id',
         });
         const records = dataList.results;
         if (records && records.length > 0) {
           const record = records[0];
-          const fetchedData = await financialRecordService.getFinancialRecordById(record.id);
+          const fetchedData = await financialRecordService.find(record.id);
           populateForm(fetchedData);
         } else {
           enqueueSnackbar('Registro não encontrado.', { variant: 'error' });
@@ -158,7 +158,7 @@ export default function UpdateForm() {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      await financialRecordService.updateFinancialRecord(protocol, formData);
+      await financialRecordService.update(protocol, formData);
       await Promise.all(
         attachments.map(async (attachment) => {
           const formDataAttachment = new FormData();

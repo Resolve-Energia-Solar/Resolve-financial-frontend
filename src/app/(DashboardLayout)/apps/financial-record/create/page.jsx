@@ -131,7 +131,7 @@ export default function FormCustom() {
     setLoading(true);
     try {
       // Cria o registro e obtém o object_id
-      const recordResponse = await financialRecordService.createFinancialRecord(formData);
+      const recordResponse = await financialRecordService.create(formData);
       const recordId = recordResponse.id;
       // Envia cada anexo pendente
       await Promise.all(
