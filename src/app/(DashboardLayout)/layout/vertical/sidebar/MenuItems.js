@@ -51,11 +51,25 @@ const Menuitems = [
  {
     id: uniqueId(),
     title: 'CRM',
-    icon: IconBriefcase2,
     href: '/',
+    icon: IconBriefcase2,
+    href: '/apps/kanban/',
+    permissions: ['core.view_board', 'resolve_crm.view_lead'],
     children: [
-      { id: uniqueId(), title: 'CRM', icon: IconPoint, href: '/apps/kanban/' },
-      // { id: uniqueId(), title: 'Operação', icon: IconPoint, href: '/apps/boards/erp' },
+      { 
+        id: uniqueId(), 
+        title: 'Kanban', 
+        icon: IconLayoutKanban, 
+        href: '/apps/kanban/', 
+        permissions: ['core.view_board'] 
+      },
+      { 
+        id: uniqueId(), 
+        title: 'Leads', 
+        icon: IconId, 
+        href: '/apps/leads', 
+        permissions: ['resolve_crm.view_lead'] 
+      },
     ],
     chip: 'Novo',
     chipColor: 'secondary',
@@ -71,7 +85,7 @@ const Menuitems = [
         id: uniqueId(),
         title: 'Ordem de Serviço',
         icon: IconPoint,
-        href: '/apps/inspections/schedule',
+        href: '/apps/schedules',
       },
       {
         id: uniqueId(),

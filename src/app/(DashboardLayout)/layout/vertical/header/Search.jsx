@@ -26,12 +26,16 @@ const Search = () => {
 
   const filterRoutes = (rotr, cSearch) => {
     if (rotr.length > 1)
-      return rotr.filter((t) =>
-        t.title ? t.href.toLocaleLowerCase().includes(cSearch.toLocaleLowerCase()) : '',
+      return rotr.filter(
+        (t) =>
+          t.title &&
+          t.href &&
+          t.href.toLocaleLowerCase().includes(cSearch.toLocaleLowerCase())
       );
-
+  
     return rotr;
   };
+  
   const searchData = filterRoutes(Menuitems, search);
 
   return (

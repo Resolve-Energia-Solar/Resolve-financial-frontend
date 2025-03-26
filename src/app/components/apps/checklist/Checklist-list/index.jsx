@@ -44,7 +44,8 @@ const CheckListRateio = ({ projectId = null }) => {
     const fetchUnits = async () => {
       try {
         if (!projectId) return;
-        const response = await unitService.getUnitByIdProject(projectId, {
+        const response = await unitService.index({
+          project: projectId,
           fields: 'id,name,type,main_unit,supply_adquance.name,supply_adquance.id',
           expand: 'supply_adquance',
         });
@@ -127,7 +128,7 @@ const CheckListRateio = ({ projectId = null }) => {
                 units.map((unit) => (
                   <TableRow key={unit.id}>
                     <TableCell align="center">
-                      <Typography variant="body2">{unit?.name}</Typography>
+                      <Typography variant="body2">{unit?.name || 'Não cadastrado'}</Typography>
                     </TableCell>
                     <TableCell align="center">
                       {unit.supply_adquance?.map((item) => (

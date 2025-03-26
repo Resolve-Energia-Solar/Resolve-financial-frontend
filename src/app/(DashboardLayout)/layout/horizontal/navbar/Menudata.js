@@ -33,6 +33,7 @@ const Menuitems = [
   {
     id: uniqueId(),
         title: 'CRM',
+        href: '/',
         icon: IconBriefcase2,
         permissions: ['core.view_board', 'resolve_crm.view_lead'],
         children: [
