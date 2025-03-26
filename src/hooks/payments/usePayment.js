@@ -43,7 +43,10 @@ const usePayment = (id) => {
 
     const fetchPayment = async () => {
       try {
-        const data = await paymentService.find(id);
+        const data = await paymentService.find(id, {
+          expand: ['sale.customer', 'installments', 'financier', 'borrower'],
+        });
+        console.log('sjhdfgaskdjhfsdf', data);
         setPaymentData(data);
       } catch (err) {
         setError('Erro ao carregar o pagamento');

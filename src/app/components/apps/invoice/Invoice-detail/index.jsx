@@ -13,7 +13,6 @@ import {
   Divider,
   Grid,
   useTheme,
-  Skeleton,
 } from '@mui/material';
 import { format, isValid } from 'date-fns';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
@@ -23,6 +22,7 @@ import usePayment from '@/hooks/payments/usePayment';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import PaymentStatusChip from '../../../../../utils/status/PaymentStatusChip';
 import EditInvoiceSkeleton from '../components/EditInvoiceSkeleton';
+import { ptBR } from 'date-fns/locale';
 
 const DetailInvoicePage = ({ payment_id = null }) => {
   const theme = useTheme();
@@ -41,7 +41,7 @@ const DetailInvoicePage = ({ payment_id = null }) => {
     PI: 'Parcelamento Interno',
     P: 'Pix',
     T: 'Transferência',
-    D: 'Dinheiro',
+    DI: 'Dinheiro',
   };
 
   const invoiceStatus = {
@@ -53,7 +53,7 @@ const DetailInvoicePage = ({ payment_id = null }) => {
 
   const orderDate = paymentData?.created_at;
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
-  const formattedOrderDate = format(parsedDate, 'EEEE, MMMM dd, yyyy');
+  const formattedOrderDate = format(parsedDate, 'EEEE, dd/MMMM/yyyy', { locale: ptBR });
 
   const formatToBRL = (value) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
