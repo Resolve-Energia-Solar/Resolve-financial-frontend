@@ -86,13 +86,6 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Leads',
-    icon: IconUser,
-    href: '/apps/leads',
-    permissions: ['resolve_crm.view_lead'],
-  },
-  {
-    id: uniqueId(),
     title: 'Vendas',
     icon: IconShoppingCart,
     href: '/apps/commercial/sale',
