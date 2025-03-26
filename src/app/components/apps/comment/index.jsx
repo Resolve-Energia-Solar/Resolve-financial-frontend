@@ -134,9 +134,9 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
                 boxShadow: 0,
                 bgcolor: 'background.paper',
                 width: '100%',
-                maxWidth: 800,
+                maxWidth: '100%',
                 margin: '0 auto',
-                mt: 2,
+                mt: 0,
                 overflow: 'hidden'
             }}
         >
@@ -148,12 +148,10 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
             <Box
                 ref={listRef}
                 sx={{
-                    height: 500,
+                    height: 320,
                     overflowY: 'auto',
                     display: 'flex',
                     flexDirection: 'column',
-                    px: 2,
-                    pb: 1,
                 }}
             >
                 <List sx={{ display: 'flex', flexDirection: 'column' }}>
