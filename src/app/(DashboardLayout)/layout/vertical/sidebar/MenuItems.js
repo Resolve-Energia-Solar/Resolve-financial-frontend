@@ -52,6 +52,7 @@ const Menuitems = [
     id: uniqueId(),
     title: 'CRM',
     icon: IconBriefcase2,
+    href: '/apps/kanban/',
     permissions: ['core.view_board', 'resolve_crm.view_lead'],
     children: [
       { 
