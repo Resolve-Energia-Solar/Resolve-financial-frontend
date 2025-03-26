@@ -6,7 +6,14 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import materialService from '@/services/materialsService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteModule({ onChange, value, error, helperText,labeltitle, disabled }) {
+export default function AutoCompleteModule({
+  onChange,
+  value,
+  error,
+  helperText,
+  labeltitle,
+  disabled,
+}) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -16,7 +23,7 @@ export default function AutoCompleteModule({ onChange, value, error, helperText,
     const fetchDefaultMaterial = async () => {
       if (value) {
         try {
-          const material = await materialService.getMaterialById(value);
+          const material = await materialService.find(value);
           if (material) {
             setSelectedMaterial({ id: material.id, name: material.description });
           }
@@ -38,7 +45,7 @@ export default function AutoCompleteModule({ onChange, value, error, helperText,
     debounce(async (name) => {
       setLoading(true);
       try {
-        const response = await materialService.getMaterialByName(name);
+        const response = await materialService.index({ name__icontains: name });
         console.log('Resposta da API: ', response);
         if (Array.isArray(response.results)) {
           const formattedMaterials = response.results.map((material) => ({

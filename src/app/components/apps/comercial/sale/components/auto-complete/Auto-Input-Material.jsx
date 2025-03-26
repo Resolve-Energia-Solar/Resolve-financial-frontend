@@ -16,7 +16,7 @@ export default function AutoCompleteMaterial({ onChange, value, error, helperTex
     const fetchDefaultMaterial = async () => {
       if (value) {
         try {
-          const material = await materialService.getMaterialById(value);
+          const material = await materialService.find(value);
           if (material) {
             setSelectedMaterial({ id: material.id, name: material.name, price: material.price });
           }
@@ -43,11 +43,11 @@ export default function AutoCompleteMaterial({ onChange, value, error, helperTex
       if (!name) return;
       setLoading(true);
       try {
-        const materials = await materialService.getMaterialByName(name);
+        const materials = await materialService.index({ name__icontains: name });
         if (materials && materials.results) {
           const formattedMaterials = materials.results
-            .filter(material => material.name)
-            .map(material => ({
+            .filter((material) => material.name)
+            .map((material) => ({
               id: material.id,
               name: material.name,
               price: material.price,
@@ -60,16 +60,16 @@ export default function AutoCompleteMaterial({ onChange, value, error, helperTex
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
 
   const fetchInitialMaterials = useCallback(async () => {
     setLoading(true);
     try {
-      const materials = await materialService.getMaterials({ limit: 5 });
+      const materials = await materialService.index({ limit: 5 });
       const formattedMaterials = materials.results
-        .filter(material => material.name)
-        .map(material => ({
+        .filter((material) => material.name)
+        .map((material) => ({
           id: material.id,
           name: material.name,
           price: material.price,
@@ -107,7 +107,7 @@ export default function AutoCompleteMaterial({ onChange, value, error, helperTex
         loading={loading}
         value={selectedMaterial}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           fetchMaterialsByName(newInputValue);
         }}
