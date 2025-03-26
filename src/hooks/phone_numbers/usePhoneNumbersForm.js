@@ -48,14 +48,14 @@ const usePhoneNumberForm = (initialData, id) => {
     try {
       let response;
       if (id) {
-        response = await phoneNumberService.updatePhoneNumber(id, dataToSend);
+        response = await phoneNumberService.update(id, dataToSend);
       } else {
-        response = await phoneNumberService.createPhoneNumber(dataToSend);
+        response = await phoneNumberService.create(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);
       setDataReceived(response);
-      enqueueSnackbar("Salvo com sucesso!", { variant: "success" });
+      enqueueSnackbar('Salvo com sucesso!', { variant: 'success' });
     } catch (err) {
       setSuccess(false);
       setFormErrors(err.response?.data || {});
