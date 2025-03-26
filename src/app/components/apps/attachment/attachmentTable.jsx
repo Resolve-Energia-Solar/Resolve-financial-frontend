@@ -17,6 +17,7 @@ import AddAttachmentModal from '@/app/(DashboardLayout)/apps/attachment/AddAttac
 import attachmentService from '@/services/attachmentService';
 import getContentType from '@/utils/getContentType';
 import { useSelector } from 'react-redux';
+import TableSkeleton from '../comercial/sale/components/TableSkeleton';
 
 const AttachmentTable = ({
   objectId,
@@ -29,6 +30,7 @@ const AttachmentTable = ({
   const [fetchedAttachments, setFetchedAttachments] = useState([]);
   const [openAttachmentModal, setOpenAttachmentModal] = useState(false);
   const [contentTypeId, setContentTypeId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Recupera os dados do usuário e suas permissões do Redux
   const user = useSelector((state) => state.user?.user);
@@ -53,8 +55,9 @@ const AttachmentTable = ({
   }, [objectId, contentTypeId]);
 
   const fetchAttachments = async () => {
+    setIsLoading(true);
     try {
-      const response = await attachmentService.find({
+      const response = await attachmentService.index({
         object_id: objectId,
         content_type: contentTypeId,
         limit: 30,
@@ -64,6 +67,7 @@ const AttachmentTable = ({
       console.error('Erro ao buscar anexos:', error);
       setFetchedAttachments([]);
     }
+    setIsLoading(false);
   };
 
   const displayAttachments = objectId ? fetchedAttachments : attachmentsProp;
@@ -85,6 +89,7 @@ const AttachmentTable = ({
           justifyContent: 'space-between',
           alignItems: 'center',
           marginBottom: '16px',
+          padding: '14px'
         }}
       >
         <Typography variant="h6">Anexos</Typography>
@@ -110,9 +115,11 @@ const AttachmentTable = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {displayAttachments.length > 0 ? (
+          {isLoading ? (
+            <TableSkeleton rows={5} columns={4} />
+          ) : displayAttachments.length > 0 ? (
             displayAttachments.map((attachment) => (
-              <TableRow key={attachment.id || attachment.file.name}>
+              <TableRow key={attachment?.id || attachment?.file?.name}>
                 <TableCell>
                   {typeof attachment.file === 'string' ? (
                     <Link href={attachment.file} target="_blank" rel="noopener noreferrer">
