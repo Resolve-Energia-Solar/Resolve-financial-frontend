@@ -48,6 +48,12 @@ const Menuitems = [
         icon: IconPoint,
         href: '/apps/inspections/schedule',
       },
+      {
+        id: uniqueId(),
+        title: 'Agendamentos',
+        icon: IconPoint,
+        href: '/apps/commercial/schedules',
+      },
     ],
     permissions: ['field_services.view_schedule'],
   },
