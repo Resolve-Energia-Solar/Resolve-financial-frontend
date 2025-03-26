@@ -48,7 +48,7 @@ const Notifications = () => {
   const handleNotificationClick = async (notification) => {
     if (notification.unread) {
       try {
-        await notificationService.updateNotificationPartial(notification.id, { unread: false });
+        await notificationService.update(notification.id, { unread: false });
         fetchNotifications();
       } catch (error) {
         console.error('Erro ao marcar como lida:', error);
@@ -61,9 +61,7 @@ const Notifications = () => {
     try {
       const unreadNotifications = notifications.filter((n) => n.unread);
       await Promise.all(
-        unreadNotifications.map((n) =>
-          notificationService.updateNotificationPartial(n.id, { unread: false })
-        )
+        unreadNotifications.map((n) => notificationService.update(n.id, { unread: false })),
       );
       fetchNotifications();
       handleClose2();
@@ -89,7 +87,7 @@ const Notifications = () => {
         }}
         onClick={handleClick2}
       >
-        <Badge variant={notifications.length > 0 ? "dot" : undefined} color="primary">
+        <Badge variant={notifications.length > 0 ? 'dot' : undefined} color="primary">
           {loading ? (
             <IconBellQuestion size="21" stroke="1.5" />
           ) : notifications.length > 0 ? (
@@ -113,16 +111,12 @@ const Notifications = () => {
           },
         }}
       >
-        <Stack
-          direction="row"
-          py={2}
-          px={4}
-          justifyContent="space-between"
-          alignItems="center"
-        >
+        <Stack direction="row" py={2} px={4} justifyContent="space-between" alignItems="center">
           <Typography variant="h6">Notificações</Typography>
           <Chip
-            label={`${notifications.filter((n) => n.unread).length} ${notifications.filter((n) => n.unread).length === 1 ? 'nova' : 'novas'}`}
+            label={`${notifications.filter((n) => n.unread).length} ${
+              notifications.filter((n) => n.unread).length === 1 ? 'nova' : 'novas'
+            }`}
             color="primary"
             size="small"
           />
@@ -130,10 +124,7 @@ const Notifications = () => {
         <Scrollbar sx={{ height: '385px' }}>
           {notifications.map((notification, index) => (
             <Box key={index}>
-              <MenuItem
-                sx={{ py: 2, px: 4 }}
-                onClick={() => handleNotificationClick(notification)}
-              >
+              <MenuItem sx={{ py: 2, px: 4 }} onClick={() => handleNotificationClick(notification)}>
                 <Stack direction="row" spacing={2}>
                   <Avatar
                     src={notification.recipient.profile_picture}
@@ -178,7 +169,7 @@ const Notifications = () => {
                       Há {notification.timesince}
                     </Typography>
                     <Badge
-                      variant={notification.unread ? "dot" : undefined}
+                      variant={notification.unread ? 'dot' : undefined}
                       color="primary"
                       sx={{ position: 'absolute', top: 10, right: 15 }}
                     />
@@ -188,20 +179,18 @@ const Notifications = () => {
               {index < notifications.length - 1 && <Divider />}
             </Box>
           ))}
-          {notifications.filter((n) => n.unread).length < 1 && <MenuItem
-                sx={{ py: 2, px: 4 }}
-                onClick={() => handleNotificationClick(notification)}
-              ><Typography>Nada a exibir, você não possui notificações não lidas.</Typography></MenuItem>}
+          {notifications.filter((n) => n.unread).length < 1 && (
+            <MenuItem sx={{ py: 2, px: 4 }} onClick={() => handleNotificationClick(notification)}>
+              <Typography>Nada a exibir, você não possui notificações não lidas.</Typography>
+            </MenuItem>
+          )}
         </Scrollbar>
         <Box p={3} pb={1} display="flex" gap={2}>
-          {notifications.filter((n) => n.unread).length > 1 && <Button
-            variant="outlined"
-            color="primary"
-            fullWidth
-            onClick={handleMarkAllAsRead}
-          >
-            Marcar todas como lidas
-          </Button>}
+          {notifications.filter((n) => n.unread).length > 1 && (
+            <Button variant="outlined" color="primary" fullWidth onClick={handleMarkAllAsRead}>
+              Marcar todas como lidas
+            </Button>
+          )}
           <Button
             href="/apps/notification"
             variant="outlined"
