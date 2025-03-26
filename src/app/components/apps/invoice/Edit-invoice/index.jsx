@@ -82,7 +82,7 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
     { value: 'PI', label: 'Parcelamento Interno' },
     { value: 'P', label: 'Pix' },
     { value: 'T', label: 'Transferência' },
-    { value: 'D', label: 'Dinheiro' },
+    { value: 'DI', label: 'Dinheiro' },
     { value: 'PA', label: 'Poste Auxiliar' },
     { value: 'RO', label: 'Repasse de Obra' },
   ];
@@ -211,7 +211,10 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
             disabled={!hasPermission(['financial.change_invoice_status'])}
             value={formData.invoice_status}
             onChange={(e) => handleChange('invoice_status', e.target.value)}
-            {...(formErrors.invoice_status && { error: true, helperText: formErrors.invoice_status })}
+            {...(formErrors.invoice_status && {
+              error: true,
+              helperText: formErrors.invoice_status,
+            })}
           />
         </Grid>
       </Grid>
