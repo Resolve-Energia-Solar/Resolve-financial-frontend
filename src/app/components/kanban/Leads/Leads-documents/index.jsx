@@ -40,7 +40,10 @@ function LeadDocumentPage({ leadId = null, customer = null }) {
     const fetchData = async () => {
       setLoadingDocumentTypes(true);
       try {
-        const response = await documentTypeService.getDocumentTypeFromContract();
+        const response = await documentTypeService.index({
+          app_label__in: 'contracts',
+          limit: 30,
+        });
         setDocumentTypes(response.results);
       } catch (error) {
         console.log('Error: ', error);
@@ -67,11 +70,7 @@ function LeadDocumentPage({ leadId = null, customer = null }) {
           }}
         >
           {/* Render LeadInfoHeader or its skeleton */}
-          {isLoading ? (
-            <LeadInfoHeaderSkeleton />
-          ) : (
-            <LeadInfoHeader leadId={leadId} />
-          )}
+          {isLoading ? <LeadInfoHeaderSkeleton /> : <LeadInfoHeader leadId={leadId} />}
 
           {/* Render sales or skeleton */}
           {isLoading ? (
