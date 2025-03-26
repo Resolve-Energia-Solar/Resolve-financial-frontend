@@ -258,8 +258,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
               <Grid container rowSpacing={1} xs={12}>
                 {paymentMethods.map((payment, index) => (
-                  <Grid container spacing={2} key={payment.id} >
-                    <Grid item xs={12} sx={{ display: 'flex',flexDirection: "row", gap: 2 }}>
+                  <Grid container spacing={2} key={payment.id} alignItems="center">
                     <Grid item xs={6} >
                       <CustomFormLabel
                         htmlFor={`payment_method_${payment.id}`}
@@ -302,7 +301,6 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                           </IconButton>
                         )}
                       </Box>
-                    </Grid>
                     </Grid>
 
                     {payment.method === 'financing' && (

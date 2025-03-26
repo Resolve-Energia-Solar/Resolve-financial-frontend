@@ -141,7 +141,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                     }}
                 >
 
-                    <Grid container spacing={4}>
+                    <Grid container spacing={0}>
                         <Grid
                             item
                             xs={12}
@@ -194,9 +194,9 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
                             </Grid>
 
-                            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                            <Grid container rowSpacing={0} columnSpacing={{ xs: 1, sm: 2, md: 3 }} >
                                 <Grid item xs={12}>
-                                    <Typography sx={{ color: "#000000", fontWeight: "400", fontSize: "18px", py: 2 }}>Consumo energético</Typography>
+                                    <Typography sx={{ color: "#000000", fontWeight: "400", fontSize: "18px", mt: 1 }}>Consumo energético</Typography>
                                 </Grid>
 
                                 <Grid item xs={3}>
