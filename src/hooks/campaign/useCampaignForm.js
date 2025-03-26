@@ -32,13 +32,15 @@ const useCampaignForm = (initialData, id) => {
 
   const handleSave = async () => {
     const dataToSend = new FormData();
-    const is_file = formData.banner instanceof File || (formData.banner instanceof FileList && formData.banner.length > 0);
+    const is_file =
+      formData.banner instanceof File ||
+      (formData.banner instanceof FileList && formData.banner.length > 0);
 
     dataToSend.append('name', formData.name);
     dataToSend.append('start_date', formData.start_date ? formatDate(formData.start_date) : null);
     dataToSend.append('end_date', formData.end_date ? formatDate(formData.end_date) : null);
     dataToSend.append('description', formData.description);
-    
+
     if (is_file) {
       dataToSend.append('banner', formData.banner);
     }
@@ -46,13 +48,12 @@ const useCampaignForm = (initialData, id) => {
     try {
       if (id) {
         if (!is_file) {
-          await campaignService.patchCampaign(id, dataToSend);
-        } 
-        else {
-          await campaignService.updateCampaign(id, dataToSend);
+          await campaignService.update(id, dataToSend);
+        } else {
+          await campaignService.update(id, dataToSend);
         }
       } else {
-        await campaignService.createCampaign(dataToSend);
+        await campaignService.create(dataToSend);
       }
 
       setFormErrors({});

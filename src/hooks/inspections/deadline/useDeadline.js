@@ -11,7 +11,7 @@ const useDeadline = (id) => {
 
     const fetchDeadline = async () => {
       try {
-        const data = await deadlineService.getDeadlineById(id);
+        const data = await deadlineService.find(id);
         setDeadlineData(data);
       } catch (err) {
         setError('Erro ao carregar o prazo');

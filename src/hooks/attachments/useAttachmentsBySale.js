@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import attachmentService from '@/services/attachmentService';
 
+const CONTENT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 const useAttachmentsBySale = (saleId) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,7 +12,11 @@ const useAttachmentsBySale = (saleId) => {
 
     const fetchAttachments = async () => {
       try {
-        const data = await attachmentService.getAttachmentByIdSale(saleId);
+        const data = await attachmentService.index({
+          object_id: saleId,
+          limit: 30,
+          content_type: CONTENT_TYPE_SALE_ID,
+        });
         setAttachmentsData(data);
       } catch (err) {
         setError('Erro ao carregar anexos');

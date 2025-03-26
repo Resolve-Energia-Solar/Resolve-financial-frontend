@@ -26,9 +26,9 @@ const useDepartmentForm = (initialData, id) => {
   const handleSave = async () => {
     try {
       if (id) {
-        await departmentService.updateDepartment(id, formData);
+        await departmentService.update(id, formData);
       } else {
-        await departmentService.createDepartment(formData);
+        await departmentService.create(formData);
       }
 
       setFormErrors({});

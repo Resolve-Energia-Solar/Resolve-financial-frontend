@@ -150,7 +150,7 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               sx={{ display: 'flex', flexDirection: 'column', marginTop: 2 }}
             >
               <Grid item xs={12} sm={4}>
-                <Typography variant="h6" sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Nova proposta</Typography>
+                <Typography variant="h6" sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Editar proposta</Typography>
               </Grid>
 
 

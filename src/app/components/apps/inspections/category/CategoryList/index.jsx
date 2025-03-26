@@ -80,7 +80,7 @@ const CategoryList = () => {
       const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
       try {
         const queryParams = new URLSearchParams(filters[1]).toString();
-        const data = await categoryService.getCategories({
+        const data = await categoryService.index({
           ordering: orderingParam,
           params: queryParams,
           nextPage: page,
@@ -141,7 +141,7 @@ const CategoryList = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await categoryService.deleteCategory(categoryToDelete);
+      await categoryService.delete(categoryToDelete);
       setCategoriesList(categoriesList.filter((item) => item.id !== categoryToDelete));
       showAlert('Categoria excluída com sucesso', 'success');
     } catch (err) {

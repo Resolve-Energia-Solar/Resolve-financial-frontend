@@ -20,25 +20,32 @@ const SidebarItems = () => {
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const hasPermission = (permissions) => {
-    // Se não houver permissões definidas, retorna true para permitir acesso
     if (!permissions) return true; 
     return permissions.some(permission => userPermissions?.includes(permission));
+
   };
 
   return (
-    <Box sx={{ px: 3 }}>
+    <Box sx={{ px: 2.5 }} width={customizer.isCollapse ? 85 : 270}>
       <List sx={{ pt: 0 }} className="sidebarNav">
         {Menuitems.map((item) => {
-          // Verifica se o item deve ser renderizado com base nas permissões do usuário
           if (!hasPermission(item.permissions)) {
-            return null; // Não renderiza o item se não houver permissão
+            return null; 
           }
 
-          // {/********SubHeader**********/}
           if (item.subheader) {
-            return <NavGroup item={item} hideMenu={hideMenu} key={item.subheader} />;
+            return (
+              <NavGroup 
+                item={item} 
+                hideMenu={hideMenu} 
+                key={item.subheader} 
+                sx={{
+                  backgroundColor: 'info.main',
+                  borderRadius: '4px',
+                }}
+              />
+            );
 
-            // {/********If Sub Menu**********/}
           } else if (item.children) {
             return (
               <NavCollapse
@@ -48,14 +55,26 @@ const SidebarItems = () => {
                 pathWithoutLastPart={pathWithoutLastPart}
                 level={1}
                 key={item.id}
+                sx={{
+                  backgroundColor: 'info.main',
+                  padding: '10px 20px',
+                }}
                 onClick={() => dispatch(toggleMobileSidebar())}
               />
             );
 
-            // {/********If Sub No Menu**********/}
           } else {
             return (
-              <NavItem item={item} key={item.id} pathDirect={pathDirect} hideMenu={hideMenu} onClick={() => dispatch(toggleMobileSidebar())} />
+              <NavItem 
+                item={item} 
+                key={item.id} 
+                pathDirect={pathDirect} 
+                hideMenu={hideMenu} 
+                sx={{
+                  padding: '10px 20px',
+                }}
+                onClick={() => dispatch(toggleMobileSidebar())}
+              />
             );
           }
         })}

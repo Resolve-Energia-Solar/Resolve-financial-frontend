@@ -104,7 +104,11 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
     setLoading(true);
     const fetchData = async () => {
       try {
-        const response = await attachmentService.getAttachment(objectId, contentType);
+        const response = await attachmentService.find({
+          object_id: objectId,
+          content_type: contentTypeId,
+          limit: 30,
+        });
         setAttachments(response.results);
       } catch (error) {
         console.log('Error: ', error);

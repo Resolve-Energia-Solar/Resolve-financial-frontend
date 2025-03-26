@@ -37,13 +37,13 @@ function AddCategoryModal({ showModal, handleCloseModal, boardId }) {
     column_type: '',
   });
 
-  boardId ? formData.board_id = boardId : null;
+  boardId ? (formData.board_id = boardId) : null;
 
   const handleSave = async () => {
     try {
       setLoading(true);
       setFormErrors({}); // Limpar erros anteriores
-      await columnService.createColumn(formData);
+      await columnService.create(formData);
       enqueueSnackbar('Coluna criada com sucesso!', { variant: 'success' });
       handleCloseModal();
       refresh();

@@ -35,7 +35,14 @@ const ScheduleFormCreate = ({
 }) => {
   const router = useRouter();
 
-  const { formData, handleChange, handleSave, loading: formLoading, formErrors, success } = useSheduleForm();
+  const {
+    formData,
+    handleChange,
+    handleSave,
+    loading: formLoading,
+    formErrors,
+    success,
+  } = useSheduleForm();
 
   const userPermissions = useSelector((state) => state.user.permissions);
 
@@ -137,7 +144,7 @@ const ScheduleFormCreate = ({
 
   const fetchAddress = async (search) => {
     try {
-      const response = await addressService.getAddress({
+      const response = await addressService.index({
         q: search,
         customer_id: customerId,
         limit: 40,
@@ -195,47 +202,47 @@ const ScheduleFormCreate = ({
           />
         </Grid>
 
-          <Grid item xs={12} sm={12} lg={6}>
-            <FormSelect
-              options={timeOptions}
-              onChange={(e) => validateChange('schedule_start_time', e.target.value)}
-              disabled={!formData.schedule_date}
-              value={formData.schedule_start_time || ''}
-              {...(formErrors.schedule_start_time && {
-                error: true,
-                helperText: formErrors.schedule_start_time,
-              })}
-              label={'Hora do Agendamento'}
-            />
-          </Grid>
+        <Grid item xs={12} sm={12} lg={6}>
+          <FormSelect
+            options={timeOptions}
+            onChange={(e) => validateChange('schedule_start_time', e.target.value)}
+            disabled={!formData.schedule_date}
+            value={formData.schedule_start_time || ''}
+            {...(formErrors.schedule_start_time && {
+              error: true,
+              helperText: formErrors.schedule_start_time,
+            })}
+            label={'Hora do Agendamento'}
+          />
+        </Grid>
 
-          <Grid item xs={12} sm={12} lg={6}>
-            <CustomFormLabel htmlFor="name">
-              Endereço
-              <Tooltip title="Somente endereços vinculados ao usuário serão exibidos." arrow>
-                <HelpIcon sx={{ ml: 1, cursor: 'pointer' }} />
-              </Tooltip>
-            </CustomFormLabel>
-            <GenericAutocomplete
-              addTitle="Adicionar Endereço"
-              label="Endereço"
-              fetchOptions={fetchAddress}
-              AddComponent={CreateAddressPage}
-              getOptionLabel={(option) =>
-                `${option.street}, ${option.number} - ${option.city}, ${option.state}`
-              }
-              onChange={(selected) => {
-                setSelectedAddress(selected);
-                console.log('selected', selected);
-                handleChange('address_id', selected?.id);
-              }}
-              value={selectedAddresses}
-              {...(formErrors.address_id && {
-                error: true,
-                helperText: formErrors.address_id,
-              })}
-            />
-          </Grid>
+        <Grid item xs={12} sm={12} lg={6}>
+          <CustomFormLabel htmlFor="name">
+            Endereço
+            <Tooltip title="Somente endereços vinculados ao usuário serão exibidos." arrow>
+              <HelpIcon sx={{ ml: 1, cursor: 'pointer' }} />
+            </Tooltip>
+          </CustomFormLabel>
+          <GenericAutocomplete
+            addTitle="Adicionar Endereço"
+            label="Endereço"
+            fetchOptions={fetchAddress}
+            AddComponent={CreateAddressPage}
+            getOptionLabel={(option) =>
+              `${option.street}, ${option.number} - ${option.city}, ${option.state}`
+            }
+            onChange={(selected) => {
+              setSelectedAddress(selected);
+              console.log('selected', selected);
+              handleChange('address_id', selected?.id);
+            }}
+            value={selectedAddresses}
+            {...(formErrors.address_id && {
+              error: true,
+              helperText: formErrors.address_id,
+            })}
+          />
+        </Grid>
 
         <HasPermission
           permissions={['field_services.change_status_schedule_field']}

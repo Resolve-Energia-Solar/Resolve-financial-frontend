@@ -11,7 +11,7 @@ const useBranch = (id) => {
 
     const fetchBranch = async () => {
       try {
-        const data = await branchService.getBranchById(id);
+        const data = await branchService.find(id);
         setBranchData(data);
       } catch (err) {
         setError('Erro ao carregar a filial');

@@ -23,7 +23,7 @@ export default function NavItem({ item, level, pathDirect, hideMenu, onClick }) 
   const theme = useTheme();
   const { t } = useTranslation();
   const itemIcon =
-    level > 1 ? <Icon stroke={1.5} size="1rem" /> : <Icon stroke={1.5} size="1.3rem" />;
+    level > 1 ? <Icon stroke={2} size="1rem" /> : <Icon stroke={2} size="1.3rem" />;
 
   const ListItemStyled = styled(ListItemButton)(() => ({
     whiteSpace: 'nowrap',
@@ -34,7 +34,7 @@ export default function NavItem({ item, level, pathDirect, hideMenu, onClick }) 
     color:
       level > 1 && (pathDirect.includes(item?.href) && item?.href !== '/') 
         ? `${theme.palette.primary.main}!important`
-        : theme.palette.text.secondary,
+        : '#7E8388',
     paddingLeft: hideMenu ? '10px' : level > 2 ? `${level * 15}px` : '10px',
     '&:hover': {
       backgroundColor: theme.palette.primary.light,
@@ -44,8 +44,8 @@ export default function NavItem({ item, level, pathDirect, hideMenu, onClick }) 
       color: 'white',
       backgroundColor: theme.palette.primary.main,
       '&:hover': {
-        backgroundColor: theme.palette.primary.main,
-        color: 'white',
+        backgroundColor: theme.palette.primary.light,
+        color: theme.palette.primary.main,
       },
     },
   }));

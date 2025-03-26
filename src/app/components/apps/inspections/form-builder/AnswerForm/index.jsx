@@ -61,7 +61,7 @@ const AnswerForm = ({ answerData }) => {
     const fetchAnswersFiles = async () => {
       try {
         if (answerData?.results[0]?.id) {
-          const files = await answerService.getAnswerFormFiles(answerData?.results[0]?.id, {
+          const files = await answerService.find(answerData?.results[0]?.id, {
             limit: 50,
           });
           setAnswersFiles(files.results);

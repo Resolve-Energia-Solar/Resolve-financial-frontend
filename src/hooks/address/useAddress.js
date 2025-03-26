@@ -11,7 +11,7 @@ const useAddress = (id) => {
 
     const fetchAddress = async () => {
       try {
-        const data = await addressService.getAddressById(id);
+        const data = await addressService.find(id);
         setAddressData(data);
       } catch (err) {
         setError('Erro ao carregar o endereço');
@@ -27,4 +27,3 @@ const useAddress = (id) => {
 };
 
 export default useAddress;
-

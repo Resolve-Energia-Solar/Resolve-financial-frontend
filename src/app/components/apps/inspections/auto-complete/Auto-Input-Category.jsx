@@ -17,7 +17,7 @@ export default function AutoCompleteCategory({ onChange, value, error, helperTex
     const fetchDefaultCategory = async () => {
       if (value) {
         try {
-          const categoryValue = await categoryService.getCategoryById(value);
+          const categoryValue = await categoryService.find(value);
           if (categoryValue) {
             setSelectedCategory({
               id: categoryValue.id,
@@ -46,7 +46,7 @@ export default function AutoCompleteCategory({ onChange, value, error, helperTex
     debounce(async (name) => {
       setLoading(true);
       try {
-        const response = await categoryService.getCategoryByName(name);
+        const response = await categoryService.find(name);
         const formattedCategories = response.results.map((category) => ({
           id: category.id,
           name: category.name,
@@ -82,7 +82,7 @@ export default function AutoCompleteCategory({ onChange, value, error, helperTex
         loading={loading}
         value={selectedCategory}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           fetchCategoriesByName(newInputValue);
         }}

@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
-import boardService from '@/services/boardService'
-import leadService from '@/services/leadService'
-import columnService from '@/services/boardColumnService'
+import { useState, useEffect } from 'react';
+import boardService from '@/services/boardService';
+import leadService from '@/services/leadService';
+import columnService from '@/services/boardColumnService';
 
 const useKanban = () => {
   const [boards, setBoards] = useState([]);
@@ -15,8 +15,8 @@ const useKanban = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const addLead = newLead => {
-    setLeads(prevLeads => [...prevLeads, newLead]);
+  const addLead = (newLead) => {
+    setLeads((prevLeads) => [...prevLeads, newLead]);
   };
 
   const handleSnackbarClose = () => {
@@ -26,12 +26,12 @@ const useKanban = () => {
   const fetchBoards = async () => {
     setLoading(true);
     try {
-      const data = await boardService.getBoards();
+      const data = await boardService.index();
       setBoards(data);
 
       if (data.results && data.results.length > 0) {
         const defaultBoardId = data.results[0].id;
-        console.log("Definindo selectedBoard:", defaultBoardId);
+        console.log('Definindo selectedBoard:', defaultBoardId);
         setSelectedBoard(defaultBoardId);
       }
     } catch (err) {
@@ -43,24 +43,24 @@ const useKanban = () => {
 
   const fetchBoardDetails = async (boardId, page = 1, pageSize = 40) => {
     if (!boardId) {
-      console.error("Erro: boardId está indefinido");
+      console.error('Erro: boardId está indefinido');
       return;
     }
 
     setLoading(true);
-    console.log("Buscando detalhes do board:", boardId);
+    console.log('Buscando detalhes do board:', boardId);
 
     try {
       const board = boards?.results?.find((b) => b.id === boardId);
       if (!board) {
-        console.error("Erro: Board não encontrado", boardId);
+        console.error('Erro: Board não encontrado', boardId);
         setError('Board não encontrado');
         return;
       }
 
       setColumns(board.columns || []);
       const sortedColumns = board.columns.sort((a, b) => a.position - b.position);
-      console.log("Colunas do board:", sortedColumns);
+      console.log('Colunas do board:', sortedColumns);
 
       const allLeads = await Promise.all(
         sortedColumns.map(async (column) => {
@@ -69,10 +69,10 @@ const useKanban = () => {
             column.id,
             page,
             pageSize,
-            searchTerm
+            searchTerm,
           );
           return leads.map((lead) => ({ ...lead, column_id: column.id }));
-        })
+        }),
       );
 
       setLeads(allLeads.flat());
@@ -82,8 +82,7 @@ const useKanban = () => {
           name: column.name,
           position: column.position,
           proposals_value: column.proposals_value,
-          
-        }))
+        })),
       );
     } catch (err) {
       console.error('Erro ao buscar detalhes do board selecionado:', err);
@@ -99,7 +98,7 @@ const useKanban = () => {
     setLoading(true);
     try {
       const results = await Promise.all(
-        columns.map(async column => {
+        columns.map(async (column) => {
           const leads = await leadService.getLeadsByColumn(
             selectedBoard,
             column.id,
@@ -107,8 +106,8 @@ const useKanban = () => {
             20,
             searchTerm,
           );
-          return leads.map(lead => ({ ...lead, column_id: column.id }));
-        })
+          return leads.map((lead) => ({ ...lead, column_id: column.id }));
+        }),
       );
       setLeads(results.flat());
     } catch (error) {
@@ -145,20 +144,20 @@ const useKanban = () => {
 
   const loadMoreLeads = async (statusId, page = 1, pageSize = 20) => {
     if (!selectedBoard || loading) return;
-  
+
     setLoading(true);
     try {
       const nextPage = Math.ceil(leads.length / pageSize) + 1;
       console.log(`Carregando mais leads para a coluna ${statusId}, página ${nextPage}`);
-      
+
       const newLeads = await leadService.getLeadsByColumn(
         selectedBoard,
         statusId,
         nextPage,
         pageSize,
-        searchTerm
+        searchTerm,
       );
-  
+
       if (newLeads.length > 0) {
         setLeads((prevLeads) => [...prevLeads, ...newLeads]);
       }
@@ -168,14 +167,13 @@ const useKanban = () => {
       setLoading(false);
     }
   };
-  
 
   const updateLeadColumn = async (leadId, newColumnId) => {
     try {
       await leadService.patchLead(leadId, { column_id: newColumnId });
 
-      setLeads(prevLeads => {
-        const updatedLeads = prevLeads.map(lead => {
+      setLeads((prevLeads) => {
+        const updatedLeads = prevLeads.map((lead) => {
           if (lead.id === leadId) {
             return { ...lead, column_id: newColumnId };
           }
@@ -190,10 +188,10 @@ const useKanban = () => {
     }
   };
 
-  const handleDeleteLead = async leadId => {
+  const handleDeleteLead = async (leadId) => {
     try {
       await boardService.deleteLead(leadId);
-      setLeads(prevLeads => prevLeads.filter(lead => lead.id !== leadId));
+      setLeads((prevLeads) => prevLeads.filter((lead) => lead.id !== leadId));
       setSnackbarMessage('Lead excluído com sucesso!');
       setSnackbarOpen(true);
 
@@ -205,11 +203,11 @@ const useKanban = () => {
     }
   };
 
-  const handleUpdateLead = async updatedLead => {
+  const handleUpdateLead = async (updatedLead) => {
     try {
       await leadService.patchLead(updatedLead.id, updatedLead);
-      setLeads(prevLeads =>
-        prevLeads.map(lead => (lead.id === updatedLead.id ? updatedLead : lead)),
+      setLeads((prevLeads) =>
+        prevLeads.map((lead) => (lead.id === updatedLead.id ? updatedLead : lead)),
       );
       setSnackbarMessage('Lead atualizado com sucesso!');
       setSnackbarOpen(true);
@@ -224,12 +222,12 @@ const useKanban = () => {
 
   const updateColumnName = async (columnId, newName) => {
     try {
-      await columnService.updateColumnPatch(columnId, { name: newName });
+      await columnService.update(columnId, { name: newName });
 
-      setStatuses(prevStatuses =>
-        prevStatuses.map(status =>
+      setStatuses((prevStatuses) =>
+        prevStatuses.map((status) =>
           status.id === columnId ? { ...status, name: newName } : status,
-        )
+        ),
       );
 
       setSnackbarMessage('Nome da coluna atualizado com sucesso!');
