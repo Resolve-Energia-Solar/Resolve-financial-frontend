@@ -454,7 +454,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
                                 <Grid item xs={2.5}>
                                     <CustomFormLabel htmlFor="roof_type" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>
-                                        Tipo de telhado
+                                        Tipo de estrutura
                                     </CustomFormLabel>
                                     <TextField
                                         select
@@ -463,7 +463,12 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         onChange={(e) => handleChange('roof_type', e.target.value)}
                                         fullWidth
                                     >
-                                        <MenuItem value="bi">Normal</MenuItem>
+                                        <MenuItem value="solo">Estrutura de solo</MenuItem>
+                                        <MenuItem value="laje">Estrutura de laje</MenuItem>
+                                        <MenuItem value="colonial">Telha colonial</MenuItem>
+                                        <MenuItem value="fibrocimento">Telha fibrocimento</MenuItem>
+                                        <MenuItem value="ecológica">Telha ecológica</MenuItem>
+                                        <MenuItem value="metálica">Telha metálica</MenuItem>
 
                                     </TextField>
                                 </Grid>

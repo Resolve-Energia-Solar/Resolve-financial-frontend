@@ -258,8 +258,9 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
               <Grid container rowSpacing={1} xs={12}>
                 {paymentMethods.map((payment, index) => (
-                  <Grid container spacing={2} key={payment.id} alignItems="center">
-                    <Grid item xs={12}>
+                  <Grid container spacing={2} key={payment.id} >
+                    <Grid item xs={12} sx={{ display: 'flex',flexDirection: "row", gap: 2 }}>
+                    <Grid item xs={6} >
                       <CustomFormLabel
                         htmlFor={`payment_method_${payment.id}`}
                         sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
@@ -267,7 +268,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                         Forma de pagamento {index + 1}
                       </CustomFormLabel>
 
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: "row", gap: 2 }}>
                         <TextField
                           select
                           name={`payment_method_${payment.id}`}
@@ -302,9 +303,10 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                         )}
                       </Box>
                     </Grid>
+                    </Grid>
 
                     {payment.method === 'financing' && (
-                      <Grid item xs={12}>
+                      <Grid item xs={6}>
                         <CustomFormLabel
                           htmlFor={`financing_type_${payment.id}`}
                           sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
@@ -335,7 +337,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     )}
 
                     {payment.method === 'credit' && (
-                      <Grid item xs={12}>
+                      <Grid item xs={6}>
                         <CustomFormLabel
                           htmlFor={`installments_num_${payment.id}`}
                           sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
@@ -358,7 +360,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   </Grid>
                 ))}
 
-                <Grid item xs={4}>
+                <Grid item xs={12}>
                   <IconButton
                     sx={{
                       mt: 2,
