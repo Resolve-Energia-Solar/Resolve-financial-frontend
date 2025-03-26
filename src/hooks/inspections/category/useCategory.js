@@ -11,7 +11,7 @@ const useCategory = (id) => {
 
     const fetchCategory = async () => {
       try {
-        const data = await categoryService.getCategoryById(id);
+        const data = await categoryService.find(id);
         setCategoryData(data);
       } catch (err) {
         setError('Erro ao carregar a categoria');

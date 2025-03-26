@@ -3,7 +3,7 @@ import apiClient from './apiClient';
 
 const DEFAULT_ROUTER = '/api/comments';
 
-const commentService = {
+const CommentService = {
   index: async (params) => {
     try {
       const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params });
@@ -25,7 +25,7 @@ const commentService = {
   },
   create: async (data) => {
     try {
-      const response = apiClient.post(`${DEFAULT_ROUTER}`, data);
+      const response = apiClient.post(`${DEFAULT_ROUTER}/`, data);
       return response.data;
     } catch (error) {
       console.error('Erro ao criar comentário:', error);
@@ -114,4 +114,4 @@ const commentService = {
   },
 };
 
-export default commentService;
+export default CommentService;

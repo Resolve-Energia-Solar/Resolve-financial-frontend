@@ -213,19 +213,19 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     handleChange(field, newValue);
   };
 
-  const fetchOpinions = async (search) => {
-    try {
-      const response = await serviceOpinionsService.index({
-        q: search,
-        limit: 15,
-        fields: 'id,name',
-      });
-      return response.results;
-    } catch (error) {
-      console.error('Erro na busca de endereços:', error);
-      return [];
-    }
-  };
+  // const fetchOpinions = async (search) => {
+  //   try {
+  //     const response = await serviceOpinionsService.index({
+  //       q: search,
+  //       limit: 15,
+  //       fields: 'id,name',
+  //     });
+  //     return response.results;
+  //   } catch (error) {
+  //     console.error('Erro na busca de endereços:', error);
+  //     return [];
+  //   }
+  // };
 
   return (
     <>

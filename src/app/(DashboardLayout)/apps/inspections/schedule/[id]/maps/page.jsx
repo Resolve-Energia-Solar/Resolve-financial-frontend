@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
 import InvoiceList from '@/app/components/apps/invoice/Invoice-list/index';
-import { InvoiceProvider } from '@/app/context/InvoiceContext/index';
 import BlankCard from '@/app/components/shared/BlankCard';
 import { CardContent, Grid, Skeleton } from '@mui/material';
 import ScheduleFormEdit from '@/app/components/apps/inspections/schedule/Edit-schedule';
@@ -55,56 +54,55 @@ const ScheduleView = () => {
   }, [id]);
 
   return (
-    <InvoiceProvider>
-      <PageContainer
-        title="Acompanhar Agendamento"
-        description="Essa é a página de Acompanhar Agendamento"
-      >
-        <Breadcrumb items={BCrumb} />
-        <BlankCard>
-          <CardContent>
-            <Grid container spacing={3} mt={2} mb={4}>
-              <Grid item xs={12} sm={12}>
-                <Box p={3} display="flex" flexDirection="column" gap="4px">
-                  <Paper elevation={3} mt={2}>
-                    {!scheduleData && !error && <LoadingSkeleton />}
-                    {error && (
-                      <Box p={3}>
-                        <Typography color="error">{error}</Typography>
+    <PageContainer
+      title="Acompanhar Agendamento"
+      description="Essa é a página de Acompanhar Agendamento"
+    >
+      <Breadcrumb items={BCrumb} />
+      <BlankCard>
+        <CardContent>
+          <Grid container spacing={3} mt={2} mb={4}>
+            <Grid item xs={12} sm={12}>
+              <Box p={3} display="flex" flexDirection="column" gap="4px">
+                <Paper elevation={3} mt={2}>
+                  {!scheduleData && !error && <LoadingSkeleton />}
+                  {error && (
+                    <Box p={3}>
+                      <Typography color="error">{error}</Typography>
+                    </Box>
+                  )}
+                  {scheduleData && (
+                    <>
+                      <Box p={3} display="flex" flexDirection="column" gap="4px">
+                        <Typography variant="h6">Agente</Typography>
+                        <Typography variant="body1">
+                          Nome: {scheduleData.schedule_agent?.complete_name}
+                        </Typography>
+                        <Typography variant="body1">
+                          Serviço: {scheduleData.service?.name}
+                        </Typography>
+                        <Typography variant="body1">
+                          Data:{' '}
+                          {scheduleData.schedule_date
+                            ? formatDate(scheduleData.schedule_date)
+                            : 'Data não disponível'}
+                        </Typography>
+                        <Typography variant="body1">
+                          Horário: {scheduleData.schedule_start_time}
+                        </Typography>
+                        <Typography variant="body1">
+                          Observações: {scheduleData.observation}
+                        </Typography>
                       </Box>
-                    )}
-                    {scheduleData && (
-                      <>
-                        <Box p={3} display="flex" flexDirection="column" gap="4px">
-                          <Typography variant="h6">Agente</Typography>
-                          <Typography variant="body1">
-                            Nome: {scheduleData.schedule_agent?.complete_name}
-                          </Typography>
-                          <Typography variant="body1">
-                            Serviço: {scheduleData.service?.name}
-                          </Typography>
-                          <Typography variant="body1">
-                            Data:{' '}
-                            {scheduleData.schedule_date
-                              ? formatDate(scheduleData.schedule_date)
-                              : 'Data não disponível'}
-                          </Typography>
-                          <Typography variant="body1">
-                            Horário: {scheduleData.schedule_start_time}
-                          </Typography>
-                          <Typography variant="body1">
-                            Observações: {scheduleData.observation}
-                          </Typography>
-                        </Box>
-                        <Divider />
-                        <Box p={3} display="flex" flexDirection="column" gap="4px">
-                          <Typography variant="h6">Cliente</Typography>
-                          <Typography variant="body1">
-                            Nome: {scheduleData.customer?.complete_name}
-                          </Typography>
-                          <Typography variant="body1">
-                            Endereço:{' '}
-                            {`${scheduleData.address?.street}, 
+                      <Divider />
+                      <Box p={3} display="flex" flexDirection="column" gap="4px">
+                        <Typography variant="h6">Cliente</Typography>
+                        <Typography variant="body1">
+                          Nome: {scheduleData.customer?.complete_name}
+                        </Typography>
+                        <Typography variant="body1">
+                          Endereço:{' '}
+                          {`${scheduleData.address?.street}, 
                                                         ${scheduleData.address?.number}, 
                                                         ${scheduleData.address?.neighborhood}, 
                                                         ${scheduleData.address?.city} - 
@@ -112,30 +110,29 @@ const ScheduleView = () => {
                                                         ${scheduleData.address?.zip_code}, 
                                                         ${scheduleData.address?.complement}, 
                                                         ${scheduleData.address?.country}`}
-                          </Typography>
-                          <Typography variant="body1">
-                            Telefones:{' '}
-                            {scheduleData.customer?.phone_numbers?.length > 0
-                              ? scheduleData.customer.phone_numbers.map((phone, index) =>
-                                  index > 0 ? `, ${phone.phone_number}` : phone.phone_number,
-                                )
-                              : 'Telefone não disponível'}
-                          </Typography>
-                          <Typography variant="body1">
-                            Contrato: {scheduleData.project?.sale?.contract_number}
-                          </Typography>
-                        </Box>
-                      </>
-                    )}
-                  </Paper>
-                  {scheduleData && <ScheduleMap schedule={scheduleData} />}
-                </Box>
-              </Grid>
+                        </Typography>
+                        <Typography variant="body1">
+                          Telefones:{' '}
+                          {scheduleData.customer?.phone_numbers?.length > 0
+                            ? scheduleData.customer.phone_numbers.map((phone, index) =>
+                              index > 0 ? `, ${phone.phone_number}` : phone.phone_number,
+                            )
+                            : 'Telefone não disponível'}
+                        </Typography>
+                        <Typography variant="body1">
+                          Contrato: {scheduleData.project?.sale?.contract_number}
+                        </Typography>
+                      </Box>
+                    </>
+                  )}
+                </Paper>
+                {scheduleData && <ScheduleMap schedule={scheduleData} />}
+              </Box>
             </Grid>
-          </CardContent>
-        </BlankCard>
-      </PageContainer>
-    </InvoiceProvider>
+          </Grid>
+        </CardContent>
+      </BlankCard>
+    </PageContainer>
   );
 };
 

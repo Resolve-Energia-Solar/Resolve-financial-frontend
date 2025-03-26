@@ -1,10 +1,8 @@
 import apiClient from './apiClient';
 
-const DEFAULT_ROUTER = '/api/answers'
+const DEFAULT_ROUTER = '/api/answers';
 
 const answerService = {
-
-
   index: async (params) => {
     try {
       const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params });
@@ -26,7 +24,7 @@ const answerService = {
   },
   create: async (data) => {
     try {
-      const response = apiClient.post(`${DEFAULT_ROUTER}`, data);
+      const response = apiClient.post(`${DEFAULT_ROUTER}/`, data);
       return response.data;
     } catch (error) {
       console.error('Erro ao criar resposta:', error);
@@ -52,14 +50,6 @@ const answerService = {
       throw error;
     }
   },
-
-
-
-
-
-
-
-
 
   getAnswers: async () => {
     try {

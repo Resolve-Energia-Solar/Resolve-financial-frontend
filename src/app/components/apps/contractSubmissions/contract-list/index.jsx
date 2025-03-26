@@ -67,7 +67,7 @@ function ContractSubmissions({ sale }) {
 
       try {
         console.log(`Buscando contratos para venda: ${sale.id}`);
-        const contractsResponse = await contractService.getContractsBySaleId(sale.id);
+        const contractsResponse = await contractService.find({ sale: sale.id });
 
         console.log('Contratos retornados:', contractsResponse);
 
@@ -90,10 +90,10 @@ function ContractSubmissions({ sale }) {
             .then((response) => response.data)
             .catch((error) => {
               console.error(
-                `Erro ao buscar o contrato com chave ${key_number} e envelope_id ${envelope_id}: ${error.message}`
+                `Erro ao buscar o contrato com chave ${key_number} e envelope_id ${envelope_id}: ${error.message}`,
               );
               return null;
-            })
+            }),
         );
 
         const documentResponses = await Promise.all(documentPromises);
@@ -164,18 +164,56 @@ function ContractSubmissions({ sale }) {
                 <Slide direction="up" in={!loading} mountOnEnter unmountOnExit>
                   <Card sx={{ boxShadow: 3, borderRadius: 2, position: 'relative' }}>
                     <CardContent>
-                      <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'space-between' }}>
+                      <Box
+                        sx={{
+                          position: 'relative',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                        }}
+                      >
                         <Typography variant="h6">{contract.filename}</Typography>
                         <ContractChip status={contract.status} />
                       </Box>
-                      <Typography variant="body2" color="text.secondary">Cliente: {contract.customerName}</Typography>
-                      <Typography variant="body2" color="text.secondary">Venda: {contract.saleNumber}</Typography>
-                      <Typography variant="body2" color="text.secondary">Data de Upload: {new Date(contract.uploadedAt).toLocaleDateString('pt-BR')}</Typography>
-                      <Typography variant="body2" color="text.secondary">Última Modificação: {new Date(contract.modifiedAt).toLocaleDateString('pt-BR')}</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Cliente: {contract.customerName}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Venda: {contract.saleNumber}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Data de Upload: {new Date(contract.uploadedAt).toLocaleDateString('pt-BR')}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Última Modificação:{' '}
+                        {new Date(contract.modifiedAt).toLocaleDateString('pt-BR')}
+                      </Typography>
                       <Box sx={{ mt: 2 }}>
-                        <Typography variant="body2" color="text.secondary">Arquivo Original: <a href={contract.originalFileUrl} target="_blank" rel="noopener noreferrer">Abrir</a></Typography>
-                        <Typography variant="body2" color="text.secondary">Arquivo Assinado: <a href={contract.signedFileUrl} target="_blank" rel="noopener noreferrer">Abrir</a></Typography>
-                        <Typography variant="body2" color="text.secondary">Arquivo Compactado: <a href={contract.zipedFileUrl} target="_blank" rel="noopener noreferrer">Abrir</a></Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Arquivo Original:{' '}
+                          <a
+                            href={contract.originalFileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Abrir
+                          </a>
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Arquivo Assinado:{' '}
+                          <a
+                            href={contract.signedFileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Abrir
+                          </a>
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Arquivo Compactado:{' '}
+                          <a href={contract.zipedFileUrl} target="_blank" rel="noopener noreferrer">
+                            Abrir
+                          </a>
+                        </Typography>
                       </Box>
                     </CardContent>
                   </Card>

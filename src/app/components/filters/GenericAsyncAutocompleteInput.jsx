@@ -11,13 +11,14 @@ const GenericAsyncAutocompleteInput = ({
   extraParams = {},
   mapResponse,
   debounceTime = 300,
+  error = false,
+  helperText = "",
+  noOptionsText = "Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.",
   ...props
 }) => {
   const [options, setOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // Memorizando os objetos para evitar que mudem a cada render
   const stableExtraParams = useMemo(() => extraParams, [JSON.stringify(extraParams)]);
   const stableMapResponse = useMemo(() => mapResponse, [mapResponse]);
 
@@ -62,11 +63,13 @@ const GenericAsyncAutocompleteInput = ({
       onChange={(event, newValue) => onChange(newValue)}
       value={value}
       loadingText="Carregando..."
-      noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
+      noOptionsText={noOptionsText}
       {...props}
       renderInput={(params) => (
         <TextField
-          {...params}
+        error={error}
+        helperText={helperText}
+        {...params}
           label={label}
           variant="outlined"
           fullWidth

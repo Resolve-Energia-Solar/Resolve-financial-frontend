@@ -88,7 +88,7 @@ const ProjectList = ({ onClick }) => {
           fields: 'id,sale.id,sale.customer.complete_name,homologator.complete_name,designer_status,material_list_is_completed,trt_pending,peding_request,access_opnion,product.name,product.params,status,sale.status,is_released_to_engineering',
           ...filters,
         });
-        setProjectsList(data.results.results);
+        setProjectsList(data.results);
         setTotalRows(data.count);
       } catch (err) {
         setError('Erro ao carregar Projetos');

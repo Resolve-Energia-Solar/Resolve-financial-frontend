@@ -80,7 +80,6 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null, refresh }) => {
 
   const { formattedValue } = useCurrencyFormatter(formData.totalValue);
 
-
   const [value, setValue] = useState(0);
 
   const handleChangeTab = (event, newValue) => {
@@ -90,7 +89,10 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null, refresh }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await documentTypeService.getDocumentTypeFromContract();
+        const response = await documentTypeService.index({
+          app_label__in: 'contracts',
+          limit: 30,
+        });
         setDocumentTypes(response.results);
         console.log('Document Types: ', response.results);
       } catch (error) {
@@ -264,7 +266,7 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null, refresh }) => {
           )}
 
           {value === 4 && <ProjectListDetail saleId={id_sale} />}
-          
+
           {value === 5 && <History contentType={CONTEXT_TYPE_SALE_ID} objectId={id_sale} />}
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
@@ -273,7 +275,6 @@ const SaleDetailPage = ({ saleId = null, onClosedModal = null, refresh }) => {
                 Fechar
               </Button>
             )}
-
           </Stack>
         </Box>
       )}

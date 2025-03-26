@@ -16,7 +16,7 @@ const useAddressForm = (initialData, id) => {
     complement: '',
     latitude: '',
     longitude: '',
-    user_id: ''
+    user_id: '',
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -65,9 +65,9 @@ const useAddressForm = (initialData, id) => {
     try {
       let request;
       if (id) {
-        request = await addressService.updateAddress(id, dataToSend);
+        request = await addressService.update(id, dataToSend);
       } else {
-        request = await addressService.createAddress(dataToSend);
+        request = await addressService.create(dataToSend);
       }
       // Se a API estiver usando Axios, os dados estarão em request.data
       const responseData = request.data ? request.data : request;
@@ -76,13 +76,13 @@ const useAddressForm = (initialData, id) => {
       setFormData(responseData);
       setFormErrors({});
       setSuccess(true);
-      enqueueSnackbar("Endereço salvo com sucesso!", { variant: "success" });
+      enqueueSnackbar('Endereço salvo com sucesso!', { variant: 'success' });
       return responseData;
     } catch (err) {
       setSuccess(false);
       setFormErrors(err.response?.data || {});
-      const errorMessage = err.response?.data?.detail || "Erro ao salvar endereço";
-      enqueueSnackbar(errorMessage, { variant: "error" });
+      const errorMessage = err.response?.data?.detail || 'Erro ao salvar endereço';
+      enqueueSnackbar(errorMessage, { variant: 'error' });
       throw err;
     } finally {
       setLoading(false);

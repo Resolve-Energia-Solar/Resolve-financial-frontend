@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import {
   Table,
   TableBody,
@@ -125,6 +125,9 @@ const SaleList = () => {
         ...filters,
       });
 
+      setIndicators(data?.meta?.indicators);
+      setSalesList(data?.results);
+      setTotalRows(data?.meta?.pagination?.total_count);
       setIndicators(data?.meta?.indicators);
       setSalesList(data?.results);
       setTotalRows(data?.meta?.pagination?.total_count);
@@ -411,7 +414,7 @@ const SaleList = () => {
               ) : error && page === 1 ? (
                 <Typography color="error">{error}</Typography>
               ) : (
-                salesList.map((item) => (
+                (salesList || []).map((item) => (
                   <TableRow
                     key={item.id}
                     onClick={() => handleRowClick(item)}

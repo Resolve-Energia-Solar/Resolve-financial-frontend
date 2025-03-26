@@ -51,7 +51,7 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
       try {
         const sales = await saleService.getSaleByFullName(name);
         if (sales && sales.results) {
-          const formattedSales = sales.results.results.map((sale) => ({
+          const formattedSales = sales.results.map(sale => ({
             id: sale.id,
             name: `${sale.contract_number} - ${sale.customer.complete_name}`,
           }));
@@ -71,7 +71,7 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
       const sales = await saleService.index({ limit: 5, page: 1 });
       console.log('initial sales:', sales);
       if (sales && sales.results) {
-        const formattedSales = sales.results.results.map((sale) => ({
+        const formattedSales = sales.results.map(sale => ({
           id: sale.id,
           name: `${sale.contract_number} - ${sale.customer.complete_name}`,
         }));

@@ -6,8 +6,13 @@ const ProductChip = ({ status }) => {
     switch (status) {
       case "S":
         return { label: 'Padrão', color: 'primary', icon: <CheckCircleIcon /> };
+      case "s":
+        return { label: 'Padrão', color: 'primary', icon: <CheckCircleIcon /> };
       case "N":
         return { label: 'Customizado', color: 'secondary', icon: <BuildIcon /> };
+      case "n":
+        return { label: 'Customizado', color: 'secondary', icon: <BuildIcon /> };
+      
       default:
         return { label: status };
     }

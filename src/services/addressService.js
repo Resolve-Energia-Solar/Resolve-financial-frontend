@@ -1,10 +1,8 @@
-import apiClient from "./apiClient";
+import apiClient from './apiClient';
 
-const DEFAULT_ROUTER = '/api/addresses'
+const DEFAULT_ROUTER = '/api/addresses';
 
 const addressService = {
-
-
   index: async (params) => {
     try {
       const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params });
@@ -26,7 +24,7 @@ const addressService = {
   },
   create: async (data) => {
     try {
-      const response = apiClient.post(`${DEFAULT_ROUTER}`, data);
+      const response = apiClient.post(`${DEFAULT_ROUTER}/`, data);
       return response.data;
     } catch (error) {
       console.error('Erro ao criar endereço:', error);
@@ -53,47 +51,14 @@ const addressService = {
     }
   },
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   getAddresses: async ({ page = 1, limit = 10 } = {}) => {
     try {
-      const response = await apiClient.get('/api/addresses/',
-        {
-          params: {
-            page,
-            limit
-          }
-        }
-      );
+      const response = await apiClient.get('/api/addresses/', {
+        params: {
+          page,
+          limit,
+        },
+      });
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar usuários:', error);

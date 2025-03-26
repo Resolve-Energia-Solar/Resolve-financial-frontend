@@ -128,6 +128,19 @@ export default function EditRequestCompany({
 
         <Grid item xs={12} sm={12} lg={4}>
           <FormDate
+            label="Data de solicitação"
+            name="request_date"
+            value={formData.request_date}
+            onChange={(newValue) => handleChange('request_date', newValue)}
+            {...(formErrors.request_date && {
+              error: true,
+              helperText: formErrors.request_date,
+            })}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={12} lg={4}>
+          <FormDate
             label="Data da Conclusão"
             name="conclusion_date"
             value={formData.conclusion_date}
@@ -138,7 +151,7 @@ export default function EditRequestCompany({
             })}
           />
         </Grid>
-
+       
         <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="situation_ids">Situação</CustomFormLabel>
           <AutoCompleteSituation

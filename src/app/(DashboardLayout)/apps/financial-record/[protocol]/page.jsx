@@ -9,7 +9,7 @@ import {
   Tabs,
   Tab,
   Chip,
-  Box
+  Box,
 } from '@mui/material';
 import { useRouter, useParams } from 'next/navigation';
 import { useSnackbar } from 'notistack';
@@ -27,28 +27,28 @@ const statusMap = {
   S: <Chip label="Solicitada" color="warning" size="small" />,
   E: <Chip label="Em Andamento" color="success" size="small" />,
   P: <Chip label="Paga" color="success" size="small" />,
-  C: <Chip label="Cancelada" color="error" size="small" />
+  C: <Chip label="Cancelada" color="error" size="small" />,
 };
 
 const paymentStatusMap = {
   P: <Chip label="Pendente" color="warning" size="small" />,
   PG: <Chip label="Pago" color="success" size="small" />,
-  C: <Chip label="Cancelado" color="error" size="small" />
+  C: <Chip label="Cancelado" color="error" size="small" />,
 };
 
 const responsibleStatusMap = {
   P: <Chip label="Pendente" color="warning" size="small" />,
   A: <Chip label="Aprovado" color="success" size="small" />,
-  R: <Chip label="Reprovado" color="error" size="small" />
+  R: <Chip label="Reprovado" color="error" size="small" />,
 };
 
 const paymentMethodMap = {
-  B: <Chip label="Boleto" color='success' />,
-  T: <Chip label="Transferência Bancária" color='success' />,
-  E: <Chip label="Dinheiro em Espécie" color='success' />,
-  D: <Chip label="Cartão de Débito" color='success' />,
-  C: <Chip label="Cartão de Crédito" color='success' />,
-  P: <Chip label="Pix" color='success'/>
+  B: <Chip label="Boleto" color="success" />,
+  T: <Chip label="Transferência Bancária" color="success" />,
+  E: <Chip label="Dinheiro em Espécie" color="success" />,
+  D: <Chip label="Cartão de Débito" color="success" />,
+  C: <Chip label="Cartão de Crédito" color="success" />,
+  P: <Chip label="Pix" color="success" />,
 };
 
 export default function FinancialRecordDetailsPage() {
@@ -69,14 +69,14 @@ export default function FinancialRecordDetailsPage() {
   useEffect(() => {
     (async () => {
       try {
-        const dataList = await financialRecordService.getFinancialRecordList({
+        const dataList = await financialRecordService.index({
           protocol__in: protocol,
-          fields: 'id'
+          fields: 'id',
         });
         const records = dataList.results;
         if (records && records.length > 0) {
           const recordId = records[0].id;
-          const fetchedData = await financialRecordService.getFinancialRecordById(recordId);
+          const fetchedData = await financialRecordService.find(recordId);
           setRecord(fetchedData);
         } else {
           enqueueSnackbar('Registro não encontrado.', { variant: 'error' });
@@ -98,7 +98,7 @@ export default function FinancialRecordDetailsPage() {
 
   const handlePDFDownload = async () => {
     try {
-      const response = await financialRecordService.generateFinancialRecordPDFById(record.id);
+      const response = await financialRecordService.find(record.id);
       const url = window.URL.createObjectURL(new Blob([response]));
       const link = document.createElement('a');
       link.setAttribute('href', url);
@@ -133,10 +133,17 @@ export default function FinancialRecordDetailsPage() {
             Detalhes da Solicitação
           </Typography>
           <Stack direction="row" spacing={1}>
-            <Button variant="outlined" onClick={handlePDFDownload} startIcon={<IconPdf size={20} />}>
+            <Button
+              variant="outlined"
+              onClick={handlePDFDownload}
+              startIcon={<IconPdf size={20} />}
+            >
               Gerar PDF
             </Button>
-            <Button variant="contained" onClick={() => router.push(`/apps/financial-record/${protocol}/update`)}>
+            <Button
+              variant="contained"
+              onClick={() => router.push(`/apps/financial-record/${protocol}/update`)}
+            >
               Editar
             </Button>
           </Stack>
@@ -200,7 +207,9 @@ export default function FinancialRecordDetailsPage() {
               <Typography variant="subtitle2" color="textSecondary">
                 Status do Responsável
               </Typography>
-              <Typography variant="body1">{responsibleStatusMap[record.responsible_status]}</Typography>
+              <Typography variant="body1">
+                {responsibleStatusMap[record.responsible_status]}
+              </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2" color="textSecondary">

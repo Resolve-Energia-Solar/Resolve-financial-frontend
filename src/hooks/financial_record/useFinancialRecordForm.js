@@ -32,7 +32,7 @@ export default function useFinancialRecordForm() {
     if (!formData.due_date) errors.due_date = 'Data de vencimento obrigatória';
     if (!formData.department_code) errors.department_code = 'Código do departamento obrigatório';
     if (!formData.department_name) errors.department_name = 'Nome do departamento obrigatório';
-    
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -43,10 +43,10 @@ export default function useFinancialRecordForm() {
 
   const handleSave = async () => {
     if (!validateForm()) return;
-  
+
     try {
       console.log('Enviando dados:', formData);
-      const response = await financialRecordService.createFinancialRecord(formData);
+      const response = await financialRecordService.create(formData);
       console.log('Resposta da API:', response);
       if (response) {
         setSuccess(true);

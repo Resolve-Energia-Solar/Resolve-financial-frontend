@@ -10,7 +10,7 @@ const PostComments = ({ comment, post }) => {
   const [showReply, setShowReply] = useState(false);
   const [replies, setReplies] = useState([]);
   const [repliesCount, setRepliesCount] = useState(0);
-  const user = useSelector(state => state.user?.user);
+  const user = useSelector((state) => state.user?.user);
   const [commentContentType, setCommentContentType] = useState(null);
 
   useEffect(() => {
@@ -25,7 +25,10 @@ const PostComments = ({ comment, post }) => {
     if (commentContentType === null) return;
     const fetchReplies = async () => {
       try {
-        const response = await commentService.getComments(comment.id, commentContentType, { fields: 'id,text,author.id,author.profile_picture,author.complete_name,created_at', expand: 'author' });
+        const response = await commentService.index(comment.id, commentContentType, {
+          fields: 'id,text,author.id,author.profile_picture,author.complete_name,created_at',
+          expand: 'author',
+        });
         const fetchedReplies = response.results || [];
         setReplies(fetchedReplies);
         setRepliesCount(response.count);
@@ -46,7 +49,7 @@ const PostComments = ({ comment, post }) => {
         parent_id: comment.id,
       };
 
-      const novoReply = await commentService.createComment(replyData);
+      const novoReply = await commentService.create(replyData);
       setReplies([...replies, novoReply]);
       setReplyTxt('');
       setShowReply(false);
@@ -61,7 +64,7 @@ const PostComments = ({ comment, post }) => {
         mt={2}
         p={3}
         sx={{
-          borderColor: theme => theme.palette.divider,
+          borderColor: (theme) => theme.palette.divider,
           borderWidth: '1px',
           borderStyle: 'solid',
         }}
@@ -101,13 +104,13 @@ const PostComments = ({ comment, post }) => {
         </Stack>
       </Box>
 
-      {replies.map(reply => (
+      {replies.map((reply) => (
         <Box key={reply.id} pl={4}>
           <Box
             mt={2}
             p={3}
             sx={{
-              borderColor: theme => theme.palette.grey[100],
+              borderColor: (theme) => theme.palette.grey[100],
               borderWidth: '1px',
               borderStyle: 'solid',
             }}
@@ -142,7 +145,7 @@ const PostComments = ({ comment, post }) => {
             <TextField
               placeholder="Responder..."
               value={replyTxt}
-              onChange={e => setReplyTxt(e.target.value)}
+              onChange={(e) => setReplyTxt(e.target.value)}
               variant="outlined"
               fullWidth
             />

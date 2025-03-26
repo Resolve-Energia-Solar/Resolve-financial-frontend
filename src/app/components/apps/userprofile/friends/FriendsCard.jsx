@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Avatar from '@mui/material/Avatar';
@@ -65,8 +65,13 @@ const FriendsCard = ({ user }) => {
     if (currentUser && currentUser.employee?.department?.id) {
       try {
         setLoading(true);
-        const data = await employeeService.getEmployee({
-          filters: { department: currentUser.employee?.department?.id, expand: 'user,department,role', fields: 'user.complete_name,user.profile_picture,user.username,role.name,department.name' },
+        const data = await employeeService.index({
+          filters: {
+            department: currentUser.employee?.department?.id,
+            expand: 'user,department,role',
+            fields:
+              'user.complete_name,user.profile_picture,user.username,role.name,department.name',
+          },
           page: page,
           limit: 10,
         });
@@ -82,7 +87,7 @@ const FriendsCard = ({ user }) => {
   };
 
   const filteredEmployees = employees.filter((profile) =>
-    profile.user.complete_name.toLowerCase().includes(search.toLowerCase())
+    profile.user.complete_name.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
@@ -118,7 +123,10 @@ const FriendsCard = ({ user }) => {
       </Grid>
       {filteredEmployees.map((profile) => (
         <Grid item sm={12} lg={4} key={profile.id}>
-          <Link href={`/apps/user-profile/${profile.user.username}`} style={{ textDecoration: 'none' }}>
+          <Link
+            href={`/apps/user-profile/${profile.user.username}`}
+            style={{ textDecoration: 'none' }}
+          >
             <BlankCard
               className="hoverCard"
               sx={{
@@ -126,7 +134,7 @@ const FriendsCard = ({ user }) => {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
             >
               <CardContent>
@@ -163,12 +171,7 @@ const FriendsCard = ({ user }) => {
           </Grid>
         ))}
       {!hasMore && !loading && (
-        <Typography
-          variant="body2"
-          color="textSecondary"
-          align="center"
-          sx={{ width: '100%' }}
-        >
+        <Typography variant="body2" color="textSecondary" align="center" sx={{ width: '100%' }}>
           Você chegou ao fim!
         </Typography>
       )}

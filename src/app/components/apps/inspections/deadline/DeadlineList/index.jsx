@@ -84,7 +84,7 @@ const DeadlineList = () => {
       const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
       try {
         const queryParams = new URLSearchParams(filters[1]).toString();
-        const data = await deadlineService.getDeadlines({
+        const data = await deadlineService.index({
           ordering: orderingParam,
           params: queryParams,
           nextPage: page,
@@ -139,7 +139,7 @@ const DeadlineList = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await deadlineService.deleteDeadline(deadlineToDelete);
+      await deadlineService.delete(deadlineToDelete);
       setDeadlineList(deadlineList.filter((deadline) => deadline.id !== deadlineToDelete));
       showAlert('Prazo deletado com sucesso', 'success');
     } catch (err) {

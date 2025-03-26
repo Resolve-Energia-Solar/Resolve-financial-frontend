@@ -33,6 +33,7 @@ const Menuitems = [
   {
     id: uniqueId(),
         title: 'CRM',
+        href: '/',
         icon: IconBriefcase2,
         permissions: ['core.view_board', 'resolve_crm.view_lead'],
         children: [
@@ -68,9 +69,9 @@ const Menuitems = [
       },
       {
         id: uniqueId(),
-        title: 'Vistoria',
+        title: 'Agendamentos',
         icon: IconUserPin,
-        href: '/apps/inspections/schedule',
+        href: '/apps/commercial/schedules',
         permissions: ['field_services.view_schedule'],
       },
     ],

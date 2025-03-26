@@ -57,8 +57,8 @@ const useProductForm = (initialData, id) => {
 
   const handleAddMaterial = () => {
     setFormData((prev) => {
-      const newId = prev.materials_ids.length > 0 
-        ? Math.max(...prev.materials_ids.map(material => material.id)) + 1 
+      const newId = prev.materials_ids.length > 0
+        ? Math.max(...prev.materials_ids.map(material => material.id)) + 1
         : 1;
 
       return {
@@ -82,7 +82,7 @@ const useProductForm = (initialData, id) => {
     setLoading(true);
     let dataToSend = {
       sale_id: formData.sale_id,
-      branches_ids: formData.branches_ids ? [formData.branches_ids] : undefined,
+      branch: formData.branches_ids ? [formData.branches_ids] : undefined,
       roof_type_id: formData.roof_type_id,
       name: formData.name,
       description: formData.description,
@@ -120,7 +120,7 @@ const useProductForm = (initialData, id) => {
     formErrors,
     success,
     response,
-    loading, 
+    loading,
     handleMaterialChange,
     handleAddMaterial,
     handleDeleteMaterial,

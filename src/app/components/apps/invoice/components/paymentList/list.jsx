@@ -21,7 +21,7 @@ import PaymentStatusChip from '../../../../../../utils/status/PaymentStatusChip'
 import paymentService from '@/services/paymentService';
 import { useRouter } from 'next/navigation';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
-import { InvoiceContext } from '@/app/context/InvoiceContext';
+import { FilterContext } from '@/context/FilterContext';
 
 const PaymentList = ({ onClick }) => {
   // Estados para dados, loading, erro e paginação
@@ -37,7 +37,7 @@ const PaymentList = ({ onClick }) => {
   const [invoiceToDelete, setInvoiceToDelete] = useState(null);
 
   const router = useRouter();
-  const { filters, refresh } = useContext(InvoiceContext);
+  const { filters, refresh } = useContext(FilterContext);
 
   // Sempre que os filtros ou o refresh mudarem, reseta a página
   useEffect(() => {
@@ -55,8 +55,8 @@ const PaymentList = ({ onClick }) => {
           page: page + 1,
           limit: rowsPerPage,
         });
-        setPaymentsList(response.results.results);
-        setTotalCount(response.count || 0);
+        setPaymentsList(response.results);
+        setTotalCount(response.meta.pagination.total_count || 0);
       } catch (err) {
         console.error('Erro ao carregar pagamentos:', err);
         setError('Erro ao carregar pagamentos.');
