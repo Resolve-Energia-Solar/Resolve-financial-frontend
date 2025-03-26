@@ -24,7 +24,7 @@ const scheduleService = {
   },
   create: async (data) => {
     try {
-      const response = apiClient.post(`${DEFAULT_ROUTER}`, data);
+      const response = apiClient.post(`${DEFAULT_ROUTER}/`, data);
       return response.data;
     } catch (error) {
       console.error('Erro ao criar agendamento:', error);
@@ -91,18 +91,15 @@ const scheduleService = {
 
   getScheduleIspections: async (params = {}) => {
     try {
-      const response = await apiClient.get(
-        `/api/schedule/`,
-        { params }
-      )
-      return response.data
+      const response = await apiClient.get(`/api/schedule/`, { params });
+      return response.data;
     } catch (error) {
-      console.error('Erro ao buscar agendamentos:', error)
-      throw error
+      console.error('Erro ao buscar agendamentos:', error);
+      throw error;
     }
   },
 
-  getAllSchedulesInspectionByCustomer: async (customerId, fields='*', params = {}) => {
+  getAllSchedulesInspectionByCustomer: async (customerId, fields = '*', params = {}) => {
     try {
       const response = await apiClient.get(
         `/api/schedule/?service=${SERVICE_INSPECTION_ID}&customer=${customerId}&fields=${fields}`,
@@ -137,7 +134,8 @@ const scheduleService = {
     const urlNextPage = nextPage ? `&page=${nextPage}` : '';
     try {
       const response = await apiClient.get(
-        `/api/schedule/?schedule_agent=${userId}&ordering=${ordering || ''
+        `/api/schedule/?schedule_agent=${userId}&ordering=${
+          ordering || ''
         }${urlParams}${urlNextPage}&fields=${fields}`,
       );
       return response.data;
