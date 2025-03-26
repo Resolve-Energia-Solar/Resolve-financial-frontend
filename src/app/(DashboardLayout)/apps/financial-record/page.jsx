@@ -50,6 +50,7 @@ import PulsingBadge from "@/app/components/shared/PulsingBadge";
 import BlankCard from "@/app/components/shared/BlankCard";
 import PageContainer from "@/app/components/container/PageContainer";
 import SaleCards from "@/app/components/apps/inforCards/InforCards";
+import TableSkeleton from "@/app/components/apps/comercial/sale/components/TableSkeleton";
 
 const financialRecordList = () => {
     const router = useRouter();
@@ -410,7 +411,7 @@ const financialRecordList = () => {
                     />
 
                     {loading ? (
-                        <Typography>Carregando...</Typography>
+                        <TableSkeleton rows={rowsPerPage} columns={8}/>
                     ) : error ? (
                         <Typography color="error">{error}</Typography>
                     ) : (
