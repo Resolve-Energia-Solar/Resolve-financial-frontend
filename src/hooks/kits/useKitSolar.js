@@ -10,7 +10,7 @@ const useKitSolar = (ordering = '') => {
     const fetchKits = async () => {
       setLoading(true);
       try {
-        const data = await KitSolarService.getKitSolar(ordering);
+        const data = await KitSolarService.index({ ordering: ordering });
         setKits(data.results);
       } catch (err) {
         setError(err);
