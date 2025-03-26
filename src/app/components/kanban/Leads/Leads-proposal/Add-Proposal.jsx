@@ -11,6 +11,7 @@ import {
   Dialog,
   DialogContent,
   IconButton,
+  Chip,
 } from '@mui/material';
 
 import { useEffect, useState } from 'react';
@@ -161,13 +162,10 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             flexDirection: 'column',
           }}
         >
-          <Grid item spacing={2} alignItems="center" xs={12}>
-            <LeadInfoHeader leadId={leadId} />
-          </Grid>
-
           <Grid container spacing={4}>
-            <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'column', marginTop: 2 }}>
-              <Grid item xs={12} sm={4}>
+            {/* <LeadInfoHeader leadId={leadId} /> */}
+            <Grid item xs={12} sx={{ display: 'flex', alignItems: "center", flexDirection: 'row', marginTop: 2 }}>
+              <Grid item xs={8} >
                 <Typography
                   variant="h6"
                   sx={{ color: '#000000', fontWeight: '700', fontSize: '18px' }}
@@ -176,6 +174,37 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 </Typography>
               </Grid>
 
+              <Grid item xs={4} sx={{ display: "flex", justifyContent: "flex-end", flexDirection: 'column'}}>
+                <Typography
+                  variant="h6"
+                  sx={{ color: '#7E8388', fontWeight: '500', fontSize: '14px' }}
+                >
+                  Status da proposta
+                </Typography>
+                <Chip
+                  label={lead?.column?.name}
+                  variant="outlined"
+                  sx={{
+                    color: 'gray',
+                    backgroundColor: "#FFEBE4",
+                    border: "transparent",
+                    px: 1,
+                    width: "163px"
+                  }}
+                >
+                  <Typography
+                  variant="h6"
+                  sx={{ color: '#7E8388', fontWeight: '500', fontSize: '12px' }}
+                  >
+                    Aguardando retorno
+                  </Typography>
+                </Chip>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid container spacing={1}>
+            <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'column', marginTop: 2 }}>
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
                   <CustomFormLabel htmlFor="seller_id" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Tipo de Projeto</CustomFormLabel>
