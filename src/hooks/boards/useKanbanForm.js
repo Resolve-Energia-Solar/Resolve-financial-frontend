@@ -1,14 +1,14 @@
-import leadService from '@/services/leadService'
-import { useState, useEffect } from 'react'
+import leadService from '@/services/leadService';
+import { useState, useEffect } from 'react';
 
 const useLeadManager = (
   initialLeads = [],
   initialStatuses = [],
   { onDeleteLead, onUpdateLeadColumn },
 ) => {
-  const [leadStars, setLeadStars] = useState({})
-  const [selectedLead, setSelectedLead] = useState(null)
-  const [openModal, setOpenModal] = useState(false)
+  const [leadStars, setLeadStars] = useState({});
+  const [selectedLead, setSelectedLead] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
   const [leadData, setLeadData] = useState({
     name: '',
     contact_email: '',
@@ -26,98 +26,97 @@ const useLeadManager = (
     column: {
       name: '',
     },
-  })
-  const [snackbarMessage, setSnackbarMessage] = useState('')
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [leadsList, setLeadsList] = useState(initialLeads)
-  const [statusesList, setStatusesList] = useState(initialStatuses)
+  });
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [leadsList, setLeadsList] = useState(initialLeads);
+  const [statusesList, setStatusesList] = useState(initialStatuses);
 
-  const [tabIndex, setTabIndex] = useState(0)
+  const [tabIndex, setTabIndex] = useState(0);
 
   useEffect(() => {
-    setLeadsList(initialLeads)
-    setStatusesList(initialStatuses)
-  }, [initialLeads, initialStatuses])
-
+    setLeadsList(initialLeads);
+    setStatusesList(initialStatuses);
+  }, [initialLeads, initialStatuses]);
 
   const handleUpdateColumnName = async (statusId, newColumnName) => {
     try {
-      await onUpdateLeadColumn(statusId, newColumnName)
-      setStatusesList(prevStatuses =>
-        prevStatuses.map(status =>
+      await onUpdateLeadColumn(statusId, newColumnName);
+      setStatusesList((prevStatuses) =>
+        prevStatuses.map((status) =>
           status.id === statusId ? { ...status, name: newColumnName } : status,
         ),
-      )
-      setSnackbarMessage('Coluna atualizada com sucesso!')
-      setSnackbarOpen(true)
+      );
+      setSnackbarMessage('Coluna atualizada com sucesso!');
+      setSnackbarOpen(true);
     } catch (error) {
-      console.error('Erro ao atualizar a coluna:', error)
-      setSnackbarMessage('Erro ao atualizar a coluna.')
-      setSnackbarOpen(true)
+      console.error('Erro ao atualizar a coluna:', error);
+      setSnackbarMessage('Erro ao atualizar a coluna.');
+      setSnackbarOpen(true);
     }
-  }
+  };
 
   const handleDeleteLead = async () => {
     if (selectedLead) {
       try {
-        await onDeleteLead(selectedLead.id)
-        setLeadsList(prevLeads => prevLeads.filter(lead => lead.id !== selectedLead.id))
-        setSnackbarMessage('Lead excluído com sucesso!')
-        setSnackbarOpen(true)
+        await onDeleteLead(selectedLead.id);
+        setLeadsList((prevLeads) => prevLeads.filter((lead) => lead.id !== selectedLead.id));
+        setSnackbarMessage('Lead excluído com sucesso!');
+        setSnackbarOpen(true);
       } catch (error) {
-        setSnackbarMessage('Erro ao excluir lead.')
-        setSnackbarOpen(true)
+        setSnackbarMessage('Erro ao excluir lead.');
+        setSnackbarOpen(true);
       }
     }
-  }
+  };
 
-  const onDragEnd = async result => {
-    if (!result.destination) return
+  const onDragEnd = async (result) => {
+    if (!result.destination) return;
 
-    const { source, destination, draggableId } = result
+    const { source, destination, draggableId } = result;
 
     if (source.droppableId !== destination.droppableId) {
-      const leadId = parseInt(draggableId)
-      const destinationColumnId = parseInt(destination.droppableId)
+      const leadId = parseInt(draggableId);
+      const destinationColumnId = parseInt(destination.droppableId);
 
-      setLeadsList(prevLeads =>
-        prevLeads.map(lead =>
+      setLeadsList((prevLeads) =>
+        prevLeads.map((lead) =>
           lead.id === leadId
             ? { ...lead, column: { ...lead.column, id: destinationColumnId } }
             : lead,
         ),
-      )
+      );
 
       try {
         await leadService.patchLead(leadId, {
           column_id: destinationColumnId,
-        })
+        });
 
-        setSnackbarMessage('Lead movido com sucesso!')
-        setSnackbarOpen(true)
+        setSnackbarMessage('Lead movido com sucesso!');
+        setSnackbarOpen(true);
       } catch (error) {
-        console.error('Erro ao mover o lead:', error)
-        setSnackbarMessage('Erro ao mover o lead.')
-        setSnackbarOpen(true)
+        console.error('Erro ao mover o lead:', error);
+        setSnackbarMessage('Erro ao mover o lead.');
+        setSnackbarOpen(true);
 
-        setLeadsList(prevLeads =>
-          prevLeads.map(lead =>
+        setLeadsList((prevLeads) =>
+          prevLeads.map((lead) =>
             lead.id === leadId
               ? { ...lead, column: { ...lead.column, id: source.droppableId } }
               : lead,
           ),
-        )
+        );
       }
     }
-  }
+  };
 
-  const handleLeadClick = async lead => {
+  const handleLeadClick = async (lead) => {
     try {
-      const leadBody = await leadService.getLeadById(lead.id)
+      const leadBody = await leadService.find(lead.id);
 
       setSelectedLead({
         ...leadBody,
-      })
+      });
 
       setLeadData({
         id: leadBody.id,
@@ -133,19 +132,19 @@ const useLeadManager = (
         origin: leadBody.origin || '',
         funnel: leadBody.funnel || '',
         created_at: leadBody.created_at || '',
-        addresses_ids: leadBody.addresses.map(addr => addr.id) || [],
+        addresses_ids: leadBody.addresses.map((addr) => addr.id) || [],
         column: leadBody.column?.name || 'N/A',
         seller_id: leadBody.seller_id || null,
         sdr_id: leadBody.sdr_id || null,
         column_id: leadBody.column_id || null,
-      })
+      });
 
-      setTabIndex(0)
-      setOpenModal(true)
+      setTabIndex(0);
+      setOpenModal(true);
     } catch (error) {
-      console.error('Erro ao buscar os dados do lead:', error)
+      console.error('Erro ao buscar os dados do lead:', error);
     }
-  }
+  };
 
   return {
     leadsList,
@@ -165,8 +164,8 @@ const useLeadManager = (
     handleLeadClick,
     setTabIndex,
     tabIndex,
-    setSnackbarMessage
-  }
-}
+    setSnackbarMessage,
+  };
+};
 
-export default useLeadManager
+export default useLeadManager;

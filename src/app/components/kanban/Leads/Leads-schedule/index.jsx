@@ -36,13 +36,13 @@ function LeadSchedulePage({ leadId = null }) {
     const fetchLead = async () => {
       setLoadingInspections(true);
       try {
-        const data = await leadService.getLeadById(leadId, {
+        const data = await leadService.find(leadId, {
           params: {
             fields: 'schedules',
             expand: 'schedules',
-          }
+          },
         });
-        console.log("API Response:", data);
+        console.log('API Response:', data);
         setInspections(Array.isArray(data?.schedules) ? data.schedules : []);
       } catch (err) {
         enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
@@ -119,14 +119,14 @@ function LeadSchedulePage({ leadId = null }) {
         </Box>
       </Grid>
 
-      <Dialog
-        open={editModalOpen}
-        onClose={() => setEditModalOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="sm" fullWidth>
         <DialogContent sx={{ p: 10 }}>
-          <LeadAddSchedulePage leadId={leadId} serviceId={SERVICE_INSPECTION_ID} onClose={() => setEditModalOpen(false)} onRefresh={handleRefresh} />
+          <LeadAddSchedulePage
+            leadId={leadId}
+            serviceId={SERVICE_INSPECTION_ID}
+            onClose={() => setEditModalOpen(false)}
+            onRefresh={handleRefresh}
+          />
         </DialogContent>
       </Dialog>
     </Grid>

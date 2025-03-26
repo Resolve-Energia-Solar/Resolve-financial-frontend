@@ -47,11 +47,11 @@ function EditLeadTabs({ leadId }) {
   const [tabValue, setTabValue] = useState(0);
   const [lead, setLead] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
-  
+
   useEffect(() => {
     const fetchLead = async () => {
       try {
-        const data = await leadService.getLeadById(leadId);
+        const data = await leadService.find(leadId);
         setLead(data);
       } catch (err) {
         enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
@@ -73,7 +73,7 @@ function EditLeadTabs({ leadId }) {
         onChange={handleChange}
         aria-label="lead edit tabs"
         TabIndicatorProps={{ style: { display: 'none' } }}
-        sx={{ marginLeft: '25px', marginBottom: "-1px" }}
+        sx={{ marginLeft: '25px', marginBottom: '-1px' }}
       >
         {[
           'Informações Lead',
@@ -104,7 +104,7 @@ function EditLeadTabs({ leadId }) {
               '&:not(.Mui-selected)': {
                 fontWeight: 600,
                 fontSize: '12px',
-                color: '#7E8388', 
+                color: '#7E8388',
               },
             }}
           />

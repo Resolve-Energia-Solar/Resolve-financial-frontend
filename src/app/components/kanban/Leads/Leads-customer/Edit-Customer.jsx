@@ -30,7 +30,7 @@ function EditCustomerPage({ leadId = null }) {
   useEffect(() => {
     const fetchLead = async () => {
       try {
-        const data = await leadService.getLeadById(leadId, {
+        const data = await leadService.find(leadId, {
           params: {
             fields: 'id,customer,name,first_document,contact_email',
           },

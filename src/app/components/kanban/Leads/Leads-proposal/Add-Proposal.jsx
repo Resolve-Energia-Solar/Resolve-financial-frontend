@@ -50,12 +50,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const [openEnergyConsumption, setOpenEnergyConsumption] = useState(false);
   const [openProposalLayout, setOpenProposalLayout] = useState(false);
 
-  const {
-    handleSave,
-    formErrors,
-    loading: formLoading,
-    success,
-  } = useProposalForm();
+  const { handleSave, formErrors, loading: formLoading, success } = useProposalForm();
 
   const [formData, setFormData] = useState({
     amount: '',
@@ -63,7 +58,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     proposal_validity: '',
     payment: '',
     description: '',
-  })
+  });
 
   const handleChange = (field, value) => {
     setFormData((prevData) => ({
@@ -71,7 +66,6 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
       [field]: value,
     }));
   };
-  
 
   const customProducts = useSelector(selectProductsByLead(leadId));
 
@@ -100,7 +94,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     const fetchLead = async () => {
       setLoadingLeads(true);
       try {
-        const data = await leadService.getLeadById(leadId);
+        const data = await leadService.find(leadId);
         setLead(data);
         console.log(data);
       } catch (err) {
@@ -128,8 +122,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     // const queryParams = new URLSearchParams(formData).toString();
     // window.open(`apps/leads/${leadId}/proposal-layout?${queryParams}`, "_blank", "width=800,height=600");
     setOpenProposalLayout(true);
-    
-  }
+  };
 
   const [paymentMethods, setPaymentMethods] = useState([
     { id: Date.now(), method: '', financing_type: '', installments_num: '' },
@@ -381,24 +374,34 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             }}
           >
             <Button
-              startIcon={
-                <PictureAsPdfIcon sx={{ color: "#1C1B1F", }} />
-              }
+              startIcon={<PictureAsPdfIcon sx={{ color: '#1C1B1F' }} />}
               variant="outlined"
               onClick={handleOpenProposalPdf}
               sx={{
                 borderColor: 'black',
                 color: '#303030',
-                '&:hover': { backgroundColor: '#333', borderColor: 'black', '& .MuiSvgIcon-root': { color: "white"} },
+                '&:hover': {
+                  backgroundColor: '#333',
+                  borderColor: 'black',
+                  '& .MuiSvgIcon-root': { color: 'white' },
+                },
                 px: 3,
               }}
             >
-              <Typography sx={{ fontWeight: "400", fontSize: "14px"}} >Visualizar PDF</Typography>
+              <Typography sx={{ fontWeight: '400', fontSize: '14px' }}>Visualizar PDF</Typography>
             </Button>
 
             <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal} endIcon={<DeleteOutlinedIcon />}>
-                <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
+              <Button
+                variant="outlined"
+                color="error"
+                sx={{ px: 3 }}
+                onClick={discard_proposal}
+                endIcon={<DeleteOutlinedIcon />}
+              >
+                <Typography variant="body1" sx={{ mr: 1 }}>
+                  Descartar
+                </Typography>
               </Button>
 
               <Button
@@ -423,17 +426,15 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             PaperProps={{
               sx: {
                 borderRadius: '20px',
-                padding: "24px",
-                gap: "24px",
+                padding: '24px',
+                gap: '24px',
                 boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-                backgroundColor: '#FFFFFF', 
+                backgroundColor: '#FFFFFF',
               },
             }}
           >
             <DialogContent>
-              <ProposalLayout
-                formData={formData}
-              />
+              <ProposalLayout formData={formData} />
             </DialogContent>
           </Dialog>
 

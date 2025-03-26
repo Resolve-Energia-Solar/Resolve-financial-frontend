@@ -9,7 +9,14 @@ import { IconButton, Dialog, DialogTitle, DialogContent, Button } from '@mui/mat
 import AddIcon from '@mui/icons-material/Add';
 import CreateLead from '@/app/components/apps/leads/Add-lead';
 
-export default function AutoCompleteLead({ onChange, value, error, helperText, disabled, labeltitle }) {
+export default function AutoCompleteLead({
+  onChange,
+  value,
+  error,
+  helperText,
+  disabled,
+  labeltitle,
+}) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -19,7 +26,7 @@ export default function AutoCompleteLead({ onChange, value, error, helperText, d
   const fetchDefaultLead = async (leadId) => {
     if (leadId) {
       try {
-        const lead = await leadService.getLeadById(leadId);
+        const lead = await leadService.find(leadId);
         if (lead) {
           setSelectedLead({ id: lead.id, name: lead.name });
         }
@@ -58,13 +65,13 @@ export default function AutoCompleteLead({ onChange, value, error, helperText, d
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
 
   const fetchInitialLeads = useCallback(async () => {
     setLoading(true);
     try {
-      const leads = await leadService.getLeads();
+      const leads = await leadService.index();
       const formattedLeads = leads.results.map((lead) => ({
         id: lead.id,
         name: lead.name,
@@ -109,7 +116,7 @@ export default function AutoCompleteLead({ onChange, value, error, helperText, d
         disabled={disabled}
         value={selectedLead}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           fetchLeadsByName(newInputValue);
         }}
