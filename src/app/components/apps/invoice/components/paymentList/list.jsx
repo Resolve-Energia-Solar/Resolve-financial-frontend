@@ -54,6 +54,8 @@ const PaymentList = ({ onClick }) => {
           ...filters,
           page: page + 1,
           limit: rowsPerPage,
+          expand: 'sale.customer,borrower,installments',
+          fields: 'id,value,payment_type,is_paid,sale.customer.complete_name,sale.signature_date,sale.reference_value,sale.total_value,borrower.complete_name,installments,status',
         });
         setPaymentsList(response.results);
         setTotalCount(response.meta.pagination.total_count || 0);
@@ -158,7 +160,7 @@ const PaymentList = ({ onClick }) => {
                       <Typography fontSize="14px">{item?.borrower?.complete_name}</Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography fontSize="14px">{item?.installments.length}</Typography>
+                      <Typography fontSize="14px">{item?.installments?.length}</Typography>
                     </TableCell>
                     <TableCell>
                       <Typography fontSize="14px">

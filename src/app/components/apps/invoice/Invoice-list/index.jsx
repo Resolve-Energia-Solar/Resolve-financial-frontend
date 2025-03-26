@@ -1,28 +1,31 @@
 'use client';
-import React, { useState, useContext } from 'react';
-import {
-  Box,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Typography,
-  Button,
-} from '@mui/material';
-import { AddBoxRounded, FilterAlt } from '@mui/icons-material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+import React, { useContext, useState } from 'react';
 import { useRouter } from 'next/navigation';
+
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  Typography
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { AddBoxRounded, FilterAlt } from '@mui/icons-material';
+import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
 
 import FilterDrawer from '../components/filterDrawer/FilterDrawer';
 import PaymentList from '../components/paymentList/list';
 import InforCards from '../../inforCards/InforCards';
 
-import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
-
-import { InvoiceContext } from '@/app/context/InvoiceContext';
+import { FilterContext } from '@/context/FilterContext';
+import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 
 export default function InvoiceList({ onClick }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const { filters, setFilters } = useContext(InvoiceContext);
+  const { filters, setFilters } = useContext(FilterContext);
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const router = useRouter();
 
   const cardsData = [
@@ -63,16 +66,92 @@ export default function InvoiceList({ onClick }) {
     },
   ];
 
+  const paymentFilterConfig = [
+    {
+      key: 'borrower',
+      label: 'Tomador',
+      type: 'async-autocomplete', // Ou 'select' se for uma lista estática
+      endpoint: '/api/users/', // Endpoint atualizado para '/api/users/'
+      queryParam: 'search',
+      mapResponse: (response) => response.data, // Exemplo de mapeamento
+    },
+    {
+      key: 'sale',
+      label: 'Venda',
+      type: 'async-autocomplete', // Ou 'select'
+      endpoint: '/api/sales',
+      queryParam: 'search',
+      mapResponse: (response) => response.data,
+    },
+    {
+      key: 'value',
+      label: 'Valor',
+      type: 'number-range', // Para filtrar valores entre mínimo e máximo
+      subkeys: { min: 'value__gte', max: 'value__lte' },
+    },
+    {
+      key: 'payment_type',
+      label: 'Tipo de Pagamento',
+      type: 'multiselect', // Ou 'select' se não for múltiplo
+      options: [
+        { value: 'C', label: 'Crédito' },
+        { value: 'D', label: 'Débito' },
+        { value: 'B', label: 'Boleto' },
+        { value: 'F', label: 'Financiamento' },
+        { value: 'PI', label: 'Parcelamento interno' },
+        { value: 'P', label: 'Pix' },
+        { value: 'T', label: 'Transferência Bancária' },
+        { value: 'DI', label: 'Dinheiro' },
+        { value: 'PA', label: 'Poste auxiliar' },
+        { value: 'RO', label: 'Repasse de Obra' },
+      ],
+    },
+    {
+      key: 'financier',
+      label: 'Financiadora',
+      type: 'async-autocomplete',
+      endpoint: '/api/financiers',
+      queryParam: 'search',
+      mapResponse: (response) => response.data,
+    },
+    {
+      key: 'due_date',
+      label: 'Data de Vencimento',
+      type: 'range', // Para filtro de intervalo de datas
+    },
+    {
+      key: 'observation',
+      label: 'Observação',
+      type: 'custom', // Filtro customizado, como um campo de texto
+    },
+    {
+      key: 'invoice_status',
+      label: 'Status da Nota Fiscal',
+      type: 'multiselect',
+      options: [
+        { value: 'E', label: 'Emitida' },
+        { value: 'L', label: 'Liberada' },
+        { value: 'P', label: 'Pendente' },
+        { value: 'C', label: 'Cancelada' },
+      ],
+    },
+    {
+      key: 'created_at',
+      label: 'Criado em',
+      type: 'range', // Para intervalo de datas
+    },
+  ];
+
+  const handleApplyFilters = (newFilters) => {
+    if (context) {
+      setFilters(newFilters);
+      setPage(0);
+    }
+  };
 
   const toggleFilterDrawer = (open) => () => {
     setIsFilterOpen(open);
   };
-
-
-  const handleApplyFilters = (newFilters) => {
-    setFilters(newFilters);
-  };
-
 
   const handleCreateClick = () => {
     router.push('/apps/invoice/create');
@@ -110,10 +189,10 @@ export default function InvoiceList({ onClick }) {
         </Button>
         <Button
           variant="outlined"
-          startIcon={<FilterAlt />}
-          onClick={toggleFilterDrawer(true)}
+          sx={{ mt: 1, mb: 2 }}
+          onClick={() => setFilterDrawerOpen(true)}
         >
-          Filtros
+          Abrir Filtros
         </Button>
       </Box>
 
@@ -124,6 +203,14 @@ export default function InvoiceList({ onClick }) {
       />
 
       <PaymentList onClick={onClick} />
+
+      <GenericFilterDrawer
+        filters={paymentFilterConfig}
+        initialValues={filters}
+        open={filterDrawerOpen}
+        onClose={() => setFilterDrawerOpen(false)}
+        onApply={(newFilters) => setFilters(newFilters)}
+      />
     </Box>
   );
 }
