@@ -370,6 +370,26 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             </Grid>
 
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              <Grid item xs={6}>
+                  <Button
+                    variant="contained"
+                    onClick={() => setOpenEnergyConsumption(true)}
+                    sx={{
+                      backgroundColor: '#F4F5F7',
+                      color: '#303030',
+                      border: "1px solid",
+                      borderColor: "#ADADAD",
+                      px: 3,
+                      width: "100%",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      '&:hover': { boxShadow: '0', '& .MuiSvgIcon-root': { color: '#303030' } },
+                    }}
+                    endIcon={<ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} />}
+                  >
+                    <Typography variant="body1">Consumo Energético</Typography>
+                  </Button>
+                </Grid>
                 <Grid item xs={6}>
                   <CustomFormLabel
                     htmlFor="estimated_power_generation"
@@ -419,26 +439,6 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                       },
                     }}
                   />
-                </Grid>
-                <Grid item xs={6}>
-                  <Button
-                    variant="contained"
-                    onClick={() => setOpenEnergyConsumption(true)}
-                    sx={{
-                      backgroundColor: '#F4F5F7',
-                      color: '#303030',
-                      border: "1px solid",
-                      borderColor: "#ADADAD",
-                      px: 3,
-                      width: "100%",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      '&:hover': { boxShadow: '0', '& .MuiSvgIcon-root': { color: '#303030' } },
-                    }}
-                    endIcon={<ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} />}
-                  >
-                    <Typography variant="body1">Consumo Energético</Typography>
-                  </Button>
                 </Grid>
               </Grid>
 
