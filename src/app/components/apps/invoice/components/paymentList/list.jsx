@@ -50,7 +50,7 @@ const PaymentList = ({ onClick }) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await paymentService.getPayments({
+        const response = await paymentService.index({
           ...filters,
           page: page + 1,
           limit: rowsPerPage,
@@ -152,19 +152,13 @@ const PaymentList = ({ onClick }) => {
                 paymentsList.map((item) => (
                   <TableRow key={item.id} onClick={() => onClick(item)} hover>
                     <TableCell>
-                      <Typography fontSize="14px">
-                        {item?.sale?.customer?.complete_name}
-                      </Typography>
+                      <Typography fontSize="14px">{item?.sale?.customer?.complete_name}</Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography fontSize="14px">
-                        {item?.borrower?.complete_name}
-                      </Typography>
+                      <Typography fontSize="14px">{item?.borrower?.complete_name}</Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography fontSize="14px">
-                        {item?.installments.length}
-                      </Typography>
+                      <Typography fontSize="14px">{item?.installments.length}</Typography>
                     </TableCell>
                     <TableCell>
                       <Typography fontSize="14px">

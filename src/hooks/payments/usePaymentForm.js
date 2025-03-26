@@ -51,15 +51,23 @@ const usePaymentForm = (initialData, id) => {
 
   const handleAddItem = () => {
     setFormData((prev) => {
-      const newId = prev.installments.length > 0
-        ? Math.max(...prev.installments.map(installment => installment.id)) + 1
-        : 1;
+      const newId =
+        prev.installments.length > 0
+          ? Math.max(...prev.installments.map((installment) => installment.id)) + 1
+          : 1;
 
       return {
         ...prev,
         installments: [
           ...prev.installments,
-          { id: newId, installment_value: '', installment_number: '', due_date: '', is_paid: false, payment: id },
+          {
+            id: newId,
+            installment_value: '',
+            installment_number: '',
+            due_date: '',
+            is_paid: false,
+            payment: id,
+          },
         ],
       };
     });
@@ -90,21 +98,19 @@ const usePaymentForm = (initialData, id) => {
       dataToSend = { ...dataToSend, installments: formData.installments };
     }
 
-
-
     try {
       if (id) {
-        const response = await paymentService.updatePayment(id, dataToSend);
+        const response = await paymentService.update(id, dataToSend);
         setResponse(response);
       } else {
-        const response = await paymentService.createPayment(dataToSend);
+        const response = await paymentService.create(dataToSend);
         setResponse(response);
       }
       setFormErrors({});
       setSuccess(true);
     } catch (err) {
       setSuccess(false);
-      console.error("Erro ao salvar:", err);
+      console.error('Erro ao salvar:', err);
       setFormErrors(err.response?.data || {});
     } finally {
       setLoading(false);
