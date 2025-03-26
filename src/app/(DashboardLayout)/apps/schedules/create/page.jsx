@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import {
     Box, Button, Typography, Grid, MenuItem, InputLabel, Select, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, TextField
@@ -9,6 +10,7 @@ import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcr
 import BlankCard from '@/app/components/shared/BlankCard';
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 import scheduleService from '@/services/scheduleService';
+import { useSnackbar } from 'notistack';
 
 const CreateSchedulePage = () => {
     const router = useRouter();
@@ -31,6 +33,9 @@ const CreateSchedulePage = () => {
     const [isEndModified, setIsEndModified] = useState(false);
     const [minEnd, setMinEnd] = useState({ date: '', time: '' });
     const [hasProject, setHasProject] = useState(null);
+    const { enqueueSnackbar } = useSnackbar();
+    const user = useSelector((state) => state.user?.user);
+    console.log('ID', user.id);
 
     const handleInputChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -47,11 +52,34 @@ const CreateSchedulePage = () => {
             schedule_agent: formData.schedule_agent?.value,
             branch: formData.branch?.value,
             address: formData.address?.value,
+            schedule_creator: user.id
         };
+
+        const fieldLabels = {
+            schedule_date: "Data do Agendamento",
+            schedule_start_time: "Horário de Início",
+            schedule_end_date: "Data Final",
+            schedule_end_time: "Horário Final",
+            service: "Serviço",
+            customer: "Cliente",
+            project: "Projeto",
+            schedule_agent: "Agente",
+            branch: "Unidade",
+            address: "Endereço",
+            observation: "Observação",
+            schedule_creator: "Criador do Agendamento"
+        };
+
         try {
             await scheduleService.createSchedule(submitData);
             router.push('/apps/schedules');
         } catch (err) {
+            Object.entries(err.response.data).forEach(([field, messages]) => {
+                messages.forEach(message => {
+                    const label = fieldLabels[field] || field;
+                    enqueueSnackbar(`${label}: ${message}`, { variant: 'error' });
+                });
+            });
             setErrors(err.response.data);
             setLoading(false);
         }
@@ -118,6 +146,7 @@ const CreateSchedulePage = () => {
                                 helperText={errors.service?.[0] || ''}
                                 error={!!errors.service}
                                 fullWidth
+                                required
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -148,6 +177,7 @@ const CreateSchedulePage = () => {
                                 InputLabelProps={{ shrink: true }}
                                 helperText={errors.schedule_date?.[0] || ''}
                                 error={!!errors.schedule_date}
+                                required
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -161,6 +191,7 @@ const CreateSchedulePage = () => {
                                 InputLabelProps={{ shrink: true }}
                                 helperText={errors.schedule_start_time?.[0] || ''}
                                 error={!!errors.schedule_start_time}
+                                required
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -180,6 +211,7 @@ const CreateSchedulePage = () => {
                                 }}
                                 helperText={errors.schedule_end_date?.[0] || ''}
                                 error={!!errors.schedule_end_date}
+                                required
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -214,6 +246,7 @@ const CreateSchedulePage = () => {
                                 }}
                                 helperText={errors.schedule_end_time?.[0] || ''}
                                 error={!!errors.schedule_end_time}
+                                required
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -353,6 +386,7 @@ const CreateSchedulePage = () => {
                                                 disabled
                                                 helperText={errors.address?.[0] || ''}
                                                 error={!!errors.address}
+                                                required
                                             />
                                         </Grid>
                                     </>
@@ -426,6 +460,7 @@ const CreateSchedulePage = () => {
                                         fullWidth
                                         helperText={errors.address?.[0] || ''}
                                         error={!!errors.address}
+                                        required
                                     />
                                 </Grid>
                             </>
