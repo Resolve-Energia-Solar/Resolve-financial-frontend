@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { useSelector } from 'react-redux';
+import Link from 'next/link';
 import {
     Box, Button, FormControl, Grid, InputLabel, Select, MenuItem, Chip, CardContent, Typography,
     Table, TableCell, TableContainer, TableHead, TableRow, TableBody, TablePagination,
@@ -242,7 +243,16 @@ const ScheduleTable = () => {
             <Breadcrumb items={BCrumb} />
             <BlankCard>
                 <CardContent>
-                    <Typography variant="h5" gutterBottom>Lista de Agendamentos</Typography>
+                    <Grid container justifyContent="space-between">
+                        <Typography variant="h5" gutterBottom alignContent={"center"}>Lista de Agendamentos</Typography>
+                        <Box sx={{ p: 2 }}>
+                            <Link href="/apps/schedules/create" passHref>
+                                <Button variant="contained" color="primary">
+                                    Criar Agendamento
+                                </Button>
+                            </Link>
+                        </Box>
+                    </Grid>
                     <Grid container alignItems="center" justifyContent={"space-between"} my={2}>
                         <Grid item xs={10}>
                             <FormControl fullWidth>
