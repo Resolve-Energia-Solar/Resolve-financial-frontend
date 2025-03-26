@@ -105,21 +105,6 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Solic. Financiamento',
-    icon: IconBuildingBank,
-    href: '/apps/funding-request',
-
-    children: [
-      {
-        id: uniqueId(),
-        title: 'Sicoob',
-        icon: IconPoint,
-        href: '/apps/funding-request/sicoob',
-      },
-    ],
-  },
-  {
-    id: uniqueId(),
     title: 'Vendas',
     icon: IconShoppingCart,
     href: '/apps/commercial/sale',
