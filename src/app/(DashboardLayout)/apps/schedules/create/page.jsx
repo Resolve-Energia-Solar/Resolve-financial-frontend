@@ -3,14 +3,16 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import {
-    Box, Button, Typography, Grid, MenuItem, InputLabel, Select, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, TextField
+    Box, Button, Typography, Grid, Tooltip, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, TextField
 } from '@mui/material';
+import HelpIcon from '@mui/icons-material/Help';
 import PageContainer from '@/app/components/container/PageContainer';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import BlankCard from '@/app/components/shared/BlankCard';
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 import scheduleService from '@/services/scheduleService';
 import { useSnackbar } from 'notistack';
+import AutoCompleteUserSchedule from '@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule';
 
 const CreateSchedulePage = () => {
     const router = useRouter();
@@ -35,7 +37,6 @@ const CreateSchedulePage = () => {
     const [hasProject, setHasProject] = useState(null);
     const { enqueueSnackbar } = useSnackbar();
     const user = useSelector((state) => state.user?.user);
-    console.log('ID', user.id);
 
     const handleInputChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -130,17 +131,19 @@ const CreateSchedulePage = () => {
                             <GenericAsyncAutocompleteInput
                                 label="Serviço"
                                 value={formData.service}
-                                onChange={(newValue) =>
-                                    setFormData({ ...formData, service: newValue })
-                                }
+                                onChange={(newValue) => {
+                                    setFormData({ ...formData, service: newValue });
+                                    console.log('newValue', newValue);
+                                }}
                                 endpoint="/api/services/"
                                 queryParam="name__icontains"
-                                extraParams={{ fields: ['id', 'name', 'deadline.hours'], expand: ['deadline'] }}
+                                extraParams={{ fields: ['id', 'name', 'deadline.hours', 'category'], expand: ['deadline'] }}
                                 mapResponse={(data) =>
                                     data.results.map((s) => ({
                                         label: s.name,
                                         value: s.id,
-                                        deadline: s.deadline
+                                        deadline: s.deadline,
+                                        category: s.category
                                     }))
                                 }
                                 helperText={errors.service?.[0] || ''}
@@ -149,20 +152,32 @@ const CreateSchedulePage = () => {
                                 required
                             />
                         </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <GenericAsyncAutocompleteInput
-                                label="Agente"
+                        <Grid item xs={12} sm={6} lg={6}>
+                            <Typography htmlFor="field_agent">
+                                Agentes Disponíveis{' '}
+                                <Tooltip
+                                    title="Os agentes de campo são alocados com base na disponibilidade de horário e proximidade geográfica. Ajuste os parâmetros para visualizar opções disponíveis."
+                                    placement="right-end"
+                                >
+                                    <HelpIcon fontSize="small" />
+                                </Tooltip>
+                            </Typography>
+                            <AutoCompleteUserSchedule
+                                onChange={(id) => handleChange('schedule_agent', id)}
                                 value={formData.schedule_agent}
-                                onChange={(newValue) => setFormData({ ...formData, schedule_agent: newValue })}
-                                endpoint="/api/users/"
-                                queryParam="complete_name__icontains"
-                                extraParams={{ fields: ['id', 'complete_name'] }}
-                                mapResponse={(data) =>
-                                    data.results.map((u) => ({ label: u.complete_name, value: u.id }))
-                                }
-                                fullWidth
-                                helperText={errors.schedule_agent?.[0] || ''}
-                                error={!!errors.schedule_agent}
+                                disabled={!formData.service?.category || !formData.schedule_date || !formData.schedule_start_time}
+                                query={{
+                                    category: formData.service?.category,
+                                    scheduleDate: formData.schedule_date,
+                                    scheduleStartTime: formData.schedule_start_time,
+                                    scheduleEndTime: formData.schedule_end_time,
+                                    // scheduleLatitude: formData.address?.latitude,
+                                    // scheduleLongitude: formData.address?.longitude,
+                                }}
+                                {...(errors.schedule_agent_id && {
+                                    error: true,
+                                    helperText: formErrors.schedule_agent_id,
+                                })}
                             />
                         </Grid>
                         {/* Datas e horários */}
