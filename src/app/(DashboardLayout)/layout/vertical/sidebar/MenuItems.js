@@ -71,7 +71,7 @@ const Menuitems = [
         id: uniqueId(),
         title: 'Ordem de Serviço',
         icon: IconPoint,
-        href: '/apps/inspections/schedule',
+        href: '/apps/schedules',
       },
       {
         id: uniqueId(),
