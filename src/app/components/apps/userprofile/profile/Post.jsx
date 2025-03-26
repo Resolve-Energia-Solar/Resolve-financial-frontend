@@ -20,7 +20,7 @@ const Post = ({ user }) => {
     setLoading(true);
     try {
       const userContentType = await getContentType('accounts', 'user');
-      const data = await commentService.getComments(userId, userContentType, {
+      const data = await commentService.index(userId, userContentType, {
         author: userId,
         ordering: '-created_at',
         fields: 'id,text,author.id,author.profile_picture,author.complete_name,created_at',
@@ -40,9 +40,11 @@ const Post = ({ user }) => {
 
   return (
     <Grid container spacing={3}>
-      {user.id == loggedUser.id && <Grid item sm={12}>
-        <PostTextBox onPostCreated={fetchPosts} />
-      </Grid>}
+      {user.id == loggedUser.id && (
+        <Grid item sm={12}>
+          <PostTextBox onPostCreated={fetchPosts} />
+        </Grid>
+      )}
       {loading ? (
         Array.from(new Array(3)).map((_, index) => (
           <Grid item sm={12} key={index}>
