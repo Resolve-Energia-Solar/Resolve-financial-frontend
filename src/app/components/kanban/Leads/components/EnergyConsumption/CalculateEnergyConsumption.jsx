@@ -195,10 +195,12 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                             </Grid>
 
                             <Grid container rowSpacing={0} columnSpacing={{ xs: 1, sm: 2, md: 3 }} >
-                                <Grid item xs={12}>
-                                    <Typography sx={{ color: "#000000", fontWeight: "400", fontSize: "18px", mt: 1 }}>Consumo energético</Typography>
+                                <Grid item xs={12} sx={{mt: 2, mb: 0}}>
+                                    <Typography sx={{ color: "#000000", fontWeight: "400", fontSize: "18px" }}>Consumo energético</Typography>
                                 </Grid>
+                            </Grid>
 
+                            <Grid container rowSpacing={0} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ mt: 0}} >
                                 <Grid item xs={3}>
                                     <CustomFormLabel
                                         htmlFor="medimum_consumption"
