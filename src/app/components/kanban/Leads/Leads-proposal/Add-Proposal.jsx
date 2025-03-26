@@ -256,7 +256,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 </Grid>
               </Grid>
 
-              <Grid container rowSpacing={1} xs={12}>
+              {/* <Grid container rowSpacing={1} xs={12}>
                 {paymentMethods.map((payment, index) => (
                   <Grid container spacing={2} key={payment.id} alignItems="center">
                     <Grid item xs={6} >
@@ -380,7 +380,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     </Typography>
                   </IconButton>
                 </Grid>
-              </Grid>
+              </Grid> */}
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={12}>
