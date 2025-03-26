@@ -20,6 +20,7 @@ import { FilterContext } from "@/context/FilterContext";
 import scheduleService from '@/services/scheduleService';
 import serviceCatalogService from '@/services/serviceCatalogService';
 import { formatDate } from '@/utils/dateUtils';
+import DetailsDrawer from '@/app/components/apps/schedule/DetailsDrawer';
 
 const BCrumb = [
     { to: '/', title: 'Início' },
@@ -40,6 +41,13 @@ const ScheduleTable = () => {
     const [orderDirection, setOrderDirection] = useState('asc');
     const userPermissions = useSelector((state) => state.user.permissions);
     const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [selectedSchedule, setSelectedSchedule] = useState(null);
+
+    const handleRowClick = (schedule) => {
+        setSelectedSchedule(schedule);
+        setIsDrawerOpen(true);
+    };
 
     const hasPermission = useCallback(
         (permissions) => !permissions || permissions.some(p => userPermissions?.includes(p)),
@@ -335,7 +343,12 @@ const ScheduleTable = () => {
                                 </TableHead>
                                 <TableBody>
                                     {scheduleList.map(schedule => (
-                                        <TableRow key={schedule.id} hover>
+                                        <TableRow
+                                            key={schedule.id}
+                                            hover
+                                            onClick={() => handleRowClick(schedule)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
                                             <TableCell>
                                                 {`${formatDate(schedule.schedule_date)} - ${schedule.schedule_start_time}`}
                                             </TableCell>
@@ -351,6 +364,11 @@ const ScheduleTable = () => {
                                                 </TableCell>
                                             )}
                                             <TableCell>{new Date(schedule.created_at).toLocaleString()}</TableCell>
+                                            <DetailsDrawer
+                                                open={isDrawerOpen}
+                                                onClose={() => setIsDrawerOpen(false)}
+                                                schedule={selectedSchedule}
+                                            />
                                         </TableRow>
                                     ))}
                                     {loading && page > 1 && (

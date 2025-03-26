@@ -19,8 +19,6 @@ const GenericAsyncAutocompleteInput = ({
   const [options, setOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
-  console.log()
-  // Memorizando os objetos para evitar que mudem a cada render
   const stableExtraParams = useMemo(() => extraParams, [JSON.stringify(extraParams)]);
   const stableMapResponse = useMemo(() => mapResponse, [mapResponse]);
 
