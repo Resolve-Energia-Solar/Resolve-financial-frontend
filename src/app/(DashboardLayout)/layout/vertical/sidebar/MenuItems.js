@@ -52,10 +52,22 @@ const Menuitems = [
     id: uniqueId(),
     title: 'CRM',
     icon: IconBriefcase2,
-    href: '/',
+    permissions: ['core.view_board', 'resolve_crm.view_lead'],
     children: [
-      { id: uniqueId(), title: 'Kanban', icon: IconLayoutKanban, href: '/apps/kanban/', permissions: ['core.view_board'] },
-      { id: uniqueId(), title: 'Leads', icon: IconId, href: '/apps/leads', permissions: ['resolve_crm.view_lead'] },
+      { 
+        id: uniqueId(), 
+        title: 'Kanban', 
+        icon: IconLayoutKanban, 
+        href: '/apps/kanban/', 
+        permissions: ['core.view_board'] 
+      },
+      { 
+        id: uniqueId(), 
+        title: 'Leads', 
+        icon: IconId, 
+        href: '/apps/leads', 
+        permissions: ['resolve_crm.view_lead'] 
+      },
     ],
   },
   // {
