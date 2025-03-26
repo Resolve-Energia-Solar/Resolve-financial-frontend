@@ -11,7 +11,7 @@ const useFormBuilder = (id) => {
 
     const fetchForm = async () => {
       try {
-        const data = await formBuilderService.getFormById(id);
+        const data = await formBuilderService.find(id);
         setFormBuilderData(data);
       } catch (err) {
         setError('Erro ao carregar o formulário');

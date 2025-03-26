@@ -50,9 +50,9 @@ const useFormBuilderForm = (initialData, id) => {
     try {
       let response;
       if (id) {
-        response = await formBuilderService.updateForm(id, dataToSend);
+        response = await formBuilderService.update(id, dataToSend);
       } else {
-        response = await formBuilderService.createForm(dataToSend);
+        response = await formBuilderService.create(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);
