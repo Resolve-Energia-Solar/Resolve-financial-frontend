@@ -1,7 +1,5 @@
 'use client';
-import React, { useContext, useState, useEffect } from 'react';
-import { InvoiceContext } from '@/app/context/InvoiceContext/index';
-import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 import {
   Button,
   Typography,
@@ -169,9 +167,9 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
         <Grid item xs={12} sm={6}>
           <CustomFormLabel htmlFor="name">Tomador</CustomFormLabel>
           <AutoCompleteUser
-             onChange={(id) => handleChange('borrower_id', id)}
-             value={formData.borrower_id}
-             {...(formErrors.borrower_id && { error: true, helperText: formErrors.borrower_id })}
+            onChange={(id) => handleChange('borrower_id', id)}
+            value={formData.borrower_id}
+            {...(formErrors.borrower_id && { error: true, helperText: formErrors.borrower_id })}
           />
         </Grid>
         {formData.payment_type === 'F' && (
@@ -293,9 +291,9 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
                           }
                           {...(formErrors.installments &&
                             formErrors.installments[index]?.installment_value && {
-                              error: true,
-                              helperText: formErrors.installments[index].installment_value,
-                            })}
+                            error: true,
+                            helperText: formErrors.installments[index].installment_value,
+                          })}
                           fullWidth
                         />
                       </TableCell>
@@ -308,9 +306,9 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
                           }
                           {...(formErrors.installments &&
                             formErrors.installments[index]?.installment_number && {
-                              error: true,
-                              helperText: formErrors.installments[index].installment_number,
-                            })}
+                            error: true,
+                            helperText: formErrors.installments[index].installment_number,
+                          })}
                           fullWidth
                         />
                       </TableCell>
@@ -323,9 +321,9 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
                           }
                           {...(formErrors.installments &&
                             formErrors.installments[index]?.due_date && {
-                              error: true,
-                              helperText: formErrors.installments[index].due_date,
-                            })}
+                            error: true,
+                            helperText: formErrors.installments[index].due_date,
+                          })}
                           fullWidth
                         />
                       </TableCell>

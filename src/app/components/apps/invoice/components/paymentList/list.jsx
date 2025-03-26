@@ -21,7 +21,7 @@ import PaymentStatusChip from '../../../../../../utils/status/PaymentStatusChip'
 import paymentService from '@/services/paymentService';
 import { useRouter } from 'next/navigation';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
-import { InvoiceContext } from '@/app/context/InvoiceContext';
+import { FilterContext } from '@/context/FilterContext';
 
 const PaymentList = ({ onClick }) => {
   // Estados para dados, loading, erro e paginação
@@ -37,7 +37,7 @@ const PaymentList = ({ onClick }) => {
   const [invoiceToDelete, setInvoiceToDelete] = useState(null);
 
   const router = useRouter();
-  const { filters, refresh } = useContext(InvoiceContext);
+  const { filters, refresh } = useContext(FilterContext);
 
   // Sempre que os filtros ou o refresh mudarem, reseta a página
   useEffect(() => {
