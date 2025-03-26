@@ -369,6 +369,79 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               </Grid>
             </Grid>
 
+            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                <Grid item xs={6}>
+                  <CustomFormLabel
+                    htmlFor="estimated_power_generation"
+                    sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
+                  >
+                    Geração de energia estimada
+                  </CustomFormLabel>
+                  <TextField
+                    name="estimated_power_generation"
+                    value={formData.estimated_power_generation}
+                    onChange={(e) => handleChange('estimated_power_generation', e.target.value)}
+                    fullWidth
+                    disabled
+                    // placeholder="2500 kWh"
+                    InputProps={{
+                      sx: {
+                        input: {
+                            color: "#7E92A2",
+                            fontWeight: "400",
+                            fontSize: "12px",
+                            opacity: 1,
+                          
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={6}>
+                  <CustomFormLabel htmlFor="medium_energy_val" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Consumo médio de energia</CustomFormLabel>
+                  <TextField
+                    name="medium_energy_val"
+                    value={formData.medium_energy_val}
+                    onChange={(e) => handleChange('medium_energy_val', e.target.value)}
+                    fullWidth
+                    disabled
+                    // placeholder='1800 kWh'
+                    InputProps={{
+                      sx: {
+                        input: {
+                            color: "#7E92A2",
+                            fontWeight: "400",
+                            fontSize: "12px",
+                            opacity: 1,
+                          
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <Button
+                    variant="contained"
+                    onClick={() => setOpenEnergyConsumption(true)}
+                    sx={{
+                      backgroundColor: '#F4F5F7',
+                      color: '#303030',
+                      border: "1px solid",
+                      borderColor: "#ADADAD",
+                      px: 3,
+                      width: "100%",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      '&:hover': { boxShadow: '0', '& .MuiSvgIcon-root': { color: '#303030' } },
+                    }}
+                    endIcon={<ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} />}
+                  >
+                    <Typography variant="body1">Consumo Energético</Typography>
+                  </Button>
+                </Grid>
+              </Grid>
+
             <Grid
               item
               xs={12}
