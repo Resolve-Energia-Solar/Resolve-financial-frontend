@@ -4,15 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'next/navigation';
 
-import {
-  Grid,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Alert,
-  Stack,
-  Button,
-} from '@mui/material';
+import { Grid, RadioGroup, FormControlLabel, Radio, Alert, Stack, Button } from '@mui/material';
 
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
@@ -26,7 +18,7 @@ import userService from '@/services/userService';
 import employeeService from '@/services/employeeService';
 
 function EmployeeForm({ employee, onChange, errors }) {
-  const loggedUser = useSelector(state => state.user?.user);
+  const loggedUser = useSelector((state) => state.user?.user);
   const isSuperUser = loggedUser?.is_superuser;
   const [formData, setFormData] = useState({
     contract_type: employee?.contract_type || '',
@@ -55,7 +47,7 @@ function EmployeeForm({ employee, onChange, errors }) {
   const handleChange = (field, value) => {
     // Permite alteração somente se for superusuário
     if (!isSuperUser) return;
-    setFormData(prev => {
+    setFormData((prev) => {
       const newData = { ...prev, [field]: value };
       onChange(newData);
       return newData;
@@ -70,7 +62,7 @@ function EmployeeForm({ employee, onChange, errors }) {
         <RadioGroup
           row
           value={formData.contract_type}
-          onChange={e => handleChange('contract_type', e.target.value)}
+          onChange={(e) => handleChange('contract_type', e.target.value)}
         >
           <FormControlLabel
             disabled={!isSuperUser}
@@ -92,7 +84,7 @@ function EmployeeForm({ employee, onChange, errors }) {
           label="Data de Admissão"
           name="hire_date"
           value={formData.hire_date}
-          onChange={newValue => handleChange('hire_date', newValue)}
+          onChange={(newValue) => handleChange('hire_date', newValue)}
           error={!!errors.hire_date}
           helperText={errors.hire_date ? errors.hire_date[0] : ''}
           disabled={!isSuperUser}
@@ -104,7 +96,7 @@ function EmployeeForm({ employee, onChange, errors }) {
             label="Data de Demissão"
             name="resignation_date"
             value={formData.resignation_date}
-            onChange={newValue => handleChange('resignation_date', newValue)}
+            onChange={(newValue) => handleChange('resignation_date', newValue)}
             error={!!errors.resignation_date}
             helperText={errors.resignation_date ? errors.resignation_date[0] : ''}
             disabled={!isSuperUser}
@@ -117,7 +109,7 @@ function EmployeeForm({ employee, onChange, errors }) {
         <CustomFormLabel>Gestor</CustomFormLabel>
         <AutoCompleteUser
           value={formData.user_manager}
-          onChange={newValue => handleChange('user_manager', newValue)}
+          onChange={(newValue) => handleChange('user_manager', newValue)}
           fullWidth
           error={!!errors.user_manager}
           helperText={errors.user_manager ? errors.user_manager[0] : ''}
@@ -129,7 +121,7 @@ function EmployeeForm({ employee, onChange, errors }) {
         <AutoCompleteDepartament
           label="Departamento"
           value={formData.department_id}
-          onChange={newValue => handleChange('department_id', newValue)}
+          onChange={(newValue) => handleChange('department_id', newValue)}
           fullWidth
           error={!!errors.department_id}
           helperText={errors.department_id ? errors.department_id[0] : ''}
@@ -141,7 +133,7 @@ function EmployeeForm({ employee, onChange, errors }) {
         <AutoCompleteBranch
           label="Unidade"
           value={formData.branch_id}
-          onChange={newValue => handleChange('branch_id', newValue)}
+          onChange={(newValue) => handleChange('branch_id', newValue)}
           fullWidth
           error={!!errors.branch_id}
           helperText={errors.branch_id ? errors.branch_id[0] : ''}
@@ -155,7 +147,7 @@ function EmployeeForm({ employee, onChange, errors }) {
         <AutoCompleteRole
           label="Cargo"
           value={formData.role_id}
-          onChange={newValue => handleChange('role_id', newValue)}
+          onChange={(newValue) => handleChange('role_id', newValue)}
           fullWidth
           error={!!errors.role_id}
           helperText={errors.role_id ? errors.role_id[0] : ''}
@@ -167,7 +159,7 @@ function EmployeeForm({ employee, onChange, errors }) {
           <CustomFormLabel>Unidades Relacionadas</CustomFormLabel>
           <RelatedBranchesSelect
             value={formData.related_branches}
-            onChange={newValue => handleChange('related_branches', newValue)}
+            onChange={(newValue) => handleChange('related_branches', newValue)}
             error={!!errors.related_branches}
             helperText={errors.related_branches ? errors.related_branches[0] : ''}
             disabled={!isSuperUser}
@@ -180,10 +172,9 @@ function EmployeeForm({ employee, onChange, errors }) {
 
 export { EmployeeForm };
 
-
 export default function EmployeeData() {
   const { id } = useParams();
-  const loggedUser = useSelector(state => state.user?.user);
+  const loggedUser = useSelector((state) => state.user?.user);
   const isSuperUser = loggedUser?.is_superuser;
   const [userData, setUserData] = useState(null);
   const [employeeData, setEmployeeData] = useState({
@@ -202,8 +193,9 @@ export default function EmployeeData() {
 
   useEffect(() => {
     if (id) {
-      userService.getUserById(id)
-        .then(data => {
+      userService
+        .getUserById(id)
+        .then((data) => {
           setUserData(data);
           let dataEmployee = {};
           if (data.employee) {
@@ -222,11 +214,11 @@ export default function EmployeeData() {
             });
           }
         })
-        .catch(err => console.error(err));
+        .catch((err) => console.error(err));
     }
   }, [id]);
 
-  const handleEmployeeChange = data => {
+  const handleEmployeeChange = (data) => {
     setEmployeeData(data);
   };
 
@@ -241,17 +233,17 @@ export default function EmployeeData() {
           employeeData.contract_type === 'PJ'
             ? 'P'
             : employeeData.contract_type === 'CLT'
-              ? 'C'
-              : employeeData.contract_type,
+            ? 'C'
+            : employeeData.contract_type,
         hire_date: employeeData.hire_date ? employeeData.hire_date : null,
         resignation_date: employeeData.resignation_date ? employeeData.resignation_date : null,
         user: {},
       };
 
       if (userData && userData.employee) {
-        await employeeService.putEmployee(userData.employee.id, payload);
+        await employeeService.update(userData.employee.id, payload);
       } else {
-        await employeeService.createEmployee(payload);
+        await employeeService.create(payload);
       }
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
