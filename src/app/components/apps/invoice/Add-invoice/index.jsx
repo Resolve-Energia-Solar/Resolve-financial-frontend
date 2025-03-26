@@ -79,7 +79,7 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
     { value: 'PI', label: 'Parcelamento Interno' },
     { value: 'P', label: 'Pix' },
     { value: 'T', label: 'Transferência' },
-    { value: 'D', label: 'Dinheiro' },
+    { value: 'DI', label: 'Dinheiro' },
     { value: 'PA', label: 'Poste Auxiliar' },
     { value: 'RO', label: 'Repasse de Obra' },
   ];
@@ -169,9 +169,9 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
         <Grid item xs={12} sm={6}>
           <CustomFormLabel htmlFor="name">Tomador</CustomFormLabel>
           <AutoCompleteUser
-             onChange={(id) => handleChange('borrower_id', id)}
-             value={formData.borrower_id}
-             {...(formErrors.borrower_id && { error: true, helperText: formErrors.borrower_id })}
+            onChange={(id) => handleChange('borrower_id', id)}
+            value={formData.borrower_id}
+            {...(formErrors.borrower_id && { error: true, helperText: formErrors.borrower_id })}
           />
         </Grid>
         {formData.payment_type === 'F' && (

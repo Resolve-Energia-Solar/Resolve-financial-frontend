@@ -41,7 +41,7 @@ const DetailInvoicePage = ({ payment_id = null }) => {
     PI: 'Parcelamento Interno',
     P: 'Pix',
     T: 'Transferência',
-    D: 'Dinheiro',
+    DI: 'Dinheiro',
   };
 
   const invoiceStatus = {
