@@ -71,7 +71,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
       [field]: value,
     }));
   };
-  
+
 
   const customProducts = useSelector(selectProductsByLead(leadId));
 
@@ -128,7 +128,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     // const queryParams = new URLSearchParams(formData).toString();
     // window.open(`apps/leads/${leadId}/proposal-layout?${queryParams}`, "_blank", "width=800,height=600");
     setOpenProposalLayout(true);
-    
+
   }
 
   const [paymentMethods, setPaymentMethods] = useState([
@@ -367,10 +367,10 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   />
                 </Grid>
               </Grid>
-            </Grid>
 
-            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-              <Grid item xs={6}>
+
+              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                <Grid item xs={4}>
                   <CustomFormLabel
                     htmlFor="estimated_power_generation"
                     sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
@@ -390,14 +390,14 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                       height: "39px",
                       justifyContent: "space-between",
                       alignItems: "center",
-                      '&:hover': { boxShadow: '0', '& .MuiSvgIcon-root': { color: '#303030' } },
+                      '&:hover': { backgroundColor: theme.palette.primary.main, border: "transparent", boxShadow: '0', '& .MuiSvgIcon-root': { color: '#303030' } },
                     }}
                     endIcon={<ManageSearchIcon sx={{ ml: 1, color: "#7E8388" }} />}
                   >
                     <Typography variant="body1">Consumo Energético</Typography>
                   </Button>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <CustomFormLabel
                     htmlFor="estimated_power_generation"
                     sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
@@ -414,18 +414,18 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     InputProps={{
                       sx: {
                         input: {
-                            color: "#7E92A2",
-                            fontWeight: "400",
-                            fontSize: "12px",
-                            opacity: 1,
-                          
+                          color: "#7E92A2",
+                          fontWeight: "400",
+                          fontSize: "12px",
+                          opacity: 1,
+
                         },
                       },
                     }}
                   />
                 </Grid>
 
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <CustomFormLabel htmlFor="medium_energy_val" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Consumo médio de energia</CustomFormLabel>
                   <TextField
                     name="medium_energy_val"
@@ -437,17 +437,18 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     InputProps={{
                       sx: {
                         input: {
-                            color: "#7E92A2",
-                            fontWeight: "400",
-                            fontSize: "12px",
-                            opacity: 1,
-                          
+                          color: "#7E92A2",
+                          fontWeight: "400",
+                          fontSize: "12px",
+                          opacity: 1,
+
                         },
                       },
                     }}
                   />
                 </Grid>
               </Grid>
+            </Grid>
 
             <Grid
               item
@@ -478,11 +479,11 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               sx={{
                 borderColor: 'black',
                 color: '#303030',
-                '&:hover': { backgroundColor: '#333', borderColor: 'black', '& .MuiSvgIcon-root': { color: "white"} },
+                '&:hover': { backgroundColor: '#333', borderColor: 'black', '& .MuiSvgIcon-root': { color: "white" } },
                 px: 3,
               }}
             >
-              <Typography sx={{ fontWeight: "400", fontSize: "14px"}} >Visualizar PDF</Typography>
+              <Typography sx={{ fontWeight: "400", fontSize: "14px" }} >Visualizar PDF</Typography>
             </Button>
 
             <Box sx={{ display: 'flex', gap: 2 }}>
@@ -515,7 +516,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 padding: "24px",
                 gap: "24px",
                 boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-                backgroundColor: '#FFFFFF', 
+                backgroundColor: '#FFFFFF',
               },
             }}
           >
