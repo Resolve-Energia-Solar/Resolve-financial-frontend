@@ -74,7 +74,8 @@ export function ProposalCard({ leadId = null }) {
         container
         alignItems={'center'}
         spacing={0}
-        sx={{ minHeight: 300 }}
+        sx={{ minHeight: 200 }}
+        // justifyContent={"space-between"}
       >
         <Grid
           item
@@ -163,7 +164,7 @@ export function ProposalCard({ leadId = null }) {
         </Grid>
 
 
-        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 2 }}>
+        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 2, mt: 2 }}>
           <IconButton
             sx={{
               p: 0,
@@ -171,6 +172,7 @@ export function ProposalCard({ leadId = null }) {
               fontSize: 14,
               display: 'flex',
               alignItems: 'center',
+              justifyContent: "flex-start",
               gap: 0.5,
               transition: '0.3s',
               '&:hover': {
@@ -191,6 +193,7 @@ export function ProposalCard({ leadId = null }) {
               fontSize: 14,
               display: 'flex',
               alignItems: 'center',
+              justifyContent: "flex-start",
               gap: 0.5,
               transition: '0.3s',
               '&:hover': {
