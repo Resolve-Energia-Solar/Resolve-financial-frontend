@@ -40,11 +40,10 @@ function TabPanel({ children, value, index, ...other }) {
 }
 
 
-export default function EditProject({ projectId = null, projectData = null }) {
+export default function EditProject({ projectData = null }) {
   const params = useParams();
-  const id = projectId || params.id;
 
-  console.log('EditProject', id);
+  const id = projectData?.id;
 
   const [value, setValue] = useState(0);
   const { documentTypes } = useDocumentTypesByFilter({ app_label__in: 'engineering' });
@@ -121,7 +120,7 @@ export default function EditProject({ projectId = null, projectData = null }) {
 
       <TabPanel value={value} index={5}>
         <Box mt={2}>
-          <UploadDocument projectId={id} project={projectData} />
+          <UploadDocument projectId={id} />
         </Box>
       </TabPanel>
 

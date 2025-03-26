@@ -72,7 +72,7 @@ const unitService = {
     const response = await apiClient.delete(`/api/units/${unitId}/`);
     return response.data;
   },
-  getUnitById: async (unitId) => {
+  getUnitById: async (unitId, params = {}) => {
     const response = await apiClient.get(`/api/units/${unitId}/`);
     return response.data;
   },

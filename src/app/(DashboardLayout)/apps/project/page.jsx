@@ -29,7 +29,7 @@ const ProjectListing = ({ fields = 'id,product.id,sale.id,sale.customer.id', exp
           <CardContent>
             <ProjectList onClick={onRowClick} />
             <SideDrawer open={openDrawer} onClose={toggleDrawerClosed} title="Detalhes do Projeto">
-              <EditProject projectId={projectData?.id} projectData={projectData} />
+              <EditProject projectData={projectData} />
             </SideDrawer>
           </CardContent>
         </BlankCard>

@@ -16,7 +16,9 @@ export default function AutoCompleteUnits({ onChange, value, error, helperText, 
     const fetchDefaultUnit = async () => {
       if (value) {
         try {
-          const unit = await unitService.getUnitById(value);
+          const unit = await unitService.getUnitById(value, {
+            fields: 'id,name',
+          });
           if (unit) {
             setSelectedUnit({
               id: unit.id,
@@ -49,7 +51,11 @@ export default function AutoCompleteUnits({ onChange, value, error, helperText, 
       }
       setLoading(true);
       try {
-        const units = await unitService.getUnitsByName(name);
+        const units = await unitService.getUnits({
+          limit: 15,
+          page: 1,
+          name__icontains: name,
+        });
         if (units && units.results) {
           const formattedUnits = units.results.map((unit) => ({
             id: unit.id,

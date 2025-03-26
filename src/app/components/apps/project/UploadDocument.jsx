@@ -292,14 +292,13 @@ const UploadDocument = ({ projectId }) => {
         )}
       </Stack>
 
-      {materials.length > 0 && (
         <TableContainer component={Paper} sx={{ marginTop: 4, maxHeight: 400, overflow: 'auto' }}>
           <Button
             variant="outlined"
             startIcon={<AddBoxRounded />}
             sx={{ marginTop: 1, marginBottom: 2 }}
             onClick={() => setAddMaterialListModal(true)}
-          >
+            >
             Adicionar Material
           </Button>
           <Table stickyHeader>
@@ -313,7 +312,7 @@ const UploadDocument = ({ projectId }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {materials.map((item) => (
+              {materials.length > 0 && materials.map((item) => (
                 <TableRow key={item.material.id}>
                   <TableCell>
                     <InventoryIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
@@ -368,7 +367,6 @@ const UploadDocument = ({ projectId }) => {
             </TableBody>
           </Table>
         </TableContainer>
-      )}
 
       <Snackbar
         open={openSnackbar}
