@@ -8,26 +8,25 @@ import {
   Grid,
   TextField,
 } from '@mui/material';
-import { FilterAlt } from '@mui/icons-material';
 import CheckboxesTags from '../../../project/components/DrawerFilters/CheckboxesTags'
 import FormDateRange from '../../../project/components/DrawerFilters/DateRangePicker';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 
 // Importe seu contexto
-import { InvoiceContext } from '@/app/context/InvoiceContext';
 import AutoCompleteSale from '../auto-complete/Auto-Input-Sales';
 import AutoCompleteUser from '../auto-complete/Auto-Input-User';
 import AutoCompleteFinancier from '../auto-complete/Auto-Input-financiers';
 import AutoCompleteBranch from '../auto-complete/Auto-Input-Branch';
 import AutoCompleteCampaign from '../../../comercial/sale/components/auto-complete/Auto-Input-Campaign';
 import AutoInputStatusSchedule from '../../../inspections/auto-complete/Auto-Input-StatusInspection';
+import { FilterContext } from '@/context/FilterContext';
 
 export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) {
 
   const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
   const [open, setOpen] = useState(externalOpen);
-  
-  const { filters, setFilters } = useContext(InvoiceContext);
+
+  const { filters, setFilters } = useContext(FilterContext);
 
   const [tempFilters, setTempFilters] = useState({
     borrower: filters.borrower || '',
@@ -85,7 +84,7 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
     { value: 'C', label: 'Cancelada' },
   ];
 
-    const toggleDrawer = (inOpen) => (event) => {
+  const toggleDrawer = (inOpen) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
@@ -98,7 +97,7 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
 
   const createFilterParams = (data) => {
     const params = { ...data };
-  
+
     if (data.due_date__range && data.due_date__range[0] && data.due_date__range[1]) {
       const startDate = data.due_date__range[0].toISOString().split('T')[0];
       const endDate = data.due_date__range[1].toISOString().split('T')[0];
@@ -106,7 +105,7 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
     } else {
       delete params.due_date__range;
     }
-  
+
     if (data.created_at__range && data.created_at__range[0] && data.created_at__range[1]) {
       const startDate = data.created_at__range[0].toISOString().split('T')[0];
       const endDate = data.created_at__range[1].toISOString().split('T')[0];
@@ -114,13 +113,13 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
     } else {
       delete params.created_at__range;
     }
-  
+
     if (Array.isArray(data.payment_type__in) && data.payment_type__in.length > 0) {
       params.payment_type__in = data.payment_type__in.map(option => option.value).join(',');
     } else {
       delete params.payment_type__in;
     }
-  
+
     if (Array.isArray(data.invoice_status__in) && data.invoice_status__in.length > 0) {
       params.invoice_status__in = data.invoice_status__in.map(option => option.value).join(',');
     } else {
@@ -156,7 +155,7 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
     } else {
       delete params.sale_payment_status;
     }
-  
+
     if (data.value__gte) params.value__gte = data.value__gte;
     else delete params.value__gte;
 
@@ -171,28 +170,28 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
 
     if (data.final_service_opinions__in) params.final_service_opinions__in = data.final_service_opinions__in;
     else delete params.final_service_opinions__in;
-  
+
     if (data.value__lte) params.value__lte = data.value__lte;
     else delete params.value__lte;
-  
+
     if (data.value) params.value = data.value;
     else delete params.value;
-  
+
     if (data.borrower) params.borrower = data.borrower;
     else delete params.borrower;
 
     if (data.sale_customer) params.sale_customer = data.sale_customer;
     else delete params.sale_customer;
-  
+
     if (data.sale) params.sale = data.sale;
     else delete params.sale;
-  
+
     if (data.financier) params.financier = data.financier;
     else delete params.financier;
-  
+
     return params;
   };
-  
+
   const clearFilters = () => {
     setTempFilters({
       borrower: '',
@@ -226,11 +225,11 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
   return (
     <Box>
       <Drawer
-          anchor="right"
-          open={externalOpen}
-          onClose={onClose}
-          variant="temporary"
-        >
+        anchor="right"
+        open={externalOpen}
+        onClose={onClose}
+        variant="temporary"
+      >
         <Box
           role="presentation"
           sx={{
@@ -363,7 +362,7 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
                   onChange={(newValue) => handleChange('sale_branch', newValue)}
                 />
               </Grid>
-              
+
               <Grid item xs={12}>
                 <CustomFormLabel>Campanha de Marketing</CustomFormLabel>
                 <AutoCompleteCampaign

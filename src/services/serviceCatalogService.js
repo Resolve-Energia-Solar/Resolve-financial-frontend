@@ -1,3 +1,4 @@
+import { find } from 'lodash';
 import apiClient from './apiClient';
 
 const DEFAULT_ROUTER = '/api/services';
@@ -46,6 +47,27 @@ const serviceCatalogService = {
       return response.data;
     } catch (error) {
       console.error(`Erro ao deletar serviço com id ${id}:`, error);
+      throw error;
+    }
+  },
+
+
+  getServices: async (params = {}) => {
+    try {
+      const response = await apiClient.get('/api/services/', { params });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar serviços:', error);
+      throw error;
+    }
+  },
+
+  findServiceById: async (id, params = {}) => {
+    try {
+      const response = await apiClient.get(`/api/services/${id}/`, { params });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar serviço com id ${id}:`, error);
       throw error;
     }
   },

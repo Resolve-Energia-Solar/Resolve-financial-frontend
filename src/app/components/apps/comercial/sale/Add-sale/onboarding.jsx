@@ -53,7 +53,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
   const [totalPayments, setTotalPayments] = useState(0);
   const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  
+
   // Nova flag para disparar o save do usuário
   const [userSubmitTrigger, setUserSubmitTrigger] = useState(false);
 
@@ -169,7 +169,6 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
 
   const {
     formData,
-    handleChange,
     handleSave,
     formErrors,
     loading: saleLoading,
@@ -197,7 +196,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
     : null;
   formData.status = 'P';
   formData.payment_status = 'P';
-  user?.user?.employee?.branch ? (formData.branchId = user?.user?.employee?.branch?.id) : null;
+  user?.user?.employee?.branch ? (formData.branchId = user?.user?.employee?.branch) : null;
 
   const handleBack = () => {
     if (activeStep > 1) {

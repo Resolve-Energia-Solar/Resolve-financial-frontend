@@ -40,9 +40,9 @@ const useDocumentTypeForm = (initialData, id) => {
 
     try {
       if (id) {
-        await documentTypeService.updateDocumentType(id, dataToSend);
+        await documentTypeService.update(id, dataToSend);
       } else {
-        await documentTypeService.createDocumentType(dataToSend);
+        await documentTypeService.create(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);

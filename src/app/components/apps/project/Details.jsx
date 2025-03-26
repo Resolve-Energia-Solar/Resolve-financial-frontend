@@ -18,13 +18,33 @@ import SendingForm from '../request/SendingForm';
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 
 export default function Details({ id = null, data }) {
-  const { selectedItem, openDrawer, openDrawerCreate, setOpenDrawerCreate, isEditing, formData, selectedValues, situationOptions, handleChangeSituation, requestData, load, due_date, handleSave, handleRowClick, toggleDrawerClosed, handleInputChange, handleCreate, handleEditToggle, formDataCreate, handleCreateRequest } = RequestEnergyCompany()
+  const {
+    selectedItem,
+    openDrawer,
+    openDrawerCreate,
+    setOpenDrawerCreate,
+    isEditing,
+    formData,
+    selectedValues,
+    situationOptions,
+    handleChangeSituation,
+    requestData,
+    load,
+    due_date,
+    handleSave,
+    handleRowClick,
+    toggleDrawerClosed,
+    handleInputChange,
+    handleCreate,
+    handleEditToggle,
+    formDataCreate,
+    handleCreateRequest,
+  } = RequestEnergyCompany();
 
-  console.log('sending3', data)
+  console.log('sending3', data);
 
   const [value, setValue] = useState(0);
   const [documentTypes, setDocumentTypes] = useState([]);
-
 
   const handleChangeTab = (event, newValue) => {
     setValue(newValue);
@@ -33,7 +53,10 @@ export default function Details({ id = null, data }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await documentTypeService.getDocumentTypeFromEngineering();
+        const response = await documentTypeService.index({
+          app_label__in: 'contracts',
+          limit: 30,
+        });
         setDocumentTypes(response.results);
         console.log('Document Types: ', response.results);
       } catch (error) {
@@ -41,9 +64,8 @@ export default function Details({ id = null, data }) {
       }
     };
     fetchData();
-    fetchProject()
+    fetchProject();
   }, []);
-
 
   async function fetchProject() {
     try {
@@ -84,18 +106,27 @@ export default function Details({ id = null, data }) {
       </TabPanel>
       <TabPanel value={value} index={3}>
         <div>
-          {
-            (load) ? <ListRequest data={data?.requests_energy_company} onClick={handleRowClick} /> :
-              < Loading />
-          }
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBlock: '12px' }}>
+          {load ? (
+            <ListRequest data={data?.requests_energy_company} onClick={handleRowClick} />
+          ) : (
+            <Loading />
+          )}
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              marginBlock: '12px',
+            }}
+          >
             <Button onClick={() => handleCreateRequest(data)}>Novo</Button>
           </div>
           <SideDrawer title={'Detalhamento'} open={openDrawer} onClose={toggleDrawerClosed}>
-            {selectedItem && situationOptions.length > 0 &&
+            {selectedItem && situationOptions.length > 0 && (
               <LateralForm
                 handleChangeSituation={handleChangeSituation}
-                isEditing={isEditing} formData={formData}
+                isEditing={isEditing}
+                formData={formData}
                 due_date={due_date}
                 handleInputChange={handleInputChange}
                 options={situationOptions}
@@ -103,9 +134,13 @@ export default function Details({ id = null, data }) {
                 handleEditToggle={handleEditToggle}
                 handleSave={handleSave}
               />
-            }
+            )}
           </SideDrawer>
-          <SideDrawer title={'Nova Solicitação'} open={openDrawerCreate} onClose={() => setOpenDrawerCreate(false)}>
+          <SideDrawer
+            title={'Nova Solicitação'}
+            open={openDrawerCreate}
+            onClose={() => setOpenDrawerCreate(false)}
+          >
             <SendingForm
               handleChangeSituation={handleChangeSituation}
               formData={data}
@@ -120,11 +155,8 @@ export default function Details({ id = null, data }) {
       </TabPanel>
 
       <TabPanel value={value} index={4}>
-
         <History contentType={CONTENT_TYPE_PROJECT_ID} objectId={id} />
-
       </TabPanel>
     </>
-
   );
 }

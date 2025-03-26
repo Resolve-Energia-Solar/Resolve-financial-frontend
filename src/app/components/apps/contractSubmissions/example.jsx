@@ -47,7 +47,7 @@ function ContractSubmissions({ sale }) {
     const fetchContractsBySale = async () => {
       try {
         console.log(`Buscando contratos para venda: ${sale?.id}`);
-        const contractsResponse = await contractService.getContractsBySaleId(sale?.id);
+        const contractsResponse = await contractService.find({ sale: sale?.id });
 
         console.log('Contratos retornados:', contractsResponse);
         setContracts(contractsResponse.results || []);
@@ -58,7 +58,7 @@ function ContractSubmissions({ sale }) {
           const documentPromises = documentKeys.map((key) =>
             axios.get(`/api/clicksign/getDocument/${key}`).catch((error) => {
               console.error(`Erro ao buscar o contrato com chave ${key}:`, error.message);
-              return null; 
+              return null;
             }),
           );
 
@@ -132,7 +132,7 @@ function ContractSubmissions({ sale }) {
         throw new Error('Falha na criação do documento');
       }
       console.log('Documento criado com sucesso:', documentKey);
-      await contractService.createContract({
+      await contractService.create({
         sale_id: sale.id,
         submit_datetime: new Date().toISOString(),
         status: 'P',

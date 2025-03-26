@@ -27,17 +27,17 @@ const useSaleForm = (initialData, id) => {
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [successData, setSuccessData] = useState(null); 
+  const [successData, setSuccessData] = useState(null);
 
   useEffect(() => {
     if (initialData) {
       setFormData({
         customerId: initialData.customer?.id || null,
-        sellerId: initialData.seller?.id || null,
-        salesSupervisorId: initialData.sales_supervisor?.id || null,
-        salesManagerId: initialData.sales_manager?.id || null,
-        branchId: initialData.branch?.id || '',
-        marketingCampaignId: initialData.marketing_campaign?.id || null,
+        sellerId: initialData.seller || null,
+        salesSupervisorId: initialData.sales_supervisor || null,
+        salesManagerId: initialData.sales_manager || null,
+        branchId: initialData.branch || '',
+        marketingCampaignId: initialData.marketing_campaign || null,
         productIds: initialData.products?.map((product) => product.id) || [],
         payment_status: initialData.payment_status || null,
         isSale: initialData.is_pre_sale || false,
@@ -65,7 +65,7 @@ const useSaleForm = (initialData, id) => {
     } else {
       delete errors.cancellationReasonsIds;
     }
-  
+
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       setLoading(false);
@@ -73,11 +73,11 @@ const useSaleForm = (initialData, id) => {
     }
 
     const dataToSend = {
-      customer_id: formData.customerId,
-      seller_id: formData.sellerId,
-      sales_supervisor_id: formData.salesSupervisorId,
-      sales_manager_id: formData.salesManagerId,
-      branch_id: formData.branchId,
+      customer: formData.customerId,
+      seller: formData.sellerId,
+      sales_supervisor: formData.salesSupervisorId,
+      sales_manager: formData.salesManagerId,
+      branch: formData.branchId,
       marketing_campaign_id: formData.marketingCampaignId ? formData.marketingCampaignId : undefined,
       payment_status: formData.payment_status,
       products_ids: formData.productIds,

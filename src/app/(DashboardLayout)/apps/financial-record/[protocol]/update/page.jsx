@@ -90,7 +90,7 @@ export default function UpdateForm() {
       try {
         const dataList = await financialRecordService.getFinancialRecordList({
           protocol__in: protocol,
-          fields: 'id'
+          fields: 'id',
         });
         const records = dataList.results;
         if (records && records.length > 0) {
@@ -169,8 +169,8 @@ export default function UpdateForm() {
           formDataAttachment.append('document_type_id', '');
           formDataAttachment.append('document_subtype_id', '');
           formDataAttachment.append('status', '');
-          await attachmentService.createAttachment(formDataAttachment);
-        })
+          await attachmentService.create(formDataAttachment);
+        }),
       );
       router.push('/apps/financial-record');
     } catch (error) {
@@ -227,7 +227,12 @@ export default function UpdateForm() {
           </Grid>
           <Grid item xs={12} md={6}>
             <CustomFormLabel>Responsável pela Aprovação</CustomFormLabel>
-            <Select variant="outlined" fullWidth value={user?.employee?.manager?.complete_name || ''} disabled>
+            <Select
+              variant="outlined"
+              fullWidth
+              value={user?.employee?.manager?.complete_name || ''}
+              disabled
+            >
               <MenuItem value={user?.employee?.manager?.complete_name || ''}>
                 {user?.employee?.manager?.complete_name}
               </MenuItem>
@@ -323,7 +328,9 @@ export default function UpdateForm() {
               <MenuItem value="C">Cartão de Crédito</MenuItem>
               <MenuItem value="P">Pix</MenuItem>
             </Select>
-            {formErrors.payment_method && <FormHelperText>{formErrors.payment_method}</FormHelperText>}
+            {formErrors.payment_method && (
+              <FormHelperText>{formErrors.payment_method}</FormHelperText>
+            )}
           </Grid>
           <Grid item xs={12} md={6}>
             <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>

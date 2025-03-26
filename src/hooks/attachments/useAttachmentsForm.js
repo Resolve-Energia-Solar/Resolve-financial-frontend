@@ -8,7 +8,7 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
     file: [],
     status: '',
     document_type_id: '',
-    description: ''
+    description: '',
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -27,7 +27,7 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
       file: [],
       status: '',
       document_type_id: '',
-      description: ''
+      description: '',
     });
   };
 
@@ -39,7 +39,7 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
         file: initialData.file || [],
         status: initialData.status || null,
         document_type_id: initialData.document_type_id || null,
-        description: initialData.description || ''
+        description: initialData.description || '',
       });
     }
   }, [initialData]);
@@ -72,9 +72,9 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
 
     try {
       if (id) {
-        await attachmentService.patchAttachment(id, dataToSend);
+        await attachmentService.update(id, dataToSend);
       } else {
-        await attachmentService.createAttachment(dataToSend);
+        await attachmentService.create(dataToSend);
       }
 
       setFormErrors({});

@@ -69,30 +69,60 @@ const Menuitems = [
         permissions: ['resolve_crm.view_lead'] 
       },
     ],
+    chip: 'Novo',
+    chipColor: 'secondary',
+    permissions: ['core.view_board'],
   },
-  // {
-  //   id: uniqueId(),
-  //   title: 'Comercial',
-  //   icon: IconTrendingUp,
-  //   href: '/apps/commercial/sale',
-  //   permissions: ['resolve_crm.view_sale', 'resolve_crm.view_lead', 'core.view_board', 'field_services.view_schedule'],
-  //   children: [
+  {
+    id: uniqueId(),
+    title: 'Serviços de Campo',
+    icon: IconUserPin,
+    href: '/',
+    children: [
       {
         id: uniqueId(),
-        title: 'Vendas',
-        icon: IconShoppingCart,
-        href: '/apps/commercial/sale',
-        permissions: ['resolve_crm.view_sale'],
+        title: 'Ordem de Serviço',
+        icon: IconPoint,
+        href: '/apps/inspections/schedule',
       },
-  //     {
-  //       id: uniqueId(),
-  //       title: 'Vistoria',
-  //       icon: IconUserPin,
-  //       href: '/apps/inspections/schedule',
-  //       permissions: ['field_services.view_schedule'],
-  //     },
-  //   ],
-  // },
+      {
+        id: uniqueId(),
+        title: 'Agendamentos',
+        icon: IconPoint,
+        href: '/apps/commercial/schedules',
+      },
+    ],
+    permissions: ['field_services.view_schedule'],
+  },
+  {
+    id: uniqueId(),
+    title: 'Leads',
+    icon: IconUser,
+    href: '/apps/leads',
+    permissions: ['resolve_crm.view_lead'],
+  },
+  {
+    id: uniqueId(),
+    title: 'Solic. Financiamento',
+    icon: IconBuildingBank,
+    href: '/apps/funding-request',
+
+    children: [
+      {
+        id: uniqueId(),
+        title: 'Sicoob',
+        icon: IconPoint,
+        href: '/apps/funding-request/sicoob',
+      },
+    ],
+  },
+  {
+    id: uniqueId(),
+    title: 'Vendas',
+    icon: IconShoppingCart,
+    href: '/apps/commercial/sale',
+    permissions: ['resolve_crm.view_sale'],
+  },
   {
     id: uniqueId(),
     title: 'Financeiro',

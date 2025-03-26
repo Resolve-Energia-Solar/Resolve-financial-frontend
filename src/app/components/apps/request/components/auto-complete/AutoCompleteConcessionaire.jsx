@@ -16,7 +16,7 @@ export default function AutoCompleteCompanies({ onChange, value, error, helperTe
     const fetchDefaultCompany = async () => {
       if (value) {
         try {
-          const company = await CompanyService.getCompanyById(value);
+          const company = await CompanyService.find(value);
           if (company) {
             setSelectedCompany({
               id: company.id,
@@ -49,7 +49,7 @@ export default function AutoCompleteCompanies({ onChange, value, error, helperTe
       }
       setLoading(true);
       try {
-        const companies = await CompanyService.getCompanyByName(name);
+        const companies = await CompanyService.find({ name: name });
         if (companies && companies.results) {
           const formattedCompanies = companies.results.map((company) => ({
             id: company.id,
@@ -62,13 +62,13 @@ export default function AutoCompleteCompanies({ onChange, value, error, helperTe
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
 
   const fetchInitialCompanies = useCallback(async () => {
     setLoading(true);
     try {
-      const companies = await CompanyService.getCompanies({ limit: 5, page: 1 });
+      const companies = await CompanyService.index({ limit: 5, page: 1 });
       if (companies && companies.results) {
         const formattedCompanies = companies.results.map((company) => ({
           id: company.id,
@@ -107,7 +107,7 @@ export default function AutoCompleteCompanies({ onChange, value, error, helperTe
         loading={loading}
         value={selectedCompany}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         {...rest}
         onInputChange={(event, newInputValue) => {
           fetchCompaniesByName(newInputValue);

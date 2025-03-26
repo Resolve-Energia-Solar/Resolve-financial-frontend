@@ -23,5 +23,7 @@
     "Invoice": "Fatura",
     "Details": "Detalhes",
     "Create": "Criar",
-    "Edit": "Editar"
+    "Edit": "Editar",
+    "Sales": "Vendas",
+    "Projects": "Projetos"
 }

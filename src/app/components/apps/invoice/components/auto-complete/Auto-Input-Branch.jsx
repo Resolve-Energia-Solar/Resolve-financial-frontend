@@ -6,7 +6,14 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import branchService from '@/services/branchService';
 import { debounce } from 'lodash';
 
-export default function AutoCompleteBranch({ onChange, value, error, helperText, labeltitle, disabled }) {
+export default function AutoCompleteBranch({
+  onChange,
+  value,
+  error,
+  helperText,
+  labeltitle,
+  disabled,
+}) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -16,7 +23,7 @@ export default function AutoCompleteBranch({ onChange, value, error, helperText,
     const fetchDefaultBranch = async () => {
       if (value) {
         try {
-          const branch = await branchService.getBranchById(value);
+          const branch = await branchService.find(value);
           if (branch) {
             setSelectedBranch({ id: branch.id, name: branch.name });
           }
@@ -43,7 +50,7 @@ export default function AutoCompleteBranch({ onChange, value, error, helperText,
       if (!name) return;
       setLoading(true);
       try {
-        const branches = await branchService.getBranchByName(name);
+        const branches = await branchService.find(name);
         if (branches && branches.results) {
           const formattedBranches = branches.results.map((branch) => ({
             id: branch.id,
@@ -62,7 +69,7 @@ export default function AutoCompleteBranch({ onChange, value, error, helperText,
   const fetchInitialBranches = useCallback(async () => {
     setLoading(true);
     try {
-      const branches = await branchService.getBranches({ limit: 5 });
+      const branches = await branchService.index({ limit: 5 });
       const formattedBranches = branches.results.map((branch) => ({
         id: branch.id,
         name: branch.name,
@@ -100,7 +107,7 @@ export default function AutoCompleteBranch({ onChange, value, error, helperText,
         value={selectedBranch}
         disabled={disabled}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           fetchBranchesByName(newInputValue);
         }}

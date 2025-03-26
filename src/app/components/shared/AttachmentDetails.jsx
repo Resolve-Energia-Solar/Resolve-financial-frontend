@@ -1,14 +1,5 @@
 'use client';
-import {
-  Grid,
-  Typography,
-  Box,
-  Modal,
-  List,
-  ListItem,
-  Link,
-  useTheme,
-} from '@mui/material';
+import { Grid, Typography, Box, Modal, List, ListItem, Link, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ImageIcon from '@mui/icons-material/Image';
@@ -27,7 +18,11 @@ export default function AttachmentDetails({ objectId, contentType }) {
     setLoading(true);
     const fetchData = async () => {
       try {
-        const response = await attachmentService.getAttachment(objectId, contentType);
+        const response = await attachmentService.find({
+          object_id: objectId,
+          content_type: contentTypeId,
+          limit: 30,
+        });
         setAttachments(response.results);
       } catch (error) {
         console.error('Error fetching attachments:', error);
@@ -108,7 +103,12 @@ export default function AttachmentDetails({ objectId, contentType }) {
             p: 4,
           }}
         >
-          <Typography id="attachment-details-modal" variant="h6" component="h2" sx={{ marginBottom: 2 }}>
+          <Typography
+            id="attachment-details-modal"
+            variant="h6"
+            component="h2"
+            sx={{ marginBottom: 2 }}
+          >
             Detalhes do Anexo
           </Typography>
           {selectedAttachment ? (
@@ -131,7 +131,12 @@ export default function AttachmentDetails({ objectId, contentType }) {
                   href={selectedAttachment.file}
                   target="_blank"
                   rel="noopener noreferrer"
-                  sx={{ marginLeft: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                  sx={{
+                    marginLeft: 1,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
                 >
                   {selectedAttachment.file?.split('/').pop()}
                 </Link>

@@ -86,7 +86,7 @@ export default function AddUser({
 
   const fetchAddress = async (search) => {
     try {
-      const response = await addressService.getAddress({
+      const response = await addressService.index({
         q: search,
         limit: 40,
         fields: 'id,street,number,city,state',

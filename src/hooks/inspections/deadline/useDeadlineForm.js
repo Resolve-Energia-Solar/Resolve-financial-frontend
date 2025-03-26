@@ -89,9 +89,9 @@ const useDeadlineForm = (initialData, id) => {
 
     try {
       if (id) {
-        await deadlineService.updateDeadline(id, dataToSend);
+        await deadlineService.find(id, dataToSend);
       } else {
-        await deadlineService.createDeadline(dataToSend);
+        await deadlineService.create(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);
