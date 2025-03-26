@@ -431,7 +431,7 @@ const financialRecordList = () => {
                                     {financialRecordList.map((item) => (
                                         <TableRow key={item.id} hover onClick={() => handleRowClick(item)}>
                                             <TableCell>
-                                                {(item.paid_at &&
+                                                {(item.paid_at && item.payment_status === 'PG' &&
                                                     new Date(item.paid_at).getFullYear() === new Date().getFullYear() &&
                                                     new Date(item.paid_at).getMonth() === new Date().getMonth() &&
                                                     new Date(item.paid_at).getDate() === new Date().getDate()
@@ -439,7 +439,7 @@ const financialRecordList = () => {
                                                     <PulsingBadge />
                                                 ) : (
                                                     <>
-                                                        {(item.paid_at && new Date() - new Date(item.paid_at) > 86400000) ? (
+                                                        {(item.paid_at && new Date() - new Date(item.paid_at) > 86400000 && item.payment_status === 'PG') ? (
                                                             <PulsingBadge noPulse />
                                                         ) : (
                                                             <>
