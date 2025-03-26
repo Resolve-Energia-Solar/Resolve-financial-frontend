@@ -42,47 +42,47 @@ import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 // Configuração dos filtros para agendamentos
 const scheduleFilterConfig = [
   {
-    key: "schedule_date__range",
-    label: "Data do Agendamento (Entre)",
-    type: "range",
-    inputType: "date",
+    key: 'schedule_date__range',
+    label: 'Data do Agendamento (Entre)',
+    type: 'range',
+    inputType: 'date',
   },
   {
-    key: "status__in",
-    label: "Status do Agendamento (Lista)",
-    type: "multiselect",
+    key: 'status__in',
+    label: 'Status do Agendamento (Lista)',
+    type: 'multiselect',
     options: [
-      { value: "Pendente", label: "Pendente" },
-      { value: "Confirmado", label: "Confirmado" },
-      { value: "Cancelado", label: "Cancelado" },
+      { value: 'Pendente', label: 'Pendente' },
+      { value: 'Confirmado', label: 'Confirmado' },
+      { value: 'Cancelado', label: 'Cancelado' },
     ],
   },
   {
-    key: "final_service_is_null",
-    label: "Parecer Final do Serviço Pendente",
-    type: "select",
+    key: 'final_service_is_null',
+    label: 'Parecer Final do Serviço Pendente',
+    type: 'select',
     options: [
-      { value: 'null', label: "Todos" },
-      { value: true, label: "Pendente" },
-      { value: 'false', label: "Concluído" },
+      { value: 'null', label: 'Todos' },
+      { value: true, label: 'Pendente' },
+      { value: 'false', label: 'Concluído' },
     ],
   },
   {
-    key: "service_opnion_is_null",
-    label: "Parecer do Serviço Pendente",
-    type: "select",
+    key: 'service_opnion_is_null',
+    label: 'Parecer do Serviço Pendente',
+    type: 'select',
     options: [
-      { value: 'null', label: "Todos" },
-      { value: true, label: "Pendente" },
-      { value: 'false', label: "Concluído" },
+      { value: 'null', label: 'Todos' },
+      { value: true, label: 'Pendente' },
+      { value: 'false', label: 'Concluído' },
     ],
   },
   {
-    key: "schedule_agent__in",
-    label: "Agente de Campo",
-    type: "async-multiselect",
-    endpoint: "/api/users/",
-    queryParam: "complete_name__icontains",
+    key: 'schedule_agent__in',
+    label: 'Agente de Campo',
+    type: 'async-multiselect',
+    endpoint: '/api/users/',
+    queryParam: 'complete_name__icontains',
     extraParams: { fields: ['id', 'complete_name'] },
     mapResponse: (data) =>
       data.results.map((user) => ({
@@ -91,11 +91,11 @@ const scheduleFilterConfig = [
       })),
   },
   {
-    key: "service__in",
-    label: "Serviço",
-    type: "async-multiselect",
-    endpoint: "/api/services/",
-    queryParam: "name__icontains",
+    key: 'service__in',
+    label: 'Serviço',
+    type: 'async-multiselect',
+    endpoint: '/api/services/',
+    queryParam: 'name__icontains',
     extraParams: { limit: 10, fields: ['id', 'name'] },
     mapResponse: (data) =>
       data.results.map((service) => ({
@@ -104,11 +104,11 @@ const scheduleFilterConfig = [
       })),
   },
   {
-    key: "customer",
-    label: "Cliente",
-    type: "async-autocomplete",
-    endpoint: "/api/users/",
-    queryParam: "complete_name__icontains",
+    key: 'customer',
+    label: 'Cliente',
+    type: 'async-autocomplete',
+    endpoint: '/api/users/',
+    queryParam: 'complete_name__icontains',
     extraParams: { fields: ['id', 'complete_name'] },
     mapResponse: (data) =>
       data.results.map((customer) => ({
@@ -117,12 +117,12 @@ const scheduleFilterConfig = [
       })),
   },
   {
-    key: "branch__in",
-    label: "Unidade",
-    type: "async-multiselect",
-    endpoint: "/api/branches/",
-    queryParam: "name__icontains",
-    extraParams: {  limit: 10, fields: ['id', 'name'] },
+    key: 'branch__in',
+    label: 'Unidade',
+    type: 'async-multiselect',
+    endpoint: '/api/branches/',
+    queryParam: 'name__icontains',
+    extraParams: { limit: 10, fields: ['id', 'name'] },
     mapResponse: (data) =>
       data.results.map((branch) => ({
         label: branch.name,
@@ -130,12 +130,17 @@ const scheduleFilterConfig = [
       })),
   },
   {
-    key: "service_opinion__in",
-    label: "Parecer do Serviço",
-    type: "async-multiselect",
-    endpoint: "/api/service-opinions/",
-    queryParam: "name__icontains",
-    extraParams: { is_final_opinion: false, limit: 10, fields: ['id', 'name', 'service.name'], expand: 'service' },
+    key: 'service_opinion__in',
+    label: 'Parecer do Serviço',
+    type: 'async-multiselect',
+    endpoint: '/api/service-opinions/',
+    queryParam: 'name__icontains',
+    extraParams: {
+      is_final_opinion: false,
+      limit: 10,
+      fields: ['id', 'name', 'service.name'],
+      expand: 'service',
+    },
     mapResponse: (data) =>
       data.results.map((opinion) => ({
         label: `${opinion.name} - ${opinion.service?.name}`,
@@ -143,12 +148,17 @@ const scheduleFilterConfig = [
       })),
   },
   {
-    key: "final_service_opinion__in",
-    label: "Parecer Final do Serviço",
-    type: "async-multiselect",
-    endpoint: "/api/service-opinions/",
-    queryParam: "name__icontains",
-    extraParams: { is_final_opinion: true, limit: 10, fields: ['id', 'name', 'service.name'], expand: 'service' },
+    key: 'final_service_opinion__in',
+    label: 'Parecer Final do Serviço',
+    type: 'async-multiselect',
+    endpoint: '/api/service-opinions/',
+    queryParam: 'name__icontains',
+    extraParams: {
+      is_final_opinion: true,
+      limit: 10,
+      fields: ['id', 'name', 'service.name'],
+      expand: 'service',
+    },
     mapResponse: (data) =>
       data.results.map((opinion) => ({
         label: `${opinion.name} - ${opinion.service?.name}`,
@@ -171,13 +181,13 @@ const SchedulingList = () => {
   const router = useRouter();
   const userPermissions = useSelector((state) => state.user.permissions);
   const user = useSelector((state) => state.user);
-  
+
   const hasPermission = useCallback(
     (permissions) => {
       if (!permissions) return true;
       return permissions.some((permission) => userPermissions?.includes(permission));
     },
-    [userPermissions]
+    [userPermissions],
   );
 
   // Obtém filtros e refresh do contexto de agendamentos
@@ -224,7 +234,8 @@ const SchedulingList = () => {
         ordering: orderingParam,
         nextPage: page,
         limit: rowsPerPage,
-        fields: 'id,customer,service,service_opinion,final_service_opinion,schedule_date,schedule_start_time,schedule_agent,address,observation,status,created_at',
+        fields:
+          'id,customer,service,service_opinion,final_service_opinion,schedule_date,schedule_start_time,schedule_agent,address,observation,status,created_at,branch',
         page: page + 1,
         ...debouncedFilters,
       };
@@ -265,9 +276,12 @@ const SchedulingList = () => {
     router.push('/apps/inspections/schedule/create');
   }, [router]);
 
-  const handleEditClick = useCallback((id) => {
-    router.push(`/apps/inspections/schedule/${id}/update`);
-  }, [router]);
+  const handleEditClick = useCallback(
+    (id) => {
+      router.push(`/apps/inspections/schedule/${id}/update`);
+    },
+    [router],
+  );
 
   const handleRowClick = useCallback((schedule) => {
     setSelectedSchedule(schedule);
@@ -309,7 +323,7 @@ const SchedulingList = () => {
         setOrderDirection('asc');
       }
     },
-    [order, orderDirection]
+    [order, orderDirection],
   );
 
   const formatDate = useCallback((dateString) => {
@@ -369,7 +383,10 @@ const SchedulingList = () => {
           <Table stickyHeader aria-label="schedule table">
             <TableHead>
               <TableRow>
-                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('created_at')}>
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('created_at')}
+                >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Criado Em
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -387,7 +404,19 @@ const SchedulingList = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('status')}>
+                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    Unidade
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
+                      {order === 'branch.name' &&
+                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('status')}
+                >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Status Agendamento
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -397,7 +426,10 @@ const SchedulingList = () => {
                   </Box>
                 </TableCell>
                 {hasPermission(['field_services.view_service_opinion']) && (
-                  <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('service_opinion')}>
+                  <TableCell
+                    sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                    onClick={() => handleSort('service_opinion')}
+                  >
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       Parecer do Serviço
                       <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -407,7 +439,10 @@ const SchedulingList = () => {
                     </Box>
                   </TableCell>
                 )}
-                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('final_service_opinion')}>
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('final_service_opinion')}
+                >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Parecer Final do Serviço
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -416,7 +451,10 @@ const SchedulingList = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('schedule_date')}>
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('schedule_date')}
+                >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Data
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -425,7 +463,10 @@ const SchedulingList = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('schedule_start_time')}>
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('schedule_start_time')}
+                >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Hora
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -434,7 +475,10 @@ const SchedulingList = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('service.name')}>
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('service.name')}
+                >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Serviço
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -444,7 +488,10 @@ const SchedulingList = () => {
                   </Box>
                 </TableCell>
                 {hasPermission(['field_services.view_agent_info']) && (
-                  <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('schedule_agent.complete_name')}>
+                  <TableCell
+                    sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                    onClick={() => handleSort('schedule_agent.complete_name')}
+                  >
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       Agente
                       <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -454,7 +501,10 @@ const SchedulingList = () => {
                     </Box>
                   </TableCell>
                 )}
-                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('address.street')}>
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('address.street')}
+                >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Endereço
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -463,7 +513,10 @@ const SchedulingList = () => {
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }} onClick={() => handleSort('observation')}>
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('observation')}
+                >
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     Descrição
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
@@ -486,34 +539,51 @@ const SchedulingList = () => {
                       {format(new Date(schedule.created_at), 'dd/MM/yyyy HH:mm:ss')}
                     </TableCell>
                     <TableCell>{schedule?.customer?.complete_name}</TableCell>
+                    <TableCell>{schedule?.branch?.name}</TableCell>
                     <TableCell>
                       <ScheduleStatusChip status={schedule.status} />
                     </TableCell>
                     {hasPermission(['field_services.view_service_opinion']) && (
                       <TableCell>
-                        {schedule.service_opinion ? schedule.service_opinion.name : <Chip label="Sem Parecer" color="error" />}
+                        {schedule.service_opinion ? (
+                          schedule.service_opinion.name
+                        ) : (
+                          <Chip label="Sem Parecer" color="error" />
+                        )}
                       </TableCell>
                     )}
                     <TableCell>
-                      {schedule.final_service_opinion ? schedule.final_service_opinion.name : <Chip label="Em Análise" color="warning" />}
+                      {schedule.final_service_opinion ? (
+                        schedule.final_service_opinion.name
+                      ) : (
+                        <Chip label="Em Análise" color="warning" />
+                      )}
                     </TableCell>
                     <TableCell>{formatDate(schedule.schedule_date)}</TableCell>
                     <TableCell>{formatTime(schedule.schedule_start_time)}</TableCell>
                     <TableCell>{schedule.service.name}</TableCell>
                     {hasPermission(['field_services.view_agent_info']) && (
                       <TableCell>
-                        {schedule.schedule_agent ? schedule.schedule_agent.complete_name : <Chip label="Sem Agente" color="error" />}
+                        {schedule.schedule_agent ? (
+                          schedule.schedule_agent.complete_name
+                        ) : (
+                          <Chip label="Sem Agente" color="error" />
+                        )}
                       </TableCell>
                     )}
                     <TableCell>
                       {`${schedule.address.street}, ${schedule.address.number}, ${schedule.address.neighborhood}, ${schedule.address.city} - ${schedule.address.state}`}
                     </TableCell>
                     <TableCell>
-                      {schedule.observation
-                        ? schedule.observation.length > 50
-                          ? `${schedule.observation.substring(0, 50)}...`
-                          : schedule.observation
-                        : <Chip label="Sem Observação" color="warning" />}
+                      {schedule.observation ? (
+                        schedule.observation.length > 50 ? (
+                          `${schedule.observation.substring(0, 50)}...`
+                        ) : (
+                          schedule.observation
+                        )
+                      ) : (
+                        <Chip label="Sem Observação" color="warning" />
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -547,11 +617,19 @@ const SchedulingList = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={handleCloseModal}>Cancelar</Button>
-          <Button color="error" onClick={handleConfirmDelete}>Excluir</Button>
+          <Button color="primary" onClick={handleCloseModal}>
+            Cancelar
+          </Button>
+          <Button color="error" onClick={handleConfirmDelete}>
+            Excluir
+          </Button>
         </DialogActions>
       </Dialog>
-      <ScheduleView open={drawerOpen} onClose={handleDrawerClose} selectedSchedule={selectedSchedule} />
+      <ScheduleView
+        open={drawerOpen}
+        onClose={handleDrawerClose}
+        selectedSchedule={selectedSchedule}
+      />
     </Box>
   );
 };
