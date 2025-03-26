@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
     Box, Button, Typography, Grid, MenuItem, InputLabel, Select, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, TextField
@@ -27,6 +27,9 @@ const CreateSchedulePage = () => {
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [errors, setErrors] = useState({});
+    const [isEndModified, setIsEndModified] = useState(false);
+    const [minEnd, setMinEnd] = useState({ date: '', time: '' });
     const [hasProject, setHasProject] = useState(null);
 
     const handleInputChange = (e) =>
@@ -36,7 +39,6 @@ const CreateSchedulePage = () => {
         e.preventDefault();
         setLoading(true);
         setError('');
-        // Converte os campos de foreign key para enviar apenas os IDs
         const submitData = {
             ...formData,
             service: formData.service?.value,
@@ -50,7 +52,7 @@ const CreateSchedulePage = () => {
             await scheduleService.createSchedule(submitData);
             router.push('/apps/schedules');
         } catch (err) {
-            setError('Erro ao criar agendamento');
+            setErrors(err.response.data);
             setLoading(false);
         }
     };
@@ -61,6 +63,34 @@ const CreateSchedulePage = () => {
         { title: 'Criar Agendamento' },
     ];
 
+    useEffect(() => {
+        if (
+            formData.service &&
+            formData.schedule_date &&
+            formData.schedule_start_time &&
+            formData.service.deadline &&
+            formData.service.deadline.hours
+        ) {
+            const [addHours, addMinutes, addSeconds] = formData.service.deadline.hours
+                .split(':')
+                .map(Number);
+            const [year, month, day] = formData.schedule_date.split('-').map(Number);
+            const [hour, minute] = formData.schedule_start_time.split(':').map(Number);
+            const startDate = new Date(year, month - 1, day, hour, minute);
+            startDate.setHours(
+                startDate.getHours() + addHours,
+                startDate.getMinutes() + addMinutes,
+                startDate.getSeconds() + addSeconds
+            );
+            const computedDate = startDate.toISOString().split('T')[0];
+            const computedTime = startDate.toTimeString().slice(0, 5);
+            setFormData((prev) => ({
+                ...prev,
+                schedule_end_date: computedDate,
+                schedule_end_time: computedTime,
+            }));
+        }
+    }, [formData.service, formData.schedule_date, formData.schedule_start_time]);
     return (
         <PageContainer title="Criar Agendamento" description="Formulário para criação de um novo agendamento">
             <Breadcrumb items={breadcrumbItems} />
@@ -72,13 +102,21 @@ const CreateSchedulePage = () => {
                             <GenericAsyncAutocompleteInput
                                 label="Serviço"
                                 value={formData.service}
-                                onChange={(newValue) => setFormData({ ...formData, service: newValue })}
+                                onChange={(newValue) =>
+                                    setFormData({ ...formData, service: newValue })
+                                }
                                 endpoint="/api/services/"
                                 queryParam="name__icontains"
-                                extraParams={{ fields: ['id', 'name'] }}
+                                extraParams={{ fields: ['id', 'name', 'deadline.hours'], expand: ['deadline'] }}
                                 mapResponse={(data) =>
-                                    data.results.map((s) => ({ label: s.name, value: s.id }))
+                                    data.results.map((s) => ({
+                                        label: s.name,
+                                        value: s.id,
+                                        deadline: s.deadline
+                                    }))
                                 }
+                                helperText={errors.service?.[0] || ''}
+                                error={!!errors.service}
                                 fullWidth
                             />
                         </Grid>
@@ -94,6 +132,8 @@ const CreateSchedulePage = () => {
                                     data.results.map((u) => ({ label: u.complete_name, value: u.id }))
                                 }
                                 fullWidth
+                                helperText={errors.schedule_agent?.[0] || ''}
+                                error={!!errors.schedule_agent}
                             />
                         </Grid>
                         {/* Datas e horários */}
@@ -106,6 +146,8 @@ const CreateSchedulePage = () => {
                                 onChange={handleInputChange}
                                 fullWidth
                                 InputLabelProps={{ shrink: true }}
+                                helperText={errors.schedule_date?.[0] || ''}
+                                error={!!errors.schedule_date}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -117,6 +159,61 @@ const CreateSchedulePage = () => {
                                 onChange={handleInputChange}
                                 fullWidth
                                 InputLabelProps={{ shrink: true }}
+                                helperText={errors.schedule_start_time?.[0] || ''}
+                                error={!!errors.schedule_start_time}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="Data Final"
+                                type="date"
+                                name="schedule_end_date"
+                                value={formData.schedule_end_date}
+                                onChange={(e) => {
+                                    setIsEndModified(true);
+                                    handleInputChange(e);
+                                }}
+                                fullWidth
+                                InputLabelProps={{ shrink: true }}
+                                inputProps={{
+                                    min: minEnd.date || undefined,
+                                }}
+                                helperText={errors.schedule_end_date?.[0] || ''}
+                                error={!!errors.schedule_end_date}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="Hora Final"
+                                type="time"
+                                name="schedule_end_time"
+                                value={formData.schedule_end_time}
+                                onChange={(e) => {
+                                    setIsEndModified(true);
+                                    handleInputChange(e);
+                                }}
+                                onBlur={() => {
+                                    // Se a data final for a mesma do mínimo, a hora não pode ser menor que o mínimo
+                                    if (
+                                        formData.schedule_end_date === minEnd.date &&
+                                        formData.schedule_end_time < minEnd.time
+                                    ) {
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            schedule_end_time: minEnd.time,
+                                        }));
+                                    }
+                                }}
+                                fullWidth
+                                InputLabelProps={{ shrink: true }}
+                                inputProps={{
+                                    min:
+                                        formData.schedule_end_date === minEnd.date
+                                            ? minEnd.time
+                                            : undefined,
+                                }}
+                                helperText={errors.schedule_end_time?.[0] || ''}
+                                error={!!errors.schedule_end_time}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -182,6 +279,8 @@ const CreateSchedulePage = () => {
                                             }))
                                         }
                                         fullWidth
+                                        helperText={errors.project?.[0] || ''}
+                                        error={!!errors.project}
                                     />
                                 </Grid>
                                 {formData.project && (
@@ -199,6 +298,8 @@ const CreateSchedulePage = () => {
                                                 }
                                                 fullWidth
                                                 disabled
+                                                helperText={errors.customer?.[0] || ''}
+                                                error={!!errors.customer}
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
@@ -214,6 +315,8 @@ const CreateSchedulePage = () => {
                                                 }
                                                 fullWidth
                                                 disabled
+                                                helperText={errors.branch?.[0] || ''}
+                                                error={!!errors.branch}
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
@@ -231,6 +334,8 @@ const CreateSchedulePage = () => {
                                                 }
                                                 fullWidth
                                                 disabled
+                                                helperText={errors.product?.[0] || ''}
+                                                error={!!errors.product}
                                             />
                                         </Grid>
                                         <Grid item xs={12}>
@@ -246,6 +351,8 @@ const CreateSchedulePage = () => {
                                                 }
                                                 fullWidth
                                                 disabled
+                                                helperText={errors.address?.[0] || ''}
+                                                error={!!errors.address}
                                             />
                                         </Grid>
                                     </>
@@ -267,6 +374,8 @@ const CreateSchedulePage = () => {
                                             data.results.map((u) => ({ label: u.complete_name, value: u.id }))
                                         }
                                         fullWidth
+                                        helperText={errors.customer?.[0] || ''}
+                                        error={!!errors.customer}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -281,6 +390,8 @@ const CreateSchedulePage = () => {
                                             data.results.map((b) => ({ label: b.name, value: b.id }))
                                         }
                                         fullWidth
+                                        helperText={errors.branch?.[0] || ''}
+                                        error={!!errors.branch}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -297,6 +408,8 @@ const CreateSchedulePage = () => {
                                             data.results.map((p) => ({ label: p.description || p.name, value: p.id }))
                                         }
                                         fullWidth
+                                        helperText={errors.product?.[0] || ''}
+                                        error={!!errors.product}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -311,6 +424,8 @@ const CreateSchedulePage = () => {
                                             data.results.map((a) => ({ label: a.street, value: a.id }))
                                         }
                                         fullWidth
+                                        helperText={errors.address?.[0] || ''}
+                                        error={!!errors.address}
                                     />
                                 </Grid>
                             </>
