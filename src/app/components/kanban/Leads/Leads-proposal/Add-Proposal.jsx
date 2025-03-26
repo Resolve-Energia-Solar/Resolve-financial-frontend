@@ -36,7 +36,7 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import EnergyConsumptionCalc from '../components/EnergyConsumption/CalculateEnergyConsumption';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ProposalLayout from '../components/ProposalLayout';
-import ProposalCard from '../../components/CardProposal';
+import ProposalCard from '../components/ProposalSmallListCard';
 
 function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
