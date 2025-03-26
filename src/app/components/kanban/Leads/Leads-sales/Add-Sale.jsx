@@ -59,7 +59,6 @@
 //     handleChange('value', null);
 //     handleChange('observation', '');
 //   };
-  
 
 //   useEffect(() => {
 //     if (success) {
@@ -68,12 +67,11 @@
 //     }
 //   }, [success]);
 
-
 //   useEffect(() => {
 //     const fetchLead = async () => {
 //       setLoadingLeads(true);
 //       try {
-//         const data = await leadService.getLeadById(leadId);
+//         const data = await leadService.find(leadId);
 //         setLead(data);
 //         console.log(data);
 //       } catch (err) {
@@ -84,7 +82,6 @@
 //     };
 //     fetchLead();
 //   }, []);
-
 
 //   const handleSaveForm = async () => {
 //     const response = await handleSave();

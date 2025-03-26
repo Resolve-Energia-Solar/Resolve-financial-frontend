@@ -13,7 +13,12 @@ function ChecklistSales({ saleId }) {
     setLoading(true);
     const fetchData = async () => {
       try {
-        const response = await projectService.getProjectBySale(saleId);
+        const response = await projectService.index({ 
+          sale: saleId,
+          expand: 'product',
+          fields: 'id,product.product_value,product.default',
+         });
+        console.log('Response: ', response);
         setProjectsList(response);
       } catch (error) {
         console.log('Error: ', error);

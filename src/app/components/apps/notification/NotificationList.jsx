@@ -10,8 +10,8 @@ const NotificationList = ({ showRightSidebar, onNotificationSelect, filters }) =
 
   const fetchNotifications = async (appliedFilters = {}) => {
     try {
-      const data = await notificationService.getAllNotifications(appliedFilters);
-      console.log("Notificações recebidas:", data.results);
+      const data = await notificationService.index(appliedFilters);
+      console.log('Notificações recebidas:', data.results);
       setNotifications(data.results);
     } catch (error) {
       console.error('Erro ao buscar notificações:', error);

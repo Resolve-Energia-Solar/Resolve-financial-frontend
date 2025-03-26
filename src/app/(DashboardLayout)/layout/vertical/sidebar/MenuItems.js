@@ -30,18 +30,6 @@ import {
   IconUserDollar,
   IconHomeQuestion
 } from '@tabler/icons-react';
-import ViewKanbanOutlinedIcon from '@mui/icons-material/ViewKanbanOutlined';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
-import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
-import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
-import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
-import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
-import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
-import SquareFootOutlinedIcon from '@mui/icons-material/SquareFootOutlined';
-import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
 
 
 import { permission } from 'process';
@@ -51,7 +39,9 @@ const Menuitems = [
  {
     id: uniqueId(),
     title: 'CRM',
+    href: '/',
     icon: IconBriefcase2,
+    href: '/apps/kanban/',
     permissions: ['core.view_board', 'resolve_crm.view_lead'],
     children: [
       { 
@@ -93,28 +83,6 @@ const Menuitems = [
       },
     ],
     permissions: ['field_services.view_schedule'],
-  },
-  {
-    id: uniqueId(),
-    title: 'Leads',
-    icon: IconUser,
-    href: '/apps/leads',
-    permissions: ['resolve_crm.view_lead'],
-  },
-  {
-    id: uniqueId(),
-    title: 'Solic. Financiamento',
-    icon: IconBuildingBank,
-    href: '/apps/funding-request',
-
-    children: [
-      {
-        id: uniqueId(),
-        title: 'Sicoob',
-        icon: IconPoint,
-        href: '/apps/funding-request/sicoob',
-      },
-    ],
   },
   {
     id: uniqueId(),

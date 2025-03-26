@@ -16,7 +16,7 @@ export default function AutoCompleteFinancier({ onChange, value, error, helperTe
     const fetchDefaultFinancier = async () => {
       if (value) {
         try {
-          const financier = await financierService.getFinancierById(value);
+          const financier = await financierService.find(value);
           if (financier) {
             setSelectedFinancier({ id: financier.id, name: financier.name });
           }
@@ -33,8 +33,8 @@ export default function AutoCompleteFinancier({ onChange, value, error, helperTe
     const fetchInitialFinanciers = async () => {
       setLoading(true);
       try {
-        const financiers = await financierService.getFinanciers();
-        const formattedFinanciers = financiers.results.map(financier => ({
+        const financiers = await financierService.index();
+        const formattedFinanciers = financiers.results.map((financier) => ({
           id: financier.id,
           name: financier.name,
         }));
@@ -62,8 +62,8 @@ export default function AutoCompleteFinancier({ onChange, value, error, helperTe
       if (!name) return;
       setLoading(true);
       try {
-        const financiers = await financierService.getFinanciers({ name__icontains: name });
-        const formattedFinanciers = financiers.results.map(financier => ({
+        const financiers = await financierService.index({ name__icontains: name });
+        const formattedFinanciers = financiers.results.map((financier) => ({
           id: financier.id,
           name: financier.name,
         }));
@@ -72,8 +72,8 @@ export default function AutoCompleteFinancier({ onChange, value, error, helperTe
         console.error('Erro ao buscar os financiers:', error);
       }
       setLoading(false);
-    }, 300), 
-    []
+    }, 300),
+    [],
   );
 
   const handleOpen = () => {

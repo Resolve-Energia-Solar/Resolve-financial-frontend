@@ -14,11 +14,22 @@ const NavListing = () => {
   const customizer = useSelector((state) => state.customizer);
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const hideMenu = lgUp ? customizer.isCollapse && !customizer.isSidebarHover : '';
+  const userPermissions = useSelector((state) => state.user.permissions);
+
+  const hasPermission = (permissions) => {
+    if (!permissions) return true; 
+    return permissions.some(permission => userPermissions?.includes(permission));
+
+  };
 
   return (
     <Box>
       <List sx={{ p: 0, display: 'flex', gap: '3px', zIndex: '100' }}>
         {Menudata.map((item) => {
+          if (!hasPermission(item.permissions)) {
+            return null; 
+          }
+
           if (item.children) {
             return (
               <NavCollapse

@@ -148,7 +148,7 @@ const CommercialSchedulesList = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await scheduleService.getScheduleIspections({
+      const response = await scheduleService.index({
         fields:
           'customer.complete_name,service.name,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,address,status,created_at,id,groups',
         expand: 'customer,service,schedule_agent,address',
@@ -156,7 +156,6 @@ const CommercialSchedulesList = () => {
         limit: rowsPerPage,
         ...filters,
       });
-      console.log("Dados buscados:", response);
       setSchedules(response);
     } catch (err) {
       setError(err);

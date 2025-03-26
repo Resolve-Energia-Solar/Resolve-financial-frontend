@@ -11,7 +11,7 @@ const useFinancialRecord = (id) => {
 
     const fetchFinancialRecord = async () => {
       try {
-        const data = await financialRecordService.getFinancialRecordList();
+        const data = await financialRecordService.index();
         setFinancialRecordData(data);
       } catch (err) {
         setError('Erro ao carregar a função');
