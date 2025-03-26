@@ -10,7 +10,7 @@ const usePayment = (id) => {
   const [paymentData, setPaymentData] = useState(null);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rowSelected, setRowSelected] = useState(null);
-  const [openModal,setOpenModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [text, setText] = useState();
   const [IconComponents, setIconComponents] = useState(null);
 
@@ -29,12 +29,12 @@ const usePayment = (id) => {
     if (response) {
       setOpenModal(true)
       setIconComponents(CheckCircleIcon)
-      setText({title:'Sucesso', message:'Status Modificado com sucesso!'})
+      setText({ title: 'Sucesso', message: 'Status Modificado com sucesso!' })
       setRowSelected({ ...rowSelected, sale: { ...rowSelected.sale, [name]: value } })
     } else {
       setOpenModal(true)
       setIconComponents(ErrorIcon)
-      setText({title:'Erro', message:'Erro ao salvar status de pagamento!'})
+      setText({ title: 'Erro', message: 'Erro ao salvar status de pagamento!' })
     }
   }
 
@@ -43,7 +43,8 @@ const usePayment = (id) => {
 
     const fetchPayment = async () => {
       try {
-        const data = await paymentService.getPaymentById(id);
+        const data = await paymentService.find(id, { expand: ['sale.customer', 'installments', 'financier', 'borrower'] });
+        console.log('sjhdfgaskdjhfsdf', data)
         setPaymentData(data);
       } catch (err) {
         setError('Erro ao carregar o pagamento');
@@ -55,14 +56,14 @@ const usePayment = (id) => {
     fetchPayment();
   }, [id]);
 
-  return { 
-    editPaymentStatus, 
-    loading, 
-    error, 
-    paymentData, 
-    openDrawer, 
-    handleRowClick, 
-    toggleOpenDrawerClosed, 
+  return {
+    editPaymentStatus,
+    loading,
+    error,
+    paymentData,
+    openDrawer,
+    handleRowClick,
+    toggleOpenDrawerClosed,
     rowSelected,
     openModal,
     setOpenModal,
