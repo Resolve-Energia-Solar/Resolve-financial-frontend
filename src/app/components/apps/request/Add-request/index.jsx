@@ -38,16 +38,16 @@ export default function AddRequestCompany({
   formData.status ? formData.status : (formData.status = 'S');
 
   const today = new Date();
-  const formattedDate =
-    today.getFullYear() +
-    '-' +
-    (today.getMonth() + 1).toString().padStart(2, '0') +
-    '-' +
-    today.getDate().toString().padStart(2, '0');
+  //const formattedDate =
+    //today.getFullYear() +
+    //'-' +
+    //(today.getMonth() + 1).toString().padStart(2, '0') +
+    //'-' +
+    //today.getDate().toString().padStart(2, '0');
 
-  formData.request_date = formattedDate;
+  //formData.request_date = formattedDate;
 
-  console.log('formData', formData);
+  //console.log('formData', formData);
 
   useEffect(() => {
     if (success) {
@@ -96,6 +96,19 @@ export default function AddRequestCompany({
             onChange={(id) => handleChange('unit_id', id)}
             value={formData.unit_id}
             {...(formErrors.unit_id && { error: true, helperText: formErrors.unit_id })}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={12} lg={4}>
+          <FormDate
+            label="Data de solicitação"
+            name="request_date"
+            value={formData.request_date}
+            onChange={(newValue) => handleChange('request_date', newValue)}
+            {...(formErrors.request_date && {
+              error: true,
+              helperText: formErrors.request_date,
+            })}
           />
         </Grid>
 
