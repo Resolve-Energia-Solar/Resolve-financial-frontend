@@ -75,7 +75,7 @@ const SalesListPage = ({ lead }) => {
                 const response = await saleService.index({
                     customer__in: lead?.customer?.id,
                 })
-                setData(response.results.results || []);
+                setData(response.results || []);
                 setTotalRows(response.sale?.length || 0);
 
             } catch (err) {

@@ -53,7 +53,7 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
       try {
         const sales = await saleService.getSaleByFullName(name);
         if (sales && sales.results) {
-          const formattedSales = sales.results.results.map((sale) => ({
+          const formattedSales = sales.results.map(sale => ({
             id: sale.id,
             name: `${sale.contract_number} - ${sale.customer.complete_name}`,
           }));

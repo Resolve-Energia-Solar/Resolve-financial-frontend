@@ -25,7 +25,7 @@ function LeadDocumentPage({ leadId = null, customer = null }) {
           customer__in: customer.id,
           fields: 'id,str',
         });
-        setSaleIds(response.results.results || []);
+        setSaleIds(response.results || []);
       } catch (err) {
         console.error('Erro ao buscar as vendas:', err);
       } finally {

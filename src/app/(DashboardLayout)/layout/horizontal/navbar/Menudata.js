@@ -68,9 +68,9 @@ const Menuitems = [
       },
       {
         id: uniqueId(),
-        title: 'Vistoria',
+        title: 'Agendamentos',
         icon: IconUserPin,
-        href: '/apps/inspections/schedule',
+        href: '/apps/commercial/schedules',
         permissions: ['field_services.view_schedule'],
       },
     ],

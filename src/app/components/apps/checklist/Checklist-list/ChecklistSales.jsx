@@ -14,7 +14,7 @@ function ChecklistSales({ saleId }) {
     const fetchData = async () => {
       try {
         const response = await projectService.getProjectBySale(saleId);
-        setProjectsList(response.results);
+        setProjectsList(response);
       } catch (error) {
         console.log('Error: ', error);
       } finally {
@@ -30,7 +30,7 @@ function ChecklistSales({ saleId }) {
 
   return (
     <div>
-      {projectsList.map((project) => (
+      {projectsList.results.map((project) => (
         <Box key={project.id} mt={3}>
           <Card elevation={10}>
             <CardContent>

@@ -3,7 +3,7 @@ import apiClient from './apiClient';
 
 const DEFAULT_ROUTER = '/api/comments';
 
-const commentService = {
+const CommentService = {
   index: async (params) => {
     try {
       const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params });
@@ -114,4 +114,4 @@ const commentService = {
   },
 };
 
-export default commentService;
+export default CommentService;

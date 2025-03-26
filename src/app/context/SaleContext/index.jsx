@@ -11,7 +11,7 @@ export const SaleDataContextProvider = ({ children }) => {
   const refreshData = () => {
     setRefresh((prev) => !prev);
   };
-
+ 
 
   return (
     <SaleDataContext.Provider value={{ filters, setFilters, refreshData, refresh }}>

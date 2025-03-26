@@ -18,7 +18,7 @@ import { motion } from 'framer-motion';
 import { useSelector } from 'react-redux';
 
 import getContentType from '@/utils/getContentType';
-import commentService from '@/services/commentService';
+import CommentService from '@/services/commentService';
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -40,6 +40,7 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
     async function fetchContentTypeId() {
       try {
         const id = await getContentType(appLabel, model);
+        console.log('Content Type ID:', id);
         setContentTypeId(id);
       } catch (error) {
         console.error('Erro ao buscar content type:', error);
@@ -48,47 +49,58 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
     fetchContentTypeId();
   }, [appLabel, model]);
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const data = await commentService.index({
-          object_id: objectId,
-          content_type: contentTypeId,
-          ordering: 'created_at',
-        });
-        setComments(data.results || []);
-      } catch (err) {
-        setError(err.message || 'Erro ao carregar comentários.');
-      } finally {
-        setLoading(false);
-      }
-    };
+    useEffect(() => {
+        const fetchComments = async () => {
+            try {
+                const data = await CommentService.index({
+                    object_id: objectId,
+                    content_type: contentTypeId,
+                    fields: 'author.complete_name,created_at,text',
+                    expand: 'author',
+                });
+                setComments(data.results || []);
+
+            } catch (err) {
+                setError(err.message || 'Erro ao carregar comentários.');
+            } finally {
+                setLoading(false);
+            }
+        };
 
     fetchComments();
   }, [contentTypeId, objectId]);
 
   const getInitials = (name) => name?.charAt(0)?.toUpperCase() || '';
 
-  const handleSubmit = async () => {
-    console.log('Enviando comentário:', newComment);
-    if (!newComment.trim()) return;
-    setSubmitting(true);
-    try {
-      const data = await commentService.createComment({
-        object_id: objectId,
-        content_type: contentTypeId,
-        text: newComment,
-        author_id: user?.id,
-      });
-      // Adiciona a nova mensagem ao final do array
-      setComments((prev) => [...prev, data]);
-      setNewComment('');
-    } catch (err) {
-      setError(err.message || 'Erro ao enviar comentário.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    const handleSubmit = async () => {
+        if (!newComment.trim()) return;
+        setSubmitting(true);
+        try {
+            const data = await CommentService.createComment({
+                author: user?.id,
+                object_id: objectId,
+                content_type: contentTypeId,
+                text: newComment
+            });
+    
+            const commentWithAuthor = {
+                ...data,
+                author: {
+                    id: user?.id,
+                    complete_name: user?.complete_name,
+                    email: user?.email,
+                    employee_data: user?.employee_data || {},
+                },
+            };
+    
+            setComments(prev => [...prev, commentWithAuthor]);
+            setNewComment('');
+        } catch (err) {
+            setError(err.message || 'Erro ao enviar comentário.');
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
   // Rolagem automática ao final quando as mensagens mudam
   useEffect(() => {
@@ -111,135 +123,110 @@ export default function Comment({ appLabel, model, objectId, label = 'Comentári
     </>
   );
 
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        borderRadius: 2,
-        boxShadow: 0,
-        bgcolor: 'background.paper',
-        width: '100%',
-        maxWidth: 800,
-        margin: '0 auto',
-        mt: 2,
-        overflow: 'hidden',
-      }}
-    >
-      <Typography variant="h6" gutterBottom sx={{ p: 2 }}>
-        {label}
-      </Typography>
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                borderRadius: 2,
+                boxShadow: 0,
+                bgcolor: 'background.paper',
+                width: '100%',
+                maxWidth: '100%',
+                margin: '0 auto',
+                mt: 0,
+                overflow: 'hidden'
+            }}
+        >
+            <Typography variant="h6" gutterBottom sx={{ p: 2 }}>
+                {label}
+            </Typography>
 
-      {/* Área de mensagens */}
-      <Box
-        ref={listRef}
-        sx={{
-          height: 500,
-          overflowY: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-          px: 2,
-          pb: 1,
-        }}
-      >
-        <List sx={{ display: 'flex', flexDirection: 'column' }}>
-          {loading ? (
-            <SkeletonList />
-          ) : (
-            comments.map((comment, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                initial="hidden"
-                animate="visible"
-                exit="hidden"
-                style={{
-                  marginBottom: '8px',
-                  display: 'flex',
-                  justifyContent: comment.author?.id === user?.id ? 'flex-end' : 'flex-start',
+            {/* Área de mensagens */}
+            <Box
+                ref={listRef}
+                sx={{
+                    height: 320,
+                    overflowY: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
                 }}
-              >
-                <Tooltip
-                  title={
-                    <Box sx={{ p: 0, textAlign: 'left' }}>
-                      <Typography variant="body2">
-                        <strong>Nome:</strong> {comment.author?.complete_name || 'Desconhecido'}
-                      </Typography>
-                      <Typography variant="body2">
-                        <strong>Email:</strong> {comment.author?.email || 'Desconhecido'}
-                      </Typography>
-                      <Typography variant="body2">
-                        <strong>Cargo:</strong>{' '}
-                        {comment.author?.employee_data?.role || 'Desconhecido'}
-                      </Typography>
-                      <Typography variant="body2">
-                        <strong>Setor:</strong>{' '}
-                        {comment.author?.employee_data?.department || 'Desconhecido'}
-                      </Typography>
-                      <Typography variant="body2">
-                        <strong>Unidade:</strong>{' '}
-                        {comment.author?.employee_data?.branch || 'Desconhecido'}
-                      </Typography>
-                      <Typography variant="body2">
-                        <strong>Data:</strong> {new Date(comment.created_at).toLocaleString()}
-                      </Typography>
-                    </Box>
-                  }
-                  arrow
-                  placement="right"
-                  enterDelay={300}
-                  leaveDelay={50}
-                >
-                  <ListItem
-                    sx={{
-                      maxWidth: '90%',
-                      bgcolor: comment.author?.id === user?.id ? 'primary.light' : 'grey.300',
-                      borderRadius: 2,
-                      padding: 1,
-                      alignSelf: comment.author?.id === user?.id ? 'flex-end' : 'flex-start',
-                    }}
-                  >
-                    <ListItemAvatar>
-                      <Avatar sx={{ bgcolor: 'primary.main', color: 'white' }}>
-                        {getInitials(comment.author?.complete_name || comment.author?.email || 'D')}
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={
-                        comment.author?.complete_name
-                          ? comment.author.complete_name.charAt(0).toUpperCase() +
-                            comment.author.complete_name.slice(1).toLowerCase()
-                          : comment.author?.email
-                          ? comment.author.email.charAt(0).toUpperCase() +
-                            comment.author.email.slice(1).toLowerCase()
-                          : 'Desconhecido'
-                      }
-                      secondary={
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Typography variant="body1">{comment?.text}</Typography>
-                          <Typography
-                            variant="caption"
-                            color="textSecondary"
-                            sx={{ marginLeft: '10px' }}
-                          >
-                            {new Date(comment.created_at).toLocaleString()}
-                          </Typography>
-                        </Box>
-                      }
-                    />
-                  </ListItem>
-                </Tooltip>
-              </motion.div>
-            ))
-          )}
-        </List>
-      </Box>
+            >
+                <List sx={{ display: 'flex', flexDirection: 'column' }}>
+                    {loading ? (
+                        <SkeletonList />
+                    ) : (
+                        comments.map((comment, index) => (
+                            <motion.div
+                                key={index}
+                                variants={itemVariants}
+                                initial="hidden"
+                                animate="visible"
+                                exit="hidden"
+                                style={{
+                                    marginBottom: '8px',
+                                    display: 'flex',
+                                    justifyContent: comment.author?.id === user?.id ? 'flex-end' : 'flex-start'
+                                }}
+                            >
+                                <Tooltip
+                                    title={
+                                        <Box sx={{ p: 0, textAlign: 'left' }}>
+                                            <Typography variant="body2"><strong>Nome:</strong> {comment.author?.complete_name || 'Desconhecido'}</Typography>
+                                            <Typography variant="body2"><strong>Email:</strong> {comment.author?.email || 'Desconhecido'}</Typography>
+                                            <Typography variant="body2"><strong>Cargo:</strong> {comment.author?.employee_data?.role || 'Desconhecido'}</Typography>
+                                            <Typography variant="body2"><strong>Setor:</strong> {comment.author?.employee_data?.department || 'Desconhecido'}</Typography>
+                                            <Typography variant="body2"><strong>Unidade:</strong> {comment.author?.employee_data?.branch || 'Desconhecido'}</Typography>
+                                            <Typography variant="body2"><strong>Data:</strong> {new Date(comment.created_at).toLocaleString()}</Typography>
+                                        </Box>
+                                    }
+                                    arrow
+                                    placement="right"
+                                    enterDelay={300}
+                                    leaveDelay={50}
+                                >
+                                    <ListItem
+                                        sx={{
+                                            maxWidth: '90%',
+                                            bgcolor: comment.author?.id === user?.id ? 'primary.light' : 'grey.300',
+                                            borderRadius: 2,
+                                            padding: 1,
+                                            alignSelf: comment.author?.id === user?.id ? 'flex-end' : 'flex-start'
+                                        }}
+                                    >
+                                        <ListItemAvatar>
+                                            <Avatar sx={{ bgcolor: 'primary.main', color: 'white' }}>
+                                                {getInitials(
+                                                    comment.author?.complete_name || comment.author?.email || 'D'
+                                                )}
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={
+                                                comment.author?.complete_name
+                                                    ? comment.author.complete_name.charAt(0).toUpperCase() + comment.author.complete_name.slice(1).toLowerCase()
+                                                    : comment.author?.email
+                                                        ? comment.author.email.charAt(0).toUpperCase() + comment.author.email.slice(1).toLowerCase()
+                                                        : 'Desconhecido'
+                                            }
+                                            secondary={
+                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    <Typography variant="body1">
+                                                        {comment?.text}
+                                                    </Typography>
+                                                    <Typography variant="caption" color="textSecondary" sx={{ marginLeft: '10px' }}>
+                                                        {new Date(comment.created_at).toLocaleString()}
+                                                    </Typography>
+                                                </Box>
+                                            }
+                                        />
+                                    </ListItem>
+                                </Tooltip>
+                            </motion.div>
+                        ))
+                    )}
+                </List>
+            </Box>
 
       {/* Área de input */}
       <Box
