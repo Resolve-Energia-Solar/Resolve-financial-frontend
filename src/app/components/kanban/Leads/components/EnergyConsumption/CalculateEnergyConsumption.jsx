@@ -191,7 +191,6 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     </Button>
                                 </Grid>
 
-
                             </Grid>
 
                             <Grid container rowSpacing={0} columnSpacing={{ xs: 1, sm: 2, md: 3 }} >
@@ -501,9 +500,9 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                             '&:hover': { backgroundColor: '#333' },
                                             px: 3,
                                         }}
+                                        endIcon={<BoltOutlinedIcon sx={{ ml: 1 }} />}
                                     >
                                         <Typography variant="body1">Calcular geração de energia estimada</Typography>
-                                        <BoltOutlinedIcon sx={{ ml: 1 }} />
                                     </Button>
                                 </Grid>
 
