@@ -50,7 +50,7 @@ const ProfileBanner = ({ user }) => {
       // Busca dados de departamento
       if (user?.employee_data?.department) {
         try {
-          const data = await employeeService.getEmployee({
+          const data = await employeeService.index({
             filters: { department: user.employee?.department?.id, fields: 'id' },
           });
           setDepartmentCount(data.count || data.length || 0);

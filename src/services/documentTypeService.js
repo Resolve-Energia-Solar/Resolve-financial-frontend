@@ -60,7 +60,7 @@ const documentTypeService = {
     const response = await apiClient.get(`/api/document-types/${id}/`);
     return response.data;
   },
-  getDocumentTypeFromEngineering: async (limit = 30) => {
+  Aqw34: async (limit = 30) => {
     const response = await apiClient.get(`/api/document-types/`, {
       params: { app_label__in: 'engineering', limit },
     });

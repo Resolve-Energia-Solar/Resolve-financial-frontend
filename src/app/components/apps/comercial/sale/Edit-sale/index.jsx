@@ -136,7 +136,10 @@ const EditSaleTabs = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await documentTypeService.getDocumentTypeFromContract();
+        const response = await documentTypeService.index({
+          app_label__in: 'contracts',
+          limit: 30,
+        });
         setDocumentTypes(response.results);
       } catch (error) {
         console.log('Error: ', error);

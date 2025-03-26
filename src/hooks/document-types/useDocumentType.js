@@ -11,7 +11,7 @@ const useDocumentType = (id) => {
 
     const fetchDocumentType = async () => {
       try {
-        const data = await documentTypeService.getDocumentTypeById(id);
+        const data = await documentTypeService.find(id);
         setDocumentType(data);
       } catch (err) {
         setError('Erro ao carregar a função');
@@ -22,7 +22,6 @@ const useDocumentType = (id) => {
 
     fetchDocumentType();
   }, [id]);
-
 
   return { loading, error, documentTypeData };
 };
