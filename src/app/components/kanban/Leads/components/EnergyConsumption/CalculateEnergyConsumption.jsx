@@ -11,6 +11,7 @@ import {
     Dialog,
     DialogContent,
     IconButton,
+    DialogTitle,
 } from '@mui/material';
 
 import { useEffect, useState } from 'react';
@@ -205,6 +206,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         onClick={handleFieldClick}
                                         onChange={handleInputChange}
                                         fullWidth
+                                        disabled={openDialog}
                                         InputProps={{
                                             sx: {
                                                 input: {
@@ -212,7 +214,6 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                     fontWeight: "400",
                                                     fontSize: "12px",
                                                     opacity: 1,
-
                                                 },
                                             },
                                             endAdornment: (
@@ -529,6 +530,12 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                             </Grid>
 
 
+                        <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                            <DialogTitle>Histórico de Consumo</DialogTitle>
+                            <DialogContent>
+                                
+                            </DialogContent>
+                        </Dialog>
 
                         </Grid>
 
