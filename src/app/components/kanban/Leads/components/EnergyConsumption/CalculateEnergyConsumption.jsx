@@ -117,6 +117,11 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
         setFormData({ ...formData, medimum_consumption: e.target.value });
     };
 
+    const handleFieldClick = () => {
+        setOpenDialog(true);
+    }
+
+
 
     return (
         <Grid container spacing={0}>
@@ -197,7 +202,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     <TextField
                                         name="medimum_consumption"
                                         value={formData.medimum_consumption}
-                                        onChange={(e) => handleInputChange('medimum_consumption', e.target.value)}
+                                        onClick={handleFieldClick}
+                                        onChange={handleInputChange}
                                         fullWidth
                                         InputProps={{
                                             sx: {
