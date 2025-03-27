@@ -8,12 +8,21 @@ import LeadAttachmentsAccordionSkeleton from '../components/LeadAttachmentsAccor
 import documentTypeService from '@/services/documentTypeService';
 import saleService from '@/services/saleService';
 import { useEffect, useState } from 'react';
+import { useContext } from 'react';
+import { LeadModalTabContext } from '../context/LeadModalTabContext';
 
-function LeadDocumentPage({ leadId = null, customer = null }) {
+function LeadDocumentPage() {
   const [documentTypes, setDocumentTypes] = useState([]);
   const [saleIds, setSaleIds] = useState([]);
   const [loadingSales, setLoadingSales] = useState(true);
   const [loadingDocumentTypes, setLoadingDocumentTypes] = useState(true);
+  const { lead } = useContext(LeadModalTabContext);
+
+  console.log('lead leadDocumentPage:', lead);
+
+  const customer = lead?.customer || null;
+  const leadId = lead?.id || null;
+  
 
   const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 

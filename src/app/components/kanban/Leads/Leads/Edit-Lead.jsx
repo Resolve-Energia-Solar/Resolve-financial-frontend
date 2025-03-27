@@ -52,8 +52,6 @@ function EditLeadPage({ leadId = null }) {
     }
   };
 
-  console.log('leadData', formData);
-
   return (
     <Grid container spacing={0}>
       <Grid item xs={12}>
