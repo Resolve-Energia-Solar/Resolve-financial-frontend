@@ -27,6 +27,8 @@ import RotateLeftOutlinedIcon from '@mui/icons-material/RotateLeftOutlined';
 import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
 import { Switch } from '@mui/material';
 import { months } from 'moment';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null }) {
     const router = useRouter();
@@ -571,14 +573,39 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                         >
                             {/* <DialogTitle>Histórico de Consumo</DialogTitle> */}
                             <DialogContent>
-                                <Grid container rowSpacing={2}>
-                                    <Grid item>
-                                        <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Histórico de Consumo</Typography>
-                                    </Grid>
-                                    <Grid item>
+                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12}>
+                                            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Histórico de Consumo</Typography>
+                                        </Grid>
+                                        <Grid item xs={12} sx={{display: "flex", flexDirection: "column"}}>
+                                            <Grid item xs={12}>
+                                                <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "16px" }}>Período</Typography>
+                                            </Grid>
+                                            <Grid item xs={12} sx={{display: "flex", flexDirection: "row"}}>
+                                                <Grid item xs={5}>
+                                                    <DatePicker
+                                                        value={startDate}
+                                                        onChange={handleStartDateChange}
+                                                        renderInput={(params) => <TextField {... params} fullWidth />}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={2} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+                                                    <Typography sx={{ color: "#ADADAD", fontWeight: "400", fontSize: "16px" }}>à</Typography>
+                                                </Grid>
+                                                <Grid item xs={5}>
+                                                    <DatePicker
+                                                        value={endDate}
+                                                        onChange={handleEndDateChange}
+                                                        renderInput={(params) => <TextField {... params} fullWidth />}
+                                                    />
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
 
                                     </Grid>
-                                </Grid>
+                                </LocalizationProvider>
                             </DialogContent>
                         </Dialog>
 
