@@ -26,6 +26,7 @@ import BackupOutlinedIcon from '@mui/icons-material/BackupOutlined';
 import RotateLeftOutlinedIcon from '@mui/icons-material/RotateLeftOutlined';
 import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
 import { Switch } from '@mui/material';
+import { months } from 'moment';
 
 function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null }) {
     const router = useRouter();
@@ -133,6 +134,13 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
         return [];
     }
+
+    const handleMonthInputChange = (month, value) => {
+        setInputValues({ ...inputValues, [month]: value});
+    };
+
+    
+
 
 
 
