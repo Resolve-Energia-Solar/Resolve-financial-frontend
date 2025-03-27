@@ -445,12 +445,12 @@ const SaleList = () => {
                       <StatusChip status={item.status} />
                     </TableCell>
                     <TableCell>
-                      {item.final_service_opinion[0] ? (
+                      {Array.isArray(item.final_service_opinion) && item.final_service_opinion[0].name ? (
                         <Chip
-                          label={item.final_service_opinion[0]}
+                          label={item.final_service_opinion[0].name}
                           color={
-                            item.final_service_opinion[0] === 'Aprovado' ? 'success' : 'default'
-                          }
+                            item.final_service_opinion[0].name.toLowerCase().includes('aprovado') ? 'success' : 'default'
+                          }                          
                         />
                       ) : (
                         <Chip label="Sem P.F" color="warning" />
