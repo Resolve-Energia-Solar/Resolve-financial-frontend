@@ -95,14 +95,11 @@ function CategoryTaskList({ id }) {
       setLoading(true);
       try {
         const response = await leadService.index({
-          params: {
             fields: 'id,name,phone,created_at,qualification,origin',
             column: id,
-
             ordering: '-created_at',
             page: page,
             limit: perPage,
-          },
         });
 
         response?.next ? setHasNext(true) : setHasNext(false);
