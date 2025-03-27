@@ -109,6 +109,17 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
         setOpenDialog(true);
     }
 
+    // medium calc logic
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [inputValues, setInputValues] = useState({});
+    const [averageConsuption, setAverageConsuption] = useState(null);
+
+    const handleStartDateChange = (date) => setStartDate(date);
+    const handleEndDateChange = (date) => setEndDate(date);
+
+    
+
 
 
     return (
