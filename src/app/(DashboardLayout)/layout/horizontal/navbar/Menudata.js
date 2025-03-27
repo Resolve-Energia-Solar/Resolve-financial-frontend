@@ -93,13 +93,13 @@ const Menuitems = [
         href: '/apps/invoice',
         permissions: ['financial.view_payment'],
       },
-      {
-        id: uniqueId(),
-        title: 'Parcelas',
-        icon: IconWallet,
-        href: '/apps/invoice/installments',
-        permissions: ['financial.view_payment'],
-      },
+      // {
+      //   id: uniqueId(),
+      //   title: 'Parcelas',
+      //   icon: IconWallet,
+      //   href: '/apps/invoice/installments',
+      //   permissions: ['financial.view_payment'],
+      // },
       {
         id: uniqueId(),
         title: 'Solic. de Pagamento',
