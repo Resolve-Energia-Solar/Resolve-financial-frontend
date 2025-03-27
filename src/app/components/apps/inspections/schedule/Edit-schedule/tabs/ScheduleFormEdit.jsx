@@ -213,19 +213,19 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     handleChange(field, newValue);
   };
 
-  const fetchOpinions = async (search) => {
-    try {
-      const response = await serviceOpinionsService.index({
-        q: search,
-        limit: 15,
-        fields: 'id,name',
-      });
-      return response.results;
-    } catch (error) {
-      console.error('Erro na busca de endereços:', error);
-      return [];
-    }
-  };
+  // const fetchOpinions = async (search) => {
+  //   try {
+  //     const response = await serviceOpinionsService.index({
+  //       q: search,
+  //       limit: 15,
+  //       fields: 'id,name',
+  //     });
+  //     return response.results;
+  //   } catch (error) {
+  //     console.error('Erro na busca de endereços:', error);
+  //     return [];
+  //   }
+  // };
 
   return (
     <>
@@ -350,6 +350,10 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         </HasPermission>
 
         {/* Agente de Campo */}
+        <HasPermission
+          permissions={['field_services.change_final_service_opinion']}
+          userPermissions={userPermissions}
+        >
         <Grid item xs={12} sm={6} lg={6}>
           <CustomFormLabel htmlFor="field_agent">
             Agentes Disponíveis{' '}
@@ -379,6 +383,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
             })}
           />
         </Grid>
+        </HasPermission>
 
         {/* Parecer final de Serviço */}
         <HasPermission
@@ -420,6 +425,10 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         </Grid>
 
         {/* Parecer de Serviço */}
+        <HasPermission
+          permissions={['field_services.change_final_service_opinion']}
+          userPermissions={userPermissions}
+        >
         <Grid item xs={12} sm={6} lg={6}>
           <CustomFormLabel htmlFor="service_opinion_id">Parecer de serviço</CustomFormLabel>
           <Chip
@@ -431,6 +440,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
             color="primary"
           />
         </Grid>
+        </HasPermission>
 
         {/* Botão de Ação */}
         <Grid item xs={12} sm={12} lg={12}>
