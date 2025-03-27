@@ -88,7 +88,7 @@ const financialRecordList = () => {
           ...filters,
         });
         setFinancialRecordList(data.results);
-        setTotalRows(data.count);
+        setTotalRows(data.meta.pagination.total_count);
 
         // Atualizar KPIs globais
         await fetchKPIs();
@@ -106,8 +106,8 @@ const financialRecordList = () => {
           ...filters,
         });
 
-        setTotalRequests(kpiData.count); // Total de registros
-        setTotalAmount(kpiData.results.reduce((acc, item) => acc + parseFloat(item.value), 0)); // Soma do valor
+        setTotalRequests(kpiData.meta.pagination.total_count);
+        setTotalAmount(kpiData.results.reduce((acc, item) => acc + parseFloat(item.value), 0));
         setInProgressCount(
           kpiData.results.filter(
             (item) => item.responsible_status === 'A' && item.payment_status === 'P',
@@ -476,9 +476,9 @@ const financialRecordList = () => {
                     <TableRow key={item.id} hover onClick={() => handleRowClick(item)}>
                       <TableCell>
                         {item.paid_at &&
-                        new Date(item.paid_at).getFullYear() === new Date().getFullYear() &&
-                        new Date(item.paid_at).getMonth() === new Date().getMonth() &&
-                        new Date(item.paid_at).getDate() === new Date().getDate() ? (
+                          new Date(item.paid_at).getFullYear() === new Date().getFullYear() &&
+                          new Date(item.paid_at).getMonth() === new Date().getMonth() &&
+                          new Date(item.paid_at).getDate() === new Date().getDate() ? (
                           <PulsingBadge />
                         ) : (
                           <>
