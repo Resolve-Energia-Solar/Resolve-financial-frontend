@@ -147,6 +147,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
         setAverageConsuption(average);
     }
 
+    const months = generateMonths();
 
 
 
