@@ -530,10 +530,23 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                             </Grid>
 
 
-                        <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                        <Dialog 
+                            open={openDialog} 
+                            onClose={() => setOpenDialog(false)}
+                            fullWidth
+                            PaperProps={{
+                                sx: {
+                                    borderRadius: '20px',
+                                    padding: '24px',
+                                    gap: '24px',
+                                    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                                }
+                            }}
+                        >
                             <DialogTitle>Histórico de Consumo</DialogTitle>
                             <DialogContent>
-                                
+                                <Grid container rowSpacing={2}>
+                                </Grid>
                             </DialogContent>
                         </Dialog>
 
