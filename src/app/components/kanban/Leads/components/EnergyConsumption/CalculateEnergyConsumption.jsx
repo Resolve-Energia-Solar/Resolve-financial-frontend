@@ -138,12 +138,12 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
     }
 
     const handleMonthInputChange = (month, value) => {
-        setInputValues({ ...inputValues, [month]: value});
+        setInputValues({ ...inputValues, [month]: value });
     };
 
     const calculateAverage = () => {
         const values = Object.values(inputValues);
-        if (values.length === 0 ) return;
+        if (values.length === 0) return;
         const total = values.reduce((acc, value) => acc + parseFloat(value || 0), 0);
         const average = total / values.length;
         setAverageConsuption(average);
@@ -216,12 +216,12 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                             </Grid>
 
                             <Grid container rowSpacing={0} columnSpacing={{ xs: 1, sm: 2, md: 3 }} >
-                                <Grid item xs={12} sx={{mt: 2, mb: 0}}>
+                                <Grid item xs={12} sx={{ mt: 2, mb: 0 }}>
                                     <Typography sx={{ color: "#000000", fontWeight: "400", fontSize: "18px" }}>Consumo energético</Typography>
                                 </Grid>
                             </Grid>
 
-                            <Grid container rowSpacing={0} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ mt: 0}} >
+                            <Grid container rowSpacing={0} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ mt: 0 }} >
                                 <Grid item xs={3}>
                                     <CustomFormLabel
                                         htmlFor="medimum_consumption"
@@ -465,13 +465,13 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         color="primary"
                                         sx={{
                                             '& .MuiSwitch-switchBase.Mui-checked': {
-                                                color: '#FDCB02', 
+                                                color: '#FDCB02',
                                             },
                                             '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                                                backgroundColor: '#FDCB02', 
+                                                backgroundColor: '#FDCB02',
                                             },
                                             '& .MuiSwitch-track': {
-                                                backgroundColor: '#ccc', 
+                                                backgroundColor: '#ccc',
                                             },
                                         }}
                                     />
@@ -559,96 +559,111 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                             </Grid>
 
 
-                        <Dialog 
-                            open={openDialog} 
-                            onClose={() => setOpenDialog(false)}
-                            PaperProps={{
-                                sx: {
-                                    borderRadius: '20px',
-                                    padding: '24px',
-                                    gap: '24px',
-                                    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-                                }
-                            }}
-                        >
-                            {/* <DialogTitle>Histórico de Consumo</DialogTitle> */}
-                            <DialogContent>
-                                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                    <Grid container spacing={2}>
-                                        <Grid item xs={12}>
-                                            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Histórico de Consumo</Typography>
-                                        </Grid>
-                                        <Grid item xs={12} sx={{display: "flex", flexDirection: "column"}}>
+                            <Dialog
+                                open={openDialog}
+                                onClose={() => setOpenDialog(false)}
+                                PaperProps={{
+                                    sx: {
+                                        borderRadius: '20px',
+                                        padding: '24px',
+                                        gap: '24px',
+                                        boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                                    }
+                                }}
+                            >
+                                {/* <DialogTitle>Histórico de Consumo</DialogTitle> */}
+                                <DialogContent>
+                                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                        <Grid container spacing={2}>
                                             <Grid item xs={12}>
-                                                <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "16px" }}>Período</Typography>
+                                                <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Histórico de Consumo</Typography>
                                             </Grid>
-                                            <Grid item xs={12} sx={{display: "flex", flexDirection: "row"}}>
-                                                <Grid item xs={5}>
-                                                    <DatePicker
-                                                        value={startDate}
-                                                        onChange={handleStartDateChange}
-                                                        renderInput={(params) => <TextField {... params} fullWidth />}
-                                                    />
+                                            <Grid item xs={12} sx={{ display: "flex", flexDirection: "column" }}>
+                                                <Grid item xs={12}>
+                                                    <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "16px" }}>Período</Typography>
                                                 </Grid>
-                                                <Grid item xs={2} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-                                                    <Typography sx={{ color: "#ADADAD", fontWeight: "400", fontSize: "16px" }}>à</Typography>
-                                                </Grid>
-                                                <Grid item xs={5}>
-                                                    <DatePicker
-                                                        value={endDate}
-                                                        onChange={handleEndDateChange}
-                                                        renderInput={(params) => <TextField {... params} fullWidth />}
-                                                    />
-                                                </Grid>
-                                            </Grid>
-                                            {months.length > 0 && (
-                                                <Grid item xs={12} sx={{display: "flex", flexDirection: "column"}}>
-                                                    <Grid container spacing={3}>
-                                                        {months.map((month, index) => {
-                                                            const monthLabel = month.toLocaleString('default', {month: 'long', year: 'numeric'});
-                                                            return (
-                                                                <Grid item xs={12} key={index} sx={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
-                                                                    <Grid item xs={4}>
-                                                                        <CustomFormLabel htmlFor="estimated_generation" sx={{ color: "#7E8388", fontWeight: "700", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "flex-start"}}>{monthLabel}</CustomFormLabel>
-                                                                    </Grid>
-                                                                    <Grid item xs={8}>
-                                                                        <TextField
-                                                                            value={inputValues[monthLabel]}
-                                                                            onChange={(e) => handleMonthInputChange(monthLabel, e.target.value)}
-                                                                            fullWidth
-                                                                            type="number"
-                                                                            InputProps={{
-                                                                                sx: {
-                                                                                    input: {
-                                                                                        color: "#7E92A2",
-                                                                                        fontWeight: "400",
-                                                                                        fontSize: "12px",
-                                                                                        opacity: 1,
-                                                                                    },
-                                                                                },
-                                                                                endAdornment: (
-                                                                                    <InputAdornment position="end">
-                                                                                        <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
-                                                                                            kWh
-                                                                                        </Box>
-                                                                                    </InputAdornment>
-                                                                                ),
-                                                                            }}
-                                                                        />
-                                                                    </Grid>
-                                                                </Grid>
-                                                            )
-                                                        })}
+                                                <Grid item xs={12} sx={{ display: "flex", flexDirection: "row" }}>
+                                                    <Grid item xs={5}>
+                                                        <DatePicker
+                                                            value={startDate}
+                                                            onChange={handleStartDateChange}
+                                                            renderInput={(params) => <TextField {...params} fullWidth />}
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={2} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                                        <Typography sx={{ color: "#ADADAD", fontWeight: "400", fontSize: "16px" }}>à</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={5}>
+                                                        <DatePicker
+                                                            value={endDate}
+                                                            onChange={handleEndDateChange}
+                                                            renderInput={(params) => <TextField {...params} fullWidth />}
+                                                        />
                                                     </Grid>
                                                 </Grid>
-                                            )}
+                                                {months.length > 0 && (
+                                                    <Grid item xs={12} sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", mt: 2 }}>
+                                                        <Grid container spacing={3} sx={{ justifyContent: "center" }}>
+                                                            {months.map((month, index) => {
+                                                                const monthLabel = month.toLocaleString('default', { month: 'long', year: 'numeric' });
+                                                                return (
+                                                                    <Grid item xs={12} key={index} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                                        <Grid container sx={{ alignItems: "center", justifyContent: "center" }}>
+                                                                            <Grid item xs={4} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                                                                <CustomFormLabel
+                                                                                    htmlFor="estimated_generation"
+                                                                                    sx={{
+                                                                                        color: "#7E8388",
+                                                                                        fontWeight: "700",
+                                                                                        fontSize: "14px",
+                                                                                        display: "flex",
+                                                                                        alignItems: "center",
+                                                                                        justifyContent: "center"
+                                                                                    }}
+                                                                                >
+                                                                                    {monthLabel}
+                                                                                </CustomFormLabel>
+                                                                            </Grid>
+                                                                            <Grid item xs={8} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                                                <TextField
+                                                                                    value={inputValues[monthLabel]}
+                                                                                    onChange={(e) => handleMonthInputChange(monthLabel, e.target.value)}
+                                                                                    fullWidth
+                                                                                    type="number"
+                                                                                    InputProps={{
+                                                                                        sx: {
+                                                                                            input: {
+                                                                                                color: "#7E92A2",
+                                                                                                fontWeight: "400",
+                                                                                                fontSize: "12px",
+                                                                                                opacity: 1,
+                                                                                            },
+                                                                                        },
+                                                                                        endAdornment: (
+                                                                                            <InputAdornment position="end">
+                                                                                                <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
+                                                                                                    kWh
+                                                                                                </Box>
+                                                                                            </InputAdornment>
+                                                                                        ),
+                                                                                    }}
+                                                                                />
+                                                                            </Grid>
+                                                                        </Grid>
+                                                                    </Grid>
+                                                                );
+                                                            })}
+                                                        </Grid>
+                                                    </Grid>
+                                                )}
+
+                                            </Grid>
+
+
                                         </Grid>
-
-
-                                    </Grid>
-                                </LocalizationProvider>
-                            </DialogContent>
-                        </Dialog>
+                                    </LocalizationProvider>
+                                </DialogContent>
+                            </Dialog>
 
                         </Grid>
 
