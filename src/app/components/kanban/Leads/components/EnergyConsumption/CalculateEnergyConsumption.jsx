@@ -51,6 +51,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
     const {
         formData,
+        setFormData,
         handleChange,
         handleSave,
         formErrors,
@@ -110,25 +111,9 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
         }
     }
 
-    // const [paymentMethods, setPaymentMethods] = useState([
-    //     { id: Date.now(), method: '', financing_type: '', installments_num: '' }
-    // ]);
-
-    // const handleMethodChange = (id, field, value) => {
-    //     setPaymentMethods((prevMethods) =>
-    //         prevMethods.map((method) =>
-    //             method.id === id ? { ...method, [field]: value } : method
-    //         )
-    //     );
-    // };
-
-    // const addPaymentMethod = () => {
-    //     setPaymentMethods([...paymentMethods, { id: Date.now(), method: '', financing_type: '', installments_num: '' }]);
-    // };
-
-    // const removePaymentMethod = (id) => {
-    //     setPaymentMethods(paymentMethods.filter((method) => method.id !== id));
-    // }
+    const handleInputChange = (e) => {
+        setFormData({ ...formData, medimum_consumption: e.target.value });
+    };
 
 
     return (
