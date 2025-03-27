@@ -39,7 +39,7 @@ function TabPanel({ children, value, index, ...other }) {
   );
 }
 
-export default function EditProject({ projectData }) {
+export default function EditProject({ projectData, projectId }) {
   console.log('projectData', projectData);
   const [value, setValue] = useState(0);
   const { documentTypes } = useDocumentTypesByFilter({ app_label__in: 'engineering' });
@@ -63,13 +63,13 @@ export default function EditProject({ projectData }) {
       </Tabs>
 
       <TabPanel value={value} index={0}>
-        <EditProjectTab projectId={projectData?.id} />
+        <EditProjectTab projectId={projectId} />
       </TabPanel>
 
       <TabPanel value={value} index={1}>
         <Box mt={2}>
           <ListInspection
-            projectId={projectData?.id}
+            projectId={projectId}
             product={projectData?.product?.id}
             customerId={projectData?.sale?.customer?.id}
           />
@@ -78,7 +78,7 @@ export default function EditProject({ projectData }) {
 
       <TabPanel value={value} index={2}>
         <Box mt={2}>
-          <CheckListRateio projectId={projectData?.id} />
+          <CheckListRateio projectId={projectId} />
         </Box>
       </TabPanel>
 
@@ -89,7 +89,7 @@ export default function EditProject({ projectData }) {
           </Typography>
           <Attachments
             contentType={CONTENT_TYPE_PROJECT_ID}
-            objectId={projectData?.id}
+            objectId={projectId}
             documentTypes={documentTypes}
           />
           <Typography variant="h6" sx={{ mt: 2 }}>
@@ -105,19 +105,19 @@ export default function EditProject({ projectData }) {
 
       <TabPanel value={value} index={4}>
         <Box mt={2}>
-          <RequestList projectId={projectData?.id} enableFilters={false} enableIndicators={false} />
+          <RequestList projectId={projectId} enableFilters={false} enableIndicators={false} />
         </Box>
       </TabPanel>
 
       <TabPanel value={value} index={5}>
         <Box mt={2}>
-          <UploadDocument projectId={projectData?.id} project={projectData} />
+          <UploadDocument projectId={projectId} project={projectData} />
         </Box>
       </TabPanel>
 
       <TabPanel value={value} index={6}>
         <Box mt={2}>
-          <History contentType={CONTENT_TYPE_PROJECT_ID} objectId={projectData?.id} />
+          <History contentType={CONTENT_TYPE_PROJECT_ID} objectId={projectId} />
         </Box>
       </TabPanel>
 
@@ -137,7 +137,7 @@ export default function EditProject({ projectData }) {
           <Comment
             appLabel="resolve_crm"
             model="project"
-            objectId={projectData?.id}
+            objectId={projectId}
             label="Comentários do Projeto"
           />
         </Box>

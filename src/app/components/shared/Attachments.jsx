@@ -36,8 +36,6 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
     label: docType.name,
   }));
 
-  console.log('objectId no att: ', objectId);
-
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const statusDoc = [
@@ -59,8 +57,8 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
   } = useAttachmentForm(
     selectedAttachment || null,
     selectedAttachment?.id || null,
-    selectedAttachment?.object_id || objectId,
-    selectedAttachment?.content_type?.id || parseInt(contentType),
+    objectId,
+    parseInt(contentType),
   );
 
   formData.status ? formData.status : (formData.status = 'EA');
@@ -125,7 +123,7 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
       try {
         const response = await attachmentService.index({
           expand: 'document_type,content_type',
-          fields: 'id,file,document_type.name,document_type.id,status,content_type.id',
+          fields: 'id,file,document_type.name,document_type.id,status,content_type.id,description',
           object_id: objectId,
           content_type: contentType,
           limit: 30,

@@ -33,9 +33,11 @@ export default function AddRequestCompany({
     loading: loadingForm,
   } = useEnergyCompanyForm();
 
-  formData.requested_by_id ? formData.requested_by_id : (formData.requested_by_id = userAuth.id);
+  formData.requested_by ? formData.requested_by : (formData.requested_by = userAuth.id);
   formData.project ? formData.project : (formData.project = projectId);
   formData.status ? formData.status : (formData.status = 'S');
+
+  console.log('formData', formData);
 
   const today = new Date();
   //const formattedDate =
