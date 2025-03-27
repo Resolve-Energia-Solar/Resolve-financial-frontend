@@ -1,29 +1,30 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { parseISO, format } from 'date-fns';
-
-/* material */
-import { Grid, Button, Stack, Tooltip, Snackbar, Alert, CircularProgress } from '@mui/material';
+import {
+  Grid,
+  Button,
+  Stack,
+  Tooltip,
+  Snackbar,
+  Alert,
+  CircularProgress,
+} from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
-
-/* components */
-import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
 import AutoCompleteServiceCatalog from '@/app/components/apps/inspections/auto-complete/Auto-input-Service';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
-import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-
-/* hooks */
-import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import AutoCompleteProject from '../../auto-complete/Auto-input-Project';
-import { useSelector } from 'react-redux';
 import HasPermission from '@/app/components/permissions/HasPermissions';
 import CreateAddressPage from '../../../address/Add-address';
 import addressService from '@/services/addressService';
 import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
+import UseSaleScheduleForm from '@/hooks/inspections/schedule/UseSaleScheduleForm';
+import { useSelector } from 'react-redux';
+import serviceCatalogService from '@/services/serviceCatalogService';
 
 const ScheduleFormCreate = ({
   serviceId = null,
@@ -42,27 +43,7 @@ const ScheduleFormCreate = ({
     loading: formLoading,
     formErrors,
     success,
-  } = useSheduleForm();
-
-  const userPermissions = useSelector((state) => state.user.permissions);
-
-  const [alertOpen, setAlertOpen] = React.useState(false);
-  const [alertMessage, setAlertMessage] = React.useState('');
-  const [alertType, setAlertType] = React.useState('success');
-  const [selectedAddresses, setSelectedAddress] = React.useState();
-
-  serviceId ? (formData.service_id = serviceId) : null;
-  projectId ? (formData.project_id = projectId) : null;
-  customerId ? (formData.customer_id = customerId) : null;
-  products.length > 0 ? (formData.products_ids = products) : null;
-
-  console.log('customerId', customerId);
-
-  const statusOptions = [
-    { value: 'Pendente', label: 'Pendente' },
-    { value: 'Confirmado', label: 'Confirmado' },
-    { value: 'Cancelado', label: 'Cancelado' },
-  ];
+  } = UseSaleScheduleForm();
 
   const timeOptions = [
     { value: '08:30:00', label: '08:30' },
@@ -72,11 +53,25 @@ const ScheduleFormCreate = ({
     { value: '16:00:00', label: '16:00' },
   ];
 
+  const userPermissions = useSelector((state) => state.user.permissions);
+
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState('success');
+  const [selectedAddresses, setSelectedAddress] = useState();
+  // Estado para armazenar os valores calculados de schedule_end_date e schedule_end_time
+  const [calculatedEnd, setCalculatedEnd] = useState({ date: '', time: '' });
+
+  if (projectId) formData.project = projectId;
+  if (customerId) formData.customer = customerId;
+  if (serviceId) formData.service = serviceId;
+  if (products.length > 0) formData.products_ids = products;
+
   useEffect(() => {
     if (success) {
       if (onClosedModal) {
         onClosedModal();
-        onRefresh();
+        onRefresh && onRefresh();
       } else {
         router.push('/apps/inspections/schedule');
       }
@@ -98,9 +93,7 @@ const ScheduleFormCreate = ({
       try {
         const today = new Date();
         const selectedDate = parseISO(newValue);
-
         const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
         if (selectedDate < todayStart) {
           showAlert('A data selecionada não pode ser anterior à data atual.', 'error');
           handleChange(field, '');
@@ -113,18 +106,14 @@ const ScheduleFormCreate = ({
         return;
       }
     }
-
     if (field === 'schedule_start_time') {
       try {
         const today = new Date();
         const selectedTime = newValue;
         const selectedDate = parseISO(formData.schedule_date);
-
         const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
         if (selectedDate.getTime() === todayStart.getTime()) {
           const formattedTime = format(today, 'HH:mm:ss');
-
           if (selectedTime < formattedTime) {
             showAlert('O horário selecionado não pode ser anterior ao horário atual.', 'error');
             handleChange(field, '');
@@ -138,7 +127,6 @@ const ScheduleFormCreate = ({
         return;
       }
     }
-
     handleChange(field, newValue);
   };
 
@@ -157,6 +145,51 @@ const ScheduleFormCreate = ({
     }
   };
 
+  // Lógica para calcular schedule_end_date e schedule_end_time com base no deadline do serviço
+  useEffect(() => {
+    const calculateFinalTime = async () => {
+      if (!formData.schedule_date || !formData.schedule_start_time || !formData.service) return;
+      try {
+        // Obter o id do serviço (considerando que pode vir como objeto ou valor)
+        const serviceId =
+          formData.service.value || formData.service.id || formData.service;
+        const serviceInfo = await serviceCatalogService.getServiceCatalogById(serviceId, {
+          expand: 'deadline',
+          fields: 'deadline',
+        });
+        const deadline = serviceInfo.deadline?.hours;
+        if (!deadline) return;
+
+        // Normaliza o horário de início (adiciona ":00" se necessário)
+        let startTime = formData.schedule_start_time;
+        if (!startTime.includes(':')) {
+          startTime += ':00';
+        }
+        const [startHour, startMinute, startSecond] = startTime.split(':').map(Number);
+        const [year, month, day] = formData.schedule_date.split('-').map(Number);
+        const startDate = new Date(year, month - 1, day, startHour, startMinute, startSecond || 0);
+
+        // Converte o deadline (formato "HH:mm:ss") para milissegundos
+        const [dHour, dMinute, dSecond] = deadline.split(':').map(Number);
+        const durationMs = ((dHour * 3600) + (dMinute * 60) + (dSecond || 0)) * 1000;
+        const endDate = new Date(startDate.getTime() + durationMs);
+
+        // Formata o endDate e endTime para os formatos requeridos
+        const endDateStr = endDate.toISOString().split('T')[0]; // YYYY-MM-DD
+        const endTimeStr = endDate.toTimeString().split(' ')[0];  // HH:mm:ss
+
+        setCalculatedEnd({ date: endDateStr, time: endTimeStr });
+        handleChange('schedule_end_date', endDateStr);
+        handleChange('schedule_end_time', endTimeStr);
+      } catch (error) {
+        console.error('Erro ao calcular schedule_end_date e schedule_end_time:', error);
+        showAlert('Erro ao calcular data/hora final.', 'error');
+      }
+    };
+
+    calculateFinalTime();
+  }, [formData.schedule_date, formData.schedule_start_time, formData.service]);
+
   return (
     <>
       <Grid container spacing={3}>
@@ -165,26 +198,20 @@ const ScheduleFormCreate = ({
           <Grid item xs={12} sm={12} lg={6}>
             <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
             <AutoCompleteServiceCatalog
-              onChange={(id) => handleChange('service_id', id)}
-              value={formData.service_id}
-              {...(formErrors.service_id && {
-                error: true,
-                helperText: formErrors.service_id,
-              })}
+              onChange={(id) => handleChange('service', id)}
+              value={formData.service}
+              {...(formErrors.service && { error: true, helperText: formErrors.service })}
             />
           </Grid>
         )}
-        {/* Projeto */}
+        {/* Projeto – se não for passado via params, o usuário pode selecionar */}
         {projectId ? null : (
           <Grid item xs={12} sm={12} lg={6}>
             <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
             <AutoCompleteProject
-              onChange={(id) => handleChange('project_id', id)}
-              value={formData.project_id}
-              {...(formErrors.project_id && {
-                error: true,
-                helperText: formErrors.project_id,
-              })}
+              onChange={(id) => handleChange('project', id)}
+              value={formData.project}
+              {...(formErrors.project && { error: true, helperText: formErrors.project })}
             />
           </Grid>
         )}
@@ -195,27 +222,21 @@ const ScheduleFormCreate = ({
             name="start_datetime"
             value={formData.schedule_date}
             onChange={(newValue) => validateChange('schedule_date', newValue)}
-            {...(formErrors.schedule_date && {
-              error: true,
-              helperText: formErrors.schedule_date,
-            })}
+            {...(formErrors.schedule_date && { error: true, helperText: formErrors.schedule_date })}
           />
         </Grid>
-
+        {/* Hora do Agendamento */}
         <Grid item xs={12} sm={12} lg={6}>
           <FormSelect
             options={timeOptions}
             onChange={(e) => validateChange('schedule_start_time', e.target.value)}
             disabled={!formData.schedule_date}
             value={formData.schedule_start_time || ''}
-            {...(formErrors.schedule_start_time && {
-              error: true,
-              helperText: formErrors.schedule_start_time,
-            })}
-            label={'Hora do Agendamento'}
+            {...(formErrors.schedule_start_time && { error: true, helperText: formErrors.schedule_start_time })}
+            label="Hora do Agendamento"
           />
         </Grid>
-
+        {/* Endereço */}
         <Grid item xs={12} sm={12} lg={6}>
           <CustomFormLabel htmlFor="name">
             Endereço
@@ -233,25 +254,22 @@ const ScheduleFormCreate = ({
             }
             onChange={(selected) => {
               setSelectedAddress(selected);
-              console.log('selected', selected);
-              handleChange('address_id', selected?.id);
+              handleChange('address', selected?.id);
             }}
             value={selectedAddresses}
-            {...(formErrors.address_id && {
-              error: true,
-              helperText: formErrors.address_id,
-            })}
+            {...(formErrors.address && { error: true, helperText: formErrors.address })}
           />
         </Grid>
-
-        <HasPermission
-          permissions={['field_services.change_status_schedule_field']}
-          userPermissions={userPermissions}
-        >
+        {/* Status do Agendamento */}
+        <HasPermission permissions={['field_services.change_status_schedule_field']} userPermissions={userPermissions}>
           <Grid item xs={12} sm={12} lg={6}>
             <FormSelect
               label="Status do Agendamento"
-              options={statusOptions}
+              options={[
+                { value: 'Pendente', label: 'Pendente' },
+                { value: 'Confirmado', label: 'Confirmado' },
+                { value: 'Cancelado', label: 'Cancelado' },
+              ]}
               onChange={(e) => handleChange('status', e.target.value)}
               value={formData.status || ''}
               {...(formErrors.status && { error: true, helperText: formErrors.status })}
@@ -273,8 +291,7 @@ const ScheduleFormCreate = ({
             {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
           />
         </Grid>
-
-        {/* Botão de Ação*/}
+        {/* Botão de Ação */}
         <Grid item xs={12} sm={12} lg={12}>
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             <Button
@@ -289,15 +306,13 @@ const ScheduleFormCreate = ({
           </Stack>
         </Grid>
       </Grid>
-
-      {/* Alerta */}
       <Snackbar
         open={alertOpen}
         autoHideDuration={6000}
-        onClose={handleAlertClose}
+        onClosedModal={handleAlertClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert onClose={handleAlertClose} severity={alertType} sx={{ width: '100%' }}>
+        <Alert onClosedModal={handleAlertClose} severity={alertType} sx={{ width: '100%' }}>
           {alertMessage}
         </Alert>
       </Snackbar>

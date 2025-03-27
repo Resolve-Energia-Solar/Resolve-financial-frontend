@@ -41,7 +41,7 @@ const usePhoneNumberForm = (initialData, id) => {
       area_code: formData.area_code,
       phone_number: formData.phone_number,
       is_main: formData.is_main,
-      user_id: formData.user_id ? formData.user_id : undefined,
+      user: formData.user_id ? formData.user_id : undefined,
     };
 
     console.log('dataToSend', dataToSend);

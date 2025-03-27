@@ -59,9 +59,9 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
     const isFileArray = Array.isArray(formData.file) && formData.file.length > 0;
 
     dataToSend.append('object_id', formData.object_id);
-    dataToSend.append('content_type_id', formData.content_type_id);
+    dataToSend.append('content_type', formData.content_type_id);
     dataToSend.append('status', formData.status);
-    dataToSend.append('document_type_id', formData.document_type_id);
+    dataToSend.append('document_type', formData.document_type_id);
     dataToSend.append('description', formData.description);
 
     if (isFileArray) {

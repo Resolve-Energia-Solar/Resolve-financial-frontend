@@ -24,6 +24,7 @@ import useAttachmentForm from '@/hooks/attachments/useAttachmentsForm';
 import FormSelect from '../forms/form-custom/FormSelect';
 import HasPermission from '../permissions/HasPermissions';
 import { useSelector } from 'react-redux';
+import exp from 'constants';
 
 export default function Attachments({ objectId, contentType, documentTypes }) {
   const theme = useTheme();
@@ -60,6 +61,8 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
     selectedAttachment?.content_type?.id || parseInt(contentType),
   );
 
+  console.log('Attachments0: ', formData, selectedAttachment);
+
   formData.status ? formData.status : (formData.status = 'EA');
 
   const [attachments, setAttachments] = useState([]);
@@ -72,8 +75,8 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
     if (attachment)
       setSelectedAttachment({
         ...attachment,
-        content_type_id: attachment?.content_type?.id,
-        document_type_id: attachment?.document_type?.id,
+        content_type: attachment?.content_type,
+        document_type: attachment?.document_type,
       });
   };
 
@@ -100,13 +103,33 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
     }
   };
 
+  console.log('Attachments2: ', attachments, refreshSuccess, objectId, contentType);
+
+  useEffect(() => {
+    if (selectedAttachment) {
+      handleChange('description', selectedAttachment.description || "");
+      handleChange('status', selectedAttachment.status || "EA");
+      handleChange('document_type_id', selectedAttachment.document_type?.id || "");
+      handleChange('content_type_id', selectedAttachment.content_type?.id || "");
+      handleChange('object_id', selectedAttachment.object_id || objectId);
+    } else {
+      handleChange('description', "");
+      handleChange('status', "EA");
+      handleChange('document_type_id', "");
+      handleChange('content_type_id', "");
+      handleChange('object_id', objectId);
+    }
+  }, [selectedAttachment]);
+
   useEffect(() => {
     setLoading(true);
     const fetchData = async () => {
       try {
-        const response = await attachmentService.find({
+        const response = await attachmentService.index({
+          expand: 'document_type,content_type',
+          fields: 'id,file,document_type.name,document_type.id,status,content_type.id',
           object_id: objectId,
-          content_type: contentTypeId,
+          content_type: contentType,
           limit: 30,
         });
         setAttachments(response.results);

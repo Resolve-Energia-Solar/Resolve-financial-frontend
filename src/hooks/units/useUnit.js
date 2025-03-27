@@ -11,7 +11,11 @@ const useUnit = (id) => {
 
     const fetchUnit = async () => {
       try {
-        const data = await unitService.getUnitById(id);
+        const data = await unitService.find(id, {
+          fields: 'id,name,type,main_unit,supply_adquance.name,supply_adquance.id,unit_percentage,address,type,unit_number,new_contract_number,account_number,bill_file,project',
+          expand: 'supply_adquance,address',
+        });
+        console.log('data', data);
         setUnitData(data);
       } catch (err) {
         setError('Erro ao carregar a unidade');

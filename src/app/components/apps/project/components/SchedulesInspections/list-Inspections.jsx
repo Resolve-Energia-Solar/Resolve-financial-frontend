@@ -62,22 +62,20 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
         setLoading(true);
         const fields =
           'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name';
-        const response = await scheduleService.getAllSchedulesInspectionByProject(
-          projectId,
-          fields,
+        const response = await scheduleService.index({
+            project: projectId,
+            fields: 'id,schedule_date,schedule_start_time,schedule_end_time,status',
+          }
         );
-        console.log('response', response.results);
+        console.log('response schedules2', response.results);
 
         // Obter os detalhes do projeto para verificar a vistoria principal
-        const projectResponse = await projectService.getProjectById(projectId, {
-          fields: '*',
+        const projectResponse = await projectService.find(projectId, {
+          fields: 'inspection',
         });
-        console.log('projectResponse', projectResponse);
 
-        // Extrair o ID da vistoria principal
-        const inspectionIdPrincipal = projectResponse.inspection?.id || null;
+        const inspectionIdPrincipal = projectResponse.inspection || null;
 
-        // Atualiza os schedules marcando a vistoria principal
         const updatedschedules = response.results.map((schedule) => ({
           ...schedule,
           isChecked: schedule.id === inspectionIdPrincipal,
@@ -100,18 +98,14 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
     const fetch = async () => {
       setLoadingInspections(true);
       try {
-        const fields =
-          'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name';
-        const response = await scheduleService.getAllSchedulesInspectionByCustomer(
-          customer,
-          fields,
-          {
+        const response = await scheduleService.index({
+            customer: customer,
+            fields: 'id,schedule_date,schedule_start_time,schedule_end_time,status',
             expand: 'final_service_opinion',
           },
         );
-        console.log('response', response.results);
         // Se necessário, você pode filtrar os resultados aqui
-        setInspectionsNotAssociated(response.results);
+        setInspectionsNotAssociated(response);
       } catch (error) {
         console.error('Erro ao buscar agendamentos:', error);
       } finally {
@@ -135,9 +129,9 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
 
     try {
       if (checked) {
-        await projectService.partialUpdateProject(projectId, { inspection_id: scheduleId });
+        await projectService.partialUpdateProject(projectId, { inspection: scheduleId });
       } else {
-        await projectService.partialUpdateProject(projectId, { inspection_id: null });
+        await projectService.partialUpdateProject(projectId, { inspection: null });
       }
     } catch (error) {
       setschedules(previousschedules);
@@ -155,11 +149,11 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
 
   const handleDelete = async (scheduleId) => {
     try {
-      await scheduleService.patchSchedule(scheduleId, { project_id: null });
+      await scheduleService.patchSchedule(scheduleId, { project: null });
 
       const scheduleRemoved = schedules.find((schedule) => schedule.id === scheduleId);
       if (scheduleRemoved && scheduleRemoved.isChecked) {
-        await projectService.partialUpdateProject(projectId, { inspection_id: null });
+        await projectService.partialUpdateProject(projectId, { inspection: null });
       }
 
       reloadPage();
@@ -171,7 +165,7 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
 
   const AssociateProject = async (inspectionId) => {
     try {
-      await scheduleService.patchSchedule(inspectionId, { project_id: projectId });
+      await scheduleService.patchSchedule(inspectionId, { project: projectId });
       reloadPage();
       setConfirmAssociateModalOpen(false);
       setOpenModelInspectionNotAssociated(false);
@@ -321,9 +315,7 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
         <DialogContent>
           <ScheduleFormCreate
             CreateSale={() => setAddModalOpen(false)}
-            serviceId={SERVICE_INSPECTION_ID}
             projectId={projectId}
-            products={[product]}
             customerId={customerId}
             onClosedModal={() => setAddModalOpen(false)}
             onRefresh={reloadPage}
@@ -387,7 +379,7 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    inspectionsNotAssociated.map((schedule) => (
+                    inspectionsNotAssociated.results.map((schedule) => (
                       <TableRow key={schedule.id}>
                         <TableCell align="center">
                           <Typography variant="body2">{schedule?.schedule_date}</Typography>
