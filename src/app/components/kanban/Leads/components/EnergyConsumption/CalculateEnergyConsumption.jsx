@@ -601,6 +601,26 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                     />
                                                 </Grid>
                                             </Grid>
+                                            {months.length > 0 && (
+                                                <Grid item xs={12} sx={{display: "flex", flexDirection: "column"}}>
+                                                    <Grid container spacing={3}>
+                                                        {months.map((month, index) => {
+                                                            const monthLabel = month.toLocaleString('default', {month: 'long', year: 'numeric'});
+                                                            return (
+                                                                <Grid item sx={4} key={index}>
+                                                                    <CustomFormLabel htmlFor="estimated_generation" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>{monthLabel}</CustomFormLabel>
+                                                                    <TextField
+                                                                        value={inputValues[monthLabel]}
+                                                                        onChange={(e) => handleMonthInputChange(monthLabel, e.target.value)}
+                                                                        fullWidth
+                                                                        type="number"
+                                                                    />
+                                                                </Grid>
+                                                            )
+                                                        })}
+                                                    </Grid>
+                                                </Grid>
+                                            )}
                                         </Grid>
 
 
