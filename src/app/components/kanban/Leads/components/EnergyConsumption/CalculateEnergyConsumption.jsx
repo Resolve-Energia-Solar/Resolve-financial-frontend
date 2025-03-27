@@ -139,7 +139,13 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
         setInputValues({ ...inputValues, [month]: value});
     };
 
-    
+    const calculateAverage = () => {
+        const values = Object.values(inputValues);
+        if (values.length === 0 ) return;
+        const total = values.reduce((acc, value) => acc + parseFloat(value || 0), 0);
+        const average = total / values.length;
+        setAverageConsuption(average);
+    }
 
 
 
