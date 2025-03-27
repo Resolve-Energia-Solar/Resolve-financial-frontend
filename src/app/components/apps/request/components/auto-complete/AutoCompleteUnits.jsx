@@ -16,7 +16,10 @@ export default function AutoCompleteUnits({ onChange, value, error, helperText, 
     const fetchDefaultUnit = async () => {
       if (value) {
         try {
-          const unit = await unitService.getUnitById(value);
+          const unit = await unitService.find(value, {
+            fields: 'id,name,address,project.customer.complete_name',
+            expand: 'address,project.customer',
+          });
           if (unit) {
             setSelectedUnit({
               id: unit.id,
@@ -49,7 +52,13 @@ export default function AutoCompleteUnits({ onChange, value, error, helperText, 
       }
       setLoading(true);
       try {
-        const units = await unitService.getUnitsByName(name);
+        const units = await unitService.index({
+          name__contains: name,
+          fields: 'id,name,address,project.customer.complete_name',
+          expand: 'address,project.customer',
+          limit: 15,
+          page: 1,
+        });
         if (units && units.results) {
           const formattedUnits = units.results.map((unit) => ({
             id: unit.id,
@@ -68,7 +77,12 @@ export default function AutoCompleteUnits({ onChange, value, error, helperText, 
   const fetchInitialUnits = useCallback(async () => {
     setLoading(true);
     try {
-      const units = await unitService.getUnits({ limit: 5, page: 1 });
+      const units = await unitService.index({ 
+        limit: 5,
+        page: 1,
+        fields: 'id,name,address,project.customer.complete_name',
+        expand: 'address,project.customer',
+      });
       if (units && units.results) {
         const formattedUnits = units.results.map((unit) => ({
           id: unit.id,
@@ -102,7 +116,7 @@ export default function AutoCompleteUnits({ onChange, value, error, helperText, 
         onOpen={handleOpen}
         onClose={handleClose}
         isOptionEqualToValue={(option, value) => option.id === value.id}
-        getOptionLabel={(option) => option.name}
+        getOptionLabel={(option) => `${option.project?.customer?.complete_name} - ${option.address?.street}`}
         options={options}
         loading={loading}
         value={selectedUnit}

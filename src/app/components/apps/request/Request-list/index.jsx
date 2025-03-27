@@ -90,17 +90,15 @@ const RequestList = ({ projectId = null, enableFilters = true, enableIndicators 
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        const params = {
+        const data = await requestConcessionaireService.index({
           page: page + 1,
           limit: rowsPerPage,
-          projectId,
+          project: projectId,
           ...stableFilters,
-        };
+        });
 
-        const data = await requestConcessionaireService.getAllByProject(params);
-        console.log('data', data);
         setProjectsList(data.results);
-        setTotalRows(data.count);
+        setTotalRows(data.meta.pagination.total_count);
       } catch (err) {
         setError('Erro ao carregar Solicitações');
       } finally {

@@ -36,6 +36,8 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
     label: docType.name,
   }));
 
+  console.log('objectId no att: ', objectId);
+
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const statusDoc = [
@@ -60,8 +62,6 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
     selectedAttachment?.object_id || objectId,
     selectedAttachment?.content_type?.id || parseInt(contentType),
   );
-
-  console.log('Attachments0: ', formData, selectedAttachment);
 
   formData.status ? formData.status : (formData.status = 'EA');
 
@@ -102,8 +102,6 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
       handleChange('file', renamedFile);
     }
   };
-
-  console.log('Attachments2: ', attachments, refreshSuccess, objectId, contentType);
 
   useEffect(() => {
     if (selectedAttachment) {

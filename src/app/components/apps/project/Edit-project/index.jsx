@@ -30,7 +30,7 @@ function TabPanel({ children, value, index, ...other }) {
         flexGrow: 1,
         height: 'calc(100vh - 120px)',
         overflowY: 'auto',
-        padding: '16px', 
+        padding: '16px',
       }}
       {...other}
     >
@@ -39,13 +39,8 @@ function TabPanel({ children, value, index, ...other }) {
   );
 }
 
-
-export default function EditProject({ projectId = null, projectData = null }) {
-  const params = useParams();
-  const id = projectId || params.id;
-
-  console.log('EditProject', id);
-
+export default function EditProject({ projectData }) {
+  console.log('projectData', projectData);
   const [value, setValue] = useState(0);
   const { documentTypes } = useDocumentTypesByFilter({ app_label__in: 'engineering' });
 
@@ -55,12 +50,7 @@ export default function EditProject({ projectId = null, projectData = null }) {
 
   return (
     <>
-      <Tabs
-        value={value}
-        onChange={handleChangeTab}
-        variant="scrollable"
-        scrollButtons="auto"
-      >
+      <Tabs value={value} onChange={handleChangeTab} variant="scrollable" scrollButtons="auto">
         <Tab label="Informações Adicionais" />
         <Tab label="Vistoria" />
         <Tab label="Checklist Rateio" />
@@ -73,13 +63,13 @@ export default function EditProject({ projectId = null, projectData = null }) {
       </Tabs>
 
       <TabPanel value={value} index={0}>
-        <EditProjectTab projectId={id} />
+        <EditProjectTab projectId={projectData?.id} />
       </TabPanel>
 
       <TabPanel value={value} index={1}>
         <Box mt={2}>
           <ListInspection
-            projectId={id}
+            projectId={projectData?.id}
             product={projectData?.product?.id}
             customerId={projectData?.sale?.customer?.id}
           />
@@ -88,7 +78,7 @@ export default function EditProject({ projectId = null, projectData = null }) {
 
       <TabPanel value={value} index={2}>
         <Box mt={2}>
-          <CheckListRateio projectId={id} />
+          <CheckListRateio projectId={projectData?.id} />
         </Box>
       </TabPanel>
 
@@ -99,7 +89,7 @@ export default function EditProject({ projectId = null, projectData = null }) {
           </Typography>
           <Attachments
             contentType={CONTENT_TYPE_PROJECT_ID}
-            objectId={id}
+            objectId={projectData?.id}
             documentTypes={documentTypes}
           />
           <Typography variant="h6" sx={{ mt: 2 }}>
@@ -115,19 +105,19 @@ export default function EditProject({ projectId = null, projectData = null }) {
 
       <TabPanel value={value} index={4}>
         <Box mt={2}>
-          <RequestList projectId={id} enableFilters={false} enableIndicators={false} />
+          <RequestList projectId={projectData?.id} enableFilters={false} enableIndicators={false} />
         </Box>
       </TabPanel>
 
       <TabPanel value={value} index={5}>
         <Box mt={2}>
-          <UploadDocument projectId={id} project={projectData} />
+          <UploadDocument projectId={projectData?.id} project={projectData} />
         </Box>
       </TabPanel>
 
       <TabPanel value={value} index={6}>
         <Box mt={2}>
-          <History contentType={CONTENT_TYPE_PROJECT_ID} objectId={id} />
+          <History contentType={CONTENT_TYPE_PROJECT_ID} objectId={projectData?.id} />
         </Box>
       </TabPanel>
 
@@ -147,7 +137,7 @@ export default function EditProject({ projectId = null, projectData = null }) {
           <Comment
             appLabel="resolve_crm"
             model="project"
-            objectId={id}
+            objectId={projectData?.id}
             label="Comentários do Projeto"
           />
         </Box>

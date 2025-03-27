@@ -66,7 +66,6 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
     }
   };
 
-  // Se já houver um endereço selecionado (formData.address), busca o objeto completo
   useEffect(() => {
     if (formData.address) {
       addressService

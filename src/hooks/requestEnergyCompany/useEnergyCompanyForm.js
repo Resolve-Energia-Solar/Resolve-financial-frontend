@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
 import formatDate from '@/utils/formatDate';
 import requestConcessionaireService from "@/services/requestConcessionaireService";
+import { useSelector } from 'react-redux';
 
 const useEnergyCompanyForm = (initialData, id) => {
+  
   const [formData, setFormData] = useState({
-    company_id: null,
-    project_id: null,
-    type_id: '',
-    unit_id: null,
-    situation_ids: [],
-    requested_by_id: null,
+    company: null,
+    project: null,
+    type: '',
+    unit: null,
+    situation: [],
+    requested_by: null,
     request_date: null,
     status: '',
     conclusion_date: null,
@@ -25,12 +27,12 @@ const useEnergyCompanyForm = (initialData, id) => {
   useEffect(() => {
     if (initialData) {
       setFormData({
-        company_id: initialData.company?.id || null,
-        project_id: initialData.project?.id || null,
-        type_id: initialData.type.id || '',
-        unit_id: initialData.unit?.id || null,
-        situation_ids: initialData.situation?.map((situation) => situation.id) || [],
-        requested_by_id: initialData.requested_by?.id || null,
+        company: initialData.company?.id || null,
+        project: initialData.project?.id || null,
+        type: initialData.type.id || '',
+        unit: initialData.unit?.id || null,
+        situation: initialData.situation?.map((situation) => situation.id) || [],
+        requested_by: initialData.requested_by?.id || null,
         request_date: initialData.request_date ? initialData.request_date : null,
         status: initialData.status || '',
         conclusion_date: initialData.conclusion_date ? initialData.conclusion_date : null,
@@ -47,12 +49,12 @@ const useEnergyCompanyForm = (initialData, id) => {
 
   const handleSave = async () => {
     const dataToSend = {
-      company_id: formData.company_id,
-      project_id: formData.project_id,
-      type_id: formData.type_id,
-      unit_id: formData.unit_id,
-      situation_ids: formData.situation_ids,
-      requested_by_id: formData.requested_by_id,
+      company: formData.company,
+      project: formData.project,
+      type: formData.type,
+      unit: formData.unit,
+      situation: formData.situation,
+      requested_by: formData.requested_by,
       request_date: formData.request_date ? formData.request_date : null,
       status: formData.status,
       conclusion_date: formData.conclusion_date ? formatDate(formData.conclusion_date) : null,
