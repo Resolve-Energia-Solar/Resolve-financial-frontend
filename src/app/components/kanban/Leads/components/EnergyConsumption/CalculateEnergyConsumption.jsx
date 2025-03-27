@@ -118,7 +118,21 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
     const handleStartDateChange = (date) => setStartDate(date);
     const handleEndDateChange = (date) => setEndDate(date);
 
-    
+    const generateMonths = () => {
+        if (startDate && endDate) {
+            const months = [];
+            let current = new Date(startDate);
+
+            while (current <= endDate) {
+                months.push(new Date(current));
+                current.setMonth(current.getMonth() + 1);
+            }
+
+            return months;
+        }
+
+        return [];
+    }
 
 
 
