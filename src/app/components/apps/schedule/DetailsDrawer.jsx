@@ -1,39 +1,64 @@
-import React, { useState } from 'react';
-import { Drawer, Tabs, Tab, Box, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Drawer, Tabs, Tab, Box, Typography, CircularProgress } from '@mui/material';
+import scheduleService from '@/services/scheduleService';
 
-const DetailsDrawer = ({ open, onClose, schedule }) => {
+const DetailsDrawer = ({ open, onClose, scheduleId }) => {
     const [tabIndex, setTabIndex] = useState(0);
+    const [scheduleDetails, setScheduleDetails] = useState(null);
+    const [loading, setLoading] = useState(true); // Carregar os dados enquanto isso é true
+    const [error, setError] = useState(null); // Para capturar qualquer erro
 
     const handleTabChange = (event, newValue) => {
         setTabIndex(newValue);
     };
 
-    // Se "schedule" não estiver definido, exibe uma mensagem de carregamento
-    if (!schedule) {
+    useEffect(() => {
+        if (open && scheduleId) {  // Garantir que o Drawer está aberto e tem um ID válido
+            setLoading(true);  // Inicia o carregamento
+            scheduleService.find(scheduleId)
+                .then((response) => {
+                    setScheduleDetails(response.data);  // Armazena os detalhes
+                })
+                .catch((error) => {
+                    setError('Erro ao carregar os detalhes do agendamento');
+                    console.error("Erro ao buscar os detalhes do agendamento:", error);
+                })
+                .finally(() => {
+                    setLoading(false);  // Finaliza o carregamento
+                });
+        }
+    }, [open, scheduleId]);  // Recarregar os dados sempre que o Drawer ou ID mudarem
+
+    // Exibe um spinner enquanto os dados estão sendo carregados
+    if (loading) {
         return (
             <Drawer anchor="right" open={open} onClose={onClose}>
-                <Box sx={{ width: 500, p: 2 }}>
-                    <Typography>Carregando detalhes...</Typography>
+                <Box sx={{ width: 500, p: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <CircularProgress />
                 </Box>
             </Drawer>
         );
     }
 
+    // Se houver um erro no carregamento, mostra uma mensagem
+    if (error) {
+        return (
+            <Drawer anchor="right" open={open} onClose={onClose}>
+                <Box sx={{ width: 500, p: 2 }}>
+                    <Typography variant="body1" color="error">{error}</Typography>
+                </Box>
+            </Drawer>
+        );
+    }
+
+    if (!scheduleDetails) {
+        return null; // Caso o agendamento não exista ou tenha falhado ao buscar os dados
+    }
+
     return (
-        <Drawer anchor="right" open={open} onClose={onClose}   ModalProps={{
-            BackdropProps: {
-              style: {
-                backgroundColor: 'rgba(0, 0, 0, 0.1)'
-              }
-            }
-          }}>
+        <Drawer anchor="right" open={open} onClose={onClose}>
             <Box sx={{ width: 500, p: 2 }}>
-                <Tabs
-                    value={tabIndex}
-                    onChange={handleTabChange}
-                    variant="scrollable"
-                    sx={{ borderBottom: 1, borderColor: 'divider' }}
-                >
+                <Tabs value={tabIndex} onChange={handleTabChange} variant="scrollable" sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tab label="Geral" />
                     <Tab label="Serviço" />
                     <Tab label="Cliente" />
@@ -44,103 +69,60 @@ const DetailsDrawer = ({ open, onClose, schedule }) => {
 
                 {tabIndex === 0 && (
                     <Box sx={{ mt: 2 }}>
-                        <Typography variant="body1">
-                            <strong>Protocolo:</strong> {schedule.protocol}
-                        </Typography>
-                        <Typography variant="body1">
-                            <strong>Agendamento:</strong> {schedule.schedule_date} às {schedule.schedule_start_time}
-                        </Typography>
-                        <Typography variant="body1">
-                            <strong>Final:</strong> {schedule.schedule_end_date} às {schedule.schedule_end_time}
-                        </Typography>
-                        <Typography variant="body1">
-                            <strong>Status:</strong> {schedule.status}
-                        </Typography>
-                        <Typography variant="body1">
-                            <strong>Observação:</strong> {schedule.observation || '-'}
-                        </Typography>
-                        <Typography variant="body1">
-                            <strong>Criado em:</strong> {new Date(schedule.created_at).toLocaleString()}
-                        </Typography>
+                        <Typography variant="body1"><strong>ID:</strong> {scheduleDetails.id}</Typography>
+                        <Typography variant="body1"><strong>Protocolo:</strong> {scheduleDetails.protocol}</Typography>
+                        <Typography variant="body1"><strong>Agendamento:</strong> {scheduleDetails.schedule_date} às {scheduleDetails.schedule_start_time}</Typography>
+                        <Typography variant="body1"><strong>Final:</strong> {scheduleDetails.schedule_end_date} às {scheduleDetails.schedule_end_time}</Typography>
+                        <Typography variant="body1"><strong>Status:</strong> {scheduleDetails.status}</Typography>
+                        <Typography variant="body1"><strong>Observação:</strong> {scheduleDetails.observation || '-'}</Typography>
+                        <Typography variant="body1"><strong>Criado em:</strong> {new Date(scheduleDetails.created_at).toLocaleString()}</Typography>
                     </Box>
                 )}
 
-                {tabIndex === 1 && schedule.service && (
+                {tabIndex === 1 && scheduleDetails.service && (
                     <Box sx={{ mt: 2 }}>
-                        <Typography variant="body1">
-                            <strong>Serviço:</strong> {schedule.service.name}
-                        </Typography>
-                        <Typography variant="body1">
-                            <strong>Descrição:</strong> {schedule.service.description || '-'}
-                        </Typography>
-                        <Typography variant="body1">
-                            <strong>Deadline:</strong> {schedule.service.deadline || '-'}
-                        </Typography>
+                        <Typography variant="body1"><strong>Serviço:</strong> {scheduleDetails.service.name}</Typography>
+                        <Typography variant="body1"><strong>Descrição:</strong> {scheduleDetails.service.description || '-'}</Typography>
+                        <Typography variant="body1"><strong>Deadline:</strong> {scheduleDetails.service.deadline || '-'}</Typography>
                     </Box>
                 )}
 
-                {tabIndex === 2 && schedule.customer && (
+                {tabIndex === 2 && scheduleDetails.customer && (
                     <Box sx={{ mt: 2 }}>
-                        <Typography variant="body1">
-                            <strong>Cliente:</strong> {schedule.customer.complete_name}
-                        </Typography>
-                        <Typography variant="body1">
-                            <strong>Documento:</strong> {schedule.customer.first_document || '-'}
-                        </Typography>
-                        <Typography variant="body1">
-                            <strong>E-mail:</strong> {schedule.customer.email}
-                        </Typography>
+                        <Typography variant="body1"><strong>Cliente:</strong> {scheduleDetails.customer.complete_name}</Typography>
+                        <Typography variant="body1"><strong>Documento:</strong> {scheduleDetails.customer.first_document || '-'}</Typography>
+                        <Typography variant="body1"><strong>E-mail:</strong> {scheduleDetails.customer.email}</Typography>
                     </Box>
                 )}
 
-                {tabIndex === 3 && schedule.project && (
+                {tabIndex === 3 && scheduleDetails.project && (
                     <Box sx={{ mt: 2 }}>
-                        <Typography variant="body1">
-                            <strong>Projeto:</strong> {schedule.project.project_number}
-                        </Typography>
+                        <Typography variant="body1"><strong>Projeto:</strong> {scheduleDetails.project.project_number}</Typography>
                     </Box>
                 )}
 
                 {tabIndex === 4 && (
                     <Box sx={{ mt: 2 }}>
-                        {schedule.address && (
+                        {scheduleDetails.address && (
                             <>
-                                <Typography variant="body1">
-                                    <strong>Endereço:</strong>
-                                </Typography>
+                                <Typography variant="body1"><strong>Endereço:</strong></Typography>
                                 <Typography variant="body2">
-                                    {schedule.address.street}, {schedule.address.number}{' '}
-                                    {schedule.address.complement && `, ${schedule.address.complement}`}
+                                    {scheduleDetails.address.street}, {scheduleDetails.address.number} {scheduleDetails.address.complement && `, ${scheduleDetails.address.complement}`}
                                 </Typography>
-                                <Typography variant="body2">
-                                    {schedule.address.neighborhood}, {schedule.address.city} - {schedule.address.state}
-                                </Typography>
-                                <Typography variant="body2">
-                                    {schedule.address.country} - CEP: {schedule.address.zip_code}
-                                </Typography>
+                                <Typography variant="body2">{scheduleDetails.address.neighborhood}, {scheduleDetails.address.city} - {scheduleDetails.address.state}</Typography>
+                                <Typography variant="body2">{scheduleDetails.address.country} - CEP: {scheduleDetails.address.zip_code}</Typography>
                             </>
                         )}
-                        <Typography variant="body1" sx={{ mt: 1 }}>
-                            <strong>Latitude:</strong> {schedule.latitude}
-                        </Typography>
-                        <Typography variant="body1">
-                            <strong>Longitude:</strong> {schedule.longitude}
-                        </Typography>
+                        <Typography variant="body1" sx={{ mt: 1 }}><strong>Latitude:</strong> {scheduleDetails.latitude}</Typography>
+                        <Typography variant="body1"><strong>Longitude:</strong> {scheduleDetails.longitude}</Typography>
                     </Box>
                 )}
 
-                {tabIndex === 5 && schedule.schedule_creator && (
+                {tabIndex === 5 && scheduleDetails.schedule_creator && (
                     <Box sx={{ mt: 2 }}>
-                        <Typography variant="body1">
-                            <strong>Criador:</strong> {schedule.schedule_creator.complete_name}
-                        </Typography>
-                        <Typography variant="body1">
-                            <strong>E-mail:</strong> {schedule.schedule_creator.email}
-                        </Typography>
-                        <Typography variant="body1">
-                            <strong>Data de Cadastro:</strong>{' '}
-                            {new Date(schedule.schedule_creator.date_joined).toLocaleString()}
-                        </Typography>
+                        <Typography variant="body1"><strong>Criador:</strong> {scheduleDetails.schedule_creator.complete_name}</Typography>
+                        <Typography variant="body1"><strong>E-mail:</strong> {scheduleDetails.schedule_creator.email}</Typography>
+                        <Typography variant="body1"><strong>Data de Cadastro:</strong> {new Date(scheduleDetails.schedule_creator.date_joined).toLocaleString()}</Typography>
                     </Box>
                 )}
             </Box>

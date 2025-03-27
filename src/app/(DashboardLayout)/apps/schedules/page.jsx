@@ -44,10 +44,11 @@ const ScheduleTable = () => {
     const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [selectedSchedule, setSelectedSchedule] = useState(null);
+    const [openDrawerId, setOpenDrawerId] = useState(null);
 
     const handleRowClick = (schedule) => {
         setSelectedSchedule(schedule);
-        setIsDrawerOpen(true);
+        setOpenDrawerId(schedule.id);
     };
 
     const hasPermission = useCallback(
@@ -375,9 +376,9 @@ const ScheduleTable = () => {
                                             )}
                                             <TableCell>{new Date(schedule.created_at).toLocaleString()}</TableCell>
                                             <DetailsDrawer
-                                                open={isDrawerOpen}
-                                                onClose={() => setIsDrawerOpen(false)}
-                                                schedule={selectedSchedule}
+                                                open={openDrawerId === schedule.id}
+                                                onClose={() => setOpenDrawerId(null)}
+                                                scheduleId={schedule.id}
                                             />
                                         </TableRow>
                                     ))}
