@@ -607,8 +607,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                         {months.map((month, index) => {
                                                             const monthLabel = month.toLocaleString('default', {month: 'long', year: 'numeric'});
                                                             return (
-                                                                <Grid item sx={4} key={index}>
-                                                                    <CustomFormLabel htmlFor="estimated_generation" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>{monthLabel}</CustomFormLabel>
+                                                                <Grid item xs={12} key={index} sx={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
+                                                                    <CustomFormLabel htmlFor="estimated_generation" sx={{ color: "#7E8388", fontWeight: "700", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "flex-start"}}>{monthLabel}</CustomFormLabel>
                                                                     <TextField
                                                                         value={inputValues[monthLabel]}
                                                                         onChange={(e) => handleMonthInputChange(monthLabel, e.target.value)}
