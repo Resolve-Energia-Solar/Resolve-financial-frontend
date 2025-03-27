@@ -67,7 +67,6 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
             fields: 'id,schedule_date,schedule_start_time,schedule_end_time,status',
           }
         );
-        console.log('response schedules2', response.results);
 
         // Obter os detalhes do projeto para verificar a vistoria principal
         const projectResponse = await projectService.find(projectId, {

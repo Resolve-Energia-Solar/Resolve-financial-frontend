@@ -34,9 +34,6 @@ import HasPermission from '@/app/components/permissions/HasPermissions';
 
 const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = null }) => {
   const id = unitId;
-
-  console.log('id', id);
-
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const [fileLoading, setFileLoading] = useState(false);
@@ -61,8 +58,6 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = nu
     loading: formLoading,
     success,
   } = useUnitForm(unitData, id);
-
-  console.log('unitData', unitData);
 
   useEffect(() => {
     if (success) {

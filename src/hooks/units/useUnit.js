@@ -15,7 +15,6 @@ const useUnit = (id) => {
           fields: 'id,name,type,main_unit,supply_adquance.name,supply_adquance.id,unit_percentage,address,type,unit_number,new_contract_number,account_number,bill_file,project',
           expand: 'supply_adquance,address',
         });
-        console.log('data', data);
         setUnitData(data);
       } catch (err) {
         setError('Erro ao carregar a unidade');
