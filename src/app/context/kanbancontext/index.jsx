@@ -28,7 +28,7 @@ export const KanbanDataContextProvider = ({ children }) => {
           board: boardId,
           ordering: 'position',
         });
-        setTodoCategories(response || []);
+        setTodoCategories(response.results || []);
       } catch (error) {
         console.log(error?.message);
       } finally {
