@@ -614,6 +614,23 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                                         onChange={(e) => handleMonthInputChange(monthLabel, e.target.value)}
                                                                         fullWidth
                                                                         type="number"
+                                                                        InputProps={{
+                                                                            sx: {
+                                                                                input: {
+                                                                                    color: "#7E92A2",
+                                                                                    fontWeight: "400",
+                                                                                    fontSize: "12px",
+                                                                                    opacity: 1,
+                                                                                },
+                                                                            },
+                                                                            endAdornment: (
+                                                                                <InputAdornment position="end">
+                                                                                    <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
+                                                                                        kWh
+                                                                                    </Box>
+                                                                                </InputAdornment>
+                                                                            ),
+                                                                        }}
                                                                     />
                                                                 </Grid>
                                                             )
