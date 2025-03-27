@@ -223,6 +223,13 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
                                                 },
                                             },
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
+                                                        kWh
+                                                    </Box>
+                                                </InputAdornment>
+                                            ),
                                         }}
                                     />
                                 </Grid>
