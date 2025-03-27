@@ -110,25 +110,25 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
         }
     }
 
-    const [paymentMethods, setPaymentMethods] = useState([
-        { id: Date.now(), method: '', financing_type: '', installments_num: '' }
-    ]);
+    // const [paymentMethods, setPaymentMethods] = useState([
+    //     { id: Date.now(), method: '', financing_type: '', installments_num: '' }
+    // ]);
 
-    const handleMethodChange = (id, field, value) => {
-        setPaymentMethods((prevMethods) =>
-            prevMethods.map((method) =>
-                method.id === id ? { ...method, [field]: value } : method
-            )
-        );
-    };
+    // const handleMethodChange = (id, field, value) => {
+    //     setPaymentMethods((prevMethods) =>
+    //         prevMethods.map((method) =>
+    //             method.id === id ? { ...method, [field]: value } : method
+    //         )
+    //     );
+    // };
 
-    const addPaymentMethod = () => {
-        setPaymentMethods([...paymentMethods, { id: Date.now(), method: '', financing_type: '', installments_num: '' }]);
-    };
+    // const addPaymentMethod = () => {
+    //     setPaymentMethods([...paymentMethods, { id: Date.now(), method: '', financing_type: '', installments_num: '' }]);
+    // };
 
-    const removePaymentMethod = (id) => {
-        setPaymentMethods(paymentMethods.filter((method) => method.id !== id));
-    }
+    // const removePaymentMethod = (id) => {
+    //     setPaymentMethods(paymentMethods.filter((method) => method.id !== id));
+    // }
 
 
     return (
@@ -212,7 +212,6 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         value={formData.medimum_consumption}
                                         onChange={(e) => handleChange('medimum_consumption', e.target.value)}
                                         fullWidth
-                                        // placeholder="2500 kWh"
                                         InputProps={{
                                             sx: {
                                                 input: {
