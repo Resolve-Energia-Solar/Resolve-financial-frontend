@@ -10,8 +10,6 @@ import {
     CircularProgress,
     Dialog,
     DialogContent,
-    IconButton,
-    DialogTitle,
 } from '@mui/material';
 
 import { useEffect, useState } from 'react';
@@ -19,22 +17,11 @@ import leadService from '@/services/leadService';
 import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import ProjectCard from '@/app/components/kanban/Leads/components/ProposalSmallListCard';
-import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import Button from "@mui/material/Button";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import useProposalForm from '@/hooks/proposal/useProposalForm';
-import FormDate from '@/app/components/forms/form-custom/FormDate';
-import CustomFieldMoney from '@/app/components/apps/invoice/components/CustomFieldMoney';
-import CustomTextArea from '@/app/components/forms/theme-elements/CustomTextArea';
 import { useSelector } from 'react-redux';
 import { removeProductFromLead, selectProductsByLead } from '@/store/products/customProducts';
 import { useDispatch } from 'react-redux';
-import { color } from 'framer-motion';
-import ManageSearchIcon from '@mui/icons-material/ManageSearch';
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import BackupOutlinedIcon from '@mui/icons-material/BackupOutlined';
 import RotateLeftOutlinedIcon from '@mui/icons-material/RotateLeftOutlined';
 import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
@@ -533,7 +520,6 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                         <Dialog 
                             open={openDialog} 
                             onClose={() => setOpenDialog(false)}
-                            fullWidth
                             PaperProps={{
                                 sx: {
                                     borderRadius: '20px',
@@ -543,9 +529,15 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                 }
                             }}
                         >
-                            <DialogTitle>Histórico de Consumo</DialogTitle>
+                            {/* <DialogTitle>Histórico de Consumo</DialogTitle> */}
                             <DialogContent>
                                 <Grid container rowSpacing={2}>
+                                    <Grid item>
+                                        <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Histórico de Consumo</Typography>
+                                    </Grid>
+                                    <Grid item>
+
+                                    </Grid>
                                 </Grid>
                             </DialogContent>
                         </Dialog>
