@@ -64,6 +64,10 @@ function CategoryTaskList({ id }) {
 
     const isNearBottom = scrollPosition >= 0.75 * scrollHeight && hasNext;
 
+    console.log('scrollPosition:', scrollPosition);
+    console.log('scrollHeight:', scrollHeight);
+    console.log('isNearBottom:', scrollPosition >= 0.75 * scrollHeight);
+
     console.log('isNearTop:', isNearTop);
     console.log('page:', page);
 
@@ -72,6 +76,7 @@ function CategoryTaskList({ id }) {
     }
 
     if (isNearBottom) {
+      console.log('nextPage');
       nextPage();
     }
   }, 700);
@@ -95,14 +100,14 @@ function CategoryTaskList({ id }) {
       setLoading(true);
       try {
         const response = await leadService.index({
-            fields: 'id,name,phone,created_at,qualification,origin',
-            column: id,
-            ordering: '-created_at',
-            page: page,
-            limit: perPage,
+          fields: 'id,name,phone,created_at,qualification,origin',
+          column: id,
+          ordering: '-created_at',
+          page: page,
+          limit: perPage,
         });
 
-        response?.next ? setHasNext(true) : setHasNext(false);
+        response?.meta.pagination.next ? setHasNext(true) : setHasNext(false);
         setCount(id, response?.count);
         if (!response) {
           throw new Error('Failed to fetch leads');
@@ -179,7 +184,7 @@ function CategoryTaskList({ id }) {
         flexDirection="column"
         sx={{
           borderTop: (theme) => `7px solid ${category?.color}`,
-          maxHeight: '95%',
+          maxHeight: '100%',
           minHeight: allTasks?.length === 0 ? '150px' : undefined,
         }}
       >
@@ -280,25 +285,11 @@ function CategoryTaskList({ id }) {
             {/* Conteúdo com scroll */}
             <Box
               flex={1}
-              component={SimpleBar}
               overflow="auto"
               px={3}
+              py={2}
               maxHeight="calc(100vh - 160px)"
-              onScroll={handleScroll} // Adiciona o evento de rolagem
-              sx={{
-                '& .simplebar-scrollbar::before': {
-                  backgroundColor: '#7E8388 !important',
-                  opacity: '1 !important',
-                  borderRadius: '8px',
-                },
-                '& .simplebar-track': {
-                  backgroundColor: '#7E8388 !important',
-                  borderRadius: '8px',
-                },
-                '& .simplebar-track.simplebar-vertical': {
-                  backgroundColor: '#D9D9D9 !important',
-                },
-              }}
+              onScroll={handleScroll}
             >
               {loading && page === 1 ? (
                 <Stack spacing={2}>
