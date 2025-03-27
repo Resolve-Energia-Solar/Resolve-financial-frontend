@@ -48,6 +48,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
     const [checked, setChecked] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [mediumConsumptionResult, setMediumConsumptionResult] = useState("");
 
     const {
         formData,
@@ -195,7 +197,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     <TextField
                                         name="medimum_consumption"
                                         value={formData.medimum_consumption}
-                                        onChange={(e) => handleChange('medimum_consumption', e.target.value)}
+                                        onChange={(e) => handleInputChange('medimum_consumption', e.target.value)}
                                         fullWidth
                                         InputProps={{
                                             sx: {
