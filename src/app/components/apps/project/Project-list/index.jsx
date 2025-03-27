@@ -287,7 +287,7 @@ const ProjectList = ({ onClick }) => {
             </TableRow>
           </TableHead>
           {loadingProjects ? (
-            <TableSkeleton rows={rowsPerPage} cols={9} />
+            <TableSkeleton rows={rowsPerPage} columns={12} />
           ) : error && page === 1 ? (
             <Typography color="error">{error}</Typography>
           ) : (
