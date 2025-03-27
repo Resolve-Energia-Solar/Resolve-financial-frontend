@@ -15,9 +15,9 @@ import projectMaterialsService from '@/services/projectMaterialService';
 
 const AddMaterialList = ({ open, handleClose, onRefresh, projectId }) => {
   const [formData, setFormData] = useState({
-    material_id: '',
+    material: '',
     amount: '',
-    project_id: projectId || '',
+    project: projectId || '',
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -26,7 +26,7 @@ const AddMaterialList = ({ open, handleClose, onRefresh, projectId }) => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      await projectMaterialsService.createProjectMaterial(formData);
+      await projectMaterialsService.create(formData);
       if (handleClose) handleClose();
       if (onRefresh) onRefresh();
     } catch (error) {
@@ -47,12 +47,12 @@ const AddMaterialList = ({ open, handleClose, onRefresh, projectId }) => {
             <CustomFormLabel htmlFor="material">Material</CustomFormLabel>
             <AutoCompleteMaterial
               name="material"
-              onChange={(value) => setFormData({ ...formData, material_id: value })}
+              onChange={(value) => setFormData({ ...formData, material: value })}
               variant="outlined"
               fullWidth
-              {...(formErrors.material_id && {
+              {...(formErrors.material && {
                 error: true,
-                helperText: formErrors.material_id,
+                helperText: formErrors.material,
               })}
             />
           </Grid>

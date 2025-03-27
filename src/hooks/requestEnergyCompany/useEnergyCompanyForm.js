@@ -20,6 +20,8 @@ const useEnergyCompanyForm = (initialData, id) => {
     request: null,
   });
 
+  console.log('initialData', initialData);
+
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);

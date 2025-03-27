@@ -94,8 +94,11 @@ const RequestList = ({ projectId = null, enableFilters = true, enableIndicators 
           page: page + 1,
           limit: rowsPerPage,
           project: projectId,
+          fields: 'id,type.name,interim_protocol,status,request_date,conclusion_date',
+          expand: 'type',
           ...stableFilters,
         });
+
 
         setProjectsList(data.results);
         setTotalRows(data.meta.pagination.total_count);
