@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Box, Drawer, Button, Typography, Grid, RadioGroup, FormControlLabel, Radio, Checkbox } from '@mui/material';
+import { Box, Drawer, Button, Typography, Grid, RadioGroup, FormControlLabel, Radio, Checkbox, Select, MenuItem } from '@mui/material';
 import { FilterAlt } from '@mui/icons-material';
 import CheckboxesTags from './CheckboxesTags';
 import FormDateRange from './DateRangePicker';
@@ -34,7 +34,7 @@ export default function DrawerFilters() {
     borrower: filters.borrower || "",
     payment_status: filters.payment_status || [],
     tag_name__exact: filters.tag_name__exact || "",
-    documents_under_analysis: filters.documents_under_analysis || false
+    documents_under_analysis: filters.documents_under_analysis || ""
   });
 
   const createFilterParams = (filters) => {
@@ -278,9 +278,11 @@ export default function DrawerFilters() {
               </Grid>
 
               <Grid item xs={12}>
-                <CustomFormLabel htmlFor="documents_under_analysis">Documentos em Análise</CustomFormLabel>
-                <RadioGroup
-                  row
+                <CustomFormLabel htmlFor="documents_under_analysis">
+                  Documentos em Análise
+                </CustomFormLabel>
+                <Select
+                  id="documents_under_analysis"
                   name="documents_under_analysis"
                   value={
                     tempFilters.documents_under_analysis === true
@@ -297,13 +299,14 @@ export default function DrawerFilters() {
                     else value = "";
                     handleChange("documents_under_analysis", value);
                   }}
+                  displayEmpty
+                  fullWidth
                 >
-                  <FormControlLabel value="true" control={<Radio />} label="Em Análise" />
-                  <FormControlLabel value="false" control={<Radio />} label="Sem documento em análise" />
-                  <FormControlLabel value="" control={<Radio />} label="Todos" />
-                </RadioGroup>
+                  <MenuItem value="true">Em Análise</MenuItem>
+                  <MenuItem value="false">Sem documento em análise</MenuItem>
+                  <MenuItem value="">Todos</MenuItem>
+                </Select>
               </Grid>
-
 
               {/* Demais filtros */}
               <Grid item xs={12}>
