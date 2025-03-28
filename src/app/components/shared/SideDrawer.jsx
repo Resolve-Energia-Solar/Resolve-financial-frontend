@@ -1,5 +1,5 @@
 'use client';
-import { Box, CardContent, Drawer, IconButton } from '@mui/material';
+import { Box, Drawer, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ParentCard from './ParentCard';
 import { useState } from 'react';
@@ -34,7 +34,15 @@ export default function SideDrawer({ title, children, open, onClose, anchor = 'r
         </Box>
 
         <ParentCard title={title}>
-          <Box sx={{ height: 'calc(100vh - 106.1px )', paddingInline: 2 }}>{children}</Box>
+          <Box
+            sx={{
+              height: 'calc(100vh - 106.1px)',
+              paddingInline: 2,
+              overflowY: 'auto', // Adicionado para habilitar a rolagem vertical
+            }}
+          >
+            {children}
+          </Box>
         </ParentCard>
       </Box>
     </Drawer>

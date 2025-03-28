@@ -38,7 +38,7 @@ export default function InstallamentDrawer({ data }) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {data.map((item) => (
+                        {Array.isArray(data) && data.map((item) => (
                             <TableRow key={item.id}>
 
                                 <TableCell>{item.installment_number}</TableCell>

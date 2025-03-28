@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function useCurrencyFormatter(initialValue) {
+export default function useCurrencyFormatter(initialValue, onValueChange) {
   const [formattedValue, setFormattedValue] = useState('');
   const [numericValue, setNumericValue] = useState('');
 
@@ -8,12 +8,14 @@ export default function useCurrencyFormatter(initialValue) {
     return Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   };
 
-  const handleValueChange = (e, handleChange) => {
+  const handleValueChange = (e) => {
     const rawValue = e.target.value.replace(/\D/g, '');
-    setNumericValue(rawValue); 
-    const formatted = formatCurrency(rawValue / 100); 
+    setNumericValue(rawValue);
+    const formatted = formatCurrency(rawValue / 100);
     setFormattedValue(formatted);
-    handleChange('totalValue', rawValue / 100);
+    if (onValueChange) {
+      onValueChange(rawValue / 100);
+    }
   };
 
   useEffect(() => {

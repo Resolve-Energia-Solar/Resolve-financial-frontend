@@ -3,8 +3,9 @@ import paymentService from '@/services/paymentService';
 import saleService from '@/services/saleService';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
+import { fi } from 'date-fns/locale';
 
-const usePayment = (id) => {
+const usePayment = (id, params={}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [paymentData, setPaymentData] = useState(null);
@@ -18,6 +19,10 @@ const usePayment = (id) => {
     setOpenDrawer(true);
     setRowSelected(item);
   };
+
+  id = rowSelected?.id || id;
+  console.log('id', id);
+
 
   const toggleOpenDrawerClosed = () => {
     setOpenDrawer(!openDrawer);
@@ -43,10 +48,8 @@ const usePayment = (id) => {
 
     const fetchPayment = async () => {
       try {
-        const data = await paymentService.find(id, {
-          expand: ['sale.customer', 'installments', 'financier', 'borrower'],
-        });
-        console.log('sjhdfgaskdjhfsdf', data);
+        const data = await paymentService.find(id,params);
+        console.log()
         setPaymentData(data);
       } catch (err) {
         setError('Erro ao carregar o pagamento');

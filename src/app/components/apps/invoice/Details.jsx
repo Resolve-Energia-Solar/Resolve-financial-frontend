@@ -1,111 +1,142 @@
-import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
-import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
-import { Box, Chip, Grid, MenuItem } from "@mui/material";
-import InstallamentDrawer from "./InstallmentDrawer";
-import StatusChip from "@/utils/status/DocumentStatusIcon";
-import CustomSelect from "../../forms/theme-elements/CustomSelect";
-import StatusInspectionChip from "@/utils/status/InspecStatusChip";
+import React, { useState, useEffect } from "react";
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Box,
+  Typography,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import TableSkeleton from "../comercial/sale/components/TableSkeleton";
+import paymentService from "@/services/paymentService";
+import Attachments from '@/app/components/shared/Attachments';
+import SaleEditForm from "./components/accordeon-components/SaleEditForm";
+import PaymentCard from "./components/paymentList/card";
+import documentTypeService from "@/services/documentTypeService";
+import Comment from "../comment";
+import History from "../history";
 
-export default function Details({ data, handleInputChange }) {
+const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
+
+export default function Details({ id, refresh }) {
+  const [documentTypes, setDocumentTypes] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await documentTypeService.index({
+          app_label__in: "contracts",
+          limit: 30,
+        });
+        setDocumentTypes(response.results);
+      } catch (error) {
+        console.log("Error: ", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <Box>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Venda</CustomFormLabel>
-          <CustomTextField
-            type="text"
-            value={data.sale.customer.complete_name}
-            fullWidth
-            margin="normal"
-            disabled
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Data de Contrato</CustomFormLabel>
-          <CustomTextField
-            type="text"
-            value={data.sale?.signature_date}
-            fullWidth
-            margin="normal"
-            disabled
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Status da Venda</CustomFormLabel>
-          <Box p={1.4} />
-          <StatusChip status={data.status} />
-        </Grid>
+      {/* Accordion - Informações da Venda */}
+      <Accordion defaultExpanded>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          sx={{
+            minHeight: "80px",
+            "& .MuiAccordionSummary-content": { margin: "12px 0" },
+          }}
+        >
+          <InfoOutlinedIcon sx={{ marginRight: "8px" }} />
+          <Typography variant="h6">Informações da Venda</Typography>
+        </AccordionSummary>
+        <AccordionDetails sx={{ maxHeight: "80vh", overflowY: "auto" }}>
+          <Typography variant="body1">
+            <SaleEditForm id_sale={id} />
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
 
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Valor de Referência</CustomFormLabel>
-          <CustomTextField
-            name="interim_protocol"
-            type="text"
-            value={''}
-            fullWidth
-            margin="normal"
-            disabled
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Valor de Projeto</CustomFormLabel>
-          <CustomTextField
-            name="interim_protocol"
-            type="decimal"
-            value={Number(data.sale.total_value).toLocaleString('pt-BR', {
-              style: 'currency',
-              currency: 'BRL',
-            })}
-            fullWidth
-            margin="normal"
-            disabled
-          />
-        </Grid>
+      {/* Accordion - Documentos da Venda */}
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          sx={{
+            minHeight: "80px",
+            "& .MuiAccordionSummary-content": { margin: "12px 0" },
+          }}
+        >
+          <InfoOutlinedIcon sx={{ marginRight: "8px" }} />
+          <Typography variant="h6">Documentos da Venda</Typography>
+        </AccordionSummary>
+        <AccordionDetails sx={{ maxHeight: "80vh", overflowY: "auto" }}>
+          <Typography variant="body1">
+            <Attachments
+              contentType={CONTEXT_TYPE_SALE_ID}
+              objectId={id}
+              documentTypes={documentTypes}
+            />
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
 
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Status do Projeto</CustomFormLabel>
-          <CustomTextField
-            name="interim_protocol"
-            type="text"
-            value={''}
-            fullWidth
-            margin="normal"
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Status da vistoria</CustomFormLabel>
-          <Box p={1.4} />
-          <StatusInspectionChip status={data.sale.inspection?.service_opinion || 'Não possui vistoria'} />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Status do pagamento</CustomFormLabel>
-          <Box p={1} />
-          <CustomSelect fullWidth value={data.sale.payment_status} name='payment_status' onChange={(e) => handleInputChange(e, data.sale.id)} >
-            <MenuItem value="P" >
-              <Chip label="Pago" color="success" />
-            </MenuItem>
-            <MenuItem value="L">
-              <Chip label="Liberado" color="primary" />
-            </MenuItem>
-            <MenuItem value="PE">
-              <Chip label="Pendente" color="secondary" />
-            </MenuItem>
-          </CustomSelect>
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Qtd. Parcelas</CustomFormLabel>
-          <CustomTextField
-            name="interim_protocol"
-            type="text"
-            value={data.installments.length}
-            onChange={handleInputChange}
-            fullWidth
-            margin="normal"
-            disabled
-          />
-        </Grid>
-      </Grid>
-      <InstallamentDrawer data={data?.installments} />
+      {/* Accordion - Informações do Pagamento */}
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          sx={{
+            minHeight: "80px",
+            "& .MuiAccordionSummary-content": { margin: "12px 0" },
+          }}
+        >
+          <InfoOutlinedIcon sx={{ marginRight: "8px" }} />
+          <Typography variant="h6">Informações do Pagamento</Typography>
+        </AccordionSummary>
+        <AccordionDetails sx={{ maxHeight: "80vh", overflowY: "auto" }}>
+          <Typography variant="body1">
+            <PaymentCard sale={id} />
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Accordion - Comentários */}
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          sx={{
+            minHeight: "80px",
+            "& .MuiAccordionSummary-content": { margin: "12px 0" },
+          }}
+        >
+          <InfoOutlinedIcon sx={{ marginRight: "8px" }} />
+          <Typography variant="h6">Comentários</Typography>
+        </AccordionSummary>
+        <AccordionDetails sx={{ maxHeight: "80vh", overflowY: "auto" }}>
+          <Typography variant="body1">
+            <Comment appLabel={"contracts"} objectId={id} model={"sale"} />
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Accordion - Histórico */}
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          sx={{
+            minHeight: "80px",
+            "& .MuiAccordionSummary-content": { margin: "12px 0" },
+          }}
+        >
+          <InfoOutlinedIcon sx={{ marginRight: "8px" }} />
+          <Typography variant="h6">Histórico</Typography>
+        </AccordionSummary>
+        <AccordionDetails sx={{ maxHeight: "80vh", overflowY: "auto" }}>
+          <Typography variant="body1">
+            <History objectId={id} contentType={CONTEXT_TYPE_SALE_ID} />
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
     </Box>
   );
 }
