@@ -25,28 +25,28 @@ export const NotificationSlice = createSlice({
       state.notifications = state.notifications.map((notification) =>
         notification.id === action.payload
           ? { ...notification, starred: !notification.starred }
-          : notification
+          : notification,
       );
     },
     importantNotification: (state, action) => {
       state.notifications = state.notifications.map((notification) =>
         notification.id === action.payload
           ? { ...notification, important: !notification.important }
-          : notification
+          : notification,
       );
     },
     checkNotification: (state, action) => {
       state.notifications = state.notifications.map((notification) =>
         notification.id === action.payload
           ? { ...notification, checked: !notification.checked }
-          : notification
+          : notification,
       );
     },
     deleteNotification: (state, action) => {
       state.notifications = state.notifications.map((notification) =>
         notification.id === action.payload
           ? { ...notification, trash: !notification.trash }
-          : notification
+          : notification,
       );
     },
     setVisibilityFilter: (state, action) => {
@@ -68,7 +68,7 @@ export const {
 
 export const fetchNotifications = () => async (dispatch) => {
   try {
-    const data = await notificationService.getAllNotifications();
+    const data = await notificationService.index();
     dispatch(getNotifications(data.results));
   } catch (err) {
     throw new Error(err);

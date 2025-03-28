@@ -39,7 +39,6 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
     success,
   } = useUnitForm();
 
-  console.log('formData', formData);
 
   const statusOptions = [
     { value: 'M', label: 'Monofásico' },
@@ -47,8 +46,6 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
     { value: 'T', label: 'Trifásico' },
   ];
 
-  // Atualiza os campos do form com o id do projeto
-  formData.project_id = projectId;
   formData.project = projectId;
 
   useEffect(() => {
@@ -69,11 +66,10 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
     }
   };
 
-  // Se já houver um endereço selecionado (formData.address_id), busca o objeto completo
   useEffect(() => {
-    if (formData.address_id) {
+    if (formData.address) {
       addressService
-        .getAddressById(formData.address_id)
+        .getAddressById(formData.address)
         .then((address) => {
           setSelectedAddress(address);
         })
@@ -81,7 +77,7 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
           console.error('Erro ao buscar endereço:', error);
         });
     }
-  }, [formData.address_id]);
+  }, [formData.address]);
 
   useEffect(() => {
     if (formData.bill_file) {
@@ -217,13 +213,13 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
             )}
 
             <Grid item xs={12} sm={12} lg={6}>
-              <CustomFormLabel htmlFor="address_id">Endereço</CustomFormLabel>
+              <CustomFormLabel htmlFor="address">Endereço</CustomFormLabel>
               <GenericAutocomplete
                 label="Endereço"
                 fetchOptions={fetchAddress}
                 onChange={(option) => {
                   setSelectedAddress(option);
-                  handleChange('address_id', option ? option.id : null);
+                  handleChange('address', option ? option.id : null);
                 }}
                 getOptionLabel={(option) =>
                   `${option.street}, ${option.number}, ${option.city}, ${option.state}`
@@ -232,10 +228,10 @@ const CreateChecklistPage = ({ projectId = null, onClosedModal = null, onRefresh
                 AddComponent={CreateAddressPage}
                 onAdd={(newAddress) => {
                   setSelectedAddress(newAddress);
-                  handleChange('address_id', newAddress.id);
+                  handleChange('address', newAddress.id);
                 }}
                 addTitle="Adicionar Novo Endereço"
-                {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
+                {...(formErrors.address && { error: true, helperText: formErrors.address })}
               />
             </Grid>
 

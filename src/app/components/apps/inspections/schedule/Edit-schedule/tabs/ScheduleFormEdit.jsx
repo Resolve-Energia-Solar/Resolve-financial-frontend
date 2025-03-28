@@ -233,18 +233,23 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         {/* Serviço */}
         {!onClosedModal && (
           <>
-            <Grid item xs={12} sm={12} lg={6}>
-              <CustomFormLabel htmlFor="service">Serviços relacionados</CustomFormLabel>
-              <AutoCompleteParentSchedule
-                onChange={(id) => handleChange('parent_schedules_id', id)}
-                value={formData.parent_schedules_id}
-                {...(formErrors.parent_schedules_id && {
-                  error: true,
-                  helperText: formErrors.parent_schedules_id,
-                })}
-                noOptionsText={'Nenhum serviço encontrado'}
-              />
-            </Grid>
+            <HasPermission
+            permissions={['field_services.change_final_service_opinion']}
+            userPermissions={userPermissions}
+            >
+              <Grid item xs={12} sm={12} lg={6}>
+                <CustomFormLabel htmlFor="service">Serviços relacionados</CustomFormLabel>
+                <AutoCompleteParentSchedule
+                  onChange={(id) => handleChange('parent_schedules_id', id)}
+                  value={formData.parent_schedules_id}
+                  {...(formErrors.parent_schedules_id && {
+                    error: true,
+                    helperText: formErrors.parent_schedules_id,
+                  })}
+                  noOptionsText={'Nenhum serviço encontrado'}
+                />
+              </Grid>
+            </HasPermission>
 
             <Grid item xs={12} sm={12} lg={6}>
               <CustomFormLabel htmlFor="client">Cliente</CustomFormLabel>
@@ -350,6 +355,10 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         </HasPermission>
 
         {/* Agente de Campo */}
+        <HasPermission
+          permissions={['field_services.change_final_service_opinion']}
+          userPermissions={userPermissions}
+        >
         <Grid item xs={12} sm={6} lg={6}>
           <CustomFormLabel htmlFor="field_agent">
             Agentes Disponíveis{' '}
@@ -379,6 +388,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
             })}
           />
         </Grid>
+        </HasPermission>
 
         {/* Parecer final de Serviço */}
         <HasPermission

@@ -4,9 +4,9 @@ import projectService from '@/services/projectService';
 
 const useProjectForm = (initialData, id) => {
   const [formData, setFormData] = useState({
-    sale_id: null,
-    designer_id: null,
-    homologator_id: null,
+    sale: null,
+    designer: null,
+    homologator: null,
     project_number: '',
     start_date: null,
     end_date: null,
@@ -24,17 +24,17 @@ const useProjectForm = (initialData, id) => {
   useEffect(() => {
     if (initialData) {
       setFormData({
-        sale_id: initialData.sale?.id || null,
-        designer_id: initialData.designer?.id || null,
-        homologator_id: initialData.homologator?.id || null,
-        project_number: initialData.project_number || '',
-        start_date: initialData.start_date ? initialData.start_date : null,
-        end_date: initialData.end_date ? initialData.end_date : null,
-        is_completed: initialData.is_completed || false,
-        is_documentation_completed: initialData.is_documentation_completed || false,
-        status: initialData.status || '',
-        designer_status: initialData.designer_status || '',
-        material_list_is_completed: initialData.material_list_is_completed || false,
+        sale: initialData.sale?.id,
+        designer: initialData.designer?.id,
+        homologator: initialData.homologator?.id,
+        project_number: initialData.project_number,
+        start_date: initialData.start_date ,
+        end_date: initialData.end_date ,
+        is_completed: initialData.is_completed,
+        is_documentation_completed: initialData.is_documentation_completed,
+        status: initialData.status ,
+        designer_status: initialData.designer_status,
+        material_list_is_completed: initialData.material_list_is_completed,
       });
     }
   }, [initialData]);
@@ -45,9 +45,9 @@ const useProjectForm = (initialData, id) => {
 
   const handleSave = async () => {
     const dataToSend = {
-      sale_id: formData.sale_id,
-      designer_id: formData.designer_id,
-      homologator_id: formData.homologator_id,
+      sale: formData.sale,
+      designer: formData.designer,
+      homologator: formData.homologator,
       project_number: formData.project_number,
       start_date: formData.start_date ? formatDate(formData.start_date) : null,
       end_date: formData.end_date ? formatDate(formData.end_date) : null,
@@ -62,9 +62,9 @@ const useProjectForm = (initialData, id) => {
 
     try {
       if (id) {
-        await projectService.updateProject(id, dataToSend);
+        await projectService.update(id, dataToSend);
       } else {
-        await projectService.createProject(dataToSend);
+        await projectService.create(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);

@@ -84,12 +84,12 @@ const ProjectList = ({ onClick }) => {
         const data = await projectService.getProjects({
           page: page + 1,
           limit: rowsPerPage,
-          expand: 'sale.customer',
+          expand: 'sale.customer,designer,homologator,product,sale',
           fields: 'id,sale.id,sale.customer.complete_name,homologator.complete_name,designer_status,material_list_is_completed,trt_pending,peding_request,access_opnion,product.name,product.params,status,sale.status,is_released_to_engineering',
           ...filters,
         });
         setProjectsList(data.results);
-        setTotalRows(data.count);
+        setTotalRows(data.meta.pagination.total_count);
       } catch (err) {
         setError('Erro ao carregar Projetos');
       } finally {
@@ -287,7 +287,7 @@ const ProjectList = ({ onClick }) => {
             </TableRow>
           </TableHead>
           {loadingProjects ? (
-            <TableSkeleton rows={rowsPerPage} cols={9} />
+            <TableSkeleton rows={rowsPerPage} columns={12} />
           ) : error && page === 1 ? (
             <Typography color="error">{error}</Typography>
           ) : (

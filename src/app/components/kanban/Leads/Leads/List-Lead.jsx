@@ -1,14 +1,11 @@
-import {
-  Chip,
-} from '@mui/material';
+import { Chip } from '@mui/material';
 
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import leadService from '@/services/leadService';
-import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
-import TableComponent from '@/app/components/kanban/Leads/components/TableComponent'
+import TableHeader from '@/app/components/kanban/Leads/components/TableHeader';
+import TableComponent from '@/app/components/kanban/Leads/components/TableComponent';
 import formatPhoneNumber from '@/utils/formatPhoneNumber';
-
 
 const LeadList = () => {
   const router = useRouter();
@@ -27,14 +24,12 @@ const LeadList = () => {
     {
       field: 'address',
       headerName: 'Endereço',
-      render: (row) =>
-        `${row?.addresses[0]?.number || '-'} - ${row?.addresses[0]?.city || '-'}`
+      render: (row) => `${row?.addresses[0]?.number || '-'} - ${row?.addresses[0]?.city || '-'}`,
     },
     {
       field: 'phone',
       headerName: 'Fone',
-      render: (row) =>
-        formatPhoneNumber(row?.phone)
+      render: (row) => formatPhoneNumber(row?.phone),
     },
     {
       field: 'column.name',
@@ -45,10 +40,10 @@ const LeadList = () => {
           sx={{
             border: `1px solid ${row?.column?.color || 'transparent'}`,
             backgroundColor: 'transparent',
-            color: "#7E8388"
+            color: '#7E8388',
           }}
         />
-      )
+      ),
     },
   ];
 
@@ -56,7 +51,7 @@ const LeadList = () => {
     const fetchLeads = async () => {
       setLoadingLeads(true);
       try {
-        const data = await leadService.getLeads({
+        const data = await leadService.index({
           params: {
             page: page + 1,
             limit: rowsPerPage,
@@ -77,17 +72,16 @@ const LeadList = () => {
   const handleFilterChange = (field, val) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
-      [field]: val
+      [field]: val,
     }));
   };
-
 
   return (
     <>
       <TableHeader
-        title={"Total"}
+        title={'Total'}
         totalItems={totalRows}
-        objNameNumberReference={"Leads"}
+        objNameNumberReference={'Leads'}
         buttonLabel="Criar"
         onButtonClick={() => console.log('Go to create lead')}
         onFilterChange={handleFilterChange}
@@ -108,10 +102,8 @@ const LeadList = () => {
         actions={{
           edit: (row) => router.push(`/apps/leads/${row.id}/edit`),
           view: (row) => router.push(`/apps/leads/${row.id}/view`),
-
         }}
       />
-
     </>
   );
 };

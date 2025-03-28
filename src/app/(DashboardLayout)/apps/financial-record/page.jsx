@@ -36,16 +36,17 @@ import financialRecordService from '@/services/financialRecordService';
 
 import { FilterContext } from '@/context/FilterContext';
 
-import AutoCompleteBeneficiary from '@/app/components/apps/financial-record/beneficiaryInput';
-import AutoCompleteDepartment from '@/app/components/apps/financial-record/departmentInput';
-import AutoCompleteCategory from '@/app/components/apps/financial-record/categoryInput';
-import AutoCompleteProject from '@/app/components/apps/inspections/auto-complete/Auto-input-Project';
-import FinancialRecordDetailDrawer from '@/app/components/apps/financial-record/detailDrawer';
-import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
-import PulsingBadge from '@/app/components/shared/PulsingBadge';
-import BlankCard from '@/app/components/shared/BlankCard';
-import PageContainer from '@/app/components/container/PageContainer';
-import SaleCards from '@/app/components/apps/inforCards/InforCards';
+import AutoCompleteBeneficiary from "@/app/components/apps/financial-record/beneficiaryInput";
+import AutoCompleteDepartment from "@/app/components/apps/financial-record/departmentInput";
+import AutoCompleteCategory from "@/app/components/apps/financial-record/categoryInput";
+import AutoCompleteProject from "@/app/components/apps/inspections/auto-complete/Auto-input-Project";
+import FinancialRecordDetailDrawer from "@/app/components/apps/financial-record/detailDrawer";
+import GenericFilterDrawer from "@/app/components/filters/GenericFilterDrawer";
+import PulsingBadge from "@/app/components/shared/PulsingBadge";
+import BlankCard from "@/app/components/shared/BlankCard";
+import PageContainer from "@/app/components/container/PageContainer";
+import SaleCards from "@/app/components/apps/inforCards/InforCards";
+import TableSkeleton from "@/app/components/apps/comercial/sale/components/TableSkeleton";
 
 const financialRecordList = () => {
   const router = useRouter();
@@ -87,7 +88,7 @@ const financialRecordList = () => {
           ...filters,
         });
         setFinancialRecordList(data.results);
-        setTotalRows(data.count);
+        setTotalRows(data.meta.pagination.total_count);
 
         // Atualizar KPIs globais
         await fetchKPIs();
@@ -105,8 +106,8 @@ const financialRecordList = () => {
           ...filters,
         });
 
-        setTotalRequests(kpiData.count); // Total de registros
-        setTotalAmount(kpiData.results.reduce((acc, item) => acc + parseFloat(item.value), 0)); // Soma do valor
+        setTotalRequests(kpiData.meta.pagination.total_count);
+        setTotalAmount(kpiData.results.reduce((acc, item) => acc + parseFloat(item.value), 0));
         setInProgressCount(
           kpiData.results.filter(
             (item) => item.responsible_status === 'A' && item.payment_status === 'P',
@@ -475,9 +476,9 @@ const financialRecordList = () => {
                     <TableRow key={item.id} hover onClick={() => handleRowClick(item)}>
                       <TableCell>
                         {item.paid_at &&
-                        new Date(item.paid_at).getFullYear() === new Date().getFullYear() &&
-                        new Date(item.paid_at).getMonth() === new Date().getMonth() &&
-                        new Date(item.paid_at).getDate() === new Date().getDate() ? (
+                          new Date(item.paid_at).getFullYear() === new Date().getFullYear() &&
+                          new Date(item.paid_at).getMonth() === new Date().getMonth() &&
+                          new Date(item.paid_at).getDate() === new Date().getDate() ? (
                           <PulsingBadge />
                         ) : (
                           <>

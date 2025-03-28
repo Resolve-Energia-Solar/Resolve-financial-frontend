@@ -17,7 +17,7 @@ function SchedulesInspections({ saleId, userId }) {
         const response = await projectService.index({
           sale: saleId,
           expand: 'product',
-          fields: 'id,product.product_value,product.default',
+          fields: 'id,product.product_value,product.default,product.name',
         });
         setProjectsList(response.results);
       } catch (error) {

@@ -19,7 +19,7 @@ import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
-import Button from "@mui/material/Button";
+import Button from '@mui/material/Button';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import useProposalForm from '@/hooks/proposal/useProposalForm';
@@ -64,12 +64,13 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   user?.user ? (formData.created_by_id = user.user.id) : null;
 
   const discard_proposal = () => {
-    dispatch(removeProductFromLead({ leadId, productIds: customProducts.map((product) => product.id) }));
+    dispatch(
+      removeProductFromLead({ leadId, productIds: customProducts.map((product) => product.id) }),
+    );
     handleChange('due_date', null);
     handleChange('value', null);
     handleChange('proposal_description', '');
   };
-
 
   useEffect(() => {
     if (success) {
@@ -78,12 +79,11 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     }
   }, [success]);
 
-
   useEffect(() => {
     const fetchLead = async () => {
       setLoadingLeads(true);
       try {
-        const data = await leadService.getLeadById(leadId);
+        const data = await leadService.find(leadId);
         setLead(data);
         console.log(data);
       } catch (err) {
@@ -95,7 +95,6 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     fetchLead();
   }, []);
 
-
   const handleSaveForm = async () => {
     const response = await handleSave();
     if (response) {
@@ -106,28 +105,28 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
       enqueueSnackbar('Erro ao atualizar proposta', { variant: 'error' });
       console.log('Form Errors:', formErrors);
     }
-  }
+  };
 
   const [paymentMethods, setPaymentMethods] = useState([
-    { id: Date.now(), method: '', financing_type: '', installments_num: '' }
+    { id: Date.now(), method: '', financing_type: '', installments_num: '' },
   ]);
 
   const handleMethodChange = (id, field, value) => {
     setPaymentMethods((prevMethods) =>
-      prevMethods.map((method) =>
-        method.id === id ? { ...method, [field]: value } : method
-      )
+      prevMethods.map((method) => (method.id === id ? { ...method, [field]: value } : method)),
     );
   };
 
   const addPaymentMethod = () => {
-    setPaymentMethods([...paymentMethods, { id: Date.now(), method: '', financing_type: '', installments_num: '' }]);
+    setPaymentMethods([
+      ...paymentMethods,
+      { id: Date.now(), method: '', financing_type: '', installments_num: '' },
+    ]);
   };
 
   const removePaymentMethod = (id) => {
     setPaymentMethods(paymentMethods.filter((method) => method.id !== id));
-  }
-
+  };
 
   return (
     <Grid container spacing={0}>
@@ -138,21 +137,20 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             flexDirection: 'column',
           }}
         >
-
           <Grid item spacing={2} alignItems="center" xs={12}>
             <LeadInfoHeader leadId={leadId} />
           </Grid>
 
           <Grid container spacing={4}>
-            <Grid
-              item
-              xs={12}
-              sx={{ display: 'flex', flexDirection: 'column', marginTop: 2 }}
-            >
+            <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'column', marginTop: 2 }}>
               <Grid item xs={12} sm={4}>
-                <Typography variant="h6" sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Editar proposta</Typography>
+                <Typography
+                  variant="h6"
+                  sx={{ color: '#000000', fontWeight: '700', fontSize: '18px' }}
+                >
+                  Editar proposta
+                </Typography>
               </Grid>
-
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
@@ -212,7 +210,7 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     <Grid item xs={12}>
                       <CustomFormLabel
                         htmlFor={`payment_method_${payment.id}`}
-                        sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
+                        sx={{ color: '#092C4C', fontWeight: '700', fontSize: '14px' }}
                       >
                         Forma de pagamento {index + 1}
                       </CustomFormLabel>
@@ -257,7 +255,7 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                       <Grid item xs={12}>
                         <CustomFormLabel
                           htmlFor={`financing_type_${payment.id}`}
-                          sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
+                          sx={{ color: '#092C4C', fontWeight: '700', fontSize: '14px' }}
                         >
                           Financiadoras
                         </CustomFormLabel>
@@ -265,7 +263,9 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                           select
                           name={`financing_type_${payment.id}`}
                           value={payment.financing_type}
-                          onChange={(e) => handleMethodChange(payment.id, 'financing_type', e.target.value)}
+                          onChange={(e) =>
+                            handleMethodChange(payment.id, 'financing_type', e.target.value)
+                          }
                           fullWidth
                         >
                           <MenuItem value="1">Sol Agora</MenuItem>
@@ -288,7 +288,7 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                       <Grid item xs={12}>
                         <CustomFormLabel
                           htmlFor={`installments_num_${payment.id}`}
-                          sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
+                          sx={{ color: '#092C4C', fontWeight: '700', fontSize: '14px' }}
                         >
                           Parcelas
                         </CustomFormLabel>
@@ -296,7 +296,9 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                           select
                           name={`installments_num_${payment.id}`}
                           value={payment.installments_num}
-                          onChange={(e) => handleMethodChange(payment.id, 'installments_num', e.target.value)}
+                          onChange={(e) =>
+                            handleMethodChange(payment.id, 'installments_num', e.target.value)
+                          }
                           fullWidth
                         >
                           <MenuItem value="2">2x</MenuItem>
@@ -335,7 +337,12 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={12}>
-                  <CustomFormLabel htmlFor="description" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Descrição</CustomFormLabel>
+                  <CustomFormLabel
+                    htmlFor="description"
+                    sx={{ color: '#092C4C', fontWeight: '700', fontSize: '14px' }}
+                  >
+                    Descrição
+                  </CustomFormLabel>
                   <CustomTextArea
                     name="description"
                     multiline
@@ -349,7 +356,6 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               </Grid>
             </Grid>
 
-
             <Grid
               item
               xs={12}
@@ -358,7 +364,6 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               <ProposalCard leadId={leadId} />
             </Grid>
           </Grid>
-
 
           <Grid
             item
@@ -386,12 +391,19 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>
-                <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
+                <Typography variant="body1" sx={{ mr: 1 }}>
+                  Descartar
+                </Typography>
                 <DeleteOutlinedIcon />
               </Button>
 
-              <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }} onClick={handleSaveForm} disabled={formLoading}
-                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}>
+              <Button
+                variant="contained"
+                sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }}
+                onClick={handleSaveForm}
+                disabled={formLoading}
+                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+              >
                 <Typography variant="body1" color="white">
                   {formLoading ? 'Gerando proposta...' : 'Gerar proposta'}
                 </Typography>
@@ -407,8 +419,8 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             PaperProps={{
               sx: {
                 borderRadius: '20px',
-                padding: "24px",
-                gap: "24px",
+                padding: '24px',
+                gap: '24px',
                 boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
                 backgroundColor: '#FFFFFF',
               },
@@ -418,10 +430,10 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               <EnergyConsumptionCalc
                 leadId={leadId}
                 onClose={() => setOpenEnergyConsumption(false)}
-                onRefresh={onRefresh} />
+                onRefresh={onRefresh}
+              />
             </DialogContent>
           </Dialog>
-
         </Box>
       </Grid>
     </Grid>

@@ -9,6 +9,7 @@ import EditCustomerPage from '../Leads-customer/Edit-Customer';
 import SalesListPage from '../Leads-sales';
 import { useSnackbar } from 'notistack';
 import leadService from '@/services/leadService';
+import { LeadModalTabProvider } from '../context/LeadModalTabContext';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -47,11 +48,11 @@ function EditLeadTabs({ leadId }) {
   const [tabValue, setTabValue] = useState(0);
   const [lead, setLead] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
-  
+
   useEffect(() => {
     const fetchLead = async () => {
       try {
-        const data = await leadService.getLeadById(leadId);
+        const data = await leadService.find(leadId);
         setLead(data);
       } catch (err) {
         enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
@@ -109,37 +110,94 @@ function EditLeadTabs({ leadId }) {
           />
         ))}
       </Tabs>
+    <LeadModalTabProvider leadId={leadId}>
+      <Box sx={{ overflow: 'hidden', height: '100%', p: 0, margin: 0 }}>
+        <Tabs
+          value={tabValue}
+          onChange={handleChange}
+          aria-label="lead edit tabs"
+          TabIndicatorProps={{ style: { display: 'none' } }}
+          sx={{ marginLeft: '25px', marginBottom: '-1px' }}
+        >
+          {[
+            'Informações Lead',
+            'Dados Pessoais',
+            'Propostas',
+            'Vendas',
+            'Documentos',
+            'Projetos',
+            'Agendamentos',
+          ].map((label, index) => (
+            <Tab
+              key={index}
+              label={label}
+              {...a11yProps(index)}
+              sx={{
+                backgroundColor: tabValue === index ? theme.palette.primary.main : 'transparent',
+                color: '#303030',
+                fontWeight: 600,
+                fontSize: '12px',
+                borderTopLeftRadius: '10px',
+                borderTopRightRadius: '10px',
+                '&.Mui-selected': {
+                  backgroundColor: theme.palette.primary.main,
+                  color: '#303030',
+                  fontWeight: 600,
+                  fontSize: '12px',
+                },
+                '&:not(.Mui-selected)': {
+                  fontWeight: 600,
+                  fontSize: '12px',
+                  color: '#7E8388',
+                },
+              }}
+            />
+          ))}
+        </Tabs>
 
-      {/* infos do lead */}
-      <CustomTabPanel value={tabValue} index={0}>
-        <EditLeadPage leadId={leadId} />
-      </CustomTabPanel>
+        {/* infos do lead */}
+        <CustomTabPanel value={tabValue} index={0}>
+          <EditLeadPage leadId={leadId} />
+        </CustomTabPanel>
 
-      {/* dados pessoais */}
-      <CustomTabPanel value={tabValue} index={1}>
-        <EditCustomerPage leadId={leadId} />
-      </CustomTabPanel>
+        {/* dados pessoais */}
+        <CustomTabPanel value={tabValue} index={1}>
+          <EditCustomerPage leadId={leadId} />
+        </CustomTabPanel>
 
-      {/* propostas */}
-      <CustomTabPanel value={tabValue} index={2}>
-        <LeadsProposalListPage leadId={leadId} />
-      </CustomTabPanel>
+        {/* propostas */}
+        <CustomTabPanel value={tabValue} index={2}>
+          <LeadsProposalListPage leadId={leadId} />
+        </CustomTabPanel>
 
-      {/* vendas */}
-      <CustomTabPanel value={tabValue} index={3}>
-        <SalesListPage lead={lead} />
-      </CustomTabPanel>
+        {/* vendas */}
+        <CustomTabPanel value={tabValue} index={3}>
+          <SalesListPage lead={lead} />
+        </CustomTabPanel>
 
       {/* docs */}
       <CustomTabPanel value={tabValue} index={4}>
         <LeadDocumentPage leadId={leadId} customer={lead?.customer} />
       </CustomTabPanel>
+        {/* docs a ser retirado futuramente e integrado à page de projetos */}
+        <CustomTabPanel value={tabValue} index={4}>
+          <LeadDocumentPage />
+        </CustomTabPanel>
+
+        {/* contratos */}
+        <CustomTabPanel value={tabValue} index={5}></CustomTabPanel>
 
       {/* agendamentos */}
       <CustomTabPanel value={tabValue} index={5}>
         <LeadSchedulePage leadId={leadId} />
       </CustomTabPanel>
     </Box>
+        {/* agendamentos */}
+        <CustomTabPanel value={tabValue} index={6}>
+          <LeadSchedulePage leadId={leadId} />
+        </CustomTabPanel>
+      </Box>
+    </LeadModalTabProvider>
   );
 }
 

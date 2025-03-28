@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import phoneNumberService from '@/services/phoneNumberService';
 
-
 const usePhoneNumbers = (id) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,7 +11,7 @@ const usePhoneNumbers = (id) => {
 
     const fetchPhoneNumber = async () => {
       try {
-        const data = await phoneNumberService.getPhoneNumberById(id);
+        const data = await phoneNumberService.find(id);
         setPhoneNumberData(data);
       } catch (err) {
         setError('Erro ao carregar o número de telefone');

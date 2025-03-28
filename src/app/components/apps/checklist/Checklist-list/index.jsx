@@ -29,6 +29,7 @@ const CheckListRateio = ({ projectId = null }) => {
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedUnitId, setSelectedUnitId] = useState(null);
+  const [selectedUnit, setSelectedUnit] = useState(null);
 
   const [AddModalOpen, setAddModalOpen] = useState(false);
   const [confirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
@@ -59,8 +60,9 @@ const CheckListRateio = ({ projectId = null }) => {
 
   const [units, setUnits] = useState([]);
 
-  const handleEdit = (unitId) => {
-    setSelectedUnitId(unitId);
+  const handleEdit = (unit) => {
+    setSelectedUnitId(unit.id);
+    setSelectedUnit(unit);
     setEditModalOpen(true);
   };
 
@@ -148,7 +150,7 @@ const CheckListRateio = ({ projectId = null }) => {
                     </TableCell>
                     <TableCell align="center">
                       <Tooltip title="Edit Item">
-                        <IconButton color="primary" onClick={() => handleEdit(unit.id)}>
+                        <IconButton color="primary" onClick={() => handleEdit(unit)}>
                           <Edit width={22} />
                         </IconButton>
                       </Tooltip>

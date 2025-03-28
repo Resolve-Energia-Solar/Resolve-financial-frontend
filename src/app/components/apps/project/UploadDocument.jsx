@@ -67,7 +67,13 @@ const UploadDocument = ({ projectId }) => {
   };
   const fetchMaterials = async () => {
     try {
-      const response = await projectMaterialsService.getProjectMaterials({ project: projectId });
+      const response = await projectMaterialsService.index({
+        project: projectId ,
+        limit: 100,
+        page: 1,
+        fields: 'id,material.name,amount,is_exit,material.price,material.id',
+        expand: 'material',
+        });
       setMaterials(response.results);
     } catch (error) {
       console.log('Erro ao buscar materiais do projeto:', error);
@@ -174,19 +180,29 @@ const UploadDocument = ({ projectId }) => {
   };
 
   const handleEditSave = async (id) => {
+    const originalAmount = materials.find((item) => item.id === id)?.amount;
+  
     try {
       await projectMaterialsService.partialUpdateProjectMaterial(id, { amount: editedAmount });
+  
       const updatedMaterials = materials.map((item) =>
-        item.material.id === id ? { ...item, amount: editedAmount } : item,
+        item.id === id ? { ...item, amount: editedAmount } : item
       );
-
-      fetchProject();
+  
       setMaterials(updatedMaterials);
       setEditingId(null);
     } catch (error) {
-      console.error('Erro ao atualizar quantidade:', error);
+      setUploadStatus('error');
+      setErrorMessage('Erro ao atualizar quantidade: ' + (error.response?.data?.error || 'Erro desconhecido'));
+      setOpenSnackbar(true);
+  
+      // Reverte o valor para o original
+      const revertedMaterials = materials.map((item) =>
+        item.id === id ? { ...item, amount: originalAmount } : item
+      );
+      setMaterials(revertedMaterials);
     }
-  };
+  };  
 
   /*************  ✨ Codeium Command ⭐  *************/
   /**
@@ -292,14 +308,13 @@ const UploadDocument = ({ projectId }) => {
         )}
       </Stack>
 
-      {materials.length > 0 && (
         <TableContainer component={Paper} sx={{ marginTop: 4, maxHeight: 400, overflow: 'auto' }}>
           <Button
             variant="outlined"
             startIcon={<AddBoxRounded />}
             sx={{ marginTop: 1, marginBottom: 2 }}
             onClick={() => setAddMaterialListModal(true)}
-          >
+            >
             Adicionar Material
           </Button>
           <Table stickyHeader>
@@ -313,62 +328,69 @@ const UploadDocument = ({ projectId }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {materials.map((item) => (
-                <TableRow key={item.material.id}>
-                  <TableCell>
-                    <InventoryIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
-                    {item.material.name}
-                  </TableCell>
-                  <TableCell>
-                    {editingId === item.material.id ? (
-                      <TextField
-                        value={editedAmount}
-                        onChange={(e) => setEditedAmount(e.target.value)}
-                        type="number"
-                        size="small"
-                      />
-                    ) : (
-                      parseFloat(item.amount).toLocaleString()
-                    )}
-                  </TableCell>
-                  <TableCell>{formatCurrency(item.material.price)}</TableCell>
-                  <TableCell>
-                    {item.is_exit ? (
-                      <CheckIcon sx={{ color: 'green' }} />
-                    ) : (
-                      <CloseIcon sx={{ color: 'red' }} />
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {editingId === item.material.id ? (
-                      <>
-                        <IconButton onClick={() => handleEditSave(item.id)} color="primary">
-                          <SaveIcon />
-                        </IconButton>
-                        <IconButton onClick={() => setEditingId(null)} color="secondary">
-                          <CloseIcon />
-                        </IconButton>
-                      </>
-                    ) : (
-                      <>
-                        <IconButton
-                          onClick={() => handleEditStart(item.material.id, item.amount)}
-                          color="primary"
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton onClick={() => handleDelete(item.id)} color="error">
-                          <DeleteIcon />
-                        </IconButton>
-                      </>
-                    )}
+              {materials.length > 0 ? (
+                materials.map((item) => (
+                  <TableRow key={item.material.id}>
+                    <TableCell>
+                      <InventoryIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
+                      {item.material.name}
+                    </TableCell>
+                    <TableCell>
+                      {editingId === item.id ? (
+                        <TextField
+                          value={editedAmount}
+                          onChange={(e) => setEditedAmount(e.target.value)}
+                          type="number"
+                          size="small"
+                        />
+                      ) : (
+                        parseFloat(item.amount).toLocaleString()
+                      )}
+                    </TableCell>
+                    <TableCell>{formatCurrency(item.material.price)}</TableCell>
+                    <TableCell>
+                      {item.is_exit ? (
+                        <CheckIcon sx={{ color: 'green' }} />
+                      ) : (
+                        <CloseIcon sx={{ color: 'red' }} />
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {editingId === item.id ? (
+                        <>
+                          <IconButton onClick={() => handleEditSave(item.id)} color="primary">
+                            <SaveIcon />
+                          </IconButton>
+                          <IconButton onClick={() => setEditingId(null)} color="secondary">
+                            <CloseIcon />
+                          </IconButton>
+                        </>
+                      ) : (
+                        <>
+                          <IconButton
+                            onClick={() => handleEditStart(item.id, item.amount)}
+                            color="primary"
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton onClick={() => handleDelete(item.id)} color="error">
+                            <DeleteIcon />
+                          </IconButton>
+                        </>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">
+                    Nenhum material cadastrado.
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </TableContainer>
-      )}
 
       <Snackbar
         open={openSnackbar}

@@ -16,9 +16,7 @@ import {
   Stack,
   Divider,
   Grid,
-  CircularProgress,
   FormControlLabel,
-  Skeleton,
 } from '@mui/material';
 import { format, isValid } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -56,7 +54,6 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
   const {
     formData,
     handleChange,
-    handleSave,
     formErrors,
     success,
     loading: formLoading,
@@ -82,7 +79,7 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
     { value: 'PI', label: 'Parcelamento Interno' },
     { value: 'P', label: 'Pix' },
     { value: 'T', label: 'Transferência' },
-    { value: 'D', label: 'Dinheiro' },
+    { value: 'DI', label: 'Dinheiro' },
     { value: 'PA', label: 'Poste Auxiliar' },
     { value: 'RO', label: 'Repasse de Obra' },
   ];
@@ -108,28 +105,6 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
 
   return (
     <Box>
-      <Stack
-        direction="row"
-        spacing={{ xs: 1, sm: 2, md: 4 }}
-        justifyContent="space-between"
-        alignItems="center"
-        mb={3}
-      >
-        <Typography variant="h5"># {id}</Typography>
-        <Box display="flex" gap={1}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSave}
-            disabled={formLoading}
-            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-          >
-            {formLoading ? 'Salvando...' : 'Salvar Alterações'}{' '}
-          </Button>
-        </Box>
-      </Stack>
-      <Divider></Divider>
-
       {success && (
         <Alert severity="success" sx={{ mt: 2 }}>
           Pagamento atualizado com sucesso!
@@ -160,14 +135,6 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
       <Divider></Divider>
 
       <Grid container spacing={3} mb={4}>
-        {/* <Grid item xs={12} sm={6}>
-          <CustomFormLabel htmlFor="name">Venda</CustomFormLabel>
-          <AutoCompleteSale
-            onChange={(id) => handleChange('sale_id', id)}
-            value={formData.sale_id}
-            {...(formErrors.sale_id && { error: true, helperText: formErrors.sale_id })}
-          />
-        </Grid> */}
         <Grid item xs={12} sm={6}>
           <CustomFormLabel htmlFor="name">Tomador</CustomFormLabel>
           <AutoCompleteUser
@@ -211,7 +178,10 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
             disabled={!hasPermission(['financial.change_invoice_status'])}
             value={formData.invoice_status}
             onChange={(e) => handleChange('invoice_status', e.target.value)}
-            {...(formErrors.invoice_status && { error: true, helperText: formErrors.invoice_status })}
+            {...(formErrors.invoice_status && {
+              error: true,
+              helperText: formErrors.invoice_status,
+            })}
           />
         </Grid>
       </Grid>
@@ -340,33 +310,6 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
           </Table>
         </TableContainer>
       </Paper>
-
-      {/* <Box p={3} backgroundColor="primary.light" mt={3}>
-        <Box display="flex" justifyContent="end" gap={3} mb={3}>
-          <Typography variant="body1" fontWeight={600}>
-            Sub Total:
-          </Typography>
-          <Typography variant="body1" fontWeight={600}>
-            0
-          </Typography>
-        </Box>
-        <Box display="flex" justifyContent="end" gap={3} mb={3}>
-          <Typography variant="body1" fontWeight={600}>
-            VAT:
-          </Typography>
-          <Typography variant="body1" fontWeight={600}>
-            0
-          </Typography>
-        </Box>
-        <Box display="flex" justifyContent="end" gap={3}>
-          <Typography variant="body1" fontWeight={600}>
-            Grand Total:
-          </Typography>
-          <Typography variant="body1" fontWeight={600}>
-            0
-          </Typography>
-        </Box>
-      </Box> */}
     </Box>
   );
 };

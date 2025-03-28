@@ -28,7 +28,7 @@ export const KanbanDataContextProvider = ({ children }) => {
           board: boardId,
           ordering: 'position',
         });
-        setTodoCategories(response || []);
+        setTodoCategories(response.results || []);
       } catch (error) {
         console.log(error?.message);
       } finally {
@@ -90,7 +90,7 @@ export const KanbanDataContextProvider = ({ children }) => {
     });
 
     try {
-      await leadService.patchLead(taskId, { column_id: destinationCategoryId });
+      await leadService.patchLead(taskId, { column: destinationCategoryId });
       enqueueSnackbar('Lead movido com sucesso', { variant: 'success' });
     } catch (error) {
       console.error('Erro ao mover o lead:', error.message);

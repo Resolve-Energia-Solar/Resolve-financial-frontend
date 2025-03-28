@@ -10,7 +10,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Alert,
   IconButton,
   Tooltip,
   Box,
@@ -77,7 +76,7 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
     { value: 'PI', label: 'Parcelamento Interno' },
     { value: 'P', label: 'Pix' },
     { value: 'T', label: 'Transferência' },
-    { value: 'D', label: 'Dinheiro' },
+    { value: 'DI', label: 'Dinheiro' },
     { value: 'PA', label: 'Poste Auxiliar' },
     { value: 'RO', label: 'Repasse de Obra' },
   ];
@@ -103,7 +102,7 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
 
   const orderDate = new Date();
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
-  const formattedOrderDate = format(parsedDate, 'EEEE, MMMM dd, yyyy', { locale: ptBR });
+  const formattedOrderDate = format(parsedDate, 'dd,MMMM,yyyy', { locale: ptBR });
 
   return (
     <Box>
@@ -291,9 +290,9 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
                           }
                           {...(formErrors.installments &&
                             formErrors.installments[index]?.installment_value && {
-                            error: true,
-                            helperText: formErrors.installments[index].installment_value,
-                          })}
+                              error: true,
+                              helperText: formErrors.installments[index].installment_value,
+                            })}
                           fullWidth
                         />
                       </TableCell>
@@ -306,9 +305,9 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
                           }
                           {...(formErrors.installments &&
                             formErrors.installments[index]?.installment_number && {
-                            error: true,
-                            helperText: formErrors.installments[index].installment_number,
-                          })}
+                              error: true,
+                              helperText: formErrors.installments[index].installment_number,
+                            })}
                           fullWidth
                         />
                       </TableCell>
@@ -321,9 +320,9 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
                           }
                           {...(formErrors.installments &&
                             formErrors.installments[index]?.due_date && {
-                            error: true,
-                            helperText: formErrors.installments[index].due_date,
-                          })}
+                              error: true,
+                              helperText: formErrors.installments[index].due_date,
+                            })}
                           fullWidth
                         />
                       </TableCell>

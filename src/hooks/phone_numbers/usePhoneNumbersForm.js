@@ -41,21 +41,21 @@ const usePhoneNumberForm = (initialData, id) => {
       area_code: formData.area_code,
       phone_number: formData.phone_number,
       is_main: formData.is_main,
-      user_id: formData.user_id ? formData.user_id : undefined,
+      user: formData.user_id ? formData.user_id : undefined,
     };
 
     console.log('dataToSend', dataToSend);
     try {
       let response;
       if (id) {
-        response = await phoneNumberService.updatePhoneNumber(id, dataToSend);
+        response = await phoneNumberService.update(id, dataToSend);
       } else {
-        response = await phoneNumberService.createPhoneNumber(dataToSend);
+        response = await phoneNumberService.create(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);
       setDataReceived(response);
-      enqueueSnackbar("Salvo com sucesso!", { variant: "success" });
+      enqueueSnackbar('Salvo com sucesso!', { variant: 'success' });
     } catch (err) {
       setSuccess(false);
       setFormErrors(err.response?.data || {});

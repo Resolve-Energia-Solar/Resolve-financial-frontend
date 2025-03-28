@@ -24,7 +24,7 @@ const useProject = (id, params = {}) => {
 
     const fetchProject = async () => {
       try {
-        const data = await projectService.findOneProject(id, params);
+        const data = await projectService.find(id, params);
         setProjectData(data);
       } catch (err) {
         setError('Erro ao carregar o projeto');

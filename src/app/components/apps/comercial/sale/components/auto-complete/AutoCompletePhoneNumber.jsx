@@ -28,7 +28,7 @@ export default function AutoCompletePhoneNumber({
   const fetchDefaultPhone = async (phoneId) => {
     if (phoneId) {
       try {
-        const phone = await phoneNumberService.getPhoneNumberById(phoneId);
+        const phone = await phoneNumberService.find(phoneId);
         if (phone) {
           setSelectedPhone({
             id: phone.id,
@@ -59,7 +59,7 @@ export default function AutoCompletePhoneNumber({
       }
       setLoading(true);
       try {
-        const response = await phoneNumberService.getPhoneNumbersByQuery(query);
+        const response = await phoneNumberService.index({ phone_number__icontains: querys });
         const formattedPhones = response.results.map((phone) => ({
           id: phone.id,
           label: `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`,
@@ -70,7 +70,7 @@ export default function AutoCompletePhoneNumber({
       }
       setLoading(false);
     }, 300),
-    [disableSuggestions]
+    [disableSuggestions],
   );
 
   const fetchInitialPhones = useCallback(async () => {
@@ -80,7 +80,7 @@ export default function AutoCompletePhoneNumber({
     }
     setLoading(true);
     try {
-      const response = await phoneNumberService.getPhoneNumbers({ limit: 5 });
+      const response = await phoneNumberService.index({ limit: 5, page: 1 });
       const formattedPhones = response.results.map((phone) => ({
         id: phone.id,
         label: `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`,
@@ -168,7 +168,10 @@ export default function AutoCompletePhoneNumber({
       <Dialog open={openModal} onClose={handleCloseModal} maxWidth="lg">
         <DialogTitle>Adicionar Novo Número de Telefone</DialogTitle>
         <DialogContent>
-          <CreatePhonePage onClosedModal={handleCloseModal} selectedPhoneNumberId={fetchDefaultPhone} />
+          <CreatePhonePage
+            onClosedModal={handleCloseModal}
+            selectedPhoneNumberId={fetchDefaultPhone}
+          />
         </DialogContent>
       </Dialog>
     </div>

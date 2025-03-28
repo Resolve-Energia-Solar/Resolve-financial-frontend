@@ -51,12 +51,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const [openEnergyConsumption, setOpenEnergyConsumption] = useState(false);
   const [openProposalLayout, setOpenProposalLayout] = useState(false);
 
-  const {
-    handleSave,
-    formErrors,
-    loading: formLoading,
-    success,
-  } = useProposalForm();
+  const { handleSave, formErrors, loading: formLoading, success } = useProposalForm();
 
   const [formData, setFormData] = useState({
     amount: '',
@@ -64,7 +59,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     proposal_validity: '',
     payment: '',
     description: '',
-  })
+  });
 
   const handleChange = (field, value) => {
     setFormData((prevData) => ({
@@ -101,7 +96,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     const fetchLead = async () => {
       setLoadingLeads(true);
       try {
-        const data = await leadService.getLeadById(leadId);
+        const data = await leadService.find(leadId);
         setLead(data);
         console.log(data);
       } catch (err) {
@@ -500,9 +495,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             }}
           >
             <Button
-              startIcon={
-                <PictureAsPdfIcon sx={{ color: "#1C1B1F", }} />
-              }
+              startIcon={<PictureAsPdfIcon sx={{ color: '#1C1B1F' }} />}
               variant="outlined"
               onClick={handleOpenProposalPdf}
               sx={{
@@ -516,8 +509,16 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             </Button>
 
             <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal} endIcon={<DeleteOutlinedIcon />}>
-                <Typography variant="body1" sx={{ mr: 1 }}>Descartar</Typography>
+              <Button
+                variant="outlined"
+                color="error"
+                sx={{ px: 3 }}
+                onClick={discard_proposal}
+                endIcon={<DeleteOutlinedIcon />}
+              >
+                <Typography variant="body1" sx={{ mr: 1 }}>
+                  Descartar
+                </Typography>
               </Button>
 
               <Button
@@ -542,17 +543,16 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             PaperProps={{
               sx: {
                 borderRadius: '20px',
-                padding: "24px",
-                gap: "24px",
+                padding: '24px',
+                gap: '24px',
                 boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                backgroundColor: '#FFFFFF',
                 backgroundColor: '#FFFFFF',
               },
             }}
           >
             <DialogContent>
-              <ProposalLayout
-                formData={formData}
-              />
+              <ProposalLayout formData={formData} />
             </DialogContent>
           </Dialog>
 
