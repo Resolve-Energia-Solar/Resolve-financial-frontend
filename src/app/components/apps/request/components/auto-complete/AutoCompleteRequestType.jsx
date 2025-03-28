@@ -16,7 +16,7 @@ export default function AutoCompleteRequestType({ onChange, value, error, helper
     const fetchDefaultRequestType = async () => {
       if (value) {
         try {
-          const requestType = await RequestTypeService.getTypeById(value);
+          const requestType = await RequestTypeService.find(value);
           if (requestType) {
             setSelectedRequestType({
               id: requestType.id,
@@ -49,7 +49,7 @@ export default function AutoCompleteRequestType({ onChange, value, error, helper
       }
       setLoading(true);
       try {
-        const requestTypes = await RequestTypeService.getTypeByName(name);
+        const requestTypes = await RequestTypeService.index({ name: name });
         if (requestTypes && requestTypes.results) {
           const formattedRequestTypes = requestTypes.results.map((requestType) => ({
             id: requestType.id,
@@ -62,13 +62,13 @@ export default function AutoCompleteRequestType({ onChange, value, error, helper
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
 
   const fetchInitialRequestTypes = useCallback(async () => {
     setLoading(true);
     try {
-      const requestTypes = await RequestTypeService.getTypes({ limit: 5, page: 1 });
+      const requestTypes = await RequestTypeService.index({ limit: 5, page: 1 });
       if (requestTypes && requestTypes.results) {
         const formattedRequestTypes = requestTypes.results.map((requestType) => ({
           id: requestType.id,
@@ -107,7 +107,7 @@ export default function AutoCompleteRequestType({ onChange, value, error, helper
         loading={loading}
         value={selectedRequestType}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         {...rest}
         onInputChange={(event, newInputValue) => {
           fetchRequestTypesByName(newInputValue);
