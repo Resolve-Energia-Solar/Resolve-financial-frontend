@@ -29,7 +29,8 @@ import { Switch } from '@mui/material';
 import { months } from 'moment';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { ptBR } from 'date-fns/locale'; 
+import { ptBR } from 'date-fns/locale';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; 
 
 function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null }) {
     const router = useRouter();
@@ -605,6 +606,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                 {/* <DialogTitle>Histórico de Consumo</DialogTitle> */}
                                 <DialogContent>
                                     <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
+
                                         <Grid container spacing={3}>
                                             <Grid item xs={12}>
                                                 <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Histórico de Consumo</Typography>
@@ -618,7 +620,21 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                         <DatePicker
                                                             value={startDate}
                                                             onChange={handleStartDateChange}
-                                                            renderInput={(params) => <TextField {...params} fullWidth />}
+                                                            renderInput={(params) => (
+                                                                <TextField
+                                                                    {...params}
+                                                                    fullWidth
+                                                                    InputProps={{
+                                                                        ...params.InputProps,
+                                                                        startAdornment: (
+                                                                            <InputAdornment position="start" sx={{ color: theme.palette.primary.main }}>
+                                                                                <CalendarTodayIcon sx={{ fontSize: 25 }} /> 
+                                                                            </InputAdornment>
+                                                                        ),
+                                                                    }}
+                                                                />
+                                                            )}
+                                                            format="dd/MM/yyyy"
                                                         />
                                                     </Grid>
                                                     <Grid item xs={2} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -628,7 +644,20 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                         <DatePicker
                                                             value={endDate}
                                                             onChange={handleEndDateChange}
-                                                            renderInput={(params) => <TextField {...params} fullWidth />}
+                                                            renderInput={(params) => (
+                                                                <TextField
+                                                                    {...params}
+                                                                    fullWidth
+                                                                    InputProps={{
+                                                                        ...params.InputProps,
+                                                                        startAdornment: (
+                                                                            <InputAdornment position="start" sx={{ color: theme.palette.primary.main }}>
+                                                                                <CalendarTodayIcon sx={{ fontSize: 25 }} /> 
+                                                                            </InputAdornment>
+                                                                        ),
+                                                                    }}
+                                                                />
+                                                            )}
                                                             format="dd/MM/yyyy"
                                                         />
                                                     </Grid>
@@ -637,7 +666,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                     <Grid item xs={12} sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", mt: 2 }}>
                                                         <Grid container sx={{ justifyContent: "center" }}>
                                                             {months.map((month, index) => {
-                                                                const monthLabel = month.toLocaleString('default', { month: 'long', year: 'numeric' });
+                                                                const monthLabel = month.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
                                                                 return (
                                                                     <Grid item columnSpacing={0} xs={12} key={index} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                                                         <Grid container sx={{ alignItems: "center", justifyContent: "center" }}>
