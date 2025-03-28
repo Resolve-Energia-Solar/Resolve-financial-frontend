@@ -40,9 +40,9 @@ const useServiceCatalogForm = (initialData, id) => {
 
     try {
       if (id) {
-        await serviceCatalogService.updateServiceCatalog(id, dataToSend);
+        await serviceCatalogService.update(id, dataToSend);
       } else {
-        await serviceCatalogService.createServiceCatalog(dataToSend);
+        await serviceCatalogService.create(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);

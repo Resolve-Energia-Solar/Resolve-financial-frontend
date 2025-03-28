@@ -2,15 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { parseISO, format } from 'date-fns';
-import {
-  Grid,
-  Button,
-  Stack,
-  Tooltip,
-  Snackbar,
-  Alert,
-  CircularProgress,
-} from '@mui/material';
+import { Grid, Button, Stack, Tooltip, Snackbar, Alert, CircularProgress } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 import AutoCompleteServiceCatalog from '@/app/components/apps/inspections/auto-complete/Auto-input-Service';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
@@ -151,9 +143,9 @@ const ScheduleFormCreate = ({
       if (!formData.schedule_date || !formData.schedule_start_time || !formData.service) return;
       try {
         // Obter o id do serviço (considerando que pode vir como objeto ou valor)
-        const serviceId =
-          formData.service.value || formData.service.id || formData.service;
-        const serviceInfo = await serviceCatalogService.getServiceCatalogById(serviceId, {
+        const serviceId = formData.service.value || formData.service.id || formData.service;
+        const serviceInfo = await serviceCatalogService.index({
+          id: serviceId,
           expand: 'deadline',
           fields: 'deadline',
         });
@@ -171,12 +163,12 @@ const ScheduleFormCreate = ({
 
         // Converte o deadline (formato "HH:mm:ss") para milissegundos
         const [dHour, dMinute, dSecond] = deadline.split(':').map(Number);
-        const durationMs = ((dHour * 3600) + (dMinute * 60) + (dSecond || 0)) * 1000;
+        const durationMs = (dHour * 3600 + dMinute * 60 + (dSecond || 0)) * 1000;
         const endDate = new Date(startDate.getTime() + durationMs);
 
         // Formata o endDate e endTime para os formatos requeridos
         const endDateStr = endDate.toISOString().split('T')[0]; // YYYY-MM-DD
-        const endTimeStr = endDate.toTimeString().split(' ')[0];  // HH:mm:ss
+        const endTimeStr = endDate.toTimeString().split(' ')[0]; // HH:mm:ss
 
         setCalculatedEnd({ date: endDateStr, time: endTimeStr });
         handleChange('schedule_end_date', endDateStr);
@@ -232,7 +224,10 @@ const ScheduleFormCreate = ({
             onChange={(e) => validateChange('schedule_start_time', e.target.value)}
             disabled={!formData.schedule_date}
             value={formData.schedule_start_time || ''}
-            {...(formErrors.schedule_start_time && { error: true, helperText: formErrors.schedule_start_time })}
+            {...(formErrors.schedule_start_time && {
+              error: true,
+              helperText: formErrors.schedule_start_time,
+            })}
             label="Hora do Agendamento"
           />
         </Grid>
@@ -261,7 +256,10 @@ const ScheduleFormCreate = ({
           />
         </Grid>
         {/* Status do Agendamento */}
-        <HasPermission permissions={['field_services.change_status_schedule_field']} userPermissions={userPermissions}>
+        <HasPermission
+          permissions={['field_services.change_status_schedule_field']}
+          userPermissions={userPermissions}
+        >
           <Grid item xs={12} sm={12} lg={6}>
             <FormSelect
               label="Status do Agendamento"

@@ -13,7 +13,7 @@ export default function AutoCompleteServiceCatalogFilter({
   helperText,
   disabled,
   labeltitle,
-  noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.",
+  noOptionsText = 'Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.',
 }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
@@ -23,7 +23,7 @@ export default function AutoCompleteServiceCatalogFilter({
   const fetchDefaultServiceCatalog = async (catalogId) => {
     if (catalogId) {
       try {
-        const serviceCatalogValue = await serviceCatalogService.getServiceCatalogById(catalogId);
+        const serviceCatalogValue = await serviceCatalogService.find({ id: catalogId });
         if (serviceCatalogValue) {
           return { id: serviceCatalogValue.id, name: serviceCatalogValue.name };
         }
@@ -57,7 +57,7 @@ export default function AutoCompleteServiceCatalogFilter({
     debounce(async (name) => {
       setLoading(true);
       try {
-        const response = await serviceCatalogService.getServiceCatalogByName(name);
+        const response = await serviceCatalogService.index({ name__icontains: name });
         const formattedServiceCatalogs = response.results.map((serviceCatalog) => ({
           id: serviceCatalog.id,
           name: serviceCatalog.name,
