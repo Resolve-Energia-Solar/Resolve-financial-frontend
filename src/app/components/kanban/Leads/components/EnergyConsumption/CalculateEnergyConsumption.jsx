@@ -620,6 +620,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                         <DatePicker
                                                             value={startDate}
                                                             onChange={handleStartDateChange}
+                                                            locale={ptBR}
                                                             renderInput={(params) => (
                                                                 <TextField
                                                                     {...params}
@@ -644,6 +645,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                         <DatePicker
                                                             value={endDate}
                                                             onChange={handleEndDateChange}
+                                                            locale={ptBR}
                                                             renderInput={(params) => (
                                                                 <TextField
                                                                     {...params}
@@ -667,6 +669,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                         <Grid container sx={{ justifyContent: "center" }}>
                                                             {months.map((month, index) => {
                                                                 const monthLabel = month.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+                                                                const formatedMonthLabel = monthLabel.charAt(0).toLocaleUpperCase() + monthLabel.slice(1);
                                                                 return (
                                                                     <Grid item columnSpacing={0} xs={12} key={index} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                                                         <Grid container sx={{ alignItems: "center", justifyContent: "center" }}>
@@ -683,7 +686,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                                                         mb: 3
                                                                                     }}
                                                                                 >
-                                                                                    {monthLabel}
+                                                                                    {formatedMonthLabel}
                                                                                 </CustomFormLabel>
                                                                             </Grid>
                                                                             <Grid item xs={8} sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
