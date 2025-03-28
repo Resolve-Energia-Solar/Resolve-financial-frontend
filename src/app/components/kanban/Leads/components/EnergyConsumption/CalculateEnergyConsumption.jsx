@@ -609,7 +609,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                                 return (
                                                                     <Grid item xs={12} key={index} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                                                         <Grid container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                                                            <Grid item xs={4} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                                                            <Grid item xs={2} sx={{ display: "flex", justifyContent: "center" }}>
                                                                                 <CustomFormLabel
                                                                                     htmlFor="estimated_generation"
                                                                                     sx={{
@@ -624,7 +624,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                                                     {monthLabel}
                                                                                 </CustomFormLabel>
                                                                             </Grid>
-                                                                            <Grid item xs={8} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                                            <Grid item xs={10} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                                                                 <TextField
                                                                                     value={inputValues[monthLabel]}
                                                                                     onChange={(e) => handleMonthInputChange(monthLabel, e.target.value)}
