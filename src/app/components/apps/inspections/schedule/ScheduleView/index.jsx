@@ -126,7 +126,7 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
             typeof scheduleData.project.product === 'object'
               ? scheduleData.project.product.id
               : scheduleData.project.product;
-          const productData = await ProductService.getProductById(productId);
+          const productData = await ProductService.find(productId);
           setProductName(productData.name);
         } catch (error) {
           console.error('Erro ao buscar produto:', error);
