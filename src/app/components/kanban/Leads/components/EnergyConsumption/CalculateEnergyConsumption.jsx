@@ -29,6 +29,7 @@ import { Switch } from '@mui/material';
 import { months } from 'moment';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { ptBR } from 'date-fns/locale'; 
 
 function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null }) {
     const router = useRouter();
@@ -603,7 +604,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                             >
                                 {/* <DialogTitle>Histórico de Consumo</DialogTitle> */}
                                 <DialogContent>
-                                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                    <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
                                         <Grid container spacing={3}>
                                             <Grid item xs={12}>
                                                 <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Histórico de Consumo</Typography>
@@ -633,13 +634,13 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                 </Grid>
                                                 {months.length > 0 && (
                                                     <Grid item xs={12} sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", mt: 2 }}>
-                                                        <Grid container spacing={3} sx={{ justifyContent: "center" }}>
+                                                        <Grid container sx={{ justifyContent: "center" }}>
                                                             {months.map((month, index) => {
                                                                 const monthLabel = month.toLocaleString('default', { month: 'long', year: 'numeric' });
                                                                 return (
                                                                     <Grid item columnSpacing={0} xs={12} key={index} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                                                         <Grid container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                                                            <Grid item xs={2} sx={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+                                                                            <Grid item xs={4} sx={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
                                                                                 <CustomFormLabel
                                                                                     htmlFor="estimated_generation"
                                                                                     sx={{
@@ -648,17 +649,17 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                                                         fontSize: "14px",
                                                                                         display: "flex",
                                                                                         alignItems: "center",
-                                                                                        justifyContent: "flex-start"
+                                                                                        justifyContent: "flex-start",
+                                                                                        mb: 3
                                                                                     }}
                                                                                 >
                                                                                     {monthLabel}
                                                                                 </CustomFormLabel>
                                                                             </Grid>
-                                                                            <Grid item xs={10} sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+                                                                            <Grid item xs={8} sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
                                                                                 <TextField
                                                                                     value={inputValues[monthLabel]}
                                                                                     onChange={(e) => handleMonthInputChange(monthLabel, e.target.value)}
-                                                                                    // fullWidth
                                                                                     type="number"
                                                                                     InputProps={{
                                                                                         sx: {
