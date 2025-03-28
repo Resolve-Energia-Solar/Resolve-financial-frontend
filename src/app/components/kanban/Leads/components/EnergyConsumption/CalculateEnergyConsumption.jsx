@@ -610,7 +610,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                 <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Histórico de Consumo</Typography>
                                             </Grid>
                                             <Grid item xs={12} sx={{ display: "flex", flexDirection: "column" }}>
-                                                <Grid item xs={12} sx={{mb: 1}}>
+                                                <Grid item xs={12} sx={{mb: 2}}>
                                                     <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "16px" }}>Período</Typography>
                                                 </Grid>
                                                 <Grid item xs={12} sx={{ display: "flex", flexDirection: "row" }}>
@@ -629,6 +629,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                             value={endDate}
                                                             onChange={handleEndDateChange}
                                                             renderInput={(params) => <TextField {...params} fullWidth />}
+                                                            format="dd/MM/yyyy"
                                                         />
                                                     </Grid>
                                                 </Grid>
