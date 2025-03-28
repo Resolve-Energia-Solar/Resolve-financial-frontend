@@ -4,7 +4,7 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import productService from '@/services/productsService'; 
+import productService from '@/services/productsService';
 
 import { debounce } from 'lodash';
 
@@ -18,7 +18,7 @@ export default function AutoCompleteProduct({ onChange, value, error, helperText
     const fetchDefaultProduct = async () => {
       if (value) {
         try {
-          const productValue = await productService.getProductById(value);
+          const productValue = await productService.find(value);
           if (productValue) {
             setSelectedProduct({
               id: productValue.id,
@@ -47,7 +47,7 @@ export default function AutoCompleteProduct({ onChange, value, error, helperText
     debounce(async (name) => {
       setLoading(true);
       try {
-        const responses = await productService.getProductsByName(name);
+        const responses = await productService.index({ name__icontains: name });
         const formattedProducts = responses.results.map((product) => ({
           id: product.id,
           name: product.name,
@@ -83,7 +83,7 @@ export default function AutoCompleteProduct({ onChange, value, error, helperText
         loading={loading}
         value={selectedProduct}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           fetchProductsByName(newInputValue);
         }}

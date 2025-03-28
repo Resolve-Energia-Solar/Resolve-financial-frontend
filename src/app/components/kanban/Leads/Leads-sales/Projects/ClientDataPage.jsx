@@ -77,7 +77,7 @@ function ClientDataPage({ leadId = null }) {
     try {
       const productToDelete = customProducts.find((product) => product.id === selectedProduct);
       if (productToDelete && productToDelete.default === 'N') {
-        await ProductService.deleteProduct(selectedProduct);
+        await ProductService.delete(selectedProduct);
       }
       dispatch(removeProductsByIds([selectedProduct]));
       setDeleteModalOpen(false);

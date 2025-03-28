@@ -94,7 +94,7 @@ const ExpandableListComponent = ({
     try {
       setIsLoadingProjects(true);
       setProjects([]);
-      const response = await projectService.getProjects({
+      const response = await projectService.index({
         sale: saleId,
         fields: 'id,product,project_number',
       });

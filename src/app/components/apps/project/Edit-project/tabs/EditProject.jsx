@@ -19,7 +19,7 @@ import {
   FormControl,
   MenuItem,
   Select,
-  Tooltip
+  Tooltip,
 } from '@mui/material';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import { useParams } from 'next/navigation';
@@ -39,16 +39,16 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import projectMaterialsService from '@/services/projectMaterialService';
 import { useSelector } from 'react-redux';
 
-
 export default function EditProjectTab({ projectId = null, detail = false }) {
-  const id = projectId
+  const id = projectId;
 
   const [materials, setMaterials] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const userPermissions = useSelector((state) => state.user.permissions);
   const { loading, error, projectData } = useProject(id, {
-    fields: 'id,product.id,product.product_value,product.default,product.name,sale.id,sale.customer.id,sale.customer.complete_name,designer.id,designer.name,homologator.id,homologator.name,status,designer_status,start_date,end_date,material_list_is_completed',
+    fields:
+      'id,product.id,product.product_value,product.default,product.name,sale.id,sale.customer.id,sale.customer.complete_name,designer.id,designer.name,homologator.id,homologator.name,status,designer_status,start_date,end_date,material_list_is_completed',
     expand: 'product,sale,designer,homologator,sale.customer',
   });
   const {
@@ -61,7 +61,7 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
   } = useProjectForm(projectData, id);
 
   console.log('projectData', projectData);
-  
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
@@ -76,11 +76,11 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
 
   const fetchMaterials = async () => {
     try {
-      const response = await projectMaterialsService.getProjectMaterials({ 
+      const response = await projectMaterialsService.index({
         project: projectId,
         expand: 'material',
         fields: 'id,material.name,amount',
-       });
+      });
       setMaterials(response.results);
     } catch (error) {
       console.log('Erro ao buscar materiais do projeto:', error);
@@ -292,7 +292,11 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
       >
         <Alert
           onClose={handleSnackbarClose}
-          severity={formErrors && typeof formErrors === 'object' && Object.keys(formErrors).length > 0 ? 'error' : 'success'}
+          severity={
+            formErrors && typeof formErrors === 'object' && Object.keys(formErrors).length > 0
+              ? 'error'
+              : 'success'
+          }
           sx={{ width: '100%', display: 'flex', alignItems: 'center' }}
           iconMapping={{
             error: <Error style={{ verticalAlign: 'middle' }} />,
@@ -318,12 +322,13 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
                 </li>
               ))}
             </ul>
+          ) : formErrors ? (
+            'Ocorreu um erro ao salvar as alterações.'
           ) : (
-            formErrors ? 'Ocorreu um erro ao salvar as alterações.' : 'Alterações salvas com sucesso!'
+            'Alterações salvas com sucesso!'
           )}
         </Alert>
       </Snackbar>
-
     </>
   );
 }

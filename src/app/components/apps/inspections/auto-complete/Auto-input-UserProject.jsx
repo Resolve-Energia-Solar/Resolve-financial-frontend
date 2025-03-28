@@ -27,7 +27,7 @@ export default function AutoCompleteUserProject({
     const fetchDefaultProject = async () => {
       if (value) {
         try {
-          const projectValue = await projectService.getProjectById(value);
+          const projectValue = await projectService.find(value);
           if (projectValue) {
             setSelectedProject({
               id: projectValue.id,
@@ -78,7 +78,7 @@ export default function AutoCompleteUserProject({
           });
 
           const formattedProjects = await Promise.all(
-            allProjects.map((project) => projectService.getProjectById(project.id)),
+            allProjects.map((project) => projectService.find(project.id)),
           );
 
           setOptions(formattedProjects);

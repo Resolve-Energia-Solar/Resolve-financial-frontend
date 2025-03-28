@@ -110,7 +110,7 @@ const ListProductsDefault = () => {
 
   const confirmDelete = async () => {
     try {
-      await ProductService.deleteProduct(selectedProductDetail);
+      await ProductService.delete(selectedProductDetail);
       dispatch(removeProductsByIds([selectedProductDetail]));
       setDeleteModalOpen(false);
     } catch (error) {

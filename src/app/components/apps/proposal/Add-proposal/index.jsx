@@ -51,7 +51,7 @@ const ProposalForm = ({ onClosedModal = null, leadId = null, onRefresh = null })
     console.log('Valor total:', total);
     setTotalValue(total);
   }, [selectedProducts, products]);
-  
+
   console.log('products:', products);
 
   formData.lead_id = leadId;
@@ -71,7 +71,7 @@ const ProposalForm = ({ onClosedModal = null, leadId = null, onRefresh = null })
 
   const fetchData = async () => {
     try {
-      const response = await ProductService.getProductsDefault();
+      const response = await ProductService.index();
       setProducts(response.results);
     } catch (err) {
       console.error('Erro ao buscar produtos da venda:', err);
@@ -182,7 +182,7 @@ const ProposalForm = ({ onClosedModal = null, leadId = null, onRefresh = null })
                 />
                 <Typography variant="h6">{product.name}</Typography>
                 <Typography variant="subtitle2" color="text.secondary">
-                  {(product.default === "S" && 'Padrão') || 'Personalizado'}
+                  {(product.default === 'S' && 'Padrão') || 'Personalizado'}
                 </Typography>
               </Stack>
             </AccordionSummary>
@@ -239,7 +239,10 @@ const ProposalForm = ({ onClosedModal = null, leadId = null, onRefresh = null })
         fullWidth
       >
         <DialogContent>
-          <CreateProduct onAddProduct={addProductToList} onClosedModal={() => setDialogProductOpen(false)} />
+          <CreateProduct
+            onAddProduct={addProductToList}
+            onClosedModal={() => setDialogProductOpen(false)}
+          />
         </DialogContent>
       </Dialog>
     </Grid>
