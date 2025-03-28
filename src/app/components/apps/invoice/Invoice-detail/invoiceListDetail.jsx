@@ -67,7 +67,7 @@ const PaymentCardDetail = ({ sale = null }) => {
     fetchData();
     const fetchSale = async () => {
       try {
-        const data = await saleService.getTotalPaidSales(sale);
+        const data = await saleService.find(sale);
         console.log(data);
         setSaleData(data);
       } catch (err) {

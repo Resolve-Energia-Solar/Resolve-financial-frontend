@@ -81,7 +81,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
 
   const isCompleteFinancial = async (id) => {
     try {
-      const response = await saleService.getSaleByIdWithPendingContract(id);
+      const response = await saleService.find(id);
       return response?.can_generate_contract?.failed_dependencies?.payment_data === undefined;
     } catch (error) {
       console.log('Error: ', error);
@@ -90,7 +90,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
 
   const isCompleteUnits = async (id) => {
     try {
-      const response = await saleService.getSaleByIdWithPendingContract(id);
+      const response = await saleService.find(id);
       return response?.can_generate_contract?.failed_dependencies?.have_units === undefined;
     } catch (error) {
       console.log('Error: ', error);

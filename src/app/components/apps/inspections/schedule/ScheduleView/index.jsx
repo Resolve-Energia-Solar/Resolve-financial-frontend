@@ -105,7 +105,7 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
     async function fetchSaleAndSeller() {
       if (scheduleData?.project?.sale) {
         try {
-          const saleData = await saleService.getSaleById(scheduleData.project.sale);
+          const saleData = await saleService.find(scheduleData.project.sale);
           if (saleData?.seller) {
             const sellerData = await userService.getUserById(saleData.seller.id);
             setSeller(sellerData);

@@ -171,7 +171,7 @@ const SaleListCopy = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await saleService.deleteSale(saleToDelete);
+      await saleService.delete(saleToDelete);
       setSalesList(salesList.filter((item) => item.id !== saleToDelete));
       showAlert('Venda excluída com sucesso', 'success');
     } catch (err) {

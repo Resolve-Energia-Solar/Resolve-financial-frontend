@@ -16,7 +16,7 @@ export default function usePreviewContract(saleId) {
     const fetchSaleAndUser = async () => {
       setError(null);
       try {
-        const saleResponse = await saleService.getSaleById(saleId);
+        const saleResponse = await saleService.find(saleId);
         setSale(saleResponse);
 
         if (saleResponse?.customer?.id) {
@@ -50,17 +50,17 @@ export default function usePreviewContract(saleId) {
       });
       return;
     }
-  
+
     setError(null);
     setSuccess(false);
     setLoading(true);
-  
+
     try {
       const today = new Date();
       const dia = today.getDate();
       const mes = today.getMonth() + 1;
       const ano = today.getFullYear();
-  
+
       const response = await contractService.previewContract({
         sale_id: sale.id,
         contract_data: {
@@ -80,15 +80,15 @@ export default function usePreviewContract(saleId) {
           ano,
         },
       });
-  
+
       // Converte o base64 para Blob
-  
+
       // Cria uma URL a partir do Blob
       const blobUrl = URL.createObjectURL(response);
-      
+
       // Define a URL do contrato
       setContractPDF(blobUrl);
-  
+
       setSuccess(true);
       setSnackbar({
         open: true,
@@ -106,7 +106,6 @@ export default function usePreviewContract(saleId) {
       setLoading(false);
     }
   };
-  
 
   const handleCloseSnackbar = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));

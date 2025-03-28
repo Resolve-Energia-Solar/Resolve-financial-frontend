@@ -25,7 +25,7 @@ const usePayment = (id) => {
 
   const editPaymentStatus = async (event, id) => {
     const { name, value } = event.target;
-    const response = await saleService.updateSalePartial(id, { [name]: event.target.value });
+    const response = await saleService.update(id, { [name]: event.target.value });
     if (response) {
       setOpenModal(true);
       setIconComponents(CheckCircleIcon);
