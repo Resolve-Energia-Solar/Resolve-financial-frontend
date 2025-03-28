@@ -49,7 +49,7 @@ export default function AutoCompleteCompanies({ onChange, value, error, helperTe
       }
       setLoading(true);
       try {
-        const companies = await CompanyService.find({ name: name });
+        const companies = await CompanyService.index({ name: name });
         if (companies && companies.results) {
           const formattedCompanies = companies.results.map((company) => ({
             id: company.id,
