@@ -604,12 +604,12 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                 {/* <DialogTitle>Histórico de Consumo</DialogTitle> */}
                                 <DialogContent>
                                     <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                        <Grid container spacing={2}>
+                                        <Grid container spacing={3}>
                                             <Grid item xs={12}>
                                                 <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Histórico de Consumo</Typography>
                                             </Grid>
                                             <Grid item xs={12} sx={{ display: "flex", flexDirection: "column" }}>
-                                                <Grid item xs={12}>
+                                                <Grid item xs={12} sx={{mb: 1}}>
                                                     <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "16px" }}>Período</Typography>
                                                 </Grid>
                                                 <Grid item xs={12} sx={{ display: "flex", flexDirection: "row" }}>
@@ -637,9 +637,9 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                             {months.map((month, index) => {
                                                                 const monthLabel = month.toLocaleString('default', { month: 'long', year: 'numeric' });
                                                                 return (
-                                                                    <Grid item xs={12} key={index} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                                    <Grid item columnSpacing={0} xs={12} key={index} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                                                         <Grid container sx={{ alignItems: "center", justifyContent: "center" }}>
-                                                                            <Grid item xs={2} sx={{ display: "flex", justifyContent: "center" }}>
+                                                                            <Grid item xs={2} sx={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
                                                                                 <CustomFormLabel
                                                                                     htmlFor="estimated_generation"
                                                                                     sx={{
@@ -648,17 +648,17 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                                                         fontSize: "14px",
                                                                                         display: "flex",
                                                                                         alignItems: "center",
-                                                                                        justifyContent: "center"
+                                                                                        justifyContent: "flex-start"
                                                                                     }}
                                                                                 >
                                                                                     {monthLabel}
                                                                                 </CustomFormLabel>
                                                                             </Grid>
-                                                                            <Grid item xs={10} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                                            <Grid item xs={10} sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
                                                                                 <TextField
                                                                                     value={inputValues[monthLabel]}
                                                                                     onChange={(e) => handleMonthInputChange(monthLabel, e.target.value)}
-                                                                                    fullWidth
+                                                                                    // fullWidth
                                                                                     type="number"
                                                                                     InputProps={{
                                                                                         sx: {
@@ -667,12 +667,13 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                                                                 fontWeight: "400",
                                                                                                 fontSize: "12px",
                                                                                                 opacity: 1,
+                                                                                                width: "265px"
                                                                                             },
                                                                                         },
                                                                                         endAdornment: (
                                                                                             <InputAdornment position="end">
-                                                                                                <Box sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "12px" }}>
-                                                                                                    kWh
+                                                                                                <Box>
+                                                                                                    <Typography sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "16px" }}>kWh</Typography>
                                                                                                 </Box>
                                                                                             </InputAdornment>
                                                                                         ),
