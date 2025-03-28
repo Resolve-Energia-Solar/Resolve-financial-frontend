@@ -68,48 +68,6 @@ function EditLeadTabs({ leadId }) {
   const theme = useTheme();
 
   return (
-    <Box sx={{ overflow: 'hidden', height: '100%', p: 0, margin: 0 }}>
-      <Tabs
-        value={tabValue}
-        onChange={handleChange}
-        aria-label="lead edit tabs"
-        TabIndicatorProps={{ style: { display: 'none' } }}
-        sx={{ marginLeft: '25px', marginBottom: "-1px" }}
-      >
-        {[
-          'Informações Lead',
-          'Dados Pessoais',
-          'Propostas',
-          'Vendas',
-          'Documentos',
-          'Agendamentos',
-        ].map((label, index) => (
-          <Tab
-            key={index}
-            label={label}
-            {...a11yProps(index)}
-            sx={{
-              backgroundColor: tabValue === index ? theme.palette.primary.main : 'transparent',
-              color: '#303030',
-              fontWeight: 600,
-              fontSize: '12px',
-              borderTopLeftRadius: '10px',
-              borderTopRightRadius: '10px',
-              '&.Mui-selected': {
-                backgroundColor: theme.palette.primary.main,
-                color: '#303030',
-                fontWeight: 600,
-                fontSize: '12px',
-              },
-              '&:not(.Mui-selected)': {
-                fontWeight: 600,
-                fontSize: '12px',
-                color: '#7E8388', 
-              },
-            }}
-          />
-        ))}
-      </Tabs>
     <LeadModalTabProvider leadId={leadId}>
       <Box sx={{ overflow: 'hidden', height: '100%', p: 0, margin: 0 }}>
         <Tabs
@@ -125,7 +83,7 @@ function EditLeadTabs({ leadId }) {
             'Propostas',
             'Vendas',
             'Documentos',
-            'Projetos',
+            'Contratos',
             'Agendamentos',
           ].map((label, index) => (
             <Tab
@@ -175,23 +133,15 @@ function EditLeadTabs({ leadId }) {
           <SalesListPage lead={lead} />
         </CustomTabPanel>
 
-      {/* docs */}
-      <CustomTabPanel value={tabValue} index={4}>
-        <LeadDocumentPage leadId={leadId} customer={lead?.customer} />
-      </CustomTabPanel>
-        {/* docs a ser retirado futuramente e integrado à page de projetos */}
+        {/* docs */}
         <CustomTabPanel value={tabValue} index={4}>
           <LeadDocumentPage />
         </CustomTabPanel>
 
         {/* contratos */}
-        <CustomTabPanel value={tabValue} index={5}></CustomTabPanel>
+        <CustomTabPanel value={tabValue} index={5}>
+        </CustomTabPanel>
 
-      {/* agendamentos */}
-      <CustomTabPanel value={tabValue} index={5}>
-        <LeadSchedulePage leadId={leadId} />
-      </CustomTabPanel>
-    </Box>
         {/* agendamentos */}
         <CustomTabPanel value={tabValue} index={6}>
           <LeadSchedulePage leadId={leadId} />
