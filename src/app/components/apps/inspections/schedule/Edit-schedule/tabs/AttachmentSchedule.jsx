@@ -33,7 +33,7 @@ function AttachmentSchedule({ scheduleId }) {
   useEffect(() => {
     const fetchAttachments = async () => {
       try {
-        const response = await scheduleService.getScheduleByIdAttachments(scheduleId);
+        const response = await scheduleService.find(scheduleId);
         setAttachments(response.attachments);
         setSaleId(response?.project?.sale);
         setProjectId(response?.project?.id);

@@ -65,7 +65,7 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
   useEffect(() => {
     async function fetchFullSchedule() {
       try {
-        const data = await scheduleService.getScheduleById(selectedSchedule.id, {
+        const data = await scheduleService.find(selectedSchedule.id, {
           fields:
             'id,schedule_date,customer,address,service,project,schedule_agent,created_at,observation,status,products,schedule_creator,products.name',
           expand: 'products',

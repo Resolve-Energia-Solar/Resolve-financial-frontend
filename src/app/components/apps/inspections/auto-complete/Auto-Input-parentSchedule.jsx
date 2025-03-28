@@ -28,7 +28,7 @@ export default function AutoCompleteParentSchedule({
         try {
           const schedules = await Promise.all(
             value.map((id) =>
-              scheduleService.getScheduleById(id, {
+              scheduleService.find(id, {
                 expand: ['service.category'],
                 fields: ['id', 'customer', 'service', 'status'],
               }),
@@ -64,7 +64,7 @@ export default function AutoCompleteParentSchedule({
       setLoading(true);
       try {
         const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
-        const response = await scheduleService.getSchedules({
+        const response = await scheduleService.index({
           ordering: orderingParam,
           nextPage: 1,
           limit: 15,

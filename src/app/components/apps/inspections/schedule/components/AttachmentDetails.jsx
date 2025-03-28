@@ -83,7 +83,7 @@ export default function AttachmentDetailsSchedule({
       : [...attachmentIds, attachment.id];
 
     try {
-      await scheduleService.patchSchedule(scheduleId, {
+      await scheduleService.update(scheduleId, {
         attachments_id: newAttachmentIds,
       });
       setAttachmentIds(newAttachmentIds);
