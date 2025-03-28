@@ -3,7 +3,7 @@ import roleService from '@/services/roleService';
 
 const useRoleForm = (initialData, id) => {
   const [formData, setFormData] = useState({
-    name: ''
+    name: '',
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -28,9 +28,9 @@ const useRoleForm = (initialData, id) => {
 
     try {
       if (id) {
-        await roleService.updateRole(id, dataToSend);
+        await roleService.update(id, dataToSend);
       } else {
-        await roleService.createRole(dataToSend);
+        await roleService.create(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);

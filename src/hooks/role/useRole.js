@@ -11,7 +11,7 @@ const useRole = (id) => {
 
     const fetchRole = async () => {
       try {
-        const data = await roleService.getRoleById(id);
+        const data = await roleService.find(id);
         setRoleData(data);
       } catch (err) {
         setError('Erro ao carregar a função');

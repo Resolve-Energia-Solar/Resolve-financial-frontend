@@ -16,7 +16,7 @@ export default function AutoCompleteRole({ onChange, value, error, helperText })
     const fetchDefaultRole = async () => {
       if (value) {
         try {
-          const role = await roleService.getRoleById(value);
+          const role = await roleService.find(value);
           if (role) {
             setSelectedRole({ id: role.id, name: role.name });
           }
@@ -43,9 +43,9 @@ export default function AutoCompleteRole({ onChange, value, error, helperText })
       if (!name) return;
       setLoading(true);
       try {
-        const roles = await roleService.getRoleByName(name);
+        const roles = await roleService.index({ name: name });
         if (roles && roles.results) {
-          const formattedRoles = roles.results.map(role => ({
+          const formattedRoles = roles.results.map((role) => ({
             id: role.id,
             name: role.name,
           }));
@@ -56,14 +56,14 @@ export default function AutoCompleteRole({ onChange, value, error, helperText })
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
 
   const fetchInitialRoles = useCallback(async () => {
     setLoading(true);
     try {
-      const roles = await roleService.getRole({ limit: 5 });
-      const formattedRoles = roles.results.map(role => ({
+      const roles = await roleService.index({ limit: 5 });
+      const formattedRoles = roles.results.map((role) => ({
         id: role.id,
         name: role.name,
       }));
@@ -72,9 +72,7 @@ export default function AutoCompleteRole({ onChange, value, error, helperText })
       console.error('Erro ao buscar funções:', error);
     }
     setLoading(false);
-  }
-  , []);
-  
+  }, []);
 
   const handleOpen = () => {
     setOpen(true);
@@ -101,7 +99,7 @@ export default function AutoCompleteRole({ onChange, value, error, helperText })
         loading={loading}
         value={selectedRole}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           fetchRolesByName(newInputValue);
         }}
