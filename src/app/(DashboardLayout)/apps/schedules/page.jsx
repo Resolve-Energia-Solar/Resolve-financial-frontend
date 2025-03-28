@@ -42,14 +42,8 @@ const ScheduleTable = () => {
     const [orderDirection, setOrderDirection] = useState('asc');
     const userPermissions = useSelector((state) => state.user.permissions);
     const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [selectedSchedule, setSelectedSchedule] = useState(null);
-    const [openDrawerId, setOpenDrawerId] = useState(null);
-
-    const handleRowClick = (schedule) => {
-        setSelectedSchedule(schedule);
-        setOpenDrawerId(schedule.id);
-    };
+    const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false);
+    const [selectedScheduleId, setSelectedScheduleId] = useState(null);
 
     const hasPermission = useCallback(
         (permissions) => !permissions || permissions.some(p => userPermissions?.includes(p)),
@@ -78,7 +72,7 @@ const ScheduleTable = () => {
             expand: 'customer,service_opinion',
             service__in: selectedServices.join(','),
             fields: 'id,created_at,customer.complete_name,status,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,address.street,address.number,address.neighborhood,address.city,address.state,observation',
-            ordering: orderDirection === 'asc' ? order : `-${order}`,
+            ordering: orderDirection === 'desc' ? order : `-${order}`,
             ...filters,
         })
             .then(data => {
@@ -357,8 +351,11 @@ const ScheduleTable = () => {
                                         <TableRow
                                             key={schedule.id}
                                             hover
-                                            onClick={() => handleRowClick(schedule)}
                                             style={{ cursor: 'pointer' }}
+                                            onClick={() => {
+                                                setSelectedScheduleId(schedule.id);
+                                                setDetailsDrawerOpen(true);
+                                            }}
                                         >
                                             <TableCell>
                                                 {`${formatDate(schedule.schedule_date)} - ${schedule.schedule_start_time}`}
@@ -375,11 +372,6 @@ const ScheduleTable = () => {
                                                 </TableCell>
                                             )}
                                             <TableCell>{new Date(schedule.created_at).toLocaleString()}</TableCell>
-                                            <DetailsDrawer
-                                                open={openDrawerId === schedule.id}
-                                                onClose={() => setOpenDrawerId(null)}
-                                                scheduleId={schedule.id}
-                                            />
                                         </TableRow>
                                     ))}
                                     {loading && page > 1 && (
@@ -411,6 +403,11 @@ const ScheduleTable = () => {
                 open={filterDrawerOpen}
                 onClose={() => setFilterDrawerOpen(false)}
                 onApply={(newFilters) => setFilters(newFilters)}
+            />
+            <DetailsDrawer
+                open={detailsDrawerOpen}
+                onClose={() => setDetailsDrawerOpen(false)}
+                scheduleId={selectedScheduleId}
             />
         </PageContainer>
     );
