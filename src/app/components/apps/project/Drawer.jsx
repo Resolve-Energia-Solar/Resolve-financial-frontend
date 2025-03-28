@@ -68,7 +68,7 @@ const ProjectList = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const data = await projectService.getProjects();
+        const data = await projectService.index();
         console.log(data);
         setProjectsList(data.results);
       } catch (err) {
@@ -101,7 +101,7 @@ const ProjectList = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await projectService.deleteProject(projectToDelete);
+      await projectService.delete(projectToDelete);
       setProjectsList(projectsList.filter((item) => item.id !== projectToDelete));
       console.log('Venda excluída com sucesso');
     } catch (err) {
@@ -143,7 +143,12 @@ const ProjectList = () => {
             </TableHead>
             <TableBody>
               {projectsList.map((item) => (
-                <TableRow key={item.id} hover onClick={() => handleEditClick(item.id)} sx={{ cursor: 'pointer' }}>
+                <TableRow
+                  key={item.id}
+                  hover
+                  onClick={() => handleEditClick(item.id)}
+                  sx={{ cursor: 'pointer' }}
+                >
                   <TableCell>{item.id}</TableCell>
                   <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                   <TableCell>{item.sale?.contract_number}</TableCell>

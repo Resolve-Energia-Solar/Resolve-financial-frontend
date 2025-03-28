@@ -59,7 +59,7 @@ const UploadDocument = ({ projectId }) => {
 
   const fetchProject = async () => {
     try {
-      const response = await projectService.getProjectById(projectId);
+      const response = await projectService.find(projectId);
       setProject(response);
     } catch (error) {
       console.log('Erro ao carregar projeto:', error);

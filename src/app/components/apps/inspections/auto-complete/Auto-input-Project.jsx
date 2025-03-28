@@ -16,9 +16,9 @@ export default function AutoCompleteProject({ onChange, value, error, helperText
     const fetchDefaultProject = async () => {
       if (value) {
         try {
-          const projectValue = await projectService.getProjectById(value, {
+          const projectValue = await projectService.find(value, {
             expand: 'sale.customer',
-            fields: 'project_number,sale.customer.complete_name'
+            fields: 'project_number,sale.customer.complete_name',
           });
           if (projectValue) {
             setSelectedProject({
@@ -45,9 +45,9 @@ export default function AutoCompleteProject({ onChange, value, error, helperText
       setLoading(true);
       try {
         // Chama o endpoint já retornando os dados expandidos do cliente
-        const response = await projectService.getProjects({
+        const response = await projectService.index({
           expand: 'sale.customer',
-          fields: 'project_number,sale.customer.complete_name'
+          fields: 'project_number,sale.customer.complete_name',
         });
         console.log('response', response);
         const formattedProjects = response.results.map((project) => ({
@@ -62,7 +62,7 @@ export default function AutoCompleteProject({ onChange, value, error, helperText
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
 
   const handleOpen = () => setOpen(true);
@@ -81,9 +81,7 @@ export default function AutoCompleteProject({ onChange, value, error, helperText
         loadingText="Carregando..."
         noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         isOptionEqualToValue={(option, value) => option.project_number === value.project_number}
-        getOptionLabel={(option) =>
-          `${option.project_number} - ${option.customerName || ''}`
-        }
+        getOptionLabel={(option) => `${option.project_number} - ${option.customerName || ''}`}
         options={options}
         loading={loading}
         value={selectedProject}

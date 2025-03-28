@@ -81,7 +81,7 @@ const ProjectListCards = ({ saleId = null }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await projectService.getProjectBySale(saleId);
+        const response = await projectService.find(saleId);
         console.log('Projects: ', response.results);
         setProjectsList(response.results);
       } catch (error) {
@@ -94,7 +94,7 @@ const ProjectListCards = ({ saleId = null }) => {
 
     const fetchPreviewGenerateProject = async () => {
       try {
-        const response = await projectService.getPreviewGenerateProject(saleId);
+        const response = await projectService.find(saleId);
         setResponsePreviewGenerate(response);
       } catch (error) {
         console.log('Error: ', error);
@@ -119,7 +119,7 @@ const ProjectListCards = ({ saleId = null }) => {
   const fetchGenerateProject = async () => {
     setLoadingGenerate(true);
     try {
-      const response = await projectService.generateProjectBySale(saleId);
+      const response = await projectService.find(saleId);
       refreshList();
       setCreateModalOpen(false);
     } catch (error) {

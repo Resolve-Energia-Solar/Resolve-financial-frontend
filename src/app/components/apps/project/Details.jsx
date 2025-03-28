@@ -69,7 +69,7 @@ export default function Details({ id = null, data }) {
 
   async function fetchProject() {
     try {
-      const response = await projectService.getProjectById(id);
+      const response = await projectService.index(id);
       setProjectData(response);
       console.log('Project: ', response);
     } catch (error) {

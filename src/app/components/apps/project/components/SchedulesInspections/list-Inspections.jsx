@@ -63,10 +63,9 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
         const fields =
           'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name';
         const response = await scheduleService.index({
-            project: projectId,
-            fields: 'id,schedule_date,schedule_start_time,schedule_end_time,status',
-          }
-        );
+          project: projectId,
+          fields: 'id,schedule_date,schedule_start_time,schedule_end_time,status',
+        });
 
         // Obter os detalhes do projeto para verificar a vistoria principal
         const projectResponse = await projectService.find(projectId, {
@@ -98,11 +97,10 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
       setLoadingInspections(true);
       try {
         const response = await scheduleService.index({
-            customer: customer,
-            fields: 'id,schedule_date,schedule_start_time,schedule_end_time,status',
-            expand: 'final_service_opinion',
-          },
-        );
+          customer: customer,
+          fields: 'id,schedule_date,schedule_start_time,schedule_end_time,status',
+          expand: 'final_service_opinion',
+        });
         // Se necessário, você pode filtrar os resultados aqui
         setInspectionsNotAssociated(response);
       } catch (error) {
@@ -128,9 +126,9 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
 
     try {
       if (checked) {
-        await projectService.partialUpdateProject(projectId, { inspection: scheduleId });
+        await projectService.Update(projectId, { inspection: scheduleId });
       } else {
-        await projectService.partialUpdateProject(projectId, { inspection: null });
+        await projectService.Update(projectId, { inspection: null });
       }
     } catch (error) {
       setschedules(previousschedules);
@@ -152,7 +150,7 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
 
       const scheduleRemoved = schedules.find((schedule) => schedule.id === scheduleId);
       if (scheduleRemoved && scheduleRemoved.isChecked) {
-        await projectService.partialUpdateProject(projectId, { inspection: null });
+        await projectService.Update(projectId, { inspection: null });
       }
 
       reloadPage();
