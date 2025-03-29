@@ -31,7 +31,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId }) => {
     const [error, setError] = useState(null)
     const [seller, setSeller] = useState(null)
     const [productName, setProductName] = useState(null)
-    const [tabValue, setTabValue] = useState(0) // novo estado para tabs
+    const [tabValue, setTabValue] = useState(0)
     const { enqueueSnackbar } = useSnackbar()
     const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
