@@ -132,7 +132,9 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
     const fetchServiceOpinions = async () => {
       try {
         setLoadingServiceOpinions(true);
-        const response = await serviceOpinionsService.getServiceOpinions({
+        const response = await serviceOpinionsService.index({
+          limit: 5,
+          page: 1,
           service: formData.service_id,
           is_final_opinion: true,
         });
@@ -234,8 +236,8 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         {!onClosedModal && (
           <>
             <HasPermission
-            permissions={['field_services.change_final_service_opinion']}
-            userPermissions={userPermissions}
+              permissions={['field_services.change_final_service_opinion']}
+              userPermissions={userPermissions}
             >
               <Grid item xs={12} sm={12} lg={6}>
                 <CustomFormLabel htmlFor="service">Serviços relacionados</CustomFormLabel>
@@ -359,35 +361,35 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
           permissions={['field_services.change_final_service_opinion']}
           userPermissions={userPermissions}
         >
-        <Grid item xs={12} sm={6} lg={6}>
-          <CustomFormLabel htmlFor="field_agent">
-            Agentes Disponíveis{' '}
-            <Tooltip
-              title="Os agentes de campo são alocados com base na disponibilidade de horário e proximidade geográfica. Ajuste os parâmetros para visualizar opções disponíveis."
-              placement="right-end"
-            >
-              <HelpIcon fontSize="small" />
-            </Tooltip>
-          </CustomFormLabel>
-          <AutoCompleteUserSchedule
-            onChange={(id) => handleChange('schedule_agent_id', id)}
-            value={formData.schedule_agent_id}
-            disabled={!formData.category_id}
-            query={{
-              category: formData.category_id,
-              scheduleDate: formData.schedule_date,
-              scheduleStartTime: formData.schedule_start_time,
-              scheduleEndTime: formData.schedule_end_time,
-              scheduleLatitude: formData.latitude,
-              scheduleLongitude: formData.longitude,
-            }}
-            initialValue={initialAgent} // Passa o inspetor inicial ao autocomplete
-            {...(formErrors.schedule_agent_id && {
-              error: true,
-              helperText: formErrors.schedule_agent_id,
-            })}
-          />
-        </Grid>
+          <Grid item xs={12} sm={6} lg={6}>
+            <CustomFormLabel htmlFor="field_agent">
+              Agentes Disponíveis{' '}
+              <Tooltip
+                title="Os agentes de campo são alocados com base na disponibilidade de horário e proximidade geográfica. Ajuste os parâmetros para visualizar opções disponíveis."
+                placement="right-end"
+              >
+                <HelpIcon fontSize="small" />
+              </Tooltip>
+            </CustomFormLabel>
+            <AutoCompleteUserSchedule
+              onChange={(id) => handleChange('schedule_agent_id', id)}
+              value={formData.schedule_agent_id}
+              disabled={!formData.category_id}
+              query={{
+                category: formData.category_id,
+                scheduleDate: formData.schedule_date,
+                scheduleStartTime: formData.schedule_start_time,
+                scheduleEndTime: formData.schedule_end_time,
+                scheduleLatitude: formData.latitude,
+                scheduleLongitude: formData.longitude,
+              }}
+              initialValue={initialAgent} // Passa o inspetor inicial ao autocomplete
+              {...(formErrors.schedule_agent_id && {
+                error: true,
+                helperText: formErrors.schedule_agent_id,
+              })}
+            />
+          </Grid>
         </HasPermission>
 
         {/* Parecer final de Serviço */}

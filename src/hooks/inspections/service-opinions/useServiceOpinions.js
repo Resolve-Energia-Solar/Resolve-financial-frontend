@@ -12,7 +12,7 @@ const useServiceOpinions = (id) => {
 
     const fetchServiceOpinion = async () => {
       try {
-        const data = await serviceOpinionsService.getServiceOpinionsById(id);
+        const data = await serviceOpinionsService.find(id);
         setServiceOpinionData(data);
       } catch (err) {
         setError('Erro ao carregar o parecer do serviço');

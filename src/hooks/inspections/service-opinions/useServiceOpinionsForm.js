@@ -31,9 +31,9 @@ const useServiceOpinionsForm = (initialData, id) => {
 
     try {
       if (id) {
-        await serviceOpinionsService.updateServiceOpinions(id, dataToSend);
+        await serviceOpinionsService.update(id, dataToSend);
       } else {
-        await serviceOpinionsService.createServiceOpinions(dataToSend);
+        await serviceOpinionsService.create(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);

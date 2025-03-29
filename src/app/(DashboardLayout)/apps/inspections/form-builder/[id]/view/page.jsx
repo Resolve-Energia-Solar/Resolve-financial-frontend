@@ -87,9 +87,7 @@ const FormBuilderView = () => {
     const fetchServiceOpinions = async () => {
       try {
         setLoadingServiceOpinions(true);
-        const response = await serviceOpinionsService.getServiceOpinionsByService(
-          formData.service_id,
-        );
+        const response = await serviceOpinionsService.find({ service: formData.service_id });
 
         setServiceOpinions(formattedServiceOpinions(response.results));
       } catch (error) {
