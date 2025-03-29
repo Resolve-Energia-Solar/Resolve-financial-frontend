@@ -11,7 +11,9 @@ import {
     Button,
     Card,
     CardHeader,
-    CardContent
+    CardContent,
+    Tabs,
+    Tab
 } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { formatDate } from '@/utils/dateUtils'
@@ -21,6 +23,7 @@ import ProductService from '@/services/productsService'
 import ScheduleStatusChip from '../inspections/schedule/StatusChip'
 import UserCard from '../users/userCard'
 import Logo from '@/app/(DashboardLayout)/layout/shared/logo/Logo'
+import Comment from '@/app/components/apps/comment/index'
 
 const DetailsDrawer = ({ open, onClose, scheduleId }) => {
     const [schedule, setScheduleDetails] = useState(null)
@@ -28,6 +31,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId }) => {
     const [error, setError] = useState(null)
     const [seller, setSeller] = useState(null)
     const [productName, setProductName] = useState(null)
+    const [tabValue, setTabValue] = useState(0) // novo estado para tabs
     const { enqueueSnackbar } = useSnackbar()
     const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
@@ -163,8 +167,23 @@ const DetailsDrawer = ({ open, onClose, scheduleId }) => {
     }
 
     return (
-        <Drawer anchor="right" open={open} onClose={onClose}>
-            <Box sx={{ minWidth: { xs: '100vw', sm: '50vw', md: '40vw' }, p: 3 }}>
+        <Drawer
+            anchor="right"
+            open={open}
+            onClose={onClose}
+            PaperProps={{
+                sx: { width: { xs: '100vw', sm: '70vw' } }
+            }}
+        >
+            <Box
+                sx={{
+                    minWidth: { xs: '100vw', sm: '50vw', md: '40vw' },
+                    height: '90vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    p: 3
+                }}
+            >
                 {/* Cabeçalho */}
                 <Box
                     sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}
@@ -186,125 +205,155 @@ const DetailsDrawer = ({ open, onClose, scheduleId }) => {
                 </Box>
 
                 <Divider sx={{ mb: 2 }} />
-
-                <Grid container spacing={2}>
-                    {/* Coluna Esquerda */}
-                    <Grid item xs={12} sm={6}>
-                        <Card variant="outlined">
-                            <CardHeader title="Detalhes do Agendamento" />
-                            <CardContent>
-                                <Typography variant="body1" gutterBottom>
-                                    <strong>Serviço:</strong> {schedule.service?.name}
-                                </Typography>
-                                <Typography variant="body1" gutterBottom>
-                                    <strong>Kit:</strong>{' '}
-                                    {Array.isArray(schedule.products) && schedule.products.length > 0
-                                        ? schedule.products.map((prod) => prod.name).join(', ')
-                                        : productName || 'Sem kit associado'}
-                                </Typography>
-                                <Typography variant="body1" gutterBottom>
-                                    <strong>Observação do Comercial:</strong>{' '}
-                                    {schedule.observation || ' - '}
-                                </Typography>
-                                <Typography variant="body1" gutterBottom>
-                                    <strong>Unidade:</strong> {schedule.branch?.name || 'Sem unidade associada'}
-                                </Typography>
-                                <Typography variant="body1" gutterBottom>
-                                    <strong>Agendado por:</strong>{' '}
-                                    {schedule.schedule_creator?.complete_name || 'Não identificado'}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong>Criado em:</strong> {formatDate(schedule.created_at)}
-                                </Typography>
-                            </CardContent>
-                        </Card>
-
-                        <Card variant="outlined" sx={{ mt: 2 }}>
-                            <CardHeader title="Pessoas" />
-                            <CardContent>
-                                {/* Agente */}
-                                {schedule.schedule_agent ? (
-                                    <UserCard
-                                        title="Agente"
-                                        userId={schedule.schedule_agent?.id}
-                                        showEmail={false}
-                                        showPhone
-                                    />
-                                ) : (
-                                    <Typography variant="body1">
-                                        <strong>Agente:</strong> Não identificado
-                                    </Typography>
-                                )}
-
-                                <Divider sx={{ my: 2 }} />
-
-                                {/* Supervisor */}
-                                {seller?.employee?.user_manager ? (
-                                    <UserCard
-                                        title="Supervisor"
-                                        userId={seller.employee.user_manager.id}
-                                        showEmail={false}
-                                        showPhone
-                                    />
-                                ) : (
-                                    <Typography variant="body1">
-                                        <strong>Supervisor:</strong> Não identificado
-                                    </Typography>
-                                )}
-
-                                <Divider sx={{ my: 2 }} />
-
-                                {/* Vendedor */}
-                                {seller ? (
-                                    <UserCard
-                                        title="Vendedor"
-                                        userId={seller.id}
-                                        showEmail={false}
-                                        showPhone
-                                    />
-                                ) : (
-                                    <Typography variant="body1">
-                                        <strong>Vendedor:</strong> Não identificado
-                                    </Typography>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </Grid>
-
-                    {/* Coluna Direita */}
-                    <Grid item xs={12} sm={6}>
-                        <Card variant="outlined">
-                            <CardHeader title="Dados do Cliente" />
-                            <CardContent>
-                                <UserCard userId={schedule.customer?.id} showPhone showEmail={false} />
-                                <Typography variant="body1" sx={{ mt: 2 }}>
-                                    <strong>Endereço:</strong> {schedule.address?.complete_address}
-                                </Typography>
-                                <Box sx={{ mt: 2 }}>
-                                    <iframe
-                                        width="100%"
-                                        height="300"
-                                        style={{ border: 0 }}
-                                        loading="lazy"
-                                        allowFullScreen
-                                        referrerPolicy="no-referrer-when-downgrade"
-                                        src={`https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${schedule.address?.street}+${schedule.address?.number}+${schedule.address?.city}+${schedule.address?.neighborhood}`}
-                                    />
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid>
-
-                <Stack direction="row" spacing={2} justifyContent="flex-end" mt={3}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => console.log('Editar Agendamento')}
+                {/* Novas Tabs */}
+                <Box sx={{ mt: 3 }}>
+                    <Tabs
+                        value={tabValue}
+                        onChange={(e, newValue) => setTabValue(newValue)}
+                        sx={{ mb: 2 }}
                     >
-                        Editar Agendamento
-                    </Button>
-                </Stack>
+                        <Tab label="Informações" />
+                        <Tab label="Comentários" />
+                        <Tab label="Formulário" />
+                    </Tabs>
+
+                    {tabValue === 0 && (
+                        <Box>
+                            <Grid container spacing={2}>
+                                {/* Coluna Esquerda */}
+                                <Grid item xs={12} sm={6}>
+                                    <Card variant="outlined">
+                                        <CardHeader title="Detalhes do Agendamento" />
+                                        <CardContent>
+                                            <Typography variant="body1" gutterBottom>
+                                                <strong>Serviço:</strong> {schedule.service?.name}
+                                            </Typography>
+                                            <Typography variant="body1" gutterBottom>
+                                                <strong>Kit:</strong>{' '}
+                                                {Array.isArray(schedule.products) && schedule.products.length > 0
+                                                    ? schedule.products.map((prod) => prod.name).join(', ')
+                                                    : productName || 'Sem kit associado'}
+                                            </Typography>
+                                            <Typography variant="body1" gutterBottom>
+                                                <strong>Observação do Comercial:</strong>{' '}
+                                                {schedule.observation || ' - '}
+                                            </Typography>
+                                            <Typography variant="body1" gutterBottom>
+                                                <strong>Unidade:</strong> {schedule.branch?.name || 'Sem unidade associada'}
+                                            </Typography>
+                                            <Typography variant="body1" gutterBottom>
+                                                <strong>Agendado por:</strong>{' '}
+                                                {schedule.schedule_creator?.complete_name || 'Não identificado'}
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                <strong>Criado em:</strong> {formatDate(schedule.created_at)}
+                                            </Typography>
+                                        </CardContent>
+                                    </Card>
+
+                                    <Card variant="outlined" sx={{ mt: 2 }}>
+                                        <CardHeader title="Pessoas" />
+                                        <CardContent>
+                                            {/* Agente */}
+                                            {schedule.schedule_agent ? (
+                                                <UserCard
+                                                    title="Agente"
+                                                    userId={schedule.schedule_agent?.id}
+                                                    showEmail={false}
+                                                    showPhone
+                                                />
+                                            ) : (
+                                                <Typography variant="body1">
+                                                    <strong>Agente:</strong> Não identificado
+                                                </Typography>
+                                            )}
+
+                                            <Divider sx={{ my: 2 }} />
+
+                                            {/* Supervisor */}
+                                            {seller?.employee?.user_manager ? (
+                                                <UserCard
+                                                    title="Supervisor"
+                                                    userId={seller.employee.user_manager.id}
+                                                    showEmail={false}
+                                                    showPhone
+                                                />
+                                            ) : (
+                                                <Typography variant="body1">
+                                                    <strong>Supervisor:</strong> Não identificado
+                                                </Typography>
+                                            )}
+
+                                            <Divider sx={{ my: 2 }} />
+
+                                            {/* Vendedor */}
+                                            {seller ? (
+                                                <UserCard
+                                                    title="Vendedor"
+                                                    userId={seller.id}
+                                                    showEmail={false}
+                                                    showPhone
+                                                />
+                                            ) : (
+                                                <Typography variant="body1">
+                                                    <strong>Vendedor:</strong> Não identificado
+                                                </Typography>
+                                            )}
+                                        </CardContent>
+                                    </Card>
+                                </Grid>
+
+                                {/* Coluna Direita */}
+                                <Grid item xs={12} sm={6}>
+                                    <Card variant="outlined">
+                                        <CardHeader title="Dados do Cliente" />
+                                        <CardContent>
+                                            <UserCard userId={schedule.customer?.id} showPhone showEmail={false} />
+                                            <Typography variant="body1" sx={{ mt: 2 }}>
+                                                <strong>Endereço:</strong> {schedule.address?.complete_address}
+                                            </Typography>
+                                            <Box sx={{ mt: 2 }}>
+                                                <iframe
+                                                    width="100%"
+                                                    height="300"
+                                                    style={{ border: 0 }}
+                                                    loading="lazy"
+                                                    allowFullScreen
+                                                    referrerPolicy="no-referrer-when-downgrade"
+                                                    src={`https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${schedule.address?.street}+${schedule.address?.number}+${schedule.address?.city}+${schedule.address?.neighborhood}`}
+                                                />
+                                            </Box>
+                                        </CardContent>
+                                    </Card>
+                                </Grid>
+                            </Grid>
+
+                            <Stack direction="row" spacing={2} justifyContent="flex-end" mt={3}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => console.log('Editar Agendamento')}
+                                >
+                                    Editar Agendamento
+                                </Button>
+                            </Stack>
+                        </Box>
+                    )}
+                    {tabValue === 1 && (
+                        <Box sx={{ p: 2 }}>
+                            <Comment appLabel="field_services" model="schedule" objectId={schedule.id} />
+                        </Box>
+                    )}
+                    {/* {tabValue === 2 && (
+                        <Box sx={{ p: 2 }}>
+                            <Typography variant="h6">Formulário</Typography>
+                            <Divider sx={{ mb: 2 }} />
+                            <Typography variant="body1">
+                                Formulário de inspeção ainda não implementado.
+                            </Typography>
+                        </Box>
+                    )} */}
+                </Box>
             </Box>
         </Drawer>
     )
