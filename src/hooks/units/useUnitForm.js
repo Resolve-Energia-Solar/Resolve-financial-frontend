@@ -16,11 +16,10 @@ const useUnitForm = (initialData, id) => {
     bill_file: null,
   });
 
-  
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   useEffect(() => {
     if (initialData) {
       setFormData({
@@ -45,17 +44,19 @@ const useUnitForm = (initialData, id) => {
 
   const generateFileNameWithHash = (file) => {
     if (!file) return null;
-    
+
     const timestamp = Date.now();
-    const fileExtension = file.name.split('.').pop(); 
+    const fileExtension = file.name.split('.').pop();
     return `${file.name.split('.')[0]}_${timestamp}.${fileExtension}`;
   };
 
   const handleSave = async () => {
     setLoading(true);
-    const isFile = formData.bill_file instanceof File || (formData.bill_file instanceof FileList && formData.bill_file.length > 0);
+    const isFile =
+      formData.bill_file instanceof File ||
+      (formData.bill_file instanceof FileList && formData.bill_file.length > 0);
     const dataToSend = new FormData();
-    
+
     dataToSend.append('address', formData.address);
     dataToSend.append('name', formData.name);
     dataToSend.append('main_unit', formData.main_unit);
@@ -74,16 +75,16 @@ const useUnitForm = (initialData, id) => {
       const renamedFile = new File(
         [formData.bill_file],
         generateFileNameWithHash(formData.bill_file),
-        { type: formData.bill_file.type }
+        { type: formData.bill_file.type },
       );
       dataToSend.append('bill_file', renamedFile);
     }
 
     try {
       if (id) {
-        await unitService.updateUnit(id, dataToSend);
+        await unitService.update(id, dataToSend);
       } else {
-        await unitService.createUnit(dataToSend);
+        await unitService.create(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);

@@ -26,7 +26,6 @@ import unitService from '@/services/unitService';
 import SupplyChip from '../components/SupplyChip';
 
 const CheckListRateio = ({ projectId = null }) => {
-
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedUnitId, setSelectedUnitId] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(null);
@@ -72,7 +71,7 @@ const CheckListRateio = ({ projectId = null }) => {
 
   const handleDelete = async (unitId) => {
     try {
-      await unitService.deleteUnit(unitId);
+      await unitService.delete(unitId);
       setUnits((prevUnits) => prevUnits.filter((unit) => unit.id !== unitId));
       setConfirmDeleteModalOpen(false);
     } catch (error) {
@@ -138,7 +137,9 @@ const CheckListRateio = ({ projectId = null }) => {
                           {item?.name}
                         </Typography>
                       ))}
-                      { unit.supply_adquance?.length === 0 && <Typography variant="body2">Nenhuma</Typography>}
+                      {unit.supply_adquance?.length === 0 && (
+                        <Typography variant="body2">Nenhuma</Typography>
+                      )}
                     </TableCell>
                     <TableCell align="center">
                       <Typography variant="body2">
@@ -146,7 +147,9 @@ const CheckListRateio = ({ projectId = null }) => {
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
-                      <Typography variant="body2"><SupplyChip status={unit?.type} /></Typography>
+                      <Typography variant="body2">
+                        <SupplyChip status={unit?.type} />
+                      </Typography>
                     </TableCell>
                     <TableCell align="center">
                       <Tooltip title="Edit Item">
@@ -200,7 +203,12 @@ const CheckListRateio = ({ projectId = null }) => {
       </Dialog>
 
       {/* Modal de Confirmação de Exclusão */}
-      <Dialog open={confirmDeleteModalOpen} onClose={() => setConfirmDeleteModalOpen(false)} maxWidth="xs" fullWidth>
+      <Dialog
+        open={confirmDeleteModalOpen}
+        onClose={() => setConfirmDeleteModalOpen(false)}
+        maxWidth="xs"
+        fullWidth
+      >
         <DialogTitle>Confirmar Exclusão</DialogTitle>
         <DialogContent>
           <Typography variant="body2">
