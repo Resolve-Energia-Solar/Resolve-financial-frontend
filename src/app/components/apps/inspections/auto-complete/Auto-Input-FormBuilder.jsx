@@ -63,7 +63,7 @@ export default function AutoCompleteFormBuilder({
     debounce(async (title) => {
       setLoading(true);
       try {
-        const forms = await formBuilderService.index(title);
+        const forms = await formBuilderService.index({ name: title });
         const formattedForms = forms.results.map((form) => ({
           id: form.id,
           name: form.name,

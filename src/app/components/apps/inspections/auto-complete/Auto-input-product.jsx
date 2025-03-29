@@ -47,7 +47,7 @@ export default function AutoCompleteProduct({ onChange, value, error, helperText
     debounce(async (name) => {
       setLoading(true);
       try {
-        const responses = await productService.index({ name__icontains: name });
+        const responses = await productService.index({ name__icontains: name.join(',') });
         const formattedProducts = responses.results.map((product) => ({
           id: product.id,
           name: product.name,

@@ -68,7 +68,7 @@ const ProductCard = ({ sale = null }) => {
           ...response.sale_products.map((item) => item.product),
         ]);
 
-        const responseDefault = await productService.index();
+        const responseDefault = await productService.index({ default__in: 'S' });
         setProductsList((prevProducts) => [
           ...prevProducts,
           ...responseDefault.results.filter(

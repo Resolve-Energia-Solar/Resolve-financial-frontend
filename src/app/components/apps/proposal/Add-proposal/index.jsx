@@ -71,7 +71,7 @@ const ProposalForm = ({ onClosedModal = null, leadId = null, onRefresh = null })
 
   const fetchData = async () => {
     try {
-      const response = await ProductService.index();
+      const response = await ProductService.index({ default__in: 'S' });
       setProducts(response.results);
     } catch (err) {
       console.error('Erro ao buscar produtos da venda:', err);
