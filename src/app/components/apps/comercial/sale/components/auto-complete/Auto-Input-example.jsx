@@ -20,7 +20,6 @@ export default function AutoCompleteUserTest({ onChange, value }) {
   const [openDialog, setOpenDialog] = React.useState(false);
   const [newUser, setNewUser] = React.useState('');
 
-
   React.useEffect(() => {
     const fetchDefaultUser = async () => {
       if (value) {
@@ -52,27 +51,27 @@ export default function AutoCompleteUserTest({ onChange, value }) {
       if (!name) return;
       setLoading(true);
       try {
-        const users = await userService.getUserByName(name);
-        const formattedUsers = users.results.map(user => ({
+        const users = await userService.index({ name: name });
+        const formattedUsers = users.results.map((user) => ({
           id: user.id,
-          name: user.complete_name
+          name: user.complete_name,
         }));
         setOptions(formattedUsers);
       } catch (error) {
         console.error('Erro ao buscar usuários:', error);
       }
       setLoading(false);
-    }, 300), 
-    []
+    }, 300),
+    [],
   );
 
   const fetchInitialUsers = React.useCallback(async () => {
     setLoading(true);
     try {
       const users = await userService.getUser({ limit: 5, page: 1 });
-      const formattedUsers = users.results.map(user => ({
+      const formattedUsers = users.results.map((user) => ({
         id: user.id,
-        name: user.complete_name
+        name: user.complete_name,
       }));
       setOptions(formattedUsers);
     } catch (error) {
@@ -104,11 +103,11 @@ export default function AutoCompleteUserTest({ onChange, value }) {
 
   const handleAddUser = async () => {
     try {
-      const createdUser = await userService.createUser({ name: newUser });
+      const createdUser = await userService.create({ name: newUser });
       const newOption = { id: createdUser.id, name: createdUser.name };
 
       setOptions((prev) => [...prev, newOption]);
-      setSelectedUser(newOption); 
+      setSelectedUser(newOption);
       handleCloseDialog();
     } catch (error) {
       console.error('Erro ao cadastrar usuário:', error);
@@ -128,7 +127,7 @@ export default function AutoCompleteUserTest({ onChange, value }) {
         loading={loading}
         value={selectedUser}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           fetchUsersByName(newInputValue);
         }}
@@ -168,7 +167,9 @@ export default function AutoCompleteUserTest({ onChange, value }) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog} size="small">Cancelar</Button>
+          <Button onClick={handleCloseDialog} size="small">
+            Cancelar
+          </Button>
           <Button onClick={handleAddUser} color="primary" size="small">
             Cadastrar
           </Button>

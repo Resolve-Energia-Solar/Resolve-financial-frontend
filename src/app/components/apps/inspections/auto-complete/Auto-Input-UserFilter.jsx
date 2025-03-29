@@ -11,7 +11,7 @@ export default function AutoCompleteUserFilter({
   helperText,
   disabled,
   labeltitle,
-  noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.",
+  noOptionsText = 'Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.',
 }) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
@@ -55,7 +55,7 @@ export default function AutoCompleteUserFilter({
     debounce(async (name) => {
       setLoading(true);
       try {
-        const users = await userService.getUserByName(name);
+        const users = await userService.index({ name: name });
         const formattedUsers = users.results.map((user) => ({
           id: user.id,
           name: user.complete_name,

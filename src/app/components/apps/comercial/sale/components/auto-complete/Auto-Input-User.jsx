@@ -4,12 +4,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import userService from '@/services/userService';
 import { debounce } from 'lodash';
-import {
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-} from '@mui/material';
+import { IconButton, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CreateCustomer from '@/app/components/apps/users/Add-user/customer';
 
@@ -32,7 +27,10 @@ export default function AutoCompleteUser({
       try {
         const user = await userService.getUserById(userId, '', 'complete_name');
         if (user) {
-          setSelectedUser({ id: user.id, name: user.complete_name || user.name || 'Nome indisponível' });
+          setSelectedUser({
+            id: user.id,
+            name: user.complete_name || user.name || 'Nome indisponível',
+          });
           if (!value) onChange(user.id);
         }
       } catch (error) {
@@ -59,7 +57,7 @@ export default function AutoCompleteUser({
       if (!name) return;
       setLoading(true);
       try {
-        const users = await userService.getUserByName(name);
+        const users = await userService.index({ name: name });
         const formattedUsers = users.results.map((user) => ({
           id: user.id,
           name: user.complete_name,
