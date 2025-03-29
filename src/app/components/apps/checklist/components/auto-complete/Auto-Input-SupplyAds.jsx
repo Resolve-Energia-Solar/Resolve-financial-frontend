@@ -23,7 +23,7 @@ export default function AutoCompleteSupplyAds({
     const fetchDefaultSupplies = async () => {
       if (value && value.length > 0) {
         try {
-          const supplies = await Promise.all(value.map((id) => supplyService.getSupplyAdById(id)));
+          const supplies = await Promise.all(value.map((id) => supplyService.find(id)));
           const formattedSupplies = supplies.map((supply) => ({
             id: supply.id,
             name: supply.name,
@@ -51,7 +51,7 @@ export default function AutoCompleteSupplyAds({
       }
       setLoading(true);
       try {
-        const supplies = await supplyService.getSupplyByName(name);
+        const supplies = await supplyService.index({ name__icontains: name });
         console.log('supplies', supplies?.data?.results);
         if (supplies && supplies?.results) {
           const formattedSupplies = supplies?.results.map((supply) => ({
@@ -71,7 +71,7 @@ export default function AutoCompleteSupplyAds({
   const fetchInitialSupplies = useCallback(async () => {
     setLoading(true);
     try {
-      const supplies = await supplyService.getSupplyAd({ limit: 5 });
+      const supplies = await supplyService.index({ limit: 5, page: 1 });
       const formattedSupplies = supplies.results.map((supply) => ({
         id: supply.id,
         name: supply.name,
@@ -111,7 +111,7 @@ export default function AutoCompleteSupplyAds({
         value={selectedSupplies}
         disabled={disabled}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           fetchSuppliesByName(newInputValue);
         }}
