@@ -32,7 +32,7 @@ export default function AutoCompleteSituation({
       if (valuesDefault.length > 0) {
         try {
           const situations = await Promise.all(
-            valuesDefault.map((id) => situationEnergyService.findOne(id)),
+            valuesDefault.map((id) => situationEnergyService.find(id)),
           );
           const formattedSituations = situations.map((situation) => ({
             id: situation.id,
@@ -65,7 +65,7 @@ export default function AutoCompleteSituation({
       }
       setLoading(true);
       try {
-        const situations = await situationEnergyService.getSituations({ name__icontains: name });
+        const situations = await situationEnergyService.index({ name__icontains: name });
         if (situations && situations.results) {
           const formattedSituations = situations.results.map((situation) => ({
             id: situation.id,
@@ -84,7 +84,7 @@ export default function AutoCompleteSituation({
   const fetchInitialSituations = useCallback(async () => {
     setLoading(true);
     try {
-      const situations = await situationEnergyService.getSituations({ limit: 5 });
+      const situations = await situationEnergyService.index({ limit: 5 });
       const formattedSituations = situations.results.map((situation) => ({
         id: situation.id,
         name: situation.name,
@@ -122,7 +122,7 @@ export default function AutoCompleteSituation({
         loading={loading}
         value={selectedSituations}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           fetchSituationsByName(newInputValue);
         }}
