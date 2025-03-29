@@ -34,6 +34,7 @@ const UpdateSchedulePage = () => {
         branch: null,
         address: null,
         observation: '',
+        products: null,
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -50,7 +51,7 @@ const UpdateSchedulePage = () => {
         if (id) {
             setLoading(true);
             scheduleService
-                .find(id, { fields: 'schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,service,customer,project,schedule_agent,branch,address,observation' })
+                .find(id, { fields: 'schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,service,customer,project,schedule_agent,branch,address,observation,products' })
                 .then((data) => {
                     setFormData({
                         schedule_date: data.schedule_date ? data.schedule_date.split('T')[0] : '',
@@ -64,7 +65,9 @@ const UpdateSchedulePage = () => {
                         branch: data.branch,
                         address: data.address,
                         observation: data.observation || '',
-                    });
+                        product: (data.products && data.products.length > 0) ? data.products[0]: [],
+                      });
+                      
                 })
                 .catch((err) => {
                     console.error('Erro ao carregar agendamento:', err);
@@ -105,7 +108,6 @@ const UpdateSchedulePage = () => {
         }
     }, [formData.service, formData.schedule_date, formData.schedule_start_time]);
 
-    // Função de submit atualizada para chamar o update ao invés de create
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -113,13 +115,14 @@ const UpdateSchedulePage = () => {
         const submitData = {
             ...formData,
             service: formData.service?.value,
-            customer: formData.customer?.value,
+            customer: formData.customer?.value || null,
             project: formData.project?.value,
             schedule_agent: formData.schedule_agent?.value,
-            branch: formData.branch?.value,
-            address: formData.address?.value,
+            branch: formData.branch?.value || null,
+            address: formData.address?.value || null,
+            products: formData.product ? [formData.product.value] : [],
             schedule_creator: user.id,
-        };
+          };          
 
         const fieldLabels = {
             schedule_date: 'Data do Agendamento',
@@ -181,7 +184,7 @@ const UpdateSchedulePage = () => {
                                 onChange={(newValue) =>
                                     setFormData({ ...formData, service: newValue })
                                 }
-                                endpoint="/api/services/"
+                                endpoint="/api/services"
                                 queryParam="name__icontains"
                                 extraParams={{
                                     fields: ['id', 'name', 'deadline.hours', 'category'],
@@ -330,7 +333,7 @@ const UpdateSchedulePage = () => {
                                         product: newValue.product,
                                     });
                                 }}
-                                endpoint="/api/projects/"
+                                endpoint="/api/projects"
                                 queryParam="q"
                                 extraParams={{
                                     expand: ['sale.customer', 'sale.branch', 'product'],
@@ -377,7 +380,7 @@ const UpdateSchedulePage = () => {
                                 label="Cliente"
                                 value={formData.customer}
                                 onChange={(newValue) => setFormData({ ...formData, customer: newValue })}
-                                endpoint="/api/users/"
+                                endpoint="/api/users"
                                 queryParam="complete_name__icontains"
                                 extraParams={{ fields: ['id', 'complete_name'] }}
                                 mapResponse={(data) =>
@@ -393,7 +396,7 @@ const UpdateSchedulePage = () => {
                                 label="Unidade"
                                 value={formData.branch}
                                 onChange={(newValue) => setFormData({ ...formData, branch: newValue })}
-                                endpoint="/api/branches/"
+                                endpoint="/api/branches"
                                 queryParam="name__icontains"
                                 extraParams={{ fields: ['id', 'name'] }}
                                 mapResponse={(data) =>
@@ -409,7 +412,7 @@ const UpdateSchedulePage = () => {
                                 label="Produto"
                                 value={formData.product}
                                 onChange={(newValue) => setFormData({ ...formData, product: newValue })}
-                                endpoint="/api/products/"
+                                endpoint="/api/products"
                                 queryParam="name__icontains"
                                 extraParams={{ fields: ['id', 'description', 'name'] }}
                                 mapResponse={(data) =>
@@ -425,7 +428,7 @@ const UpdateSchedulePage = () => {
                                 label="Endereço"
                                 value={formData.address}
                                 onChange={(newValue) => setFormData({ ...formData, address: newValue })}
-                                endpoint="/api/addresses/"
+                                endpoint="/api/addresses"
                                 queryParam="street__icontains"
                                 extraParams={{ fields: ['id', 'street'] }}
                                 mapResponse={(data) =>
