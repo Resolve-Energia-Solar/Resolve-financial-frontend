@@ -20,19 +20,21 @@ const GenericAsyncAutocompleteInput = ({
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Estabiliza extraParams e mapResponse
   const stableExtraParams = useMemo(() => extraParams, [JSON.stringify(extraParams)]);
   const stableMapResponse = useMemo(() => mapResponse, [mapResponse]);
 
-  // Calcula o objeto selecionado com base no valor (que pode ser id ou objeto)
   const selectedOption = useMemo(() => {
     if (!value) return null;
     if (typeof value === "object") return value;
     return options.find((option) => option.value === value) || null;
   }, [value, options]);
 
-  // Busca as opções com base no inputValue (com debounce)
   useEffect(() => {
+    if (!inputValue.trim()) {
+      setOptions([]);
+      setLoading(false);
+      return;
+    }
     let active = true;
     setLoading(true);
     const handler = setTimeout(async () => {
@@ -65,19 +67,16 @@ const GenericAsyncAutocompleteInput = ({
     };
   }, [inputValue, endpoint, queryParam, stableExtraParams, stableMapResponse, debounceTime]);
 
-  // Efeito para buscar o item selecionado, caso não esteja na lista de opções
   useEffect(() => {
     const fetchInitialOption = async () => {
-      if (!value || typeof value === "object") return; // Se não há valor ou já é objeto, nada a fazer.
-      if (options.find((option) => option.value === value)) return; // Já está na lista.
+      if (!value || typeof value === "object") return;
+      if (options.find((option) => option.value === value)) return;
       
       try {
-        // Supondo que a API permita buscar um item pelo id (ex: /api/users/27842)
         const response = await apiClient.get(`${endpoint}/${value}`, {
           params: { fields: stableExtraParams.fields },
         });
         const item = response.data;
-        // Mapeia o item para o formato esperado
         const mappedOption = stableMapResponse
           ? stableMapResponse({ results: [item] })[0]
           : { label: item.complete_name || item.name || "", value: item.id };
