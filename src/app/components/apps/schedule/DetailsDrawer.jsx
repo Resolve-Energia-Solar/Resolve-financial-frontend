@@ -251,7 +251,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId }) => {
                                         </CardContent>
                                     </Card>
 
-                                    <Card variant="outlined" sx={{ mt: 2 }}>
+                                    <Card variant="outlined" sx={{ my: 2 }}>
                                         <CardHeader title="Pessoas" />
                                         <CardContent>
                                             {/* Agente */}
@@ -325,18 +325,18 @@ const DetailsDrawer = ({ open, onClose, scheduleId }) => {
                                             </Box>
                                         </CardContent>
                                     </Card>
-                                </Grid>
-                            </Grid>
-
                             <Stack direction="row" spacing={2} justifyContent="flex-end" mt={3}>
                                 <Button
                                     variant="contained"
                                     color="primary"
-                                    onClick={() => console.log('Editar Agendamento')}
+                                    href={`/apps/schedules/${schedule.id}/update`}
                                 >
                                     Editar Agendamento
                                 </Button>
                             </Stack>
+                                </Grid>
+                            </Grid>
+
                         </Box>
                     )}
                     {tabValue === 1 && (
