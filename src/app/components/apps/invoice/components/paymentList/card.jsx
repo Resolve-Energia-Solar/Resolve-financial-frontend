@@ -16,9 +16,6 @@ import {
   Button,
   Box,
   Skeleton,
-  useTheme,
-  FormControl,
-  TextField,
   CircularProgress,
   Stack,
   Snackbar,
@@ -42,7 +39,6 @@ import {
 } from '@mui/icons-material';
 import PaymentChip from '../PaymentChip';
 import paymentService from '@/services/paymentService';
-import { useRouter } from 'next/navigation';
 import { styled } from '@mui/material/styles';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import EditInvoicePage from '../../Edit-invoice';
@@ -100,7 +96,13 @@ const PaymentCard = ({ sale = null }) => {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const response = await paymentService.index({ sale });
+        const response = await paymentService.index({ 
+          sale: sale,
+          expand: 'financier,installments',
+          fields: 'id,financier.name,value,due_date,payment_type,installments.id,is_paid',
+          limit: 100,
+          page: 1,
+         });
         setPaymentsList(response.results);
       } catch (err) {
         console.error(err);
@@ -109,17 +111,20 @@ const PaymentCard = ({ sale = null }) => {
       }
     };
 
+
     const fetchSaleData = async () => {
       try {
         const data = await saleService.find(sale, {
-          expand: ['products', 'installments', 'financier', 'sale'],
-          fields: ['*', 'installments.id', 'financier.name'],
+          expand: ['sale_products'],
+          fields: ['sale_products', 'total_value', 'total_paid', 'is_pre_sale'],
         });
+
+        console.log('data sales', data);
 
         setSaleData(data);
 
-        const calculatedValue = data.products
-          .map((product) => parseFloat(product.product_value))
+        const calculatedValue = data.sale_products
+          .map((product) => parseFloat(product.value))
           .reduce((a, b) => a + b, 0);
 
         setProductValue(calculatedValue);
@@ -196,6 +201,8 @@ const PaymentCard = ({ sale = null }) => {
       setOpen(false);
     }
   };
+
+  console.log('paymentsList', paymentsList);
 
   return (
     <>
@@ -298,7 +305,13 @@ const PaymentCard = ({ sale = null }) => {
                       </TableCell>
                       <TableCell>
                         <Stack spacing={2} direction="row" alignItems="center">
-                          {console.log('uiui', item)}
+                          {Array.isArray(item?.installments) && item.installments.length > 0 ? (
+                          <>
+                            {item.installments.length} X
+                          </>
+                          ) : (
+                          '-'
+                          )}
                         </Stack>
                       </TableCell>
                       <TableCell>
@@ -316,7 +329,11 @@ const PaymentCard = ({ sale = null }) => {
                       </TableCell>
                       <TableCell>
                         <Stack spacing={2} direction="row" alignItems="center">
-                          {item.is_paid}
+                          {item.is_paid ? (
+                          <CheckCircle color="success" />
+                          ) : (
+                          <Error color="error" />
+                          )}
                         </Stack>
                       </TableCell>
                       <TableCell>

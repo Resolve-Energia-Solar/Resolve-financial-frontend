@@ -180,7 +180,7 @@ const SaleEditForm = ({ id_sale }) => {
               noOptionsText="Nenhum vendedor encontrado"
               endpoint="/api/users"
               queryParam="complete_name__icontains"
-              extraParams={{}}
+              extraParams={{ fields: 'id,complete_name' }}
               value={formData.seller}
               onChange={(option) =>
                 handleChange('seller', option ? option.value : '')
@@ -204,7 +204,7 @@ const SaleEditForm = ({ id_sale }) => {
             noOptionsText="Nenhum supervisor encontrado"
             endpoint="/api/users"
             queryParam="complete_name__icontains"
-            extraParams={{ role: 'supervisor' }}
+            extraParams={{ fields: 'id,complete_name' }}
             value={formData.sales_supervisor}
             onChange={(option) =>
               handleChange('sales_supervisor', option ? option.value : '')
@@ -227,6 +227,7 @@ const SaleEditForm = ({ id_sale }) => {
             noOptionsText="Nenhum gerente encontrado"
             endpoint="/api/users"
             queryParam="complete_name__icontains"
+            extraParams={{ fields: 'id,complete_name' }}
             value={formData.sales_manager}
             onChange={(option) =>
               handleChange('sales_manager', option ? option.value : '')
@@ -249,7 +250,7 @@ const SaleEditForm = ({ id_sale }) => {
             noOptionsText="Nenhuma campanha encontrada"
             endpoint="/api/marketing-campaigns"
             queryParam="name__icontains"
-            extraParams={{}}
+            extraParams={{ fields: 'id,name' }}
             value={formData.marketing_campaign}
             onChange={(option) =>
               handleChange('marketing_campaign', option ? option.value : '')
