@@ -32,7 +32,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
       headerName: 'Nome',
       flex: 1,
       render: (row) =>
-        row?.products.length > 0
+        row?.products?.length > 0
           ? row.products.map((product) => product.name).join(', ')
           : 'Nenhum produto vinculado',
     },
@@ -90,7 +90,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
       try {
         const response = await leadService.find(leadId, {
           params: {
-            expand: 'proposals',
+            expand: 'proposals,products',
             fields: 'id,proposals',
             page: page + 1,
             limit: rowsPerPage,
