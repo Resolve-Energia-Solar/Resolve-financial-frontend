@@ -31,9 +31,7 @@ function EditCustomerPage({ leadId = null }) {
     const fetchLead = async () => {
       try {
         const data = await leadService.find(leadId, {
-          params: {
             fields: 'id,customer,name,first_document,contact_email',
-          },
         });
         setLead(data);
         setCustomerId(data?.customer);
