@@ -162,6 +162,29 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
     }
 
+    // household appliances part
+    const [householdAppliances, setHouseholdAppliances] = useState([
+        { id: Date.now(), appliance: '', power: '' },
+      ]);
+    
+      const handleMethodChange = (id, field, value) => {
+        setHouseholdAppliances((prevAppliances) =>
+            prevAppliances.map((appliance) => (appliance.id === id ? { ...appliance, [field]: value } : appliance)),
+        );
+      };
+    
+      const addHouseholdAppliances = () => {
+        setHouseholdAppliances([
+          ...householdAppliances,
+          { id: Date.now(), appliance: '', power: '' },
+        ]);
+      };
+    
+      const removeHouseholdAppliances = (id) => {
+        setHouseholdAppliances(householdAppliances.filter((appliance) => appliance.id !== id));
+      };
+    
+
 
 
     return (
@@ -859,59 +882,22 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                 <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Equipamentos domésticos</Typography>
                                             </Grid>
                                             <Grid item xs={12} sx={{ display: "flex", flexDirection: "column" }}>
-                                                <Grid item xs={12} sx={{ mb: 2 }}>
-                                                    <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "16px" }}>Período</Typography>
-                                                </Grid>
-                                                <Grid item xs={12} sx={{ display: "flex", flexDirection: "row" }}>
-                                                    <Grid item xs={5}>
-                                                        <DatePicker
-                                                            value={startDate}
-                                                            onChange={handleStartDateChange}
-                                                            locale={ptBR}
-                                                            renderInput={(params) => (
-                                                                <TextField
-                                                                    {...params}
-                                                                    fullWidth
-                                                                    InputProps={{
-                                                                        ...params.InputProps,
-                                                                        startAdornment: (
-                                                                            <InputAdornment position="start" sx={{ color: theme.palette.primary.main }}>
-                                                                                <CalendarTodayIcon sx={{ fontSize: 25 }} />
-                                                                            </InputAdornment>
-                                                                        ),
-                                                                    }}
-                                                                />
-                                                            )}
-                                                            format="dd/MM/yyyy"
-                                                        />
-                                                    </Grid>
-                                                    <Grid item xs={2} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                                                        <Typography sx={{ color: "#ADADAD", fontWeight: "400", fontSize: "16px" }}>à</Typography>
-                                                    </Grid>
-                                                    <Grid item xs={5}>
-                                                        <DatePicker
-                                                            value={endDate}
-                                                            onChange={handleEndDateChange}
-                                                            locale={ptBR}
-                                                            renderInput={(params) => (
-                                                                <TextField
-                                                                    {...params}
-                                                                    fullWidth
-                                                                    InputProps={{
-                                                                        ...params.InputProps,
-                                                                        startAdornment: (
-                                                                            <InputAdornment position="start">
-                                                                                <CalendarTodayIcon sx={{ fontSize: 25, color: theme.palette.primary.main }} />
-                                                                            </InputAdornment>
-                                                                        ),
-                                                                    }}
-                                                                />
-                                                            )}
-                                                            format="dd/MM/yyyy"
-                                                        />
-                                                    </Grid>
-                                                </Grid>
                                                 
+                                                <Grid item xs={12} sx={{ display: "flex", flexDirection: "row" }}>
+                                                    <Grid container xs={12} sx={{ mb: 1, mt: 2 }}>
+                                                        <Grid item xs={10}>
+                                                            <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: "16px" }}>Equipamentos</Typography>
+                                                        </Grid>
+                                                        <Grid
+                                                            item
+                                                            xs={2}
+                                                            sx={{ justifyContent: 'flex-end', alignItems: 'center', display: 'flex' }}
+                                                        >
+                                                            <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: '16px' }}>Potência</Typography>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Grid>
+
 
                                             </Grid>
                                         </Grid>
