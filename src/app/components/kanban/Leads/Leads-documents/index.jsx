@@ -18,8 +18,6 @@ function LeadDocumentPage() {
   const [loadingDocumentTypes, setLoadingDocumentTypes] = useState(true);
   const { lead } = useContext(LeadModalTabContext);
 
-  console.log('lead leadDocumentPage:', lead);
-
   const customer = lead?.customer || null;
   const leadId = lead?.id || null;
   
@@ -32,8 +30,9 @@ function LeadDocumentPage() {
       try {
         const response = await saleService.index({
           customer__in: customer.id,
-          fields: 'id,str',
+          fields: 'id,contract_number',
         });
+        console.log('Sales response:', response.results);
         setSaleIds(response.results || []);
       } catch (err) {
         console.error('Erro ao buscar as vendas:', err);
@@ -98,7 +97,7 @@ function LeadDocumentPage() {
                 <LeadAttachmentsAccordion
                   contentType={CONTEXT_TYPE_SALE_ID}
                   objectId={sale.id}
-                  title={`#${sale.str} - Anexos`}
+                  title={`#${sale.contract_number} - Anexos`}
                   documentTypes={documentTypes}
                 />
               </Box>
