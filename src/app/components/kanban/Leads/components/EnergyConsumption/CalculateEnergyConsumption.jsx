@@ -847,55 +847,75 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         padding: '24px',
                                         gap: '24px',
                                         boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-                                        width: "464px"
+                                        width: "512px"
                                     }
                                 }}
                             >
                                 <DialogContent>
-                                    <Grid container spacing={3} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                        <Grid item xs={12} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Consumo médio mensal</Typography>
-                                        </Grid>
-                                        <Grid item xs={12} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "36px" }}>{averageConsuption} kWh</Typography>
-                                        </Grid>
-                                        <Grid spacing={2} container xs={12} sx={{ mt: 2 }}>
-                                            <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end", }}>
-                                                <Button
-                                                    variant='outlined'
-                                                    onClick={() => setOpenEstimatedGeneration(false)}
-                                                    sx={{
-                                                        backgroundColor: 'white',
-                                                        color: 'black',
-                                                        border: "1px solid",
-                                                        px: 3,
-                                                        '&:hover': {
-                                                            borderColor: "transparent",
-                                                            backgroundColor: "black",
-                                                            color: "white"
-                                                        }
-                                                    }}
-                                                >
-                                                    Calcular novamente
-                                                </Button>
+                                    <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
+
+                                        <Grid container spacing={3}>
+                                            <Grid item xs={12}>
+                                                <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Equipamentos domésticos</Typography>
                                             </Grid>
-                                            <Grid item xs={2}>
-                                                <Button
-                                                    onClick={handleSaveAverage}
-                                                    sx={{
-                                                        backgroundColor: theme.palette.primary.main,
-                                                        color: theme.palette.primary.light,
-                                                        '&:hover': {
-                                                            backgroundColor: theme.palette.primary.light,
-                                                            color: theme.palette.primary.main
-                                                        }
-                                                    }}
-                                                >
-                                                    Salvar
-                                                </Button>
+                                            <Grid item xs={12} sx={{ display: "flex", flexDirection: "column" }}>
+                                                <Grid item xs={12} sx={{ mb: 2 }}>
+                                                    <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "16px" }}>Período</Typography>
+                                                </Grid>
+                                                <Grid item xs={12} sx={{ display: "flex", flexDirection: "row" }}>
+                                                    <Grid item xs={5}>
+                                                        <DatePicker
+                                                            value={startDate}
+                                                            onChange={handleStartDateChange}
+                                                            locale={ptBR}
+                                                            renderInput={(params) => (
+                                                                <TextField
+                                                                    {...params}
+                                                                    fullWidth
+                                                                    InputProps={{
+                                                                        ...params.InputProps,
+                                                                        startAdornment: (
+                                                                            <InputAdornment position="start" sx={{ color: theme.palette.primary.main }}>
+                                                                                <CalendarTodayIcon sx={{ fontSize: 25 }} />
+                                                                            </InputAdornment>
+                                                                        ),
+                                                                    }}
+                                                                />
+                                                            )}
+                                                            format="dd/MM/yyyy"
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={2} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                                        <Typography sx={{ color: "#ADADAD", fontWeight: "400", fontSize: "16px" }}>à</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={5}>
+                                                        <DatePicker
+                                                            value={endDate}
+                                                            onChange={handleEndDateChange}
+                                                            locale={ptBR}
+                                                            renderInput={(params) => (
+                                                                <TextField
+                                                                    {...params}
+                                                                    fullWidth
+                                                                    InputProps={{
+                                                                        ...params.InputProps,
+                                                                        startAdornment: (
+                                                                            <InputAdornment position="start">
+                                                                                <CalendarTodayIcon sx={{ fontSize: 25, color: theme.palette.primary.main }} />
+                                                                            </InputAdornment>
+                                                                        ),
+                                                                    }}
+                                                                />
+                                                            )}
+                                                            format="dd/MM/yyyy"
+                                                        />
+                                                    </Grid>
+                                                </Grid>
+                                                
+
                                             </Grid>
                                         </Grid>
-                                    </Grid>
+                                    </LocalizationProvider>
                                 </DialogContent>
 
                             </Dialog>
