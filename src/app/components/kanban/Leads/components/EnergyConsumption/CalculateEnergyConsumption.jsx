@@ -45,6 +45,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
     const [openMediumCalcDialog, setOpenMediumCalcDialog] = useState(false);
     const [openMediumCalcResultDialog, setOpenMediumCalcResultDialog ] = useState(false);
     const [mediumConsumptionResult, setMediumConsumptionResult] = useState("");
+    const [openEstimatedGeneration, setOpenEstimatedGeneration] = useState(false);
 
     const {
         formData,
@@ -246,7 +247,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     <TextField
                                         name="medium_consumption"
                                         value={formData.medium_consumption}
-                                        onClick={handleFieldClick}
+                                        onClick={() => setOpenMediumCalcDialog(true)}
                                         onChange={handleInputChange}
                                         fullWidth
                                         disabled={openMediumCalcDialog}
@@ -553,7 +554,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     <TextField
                                         name="estimated_generation"
                                         value={formData.estimated_generation}
-                                        onChange={(e) => handleChange('estimated_generation', e.target.value)}
+                                        // onClick={}
+                                        // onChange={(e) => handleChange('estimated_generation', e.target.value)}
                                         fullWidth
                                         InputProps={{
                                             endAdornment: (
