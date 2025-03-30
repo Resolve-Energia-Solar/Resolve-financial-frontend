@@ -780,6 +780,9 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         <Grid item xs={12}>
                                             <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Consumo médio mensal</Typography>
                                         </Grid>
+                                        <Grid item xs={12}>
+                                            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "36px" }}>{averageConsuption} kWh</Typography>
+                                        </Grid>
                                     </Grid>
                                 </DialogContent>
 
