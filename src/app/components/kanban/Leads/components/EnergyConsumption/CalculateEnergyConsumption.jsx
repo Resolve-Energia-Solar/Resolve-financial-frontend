@@ -158,7 +158,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
     const handleSaveAverage = () => {
         setFormData({
             ...formData,
-            medimum_consumption: mediumConsumptionResult,
+            medium_consumption: mediumConsumptionResult,
         })
         setOpenMediumCalcResultDialog(false);
         enqueueSnackbar("Consumo médio salvo!", {variant: 'success'});
@@ -238,14 +238,14 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                             <Grid container rowSpacing={0} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ mt: 0 }} >
                                 <Grid item xs={3}>
                                     <CustomFormLabel
-                                        htmlFor="medimum_consumption"
+                                        htmlFor="medium_consumption"
                                         sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
                                     >
                                         Consumo médio mensal
                                     </CustomFormLabel>
                                     <TextField
-                                        name="medimum_consumption"
-                                        value={formData.medimum_consumption}
+                                        name="medium_consumption"
+                                        value={formData.medium_consumption}
                                         onClick={handleFieldClick}
                                         onChange={handleInputChange}
                                         fullWidth
