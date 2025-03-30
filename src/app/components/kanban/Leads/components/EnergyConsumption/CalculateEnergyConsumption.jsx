@@ -734,7 +734,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                                 );
                                                             })}
 
-                                                            <DialogActions>
+                                                            
                                                                 <Grid container xs={12} sx={{ mt: 2}}>
                                                                     <Grid item xs={2}>
                                                                         <Button
@@ -767,7 +767,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                                         </Button>
                                                                     </Grid>
                                                                 </Grid>
-                                                            </DialogActions>
+                                                            
                                                         </Grid>
                                                     </Grid>
                                                 )}
@@ -787,25 +787,54 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         padding: '24px',
                                         gap: '24px',
                                         boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                                        width: "464px"
                                     }
                                 }}
                             >
                                 <DialogContent>
-                                    <Grid container spacing={3}>
-                                        <Grid item xs={12}>
+                                    <Grid container spacing={3} sx={{display: "flex",alignItems: "center", justifyContent: "center"}}>
+                                        <Grid item xs={12} sx={{display: "flex",alignItems: "center", justifyContent: "center"}}>
                                             <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Consumo médio mensal</Typography>
                                         </Grid>
-                                        <Grid item xs={12}>
+                                        <Grid item xs={12} sx={{display: "flex",alignItems: "center", justifyContent: "center"}}>
                                             <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "36px" }}>{averageConsuption} kWh</Typography>
                                         </Grid>
-                                        <DialogActions>
-                                            <Button onClick={() => setOpenMediumCalcResultDialog(false)} color="primary">
-                                                Calcular novamente
-                                            </Button>
-                                            <Button onClick={handleSaveAverage} color="primary">
-                                                Salvar
-                                            </Button>
-                                        </DialogActions>
+                                        <Grid spacing={2} container xs={12} sx={{ mt: 2}}>
+                                            <Grid item xs={10} sx={{display:"flex", justifyContent: "flex-end",}}>
+                                                <Button
+                                                    variant='outlined' 
+                                                    onClick={() => setOpenMediumCalcResultDialog(false)} 
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        color: 'black',
+                                                        border: "1px solid",
+                                                        px: 3,
+                                                        '&:hover': {
+                                                            borderColor: "transparent",
+                                                            backgroundColor: "black",
+                                                            color: "white"
+                                                        }
+                                                    }}
+                                                >
+                                                    Calcular novamente
+                                                </Button>
+                                            </Grid>
+                                            <Grid item xs={2}>
+                                                <Button 
+                                                    onClick={handleSaveAverage} 
+                                                    sx={{ 
+                                                        backgroundColor: theme.palette.primary.main, 
+                                                        color: theme.palette.primary.light, 
+                                                        '&:hover': {
+                                                            backgroundColor: theme.palette.primary.light, 
+                                                            color: theme.palette.primary.main
+                                                        } 
+                                                    }}
+                                                >
+                                                        Salvar
+                                                </Button>
+                                        </Grid>
+                                        </Grid>
                                     </Grid>
                                 </DialogContent>
 
