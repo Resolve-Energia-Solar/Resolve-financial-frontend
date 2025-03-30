@@ -43,6 +43,8 @@ function EditLeadPage({ leadId = null }) {
     success,
   } = useLeadForm(leadData, leadId);
 
+  console.log('Form Data:', formData);
+
   formData?.seller_id ? null : handleChange('seller_id', user?.id);
 
   const handleSaveLead = async () => {
@@ -148,11 +150,11 @@ function EditLeadPage({ leadId = null }) {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <CustomFormLabel htmlFor="origin_id">Origem</CustomFormLabel>
+              <CustomFormLabel htmlFor="origin">Origem</CustomFormLabel>
               <AutoCompleteOrigin
-                onChange={(id) => handleChange('origin_id', id)}
-                value={formData.origin_id}
-                {...(formErrors.origin_id && { error: true, helperText: formErrors.origin_id })}
+                onChange={(id) => handleChange('origin', id)}
+                value={formData.origin}
+                {...(formErrors.origin && { error: true, helperText: formErrors.origin })}
               />
             </Grid>
 
