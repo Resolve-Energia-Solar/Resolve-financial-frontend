@@ -150,6 +150,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
         const total = values.reduce((acc, value) => acc + parseFloat(value || 0), 0);
         const average = total / values.length;
         setAverageConsuption(average);
+        setOpenMediumCalcResultDialog(true);
     }
 
     const months = generateMonths();
@@ -753,6 +754,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                                     <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end"}}>
                                                                         <Button
                                                                             variant="contained"
+                                                                            onClick={calculateAverage}
                                                                             sx={{
                                                                                 backgroundColor: 'black',
                                                                                 color: 'white',
@@ -797,7 +799,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                             <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "36px" }}>{averageConsuption} kWh</Typography>
                                         </Grid>
                                         <DialogActions>
-                                            <Button onClick={() => setOpenResultDialog(false)} color="primary">
+                                            <Button onClick={() => setOpenMediumCalcResultDialog(false)} color="primary">
                                                 Calcular novamente
                                             </Button>
                                             <Button onClick={handleSaveAverage} color="primary">
