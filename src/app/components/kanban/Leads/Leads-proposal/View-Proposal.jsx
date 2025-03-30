@@ -24,12 +24,13 @@ import ProposalService from '@/services/proposalService';
 import saleService from '@/services/saleService';
 
 function LeadsViewProposal({ leadId = null, proposalId = null, onClose = null, onRefresh = null }) {
-  const router = useRouter();
-  const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const user = useSelector((state) => state.user);
 
   const { proposalData } = useProposal(proposalId);
+
+  console.log('proposalData: ', proposalData);
+  console.log('proposalId: ', proposalId);
 
   const proposalStatus = {
     A: { label: 'Aceita', color: '#E9F9E6' },
