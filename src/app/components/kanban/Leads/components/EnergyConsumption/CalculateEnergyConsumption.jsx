@@ -885,13 +885,13 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                 
                                                 <Grid item xs={12} sx={{ display: "flex", flexDirection: "row" }}>
                                                     <Grid container xs={12} sx={{ mb: 1, mt: 2 }}>
-                                                        <Grid item xs={10}>
+                                                        <Grid item xs={6}>
                                                             <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: "16px" }}>Equipamentos</Typography>
                                                         </Grid>
                                                         <Grid
                                                             item
-                                                            xs={2}
-                                                            sx={{ justifyContent: 'flex-end', alignItems: 'center', display: 'flex' }}
+                                                            xs={6}
+                                                            sx={{ justifyContent: 'flex-start', alignItems: 'center', display: 'flex' }}
                                                         >
                                                             <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: '16px' }}>Potência</Typography>
                                                         </Grid>
