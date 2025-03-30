@@ -724,6 +724,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                             <Grid container xs={12} sx={{ mt: 2}}>
                                                                 <Grid item xs={2}>
                                                                     <Button
+                                                                        onClick={() => setOpenDialog(false)}
                                                                         variant="contained"
                                                                         sx={{
                                                                             backgroundColor: 'white',
