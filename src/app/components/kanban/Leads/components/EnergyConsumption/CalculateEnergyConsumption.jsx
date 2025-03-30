@@ -154,6 +154,16 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
     const months = generateMonths();
 
+    const handleSaveAverage = () => {
+        setFormData({
+            ...formData,
+            medimum_consumption: mediumConsumptionResult,
+        })
+        setOpenMediumCalcResultDialog(false);
+        enqueueSnackbar("Consumo médio salvo!", {variant: 'success'});
+
+    }
+
 
 
     return (
