@@ -41,7 +41,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
     const [checked, setChecked] = useState(false);
-    const [openDialog, setOpenDialog] = useState(false);
+    const [openMediumCalcDialog, setOpenMediumCalcDialog] = useState(false);
+    const [openMediumCalcResultDialog, setOpenMediumCalcResultDialog ] = useState(false);
     const [mediumConsumptionResult, setMediumConsumptionResult] = useState("");
 
     const {
@@ -110,7 +111,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
     };
 
     const handleFieldClick = () => {
-        setOpenDialog(true);
+        setOpenMediumCalcDialog(true);
     }
 
     // medium calc logic
@@ -236,7 +237,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         onClick={handleFieldClick}
                                         onChange={handleInputChange}
                                         fullWidth
-                                        disabled={openDialog}
+                                        disabled={openMediumCalcDialog}
                                         InputProps={{
                                             sx: {
                                                 input: {
@@ -592,8 +593,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
 
                             <Dialog
-                                open={openDialog}
-                                onClose={() => setOpenDialog(false)}
+                                open={openMediumCalcDialog}
+                                onClose={() => setOpenMediumCalcDialog(false)}
                                 PaperProps={{
                                     sx: {
                                         borderRadius: '20px',
@@ -724,7 +725,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                             <Grid container xs={12} sx={{ mt: 2}}>
                                                                 <Grid item xs={2}>
                                                                     <Button
-                                                                        onClick={() => setOpenDialog(false)}
+                                                                        onClick={() => setOpenMediumCalcDialog(false)}
                                                                         variant="contained"
                                                                         sx={{
                                                                             backgroundColor: 'white',
@@ -760,6 +761,28 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         </Grid>
                                     </LocalizationProvider>
                                 </DialogContent>
+                            </Dialog>
+
+                            <Dialog 
+                                open={openMediumCalcResultDialog} 
+                                onClose={() => setOpenMediumCalcResultDialog(false)}
+                                PaperProps={{
+                                    sx: {
+                                        borderRadius: '20px',
+                                        padding: '24px',
+                                        gap: '24px',
+                                        boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                                    }
+                                }}
+                            >
+                                <DialogContent>
+                                    <Grid container spacing={3}>
+                                        <Grid item xs={12}>
+                                            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Consumo médio mensal</Typography>
+                                        </Grid>
+                                    </Grid>
+                                </DialogContent>
+
                             </Dialog>
 
                         </Grid>
