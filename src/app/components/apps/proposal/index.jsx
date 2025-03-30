@@ -41,7 +41,7 @@ const ProposalManager = ({ selectedLead }) => {
   const fetchProposals = async () => {
     setLoadingProposals(true);
     try {
-      const fetchedProposals = await ProposalService.getProposalByLead(selectedLead.id);
+      const fetchedProposals = await ProposalService.find(selectedLead.id);
       setProposals(fetchedProposals.results);
     } catch (err) {
       console.error('Erro ao buscar propostas:', err);

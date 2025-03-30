@@ -50,7 +50,6 @@ const useScheduleForm = (initialData, id, service_id) => {
   // Inicializa o formData com os dados iniciais, extraindo somente os IDs quando possível
   useEffect(() => {
     if (initialData) {
-      console.log("Inicializando formData com initialData:", initialData);
       setFormData({
         schedule_creator: initialData.schedule_creator || null,
         service: initialData.service?.id || service_id || SERVICE_INSPECTION_ID,
@@ -85,13 +84,10 @@ const useScheduleForm = (initialData, id, service_id) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  console.log("!formData.schedule_date || !formData.schedule_start_time || !formData.service", !formData.schedule_date, !formData.schedule_start_time, !formData.service);
-
   useEffect(() => {
     const calculateEndDateTime = async () => {
       if (!formData.schedule_date || !formData.schedule_start_time || !formData.service) return;
       try {
-        console.log("Calculando data/hora final para:", formData.schedule_date, formData.schedule_start_time);
         
         const serviceId = extractId(formData.service);
         const serviceInfo = await serviceCatalogService.getServiceCatalogById(serviceId, {

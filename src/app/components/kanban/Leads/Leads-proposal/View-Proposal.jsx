@@ -50,7 +50,7 @@ function LeadsViewProposal({ leadId = null, proposalId = null, onClose = null, o
         });
       }
 
-      await ProposalService.updateProposalPartial(proposalId, { status });
+      await ProposalService.update(proposalId, { status });
 
       enqueueSnackbar(`Proposta ${status === 'A' ? 'aceita' : 'recusada'} com sucesso!`, {
         variant: 'success',

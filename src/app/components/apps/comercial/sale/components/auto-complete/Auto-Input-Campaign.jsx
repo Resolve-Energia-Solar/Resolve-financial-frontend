@@ -43,7 +43,7 @@ export default function AutoCompleteCampaign({ onChange, value, error, helperTex
       if (!name) return;
       setLoading(true);
       try {
-        const campaigns = await campaignService.find({ name: name });
+        const campaigns = await campaignService.index({ name: name });
         if (campaigns && campaigns.results) {
           const formattedCampaigns = campaigns.results.map((campaign) => ({
             id: campaign.id,

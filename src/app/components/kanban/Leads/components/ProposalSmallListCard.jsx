@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import {
   Box,
   Typography,
@@ -18,7 +18,12 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import CreateProduct from '@/app/components/apps/product/Add-product';
 import { useState } from 'react';
-import { addProduct, removeProductsByIds, associateProductWithLead, selectProductsByLead } from '@/store/products/customProducts';
+import {
+  addProduct,
+  removeProductsByIds,
+  associateProductWithLead,
+  selectProductsByLead,
+} from '@/store/products/customProducts';
 import { useDispatch, useSelector } from 'react-redux';
 import ProductService from '@/services/productsService';
 import ListProducts from './ListProducts';
@@ -34,7 +39,6 @@ export function ProposalCard({ leadId = null }) {
 
   const [dialogExistingProductOpen, setDialogExistingProductOpen] = useState(false);
 
-
   const customProducts = useSelector(selectProductsByLead(leadId));
 
   const addCustomProduct = (product) => {
@@ -44,9 +48,9 @@ export function ProposalCard({ leadId = null }) {
 
   const confirmDelete = async () => {
     try {
-      const productToDelete = customProducts.find(product => product.id === selectedProduct);
-      if (productToDelete && productToDelete.default === "N") {
-        await ProductService.deleteProduct(selectedProduct);
+      const productToDelete = customProducts.find((product) => product.id === selectedProduct);
+      if (productToDelete && productToDelete.default === 'N') {
+        await ProductService.delete(selectedProduct);
       }
       dispatch(removeProductsByIds([selectedProduct]));
       setDeleteModalOpen(false);
@@ -109,8 +113,12 @@ export function ProposalCard({ leadId = null }) {
           <Grid item xs={10}>
             <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Produto</Typography>
           </Grid>
-          <Grid item xs={2} sx={{ justifyContent: 'flex-end', alignItems: 'center', display: 'flex' }}>
-            <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Quantidade</Typography>
+          <Grid
+            item
+            xs={2}
+            sx={{ justifyContent: 'flex-end', alignItems: 'center', display: 'flex' }}
+          >
+            <Typography sx={{ fontWeight: '700', fontSize: '12px' }}>Quantidade</Typography>
           </Grid>
         </Grid>
 
@@ -125,15 +133,17 @@ export function ProposalCard({ leadId = null }) {
             }}
           >
             <Grid item xs={8} sx={{ display: 'flex', alignItems: 'flex-start' }}>
-              <Typography sx={{ fontWeight: '500', fontSize: "12px" }}>{product.name}</Typography>
+              <Typography sx={{ fontWeight: '500', fontSize: '12px' }}>{product.name}</Typography>
             </Grid>
             <Grid
               item
               xs={3}
               sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}
             >
-              <Typography sx={{ fontWeight: '500', fontSize: "12px" }}>
-                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.product_value)}
+              <Typography sx={{ fontWeight: '500', fontSize: '12px' }}>
+                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                  product.product_value,
+                )}
               </Typography>
             </Grid>
             <Grid
@@ -149,17 +159,29 @@ export function ProposalCard({ leadId = null }) {
         ))}
 
         {customProducts.length === 0 && (
-          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Typography sx={{ fontWeight: '200', fontSize: "12px" }}>Nenhum produto adicionado</Typography>
+          <Grid
+            item
+            xs={12}
+            sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+          >
+            <Typography sx={{ fontWeight: '200', fontSize: '12px' }}>
+              Nenhum produto adicionado
+            </Typography>
           </Grid>
         )}
 
         <Grid container xs={12} sx={{ mb: 1, mt: 2, justifyContent: 'space-between' }}>
           <Grid item xs={10}>
-            <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Energia gerada pelo Kit</Typography>
+            <Typography sx={{ fontWeight: '700', fontSize: '14px' }}>
+              Energia gerada pelo Kit
+            </Typography>
           </Grid>
-          <Grid item xs={2} sx={{ justifyContent: 'flex-end', alignItems: 'center', display: 'flex' }}>
-            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>2500 kWh</Typography>
+          <Grid
+            item
+            xs={2}
+            sx={{ justifyContent: 'flex-end', alignItems: 'center', display: 'flex' }}
+          >
+            <Typography sx={{ fontWeight: '600', fontSize: '12px' }}>2500 kWh</Typography>
           </Grid>
         </Grid>
 
@@ -183,7 +205,7 @@ export function ProposalCard({ leadId = null }) {
             onClick={() => setDialogProductOpen(true)}
           >
             <AddOutlinedIcon sx={{ fontSize: 18 }} />
-            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar novo</Typography>
+            <Typography sx={{ fontWeight: '600', fontSize: '12px' }}>Adicionar novo</Typography>
           </IconButton>
 
           <IconButton
@@ -201,15 +223,17 @@ export function ProposalCard({ leadId = null }) {
                 backgroundColor: 'rgba(0, 0, 0, 0.00)',
               },
             }}
-            onClick={() => { setDialogExistingProductOpen(true) }}
+            onClick={() => {
+              setDialogExistingProductOpen(true);
+            }}
           >
             <Search sx={{ fontSize: 18 }} />
-            <Typography sx={{ fontWeight: '600', fontSize: "12px" }}>Adicionar existente</Typography>
+            <Typography sx={{ fontWeight: '600', fontSize: '12px' }}>
+              Adicionar existente
+            </Typography>
           </IconButton>
         </Grid>
-
       </Grid>
-
 
       <Dialog
         open={dialogExistingProductOpen}
@@ -218,7 +242,10 @@ export function ProposalCard({ leadId = null }) {
         fullWidth
       >
         <DialogContent>
-          <ListProducts onAddProduct={addCustomProduct} onClosedModal={() => setDialogExistingProductOpen(false)} />
+          <ListProducts
+            onAddProduct={addCustomProduct}
+            onClosedModal={() => setDialogExistingProductOpen(false)}
+          />
         </DialogContent>
       </Dialog>
 
@@ -309,7 +336,6 @@ export function ProposalCard({ leadId = null }) {
           </Button>
         </DialogActions>
       </Dialog>
-
     </Grid>
   );
 }

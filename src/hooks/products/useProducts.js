@@ -9,9 +9,9 @@ const useProducts = (ordering = '', initialPage = 1) => {
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
-    setError(null); 
+    setError(null);
     try {
-      const data = await ProductService.getProducts(ordering);
+      const data = await ProductService.index({ ordering });
       setProducts(data.results);
     } catch (err) {
       setError(err.message || 'Erro ao carregar produtos');

@@ -15,7 +15,7 @@ import {
   FormControlLabel,
   Radio,
   Box,
-  Typography
+  Typography,
 } from '@mui/material';
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
@@ -34,13 +34,17 @@ const timeOptions = [
   { value: '16:00:00', label: '16:00' },
 ];
 
-const CreateCommercialSchedule = ({
-  onClose,
-  onRefresh
-}) => {
+const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
   const router = useRouter();
-  const { formData, handleChange, handleSave, loading: formLoading, formErrors, success } = useSheduleForm();
-  const userPermissions = useSelector((state) => state.user.permissions)
+  const {
+    formData,
+    handleChange,
+    handleSave,
+    loading: formLoading,
+    formErrors,
+    success,
+  } = useSheduleForm();
+  const userPermissions = useSelector((state) => state.user.permissions);
   const [hasSale, setHasSale] = useState(null);
   const [clientSelected, setClientSelected] = useState('');
   const [selectedAddress, setSelectedAddress] = useState(null);
@@ -89,13 +93,14 @@ const CreateCommercialSchedule = ({
     } else {
       // Se não tiver, exibe um alerta e permite seleção manual
       setAlertOpen(true);
-      setAlertMessage('Este projeto não possui endereço associado. Por favor, selecione um endereço manualmente.');
+      setAlertMessage(
+        'Este projeto não possui endereço associado. Por favor, selecione um endereço manualmente.',
+      );
       setAlertType('warning');
       handleChange('address', null);
       setSelectedAddress(null);
     }
   };
-  
 
   return (
     <>
@@ -114,7 +119,7 @@ const CreateCommercialSchedule = ({
               handleChange('customer', option || null);
             }}
             mapResponse={(data) =>
-              data.results.map(item => ({ label: item.complete_name, value: item.id }))
+              data.results.map((item) => ({ label: item.complete_name, value: item.id }))
             }
             {...(formErrors.customer && { error: true, helperText: formErrors.customer })}
           />
@@ -132,7 +137,7 @@ const CreateCommercialSchedule = ({
               handleChange('service', option || null);
             }}
             mapResponse={(data) =>
-              data.results.map(item => ({ label: item.name, value: item.id }))
+              data.results.map((item) => ({ label: item.name, value: item.id }))
             }
             {...(formErrors.service && { error: true, helperText: formErrors.service })}
           />
@@ -158,24 +163,43 @@ const CreateCommercialSchedule = ({
             }}
             disabled={!formData.schedule_date}
             value={formData.schedule_start_time || ''}
-            {...(formErrors.schedule_start_time && { error: true, helperText: formErrors.schedule_start_time })}
+            {...(formErrors.schedule_start_time && {
+              error: true,
+              helperText: formErrors.schedule_start_time,
+            })}
           />
         </Grid>
         {/* Toggle para indicar se o cliente possui venda */}
         <Grid item xs={12}>
           <FormControl
             component="fieldset"
-            disabled={!(formData.customer && formData.service && formData.schedule_date && formData.schedule_start_time)}
+            disabled={
+              !(
+                formData.customer &&
+                formData.service &&
+                formData.schedule_date &&
+                formData.schedule_start_time
+              )
+            }
           >
             <FormLabel component="legend">
               O cliente já possui Projeto?
-              {!(formData.customer && formData.service && formData.schedule_date && formData.schedule_start_time) && (
+              {!(
+                formData.customer &&
+                formData.service &&
+                formData.schedule_date &&
+                formData.schedule_start_time
+              ) && (
                 <Typography variant="caption" color="textSecondary" sx={{ ml: 1 }}>
                   Preencha Cliente, Serviço, Data e Hora
                 </Typography>
               )}
             </FormLabel>
-            <RadioGroup row value={hasSale === null ? '' : hasSale.toString()} onChange={handleSaleToggle}>
+            <RadioGroup
+              row
+              value={hasSale === null ? '' : hasSale.toString()}
+              onChange={handleSaleToggle}
+            >
               <FormControlLabel value="true" control={<Radio />} label="Sim" />
               <FormControlLabel value="false" control={<Radio />} label="Não" />
             </RadioGroup>
@@ -201,7 +225,7 @@ const CreateCommercialSchedule = ({
                   handleProjectChange(option);
                 }}
                 mapResponse={(data) =>
-                  data.results.map(item => ({
+                  data.results.map((item) => ({
                     label: `${item.project_number} - ${item.sale.customer.complete_name}`,
                     value: item.id,
                     address: item.address,
@@ -217,22 +241,21 @@ const CreateCommercialSchedule = ({
                 endpoint="/api/addresses"
                 queryParam="street__icontains"
                 extraParams={{ customer_id: clientSelected, fields: 'street,number,city,state,id' }}
-                disabled={!formData.project || (formData.project.address !== null)}
+                disabled={!formData.project || formData.project.address !== null}
                 value={selectedAddress || formData.address}
                 onChange={(option) => {
                   handleChange('address', option || null);
                   setSelectedAddress(option);
                 }}
                 mapResponse={(data) =>
-                  data.results.map(item => ({
+                  data.results.map((item) => ({
                     label: `${item.street}, ${item.number} - ${item.city}, ${item.state}`,
                     value: item.id,
                   }))
                 }
                 {...(formErrors.address && { error: true, helperText: formErrors.address })}
               />
-          </Grid>
-
+            </Grid>
           </>
         )}
         {/* Se o cliente não possui venda: exibe Produto e Endereço abertos */}
@@ -250,7 +273,7 @@ const CreateCommercialSchedule = ({
                   handleChange('product', option || null);
                 }}
                 mapResponse={(data) =>
-                  data.results.map(item => ({ label: item.name, value: item.id }))
+                  data.results.map((item) => ({ label: item.name, value: item.id }))
                 }
                 {...(formErrors.product && { error: true, helperText: formErrors.product })}
               />
@@ -261,13 +284,13 @@ const CreateCommercialSchedule = ({
                 label="Endereço"
                 endpoint="/api/addresses"
                 queryParam="q"
-                extraParams={{ customer_id: clientSelected , fields: 'street,number,city,state,id' }}
+                extraParams={{ customer_id: clientSelected, fields: 'street,number,city,state,id' }}
                 value={formData.address}
                 onChange={(option) => {
                   handleChange('address', option || null);
                 }}
                 mapResponse={(data) =>
-                  data.results.map(item => ({
+                  data.results.map((item) => ({
                     label: `${item.street}, ${item.number} - ${item.city}, ${item.state}`,
                     value: item.id,
                   }))

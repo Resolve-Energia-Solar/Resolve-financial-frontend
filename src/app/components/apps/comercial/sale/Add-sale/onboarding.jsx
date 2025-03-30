@@ -99,7 +99,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
 
   const totalPaymentsCreated = async (id) => {
     try {
-      const response = await paymentService.find(id);
+      const response = await paymentService.index({ sale: id });
       console.log(response);
       return response.results.reduce((acc, curr) => acc + Number(curr.value), 0);
     } catch (error) {

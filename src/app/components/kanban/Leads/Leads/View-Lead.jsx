@@ -44,7 +44,7 @@ function ViewLeadPage({ leadId = null }) {
   useEffect(() => {
     const fetchProposals = async () => {
       try {
-        const data = await ProposalService.getProposals({
+        const data = await ProposalService.index({
           params: {
             lead: leadId,
           },

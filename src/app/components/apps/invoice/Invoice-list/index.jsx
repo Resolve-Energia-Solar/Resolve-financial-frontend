@@ -21,12 +21,15 @@ import InforCards from '../../inforCards/InforCards';
 
 import { FilterContext } from '@/context/FilterContext';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
+import SalePaymentList from '../components/paymentList/SalePaymentList';
 
 export default function InvoiceList({ onClick }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const { filters, setFilters } = useContext(FilterContext);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const router = useRouter();
+
+  const context = useContext(FilterContext);
 
   const cardsData = [
     {
@@ -121,11 +124,13 @@ export default function InvoiceList({ onClick }) {
     },
     {
       key: 'observation',
+      queryParam: 'observation__icontains',
       label: 'Observação',
       type: 'custom', // Filtro customizado, como um campo de texto
     },
     {
       key: 'invoice_status',
+      queryParam: 'invoice_status__in',
       label: 'Status da Nota Fiscal',
       type: 'multiselect',
       options: [
@@ -180,13 +185,13 @@ export default function InvoiceList({ onClick }) {
           mb: 3,
         }}
       >
-        <Button
+        {/* <Button
           variant="outlined"
           startIcon={<AddBoxRounded />}
           onClick={handleCreateClick}
         >
           Adicionar Pagamento
-        </Button>
+        </Button> */}
         <Button
           variant="outlined"
           sx={{ mt: 1, mb: 2 }}
@@ -202,7 +207,7 @@ export default function InvoiceList({ onClick }) {
         onApplyFilters={handleApplyFilters}
       />
 
-      <PaymentList onClick={onClick} />
+      <SalePaymentList onClick={onClick} />
 
       <GenericFilterDrawer
         filters={paymentFilterConfig}
