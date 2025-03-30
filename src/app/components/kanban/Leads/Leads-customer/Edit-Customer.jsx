@@ -36,7 +36,7 @@ function EditCustomerPage({ leadId = null }) {
           },
         });
         setLead(data);
-        setCustomerId(data?.customer?.id);
+        setCustomerId(data?.customer);
       } catch (err) {
         enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
       }
@@ -45,6 +45,7 @@ function EditCustomerPage({ leadId = null }) {
   }, [leadId]);
 
   const { loading, error, userData } = useUser(customerId);
+
 
   const {
     formData,
@@ -79,7 +80,7 @@ function EditCustomerPage({ leadId = null }) {
 
   const associateCustomerToLead = async (leadId, customerId) => {
     try {
-      await leadService.patchLead(leadId, { customer_id: customerId });
+      await leadService.patchLead(leadId, { customer: customerId });
     } catch (err) {
       enqueueSnackbar('Não foi possível associar o cliente ao lead', { variant: 'error' });
     }
