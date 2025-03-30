@@ -786,6 +786,14 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         <Grid item xs={12}>
                                             <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "36px" }}>{averageConsuption} kWh</Typography>
                                         </Grid>
+                                        <DialogActions>
+                                            <Button onClick={() => setOpenResultDialog(false)} color="primary">
+                                                Calcular novamente
+                                            </Button>
+                                            <Button onClick={handleSaveAverage} color="primary">
+                                                Salvar
+                                            </Button>
+                                        </DialogActions>
                                     </Grid>
                                 </DialogContent>
 
