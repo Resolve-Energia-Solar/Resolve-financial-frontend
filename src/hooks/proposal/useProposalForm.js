@@ -14,6 +14,7 @@ const useProposalForm = (initialData, id) => {
     status: 'P',
     observation: '',
     medium_consumption: "",
+    estimated_generation: "",
   });
 
   const [formErrors, setFormErrors] = useState({});
