@@ -16,6 +16,8 @@ import {
   DialogTitle,
   Button,
 } from '@mui/material';
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PaymentChip from '../PaymentChip';
 import paymentService from '@/services/paymentService';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
@@ -55,7 +57,7 @@ const SalePaymentList = ({ onClick }) => {
           limit: rowsPerPage,
           expand: 'customer,payments.borrower,payments,sale,payments.financier',
           fields:
-            'id,total_value,payments.payment_type,payments.is_paid,customer.complete_name,signature_date,payments.borrower.complete_name,payments.installments,payments.invoice_status,status,payment_status,payments.financier.name',
+            'id,total_value,payments.payment_type,payments.is_paid,customer.complete_name,signature_date,payments.borrower.complete_name,payments.installments,payments.invoice_status,status,payment_status,payments.financier.name,is_pre_sale',
           ...filters,
         });
         setPaymentsList(response.results);
@@ -111,6 +113,11 @@ const SalePaymentList = ({ onClick }) => {
               </TableCell>
               <TableCell>
                 <Typography variant="h6" fontSize="14px">
+                  Venda
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="h6" fontSize="14px">
                   Cliente
                 </Typography>
               </TableCell>
@@ -156,8 +163,16 @@ const SalePaymentList = ({ onClick }) => {
                   <TableRow key={item.id} onClick={() => onClick(item)} hover>
                     <TableCell>
                       <Typography fontSize="14px">
-                        {/* Renderiza o badge somente se a condição for atendida */}
                         <PaymentDocBadge saleId={item.id} contentType={CONTEXT_TYPE_SALE_ID} />
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography fontSize="14px">
+                        {item?.is_pre_sale ? (
+                          <CancelIcon fontSize="small" color="error" />
+                        ) : (
+                          <CheckCircleIcon fontSize="small" color="success" />
+                        )}
                       </Typography>
                     </TableCell>
                     <TableCell>

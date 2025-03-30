@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useContext, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -9,16 +8,11 @@ import {
   AccordionSummary,
   Box,
   Button,
-  Typography
+  Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { AddBoxRounded, FilterAlt } from '@mui/icons-material';
 import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
-
-import FilterDrawer from '../components/filterDrawer/FilterDrawer';
-import PaymentList from '../components/paymentList/list';
 import InforCards from '../../inforCards/InforCards';
-
 import { FilterContext } from '@/context/FilterContext';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import SalePaymentList from '../components/paymentList/SalePaymentList';
@@ -28,7 +22,6 @@ export default function InvoiceList({ onClick }) {
   const { filters, setFilters } = useContext(FilterContext);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const router = useRouter();
-
   const context = useContext(FilterContext);
 
   const cardsData = [
@@ -71,66 +64,43 @@ export default function InvoiceList({ onClick }) {
 
   const paymentFilterConfig = [
     {
+      key: 'customer',
+      label: 'Cliente',
+      type: 'async-autocomplete',
+      queryParam: 'complete_name__icontains',
+      endpoint: '/api/users',
+      extraParams: { fields: ['id', 'complete_name'] },
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
+    },
+    {
       key: 'borrower',
       label: 'Tomador',
-      type: 'async-autocomplete', // Ou 'select' se for uma lista estática
-      endpoint: '/api/users/', // Endpoint atualizado para '/api/users/'
-      queryParam: 'search',
-      mapResponse: (response) => response.data, // Exemplo de mapeamento
+      type: 'async-autocomplete',
+      queryParam: 'complete_name__icontains',
+      endpoint: '/api/users',
+      extraParams: { fields: ['id', 'complete_name'] },
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
     },
     {
-      key: 'sale',
-      label: 'Venda',
-      type: 'async-autocomplete', // Ou 'select'
-      endpoint: '/api/sales',
-      queryParam: 'search',
-      mapResponse: (response) => response.data,
-    },
-    {
-      key: 'value',
-      label: 'Valor',
-      type: 'number-range', // Para filtrar valores entre mínimo e máximo
-      subkeys: { min: 'value__gte', max: 'value__lte' },
-    },
-    {
-      key: 'payment_type',
-      label: 'Tipo de Pagamento',
-      type: 'multiselect', // Ou 'select' se não for múltiplo
+      key: 'is_pre_sale',
+      label: 'Pré-venda',
+      type: 'select',
       options: [
-        { value: 'C', label: 'Crédito' },
-        { value: 'D', label: 'Débito' },
-        { value: 'B', label: 'Boleto' },
-        { value: 'F', label: 'Financiamento' },
-        { value: 'PI', label: 'Parcelamento interno' },
-        { value: 'P', label: 'Pix' },
-        { value: 'T', label: 'Transferência Bancária' },
-        { value: 'DI', label: 'Dinheiro' },
-        { value: 'PA', label: 'Poste auxiliar' },
-        { value: 'RO', label: 'Repasse de Obra' },
+        { label: 'Todos', value: null },
+        { label: 'Sim', value: 'true' },
+        { label: 'Não', value: 'false' },
       ],
     },
     {
-      key: 'financier',
-      label: 'Financiadora',
-      type: 'async-autocomplete',
-      endpoint: '/api/financiers',
-      queryParam: 'search',
-      mapResponse: (response) => response.data,
-    },
-    {
-      key: 'due_date',
-      label: 'Data de Vencimento',
-      type: 'range', // Para filtro de intervalo de datas
-    },
-    {
-      key: 'observation',
-      queryParam: 'observation__icontains',
-      label: 'Observação',
-      type: 'custom', // Filtro customizado, como um campo de texto
-    },
-    {
       key: 'invoice_status',
-      queryParam: 'invoice_status__in',
       label: 'Status da Nota Fiscal',
       type: 'multiselect',
       options: [
@@ -141,26 +111,120 @@ export default function InvoiceList({ onClick }) {
       ],
     },
     {
+      key: 'payment_status__in',
+      label: 'Status do Financeiro',
+      type: 'multiselect',
+      options: [
+        { value: 'P', label: 'Pendente' },
+        { value: 'L', label: 'Liberado' },
+        { value: 'C', label: 'Concluído' },
+        { value: 'CA', label: 'Cancelado' },
+      ],
+    },
+    // {
+    //   key: 'document_completion_date__range',
+    //   label: 'Data de Conclusão do Documento',
+    //   type: 'range',
+    //   inputType: 'date',
+    // },
+    {
+      key: 'billing_date',
+      label: 'Data de Competência',
+      queryParam: 'billing_date__range',
+      type: 'range',
+      inputType: 'date',
+    },
+    {
+      key: 'status__in',
+      label: 'Status da Venda',
+      type: 'multiselect',
+      options: [
+        { value: 'F', label: 'Finalizado' },
+        { value: 'EA', label: 'Em Andamento' },
+        { value: 'P', label: 'Pendente' },
+        { value: 'C', label: 'Cancelado' },
+        { value: 'D', label: 'Distrato' },
+      ],
+    },
+    {
+      key: 'branch',
+      label: 'Filial',
+      type: 'async-autocomplete',
+      endpoint: '/api/branches',
+      queryParam: 'name__icontains',
+      extraParams: { fields: ['id', 'name'] },
+      mapResponse: (data) =>
+        data.results.map((branch) => ({
+          label: branch.name,
+          value: branch.id,
+        })),
+    },
+    {
+      key: 'marketing_campaign',
+      label: 'Campanha de Marketing',
+      type: 'async-autocomplete',
+      endpoint: '/api/marketing_campaigns',
+      queryParam: 'name__icontains',
+      extraParams: { fields: ['id', 'name'] },
+      mapResponse: (data) =>
+        data.results.map((campaign) => ({
+          label: campaign.name,
+          value: campaign.id,
+        })),
+    },
+    {
+      key: 'seller',
+      label: 'Vendedor',
+      type: 'async-autocomplete',
+      endpoint: '/api/users',
+      queryParam: 'complete_name__icontains',
+      extraParams: { fields: ['id', 'complete_name'] },
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
+    },
+    {
       key: 'created_at',
-      label: 'Criado em',
-      type: 'range', // Para intervalo de datas
+      label: 'Data de Criação',
+      type: 'range',
+      inputType: 'date',
+    },
+    {
+      key: 'is_signed',
+      label: 'Assinado',
+      type: 'select',
+      options: [
+        { label: 'Sim', value: 'true' },
+        { label: 'Não', value: 'false' },
+      ],
+    },
+    {
+      key: 'signature_date',
+      label: 'Data de Assinatura',
+      type: 'range',
+      inputType: 'date',
+    },
+    {
+      key: 'final_service_opinion',
+      label: 'Parecer Final do Serviço',
+      type: 'async-autocomplete',
+      endpoint: '/api/service-opinions/',
+      queryParam: 'name__icontains',
+      extraParams: {
+        is_final_opinion: true,
+        limit: 10,
+        fields: ['id', 'name', 'service.name'],
+        expand: 'service',
+      },
+      mapResponse: (data) =>
+        data.results.map((opinion) => ({
+          label: `${opinion.name} - ${opinion.service?.name}`,
+          value: opinion.id,
+        })),
     },
   ];
-
-  const handleApplyFilters = (newFilters) => {
-    if (context) {
-      setFilters(newFilters);
-      setPage(0);
-    }
-  };
-
-  const toggleFilterDrawer = (open) => () => {
-    setIsFilterOpen(open);
-  };
-
-  const handleCreateClick = () => {
-    router.push('/apps/invoice/create');
-  };
 
   return (
     <Box>
@@ -185,33 +249,19 @@ export default function InvoiceList({ onClick }) {
           mb: 3,
         }}
       >
-        {/* <Button
-          variant="outlined"
-          startIcon={<AddBoxRounded />}
-          onClick={handleCreateClick}
-        >
-          Adicionar Pagamento
-        </Button> */}
-        <Button
-          variant="outlined"
-          sx={{ mt: 1, mb: 2 }}
-          onClick={() => setFilterDrawerOpen(true)}
-        >
+        <Button variant="outlined" sx={{ mt: 1, mb: 2 }} onClick={() => setFilterDrawerOpen(true)}>
           Abrir Filtros
         </Button>
       </Box>
-
-      <FilterDrawer
-        externalOpen={isFilterOpen}
-        onClose={toggleFilterDrawer(false)}
-        onApplyFilters={handleApplyFilters}
-      />
 
       <SalePaymentList onClick={onClick} />
 
       <GenericFilterDrawer
         filters={paymentFilterConfig}
-        initialValues={filters}
+        initialValues={{
+          ...filters,
+          is_pre_sale: [{ label: 'Não', value: 'false' }],
+        }}
         open={filterDrawerOpen}
         onClose={() => setFilterDrawerOpen(false)}
         onApply={(newFilters) => setFilters(newFilters)}
