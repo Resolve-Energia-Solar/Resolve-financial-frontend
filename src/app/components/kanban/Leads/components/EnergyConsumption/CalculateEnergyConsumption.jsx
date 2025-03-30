@@ -43,7 +43,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
     const dispatch = useDispatch();
     const [checked, setChecked] = useState(false);
     const [openMediumCalcDialog, setOpenMediumCalcDialog] = useState(false);
-    const [openMediumCalcResultDialog, setOpenMediumCalcResultDialog ] = useState(false);
+    const [openMediumCalcResultDialog, setOpenMediumCalcResultDialog] = useState(false);
     const [mediumConsumptionResult, setMediumConsumptionResult] = useState("");
     const [openEstimatedGeneration, setOpenEstimatedGeneration] = useState(false);
 
@@ -112,10 +112,6 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
         setFormData({ ...formData, medimum_consumption: e.target.value });
     };
 
-    const handleFieldClick = () => {
-        setOpenMediumCalcDialog(true);
-    }
-
     // medium calc logic
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
@@ -162,7 +158,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
             medium_consumption: mediumConsumptionResult,
         })
         setOpenMediumCalcResultDialog(false);
-        enqueueSnackbar("Consumo médio salvo!", {variant: 'success'});
+        enqueueSnackbar("Consumo médio salvo!", { variant: 'success' });
 
     }
 
@@ -554,7 +550,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     <TextField
                                         name="estimated_generation"
                                         value={formData.estimated_generation}
-                                        // onClick={}
+                                        onClick={() => setOpenEstimatedGeneration(true)}
                                         // onChange={(e) => handleChange('estimated_generation', e.target.value)}
                                         fullWidth
                                         InputProps={{
@@ -736,40 +732,40 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                                 );
                                                             })}
 
-                                                            
-                                                                <Grid container xs={12} sx={{ mt: 2}}>
-                                                                    <Grid item xs={2}>
-                                                                        <Button
-                                                                            onClick={() => setOpenMediumCalcDialog(false)}
-                                                                            variant="contained"
-                                                                            sx={{
-                                                                                backgroundColor: 'white',
-                                                                                color: 'black',
-                                                                                border: "1px solid",
-                                                                                px: 3,
-                                                                                '&:hover': {borderColor: "transparent"}
-                                                                            }}
-                                                                        >
-                                                                            <Typography variant="body1">Cancelar</Typography>
-                                                                        </Button>
-                                                                    </Grid>
-                                                                    <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end"}}>
-                                                                        <Button
-                                                                            variant="contained"
-                                                                            onClick={calculateAverage}
-                                                                            sx={{
-                                                                                backgroundColor: 'black',
-                                                                                color: 'white',
-                                                                                '&:hover': { backgroundColor: '#333' },
-                                                                                px: 3,
-                                                                            }}
-                                                                            endIcon={<BoltOutlinedIcon sx={{ ml: 1 }} />}
-                                                                        >
-                                                                            <Typography variant="body1">Calcular consuno médio de energia</Typography>
-                                                                        </Button>
-                                                                    </Grid>
+
+                                                            <Grid container xs={12} sx={{ mt: 2 }}>
+                                                                <Grid item xs={2}>
+                                                                    <Button
+                                                                        onClick={() => setOpenMediumCalcDialog(false)}
+                                                                        variant="contained"
+                                                                        sx={{
+                                                                            backgroundColor: 'white',
+                                                                            color: 'black',
+                                                                            border: "1px solid",
+                                                                            px: 3,
+                                                                            '&:hover': { borderColor: "transparent" }
+                                                                        }}
+                                                                    >
+                                                                        <Typography variant="body1">Cancelar</Typography>
+                                                                    </Button>
                                                                 </Grid>
-                                                            
+                                                                <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end" }}>
+                                                                    <Button
+                                                                        variant="contained"
+                                                                        onClick={calculateAverage}
+                                                                        sx={{
+                                                                            backgroundColor: 'black',
+                                                                            color: 'white',
+                                                                            '&:hover': { backgroundColor: '#333' },
+                                                                            px: 3,
+                                                                        }}
+                                                                        endIcon={<BoltOutlinedIcon sx={{ ml: 1 }} />}
+                                                                    >
+                                                                        <Typography variant="body1">Calcular consuno médio de energia</Typography>
+                                                                    </Button>
+                                                                </Grid>
+                                                            </Grid>
+
                                                         </Grid>
                                                     </Grid>
                                                 )}
@@ -780,8 +776,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                 </DialogContent>
                             </Dialog>
 
-                            <Dialog 
-                                open={openMediumCalcResultDialog} 
+                            <Dialog
+                                open={openMediumCalcResultDialog}
                                 onClose={() => setOpenMediumCalcResultDialog(false)}
                                 PaperProps={{
                                     sx: {
@@ -794,18 +790,18 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                 }}
                             >
                                 <DialogContent>
-                                    <Grid container spacing={3} sx={{display: "flex",alignItems: "center", justifyContent: "center"}}>
-                                        <Grid item xs={12} sx={{display: "flex",alignItems: "center", justifyContent: "center"}}>
+                                    <Grid container spacing={3} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                        <Grid item xs={12} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                             <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Consumo médio mensal</Typography>
                                         </Grid>
-                                        <Grid item xs={12} sx={{display: "flex",alignItems: "center", justifyContent: "center"}}>
+                                        <Grid item xs={12} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                             <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "36px" }}>{averageConsuption} kWh</Typography>
                                         </Grid>
-                                        <Grid spacing={2} container xs={12} sx={{ mt: 2}}>
-                                            <Grid item xs={10} sx={{display:"flex", justifyContent: "flex-end",}}>
+                                        <Grid spacing={2} container xs={12} sx={{ mt: 2 }}>
+                                            <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end", }}>
                                                 <Button
-                                                    variant='outlined' 
-                                                    onClick={() => setOpenMediumCalcResultDialog(false)} 
+                                                    variant='outlined'
+                                                    onClick={() => setOpenMediumCalcResultDialog(false)}
                                                     sx={{
                                                         backgroundColor: 'white',
                                                         color: 'black',
@@ -822,20 +818,82 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                 </Button>
                                             </Grid>
                                             <Grid item xs={2}>
-                                                <Button 
-                                                    onClick={handleSaveAverage} 
-                                                    sx={{ 
-                                                        backgroundColor: theme.palette.primary.main, 
-                                                        color: theme.palette.primary.light, 
+                                                <Button
+                                                    onClick={handleSaveAverage}
+                                                    sx={{
+                                                        backgroundColor: theme.palette.primary.main,
+                                                        color: theme.palette.primary.light,
                                                         '&:hover': {
-                                                            backgroundColor: theme.palette.primary.light, 
+                                                            backgroundColor: theme.palette.primary.light,
                                                             color: theme.palette.primary.main
-                                                        } 
+                                                        }
                                                     }}
                                                 >
-                                                        Salvar
+                                                    Salvar
                                                 </Button>
+                                            </Grid>
                                         </Grid>
+                                    </Grid>
+                                </DialogContent>
+
+                            </Dialog>
+
+                            <Dialog
+                                open={openEstimatedGeneration}
+                                onClose={() => setOpenEstimatedGeneration(false)}
+                                PaperProps={{
+                                    sx: {
+                                        borderRadius: '20px',
+                                        padding: '24px',
+                                        gap: '24px',
+                                        boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                                        width: "464px"
+                                    }
+                                }}
+                            >
+                                <DialogContent>
+                                    <Grid container spacing={3} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                        <Grid item xs={12} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Consumo médio mensal</Typography>
+                                        </Grid>
+                                        <Grid item xs={12} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "36px" }}>{averageConsuption} kWh</Typography>
+                                        </Grid>
+                                        <Grid spacing={2} container xs={12} sx={{ mt: 2 }}>
+                                            <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end", }}>
+                                                <Button
+                                                    variant='outlined'
+                                                    onClick={() => setOpenEstimatedGeneration(false)}
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        color: 'black',
+                                                        border: "1px solid",
+                                                        px: 3,
+                                                        '&:hover': {
+                                                            borderColor: "transparent",
+                                                            backgroundColor: "black",
+                                                            color: "white"
+                                                        }
+                                                    }}
+                                                >
+                                                    Calcular novamente
+                                                </Button>
+                                            </Grid>
+                                            <Grid item xs={2}>
+                                                <Button
+                                                    onClick={handleSaveAverage}
+                                                    sx={{
+                                                        backgroundColor: theme.palette.primary.main,
+                                                        color: theme.palette.primary.light,
+                                                        '&:hover': {
+                                                            backgroundColor: theme.palette.primary.light,
+                                                            color: theme.palette.primary.main
+                                                        }
+                                                    }}
+                                                >
+                                                    Salvar
+                                                </Button>
+                                            </Grid>
                                         </Grid>
                                     </Grid>
                                 </DialogContent>
