@@ -10,6 +10,7 @@ import {
     CircularProgress,
     Dialog,
     DialogContent,
+    DialogActions,
 } from '@mui/material';
 
 import { useEffect, useState } from 'react';
@@ -722,37 +723,39 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                                 );
                                                             })}
 
-                                                            <Grid container xs={12} sx={{ mt: 2}}>
-                                                                <Grid item xs={2}>
-                                                                    <Button
-                                                                        onClick={() => setOpenMediumCalcDialog(false)}
-                                                                        variant="contained"
-                                                                        sx={{
-                                                                            backgroundColor: 'white',
-                                                                            color: 'black',
-                                                                            border: "1px solid",
-                                                                            px: 3,
-                                                                            '&:hover': {borderColor: "transparent"}
-                                                                        }}
-                                                                    >
-                                                                        <Typography variant="body1">Cancelar</Typography>
-                                                                    </Button>
+                                                            <DialogActions>
+                                                                <Grid container xs={12} sx={{ mt: 2}}>
+                                                                    <Grid item xs={2}>
+                                                                        <Button
+                                                                            onClick={() => setOpenMediumCalcDialog(false)}
+                                                                            variant="contained"
+                                                                            sx={{
+                                                                                backgroundColor: 'white',
+                                                                                color: 'black',
+                                                                                border: "1px solid",
+                                                                                px: 3,
+                                                                                '&:hover': {borderColor: "transparent"}
+                                                                            }}
+                                                                        >
+                                                                            <Typography variant="body1">Cancelar</Typography>
+                                                                        </Button>
+                                                                    </Grid>
+                                                                    <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end"}}>
+                                                                        <Button
+                                                                            variant="contained"
+                                                                            sx={{
+                                                                                backgroundColor: 'black',
+                                                                                color: 'white',
+                                                                                '&:hover': { backgroundColor: '#333' },
+                                                                                px: 3,
+                                                                            }}
+                                                                            endIcon={<BoltOutlinedIcon sx={{ ml: 1 }} />}
+                                                                        >
+                                                                            <Typography variant="body1">Calcular consuno médio de energia</Typography>
+                                                                        </Button>
+                                                                    </Grid>
                                                                 </Grid>
-                                                                <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end"}}>
-                                                                    <Button
-                                                                        variant="contained"
-                                                                        sx={{
-                                                                            backgroundColor: 'black',
-                                                                            color: 'white',
-                                                                            '&:hover': { backgroundColor: '#333' },
-                                                                            px: 3,
-                                                                        }}
-                                                                        endIcon={<BoltOutlinedIcon sx={{ ml: 1 }} />}
-                                                                    >
-                                                                        <Typography variant="body1">Calcular consuno médio de energia</Typography>
-                                                                    </Button>
-                                                                </Grid>
-                                                            </Grid>
+                                                            </DialogActions>
                                                         </Grid>
                                                     </Grid>
                                                 )}
