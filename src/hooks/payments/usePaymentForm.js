@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import formatDate from '@/utils/formatDate';
 import paymentService from '@/services/paymentService';
+import paymentInstallmentService from '@/services/paymentInstallmentService';
 
 const usePaymentForm = (initialData, id) => {
   const [formData, setFormData] = useState({
@@ -49,40 +50,46 @@ const usePaymentForm = (initialData, id) => {
     });
   };
 
+  // Ao adicionar uma nova parcela, definimos o id como null para que ela seja tratada como "nova"
   const handleAddItem = () => {
-    setFormData((prev) => {
-      const newId =
-        prev.installments.length > 0
-          ? Math.max(...prev.installments.map((installment) => installment.id)) + 1
-          : 1;
-
-      return {
-        ...prev,
-        installments: [
-          ...prev.installments,
-          {
-            id: newId,
-            installment_value: '',
-            installment_number: '',
-            due_date: '',
-            is_paid: false,
-            payment: id,
-          },
-        ],
-      };
-    });
+    setFormData((prev) => ({
+      ...prev,
+      installments: [
+        ...prev.installments,
+        {
+          id: null,
+          installment_value: '',
+          installment_number: '',
+          due_date: '',
+          is_paid: false,
+          payment: id,
+        },
+      ],
+    }));
   };
 
-  const handleDeleteItem = (index) => {
+  // Se a parcela tiver id, tenta excluir via API; caso contrário, remove somente do estado
+  const handleDeleteItem = async (index) => {
+    const installment = formData.installments[index];
+    if (installment && installment.id) {
+      try {
+        await paymentInstallmentService.delete(installment.id);
+      } catch (error) {
+        console.error('Erro ao deletar parcela:', error);
+      }
+    }
     setFormData((prev) => {
       const newInstallments = prev.installments.filter((_, i) => i !== index);
       return { ...prev, installments: newInstallments };
     });
   };
 
+  // A função handleSave envia os dados do pagamento sem as parcelas para o paymentService
+  // e depois trata cada parcela usando o paymentInstallmentService (create ou update)
   const handleSave = async () => {
     setLoading(true);
-    let dataToSend = {
+    // Dados do pagamento, sem incluir parcelas
+    const paymentDataToSend = {
       sale: formData.sale_id,
       borrower: formData.borrower_id,
       financier: formData.financier_id ? formData.financier_id : undefined,
@@ -90,22 +97,33 @@ const usePaymentForm = (initialData, id) => {
       payment_type: formData.payment_type,
       installments_number: formData.installments_number,
       due_date: formData.due_date ? formatDate(formData.due_date) : null,
-      create_installments: formData.create_installments,
       invoice_status: formData.invoice_status,
     };
 
-    if (!formData.create_installments) {
-      dataToSend = { ...dataToSend, installments: formData.installments };
-    }
-
     try {
+      let paymentResponse;
       if (id) {
-        const response = await paymentService.update(id, dataToSend);
-        setResponse(response);
+        paymentResponse = await paymentService.update(id, paymentDataToSend);
       } else {
-        const response = await paymentService.create(dataToSend);
-        setResponse(response);
+        paymentResponse = await paymentService.create(paymentDataToSend);
       }
+      setResponse(paymentResponse);
+
+      const updatedInstallments = [];
+      for (const installment of formData.installments) {
+        let installmentResponse;
+        if (installment.id) {
+          installmentResponse = await paymentInstallmentService.update(
+            installment.id,
+            installment
+          );
+        } else {
+          installmentResponse = await paymentInstallmentService.create(installment);
+        }
+        updatedInstallments.push(installmentResponse.data);
+      }
+      // Atualiza o estado com as parcelas atualizadas
+      setFormData((prev) => ({ ...prev, installments: updatedInstallments }));
       setFormErrors({});
       setSuccess(true);
     } catch (err) {

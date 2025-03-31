@@ -53,9 +53,10 @@ function LeadAttachmentsAccordion({ objectId, contentType, documentTypes, title 
     setLoading(true);
     const fetchData = async () => {
       try {
-        const response = await attachmentService.find({
+        const response = await attachmentService.index({
           object_id: objectId,
-          content_type: contentTypeId,
+          expand: 'document_type',
+          content_type: contentType,
           limit: 30,
         });
         const fetchedAttachments = response.results;

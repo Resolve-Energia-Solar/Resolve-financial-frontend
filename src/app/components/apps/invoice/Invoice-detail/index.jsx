@@ -30,7 +30,11 @@ const DetailInvoicePage = ({ payment_id = null }) => {
   let id = payment_id;
   if (!payment_id) id = params.id;
 
-  const { loading, error, paymentData } = usePayment(id);
+  const { loading, error, paymentData } = usePayment(id, {
+    expand: 'sale.customer,borrower,installments,sale',
+    fields:
+      'id,value,payment_type,is_paid,sale.customer.complete_name,sale.signature_date,sale.reference_value,sale.total_value,borrower.complete_name,installments,invoice_status,sale.status,sale.payment_status',
+  });
   const { formattedValue } = useCurrencyFormatter(paymentData?.value);
 
   const statusLabels = {
@@ -105,7 +109,7 @@ const DetailInvoicePage = ({ payment_id = null }) => {
               borderBottom: `1px dashed ${theme.palette.divider}`,
             }}
           >
-            {paymentData?.sale.contract_number} - {paymentData?.sale.customer.complete_name}
+            {paymentData?.sale?.contract_number} - {paymentData?.sale.customer?.complete_name}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6}>

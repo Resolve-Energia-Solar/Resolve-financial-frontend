@@ -1,111 +1,153 @@
-import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
-import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
-import { Box, Chip, Grid, MenuItem } from "@mui/material";
-import InstallamentDrawer from "./InstallmentDrawer";
-import StatusChip from "@/utils/status/DocumentStatusIcon";
-import CustomSelect from "../../forms/theme-elements/CustomSelect";
-import StatusInspectionChip from "@/utils/status/InspecStatusChip";
+import React, { useState, useEffect } from "react";
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Box,
+  Typography,
+  Tooltip,
+  useTheme,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import CommentIcon from "@mui/icons-material/Comment";
+import PaymentIcon from "@mui/icons-material/Payment";
+import HistoryIcon from "@mui/icons-material/History";
+import DescriptionIcon from "@mui/icons-material/Description";
+import Attachments from "@/app/components/shared/Attachments";
+import SaleEditForm from "./components/accordeon-components/SaleEditForm";
+import PaymentCard from "./components/paymentList/card";
+import documentTypeService from "@/services/documentTypeService";
+import Comment from "../comment";
+import History from "../history";
 
-export default function Details({ data, handleInputChange }) {
+const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
+
+export default function Details({ id, refresh }) {
+  const [documentTypes, setDocumentTypes] = useState([]);
+  const [expandedPanels, setExpandedPanels] = useState(["sale-info"]);
+  const theme = useTheme();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await documentTypeService.index({
+          app_label__in: "contracts",
+          limit: 30,
+        });
+        setDocumentTypes(response.results);
+      } catch (error) {
+        console.log("Error: ", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const togglePanel = (key) => {
+    setExpandedPanels((prev) =>
+      prev.includes(key)
+        ? prev.filter((item) => item !== key)
+        : [...prev, key]
+    );
+  };
+
+  const panels = [
+    {
+      key: "sale-info",
+      icon: <InfoOutlinedIcon />,
+      title: "Informações da Venda",
+      content: <SaleEditForm id_sale={id} />,
+    },
+    {
+      key: "documents",
+      icon: <DescriptionIcon />,
+      title: "Documentos da Venda",
+      content: (
+        <Attachments
+          contentType={CONTEXT_TYPE_SALE_ID}
+          objectId={id}
+          documentTypes={documentTypes}
+        />
+      ),
+      summaryRight: `${documentTypes.length} tipos`,
+    },
+    {
+      key: "payment",
+      icon: <PaymentIcon />,
+      title: "Informações do Pagamento",
+      content: <PaymentCard sale={id} />,
+    },
+    {
+      key: "comments",
+      icon: <CommentIcon />,
+      title: "Comentários",
+      content: <Comment appLabel={"resolve_crm"} objectId={id} model={"sale"} />,
+    },
+    {
+      key: "history",
+      icon: <HistoryIcon />,
+      title: "Histórico",
+      content: (
+        <History objectId={id} contentType={CONTEXT_TYPE_SALE_ID} />
+      ),
+    },
+  ];
+
   return (
     <Box>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Venda</CustomFormLabel>
-          <CustomTextField
-            type="text"
-            value={data.sale.customer.complete_name}
-            fullWidth
-            margin="normal"
-            disabled
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Data de Contrato</CustomFormLabel>
-          <CustomTextField
-            type="text"
-            value={data.sale?.signature_date}
-            fullWidth
-            margin="normal"
-            disabled
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Status da Venda</CustomFormLabel>
-          <Box p={1.4} />
-          <StatusChip status={data.status} />
-        </Grid>
+      {panels.map(({ key, icon, title, content, summaryRight }) => {
+        const isExpanded = expandedPanels.includes(key);
 
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Valor de Referência</CustomFormLabel>
-          <CustomTextField
-            name="interim_protocol"
-            type="text"
-            value={''}
-            fullWidth
-            margin="normal"
-            disabled
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Valor de Projeto</CustomFormLabel>
-          <CustomTextField
-            name="interim_protocol"
-            type="decimal"
-            value={Number(data.sale.total_value).toLocaleString('pt-BR', {
-              style: 'currency',
-              currency: 'BRL',
-            })}
-            fullWidth
-            margin="normal"
-            disabled
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Status do Projeto</CustomFormLabel>
-          <CustomTextField
-            name="interim_protocol"
-            type="text"
-            value={''}
-            fullWidth
-            margin="normal"
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Status da vistoria</CustomFormLabel>
-          <Box p={1.4} />
-          <StatusInspectionChip status={data.sale.inspection?.service_opinion || 'Não possui vistoria'} />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Status do pagamento</CustomFormLabel>
-          <Box p={1} />
-          <CustomSelect fullWidth value={data.sale.payment_status} name='payment_status' onChange={(e) => handleInputChange(e, data.sale.id)} >
-            <MenuItem value="P" >
-              <Chip label="Pago" color="success" />
-            </MenuItem>
-            <MenuItem value="L">
-              <Chip label="Liberado" color="primary" />
-            </MenuItem>
-            <MenuItem value="PE">
-              <Chip label="Pendente" color="secondary" />
-            </MenuItem>
-          </CustomSelect>
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="address">Qtd. Parcelas</CustomFormLabel>
-          <CustomTextField
-            name="interim_protocol"
-            type="text"
-            value={data.installments.length}
-            onChange={handleInputChange}
-            fullWidth
-            margin="normal"
-            disabled
-          />
-        </Grid>
-      </Grid>
-      <InstallamentDrawer data={data?.installments} />
+        return (
+          <Accordion
+            key={key}
+            expanded={isExpanded}
+            onChange={() => togglePanel(key)}
+            sx={{
+              mb: 2,
+              borderRadius: 2,
+              boxShadow: 1,
+              border: "1px solid #ddd",
+              backgroundColor: theme.palette.background.paper,
+            }}
+            id={`accordion-${key}`}
+            aria-controls={`accordion-${key}-content`}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              sx={{
+                minHeight: "80px",
+                "& .MuiAccordionSummary-content": {
+                  margin: "12px 0",
+                  alignItems: "center",
+                },
+              }}
+            >
+              <Tooltip title={title}>
+                <Box component="span" sx={{ mr: 1 }}>
+                  {icon}
+                </Box>
+              </Tooltip>
+              <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                {title}
+              </Typography>
+              {summaryRight && (
+                <Typography variant="body2" color="text.secondary">
+                  {summaryRight}
+                </Typography>
+              )}
+            </AccordionSummary>
+            <AccordionDetails
+              sx={{
+                maxHeight: "80vh",
+                overflowY: "auto",
+              }}
+            >
+              <Typography variant="body1">{content}</Typography>
+            </AccordionDetails>
+          </Accordion>
+        );
+      })}
     </Box>
   );
 }

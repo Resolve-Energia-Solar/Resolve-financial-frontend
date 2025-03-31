@@ -7,8 +7,9 @@ import BlankCard from '@/app/components/shared/BlankCard';
 import { CardContent } from '@mui/material';
 import Details from '@/app/components/apps/invoice/Details';
 import SideDrawer from '@/app/components/shared/SideDrawer';
-import usePayment from '@/hooks/payments/usePayment';
 import BasicModal from '@/app/components/apps/modal/modal';
+import { useState } from 'react';
+
 
 const BCrumb = [
   {
@@ -21,30 +22,33 @@ const BCrumb = [
 ];
 
 const InvoiceListing = () => {
-  const {
-    toggleOpenDrawerClosed,
-    openDrawer,
-    rowSelected,
-    handleRowClick,
-    editPaymentStatus,
-    openModal,
-    setOpenModal,
-    text,
-    IconComponents,
-  } = usePayment();
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [rowSelected, setRowSelected] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [text, setText] = useState();
+  const [IconComponents, setIconComponents] = useState(null);
+
+  const handleRowClick = (item) => {
+    setOpenDrawer(true);
+    setRowSelected(item);
+  };
+
+  const toggleOpenDrawerClosed = () => {
+    setOpenDrawer(!openDrawer);
+  };
 
   return (
-    <PageContainer title="Lista de Pagamentos" description="Essa é a Lista de Pagamentos">
+    <PageContainer title="Lista de Vendas" description="Essa é a Lista de Pagamentos">
       <Breadcrumb items={BCrumb} />
       <BlankCard>
         <CardContent>
           <InvoiceList onClick={handleRowClick} />
           <SideDrawer
-            title="Detalhes do Pagamento"
+            title="Detalhes da Venda"
             open={openDrawer}
             onClose={toggleOpenDrawerClosed}
           >
-            <Details data={rowSelected} handleInputChange={editPaymentStatus} />
+            <Details id={rowSelected?.id} />
           </SideDrawer>
           <BasicModal
             open={openModal}

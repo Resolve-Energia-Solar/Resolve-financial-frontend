@@ -19,16 +19,28 @@ const GenericAsyncAutocompleteInput = ({
   const [options, setOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
+
   const stableExtraParams = useMemo(() => extraParams, [JSON.stringify(extraParams)]);
   const stableMapResponse = useMemo(() => mapResponse, [mapResponse]);
 
+  const selectedOption = useMemo(() => {
+    if (!value) return null;
+    if (typeof value === "object") return value;
+    return options.find((option) => option.value === value) || null;
+  }, [value, options]);
+
   useEffect(() => {
+    if (!inputValue.trim()) {
+      setOptions([]);
+      setLoading(false);
+      return;
+    }
     let active = true;
     setLoading(true);
     const handler = setTimeout(async () => {
       try {
         const params = new URLSearchParams({
-          [queryParam]: inputValue, // Mesmo que seja vazio, a busca será feita
+          [queryParam]: inputValue,
           ...stableExtraParams,
         });
         const page = 1;
@@ -37,12 +49,14 @@ const GenericAsyncAutocompleteInput = ({
           params: { page, limit },
         });
         const data = response.data;
-        const fetchedOptions = stableMapResponse ? stableMapResponse(data) : data.results || [];
+        const fetchedOptions = stableMapResponse
+          ? stableMapResponse(data)
+          : data.results || [];
         if (active) {
           setOptions(fetchedOptions);
         }
-      } catch (error) {
-        console.error("Error fetching options:", error);
+      } catch (err) {
+        console.error("Error fetching options:", err);
       } finally {
         if (active) setLoading(false);
       }
@@ -53,6 +67,27 @@ const GenericAsyncAutocompleteInput = ({
     };
   }, [inputValue, endpoint, queryParam, stableExtraParams, stableMapResponse, debounceTime]);
 
+  useEffect(() => {
+    const fetchInitialOption = async () => {
+      if (!value || typeof value === "object") return;
+      if (options.find((option) => option.value === value)) return;
+      
+      try {
+        const response = await apiClient.get(`${endpoint}/${value}`, {
+          params: { fields: stableExtraParams.fields },
+        });
+        const item = response.data;
+        const mappedOption = stableMapResponse
+          ? stableMapResponse({ results: [item] })[0]
+          : { label: item.complete_name || item.name || "", value: item.id };
+        setOptions((prevOptions) => [...prevOptions, mappedOption]);
+      } catch (err) {
+        console.error("Error fetching initial option:", err);
+      }
+    };
+    fetchInitialOption();
+  }, [value, options, endpoint, stableExtraParams, stableMapResponse]);
+
   return (
     <Autocomplete
       freeSolo
@@ -61,19 +96,19 @@ const GenericAsyncAutocompleteInput = ({
       loading={loading}
       onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
       onChange={(event, newValue) => onChange(newValue)}
-      value={value}
+      value={selectedOption}
       loadingText="Carregando..."
       noOptionsText={noOptionsText}
       {...props}
       renderInput={(params) => (
         <TextField
-        error={error}
-        helperText={helperText}
-        {...params}
+          {...params}
           label={label}
           variant="outlined"
           fullWidth
           margin="normal"
+          error={error}
+          helperText={helperText}
           InputProps={{
             ...params.InputProps,
             endAdornment: (

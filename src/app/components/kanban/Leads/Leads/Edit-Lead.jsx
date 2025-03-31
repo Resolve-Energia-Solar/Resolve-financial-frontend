@@ -66,7 +66,7 @@ function EditLeadPage({ leadId = null }) {
           }}
         >
           <Grid container spacing={2} alignItems="center" sx={{ p: 3 }}>
-            <LeadInfoHeader leadId={leadId} />
+            <LeadInfoHeader />
           </Grid>
 
           <Grid container spacing={1} sx={{ padding: '0px 20px 20px 20px' }}>
@@ -148,11 +148,11 @@ function EditLeadPage({ leadId = null }) {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <CustomFormLabel htmlFor="origin_id">Origem</CustomFormLabel>
+              <CustomFormLabel htmlFor="origin">Origem</CustomFormLabel>
               <AutoCompleteOrigin
-                onChange={(id) => handleChange('origin_id', id)}
-                value={formData.origin_id}
-                {...(formErrors.origin_id && { error: true, helperText: formErrors.origin_id })}
+                onChange={(id) => handleChange('origin', id)}
+                value={formData.origin}
+                {...(formErrors.origin && { error: true, helperText: formErrors.origin })}
               />
             </Grid>
 

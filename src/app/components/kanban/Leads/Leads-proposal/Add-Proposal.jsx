@@ -21,7 +21,6 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import ProjectCard from '@/app/components/kanban/Leads/components/ProjectSmallListCard';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import Button from '@mui/material/Button';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import useProposalForm from '@/hooks/proposal/useProposalForm';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
@@ -30,10 +29,6 @@ import CustomTextArea from '@/app/components/forms/theme-elements/CustomTextArea
 import { useSelector } from 'react-redux';
 import { removeProductFromLead, selectProductsByLead } from '@/store/products/customProducts';
 import { useDispatch } from 'react-redux';
-import { color } from 'framer-motion';
-import ManageSearchIcon from '@mui/icons-material/ManageSearch';
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import EnergyConsumptionCalc from '../components/EnergyConsumption/CalculateEnergyConsumption';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ProposalLayout from '../components/ProposalLayout';
@@ -50,29 +45,21 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const [openEnergyConsumption, setOpenEnergyConsumption] = useState(false);
   const [openProposalLayout, setOpenProposalLayout] = useState(false);
 
-  const { handleSave, formErrors, loading: formLoading, success } = useProposalForm();
-
-  const [formData, setFormData] = useState({
-    amount: '',
-    seller_id: '',
-    proposal_validity: '',
-    payment: '',
-    description: '',
-  });
-
-  const handleChange = (field, value) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [field]: value,
-    }));
-  };
+  const {
+    formData,
+    handleChange,
+    handleSave,
+    formErrors,
+    loading: formLoading,
+    success,
+  } = useProposalForm();
 
   const customProducts = useSelector(selectProductsByLead(leadId));
 
-  formData.commercial_products_ids = customProducts.map((product) => product.id);
-  formData.lead_id ? null : (formData.lead_id = leadId);
+  formData.products = customProducts.map((product) => product.id);
+  formData.lead ? null : (formData.lead = leadId);
   formData.status ? null : (formData.status = 'P');
-  user?.user ? (formData.created_by_id = user.user.id) : null;
+  user?.user ? (formData.created_by = user.user.id) : null;
 
   const discard_proposal = () => {
     dispatch(
@@ -155,7 +142,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
           }}
         >
           <Grid item spacing={2} alignItems="center" xs={12}>
-            <LeadInfoHeader leadId={leadId} />
+            <LeadInfoHeader />
           </Grid>
 
           <Grid container spacing={4}>

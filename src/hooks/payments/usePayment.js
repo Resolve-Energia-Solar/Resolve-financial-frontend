@@ -4,7 +4,7 @@ import saleService from '@/services/saleService';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 
-const usePayment = (id) => {
+const usePayment = (id, params = {}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [paymentData, setPaymentData] = useState(null);
@@ -19,17 +19,21 @@ const usePayment = (id) => {
     setRowSelected(item);
   };
 
+  // Se houver um rowSelected, prioriza o id dele
+  id = rowSelected?.id || id;
+  console.log('id', id);
+
   const toggleOpenDrawerClosed = () => {
     setOpenDrawer(!openDrawer);
   };
 
   const editPaymentStatus = async (event, id) => {
     const { name, value } = event.target;
-    const response = await saleService.update(id, { [name]: event.target.value });
+    const response = await saleService.update(id, { [name]: value });
     if (response) {
       setOpenModal(true);
       setIconComponents(CheckCircleIcon);
-      setText({ title: 'Sucesso', message: 'Status Modificado com sucesso!' });
+      setText({ title: 'Sucesso', message: 'Status modificado com sucesso!' });
       setRowSelected({ ...rowSelected, sale: { ...rowSelected.sale, [name]: value } });
     } else {
       setOpenModal(true);
@@ -38,25 +42,30 @@ const usePayment = (id) => {
     }
   };
 
-  useEffect(() => {
+  // Função que busca os dados do pagamento
+  const fetchPayment = async () => {
     if (!id) return;
+    setLoading(true);
+    try {
+      const data = await paymentService.find(id, params);
+      console.log('data (usePayment)', data);
+      setPaymentData(data);
+    } catch (err) {
+      setError('Erro ao carregar o pagamento');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const fetchPayment = async () => {
-      try {
-        const data = await paymentService.find(id, {
-          expand: ['sale.customer', 'installments', 'financier', 'borrower'],
-        });
-        console.log('sjhdfgaskdjhfsdf', data);
-        setPaymentData(data);
-      } catch (err) {
-        setError('Erro ao carregar o pagamento');
-      } finally {
-        setLoading(false);
-      }
-    };
-
+  // Carrega os dados inicialmente e sempre que o id mudar
+  useEffect(() => {
     fetchPayment();
   }, [id]);
+
+  // Função de refresh para recarregar os dados do pagamento
+  const refreshPayment = async () => {
+    await fetchPayment();
+  };
 
   return {
     editPaymentStatus,
@@ -71,6 +80,7 @@ const usePayment = (id) => {
     setOpenModal,
     IconComponents,
     text,
+    refreshPayment,
   };
 };
 

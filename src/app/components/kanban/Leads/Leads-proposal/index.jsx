@@ -32,7 +32,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
       headerName: 'Nome',
       flex: 1,
       render: (row) =>
-        row?.products.length > 0
+        row?.products?.length > 0
           ? row.products.map((product) => product.name).join(', ')
           : 'Nenhum produto vinculado',
     },
@@ -89,13 +89,12 @@ const LeadsProposalListPage = ({ leadId = null }) => {
       setLoadingProposals(true);
       try {
         const response = await leadService.find(leadId, {
-          params: {
-            expand: 'proposals',
+            expand: 'proposals,products',
             fields: 'id,proposals',
             page: page + 1,
             limit: rowsPerPage,
-          },
         });
+        console.log('response', response.proposals || []);
         setData(response.proposals || []);
         setTotalRows(response.proposals?.length || 0);
       } catch (err) {
@@ -165,11 +164,13 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                 }}
                 actions={{
                   edit: (row) => {
-                    setSelectedProposalId(row.id);
+                    console.log('row edit', row);
+                    setSelectedProposalId(row);
                     setOpenEditProposal(true);
                   },
                   view: (row) => {
-                    setSelectedProposalId(row.id);
+                    console.log('row view', row);
+                    setSelectedProposalId(row);
                     setOpenDetailProposal(true);
                   },
                 }}
@@ -212,6 +213,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
               >
                 <DialogContent>
                   <EditProposalPage
+                    proposalData={selectedProposalId}
                     leadId={leadId}
                     onClose={() => setOpenEditProposal(false)}
                     onRefresh={handleRefresh}
@@ -228,7 +230,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
                 <DialogContent>
                   <LeadsViewProposal
                     leadId={leadId}
-                    proposalId={selectedProposalId}
+                    proposalData={selectedProposalId}
                     onClose={() => setOpenDetailProposal(false)}
                     onRefresh={handleRefresh}
                   />

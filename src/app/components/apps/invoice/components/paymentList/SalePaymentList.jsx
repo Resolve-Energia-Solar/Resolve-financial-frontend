@@ -16,46 +16,49 @@ import {
   DialogTitle,
   Button,
 } from '@mui/material';
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PaymentChip from '../PaymentChip';
-import PaymentStatusChip from '../../../../../../utils/status/PaymentStatusChip';
 import paymentService from '@/services/paymentService';
-import { useRouter } from 'next/navigation';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
 import { FilterContext } from '@/context/FilterContext';
+import saleService from '@/services/saleService';
+import PaymentDocBadge from '../accordeon-components/PaymentDocBadge';
 
-const PaymentList = ({ onClick }) => {
+
+const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
+
+const SalePaymentList = ({ onClick }) => {
   // Estados para dados, loading, erro e paginação
   const [paymentsList, setPaymentsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
 
   // Estados para o diálogo de exclusão
   const [open, setOpen] = useState(false);
   const [invoiceToDelete, setInvoiceToDelete] = useState(null);
 
-  const router = useRouter();
   const { filters, refresh } = useContext(FilterContext);
 
-  // Sempre que os filtros ou o refresh mudarem, reseta a página
   useEffect(() => {
     setPage(0);
   }, [filters, refresh]);
 
-  // Busca os pagamentos sempre que os filtros, refresh, página ou linhas por página mudarem
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await paymentService.index({
-          ...filters,
+        const response = await saleService.index({
           page: page + 1,
           limit: rowsPerPage,
-          expand: 'sale.customer,borrower,installments,sale',
-          fields: 'id,value,payment_type,is_paid,sale.customer.complete_name,sale.signature_date,sale.reference_value,sale.total_value,borrower.complete_name,installments,invoice_status,sale.status,sale.payment_status',
+          expand: 'customer,payments.borrower,payments,sale,payments.financier',
+          fields:
+            'id,total_value,payments.payment_type,payments.is_paid,customer.complete_name,signature_date,payments.borrower.complete_name,payments.installments,payments.invoice_status,status,payment_status,payments.financier.name,is_pre_sale',
+          ...filters,
         });
         setPaymentsList(response.results);
         setTotalCount(response.meta.pagination.total_count || 0);
@@ -105,6 +108,16 @@ const PaymentList = ({ onClick }) => {
             <TableRow>
               <TableCell>
                 <Typography variant="h6" fontSize="14px">
+                  Doc.
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="h6" fontSize="14px">
+                  Venda
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="h6" fontSize="14px">
                   Cliente
                 </Typography>
               </TableCell>
@@ -115,7 +128,12 @@ const PaymentList = ({ onClick }) => {
               </TableCell>
               <TableCell>
                 <Typography variant="h6" fontSize="14px">
-                  Parcelas
+                  Tipos de Pagamento
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="h6" fontSize="14px">
+                  Financiadora
                 </Typography>
               </TableCell>
               <TableCell>
@@ -123,21 +141,11 @@ const PaymentList = ({ onClick }) => {
                   Valor
                 </Typography>
               </TableCell>
-              <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Tipo Pagamento
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="h6" fontSize="14px">
-                  Status
-                </Typography>
-              </TableCell>
             </TableRow>
           </TableHead>
 
           {loading ? (
-            <TableSkeleton rows={rowsPerPage} cols={6} />
+            <TableSkeleton rows={rowsPerPage} columns={7} />
           ) : error ? (
             <TableBody>
               <TableRow>
@@ -154,27 +162,83 @@ const PaymentList = ({ onClick }) => {
                 paymentsList.map((item) => (
                   <TableRow key={item.id} onClick={() => onClick(item)} hover>
                     <TableCell>
-                      <Typography fontSize="14px">{item?.sale?.customer?.complete_name}</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography fontSize="14px">{item?.borrower?.complete_name}</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography fontSize="14px">{item?.installments?.length}</Typography>
+                      <Typography fontSize="14px">
+                        <PaymentDocBadge saleId={item.id} contentType={CONTEXT_TYPE_SALE_ID} />
+                      </Typography>
                     </TableCell>
                     <TableCell>
                       <Typography fontSize="14px">
-                        {Number(item?.value).toLocaleString('pt-BR', {
+                        {item?.is_pre_sale ? (
+                          <CancelIcon fontSize="small" color="error" />
+                        ) : (
+                          <CheckCircleIcon fontSize="small" color="success" />
+                        )}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography fontSize="14px">{item?.customer?.complete_name}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography fontSize="14px">
+                        {Array.isArray(item?.payments) && item.payments.length > 0 ? (
+                          <>
+                            {item.payments
+                              .map((p) => p?.borrower?.complete_name)
+                              .filter(Boolean)
+                              .slice(0, 2)
+                              .join(', ')}
+                            {item.payments.filter((p) => p?.borrower?.complete_name).length > 2 &&
+                              ` +${item.payments.length - 2}`}
+                          </>
+                        ) : (
+                          '-'
+                        )}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      {Array.isArray(item?.payments) && item.payments.length > 0 ? (
+                        <>
+                          {item.payments
+                            .map((p) => p?.payment_type)
+                            .filter(Boolean)
+                            .slice(0, 2)
+                            .map((type, index) => (
+                              <PaymentChip key={index} paymentType={type} />
+                            ))}
+                          {item.payments.filter((p) => p?.payment_type).length > 2 && (
+                            <Typography component="span" fontSize="14px" ml={1}>
+                              +{item.payments.filter((p) => p?.payment_type).length - 2}
+                            </Typography>
+                          )}
+                        </>
+                      ) : (
+                        <Typography fontSize="14px">-</Typography>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Typography fontSize="14px">
+                        {Array.isArray(item?.payments) && item.payments.length > 0 ? (
+                          <>
+                            {item.payments
+                              .map((p) => p?.financier?.name)
+                              .filter(Boolean)
+                              .slice(0, 2)
+                              .join(', ')}
+                            {item.payments.filter((p) => p?.financier?.name).length > 2 &&
+                              ` +${item.payments.length - 2}`}
+                          </>
+                        ) : (
+                          '-'
+                        )}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography fontSize="14px">
+                        {Number(item?.total_value).toLocaleString('pt-BR', {
                           style: 'currency',
                           currency: 'BRL',
                         })}
                       </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <PaymentChip paymentType={item?.payment_type} />
-                    </TableCell>
-                    <TableCell>
-                      <PaymentStatusChip paymentType={item?.is_paid} />
                     </TableCell>
                   </TableRow>
                 ))
@@ -194,7 +258,7 @@ const PaymentList = ({ onClick }) => {
 
       {/* Controles de paginação */}
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[10, 20, 30]}
         component="div"
         count={totalCount}
         rowsPerPage={rowsPerPage}
@@ -224,4 +288,4 @@ const PaymentList = ({ onClick }) => {
   );
 };
 
-export default PaymentList;
+export default SalePaymentList;

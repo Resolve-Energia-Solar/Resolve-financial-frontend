@@ -24,6 +24,7 @@ import financialRecordService from '@/services/financialRecordService';
 import { IconPdf } from '@tabler/icons-react';
 import { formatDate } from '@/utils/dateUtils';
 import { useSnackbar } from 'notistack';
+import UserCard from '../users/userCard';
 
 const statusMap = {
   S: <Chip label="Solicitada" color="warning" size="small" />,
@@ -184,7 +185,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
                   <strong>Status do Financeiro:</strong>
                   {(user.employee?.department?.name === 'Tecnologia' ||
                     user.employee?.department?.name === 'Financeiro') &&
-                  currentRecord.payment_status === 'P' ? (
+                    currentRecord.payment_status === 'P' ? (
                     <FormControl variant="outlined" size="small" sx={{ ml: 1 }}>
                       <Select
                         value={currentRecord.payment_status}
@@ -210,7 +211,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
                 <Typography sx={{ display: 'flex', alignItems: 'center' }}>
                   <strong>Status do Gestor:</strong>
                   {user.id === currentRecord.responsible.id &&
-                  currentRecord.responsible_status === 'P' ? (
+                    currentRecord.responsible_status === 'P' ? (
                     <FormControl sx={{ ml: 1 }} variant="outlined" size="small">
                       <Select
                         value={currentRecord.responsible_status}
@@ -291,46 +292,14 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
             <Divider sx={{ my: 3 }} />
             <Grid container>
               <Box display="flex" gap={2}>
-                <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                    Solicitante
-                  </Typography>
-                  <Box display="flex" alignItems="center" gap={2} sx={{ mt: 2 }}>
-                    <Avatar
-                      src={currentRecord.requester.profile_picture}
-                      alt={currentRecord.requester.complete_name}
-                      sx={{ width: 40, height: 40 }}
-                    />
-                    <Box>
-                      <Typography>{currentRecord.requester.complete_name}</Typography>
-                      <Typography>
-                        <Link href={`mailto:${currentRecord.requester.email}`}>
-                          {currentRecord.requester.email}
-                        </Link>
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
-                <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                    Gestor
-                  </Typography>
-                  <Box display="flex" alignItems="center" gap={2} sx={{ mt: 2 }}>
-                    <Avatar
-                      src={currentRecord.responsible.profile_picture}
-                      alt={currentRecord.responsible.complete_name}
-                      sx={{ width: 40, height: 40 }}
-                    />
-                    <Box>
-                      <Typography>{currentRecord.responsible.complete_name}</Typography>
-                      <Typography>
-                        <Link href={`mailto:${currentRecord.responsible.email}`}>
-                          {currentRecord.responsible.email}
-                        </Link>
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
+                <UserCard
+                  userId={currentRecord.requester}
+                  title="Solicitante"
+                />
+                <UserCard
+                  userId={currentRecord.responsible}
+                  title="Gestor"
+                />
               </Box>
             </Grid>
           </Box>
