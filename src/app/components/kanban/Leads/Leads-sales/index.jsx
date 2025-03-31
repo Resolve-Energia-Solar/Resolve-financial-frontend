@@ -186,7 +186,7 @@ const SalesListPage = ({ lead }) => {
                                 <DialogContent>
                                     <LeadsViewProposal
                                         leadId={lead?.id}
-                                        proposalId={selectedSaleId}
+                                        proposalData={selectedSaleId}
                                         onClose={() => setOpenDetailSale(false)}
                                         onRefresh={handleRefresh}
                                     />

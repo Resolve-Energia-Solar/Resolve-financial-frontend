@@ -106,7 +106,7 @@
 //         >
 //           {/* HEEEEEEEEEEEEADER */}
 //           <Grid item spacing={2} alignItems="center" xs={12}>
-//             <LeadInfoHeader leadId={leadId} />
+//             <LeadInfoHeader />
 //           </Grid>
 
 //           {/* <Divider sx={{ my: 2 }} /> */}

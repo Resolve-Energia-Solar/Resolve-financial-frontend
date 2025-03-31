@@ -23,13 +23,9 @@ import { PictureAsPdfTwoTone, TaskAlt, ThumbDownOffAlt } from '@mui/icons-materi
 import ProposalService from '@/services/proposalService';
 import saleService from '@/services/saleService';
 
-function LeadsViewProposal({ leadId = null, proposalId = null, onClose = null, onRefresh = null }) {
-  const router = useRouter();
-  const theme = useTheme();
+function LeadsViewProposal({ leadId = null, proposalData = null, onClose = null, onRefresh = null }) {
   const { enqueueSnackbar } = useSnackbar();
   const user = useSelector((state) => state.user);
-
-  const { proposalData } = useProposal(proposalId);
 
   const proposalStatus = {
     A: { label: 'Aceita', color: '#E9F9E6' },
@@ -46,7 +42,7 @@ function LeadsViewProposal({ leadId = null, proposalId = null, onClose = null, o
       if (status === 'A') {
         await saleService.createPreSale({
           lead_id: leadId,
-          commercial_proposal_id: proposalId,
+          commercial_proposal_id: proposalData.id,
         });
       }
 
@@ -80,7 +76,7 @@ function LeadsViewProposal({ leadId = null, proposalId = null, onClose = null, o
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
-        <LeadInfoHeader leadId={leadId} />
+        <LeadInfoHeader />
       </Grid>
 
       <Grid item xs={12}>
