@@ -165,25 +165,25 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
     // household appliances part
     const [householdAppliances, setHouseholdAppliances] = useState([
         { id: Date.now(), appliance: '', power: '' },
-      ]);
-    
-      const handleMethodChange = (id, field, value) => {
+    ]);
+
+    const handleMethodChange = (id, field, value) => {
         setHouseholdAppliances((prevAppliances) =>
             prevAppliances.map((appliance) => (appliance.id === id ? { ...appliance, [field]: value } : appliance)),
         );
-      };
-    
-      const addHouseholdAppliances = () => {
+    };
+
+    const addHouseholdAppliances = () => {
         setHouseholdAppliances([
-          ...householdAppliances,
-          { id: Date.now(), appliance: '', power: '' },
+            ...householdAppliances,
+            { id: Date.now(), appliance: '', power: '' },
         ]);
-      };
-    
-      const removeHouseholdAppliances = (id) => {
+    };
+
+    const removeHouseholdAppliances = (id) => {
         setHouseholdAppliances(householdAppliances.filter((appliance) => appliance.id !== id));
-      };
-    
+    };
+
 
 
 
@@ -875,33 +875,33 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                 }}
                             >
                                 <DialogContent>
-                                    <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
 
-                                        <Grid container spacing={3}>
-                                            <Grid item xs={12}>
-                                                <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Equipamentos domésticos</Typography>
-                                            </Grid>
-                                            <Grid item xs={12} sx={{ display: "flex", flexDirection: "column" }}>
-                                                
-                                                <Grid item xs={12} sx={{ display: "flex", flexDirection: "row" }}>
-                                                    <Grid container xs={12} sx={{ mb: 1, mt: 2 }}>
-                                                        <Grid item xs={6}>
-                                                            <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: "16px" }}>Equipamentos</Typography>
-                                                        </Grid>
-                                                        <Grid
-                                                            item
-                                                            xs={6}
-                                                            sx={{ justifyContent: 'flex-start', alignItems: 'center', display: 'flex' }}
-                                                        >
-                                                            <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: '16px' }}>Potência</Typography>
-                                                        </Grid>
+
+                                    <Grid container spacing={3}>
+                                        <Grid item xs={12}>
+                                            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Equipamentos domésticos</Typography>
+                                        </Grid>
+                                        <Grid item xs={12} sx={{ display: "flex", flexDirection: "column" }}>
+
+                                            <Grid item xs={12} sx={{ display: "flex", flexDirection: "row" }}>
+                                                <Grid container xs={12} sx={{ mb: 1, mt: 2 }}>
+                                                    <Grid item xs={6}>
+                                                        <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: "16px" }}>Equipamentos</Typography>
+                                                    </Grid>
+                                                    <Grid
+                                                        item
+                                                        xs={6}
+                                                        sx={{ justifyContent: 'flex-start', alignItems: 'center', display: 'flex' }}
+                                                    >
+                                                        <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: '16px' }}>Potência</Typography>
                                                     </Grid>
                                                 </Grid>
-
-
                                             </Grid>
+
+
                                         </Grid>
-                                    </LocalizationProvider>
+                                    </Grid>
+
                                 </DialogContent>
 
                             </Dialog>
