@@ -11,6 +11,7 @@ import {
     Dialog,
     DialogContent,
     DialogActions,
+    Autocomplete,
 } from '@mui/material';
 
 import { useEffect, useState } from 'react';
@@ -32,6 +33,7 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ptBR } from 'date-fns/locale';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import { options } from 'numeral';
 
 function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null }) {
     const router = useRouter();
@@ -183,6 +185,18 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
     const removeHouseholdAppliances = (id) => {
         setHouseholdAppliances(householdAppliances.filter((appliance) => appliance.id !== id));
     };
+
+    // search bar part
+    const appliances = [
+        { code: 'AP', label: 'Aspirador de pó' },
+        { code: 'BT', label: 'Batedeira' },
+        { code: 'BA14', label: 'Bomba d água 1/4 CV' },
+        { code: 'BA12', label: 'Bomba d água 1/2 CV' },
+        { code: 'BA34', label: 'Bomba d água 3/4 CV' },
+        { code: 'BA1', label: 'Bomba d água 1 CV' },
+        { code: 'CA', label: 'Condicionador de Ar' },
+
+    ];
 
 
 
@@ -875,8 +889,6 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                 }}
                             >
                                 <DialogContent>
-
-
                                     <Grid container spacing={3}>
                                         <Grid item xs={12}>
                                             <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Equipamentos domésticos</Typography>
@@ -896,6 +908,17 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                         <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: '16px' }}>Potência</Typography>
                                                     </Grid>
                                                 </Grid>
+
+                                                <Grid container xs={12} sx={{ mb: 1, mt: 2 }}>
+                                                    <Autocomplete
+                                                        options={appliances}
+                                                        getOptionLabel={(option) => `${option.label}`}
+                                                        renderInput={(params) => <TextField {...params} label="Buscar equipamento" />}
+                                                    >
+
+                                                    </Autocomplete>
+                                                </Grid>
+
                                             </Grid>
 
 
