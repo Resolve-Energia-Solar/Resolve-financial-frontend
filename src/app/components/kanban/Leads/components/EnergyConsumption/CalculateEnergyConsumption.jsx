@@ -624,7 +624,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     />
                                 </Grid>
 
-                                <Grid item xs={4}>
+                                <Grid item xs={4} sx={{display: "flex", justifyContent: "flex-end", alignItems: "center"}}>
                                     <Button
                                         variant="contained"
                                         sx={{
@@ -635,7 +635,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         }}
                                         endIcon={<BoltOutlinedIcon sx={{ ml: 1 }} />}
                                     >
-                                        <Typography variant="body1">Calcular geração de energia estimada</Typography>
+                                        <Typography variant="body1">Calcular consumo energético</Typography>
                                     </Button>
                                 </Grid>
 
@@ -934,15 +934,15 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
                                     </Grid>
                                     <Grid container spacing={3} sx={{ mt: 1 }}>
-                                    {householdAppliances.map((appliance) => (
+                                    {householdAppliances.map((appliance, index) => (
                                         <Grid item key={appliance.id} xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                                             
                                             <Grid item xs={7} sx={{ display: "flex", justifyContent: "flex-start" }}>
                                             <Autocomplete
                                                 options={appliances}
-                                                value={appliance.appliance}
+                                                value={appliance.appliance || null}
                                                 onChange={(event, newValue) => handleApplianceInputChange(appliance.id, 'appliance', newValue)}
-                                                getOptionLabel={(option) => `${option.label}`}
+                                                getOptionLabel={(option) => option.label || ''}
                                                 renderInput={(params) => (<TextField {...params} label="Selecione o equipamento" />)}
                                                 sx={{
                                                 '& .MuiInputBase-root': {
@@ -956,7 +956,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                             <Grid item xs={4} sx={{ display: "flex", justifyContent: "flex-start" }}>
                                             <TextField
                                                 value={appliance.kwhValue}
-                                                onChange={(event) => handleApplianceInputChange(appliance.id, 'kwh', event.target.value)}
+                                                onChange={(event) => handleApplianceInputChange(appliance.kwhValue, 'kwh', event.target.value)}
                                                 type="number"
                                                 fullWidth
                                                 InputProps={{
@@ -1053,6 +1053,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end" }}>
                                             <Button
                                                 variant="contained"
+                                                onClick={calculateSum}
                                                 // onClick={() => console.log({ selectedAppliance, applianceKwhValue })}
                                                 sx={{
                                                     backgroundColor: 'black',
@@ -1060,7 +1061,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                     '&:hover': { backgroundColor: '#333' },
                                                     px: 3,
                                                 }}
-                                                endIcon={<BoltOutlinedIcon sx={{ ml: 1 }} />}
+                                                endIcon={<BoltOutlinedIcon />}
                                             >
                                                 <Typography variant="body1">Calcular geração de energia estimada</Typography>
                                             </Button>
@@ -1068,6 +1069,68 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                     </Grid>
 
 
+                                </DialogContent>
+
+                            </Dialog>
+
+                            <Dialog
+                                open={openHouseholdConsumptionResultDialog}
+                                onClose={() => setOpenHouseholdConsumptionResultDialog(false)}
+                                PaperProps={{
+                                    sx: {
+                                        borderRadius: '20px',
+                                        padding: '24px',
+                                        gap: '24px',
+                                        boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                                        width: "464px"
+                                    }
+                                }}
+                            >
+                                <DialogContent>
+                                    <Grid container spacing={3} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                        <Grid item xs={12} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Geração de energia estimada</Typography>
+                                        </Grid>
+                                        <Grid item xs={12} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "36px" }}>{appliancesSumConsuption} kWh</Typography>
+                                        </Grid>
+                                        <Grid spacing={2} container xs={12} sx={{ mt: 2 }}>
+                                            <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end", }}>
+                                                <Button
+                                                    variant='outlined'
+                                                    onClick={() => setOpenHouseholdConsumptionResultDialog(false)}
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        color: 'black',
+                                                        border: "1px solid",
+                                                        px: 3,
+                                                        '&:hover': {
+                                                            borderColor: "transparent",
+                                                            backgroundColor: "black",
+                                                            color: "white"
+                                                        }
+                                                    }}
+                                                >
+                                                    Calcular novamente
+                                                </Button>
+                                            </Grid>
+                                            <Grid item xs={2}>
+                                                <Button
+                                                    onClick={handleSaveAverage}
+                                                    sx={{
+                                                        backgroundColor: theme.palette.primary.main,
+                                                        color: theme.palette.primary.light,
+                                                        '&:hover': {
+                                                            backgroundColor: theme.palette.primary.light,
+                                                            color: theme.palette.primary.main
+                                                        }
+                                                    }}
+                                                >
+                                                    Salvar
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
                                 </DialogContent>
 
                             </Dialog>
