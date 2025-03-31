@@ -166,7 +166,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
     // household appliances part
     const [householdAppliances, setHouseholdAppliances] = useState([
-        { id: Date.now(), appliance: '', power: '' },
+        { id: Date.now(), appliance: '', kwhValue: '' },
     ]);
 
     const handleMethodChange = (id, field, value) => {
@@ -178,7 +178,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
     const addHouseholdAppliances = () => {
         setHouseholdAppliances([
             ...householdAppliances,
-            { id: Date.now(), appliance: '', power: '' },
+            { id: Date.now(), appliance: '', kwhValue: '' },
         ]);
     };
 
@@ -967,12 +967,35 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                     />
                                                 </Grid>
 
+                                                <Grid item xs={12}>
+                                                    <IconButton
+                                                        sx={{
+                                                        mt: 2,
+                                                        color: '#7E8388',
+                                                        justifyContent: 'flex-start',
+                                                        alignItems: 'center',
+                                                        gap: 0.5,
+                                                        transition: '0.3s',
+                                                        '&:hover': {
+                                                            transform: 'scale(1.05)',
+                                                            backgroundColor: 'rgba(0, 0, 0, 0.00)',
+                                                        },
+                                                        }}
+                                                        onClick={addPaymentMethod}
+                                                    >
+                                                        <AddOutlinedIcon sx={{ fontSize: 18 }} />
+                                                        <Typography variant="body2" sx={{ fontSize: 12, fontWeight: 600 }}>
+                                                        Adicionar equipamento
+                                                        </Typography>
+                                                    </IconButton>
+                                                </Grid>
+
 
 
                                             </Grid>
 
                                             <Grid container xs={12} sx={{ mt: 2 }}>
-                                                <Grid item xs={2}>
+                                                {/* <Grid item xs={2}>
                                                     <Button
                                                         onClick={() => setOpenEstimatedGeneration(false)}
                                                         variant="contained"
@@ -986,8 +1009,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                     >
                                                         <Typography variant="body1">Cancelar</Typography>
                                                     </Button>
-                                                </Grid>
-                                                <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end" }}>
+                                                </Grid> */}
+                                                <Grid item xs={12} sx={{ display: "flex", justifyContent: "flex-end" }}>
                                                     <Button
                                                         variant="contained"
                                                         onClick={() => console.log({selectedAppliance, applianceKwhValue})}
