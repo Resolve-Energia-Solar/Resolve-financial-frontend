@@ -25,7 +25,7 @@ const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
 export default function Details({ id, refresh }) {
   const [documentTypes, setDocumentTypes] = useState([]);
-  const [expandedPanels, setExpandedPanels] = useState([]); // <- agora é um array
+  const [expandedPanels, setExpandedPanels] = useState(["sale-info"]);
   const theme = useTheme();
 
   useEffect(() => {
