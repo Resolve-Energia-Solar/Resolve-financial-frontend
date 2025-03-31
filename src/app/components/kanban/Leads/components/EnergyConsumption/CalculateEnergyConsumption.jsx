@@ -968,18 +968,18 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                 </Grid>
 
                                                 <Grid item xs={0.5} sx={{ display: "flex", justifyContent: "flex-end" }} >
-                                                        <IconButton
-                                                            onClick={() => removeHouseholdAppliances(appliance.id)}
-                                                            sx={{
+                                                    <IconButton
+                                                        onClick={() => removeHouseholdAppliances(appliance.id)}
+                                                        sx={{
                                                             color: '#FF5A5F',
                                                             '&:hover': {
                                                                 transform: 'scale(1.1)',
                                                             },
-                                                            }}
-                                                        >
-                                                            <DeleteOutlineOutlinedIcon sx={{color: "#7E8388"}} />
-                                                        </IconButton>
-                                                  
+                                                        }}
+                                                    >
+                                                        <DeleteOutlineOutlinedIcon sx={{ color: "#7E8388" }} />
+                                                    </IconButton>
+
                                                 </Grid>
 
                                             </Grid>))}
@@ -1014,37 +1014,39 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                             </Grid>
                                         </Grid>
 
-                                        <Grid container xs={12} sx={{ mt: 2 }}>
-                                            <Grid item xs={2}>
-                                                <Button
-                                                    onClick={() => setOpenEstimatedGeneration(false)}
-                                                    variant="contained"
-                                                    sx={{
-                                                        backgroundColor: 'white',
-                                                        color: 'black',
-                                                        border: "1px solid",
-                                                        px: 3,
-                                                        '&:hover': { borderColor: "transparent" }
-                                                    }}
-                                                >
-                                                    <Typography variant="body1">Cancelar</Typography>
-                                                </Button>
-                                            </Grid>
-                                            <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end" }}>
-                                                <Button
-                                                    variant="contained"
-                                                    onClick={() => console.log({ selectedAppliance, applianceKwhValue })}
-                                                    sx={{
-                                                        backgroundColor: 'black',
-                                                        color: 'white',
-                                                        '&:hover': { backgroundColor: '#333' },
-                                                        px: 3,
-                                                    }}
-                                                    endIcon={<BoltOutlinedIcon sx={{ ml: 1 }} />}
-                                                >
-                                                    <Typography variant="body1">Calcular geração de energia estimada</Typography>
-                                                </Button>
-                                            </Grid>
+
+
+                                    </Grid>
+                                    <Grid container xs={12} sx={{ mt: 2 }}>
+                                        <Grid item xs={2}>
+                                            <Button
+                                                onClick={() => setOpenEstimatedGeneration(false)}
+                                                variant="contained"
+                                                sx={{
+                                                    backgroundColor: 'white',
+                                                    color: 'black',
+                                                    border: "1px solid",
+                                                    px: 3,
+                                                    '&:hover': { borderColor: "transparent" }
+                                                }}
+                                            >
+                                                <Typography variant="body1">Cancelar</Typography>
+                                            </Button>
+                                        </Grid>
+                                        <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end" }}>
+                                            <Button
+                                                variant="contained"
+                                                onClick={() => console.log({ selectedAppliance, applianceKwhValue })}
+                                                sx={{
+                                                    backgroundColor: 'black',
+                                                    color: 'white',
+                                                    '&:hover': { backgroundColor: '#333' },
+                                                    px: 3,
+                                                }}
+                                                endIcon={<BoltOutlinedIcon sx={{ ml: 1 }} />}
+                                            >
+                                                <Typography variant="body1">Calcular geração de energia estimada</Typography>
+                                            </Button>
                                         </Grid>
                                     </Grid>
 
