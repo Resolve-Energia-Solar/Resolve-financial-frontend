@@ -14,7 +14,7 @@ const useProposalForm = (initialData, id) => {
     status: 'P',
     observation: '',
     medium_consumption: "",
-    estimated_generation: "",
+    appliances_kwh_sum: "",
   });
 
   const [formErrors, setFormErrors] = useState({});
