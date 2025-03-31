@@ -917,72 +917,72 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
                                     </Grid>
                                     <Grid container spacing={3} sx={{ mt: 1 }}>
-                                        {householdAppliances.map((appliance) => (
-                                            <Grid item key={appliance.id} xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                <Grid item xs={6.5} sx={{ display: "flex", justifyContent: "flex-start" }}>
-                                                    <Autocomplete
-                                                        options={appliances}
-                                                        value={appliance.appliance}
-                                                        onChange={(event, newValue) => handleApplianceInputChange(appliance.id, 'appliance', newValue)}
-                                                        getOptionLabel={(option) => `${option.label}`}
-                                                        renderInput={(params) => (<TextField {...params} label="Selecione o equipamento" />)}
-                                                        sx={{
-                                                            '& .MuiInputBase-root': {
-                                                                width: '280px',
-                                                                height: '50px',
-                                                            },
-                                                        }}
-                                                    />
-                                                </Grid>
+                                    {householdAppliances.map((appliance) => (
+  <Grid item key={appliance.id} xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+    
+    <Grid item xs={7} sx={{ display: "flex", justifyContent: "flex-start" }}>
+      <Autocomplete
+        options={appliances}
+        value={appliance.appliance}
+        onChange={(event, newValue) => handleApplianceInputChange(appliance.id, 'appliance', newValue)}
+        getOptionLabel={(option) => `${option.label}`}
+        renderInput={(params) => (<TextField {...params} label="Selecione o equipamento" />)}
+        sx={{
+          '& .MuiInputBase-root': {
+            width: '280px',
+            height: '50px',
+          },
+        }}
+      />
+    </Grid>
 
-                                                <Grid item xs={4.5} >
-                                                    <TextField
-                                                        value={appliance.kwhValue}
-                                                        onChange={(event) => handleApplianceInputChange(appliance.id, 'kwh', event.target.value)}
-                                                        type="number"
-                                                        fullWidth
-                                                        InputProps={{
-                                                            sx: {
-                                                                input: {
-                                                                    color: "#7E92A2",
-                                                                    fontWeight: "400",
-                                                                    fontSize: "12px",
-                                                                    opacity: 1,
-                                                                },
-                                                            },
-                                                            endAdornment: (
-                                                                <InputAdornment position="end">
-                                                                    <Box>
-                                                                        <Typography sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "16px" }}>kWh</Typography>
-                                                                    </Box>
-                                                                </InputAdornment>
-                                                            ),
-                                                        }}
-                                                        sx={{
-                                                            '& .MuiInputBase-root': {
-                                                                // width: '240px', 
-                                                                height: '50px',
-                                                            },
-                                                        }}
-                                                    />
-                                                </Grid>
+    <Grid item xs={4} sx={{ display: "flex", justifyContent: "flex-start" }}>
+      <TextField
+        value={appliance.kwhValue}
+        onChange={(event) => handleApplianceInputChange(appliance.id, 'kwh', event.target.value)}
+        type="number"
+        fullWidth
+        InputProps={{
+          sx: {
+            input: {
+              color: "#7E92A2",
+              fontWeight: "400",
+              fontSize: "12px",
+              opacity: 1,
+            },
+          },
+          endAdornment: (
+            <InputAdornment position="end">
+              <Box>
+                <Typography sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "16px" }}>kWh</Typography>
+              </Box>
+            </InputAdornment>
+          ),
+        }}
+        sx={{
+          '& .MuiInputBase-root': {
+            height: '50px',
+          },
+        }}
+      />
+    </Grid>
 
-                                                <Grid item xs={0.5} sx={{ display: "flex", justifyContent: "flex-end" }} >
-                                                    <IconButton
-                                                        onClick={() => removeHouseholdAppliances(appliance.id)}
-                                                        sx={{
-                                                            color: '#FF5A5F',
-                                                            '&:hover': {
-                                                                transform: 'scale(1.1)',
-                                                            },
-                                                        }}
-                                                    >
-                                                        <DeleteOutlineOutlinedIcon sx={{ color: "#7E8388" }} />
-                                                    </IconButton>
+    <Grid item xs={1} sx={{ display: "flex", justifyContent: "flex-end" }}>
+      <IconButton
+        onClick={() => removeHouseholdAppliances(appliance.id)}
+        sx={{
+          color: '#FF5A5F',
+          '&:hover': {
+            transform: 'scale(1.1)',
+          },
+        }}
+      >
+        <DeleteOutlineOutlinedIcon sx={{ color: "#7E8388" }} />
+      </IconButton>
+    </Grid>
+  </Grid>
+))}
 
-                                                </Grid>
-
-                                            </Grid>))}
                                         <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
                                             <Grid item xs={12}>
                                                 <IconButton
