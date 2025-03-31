@@ -10,6 +10,7 @@ import {
   Button,
   Typography,
 } from '@mui/material';
+import FilterListIcon from "@mui/icons-material/FilterList";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
 import InforCards from '../../inforCards/InforCards';
@@ -18,11 +19,8 @@ import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import SalePaymentList from '../components/paymentList/SalePaymentList';
 
 export default function InvoiceList({ onClick }) {
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const { filters, setFilters } = useContext(FilterContext);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
-  const router = useRouter();
-  const context = useContext(FilterContext);
 
   const cardsData = [
     {
@@ -249,7 +247,18 @@ export default function InvoiceList({ onClick }) {
           mb: 3,
         }}
       >
-        <Button variant="outlined" sx={{ mt: 1, mb: 2 }} onClick={() => setFilterDrawerOpen(true)}>
+        {/* Título da página */}
+        <Typography variant="h5" component="h1">
+          Financeiro
+        </Typography>
+
+        {/* Botão com ícone de filtro */}
+        <Button
+          variant="outlined"
+          sx={{ mt: 1, mb: 2 }}
+          onClick={() => setFilterDrawerOpen(true)}
+          startIcon={<FilterListIcon />} // Ícone à esquerda do texto
+        >
           Abrir Filtros
         </Button>
       </Box>
