@@ -990,7 +990,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                 <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end" }}>
                                                     <Button
                                                         variant="contained"
-                                                        onClick={calculateAverage}
+                                                        onClick={() => console.log({selectedAppliance, applianceKwhValue})}
                                                         sx={{
                                                             backgroundColor: 'black',
                                                             color: 'white',
