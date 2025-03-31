@@ -36,7 +36,7 @@ import { permission } from 'process';
 import { id } from 'date-fns/locale';
 
 const Menuitems = [
- {
+  {
     id: uniqueId(),
     title: 'CRM',
     href: '/',
@@ -44,19 +44,19 @@ const Menuitems = [
     href: '/apps/kanban/',
     permissions: ['core.view_board', 'resolve_crm.view_lead'],
     children: [
-      { 
-        id: uniqueId(), 
-        title: 'Kanban', 
-        icon: IconLayoutKanban, 
-        href: '/apps/kanban/', 
-        permissions: ['core.view_board'] 
+      {
+        id: uniqueId(),
+        title: 'Kanban',
+        icon: IconLayoutKanban,
+        href: '/apps/kanban/',
+        permissions: ['core.view_board']
       },
-      { 
-        id: uniqueId(), 
-        title: 'Leads', 
-        icon: IconId, 
-        href: '/apps/leads', 
-        permissions: ['resolve_crm.view_lead'] 
+      {
+        id: uniqueId(),
+        title: 'Leads',
+        icon: IconId,
+        href: '/apps/leads',
+        permissions: ['resolve_crm.view_lead']
       },
     ],
     chip: 'Novo',
@@ -147,16 +147,15 @@ const Menuitems = [
     id: uniqueId(),
     title: 'Financiamento',
     icon: IconBuildingBank,
-    href: '/apps/funding-request',
     // permissions: ['contracts.view_payment',],
     children: [
-        {
-          id: uniqueId(),
-          title: 'Solicitações Sicoob',
-          icon: IconPigMoney,
-          href: '/apps/funding-request',
-          // permissions: ['financial.view_payment'],
-        },
+      {
+        id: uniqueId(),
+        title: 'Solicitações Sicoob',
+        icon: IconPigMoney,
+        href: '/apps/funding-request/sicoob',
+        // permissions: ['financial.view_payment'],
+      },
     ],
   },
   {
