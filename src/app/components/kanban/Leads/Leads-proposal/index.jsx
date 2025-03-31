@@ -213,6 +213,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
               >
                 <DialogContent>
                   <EditProposalPage
+                    proposalData={selectedProposalId}
                     leadId={leadId}
                     onClose={() => setOpenEditProposal(false)}
                     onRefresh={handleRefresh}

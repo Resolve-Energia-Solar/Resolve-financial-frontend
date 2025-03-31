@@ -25,7 +25,7 @@ const useProposalForm = (initialData, id) => {
         lead: initialData.lead?.id || null,
         created_by: initialData.created_by || user?.id || null,
         products:
-          initialData.products?.map((item) => item.product.id) || [],
+          initialData.products?.map((item) => item?.product?.id) || [],
         due_date: initialData.due_date || null,
         value: initialData.value || null,
         status: initialData.status || 'P',

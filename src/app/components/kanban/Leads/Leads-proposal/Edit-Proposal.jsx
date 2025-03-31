@@ -14,14 +14,12 @@ import {
 } from '@mui/material';
 
 import { useEffect, useState } from 'react';
-import leadService from '@/services/leadService';
 import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import ProjectCard from '@/app/components/kanban/Leads/components/ProjectSmallListCard';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import Button from '@mui/material/Button';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import useProposalForm from '@/hooks/proposal/useProposalForm';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
@@ -30,22 +28,18 @@ import CustomTextArea from '@/app/components/forms/theme-elements/CustomTextArea
 import { useSelector } from 'react-redux';
 import { removeProductFromLead, selectProductsByLead } from '@/store/products/customProducts';
 import { useDispatch } from 'react-redux';
-import { color } from 'framer-motion';
-import ManageSearchIcon from '@mui/icons-material/ManageSearch';
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import EnergyConsumptionCalc from '../components/EnergyConsumption/CalculateEnergyConsumption';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import ProposalLayout from '../components/ProposalLayout';
 
-function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
-  const router = useRouter();
+function EditProposalPage({ proposalData = null, leadId = null, onRefresh = null, onClose = null }) {
   const theme = useTheme();
-  const [lead, setLead] = useState(null);
-  const [loadingLeads, setLoadingLeads] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const [openEnergyConsumption, setOpenEnergyConsumption] = useState(false);
+  const [openProposalLayout, setOpenProposalLayout] = useState(false);
 
   const {
     formData,
@@ -54,19 +48,17 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     formErrors,
     loading: formLoading,
     success,
-  } = useProposalForm();
+  } = useProposalForm(proposalData, proposalData?.id);
 
-  const customProducts = useSelector(selectProductsByLead(leadId));
+  formData.lead ? null : (formData.lead = leadId);
 
-  formData.commercial_products_ids = customProducts.map((product) => product.id);
-  formData.lead_id ? null : (formData.lead_id = leadId);
-  formData.status ? null : (formData.status = 'P');
-  user?.user ? (formData.created_by_id = user.user.id) : null;
+  console.log('Form Data:', formData);
+
 
   const discard_proposal = () => {
-    dispatch(
-      removeProductFromLead({ leadId, productIds: customProducts.map((product) => product.id) }),
-    );
+    // dispatch(
+    //   removeProductFromLead({ leadId, productIds: customProducts?.map((product) => product.id) }),
+    // );
     handleChange('due_date', null);
     handleChange('value', null);
     handleChange('proposal_description', '');
@@ -79,32 +71,23 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     }
   }, [success]);
 
-  useEffect(() => {
-    const fetchLead = async () => {
-      setLoadingLeads(true);
-      try {
-        const data = await leadService.find(leadId);
-        setLead(data);
-        console.log(data);
-      } catch (err) {
-        enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
-      } finally {
-        setLoadingLeads(false);
-      }
-    };
-    fetchLead();
-  }, []);
 
   const handleSaveForm = async () => {
     const response = await handleSave();
     if (response) {
-      enqueueSnackbar('Proposta atualizada com sucesso', { variant: 'success' });
+      enqueueSnackbar('Proposta salva com sucesso', { variant: 'success' });
       if (onRefresh) onRefresh();
       if (onClose) onClose();
     } else {
-      enqueueSnackbar('Erro ao atualizar proposta', { variant: 'error' });
+      enqueueSnackbar('Erro ao salvar proposta', { variant: 'error' });
       console.log('Form Errors:', formErrors);
     }
+  };
+
+  const handleOpenProposalPdf = () => {
+    // const queryParams = new URLSearchParams(formData).toString();
+    // window.open(`apps/leads/${leadId}/proposal-layout?${queryParams}`, "_blank", "width=800,height=600");
+    setOpenProposalLayout(true);
   };
 
   const [paymentMethods, setPaymentMethods] = useState([
@@ -148,42 +131,24 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   variant="h6"
                   sx={{ color: '#000000', fontWeight: '700', fontSize: '18px' }}
                 >
-                  Editar proposta
+                  Nova proposta
                 </Typography>
               </Grid>
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={4}>
-                  <CustomFormLabel
-                    htmlFor="amount"
-                    sx={{ color: '#092C4C', fontWeight: '700', fontSize: '14px' }}
-                  >
-                    Valor da proposta
-                  </CustomFormLabel>
-                  <TextField
-                    name="amount"
-                    value={formData.amount}
-                    onChange={(e) => handleChange('amount', e.target.value)}
+                <Grid item xs={6}>
+                  <CustomFormLabel htmlFor="amount">Valor da proposta</CustomFormLabel>
+                  <CustomFieldMoney
+                    name="value"
                     fullWidth
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Box sx={{ color: '#7E92A2', fontWeight: '400', fontSize: '12px' }}>
-                            R$
-                          </Box>
-                        </InputAdornment>
-                      ),
-                    }}
+                    value={formData.value}
+                    onChange={(value) => handleChange('value', value)}
+                    {...(formErrors.value && { error: true, helperText: formErrors.value })}
                   />
                 </Grid>
 
-                <Grid item xs={4}>
-                  <CustomFormLabel
-                    htmlFor="seller_id"
-                    sx={{ color: '#092C4C', fontWeight: '700', fontSize: '14px' }}
-                  >
-                    Vendedor Responsável
-                  </CustomFormLabel>
+                {/* <Grid item xs={4}>
+                  <CustomFormLabel htmlFor="seller_id" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Vendedor Responsável</CustomFormLabel>
                   <TextField
                     select
                     name="seller_id"
@@ -195,31 +160,27 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     <MenuItem value="C">Ciclano</MenuItem>
                     <MenuItem value="B">Beltrano</MenuItem>
                   </TextField>
-                </Grid>
+                </Grid> */}
 
-                <Grid item xs={4}>
-                  <CustomFormLabel
-                    htmlFor="proposal_validity"
-                    sx={{ color: '#092C4C', fontWeight: '700', fontSize: '14px' }}
-                  >
-                    Validade da proposta
-                  </CustomFormLabel>
-                  <TextField
-                    name="proposal_validity"
-                    value={formData.proposal_validity}
-                    onChange={(e) => handleChange('proposal_validity', e.target.value)}
+                <Grid item xs={6}>
+                  <FormDate
+                    name="due_date"
+                    label="Data de Vencimento"
                     fullWidth
+                    value={formData.due_date}
+                    onChange={(value) => handleChange('due_date', value)}
+                    {...(formErrors.due_date && { error: true, helperText: formErrors.due_date })}
                   />
                 </Grid>
               </Grid>
 
-              <Grid container rowSpacing={1} xs={12}>
+              {/* <Grid container rowSpacing={1} xs={12}>
                 {paymentMethods.map((payment, index) => (
                   <Grid container spacing={2} key={payment.id} alignItems="center">
                     <Grid item xs={12}>
                       <CustomFormLabel
                         htmlFor={`payment_method_${payment.id}`}
-                        sx={{ color: '#092C4C', fontWeight: '700', fontSize: '14px' }}
+                        sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
                       >
                         Forma de pagamento {index + 1}
                       </CustomFormLabel>
@@ -264,7 +225,7 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                       <Grid item xs={12}>
                         <CustomFormLabel
                           htmlFor={`financing_type_${payment.id}`}
-                          sx={{ color: '#092C4C', fontWeight: '700', fontSize: '14px' }}
+                          sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
                         >
                           Financiadoras
                         </CustomFormLabel>
@@ -272,9 +233,7 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                           select
                           name={`financing_type_${payment.id}`}
                           value={payment.financing_type}
-                          onChange={(e) =>
-                            handleMethodChange(payment.id, 'financing_type', e.target.value)
-                          }
+                          onChange={(e) => handleMethodChange(payment.id, 'financing_type', e.target.value)}
                           fullWidth
                         >
                           <MenuItem value="1">Sol Agora</MenuItem>
@@ -297,7 +256,7 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                       <Grid item xs={12}>
                         <CustomFormLabel
                           htmlFor={`installments_num_${payment.id}`}
-                          sx={{ color: '#092C4C', fontWeight: '700', fontSize: '14px' }}
+                          sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
                         >
                           Parcelas
                         </CustomFormLabel>
@@ -305,9 +264,7 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                           select
                           name={`installments_num_${payment.id}`}
                           value={payment.installments_num}
-                          onChange={(e) =>
-                            handleMethodChange(payment.id, 'installments_num', e.target.value)
-                          }
+                          onChange={(e) => handleMethodChange(payment.id, 'installments_num', e.target.value)}
                           fullWidth
                         >
                           <MenuItem value="2">2x</MenuItem>
@@ -341,26 +298,21 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     </Typography>
                   </IconButton>
                 </Grid>
-              </Grid>
+              </Grid> */}
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={12}>
-                  <CustomFormLabel
-                    htmlFor="description"
-                    sx={{ color: '#092C4C', fontWeight: '700', fontSize: '14px' }}
-                  >
-                    Descrição
-                  </CustomFormLabel>
+                  <CustomFormLabel htmlFor="description">Descrição</CustomFormLabel>
                   <CustomTextArea
-                    name="proposal_description"
+                    name="observation"
                     multiline
                     rows={4}
                     minRows={3}
-                    value={formData.proposal_description}
-                    onChange={(e) => handleChange('proposal_description', e.target.value)}
-                    {...(formErrors.proposal_description && {
+                    value={formData.observation}
+                    onChange={(e) => handleChange('observation', e.target.value)}
+                    {...(formErrors.observation && {
                       error: true,
-                      helperText: formErrors.proposal_description,
+                      helperText: formErrors.observation,
                     })}
                   />
                 </Grid>
@@ -381,31 +333,41 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             xs={12}
             sx={{
               display: 'flex',
-              justifyContent: 'space-between',
+              justifyContent: 'end',
               alignItems: 'center',
               mt: 2,
               gap: 2,
             }}
           >
-            <Button
-              variant="contained"
+            {/* <Button
+              startIcon={<PictureAsPdfIcon sx={{ color: '#1C1B1F' }} />}
+              variant="outlined"
+              onClick={handleOpenProposalPdf}
               sx={{
-                backgroundColor: 'black',
-                color: 'white',
-                '&:hover': { backgroundColor: '#333' },
+                borderColor: 'black',
+                color: '#303030',
+                '&:hover': {
+                  backgroundColor: '#333',
+                  borderColor: 'black',
+                  '& .MuiSvgIcon-root': { color: 'white' },
+                },
                 px: 3,
               }}
             >
-              <Typography variant="body1">Pré-visualizar proposta</Typography>
-              <VisibilityIcon sx={{ ml: 1 }} />
-            </Button>
+              <Typography sx={{ fontWeight: '400', fontSize: '14px' }}>Visualizar PDF</Typography>
+            </Button> */}
 
             <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>
+              <Button
+                variant="outlined"
+                color="error"
+                sx={{ px: 3 }}
+                onClick={discard_proposal}
+                endIcon={<DeleteOutlinedIcon />}
+              >
                 <Typography variant="body1" sx={{ mr: 1 }}>
                   Descartar
                 </Typography>
-                <DeleteOutlinedIcon />
               </Button>
 
               <Button
@@ -416,11 +378,31 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
               >
                 <Typography variant="body1" color="white">
-                  {formLoading ? 'Gerando proposta...' : 'Gerar proposta'}
+                  {formLoading ? 'Salvando...' : 'Salvar alterações'}
                 </Typography>
               </Button>
             </Box>
           </Grid>
+
+          <Dialog
+            open={openProposalLayout}
+            onClose={() => setOpenProposalLayout(false)}
+            maxWidth="lg"
+            fullWidth
+            PaperProps={{
+              sx: {
+                borderRadius: '20px',
+                padding: '24px',
+                gap: '24px',
+                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                backgroundColor: '#FFFFFF',
+              },
+            }}
+          >
+            <DialogContent>
+              <ProposalLayout formData={formData} />
+            </DialogContent>
+          </Dialog>
 
           <Dialog
             open={openEnergyConsumption}
