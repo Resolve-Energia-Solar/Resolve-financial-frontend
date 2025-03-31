@@ -107,7 +107,7 @@ function EditCustomerPage({ leadId = null }) {
           {/* Header */}
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12}>
-              <LeadInfoHeader leadId={leadId} />
+              <LeadInfoHeader />
             </Grid>
           </Grid>
 

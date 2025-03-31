@@ -74,7 +74,7 @@ const LeadsContractPage = ({ leadId = null }) => {
           }}
         >
           <Grid item spacing={2} alignItems="center" xs={12}>
-            <LeadInfoHeader leadId={leadId} />
+            <LeadInfoHeader />
           </Grid>
           <Grid container spacing={4} sx={{ mt: 2, mb: 1, ml: 1.5 }}>
             <Typography variant="h5" fontWeight={'bold'}>

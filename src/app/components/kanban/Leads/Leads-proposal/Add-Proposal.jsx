@@ -142,7 +142,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
           }}
         >
           <Grid item spacing={2} alignItems="center" xs={12}>
-            <LeadInfoHeader leadId={leadId} />
+            <LeadInfoHeader />
           </Grid>
 
           <Grid container spacing={4}>

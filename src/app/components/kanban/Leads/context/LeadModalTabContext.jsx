@@ -7,6 +7,7 @@ export const LeadModalTabContext = createContext();
 export function LeadModalTabProvider({ leadId, children }) {
   const [lead, setLead] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
+
   
   useEffect(() => {
     const fetchLead = async () => {
@@ -19,6 +20,7 @@ export function LeadModalTabProvider({ leadId, children }) {
     };
     fetchLead();
   }, [leadId]);
+
 
   return <LeadModalTabContext.Provider value={{ lead }}>{children}</LeadModalTabContext.Provider>;
 }

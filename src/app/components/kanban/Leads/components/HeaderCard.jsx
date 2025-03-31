@@ -17,39 +17,18 @@ import {
 import { CalendarToday, WbSunny } from '@mui/icons-material';
 
 import EditIcon from '@mui/icons-material/Edit';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { usePathname } from 'next/navigation';
 import leadService from '@/services/leadService';
 import { IconCalendarWeek, IconEye, IconPencil, IconTrash } from '@tabler/icons-react';
 import LeadInfoHeaderSkeleton from './LeadInfoHeaderSkeleton';
+import { LeadModalTabContext } from '../context/LeadModalTabContext';
 
 function LeadInfoHeader({ leadId, tabValue }) {
-  const [lead, setLead] = useState(null);
-  const [projects, setProjects] = useState([]);
+  const { lead } = useContext(LeadModalTabContext);
   const [selectedProject, setSelectedProject] = useState('');
-  const [loadingLeads, setLoadingLeads] = useState(true);
-  const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
-
-  useEffect(() => {
-    const fetchLead = async () => {
-      if (!leadId) return;
-      setLoadingLeads(true);
-      try {
-        const data = await leadService.find(leadId);
-        setLead(data);
-        setProjects(data?.projects || []);
-        // setSelectedProject(data?.projects[0]?.id || '');
-      } catch (err) {
-        enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
-      } finally {
-        setLoadingLeads(false);
-      }
-    };
-
-    fetchLead();
-  }, [leadId]);
 
   if (!lead) return <LeadInfoHeaderSkeleton />;
 
@@ -134,27 +113,29 @@ function LeadInfoHeader({ leadId, tabValue }) {
             />
           </Grid>
 
-          <Grid
-            item
-            sx={{
-              display: 'flex',
-              flexDirection: 'column ',
-              alignItems: 'flex-start',
-            }}
-          >
-            <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
-              Status
-            </Typography>
-            <Chip
-              label={lead?.column?.name}
-              variant="outlined"
+          {lead?.column?.name && (
+            <Grid
+              item
               sx={{
-                color: 'gray',
-                borderColor: `${lead?.column?.color}`,
-                px: 1,
+                display: 'flex',
+                flexDirection: 'column ',
+                alignItems: 'flex-start',
               }}
-            />
-          </Grid>
+            >
+              <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
+                Status
+              </Typography>
+              <Chip
+                label={lead?.column?.name}
+                variant="outlined"
+                sx={{
+                  color: 'gray',
+                  borderColor: `${lead?.column?.color}`,
+                  px: 1,
+                }}
+              />
+            </Grid>
+          )}
         </Grid>
       </Grid>
 

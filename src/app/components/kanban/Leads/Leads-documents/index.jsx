@@ -78,7 +78,7 @@ function LeadDocumentPage() {
           }}
         >
           {/* Render LeadInfoHeader or its skeleton */}
-          {isLoading ? <LeadInfoHeaderSkeleton /> : <LeadInfoHeader leadId={leadId} />}
+          {isLoading ? <LeadInfoHeaderSkeleton /> : <LeadInfoHeader />}
 
           {/* Render sales or skeleton */}
           {isLoading ? (

@@ -43,8 +43,6 @@ function EditLeadPage({ leadId = null }) {
     success,
   } = useLeadForm(leadData, leadId);
 
-  console.log('Form Data:', formData);
-
   formData?.seller_id ? null : handleChange('seller_id', user?.id);
 
   const handleSaveLead = async () => {
@@ -68,7 +66,7 @@ function EditLeadPage({ leadId = null }) {
           }}
         >
           <Grid container spacing={2} alignItems="center" sx={{ p: 3 }}>
-            <LeadInfoHeader leadId={leadId} />
+            <LeadInfoHeader />
           </Grid>
 
           <Grid container spacing={1} sx={{ padding: '0px 20px 20px 20px' }}>

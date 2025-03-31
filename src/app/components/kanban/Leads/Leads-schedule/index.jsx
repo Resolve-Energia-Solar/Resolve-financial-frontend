@@ -68,7 +68,7 @@ function LeadSchedulePage({ leadId = null }) {
             flexDirection: 'column',
           }}
         >
-          <LeadInfoHeader leadId={leadId} />
+          <LeadInfoHeader />
 
           <Stack spacing={3} sx={{ mt: 3 }}>
             <Stack direction="row" justifyContent="space-between" sx={{ mt: 3 }}>

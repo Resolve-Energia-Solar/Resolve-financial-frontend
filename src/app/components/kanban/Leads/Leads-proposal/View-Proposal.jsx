@@ -76,7 +76,7 @@ function LeadsViewProposal({ leadId = null, proposalData = null, onClose = null,
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
-        <LeadInfoHeader leadId={leadId} />
+        <LeadInfoHeader />
       </Grid>
 
       <Grid item xs={12}>
