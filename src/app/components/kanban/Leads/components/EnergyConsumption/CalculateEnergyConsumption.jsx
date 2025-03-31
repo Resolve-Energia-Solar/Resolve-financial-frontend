@@ -896,30 +896,64 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         <Grid item xs={12} sx={{ display: "flex", flexDirection: "column" }}>
 
                                             <Grid item xs={12} sx={{ display: "flex", flexDirection: "row" }}>
-                                                <Grid container xs={12} sx={{ mb: 1, mt: 2 }}>
-                                                    <Grid item xs={6}>
-                                                        <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: "16px" }}>Equipamentos</Typography>
-                                                    </Grid>
-                                                    <Grid
-                                                        item
-                                                        xs={6}
-                                                        sx={{ justifyContent: 'flex-start', alignItems: 'center', display: 'flex' }}
-                                                    >
-                                                        <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: '16px' }}>Potência</Typography>
-                                                    </Grid>
+
+                                                <Grid item xs={6}>
+                                                    <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: "16px" }}>Equipamentos</Typography>
+                                                </Grid>
+                                                <Grid
+                                                    item
+                                                    xs={6}
+                                                    sx={{ justifyContent: 'flex-start', alignItems: 'center', display: 'flex' }}
+                                                >
+                                                    <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: '16px' }}>Potência</Typography>
                                                 </Grid>
 
-                                                <Grid container xs={12} sx={{ mb: 1, mt: 2 }}>
+
+                                            </Grid>
+
+                                            <Grid item rowSpacing={2} xs={12} sx={{ display: "flex", flexDirection: "row", mt: 2 }}>
+                                                <Grid item xs={6}>
                                                     <Autocomplete
                                                         options={appliances}
                                                         getOptionLabel={(option) => `${option.label}`}
-                                                        renderInput={(params) => <TextField {...params} label="Buscar equipamento" />}
+                                                        renderInput={(params) => <TextField {...params}   />}
                                                     >
 
                                                     </Autocomplete>
                                                 </Grid>
 
+                                                <Grid item xs={6}>
+
+                                                    <TextField
+                                                        // value={}
+                                                        // onChange={(e) => handleMonthInputChange(monthLabel, e.target.value)}
+                                                        type="number"
+                                                        InputProps={{
+                                                            sx: {
+                                                                input: {
+                                                                    color: "#7E92A2",
+                                                                    fontWeight: "400",
+                                                                    fontSize: "12px",
+                                                                    opacity: 1,
+                                                                    // width: "265px"
+                                                                },
+                                                            },
+                                                            endAdornment: (
+                                                                <InputAdornment position="end">
+                                                                    <Box>
+                                                                        <Typography sx={{ color: "#7E92A2", fontWeight: "400", fontSize: "16px" }}>kWh</Typography>
+                                                                    </Box>
+                                                                </InputAdornment>
+                                                            ),
+                                                        }}
+                                                    />
+                                                </Grid>
+
+
+
                                             </Grid>
+
+
 
 
                                         </Grid>
