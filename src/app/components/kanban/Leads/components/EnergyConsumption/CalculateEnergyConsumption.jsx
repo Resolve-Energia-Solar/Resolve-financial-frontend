@@ -894,26 +894,26 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                             >
                                 <DialogContent>
                                     <Grid container spacing={3}>
-                                        <Grid item xs={12}>
+                                        <Grid item xs={12} sx={{ justifyContent: 'flex-start', alignItems: 'center', display: 'flex', textAlign: 'center'}}>
                                             <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Equipamentos domésticos</Typography>
                                         </Grid>
-                                        <Grid item xs={12} sx={{ display: "flex", flexDirection: "row" }}>
-
-
-                                            <Grid item xs={6}>
-                                                <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: "16px" }}>Equipamentos</Typography>
+                                        
+                                        <Grid container item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+                                            <Grid item xs={6} sx={{ justifyContent: 'flex-start', alignItems: 'center', display: 'flex', textAlign: 'center' }}>
+                                                <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: "16px" }}>
+                                                    Equipamentos
+                                                </Typography>
                                             </Grid>
-                                            <Grid
-                                                item
-                                                xs={6}
-                                                sx={{ justifyContent: 'flex-start', alignItems: 'center', display: 'flex' }}
-                                            >
-                                                <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: '16px' }}>Potência</Typography>
+                                            <Grid item xs={6}  sx={{ justifyContent: 'flex-start', alignItems: 'center', display: 'flex', textAlign: 'center' }} >
+                                                <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: '16px' }}>
+                                                    Potência
+                                                </Typography>
                                             </Grid>
+                                        </Grid>
 
 
                                         </Grid>
-                                        <Grid container spacing={3} sx={{ mt: 2, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                                        <Grid container sx={{ mt: 2 }}>
                                             <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
                                                 <Grid item xs={6}>
                                                     <Autocomplete
@@ -1004,7 +1004,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                 </Grid>
                                             </Grid>
                                         </Grid>
-                                    </Grid>
+                                    
 
                                 </DialogContent>
 
