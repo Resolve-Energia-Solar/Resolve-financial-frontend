@@ -198,6 +198,10 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
     ];
 
+    const [selectedAppliance, setSelectedAppliance] = useState("");
+    const [applianceKwhValue, setApplianceKwhValue] = useState("");
+
+
 
 
 
