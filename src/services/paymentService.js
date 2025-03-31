@@ -51,6 +51,16 @@ const paymentService = {
     }
   },
 
+  getIndicators: async (params) => {
+    try {
+      const response = await apiClient.get('/api/payments/indicators/', { params });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar indicadores de pagamentos:', error);
+      throw error;
+    }
+  },
+
   getPayments: async ({ ordering, nextPage, userRole, limit = 25, page = 1, ...filters }) => {
     try {
       const params = {

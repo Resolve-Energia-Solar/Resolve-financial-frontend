@@ -28,12 +28,33 @@ import PaymentDocBadge from '../accordeon-components/PaymentDocBadge';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
+function useAnimatedNumber(targetValue, duration = 800) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    let startTime;
+    const animate = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      setDisplayValue(Math.floor(progress * targetValue));
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    requestAnimationFrame(animate);
+  }, [targetValue, duration]);
+
+  return displayValue;
+}
+
 const SalePaymentList = ({ onClick }) => {
   // Estados para dados, loading, erro e paginação
   const [paymentsList, setPaymentsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
+  const [indicators, setIndicators] = useState([]);
+  const [loadingIndicators, setLoadingIndicators] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
 
@@ -70,9 +91,55 @@ const SalePaymentList = ({ onClick }) => {
       }
     };
 
+    const fetchIndicators = async () => {
+      setLoadingIndicators(true);
+      try {
+        const response = await paymentService.getIndicators({
+          ...filters,
+        })
+        console.log('Indicadores:', response);
+        setIndicators(response.indicators || 0);
+      } catch (err) {
+        console.error('Erro ao carregar indicadores:', err);
+        setError('Erro ao carregar indicadores.');
+      } finally {
+        setLoadingIndicators(false);
+      }
+    }
+
     fetchData();
+    fetchIndicators();
+
   }, [filters, refresh, page, rowsPerPage]);
 
+  const onTimeInstallmentCount = useAnimatedNumber(
+    indicators?.installments?.on_time_installments_count || 0,
+  );
+  
+  const overdueInstallmentsCount = useAnimatedNumber(
+    indicators?.installments?.overdue_installments_count || 0,
+  );
+  
+  const paidInstallmentsCount = useAnimatedNumber(
+    indicators?.installments?.paid_installments_count || 0,
+  );
+  
+  const totalInstallments = useAnimatedNumber(
+    indicators?.installments?.total_installments || 0,
+  );
+  
+  const totalPayments = useAnimatedNumber(
+    indicators?.consistency?.total_payments || 0,
+  );
+  
+  const consistentPayments = useAnimatedNumber(
+    indicators?.consistency?.consistent_payments || 0,
+  );
+  
+  const inconsistentPayments = useAnimatedNumber(
+    indicators?.consistency?.inconsistent_payments || 0,
+  );
+  
   // Handlers para paginação
   const handlePageChange = (_, newPage) => {
     setPage(newPage);
