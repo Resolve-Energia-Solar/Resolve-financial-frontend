@@ -897,41 +897,49 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         <Grid item xs={12}>
                                             <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Equipamentos domésticos</Typography>
                                         </Grid>
-                                        <Grid item xs={12} sx={{ display: "flex", flexDirection: "column" }}>
-
-                                            <Grid item xs={12} sx={{ display: "flex", flexDirection: "row" }}>
-
-                                                <Grid item xs={6}>
-                                                    <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: "16px" }}>Equipamentos</Typography>
-                                                </Grid>
-                                                <Grid
-                                                    item
-                                                    xs={6}
-                                                    sx={{ justifyContent: 'flex-start', alignItems: 'center', display: 'flex' }}
-                                                >
-                                                    <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: '16px' }}>Potência</Typography>
-                                                </Grid>
+                                        <Grid item xs={12} sx={{ display: "flex", flexDirection: "row" }}>
 
 
+                                            <Grid item xs={6}>
+                                                <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: "16px" }}>Equipamentos</Typography>
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                xs={6}
+                                                sx={{ justifyContent: 'flex-start', alignItems: 'center', display: 'flex' }}
+                                            >
+                                                <Typography sx={{ color: "#000000", fontWeight: '700', fontSize: '16px' }}>Potência</Typography>
                                             </Grid>
 
-                                            <Grid item rowSpacing={2} xs={12} sx={{ display: "flex", flexDirection: "row", mt: 2 }}>
+
+                                        </Grid>
+                                        <Grid container spacing={3} sx={{ mt: 2, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                                            <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
                                                 <Grid item xs={6}>
                                                     <Autocomplete
                                                         options={appliances}
+                                                        value={selectedAppliance}
+                                                        onChange={(event, newValue) => setSelectedAppliance(newValue)}
                                                         getOptionLabel={(option) => `${option.label}`}
-                                                        renderInput={(params) => <TextField {...params}   />}
+                                                        renderInput={(params) => (<TextField {...params} label="Selecione equipamento" />)}
+                                                        sx={{
+                                                            '& .MuiInputBase-root': {
+                                                              width: '100%', 
+                                                              height: '50px', 
+                                                            },
+                                                          }}
                                                     >
 
                                                     </Autocomplete>
                                                 </Grid>
 
-                                                <Grid item xs={6}>
+                                                <Grid item xs={6} sx={{ display: "flex", justifyContent: "flex-end" }}>
 
                                                     <TextField
-                                                        // value={}
-                                                        // onChange={(e) => handleMonthInputChange(monthLabel, e.target.value)}
+                                                        value={applianceKwhValue}
+                                                        onChange={(event) => setApplianceKwhValue(event.target.value)}
                                                         type="number"
+                                                        fullWidth
                                                         InputProps={{
                                                             sx: {
                                                                 input: {
@@ -950,6 +958,12 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                                 </InputAdornment>
                                                             ),
                                                         }}
+                                                        sx={{
+                                                            '& .MuiInputBase-root': {
+                                                              width: '100%', 
+                                                              height: '50px',
+                                                            },
+                                                          }}
                                                     />
                                                 </Grid>
 
@@ -957,9 +971,38 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
                                             </Grid>
 
-
-
-
+                                            <Grid container xs={12} sx={{ mt: 2 }}>
+                                                <Grid item xs={2}>
+                                                    <Button
+                                                        onClick={() => setOpenEstimatedGeneration(false)}
+                                                        variant="contained"
+                                                        sx={{
+                                                            backgroundColor: 'white',
+                                                            color: 'black',
+                                                            border: "1px solid",
+                                                            px: 3,
+                                                            '&:hover': { borderColor: "transparent" }
+                                                        }}
+                                                    >
+                                                        <Typography variant="body1">Cancelar</Typography>
+                                                    </Button>
+                                                </Grid>
+                                                <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end" }}>
+                                                    <Button
+                                                        variant="contained"
+                                                        onClick={calculateAverage}
+                                                        sx={{
+                                                            backgroundColor: 'black',
+                                                            color: 'white',
+                                                            '&:hover': { backgroundColor: '#333' },
+                                                            px: 3,
+                                                        }}
+                                                        endIcon={<BoltOutlinedIcon sx={{ ml: 1 }} />}
+                                                    >
+                                                        <Typography variant="body1">Calcular geração de energia estimada</Typography>
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
                                         </Grid>
                                     </Grid>
 
