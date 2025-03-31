@@ -25,9 +25,17 @@ const PostComments = ({ comment, post }) => {
     if (commentContentType === null) return;
     const fetchReplies = async () => {
       try {
-        const response = await commentService.index(comment.id, commentContentType, {
-          fields: 'id,text,author.id,author.profile_picture,author.complete_name,created_at',
-          expand: 'author',
+        const response = await commentService.index({
+          object_id: comment.id,
+          content_type: commentContentType,
+          fields: [
+            'id',
+            'text,author.id',
+            'author.profile_picture',
+            'author.complete_name',
+            'created_at',
+          ],
+          expand: ['author'],
         });
         const fetchedReplies = response.results || [];
         setReplies(fetchedReplies);

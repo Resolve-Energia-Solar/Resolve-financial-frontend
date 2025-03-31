@@ -47,7 +47,7 @@ function ContractSubmissions({ sale }) {
     const fetchContractsBySale = async () => {
       try {
         console.log(`Buscando contratos para venda: ${sale?.id}`);
-        const contractsResponse = await contractService.find({ sale: sale?.id });
+        const contractsResponse = await contractService.index({ sale: sale?.id });
 
         console.log('Contratos retornados:', contractsResponse);
         setContracts(contractsResponse.results || []);

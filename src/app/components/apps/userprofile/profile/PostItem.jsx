@@ -28,9 +28,18 @@ const PostItem = ({ post }) => {
     const fetchComments = async () => {
       try {
         const commentContentType = await getContentType('core', 'comment');
-        const commentsData = await commentService.index(post.id, commentContentType, {
-          fields: 'id,text,author.id,author.profile_picture,author.complete_name,created_at',
-          expand: 'author',
+        const commentsData = await commentService.index({
+          object_id: post.id,
+          content_type: commentContentType,
+          fields: [
+            'id',
+            'text',
+            'author.id',
+            'author.profile_picture',
+            'author.complete_name',
+            'created_at',
+          ],
+          expand: ['author'],
         });
         setComments(commentsData.results || commentsData);
       } catch (error) {

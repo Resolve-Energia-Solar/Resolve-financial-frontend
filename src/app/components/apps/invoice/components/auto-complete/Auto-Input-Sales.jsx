@@ -49,7 +49,7 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
       }
       setLoading(true);
       try {
-        const sales = await saleService.index(name);
+        const sales = await saleService.index({ q: name });
         if (sales && sales.results) {
           const formattedSales = sales.results.map((sale) => ({
             id: sale.id,

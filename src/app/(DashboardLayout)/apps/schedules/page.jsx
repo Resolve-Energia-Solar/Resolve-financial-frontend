@@ -71,7 +71,7 @@ const ScheduleTable = () => {
 
   useEffect(() => {
     serviceCatalogService
-      .getServicesCatalog({ fields: 'id,name' })
+      .index({ fields: ['id', 'name'] })
       .then((data) => {
         const list = data.results || [];
         setServices(list);

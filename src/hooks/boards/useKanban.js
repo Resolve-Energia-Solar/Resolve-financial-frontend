@@ -64,13 +64,13 @@ const useKanban = () => {
 
       const allLeads = await Promise.all(
         sortedColumns.map(async (column) => {
-          const leads = await leadService.getLeadsByColumn(
-            boardId,
-            column.id,
+          const leads = await leadService.index({
+            board_id: boardId,
+            column: column.id,
             page,
             pageSize,
             searchTerm,
-          );
+          });
           return leads.map((lead) => ({ ...lead, column_id: column.id }));
         }),
       );
@@ -99,13 +99,13 @@ const useKanban = () => {
     try {
       const results = await Promise.all(
         columns.map(async (column) => {
-          const leads = await leadService.getLeadsByColumn(
-            selectedBoard,
-            column.id,
-            1,
-            20,
+          const leads = await leadService.index({
+            board_id: selectedBoard,
+            column: column.id,
+            page: 1,
+            pageSize: 20,
             searchTerm,
-          );
+          });
           return leads.map((lead) => ({ ...lead, column_id: column.id }));
         }),
       );
@@ -150,13 +150,13 @@ const useKanban = () => {
       const nextPage = Math.ceil(leads.length / pageSize) + 1;
       console.log(`Carregando mais leads para a coluna ${statusId}, página ${nextPage}`);
 
-      const newLeads = await leadService.getLeadsByColumn(
-        selectedBoard,
-        statusId,
+      const newLeads = await leadService.index({
+        board_id: selectedBoard,
+        column: statusId,
         nextPage,
         pageSize,
         searchTerm,
-      );
+      });
 
       if (newLeads.length > 0) {
         setLeads((prevLeads) => [...prevLeads, ...newLeads]);
@@ -170,7 +170,7 @@ const useKanban = () => {
 
   const updateLeadColumn = async (leadId, newColumnId) => {
     try {
-      await leadService.patchLead(leadId, { column_id: newColumnId });
+      await leadService.update(leadId, { column_id: newColumnId });
 
       setLeads((prevLeads) => {
         const updatedLeads = prevLeads.map((lead) => {
@@ -190,7 +190,7 @@ const useKanban = () => {
 
   const handleDeleteLead = async (leadId) => {
     try {
-      await boardService.deleteLead(leadId);
+      await boardService.delete(leadId);
       setLeads((prevLeads) => prevLeads.filter((lead) => lead.id !== leadId));
       setSnackbarMessage('Lead excluído com sucesso!');
       setSnackbarOpen(true);
@@ -205,7 +205,7 @@ const useKanban = () => {
 
   const handleUpdateLead = async (updatedLead) => {
     try {
-      await leadService.patchLead(updatedLead.id, updatedLead);
+      await leadService.update(updatedLead.id, updatedLead);
       setLeads((prevLeads) =>
         prevLeads.map((lead) => (lead.id === updatedLead.id ? updatedLead : lead)),
       );

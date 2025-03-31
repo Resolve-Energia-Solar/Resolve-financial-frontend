@@ -144,10 +144,9 @@ const ScheduleFormCreate = ({
       try {
         // Obter o id do serviço (considerando que pode vir como objeto ou valor)
         const serviceId = formData.service.value || formData.service.id || formData.service;
-        const serviceInfo = await serviceCatalogService.index({
-          id: serviceId,
-          expand: 'deadline',
-          fields: 'deadline',
+        const serviceInfo = await serviceCatalogService.find(serviceId, {
+          expand: ['deadline'],
+          fields: ['deadline'],
         });
         const deadline = serviceInfo.deadline?.hours;
         if (!deadline) return;

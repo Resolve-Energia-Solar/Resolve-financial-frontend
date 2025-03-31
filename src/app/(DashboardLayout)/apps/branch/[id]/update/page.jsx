@@ -16,7 +16,9 @@ export default function AutoCompleteUsers({ onChange, value = [], error, helperT
     const fetchDefaultUsers = async () => {
       if (value.length > 0) {
         try {
-          const users = await Promise.all(value.map((id) => userService.getUserById(id)));
+          const users = await Promise.all(
+            value.map((id) => userService.find(id, { expand: ['employee'], fields: ['*'] })),
+          );
           const formattedUsers = users.map((user) => ({
             id: user.id,
             name: user.complete_name, // Ajuste conforme o campo do nome do usuário
@@ -57,7 +59,7 @@ export default function AutoCompleteUsers({ onChange, value = [], error, helperT
   const fetchInitialUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const users = await userService.getUsers({ limit: 5 }); // Busca inicial com limite
+      const users = await userService.index({ limit: 5, page: 1, expand: ['employee'] }); // Busca inicial com limite
       const formattedUsers = users.results.map((user) => ({
         id: user.id,
         name: user.complete_name, // Formata conforme necessário

@@ -25,7 +25,7 @@ export default function AutoCompleteUser({
   const fetchDefaultUser = async (userId) => {
     if (userId) {
       try {
-        const user = await userService.getUserById(userId, '', 'complete_name');
+        const user = await userService.find(userId, { expand: ['employee'], fields: ['*'] });
         if (user) {
           setSelectedUser({
             id: user.id,

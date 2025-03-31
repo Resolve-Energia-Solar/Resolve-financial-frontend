@@ -68,7 +68,7 @@ export default function AutoCompleteUserTest({ onChange, value }) {
   const fetchInitialUsers = React.useCallback(async () => {
     setLoading(true);
     try {
-      const users = await userService.getUser({ limit: 5, page: 1 });
+      const users = await userService.index({ limit: 5, page: 1, expand: ['employee'] });
       const formattedUsers = users.results.map((user) => ({
         id: user.id,
         name: user.complete_name,

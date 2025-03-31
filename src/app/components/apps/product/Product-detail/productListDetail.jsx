@@ -60,7 +60,7 @@ const ProductCardDetail = ({ sale = null }) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await saleService.find(sale.id);
+        const response = await saleService.find(sale.id, { fields: ['sale_products'] });
         console.log('Response: ', response);
         setSelectedProductIds(response.sale_products.map((item) => item.product.id));
         setInitialProductIds(response.sale_products.map((item) => item.product.id));

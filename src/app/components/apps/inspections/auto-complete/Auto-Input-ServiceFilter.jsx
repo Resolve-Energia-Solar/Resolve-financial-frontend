@@ -23,7 +23,7 @@ export default function AutoCompleteServiceCatalogFilter({
   const fetchDefaultServiceCatalog = async (catalogId) => {
     if (catalogId) {
       try {
-        const serviceCatalogValue = await serviceCatalogService.find({ id: catalogId });
+        const serviceCatalogValue = await serviceCatalogService.find(catalogId);
         if (serviceCatalogValue) {
           return { id: serviceCatalogValue.id, name: serviceCatalogValue.name };
         }

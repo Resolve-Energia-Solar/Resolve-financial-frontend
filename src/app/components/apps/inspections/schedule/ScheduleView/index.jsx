@@ -66,9 +66,22 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
     async function fetchFullSchedule() {
       try {
         const data = await scheduleService.find(selectedSchedule.id, {
-          fields:
-            'id,schedule_date,customer,address,service,project,schedule_agent,created_at,observation,status,products,schedule_creator,products.name',
-          expand: 'products',
+          fields: [
+            'id',
+            'schedule_date',
+            'customer',
+            'address',
+            'service',
+            'project',
+            'schedule_agent',
+            'created_at',
+            'observation',
+            'status',
+            'products',
+            'schedule_creator',
+            'products.name',
+          ],
+          expand: ['products'],
         });
         setScheduleData(data);
       } catch (error) {
@@ -86,7 +99,7 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
       setLoadingAnswer(true);
       try {
         if (scheduleData?.id) {
-          const data = await answerService.find(scheduleData.id);
+          const data = await answerService.index({ schedule: scheduleData.id });
           setAnswerData(data);
         }
       } catch (err) {
@@ -107,7 +120,10 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
         try {
           const saleData = await saleService.find(scheduleData.project.sale);
           if (saleData?.seller) {
-            const sellerData = await userService.getUserById(saleData.seller.id);
+            const sellerData = await userService.find(saleData.seller.id, {
+              expand: ['employee'],
+              fields: ['*'],
+            });
             setSeller(sellerData);
           }
         } catch (err) {

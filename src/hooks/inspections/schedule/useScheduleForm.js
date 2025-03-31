@@ -103,10 +103,9 @@ const useScheduleForm = (initialData, id, service_id) => {
         );
 
         const serviceId = extractId(formData.service);
-        const serviceInfo = await serviceCatalogService.find({
-          id: serviceId,
-          expand: 'deadline',
-          fields: 'deadline',
+        const serviceInfo = await serviceCatalogService.find(serviceId, {
+          expand: ['deadline'],
+          fields: ['deadline'],
         });
         console.log('Serviço retornado:', serviceInfo);
 

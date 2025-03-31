@@ -20,11 +20,19 @@ const Post = ({ user }) => {
     setLoading(true);
     try {
       const userContentType = await getContentType('accounts', 'user');
-      const data = await commentService.index(userId, userContentType, {
+      const data = await commentService.index({
+        object_id: userId,
+        content_type: userContentType,
         author: userId,
         ordering: '-created_at',
-        fields: 'id,text,author.id,author.profile_picture,author.complete_name,created_at',
-        expand: 'author',
+        fields: [
+          'id,text',
+          'author.id',
+          'author.profile_picture',
+          'author.complete_name',
+          'created_at',
+        ],
+        expand: ['author'],
       });
       setPosts(data.results);
     } catch (error) {
