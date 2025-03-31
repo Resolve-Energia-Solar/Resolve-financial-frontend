@@ -86,7 +86,7 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
       setLoadingAnswer(true);
       try {
         if (scheduleData?.id) {
-          const data = await answerService.find(scheduleData.id);
+          const data = await answerService.index({ schedule: scheduleData.id });
           setAnswerData(data);
         }
       } catch (err) {
@@ -255,11 +255,11 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                       <strong>Telefone do Vistoriador:</strong>{' '}
                       {scheduleData?.schedule_agent?.phone_numbers?.length > 0
                         ? scheduleData.schedule_agent.phone_numbers
-                            .map(
-                              (phone) =>
-                                `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`,
-                            )
-                            .join(', ')
+                          .map(
+                            (phone) =>
+                              `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`,
+                          )
+                          .join(', ')
                         : 'Sem telefone associado'}
                     </Typography>
                   </HasPermission>

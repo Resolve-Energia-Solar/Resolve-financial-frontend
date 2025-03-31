@@ -371,7 +371,7 @@ const ScheduleTable = () => {
                                                         : <Chip label="Sem Parecer" color="error" />}
                                                 </TableCell>
                                             )}
-                                            <TableCell>{new Date(schedule.created_at).toLocaleString()}</TableCell>
+                                            <TableCell>{new Date(schedule.created_at).toLocaleString('pt-BR')}</TableCell>
                                         </TableRow>
                                     ))}
                                     {loading && page > 1 && (
