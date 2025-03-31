@@ -145,7 +145,7 @@ const SalePaymentList = ({ onClick }) => {
           </TableHead>
 
           {loading ? (
-            <TableSkeleton rows={rowsPerPage} columns={6} />
+            <TableSkeleton rows={rowsPerPage} columns={7} />
           ) : error ? (
             <TableBody>
               <TableRow>

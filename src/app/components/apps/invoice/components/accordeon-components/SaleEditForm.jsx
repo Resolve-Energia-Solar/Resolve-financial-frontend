@@ -11,8 +11,10 @@ import saleService from '@/services/saleService';
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 import NumberFormatCustom from '@/app/components/shared/NumberFormatCustom';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
+import FormSkeleton from '../../../comercial/sale/components/salesList/FormSkeleton';
 
 const SaleEditForm = ({ id_sale }) => {
+
   const [formData, setFormData] = useState({
     customer: '',
     branch: '',
@@ -112,7 +114,7 @@ const SaleEditForm = ({ id_sale }) => {
   }, [id_sale, formData, enqueueSnackbar]);
 
   if (loading) {
-    return <div>Carregando...</div>;
+    return <FormSkeleton fields={6} />;
   }
 
   return (
