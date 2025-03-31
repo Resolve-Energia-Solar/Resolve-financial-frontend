@@ -217,7 +217,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
     const handleSaveAppliancesKwhSum = () => {
         setFormData({
             ...formData,
-            appliances_kwh_sum: appliancesKwhSum,
+            appliances_kwh_sum: appliancesSumResult,
         })
         setOpenHouseholdConsumptionResultDialog(false);
         enqueueSnackbar("Energia estimada salva!", { variant: 'success' });
