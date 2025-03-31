@@ -955,8 +955,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
                                             <Grid item xs={4} sx={{ display: "flex", justifyContent: "flex-start" }}>
                                             <TextField
-                                                value={appliance.kwhValue}
-                                                onChange={(event) => handleApplianceInputChange(appliance.kwhValue, 'kwh', event.target.value)}
+                                                value={appliance.kwhValue || ''}
+                                                onChange={(event) => handleApplianceInputChange(appliance.id, 'kwh', event.target.value)}
                                                 type="number"
                                                 fullWidth
                                                 InputProps={{
@@ -1116,7 +1116,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                             </Grid>
                                             <Grid item xs={2}>
                                                 <Button
-                                                    onClick={handleSaveAverage}
+                                                    onClick={handleSaveAppliancesKwhSum}
                                                     sx={{
                                                         backgroundColor: theme.palette.primary.main,
                                                         color: theme.palette.primary.light,
