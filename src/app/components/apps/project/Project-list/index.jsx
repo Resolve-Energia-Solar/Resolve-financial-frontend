@@ -104,7 +104,7 @@ const ProjectList = ({ onClick }) => {
     const fetchIndicators = async () => {
       setLoadingIndicators(true);
       try {
-        const data = await projectService.index({ ...filters });
+        const data = await projectService.getIndicators({ ...filters });
         console.log(data.indicators);
         setIndicators(data.indicators);
       } catch (err) {

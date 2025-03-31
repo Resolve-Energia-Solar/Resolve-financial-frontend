@@ -10,55 +10,78 @@ import {
   Button,
   Typography,
 } from '@mui/material';
-import FilterListIcon from "@mui/icons-material/FilterList";
+import FilterListIcon from '@mui/icons-material/FilterList';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
 import InforCards from '../../inforCards/InforCards';
 import { FilterContext } from '@/context/FilterContext';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import SalePaymentList from '../components/paymentList/SalePaymentList';
+import paymentService from '@/services/paymentService';
+import { useEffect } from 'react';
+
+// Hook para animar números
+function useAnimatedNumber(targetValue, duration = 800) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    let startTime;
+    const animate = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      setDisplayValue(Math.floor(progress * targetValue));
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    requestAnimationFrame(animate);
+  }, [targetValue, duration]);
+
+  return displayValue;
+}
 
 export default function InvoiceList({ onClick }) {
   const { filters, setFilters } = useContext(FilterContext);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
+  // Inicialize indicators como objeto (não array)
+  const [indicators, setIndicators] = useState({});
+  const [loadingIndicators, setLoadingIndicators] = useState(true);
+  const [error, setError] = useState('');
 
-  const cardsData = [
-    {
-      backgroundColor: 'primary.light',
-      iconColor: 'primary.main',
-      IconComponent: IconListDetails,
-      title: 'Crédito',
-      count: '-',
-    },
-    {
-      backgroundColor: 'success.light',
-      iconColor: 'success.main',
-      IconComponent: IconListDetails,
-      title: 'Débito',
-      count: '-',
-    },
-    {
-      backgroundColor: 'secondary.light',
-      iconColor: 'secondary.main',
-      IconComponent: IconPaperclip,
-      title: 'Boleto',
-      count: '-',
-    },
-    {
-      backgroundColor: 'warning.light',
-      iconColor: 'warning.main',
-      IconComponent: IconSortAscending,
-      title: 'Financiamento',
-      count: '-',
-    },
-    {
-      backgroundColor: 'warning.light',
-      iconColor: 'warning.main',
-      IconComponent: IconSortAscending,
-      title: 'Parcelamento Interno',
-      count: '-',
-    },
-  ];
+  const fetchIndicators = async () => {
+    setLoadingIndicators(true);
+    try {
+      const response = await paymentService.getIndicators({ ...filters });
+      console.log('Indicadores:', response);
+      // Supondo que a resposta seja { data: { installments: { ... }, consistency: { ... } } }
+      setIndicators(response.indicators);
+    } catch (err) {
+      console.error('Erro ao carregar indicadores:', err);
+      setError('Erro ao carregar indicadores.');
+    } finally {
+      setLoadingIndicators(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchIndicators();
+  }, [filters]);
+
+  // Valores animados (caso os dados estejam disponíveis)
+  const onTimeInstallmentCount = useAnimatedNumber(indicators?.installments?.on_time_installments_count || 0);
+  const onTimeInstallmentValue = useAnimatedNumber(indicators?.installments?.on_time_installments_value || 0);
+  const overdueInstallmentsCount = useAnimatedNumber(indicators?.installments?.overdue_installments_count || 0);
+  const overdueInstallmentsValue = useAnimatedNumber(indicators?.installments?.overdue_installments_value || 0);
+  const paidInstallmentsCount = useAnimatedNumber(indicators?.installments?.paid_installments_count || 0);
+  const paidInstallmentsValue = useAnimatedNumber(indicators?.installments?.paid_installments_value || 0);
+  const totalInstallments = useAnimatedNumber(indicators?.installments?.total_installments || 0);
+  const totalInstallmentsValue = useAnimatedNumber(indicators?.installments?.total_installments_value || 0);
+  const totalPayments = useAnimatedNumber(indicators?.consistency?.total_payments || 0);
+  const totalPaymentsValue = useAnimatedNumber(indicators?.consistency?.total_payments_value || 0);
+  const consistentPayments = useAnimatedNumber(indicators?.consistency?.consistent_payments || 0);
+  const consistentPaymentsValue = useAnimatedNumber(indicators?.consistency?.consistent_payments_value || 0);
+  const inconsistentPayments = useAnimatedNumber(indicators?.consistency?.inconsistent_payments || 0);
+  const inconsistentPaymentsValue = useAnimatedNumber(indicators?.consistency?.inconsistent_payments_value || 0);
 
   const paymentFilterConfig = [
     {
@@ -226,7 +249,7 @@ export default function InvoiceList({ onClick }) {
 
   return (
     <Box>
-      <Accordion sx={{ marginBottom: 4 }}>
+      <Accordion defaultExpanded sx={{ marginBottom: 4 }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="sale-cards-content"
@@ -235,7 +258,72 @@ export default function InvoiceList({ onClick }) {
           <Typography variant="h6">Status</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <InforCards cardsData={cardsData} />
+          <InforCards 
+          cardsData={[
+            {
+              backgroundColor: 'error.light',
+              iconColor: 'error.main',
+              IconComponent: IconListDetails,
+              title: 'Parcelas Vencidas',
+              // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
+              value: overdueInstallmentsValue,
+              count: overdueInstallmentsCount,
+            },
+            {
+              backgroundColor: 'info.light',
+              iconColor: 'info.main',
+              IconComponent: IconSortAscending,
+              title: 'Parcelas em Dia',
+              // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
+              value: onTimeInstallmentValue,
+              count: onTimeInstallmentCount,
+            },
+            {
+              backgroundColor: 'success.light',
+              iconColor: 'success.main',
+              IconComponent: IconPaperclip,
+              title: 'Parcelas Pagas',
+              // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
+              value: paidInstallmentsValue,
+              count: paidInstallmentsCount,
+            },
+            {
+              backgroundColor: 'secondary.light',
+              iconColor: 'secondary.main',
+              IconComponent: IconListDetails,
+              title: 'Total de Parcelas',
+              // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
+              value: totalInstallmentsValue,
+              count: totalInstallments,
+            },
+            {
+              backgroundColor: 'primary.light',
+              iconColor: 'primary.main',
+              IconComponent: IconSortAscending,
+              title: 'Pagamentos Consistentes (Dentro do Prazo)',
+              // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
+              value: consistentPaymentsValue,
+              count: consistentPayments,
+            },
+            {
+              backgroundColor: 'warning.light',
+              iconColor: 'warning.main',
+              IconComponent: IconSortAscending,
+              title: 'Pagamentos Pagos (Fora do Prazo)',
+              // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
+              value: inconsistentPaymentsValue,
+              count: inconsistentPayments,
+            },
+            {
+              backgroundColor: 'success.light',
+              iconColor: 'success.main',
+              IconComponent: IconSortAscending,
+              title: 'Total de Pagamentos',
+              // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
+              value: totalPaymentsValue,
+              count: totalPayments,
+            },
+            ]} />
         </AccordionDetails>
       </Accordion>
 
