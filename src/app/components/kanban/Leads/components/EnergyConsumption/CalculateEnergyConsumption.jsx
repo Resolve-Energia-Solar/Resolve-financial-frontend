@@ -29,7 +29,6 @@ import BackupOutlinedIcon from '@mui/icons-material/BackupOutlined';
 import RotateLeftOutlinedIcon from '@mui/icons-material/RotateLeftOutlined';
 import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
 import { Switch } from '@mui/material';
-import { months } from 'moment';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ptBR } from 'date-fns/locale';
