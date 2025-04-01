@@ -73,7 +73,7 @@ const CustomerJourney = () => {
         break;
       case 'L':
         label = 'Liberado';
-        color = 'info';
+        color = 'success';
         break;
       case 'CA':
         label = 'Cancelado';
@@ -90,6 +90,34 @@ const CustomerJourney = () => {
 
     return <Chip label={label} color={color} />;
   };
+
+  const getFieldServiceStatusChip = (status) => {
+    if (!status) {
+      return <Chip label="Pendente" color="default" />;
+    }
+    const lowerStatus = status.toLowerCase();
+    let color = 'default';
+
+    if (lowerStatus.includes('solicitado') || lowerStatus.includes('solicito') || lowerStatus.includes('confirmado')) {
+      color = 'primary';
+    } else if (lowerStatus.includes('aprovado')) {
+      color = 'success';
+    } else if (lowerStatus.includes('reprovado') || lowerStatus.includes('reprovada')) {
+      color = 'error';
+    } else if (lowerStatus.includes('cancelado') || lowerStatus.includes('cancelada')) {
+      color = 'error';
+    } else if (lowerStatus.includes('concluído')) {
+      color = 'success';
+    } else if (lowerStatus.includes('andamento')) {
+      color = 'info';
+    } else if (lowerStatus.includes('entregue')) {
+      color = 'success';
+    } else if (lowerStatus.includes('agendado')) {
+      color = 'info';
+    }
+
+    return <Chip label={status} color={color} />;
+  }
 
   useEffect(() => {
     setLoading(true);
@@ -478,11 +506,7 @@ const CustomerJourney = () => {
                       </TableCell>
                       <TableCell>{project.project_number}</TableCell>
                       <TableCell>
-                        {project.fieldServiceStatus?.Vistoria ? (
-                          <Chip label={project.fieldServiceStatus.Vistoria} variant="outlined" />
-                        ) : (
-                          '-'
-                        )}
+                        {getFieldServiceStatusChip(project.fieldServiceStatus?.Vistoria)}
                       </TableCell>
                       <TableCell>
                         {getStatusChip(project.sale?.status)}
@@ -494,18 +518,11 @@ const CustomerJourney = () => {
                         {getStatusChip(project.designer_status)}
                       </TableCell>
                       <TableCell>
-                        {project.fieldServiceStatus?.Entrega ? (
-                          <Chip label={project.fieldServiceStatus.Entrega} variant="outlined" />
-                        ) : (
-                          '-'
-                        )}
+                        {getFieldServiceStatusChip(project.fieldServiceStatus?.Entrega)}
                       </TableCell>
                       <TableCell>
-                        {project.fieldServiceStatus?.["Instalação"] ? (
-                          <Chip label={project.fieldServiceStatus["Instalação"]} variant="outlined" />
-                        ) : (
-                          '-'
-                        )}
+                        {getFieldServiceStatusChip(project.fieldServiceStatus?.['Instalação'])
+                        }
                       </TableCell>
                     </TableRow>
                   ))}
