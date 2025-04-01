@@ -720,6 +720,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 												color: '#303030',
 												px: 3,
 												width: "200px",
+												height: "38px"
 											}}
 											onClick={handleSaveForm}
 											disabled={formLoading}
