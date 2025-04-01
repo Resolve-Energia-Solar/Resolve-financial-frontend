@@ -502,6 +502,13 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 													opacity: 1,
 												},
 											},
+											startAdornment: (
+												<InputAdornment position="start">
+													<Box sx={{ color: '#7E92A2', fontWeight: '400', fontSize: '12px' }}>
+														R$
+													</Box>
+												</InputAdornment>
+											),
 										}}
 									/>
 								</Grid>
