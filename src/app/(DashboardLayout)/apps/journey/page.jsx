@@ -33,7 +33,7 @@ import projectService from '@/services/projectService';
 const BCrumb = [{ title: 'Início' }];
 
 const CustomerJourney = () => {
-  const { filters, setFilters, refresh } = useContext(FilterContext);
+  const { filters, setFilters } = useContext(FilterContext);
   const [loading, setLoading] = useState(true);
   const [projectList, setProjectList] = useState([]);
   // const [selectedProjectId, setSelectedProjectId] = useState(null);
@@ -104,8 +104,10 @@ const CustomerJourney = () => {
           'field_services.final_service_opinion'
         ],
         fields: [
+          'id',
           'sale.signature_date',
           'sale.contract_number',
+          'sale.treadmill_counter',
           'sale.customer.complete_name',
           'project_number',
           'sale.status',
@@ -121,9 +123,7 @@ const CustomerJourney = () => {
       })
       .then((data) => {
         const getFieldServiceStatus = (project) => {
-          // Categories of interest
           const categories = ['Vistoria', 'Instalação', 'Entrega'];
-          // Object to store the most recent field service per category
           const latestServices = {};
 
           project.field_services.forEach(fs => {
@@ -139,7 +139,6 @@ const CustomerJourney = () => {
             }
           });
 
-          // For each category, return final_service_opinion.name or, if null, the field service status
           const result = {};
           categories.forEach(category => {
             result[category] = latestServices[category]
@@ -151,7 +150,6 @@ const CustomerJourney = () => {
           return result;
         };
 
-        // Add new property with field service statuses to each project object
         const projectsWithStatus = data.results.map(project => ({
           ...project,
           fieldServiceStatus: getFieldServiceStatus(project),
@@ -187,7 +185,220 @@ const CustomerJourney = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
   }, []);
 
-  const customerJourneyFilterConfig = [];
+  const customerJourneyFilterConfig = [
+    {
+      key: 'customer',
+      label: 'Cliente',
+      type: 'async-multiselect',
+      endpoint: '/api/users/',
+      queryParam: 'complete_name__icontains',
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
+      extraParams: {
+        fields: ['id', 'complete_name'],
+      },
+    },
+    {
+      key: 'sale__in',
+      label: 'Venda',
+      type: 'async-multiselect',
+      endpoint: '/api/sales/',
+      queryParam: 'contract_number__icontains',
+      mapResponse: (data) =>
+        data.results.map((sale) => ({
+          label: `${sale.contract_number} - ${sale.customer?.complete_name}`,
+          value: sale.id,
+        })),
+      extraParams: {
+        expand: ['customer'],
+        fields: ['id', 'contract_number', 'customer.complete_name'],
+      },
+    },
+    {
+      key: 'product__in',
+      label: 'Produto',
+      type: 'async-multiselect',
+      endpoint: '/api/products/',
+      queryParam: 'product__in',
+      mapResponse: (data) =>
+        data.results.map((product) => ({
+          label: product.name,
+          value: product.id,
+        })),
+      extraParams: {
+        fields: ['id', 'name'],
+      },
+    },
+    {
+      key: 'materials__in',
+      label: 'Materiais',
+      type: 'async-multiselect',
+      endpoint: '/api/materials/',
+      queryParam: 'materials__in',
+      mapResponse: (data) =>
+        data.results.map((material) => ({
+          label: material.name,
+          value: material.id,
+        })),
+      extraParams: {
+        fields: ['id', 'name'],
+      },
+    },
+    {
+      key: 'project_number__icontains',
+      label: 'Número do Projeto',
+      type: 'text',
+    },
+    {
+      key: 'plant_integration__icontains',
+      label: 'ID da Usina',
+      type: 'text',
+    },
+    {
+      key: 'designer__in',
+      label: 'Projetista',
+      type: 'async-multiselect',
+      endpoint: '/api/users/',
+      queryParam: 'complete_name__icontains',
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
+      extraParams: {
+        fields: ['id', 'complete_name'],
+      },
+    },
+    {
+      key: 'designer_status__in',
+      label: 'Status do Projeto de Engenharia',
+      type: 'multiselect',
+      options: [
+        { label: 'Pendente', value: 'P' },
+        { label: 'Concluído', value: 'CO' },
+        { label: 'Em Andamento', value: 'EA' },
+        { label: 'Cancelado', value: 'C' },
+        { label: 'Distrato', value: 'D' },
+      ],
+    },
+    {
+      key: 'designer_coclusion_date__range',
+      label: 'Data de Conclusão do Projeto de Engenharia',
+      type: 'range',
+      inputType: 'date',
+    },
+    {
+      key: 'inspection__in',
+      label: 'Agendamentos da Vistoria',
+      type: 'async-multiselect',
+      endpoint: '/api/schedules/',
+      queryParam: 'inspection__in',
+      mapResponse: (data) =>
+        data.results.map((schedule) => ({
+          label: schedule.protocol,
+          value: schedule.id,
+        })),
+      extraParams: {
+        fields: ['id', 'protocol'],
+      },
+    },
+    {
+      key: 'start_date__range',
+      label: 'Data de Início',
+      type: 'range',
+      inputType: 'date',
+    },
+    {
+      key: 'end_date__range',
+      label: 'Data de Término',
+      type: 'range',
+      inputType: 'date',
+    },
+    {
+      key: 'is_completed__in',
+      label: 'Projeto Completo',
+      type: 'multiselect',
+      options: [
+        { label: 'Sim', value: 'true' },
+        { label: 'Não', value: 'false' },
+      ],
+    },
+    {
+      key: 'status__in',
+      label: 'Status do Projeto',
+      type: 'multiselect',
+      options: [
+        { label: 'Pendente', value: 'P' },
+        { label: 'Concluído', value: 'CO' },
+        { label: 'Em Andamento', value: 'EA' },
+        { label: 'Cancelado', value: 'C' },
+        { label: 'Distrato', value: 'D' },
+      ],
+    },
+    {
+      key: 'homologator__in',
+      label: 'Homologador',
+      type: 'async-multiselect',
+      endpoint: '/api/users/',
+      queryParam: 'complete_name__icontains',
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
+      extraParams: {
+        fields: ['id', 'complete_name'],
+      },
+    },
+    {
+      key: 'is_documentation_completed__in',
+      label: 'Documentos Completos (Múltiplo)',
+      type: 'multiselect',
+      options: [
+        { label: 'Sim', value: 'true' },
+        { label: 'Não', value: 'false' },
+      ],
+    },
+    {
+      key: 'material_list_is_completed__in',
+      label: 'Lista de Materiais Finalizada',
+      type: 'multiselect',
+      options: [
+        { label: 'Sim', value: 'true' },
+        { label: 'Não', value: 'false' },
+      ],
+    },
+    {
+      key: 'documention_completion_date__range',
+      label: 'Data de Conclusão do Documento',
+      type: 'range',
+      inputType: 'date',
+    },
+    {
+      key: 'registered_circuit_breaker__in',
+      label: 'Disjuntor Cadastrado',
+      type: 'async-multiselect',
+      endpoint: '/api/materials/',
+      queryParam: 'registered_circuit_breaker__in',
+      mapResponse: (data) =>
+        data.results.map((material) => ({
+          label: material.name,
+          value: material.id,
+        })),
+      extraParams: {
+        fields: ['id', 'name'],
+      },
+    },
+    {
+      key: 'created_at__range',
+      label: 'Data de Criação',
+      type: 'range',
+      inputType: 'date',
+    }
+  ];
 
   return (
     <PageContainer title="Jornada do Cliente" description="Acompanhe a jornada do cliente por todas as etapas.">
@@ -255,7 +466,7 @@ const CustomerJourney = () => {
                       }}
                     >
                       <TableCell>
-                        <CounterChip counter={project.sale?.treadmill_counter || 0} />
+                        <CounterChip counter={project.sale?.treadmill_counter || 0} projectId={project.id} />
                       </TableCell>
                       <TableCell sx={{ textWrap: 'nowrap' }}>
                         {project.sale?.signature_date
