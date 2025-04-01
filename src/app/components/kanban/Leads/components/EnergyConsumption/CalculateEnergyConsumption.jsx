@@ -700,23 +700,6 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 									/>
 								</Grid>
 
-								{/* <Grid item xs={4} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-									<Button
-										variant="contained"
-										sx={{
-											backgroundColor: 'black',
-											color: 'white',
-											'&:hover': { backgroundColor: '#333' },
-											px: 3,
-										}}
-										endIcon={<BoltOutlinedIcon sx={{ ml: 1 }} />}
-									>
-										<Typography variant="body1">
-											{formLoading ? 'Calculando...' : 'Calcular consumo energético'}
-										</Typography>
-									</Button>
-								</Grid> */}
-
 								<Grid item xs={5}>
 									<Box sx={{ display: 'flex', gap: 2, justifyContent: "flex-end", alignItems: "center" }}>
 										<Button
