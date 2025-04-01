@@ -38,8 +38,8 @@ const CustomerJourney = () => {
   const { filters, setFilters, refresh } = useContext(FilterContext);
   const [loading, setLoading] = useState(true);
   const [projectList, setProjectList] = useState([]);
-  const [selectedProjectId, setSelectedProjectId] = useState(null);
-  const [selectedServices, setSelectedServices] = useState([]);
+  // const [selectedProjectId, setSelectedProjectId] = useState(null);
+  // const [selectedServices, setSelectedServices] = useState([]);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalRows, setTotalRows] = useState(0);
@@ -47,7 +47,6 @@ const CustomerJourney = () => {
   const [order, setOrder] = useState('created_at');
   const [orderDirection, setOrderDirection] = useState('asc');
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
-  const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false);
 
   const getStatusChip = (status) => {
     let label = '';
@@ -125,18 +124,72 @@ const CustomerJourney = () => {
       .index({
         page,
         limit: rowsPerPage,
-        expand: ['sale', 'sale.customer'],
-        fields: '*',
+        expand: [
+          'sale',
+          'sale.customer',
+          'field_services.service.category',
+          'field_services.final_service_opinion'
+        ],
+        fields: [
+          'sale.signature_date',
+          'sale.contract_number',
+          'sale.customer.complete_name',
+          'project_number',
+          'sale.status',
+          'sale.payment_status',
+          'designer_status',
+          'field_services.service.category.name',
+          'field_services.final_service_opinion.name',
+          'field_services.status',
+          'field_services.schedule_date'
+        ],
         ordering: orderDirection === 'desc' ? order : `-${order}`,
         ...filters,
       })
       .then((data) => {
-        setProjectList(data.results);
+        const getFieldServiceStatus = (project) => {
+          // Categories of interest
+          const categories = ['Vistoria', 'Instalação', 'Entrega'];
+          // Object to store the most recent field service per category
+          const latestServices = {};
+
+          project.field_services.forEach(fs => {
+            const categoryName = fs.service?.category?.name;
+            if (!categories.includes(categoryName)) return;
+
+            const serviceDate = new Date(fs.schedule_date);
+            if (
+              !latestServices[categoryName] ||
+              serviceDate > new Date(latestServices[categoryName].schedule_date)
+            ) {
+              latestServices[categoryName] = fs;
+            }
+          });
+
+          // For each category, return final_service_opinion.name or, if null, the field service status
+          const result = {};
+          categories.forEach(category => {
+            result[category] = latestServices[category]
+              ? (latestServices[category].final_service_opinion
+                ? latestServices[category].final_service_opinion.name
+                : latestServices[category].status)
+              : null;
+          });
+          return result;
+        };
+
+        // Add new property with field service statuses to each project object
+        const projectsWithStatus = data.results.map(project => ({
+          ...project,
+          fieldServiceStatus: getFieldServiceStatus(project),
+        }));
+
+        setProjectList(projectsWithStatus);
         setTotalRows(data.meta.pagination.total_count);
       })
       .catch((err) => {
-        console.error('Erro:', err);
-        setError('Erro ao buscar projetos');
+        console.error('Error:', err);
+        setError('Error fetching projects');
       })
       .finally(() => setLoading(false));
   }, [page, rowsPerPage, order, orderDirection, filters]);
@@ -231,15 +284,45 @@ const CustomerJourney = () => {
                       <TableCell>
                         {getCounterChip(project.sale?.signature_date)}
                       </TableCell>
-                      <TableCell sx={{ textWrap: 'nowrap' }}>{project.sale?.signature_date ? new Date(project.sale.signature_date).toLocaleString('pt-BR') : "-"}</TableCell>
-                      <TableCell sx={{ textWrap: 'nowrap' }}>{project.sale?.contract_number} / {project?.sale?.customer?.complete_name}</TableCell>
+                      <TableCell sx={{ textWrap: 'nowrap' }}>
+                        {project.sale?.signature_date
+                          ? new Date(project.sale.signature_date).toLocaleString('pt-BR')
+                          : "-"}
+                      </TableCell>
+                      <TableCell sx={{ textWrap: 'nowrap' }}>
+                        {project.sale?.contract_number} / {project?.sale?.customer?.complete_name}
+                      </TableCell>
                       <TableCell>{project.project_number}</TableCell>
-                      <TableCell>-</TableCell>
-                      <TableCell>{getStatusChip(project.sale?.status)}</TableCell>
-                      <TableCell>{getStatusChip(project.sale?.payment_status)}</TableCell>
-                      <TableCell>{getStatusChip(project.designer_status)}</TableCell>
-                      <TableCell>-</TableCell>
-                      <TableCell>-</TableCell>
+                      <TableCell>
+                        {project.fieldServiceStatus?.Vistoria ? (
+                          <Chip label={project.fieldServiceStatus.Vistoria} variant="outlined" />
+                        ) : (
+                          '-'
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {getStatusChip(project.sale?.status)}
+                      </TableCell>
+                      <TableCell>
+                        {getStatusChip(project.sale?.payment_status)}
+                      </TableCell>
+                      <TableCell>
+                        {getStatusChip(project.designer_status)}
+                      </TableCell>
+                      <TableCell>
+                        {project.fieldServiceStatus?.Entrega ? (
+                          <Chip label={project.fieldServiceStatus.Entrega} variant="outlined" />
+                        ) : (
+                          '-'
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {project.fieldServiceStatus?.["Instalação"] ? (
+                          <Chip label={project.fieldServiceStatus["Instalação"]} variant="outlined" />
+                        ) : (
+                          '-'
+                        )}
+                      </TableCell>
                     </TableRow>
                   ))}
                   {loading && page > 1 && (
@@ -252,6 +335,7 @@ const CustomerJourney = () => {
                 </TableBody>
               </Table>
             </TableContainer>
+
           )}
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
