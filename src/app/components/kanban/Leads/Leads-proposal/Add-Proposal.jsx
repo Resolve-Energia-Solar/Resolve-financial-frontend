@@ -33,6 +33,7 @@ import EnergyConsumptionCalc from '../components/EnergyConsumption/CalculateEner
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ProposalLayout from '../components/ProposalLayout';
 import ProposalCard from '../components/ProductsCard';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 
 function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
