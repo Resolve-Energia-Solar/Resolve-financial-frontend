@@ -23,14 +23,12 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
 import BlankCard from '@/app/components/shared/BlankCard';
-// import ProjectStatusChip from '@/app/components/apps/inspections/project/StatusChip';
 import TableSkeleton from '@/app/components/apps/comercial/sale/components/TableSkeleton';
+import CounterChip from '@/app/components/apps/comercial/sale/CounterChip';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 
 import { FilterContext } from '@/context/FilterContext';
 import projectService from '@/services/projectService';
-import { formatDate } from '@/utils/dateUtils';
-// import DetailsDrawer from '@/app/components/apps/project/DetailsDrawer';
 
 const BCrumb = [{ title: 'Início' }];
 
@@ -91,31 +89,6 @@ const CustomerJourney = () => {
     }
 
     return <Chip label={label} color={color} />;
-  };
-
-  const calculateDaysDifference = (signatureDate) => {
-    if (!signatureDate) return 0;
-    const today = new Date();
-    const date = new Date(signatureDate);
-    const differenceInTime = today - date;
-    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
-    return Math.floor(differenceInDays);
-  };
-
-  const getCounterChip = (signatureDate) => {
-    const days = calculateDaysDifference(signatureDate);
-    let color = 'default';
-    let label = `${days} dias`;
-
-    if (days === 0) {
-      color = 'default';
-    } else if (days === 1) {
-      color = 'success';
-    } else if (days >= 30) {
-      color = 'error';
-    }
-
-    return <Chip label={label} color={color} variant="filled" />;
   };
 
   useEffect(() => {
@@ -282,7 +255,7 @@ const CustomerJourney = () => {
                       }}
                     >
                       <TableCell>
-                        {getCounterChip(project.sale?.signature_date)}
+                        <CounterChip counter={project.sale?.treadmill_counter || 0} />
                       </TableCell>
                       <TableCell sx={{ textWrap: 'nowrap' }}>
                         {project.sale?.signature_date
