@@ -67,9 +67,9 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     dispatch(
       removeProductFromLead({ leadId, productIds: customProducts.map((product) => product.id) }),
     );
-    handleChange('due_date', null);
-    handleChange('value', null);
-    handleChange('proposal_description', '');
+    // handleChange('due_date', null);
+    // handleChange('value', null);
+    // handleChange('observation', '');
   };
 
   useEffect(() => {
@@ -366,15 +366,15 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={12}>
-                  <CustomFormLabel htmlFor="description" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Descrição</CustomFormLabel>
+                  <CustomFormLabel htmlFor="observation" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Descrição</CustomFormLabel>
                   <CustomTextArea
-                    name="description"
+                    name="observation"
                     multiline
                     rows={4}
                     minRows={3}
-                    value={formData.description}
-                    onChange={(e) => handleChange('description', e.target.value)}
-                    {...(formErrors.description && { error: true, helperText: formErrors.description })}
+                    value={formData.observation}
+                    onChange={(e) => handleChange('observation', e.target.value)}
+                    {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
                   />
                 </Grid>
               </Grid>
