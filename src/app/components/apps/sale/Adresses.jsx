@@ -59,7 +59,7 @@ export default function Addresses({ userId, data, onRefresh }) {
 
     try {
       const addressIds = selectedAddresses.map((a) => a.id);
-      await userService.updateUser(userId, { addresses: addressIds });
+      await userService.update(userId, { addresses: addressIds });
       enqueueSnackbar('Endereço adicionado com sucesso!', { variant: 'success' });
       setOpenModal(false);
       onRefresh();

@@ -73,7 +73,7 @@ const UserList = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await userService.deleteUser(userToDelete);
+      await userService.delete(userToDelete);
       setUserList(userList.filter((item) => item.id !== userToDelete));
     } catch (err) {
       setError('Erro ao excluir o usuário');
@@ -120,37 +120,39 @@ const UserList = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {userList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
-                  <TableRow key={index} hover>
-                    <TableCell>{item?.username}</TableCell>
-                    <TableCell>{item?.email}</TableCell>
-                    <TableCell>{item?.department?.name || 'N/A'}</TableCell>
-                    <TableCell>{item?.role?.name || 'N/A'}</TableCell>
-                    <TableCell>
-                      <Chip label={`${item?.user_permissions?.length} permissões`} />
-                    </TableCell>
-                    <TableCell>
-                      <Tooltip title="Editar">
-                        <IconButton
-                          color="primary"
-                          size="small"
-                          onClick={() => handleEditClick(item?.id)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Excluir">
-                        <IconButton
-                          color="error"
-                          size="small"
-                          onClick={() => handleDeleteClick(item?.id)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {userList
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((item, index) => (
+                    <TableRow key={index} hover>
+                      <TableCell>{item?.username}</TableCell>
+                      <TableCell>{item?.email}</TableCell>
+                      <TableCell>{item?.department?.name || 'N/A'}</TableCell>
+                      <TableCell>{item?.role?.name || 'N/A'}</TableCell>
+                      <TableCell>
+                        <Chip label={`${item?.user_permissions?.length} permissões`} />
+                      </TableCell>
+                      <TableCell>
+                        <Tooltip title="Editar">
+                          <IconButton
+                            color="primary"
+                            size="small"
+                            onClick={() => handleEditClick(item?.id)}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Excluir">
+                          <IconButton
+                            color="error"
+                            size="small"
+                            onClick={() => handleDeleteClick(item?.id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>

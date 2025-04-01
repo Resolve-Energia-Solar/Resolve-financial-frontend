@@ -67,8 +67,8 @@ const useUserForm = (initialData, id) => {
         phone_numbers_ids: Array.isArray(initialData.phone_numbers)
           ? initialData.phone_numbers.map((item) => item.id)
           : initialData.phone_numbers
-            ? [initialData.phone_numbers]
-            : [],
+          ? [initialData.phone_numbers]
+          : [],
       });
     }
   }, [initialData]);
@@ -80,7 +80,7 @@ const useUserForm = (initialData, id) => {
   const handleSave = async () => {
     setLoading(true);
     let patchData;
-  
+
     if (initialData && initialData.id) {
       patchData = {};
       const keysToCheck = [
@@ -110,15 +110,17 @@ const useUserForm = (initialData, id) => {
         'second_document',
         'phone_numbers_ids',
       ];
-  
+
       keysToCheck.forEach((key) => {
         let newValue;
-        if (['last_login', 'date_joined', 'birth_date', 'hire_date', 'resignation_date'].includes(key)) {
+        if (
+          ['last_login', 'date_joined', 'birth_date', 'hire_date', 'resignation_date'].includes(key)
+        ) {
           newValue = formData[key] ? formatDate(formData[key]) : null;
         } else {
           newValue = formData[key];
         }
-        
+
         if (Array.isArray(newValue)) {
           const initialArray = initialData[key] || [];
           const arraysEqual =
@@ -148,7 +150,9 @@ const useUserForm = (initialData, id) => {
         first_name: formData.first_name,
         is_staff: formData.is_staff,
         is_active: formData.is_active,
-        date_joined: formData.date_joined ? formatDate(formData.date_joined) : formatDate(new Date()),
+        date_joined: formData.date_joined
+          ? formatDate(formData.date_joined)
+          : formatDate(new Date()),
         complete_name: formData.complete_name,
         birth_date: formData.birth_date ? formatDate(formData.birth_date) : null,
         gender: formData.gender,
@@ -166,15 +170,15 @@ const useUserForm = (initialData, id) => {
           : [],
       };
     }
-  
+
     try {
       let request;
       if (id || (initialData && initialData.id)) {
         const userId = id || initialData.id;
-        request = await userService.updateUser(userId, patchData);
+        request = await userService.update(userId, patchData);
         setDataReceived(request);
       } else {
-        request = await userService.createUser(patchData);
+        request = await userService.create(patchData);
         setDataReceived(request);
       }
       setFormErrors({});

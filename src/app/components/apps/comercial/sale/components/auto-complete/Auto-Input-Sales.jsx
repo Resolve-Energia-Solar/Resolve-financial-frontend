@@ -54,9 +54,9 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
       }
       setLoading(true);
       try {
-        const sales = await saleService.getSaleByFullName(name);
+        const sales = await saleService.index(name, { q: fullname });
         if (sales && sales.results) {
-          const formattedSales = sales.results.map(sale => ({
+          const formattedSales = sales.results.map((sale) => ({
             id: sale.id,
             name: `${sale.contract_number} - ${sale.customer.complete_name}`,
           }));
@@ -73,7 +73,12 @@ export default function AutoCompleteSale({ onChange, value, error, helperText, .
   const fetchInitialSales = useCallback(async () => {
     setLoading(true);
     try {
-      const sales = await saleService.index({ limit: 5, page: 1, fields: 'id,contract_number,customer.complete_name', expand: 'customer' });
+      const sales = await saleService.index({
+        limit: 5,
+        page: 1,
+        fields: 'id,contract_number,customer.complete_name',
+        expand: 'customer',
+      });
       if (sales && sales.results) {
         const formattedSales = sales.results.map((sale) => ({
           id: sale.id,

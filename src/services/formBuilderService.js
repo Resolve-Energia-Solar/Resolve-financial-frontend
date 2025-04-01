@@ -55,7 +55,7 @@ const formBuilderService = {
       const response = await apiClient.get('/api/forms/');
       const formattedResults = await Promise.all(
         response.data.results.map(async (item) => {
-          const serviceData = await serviceCatalogService.getServiceCatalogByFormId(item.id);
+          const serviceData = await serviceCatalogService.index({ form: item.id });
           return {
             ...item,
             service: serviceData.results[0] || null,
@@ -72,7 +72,7 @@ const formBuilderService = {
   getFormById: async (id) => {
     try {
       const response = await apiClient.get(`/api/forms/${id}/`);
-      const serviceData = await serviceCatalogService.getServiceCatalogByFormId(id);
+      const serviceData = await serviceCatalogService.find({ form: id });
       return {
         ...response.data,
         service: serviceData.results[0] || null,

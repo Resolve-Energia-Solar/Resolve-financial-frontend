@@ -51,7 +51,8 @@ const ProfileBanner = ({ user }) => {
       if (user?.employee_data?.department) {
         try {
           const data = await employeeService.index({
-            filters: { department: user.employee?.department?.id, fields: 'id' },
+            department: user.employee?.department?.id,
+            fields: ['id'],
           });
           setDepartmentCount(data.count || data.length || 0);
         } catch (error) {
@@ -63,10 +64,12 @@ const ProfileBanner = ({ user }) => {
       try {
         const contentType = await getContentType('accounts', 'user');
         console.log('contentType:', contentType);
-        const commentsData = await commentService.index(user.id, contentType, {
+        const commentsData = await commentService.index({
+          object_id: post.id,
+          content_type: user.id,
           ordering: '-created_at',
           author: user.id,
-          fields: 'id',
+          fields: ['id'],
         });
         console.log('commentsData:', commentsData);
         setPostsCount(commentsData.count || commentsData.results?.length || 0);

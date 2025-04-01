@@ -55,6 +55,7 @@ function LeadAttachmentsAccordion({ objectId, contentType, documentTypes, title 
       try {
         const response = await attachmentService.index({
           object_id: objectId,
+          expand: 'document_type',
           content_type: contentType,
           limit: 30,
         });

@@ -60,7 +60,7 @@ export default function AutoCompleteDeadlineFilter({
       if (!name) return;
       setLoading(true);
       try {
-        const responses = await deadlineService.find(name);
+        const responses = await deadlineService.index({ name: name });
         const formattedDeadlines = responses.results.map((deadline) => ({
           id: deadline.id,
           name: deadline.name,

@@ -8,7 +8,7 @@ const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
 
 // Função auxiliar para extrair o id, se o valor for um objeto com a propriedade "value"
 const extractId = (fieldValue) => {
-  return (typeof fieldValue === 'object' && fieldValue !== null && 'value' in fieldValue)
+  return typeof fieldValue === 'object' && fieldValue !== null && 'value' in fieldValue
     ? fieldValue.value
     : fieldValue;
 };
@@ -53,9 +53,9 @@ const useScheduleForm = (initialData, id, service_id) => {
       setFormData({
         schedule_creator: initialData.schedule_creator || null,
         service: initialData.service?.id || service_id || SERVICE_INSPECTION_ID,
-        parent_schedules_id: initialData.parent_schedules?.map(s => s.id) || [],
+        parent_schedules_id: initialData.parent_schedules?.map((s) => s.id) || [],
         customer: initialData?.customer?.id || null,
-        leads: initialData.leads?.map(l => l.id) || [],
+        leads: initialData.leads?.map((l) => l.id) || [],
         project: initialData.project?.id || null,
         schedule_agent: initialData.schedule_agent?.id || null,
         products: initialData.products || [],
@@ -81,61 +81,62 @@ const useScheduleForm = (initialData, id, service_id) => {
   // Handler para atualizar o formData (mantém a chamada como você deseja)
   const handleChange = (field, value) => {
     console.log(`handleChange: ${field} =`, value);
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   useEffect(() => {
     const calculateEndDateTime = async () => {
       if (!formData.schedule_date || !formData.schedule_start_time || !formData.service) return;
       try {
-        
+
         const serviceId = extractId(formData.service);
-        const serviceInfo = await serviceCatalogService.getServiceCatalogById(serviceId, {
-          expand: 'deadline',
-          fields: 'deadline',
+        const serviceInfo = await serviceCatalogService.find(serviceId, {
+          expand: ['deadline'],
+          fields: ['deadline'],
         });
-        console.log("Serviço retornado:", serviceInfo);
-        
+        console.log('Serviço retornado:', serviceInfo);
+
         const deadline = serviceInfo.deadline.hours;
         if (!deadline) {
-          console.warn("Deadline não definido no serviço");
+          console.warn('Deadline não definido no serviço');
           return;
         }
-        
+
         let normalizedStartTime = formData.schedule_start_time;
         if (!normalizedStartTime.includes(':')) {
           normalizedStartTime += ':00';
         }
-        console.log("Horário de início normalizado:", normalizedStartTime);
-        
+        console.log('Horário de início normalizado:', normalizedStartTime);
+
         const [startHour, startMinute, startSecond] = normalizedStartTime.split(':').map(Number);
         const [year, month, day] = formData.schedule_date.split('-').map(Number);
         const startDate = new Date(year, month - 1, day, startHour, startMinute, startSecond || 0);
-        console.log("Data de início:", startDate);
-        
+        console.log('Data de início:', startDate);
+
         const [dHour, dMinute, dSecond] = deadline.split(':').map(Number);
-        const durationMs = ((dHour * 3600) + (dMinute * 60) + (dSecond || 0)) * 1000;
+        const durationMs = (dHour * 3600 + dMinute * 60 + (dSecond || 0)) * 1000;
         const endDate = new Date(startDate.getTime() + durationMs);
-        
+
         const endDateStr = endDate.toISOString().split('T')[0];
         const endTimeStr = endDate.toTimeString().split(' ')[0];
-        console.log("Data final calculada:", endDateStr, endTimeStr);
-        
+        console.log('Data final calculada:', endDateStr, endTimeStr);
+
         handleChange('schedule_end_date', endDateStr);
         handleChange('schedule_end_time', endTimeStr);
       } catch (error) {
-        console.error("Erro ao calcular data/hora final:", error.message);
-        enqueueSnackbar(`Erro ao calcular a data de agendamento: ${error.message}`, { variant: 'error' });
+        console.error('Erro ao calcular data/hora final:', error.message);
+        enqueueSnackbar(`Erro ao calcular a data de agendamento: ${error.message}`, {
+          variant: 'error',
+        });
       }
     };
-  
+
     calculateEndDateTime();
   }, [formData.schedule_date, formData.schedule_start_time, formData.service, enqueueSnackbar]);
-  
 
   // Função para salvar os dados – aqui transformamos os campos para enviar somente os IDs
   const handleSave = async () => {
-    console.log("Iniciando handleSave com formData:", formData);
+    console.log('Iniciando handleSave com formData:', formData);
     setLoading(true);
 
     const normalizedProducts = Array.isArray(formData.products)
@@ -150,7 +151,7 @@ const useScheduleForm = (initialData, id, service_id) => {
       customer: extractId(formData.customer),
       leads: formData.leads,
       project: extractId(formData.project),
-      products: normalizedProducts.map(item => extractId(item)),
+      products: normalizedProducts.map((item) => extractId(item)),
       schedule_agent: extractId(formData.schedule_agent) || null,
       schedule_date: formData.schedule_date,
       schedule_start_time: formData.schedule_start_time,
@@ -175,14 +176,14 @@ const useScheduleForm = (initialData, id, service_id) => {
       }
       setFormErrors({});
       setSuccess(true);
-      enqueueSnackbar("Agendamento salvo com sucesso!", { variant: "success" });
+      enqueueSnackbar('Agendamento salvo com sucesso!', { variant: 'success' });
       return true;
     } catch (error) {
-      console.error("Erro ao salvar agendamento:", error.response?.data || error);
+      console.error('Erro ao salvar agendamento:', error.response?.data || error);
       setSuccess(false);
       setFormErrors(error.response?.data || {});
-      const errorMessage = error.response?.data?.detail || "Erro ao salvar agendamento";
-      enqueueSnackbar(errorMessage, { variant: "error" });
+      const errorMessage = error.response?.data?.detail || 'Erro ao salvar agendamento';
+      enqueueSnackbar(errorMessage, { variant: 'error' });
       return false;
     } finally {
       setLoading(false);

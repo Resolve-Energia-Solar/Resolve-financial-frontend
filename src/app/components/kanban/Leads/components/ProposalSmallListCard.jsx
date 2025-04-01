@@ -29,9 +29,7 @@ import ProductService from '@/services/productsService';
 import ListProducts from './ListProducts';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
-
-
-export function ProposalCard({ leadId = null }) {
+export function ProjectCard({ leadId = null, products = [] }) {
   const dispatch = useDispatch();
   const [dialogProductOpen, setDialogProductOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);

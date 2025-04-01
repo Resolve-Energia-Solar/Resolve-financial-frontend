@@ -16,10 +16,10 @@ export default function AutoCompleteUsers({ onChange, value = [], error, helperT
     const fetchDefaultUsers = async () => {
       if (value.length > 0) {
         try {
-          const users = await Promise.all(value.map(id => userService.getUserById(id)));
-          const formattedUsers = users.map(user => ({
+          const users = await Promise.all(value.map((id) => userService.find(id)));
+          const formattedUsers = users.map((user) => ({
             id: user.id,
-            name: user.complete_name // Ajuste conforme o campo do nome do usuário
+            name: user.complete_name, // Ajuste conforme o campo do nome do usuário
           }));
           setSelectedUsers(formattedUsers);
         } catch (error) {
@@ -33,7 +33,7 @@ export default function AutoCompleteUsers({ onChange, value = [], error, helperT
 
   const handleChange = (event, newValue) => {
     setSelectedUsers(newValue);
-    onChange(newValue.map(user => user.id)); // Envia uma lista de IDs
+    onChange(newValue.map((user) => user.id)); // Envia uma lista de IDs
   };
 
   const fetchUsersByName = useCallback(
@@ -41,8 +41,8 @@ export default function AutoCompleteUsers({ onChange, value = [], error, helperT
       if (!name) return;
       setLoading(true);
       try {
-        const users = await userService.getUserByName(name); // Chama o endpoint diretamente
-        const formattedUsers = users.results.map(user => ({
+        const users = await userService.index({ name: name }); // Chama o endpoint diretamente
+        const formattedUsers = users.results.map((user) => ({
           id: user.id,
           name: user.complete_name, // Formata conforme necessário
         }));
@@ -52,14 +52,14 @@ export default function AutoCompleteUsers({ onChange, value = [], error, helperT
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
 
   const fetchInitialUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const users = await userService.getUser({ limit: 5, page: 1 }); // Busca inicial com limite
-      const formattedUsers = users.results.map(user => ({
+      const users = await userService.index({ limit: 5, page: 1, expand: ['employee'] }); // Busca inicial com limite
+      const formattedUsers = users.results.map((user) => ({
         id: user.id,
         name: user.complete_name, // Formata conforme necessário
       }));
@@ -69,7 +69,6 @@ export default function AutoCompleteUsers({ onChange, value = [], error, helperT
     }
     setLoading(false);
   }, []);
-
 
   const handleOpen = () => {
     console.log('handleOpen');
@@ -98,7 +97,7 @@ export default function AutoCompleteUsers({ onChange, value = [], error, helperT
         loading={loading}
         value={selectedUsers}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           fetchUsersByName(newInputValue);
         }}

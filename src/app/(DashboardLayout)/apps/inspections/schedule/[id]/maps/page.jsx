@@ -42,7 +42,7 @@ const ScheduleView = () => {
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
-        const schedule = await scheduleService.getScheduleById(id);
+        const schedule = await scheduleService.find(id);
         if (schedule) setScheduleData(schedule);
       } catch (error) {
         console.error('Erro ao buscar agendamento:', error);
@@ -115,8 +115,8 @@ const ScheduleView = () => {
                           Telefones:{' '}
                           {scheduleData.customer?.phone_numbers?.length > 0
                             ? scheduleData.customer.phone_numbers.map((phone, index) =>
-                              index > 0 ? `, ${phone.phone_number}` : phone.phone_number,
-                            )
+                                index > 0 ? `, ${phone.phone_number}` : phone.phone_number,
+                              )
                             : 'Telefone não disponível'}
                         </Typography>
                         <Typography variant="body1">

@@ -54,14 +54,14 @@ function FormPreSale({ selectedProposal, onClose }) {
   const handleCreatePreSale = async () => {
     setLoading(true);
     try {
-      const response = await saleService.createPreSale(sendData);
+      const response = await saleService.create(sendData);
       setSuccess(true);
       setIdSaleSuccess(response.pre_sale_id);
       onClose();
     } catch (error) {
       console.log(error);
       const errors = Object.entries(error?.response?.data).map(
-        ([key, value]) => `${key}: ${value}`
+        ([key, value]) => `${key}: ${value}`,
       );
       setErrorMessages(errors);
       setErrorDialogOpen(true);
@@ -118,11 +118,15 @@ function FormPreSale({ selectedProposal, onClose }) {
                 </Typography>
               </Box>
 
-
               <Box display="flex" alignItems="center" mb={1}>
                 <AttachMoney sx={{ color: theme.palette.secondary.main, mr: 1 }} />
                 <Typography variant="h6" gutterBottom>
-                  Valor: {product?.product?.product_value ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product?.product?.product_value) : 'N/A'}
+                  Valor:{' '}
+                  {product?.product?.product_value
+                    ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                        product?.product?.product_value,
+                      )
+                    : 'N/A'}
                 </Typography>
               </Box>
             </CardContent>

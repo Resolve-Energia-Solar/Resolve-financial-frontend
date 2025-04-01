@@ -146,7 +146,7 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
 
   const handleDelete = async (scheduleId) => {
     try {
-      await scheduleService.patchSchedule(scheduleId, { project: null });
+      await scheduleService.update(scheduleId, { project: null });
 
       const scheduleRemoved = schedules.find((schedule) => schedule.id === scheduleId);
       if (scheduleRemoved && scheduleRemoved.isChecked) {
@@ -162,7 +162,7 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
 
   const AssociateProject = async (inspectionId) => {
     try {
-      await scheduleService.patchSchedule(inspectionId, { project: projectId });
+      await scheduleService.update(inspectionId, { project: projectId });
       reloadPage();
       setConfirmAssociateModalOpen(false);
       setOpenModelInspectionNotAssociated(false);

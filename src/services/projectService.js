@@ -55,6 +55,15 @@ const projectService = {
     }
   },
 
+  getIndicators: async (params) => {
+    try {
+      const response = await apiClient.get('/api/projects/indicators/', { params });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar indicadores de projetos:', error);
+      throw error;
+    }
+  },
 
   getProjects: async (params = {}) => {
     const query = qs.stringify({ expand: 'units', ...params }, { addQueryPrefix: true, arrayFormat: 'brackets' });

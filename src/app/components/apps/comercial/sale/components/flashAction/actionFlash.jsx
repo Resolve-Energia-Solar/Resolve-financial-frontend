@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, CircularProgress } from '@mui/material';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  CircularProgress,
+} from '@mui/material';
 import { FlashOn } from '@mui/icons-material';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import saleService from '@/services/saleService';
@@ -18,13 +26,13 @@ export default function ActionFlash({ value }) {
     setLoading(true);
     const promises = value.map(async (id) => {
       try {
-        await saleService.updateSalePartial(id, { status: selectedStatus });
+        await saleService.update(id, { status: selectedStatus });
         setError(false);
       } catch (error) {
         setError(true);
       }
     });
-    
+
     await Promise.all(promises);
     setLoading(false);
     return !error;
@@ -74,10 +82,10 @@ export default function ActionFlash({ value }) {
         <DialogContent>
           <DialogTitle sx={{ textAlign: 'center' }}>Ação Rápida</DialogTitle>
 
-          { error && (
-          <DialogContent sx={{ textAlign: 'center', padding: 0, margin: 0 }}>
-            Ocorreu um erro ao atualizar as vendas.
-          </DialogContent>
+          {error && (
+            <DialogContent sx={{ textAlign: 'center', padding: 0, margin: 0 }}>
+              Ocorreu um erro ao atualizar as vendas.
+            </DialogContent>
           )}
 
           <FormSelect
@@ -89,9 +97,11 @@ export default function ActionFlash({ value }) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} disabled={loading}>Cancelar</Button>
-          <Button 
-            onClick={handleAction} 
+          <Button onClick={handleClose} disabled={loading}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleAction}
             variant="contained"
             disabled={loading || !selectedStatus}
             startIcon={loading ? <CircularProgress size={20} /> : null}

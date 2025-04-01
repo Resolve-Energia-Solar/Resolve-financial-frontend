@@ -12,7 +12,7 @@ const useServiceCatalog = (id) => {
 
     const fetchServiceCatalog = async () => {
       try {
-        const data = await serviceCatalogService.getServiceCatalogById(id);
+        const data = await serviceCatalogService.find(id);
         setServiceCatalogData(data);
       } catch (err) {
         setError('Erro ao carregar o serviços');

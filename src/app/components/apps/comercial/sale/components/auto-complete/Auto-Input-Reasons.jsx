@@ -34,9 +34,7 @@ export default function AutoCompleteReasonMultiple({
       if (valuesDefault.length > 0) {
         try {
           // Utiliza findOne para buscar um único registro
-          const reasons = await Promise.all(
-            valuesDefault.map((id) => serviceReason.findReason(id))
-          );
+          const reasons = await Promise.all(valuesDefault.map((id) => serviceReason.find(id)));
           const formattedReasons = reasons.map((reason) => ({
             id: reason.id,
             name: reason.name,
@@ -45,7 +43,7 @@ export default function AutoCompleteReasonMultiple({
         } catch (error) {
           console.error('Erro ao buscar reasons:', error);
         }
-      } 
+      }
     };
 
     fetchDefaultReasons();
@@ -71,7 +69,7 @@ export default function AutoCompleteReasonMultiple({
       }
       setLoading(true);
       try {
-        const reasons = await serviceReason.getReason({ name__icontains: name });
+        const reasons = await serviceReason.index({ name__icontains: name, limit: 5, page: 1 });
         if (reasons && reasons.results) {
           const formattedReasons = reasons.results.map((reason) => ({
             id: reason.id,
@@ -84,14 +82,14 @@ export default function AutoCompleteReasonMultiple({
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
 
   // Busca inicial ao abrir o dropdown (limitado a 5 itens)
   const fetchInitialReasons = useCallback(async () => {
     setLoading(true);
     try {
-      const reasons = await serviceReason.getReason({ limit: 5 });
+      const reasons = await serviceReason.index({ limit: 5, page: 1 });
       if (reasons && reasons.results) {
         const formattedReasons = reasons.results.map((reason) => ({
           id: reason.id,

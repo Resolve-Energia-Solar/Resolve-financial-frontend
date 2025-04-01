@@ -6,9 +6,9 @@ const useProposalForm = (initialData, id) => {
   const user = useSelector((state) => state.user?.user);
 
   const [formData, setFormData] = useState({
-    lead_id: null,
-    created_by_id: user?.id || null,
-    commercial_products_ids: [],
+    lead: null,
+    created_by: user?.id || null,
+    products: [],
     due_date: null,
     value: null,
     status: 'P',
@@ -24,10 +24,10 @@ const useProposalForm = (initialData, id) => {
   useEffect(() => {
     if (initialData) {
       setFormData({
-        lead_id: initialData.lead?.id || null,
-        created_by_id: initialData.created_by_id || user?.id || null,
-        commercial_products_ids:
-          initialData.commercial_products?.map((item) => item.product.id) || [],
+        lead: initialData.lead?.id || null,
+        created_by: initialData.created_by || user?.id || null,
+        products:
+          initialData.products?.map((item) => item?.product?.id) || [],
         due_date: initialData.due_date || null,
         value: initialData.value || null,
         status: initialData.status || 'P',
@@ -43,9 +43,9 @@ const useProposalForm = (initialData, id) => {
   const handleSave = async () => {
     setLoading(true);
     const dataToSend = {
-      lead_id: formData.lead_id,
-      created_by_id: formData.created_by_id,
-      commercial_products_ids: formData.commercial_products_ids,
+      lead: formData.lead,
+      created_by: formData.created_by,
+      products: formData.products,
       due_date: formData.due_date,
       value: formData.value,
       status: formData.status,

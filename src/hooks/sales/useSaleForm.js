@@ -21,7 +21,7 @@ const useSaleForm = (initialData, id) => {
     completedDocument: false,
     billing_date: null,
     cancellationReasonsIds: [],
-    reference_table: null
+    reference_table: null,
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -45,8 +45,10 @@ const useSaleForm = (initialData, id) => {
         status: initialData.status || null,
         completedDocument: initialData.completed_document || false,
         billing_date: initialData.billing_date || null,
-        cancellationReasonsIds: initialData.cancellation_reasons?.map(cancellation_reason => cancellation_reason.id) || [],
-        reference_table: initialData.reference_table || ''
+        cancellationReasonsIds:
+          initialData.cancellation_reasons?.map((cancellation_reason) => cancellation_reason.id) ||
+          [],
+        reference_table: initialData.reference_table || '',
       });
     }
   }, [initialData]);
@@ -60,7 +62,11 @@ const useSaleForm = (initialData, id) => {
 
     let errors = { ...formErrors };
 
-    if ((formData.status === 'D' || formData.status === 'C') && formData.isSale == false && !formData.cancellationReasonsIds.length) {
+    if (
+      (formData.status === 'D' || formData.status === 'C') &&
+      formData.isSale == false &&
+      !formData.cancellationReasonsIds.length
+    ) {
       errors.cancellationReasonsIds = ['O motivo é obrigatório.'];
     } else {
       delete errors.cancellationReasonsIds;
@@ -78,7 +84,9 @@ const useSaleForm = (initialData, id) => {
       sales_supervisor: formData.salesSupervisorId,
       sales_manager: formData.salesManagerId,
       branch: formData.branchId,
-      marketing_campaign_id: formData.marketingCampaignId ? formData.marketingCampaignId : undefined,
+      marketing_campaign_id: formData.marketingCampaignId
+        ? formData.marketingCampaignId
+        : undefined,
       payment_status: formData.payment_status,
       products_ids: formData.productIds,
       is_pre_sale: formData.isSale,
@@ -87,15 +95,15 @@ const useSaleForm = (initialData, id) => {
       completed_document: formData.completedDocument,
       billing_date: formData.billing_date || null,
       cancellation_reasons_ids: formData.cancellationReasonsIds,
-      reference_table: formData.reference_table
+      reference_table: formData.reference_table,
     };
 
     try {
       let response;
       if (id) {
-        response = await saleService.updateSale(id, dataToSend);
+        response = await saleService.update(id, dataToSend);
       } else {
-        response = await saleService.createSale(dataToSend);
+        response = await saleService.create(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);

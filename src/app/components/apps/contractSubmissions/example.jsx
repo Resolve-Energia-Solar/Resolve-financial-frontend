@@ -35,7 +35,7 @@ function ContractSubmissions({ sale }) {
 
   const handleOpen = async (saleId) => {
     try {
-      const fetchedSale = await saleService.getSaleById(saleId);
+      const fetchedSale = await saleService.find(saleId);
       setCurrentSale(fetchedSale);
       setOpen(true);
     } catch (error) {
@@ -96,7 +96,7 @@ function ContractSubmissions({ sale }) {
     setIsSendingContract(true);
 
     try {
-      const fetchedSale = await saleService.getSaleById(sale.id);
+      const fetchedSale = await saleService.find(sale.id);
       console.log('Dados da venda:', fetchedSale);
 
       const missingFields = [];

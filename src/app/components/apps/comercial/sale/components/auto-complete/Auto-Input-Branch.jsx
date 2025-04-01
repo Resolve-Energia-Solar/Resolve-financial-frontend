@@ -50,7 +50,7 @@ export default function AutoCompleteBranch({
       if (!name) return;
       setLoading(true);
       try {
-        const branches = await branchService.find(name);
+        const branches = await branchService.index({ name: name });
         if (branches && branches.results) {
           const formattedBranches = branches.results.map((branch) => ({
             id: branch.id,

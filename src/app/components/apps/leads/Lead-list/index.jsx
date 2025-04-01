@@ -101,7 +101,7 @@ const SaleList = () => {
     const fetchSales = async () => {
       try {
         setLoading(true);
-        const data = await saleService.getSales(
+        const data = await saleService.index(
           order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : null,
         );
         setSalesList(data.results);
@@ -150,7 +150,7 @@ const SaleList = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await saleService.deleteSale(saleToDelete);
+      await saleService.delete(saleToDelete);
       setSalesList(salesList.filter((item) => item.id !== saleToDelete));
       showAlert('Venda excluída com sucesso', 'success');
     } catch (err) {
@@ -174,7 +174,7 @@ const SaleList = () => {
           total_value: Number(item.total_value).toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL',
-          })
+          }),
         }),
       });
 

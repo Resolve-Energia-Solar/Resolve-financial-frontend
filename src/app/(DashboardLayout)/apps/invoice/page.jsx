@@ -38,7 +38,7 @@ const InvoiceListing = () => {
   };
 
   return (
-    <PageContainer title="Lista de Pagamentos" description="Essa é a Lista de Pagamentos">
+    <PageContainer title="Lista de Vendas" description="Essa é a Lista de Pagamentos">
       <Breadcrumb items={BCrumb} />
       <BlankCard>
         <CardContent>

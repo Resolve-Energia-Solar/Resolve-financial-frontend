@@ -24,8 +24,8 @@ export default function AutoCompleteServiceCatalog({
     const fetchDefaultServiceCatalog = async () => {
       if (value) {
         try {
-          const serviceCatalogValue = await serviceCatalogService.getServiceCatalogById(value, {
-            fields: 'id,name',
+          const serviceCatalogValue = await serviceCatalogService.find(value, {
+            fields: ['id', 'name'],
           });
           if (serviceCatalogValue) {
             setSelectedServiceCatalog({
@@ -46,8 +46,9 @@ export default function AutoCompleteServiceCatalog({
     debounce(async (name) => {
       setLoading(true);
       try {
-        const response = await serviceCatalogService.getServiceCatalogByName(name, {
-          fields: 'id,name',
+        const response = await serviceCatalogService.index({
+          name__icontains: name,
+          fields: ['id', 'name'],
         });
         const formattedServiceCatalogs = response.results.map((serviceCatalog) => ({
           id: serviceCatalog.id,

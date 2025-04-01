@@ -65,10 +65,23 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
   useEffect(() => {
     async function fetchFullSchedule() {
       try {
-        const data = await scheduleService.getScheduleById(selectedSchedule.id, {
-          fields:
-            'id,schedule_date,customer,address,service,project,schedule_agent,created_at,observation,status,products,schedule_creator,products.name',
-          expand: 'products',
+        const data = await scheduleService.find(selectedSchedule.id, {
+          fields: [
+            'id',
+            'schedule_date',
+            'customer',
+            'address',
+            'service',
+            'project',
+            'schedule_agent',
+            'created_at',
+            'observation',
+            'status',
+            'products',
+            'schedule_creator',
+            'products.name',
+          ],
+          expand: ['products'],
         });
         setScheduleData(data);
       } catch (error) {
@@ -86,7 +99,7 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
       setLoadingAnswer(true);
       try {
         if (scheduleData?.id) {
-          const data = await answerService.find(scheduleData.id);
+          const data = await answerService.index({ schedule: scheduleData.id });
           setAnswerData(data);
         }
       } catch (err) {
@@ -105,9 +118,12 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
     async function fetchSaleAndSeller() {
       if (scheduleData?.project?.sale) {
         try {
-          const saleData = await saleService.getSaleById(scheduleData.project.sale);
+          const saleData = await saleService.find(scheduleData.project.sale);
           if (saleData?.seller) {
-            const sellerData = await userService.getUserById(saleData.seller.id);
+            const sellerData = await userService.find(saleData.seller.id, {
+              expand: ['employee'],
+              fields: ['*'],
+            });
             setSeller(sellerData);
           }
         } catch (err) {
@@ -255,11 +271,11 @@ export default function ScheduleView({ open, onClose, selectedSchedule }) {
                       <strong>Telefone do Vistoriador:</strong>{' '}
                       {scheduleData?.schedule_agent?.phone_numbers?.length > 0
                         ? scheduleData.schedule_agent.phone_numbers
-                            .map(
-                              (phone) =>
-                                `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`,
-                            )
-                            .join(', ')
+                          .map(
+                            (phone) =>
+                              `+${phone.country_code} (${phone.area_code}) ${phone.phone_number}`,
+                          )
+                          .join(', ')
                         : 'Sem telefone associado'}
                     </Typography>
                   </HasPermission>

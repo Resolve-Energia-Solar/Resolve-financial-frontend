@@ -24,10 +24,13 @@ import ScheduleStatusChip from '../inspections/schedule/StatusChip'
 import UserCard from '../users/userCard'
 import Logo from '@/app/(DashboardLayout)/layout/shared/logo/Logo'
 import Comment from '@/app/components/apps/comment/index'
+import AnswerForm from '../inspections/form-builder/AnswerForm'
+import answerService from '@/services/answerService'
 
 const DetailsDrawer = ({ open, onClose, scheduleId }) => {
-    const [schedule, setScheduleDetails] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [schedule, setScheduleDetails] = useState(null)
+    const [answers, setAnswers] = useState(null)
     const [error, setError] = useState(null)
     const [seller, setSeller] = useState(null)
     const [productName, setProductName] = useState(null)
@@ -75,7 +78,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId }) => {
                         'address'
                     ]
                 })
-                .then((response) => {
+                .then(async (response) => {
                     setScheduleDetails(response)
                 })
                 .catch((error) => {
@@ -87,6 +90,22 @@ const DetailsDrawer = ({ open, onClose, scheduleId }) => {
                     setLoading(false)
                 })
         }
+    }, [open, scheduleId, enqueueSnackbar])
+
+    useEffect(() => {
+        const fetchAnswers = async () => {
+            if (scheduleId && open) {
+                try {
+                    const data = await answerService.index({ schedule: scheduleId, expand: 'form' });
+                    setAnswers(data);
+                } catch (err) {
+                    console.error('Erro ao buscar respostas:', err);
+                    setError('Erro ao carregar as respostas');
+                    enqueueSnackbar('Erro ao carregar as respostas', { variant: 'error' });
+                }
+            };
+        }
+        fetchAnswers();
     }, [open, scheduleId, enqueueSnackbar])
 
     useEffect(() => {
@@ -194,7 +213,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId }) => {
                             size="small"
                             color="secondary"
                             variant="outlined"
-                            label={formatDate(schedule.schedule_date)}
+                            label={new Date(schedule.created_at).toLocaleString('pt-BR')}
                             sx={{ mt: 1 }}
                         />
                     </Box>
@@ -214,7 +233,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId }) => {
                     >
                         <Tab label="Informações" />
                         <Tab label="Comentários" />
-                        <Tab label="Formulário" />
+                        {answers && answers.results?.length > 0 && <Tab label="Formulário" />}
                     </Tabs>
 
                     {tabValue === 0 && (
@@ -325,15 +344,15 @@ const DetailsDrawer = ({ open, onClose, scheduleId }) => {
                                             </Box>
                                         </CardContent>
                                     </Card>
-                            <Stack direction="row" spacing={2} justifyContent="flex-end" mt={3}>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    href={`/apps/schedules/${schedule.id}/update`}
-                                >
-                                    Editar Agendamento
-                                </Button>
-                            </Stack>
+                                    <Stack direction="row" spacing={2} justifyContent="flex-end" mt={3}>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            href={`/apps/schedules/${schedule.id}/update`}
+                                        >
+                                            Editar Agendamento
+                                        </Button>
+                                    </Stack>
                                 </Grid>
                             </Grid>
 
@@ -344,15 +363,11 @@ const DetailsDrawer = ({ open, onClose, scheduleId }) => {
                             <Comment appLabel="field_services" model="schedule" objectId={schedule.id} />
                         </Box>
                     )}
-                    {/* {tabValue === 2 && (
+                    {answers && answers.results?.length > 0 && tabValue === 2 && (
                         <Box sx={{ p: 2 }}>
-                            <Typography variant="h6">Formulário</Typography>
-                            <Divider sx={{ mb: 2 }} />
-                            <Typography variant="body1">
-                                Formulário de inspeção ainda não implementado.
-                            </Typography>
+                            <AnswerForm answerData={answers} />
                         </Box>
-                    )} */}
+                    )}
                 </Box>
             </Box>
         </Drawer>

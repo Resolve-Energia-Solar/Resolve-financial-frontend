@@ -21,7 +21,9 @@ export default function AutoInputStatusSchedule({
   useEffect(() => {
     const getStatus = async () => {
       try {
-        const response = await serviceOpinionsService.getServiceOpinions({
+        const response = await serviceOpinionsService.index({
+          page: 1,
+          limit: 5,
           name__icontains: inputValue,
           service: serviceId,
           is_final_opinion: isFinalOpinion,
@@ -45,7 +47,9 @@ export default function AutoInputStatusSchedule({
       try {
         // Verifica se o input possui um tamanho mínimo (opcional)
         if (inputValue.length < 3) return;
-        const response = await serviceOpinionsService.getServiceOpinions({
+        const response = await serviceOpinionsService.index({
+          limit: 5,
+          page: 1,
           name__icontains: inputValue,
           service: serviceId,
           is_final_opinion: isFinalOpinion,
@@ -69,7 +73,7 @@ export default function AutoInputStatusSchedule({
     const fetchSelectedValue = async () => {
       if (value) {
         try {
-          const response = await serviceOpinionsService.getServiceOpinionsById(value);
+          const response = await serviceOpinionsService.find(value);
           setSelectedValue({ id: response.id, label: response.name });
         } catch (error) {
           console.error('Erro ao buscar o status por ID:', error);

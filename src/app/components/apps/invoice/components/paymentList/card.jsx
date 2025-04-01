@@ -179,7 +179,7 @@ const PaymentCard = ({ sale = null }) => {
     setErrorValue(null);
     setLoadingValue(true);
     try {
-      await saleService.updateSalePartial(sale, {
+      await saleService.update(sale, {
         total_value: totalValue,
       });
       handleRefresh();

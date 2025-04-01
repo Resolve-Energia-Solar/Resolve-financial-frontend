@@ -143,7 +143,7 @@ function EditLeadTabs({ leadId }) {
         </CustomTabPanel>
 
         {/* agendamentos */}
-        <CustomTabPanel value={tabValue} index={6}>
+        <CustomTabPanel value={tabValue} index={5}>
           <LeadSchedulePage leadId={leadId} />
         </CustomTabPanel>
       </Box>

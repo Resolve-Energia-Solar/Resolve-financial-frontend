@@ -138,14 +138,12 @@ const Menuitems = [
     title: 'Financiamento',
     icon: IconBuildingBank,
     href: '/apps/funding-request',
-    // permissions: ['contracts.view_payment',],
     children: [
       {
         id: uniqueId(),
         title: 'Solicitações Sicoob',
         icon: IconPigMoney,
-        href: '/apps/funding-request',
-        // permissions: ['financial.view_payment'],
+        href: '/apps/funding-request/sicoob',
       },
     ],
   },

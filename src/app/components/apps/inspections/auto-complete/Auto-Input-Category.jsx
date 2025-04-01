@@ -46,7 +46,7 @@ export default function AutoCompleteCategory({ onChange, value, error, helperTex
     debounce(async (name) => {
       setLoading(true);
       try {
-        const response = await categoryService.find(name);
+        const response = await categoryService.index({ name: name });
         const formattedCategories = response.results.map((category) => ({
           id: category.id,
           name: category.name,

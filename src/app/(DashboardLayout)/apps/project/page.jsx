@@ -10,7 +10,10 @@ import SideDrawer from '@/app/components/shared/SideDrawer';
 import useProject from '@/hooks/projects/useProject';
 import { ProjectDataContextProvider } from '@/app/context/ProjectContext';
 
-const ProjectListing = ({ fields = 'id,product.id,sale.id,sale.customer.id', expand = 'product,sale,sale.customer,' }) => {
+const ProjectListing = ({
+  fields = 'id,product.id,sale.id,sale.customer.id',
+  expand = 'product,sale,sale.customer,',
+}) => {
   const { openDrawer, toggleDrawerClosed, handleRowClick, rowSelected } = useProject();
 
   const projectId = rowSelected?.id || null;

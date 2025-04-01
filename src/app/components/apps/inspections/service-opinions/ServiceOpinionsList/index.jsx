@@ -89,7 +89,7 @@ const ServiceOpinionsList = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await serviceOpinionsService.deleteServiceOpinions(opinionsToDelete);
+      await serviceOpinionsService.delete(opinionsToDelete);
       setOpinionsList(opinionsList.filter((item) => item.id !== opinionsToDelete));
       showAlert('Parecer excluído com sucesso', 'success');
     } catch (err) {
@@ -132,7 +132,9 @@ const ServiceOpinionsList = () => {
         const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
         const queryParams = new URLSearchParams(filters[1]).toString();
 
-        const data = await serviceOpinionsService.getServiceOpinions({
+        const data = await serviceOpinionsService.index({
+          limit: 5,
+          page: 1,
           ordering: orderingParam,
           params: queryParams,
           nextPage: page,

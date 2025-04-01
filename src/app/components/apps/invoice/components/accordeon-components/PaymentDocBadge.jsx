@@ -4,6 +4,7 @@ import attachmentService from '@/services/attachmentService';
 
 const PaymentDocBadge = ({ saleId, contentType }) => {
   const [badgeColor, setBadgeColor] = useState(null);
+  const [pulse, setPulse] = useState(false);
 
   useEffect(() => {
     const fetchAttachments = async () => {
@@ -15,16 +16,15 @@ const PaymentDocBadge = ({ saleId, contentType }) => {
           content_type: contentType,
         });
         const attachments = response.results || [];
-        // Filtra os attachments cujo document_type.name contenha "Comprovante de pagamento"
         const comprovantes = attachments.filter(att =>
           att.document_type?.name?.toLowerCase().includes("comprovante de pagamento")
         );
         if (comprovantes.length > 0) {
-          // Se existir algum com status "EA" => laranja
           if (comprovantes.some(att => att.status === "EA")) {
+            setPulse(true);
             setBadgeColor("orange");
           } else if (comprovantes.some(att => att.status === "A")) {
-            // Se existir algum com status "A" => verde
+            setPulse(false);
             setBadgeColor("green");
           } else {
             setBadgeColor(null);
@@ -41,7 +41,7 @@ const PaymentDocBadge = ({ saleId, contentType }) => {
   }, [saleId, contentType]);
 
   if (!badgeColor) return null;
-  return <PulsingBadge color={badgeColor} />;
+  return <PulsingBadge color={badgeColor} noPulse={!pulse} />;
 };
 
 export default PaymentDocBadge;

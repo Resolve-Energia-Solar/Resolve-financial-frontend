@@ -59,7 +59,7 @@ const ProductCard = ({ sale = null }) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await saleService.getSalesProducts(sale.id);
+        const response = await saleService.find(sale.id, { fields: ['sale_products'] });
         console.log('Response: ', response);
         setSelectedProductIds(response.sale_products.map((item) => item.product.id));
         setInitialProductIds(response.sale_products.map((item) => item.product.id));
@@ -116,7 +116,7 @@ const ProductCard = ({ sale = null }) => {
 
   const handleApplyChanges = async () => {
     try {
-      const response = await saleService.patchSaleProduct(sale.id, selectedProductIds);
+      const response = await saleService.update(sale.id, selectedProductIds);
       setInitialProductIds(selectedProductIds);
       handleRefreshList();
       console.log('Response: ', response);

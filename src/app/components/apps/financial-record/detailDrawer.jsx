@@ -101,7 +101,7 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
 
   const handlePDFBtnClick = async () => {
     try {
-      const response = await financialRecordService.find(currentRecord.id);
+      const response = await financialRecordService.find(currentRecord.id, { generate_pdf: true });
       const url = window.URL.createObjectURL(new Blob([response]));
       const link = document.createElement('a');
       link.setAttribute('href', url);

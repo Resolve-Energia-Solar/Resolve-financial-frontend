@@ -172,7 +172,7 @@ const SaleList = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await saleService.deleteSale(saleToDelete);
+      await saleService.delete(saleToDelete);
       setSalesList(salesList.filter((item) => item.id !== saleToDelete));
       showAlert('Venda excluída com sucesso', 'success');
     } catch (err) {
@@ -445,12 +445,15 @@ const SaleList = () => {
                       <StatusChip status={item.status} />
                     </TableCell>
                     <TableCell>
-                      {Array.isArray(item.final_service_opinion) && item.final_service_opinion[0].name ? (
+                      {Array.isArray(item.final_service_opinion) &&
+                      item.final_service_opinion[0].name ? (
                         <Chip
                           label={item.final_service_opinion[0].name}
                           color={
-                            item.final_service_opinion[0].name.toLowerCase().includes('aprovado') ? 'success' : 'default'
-                          }                          
+                            item.final_service_opinion[0].name.toLowerCase().includes('aprovado')
+                              ? 'success'
+                              : 'default'
+                          }
                         />
                       ) : (
                         <Chip label="Sem P.F" color="warning" />

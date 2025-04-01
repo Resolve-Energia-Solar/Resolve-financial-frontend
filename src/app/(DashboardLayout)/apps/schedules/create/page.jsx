@@ -81,7 +81,7 @@ const CreateSchedulePage = () => {
     };
 
     try {
-      await scheduleService.createSchedule(submitData);
+      await scheduleService.create(submitData);
       router.push('/apps/schedules');
     } catch (err) {
       Object.entries(err.response.data).forEach(([field, messages]) => {

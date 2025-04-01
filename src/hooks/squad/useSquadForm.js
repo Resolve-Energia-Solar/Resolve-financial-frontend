@@ -38,9 +38,9 @@ const useSquadForm = (initialData, id) => {
     console.log('dataToSend', dataToSend);
     try {
       if (id) {
-        await squadService.updateSquad(id, dataToSend);
+        await squadService.update(id, dataToSend);
       } else {
-        await squadService.createSquad(dataToSend);
+        await squadService.create(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);

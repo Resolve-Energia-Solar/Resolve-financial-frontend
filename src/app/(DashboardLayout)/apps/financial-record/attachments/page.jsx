@@ -81,7 +81,9 @@ const attachmentList = () => {
       for (const item of attachmentList) {
         if (item.object_id && !newMap[item.object_id]) {
           try {
-            const record = await financialRecordService.find(item.object_id, 'protocol');
+            const record = await financialRecordService.find(item.object_id, {
+              fields: ['protocol'],
+            });
             newMap[item.object_id] = record.protocol;
           } catch (error) {
             console.error('Erro ao buscar protocolo para object_id', item.object_id, error);
@@ -152,19 +154,6 @@ const attachmentList = () => {
           value: type.id,
         })),
     },
-    /*
-        {
-            key: 'document_subtype__in',
-            label: 'Subtipo de Documento',
-            type: 'async-multiselect',
-            endpoint: '/api/document-subtypes/',
-            queryParam: 'name_icontains',
-            mapResponse: (data) =>
-                data.results.map((subtype) => ({
-                    label: subtype.name,
-                    value: subtype.id,
-                })),
-        }, */
     {
       key: 'description__icontains',
       label: 'Descrição',

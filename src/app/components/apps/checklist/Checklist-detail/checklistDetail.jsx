@@ -37,7 +37,7 @@ const CheckListRateioDetail = ({ projectId = null }) => {
   useEffect(() => {
     const fetchUnits = async () => {
       try {
-        const response = await unitService.getUnitByIdProject(projectId);
+        const response = await unitService.index({ project: projectId });
         setUnits(response.results);
       } catch (error) {
         console.log('Error: ', error);
@@ -136,7 +136,12 @@ const CheckListRateioDetail = ({ projectId = null }) => {
       </Paper>
 
       {/* Modal de Edição */}
-      <Dialog open={detailModalOpen} onClose={() => setDetailModalOpen(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={detailModalOpen}
+        onClose={() => setDetailModalOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>Visualizar Unidade</DialogTitle>
         <DialogContent>
           <ChecklistFormDetail

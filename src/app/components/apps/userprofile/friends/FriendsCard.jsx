@@ -66,12 +66,15 @@ const FriendsCard = ({ user }) => {
       try {
         setLoading(true);
         const data = await employeeService.index({
-          filters: {
-            department: currentUser.employee?.department?.id,
-            expand: 'user,department,role',
-            fields:
-              'user.complete_name,user.profile_picture,user.username,role.name,department.name',
-          },
+          department: currentUser.employee?.department?.id,
+          expand: ['user', 'department', 'role'],
+          fields: [
+            'user.complete_name',
+            'user.profile_picture',
+            'user.username',
+            'role.name',
+            'department.name',
+          ],
           page: page,
           limit: 10,
         });

@@ -13,7 +13,7 @@ const DocumentTypeSelect = ({ appLabel, formData, handleChange }) => {
         const response = await documentTypeService.index({
           page: 1,
           limit: 50,
-          filters: { app_label__in: appLabel },
+          app_label__in: appLabel,
         });
         const results = response.data?.results || response.results || [];
         // Incluímos subtypes na estrutura

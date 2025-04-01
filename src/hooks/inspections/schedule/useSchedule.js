@@ -11,7 +11,7 @@ const useSchedule = (id) => {
 
     const fetchSchedule = async () => {
       try {
-        const data = await scheduleService.getScheduleById(id);
+        const data = await scheduleService.find(id);
         setScheduleData(data);
       } catch (err) {
         setError('Erro ao carregar o agendamento');

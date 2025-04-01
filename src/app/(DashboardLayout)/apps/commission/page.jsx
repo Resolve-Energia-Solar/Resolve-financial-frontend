@@ -146,7 +146,7 @@ function commission() {
     };
 
     const fectchComissionAll = async () => {
-      const commissionData = await commissionService.index();
+      const commissionData = await commissionService.index({ expand: ['sale'] });
 
       setComissions(commissionData.results);
     };

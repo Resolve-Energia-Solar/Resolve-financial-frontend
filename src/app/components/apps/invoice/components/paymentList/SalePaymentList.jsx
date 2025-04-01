@@ -16,6 +16,8 @@ import {
   DialogTitle,
   Button,
 } from '@mui/material';
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PaymentChip from '../PaymentChip';
 import paymentService from '@/services/paymentService';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
@@ -26,12 +28,33 @@ import PaymentDocBadge from '../accordeon-components/PaymentDocBadge';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
+function useAnimatedNumber(targetValue, duration = 800) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    let startTime;
+    const animate = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      setDisplayValue(Math.floor(progress * targetValue));
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    requestAnimationFrame(animate);
+  }, [targetValue, duration]);
+
+  return displayValue;
+}
+
 const SalePaymentList = ({ onClick }) => {
   // Estados para dados, loading, erro e paginação
   const [paymentsList, setPaymentsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
+  const [indicators, setIndicators] = useState([]);
+  const [loadingIndicators, setLoadingIndicators] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
 
@@ -55,7 +78,7 @@ const SalePaymentList = ({ onClick }) => {
           limit: rowsPerPage,
           expand: 'customer,payments.borrower,payments,sale,payments.financier',
           fields:
-            'id,total_value,payments.payment_type,payments.is_paid,customer.complete_name,signature_date,payments.borrower.complete_name,payments.installments,payments.invoice_status,status,payment_status,payments.financier.name',
+            'id,total_value,payments.payment_type,payments.is_paid,customer.complete_name,signature_date,payments.borrower.complete_name,payments.installments,payments.invoice_status,status,payment_status,payments.financier.name,is_pre_sale',
           ...filters,
         });
         setPaymentsList(response.results);
@@ -68,9 +91,55 @@ const SalePaymentList = ({ onClick }) => {
       }
     };
 
+    const fetchIndicators = async () => {
+      setLoadingIndicators(true);
+      try {
+        const response = await paymentService.getIndicators({
+          ...filters,
+        })
+        console.log('Indicadores:', response);
+        setIndicators(response.indicators || 0);
+      } catch (err) {
+        console.error('Erro ao carregar indicadores:', err);
+        setError('Erro ao carregar indicadores.');
+      } finally {
+        setLoadingIndicators(false);
+      }
+    }
+
     fetchData();
+    fetchIndicators();
+
   }, [filters, refresh, page, rowsPerPage]);
 
+  const onTimeInstallmentCount = useAnimatedNumber(
+    indicators?.installments?.on_time_installments_count || 0,
+  );
+  
+  const overdueInstallmentsCount = useAnimatedNumber(
+    indicators?.installments?.overdue_installments_count || 0,
+  );
+  
+  const paidInstallmentsCount = useAnimatedNumber(
+    indicators?.installments?.paid_installments_count || 0,
+  );
+  
+  const totalInstallments = useAnimatedNumber(
+    indicators?.installments?.total_installments || 0,
+  );
+  
+  const totalPayments = useAnimatedNumber(
+    indicators?.consistency?.total_payments || 0,
+  );
+  
+  const consistentPayments = useAnimatedNumber(
+    indicators?.consistency?.consistent_payments || 0,
+  );
+  
+  const inconsistentPayments = useAnimatedNumber(
+    indicators?.consistency?.inconsistent_payments || 0,
+  );
+  
   // Handlers para paginação
   const handlePageChange = (_, newPage) => {
     setPage(newPage);
@@ -111,6 +180,11 @@ const SalePaymentList = ({ onClick }) => {
               </TableCell>
               <TableCell>
                 <Typography variant="h6" fontSize="14px">
+                  Venda
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="h6" fontSize="14px">
                   Cliente
                 </Typography>
               </TableCell>
@@ -138,7 +212,7 @@ const SalePaymentList = ({ onClick }) => {
           </TableHead>
 
           {loading ? (
-            <TableSkeleton rows={rowsPerPage} columns={6} />
+            <TableSkeleton rows={rowsPerPage} columns={7} />
           ) : error ? (
             <TableBody>
               <TableRow>
@@ -156,8 +230,16 @@ const SalePaymentList = ({ onClick }) => {
                   <TableRow key={item.id} onClick={() => onClick(item)} hover>
                     <TableCell>
                       <Typography fontSize="14px">
-                        {/* Renderiza o badge somente se a condição for atendida */}
                         <PaymentDocBadge saleId={item.id} contentType={CONTEXT_TYPE_SALE_ID} />
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography fontSize="14px">
+                        {item?.is_pre_sale ? (
+                          <CancelIcon fontSize="small" color="error" />
+                        ) : (
+                          <CheckCircleIcon fontSize="small" color="success" />
+                        )}
                       </Typography>
                     </TableCell>
                     <TableCell>

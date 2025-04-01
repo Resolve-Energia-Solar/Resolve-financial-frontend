@@ -194,7 +194,7 @@ export default function EmployeeData() {
   useEffect(() => {
     if (id) {
       userService
-        .getUserById(id)
+        .find(id, { expand: ['employee'], fields: ['*'] })
         .then((data) => {
           setUserData(data);
           let dataEmployee = {};
