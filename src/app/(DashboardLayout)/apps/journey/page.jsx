@@ -104,8 +104,10 @@ const CustomerJourney = () => {
           'field_services.final_service_opinion'
         ],
         fields: [
+          'id',
           'sale.signature_date',
           'sale.contract_number',
+          'sale.treadmill_counter',
           'sale.customer.complete_name',
           'project_number',
           'sale.status',
@@ -121,9 +123,7 @@ const CustomerJourney = () => {
       })
       .then((data) => {
         const getFieldServiceStatus = (project) => {
-          // Categories of interest
           const categories = ['Vistoria', 'Instalação', 'Entrega'];
-          // Object to store the most recent field service per category
           const latestServices = {};
 
           project.field_services.forEach(fs => {
@@ -139,7 +139,6 @@ const CustomerJourney = () => {
             }
           });
 
-          // For each category, return final_service_opinion.name or, if null, the field service status
           const result = {};
           categories.forEach(category => {
             result[category] = latestServices[category]
@@ -151,7 +150,6 @@ const CustomerJourney = () => {
           return result;
         };
 
-        // Add new property with field service statuses to each project object
         const projectsWithStatus = data.results.map(project => ({
           ...project,
           fieldServiceStatus: getFieldServiceStatus(project),
@@ -255,7 +253,7 @@ const CustomerJourney = () => {
                       }}
                     >
                       <TableCell>
-                        <CounterChip counter={project.sale?.treadmill_counter || 0} />
+                        <CounterChip counter={project.sale?.treadmill_counter || 0} projectId={project.id} />
                       </TableCell>
                       <TableCell sx={{ textWrap: 'nowrap' }}>
                         {project.sale?.signature_date
