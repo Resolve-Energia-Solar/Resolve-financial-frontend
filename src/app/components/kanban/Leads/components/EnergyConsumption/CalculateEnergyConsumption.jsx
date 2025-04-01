@@ -890,7 +890,10 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                             </Grid>
                                             <Grid item xs={2}>
                                                 <Button
-                                                    onClick={handleSaveAverage}
+                                                    onClick={() => {
+                                                        handleSaveAverage();
+                                                        setOpenMediumCalcDialog(false);
+                                                    }}
                                                     sx={{
                                                         backgroundColor: theme.palette.primary.main,
                                                         color: theme.palette.primary.light,
