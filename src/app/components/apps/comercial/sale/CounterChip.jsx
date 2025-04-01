@@ -1,7 +1,7 @@
 import React from 'react';
 import { Chip } from '@mui/material';
 
-const CounterChip = ({ counter }) => {
+const CounterChip = ({ counter, projectId }) => {
   const getChipForDays = (days, key) => {
     const label = `${days} dias`;
     let hexColor;
@@ -19,26 +19,28 @@ const CounterChip = ({ counter }) => {
         .join("")
         .toUpperCase();
     }
-    
+
     return (
-      <Chip 
+      <Chip
         key={key}
-        label={label} 
-        style={{ backgroundColor: hexColor, color: "#fff" }} 
-        variant="filled" 
+        label={label}
+        style={{ backgroundColor: hexColor, color: "#fff" }}
+        variant="filled"
       />
     );
   };
 
   if (counter && typeof counter === "object") {
-    // Se counter for um objeto, retorna um Chip para cada entrada.
+    if (projectId) {
+      const days = counter[projectId];
+      return days !== undefined ? getChipForDays(days, projectId) : null;
+    }
     return (
       <>
         {Object.entries(counter).map(([id, days]) => getChipForDays(days, id))}
       </>
     );
   } else {
-    // Se counter for um número.
     return getChipForDays(counter, 'single-chip');
   }
 };
