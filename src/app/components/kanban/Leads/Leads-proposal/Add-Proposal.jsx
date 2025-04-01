@@ -466,7 +466,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               xs={12}
               sx={{ display: 'flex', flexDirection: 'column', marginTop: 2, gap: 2 }}
             >
-              <ProposalCard leadId={leadId} />
+              <ProductsCard leadId={leadId} />
             </Grid>
           </Grid>
 
