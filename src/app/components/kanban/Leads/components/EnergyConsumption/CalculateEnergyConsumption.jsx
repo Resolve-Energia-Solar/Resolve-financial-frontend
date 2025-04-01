@@ -206,8 +206,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
     // house appliance calc
     const [openHouseholdConsumptionResultDialog, setOpenHouseholdConsumptionResultDialog] = useState(false);
-    const [appliancesSumResult, setAppliancesSumResult] = useState("");
-    const [appliancesSumConsuption, setAppliancesSumConsuption] = useState(null);
+    const [appliancesCalcResult, setAppliancesCalcResult] = useState("");
 
     const calculateSum = () => {
         let totalConsumption = 0;
@@ -218,7 +217,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
             totalConsumption += kwh * hours / 1000; 
         });
     
-        setAppliancesSumResult(totalConsumption);
+        setAppliancesCalcResult(totalConsumption);
         setOpenHouseholdConsumptionResultDialog(true); 
     };
     
@@ -227,7 +226,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
     const handleSaveAppliancesKwhSum = () => {
         setFormData({
             ...formData,
-            appliances_kwh_sum: appliancesSumResult,
+            appliances_kwh_sum: appliancesCalcResult,
         })
         setOpenHouseholdConsumptionResultDialog(false);
         enqueueSnackbar("Energia estimada salva!", { variant: 'success' });
@@ -1146,7 +1145,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                             <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Geração de energia estimada</Typography>
                                         </Grid>
                                         <Grid item xs={12} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "36px" }}>{appliancesSumResult} kWh</Typography>
+                                            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "36px" }}>{appliancesCalcResult} kWh</Typography>
                                         </Grid>
                                         <Grid spacing={2} container xs={12} sx={{ mt: 2 }}>
                                             <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end", }}>
