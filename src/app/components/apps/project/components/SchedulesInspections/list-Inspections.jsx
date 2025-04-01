@@ -30,10 +30,11 @@ import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/A
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
 import projectService from '@/services/projectService';
+import useCanEditUser from '@/hooks/users/userCanEdit';
 
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
 
-const ListInspection = ({ projectId = null, product = [], customerId }) => {
+const ListInspection = ({ projectId = null, product = [], customerId, saleId=null }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedscheduleId, setSelectedscheduleId] = useState(null);
   const [AddModalOpen, setAddModalOpen] = useState(false);
@@ -51,6 +52,8 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
   const reloadPage = () => {
     setReload(!reload);
   };
+
+  const { canEdit } = useCanEditUser(saleId);
 
   useEffect(() => {
     setCustomer(customerId);
@@ -213,11 +216,13 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                     Principal
                   </Typography>
                 </TableCell>
-                <TableCell align="center">
-                  <Typography variant="h6" fontSize="14px">
-                    Ações
-                  </Typography>
-                </TableCell>
+                {canEdit && (
+                  <TableCell align="center">
+                    <Typography variant="h6" fontSize="14px">
+                      Ações
+                    </Typography>
+                  </TableCell>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -258,39 +263,45 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                         onChange={(e) => handleSwitchChange(e.target.checked, schedule.id)}
                       />
                     </TableCell>
-                    <TableCell align="center">
-                      <Tooltip title="Edit Item">
-                        <IconButton color="primary" onClick={() => handleEdit(schedule.id)}>
-                          <Edit width={22} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Desassociar Item">
-                        <IconButton color="error" onClick={() => openDeleteModal(schedule.id)}>
-                          <ArrowBack width={22} />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
+                    {canEdit && (
+                      <TableCell align="center">
+                        <Tooltip title="Edit Item">
+                          <IconButton color="primary" onClick={() => handleEdit(schedule.id)}>
+                            <Edit width={22} />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Desassociar Item">
+                          <IconButton color="error" onClick={() => openDeleteModal(schedule.id)}>
+                            <ArrowBack width={22} />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))
               )}
             </TableBody>
           </Table>
-          <Grid container justifyContent="center" align="center" mt={1}>
-            <Button variant="contained" color="primary" onClick={handleAdd}>
-              Agendar Vistoria
-            </Button>
-          </Grid>
-          <Grid container justifyContent="center" align="center" mt={1} mb={2}>
-            <Typography
-              variant="body2"
-              color="primary"
-              component="a"
-              sx={{ cursor: 'pointer' }}
-              onClick={() => setOpenModelInspectionNotAssociated(true)}
-            >
-              Adicionar uma vistoria já existente
-            </Typography>
-          </Grid>
+          {canEdit && (
+            <>
+            <Grid container justifyContent="center" align="center" mt={1}>
+              <Button variant="contained" color="primary" onClick={handleAdd}>
+                Agendar Vistoria
+              </Button>
+            </Grid>
+            <Grid container justifyContent="center" align="center" mt={1} mb={2}>
+              <Typography
+                variant="body2"
+                color="primary"
+                component="a"
+                sx={{ cursor: 'pointer' }}
+                onClick={() => setOpenModelInspectionNotAssociated(true)}
+              >
+                Adicionar uma vistoria já existente
+              </Typography>
+            </Grid>
+            </>
+          )}
         </TableContainer>
       </Paper>
 
@@ -356,11 +367,13 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                       Status
                     </Typography>
                   </TableCell>
-                  <TableCell align="center">
-                    <Typography variant="h6" fontSize="14px">
-                      Ações
-                    </Typography>
-                  </TableCell>
+                  {canEdit && (
+                    <TableCell align="center">
+                      <Typography variant="h6" fontSize="14px">
+                        Ações
+                      </Typography>
+                    </TableCell>
+                  )}
                 </TableRow>
               </TableHead>
               {loadingInspections ? (
@@ -392,21 +405,23 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                             <SupplyChip status={schedule?.status} />
                           </Typography>
                         </TableCell>
-                        <TableCell align="center">
-                          <Tooltip title="Editar Item">
-                            <IconButton color="primary" onClick={() => handleEdit(schedule.id)}>
-                              <Edit width={22} />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Associar Item">
-                            <IconButton
-                              color="success"
-                              onClick={() => openAssociateModal(schedule.id)}
-                            >
-                              <KeyboardArrowRight width={22} />
-                            </IconButton>
-                          </Tooltip>
-                        </TableCell>
+                        {canEdit && (
+                          <TableCell align="center">
+                            <Tooltip title="Editar Item">
+                              <IconButton color="primary" onClick={() => handleEdit(schedule.id)}>
+                                <Edit width={22} />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Associar Item">
+                              <IconButton
+                                color="success"
+                                onClick={() => openAssociateModal(schedule.id)}
+                              >
+                                <KeyboardArrowRight width={22} />
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>
+                        )}
                       </TableRow>
                     ))
                   )}

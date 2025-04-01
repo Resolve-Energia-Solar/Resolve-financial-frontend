@@ -33,7 +33,7 @@ const DetailInvoicePage = ({ payment_id = null }) => {
   const { loading, error, paymentData } = usePayment(id, {
     expand: 'sale.customer,borrower,installments,sale',
     fields:
-      'id,value,payment_type,is_paid,sale.customer.complete_name,sale.signature_date,sale.reference_value,sale.total_value,borrower.complete_name,installments,invoice_status,sale.status,sale.payment_status',
+      'id,value,payment_type,is_paid,sale.customer.complete_name,sale.signature_date,sale.reference_value,sale.total_value,borrower.complete_name,installments,invoice_status,sale.status,sale.payment_status,due_date',
   });
   const { formattedValue } = useCurrencyFormatter(paymentData?.value);
 
@@ -194,6 +194,19 @@ const DetailInvoicePage = ({ payment_id = null }) => {
               </TableRow>
             </TableHead>
             <TableBody>
+              {paymentData.installments.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={4} align="center">
+                    <Typography variant="body2">Nenhuma parcela cadastrada</Typography>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} align="center">
+                    <Typography variant="body2">Parcelas disponíveis</Typography>
+                  </TableCell>
+                </TableRow>
+              )}
               {paymentData.installments.map((installment) => (
                 <TableRow key={installment.id}>
                   <TableCell>{formatToBRL(installment.installment_value)}</TableCell>

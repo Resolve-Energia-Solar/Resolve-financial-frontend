@@ -26,7 +26,7 @@ import HasPermission from '../permissions/HasPermissions';
 import { useSelector } from 'react-redux';
 import exp from 'constants';
 
-export default function Attachments({ objectId, contentType, documentTypes }) {
+export default function Attachments({ objectId, contentType, documentTypes, canEdit = true }) {
   const theme = useTheme();
   const [selectedAttachment, setSelectedAttachment] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -373,14 +373,16 @@ export default function Attachments({ objectId, contentType, documentTypes }) {
               </List>
             )}
 
-            <Button
-              onClick={handleSave}
-              sx={{ marginTop: 2 }}
-              variant="contained"
-              disabled={formLoading}
-            >
-              {formLoading ? <CircularProgress size={24} /> : 'Enviar'}
-            </Button>
+            {canEdit && (
+              <Button
+                onClick={handleSave}
+                sx={{ marginTop: 2 }}
+                variant="contained"
+                disabled={formLoading}
+              >
+                {formLoading ? <CircularProgress size={24} /> : 'Enviar'}
+              </Button>
+            )}
             <Button
               onClick={handleCloseModal}
               sx={{ marginTop: 2, marginLeft: 1 }}

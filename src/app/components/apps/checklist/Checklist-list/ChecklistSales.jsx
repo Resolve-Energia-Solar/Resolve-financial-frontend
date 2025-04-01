@@ -4,10 +4,12 @@ import projectService from '@/services/projectService';
 import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
 import ProductChip from '../../product/components/ProductChip';
 import ChecklistSalesSkeleton from '../components/ChecklistSalesSkeleton';
+import useCanEditUser from '@/hooks/users/userCanEdit';
 
 function ChecklistSales({ saleId }) {
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { canEdit } = useCanEditUser(saleId);
 
   useEffect(() => {
     setLoading(true);
@@ -57,7 +59,7 @@ function ChecklistSales({ saleId }) {
                 </Stack>
               </Stack>
 
-              <CheckListRateio projectId={project.id} />
+              <CheckListRateio projectId={project.id} canEdit={canEdit} />
             </CardContent>
           </Card>
         </Box>

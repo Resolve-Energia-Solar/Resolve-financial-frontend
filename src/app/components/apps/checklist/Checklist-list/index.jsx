@@ -25,7 +25,7 @@ import CreateChecklistPage from '../Add-checklist';
 import unitService from '@/services/unitService';
 import SupplyChip from '../components/SupplyChip';
 
-const CheckListRateio = ({ projectId = null }) => {
+const CheckListRateio = ({ projectId = null, canEdit = true }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedUnitId, setSelectedUnitId] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(null);
@@ -111,11 +111,13 @@ const CheckListRateio = ({ projectId = null }) => {
                     Tipo de Fornecimento
                   </Typography>
                 </TableCell>
-                <TableCell align="center">
-                  <Typography variant="h6" fontSize="14px">
-                    Ações
-                  </Typography>
-                </TableCell>
+                {canEdit && (
+                  <TableCell align="center">
+                    <Typography variant="h6" fontSize="14px">
+                      Ações
+                    </Typography>
+                  </TableCell>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -151,28 +153,32 @@ const CheckListRateio = ({ projectId = null }) => {
                         <SupplyChip status={unit?.type} />
                       </Typography>
                     </TableCell>
-                    <TableCell align="center">
-                      <Tooltip title="Edit Item">
-                        <IconButton color="primary" onClick={() => handleEdit(unit)}>
-                          <Edit width={22} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete Item">
-                        <IconButton color="error" onClick={() => openDeleteModal(unit.id)}>
-                          <IconTrash width={22} />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
+                    {canEdit && (
+                      <TableCell align="center">
+                        <Tooltip title="Edit Item">
+                          <IconButton color="primary" onClick={() => handleEdit(unit)}>
+                            <Edit width={22} />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete Item">
+                          <IconButton color="error" onClick={() => openDeleteModal(unit.id)}>
+                            <IconTrash width={22} />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))
               )}
-              <TableRow>
-                <TableCell colSpan={5} align="center">
-                  <Button variant="contained" color="primary" onClick={() => handleAdd()}>
-                    Adicionar Unidade
-                  </Button>
-                </TableCell>
-              </TableRow>
+              {canEdit && (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">
+                    <Button variant="contained" color="primary" onClick={() => handleAdd()}>
+                      Adicionar Unidade
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
