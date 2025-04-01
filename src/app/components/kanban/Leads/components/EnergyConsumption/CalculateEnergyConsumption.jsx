@@ -345,10 +345,11 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 									</CustomFormLabel>
 									<TextField
 										name="consumer_unity"
+										id='consumer_unity'
+										type='number'
 										value={formData.medium_energy_val}
 										onChange={(e) => handleChange('consumer_unity', e.target.value)}
 										fullWidth
-										// placeholder='1800 kWh'
 										InputProps={{
 											sx: {
 												input: {
@@ -371,6 +372,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 									</CustomFormLabel>
 									<TextField
 										name="meter_number"
+										id='meter_number'
+										type='number'
 										value={formData.meter_number}
 										onChange={(e) => handleChange('meter_number', e.target.value)}
 										fullWidth
@@ -398,6 +401,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 									<TextField
 										select
 										name="dealership"
+										id='dealership'
+										type='text'
 										value={formData.dealership}
 										onChange={(e) => handleChange('dealership', e.target.value)}
 										fullWidth
@@ -428,6 +433,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 									<TextField
 										select
 										name="power_phase"
+										id='power_phase'
+										type='text'
 										value={formData.power_phase}
 										onChange={(e) => handleChange('power_phase', e.target.value)}
 										fullWidth
@@ -455,6 +462,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 									</CustomFormLabel>
 									<TextField
 										name="kwh_value"
+										id='kwh_value'
+										type='number'
 										value={formData.medium_energy_val}
 										onChange={(e) => handleChange('kwh_value', e.target.value)}
 										fullWidth
@@ -488,6 +497,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 									</CustomFormLabel>
 									<TextField
 										name="electricity_bill"
+										id='electricity_bill'
+										type='number'
 										value={formData.electricity_bill}
 										onChange={(e) => handleChange('electricity_bill', e.target.value)}
 										fullWidth
@@ -523,6 +534,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 									</CustomFormLabel>
 									<TextField
 										name="public_lighting_charge"
+										id='public_lighting_charge'
+										type='number'
 										value={formData.public_lighting_charge}
 										onChange={(e) => handleChange('public_lighting_charge', e.target.value)}
 										fullWidth
@@ -555,6 +568,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 									</CustomFormLabel>
 									<TextField
 										name="availability_charge"
+										id='availability_charge'
+										type='number'
 										value={formData.availability_charge}
 										onChange={(e) => handleChange('availability_charge', e.target.value)}
 										fullWidth
@@ -587,6 +602,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 									</CustomFormLabel>
 									<TextField
 										name="b_wire_value"
+										id='b_wire_value'
+										type='number'
 										value={formData.b_wire_value}
 										onChange={(e) => handleChange('b_wire_value', e.target.value)}
 										fullWidth
@@ -627,6 +644,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
 									<Switch
 										checked={checked}
+										id='shadowing'
 										onChange={(e) => setChecked(e.target.checked)}
 										color="primary"
 										sx={{
@@ -653,6 +671,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 									<TextField
 										select
 										name="roof_type"
+										id='roof_type'
+										type='text'
 										value={formData.roof_type}
 										onChange={(e) => handleChange('roof_type', e.target.value)}
 										fullWidth
