@@ -29,7 +29,7 @@ import ProductService from '@/services/productsService';
 import ListProducts from './ListProducts';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
-export function ProjectCard({ leadId = null, products = [] }) {
+export function ProductsCard({ leadId = null, products = [] }) {
   const dispatch = useDispatch();
   const [dialogProductOpen, setDialogProductOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -338,4 +338,4 @@ export function ProjectCard({ leadId = null, products = [] }) {
   );
 }
 
-export default ProposalCard;
+export default ProductsCard;

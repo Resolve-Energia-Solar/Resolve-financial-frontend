@@ -32,7 +32,7 @@ import { useDispatch } from 'react-redux';
 import EnergyConsumptionCalc from '../components/EnergyConsumption/CalculateEnergyConsumption';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ProposalLayout from '../components/ProposalLayout';
-import ProposalCard from '../components/ProposalSmallListCard';
+import ProposalCard from '../components/ProductsCard';
 
 function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
