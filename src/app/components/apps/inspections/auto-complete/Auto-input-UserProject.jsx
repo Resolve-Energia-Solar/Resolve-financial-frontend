@@ -123,8 +123,13 @@ export default function AutoCompleteUserProject({
       <Autocomplete
         sx={{ width: '100%' }}
         open={open}
-        onOpen={handleOpen}
-        onClose={handleClose}
+        onOpen={() => {
+          setOpen(true);
+          if (options.length === 0 && selectedClient) {
+            fetchProjectsByCodeNumber('');
+          }
+        }}
+        onClose={() => setOpen(false)}
         isOptionEqualToValue={(option, value) => option.id === value.id}
         getOptionLabel={(option) => option.project_number?.toString() || ''}
         loadingText="Carregando..."
@@ -136,9 +141,7 @@ export default function AutoCompleteUserProject({
               </Typography>
               <Typography variant="body2">
                 <strong>Valor total:</strong>{' '}
-                {option.sale?.total_value
-                  ? formatCurrency(option.sale.total_value)
-                  : 'Sem valor Total'}
+                {option.sale?.total_value ? formatCurrency(option.sale.total_value) : 'Sem valor Total'}
               </Typography>
               <Typography variant="body2">
                 <strong>Contrato:</strong>{' '}
@@ -158,9 +161,7 @@ export default function AutoCompleteUserProject({
               </Typography>
               <Typography variant="body2">
                 <strong>Status da Venda:</strong>{' '}
-                {option.sale?.status
-                  ? statusMap[option.sale.status] || 'Status Desconhecido'
-                  : 'Status não Disponível'}
+                {option.sale?.status ? statusMap[option.sale.status] || 'Status Desconhecido' : 'Status não Disponível'}
               </Typography>
               <Typography variant="body2">
                 <strong>Produto:</strong>{' '}
@@ -177,7 +178,6 @@ export default function AutoCompleteUserProject({
           fetchProjectsByCodeNumber(newInputValue);
         }}
         onChange={handleChange}
-        onFocus={() => fetchProjectsByCodeNumber('')}
         renderInput={(params) => (
           <CustomTextField
             error={error}
