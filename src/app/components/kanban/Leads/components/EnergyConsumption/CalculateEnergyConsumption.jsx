@@ -113,7 +113,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 	};
 
 	const handleInputChange = (e) => {
-		setFormData({ ...formData, medimum_consumption: e.target.value });
+		setFormData( [...formData.entries()] );
 	};
 
 	// medium calc logic
