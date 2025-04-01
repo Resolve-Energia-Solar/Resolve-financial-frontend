@@ -212,16 +212,14 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
     const calculateSum = () => {
         let totalConsumption = 0;
     
-        // Iterate over each appliance to calculate the total consumption (kWh * hours)
         householdAppliances.forEach(appliance => {
-            const kwh = parseFloat(appliance.kwhValue) || 0; // Parse kWh value
-            const hours = parseFloat(appliance.hoursValue) || 0; // Parse hour value
-            totalConsumption += kwh * hours; // Add the result of kWh * hours to total
+            const kwh = parseFloat(appliance.kwhValue) || 0; 
+            const hours = parseFloat(appliance.hoursValue) || 0; 
+            totalConsumption += kwh * hours / 1000; 
         });
     
-        // Set the result to the state
         setAppliancesSumResult(totalConsumption);
-        setOpenHouseholdConsumptionResultDialog(true); // Open the dialog to display the result
+        setOpenHouseholdConsumptionResultDialog(true); 
     };
     
 
@@ -975,9 +973,9 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                 </Grid>
 
                                                 <Grid item xs={3} sx={{ display: "flex", justifyContent: "flex-start" }}>
-                                                    <TextField
+                                                <TextField
                                                         value={appliance.kwhValue || ''}
-                                                        onChange={(event) => handleApplianceInputChange(appliance.id, 'kwh', event.target.value)}
+                                                        onChange={(event) => handleApplianceInputChange(appliance.id, 'kwhValue', event.target.value)}
                                                         type="number"
                                                         fullWidth
                                                         InputProps={{
@@ -1145,7 +1143,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                             <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Geração de energia estimada</Typography>
                                         </Grid>
                                         <Grid item xs={12} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "36px" }}>{appliancesSumConsuption} kWh</Typography>
+                                            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "36px" }}>{appliancesSumResult} kWh</Typography>
                                         </Grid>
                                         <Grid spacing={2} container xs={12} sx={{ mt: 2 }}>
                                             <Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end", }}>
@@ -1169,7 +1167,10 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                             </Grid>
                                             <Grid item xs={2}>
                                                 <Button
-                                                    onClick={handleSaveAppliancesKwhSum}
+                                                    onClick={() => {
+                                                        handleSaveAppliancesKwhSum();
+                                                        setOpenEstimatedGeneration(false)
+                                                    }}
                                                     sx={{
                                                         backgroundColor: theme.palette.primary.main,
                                                         color: theme.palette.primary.light,
