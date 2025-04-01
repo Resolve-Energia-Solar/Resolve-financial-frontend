@@ -694,7 +694,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 									/>
 								</Grid>
 
-								<Grid item xs={4} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+								{/* <Grid item xs={4} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
 									<Button
 										variant="contained"
 										sx={{
@@ -709,16 +709,17 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 											{formLoading ? 'Calculando...' : 'Calcular consumo energético'}
 										</Typography>
 									</Button>
-								</Grid>
+								</Grid> */}
 
-								<Grid item xs={1}>
-									<Box sx={{ display: 'flex', gap: 2 }}>
+								<Grid item xs={5}>
+									<Box sx={{ display: 'flex', gap: 2, justifyContent: "flex-end", alignItems: "center" }}>
 										<Button
 											variant="contained"
 											sx={{
 												backgroundColor: theme.palette.primary.Button,
 												color: '#303030',
-												px: 3
+												px: 3,
+												width: "200px",
 											}}
 											onClick={handleSaveForm}
 											disabled={formLoading}
