@@ -208,7 +208,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 	const [openHouseholdConsumptionResultDialog, setOpenHouseholdConsumptionResultDialog] = useState(false);
 	const [appliancesCalcResult, setAppliancesCalcResult] = useState("");
 
-	const calculateSum = () => {
+	const calculateEnergyConsumption = () => {
 		let totalConsumption = 0;
 
 		householdAppliances.forEach(appliance => {
@@ -1169,8 +1169,10 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 										<Grid item xs={10} sx={{ display: "flex", justifyContent: "flex-end" }}>
 											<Button
 												variant="contained"
-												onClick={calculateSum}
-												// onClick={() => console.log({ selectedAppliance, applianceKwhValue })}
+												onClick={() => {
+													calculateEnergyConsumption();
+													console.log("householdAppliances: ", {householdAppliances});
+												}}
 												sx={{
 													backgroundColor: 'black',
 													color: 'white',
