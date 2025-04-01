@@ -402,6 +402,16 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         value={formData.dealership}
                                         onChange={(e) => handleChange('dealership', e.target.value)}
                                         fullWidth
+                                        InputProps={{
+                                            sx: {
+                                                '& .MuiSelect-select': {
+                                                    color: '#7E92A2',  
+                                                    fontWeight: '400',
+                                                    fontSize: '12px',
+                                                    opacity: 1,
+                                                },
+                                            },
+                                        }}
                                     >
                                         <MenuItem value="enel">ENEL</MenuItem>
                                     </TextField>
@@ -422,6 +432,16 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         value={formData.power_phase}
                                         onChange={(e) => handleChange('power_phase', e.target.value)}
                                         fullWidth
+                                        InputProps={{
+                                            sx: {
+                                                '& .MuiSelect-select': {
+                                                    color: '#7E92A2',  
+                                                    fontWeight: '400',
+                                                    fontSize: '12px',
+                                                    opacity: 1,
+                                                },
+                                            },
+                                        }}
                                     >
                                         <MenuItem value="bi">Bifásica</MenuItem>
                                     </TextField>
@@ -448,7 +468,14 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                                     fontSize: '12px',
                                                     opacity: 1,
                                                 },
-                                            },
+                                            },                                        
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <Box sx={{ color: '#7E92A2', fontWeight: '400', fontSize: '12px' }}>
+                                                        R$
+                                                    </Box>
+                                                </InputAdornment>
+                                            ),
                                         }}
                                     />
                                 </Grid>
@@ -494,6 +521,14 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         onChange={(e) => handleChange('public_lighting_charge', e.target.value)}
                                         fullWidth
                                         InputProps={{
+                                            sx: {
+                                                input: {
+                                                    color: '#7E92A2',
+                                                    fontWeight: '400',
+                                                    fontSize: '12px',
+                                                    opacity: 1,
+                                                },
+                                            }, 
                                             startAdornment: (
                                                 <InputAdornment position="start">
                                                     <Box sx={{ color: '#7E92A2', fontWeight: '400', fontSize: '12px' }}>
@@ -518,6 +553,14 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         onChange={(e) => handleChange('availability_charge', e.target.value)}
                                         fullWidth
                                         InputProps={{
+                                            sx: {
+                                                input: {
+                                                    color: '#7E92A2',
+                                                    fontWeight: '400',
+                                                    fontSize: '12px',
+                                                    opacity: 1,
+                                                },
+                                            }, 
                                             startAdornment: (
                                                 <InputAdornment position="start">
                                                     <Box sx={{ color: '#7E92A2', fontWeight: '400', fontSize: '12px' }}>
@@ -542,6 +585,14 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         onChange={(e) => handleChange('b_wire_value', e.target.value)}
                                         fullWidth
                                         InputProps={{
+                                            sx: {
+                                                input: {
+                                                    color: '#7E92A2',
+                                                    fontWeight: '400',
+                                                    fontSize: '12px',
+                                                    opacity: 1,
+                                                },
+                                            }, 
                                             startAdornment: (
                                                 <InputAdornment position="start">
                                                     <Box sx={{ color: '#7E92A2', fontWeight: '400', fontSize: '12px' }}>
@@ -599,6 +650,16 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
                                         value={formData.roof_type}
                                         onChange={(e) => handleChange('roof_type', e.target.value)}
                                         fullWidth
+                                        InputProps={{
+                                            sx: {
+                                                '& .MuiSelect-select': {
+                                                    color: '#7E92A2',  
+                                                    fontWeight: '400',
+                                                    fontSize: '12px',
+                                                    opacity: 1,
+                                                },
+                                            },
+                                        }}
                                     >
                                         <MenuItem value="solo">Estrutura de solo</MenuItem>
                                         <MenuItem value="laje">Estrutura de laje</MenuItem>
