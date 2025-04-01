@@ -1,6 +1,5 @@
 'use client';
 import { Fragment, useCallback, useEffect, useState } from 'react';
-
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
@@ -9,6 +8,14 @@ import { debounce } from 'lodash';
 import saleService from '@/services/saleService';
 import { formatDate } from '@/utils/dateUtils';
 import { Box, Typography } from '@mui/material';
+
+const statusMap = {
+  P: 'Pendente',
+  F: 'Finalizado',
+  EA: 'Em Andamento',
+  C: 'Cancelado',
+  D: 'Distrato',
+};
 
 export default function AutoCompleteUserProject({
   onChange,
@@ -27,7 +34,9 @@ export default function AutoCompleteUserProject({
     const fetchDefaultProject = async () => {
       if (value) {
         try {
-          const projectValue = await projectService.find(value);
+          const projectValue = await projectService.find(value, {
+            expand: 'sale',
+          });
           if (projectValue) {
             setSelectedProject({
               id: projectValue.id,
@@ -78,7 +87,13 @@ export default function AutoCompleteUserProject({
           });
 
           const formattedProjects = await Promise.all(
-            allProjects.map((project) => projectService.find(project.id)),
+            allProjects.map((project) =>
+              projectService.find(project.id, {
+                expand: 'sale,homologator,address,product',
+                fields:
+                  'id,project_number,sale.total_value,sale.contract_number,sale.signature_date,sale.status,homologator.complete_name,address.complete_address,product.name',
+              })
+            )
           );
 
           setOptions(formattedProjects);
@@ -88,8 +103,11 @@ export default function AutoCompleteUserProject({
       }
       setLoading(false);
     }, 300),
-    [],
+    []
   );
+
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
   const handleOpen = () => {
     setOpen(true);
@@ -117,7 +135,10 @@ export default function AutoCompleteUserProject({
                 <strong>Projeto:</strong> {option.project_number}
               </Typography>
               <Typography variant="body2">
-                <strong>Valor total:</strong> {option.sale?.total_value || 'Sem valor Total'}
+                <strong>Valor total:</strong>{' '}
+                {option.sale?.total_value
+                  ? formatCurrency(option.sale.total_value)
+                  : 'Sem valor Total'}
               </Typography>
               <Typography variant="body2">
                 <strong>Contrato:</strong>{' '}
@@ -132,7 +153,18 @@ export default function AutoCompleteUserProject({
                 {formatDate(option.sale?.signature_date) || 'Data de Contrato não Disponível'}
               </Typography>
               <Typography variant="body2">
-                <strong>Endereço:</strong> {option?.address?.str || 'Endereço não Disponível'}
+                <strong>Endereço:</strong>{' '}
+                {option?.address?.complete_address || 'Endereço não Disponível'}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Status da Venda:</strong>{' '}
+                {option.sale?.status
+                  ? statusMap[option.sale.status] || 'Status Desconhecido'
+                  : 'Status não Disponível'}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Produto:</strong>{' '}
+                {option?.product?.name || 'Produto não Disponível'}
               </Typography>
             </Box>
           </li>
