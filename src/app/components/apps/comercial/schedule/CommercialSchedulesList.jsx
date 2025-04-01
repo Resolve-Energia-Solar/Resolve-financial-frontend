@@ -1,6 +1,5 @@
 'use client';
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   Box,
   Typography,
@@ -11,7 +10,6 @@ import {
   TableBody,
   TableContainer,
   Paper,
-  CircularProgress,
   Alert,
   Chip,
   Button,
@@ -21,26 +19,14 @@ import {
   DialogContent,
   DialogActions,
   Drawer,
-  Snackbar,
-  Stack,
-  Tooltip,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
 } from '@mui/material';
 import AddBoxRounded from '@mui/icons-material/AddBoxRounded';
 import FilterAlt from '@mui/icons-material/FilterAlt';
-import ArrowDropUp from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
-import HelpIcon from '@mui/icons-material/Help';
 import ScheduleStatusChip from '../../inspections/schedule/StatusChip';
 import CreateCommercialSchedule from './CreateCommercialSchedule';
 import TableSkeleton from '../sale/components/TableSkeleton';
 import { CommercialScheduleDataContext } from '@/app/context/Inspection/CommercialScheduleContext';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
-import { format } from 'date-fns';
 import scheduleService from '@/services/scheduleService';
 import CommercialScheduleDetail from './CommercialScheduleDetail';
 
@@ -138,7 +124,6 @@ const CommercialSchedulesList = () => {
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  // Ordenação via backend, não há lógica de ordenação no front
   const { filters, setFilters } = useContext(CommercialScheduleDataContext);
 
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -150,8 +135,8 @@ const CommercialSchedulesList = () => {
       setLoading(true);
       const response = await scheduleService.index({
         fields:
-          'customer.complete_name,service.name,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,address,status,created_at,id,groups',
-        expand: 'customer,service,schedule_agent,address',
+          'customer.complete_name,service.name,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,schedule_agent.id,address,status,created_at,id,groups,project.id,project.product,product.name,product.id,project.sale.seller',
+        expand: 'customer,service,schedule_agent,address,project,product,project.sale',
         page: page + 1,
         limit: rowsPerPage,
         ...filters,
