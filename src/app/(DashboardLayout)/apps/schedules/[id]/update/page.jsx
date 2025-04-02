@@ -51,7 +51,7 @@ const UpdateSchedulePage = () => {
         if (id) {
             setLoading(true);
             scheduleService
-                .find(id, { fields: 'schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,service,customer,project,schedule_agent,branch,address,observation,products' })
+                .find(id, { fields: 'schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,service.id,service.category,customer,project,schedule_agent,branch,address,observation,products', expand: 'service' })
                 .then((data) => {
                     setFormData({
                         schedule_date: data.schedule_date ? data.schedule_date.split('T')[0] : '',
@@ -65,9 +65,8 @@ const UpdateSchedulePage = () => {
                         branch: data.branch,
                         address: data.address,
                         observation: data.observation || '',
-                        product: (data.products && data.products.length > 0) ? data.products[0]: [],
-                      });
-                      
+                        product: (data.products && data.products.length > 0) ? data.products[0] : [],
+                    });
                 })
                 .catch((err) => {
                     console.error('Erro ao carregar agendamento:', err);
@@ -78,7 +77,6 @@ const UpdateSchedulePage = () => {
         }
     }, [id, enqueueSnackbar]);
 
-    // Atualiza o valor de schedule_end (conforme o serviço selecionado e horário de início)
     useEffect(() => {
         if (
             formData.service &&
@@ -92,22 +90,25 @@ const UpdateSchedulePage = () => {
                 .map(Number);
             const [year, month, day] = formData.schedule_date.split('-').map(Number);
             const [hour, minute] = formData.schedule_start_time.split(':').map(Number);
-            const startDate = new Date(year, month - 1, day, hour, minute);
-            startDate.setHours(
-                startDate.getHours() + addHours,
-                startDate.getMinutes() + addMinutes,
-                startDate.getSeconds() + addSeconds,
-            );
-            const computedDate = startDate.toISOString().split('T')[0];
-            const computedTime = startDate.toTimeString().slice(0, 5);
-            setFormData((prev) => ({
-                ...prev,
-                schedule_end_date: computedDate,
-                schedule_end_time: computedTime,
-            }));
+            if (year && month && day && hour && minute) {
+                const startDate = new Date(year, month - 1, day, hour, minute);
+                startDate.setHours(
+                    startDate.getHours() + addHours,
+                    startDate.getMinutes() + addMinutes,
+                    startDate.getSeconds() + addSeconds,
+                );
+                const computedDate = startDate.toISOString().split('T')[0];
+                const computedTime = startDate.toTimeString().slice(0, 5);
+                setFormData((prev) => ({
+                    ...prev,
+                    schedule_end_date: computedDate,
+                    schedule_end_time: computedTime,
+                }));
+            }
         }
     }, [formData.service, formData.schedule_date, formData.schedule_start_time]);
 
+    console.log('formData', formData);
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -122,7 +123,7 @@ const UpdateSchedulePage = () => {
             address: formData.address?.value || null,
             products: formData.product ? [formData.product.value] : [],
             schedule_creator: user.id,
-          };          
+        };
 
         const fieldLabels = {
             schedule_date: 'Data do Agendamento',
@@ -140,7 +141,6 @@ const UpdateSchedulePage = () => {
         };
 
         try {
-            // Aqui utilizamos updateSchedule passando o ID do agendamento
             await scheduleService.updateSchedule(id, submitData);
             router.push('/apps/schedules');
         } catch (err) {
@@ -180,7 +180,7 @@ const UpdateSchedulePage = () => {
                         <Grid item xs={12} sm={6}>
                             <GenericAsyncAutocompleteInput
                                 label="Serviço"
-                                value={formData.service}
+                                value={formData.service.id}
                                 onChange={(newValue) =>
                                     setFormData({ ...formData, service: newValue })
                                 }
@@ -215,7 +215,11 @@ const UpdateSchedulePage = () => {
                                 </Tooltip>
                             </Typography>
                             <AutoCompleteUserSchedule
-                                onChange={(id) => handleChange('schedule_agent', id)}
+                                onChange={(id) => {
+                                    if (id) {
+                                        setFormData({ ...formData, schedule_agent: { value: id, name: 'nome do agente' } });
+                                    }
+                                }}
                                 value={formData.schedule_agent}
                                 disabled={
                                     !formData.service?.category ||
@@ -227,8 +231,6 @@ const UpdateSchedulePage = () => {
                                     scheduleDate: formData.schedule_date,
                                     scheduleStartTime: formData.schedule_start_time,
                                     scheduleEndTime: formData.schedule_end_time,
-                                    // scheduleLatitude: formData.address?.latitude,
-                                    // scheduleLongitude: formData.address?.longitude,
                                 }}
                                 {...(errors.schedule_agent_id && {
                                     error: true,
