@@ -116,6 +116,11 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
   }
 
+  const handleMediumConsumptionFieldUpdate = (newValue) => {
+    setMediumConsumption(newValue);
+    // handleChange
+  }
+
 
   return (
     <Grid container spacing={0}>
@@ -266,15 +271,15 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 </Grid>
                 <Grid item xs={4}>
                   <CustomFormLabel
-                    htmlFor="estimated_power_generation"
+                    htmlFor="medium_consumption"
                     sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}
                   >
                     Geração de energia estimada
                   </CustomFormLabel>
                   <TextField
-                    name="estimated_power_generation"
-                    value={formData.estimated_power_generation}
-                    onChange={(e) => handleChange('estimated_power_generation', e.target.value)}
+                    name="medium_consumption"
+                    value={mediumConsumption}
+                    // onChange={(e) => handleChange('medium_consumption', e.target.value)}
                     fullWidth
                     disabled
                     // placeholder="2500 kWh"
@@ -419,6 +424,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                 leadId={leadId}
                 onClose={() => setOpenEnergyConsumption(false)}
                 mediumConsumption={mediumConsumption}
+                onUpdate={handleMediumConsumptionFieldUpdate}
                 onRefresh={onRefresh}
               />
             </DialogContent>

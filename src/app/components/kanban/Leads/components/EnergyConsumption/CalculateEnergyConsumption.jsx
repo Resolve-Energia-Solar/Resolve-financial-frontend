@@ -38,7 +38,7 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import useEnergyConsumptionForm from '@/hooks/energyConsumption/useEnergyConsumptionForm';
 
-function EnergyConsumptionCalc({ leadId = null, mediumConsumption = null, onRefresh = null, onClose = null }) {
+function EnergyConsumptionCalc({ leadId = null, mediumConsumption = null, onUpdate = null, onRefresh = null, onClose = null }) {
 	const router = useRouter();
 	const theme = useTheme();
 	const [lead, setLead] = useState(null);
