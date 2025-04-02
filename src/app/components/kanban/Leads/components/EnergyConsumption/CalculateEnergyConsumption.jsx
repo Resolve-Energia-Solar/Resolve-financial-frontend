@@ -57,6 +57,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 		setFormData,
 		handleChange,
 		handleSave,
+		handleFileChange,
 		formErrors,
 		loading: formLoading,
 		success,
@@ -233,7 +234,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
 
 							<Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
-								<Grid item xs={12} sx={{ mt: "24px" }} >
+								<Grid item xs={12} sx={{ mt: "18px" }} >
 									<Button
 										variant="outlined"
 										sx={{
@@ -243,7 +244,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 											borderRadius: 1,
 											p: 4,
 											width: "100%",
-											height: "100%",
+											height: "144px",
 											display: "flex",
 											flexDirection: "column",
 											"&:hover": {
@@ -253,7 +254,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 												"& .MuiSvgIcon-root": { color: "#FFFFFF" },
 											},
 										}}
-										onClick={() => console.log("Uploading file")}
+										// onClick={() => console.log("Uploading file")}
+										onClick={() => document.getElementById('file-upload').click()}
 									>
 										<BackupOutlinedIcon sx={{ fontSize: "36px" }} />
 										<Box sx={{ display: "flex", alignItems: "center", gap: 0.5, p: 1 }}>
@@ -262,15 +264,29 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 											</Typography>
 											<Typography sx={{ fontSize: '14px', fontWeight: "600", color: theme.palette.primary.main }}>
 												Upload
-											</Typography>
+											</Typography> 
 										</Box>
 										<Typography sx={{ fontSize: '14px', fontWeight: "400", color: "#6D6D6D" }}>
 											Tamanho máximo do arquivo 10 MB
 										</Typography>
 
 									</Button>
-								</Grid>
+								
+									<input
+										type="file"
+										id="file-upload"
+										style={{ display: 'none' }}
+										onChange={handleFileChange}
+										accept='application/pdf, image/*'
+									/>
 
+									{formData.uploaded_file && (
+										<Typography sx={{ fontSize: '14px', fontWeight: "400", color: "#6D6D6D", mt: 1 }}>
+											Documento selecionado: {formData.uploaded_file.name}
+										</Typography>
+									)}
+
+								</Grid>
 							</Grid>
 
 							<Grid container rowSpacing={0} columnSpacing={{ xs: 1, sm: 2, md: 3 }} >

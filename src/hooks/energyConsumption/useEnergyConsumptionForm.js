@@ -62,23 +62,22 @@ const useEnergyConsumptionForm = (initialData, id) => {
         }
     }
 
-    // const handleFileChange = (event) => {
-    //     const file = event.target.files[0];
-    //     if (file) {
-    //         setFormData({
-    //             ...formData, 
-    //             uploaded_file: file,
-    //         });
-
-    //         console.log("file: ", file);
-    //     }
-    // };
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file && file.size > 10 * 1024 * 1024) {
+            setFormErrors('Tamanho máximo do arquivo não deve ser acima de 10 MB');
+            
+        } else {
+            setFormData({uploaded_file: file});
+        }
+    };
 
     return {
         formData,
         setFormData,
         handleSave,
         handleChange,
+        handleFileChange,
         formErrors,
         success,
         loading,
