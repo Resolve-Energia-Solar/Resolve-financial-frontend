@@ -180,7 +180,7 @@ const UpdateSchedulePage = () => {
                         <Grid item xs={12} sm={6}>
                             <GenericAsyncAutocompleteInput
                                 label="Serviço"
-                                value={formData.service.id}
+                                value={formData.service?.id}
                                 onChange={(newValue) =>
                                     setFormData({ ...formData, service: newValue })
                                 }
