@@ -8,7 +8,7 @@ const useProposalForm = (initialData, id) => {
   const [formData, setFormData] = useState({
     lead: null,
     created_by: user?.id || null,
-    products: [],
+    products_ids: [],
     due_date: null,
     value: null,
     status: 'P',
@@ -24,8 +24,8 @@ const useProposalForm = (initialData, id) => {
       setFormData({
         lead: initialData.lead?.id || null,
         created_by: initialData.created_by || user?.id || null,
-        products:
-          initialData.products?.map((item) => item?.product?.id) || [],
+        products_ids:
+          initialData.commercial_products?.map((item) => item.product.id) || [],
         due_date: initialData.due_date || null,
         value: initialData.value || null,
         status: initialData.status || 'P',
@@ -43,7 +43,7 @@ const useProposalForm = (initialData, id) => {
     const dataToSend = {
       lead: formData.lead,
       created_by: formData.created_by,
-      products: formData.products,
+      products_ids: formData.products_ids,
       due_date: formData.due_date,
       value: formData.value,
       status: formData.status,

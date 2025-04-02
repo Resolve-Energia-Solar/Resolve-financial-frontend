@@ -1,11 +1,11 @@
 import { Box, Chip, Grid, Dialog, DialogContent, Drawer } from '@mui/material';
 
-import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import leadService from '@/services/leadService';
 import TableHeader from '@/app/components/kanban/Leads/components/TableHeader';
 import TableComponent from '@/app/components/kanban/Leads/components/TableComponent';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
+import ProposalService from '@/services/proposalService';
 // import LeadProposalPage from './Edit-Proposal';
 import LeadsViewProposal from './View-Proposal';
 import AddProposalPage from './Add-Proposal';
@@ -59,7 +59,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
     },
     {
       field: 'due_date',
-      headerName: 'Data',
+      headerName: 'Validade',
       flex: 1,
     },
     {
@@ -88,15 +88,14 @@ const LeadsProposalListPage = ({ leadId = null }) => {
     const fetchProposals = async () => {
       setLoadingProposals(true);
       try {
-        const response = await leadService.find(leadId, {
-            expand: 'proposals,products',
-            fields: 'id,proposals',
+        const response = await ProposalService.index({
+            expand: 'products,created_by',
+            fields: 'id,products,value,status,created_by,due_date',
             page: page + 1,
             limit: rowsPerPage,
         });
-        console.log('response', response.proposals || []);
-        setData(response.proposals || []);
-        setTotalRows(response.proposals?.length || 0);
+        setData(response.results || []);
+        setTotalRows(response.meta?.pagination.total_count || 0);
       } catch (err) {
         console.error('Erro ao buscar contratos');
       } finally {

@@ -56,7 +56,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
   const customProducts = useSelector(selectProductsByLead(leadId));
 
-  formData.products = customProducts.map((product) => product.id);
+  formData.products_ids = customProducts.map((product) => product.id);
   formData.lead ? null : (formData.lead = leadId);
   formData.status ? null : (formData.status = 'P');
   user?.user ? (formData.created_by = user.user.id) : null;
