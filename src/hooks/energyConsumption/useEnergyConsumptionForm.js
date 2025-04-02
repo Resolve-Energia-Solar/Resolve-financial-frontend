@@ -25,7 +25,7 @@ const useEnergyConsumptionForm = (initialData, id) => {
                 appliances_kwh_sum: initialData.appliances_kwh_sum || null,
             })
         }
-    }, [initialData, project?.id]);
+    }, [initialData, user?.id]);
 
     const handleChange = (field, value) => {
         setFormData((prev) => ({ ...prev, [field]: value }));

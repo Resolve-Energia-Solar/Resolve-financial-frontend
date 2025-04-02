@@ -159,15 +159,16 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
 	const months = generateMonths();
 
-	const handleSaveAverage = () => {
-		setFormData({
-			...formData,
-			medium_consumption: mediumConsumptionResult,
-		})
-		setOpenMediumCalcResultDialog(false);
-		enqueueSnackbar("Consumo médio salvo!", { variant: 'success' });
+	// const handleSaveAverage = () => {
+	// 	setFormData({
+	// 		...formData,
+	// 		medium_consumption: mediumConsumptionResult,
+	// 	})
+	// 	setOpenMediumCalcResultDialog(false);
+	// 	enqueueSnackbar("Consumo médio salvo!", { variant: 'success' });
 
-	}
+	// }
+
 
 	// household appliances part
 	const [householdAppliances, setHouseholdAppliances] = useState([
@@ -316,7 +317,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 										name="medium_consumption"
 										value={formData.medium_consumption}
 										onClick={() => setOpenMediumCalcDialog(true)}
-										onChange={handleInputChange}
+										// onChange={(e) => handleChange('medium_consumption', e.target.value)}
 										fullWidth
 										disabled={openMediumCalcDialog}
 										InputProps={{
@@ -702,18 +703,26 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
 								<Grid item xs={3}>
 									<CustomFormLabel
-										htmlFor="estimated_generation"
+										htmlFor="appliances_kwh_sum"
 										sx={{ color: '#092C4C', fontWeight: '700', fontSize: '14px' }}
 									>
 										Geração de energia estimada
 									</CustomFormLabel>
 									<TextField
-										name="estimated_generation"
-										value={formData.estimated_generation}
+										name="appliances_kwh_sum"
+										value={formData.appliances_kwh_sum}
 										onClick={() => setOpenEstimatedGeneration(true)}
 										// onChange={(e) => handleChange('estimated_generation', e.target.value)}
 										fullWidth
 										InputProps={{
+											sx: {
+												input: {
+													color: '#7E92A2',
+													fontWeight: '400',
+													fontSize: '12px',
+													opacity: 1,
+												},
+											},
 											endAdornment: (
 												<InputAdornment position="end">
 													<RotateLeftOutlinedIcon />
@@ -967,8 +976,11 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 											<Grid item xs={2}>
 												<Button
 													onClick={() => {
-														handleSaveAverage();
+														// handleSaveAverage();
+														handleChange('medium_consumption', averageConsuption);
+														setOpenMediumCalcResultDialog(false);
 														setOpenMediumCalcDialog(false);
+														enqueueSnackbar("Consumo médio salvo!", { variant: 'success' });
 													}}
 													sx={{
 														backgroundColor: theme.palette.primary.main,
@@ -1248,9 +1260,12 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 											</Grid>
 											<Grid item xs={2}>
 												<Button
-													onClick={() => {
-														handleSaveAppliancesKwhSum();
+													onClick={(e) => {
+														// handleSaveAppliancesKwhSum();
+														handleChange('appliances_kwh_sum', appliancesCalcResult);
+														setOpenHouseholdConsumptionResultDialog(false);
 														setOpenEstimatedGeneration(false)
+														enqueueSnackbar("Energia estimada salva!", { variant: 'success' });	
 													}}
 													sx={{
 														backgroundColor: theme.palette.primary.main,
