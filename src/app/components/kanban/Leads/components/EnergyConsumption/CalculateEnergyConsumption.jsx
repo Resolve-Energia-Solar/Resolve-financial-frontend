@@ -67,8 +67,8 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 	// formData.commercial_products_ids = customProducts.map((product) => product.id);
 	formData.lead_id ? null : (formData.lead_id = leadId);
 	// formData.status ? null : (formData.status = 'P');
-	formData.appliances_kwh_sum ? null : (formData.appliances_kwh_sum = '895');
-	formData.medium_consumption ? null : (formData.medium_consumption = '552');
+	formData.appliances_kwh_sum ? null : (formData.appliances_kwh_sum = '');
+	formData.medium_consumption ? null : (formData.medium_consumption = '');
 	// user?.user ? (formData.created_by_id = user.user.id) : null;
 
 	const discard_proposal = () => {
