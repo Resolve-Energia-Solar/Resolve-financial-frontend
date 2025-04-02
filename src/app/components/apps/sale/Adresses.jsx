@@ -25,7 +25,7 @@ import GenericAutocomplete from '../../auto-completes/GenericAutoComplete';
 import { useSnackbar } from 'notistack';
 import userService from '@/services/userService';
 
-export default function Addresses({ userId, data, onRefresh }) {
+export default function Addresses({ userId, data, onRefresh = () => {} }) {
   const { enqueueSnackbar } = useSnackbar();
   const [openModal, setOpenModal] = useState(false);
   const [selectedAddresses, setSelectedAddresses] = useState([]);
@@ -56,10 +56,15 @@ export default function Addresses({ userId, data, onRefresh }) {
       enqueueSnackbar('Selecione um endereço antes de adicionar.', { variant: 'warning' });
       return;
     }
-
+  
     try {
-      const addressIds = selectedAddresses.map((a) => a.id);
-      await userService.update(userId, { addresses: addressIds });
+      const existingAddressIds = data.map((addr) => addr.id);
+  
+      const selectedAddressIds = selectedAddresses.map((a) => a.id);
+  
+      const combinedIds = [...new Set([...existingAddressIds, ...selectedAddressIds])];
+  
+      await userService.update(userId, { addresses: combinedIds });
       enqueueSnackbar('Endereço adicionado com sucesso!', { variant: 'success' });
       setOpenModal(false);
       onRefresh();
@@ -68,6 +73,7 @@ export default function Addresses({ userId, data, onRefresh }) {
       console.error('Erro ao adicionar endereço:', error);
     }
   };
+  
 
   return (
     <Box sx={{ marginBottom: 2 }}>
@@ -126,7 +132,9 @@ export default function Addresses({ userId, data, onRefresh }) {
           variant="outlined"
           startIcon={<AddBoxRounded />}
           sx={{ marginBottom: 2 }}
-          onClick={() => setOpenModal(true)}
+          onClick={() => {
+            setOpenModal(true);
+          }}
         >
           Novo
         </Button>

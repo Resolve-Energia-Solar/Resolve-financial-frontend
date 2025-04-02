@@ -63,6 +63,7 @@ const CreateSchedulePage = () => {
       branch: formData.branch?.value,
       address: formData.address?.value,
       schedule_creator: user.id,
+      products: formData.product ? [formData.product.value] : []
     };
 
     const fieldLabels = {
@@ -180,7 +181,11 @@ const CreateSchedulePage = () => {
                 </Tooltip>
               </Typography>
               <AutoCompleteUserSchedule
-                onChange={(id) => handleChange('schedule_agent', id)}
+                onChange={(id) => {
+                  if (id) {
+                    setFormData({ ...formData, schedule_agent: { value: id, name: 'nome do agente' } });
+                  }
+                }}
                 value={formData.schedule_agent}
                 disabled={
                   !formData.service?.category ||
@@ -336,11 +341,9 @@ const CreateSchedulePage = () => {
                         branch: { label: p.sale.branch.name, value: p.sale.branch.id },
                         address: {
                           label: p.address
-                            ? `${p.address.zip_code || ''} - ${p.address.country || ''} - ${
-                                p.address.state || ''
-                              } - ${p.address.city || ''} - ${p.address.neighborhood || ''} - ${
-                                p.address.street || ''
-                              } - ${p.address.number || ''} - ${p.address.complement || ''}`
+                            ? `${p.address.zip_code || ''} - ${p.address.country || ''} - ${p.address.state || ''
+                            } - ${p.address.city || ''} - ${p.address.neighborhood || ''} - ${p.address.street || ''
+                            } - ${p.address.number || ''} - ${p.address.complement || ''}`
                             : '',
                           value: p.address?.id || null,
                         },
