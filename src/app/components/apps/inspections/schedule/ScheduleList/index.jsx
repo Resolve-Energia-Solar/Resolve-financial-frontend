@@ -232,7 +232,7 @@ const SchedulingList = () => {
       const orderingParam = order ? `${orderDirection === 'asc' ? '' : '-'}${order}` : '';
       const queryParams = {
         ordering: orderingParam,
-        nextPage: page,
+        // nextPage: page,
         limit: rowsPerPage,
         fields:
           'id,customer,service,service_opinion,final_service_opinion,schedule_date,schedule_start_time,schedule_agent,address,observation,status,created_at',

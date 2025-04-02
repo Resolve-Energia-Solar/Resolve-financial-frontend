@@ -32,9 +32,6 @@ import {
 } from '@tabler/icons-react';
 
 
-import { permission } from 'process';
-import { id } from 'date-fns/locale';
-
 const Menuitems = [
   {
     id: uniqueId(),
@@ -128,21 +125,21 @@ const Menuitems = [
       },
     ],
   },
-  {
-    id: uniqueId(),
-    title: 'Serviços de Campo',
-    icon: IconMapRoute,
-    href: '/',
-    children: [
-      {
-        id: uniqueId(),
-        title: 'Agendamentos',
-        icon: IconCalendarStar,
-        href: '/apps/inspections/schedule',
-      },
-    ],
-    permissions: ['field_services.view_schedule'],
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Serviços de Campo',
+  //   icon: IconMapRoute,
+  //   href: '/',
+  //   children: [
+  //     {
+  //       id: uniqueId(),
+  //       title: 'Agendamentos',
+  //       icon: IconCalendarStar,
+  //       href: '/apps/inspections/schedule',
+  //     },
+  //   ],
+  //   permissions: ['field_services.view_schedule'],
+  // },
   {
     id: uniqueId(),
     title: 'Financiamento',
