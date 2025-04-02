@@ -1,6 +1,6 @@
 import { Box, Chip, Grid, Dialog, DialogContent, Drawer } from '@mui/material';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import leadService from '@/services/leadService';
 import TableHeader from '@/app/components/kanban/Leads/components/TableHeader';
 import TableComponent from '@/app/components/kanban/Leads/components/TableComponent';
@@ -10,6 +10,7 @@ import ProposalService from '@/services/proposalService';
 import LeadsViewProposal from './View-Proposal';
 import AddProposalPage from './Add-Proposal';
 import EditProposalPage from './Edit-Proposal';
+import { LeadModalTabContext } from '../context/LeadModalTabContext';
 
 const LeadsProposalListPage = ({ leadId = null }) => {
   const [data, setData] = useState([]);
@@ -19,6 +20,8 @@ const LeadsProposalListPage = ({ leadId = null }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
+
+  const { lead } = useContext(LeadModalTabContext);
 
   const proposalStatus = {
     A: { label: 'Aceita', color: '#E9F9E6' },
@@ -91,6 +94,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
         const response = await ProposalService.index({
             expand: 'products,created_by',
             fields: 'id,products,value,status,created_by,due_date',
+            created_by__in: lead.customer,
             page: page + 1,
             limit: rowsPerPage,
         });
