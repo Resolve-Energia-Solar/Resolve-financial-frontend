@@ -34,6 +34,7 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ProposalLayout from '../components/ProposalLayout';
 import ProductsCard from '../components/ProductsCard';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import useEnergyConsumptionForm from '@/hooks/energyConsumption/useEnergyConsumptionForm';
 
 function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
@@ -44,6 +45,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
+  const [mediumConsumption, setMediumConsumption] = useState("");
   const [openEnergyConsumption, setOpenEnergyConsumption] = useState(false);
   const [openProposalLayout, setOpenProposalLayout] = useState(false);
 
@@ -562,6 +564,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               <EnergyConsumptionCalc
                 leadId={leadId}
                 onClose={() => setOpenEnergyConsumption(false)}
+                mediumConsumption={mediumConsumption}
                 onRefresh={onRefresh}
               />
             </DialogContent>

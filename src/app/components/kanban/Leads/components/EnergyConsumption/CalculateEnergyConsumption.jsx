@@ -38,7 +38,7 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import useEnergyConsumptionForm from '@/hooks/energyConsumption/useEnergyConsumptionForm';
 
-function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null }) {
+function EnergyConsumptionCalc({ leadId = null, mediumConsumption = null, onRefresh = null, onClose = null }) {
 	const router = useRouter();
 	const theme = useTheme();
 	const [lead, setLead] = useState(null);
@@ -49,7 +49,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 	const [checked, setChecked] = useState(false);
 	const [openMediumCalcDialog, setOpenMediumCalcDialog] = useState(false);
 	const [openMediumCalcResultDialog, setOpenMediumCalcResultDialog] = useState(false);
-	const [mediumConsumptionResult, setMediumConsumptionResult] = useState("");
+	const [mediumConsumptionResult, setMediumConsumptionResult] = useState(mediumConsumption);
 	const [openEstimatedGeneration, setOpenEstimatedGeneration] = useState(false);
 
 	const {
@@ -307,7 +307,6 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 										name="medium_consumption"
 										value={formData.medium_consumption}
 										onClick={() => setOpenMediumCalcDialog(true)}
-										// onChange={(e) => handleChange('medium_consumption', e.target.value)}
 										fullWidth
 										disabled={openMediumCalcDialog}
 										InputProps={{
@@ -760,7 +759,6 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 									}
 								}}
 							>
-								{/* <DialogTitle>Histórico de Consumo</DialogTitle> */}
 								<DialogContent>
 									<LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
 
