@@ -43,7 +43,7 @@ function EditLeadPage({ leadId = null }) {
     success,
   } = useLeadForm(leadData, leadId);
 
-  formData?.seller_id ? null : handleChange('seller_id', user?.id);
+  formData?.seller ? null : handleChange('seller', user?.id);
 
   const handleSaveLead = async () => {
     const response = await handleSave(formData);
@@ -203,9 +203,9 @@ function EditLeadPage({ leadId = null }) {
             <Grid item xs={12} sm={6}>
               <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
               <AutoCompleteUser
-                onChange={(id) => handleChange('seller_id', id)}
-                value={formData.seller_id}
-                {...(formErrors.seller_id && { error: true, helperText: formErrors.seller_id })}
+                onChange={(id) => handleChange('seller', id)}
+                value={formData.seller}
+                {...(formErrors.seller && { error: true, helperText: formErrors.seller })}
               />
             </Grid>
 
