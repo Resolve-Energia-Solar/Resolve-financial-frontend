@@ -341,7 +341,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 										name="consumer_unity"
 										id='consumer_unity'
 										type='number'
-										value={formData.medium_energy_val}
+										value={formData.consumer_unity}
 										onChange={(e) => handleChange('consumer_unity', e.target.value)}
 										fullWidth
 										InputProps={{
@@ -449,17 +449,17 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
 								<Grid item xs={5}>
 									<CustomFormLabel
-										htmlFor="kwh_value"
+										htmlFor="kwh_price"
 										sx={{ color: '#092C4C', fontWeight: '700', fontSize: '14px' }}
 									>
 										Valor do kWh
 									</CustomFormLabel>
 									<TextField
-										name="kwh_value"
-										id='kwh_value'
+										name="kwh_price"
+										id='kwh_price'
 										type='number'
-										value={formData.medium_energy_val}
-										onChange={(e) => handleChange('kwh_value', e.target.value)}
+										value={formData.kwh_price}
+										onChange={(e) => handleChange('kwh_price', e.target.value)}
 										fullWidth
 										// placeholder='1800 kWh'
 										InputProps={{
