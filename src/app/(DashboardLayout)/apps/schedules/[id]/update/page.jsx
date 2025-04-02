@@ -18,6 +18,7 @@ import scheduleService from '@/services/scheduleService';
 import { useSnackbar } from 'notistack';
 import AutoCompleteUserSchedule from '@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
+import { formatDate } from '@/utils/dateUtils';
 
 const UpdateSchedulePage = () => {
     const router = useRouter();
@@ -165,6 +166,17 @@ const UpdateSchedulePage = () => {
         return <Typography>Carregando...</Typography>;
     }
 
+    const saleStatusMap = {
+        P: 'Pendente',
+        F: 'Finalizado',
+        EA: 'Em Andamento',
+        C: 'Cancelado',
+        D: 'Distrato',
+    };
+
+    const formatCurrency = (value) =>
+        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+    console.log('formData', formData);
     return (
         <PageContainer
             title="Atualizar Agendamento"
@@ -334,23 +346,42 @@ const UpdateSchedulePage = () => {
                                 label="Projeto"
                                 value={formData.project}
                                 onChange={(newValue) => {
-                                    setFormData({
-                                        ...formData,
-                                        project: newValue,
-                                        customer: newValue.customer,
-                                        branch: newValue.branch,
-                                        address: newValue.address,
-                                        product: newValue.product,
-                                    });
+                                    if (newValue) {
+                                        setFormData({
+                                            ...formData,
+                                            project: newValue.value,
+                                            customer: newValue.customer,
+                                            branch: newValue.branch,
+                                            address: newValue.address,
+                                            product: newValue.product,
+                                        });
+                                    } else {
+                                        setFormData({
+                                            ...formData,
+                                            project: null,
+                                            customer: null,
+                                            branch: null,
+                                            address: null,
+                                            product: null,
+                                        });
+                                    }
                                 }}
-                                endpoint="/api/projects"
+                                endpoint="/api/projects/"
                                 queryParam="q"
                                 extraParams={{
-                                    expand: ['sale.customer', 'sale.branch', 'product'],
+                                    expand: [
+                                        'sale.customer',
+                                        'sale',
+                                        'sale.branch',
+                                        'product',
+                                        'sale.homologator'
+                                    ],
                                     fields: [
                                         'id',
                                         'project_number',
                                         'address',
+                                        'sale.total_value',
+                                        'sale.contract_number',
                                         'sale.customer.complete_name',
                                         'sale.customer.id',
                                         'sale.branch.id',
@@ -358,31 +389,70 @@ const UpdateSchedulePage = () => {
                                         'product.id',
                                         'product.name',
                                         'product.description',
+                                        'sale.signature_date',
+                                        'sale.status',
+                                        'sale.homologator.complete_name',
+                                        'address.complete_address',
                                     ],
                                 }}
                                 mapResponse={(data) =>
                                     data.results.map((p) => ({
                                         label: `${p.project_number} - ${p.sale.customer.complete_name}`,
                                         value: p.id,
+                                        project_number: p.project_number,
+                                        total_value: p.sale.total_value,
                                         customer: {
                                             label: p.sale.customer.complete_name,
                                             value: p.sale.customer.id,
                                         },
                                         branch: { label: p.sale.branch.name, value: p.sale.branch.id },
                                         address: {
-                                            label: p.address
-                                                ? `${p.address.zip_code || ''} - ${p.address.country || ''} - ${p.address.state || ''
-                                                } - ${p.address.city || ''} - ${p.address.neighborhood || ''} - ${p.address.street || ''
-                                                } - ${p.address.number || ''} - ${p.address.complement || ''}`
-                                                : '',
+                                            label: p.address?.complete_address || '',
                                             value: p.address?.id || null,
                                         },
                                         product: { label: p.product.name, value: p.product.id },
+                                        contract_number: p.sale.contract_number,
+                                        homologator: {
+                                            label: p.sale.homologator?.complete_name || 'Homologador não disponível',
+                                            value: p.sale.homologator?.id || null,
+                                        },
+                                        signature_date: p.sale.signature_date,
+                                        status: p.sale.status,
                                     }))
                                 }
                                 fullWidth
                                 helperText={errors.project?.[0] || ''}
                                 error={!!errors.project}
+                                renderOption={(props, option) => (
+                                    <li {...props}>
+                                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                            <Typography variant="body2">
+                                                <strong>Projeto:</strong> {option.project_number}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                <strong>Valor total:</strong> {option.total_value ? formatCurrency(option.total_value) : 'Sem valor Total'}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                <strong>Contrato:</strong> {option.contract_number || 'Contrato não Disponível'}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                <strong>Homologador:</strong> {option.homologator.label || 'Homologador não Disponível'}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                <strong>Data de Contrato:</strong> {formatDate(option.signature_date) || 'Data de Contrato não Disponível'}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                <strong>Endereço:</strong> {option.address.label || 'Endereço não Disponível'}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                <strong>Status da Venda:</strong> {option.status ? saleStatusMap[option.status] || 'Status Desconhecido' : 'Status não Disponível'}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                <strong>Produto:</strong> {option.product.label || 'Produto não Disponível'}
+                                            </Typography>
+                                        </Box>
+                                    </li>
+                                )}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>

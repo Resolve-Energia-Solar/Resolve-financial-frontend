@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Autocomplete, TextField, CircularProgress } from "@mui/material";
+import { Autocomplete, TextField, CircularProgress, Typography } from "@mui/material";
 import apiClient from "@/services/apiClient";
 
 const GenericAsyncAutocompleteInput = ({
@@ -14,6 +14,7 @@ const GenericAsyncAutocompleteInput = ({
   error = false,
   helperText = "",
   noOptionsText = "Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.",
+  renderOption,
   ...props
 }) => {
   const [options, setOptions] = useState([]);
@@ -71,7 +72,6 @@ const GenericAsyncAutocompleteInput = ({
     const fetchInitialOption = async () => {
       if (!value || typeof value === "object") return;
       if (options.find((option) => option.value === value)) return;
-      
       try {
         const response = await apiClient.get(`${endpoint}/${value}`, {
           params: { fields: stableExtraParams.fields },
@@ -99,6 +99,11 @@ const GenericAsyncAutocompleteInput = ({
       value={selectedOption}
       loadingText="Carregando..."
       noOptionsText={noOptionsText}
+      renderOption={renderOption || ((props, option) => (
+        <li {...props}>
+          <Typography variant="body1">{option.label}</Typography>
+        </li>
+      ))}
       {...props}
       renderInput={(params) => (
         <TextField
