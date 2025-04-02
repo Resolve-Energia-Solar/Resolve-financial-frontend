@@ -2,10 +2,27 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-  Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip,
-  IconButton, Typography, CircularProgress, Avatar
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Tooltip,
+  IconButton,
+  Typography,
+  CircularProgress,
+  Avatar,
 } from '@mui/material';
-import { IconTrash, IconUsers, IconBuilding, IconMail, IconUser, IconMapPin } from '@tabler/icons-react';
+import {
+  IconTrash,
+  IconUsers,
+  IconBuilding,
+  IconMail,
+  IconUser,
+  IconMapPin,
+} from '@tabler/icons-react';
 import squadService from '@/services/squadService';
 import { Slide, Zoom } from '@mui/material';
 
@@ -17,7 +34,7 @@ function SquadList() {
   useEffect(() => {
     const fetchSquads = async () => {
       try {
-        const data = await squadService.getSquads();
+        const data = await squadService.index();
         if (data && data.results) {
           setSquads(data.results);
         } else {
@@ -60,41 +77,51 @@ function SquadList() {
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '150px' }}>
+                  <Typography
+                    variant="h6"
+                    sx={{ display: 'flex', alignItems: 'center', minWidth: '150px' }}
+                  >
                     <IconUsers size={20} style={{ marginRight: '8px' }} />
                     Nome do Squad
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '200px' }}>
+                  <Typography
+                    variant="h6"
+                    sx={{ display: 'flex', alignItems: 'center', minWidth: '200px' }}
+                  >
                     <IconBuilding size={20} style={{ marginRight: '8px' }} />
                     Filial
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '200px' }}>
+                  <Typography
+                    variant="h6"
+                    sx={{ display: 'flex', alignItems: 'center', minWidth: '200px' }}
+                  >
                     <IconUser size={20} style={{ marginRight: '8px' }} />
                     Gerente
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', minWidth: '250px' }}>
+                  <Typography
+                    variant="h6"
+                    sx={{ display: 'flex', alignItems: 'center', minWidth: '250px' }}
+                  >
                     <IconMapPin size={20} style={{ marginRight: '8px' }} />
                     Endereço da Filial
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6" sx={{ minWidth: '100px' }}>Ação</Typography>
+                  <Typography variant="h6" sx={{ minWidth: '100px' }}>
+                    Ação
+                  </Typography>
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {squads.map((squad, index) => (
-                <Zoom
-                  key={squad.id}
-                  in={true}
-                  style={{ transitionDelay: `${index * 100}ms` }}
-                >
+                <Zoom key={squad.id} in={true} style={{ transitionDelay: `${index * 100}ms` }}>
                   <TableRow hover>
                     <TableCell>
                       <Typography variant="h6" fontWeight={600} noWrap>

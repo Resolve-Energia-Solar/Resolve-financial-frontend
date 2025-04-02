@@ -11,7 +11,7 @@ const useProposal = (id) => {
 
     const fetchProposal = async () => {
       try {
-        const data = await ProposalService.getProposalById(id);
+        const data = await ProposalService.find(id);
         setProposalData(data);
       } catch (err) {
         setError('Erro ao carregar a proposta');

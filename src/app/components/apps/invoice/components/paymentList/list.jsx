@@ -21,7 +21,7 @@ import PaymentStatusChip from '../../../../../../utils/status/PaymentStatusChip'
 import paymentService from '@/services/paymentService';
 import { useRouter } from 'next/navigation';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
-import { InvoiceContext } from '@/app/context/InvoiceContext';
+import { FilterContext } from '@/context/FilterContext';
 
 const PaymentList = ({ onClick }) => {
   // Estados para dados, loading, erro e paginação
@@ -37,7 +37,7 @@ const PaymentList = ({ onClick }) => {
   const [invoiceToDelete, setInvoiceToDelete] = useState(null);
 
   const router = useRouter();
-  const { filters, refresh } = useContext(InvoiceContext);
+  const { filters, refresh } = useContext(FilterContext);
 
   // Sempre que os filtros ou o refresh mudarem, reseta a página
   useEffect(() => {
@@ -50,13 +50,15 @@ const PaymentList = ({ onClick }) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await paymentService.getPayments({
+        const response = await paymentService.index({
           ...filters,
           page: page + 1,
           limit: rowsPerPage,
+          expand: 'sale.customer,borrower,installments,sale',
+          fields: 'id,value,payment_type,is_paid,sale.customer.complete_name,sale.signature_date,sale.reference_value,sale.total_value,borrower.complete_name,installments,invoice_status,sale.status,sale.payment_status',
         });
         setPaymentsList(response.results);
-        setTotalCount(response.count || 0);
+        setTotalCount(response.meta.pagination.total_count || 0);
       } catch (err) {
         console.error('Erro ao carregar pagamentos:', err);
         setError('Erro ao carregar pagamentos.');
@@ -158,7 +160,7 @@ const PaymentList = ({ onClick }) => {
                       <Typography fontSize="14px">{item?.borrower?.complete_name}</Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography fontSize="14px">{item?.installments.length}x</Typography>
+                      <Typography fontSize="14px">{item?.installments?.length}</Typography>
                     </TableCell>
                     <TableCell>
                       <Typography fontSize="14px">

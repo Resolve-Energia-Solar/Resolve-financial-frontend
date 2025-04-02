@@ -34,10 +34,10 @@ const useBranchForm = (initialData, id) => {
 
     dataToSend.append('address_id', formData.address_id);
     dataToSend.append('name', formData.name);
-    console.log("dataToSend", dataToSend);
+    console.log('dataToSend', dataToSend);
     try {
       if (id) {
-        await branchService.updateBranch(id, dataToSend);
+        await branchService.update(id, dataToSend);
       } else {
         await branchService.createBranch(dataToSend);
       }

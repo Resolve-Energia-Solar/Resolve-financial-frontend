@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Drawer,
   Box,
@@ -11,14 +11,14 @@ import {
   Typography,
   Grid,
   FormControlLabel,
-  Checkbox
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import GenericAsyncAutocompleteInput from "./GenericAsyncAutocompleteInput";
-import CustomFormLabel from "../forms/theme-elements/CustomFormLabel";
+  Checkbox,
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import GenericAsyncAutocompleteInput from './GenericAsyncAutocompleteInput';
+import CustomFormLabel from '../forms/theme-elements/CustomFormLabel';
 
 // Componente para intervalos (range)
-const RangeInput = ({ label, value, onChange, inputType = "text" }) => {
+const RangeInput = ({ label, value, onChange, inputType = 'text' }) => {
   const handleStartChange = (e) => {
     onChange({ ...value, start: e.target.value });
   };
@@ -28,11 +28,11 @@ const RangeInput = ({ label, value, onChange, inputType = "text" }) => {
   };
 
   return (
-    <Box sx={{ display: "flex", gap: 1 }}>
+    <Box sx={{ display: 'flex', gap: 1 }}>
       <TextField
         label={`${label} (Início)`}
         type={inputType}
-        value={value?.start || ""}
+        value={value?.start || ''}
         onChange={handleStartChange}
         fullWidth
         margin="normal"
@@ -41,7 +41,7 @@ const RangeInput = ({ label, value, onChange, inputType = "text" }) => {
       <TextField
         label={`${label} (Fim)`}
         type={inputType}
-        value={value?.end || ""}
+        value={value?.end || ''}
         onChange={handleEndChange}
         fullWidth
         margin="normal"
@@ -62,11 +62,11 @@ const NumberRangeInput = ({ label, value, onChange }) => {
   };
 
   return (
-    <Box sx={{ display: "flex", gap: 1 }}>
+    <Box sx={{ display: 'flex', gap: 1 }}>
       <TextField
         label={`${label} Mínimo`}
         type="number"
-        value={value?.min || ""}
+        value={value?.min || ''}
         onChange={handleMinChange}
         fullWidth
         margin="normal"
@@ -75,7 +75,7 @@ const NumberRangeInput = ({ label, value, onChange }) => {
       <TextField
         label={`${label} Máximo`}
         type="number"
-        value={value?.max || ""}
+        value={value?.max || ''}
         onChange={handleMaxChange}
         fullWidth
         margin="normal"
@@ -101,20 +101,20 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
   const getDefaultValues = () => {
     const defaultValues = {};
     filters.forEach((filterConfig) => {
-      if (filterConfig.type === "async-multiselect") {
+      if (filterConfig.type === 'async-multiselect') {
         defaultValues[filterConfig.key] = [];
-      } else if (filterConfig.type === "number-range") {
-        defaultValues[filterConfig.key] = { min: "", max: "" };
-      } else if (filterConfig.type === "range") {
-        defaultValues[filterConfig.key] = { start: "", end: "" };
-      } else if (filterConfig.type === "multiselect") {
+      } else if (filterConfig.type === 'number-range') {
+        defaultValues[filterConfig.key] = { min: '', max: '' };
+      } else if (filterConfig.type === 'range') {
+        defaultValues[filterConfig.key] = { start: '', end: '' };
+      } else if (filterConfig.type === 'multiselect') {
         defaultValues[filterConfig.key] = [];
-      } else if (filterConfig.type === "custom") {
-        defaultValues[filterConfig.key] = "";
-      } else if (filterConfig.type === "checkbox") {
+      } else if (filterConfig.type === 'custom') {
+        defaultValues[filterConfig.key] = '';
+      } else if (filterConfig.type === 'checkbox') {
         defaultValues[filterConfig.key] = false;
       } else {
-        defaultValues[filterConfig.key] = "";
+        defaultValues[filterConfig.key] = '';
       }
     });
     return defaultValues;
@@ -126,7 +126,7 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
         if (Object.keys(prev).length > 0) return prev;
         const defaultValues = {};
         filters.forEach((filterConfig) => {
-          if (filterConfig.type === "number-range") {
+          if (filterConfig.type === 'number-range') {
             if (
               initialValues &&
               initialValues[filterConfig.subkeys.min] !== undefined &&
@@ -137,20 +137,23 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
                 max: initialValues[filterConfig.subkeys.max],
               };
             } else {
-              defaultValues[filterConfig.key] = { min: "", max: "" };
+              defaultValues[filterConfig.key] = { min: '', max: '' };
             }
-          } else if (filterConfig.type === "range") {
+          } else if (filterConfig.type === 'range') {
             if (initialValues && initialValues[filterConfig.key]) {
-              if (typeof initialValues[filterConfig.key] === "object") {
+              if (typeof initialValues[filterConfig.key] === 'object') {
                 defaultValues[filterConfig.key] = initialValues[filterConfig.key];
-              } else if (typeof initialValues[filterConfig.key] === "string") {
-                const [start, end] = initialValues[filterConfig.key].split(",");
-                defaultValues[filterConfig.key] = { start: start || "", end: end || "" };
+              } else if (typeof initialValues[filterConfig.key] === 'string') {
+                const [start, end] = initialValues[filterConfig.key].split(',');
+                defaultValues[filterConfig.key] = { start: start || '', end: end || '' };
               }
             } else {
-              defaultValues[filterConfig.key] = { start: "", end: "" };
+              defaultValues[filterConfig.key] = { start: '', end: '' };
             }
-          } else if (filterConfig.type === "multiselect" || filterConfig.type === "async-multiselect") {
+          } else if (
+            filterConfig.type === 'multiselect' ||
+            filterConfig.type === 'async-multiselect'
+          ) {
             if (initialValues && initialValues[filterConfig.key] !== undefined) {
               const value = initialValues[filterConfig.key];
               if (value === undefined || value === null) {
@@ -158,25 +161,28 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
               } else {
                 defaultValues[filterConfig.key] = Array.isArray(value)
                   ? value
-                  : value === ""
+                  : value === ''
                     ? []
-                    : value.split(",");
+                    : value.split(',');
               }
             } else {
               defaultValues[filterConfig.key] = [];
             }
-          } else if (filterConfig.type === "checkbox") {
-            defaultValues[filterConfig.key] = initialValues && initialValues[filterConfig.key] !== undefined
-              ? initialValues[filterConfig.key]
-              : false;
-          } else if (filterConfig.type === "custom") {
-            defaultValues[filterConfig.key] = initialValues && initialValues[filterConfig.key]
-              ? initialValues[filterConfig.key]
-              : "";
+          } else if (filterConfig.type === 'checkbox') {
+            defaultValues[filterConfig.key] =
+              initialValues && initialValues[filterConfig.key] !== undefined
+                ? initialValues[filterConfig.key]
+                : false;
+          } else if (filterConfig.type === 'custom') {
+            defaultValues[filterConfig.key] =
+              initialValues && initialValues[filterConfig.key]
+                ? initialValues[filterConfig.key]
+                : '';
           } else {
-            defaultValues[filterConfig.key] = initialValues && initialValues[filterConfig.key]
-              ? initialValues[filterConfig.key]
-              : "";
+            defaultValues[filterConfig.key] =
+              initialValues && initialValues[filterConfig.key]
+                ? initialValues[filterConfig.key]
+                : '';
           }
         });
         return defaultValues;
@@ -198,29 +204,32 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
   const handleApply = () => {
     const transformedFilters = {};
     filters.forEach((filterConfig) => {
-      if (filterConfig.type === "number-range") {
+      if (filterConfig.type === 'number-range') {
         const val = filterValues[filterConfig.key] || {};
         transformedFilters[filterConfig.subkeys.min] = val.min;
         transformedFilters[filterConfig.subkeys.max] = val.max;
-      } else if (filterConfig.type === "async-multiselect") {
+      } else if (filterConfig.type === 'async-multiselect') {
         const selected = filterValues[filterConfig.key];
         transformedFilters[filterConfig.key] = Array.isArray(selected)
-          ? selected.map(item => item.value).join(",")
-          : "";
-      } else if (filterConfig.type === "range") {
-        const val = filterValues[filterConfig.key] || { start: "", end: "" };
-        transformedFilters[filterConfig.key] = (val.start || val.end) ? `${val.start},${val.end}` : "";
-      } else if (filterConfig.type === "multiselect") {
+          ? selected.map((item) => item.value).join(',')
+          : '';
+      } else if (filterConfig.type === 'range') {
+        const val = filterValues[filterConfig.key] || { start: '', end: '' };
+        transformedFilters[filterConfig.key] =
+          val.start || val.end ? `${val.start},${val.end}` : '';
+      } else if (filterConfig.type === 'multiselect') {
         const val = filterValues[filterConfig.key];
-        transformedFilters[filterConfig.key] = Array.isArray(val) ? val.join(",") : val;
-      } else if (filterConfig.type === "async-autocomplete") {
+        transformedFilters[filterConfig.key] = Array.isArray(val) ? val.join(',') : val;
+      } else if (filterConfig.type === 'async-autocomplete') {
         const selected = filterValues[filterConfig.key];
-        transformedFilters[filterConfig.key] = selected && selected.value ? selected.value : "";
-      } else if (filterConfig.type === "checkbox") {
+        transformedFilters[filterConfig.key] = selected && selected.value ? selected.value : '';
+      } else if (filterConfig.type === 'checkbox') {
         transformedFilters[filterConfig.key] = filterValues[filterConfig.key];
-      } else if (filterConfig.type === "custom") {
+      } else if (filterConfig.type === 'custom') {
         if (filterConfig.customTransform) {
-          transformedFilters[filterConfig.key] = filterConfig.customTransform(filterValues[filterConfig.key]);
+          transformedFilters[filterConfig.key] = filterConfig.customTransform(
+            filterValues[filterConfig.key],
+          );
         } else {
           transformedFilters[filterConfig.key] = filterValues[filterConfig.key];
         }
@@ -228,16 +237,26 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
         transformedFilters[filterConfig.key] = filterValues[filterConfig.key];
       }
     });
-    onApply(transformedFilters);
+
+    const filteredParams = Object.entries(transformedFilters).reduce((acc, [key, value]) => {
+      if (value !== '' && !(Array.isArray(value) && value.length === 0)) {
+        acc[key] = value;
+      }
+      return acc;
+    }, {});
+
+    onApply(filteredParams);
     onClose();
   };
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
-      <Box sx={{ width: 600, height: "100%", display: "flex", flexDirection: "column" }}>
+      <Box sx={{ width: 600, height: '100%', display: 'flex', flexDirection: 'column' }}>
         {/* Área de conteúdo scrollável */}
-        <Box sx={{ flex: 1, overflowY: "auto", pr: 2, pl: 2 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+        <Box sx={{ flex: 1, overflowY: 'auto', pr: 2, pl: 2 }}>
+          <Box
+            sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}
+          >
             <Typography variant="h6">Filtros</Typography>
             <IconButton onClick={onClose}>
               <CloseIcon />
@@ -245,12 +264,12 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
           </Box>
           <Grid container spacing={2}>
             {filters.map((filterConfig) => {
-              if (filterConfig.type === "select") {
+              if (filterConfig.type === 'select') {
                 return (
                   <Grid item xs={12} key={filterConfig.key}>
                     <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
                     <TextField
-                      value={filterValues[filterConfig.key] || ""}
+                      value={filterValues[filterConfig.key] || ''}
                       onChange={(e) => handleChange(filterConfig.key, e.target.value)}
                       fullWidth
                       margin="normal"
@@ -264,18 +283,22 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
                     </TextField>
                   </Grid>
                 );
-              } else if (filterConfig.type === "checkbox") {
+              } else if (filterConfig.type === 'checkbox') {
                 return (
                   <Grid item xs={12} key={filterConfig.key}>
                     <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
                     <CheckboxInput
-                      label={filterValues[filterConfig.key] ? filterConfig.trueLabel : filterConfig.falseLabel}
+                      label={
+                        filterValues[filterConfig.key]
+                          ? filterConfig.trueLabel
+                          : filterConfig.falseLabel
+                      }
                       value={filterValues[filterConfig.key] || false}
                       onChange={(value) => handleChange(filterConfig.key, value)}
                     />
                   </Grid>
                 );
-              } else if (filterConfig.type === "multiselect") {
+              } else if (filterConfig.type === 'multiselect') {
                 return (
                   <Grid item xs={12} key={filterConfig.key}>
                     <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
@@ -295,20 +318,20 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
                     </TextField>
                   </Grid>
                 );
-              } else if (filterConfig.type === "range") {
-                const inputType = filterConfig.inputType || "text";
+              } else if (filterConfig.type === 'range') {
+                const inputType = filterConfig.inputType || 'text';
                 return (
                   <Grid item xs={12} key={filterConfig.key}>
                     <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
                     <RangeInput
                       label={filterConfig.label}
-                      value={filterValues[filterConfig.key] || { start: "", end: "" }}
+                      value={filterValues[filterConfig.key] || { start: '', end: '' }}
                       onChange={(value) => handleChange(filterConfig.key, value)}
                       inputType={inputType}
                     />
                   </Grid>
                 );
-              } else if (filterConfig.type === "async-multiselect") {
+              } else if (filterConfig.type === 'async-multiselect') {
                 return (
                   <Grid item xs={12} key={filterConfig.key}>
                     <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
@@ -324,25 +347,25 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
                     />
                   </Grid>
                 );
-              } else if (filterConfig.type === "number-range") {
+              } else if (filterConfig.type === 'number-range') {
                 return (
                   <Grid item xs={12} key={filterConfig.key}>
                     <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
                     <NumberRangeInput
                       label={filterConfig.label}
-                      value={filterValues[filterConfig.key] || { min: "", max: "" }}
+                      value={filterValues[filterConfig.key] || { min: '', max: '' }}
                       onChange={(value) => handleChange(filterConfig.key, value)}
                     />
                   </Grid>
                 );
-              } else if (filterConfig.type === "date") {
+              } else if (filterConfig.type === 'date') {
                 return (
                   <Grid item xs={12} key={filterConfig.key}>
                     <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
                     <TextField
                       label={filterConfig.label}
                       type="date"
-                      value={filterValues[filterConfig.key] || ""}
+                      value={filterValues[filterConfig.key] || ''}
                       onChange={(e) => handleChange(filterConfig.key, e.target.value)}
                       fullWidth
                       margin="normal"
@@ -350,7 +373,7 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
                     />
                   </Grid>
                 );
-              } else if (filterConfig.type === "async-autocomplete") {
+              } else if (filterConfig.type === 'async-autocomplete') {
                 return (
                   <Grid item xs={12} key={filterConfig.key}>
                     <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
@@ -365,18 +388,18 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
                     />
                   </Grid>
                 );
-              } else if (filterConfig.type === "custom") {
+              } else if (filterConfig.type === 'custom') {
                 return (
                   <Grid item xs={12} key={filterConfig.key}>
                     <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
                     {filterConfig.customComponent ? (
                       <filterConfig.customComponent
-                        value={filterValues[filterConfig.key] || ""}
+                        value={filterValues[filterConfig.key] || ''}
                         onChange={(newValue) => handleChange(filterConfig.key, newValue)}
                       />
                     ) : (
                       <TextField
-                        value={filterValues[filterConfig.key] || ""}
+                        value={filterValues[filterConfig.key] || ''}
                         onChange={(e) => handleChange(filterConfig.key, e.target.value)}
                         fullWidth
                         margin="normal"
@@ -390,11 +413,11 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
                     <CustomFormLabel>{filterConfig.label}</CustomFormLabel>
                     <TextField
                       label={filterConfig.label}
-                      value={filterValues[filterConfig.key] || ""}
+                      value={filterValues[filterConfig.key] || ''}
                       onChange={(e) => handleChange(filterConfig.key, e.target.value)}
                       fullWidth
                       margin="normal"
-                      type={filterConfig.type === "number" ? "number" : "text"}
+                      type={filterConfig.type === 'number' ? 'number' : 'text'}
                     />
                   </Grid>
                 );
@@ -405,9 +428,9 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
         {/* Área fixa dos botões */}
         <Box
           sx={{
-            position: "sticky",
+            position: 'sticky',
             bottom: 0,
-            backgroundColor: "background.paper",
+            backgroundColor: 'background.paper',
             p: 2,
             boxShadow: 3,
           }}

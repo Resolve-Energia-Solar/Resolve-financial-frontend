@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Autocomplete } from '@mui/material';
 import TextField from '@mui/material/TextField';
-import documentTypeService from "@/services/documentTypeService";
+import documentTypeService from '@/services/documentTypeService';
 
 const DocumentTypeSelect = ({ appLabel, formData, handleChange }) => {
   const [documentTypes, setDocumentTypes] = useState([]);
@@ -10,21 +10,21 @@ const DocumentTypeSelect = ({ appLabel, formData, handleChange }) => {
   useEffect(() => {
     const fetchDocumentTypes = async () => {
       try {
-        const response = await documentTypeService.getDocumentTypes({
+        const response = await documentTypeService.index({
           page: 1,
           limit: 50,
-          filters: { app_label__in: appLabel }
+          app_label__in: appLabel,
         });
         const results = response.data?.results || response.results || [];
         // Incluímos subtypes na estrutura
-        const options = results.map(docType => ({
+        const options = results.map((docType) => ({
           id: docType.id,
           name: docType.name,
-          subtypes: docType.subtypes || []
+          subtypes: docType.subtypes || [],
         }));
         setDocumentTypes(options);
       } catch (error) {
-        console.error("Erro ao buscar tipos de documento:", error);
+        console.error('Erro ao buscar tipos de documento:', error);
       }
     };
     fetchDocumentTypes();
@@ -34,13 +34,13 @@ const DocumentTypeSelect = ({ appLabel, formData, handleChange }) => {
     <>
       <Autocomplete
         options={documentTypes}
-        getOptionLabel={(option) => option.name || ""}
-        value={documentTypes.find(dt => dt.id === formData.document_type_id) || null}
+        getOptionLabel={(option) => option.name || ''}
+        value={documentTypes.find((dt) => dt.id === formData.document_type_id) || null}
         noOptionsText="Nenhum tipo de documento encontrado, mude a busca ou digite algo."
         loadingText="Carregando..."
         onChange={(event, newValue) => {
           setSelectedDocType(newValue);
-          handleChange('document_type_id', newValue ? newValue.id : "");
+          handleChange('document_type_id', newValue ? newValue.id : '');
         }}
         renderInput={(params) => (
           <TextField {...params} label="Tipo de Documento" variant="outlined" fullWidth />
@@ -50,12 +50,12 @@ const DocumentTypeSelect = ({ appLabel, formData, handleChange }) => {
         <Autocomplete
           sx={{ mt: 2 }}
           options={selectedDocType.subtypes}
-          getOptionLabel={(option) => option.name || ""}
+          getOptionLabel={(option) => option.name || ''}
           value={
-            selectedDocType.subtypes.find(sub => sub.id === formData.document_subtype_id) || null
+            selectedDocType.subtypes.find((sub) => sub.id === formData.document_subtype_id) || null
           }
           onChange={(event, newValue) =>
-            handleChange('document_subtype_id', newValue ? newValue.id : "")
+            handleChange('document_subtype_id', newValue ? newValue.id : '')
           }
           renderInput={(params) => (
             <TextField {...params} label="Subtipo de Documento" variant="outlined" fullWidth />

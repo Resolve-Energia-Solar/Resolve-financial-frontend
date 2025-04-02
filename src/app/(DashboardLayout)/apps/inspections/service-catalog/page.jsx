@@ -1,7 +1,7 @@
 'use client';
-import React, { useState, useEffect } from "react";
-import PageContainer from "@/app/components/container/PageContainer";
-import BlankCard from "@/app/components/shared/BlankCard";
+import React, { useState, useEffect } from 'react';
+import PageContainer from '@/app/components/container/PageContainer';
+import BlankCard from '@/app/components/shared/BlankCard';
 import {
   Button,
   CardContent,
@@ -22,16 +22,12 @@ import {
   Paper,
   TablePagination,
   TableSortLabel,
-} from "@mui/material";
-import {
-  AddBoxRounded,
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-} from "@mui/icons-material";
+} from '@mui/material';
+import { AddBoxRounded, Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 
 import { useRouter } from 'next/navigation';
-import serviceCatalogService from "@/services/serviceCatalogService";
-import capitalizeFirstWord from "@/utils/capitalizeFirstWord";
+import serviceCatalogService from '@/services/serviceCatalogService';
+import capitalizeFirstWord from '@/utils/capitalizeFirstWord';
 
 const ServiceCatalogList = () => {
   const pageName = 'serviço';
@@ -54,7 +50,7 @@ const ServiceCatalogList = () => {
   useEffect(() => {
     const fetchServicesCatalog = async () => {
       try {
-        const data = await serviceCatalogService.getServicesCatalog();
+        const data = await serviceCatalogService.index();
         setServicesCatalogList(data.results);
       } catch (err) {
         setError(`Erro ao carregar ${pageNamePlural}`);
@@ -86,8 +82,10 @@ const ServiceCatalogList = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await serviceCatalogService.deleteServiceCatalog(serviceCatalogToDelete);
-      setServicesCatalogList(serviceCatalogList.filter((item) => item.id !== serviceCatalogToDelete));
+      await serviceCatalogService.delete(serviceCatalogToDelete);
+      setServicesCatalogList(
+        serviceCatalogList.filter((item) => item.id !== serviceCatalogToDelete),
+      );
     } catch (err) {
       setError(`Erro ao excluir ${pageName}`);
     } finally {
@@ -116,21 +114,21 @@ const ServiceCatalogList = () => {
     return order === 'desc'
       ? (a, b) => {
           if (orderBy === 'category') {
-            return (b.category.name < a.category.name ? -1 : 1);
+            return b.category.name < a.category.name ? -1 : 1;
           }
           if (orderBy === 'deadline') {
-            return (b.deadline.name < a.deadline.name ? -1 : 1);
+            return b.deadline.name < a.deadline.name ? -1 : 1;
           }
-          return (b[orderBy] < a[orderBy] ? -1 : 1);
+          return b[orderBy] < a[orderBy] ? -1 : 1;
         }
       : (a, b) => {
           if (orderBy === 'category') {
-            return (a.category.name < b.category.name ? -1 : 1);
+            return a.category.name < b.category.name ? -1 : 1;
           }
           if (orderBy === 'deadline') {
-            return (a.deadline.name < b.deadline.name ? -1 : 1);
+            return a.deadline.name < b.deadline.name ? -1 : 1;
           }
-          return (a[orderBy] < b[orderBy] ? -1 : 1);
+          return a[orderBy] < b[orderBy] ? -1 : 1;
         };
   };
 
@@ -144,13 +142,16 @@ const ServiceCatalogList = () => {
           <Typography variant="h6" gutterBottom>
             Lista de {capitalizeFirstWord(pageNamePlural)}
           </Typography>
-          <Button variant="outlined" startIcon={<AddBoxRounded />} sx={{ marginTop: 1, marginBottom: 2 }} onClick={handleCreateClick}>
+          <Button
+            variant="outlined"
+            startIcon={<AddBoxRounded />}
+            sx={{ marginTop: 1, marginBottom: 2 }}
+            onClick={handleCreateClick}
+          >
             Adicionar {capitalizeFirstWord(pageName)}
           </Button>
           {loading ? (
-            <Typography>
-              Carregando...
-            </Typography>
+            <Typography>Carregando...</Typography>
           ) : error ? (
             <Typography color="error">{error}</Typography>
           ) : (
@@ -207,35 +208,37 @@ const ServiceCatalogList = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {sortedServiceCatalogList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item) => (
-                    <TableRow key={item.id} hover>
-                      <TableCell>{item.id}</TableCell>
-                      <TableCell>{item.name}</TableCell>
-                      <TableCell>{item.description}</TableCell>
-                      <TableCell>{item.category.name}</TableCell>
-                      <TableCell>{item.deadline.name}</TableCell>
-                      <TableCell>
-                        <Tooltip title="Editar">
-                          <IconButton 
-                            color="primary"
-                            size="small"
-                            onClick={() => handleEditClick(item.id)}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Excluir">
-                          <IconButton
-                            color="error"
-                            size="small"
-                            onClick={() => handleDeleteClick(item.id)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {sortedServiceCatalogList
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((item) => (
+                      <TableRow key={item.id} hover>
+                        <TableCell>{item.id}</TableCell>
+                        <TableCell>{item.name}</TableCell>
+                        <TableCell>{item.description}</TableCell>
+                        <TableCell>{item.category.name}</TableCell>
+                        <TableCell>{item.deadline.name}</TableCell>
+                        <TableCell>
+                          <Tooltip title="Editar">
+                            <IconButton
+                              color="primary"
+                              size="small"
+                              onClick={() => handleEditClick(item.id)}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Excluir">
+                            <IconButton
+                              color="error"
+                              size="small"
+                              onClick={() => handleDeleteClick(item.id)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
               <TablePagination

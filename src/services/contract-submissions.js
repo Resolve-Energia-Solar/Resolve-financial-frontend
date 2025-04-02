@@ -1,4 +1,4 @@
-import apiClient from './apiClient'
+import apiClient from './apiClient';
 
 const logError = (operation, error, additionalInfo = null) => {
   console.error(`Erro durante "${operation}":`, {
@@ -8,8 +8,57 @@ const logError = (operation, error, additionalInfo = null) => {
     additionalInfo,
   });
 };
+const DEFAULT_ROUTER = '/api/contract-submissions';
 
 const contractService = {
+  index: async (params) => {
+    try {
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar contratos:', error);
+      throw error;
+    }
+  },
+
+  find: async (id, params) => {
+    try {
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/${id}/`, { params });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar contrato com id ${id}:`, error);
+      throw error;
+    }
+  },
+  create: async (data) => {
+    try {
+      const response = await apiClient.post(`${DEFAULT_ROUTER}/`, data);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao criar contrato:', error);
+      throw error;
+    }
+  },
+  update: async (id, data) => {
+    try {
+      const response = await apiClient.patch(`${DEFAULT_ROUTER}/${id}/`, data);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao atualizar contratocom id ${id}:`, error);
+      throw error;
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      const response = await apiClient.delete(`${DEFAULT_ROUTER}/${id}/`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao deletar contrato com id ${id}:`, error);
+      throw error;
+    }
+  },
+
   getContracts: async (params = {}) => {
     try {
       const response = await apiClient.get('/api/contract-submissions/', { ...params });
@@ -31,7 +80,7 @@ const contractService = {
       throw error;
     }
   },
-  getContractById: async id => {
+  getContractById: async (id) => {
     try {
       const response = await apiClient.get(`/api/contract-submissions/${id}/`);
       return response.data;
@@ -40,7 +89,7 @@ const contractService = {
       throw error;
     }
   },
-  createContract: async data => {
+  createContract: async (data) => {
     try {
       const response = await apiClient.post('/api/contract-submissions/', data);
       return response.data;
@@ -67,7 +116,7 @@ const contractService = {
       throw error;
     }
   },
-  deleteContract: async id => {
+  deleteContract: async (id) => {
     try {
       const response = await apiClient.delete(`/api/contract-submissions/${id}/`);
       return response.data;

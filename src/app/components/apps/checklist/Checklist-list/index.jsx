@@ -25,10 +25,10 @@ import CreateChecklistPage from '../Add-checklist';
 import unitService from '@/services/unitService';
 import SupplyChip from '../components/SupplyChip';
 
-const CheckListRateio = ({ projectId = null }) => {
-
+const CheckListRateio = ({ projectId = null, canEdit = true }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedUnitId, setSelectedUnitId] = useState(null);
+  const [selectedUnit, setSelectedUnit] = useState(null);
 
   const [AddModalOpen, setAddModalOpen] = useState(false);
   const [confirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
@@ -44,7 +44,8 @@ const CheckListRateio = ({ projectId = null }) => {
     const fetchUnits = async () => {
       try {
         if (!projectId) return;
-        const response = await unitService.getUnitByIdProject(projectId, {
+        const response = await unitService.index({
+          project: projectId,
           fields: 'id,name,type,main_unit,supply_adquance.name,supply_adquance.id',
           expand: 'supply_adquance',
         });
@@ -58,8 +59,9 @@ const CheckListRateio = ({ projectId = null }) => {
 
   const [units, setUnits] = useState([]);
 
-  const handleEdit = (unitId) => {
-    setSelectedUnitId(unitId);
+  const handleEdit = (unit) => {
+    setSelectedUnitId(unit.id);
+    setSelectedUnit(unit);
     setEditModalOpen(true);
   };
 
@@ -69,7 +71,7 @@ const CheckListRateio = ({ projectId = null }) => {
 
   const handleDelete = async (unitId) => {
     try {
-      await unitService.deleteUnit(unitId);
+      await unitService.delete(unitId);
       setUnits((prevUnits) => prevUnits.filter((unit) => unit.id !== unitId));
       setConfirmDeleteModalOpen(false);
     } catch (error) {
@@ -109,11 +111,13 @@ const CheckListRateio = ({ projectId = null }) => {
                     Tipo de Fornecimento
                   </Typography>
                 </TableCell>
-                <TableCell align="center">
-                  <Typography variant="h6" fontSize="14px">
-                    Ações
-                  </Typography>
-                </TableCell>
+                {canEdit && (
+                  <TableCell align="center">
+                    <Typography variant="h6" fontSize="14px">
+                      Ações
+                    </Typography>
+                  </TableCell>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -127,7 +131,7 @@ const CheckListRateio = ({ projectId = null }) => {
                 units.map((unit) => (
                   <TableRow key={unit.id}>
                     <TableCell align="center">
-                      <Typography variant="body2">{unit?.name}</Typography>
+                      <Typography variant="body2">{unit?.name || 'Não cadastrado'}</Typography>
                     </TableCell>
                     <TableCell align="center">
                       {unit.supply_adquance?.map((item) => (
@@ -135,7 +139,9 @@ const CheckListRateio = ({ projectId = null }) => {
                           {item?.name}
                         </Typography>
                       ))}
-                      { unit.supply_adquance?.length === 0 && <Typography variant="body2">Nenhuma</Typography>}
+                      {unit.supply_adquance?.length === 0 && (
+                        <Typography variant="body2">Nenhuma</Typography>
+                      )}
                     </TableCell>
                     <TableCell align="center">
                       <Typography variant="body2">
@@ -143,30 +149,36 @@ const CheckListRateio = ({ projectId = null }) => {
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
-                      <Typography variant="body2"><SupplyChip status={unit?.type} /></Typography>
+                      <Typography variant="body2">
+                        <SupplyChip status={unit?.type} />
+                      </Typography>
                     </TableCell>
-                    <TableCell align="center">
-                      <Tooltip title="Edit Item">
-                        <IconButton color="primary" onClick={() => handleEdit(unit.id)}>
-                          <Edit width={22} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete Item">
-                        <IconButton color="error" onClick={() => openDeleteModal(unit.id)}>
-                          <IconTrash width={22} />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
+                    {canEdit && (
+                      <TableCell align="center">
+                        <Tooltip title="Edit Item">
+                          <IconButton color="primary" onClick={() => handleEdit(unit)}>
+                            <Edit width={22} />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete Item">
+                          <IconButton color="error" onClick={() => openDeleteModal(unit.id)}>
+                            <IconTrash width={22} />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))
               )}
-              <TableRow>
-                <TableCell colSpan={5} align="center">
-                  <Button variant="contained" color="primary" onClick={() => handleAdd()}>
-                    Adicionar Unidade
-                  </Button>
-                </TableCell>
-              </TableRow>
+              {canEdit && (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">
+                    <Button variant="contained" color="primary" onClick={() => handleAdd()}>
+                      Adicionar Unidade
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -197,7 +209,12 @@ const CheckListRateio = ({ projectId = null }) => {
       </Dialog>
 
       {/* Modal de Confirmação de Exclusão */}
-      <Dialog open={confirmDeleteModalOpen} onClose={() => setConfirmDeleteModalOpen(false)} maxWidth="xs" fullWidth>
+      <Dialog
+        open={confirmDeleteModalOpen}
+        onClose={() => setConfirmDeleteModalOpen(false)}
+        maxWidth="xs"
+        fullWidth
+      >
         <DialogTitle>Confirmar Exclusão</DialogTitle>
         <DialogContent>
           <Typography variant="body2">

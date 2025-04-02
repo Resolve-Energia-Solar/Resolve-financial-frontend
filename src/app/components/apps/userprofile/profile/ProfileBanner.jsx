@@ -39,19 +39,20 @@ const ProfileBanner = ({ user }) => {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: '0 auto'
+    margin: '0 auto',
   }));
 
   useEffect(() => {
     async function fetchCount() {
       // Verifica se user.id está definido
       if (!user?.id) return;
-      
+
       // Busca dados de departamento
       if (user?.employee_data?.department) {
         try {
-          const data = await employeeService.getEmployee({
-            filters: { department: user.employee?.department?.id, fields: 'id' },
+          const data = await employeeService.index({
+            department: user.employee?.department?.id,
+            fields: ['id'],
           });
           setDepartmentCount(data.count || data.length || 0);
         } catch (error) {
@@ -63,10 +64,12 @@ const ProfileBanner = ({ user }) => {
       try {
         const contentType = await getContentType('accounts', 'user');
         console.log('contentType:', contentType);
-        const commentsData = await commentService.getComments(user.id, contentType, { 
-          ordering: '-created_at', 
-          author: user.id, 
-          fields: 'id' 
+        const commentsData = await commentService.index({
+          object_id: post.id,
+          content_type: user.id,
+          ordering: '-created_at',
+          author: user.id,
+          fields: ['id'],
         });
         console.log('commentsData:', commentsData);
         setPostsCount(commentsData.count || commentsData.results?.length || 0);
@@ -92,14 +95,7 @@ const ProfileBanner = ({ user }) => {
       />
       <Grid container spacing={0} justifyContent="center" alignItems="center">
         {/* Post | Followers | Following */}
-        <Grid
-          item
-          lg={4}
-          sm={12}
-          md={5}
-          xs={12}
-          sx={{ order: { xs: '2', sm: '2', lg: '1' } }}
-        >
+        <Grid item lg={4} sm={12} md={5} xs={12} sx={{ order: { xs: '2', sm: '2', lg: '1' } }}>
           <Stack direction="row" textAlign="center" justifyContent="center" gap={6} m={3}>
             <Box>
               <Typography color="text.secondary">
@@ -143,7 +139,7 @@ const ProfileBanner = ({ user }) => {
                     borderRadius: '50%',
                     width: '100px',
                     height: '100px',
-                    border: '4px solid #fff'
+                    border: '4px solid #fff',
                   }}
                 />
               </ProfileImage>
@@ -173,11 +169,13 @@ const ProfileBanner = ({ user }) => {
             <Fab size="small" color="error" sx={{ backgroundColor: '#CD201F' }}>
               <IconBrandYoutube size="18" />
             </Fab>
-            {(isOwner || loggedUser.is_superuser) && <Link href={`/apps/users/${user.id}/update`}>
-              <Button color="primary" variant="contained">
-                Alterar Cadastro
-              </Button>
-            </Link>}
+            {(isOwner || loggedUser.is_superuser) && (
+              <Link href={`/apps/users/${user.id}/update`}>
+                <Button color="primary" variant="contained">
+                  Alterar Cadastro
+                </Button>
+              </Link>
+            )}
           </Stack>
         </Grid>
       </Grid>

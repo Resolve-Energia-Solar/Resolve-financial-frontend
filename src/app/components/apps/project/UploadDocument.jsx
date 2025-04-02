@@ -59,7 +59,7 @@ const UploadDocument = ({ projectId }) => {
 
   const fetchProject = async () => {
     try {
-      const response = await projectService.getProjectById(projectId);
+      const response = await projectService.find(projectId);
       setProject(response);
     } catch (error) {
       console.log('Erro ao carregar projeto:', error);
@@ -67,17 +67,22 @@ const UploadDocument = ({ projectId }) => {
   };
   const fetchMaterials = async () => {
     try {
-      const response = await projectMaterialsService.getProjectMaterials({ project: projectId });
+      const response = await projectMaterialsService.index({
+        project: projectId,
+        limit: 100,
+        page: 1,
+        fields: 'id,material.name,amount,is_exit,material.price,material.id',
+        expand: 'material',
+      });
       setMaterials(response.results);
     } catch (error) {
       console.log('Erro ao buscar materiais do projeto:', error);
     }
   };
-  +
-    useEffect(() => {
-      fetchProject();
-      fetchMaterials();
-    }, [projectId, refresh]);
+  +useEffect(() => {
+    fetchProject();
+    fetchMaterials();
+  }, [projectId, refresh]);
 
   const handleUpload = (event) => {
     const selectedFile = event.target.files[0];
@@ -174,17 +179,29 @@ const UploadDocument = ({ projectId }) => {
   };
 
   const handleEditSave = async (id) => {
+    const originalAmount = materials.find((item) => item.id === id)?.amount;
+
     try {
-      await projectMaterialsService.partialUpdateProjectMaterial(id, { amount: editedAmount });
+      await projectMaterialsService.Update(id, { amount: editedAmount });
+
       const updatedMaterials = materials.map((item) =>
-        item.material.id === id ? { ...item, amount: editedAmount } : item,
+        item.id === id ? { ...item, amount: editedAmount } : item,
       );
 
-      fetchProject();
       setMaterials(updatedMaterials);
       setEditingId(null);
     } catch (error) {
-      console.error('Erro ao atualizar quantidade:', error);
+      setUploadStatus('error');
+      setErrorMessage(
+        'Erro ao atualizar quantidade: ' + (error.response?.data?.error || 'Erro desconhecido'),
+      );
+      setOpenSnackbar(true);
+
+      // Reverte o valor para o original
+      const revertedMaterials = materials.map((item) =>
+        item.id === id ? { ...item, amount: originalAmount } : item,
+      );
+      setMaterials(revertedMaterials);
     }
   };
 
@@ -197,7 +214,7 @@ const UploadDocument = ({ projectId }) => {
   /******  097f8740-3680-4052-b8be-15ac2860cf76  *******/
   const handleDelete = async (id) => {
     try {
-      await projectMaterialsService.deleteProjectMaterial(id);
+      await projectMaterialsService.delete(id);
       const updatedMaterials = materials.filter((item) => item.material.id !== id);
       fetchProject();
       setMaterials(updatedMaterials);
@@ -292,34 +309,35 @@ const UploadDocument = ({ projectId }) => {
         )}
       </Stack>
 
-        <TableContainer component={Paper} sx={{ marginTop: 4, maxHeight: 400, overflow: 'auto' }}>
-          <Button
-            variant="outlined"
-            startIcon={<AddBoxRounded />}
-            sx={{ marginTop: 1, marginBottom: 2 }}
-            onClick={() => setAddMaterialListModal(true)}
-            >
-            Adicionar Material
-          </Button>
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow>
-                <TableCell>Nome do Material</TableCell>
-                <TableCell>Quantidade</TableCell>
-                <TableCell>Preço</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Ações</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {materials.length > 0 && materials.map((item) => (
+      <TableContainer component={Paper} sx={{ marginTop: 4, maxHeight: 400, overflow: 'auto' }}>
+        <Button
+          variant="outlined"
+          startIcon={<AddBoxRounded />}
+          sx={{ marginTop: 1, marginBottom: 2 }}
+          onClick={() => setAddMaterialListModal(true)}
+        >
+          Adicionar Material
+        </Button>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell>Nome do Material</TableCell>
+              <TableCell>Quantidade</TableCell>
+              <TableCell>Preço</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Ações</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {materials.length > 0 ? (
+              materials.map((item) => (
                 <TableRow key={item.material.id}>
                   <TableCell>
                     <InventoryIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
                     {item.material.name}
                   </TableCell>
                   <TableCell>
-                    {editingId === item.material.id ? (
+                    {editingId === item.id ? (
                       <TextField
                         value={editedAmount}
                         onChange={(e) => setEditedAmount(e.target.value)}
@@ -339,7 +357,7 @@ const UploadDocument = ({ projectId }) => {
                     )}
                   </TableCell>
                   <TableCell>
-                    {editingId === item.material.id ? (
+                    {editingId === item.id ? (
                       <>
                         <IconButton onClick={() => handleEditSave(item.id)} color="primary">
                           <SaveIcon />
@@ -351,7 +369,7 @@ const UploadDocument = ({ projectId }) => {
                     ) : (
                       <>
                         <IconButton
-                          onClick={() => handleEditStart(item.material.id, item.amount)}
+                          onClick={() => handleEditStart(item.id, item.amount)}
                           color="primary"
                         >
                           <EditIcon />
@@ -363,10 +381,17 @@ const UploadDocument = ({ projectId }) => {
                     )}
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} align="center">
+                  Nenhum material cadastrado.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <Snackbar
         open={openSnackbar}
@@ -402,7 +427,12 @@ const UploadDocument = ({ projectId }) => {
         </DialogActions>
       </Dialog>
 
-      <AddMaterialList open={addMaterialListModal} handleClose={() => setAddMaterialListModal(false)} projectId={projectId} onRefresh={handleRefresh} />
+      <AddMaterialList
+        open={addMaterialListModal}
+        handleClose={() => setAddMaterialListModal(false)}
+        projectId={projectId}
+        onRefresh={handleRefresh}
+      />
     </Paper>
   );
 };

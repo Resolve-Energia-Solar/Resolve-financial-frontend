@@ -17,39 +17,18 @@ import {
 import { CalendarToday, WbSunny } from '@mui/icons-material';
 
 import EditIcon from '@mui/icons-material/Edit';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { usePathname } from 'next/navigation';
 import leadService from '@/services/leadService';
 import { IconCalendarWeek, IconEye, IconPencil, IconTrash } from '@tabler/icons-react';
 import LeadInfoHeaderSkeleton from './LeadInfoHeaderSkeleton';
+import { LeadModalTabContext } from '../context/LeadModalTabContext';
 
 function LeadInfoHeader({ leadId, tabValue }) {
-  const [lead, setLead] = useState(null);
-  const [projects, setProjects] = useState([]);
+  const { lead } = useContext(LeadModalTabContext);
   const [selectedProject, setSelectedProject] = useState('');
-  const [loadingLeads, setLoadingLeads] = useState(true);
-  const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
-
-  useEffect(() => {
-    const fetchLead = async () => {
-      if (!leadId) return;
-      setLoadingLeads(true);
-      try {
-        const data = await leadService.getLeadById(leadId);
-        setLead(data);
-        setProjects(data?.projects || []);
-        // setSelectedProject(data?.projects[0]?.id || '');
-      } catch (err) {
-        enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
-      } finally {
-        setLoadingLeads(false);
-      }
-    };
-
-    fetchLead();
-  }, [leadId]);
 
   if (!lead) return <LeadInfoHeaderSkeleton />;
 
@@ -134,27 +113,29 @@ function LeadInfoHeader({ leadId, tabValue }) {
             />
           </Grid>
 
-          <Grid
-            item
-            sx={{
-              display: 'flex',
-              flexDirection: 'column ',
-              alignItems: 'flex-start',
-            }}
-          >
-            <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
-              Status
-            </Typography>
-            <Chip
-              label={lead?.column?.name}
-              variant="outlined"
+          {lead?.column?.name && (
+            <Grid
+              item
               sx={{
-                color: 'gray',
-                borderColor: `${lead?.column?.color}`,
-                px: 1,
+                display: 'flex',
+                flexDirection: 'column ',
+                alignItems: 'flex-start',
               }}
-            />
-          </Grid>
+            >
+              <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
+                Status
+              </Typography>
+              <Chip
+                label={lead?.column?.name}
+                variant="outlined"
+                sx={{
+                  color: 'gray',
+                  borderColor: `${lead?.column?.color}`,
+                  px: 1,
+                }}
+              />
+            </Grid>
+          )}
         </Grid>
       </Grid>
 
@@ -163,7 +144,6 @@ function LeadInfoHeader({ leadId, tabValue }) {
         xs={4}
         sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flexGrow: 1 }}
       >
-
         {/* <Box
           sx={{
             display: 'flex',
@@ -181,7 +161,7 @@ function LeadInfoHeader({ leadId, tabValue }) {
           </Typography>
         </Box> */}
 
-        {tabValue === 2 || tabValue === 20  && (
+        {(tabValue === 2 || tabValue === 20) && (
           <Box sx={{ minWidth: 385 }}>
             <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
               Projeto
@@ -191,21 +171,17 @@ function LeadInfoHeader({ leadId, tabValue }) {
               onChange={(e) => setSelectedProject(e.target.value)}
               fullWidth
               size="small"
-              sx={{ backgroundColor: '#F4F5F7', borderRadius: '8px', }}
+              sx={{ backgroundColor: '#F4F5F7', borderRadius: '8px' }}
               displayEmpty
             >
               {/* {projects.map((project) => ( */}
-              <MenuItem
-                value=""
-                sx={{ color: '#7E8388' }}
-                disabled
-              >
+              <MenuItem value="" sx={{ color: '#7E8388' }} disabled>
                 Selecione um projeto
               </MenuItem>
 
               <MenuItem
-                // key={project.id} 
-                // value={project.id} 
+                // key={project.id}
+                // value={project.id}
                 value="project-1"
                 sx={{ color: '#7E8388' }}
               >
@@ -213,17 +189,11 @@ function LeadInfoHeader({ leadId, tabValue }) {
                 Rua Antônio Barreto, 1198
               </MenuItem>
 
-              <MenuItem
-                value="project-2"
-                sx={{ color: '#7E8388' }}
-              >
+              <MenuItem value="project-2" sx={{ color: '#7E8388' }}>
                 Rua dos Mundurucus, 2500
               </MenuItem>
 
-              <MenuItem
-                value="project-3"
-                sx={{ color: '#7E8388' }}
-              >
+              <MenuItem value="project-3" sx={{ color: '#7E8388' }}>
                 Tv. Padre Eutíquio, 87
               </MenuItem>
 
@@ -233,23 +203,19 @@ function LeadInfoHeader({ leadId, tabValue }) {
         )}
 
         {tabValue === 10 && (
-          <Grid item sx={{ display: "flex", flexDirection: "row"}}>
-            <IconButton
-              size="small"
-              onClick={() => router.push(`/apps/leads/${leadId}/edit`)}
-            >
+          <Grid item sx={{ display: 'flex', flexDirection: 'row' }}>
+            <IconButton size="small" onClick={() => router.push(`/apps/leads/${leadId}/edit`)}>
               <IconPencil fontSize="small" />
             </IconButton>
 
             <IconButton
               size="small"
-            // onClick={() => router.push(`/apps/leads/${item.id}/view`)}
+              // onClick={() => router.push(`/apps/leads/${item.id}/view`)}
             >
               <IconTrash fontSize="small" />
             </IconButton>
           </Grid>
         )}
-
       </Grid>
     </Box>
   );

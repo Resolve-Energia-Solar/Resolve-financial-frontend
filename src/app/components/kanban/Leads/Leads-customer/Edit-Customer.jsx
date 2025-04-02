@@ -22,7 +22,6 @@ import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComp
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
 import addressService from '@/services/addressService';
 
-
 function EditCustomerPage({ leadId = null }) {
   const [lead, setLead] = useState(null);
   const [customerId, setCustomerId] = useState(null);
@@ -31,13 +30,11 @@ function EditCustomerPage({ leadId = null }) {
   useEffect(() => {
     const fetchLead = async () => {
       try {
-        const data = await leadService.getLeadById(leadId, {
-          params: {
+        const data = await leadService.find(leadId, {
             fields: 'id,customer,name,first_document,contact_email',
-          },
         });
         setLead(data);
-        setCustomerId(data?.customer?.id);
+        setCustomerId(data?.customer);
       } catch (err) {
         enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });
       }
@@ -46,6 +43,7 @@ function EditCustomerPage({ leadId = null }) {
   }, [leadId]);
 
   const { loading, error, userData } = useUser(customerId);
+
 
   const {
     formData,
@@ -59,11 +57,11 @@ function EditCustomerPage({ leadId = null }) {
 
   if (!customerId) {
     formData.complete_name
-        ? (formData.complete_name = formData.complete_name)
-        : (formData.complete_name = lead?.name);
+      ? (formData.complete_name = formData.complete_name)
+      : (formData.complete_name = lead?.name);
     formData.first_document
-        ? (formData.first_document = formData.first_document)
-        : (formData.first_document = lead?.first_document);
+      ? (formData.first_document = formData.first_document)
+      : (formData.first_document = lead?.first_document);
     formData.email ? (formData.email = formData.email) : (formData.email = lead?.contact_email);
   }
   formData.user_types = lead?.user_types;
@@ -78,10 +76,9 @@ function EditCustomerPage({ leadId = null }) {
     }
   };
 
-
   const associateCustomerToLead = async (leadId, customerId) => {
     try {
-      await leadService.patchLead(leadId, { customer_id: customerId });
+      await leadService.patchLead(leadId, { customer: customerId });
     } catch (err) {
       enqueueSnackbar('Não foi possível associar o cliente ao lead', { variant: 'error' });
     }
@@ -89,7 +86,7 @@ function EditCustomerPage({ leadId = null }) {
 
   const fetchAddress = async (search) => {
     try {
-      const response = await addressService.getAddress({
+      const response = await addressService.index({
         q: search,
         limit: 40,
         fields: 'id,street,number,city,state',
@@ -103,7 +100,6 @@ function EditCustomerPage({ leadId = null }) {
 
   const [selectedAddresses, setSelectedAddresses] = useState([]);
 
-
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -111,7 +107,7 @@ function EditCustomerPage({ leadId = null }) {
           {/* Header */}
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12}>
-              <LeadInfoHeader leadId={leadId} />
+              <LeadInfoHeader />
             </Grid>
           </Grid>
 

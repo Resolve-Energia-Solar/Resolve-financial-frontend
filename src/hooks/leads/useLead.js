@@ -11,7 +11,7 @@ const useLead = (id) => {
 
     const fetchLead = async () => {
       try {
-        const data = await leadService.getLeadById(id);
+        const data = await leadService.find(id);
         setLeadData(data);
       } catch (err) {
         setError('Erro ao carregar o lead');

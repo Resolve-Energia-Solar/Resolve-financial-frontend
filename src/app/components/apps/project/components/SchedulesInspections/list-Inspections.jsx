@@ -30,10 +30,11 @@ import AutoCompleteUser from '../../../comercial/sale/components/auto-complete/A
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
 import projectService from '@/services/projectService';
+import useCanEditUser from '@/hooks/users/userCanEdit';
 
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
 
-const ListInspection = ({ projectId = null, product = [], customerId }) => {
+const ListInspection = ({ projectId = null, product = [], customerId, saleId=null }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedscheduleId, setSelectedscheduleId] = useState(null);
   const [AddModalOpen, setAddModalOpen] = useState(false);
@@ -52,6 +53,8 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
     setReload(!reload);
   };
 
+  const { canEdit } = useCanEditUser(saleId);
+
   useEffect(() => {
     setCustomer(customerId);
   }, [customerId]);
@@ -62,22 +65,18 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
         setLoading(true);
         const fields =
           'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name';
-        const response = await scheduleService.getAllSchedulesInspectionByProject(
-          projectId,
-          fields,
-        );
-        console.log('response', response.results);
+        const response = await scheduleService.index({
+          project: projectId,
+          fields: 'id,schedule_date,schedule_start_time,schedule_end_time,status',
+        });
 
         // Obter os detalhes do projeto para verificar a vistoria principal
-        const projectResponse = await projectService.getProjectById(projectId, {
-          fields: '*',
+        const projectResponse = await projectService.find(projectId, {
+          fields: 'inspection',
         });
-        console.log('projectResponse', projectResponse);
 
-        // Extrair o ID da vistoria principal
-        const inspectionIdPrincipal = projectResponse.inspection?.id || null;
+        const inspectionIdPrincipal = projectResponse.inspection || null;
 
-        // Atualiza os schedules marcando a vistoria principal
         const updatedschedules = response.results.map((schedule) => ({
           ...schedule,
           isChecked: schedule.id === inspectionIdPrincipal,
@@ -100,18 +99,13 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
     const fetch = async () => {
       setLoadingInspections(true);
       try {
-        const fields =
-          'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name';
-        const response = await scheduleService.getAllSchedulesInspectionByCustomer(
-          customer,
-          fields,
-          {
-            expand: 'final_service_opinion',
-          },
-        );
-        console.log('response', response.results);
+        const response = await scheduleService.index({
+          customer: customer,
+          fields: 'id,schedule_date,schedule_start_time,schedule_end_time,status',
+          expand: 'final_service_opinion',
+        });
         // Se necessário, você pode filtrar os resultados aqui
-        setInspectionsNotAssociated(response.results);
+        setInspectionsNotAssociated(response);
       } catch (error) {
         console.error('Erro ao buscar agendamentos:', error);
       } finally {
@@ -135,9 +129,9 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
 
     try {
       if (checked) {
-        await projectService.partialUpdateProject(projectId, { inspection_id: scheduleId });
+        await projectService.Update(projectId, { inspection: scheduleId });
       } else {
-        await projectService.partialUpdateProject(projectId, { inspection_id: null });
+        await projectService.Update(projectId, { inspection: null });
       }
     } catch (error) {
       setschedules(previousschedules);
@@ -155,11 +149,11 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
 
   const handleDelete = async (scheduleId) => {
     try {
-      await scheduleService.patchSchedule(scheduleId, { project_id: null });
+      await scheduleService.update(scheduleId, { project: null });
 
       const scheduleRemoved = schedules.find((schedule) => schedule.id === scheduleId);
       if (scheduleRemoved && scheduleRemoved.isChecked) {
-        await projectService.partialUpdateProject(projectId, { inspection_id: null });
+        await projectService.Update(projectId, { inspection: null });
       }
 
       reloadPage();
@@ -171,7 +165,7 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
 
   const AssociateProject = async (inspectionId) => {
     try {
-      await scheduleService.patchSchedule(inspectionId, { project_id: projectId });
+      await scheduleService.update(inspectionId, { project: projectId });
       reloadPage();
       setConfirmAssociateModalOpen(false);
       setOpenModelInspectionNotAssociated(false);
@@ -222,11 +216,13 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                     Principal
                   </Typography>
                 </TableCell>
-                <TableCell align="center">
-                  <Typography variant="h6" fontSize="14px">
-                    Ações
-                  </Typography>
-                </TableCell>
+                {canEdit && (
+                  <TableCell align="center">
+                    <Typography variant="h6" fontSize="14px">
+                      Ações
+                    </Typography>
+                  </TableCell>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -267,39 +263,45 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                         onChange={(e) => handleSwitchChange(e.target.checked, schedule.id)}
                       />
                     </TableCell>
-                    <TableCell align="center">
-                      <Tooltip title="Edit Item">
-                        <IconButton color="primary" onClick={() => handleEdit(schedule.id)}>
-                          <Edit width={22} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Desassociar Item">
-                        <IconButton color="error" onClick={() => openDeleteModal(schedule.id)}>
-                          <ArrowBack width={22} />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
+                    {canEdit && (
+                      <TableCell align="center">
+                        <Tooltip title="Edit Item">
+                          <IconButton color="primary" onClick={() => handleEdit(schedule.id)}>
+                            <Edit width={22} />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Desassociar Item">
+                          <IconButton color="error" onClick={() => openDeleteModal(schedule.id)}>
+                            <ArrowBack width={22} />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))
               )}
             </TableBody>
           </Table>
-          <Grid container justifyContent="center" align="center" mt={1}>
-            <Button variant="contained" color="primary" onClick={handleAdd}>
-              Agendar Vistoria
-            </Button>
-          </Grid>
-          <Grid container justifyContent="center" align="center" mt={1} mb={2}>
-            <Typography
-              variant="body2"
-              color="primary"
-              component="a"
-              sx={{ cursor: 'pointer' }}
-              onClick={() => setOpenModelInspectionNotAssociated(true)}
-            >
-              Adicionar uma vistoria já existente
-            </Typography>
-          </Grid>
+          {canEdit && (
+            <>
+            <Grid container justifyContent="center" align="center" mt={1}>
+              <Button variant="contained" color="primary" onClick={handleAdd}>
+                Agendar Vistoria
+              </Button>
+            </Grid>
+            <Grid container justifyContent="center" align="center" mt={1} mb={2}>
+              <Typography
+                variant="body2"
+                color="primary"
+                component="a"
+                sx={{ cursor: 'pointer' }}
+                onClick={() => setOpenModelInspectionNotAssociated(true)}
+              >
+                Adicionar uma vistoria já existente
+              </Typography>
+            </Grid>
+            </>
+          )}
         </TableContainer>
       </Paper>
 
@@ -321,9 +323,7 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
         <DialogContent>
           <ScheduleFormCreate
             CreateSale={() => setAddModalOpen(false)}
-            serviceId={SERVICE_INSPECTION_ID}
             projectId={projectId}
-            products={[product]}
             customerId={customerId}
             onClosedModal={() => setAddModalOpen(false)}
             onRefresh={reloadPage}
@@ -367,11 +367,13 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                       Status
                     </Typography>
                   </TableCell>
-                  <TableCell align="center">
-                    <Typography variant="h6" fontSize="14px">
-                      Ações
-                    </Typography>
-                  </TableCell>
+                  {canEdit && (
+                    <TableCell align="center">
+                      <Typography variant="h6" fontSize="14px">
+                        Ações
+                      </Typography>
+                    </TableCell>
+                  )}
                 </TableRow>
               </TableHead>
               {loadingInspections ? (
@@ -387,7 +389,7 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    inspectionsNotAssociated.map((schedule) => (
+                    inspectionsNotAssociated.results.map((schedule) => (
                       <TableRow key={schedule.id}>
                         <TableCell align="center">
                           <Typography variant="body2">{schedule?.schedule_date}</Typography>
@@ -403,21 +405,23 @@ const ListInspection = ({ projectId = null, product = [], customerId }) => {
                             <SupplyChip status={schedule?.status} />
                           </Typography>
                         </TableCell>
-                        <TableCell align="center">
-                          <Tooltip title="Editar Item">
-                            <IconButton color="primary" onClick={() => handleEdit(schedule.id)}>
-                              <Edit width={22} />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Associar Item">
-                            <IconButton
-                              color="success"
-                              onClick={() => openAssociateModal(schedule.id)}
-                            >
-                              <KeyboardArrowRight width={22} />
-                            </IconButton>
-                          </Tooltip>
-                        </TableCell>
+                        {canEdit && (
+                          <TableCell align="center">
+                            <Tooltip title="Editar Item">
+                              <IconButton color="primary" onClick={() => handleEdit(schedule.id)}>
+                                <Edit width={22} />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Associar Item">
+                              <IconButton
+                                color="success"
+                                onClick={() => openAssociateModal(schedule.id)}
+                              >
+                                <KeyboardArrowRight width={22} />
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>
+                        )}
                       </TableRow>
                     ))
                   )}

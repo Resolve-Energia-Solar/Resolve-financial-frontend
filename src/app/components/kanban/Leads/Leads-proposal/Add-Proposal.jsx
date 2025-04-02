@@ -21,7 +21,6 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import ProjectCard from '@/app/components/kanban/Leads/components/ProjectSmallListCard';
 import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import Button from '@mui/material/Button';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import useProposalForm from '@/hooks/proposal/useProposalForm';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
@@ -30,11 +29,9 @@ import CustomTextArea from '@/app/components/forms/theme-elements/CustomTextArea
 import { useSelector } from 'react-redux';
 import { removeProductFromLead, selectProductsByLead } from '@/store/products/customProducts';
 import { useDispatch } from 'react-redux';
-import { color } from 'framer-motion';
-import ManageSearchIcon from '@mui/icons-material/ManageSearch';
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import EnergyConsumptionCalc from '../components/EnergyConsumption/CalculateEnergyConsumption';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import ProposalLayout from '../components/ProposalLayout';
 
 function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
@@ -46,6 +43,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
   const dispatch = useDispatch();
 
   const [openEnergyConsumption, setOpenEnergyConsumption] = useState(false);
+  const [openProposalLayout, setOpenProposalLayout] = useState(false);
 
   const {
     formData,
@@ -58,10 +56,10 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
 
   const customProducts = useSelector(selectProductsByLead(leadId));
 
-  formData.commercial_products_ids = customProducts.map((product) => product.id);
-  formData.lead_id ? null : (formData.lead_id = leadId);
+  formData.products_ids = customProducts.map((product) => product.id);
+  formData.lead ? null : (formData.lead = leadId);
   formData.status ? null : (formData.status = 'P');
-  user?.user ? (formData.created_by_id = user.user.id) : null;
+  user?.user ? (formData.created_by = user.user.id) : null;
 
   const discard_proposal = () => {
     dispatch(
@@ -83,7 +81,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     const fetchLead = async () => {
       setLoadingLeads(true);
       try {
-        const data = await leadService.getLeadById(leadId);
+        const data = await leadService.find(leadId);
         setLead(data);
         console.log(data);
       } catch (err) {
@@ -105,6 +103,12 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
       enqueueSnackbar('Erro ao salvar proposta', { variant: 'error' });
       console.log('Form Errors:', formErrors);
     }
+  };
+
+  const handleOpenProposalPdf = () => {
+    // const queryParams = new URLSearchParams(formData).toString();
+    // window.open(`apps/leads/${leadId}/proposal-layout?${queryParams}`, "_blank", "width=800,height=600");
+    setOpenProposalLayout(true);
   };
 
   const [paymentMethods, setPaymentMethods] = useState([
@@ -138,7 +142,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
           }}
         >
           <Grid item spacing={2} alignItems="center" xs={12}>
-            <LeadInfoHeader leadId={leadId} />
+            <LeadInfoHeader />
           </Grid>
 
           <Grid container spacing={4}>
@@ -357,24 +361,34 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
             }}
           >
             <Button
-              variant="contained"
+              startIcon={<PictureAsPdfIcon sx={{ color: '#1C1B1F' }} />}
+              variant="outlined"
+              onClick={handleOpenProposalPdf}
               sx={{
-                backgroundColor: 'black',
-                color: 'white',
-                '&:hover': { backgroundColor: '#333' },
+                borderColor: 'black',
+                color: '#303030',
+                '&:hover': {
+                  backgroundColor: '#333',
+                  borderColor: 'black',
+                  '& .MuiSvgIcon-root': { color: 'white' },
+                },
                 px: 3,
               }}
             >
-              <Typography variant="body1">Pré-visualizar proposta</Typography>
-              <VisibilityIcon sx={{ ml: 1 }} />
+              <Typography sx={{ fontWeight: '400', fontSize: '14px' }}>Visualizar PDF</Typography>
             </Button>
 
             <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button variant="outlined" color="error" sx={{ px: 3 }} onClick={discard_proposal}>
+              <Button
+                variant="outlined"
+                color="error"
+                sx={{ px: 3 }}
+                onClick={discard_proposal}
+                endIcon={<DeleteOutlinedIcon />}
+              >
                 <Typography variant="body1" sx={{ mr: 1 }}>
                   Descartar
                 </Typography>
-                <DeleteOutlinedIcon />
               </Button>
 
               <Button
@@ -390,6 +404,26 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
               </Button>
             </Box>
           </Grid>
+
+          <Dialog
+            open={openProposalLayout}
+            onClose={() => setOpenProposalLayout(false)}
+            maxWidth="lg"
+            fullWidth
+            PaperProps={{
+              sx: {
+                borderRadius: '20px',
+                padding: '24px',
+                gap: '24px',
+                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                backgroundColor: '#FFFFFF',
+              },
+            }}
+          >
+            <DialogContent>
+              <ProposalLayout formData={formData} />
+            </DialogContent>
+          </Dialog>
 
           <Dialog
             open={openEnergyConsumption}

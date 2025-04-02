@@ -1,36 +1,63 @@
 import { uniqueId } from 'lodash';
 
 import {
-  IconCurrencyDollar,
-  IconFileDescription,
-  IconLayoutKanban,
+  IconPoint,
+  IconSettings,
   IconShoppingCart,
   IconUser,
+  IconUserPin,
+  IconBuildingBank,
+  IconTools,
   IconUsers,
   IconBuilding,
   IconVector,
   IconUserScan,
-  IconTools,
-  IconHomeQuestion,
+  IconFileDescription,
+  IconCurrencyDollar,
+  IconTrendingUp,
+  IconLayoutKanban,
+  IconBriefcase2,
+  IconMapRoute,
+  IconId,
+  IconCalendarStar,
+  IconCash,
+  IconWallet,
+  IconReportMoney,
+  IconPigMoney,
+  IconPaperclip,
+  IconRuler,
+  IconFileArrowRight,
   IconUserDollar,
-  IconPoint,
-  IconBuildingBank,
-  IconUserPin,
+  IconHomeQuestion
 } from '@tabler/icons-react';
+
+
+import { permission } from 'process';
+import { id } from 'date-fns/locale';
 
 const Menuitems = [
   {
-    navlabel: true,
-    subheader: 'Home',
-  },
-  {
     id: uniqueId(),
-    title: 'Quadros',
-    icon: IconLayoutKanban,
+    title: 'CRM',
     href: '/',
+    icon: IconBriefcase2,
+    href: '/apps/kanban/',
+    permissions: ['core.view_board', 'resolve_crm.view_lead'],
     children: [
-      { id: uniqueId(), title: 'CRM', icon: IconPoint, href: '/apps/kanban/' },
-      // { id: uniqueId(), title: 'Operação', icon: IconPoint, href: '/apps/boards/erp' },
+      {
+        id: uniqueId(),
+        title: 'Kanban',
+        icon: IconLayoutKanban,
+        href: '/apps/kanban/',
+        permissions: ['core.view_board']
+      },
+      {
+        id: uniqueId(),
+        title: 'Leads',
+        icon: IconId,
+        href: '/apps/leads',
+        permissions: ['resolve_crm.view_lead']
+      },
     ],
     chip: 'Novo',
     chipColor: 'secondary',
@@ -46,32 +73,16 @@ const Menuitems = [
         id: uniqueId(),
         title: 'Ordem de Serviço',
         icon: IconPoint,
-        href: '/apps/inspections/schedule',
+        href: '/apps/schedules',
+      },
+      {
+        id: uniqueId(),
+        title: 'Agendamentos',
+        icon: IconPoint,
+        href: '/apps/commercial/schedules',
       },
     ],
     permissions: ['field_services.view_schedule'],
-  },
-  {
-    id: uniqueId(),
-    title: 'Leads',
-    icon: IconUser,
-    href: '/apps/leads',
-    permissions: ['resolve_crm.view_lead'],
-  },
-  {
-    id: uniqueId(),
-    title: 'Solic. Financiamento',
-    icon: IconBuildingBank,
-    href: '/apps/funding-request',
-
-    children: [
-      {
-        id: uniqueId(),
-        title: 'Sicoob',
-        icon: IconPoint,
-        href: '/apps/funding-request/sicoob',
-      },
-    ],
   },
   {
     id: uniqueId(),
@@ -90,34 +101,63 @@ const Menuitems = [
       {
         id: uniqueId(),
         title: 'Pagamentos',
-        icon: IconPoint,
+        icon: IconCash,
         href: '/apps/invoice',
         permissions: ['financial.view_payment'],
       },
-      {
-        id: uniqueId(),
-        title: 'Parcelas',
-        icon: IconPoint,
-        href: '/apps/invoice/installments',
-        permissions: ['financial.view_payment'],
-      },
+      // {
+      //   id: uniqueId(),
+      //   title: 'Parcelas',
+      //   icon: IconWallet,
+      //   href: '/apps/invoice/installments',
+      //   permissions: ['financial.view_payment'],
+      // },
       {
         id: uniqueId(),
         title: 'Solicitação de Pagamento',
-        icon: IconPoint,
+        icon: IconReportMoney,
         href: '/apps/financial-record',
         permissions: ['financial.view_financialrecord'],
       },
       {
         id: uniqueId(),
         title: 'Anexos',
-        icon: IconPoint,
+        icon: IconPaperclip,
         href: '/apps/financial-record/attachments',
         permissions: ['financial.view_financialrecord_attachment'],
       },
     ],
   },
-
+  {
+    id: uniqueId(),
+    title: 'Serviços de Campo',
+    icon: IconMapRoute,
+    href: '/',
+    children: [
+      {
+        id: uniqueId(),
+        title: 'Agendamentos',
+        icon: IconCalendarStar,
+        href: '/apps/inspections/schedule',
+      },
+    ],
+    permissions: ['field_services.view_schedule'],
+  },
+  {
+    id: uniqueId(),
+    title: 'Financiamento',
+    icon: IconBuildingBank,
+    // permissions: ['contracts.view_payment',],
+    children: [
+      {
+        id: uniqueId(),
+        title: 'Solicitações Sicoob',
+        icon: IconPigMoney,
+        href: '/apps/funding-request/sicoob',
+        // permissions: ['financial.view_payment'],
+      },
+    ],
+  },
   {
     id: uniqueId(),
     title: 'Comissionamento',
@@ -135,14 +175,14 @@ const Menuitems = [
       {
         id: uniqueId(),
         title: 'Projetos',
-        icon: IconPoint,
+        icon: IconRuler,
         href: '/apps/project',
         permissions: ['resolve_crm.view_project'],
       },
       {
         id: uniqueId(),
-        title: 'Solicitações Conce.',
-        icon: IconPoint,
+        title: 'Solicitações',
+        icon: IconFileArrowRight,
         href: '/apps/request',
         permissions: ['resolve_crm.view_project'],
       },

@@ -18,7 +18,7 @@ export default function AutoCompleteDeadline({ onChange, value, error, helperTex
     const fetchDefaultDeadline = async () => {
       if (value) {
         try {
-          const deadlineValue = await deadlineService.getDeadlineById(value);
+          const deadlineValue = await deadlineService.find(value);
           if (deadlineValue) {
             setSelectedDeadline({
               id: deadlineValue.id,
@@ -47,7 +47,7 @@ export default function AutoCompleteDeadline({ onChange, value, error, helperTex
     debounce(async (name) => {
       setLoading(true);
       try {
-        const responses = await deadlineService.getDeadlineByName(name);
+        const responses = await deadlineService.index({ name: name });
         const formattedDeadlines = responses.results.map((deadline) => ({
           id: deadline.id,
           name: deadline.name,
@@ -83,7 +83,7 @@ export default function AutoCompleteDeadline({ onChange, value, error, helperTex
         loading={loading}
         value={selectedDeadline}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           fetchDeadlinesByName(newInputValue);
         }}

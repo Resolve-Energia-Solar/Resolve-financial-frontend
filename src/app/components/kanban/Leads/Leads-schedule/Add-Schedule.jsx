@@ -112,21 +112,21 @@ function LeadAddSchedulePage({
     }
   };
 
-    const fetchAddress = async (search) => {
-      try {
-        const response = await addressService.getAddress({
-          q: search,
-          limit: 40,
-          fields: 'id,street,number,city,state',
-        });
-        return response.results;
-      } catch (error) {
-        console.error('Erro na busca de endereços:', error);
-        return [];
-      }
-    };
-  
-    const [selectedAddresses, setSelectedAddresses] = useState([]);
+  const fetchAddress = async (search) => {
+    try {
+      const response = await addressService.index({
+        q: search,
+        limit: 40,
+        fields: 'id,street,number,city,state',
+      });
+      return response.results;
+    } catch (error) {
+      console.error('Erro na busca de endereços:', error);
+      return [];
+    }
+  };
+
+  const [selectedAddresses, setSelectedAddresses] = useState([]);
 
   return (
     <Grid container spacing={1}>

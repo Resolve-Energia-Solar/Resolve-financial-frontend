@@ -23,7 +23,7 @@ export default function AutoCompleteInversor({
     const fetchDefaultMaterial = async () => {
       if (value) {
         try {
-          const material = await materialService.getMaterialById(value);
+          const material = await materialService.find(value);
           if (material) {
             setSelectedMaterial({ id: material.id, name: material.description });
           }
@@ -45,7 +45,7 @@ export default function AutoCompleteInversor({
     debounce(async (name) => {
       setLoading(true);
       try {
-        const response = await materialService.getMaterialByName(name);
+        const response = await materialService.index({ name__icontains: name });
         console.log('Resposta da API: ', response);
         if (Array.isArray(response.results)) {
           const formattedMaterials = response.results.map((material) => ({

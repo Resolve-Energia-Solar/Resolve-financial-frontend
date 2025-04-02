@@ -1,16 +1,64 @@
-import apiClient from "./apiClient";
+import apiClient from './apiClient';
+
+const DEFAULT_ROUTER = '/api/marketing-campaigns';
 
 const campaignService = {
+  index: async (params) => {
+    try {
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/`, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar campanhas:', error);
+      throw error;
+    }
+  },
+
+  find: async (id, params) => {
+    try {
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/${id}/`, { params });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar campanha com id ${id}:`, error);
+      throw error;
+    }
+  },
+  create: async (data) => {
+    try {
+      const response = await apiClient.post(`${DEFAULT_ROUTER}/`, data);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao criar camopanha:', error);
+      throw error;
+    }
+  },
+  update: async (id, data) => {
+    try {
+      const response = await apiClient.patch(`${DEFAULT_ROUTER}/${id}/`, data);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao atualizar campanha com id ${id}:`, error);
+      throw error;
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      const response = await apiClient.delete(`${DEFAULT_ROUTER}/${id}/`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao deletar campanha com id ${id}:`, error);
+      throw error;
+    }
+  },
+
   getCampaigns: async ({ page = 1, limit = 10 } = {}) => {
     try {
-      const response = await apiClient.get('/api/marketing-campaigns/',
-        {
-          params: {
-            page,
-            limit
-          }
-        }
-      );
+      const response = await apiClient.get('/api/marketing-campaigns/', {
+        params: {
+          page,
+          limit,
+        },
+      });
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar marketing-campaigns:', error);

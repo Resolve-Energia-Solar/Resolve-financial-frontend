@@ -53,7 +53,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
   const [totalPayments, setTotalPayments] = useState(0);
   const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  
+
   // Nova flag para disparar o save do usuário
   const [userSubmitTrigger, setUserSubmitTrigger] = useState(false);
 
@@ -81,7 +81,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
 
   const isCompleteFinancial = async (id) => {
     try {
-      const response = await saleService.getSaleByIdWithPendingContract(id);
+      const response = await saleService.find(id, { fields: ['can_generate_contract'] });
       return response?.can_generate_contract?.failed_dependencies?.payment_data === undefined;
     } catch (error) {
       console.log('Error: ', error);
@@ -90,7 +90,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
 
   const isCompleteUnits = async (id) => {
     try {
-      const response = await saleService.getSaleByIdWithPendingContract(id);
+      const response = await saleService.find(id, { fields: ['can_generate_contract'] });
       return response?.can_generate_contract?.failed_dependencies?.have_units === undefined;
     } catch (error) {
       console.log('Error: ', error);
@@ -99,7 +99,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
 
   const totalPaymentsCreated = async (id) => {
     try {
-      const response = await paymentService.getAllPaymentsBySale(id);
+      const response = await paymentService.index({ sale: id });
       console.log(response);
       return response.results.reduce((acc, curr) => acc + Number(curr.value), 0);
     } catch (error) {
@@ -169,7 +169,6 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
 
   const {
     formData,
-    handleChange,
     handleSave,
     formErrors,
     loading: saleLoading,
@@ -197,7 +196,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
     : null;
   formData.status = 'P';
   formData.payment_status = 'P';
-  user?.user?.employee?.branch ? (formData.branchId = user?.user?.employee?.branch?.id) : null;
+  user?.user?.employee?.branch ? (formData.branchId = user?.user?.employee?.branch) : null;
 
   const handleBack = () => {
     if (activeStep > 1) {

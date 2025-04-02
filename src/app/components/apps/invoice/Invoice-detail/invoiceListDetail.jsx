@@ -49,15 +49,13 @@ const PaymentCardDetail = ({ sale = null }) => {
 
   const [error, setError] = useState(null);
 
-
   const [invoiceToView, setInvoiceToView] = useState(null);
   const [loading, setLoading] = useState(true);
-
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await paymentService.getPayments({ sale });
+        const response = await paymentService.index({ sale });
         setPaymentsList(response.results);
       } catch (error) {
         console.log('Error: ', error);
@@ -69,7 +67,7 @@ const PaymentCardDetail = ({ sale = null }) => {
     fetchData();
     const fetchSale = async () => {
       try {
-        const data = await saleService.getTotalPaidSales(sale);
+        const data = await saleService.find(sale, { fields: ['total_paid', 'total_value'] });
         console.log(data);
         setSaleData(data);
       } catch (err) {
@@ -81,7 +79,6 @@ const PaymentCardDetail = ({ sale = null }) => {
 
     fetchSale();
   }, []);
-
 
   const handleMenuClick = (event, id) => {
     setMenuAnchorEl(event.currentTarget);
@@ -101,7 +98,6 @@ const PaymentCardDetail = ({ sale = null }) => {
   return (
     <>
       <Grid container spacing={3}>
-
         {loading
           ? [...Array(3)].map((_, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
@@ -198,7 +194,7 @@ const PaymentCardDetail = ({ sale = null }) => {
             Total a Pagar:
           </Typography>
           <Typography variant="body1" fontWeight={600}>
-          {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+            {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
               saleData?.total_value || 0,
             )}
           </Typography>

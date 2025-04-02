@@ -21,23 +21,23 @@ const useSaleForm = (initialData, id) => {
     completedDocument: false,
     billing_date: null,
     cancellationReasonsIds: [],
-    reference_table: null
+    reference_table: null,
   });
 
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [successData, setSuccessData] = useState(null); 
+  const [successData, setSuccessData] = useState(null);
 
   useEffect(() => {
     if (initialData) {
       setFormData({
         customerId: initialData.customer?.id || null,
-        sellerId: initialData.seller?.id || null,
-        salesSupervisorId: initialData.sales_supervisor?.id || null,
-        salesManagerId: initialData.sales_manager?.id || null,
-        branchId: initialData.branch?.id || '',
-        marketingCampaignId: initialData.marketing_campaign?.id || null,
+        sellerId: initialData.seller || null,
+        salesSupervisorId: initialData.sales_supervisor || null,
+        salesManagerId: initialData.sales_manager || null,
+        branchId: initialData.branch || '',
+        marketingCampaignId: initialData.marketing_campaign || null,
         productIds: initialData.products?.map((product) => product.id) || [],
         payment_status: initialData.payment_status || null,
         isSale: initialData.is_pre_sale || false,
@@ -45,8 +45,10 @@ const useSaleForm = (initialData, id) => {
         status: initialData.status || null,
         completedDocument: initialData.completed_document || false,
         billing_date: initialData.billing_date || null,
-        cancellationReasonsIds: initialData.cancellation_reasons?.map(cancellation_reason => cancellation_reason.id) || [],
-        reference_table: initialData.reference_table || ''
+        cancellationReasonsIds:
+          initialData.cancellation_reasons?.map((cancellation_reason) => cancellation_reason.id) ||
+          [],
+        reference_table: initialData.reference_table || '',
       });
     }
   }, [initialData]);
@@ -60,12 +62,16 @@ const useSaleForm = (initialData, id) => {
 
     let errors = { ...formErrors };
 
-    if ((formData.status === 'D' || formData.status === 'C') && formData.isSale == false && !formData.cancellationReasonsIds.length) {
+    if (
+      (formData.status === 'D' || formData.status === 'C') &&
+      formData.isSale == false &&
+      !formData.cancellationReasonsIds.length
+    ) {
       errors.cancellationReasonsIds = ['O motivo é obrigatório.'];
     } else {
       delete errors.cancellationReasonsIds;
     }
-  
+
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       setLoading(false);
@@ -73,12 +79,14 @@ const useSaleForm = (initialData, id) => {
     }
 
     const dataToSend = {
-      customer_id: formData.customerId,
-      seller_id: formData.sellerId,
-      sales_supervisor_id: formData.salesSupervisorId,
-      sales_manager_id: formData.salesManagerId,
-      branch_id: formData.branchId,
-      marketing_campaign_id: formData.marketingCampaignId ? formData.marketingCampaignId : undefined,
+      customer: formData.customerId,
+      seller: formData.sellerId,
+      sales_supervisor: formData.salesSupervisorId,
+      sales_manager: formData.salesManagerId,
+      branch: formData.branchId,
+      marketing_campaign_id: formData.marketingCampaignId
+        ? formData.marketingCampaignId
+        : undefined,
       payment_status: formData.payment_status,
       products_ids: formData.productIds,
       is_pre_sale: formData.isSale,
@@ -87,15 +95,15 @@ const useSaleForm = (initialData, id) => {
       completed_document: formData.completedDocument,
       billing_date: formData.billing_date || null,
       cancellation_reasons_ids: formData.cancellationReasonsIds,
-      reference_table: formData.reference_table
+      reference_table: formData.reference_table,
     };
 
     try {
       let response;
       if (id) {
-        response = await saleService.updateSale(id, dataToSend);
+        response = await saleService.update(id, dataToSend);
       } else {
-        response = await saleService.createSale(dataToSend);
+        response = await saleService.create(dataToSend);
       }
       setFormErrors({});
       setSuccess(true);

@@ -11,7 +11,10 @@ const useDocumentTypesByFilter = (params = {}) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await documentTypeService.getDocumentTypes(params);
+        const response = await documentTypeService.index({
+          page: 1,
+          limit: 50,
+        });
         setDocumentTypes(response.results);
       } catch (error) {
         console.error('Erro ao buscar tipos de documentos:', error);

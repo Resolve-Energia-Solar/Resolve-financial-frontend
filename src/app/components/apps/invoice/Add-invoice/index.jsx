@@ -1,7 +1,5 @@
 'use client';
-import React, { useContext, useState, useEffect } from 'react';
-import { InvoiceContext } from '@/app/context/InvoiceContext/index';
-import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 import {
   Button,
   Typography,
@@ -12,7 +10,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Alert,
   IconButton,
   Tooltip,
   Box,
@@ -105,7 +102,7 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
 
   const orderDate = new Date();
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
-  const formattedOrderDate = format(parsedDate, 'EEEE, MMMM dd, yyyy', { locale: ptBR });
+  const formattedOrderDate = format(parsedDate, 'dd,MMMM,yyyy', { locale: ptBR });
 
   return (
     <Box>

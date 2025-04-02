@@ -6,8 +6,6 @@ import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import { useSelector } from 'react-redux';
 
-import { useParams, useRouter } from 'next/navigation';
-
 import AutoCompleteCompanies from '../components/auto-complete/AutoCompleteConcessionaire';
 import useEnergyCompany from '@/hooks/requestEnergyCompany/useEnergyCompany';
 import useEnergyCompanyForm from '@/hooks/requestEnergyCompany/useEnergyCompanyForm';
@@ -17,19 +15,23 @@ import FormDate from '@/app/components/forms/form-custom/FormDate';
 import AutoCompleteUserProject from '../../inspections/auto-complete/Auto-input-UserProject';
 import AutoCompleteUnits from '../components/auto-complete/AutoCompleteUnits';
 import AutoCompleteSituation from '../../comercial/sale/components/auto-complete/Auto-Input-Situation';
+import Skeleton from '@mui/material/Skeleton';
 
 export default function EditRequestCompany({
   requestId = null,
   onClosedModal = null,
   onRefresh = null,
 }) {
-  const params = useParams();
-  let id = requestId;
-  if (!requestId) id = params.id;
+  const id = requestId;
 
   const userAuth = useSelector((state) => state.user.user);
 
-  const { loading, error, companyData } = useEnergyCompany(id);
+  const { loading, error, companyData } = useEnergyCompany(id, {
+    fields: 'id,company.id,type.id,unit.id,status,interim_protocol,final_protocol,request_date,conclusion_date,situation.id,project',
+    expand: 'company,type,unit,situation',
+  });
+
+  console.log('companyData', companyData);
 
   const {
     formData,
@@ -40,7 +42,14 @@ export default function EditRequestCompany({
     loading: loadingForm,
   } = useEnergyCompanyForm(companyData, id);
 
-  formData.requested_by_id ? formData.requested_by_id : (formData.requested_by_id = userAuth.id);
+  console.log('companyData', companyData);
+
+  useEffect(() => {
+    if (formData && !formData.requested_by && userAuth?.id) {
+      handleChange('requested_by', userAuth.id);
+      handleChange('project', companyData?.project);
+    }
+  }, [formData, userAuth]);
 
   useEffect(() => {
     if (success) {
@@ -57,33 +66,51 @@ export default function EditRequestCompany({
     { value: 'D', label: 'Deferida' },
   ];
 
+  if (loading || !formData) {
+    return (
+      <Grid container spacing={3}>
+        {[...Array(9)].map((_, index) => (
+          <Grid item xs={12} sm={12} lg={4} key={index}>
+            <Skeleton variant="text" width="60%" height={30} />
+            <Skeleton variant="rectangular" height={50} />
+          </Grid>
+        ))}
+        <Grid item xs={12} sm={12} lg={12}>
+          <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
+            <Skeleton variant="rectangular" width={150} height={40} />
+          </Stack>
+        </Grid>
+      </Grid>
+    );
+  }
+
   return (
     <>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="name">Distribuidora de Energia</CustomFormLabel>
           <AutoCompleteCompanies
-            onChange={(id) => handleChange('company_id', id)}
-            value={formData.company_id}
-            {...(formErrors.company_id && { error: true, helperText: formErrors.company_id })}
+            onChange={(id) => handleChange('company', id)}
+            value={formData.company}
+            {...(formErrors.company && { error: true, helperText: formErrors.company })}
           />
         </Grid>
 
         <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="type_id">Tipos de solicitação</CustomFormLabel>
+          <CustomFormLabel htmlFor="type">Tipos de solicitação</CustomFormLabel>
           <AutoCompleteRequestType
-            onChange={(id) => handleChange('type_id', id)}
-            value={formData.type_id}
-            {...(formErrors.type_id && { error: true, helperText: formErrors.type_id })}
+            onChange={(id) => handleChange('type', id)}
+            value={formData.type}
+            {...(formErrors.type && { error: true, helperText: formErrors.type })}
           />
         </Grid>
 
         <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="unit_id">Unidade Consumidora</CustomFormLabel>
+          <CustomFormLabel htmlFor="unit">Unidade Consumidora</CustomFormLabel>
           <AutoCompleteUnits
-            onChange={(id) => handleChange('unit_id', id)}
-            value={formData.unit_id}
-            {...(formErrors.unit_id && { error: true, helperText: formErrors.unit_id })}
+            onChange={(id) => handleChange('unit', id)}
+            value={formData.unit}
+            {...(formErrors.unit && { error: true, helperText: formErrors.unit })}
           />
         </Grid>
 
@@ -128,6 +155,19 @@ export default function EditRequestCompany({
 
         <Grid item xs={12} sm={12} lg={4}>
           <FormDate
+            label="Data de solicitação"
+            name="request_date"
+            value={formData.request_date}
+            onChange={(newValue) => handleChange('request_date', newValue)}
+            {...(formErrors.request_date && {
+              error: true,
+              helperText: formErrors.request_date,
+            })}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={12} lg={4}>
+          <FormDate
             label="Data da Conclusão"
             name="conclusion_date"
             value={formData.conclusion_date}
@@ -138,13 +178,13 @@ export default function EditRequestCompany({
             })}
           />
         </Grid>
-
+       
         <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="situation_ids">Situação</CustomFormLabel>
+          <CustomFormLabel htmlFor="situation">Situação</CustomFormLabel>
           <AutoCompleteSituation
-            onChange={(id) => handleChange('situation_ids', id)}
-            value={formData.situation_ids}
-            {...(formErrors.situation_ids && { error: true, helperText: formErrors.situation_ids })}
+            onChange={(id) => handleChange('situation', id)}
+            value={formData.situation}
+            {...(formErrors.situation && { error: true, helperText: formErrors.situation })}
           />
         </Grid>
 

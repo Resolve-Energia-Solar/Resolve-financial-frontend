@@ -14,7 +14,11 @@ function SchedulesInspections({ saleId, userId }) {
     setLoading(true);
     const fetchData = async () => {
       try {
-        const response = await projectService.getProjectBySale(saleId);
+        const response = await projectService.index({
+          sale: saleId,
+          expand: 'product',
+          fields: 'id,product.product_value,product.default,product.name',
+        });
         setProjectsList(response.results);
       } catch (error) {
         console.log('Error: ', error);
@@ -31,7 +35,6 @@ function SchedulesInspections({ saleId, userId }) {
     }
   }, [projectsList]);
   
-
   if (loading) {
     return <ChecklistSalesSkeleton />;
   }
@@ -60,7 +63,12 @@ function SchedulesInspections({ saleId, userId }) {
                 </Stack>
               </Stack>
 
-              <ListInspection projectId={project?.id} product={project?.product?.id} customerId={customerId} />
+              <ListInspection
+                projectId={project?.id}
+                product={project?.product?.id}
+                customerId={customerId}
+                saleId={saleId}
+              />
             </CardContent>
           </Card>
         </Box>

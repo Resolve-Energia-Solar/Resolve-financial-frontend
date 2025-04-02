@@ -11,10 +11,11 @@ const TagList = ({ appLabel, model, objectId }) => {
     const fetchTags = async () => {
       try {
         const contentTypeId = await getContentType(appLabel, model);
-        const data = await tagService.getTags({
+        const data = await tagService.index({
           content_type: contentTypeId,
           object_id: objectId,
           limit: 100,
+          page: 1,
         });
         setTags(data.results);
       } catch (error) {

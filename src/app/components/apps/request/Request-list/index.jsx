@@ -90,17 +90,18 @@ const RequestList = ({ projectId = null, enableFilters = true, enableIndicators 
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        const params = {
+        const data = await requestConcessionaireService.index({
           page: page + 1,
           limit: rowsPerPage,
-          projectId,
+          project: projectId,
+          fields: 'id,type.name,interim_protocol,status,request_date,conclusion_date',
+          expand: 'type',
           ...stableFilters,
-        };
+        });
 
-        const data = await requestConcessionaireService.getAllByProject(params);
-        console.log('data', data);
-        setProjectsList(data.results.results);
-        setTotalRows(data.count);
+
+        setProjectsList(data.results);
+        setTotalRows(data.meta.pagination.total_count);
       } catch (err) {
         setError('Erro ao carregar Solicitações');
       } finally {

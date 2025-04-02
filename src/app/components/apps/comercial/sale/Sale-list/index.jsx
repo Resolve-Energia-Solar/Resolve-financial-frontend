@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import {
   Table,
   TableBody,
@@ -44,6 +44,7 @@ import ChipSigned from '@/utils/status/ChipSigned';
 import PulsingBadge from '@/app/components/shared/PulsingBadge';
 import TableSortLabel from '@/app/components/shared/TableSortLabel';
 import DetailsTabs from '../../../sale/DetailsTabs';
+import CounterChip from '../CounterChip';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -101,7 +102,7 @@ const SaleList = () => {
     try {
       setLoading(true);
 
-      const data = await saleService.getSales({
+      const data = await saleService.index({
         userRole,
         ordering: orderingParam,
         limit: rowsPerPage,
@@ -121,10 +122,14 @@ const SaleList = () => {
           'is_released_to_engineering',
           'created_at',
           'branch.name',
+          'treadmill_counter'
         ],
         ...filters,
       });
 
+      setIndicators(data?.meta?.indicators);
+      setSalesList(data?.results);
+      setTotalRows(data?.meta?.pagination?.total_count);
       setIndicators(data?.meta?.indicators);
       setSalesList(data?.results);
       setTotalRows(data?.meta?.pagination?.total_count);
@@ -169,7 +174,7 @@ const SaleList = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await saleService.deleteSale(saleToDelete);
+      await saleService.delete(saleToDelete);
       setSalesList(salesList.filter((item) => item.id !== saleToDelete));
       showAlert('Venda excluída com sucesso', 'success');
     } catch (err) {
@@ -290,6 +295,7 @@ const SaleList = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Doc.</TableCell>
+                <TableCell>Contador</TableCell>
                 <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
                   <TableSortLabel
                     label="Nome contratante"
@@ -411,7 +417,7 @@ const SaleList = () => {
               ) : error && page === 1 ? (
                 <Typography color="error">{error}</Typography>
               ) : (
-                salesList.map((item) => (
+                (salesList || []).map((item) => (
                   <TableRow
                     key={item.id}
                     onClick={() => handleRowClick(item)}
@@ -423,6 +429,7 @@ const SaleList = () => {
                         <PulsingBadge color="#FFC008" />
                       )}
                     </TableCell>
+                    <TableCell><CounterChip counter={item.treadmill_counter || 0} /></TableCell>
                     <TableCell>{item.customer.complete_name}</TableCell>
                     <TableCell>{item.contract_number}</TableCell>
                     <TableCell>
@@ -442,11 +449,14 @@ const SaleList = () => {
                       <StatusChip status={item.status} />
                     </TableCell>
                     <TableCell>
-                      {item.final_service_opinion[0] ? (
+                      {Array.isArray(item.final_service_opinion) &&
+                        item.final_service_opinion[0].name ? (
                         <Chip
-                          label={item.final_service_opinion[0]}
+                          label={item.final_service_opinion[0].name}
                           color={
-                            item.final_service_opinion[0] === 'Aprovado' ? 'success' : 'default'
+                            item.final_service_opinion[0].name.toLowerCase().includes('aprovado')
+                              ? 'success'
+                              : 'default'
                           }
                         />
                       ) : (

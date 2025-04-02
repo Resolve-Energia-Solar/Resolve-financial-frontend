@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   TableContainer,
   Table,
@@ -11,12 +11,13 @@ import {
   Link,
   Typography,
   Button,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddAttachmentModal from "@/app/(DashboardLayout)/apps/attachment/AddAttachmentModal";
-import attachmentService from "@/services/attachmentService";
-import getContentType from "@/utils/getContentType";
-import { useSelector } from "react-redux";
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddAttachmentModal from '@/app/(DashboardLayout)/apps/attachment/AddAttachmentModal';
+import attachmentService from '@/services/attachmentService';
+import getContentType from '@/utils/getContentType';
+import { useSelector } from 'react-redux';
+import TableSkeleton from '../comercial/sale/components/TableSkeleton';
 
 const AttachmentTable = ({
   objectId,
@@ -29,6 +30,7 @@ const AttachmentTable = ({
   const [fetchedAttachments, setFetchedAttachments] = useState([]);
   const [openAttachmentModal, setOpenAttachmentModal] = useState(false);
   const [contentTypeId, setContentTypeId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Recupera os dados do usuário e suas permissões do Redux
   const user = useSelector((state) => state.user?.user);
@@ -40,7 +42,7 @@ const AttachmentTable = ({
         const id = await getContentType(appLabel, model);
         setContentTypeId(id);
       } catch (error) {
-        console.error("Erro ao buscar content type:", error);
+        console.error('Erro ao buscar content type:', error);
       }
     }
     fetchContentTypeId();
@@ -53,34 +55,41 @@ const AttachmentTable = ({
   }, [objectId, contentTypeId]);
 
   const fetchAttachments = async () => {
+    setIsLoading(true);
     try {
-      const response = await attachmentService.getAttachment(objectId, contentTypeId);
+      const response = await attachmentService.index({
+        object_id: objectId,
+        content_type: contentTypeId,
+        limit: 30,
+      });
       setFetchedAttachments(response.results || []);
     } catch (error) {
-      console.error("Erro ao buscar anexos:", error);
+      console.error('Erro ao buscar anexos:', error);
       setFetchedAttachments([]);
     }
+    setIsLoading(false);
   };
 
   const displayAttachments = objectId ? fetchedAttachments : attachmentsProp;
 
   const getFileName = (file) => {
-    if (typeof file === "string") {
-      return file.split("?")[0].split("/").pop();
+    if (typeof file === 'string') {
+      return file.split('?')[0].split('/').pop();
     } else if (file instanceof File) {
       return file.name;
     }
-    return "";
+    return '';
   };
 
   return (
     <TableContainer component={Paper}>
       <div
         style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "16px",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '16px',
+          padding: '14px'
         }}
       >
         <Typography variant="h6">Anexos</Typography>
@@ -106,34 +115,29 @@ const AttachmentTable = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {displayAttachments.length > 0 ? (
+          {isLoading ? (
+            <TableSkeleton rows={5} columns={4} />
+          ) : displayAttachments.length > 0 ? (
             displayAttachments.map((attachment) => (
-              <TableRow key={attachment.id || attachment.file.name}>
+              <TableRow key={attachment?.id || attachment?.file?.name}>
                 <TableCell>
-                  {typeof attachment.file === "string" ? (
-                    <Link
-                      href={attachment.file}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                  {typeof attachment.file === 'string' ? (
+                    <Link href={attachment.file} target="_blank" rel="noopener noreferrer">
                       {getFileName(attachment.file)}
                     </Link>
                   ) : (
                     getFileName(attachment.file)
                   )}
                 </TableCell>
-                <TableCell>{attachment.description || "-"}</TableCell>
+                <TableCell>{attachment.description || '-'}</TableCell>
                 <TableCell>
                   {attachment.created_at
-                    ? new Date(attachment.created_at).toLocaleString("pt-BR")
-                    : "-"}
+                    ? new Date(attachment.created_at).toLocaleString('pt-BR')
+                    : '-'}
                 </TableCell>
                 <TableCell>
                   {canDelete && (
-                    <IconButton
-                      color="error"
-                      onClick={() => onDelete && onDelete(attachment.id)}
-                    >
+                    <IconButton color="error" onClick={() => onDelete && onDelete(attachment.id)}>
                       <DeleteIcon />
                     </IconButton>
                   )}

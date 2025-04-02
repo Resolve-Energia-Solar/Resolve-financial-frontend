@@ -35,7 +35,7 @@ export default function AutoCompletePhoneNumbers({
       if (valuesDefault.length > 0) {
         try {
           const phoneNumbers = await Promise.all(
-            valuesDefault.map((id) => phoneNumberService.getPhoneNumberById(id))
+            valuesDefault.map((id) => phoneNumberService.find(id)),
           );
           const formattedPhoneNumbers = phoneNumbers.map((phoneNumber) => ({
             id: phoneNumber.id,
@@ -74,7 +74,7 @@ export default function AutoCompletePhoneNumbers({
       }
       setLoading(true);
       try {
-        const phoneNumbers = await phoneNumberService.getPhoneNumbersByQuery(name);
+        const phoneNumbers = await phoneNumberService.index({ phone_number__icontains: name });
         if (phoneNumbers && phoneNumbers.results) {
           const formattedPhoneNumbers = phoneNumbers.results.map((phoneNumber) => ({
             id: phoneNumber.id,
@@ -87,13 +87,13 @@ export default function AutoCompletePhoneNumbers({
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
 
   const fetchInitialPhoneNumbers = useCallback(async () => {
     setLoading(true);
     try {
-      const phoneNumbers = await phoneNumberService.getPhoneNumbers({ limit: 5 });
+      const phoneNumbers = await phoneNumberService.index({ limit: 5, page: 1 });
       const formattedPhoneNumbers = phoneNumbers.results.map((phoneNumber) => ({
         id: phoneNumber.id,
         name: phoneNumber.phone_number,
@@ -139,7 +139,7 @@ export default function AutoCompletePhoneNumbers({
         loading={loading}
         value={selectedPhoneNumbers}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           fetchPhoneNumbersByName(newInputValue);
         }}

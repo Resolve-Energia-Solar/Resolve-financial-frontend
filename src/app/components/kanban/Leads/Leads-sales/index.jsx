@@ -60,70 +60,67 @@ const SalesListPage = ({ lead }) => {
     setRefresh(!refresh);
   };
 
-  useEffect(() => {
-    const fetchSales = async () => {
-      setLoadingSales(true);
-      try {
-        const response = await saleService.index({
-          customer__in: lead?.customer?.id,
-        });
-        setData(response.results || []);
-        setTotalRows(response.sale?.length || 0);
-      } catch (err) {
-        console.error('Erro ao buscar vendas');
-      } finally {
-        setLoadingSales(false);
-      }
-    };
-    if (lead?.customer?.id) fetchSales();
-  }, [lead, refresh, page, rowsPerPage]);
+    useEffect(() => {
+        const fetchSales = async () => {
+            setLoadingSales(true);
+            try {
+                const response = await saleService.index({
+                    customer__in: lead?.customer?.id,
+                })
+                setData(response.results || []);
+                setTotalRows(response.sale?.length || 0);
 
-  return (
-    <>
-      <Grid
-        container
-        spacing={0}
-        sx={{
-          borderRadius: '20px',
-          display: 'flex',
-          flexDirection: 'column',
-          border: '1px solid',
-          borderColor: '#EAEAEA',
-          p: 3,
-        }}
-      >
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12}>
-            <LeadInfoHeader leadId={lead?.id} />
-          </Grid>
-        </Grid>
-        <Grid item xs={12} sx={{ overflow: 'scroll' }}>
-          <Grid
-            item
-            xs={12}
-            sx={{
-              borderRadius: '20px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'nowrap',
-              px: 1.5,
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: '18px',
-                fontWeight: '700',
-                color: '#000000',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              Vendas do cliente
-            </Typography>
+            } catch (err) {
+                console.error('Erro ao buscar vendas');
+            } finally {
+                setLoadingSales(false);
+            }
+        };
+        if (lead?.customer?.id)
+            fetchSales();
+    }, [lead, refresh, page, rowsPerPage]);
 
-            <TableHeader buttonLabel="Criar" onButtonClick={() => setOpenAddSale(true)} />
+
+    return (
+        <>
+            <Grid container spacing={0} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", p: 3 }} >
+               
+            <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12}>
+              <LeadInfoHeader leadId={lead?.id} />
+            </Grid>
           </Grid>
+                <Grid item xs={12} sx={{ overflow: 'scroll' }}>
+
+                    <Grid item xs={12} sx={{
+                        borderRadius: '20px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'nowrap',
+                        px: 1.5,
+                    }}>
+                        <Grid item xs={11.5}>
+                            <Typography
+                                sx={{
+                                    fontSize: "18px",
+                                    fontWeight: "700",
+                                    color: "#000000",
+                                    whiteSpace: 'nowrap',
+                                    textOverflow: 'ellipsis'
+                                }}
+                            >
+                                Vendas do cliente
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={0.5}>
+                            <TableHeader
+                                buttonLabel="Criar"
+                                onButtonClick={() => setOpenAddSale(true)}
+                            />
+                        </Grid>
+
+                    </Grid>
 
           <Grid container xs={12}>
             <Grid
@@ -175,32 +172,35 @@ const SalesListPage = ({ lead }) => {
                 </DialogContent>
               </Dialog>
 
-              <Dialog
-                open={openDetailSale}
-                onClose={() => setOpenDetailSale(false)}
-                maxWidth="lg"
-                fullWidth
-                PaperProps={{
-                  sx: {
-                    borderRadius: '20px',
-                  },
-                }}
-              >
-                <DialogContent>
-                  <LeadsViewProposal
-                    leadId={lead?.id}
-                    proposalId={selectedSaleId}
-                    onClose={() => setOpenDetailSale(false)}
-                    onRefresh={handleRefresh}
-                  />
-                </DialogContent>
-              </Dialog>
+                            <Dialog
+                                open={openDetailSale}
+                                onClose={() => setOpenDetailSale(false)}
+                                maxWidth="lg"
+                                fullWidth
+                                PaperProps={{
+                                    sx: {
+                                        borderRadius: "20px",
+                                    },
+                                }}
+                            >
+                                <DialogContent>
+                                    <LeadsViewProposal
+                                        leadId={lead?.id}
+                                        proposalData={selectedSaleId}
+                                        onClose={() => setOpenDetailSale(false)}
+                                        onRefresh={handleRefresh}
+                                    />
+                                </DialogContent>
+                            </Dialog>
+
+                        </Grid>
+
+                    </Grid>
+                </Grid>
             </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    </>
-  );
+
+        </>
+    );
 };
 
 export default SalesListPage;

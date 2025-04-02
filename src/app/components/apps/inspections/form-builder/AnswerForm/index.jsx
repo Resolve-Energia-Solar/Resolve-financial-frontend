@@ -1,7 +1,4 @@
 'use client';
-
-import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
 import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
 import {
   Box,
@@ -16,7 +13,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import HelpIcon from '@mui/icons-material/Help';
+import Carousel from 'react-material-ui-carousel';
 import { formatDateTime, formatDate, formatTime } from '@/utils/inspectionFormatDate';
 import { useEffect, useState } from 'react';
 import answerService from '@/services/answerService';
@@ -28,6 +25,7 @@ const AnswerForm = ({ answerData }) => {
   const [formInfo, setFormInfo] = useState(answerData?.results[0]?.form);
   const [answers, setAnswers] = useState(answerData?.results[0]?.answers);
   const [answersFiles, setAnswersFiles] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const answerFromField = (fieldName) => {
     if (!answers) return null;
@@ -76,6 +74,20 @@ const AnswerForm = ({ answerData }) => {
 
   console.log('answersFiles ->', answersFiles);
 
+  // Filtra todas as imagens (jpg, jpeg, png)
+  const imageFiles = answersFiles.filter((file) => {
+    const ext = file.file.split('?')[0].split('.').pop().toLowerCase();
+    return ['jpg', 'jpeg', 'png'].includes(ext);
+  });
+
+  // Função para obter o rótulo do campo a partir do field_id
+  const getFieldLabel = (fieldId) => {
+    const field = form_fields.find(
+      (field) => `${field.type}-${field.id}` === fieldId
+    );
+    return field ? field.label : '';
+  };
+
   return (
     <Paper variant="outlined" sx={{ marginTop: 2 }}>
       <Box p={3} display="flex" flexDirection="column" gap={1}>
@@ -101,11 +113,12 @@ const AnswerForm = ({ answerData }) => {
               color="secondary"
               variant="outlined"
               label={formatDateTime(answerData?.results[0]?.created_at)}
-            ></Chip>
+            />
           </Box>
         </Stack>
         <Divider />
-        <Box mt={1}>
+        {/* Campos do formulário em duas colunas */}
+        <Grid container spacing={2} mt={1}>
           {form_fields.map((field) => {
             switch (field.type) {
               case 'text':
@@ -113,62 +126,18 @@ const AnswerForm = ({ answerData }) => {
               case 'email':
               case 'number':
                 return (
-                  <Grid
-                    item
-                    xs={12}
-                    sm={12}
-                    p={2}
-                    key={field.id}
-                    sx={{ alignItems: 'center', width: '100%' }}
-                  >
+                  <Grid item xs={12} md={6} p={2} key={field.id}>
                     <Typography variant="h5">{field.label}:</Typography>
                     <Typography variant="body1">
                       {answerFromField(`${field.type}-${field.id}`) || 'Sem resposta'}
                     </Typography>
                   </Grid>
                 );
-              case 'select':
+              case 'select': {
                 const rawValue = answerFromField(`${field.type}-${field.id}`);
                 const normalizedValue = normalizeValue(rawValue, field.multiple);
-
-                if (field.multiple) {
-                  return (
-                    <Grid
-                      item
-                      xs={12}
-                      sm={12}
-                      p={2}
-                      key={field.id}
-                      sx={{ alignItems: 'center', width: '100%' }}
-                    >
-                      <Typography variant="h5">{field.label}:</Typography>
-                      <CustomSelect
-                        id={`${field.type}-${field.id}`}
-                        name={`${field.type}-${field.id}`}
-                        variant="standard"
-                        disabled
-                        value={normalizedValue}
-                        multiple
-                        width="100%"
-                      >
-                        {field.options.map((option) => (
-                          <MenuItem key={option.id} value={option.value}>
-                            {option.label}
-                          </MenuItem>
-                        ))}
-                      </CustomSelect>
-                    </Grid>
-                  );
-                }
                 return (
-                  <Grid
-                    item
-                    xs={12}
-                    sm={12}
-                    p={2}
-                    key={field.id}
-                    sx={{ alignItems: 'center', width: '100%' }}
-                  >
+                  <Grid item xs={12} md={6} p={2} key={field.id}>
                     <Typography variant="h5">{field.label}:</Typography>
                     <CustomSelect
                       id={`${field.type}-${field.id}`}
@@ -176,6 +145,7 @@ const AnswerForm = ({ answerData }) => {
                       variant="standard"
                       disabled
                       value={normalizedValue}
+                      {...(field.multiple && { multiple: true, width: '100%' })}
                     >
                       {field.options.map((option) => (
                         <MenuItem key={option.id} value={option.value}>
@@ -185,17 +155,10 @@ const AnswerForm = ({ answerData }) => {
                     </CustomSelect>
                   </Grid>
                 );
-
+              }
               case 'date':
                 return (
-                  <Grid
-                    item
-                    xs={12}
-                    sm={12}
-                    p={2}
-                    key={field.id}
-                    sx={{ alignItems: 'center', width: '100%' }}
-                  >
+                  <Grid item xs={12} md={6} p={2} key={field.id}>
                     <Typography variant="h5">{field.label}:</Typography>
                     <Typography variant="body1">
                       {formatDate(answerFromField(`${field.type}-${field.id}`)) || 'Sem resposta'}
@@ -204,92 +167,131 @@ const AnswerForm = ({ answerData }) => {
                 );
               case 'time':
                 return (
-                  <Grid
-                    item
-                    xs={12}
-                    sm={12}
-                    p={2}
-                    key={field.id}
-                    sx={{ alignItems: 'center', width: '100%' }}
-                  >
+                  <Grid item xs={12} md={6} p={2} key={field.id}>
                     <Typography variant="h5">{field.label}:</Typography>
                     <Typography variant="body1">
                       {formatTime(answerFromField(`${field.type}-${field.id}`)) || 'Sem resposta'}
                     </Typography>
                   </Grid>
                 );
-              case 'file':
+              case 'file': {
+                const fieldKey = `${field.type}-${field.id}`;
+                const filesForField = answersFiles.filter((file) => file.field_id === fieldKey);
+                // Filtra arquivos que não são imagens
+                const nonImageFiles = filesForField.filter((file) => {
+                  const ext = file.file.split('?')[0].split('.').pop().toLowerCase();
+                  return !['jpg', 'jpeg', 'png'].includes(ext);
+                });
+                if (nonImageFiles.length === 0) return null;
                 return (
-                  <Grid
-                    item
-                    xs={12}
-                    sm={12}
-                    p={2}
-                    key={field.id}
-                    sx={{ alignItems: 'center', width: '100%' }}
-                  >
+                  <Grid item xs={12} md={6} p={2} key={field.id}>
                     <Typography variant="h5">{field.label}:</Typography>
-                    {answersFiles.map((file) =>
-                      file.field_id === `${field.type}-${field.id}`
-                        ? (() => {
-                            const url = file.file;
-                            const urlSplitted = url.split('?')[0].split('.');
-                            const ext = urlSplitted[urlSplitted.length - 1];
-
-                            switch (ext.toLowerCase()) {
-                              case 'jpg':
-                              case 'jpeg':
-                              case 'png':
-                                return (
-                                  <Box
-                                    component="img"
-                                    sx={{
-                                      maxWidth: { xs: 350, md: 250 },
-                                    }}
-                                    alt={file.file}
-                                    src={url}
-                                    key={file.id}
-                                  />
-                                );
-                              case 'pdf':
-                                return (
-                                  <iframe
-                                    key={file.id}
-                                    src={url}
-                                    style={{ width: '100%', height: '500px' }}
-                                    title={file.file}
-                                  >
-                                    Este browser não suporta PDFs.
-                                  </iframe>
-                                );
-                              case 'txt':
-                                return (
-                                  <Link key={file.id} href={url} color="primary" target="_blank">
-                                    Abrir arquivo de texto
-                                  </Link>
-                                );
-                              case 'mp4':
-                              case 'webm':
-                              case 'ogg':
-                                return (
-                                  <video key={file.id} width="100%" height="auto" controls>
-                                    <source src={url} type={`video/${ext}`} />
-                                    Seu navegador não suporta vídeos.
-                                  </video>
-                                );
-                              default:
-                                return <p key={file.id}>Formato de arquivo não suportado.</p>;
-                            }
-                          })()
-                        : null,
-                    )}
+                    {nonImageFiles.map((file) => {
+                      const ext = file.file.split('?')[0].split('.').pop().toLowerCase();
+                      switch (ext) {
+                        case 'pdf':
+                          return (
+                            <iframe
+                              key={file.id}
+                              src={file.file}
+                              style={{ width: '100%', height: '500px' }}
+                              title={file.file}
+                            >
+                              Este browser não suporta PDFs.
+                            </iframe>
+                          );
+                        case 'txt':
+                          return (
+                            <Link key={file.id} href={file.file} color="primary" target="_blank">
+                              Abrir arquivo de texto
+                            </Link>
+                          );
+                        case 'mp4':
+                        case 'webm':
+                        case 'ogg':
+                          return (
+                            <video key={file.id} width="100%" height="auto" controls>
+                              <source src={file.file} type={`video/${ext}`} />
+                              Seu navegador não suporta vídeos.
+                            </video>
+                          );
+                        default:
+                          return <p key={file.id}>Formato de arquivo não suportado.</p>;
+                      }
+                    })}
                   </Grid>
                 );
+              }
               default:
                 return null;
             }
           })}
-        </Box>
+        </Grid>
+        {/* Carousel único para todas as imagens com rótulos e altura fixa */}
+        {imageFiles.length > 0 && (
+          <Box mt={2}>
+            <Typography variant="h5" sx={{ mb: 1 }}>
+              Imagens
+            </Typography>
+            <Carousel
+              autoPlay={false}
+              navButtonsAlwaysVisible
+              index={currentIndex}
+              onChange={(index) => setCurrentIndex(index)}
+            >
+              {imageFiles.map((file) => {
+                const label = getFieldLabel(file.field_id);
+                return (
+                  <Box key={file.id} textAlign="center">
+                    <Box
+                      component="img"
+                      src={file.file}
+                      alt={file.file}
+                      sx={{
+                        height: '50vh',
+                        width: 'auto',
+                        maxWidth: { xs: 350, md: 250 },
+                        objectFit: 'contain',
+                        margin: 'auto'
+                      }}
+                    />
+                    <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                      {label}
+                    </Typography>
+                  </Box>
+                );
+              })}
+            </Carousel>
+            {/* Barra de thumbnails com rolagem horizontal */}
+            <Box sx={{ display: 'flex', overflowX: 'auto', mt: 2, pb: 1 }}>
+              {imageFiles.map((file, idx) => (
+                <Box
+                  key={file.id}
+                  onClick={() => setCurrentIndex(idx)}
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    mr: 1,
+                    border: idx === currentIndex ? '2px solid blue' : '2px solid transparent',
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={file.file}
+                    alt={file.file}
+                    sx={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
+                  />
+                </Box>
+              ))}
+            </Box>
+          </Box>
+        )}
       </Box>
     </Paper>
   );

@@ -8,12 +8,19 @@ import LeadAttachmentsAccordionSkeleton from '../components/LeadAttachmentsAccor
 import documentTypeService from '@/services/documentTypeService';
 import saleService from '@/services/saleService';
 import { useEffect, useState } from 'react';
+import { useContext } from 'react';
+import { LeadModalTabContext } from '../context/LeadModalTabContext';
 
-function LeadDocumentPage({ leadId = null, customer = null }) {
+function LeadDocumentPage() {
   const [documentTypes, setDocumentTypes] = useState([]);
   const [saleIds, setSaleIds] = useState([]);
   const [loadingSales, setLoadingSales] = useState(true);
   const [loadingDocumentTypes, setLoadingDocumentTypes] = useState(true);
+  const { lead } = useContext(LeadModalTabContext);
+
+  const customer = lead?.customer || null;
+  const leadId = lead?.id || null;
+  
 
   const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -23,8 +30,9 @@ function LeadDocumentPage({ leadId = null, customer = null }) {
       try {
         const response = await saleService.index({
           customer__in: customer.id,
-          fields: 'id,str',
+          fields: 'id,contract_number',
         });
+        console.log('Sales response:', response.results);
         setSaleIds(response.results || []);
       } catch (err) {
         console.error('Erro ao buscar as vendas:', err);
@@ -40,7 +48,10 @@ function LeadDocumentPage({ leadId = null, customer = null }) {
     const fetchData = async () => {
       setLoadingDocumentTypes(true);
       try {
-        const response = await documentTypeService.getDocumentTypeFromContract();
+        const response = await documentTypeService.index({
+          app_label__in: 'contracts',
+          limit: 30,
+        });
         setDocumentTypes(response.results);
       } catch (error) {
         console.log('Error: ', error);
@@ -67,7 +78,7 @@ function LeadDocumentPage({ leadId = null, customer = null }) {
           }}
         >
           {/* Render LeadInfoHeader or its skeleton */}
-          {isLoading ? <LeadInfoHeaderSkeleton /> : <LeadInfoHeader leadId={leadId} />}
+          {isLoading ? <LeadInfoHeaderSkeleton /> : <LeadInfoHeader />}
 
           {/* Render sales or skeleton */}
           {isLoading ? (
@@ -86,7 +97,7 @@ function LeadDocumentPage({ leadId = null, customer = null }) {
                 <LeadAttachmentsAccordion
                   contentType={CONTEXT_TYPE_SALE_ID}
                   objectId={sale.id}
-                  title={`#${sale.str} - Anexos`}
+                  title={`#${sale.contract_number} - Anexos`}
                   documentTypes={documentTypes}
                 />
               </Box>

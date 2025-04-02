@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
-import KitSolarService from '@/services/kitSolarService'
+import { useState, useEffect } from 'react';
+import KitSolarService from '@/services/kitSolarService';
 
-const useKitForm = initialData => {
+const useKitForm = (initialData) => {
   const [formData, setFormData] = useState({
     inversors_model_id: null,
     modules_model_id: null,
@@ -11,12 +11,12 @@ const useKitForm = initialData => {
     modules_amount: 0,
     price: '',
     is_default: false,
-  })
+  });
 
-  const [formErrors, setFormErrors] = useState({})
-  const [success, setSuccess] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' })
+  const [formErrors, setFormErrors] = useState({});
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   useEffect(() => {
     if (initialData) {
@@ -29,16 +29,16 @@ const useKitForm = initialData => {
         modules_amount: initialData.modules_amount || 0,
         price: initialData.price || '',
         is_default: initialData.is_default || false,
-      })
+      });
     }
-  }, [initialData])
+  }, [initialData]);
 
   const handleChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSave = async () => {
-    setLoading(true)
+    setLoading(true);
     const dataToSend = {
       inversors_model_id: formData.inversors_model_id,
       modules_model_id: formData.modules_model_id,
@@ -48,25 +48,25 @@ const useKitForm = initialData => {
       modules_amount: formData.modules_amount,
       price: formData.price,
       is_default: formData.is_default,
-    }
+    };
 
     try {
-      await KitSolarService.createKitSolar(dataToSend)
-      setSnackbar({ open: true, message: 'Kit criado com sucesso!', severity: 'success' })
-      setFormErrors({})
-      setSuccess(true)
+      await KitSolarService.create(dataToSend);
+      setSnackbar({ open: true, message: 'Kit criado com sucesso!', severity: 'success' });
+      setFormErrors({});
+      setSuccess(true);
     } catch (err) {
-      setFormErrors(err.response?.data || {})
-      setSnackbar({ open: true, message: 'Erro ao salvar o kit.', severity: 'error' })
-      console.error(err.response?.data || err)
+      setFormErrors(err.response?.data || {});
+      setSnackbar({ open: true, message: 'Erro ao salvar o kit.', severity: 'error' });
+      console.error(err.response?.data || err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const closeSnackbar = () => {
-    setSnackbar(prev => ({ ...prev, open: false }))
-  }
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
 
   return {
     formData,
@@ -77,7 +77,7 @@ const useKitForm = initialData => {
     loading,
     snackbar,
     closeSnackbar,
-  }
-}
+  };
+};
 
-export default useKitForm
+export default useKitForm;

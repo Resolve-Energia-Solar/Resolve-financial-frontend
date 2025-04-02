@@ -10,7 +10,10 @@ import SideDrawer from '@/app/components/shared/SideDrawer';
 import useProject from '@/hooks/projects/useProject';
 import { ProjectDataContextProvider } from '@/app/context/ProjectContext';
 
-const ProjectListing = ({ fields = 'id,product.id,sale.id,sale.customer.id', expand = 'product,sale,sale.customer' }) => {
+const ProjectListing = ({
+  fields = 'id,product.id,sale.id,sale.customer.id',
+  expand = 'product,sale,sale.customer,',
+}) => {
   const { openDrawer, toggleDrawerClosed, handleRowClick, rowSelected } = useProject();
 
   const projectId = rowSelected?.id || null;
@@ -29,7 +32,7 @@ const ProjectListing = ({ fields = 'id,product.id,sale.id,sale.customer.id', exp
           <CardContent>
             <ProjectList onClick={onRowClick} />
             <SideDrawer open={openDrawer} onClose={toggleDrawerClosed} title="Detalhes do Projeto">
-              <EditProject projectData={projectData} />
+              <EditProject projectData={projectData} projectId={rowSelected?.id} />
             </SideDrawer>
           </CardContent>
         </BlankCard>

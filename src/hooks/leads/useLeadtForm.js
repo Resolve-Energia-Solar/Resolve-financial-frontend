@@ -3,11 +3,11 @@ import leadService from '@/services/leadService';
 
 const useLeadForm = (initialData, id) => {
   const initialFormState = {
-    seller_id: null,
+    seller: null,
     sdr_id: null,
     addresses_ids: [],
     column_id: null,
-    origin_id: null,
+    origin: null,
     name: '',
     type: '',
     byname: '',
@@ -32,11 +32,11 @@ const useLeadForm = (initialData, id) => {
   useEffect(() => {
     if (initialData) {
       setFormData({
-        seller_id: initialData.seller?.id || null,
+        seller: initialData.seller?.id || null,
         sdr_id: initialData.sdr?.id || null,
         addresses_ids: initialData.addresses?.map((item) => item.id) || [],
         column_id: initialData.column?.id || null,
-        origin_id: initialData.origin?.id || null,
+        origin: initialData.origin?.id || null,
         name: initialData.name || '',
         type: initialData.type || '',
         byname: initialData.byname || '',
@@ -63,11 +63,11 @@ const useLeadForm = (initialData, id) => {
   const handleSave = async () => {
     setLoading(true);
     const dataToSend = {
-      seller_id: formData.seller_id,
+      seller: formData.seller,
       sdr_id: formData.sdr_id,
       addresses_ids: formData.addresses_ids,
       column_id: formData.column_id,
-      origin_id: formData.origin_id,
+      origin: formData.origin,
       name: formData.name,
       type: formData.type,
       byname: formData.byname,

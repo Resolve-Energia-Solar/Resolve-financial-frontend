@@ -15,8 +15,8 @@ import TaskDataSkeleton from './components/TaskDataSkeleton';
 import DeleteCategoryModal from './TaskModal/DeleteCategoryModal';
 import { debounce } from 'lodash';
 
-import { Chip } from "@mui/material";
-import { format, isBefore } from "date-fns";
+import { Chip } from '@mui/material';
+import { format, isBefore } from 'date-fns';
 import SimpleBar from 'simplebar-react';
 
 function CategoryTaskList({ id }) {
@@ -64,6 +64,10 @@ function CategoryTaskList({ id }) {
 
     const isNearBottom = scrollPosition >= 0.75 * scrollHeight && hasNext;
 
+    console.log('scrollPosition:', scrollPosition);
+    console.log('scrollHeight:', scrollHeight);
+    console.log('isNearBottom:', scrollPosition >= 0.75 * scrollHeight);
+
     console.log('isNearTop:', isNearTop);
     console.log('page:', page);
 
@@ -72,10 +76,10 @@ function CategoryTaskList({ id }) {
     }
 
     if (isNearBottom) {
+      console.log('nextPage');
       nextPage();
     }
   }, 700);
-
 
   useEffect(() => {
     const debouncedEffect = debounce(() => {
@@ -95,18 +99,15 @@ function CategoryTaskList({ id }) {
       if (page > 1 && !hasNext) return;
       setLoading(true);
       try {
-        const response = await leadService.getLeads({
-          params: {
-            fields: 'id,name,phone,created_at,qualification,origin',
-            column: id,
-            
-            ordering: '-created_at',
-            page: page,
-            limit: perPage,
-          },
+        const response = await leadService.index({
+          fields: 'id,name,phone,created_at,qualification,origin',
+          column: id,
+          ordering: '-created_at',
+          page: page,
+          limit: perPage,
         });
 
-        response?.next ? setHasNext(true) : setHasNext(false);
+        response?.meta.pagination.next ? setHasNext(true) : setHasNext(false);
         setCount(id, response?.count);
         if (!response) {
           throw new Error('Failed to fetch leads');
@@ -120,8 +121,8 @@ function CategoryTaskList({ id }) {
     };
 
     fetchData();
-    console.log("task data: ", allTasks)
-    console.log("status count:", getStatusCount(allTasks || []))
+    console.log('task data: ', allTasks);
+    console.log('status count:', getStatusCount(allTasks || []));
   }, [id, page, reload]);
 
   useEffect(() => {
@@ -161,7 +162,6 @@ function CategoryTaskList({ id }) {
     return dueDate < today ? 'A' : 'P';
   };
 
-
   const getStatusCount = (tasks = []) => {
     return tasks.reduce((acc, task) => {
       const status = getDeadlineStatus(task) || 'P';
@@ -173,9 +173,7 @@ function CategoryTaskList({ id }) {
     }, {});
   };
 
-
-
-  // const totalAmount = allTasks.reduce((sum, task) => sum + (task?.value || 0), 0); // does tasks have a "value" field??? 
+  // const totalAmount = allTasks.reduce((sum, task) => sum + (task?.value || 0), 0); // does tasks have a "value" field???
 
   return (
     <>
@@ -186,7 +184,7 @@ function CategoryTaskList({ id }) {
         flexDirection="column"
         sx={{
           borderTop: (theme) => `7px solid ${category?.color}`,
-          maxHeight: '95%',
+          maxHeight: '100%',
           minHeight: allTasks?.length === 0 ? '150px' : undefined,
         }}
       >
@@ -196,21 +194,22 @@ function CategoryTaskList({ id }) {
             <Box px={3} py={2} position="sticky" top={0} zIndex={1}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Stack direction="column">
-
-
                   <Box display="flex" alignItems="center" sx={{ gap: 7 }}>
-                    <Box sx={{ fontSize: "9px", fontWeight: "400", display: "flex" }} xs={4}>
+                    <Box sx={{ fontSize: '9px', fontWeight: '400', display: 'flex' }} xs={4}>
                       {Object.entries(getStatusCount(allTasks || [])).map(([status, count]) => (
                         <ChipDeadLine
-                        key={status} status={status} count={count}
-                        sx={{ fontSize: "9px", fontWeight: "400", padding: "2px 6px" }}
-                      >
-                        
-                      </ChipDeadLine>
+                          key={status}
+                          status={status}
+                          count={count}
+                          sx={{ fontSize: '9px', fontWeight: '400', padding: '2px 6px' }}
+                        ></ChipDeadLine>
                       ))}
                     </Box>
                     <Box xs={8}>
-                      <Typography variant="body1" sx={{ fontWeight: "400", fontSize: "12px", color: "#828282" }}>
+                      <Typography
+                        variant="body1"
+                        sx={{ fontWeight: '400', fontSize: '12px', color: '#828282' }}
+                      >
                         {/* Valor total <strong>R${totalAmount.toLocaleString()}</strong> */}
                         {/* Valor total: {task?.value ? `R$ ${task.value}` : "Sem valor"} */}
                         Valor total:
@@ -218,13 +217,27 @@ function CategoryTaskList({ id }) {
                     </Box>
                   </Box>
 
-                  <Box sx={{ alignItems: "center", gap: 1, mt: 1 }}>
-                    <Typography variant="caption" className="fw-semibold" sx={{ fontWeight: "400", fontSize: "9px", color: "#303030" }}>
+                  <Box sx={{ alignItems: 'center', gap: 1, mt: 1 }}>
+                    <Typography
+                      variant="caption"
+                      className="fw-semibold"
+                      sx={{ fontWeight: '400', fontSize: '9px', color: '#303030' }}
+                    >
                       Etapa
                     </Typography>
-                    <Typography variant="h6" className="fw-semibold" sx={{ fontWeight: "400", fontSize: "14px", color: "#303030" }}>
+                    <Typography
+                      variant="h6"
+                      className="fw-semibold"
+                      sx={{ fontWeight: '400', fontSize: '14px', color: '#303030' }}
+                    >
                       {category.name}
-                      <Typography variant="body1" component="span" color="text.secondary" ml={0.2} sx={{ fontWeight: "400", fontSize: "14px", color: "#828282" }}>
+                      <Typography
+                        variant="body1"
+                        component="span"
+                        color="text.secondary"
+                        ml={0.2}
+                        sx={{ fontWeight: '400', fontSize: '14px', color: '#828282' }}
+                      >
                         {category.count ? ` (${category.count})` : ''}
                       </Typography>
                     </Typography>
@@ -272,25 +285,11 @@ function CategoryTaskList({ id }) {
             {/* Conteúdo com scroll */}
             <Box
               flex={1}
-              component={SimpleBar}
               overflow="auto"
               px={3}
+              py={2}
               maxHeight="calc(100vh - 160px)"
-              onScroll={handleScroll} // Adiciona o evento de rolagem
-              sx={{
-                '& .simplebar-scrollbar::before': {
-                  backgroundColor: '#7E8388 !important',
-                  opacity: '1 !important', 
-                  borderRadius: '8px',
-                },
-                '& .simplebar-track': {
-                  backgroundColor: '#7E8388 !important', 
-                  borderRadius: '8px',
-                },
-                '& .simplebar-track.simplebar-vertical': {
-                  backgroundColor: '#D9D9D9 !important', 
-                },
-              }}
+              onScroll={handleScroll}
             >
               {loading && page === 1 ? (
                 <Stack spacing={2}>

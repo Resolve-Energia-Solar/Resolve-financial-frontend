@@ -13,7 +13,6 @@ import {
   Divider,
   Grid,
   useTheme,
-  Skeleton,
 } from '@mui/material';
 import { format, isValid } from 'date-fns';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
@@ -23,6 +22,7 @@ import usePayment from '@/hooks/payments/usePayment';
 import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import PaymentStatusChip from '../../../../../utils/status/PaymentStatusChip';
 import EditInvoiceSkeleton from '../components/EditInvoiceSkeleton';
+import { ptBR } from 'date-fns/locale';
 
 const DetailInvoicePage = ({ payment_id = null }) => {
   const theme = useTheme();
@@ -30,7 +30,11 @@ const DetailInvoicePage = ({ payment_id = null }) => {
   let id = payment_id;
   if (!payment_id) id = params.id;
 
-  const { loading, error, paymentData } = usePayment(id);
+  const { loading, error, paymentData } = usePayment(id, {
+    expand: 'sale.customer,borrower,installments,sale',
+    fields:
+      'id,value,payment_type,is_paid,sale.customer.complete_name,sale.signature_date,sale.reference_value,sale.total_value,borrower.complete_name,installments,invoice_status,sale.status,sale.payment_status,due_date',
+  });
   const { formattedValue } = useCurrencyFormatter(paymentData?.value);
 
   const statusLabels = {
@@ -53,7 +57,7 @@ const DetailInvoicePage = ({ payment_id = null }) => {
 
   const orderDate = paymentData?.created_at;
   const parsedDate = isValid(new Date(orderDate)) ? new Date(orderDate) : new Date();
-  const formattedOrderDate = format(parsedDate, 'EEEE, MMMM dd, yyyy');
+  const formattedOrderDate = format(parsedDate, 'EEEE, dd/MMMM/yyyy', { locale: ptBR });
 
   const formatToBRL = (value) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
@@ -105,7 +109,7 @@ const DetailInvoicePage = ({ payment_id = null }) => {
               borderBottom: `1px dashed ${theme.palette.divider}`,
             }}
           >
-            {paymentData?.sale.contract_number} - {paymentData?.sale.customer.complete_name}
+            {paymentData?.sale?.contract_number} - {paymentData?.sale.customer?.complete_name}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -190,6 +194,19 @@ const DetailInvoicePage = ({ payment_id = null }) => {
               </TableRow>
             </TableHead>
             <TableBody>
+              {paymentData.installments.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={4} align="center">
+                    <Typography variant="body2">Nenhuma parcela cadastrada</Typography>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} align="center">
+                    <Typography variant="body2">Parcelas disponíveis</Typography>
+                  </TableCell>
+                </TableRow>
+              )}
               {paymentData.installments.map((installment) => (
                 <TableRow key={installment.id}>
                   <TableCell>{formatToBRL(installment.installment_value)}</TableCell>

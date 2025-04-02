@@ -33,21 +33,23 @@ export default function AddRequestCompany({
     loading: loadingForm,
   } = useEnergyCompanyForm();
 
-  formData.requested_by_id ? formData.requested_by_id : (formData.requested_by_id = userAuth.id);
-  formData.project_id ? formData.project_id : (formData.project_id = projectId);
+  formData.requested_by ? formData.requested_by : (formData.requested_by = userAuth.id);
+  formData.project ? formData.project : (formData.project = projectId);
   formData.status ? formData.status : (formData.status = 'S');
 
-  const today = new Date();
-  const formattedDate =
-    today.getFullYear() +
-    '-' +
-    (today.getMonth() + 1).toString().padStart(2, '0') +
-    '-' +
-    today.getDate().toString().padStart(2, '0');
-
-  formData.request_date = formattedDate;
-
   console.log('formData', formData);
+
+  const today = new Date();
+  //const formattedDate =
+    //today.getFullYear() +
+    //'-' +
+    //(today.getMonth() + 1).toString().padStart(2, '0') +
+    //'-' +
+    //today.getDate().toString().padStart(2, '0');
+
+  //formData.request_date = formattedDate;
+
+  //console.log('formData', formData);
 
   useEffect(() => {
     if (success) {
@@ -64,38 +66,51 @@ export default function AddRequestCompany({
         <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="name">Distribuidora de Energia</CustomFormLabel>
           <AutoCompleteCompanies
-            onChange={(id) => handleChange('company_id', id)}
-            value={formData.company_id}
-            {...(formErrors.company_id && { error: true, helperText: formErrors.company_id })}
+            onChange={(id) => handleChange('company', id)}
+            value={formData.company}
+            {...(formErrors.company && { error: true, helperText: formErrors.company })}
           />
         </Grid>
 
-        {formData.project_id ? null : (
+        {formData.project ? null : (
           <Grid item xs={12} sm={12} lg={4}>
             <CustomFormLabel htmlFor="name">Projeto</CustomFormLabel>
             <AutoCompleteProject
-              onChange={(id) => handleChange('project_id', id)}
-              value={formData.project_id}
-              {...(formErrors.project_id && { error: true, helperText: formErrors.project_id })}
+              onChange={(id) => handleChange('project', id)}
+              value={formData.project}
+              {...(formErrors.project && { error: true, helperText: formErrors.project })}
             />
           </Grid>
         )}
 
         <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="type_id">Tipos de solicitação</CustomFormLabel>
+          <CustomFormLabel htmlFor="type">Tipos de solicitação</CustomFormLabel>
           <AutoCompleteRequestType
-            onChange={(id) => handleChange('type_id', id)}
-            value={formData.type_id}
-            {...(formErrors.type_id && { error: true, helperText: formErrors.type_id })}
+            onChange={(id) => handleChange('type', id)}
+            value={formData.type}
+            {...(formErrors.type && { error: true, helperText: formErrors.type })}
           />
         </Grid>
 
         <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="unit_id">Unidade Consumidora</CustomFormLabel>
+          <CustomFormLabel htmlFor="unit">Unidade Consumidora</CustomFormLabel>
           <AutoCompleteUnits
-            onChange={(id) => handleChange('unit_id', id)}
-            value={formData.unit_id}
-            {...(formErrors.unit_id && { error: true, helperText: formErrors.unit_id })}
+            onChange={(id) => handleChange('unit', id)}
+            value={formData.unit}
+            {...(formErrors.unit && { error: true, helperText: formErrors.unit })}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={12} lg={4}>
+          <FormDate
+            label="Data de solicitação"
+            name="request_date"
+            value={formData.request_date}
+            onChange={(newValue) => handleChange('request_date', newValue)}
+            {...(formErrors.request_date && {
+              error: true,
+              helperText: formErrors.request_date,
+            })}
           />
         </Grid>
 
@@ -143,11 +158,11 @@ export default function AddRequestCompany({
         </Grid>
 
         <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="situation_ids">Situação</CustomFormLabel>
+          <CustomFormLabel htmlFor="situation">Situação</CustomFormLabel>
           <AutoCompleteSituation
-            onChange={(id) => handleChange('situation_ids', id)}
-            value={formData.situation_ids}
-            {...(formErrors.situation_ids && { error: true, helperText: formErrors.situation_ids })}
+            onChange={(id) => handleChange('situation', id)}
+            value={formData.situation}
+            {...(formErrors.situation && { error: true, helperText: formErrors.situation })}
           />
         </Grid>
 

@@ -41,7 +41,7 @@ function EditCategoryModal({ showModal, handleCloseModal, column }) {
   const handleSave = async () => {
     try {
       setLoading(true);
-      await columnService.updateColumnPatch(column.id, formData);
+      await columnService.update(column.id, formData);
       enqueueSnackbar(`Coluna "${column.name}" atualizada com sucesso`, {
         variant: 'success',
       });

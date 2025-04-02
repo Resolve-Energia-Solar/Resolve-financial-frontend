@@ -4,12 +4,26 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import userService from '@/services/userService';
 import { debounce } from 'lodash';
-import { IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import {
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import UserForm from '@/app/(DashboardLayout)/apps/users/create/page';
 import CreateCustomer from '@/app/components/apps/users/Add-user/customer';
 
-export default function AutoCompleteUser({ onChange, value, error, helperText, disabled, labeltitle }) {
+export default function AutoCompleteUser({
+  onChange,
+  value,
+  error,
+  helperText,
+  disabled,
+  labeltitle,
+}) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
@@ -48,27 +62,27 @@ export default function AutoCompleteUser({ onChange, value, error, helperText, d
       if (!name) return;
       setLoading(true);
       try {
-        const users = await userService.getUserByName(name);
-        const formattedUsers = users.results.map(user => ({
+        const users = await userService.index({ name: name });
+        const formattedUsers = users.results.map((user) => ({
           id: user.id,
-          name: user.complete_name
+          name: user.complete_name,
         }));
         setOptions(formattedUsers);
       } catch (error) {
         console.error('Erro ao buscar usuários:', error);
       }
       setLoading(false);
-    }, 300), 
-    []
+    }, 300),
+    [],
   );
 
   const fetchInitialUsers = React.useCallback(async () => {
     setLoading(true);
     try {
-      const users = await userService.getUser({ limit: 5, page: 1 });
-      const formattedUsers = users.results.map(user => ({
+      const users = await userService.index({ limit: 5, page: 1, expand: ['employee'] });
+      const formattedUsers = users.results.map((user) => ({
         id: user.id,
-        name: user.complete_name
+        name: user.complete_name,
       }));
       setOptions(formattedUsers);
     } catch (error) {
@@ -111,7 +125,7 @@ export default function AutoCompleteUser({ onChange, value, error, helperText, d
         disabled={disabled}
         value={selectedUser}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           fetchUsersByName(newInputValue);
         }}
@@ -131,9 +145,9 @@ export default function AutoCompleteUser({ onChange, value, error, helperText, d
                   {loading ? <CircularProgress color="inherit" size={20} /> : null}
                   {params.InputProps.endAdornment}
                   {!disabled && (
-                    <IconButton 
-                      onClick={handleOpenModal} 
-                      aria-label="Adicionar usuário" 
+                    <IconButton
+                      onClick={handleOpenModal}
+                      aria-label="Adicionar usuário"
                       edge="end"
                       size="small"
                       sx={{ padding: '4px' }}

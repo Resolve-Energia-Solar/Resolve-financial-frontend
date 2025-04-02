@@ -33,13 +33,13 @@ export default function Addresses({ userId, data, onRefresh }) {
   const [selectedAddress, setSelectedAddress] = useState(null);
 
   const handleEditClick = (address) => {
-    setSelectedAddress(address); 
+    setSelectedAddress(address);
     setOpenEditModal(true);
   };
 
   const fetchAddress = async (search) => {
     try {
-      const response = await addressService.getAddress({
+      const response = await addressService.index({
         q: search,
         limit: 40,
         fields: 'id,street,number,city,state',
@@ -59,7 +59,7 @@ export default function Addresses({ userId, data, onRefresh }) {
 
     try {
       const addressIds = selectedAddresses.map((a) => a.id);
-      await userService.updateUser(userId, { addresses: addressIds });
+      await userService.update(userId, { addresses: addressIds });
       enqueueSnackbar('Endereço adicionado com sucesso!', { variant: 'success' });
       setOpenModal(false);
       onRefresh();
@@ -90,14 +90,20 @@ export default function Addresses({ userId, data, onRefresh }) {
             {data.length > 0 ? (
               data.map((row) => (
                 <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                  <TableCell component="th" scope="row">{row.street}</TableCell>
+                  <TableCell component="th" scope="row">
+                    {row.street}
+                  </TableCell>
                   <TableCell align="left">{row.number}</TableCell>
                   <TableCell align="right">{row.neighborhood}</TableCell>
                   <TableCell align="right">{row.city}</TableCell>
                   <TableCell align="right">{row.zip_code}</TableCell>
                   <TableCell align="right">
                     <Tooltip title="Editar">
-                      <IconButton color="primary" size="small" onClick={() => handleEditClick(row.id)}>
+                      <IconButton
+                        color="primary"
+                        size="small"
+                        onClick={() => handleEditClick(row.id)}
+                      >
                         <Edit />
                       </IconButton>
                     </Tooltip>
@@ -106,7 +112,9 @@ export default function Addresses({ userId, data, onRefresh }) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} align="center">Nenhum endereço encontrado.</TableCell>
+                <TableCell colSpan={6} align="center">
+                  Nenhum endereço encontrado.
+                </TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -131,7 +139,7 @@ export default function Addresses({ userId, data, onRefresh }) {
         fullWidth
         maxWidth="md"
         scroll="paper"
-        sx={{ '& .MuiDialog-paper': { maxHeight: '80vh', mb:2 } }}
+        sx={{ '& .MuiDialog-paper': { maxHeight: '80vh', mb: 2 } }}
       >
         <DialogTitle>Novo Endereço</DialogTitle>
         <DialogContent>
@@ -149,7 +157,9 @@ export default function Addresses({ userId, data, onRefresh }) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenModal(false)} color="secondary">Cancelar</Button>
+          <Button onClick={() => setOpenModal(false)} color="secondary">
+            Cancelar
+          </Button>
           <Button onClick={handleAddAddressToUser} color="primary" variant="contained">
             Adicionar
           </Button>

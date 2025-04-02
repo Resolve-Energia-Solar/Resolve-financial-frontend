@@ -1,10 +1,5 @@
 'use client';
-import { 
-  Fragment,
-  useCallback,
-  useEffect,
-  useState
-} from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -22,10 +17,10 @@ export default function AutoCompleteSquads({ onChange, value = [], error, helper
     const fetchDefaultSquads = async () => {
       if (value.length > 0) {
         try {
-          const squads = await Promise.all(value.map(id => squadService.getSquadById(id)));
-          const formattedSquads = squads.map(squad => ({
+          const squads = await Promise.all(value.map((id) => squadService.getSquadById(id)));
+          const formattedSquads = squads.map((squad) => ({
             id: squad.id,
-            name: squad.name // Ajuste conforme o campo do nome do usuário
+            name: squad.name, // Ajuste conforme o campo do nome do usuário
           }));
           setSelectedSquads(formattedSquads);
         } catch (error) {
@@ -39,7 +34,7 @@ export default function AutoCompleteSquads({ onChange, value = [], error, helper
 
   const handleChange = (event, newValue) => {
     setSelectedSquads(newValue);
-    onChange(newValue.map(squad => squad.id));
+    onChange(newValue.map((squad) => squad.id));
   };
 
   const fetchSquadsByName = useCallback(
@@ -47,18 +42,18 @@ export default function AutoCompleteSquads({ onChange, value = [], error, helper
       if (!name) return;
       setLoading(true);
       try {
-        const squads = await squadService.getSquadByName(name);
-        const formattedSquads = squads.results.map(squad => ({
+        const squads = await squadService.index({ name: name });
+        const formattedSquads = squads.results.map((squad) => ({
           id: squad.id,
-          name: squad.name
+          name: squad.name,
         }));
         setOptions(formattedSquads);
       } catch (error) {
         console.error('Erro ao buscar squads:', error);
       }
       setLoading(false);
-    }, 300), 
-    []
+    }, 300),
+    [],
   );
 
   const handleOpen = () => {
@@ -84,7 +79,7 @@ export default function AutoCompleteSquads({ onChange, value = [], error, helper
         loading={loading}
         value={selectedSquads}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           fetchSquadsByName(newInputValue);
         }}

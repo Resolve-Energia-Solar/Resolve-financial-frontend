@@ -19,7 +19,7 @@ import {
   FormControl,
   MenuItem,
   Select,
-  Tooltip
+  Tooltip,
 } from '@mui/material';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import { useParams } from 'next/navigation';
@@ -39,16 +39,18 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import projectMaterialsService from '@/services/projectMaterialService';
 import { useSelector } from 'react-redux';
 
-
 export default function EditProjectTab({ projectId = null, detail = false }) {
-  const params = useParams();
-  const id = projectId || params.id;
+  const id = projectId;
 
   const [materials, setMaterials] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const userPermissions = useSelector((state) => state.user.permissions);
-  const { loading, error, projectData } = useProject(id);
+  const { loading, error, projectData } = useProject(id, {
+    fields:
+      'id,product.id,product.product_value,product.default,product.name,sale.id,sale.customer.id,sale.customer.complete_name,designer.id,designer.name,homologator.id,homologator.name,status,designer_status,start_date,end_date,material_list_is_completed',
+    expand: 'product,sale,designer,homologator,sale.customer',
+  });
   const {
     formData,
     handleChange,
@@ -57,6 +59,8 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
     success,
     loading: formLoading,
   } = useProjectForm(projectData, id);
+
+  console.log('projectData', projectData);
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -72,7 +76,11 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
 
   const fetchMaterials = async () => {
     try {
-      const response = await projectMaterialsService.getProjectMaterials({ project: projectId });
+      const response = await projectMaterialsService.index({
+        project: projectId,
+        expand: 'material',
+        fields: 'id,material.name,amount',
+      });
       setMaterials(response.results);
     } catch (error) {
       console.log('Erro ao buscar materiais do projeto:', error);
@@ -161,30 +169,30 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
         <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="name">Venda</CustomFormLabel>
           <AutoCompleteSale
-            onChange={(id) => handleChange('sale_id', id)}
-            value={formData.sale_id}
+            onChange={(id) => handleChange('sale', id)}
+            value={formData.sale}
             disabled={detail}
-            {...(formErrors.sale_id && { error: true, helperText: formErrors.sale_id })}
+            {...(formErrors.sale && { error: true, helperText: formErrors.sale })}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="name">Projetista</CustomFormLabel>
           <AutoCompleteUser
-            onChange={(id) => handleChange('designer_id', id)}
-            value={formData.designer_id}
+            onChange={(id) => handleChange('designer', id)}
+            value={formData.designer}
             disabled={detail}
-            {...(formErrors.designer_id && { error: true, helperText: formErrors.designer_id })}
+            {...(formErrors.designer && { error: true, helperText: formErrors.designer })}
           />
         </Grid>
         <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="name">Homologador</CustomFormLabel>
           <AutoCompleteUser
-            onChange={(id) => handleChange('homologator_id', id)}
-            value={formData.homologator_id}
+            onChange={(id) => handleChange('homologator', id)}
+            value={formData.homologator}
             disabled={detail}
-            {...(formErrors.homologator_id && {
+            {...(formErrors.homologator && {
               error: true,
-              helperText: formErrors.homologator_id,
+              helperText: formErrors.homologator,
             })}
           />
         </Grid>
@@ -284,7 +292,11 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
       >
         <Alert
           onClose={handleSnackbarClose}
-          severity={formErrors && typeof formErrors === 'object' && Object.keys(formErrors).length > 0 ? 'error' : 'success'}
+          severity={
+            formErrors && typeof formErrors === 'object' && Object.keys(formErrors).length > 0
+              ? 'error'
+              : 'success'
+          }
           sx={{ width: '100%', display: 'flex', alignItems: 'center' }}
           iconMapping={{
             error: <Error style={{ verticalAlign: 'middle' }} />,
@@ -310,12 +322,13 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
                 </li>
               ))}
             </ul>
+          ) : formErrors ? (
+            'Ocorreu um erro ao salvar as alterações.'
           ) : (
-            formErrors ? 'Ocorreu um erro ao salvar as alterações.' : 'Alterações salvas com sucesso!'
+            'Alterações salvas com sucesso!'
           )}
         </Alert>
       </Snackbar>
-
     </>
   );
 }

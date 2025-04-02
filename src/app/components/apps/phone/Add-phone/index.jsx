@@ -25,7 +25,6 @@ const CreatePhonePage = ({
   onRefresh = null,
   selectedPhoneNumberId = null,
 }) => {
-  const userPermissions = useSelector((state) => state.user.permissions);
 
   const formatFieldName = (fieldName) => {
     const fieldLabels = {

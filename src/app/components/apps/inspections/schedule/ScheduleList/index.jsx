@@ -235,7 +235,7 @@ const SchedulingList = () => {
         nextPage: page,
         limit: rowsPerPage,
         fields:
-          'id,customer,service,service_opinion,final_service_opinion,schedule_date,schedule_start_time,schedule_agent,address,observation,status,created_at,branch',
+          'id,customer,service,service_opinion,final_service_opinion,schedule_date,schedule_start_time,schedule_agent,address,observation,status,created_at',
         page: page + 1,
         ...debouncedFilters,
       };
@@ -248,7 +248,7 @@ const SchedulingList = () => {
         setLoading(false);
       } else {
         try {
-          const data = await scheduleService.getSchedules(queryParams);
+          const data = await scheduleService.index(queryParams);
           setScheduleList(data.results);
           setTotalRows(data.count);
           cacheRef.current[cacheKey] = data;
@@ -305,7 +305,7 @@ const SchedulingList = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await scheduleService.deleteSchedule(scheduleToDelete);
+      await scheduleService.delete(scheduleToDelete);
       setScheduleList((prev) => prev.filter((item) => item.id !== scheduleToDelete));
     } catch (err) {
       setError('Erro ao excluir agendamento');
@@ -400,15 +400,6 @@ const SchedulingList = () => {
                     Contratante
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
                       {order === 'customer.complete_name' &&
-                        (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    Unidade
-                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 1 }}>
-                      {order === 'branch.name' &&
                         (orderDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                     </Box>
                   </Box>

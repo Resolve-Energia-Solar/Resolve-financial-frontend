@@ -34,10 +34,11 @@ const useProductForm = (initialData, id) => {
         reference_value: initialData.reference_value || '',
         cost_value: initialData.cost_value || '',
         params: initialData.params || '',
-        materials_ids: initialData.materials.map(({ material, ...rest }) => ({
-          ...rest,
-          material_id: material.id,
-        })) || [],
+        materials_ids:
+          initialData.materials.map(({ material, ...rest }) => ({
+            ...rest,
+            material_id: material.id,
+          })) || [],
         default: initialData.default || '',
       });
     }
@@ -57,16 +58,14 @@ const useProductForm = (initialData, id) => {
 
   const handleAddMaterial = () => {
     setFormData((prev) => {
-      const newId = prev.materials_ids.length > 0 
-        ? Math.max(...prev.materials_ids.map(material => material.id)) + 1 
-        : 1;
+      const newId =
+        prev.materials_ids.length > 0
+          ? Math.max(...prev.materials_ids.map((material) => material.id)) + 1
+          : 1;
 
       return {
         ...prev,
-        materials_ids: [
-          ...prev.materials_ids,
-          { amount: '', material_id: '' },
-        ],
+        materials_ids: [...prev.materials_ids, { amount: '', material_id: '' }],
       };
     });
   };
@@ -82,7 +81,7 @@ const useProductForm = (initialData, id) => {
     setLoading(true);
     let dataToSend = {
       sale_id: formData.sale_id,
-      branches_ids: formData.branches_ids ? [formData.branches_ids] : undefined,
+      branch: formData.branches_ids ? [formData.branches_ids] : undefined,
       roof_type_id: formData.roof_type_id,
       name: formData.name,
       description: formData.description,
@@ -96,17 +95,17 @@ const useProductForm = (initialData, id) => {
 
     try {
       if (id) {
-        const response = await productService.updateProduct(id, dataToSend);
+        const response = await productService.update(id, dataToSend);
         setResponse(response);
       } else {
-        const response = await productService.createProduct(dataToSend);
+        const response = await productService.create(dataToSend);
         setResponse(response);
       }
       setFormErrors({});
       setSuccess(true);
     } catch (err) {
       setSuccess(false);
-      console.error("Erro ao salvar:", err);
+      console.error('Erro ao salvar:', err);
       setFormErrors(err.response?.data || {});
     } finally {
       setLoading(false);
@@ -120,7 +119,7 @@ const useProductForm = (initialData, id) => {
     formErrors,
     success,
     response,
-    loading, 
+    loading,
     handleMaterialChange,
     handleAddMaterial,
     handleDeleteMaterial,

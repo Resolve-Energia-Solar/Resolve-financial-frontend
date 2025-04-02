@@ -101,7 +101,7 @@ function TaskManager() {
               ? Array.from({ length: 4 }).map((_, index) => (
                 <CategoryTaskListSkeleton key={index} />
               ))
-              : todoCategories.map((category) => (
+              : Array.isArray(todoCategories) ? todoCategories.map((category) => (
                 <Droppable droppableId={category.id.toString()} key={category.id}>
                   {(provided) => (
                     <div ref={provided.innerRef} {...provided.droppableProps} style={{ flex: 1 }}>
@@ -110,7 +110,7 @@ function TaskManager() {
                     </div>
                   )}
                 </Droppable>
-              ))}
+              )) : null}
           </Box>
         </DragDropContext>
       </Box>

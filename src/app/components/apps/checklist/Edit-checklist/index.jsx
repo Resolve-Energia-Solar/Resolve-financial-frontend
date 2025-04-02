@@ -33,10 +33,7 @@ import supplyService from '@/services/supplyAdequanceService';
 import HasPermission from '@/app/components/permissions/HasPermissions';
 
 const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = null }) => {
-  const params = useParams();
-  let id = unitId;
-  if (!unitId) id = params.id;
-
+  const id = unitId;
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const [fileLoading, setFileLoading] = useState(false);
@@ -129,20 +126,21 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = nu
                 />
               </Grid>
 
+              <Grid item xs={12} sm={12} lg={6}>
+                <CustomFormLabel>Geradora</CustomFormLabel>
+                <FormControlLabel
+                  control={
+                    <CustomSwitch
+                      checked={formData.main_unit}
+                      onChange={(e) => handleChange('main_unit', e.target.checked)}
+                    />
+                  }
+                  label={formData.main_unit ? 'Geradora' : 'Beneficiária'}
+                />
+              </Grid>
+
               {!formData.new_contract_number && (
                 <>
-                  <Grid item xs={12} sm={12} lg={6}>
-                    <CustomFormLabel>Geradora</CustomFormLabel>
-                    <FormControlLabel
-                      control={
-                        <CustomSwitch
-                          checked={formData.main_unit}
-                          onChange={(e) => handleChange('main_unit', e.target.checked)}
-                        />
-                      }
-                      label={formData.main_unit ? 'Geradora' : 'Beneficiária'}
-                    />
-                  </Grid>
 
                   <Grid item xs={12} sm={12} lg={4}>
                     <CustomFormLabel htmlFor="account_number">Número do medidor</CustomFormLabel>
@@ -211,9 +209,9 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = nu
               <Grid item xs={12} sm={12} lg={6}>
                 <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
                 <AutoCompleteAddress
-                  onChange={(id) => handleChange('address_id', id)}
-                  value={formData.address_id}
-                  {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
+                  onChange={(id) => handleChange('address', id)}
+                  value={formData.address}
+                  {...(formErrors.address && { error: true, helperText: formErrors.address })}
                 />
               </Grid>
 
@@ -224,15 +222,15 @@ const EditChecklistPage = ({ unitId = null, onClosedModal = null, onRefresh = nu
                     userPermissions={userPermissions}
                   >
                     <Grid item xs={12} sm={12} lg={6}>
-                      <CustomFormLabel htmlFor="supply_adquance_ids">
+                      <CustomFormLabel htmlFor="supply_adquance">
                         Adequação de Fornecimento
                       </CustomFormLabel>
                       <AutoCompleteSupplyAds
-                        onChange={(ids) => handleChange('supply_adquance_ids', ids)}
-                        value={formData.supply_adquance_ids}
-                        {...(formErrors.supply_adquance_ids && {
+                        onChange={(ids) => handleChange('supply_adquance', ids)}
+                        value={formData.supply_adquance}
+                        {...(formErrors.supply_adquance && {
                           error: true,
-                          helperText: formErrors.supply_adquance_ids,
+                          helperText: formErrors.supply_adquance,
                         })}
                       />
                     </Grid>

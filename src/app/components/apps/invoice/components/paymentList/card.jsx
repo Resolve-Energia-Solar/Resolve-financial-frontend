@@ -16,18 +16,29 @@ import {
   Button,
   Box,
   Skeleton,
-  useTheme,
-  FormControl,
-  TextField,
   CircularProgress,
   Stack,
   Snackbar,
   Alert,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from '@mui/material';
-import { MoreVert, Edit, Delete, Visibility, Add, Error, CheckCircle } from '@mui/icons-material';
+import {
+  MoreVert,
+  Edit,
+  Delete,
+  Visibility,
+  Add,
+  Error,
+  CheckCircle,
+  AddBoxRounded,
+} from '@mui/icons-material';
 import PaymentChip from '../PaymentChip';
 import paymentService from '@/services/paymentService';
-import { useRouter } from 'next/navigation';
 import { styled } from '@mui/material/styles';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import EditInvoicePage from '../../Edit-invoice';
@@ -36,7 +47,8 @@ import CreateInvoice from '../../Add-invoice';
 import saleService from '@/services/saleService';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import CustomFieldMoney from '../CustomFieldMoney';
-import { IconDeviceFloppy } from '@tabler/icons-react';
+import { format } from 'date-fns';
+import useCanEditUser from '@/hooks/users/userCanEdit';
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -51,9 +63,6 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 }));
 
 const PaymentCard = ({ sale = null }) => {
-  const theme = useTheme();
-  const router = useRouter();
-
   const [paymentsList, setPaymentsList] = useState([]);
   const [saleData, setSaleData] = useState(null);
 
@@ -76,6 +85,7 @@ const PaymentCard = ({ sale = null }) => {
   const [errorValue, setErrorValue] = useState(null);
   const [loadingValue, setLoadingValue] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const { canEdit } = useCanEditUser(sale);
 
   const handleRefresh = () => {
     setRefresh(!refresh);
@@ -88,7 +98,13 @@ const PaymentCard = ({ sale = null }) => {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const response = await paymentService.getPaymentsBySale(sale);
+        const response = await paymentService.index({ 
+          sale: sale,
+          expand: 'financier,installments',
+          fields: 'id,financier.name,value,due_date,payment_type,installments.id,is_paid',
+          limit: 100,
+          page: 1,
+         });
         setPaymentsList(response.results);
       } catch (err) {
         console.error(err);
@@ -97,16 +113,22 @@ const PaymentCard = ({ sale = null }) => {
       }
     };
 
+
     const fetchSaleData = async () => {
       try {
-        const data = await saleService.getSaleById(sale);
+        const data = await saleService.find(sale, {
+          expand: ['sale_products'],
+          fields: ['sale_products', 'total_value', 'total_paid', 'is_pre_sale'],
+        });
+
+        console.log('data sales', data);
+
         setSaleData(data);
 
         const calculatedValue = data.sale_products
           .map((product) => parseFloat(product.value))
           .reduce((a, b) => a + b, 0);
 
-        console.log('calculatedValue', calculatedValue);
         setProductValue(calculatedValue);
         setTotalValue(data.total_value);
       } catch (err) {
@@ -159,7 +181,7 @@ const PaymentCard = ({ sale = null }) => {
     setErrorValue(null);
     setLoadingValue(true);
     try {
-      await saleService.updateSalePartial(sale, {
+      await saleService.update(sale, {
         total_value: totalValue,
       });
       handleRefresh();
@@ -170,8 +192,6 @@ const PaymentCard = ({ sale = null }) => {
       setLoadingValue(false);
     }
   };
-
-  console.log('totalValue', totalValue);
 
   const handleConfirmDelete = async () => {
     try {
@@ -184,154 +204,211 @@ const PaymentCard = ({ sale = null }) => {
     }
   };
 
+  console.log('paymentsList', paymentsList);
+
   return (
     <>
       {saleData && saleData.is_pre_sale && (
-        <Box sx={{ width: '100%', mb: 2 }}>
-          <CustomFormLabel htmlFor="valor">Valor da Venda</CustomFormLabel>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <CustomFieldMoney
-              value={totalValue}
-              onChange={(value) => setTotalValue(value)}
-              {...(errorValue && { error: true, helperText: errorValue })}
-            />
-            <Button
-              variant="contained"
-              onClick={async () => {
-                await saveSaleTotalValue();
-                setSnackbarOpen(true);
-              }}
-              disabled={loadingValue}
-              endIcon={loadingValue ? <CircularProgress size={20} color="inherit" /> : null}
-            >
-              {loadingValue ? 'Atualizando' : 'Atualizar'}
-            </Button>
-          </Stack>
+        <Box style={{ display: 'flex' }}>
+          <Box sx={{ width: '100%', mb: 2 }}>
+            <CustomFormLabel htmlFor="valor">Valor da Venda</CustomFormLabel>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <CustomFieldMoney
+                value={totalValue}
+                onChange={(value) => setTotalValue(value)}
+                {...(errorValue && { error: true, helperText: errorValue })}
+              />
+              <Button
+                variant="contained"
+                onClick={async () => {
+                  await saveSaleTotalValue();
+                  setSnackbarOpen(true);
+                }}
+                disabled={loadingValue}
+                endIcon={loadingValue ? <CircularProgress size={20} color="inherit" /> : null}
+              >
+                {loadingValue ? 'Atualizando' : 'Atualizar'}
+              </Button>
+            </Stack>
+          </Box>
         </Box>
       )}
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={4}>
-          <Box sx={{ height: '100%' }}>
-            <Card
-              elevation={10}
-              onClick={handleCreateClick}
-              sx={{
-                cursor: 'pointer',
-                textAlign: 'center',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <CardContent>
-                <Add fontSize="large" color="primary" />
-                <Typography variant="subtitle1" color="text.secondary">
-                  Adicionar Pagamento
-                </Typography>
-              </CardContent>
-            </Card>
-          </Box>
-        </Grid>
-
-        {loading
-          ? [...Array(3)].map((_, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Card elevation={10}>
-                  <CardContent>
-                    <Skeleton variant="text" width="60%" height={20} />
-                    <Skeleton variant="text" width="80%" height={20} />
-                    <Skeleton variant="rectangular" width="100%" height={10} sx={{ mt: 2 }} />
-                  </CardContent>
-                  <CardActions disableSpacing>
-                    <Skeleton variant="circular" width={24} height={24} />
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))
-          : paymentsList.map((payment) => {
-              const progressValue = payment?.percentual_paid * 100 || 0;
-
-              return (
-                <Grid item xs={12} sm={6} md={4} key={payment.id}>
-                  <Card elevation={10}>
-                    <CardContent>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Box>
-                          <Typography fontSize="14px" color="text.secondary">
-                            {payment?.installments?.length}x parcelas
-                          </Typography>
-                          <Typography fontSize="14px">
-                            {Number(payment?.value).toLocaleString('pt-BR', {
-                              style: 'currency',
-                              currency: 'BRL',
-                            })}
-                          </Typography>
-                        </Box>
-                        <PaymentChip paymentType={payment.payment_type} />
-                      </Box>
-                      <Box mt={2}>
-                        <Typography variant="caption" color="text.secondary" fontSize="12px">
-                          {progressValue}% Pago
-                        </Typography>
-                        <BorderLinearProgress
-                          variant="determinate"
-                          value={progressValue}
-                          sx={{ mt: 1 }}
-                        />
-                      </Box>
-                    </CardContent>
-                    <CardActions disableSpacing>
-                      <Tooltip title="Ações">
-                        <IconButton
-                          size="small"
-                          onClick={(event) => handleMenuClick(event, payment.id)}
-                        >
-                          <MoreVert fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                      <Menu
-                        anchorEl={menuAnchorEl}
-                        open={menuOpenRowId === payment.id}
-                        onClose={handleMenuClose}
-                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                      >
-                        <MenuItem
-                          onClick={() => {
-                            handleDetailClick(payment.id);
-                            handleMenuClose();
-                          }}
-                        >
-                          <Visibility fontSize="small" sx={{ mr: 1 }} />
-                          Visualizar
-                        </MenuItem>
-                        <MenuItem
-                          onClick={() => {
-                            handleEditClick(payment.id);
-                            handleMenuClose();
-                          }}
-                        >
-                          <Edit fontSize="small" sx={{ mr: 1 }} />
-                          Editar
-                        </MenuItem>
-                        <MenuItem
-                          onClick={() => {
-                            handleDeleteClick(payment.id);
-                            handleMenuClose();
-                          }}
-                        >
-                          <Delete fontSize="small" sx={{ mr: 1 }} />
-                          Excluir
-                        </MenuItem>
-                      </Menu>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              );
-            })}
-      </Grid>
-
+      <Box sx={{ marginBottom: 2 }}>
+        {loading ? (
+          [...Array(3)].map((_, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <Card elevation={10}>
+                <CardContent>
+                  <Skeleton variant="text" width="60%" height={20} />
+                  <Skeleton variant="text" width="80%" height={20} />
+                  <Skeleton variant="rectangular" width="100%" height={10} sx={{ mt: 2 }} />
+                </CardContent>
+                <CardActions disableSpacing>
+                  <Skeleton variant="circular" width={24} height={24} />
+                </CardActions>
+              </Card>
+            </Grid>
+          ))
+        ) : (
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell style={{}}>
+                    <Typography variant="body1" fontWeight="400">
+                      Tipo do Pagamento
+                    </Typography>
+                  </TableCell>
+                  <TableCell style={{}}>
+                    <Typography variant="body1" fontWeight="500">
+                      Financiadora
+                    </Typography>
+                  </TableCell>
+                  <TableCell style={{}}>
+                    <Typography variant="body1" fontWeight="500">
+                      Qtd. Parcelas
+                    </Typography>
+                  </TableCell>
+                  <TableCell style={{}}>
+                    <Typography variant="body1" fontWeight="500">
+                      Valor
+                    </Typography>
+                  </TableCell>
+                  <TableCell style={{}}>
+                    <Typography variant="body1" fontWeight="500">
+                      Vencimento
+                    </Typography>
+                  </TableCell>
+                  <TableCell style={{}}>
+                    <Typography variant="body1" fontWeight="500">
+                      Status
+                    </Typography>
+                  </TableCell>
+                  <TableCell style={{}}>
+                    <Typography variant="body1" fontWeight="500">
+                      Ações
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paymentsList.map((item) => {
+                  return (
+                    <TableRow hover key={item.id}>
+                      <TableCell>
+                        <Stack spacing={2} direction="row" alignItems="center">
+                          <PaymentChip paymentType={item?.payment_type} />
+                        </Stack>
+                      </TableCell>
+                      <TableCell>
+                        <Stack spacing={2} direction="row" alignItems="center">
+                          {item?.financier?.name || 'Não se aplica'}
+                        </Stack>
+                      </TableCell>
+                      <TableCell>
+                        <Stack spacing={2} direction="row" alignItems="center">
+                          {Array.isArray(item?.installments) && item.installments.length > 0 ? (
+                          <>
+                            {item.installments.length} X
+                          </>
+                          ) : (
+                          '-'
+                          )}
+                        </Stack>
+                      </TableCell>
+                      <TableCell>
+                        <Stack spacing={2} direction="row" alignItems="center">
+                          {Number(item?.value).toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                          })}
+                        </Stack>
+                      </TableCell>
+                      <TableCell>
+                        <Stack spacing={2} direction="row" alignItems="center">
+                          {format(new Date(item.due_date), 'dd/MM/yyyy')}
+                        </Stack>
+                      </TableCell>
+                      <TableCell>
+                        <Stack spacing={2} direction="row" alignItems="center">
+                          {item.is_paid ? (
+                          <CheckCircle color="success" />
+                          ) : (
+                          <Error color="error" />
+                          )}
+                        </Stack>
+                      </TableCell>
+                      <TableCell>
+                        <CardActions disableSpacing>
+                          <Tooltip title="Ações">
+                            <IconButton
+                              size="small"
+                              onClick={(event) => handleMenuClick(event, item.id)}
+                            >
+                              <MoreVert fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                          <Menu
+                            anchorEl={menuAnchorEl}
+                            open={menuOpenRowId === item.id}
+                            onClose={handleMenuClose}
+                            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                          >
+                            <MenuItem
+                              onClick={() => {
+                                handleDetailClick(item.id);
+                                handleMenuClose();
+                              }}
+                            >
+                              <Visibility fontSize="small" sx={{ mr: 1 }} />
+                              Visualizar
+                            </MenuItem>
+                            {canEdit && (
+                              <MenuItem
+                                onClick={() => {
+                                  handleEditClick(item.id);
+                                  handleMenuClose();
+                                }}
+                              >
+                                <Edit fontSize="small" sx={{ mr: 1 }} />
+                                Editar
+                              </MenuItem>
+                            )}
+                            {canEdit && (
+                              <MenuItem
+                                onClick={() => {
+                                  handleDeleteClick(item.id);
+                                  handleMenuClose();
+                                }}
+                              >
+                                <Delete fontSize="small" sx={{ mr: 1 }} />
+                                Excluir
+                              </MenuItem>
+                            )}
+                          </Menu>
+                        </CardActions>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </Box>
+      {canEdit && (
+        <Box sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+          <Button
+            variant="outlined"
+            startIcon={<AddBoxRounded />}
+            sx={{ marginBottom: 2 }}
+            onClick={handleCreateClick}
+          >
+            Novo
+          </Button>
+        </Box>  
+      )}
       {sale && (
         <Box p={3} backgroundColor="primary.light" mt={3}>
           <Box display="flex" justifyContent="flex-end" flexDirection="column" gap={1}>

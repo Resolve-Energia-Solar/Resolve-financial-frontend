@@ -11,9 +11,7 @@ import {
   MenuItem,
   Stack,
   Skeleton,
-  useTheme,
   Chip,
-  Box,
   Alert,
   Dialog,
   DialogContent,
@@ -23,7 +21,7 @@ import {
   FormControlLabel,
   DialogTitle,
 } from '@mui/material';
-import { Edit, MoreVert, Visibility } from '@mui/icons-material';
+import { MoreVert, Visibility } from '@mui/icons-material';
 import CustomCheckbox from '@/app/components/forms/theme-elements/CustomCheckbox';
 import ProductChip from '@/app/components/apps/product/components/ProductChip';
 import productService from '@/services/productsService';
@@ -40,7 +38,6 @@ import ProductService from '@/services/productsService';
 
 const ListProductsDefault = () => {
   const dispatch = useDispatch();
-  const theme = useTheme();
   const [productList, setProductsList] = useState([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [menuOpenRowId, setMenuOpenRowId] = useState(null);
@@ -113,7 +110,7 @@ const ListProductsDefault = () => {
 
   const confirmDelete = async () => {
     try {
-      await ProductService.deleteProduct(selectedProductDetail);
+      await ProductService.delete(selectedProductDetail);
       dispatch(removeProductsByIds([selectedProductDetail]));
       setDeleteModalOpen(false);
     } catch (error) {
@@ -125,12 +122,13 @@ const ListProductsDefault = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const responseDefault = await productService.getProducts({
+        const responseDefault = await productService.index({
           default__in: 'S',
           is_default: true,
           is_deleted: false,
           kwp_in: kwpRange.join(','),
           limit: 20,
+          expand: ['roof_type'],
           // ordering: 'product_value',
         });
         setProductsList([...customProducts, ...responseDefault.results]);
@@ -156,11 +154,6 @@ const ListProductsDefault = () => {
 
   const handleDetailClick = (id) => {
     setDetailModalOpen(true);
-    setSelectedProductDetail(id);
-  };
-
-  const handleEditClick = (id) => {
-    setEditModalOpen(true);
     setSelectedProductDetail(id);
   };
 
@@ -198,7 +191,7 @@ const ListProductsDefault = () => {
                 color="primary"
                 onClick={() => setDialogProductOpen(true)}
                 fullWidth
-                sx={{ height: '100%' }}
+                sx={{ height: '40px' }}
               >
                 Criar Produto
               </Button>
@@ -245,7 +238,7 @@ const ListProductsDefault = () => {
                     <Stack spacing={1}>
                       <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <Typography variant="subtitle1">{product?.name}</Typography>
-                        <ProductChip status={product?.default} />
+                        <ProductChip status={product?.default.toUpperCase()} />
                       </Stack>
                       <Stack direction="row" alignItems="center" spacing={1}>
                         <Typography variant="caption" color="text.secondary">
@@ -259,8 +252,8 @@ const ListProductsDefault = () => {
                         </Typography>
                       </Stack>
                       <Stack direction="row" alignItems="center" justifyContent="space-between">
-                          <Chip label={`Estrutura - ${product?.roof_type?.name}`} />
-                        </Stack>
+                        <Chip label={`Estrutura - ${product?.roof_type?.name}`} />
+                      </Stack>
                     </Stack>
                   </CardContent>
                   <CardActions disableSpacing>
@@ -292,18 +285,6 @@ const ListProductsDefault = () => {
                         <Visibility fontSize="small" sx={{ mr: 1 }} />
                         Visualizar
                       </MenuItem>
-
-                      {/* {product.default === 'N' && (
-                        <MenuItem
-                          onClick={() => {
-                            handleEditClick(product.id);
-                            handleMenuClose();
-                          }}
-                        >
-                          <Edit fontSize="small" sx={{ mr: 1 }} />
-                          Editar
-                        </MenuItem>
-                      )} */}
 
                       {product.default === 'N' && (
                         <MenuItem

@@ -3,12 +3,12 @@ import React, { createContext, useEffect, useState } from 'react';
 import axios from '@/utils/axios';
 
 
-export const InvoiceContext = createContext(undefined); 
+export const InvoiceContext = createContext(undefined);
 
 export const InvoiceProvider = ({ children }) => {
     const [invoices, setInvoices] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState (null);
+    const [error, setError] = useState(null);
     const [filters, setFilters] = useState([]);
     const [refresh, setRefresh] = useState(false);
 

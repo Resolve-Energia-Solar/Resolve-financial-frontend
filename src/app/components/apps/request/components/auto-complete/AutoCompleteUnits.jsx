@@ -16,13 +16,14 @@ export default function AutoCompleteUnits({ onChange, value, error, helperText, 
     const fetchDefaultUnit = async () => {
       if (value) {
         try {
-          const unit = await unitService.getUnitById(value, {
-            fields: 'id,name',
+          const unit = await unitService.find(value, {
+            fields: 'id,address,project.sale.customer.complete_name,project.homologator.complete_name',
+            expand: 'address,project.sale.customer,project.homologator',
           });
           if (unit) {
             setSelectedUnit({
               id: unit.id,
-              name: unit.name,
+              name: `${unit.project?.homologator?.complete_name || unit.project?.sale?.customer?.complete_name } - ${unit.address.street}, ${unit.address.number} - ${unit.address.neighborhood}`,
             });
           }
         } catch (error) {
@@ -43,6 +44,13 @@ export default function AutoCompleteUnits({ onChange, value, error, helperText, 
     }
   };
 
+  const formatAddress = (unit) => {
+    if (unit && unit.address) {
+      return `${unit.address.street}, ${unit.address.number} - ${unit.address.neighborhood}`;
+    }
+    return '';
+  };
+
   const fetchUnitsByName = useCallback(
     debounce(async (name) => {
       if (!name) {
@@ -51,18 +59,18 @@ export default function AutoCompleteUnits({ onChange, value, error, helperText, 
       }
       setLoading(true);
       try {
-        const units = await unitService.getUnits({
+        const units = await unitService.index({
+          name__contains: name,
+          fields: 'id,address,project.sale.customer.complete_name,project.homologator.complete_name',
+          expand: 'address,project.sale.customer,project.homologator',
           limit: 15,
           page: 1,
-          name__icontains: name,
         });
-        if (units && units.results) {
-          const formattedUnits = units.results.map((unit) => ({
-            id: unit.id,
-            name: unit.name,
-          }));
-          setOptions(formattedUnits);
-        }
+        const formattedUnits = units.results.map((unit) => ({
+          id: unit.id,
+          name: `${unit.project?.homologator?.complete_name || unit.project?.sale?.customer?.complete_name } - ${formatAddress(unit)}`,
+        }));
+        setOptions(formattedUnits);
       } catch (error) {
         console.error('Erro ao buscar unidades:', error);
       }
@@ -71,14 +79,20 @@ export default function AutoCompleteUnits({ onChange, value, error, helperText, 
     []
   );
 
+
   const fetchInitialUnits = useCallback(async () => {
     setLoading(true);
     try {
-      const units = await unitService.getUnits({ limit: 5, page: 1 });
+      const units = await unitService.index({ 
+        limit: 5,
+        page: 1,
+        fields: 'id,address,project.sale.customer.complete_name,project.homologator.complete_name',
+        expand: 'address,project.sale.customer,project.homologator',
+      });
       if (units && units.results) {
         const formattedUnits = units.results.map((unit) => ({
           id: unit.id,
-          name: unit.name,
+          name: `${unit.project?.homologator?.complete_name || unit.project?.sale?.customer?.complete_name } - ${formatAddress(unit)}`,
         }));
         setOptions(formattedUnits);
       }

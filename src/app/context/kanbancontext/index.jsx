@@ -23,12 +23,14 @@ export const KanbanDataContextProvider = ({ children }) => {
     const fetchData = async () => {
       setLoadingCategories(true);
       try {
-        const response = await columnService.getColumns({
-          params: { fields: 'id,name,color,column_type', board: boardId, ordering: 'position' },
+        const response = await columnService.index({
+          fields: 'id,name,color,column_type',
+          board: boardId,
+          ordering: 'position',
         });
-        setTodoCategories(response || []);
+        setTodoCategories(response.results || []);
       } catch (error) {
-        console.log(error?.message)
+        console.log(error?.message);
       } finally {
         setLoadingCategories(false);
       }
@@ -50,9 +52,9 @@ export const KanbanDataContextProvider = ({ children }) => {
     destinationIndex,
   ) => {
     setLoadingLeadsIds((prev) => [...prev, taskId]);
-  
+
     let originalState;
-  
+
     setTodoCategories((prevCategories) => {
       const sourceCategoryIndex = prevCategories.findIndex(
         (cat) => cat.id.toString() === sourceCategoryId,
@@ -60,21 +62,21 @@ export const KanbanDataContextProvider = ({ children }) => {
       const destinationCategoryIndex = prevCategories.findIndex(
         (cat) => cat.id.toString() === destinationCategoryId,
       );
-  
+
       if (sourceCategoryIndex === -1 || destinationCategoryIndex === -1) {
         return prevCategories;
       }
-  
+
       const updatedCategories = [...prevCategories];
       const sourceCategory = { ...updatedCategories[sourceCategoryIndex] };
       const destinationCategory = { ...updatedCategories[destinationCategoryIndex] };
-  
+
       originalState = JSON.parse(JSON.stringify(updatedCategories));
-  
+
       const taskToMove = sourceCategory.child.splice(sourceIndex, 1)[0];
-  
+
       destinationCategory.child.splice(destinationIndex, 0, taskToMove);
-  
+
       updatedCategories[sourceCategoryIndex] = {
         ...sourceCategory,
         count: sourceCategory.count - 1,
@@ -83,12 +85,12 @@ export const KanbanDataContextProvider = ({ children }) => {
         ...destinationCategory,
         count: destinationCategory.count + 1,
       };
-  
+
       return updatedCategories;
     });
-  
+
     try {
-      await leadService.patchLead(taskId, { column_id: destinationCategoryId });
+      await leadService.patchLead(taskId, { column: destinationCategoryId });
       enqueueSnackbar('Lead movido com sucesso', { variant: 'success' });
     } catch (error) {
       console.error('Erro ao mover o lead:', error.message);
@@ -98,14 +100,13 @@ export const KanbanDataContextProvider = ({ children }) => {
       setLoadingLeadsIds((prev) => prev.filter((id) => id !== taskId));
     }
   };
-  
 
   const insertChildren = (categoryId, childrenToAdd, overwrite = false) => {
     setTodoCategories((prevCategories) => {
       return prevCategories.map((category) => {
         if (category.id === categoryId) {
           const currentChildren = category.child ?? [];
-          
+
           if (childrenToAdd.length === 0 && !overwrite) {
             console.warn('Nenhum child foi adicionado.');
             return category;
@@ -119,7 +120,7 @@ export const KanbanDataContextProvider = ({ children }) => {
       });
     });
   };
-  
+
   const setCount = (categoryId, count) => {
     setTodoCategories((prevCategories) => {
       return prevCategories.map((category) => {
@@ -133,16 +134,13 @@ export const KanbanDataContextProvider = ({ children }) => {
       });
     });
   };
-  
 
   const updateTask = (taskId, data) => {
     setTodoCategories((prevCategories) => {
       return prevCategories.map((category) => {
         return {
           ...category,
-          child: category.child.map((task) =>
-            task.id === taskId ? { ...task, ...data } : task
-          ),
+          child: category.child.map((task) => (task.id === taskId ? { ...task, ...data } : task)),
         };
       });
     });
@@ -162,8 +160,7 @@ export const KanbanDataContextProvider = ({ children }) => {
       });
     });
   };
-  
-  
+
   return (
     <KanbanDataContext.Provider
       value={{

@@ -8,7 +8,7 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
     file: [],
     status: '',
     document_type_id: '',
-    description: ''
+    description: '',
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -27,19 +27,19 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
       file: [],
       status: '',
       document_type_id: '',
-      description: ''
+      description: '',
     });
   };
 
   useEffect(() => {
     if (initialData) {
       setFormData({
-        object_id: initialData.object_id || null,
-        content_type_id: initialData.content_type_id || null,
-        file: initialData.file || [],
-        status: initialData.status || null,
-        document_type_id: initialData.document_type_id || null,
-        description: initialData.description || ''
+        object_id: initialData.object_id,
+        content_type_id: initialData.content_type_id,
+        file: initialData.file,
+        status: initialData.status,
+        document_type_id: initialData.document_type_id,
+        description: initialData.description,
       });
     }
   }, [initialData]);
@@ -59,9 +59,9 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
     const isFileArray = Array.isArray(formData.file) && formData.file.length > 0;
 
     dataToSend.append('object_id', formData.object_id);
-    dataToSend.append('content_type_id', formData.content_type_id);
+    dataToSend.append('content_type', formData.content_type_id);
     dataToSend.append('status', formData.status);
-    dataToSend.append('document_type_id', formData.document_type_id);
+    dataToSend.append('document_type', formData.document_type_id);
     dataToSend.append('description', formData.description);
 
     if (isFileArray) {
@@ -72,9 +72,9 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
 
     try {
       if (id) {
-        await attachmentService.patchAttachment(id, dataToSend);
+        await attachmentService.update(id, dataToSend);
       } else {
-        await attachmentService.createAttachment(dataToSend);
+        await attachmentService.create(dataToSend);
       }
 
       setFormErrors({});

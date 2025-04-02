@@ -13,7 +13,7 @@ function ProjectListDetail({ saleId }) {
     setLoading(true);
     const fetchData = async () => {
       try {
-        const response = await projectService.getProjectBySale(saleId);
+        const response = await projectService.find(saleId);
         console.log(response.results);
         setProjectsList(response.results);
       } catch (error) {

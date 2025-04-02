@@ -35,7 +35,7 @@ export default function AutoCompleteFormBuilder({
   const fetchDefaultForm = async (formId) => {
     if (formId) {
       try {
-        const form = await formBuilderService.getFormById(formId);
+        const form = await formBuilderService.find(formId);
         if (form) {
           setSelectedForm({ id: form.id, name: form.name });
           if (!value) onChange(form.id);
@@ -63,7 +63,7 @@ export default function AutoCompleteFormBuilder({
     debounce(async (title) => {
       setLoading(true);
       try {
-        const forms = await formBuilderService.getFormByName(title);
+        const forms = await formBuilderService.index({ name: title });
         const formattedForms = forms.results.map((form) => ({
           id: form.id,
           name: form.name,
@@ -108,7 +108,7 @@ export default function AutoCompleteFormBuilder({
         disabled={disabled}
         value={selectedForm}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           fetchFormsByTitle(newInputValue);
         }}

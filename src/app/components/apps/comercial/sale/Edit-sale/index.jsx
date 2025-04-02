@@ -42,6 +42,7 @@ import AutoCompleteReasonMultiple from '../components/auto-complete/Auto-Input-R
 import Customer from '../../../sale/Customer';
 import Phones from '../../../sale/phones';
 import Addresses from '../../../sale/Adresses';
+import useCanEditUser from '@/hooks/users/userCanEdit';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -71,6 +72,8 @@ const EditSaleTabs = ({
   let id = saleId;
   if (!saleId) id = params.id;
 
+  const { canEdit } = useCanEditUser(saleId);
+
   const { enqueueSnackbar } = useSnackbar();
 
   const formatFieldName = (fieldName) => {
@@ -86,8 +89,6 @@ const EditSaleTabs = ({
   };
 
   const userPermissions = useSelector((state) => state.user.permissions);
-
-  const [openPreview, setOpenPreview] = useState(false);
 
   const hasPermission = (permissions) => {
     if (!permissions) return true;
@@ -136,7 +137,10 @@ const EditSaleTabs = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await documentTypeService.getDocumentTypeFromContract();
+        const response = await documentTypeService.index({
+          app_label__in: 'contracts',
+          limit: 30,
+        });
         setDocumentTypes(response.results);
       } catch (error) {
         console.log('Error: ', error);
@@ -423,6 +427,7 @@ const EditSaleTabs = ({
               contentType={CONTEXT_TYPE_SALE_ID}
               objectId={id_sale}
               documentTypes={documentTypes}
+              canEdit={canEdit}
             />
           </TabPanel>
 
@@ -459,30 +464,32 @@ const EditSaleTabs = ({
                 <Grid item>
                   <SendContractButton sale={saleData} />
                 </Grid>
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={async () => {
-                      await handleSave();
-                      if (formErrors && Object.keys(formErrors).length > 0) {
-                        const errorMessages = Object.entries(formErrors)
-                          .map(
-                            ([field, messages]) =>
-                              `${formatFieldName(field)}: ${messages.join(', ')}`,
-                          )
-                          .join(', ');
-                        enqueueSnackbar(errorMessages, { variant: 'error' });
-                      } else {
-                        enqueueSnackbar('Alterações salvas com sucesso!', { variant: 'success' });
-                      }
-                    }}
-                    disabled={formLoading}
-                    endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-                  >
-                    {formLoading ? 'Salvando...' : 'Salvar Alterações'}
-                  </Button>
-                </Grid>
+                {canEdit && (
+                  <Grid item>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={async () => {
+                        await handleSave();
+                        if (formErrors && Object.keys(formErrors).length > 0) {
+                          const errorMessages = Object.entries(formErrors)
+                            .map(
+                              ([field, messages]) =>
+                                `${formatFieldName(field)}: ${messages.join(', ')}`,
+                            )
+                            .join(', ');
+                          enqueueSnackbar(errorMessages, { variant: 'error' });
+                        } else {
+                          enqueueSnackbar('Alterações salvas com sucesso!', { variant: 'success' });
+                        }
+                      }}
+                      disabled={formLoading}
+                      endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                    >
+                      {formLoading ? 'Salvando...' : 'Salvar Alterações'}
+                    </Button>
+                  </Grid>
+                )}
               </Grid>
             )}
           </Stack>

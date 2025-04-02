@@ -59,7 +59,7 @@ const ProductCard = ({ sale = null }) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await saleService.getSalesProducts(sale.id);
+        const response = await saleService.find(sale.id, { fields: ['sale_products'] });
         console.log('Response: ', response);
         setSelectedProductIds(response.sale_products.map((item) => item.product.id));
         setInitialProductIds(response.sale_products.map((item) => item.product.id));
@@ -68,7 +68,7 @@ const ProductCard = ({ sale = null }) => {
           ...response.sale_products.map((item) => item.product),
         ]);
 
-        const responseDefault = await productService.getProductsDefault();
+        const responseDefault = await productService.index({ default__in: 'S' });
         setProductsList((prevProducts) => [
           ...prevProducts,
           ...responseDefault.results.filter(
@@ -85,7 +85,6 @@ const ProductCard = ({ sale = null }) => {
             return 0;
           }),
         );
-        
       } catch (error) {
         console.log('Error: ', error);
       } finally {
@@ -117,7 +116,7 @@ const ProductCard = ({ sale = null }) => {
 
   const handleApplyChanges = async () => {
     try {
-      const response = await saleService.patchSaleProduct(sale.id, selectedProductIds);
+      const response = await saleService.update(sale.id, selectedProductIds);
       setInitialProductIds(selectedProductIds);
       handleRefreshList();
       console.log('Response: ', response);
@@ -148,8 +147,10 @@ const ProductCard = ({ sale = null }) => {
 
   const confirmDelete = async () => {
     try {
-      await productService.deleteProduct(deleteProductId);
-      setProductsList((prevProducts) => prevProducts.filter((product) => product.id !== deleteProductId));
+      await productService.delete(deleteProductId);
+      setProductsList((prevProducts) =>
+        prevProducts.filter((product) => product.id !== deleteProductId),
+      );
       setDeleteModalOpen(false);
       setDeleteProductId(null);
     } catch (error) {
@@ -262,10 +263,10 @@ const ProductCard = ({ sale = null }) => {
                       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                     >
                       <MenuItem
-                      onClick={() => {
-                        handleDetailClick(product.id);
-                        handleMenuClose();
-                      }}
+                        onClick={() => {
+                          handleDetailClick(product.id);
+                          handleMenuClose();
+                        }}
                       >
                         <Visibility fontSize="small" sx={{ mr: 1 }} />
                         Visualizar
@@ -283,10 +284,10 @@ const ProductCard = ({ sale = null }) => {
                       )}
                       {product.default === 'N' && (
                         <MenuItem
-                        onClick={() => {
-                          handleDeleteClick(product.id);
-                          handleMenuClose();
-                        }}
+                          onClick={() => {
+                            handleDeleteClick(product.id);
+                            handleMenuClose();
+                          }}
                         >
                           <Delete fontSize="small" sx={{ mr: 1 }} />
                           Excluir
@@ -299,11 +300,14 @@ const ProductCard = ({ sale = null }) => {
             ))}
       </Grid>
 
-      <Dialog open={detailModalOpen} onClose={() => setDetailModalOpen(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={detailModalOpen}
+        onClose={() => setDetailModalOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogContent>
-          <DetailProduct
-            productId={selectedProductDetail}
-          />
+          <DetailProduct productId={selectedProductDetail} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDetailModalOpen(false)} color="primary">

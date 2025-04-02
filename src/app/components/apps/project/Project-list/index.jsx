@@ -84,16 +84,16 @@ const ProjectList = ({ onClick }) => {
     const fetchProjects = async () => {
       setLoadingProjects(true);
       try {
-        const data = await projectService.getProjects({
+        const data = await projectService.index({
           page: page + 1,
           limit: rowsPerPage,
-          expand: 'sale.customer',
+          expand: 'sale.customer,designer,homologator,product,sale',
           fields:
             'id,sale.id,sale.customer.complete_name,homologator.complete_name,designer_status,material_list_is_completed,trt_pending,peding_request,access_opnion,product.name,product.params,status,sale.status,is_released_to_engineering',
           ...filters,
         });
         setProjectsList(data.results);
-        setTotalRows(data.count);
+        setTotalRows(data.meta.pagination.total_count);
       } catch (err) {
         setError('Erro ao carregar Projetos');
       } finally {
@@ -104,7 +104,7 @@ const ProjectList = ({ onClick }) => {
     const fetchIndicators = async () => {
       setLoadingIndicators(true);
       try {
-        const data = await projectService.getProjectsIndicators({ ...filters });
+        const data = await projectService.getIndicators({ ...filters });
         console.log(data.indicators);
         setIndicators(data.indicators);
       } catch (err) {

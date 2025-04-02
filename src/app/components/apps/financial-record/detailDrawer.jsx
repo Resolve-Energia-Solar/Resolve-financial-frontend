@@ -14,7 +14,7 @@ import {
   Link,
   FormControl,
   Select,
-  MenuItem
+  MenuItem,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import Comment from '../comment';
@@ -24,24 +24,25 @@ import financialRecordService from '@/services/financialRecordService';
 import { IconPdf } from '@tabler/icons-react';
 import { formatDate } from '@/utils/dateUtils';
 import { useSnackbar } from 'notistack';
+import UserCard from '../users/userCard';
 
 const statusMap = {
   S: <Chip label="Solicitada" color="warning" size="small" />,
   E: <Chip label="Em Andamento" color="success" size="small" />,
   P: <Chip label="Paga" color="success" size="small" />,
-  C: <Chip label="Cancelada" color="error" size="small" />
+  C: <Chip label="Cancelada" color="error" size="small" />,
 };
 
 const paymentStatusMap = {
   P: <Chip label="Pendente" color="warning" size="small" />,
   PG: <Chip label="Pago" color="success" size="small" />,
-  C: <Chip label="Cancelado" color="error" size="small" />
+  C: <Chip label="Cancelado" color="error" size="small" />,
 };
 
 const responsibleStatusMap = {
   P: <Chip label="Pendente" color="warning" size="small" />,
   A: <Chip label="Aprovado" color="success" size="small" />,
-  R: <Chip label="Reprovado" color="error" size="small" />
+  R: <Chip label="Reprovado" color="error" size="small" />,
 };
 
 const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
@@ -57,42 +58,50 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
   const handlePaymentStatusChange = async (status) => {
     try {
       const newStatus = status === 'PG' ? 'P' : status === 'C' ? 'C' : currentRecord.status;
-      await financialRecordService.updateFinancialRecordPartial(currentRecord.id, {
+      await financialRecordService.update(currentRecord.id, {
         payment_status: status,
         status: newStatus,
-        paid_at: new Date().toISOString()
+        paid_at: new Date().toISOString(),
       });
       setCurrentRecord((prev) => ({ ...prev, payment_status: status, status: newStatus }));
     } catch (error) {
       console.error(error);
-      const errorMessages = error.response?.data ? Object.values(error.response.data).flat() : [error.message];
-      errorMessages.forEach((msg) => enqueueSnackbar(`Erro ao atualizar status de pagamento: ${msg}`, { variant: 'error' }));
+      const errorMessages = error.response?.data
+        ? Object.values(error.response.data).flat()
+        : [error.message];
+      errorMessages.forEach((msg) =>
+        enqueueSnackbar(`Erro ao atualizar status de pagamento: ${msg}`, { variant: 'error' }),
+      );
     }
   };
 
   const handleResponsibleStatusChange = async (status) => {
     try {
       const newStatus = status === 'A' ? 'E' : status === 'R' ? 'C' : currentRecord.status;
-      await financialRecordService.updateFinancialRecordPartial(currentRecord.id, {
+      await financialRecordService.update(currentRecord.id, {
         responsible_status: status,
         responsible_response_date: new Date().toISOString(),
-        status: newStatus
+        status: newStatus,
       });
       setCurrentRecord((prev) => ({
         ...prev,
         responsible_status: status,
-        status: newStatus
+        status: newStatus,
       }));
     } catch (error) {
       console.error(error);
-      const errorMessages = error.response?.data ? Object.values(error.response.data).flat() : [error.message];
-      errorMessages.forEach((msg) => enqueueSnackbar(`Erro ao atualizar status do gestor: ${msg}`, { variant: 'error' }));
+      const errorMessages = error.response?.data
+        ? Object.values(error.response.data).flat()
+        : [error.message];
+      errorMessages.forEach((msg) =>
+        enqueueSnackbar(`Erro ao atualizar status do gestor: ${msg}`, { variant: 'error' }),
+      );
     }
   };
 
   const handlePDFBtnClick = async () => {
     try {
-      const response = await financialRecordService.generateFinancialRecordPDFById(currentRecord.id);
+      const response = await financialRecordService.find(currentRecord.id, { generate_pdf: true });
       const url = window.URL.createObjectURL(new Blob([response]));
       const link = document.createElement('a');
       link.setAttribute('href', url);
@@ -149,8 +158,11 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography>
-                  <strong>Valor:</strong>{' '}
-                  R$ {parseFloat(currentRecord.value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  <strong>Valor:</strong> R${' '}
+                  {parseFloat(currentRecord.value).toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
                 </Typography>
               </Grid>
               <Grid item xs={12} md={6}>
@@ -223,7 +235,8 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography>
-                  <strong>Data de Criação:</strong> {new Date(currentRecord.created_at).toLocaleString('pt-BR')}
+                  <strong>Data de Criação:</strong>{' '}
+                  {new Date(currentRecord.created_at).toLocaleString('pt-BR')}
                 </Typography>
               </Grid>
             </Grid>
@@ -243,7 +256,9 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
             <Divider sx={{ my: 3 }} />
             <Grid item xs={12} md={6}>
               <Typography>
-                <strong>Descrição:</strong><br />{currentRecord.notes}
+                <strong>Descrição:</strong>
+                <br />
+                {currentRecord.notes}
               </Typography>
             </Grid>
             {user.is_superuser && (
@@ -262,7 +277,8 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <Typography>
-                      <strong>Código do Cliente/Fornecedor:</strong> {currentRecord.client_supplier_code}
+                      <strong>Código do Cliente/Fornecedor:</strong>{' '}
+                      {currentRecord.client_supplier_code}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} md={6}>
@@ -276,46 +292,14 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
             <Divider sx={{ my: 3 }} />
             <Grid container>
               <Box display="flex" gap={2}>
-                <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                    Solicitante
-                  </Typography>
-                  <Box display="flex" alignItems="center" gap={2} sx={{ mt: 2 }}>
-                    <Avatar
-                      src={currentRecord.requester.profile_picture}
-                      alt={currentRecord.requester.complete_name}
-                      sx={{ width: 40, height: 40 }}
-                    />
-                    <Box>
-                      <Typography>{currentRecord.requester.complete_name}</Typography>
-                      <Typography>
-                        <Link href={`mailto:${currentRecord.requester.email}`}>
-                          {currentRecord.requester.email}
-                        </Link>
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
-                <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                    Gestor
-                  </Typography>
-                  <Box display="flex" alignItems="center" gap={2} sx={{ mt: 2 }}>
-                    <Avatar
-                      src={currentRecord.responsible.profile_picture}
-                      alt={currentRecord.responsible.complete_name}
-                      sx={{ width: 40, height: 40 }}
-                    />
-                    <Box>
-                      <Typography>{currentRecord.responsible.complete_name}</Typography>
-                      <Typography>
-                        <Link href={`mailto:${currentRecord.responsible.email}`}>
-                          {currentRecord.responsible.email}
-                        </Link>
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
+                <UserCard
+                  userId={currentRecord.requester}
+                  title="Solicitante"
+                />
+                <UserCard
+                  userId={currentRecord.responsible}
+                  title="Gestor"
+                />
               </Box>
             </Grid>
           </Box>
@@ -329,7 +313,11 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
 
         {tabIndex === 2 && (
           <Box sx={{ mt: 3 }}>
-            <AttachmentTable appLabel={'financial'} model={'financialrecord'} objectId={currentRecord.id} />
+            <AttachmentTable
+              appLabel={'financial'}
+              model={'financialrecord'}
+              objectId={currentRecord.id}
+            />
           </Box>
         )}
       </Box>

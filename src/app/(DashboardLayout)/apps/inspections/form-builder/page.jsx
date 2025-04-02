@@ -1,8 +1,5 @@
 'use client';
-import React, {
-  useState,
-  useEffect,
-} from "react";
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 /* material */
@@ -26,23 +23,17 @@ import {
   Paper,
   Box,
   TablePagination,
-} from "@mui/material";
-import {
-  AddBoxRounded,
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-} from "@mui/icons-material";
-import { 
-  IconEyeglass
-} from '@tabler/icons-react';
+} from '@mui/material';
+import { AddBoxRounded, Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
+import { IconEyeglass } from '@tabler/icons-react';
 
 /* components */
-import PageContainer from "@/app/components/container/PageContainer";
-import BlankCard from "@/app/components/shared/BlankCard";
+import PageContainer from '@/app/components/container/PageContainer';
+import BlankCard from '@/app/components/shared/BlankCard';
 
 /* services */
-import formBuilderService from "@/services/formBuilderService";
-import serviceCatalogService from "@/services/serviceCatalogService";
+import formBuilderService from '@/services/formBuilderService';
+import serviceCatalogService from '@/services/serviceCatalogService';
 
 const FormBuilderList = () => {
   const [formList, setFormList] = useState([]);
@@ -60,7 +51,7 @@ const FormBuilderList = () => {
     const fetchForms = async () => {
       setLoading(true);
       try {
-        const data = await formBuilderService.getForms();
+        const data = await formBuilderService.index();
         setFormList(data);
       } catch (err) {
         setError('Erro ao carregar formulários', err);
@@ -74,15 +65,15 @@ const FormBuilderList = () => {
 
   const handleCreateClick = () => {
     router.push('/apps/inspections/form-builder/create');
-  }
+  };
 
   const handleEditClick = (id) => {
     router.push(`/apps/inspections/form-builder/${id}/update`);
-  }
+  };
 
   const handleViewClick = (id) => {
     router.push(`/apps/inspections/form-builder/${id}/view`);
-  }
+  };
 
   const handleDeleteClick = (form) => {
     setFormToDelete(form);
@@ -96,9 +87,8 @@ const FormBuilderList = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await formBuilderService.deleteForm(formToDelete.id);
-      setFormList(formList.filter(form => form.id !== formToDelete.id));
-
+      await formBuilderService.delete(formToDelete.id);
+      setFormList(formList.filter((form) => form.id !== formToDelete.id));
     } catch (err) {
       setError('Erro ao deletar formulário');
     } finally {
@@ -116,16 +106,10 @@ const FormBuilderList = () => {
   };
 
   return (
-    <PageContainer
-      title={'Formulários'}
-      description={'Listagem de formulários'}
-    >
+    <PageContainer title={'Formulários'} description={'Listagem de formulários'}>
       <BlankCard>
         <CardContent>
-          <Typography
-            variant={'h6'}
-            gutterBottom
-          >
+          <Typography variant={'h6'} gutterBottom>
             Lista de Formulários
           </Typography>
           <Button
@@ -137,105 +121,67 @@ const FormBuilderList = () => {
             Criar Formulário
           </Button>
           {loading ? (
-            <Typography>
-              Carregando formulários...
-            </Typography>
+            <Typography>Carregando formulários...</Typography>
           ) : error ? (
-            <Typography>
-              {error}
-            </Typography>
+            <Typography>{error}</Typography>
           ) : (
-            <TableContainer
-              component={Paper}
-              elevation={10}
-              sx={{ overflowX: 'auto' }}
-            >
-              <Table
-                stickyHeader
-                aria-label="forms table"
-              >
+            <TableContainer component={Paper} elevation={10} sx={{ overflowX: 'auto' }}>
+              <Table stickyHeader aria-label="forms table">
                 <TableHead>
                   <TableRow>
-                    <TableCell
-                      sx={{ whiteSpace: 'nowrap' }}
-                    >
-                      <Box
-                        sx={{ display: 'flex', alignItems: 'center' }}
-                      >
-                        ID
-                      </Box>
+                    <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>ID</Box>
                     </TableCell>
-                    <TableCell
-                      sx={{ whiteSpace: 'nowrap' }}
-                    >
-                      <Box
-                        sx={{ display: 'flex', alignItems: 'center' }}
-                      >
-                        Nome
-                      </Box>
+                    <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>Nome</Box>
                     </TableCell>
-                    <TableCell
-                      sx={{ whiteSpace: 'nowrap' }}
-                    >
-                      <Box
-                        sx={{ display: 'flex', alignItems: 'center' }}
-                      >
-                        Serviço
-                      </Box>
+                    <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>Serviço</Box>
                     </TableCell>
-                    <TableCell
-                      sx={{ whiteSpace: 'nowrap' }}
-                      align="center"
-                    >
+                    <TableCell sx={{ whiteSpace: 'nowrap' }} align="center">
                       Ações
                     </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {formList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((form) => (
-                    <TableRow key={form.id}>
-                      <TableCell>
-                        {form.id}
-                      </TableCell>
-                      <TableCell>
-                        {form.name}
-                      </TableCell>
-                      <TableCell>
-                        {form.service?.name || 'Sem serviço associado'}
-                      </TableCell>
-                      <TableCell
-                        align="center"
-                      >
-                        <Tooltip title={'Editar'}>
-                          <IconButton
-                            color="primary"
-                            size="small"
-                            onClick={() => handleEditClick(form.id)}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title={'Visualizar'}>
-                          <IconButton
-                            color="primary"
-                            size="small"
-                            onClick={() => handleViewClick(form.id)}
-                          >
-                            <IconEyeglass />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title={'Excluir'}>
-                          <IconButton
-                            color="error"
-                            size="small"
-                            onClick={() => handleDeleteClick(form)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {formList
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((form) => (
+                      <TableRow key={form.id}>
+                        <TableCell>{form.id}</TableCell>
+                        <TableCell>{form.name}</TableCell>
+                        <TableCell>{form.service?.name || 'Sem serviço associado'}</TableCell>
+                        <TableCell align="center">
+                          <Tooltip title={'Editar'}>
+                            <IconButton
+                              color="primary"
+                              size="small"
+                              onClick={() => handleEditClick(form.id)}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title={'Visualizar'}>
+                            <IconButton
+                              color="primary"
+                              size="small"
+                              onClick={() => handleViewClick(form.id)}
+                            >
+                              <IconEyeglass />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title={'Excluir'}>
+                            <IconButton
+                              color="error"
+                              size="small"
+                              onClick={() => handleDeleteClick(form)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
               <TablePagination
@@ -260,30 +206,17 @@ const FormBuilderList = () => {
         aria-describedby="alert-dialog-description"
         onClose={handleCloseModal}
       >
-        <DialogTitle 
-          id="alert-dialog-title"
-        >
-          Confirmar Exclusão
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-title">Confirmar Exclusão</DialogTitle>
         <DialogContent>
-          <DialogContentText
-            id="alert-dialog-description"
-          >
+          <DialogContentText id="alert-dialog-description">
             Tem certeza que deseja excluir o formulário? Esta ação não pode ser desfeita.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button
-            autoFocus
-            color="primary"
-            onClick={handleCloseModal}
-          >
+          <Button autoFocus color="primary" onClick={handleCloseModal}>
             Cancelar
           </Button>
-          <Button
-            color="error"
-            onClick={handleConfirmDelete}
-          >
+          <Button color="error" onClick={handleConfirmDelete}>
             Excluir
           </Button>
         </DialogActions>

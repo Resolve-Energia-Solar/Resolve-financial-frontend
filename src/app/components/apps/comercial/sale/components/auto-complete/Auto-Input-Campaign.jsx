@@ -3,7 +3,7 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import campaignService from '@/services/campaignService'; 
+import campaignService from '@/services/campaignService';
 import { debounce } from 'lodash';
 
 export default function AutoCompleteCampaign({ onChange, value, error, helperText, disabled }) {
@@ -16,7 +16,7 @@ export default function AutoCompleteCampaign({ onChange, value, error, helperTex
     const fetchDefaultCampaign = async () => {
       if (value) {
         try {
-          const campaign = await campaignService.getCampaignById(value);
+          const campaign = await campaignService.find(value);
           if (campaign) {
             setSelectedCampaign({ id: campaign.id, name: campaign.name });
           }
@@ -43,9 +43,9 @@ export default function AutoCompleteCampaign({ onChange, value, error, helperTex
       if (!name) return;
       setLoading(true);
       try {
-        const campaigns = await campaignService.getCampaignByName(name);
+        const campaigns = await campaignService.index({ name: name });
         if (campaigns && campaigns.results) {
-          const formattedCampaigns = campaigns.results.map(campaign => ({
+          const formattedCampaigns = campaigns.results.map((campaign) => ({
             id: campaign.id,
             name: campaign.name,
           }));
@@ -56,14 +56,14 @@ export default function AutoCompleteCampaign({ onChange, value, error, helperTex
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
 
   const fetchInitialCampaigns = useCallback(async () => {
     setLoading(true);
     try {
-      const campaigns = await campaignService.getCampaigns({ limit: 5 });
-      const formattedCampaigns = campaigns.results.map(campaign => ({
+      const campaigns = await campaignService.index({ limit: 5, page: 1 });
+      const formattedCampaigns = campaigns.results.map((campaign) => ({
         id: campaign.id,
         name: campaign.name,
       }));
@@ -72,7 +72,6 @@ export default function AutoCompleteCampaign({ onChange, value, error, helperTex
       console.error('Erro ao buscar campanhas:', error);
     }
   }, []);
-  
 
   const handleOpen = () => {
     setOpen(true);
@@ -100,7 +99,7 @@ export default function AutoCompleteCampaign({ onChange, value, error, helperTex
         value={selectedCampaign}
         disabled={disabled}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         onInputChange={(event, newInputValue) => {
           fetchCampaignsByName(newInputValue);
         }}
