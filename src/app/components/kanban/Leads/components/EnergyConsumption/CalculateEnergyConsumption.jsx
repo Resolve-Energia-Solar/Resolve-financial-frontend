@@ -36,6 +36,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { options } from 'numeral';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import useEnergyConsumptionForm from '@/hooks/energyConsumption/useEnergyConsumptionForm';
 
 function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null }) {
 	const router = useRouter();
@@ -59,13 +60,13 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 		formErrors,
 		loading: formLoading,
 		success,
-	} = useProposalForm();
+	} = useEnergyConsumptionForm();
 
-	const customProducts = useSelector(selectProductsByLead(leadId));
+	// const customProducts = useSelector(selectProductsByLead(leadId));
 
-	formData.commercial_products_ids = customProducts.map((product) => product.id);
+	// formData.commercial_products_ids = customProducts.map((product) => product.id);
 	formData.lead_id ? null : (formData.lead_id = leadId);
-	formData.status ? null : (formData.status = 'P');
+	// formData.status ? null : (formData.status = 'P');
 	user?.user ? (formData.created_by_id = user.user.id) : null;
 
 	const discard_proposal = () => {
