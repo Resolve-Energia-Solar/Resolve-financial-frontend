@@ -48,6 +48,7 @@ import saleService from '@/services/saleService';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import CustomFieldMoney from '../CustomFieldMoney';
 import { format } from 'date-fns';
+import useCanEditUser from '@/hooks/users/userCanEdit';
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -84,6 +85,7 @@ const PaymentCard = ({ sale = null }) => {
   const [errorValue, setErrorValue] = useState(null);
   const [loadingValue, setLoadingValue] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const { canEdit } = useCanEditUser(sale);
 
   const handleRefresh = () => {
     setRefresh(!refresh);
@@ -362,24 +364,28 @@ const PaymentCard = ({ sale = null }) => {
                               <Visibility fontSize="small" sx={{ mr: 1 }} />
                               Visualizar
                             </MenuItem>
-                            <MenuItem
-                              onClick={() => {
-                                handleEditClick(item.id);
-                                handleMenuClose();
-                              }}
-                            >
-                              <Edit fontSize="small" sx={{ mr: 1 }} />
-                              Editar
-                            </MenuItem>
-                            <MenuItem
-                              onClick={() => {
-                                handleDeleteClick(item.id);
-                                handleMenuClose();
-                              }}
-                            >
-                              <Delete fontSize="small" sx={{ mr: 1 }} />
-                              Excluir
-                            </MenuItem>
+                            {canEdit && (
+                              <MenuItem
+                                onClick={() => {
+                                  handleEditClick(item.id);
+                                  handleMenuClose();
+                                }}
+                              >
+                                <Edit fontSize="small" sx={{ mr: 1 }} />
+                                Editar
+                              </MenuItem>
+                            )}
+                            {canEdit && (
+                              <MenuItem
+                                onClick={() => {
+                                  handleDeleteClick(item.id);
+                                  handleMenuClose();
+                                }}
+                              >
+                                <Delete fontSize="small" sx={{ mr: 1 }} />
+                                Excluir
+                              </MenuItem>
+                            )}
                           </Menu>
                         </CardActions>
                       </TableCell>
@@ -391,16 +397,18 @@ const PaymentCard = ({ sale = null }) => {
           </TableContainer>
         )}
       </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
-        <Button
-          variant="outlined"
-          startIcon={<AddBoxRounded />}
-          sx={{ marginBottom: 2 }}
-          onClick={handleCreateClick}
-        >
-          Novo
-        </Button>
-      </Box>
+      {canEdit && (
+        <Box sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+          <Button
+            variant="outlined"
+            startIcon={<AddBoxRounded />}
+            sx={{ marginBottom: 2 }}
+            onClick={handleCreateClick}
+          >
+            Novo
+          </Button>
+        </Box>  
+      )}
       {sale && (
         <Box p={3} backgroundColor="primary.light" mt={3}>
           <Box display="flex" justifyContent="flex-end" flexDirection="column" gap={1}>

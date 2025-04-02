@@ -300,7 +300,7 @@ export default function InvoiceList({ onClick }) {
               backgroundColor: 'primary.light',
               iconColor: 'primary.main',
               IconComponent: IconSortAscending,
-              title: 'Pagamentos Consistentes (Dentro do Prazo)',
+              title: 'Pagamentos Pagos (Dentro do Prazo)',
               // onClick: () => setFilters({ ...filters, /* defina filtro se necessário */ }),
               value: consistentPaymentsValue,
               count: consistentPayments,

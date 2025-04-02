@@ -67,6 +67,7 @@ function SchedulesInspections({ saleId, userId }) {
                 projectId={project?.id}
                 product={project?.product?.id}
                 customerId={customerId}
+                saleId={saleId}
               />
             </CardContent>
           </Card>

@@ -3,7 +3,7 @@ import leadService from '@/services/leadService';
 
 const useLeadForm = (initialData, id) => {
   const initialFormState = {
-    seller_id: null,
+    seller: null,
     sdr_id: null,
     addresses_ids: [],
     column_id: null,
@@ -32,7 +32,7 @@ const useLeadForm = (initialData, id) => {
   useEffect(() => {
     if (initialData) {
       setFormData({
-        seller_id: initialData.seller?.id || null,
+        seller: initialData.seller?.id || null,
         sdr_id: initialData.sdr?.id || null,
         addresses_ids: initialData.addresses?.map((item) => item.id) || [],
         column_id: initialData.column?.id || null,
@@ -63,7 +63,7 @@ const useLeadForm = (initialData, id) => {
   const handleSave = async () => {
     setLoading(true);
     const dataToSend = {
-      seller_id: formData.seller_id,
+      seller: formData.seller,
       sdr_id: formData.sdr_id,
       addresses_ids: formData.addresses_ids,
       column_id: formData.column_id,

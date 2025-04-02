@@ -23,19 +23,17 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
 import BlankCard from '@/app/components/shared/BlankCard';
-// import ProjectStatusChip from '@/app/components/apps/inspections/project/StatusChip';
 import TableSkeleton from '@/app/components/apps/comercial/sale/components/TableSkeleton';
+import CounterChip from '@/app/components/apps/comercial/sale/CounterChip';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 
 import { FilterContext } from '@/context/FilterContext';
 import projectService from '@/services/projectService';
-import { formatDate } from '@/utils/dateUtils';
-// import DetailsDrawer from '@/app/components/apps/project/DetailsDrawer';
 
 const BCrumb = [{ title: 'Início' }];
 
 const CustomerJourney = () => {
-  const { filters, setFilters, refresh } = useContext(FilterContext);
+  const { filters, setFilters } = useContext(FilterContext);
   const [loading, setLoading] = useState(true);
   const [projectList, setProjectList] = useState([]);
   // const [selectedProjectId, setSelectedProjectId] = useState(null);
@@ -75,7 +73,7 @@ const CustomerJourney = () => {
         break;
       case 'L':
         label = 'Liberado';
-        color = 'info';
+        color = 'success';
         break;
       case 'CA':
         label = 'Cancelado';
@@ -93,30 +91,33 @@ const CustomerJourney = () => {
     return <Chip label={label} color={color} />;
   };
 
-  const calculateDaysDifference = (signatureDate) => {
-    if (!signatureDate) return 0;
-    const today = new Date();
-    const date = new Date(signatureDate);
-    const differenceInTime = today - date;
-    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
-    return Math.floor(differenceInDays);
-  };
-
-  const getCounterChip = (signatureDate) => {
-    const days = calculateDaysDifference(signatureDate);
+  const getFieldServiceStatusChip = (status) => {
+    if (!status) {
+      return <Chip label="Pendente" color="default" />;
+    }
+    const lowerStatus = status.toLowerCase();
     let color = 'default';
-    let label = `${days} dias`;
 
-    if (days === 0) {
-      color = 'default';
-    } else if (days === 1) {
+    if (lowerStatus.includes('solicitado') || lowerStatus.includes('solicito') || lowerStatus.includes('confirmado')) {
+      color = 'primary';
+    } else if (lowerStatus.includes('aprovado')) {
       color = 'success';
-    } else if (days >= 30) {
+    } else if (lowerStatus.includes('reprovado') || lowerStatus.includes('reprovada')) {
       color = 'error';
+    } else if (lowerStatus.includes('cancelado') || lowerStatus.includes('cancelada')) {
+      color = 'error';
+    } else if (lowerStatus.includes('concluído')) {
+      color = 'success';
+    } else if (lowerStatus.includes('andamento')) {
+      color = 'info';
+    } else if (lowerStatus.includes('entregue')) {
+      color = 'success';
+    } else if (lowerStatus.includes('agendado')) {
+      color = 'info';
     }
 
-    return <Chip label={label} color={color} variant="filled" />;
-  };
+    return <Chip label={status} color={color} />;
+  }
 
   useEffect(() => {
     setLoading(true);
@@ -131,8 +132,10 @@ const CustomerJourney = () => {
           'field_services.final_service_opinion'
         ],
         fields: [
+          'id',
           'sale.signature_date',
           'sale.contract_number',
+          'sale.treadmill_counter',
           'sale.customer.complete_name',
           'project_number',
           'sale.status',
@@ -148,9 +151,7 @@ const CustomerJourney = () => {
       })
       .then((data) => {
         const getFieldServiceStatus = (project) => {
-          // Categories of interest
           const categories = ['Vistoria', 'Instalação', 'Entrega'];
-          // Object to store the most recent field service per category
           const latestServices = {};
 
           project.field_services.forEach(fs => {
@@ -166,7 +167,6 @@ const CustomerJourney = () => {
             }
           });
 
-          // For each category, return final_service_opinion.name or, if null, the field service status
           const result = {};
           categories.forEach(category => {
             result[category] = latestServices[category]
@@ -178,7 +178,6 @@ const CustomerJourney = () => {
           return result;
         };
 
-        // Add new property with field service statuses to each project object
         const projectsWithStatus = data.results.map(project => ({
           ...project,
           fieldServiceStatus: getFieldServiceStatus(project),
@@ -214,7 +213,220 @@ const CustomerJourney = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
   }, []);
 
-  const customerJourneyFilterConfig = [];
+  const customerJourneyFilterConfig = [
+    {
+      key: 'customer',
+      label: 'Cliente',
+      type: 'async-multiselect',
+      endpoint: '/api/users/',
+      queryParam: 'complete_name__icontains',
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
+      extraParams: {
+        fields: ['id', 'complete_name'],
+      },
+    },
+    {
+      key: 'sale__in',
+      label: 'Venda',
+      type: 'async-multiselect',
+      endpoint: '/api/sales/',
+      queryParam: 'contract_number__icontains',
+      mapResponse: (data) =>
+        data.results.map((sale) => ({
+          label: `${sale.contract_number} - ${sale.customer?.complete_name}`,
+          value: sale.id,
+        })),
+      extraParams: {
+        expand: ['customer'],
+        fields: ['id', 'contract_number', 'customer.complete_name'],
+      },
+    },
+    {
+      key: 'product__in',
+      label: 'Produto',
+      type: 'async-multiselect',
+      endpoint: '/api/products/',
+      queryParam: 'product__in',
+      mapResponse: (data) =>
+        data.results.map((product) => ({
+          label: product.name,
+          value: product.id,
+        })),
+      extraParams: {
+        fields: ['id', 'name'],
+      },
+    },
+    {
+      key: 'materials__in',
+      label: 'Materiais',
+      type: 'async-multiselect',
+      endpoint: '/api/materials/',
+      queryParam: 'materials__in',
+      mapResponse: (data) =>
+        data.results.map((material) => ({
+          label: material.name,
+          value: material.id,
+        })),
+      extraParams: {
+        fields: ['id', 'name'],
+      },
+    },
+    {
+      key: 'project_number__icontains',
+      label: 'Número do Projeto',
+      type: 'text',
+    },
+    {
+      key: 'plant_integration__icontains',
+      label: 'ID da Usina',
+      type: 'text',
+    },
+    {
+      key: 'designer__in',
+      label: 'Projetista',
+      type: 'async-multiselect',
+      endpoint: '/api/users/',
+      queryParam: 'complete_name__icontains',
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
+      extraParams: {
+        fields: ['id', 'complete_name'],
+      },
+    },
+    {
+      key: 'designer_status__in',
+      label: 'Status do Projeto de Engenharia',
+      type: 'multiselect',
+      options: [
+        { label: 'Pendente', value: 'P' },
+        { label: 'Concluído', value: 'CO' },
+        { label: 'Em Andamento', value: 'EA' },
+        { label: 'Cancelado', value: 'C' },
+        { label: 'Distrato', value: 'D' },
+      ],
+    },
+    {
+      key: 'designer_coclusion_date__range',
+      label: 'Data de Conclusão do Projeto de Engenharia',
+      type: 'range',
+      inputType: 'date',
+    },
+    {
+      key: 'inspection__in',
+      label: 'Agendamentos da Vistoria',
+      type: 'async-multiselect',
+      endpoint: '/api/schedules/',
+      queryParam: 'inspection__in',
+      mapResponse: (data) =>
+        data.results.map((schedule) => ({
+          label: schedule.protocol,
+          value: schedule.id,
+        })),
+      extraParams: {
+        fields: ['id', 'protocol'],
+      },
+    },
+    {
+      key: 'start_date__range',
+      label: 'Data de Início',
+      type: 'range',
+      inputType: 'date',
+    },
+    {
+      key: 'end_date__range',
+      label: 'Data de Término',
+      type: 'range',
+      inputType: 'date',
+    },
+    {
+      key: 'is_completed__in',
+      label: 'Projeto Completo',
+      type: 'multiselect',
+      options: [
+        { label: 'Sim', value: 'true' },
+        { label: 'Não', value: 'false' },
+      ],
+    },
+    {
+      key: 'status__in',
+      label: 'Status do Projeto',
+      type: 'multiselect',
+      options: [
+        { label: 'Pendente', value: 'P' },
+        { label: 'Concluído', value: 'CO' },
+        { label: 'Em Andamento', value: 'EA' },
+        { label: 'Cancelado', value: 'C' },
+        { label: 'Distrato', value: 'D' },
+      ],
+    },
+    {
+      key: 'homologator__in',
+      label: 'Homologador',
+      type: 'async-multiselect',
+      endpoint: '/api/users/',
+      queryParam: 'complete_name__icontains',
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
+      extraParams: {
+        fields: ['id', 'complete_name'],
+      },
+    },
+    {
+      key: 'is_documentation_completed__in',
+      label: 'Documentos Completos (Múltiplo)',
+      type: 'multiselect',
+      options: [
+        { label: 'Sim', value: 'true' },
+        { label: 'Não', value: 'false' },
+      ],
+    },
+    {
+      key: 'material_list_is_completed__in',
+      label: 'Lista de Materiais Finalizada',
+      type: 'multiselect',
+      options: [
+        { label: 'Sim', value: 'true' },
+        { label: 'Não', value: 'false' },
+      ],
+    },
+    {
+      key: 'documention_completion_date__range',
+      label: 'Data de Conclusão do Documento',
+      type: 'range',
+      inputType: 'date',
+    },
+    {
+      key: 'registered_circuit_breaker__in',
+      label: 'Disjuntor Cadastrado',
+      type: 'async-multiselect',
+      endpoint: '/api/materials/',
+      queryParam: 'registered_circuit_breaker__in',
+      mapResponse: (data) =>
+        data.results.map((material) => ({
+          label: material.name,
+          value: material.id,
+        })),
+      extraParams: {
+        fields: ['id', 'name'],
+      },
+    },
+    {
+      key: 'created_at__range',
+      label: 'Data de Criação',
+      type: 'range',
+      inputType: 'date',
+    }
+  ];
 
   return (
     <PageContainer title="Jornada do Cliente" description="Acompanhe a jornada do cliente por todas as etapas.">
@@ -282,7 +494,7 @@ const CustomerJourney = () => {
                       }}
                     >
                       <TableCell>
-                        {getCounterChip(project.sale?.signature_date)}
+                        <CounterChip counter={project.sale?.treadmill_counter || 0} projectId={project.id} />
                       </TableCell>
                       <TableCell sx={{ textWrap: 'nowrap' }}>
                         {project.sale?.signature_date
@@ -294,11 +506,7 @@ const CustomerJourney = () => {
                       </TableCell>
                       <TableCell>{project.project_number}</TableCell>
                       <TableCell>
-                        {project.fieldServiceStatus?.Vistoria ? (
-                          <Chip label={project.fieldServiceStatus.Vistoria} variant="outlined" />
-                        ) : (
-                          '-'
-                        )}
+                        {getFieldServiceStatusChip(project.fieldServiceStatus?.Vistoria)}
                       </TableCell>
                       <TableCell>
                         {getStatusChip(project.sale?.status)}
@@ -310,18 +518,11 @@ const CustomerJourney = () => {
                         {getStatusChip(project.designer_status)}
                       </TableCell>
                       <TableCell>
-                        {project.fieldServiceStatus?.Entrega ? (
-                          <Chip label={project.fieldServiceStatus.Entrega} variant="outlined" />
-                        ) : (
-                          '-'
-                        )}
+                        {getFieldServiceStatusChip(project.fieldServiceStatus?.Entrega)}
                       </TableCell>
                       <TableCell>
-                        {project.fieldServiceStatus?.["Instalação"] ? (
-                          <Chip label={project.fieldServiceStatus["Instalação"]} variant="outlined" />
-                        ) : (
-                          '-'
-                        )}
+                        {getFieldServiceStatusChip(project.fieldServiceStatus?.['Instalação'])
+                        }
                       </TableCell>
                     </TableRow>
                   ))}

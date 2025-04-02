@@ -27,13 +27,15 @@ import useLead from '@/hooks/leads/useLead';
 import useLeadForm from '@/hooks/leads/useLeadtForm';
 import { useSelector } from 'react-redux';
 import AutoCompleteUser from '@/app/components/apps/invoice/components/auto-complete/Auto-Input-User';
+import { LeadModalTabContext } from '../context/LeadModalTabContext';
+import { useContext } from 'react';
 
 function EditLeadPage({ leadId = null }) {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const user = useSelector((state) => state.user?.user);
 
-  const { loading, error, leadData } = useLead(leadId);
+  const { lead } = useContext(LeadModalTabContext);
   const {
     formData,
     handleChange,
@@ -41,9 +43,9 @@ function EditLeadPage({ leadId = null }) {
     loading: formLoading,
     formErrors,
     success,
-  } = useLeadForm(leadData, leadId);
+  } = useLeadForm(lead, leadId);
 
-  formData?.seller_id ? null : handleChange('seller_id', user?.id);
+  formData?.seller ? null : handleChange('seller', user?.id);
 
   const handleSaveLead = async () => {
     const response = await handleSave(formData);
@@ -203,9 +205,9 @@ function EditLeadPage({ leadId = null }) {
             <Grid item xs={12} sm={6}>
               <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
               <AutoCompleteUser
-                onChange={(id) => handleChange('seller_id', id)}
-                value={formData.seller_id}
-                {...(formErrors.seller_id && { error: true, helperText: formErrors.seller_id })}
+                onChange={(id) => handleChange('seller', id)}
+                value={formData.seller}
+                {...(formErrors.seller && { error: true, helperText: formErrors.seller })}
               />
             </Grid>
 

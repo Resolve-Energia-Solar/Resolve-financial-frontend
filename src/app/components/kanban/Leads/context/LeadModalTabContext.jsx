@@ -12,7 +12,9 @@ export function LeadModalTabProvider({ leadId, children }) {
   useEffect(() => {
     const fetchLead = async () => {
       try {
-        const data = await leadService.find(leadId);
+        const data = await leadService.find(leadId,{
+          expand: "seller"
+        })
         setLead(data);
       } catch (err) {
         enqueueSnackbar('Não foi possível carregar o lead', { variant: 'error' });

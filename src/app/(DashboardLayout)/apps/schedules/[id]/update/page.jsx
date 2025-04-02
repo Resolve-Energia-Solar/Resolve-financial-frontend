@@ -8,9 +8,8 @@ import {
     Typography,
     Grid,
     Tooltip,
-    TextField
+    MenuItem
 } from '@mui/material';
-import HelpIcon from '@mui/icons-material/Help';
 import PageContainer from '@/app/components/container/PageContainer';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import BlankCard from '@/app/components/shared/BlankCard';
@@ -18,6 +17,7 @@ import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsync
 import scheduleService from '@/services/scheduleService';
 import { useSnackbar } from 'notistack';
 import AutoCompleteUserSchedule from '@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule';
+import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 
 const UpdateSchedulePage = () => {
     const router = useRouter();
@@ -51,7 +51,7 @@ const UpdateSchedulePage = () => {
         if (id) {
             setLoading(true);
             scheduleService
-                .find(id, { fields: 'schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,service,customer,project,schedule_agent,branch,address,observation,products' })
+                .find(id, { fields: 'schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,service.id,service.category,customer,project,schedule_agent,branch,address,observation,products,status', expand: 'service' })
                 .then((data) => {
                     setFormData({
                         schedule_date: data.schedule_date ? data.schedule_date.split('T')[0] : '',
@@ -65,9 +65,9 @@ const UpdateSchedulePage = () => {
                         branch: data.branch,
                         address: data.address,
                         observation: data.observation || '',
-                        product: (data.products && data.products.length > 0) ? data.products[0]: [],
-                      });
-                      
+                        product: (data.products && data.products.length > 0) ? data.products[0] : [],
+                        status: data.status
+                    });
                 })
                 .catch((err) => {
                     console.error('Erro ao carregar agendamento:', err);
@@ -78,7 +78,6 @@ const UpdateSchedulePage = () => {
         }
     }, [id, enqueueSnackbar]);
 
-    // Atualiza o valor de schedule_end (conforme o serviço selecionado e horário de início)
     useEffect(() => {
         if (
             formData.service &&
@@ -92,19 +91,21 @@ const UpdateSchedulePage = () => {
                 .map(Number);
             const [year, month, day] = formData.schedule_date.split('-').map(Number);
             const [hour, minute] = formData.schedule_start_time.split(':').map(Number);
-            const startDate = new Date(year, month - 1, day, hour, minute);
-            startDate.setHours(
-                startDate.getHours() + addHours,
-                startDate.getMinutes() + addMinutes,
-                startDate.getSeconds() + addSeconds,
-            );
-            const computedDate = startDate.toISOString().split('T')[0];
-            const computedTime = startDate.toTimeString().slice(0, 5);
-            setFormData((prev) => ({
-                ...prev,
-                schedule_end_date: computedDate,
-                schedule_end_time: computedTime,
-            }));
+            if (year && month && day && hour && minute) {
+                const startDate = new Date(year, month - 1, day, hour, minute);
+                startDate.setHours(
+                    startDate.getHours() + addHours,
+                    startDate.getMinutes() + addMinutes,
+                    startDate.getSeconds() + addSeconds,
+                );
+                const computedDate = startDate.toISOString().split('T')[0];
+                const computedTime = startDate.toTimeString().slice(0, 5);
+                setFormData((prev) => ({
+                    ...prev,
+                    schedule_end_date: computedDate,
+                    schedule_end_time: computedTime,
+                }));
+            }
         }
     }, [formData.service, formData.schedule_date, formData.schedule_start_time]);
 
@@ -122,7 +123,7 @@ const UpdateSchedulePage = () => {
             address: formData.address?.value || null,
             products: formData.product ? [formData.product.value] : [],
             schedule_creator: user.id,
-          };          
+        };
 
         const fieldLabels = {
             schedule_date: 'Data do Agendamento',
@@ -140,7 +141,6 @@ const UpdateSchedulePage = () => {
         };
 
         try {
-            // Aqui utilizamos updateSchedule passando o ID do agendamento
             await scheduleService.updateSchedule(id, submitData);
             router.push('/apps/schedules');
         } catch (err) {
@@ -180,7 +180,7 @@ const UpdateSchedulePage = () => {
                         <Grid item xs={12} sm={6}>
                             <GenericAsyncAutocompleteInput
                                 label="Serviço"
-                                value={formData.service}
+                                value={formData.service?.id}
                                 onChange={(newValue) =>
                                     setFormData({ ...formData, service: newValue })
                                 }
@@ -205,17 +205,13 @@ const UpdateSchedulePage = () => {
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} lg={6}>
-                            <Typography htmlFor="field_agent">
-                                Agentes Disponíveis{' '}
-                                <Tooltip
-                                    title="Os agentes de campo são alocados com base na disponibilidade de horário e proximidade geográfica. Ajuste os parâmetros para visualizar opções disponíveis."
-                                    placement="right-end"
-                                >
-                                    <HelpIcon fontSize="small" />
-                                </Tooltip>
-                            </Typography>
+
                             <AutoCompleteUserSchedule
-                                onChange={(id) => handleChange('schedule_agent', id)}
+                                onChange={(id) => {
+                                    if (id) {
+                                        setFormData({ ...formData, schedule_agent: { value: id, name: 'nome do agente' } });
+                                    }
+                                }}
                                 value={formData.schedule_agent}
                                 disabled={
                                     !formData.service?.category ||
@@ -227,8 +223,6 @@ const UpdateSchedulePage = () => {
                                     scheduleDate: formData.schedule_date,
                                     scheduleStartTime: formData.schedule_start_time,
                                     scheduleEndTime: formData.schedule_end_time,
-                                    // scheduleLatitude: formData.address?.latitude,
-                                    // scheduleLongitude: formData.address?.longitude,
                                 }}
                                 {...(errors.schedule_agent_id && {
                                     error: true,
@@ -238,7 +232,7 @@ const UpdateSchedulePage = () => {
                         </Grid>
                         {/* Datas e horários */}
                         <Grid item xs={12} sm={6}>
-                            <TextField
+                            <CustomTextField
                                 label="Data do Agendamento"
                                 type="date"
                                 name="schedule_date"
@@ -252,7 +246,7 @@ const UpdateSchedulePage = () => {
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                            <TextField
+                            <CustomTextField
                                 label="Horário de Início"
                                 type="time"
                                 name="schedule_start_time"
@@ -266,7 +260,7 @@ const UpdateSchedulePage = () => {
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                            <TextField
+                            <CustomTextField
                                 label="Data Final"
                                 type="date"
                                 name="schedule_end_date"
@@ -286,7 +280,7 @@ const UpdateSchedulePage = () => {
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                            <TextField
+                            <CustomTextField
                                 label="Hora Final"
                                 type="time"
                                 name="schedule_end_time"
@@ -317,8 +311,24 @@ const UpdateSchedulePage = () => {
                                 required
                             />
                         </Grid>
-
-
+                        <Grid item xs={12} sm={6}>
+                            <CustomTextField
+                                select
+                                label="Status"
+                                name="status"
+                                value={formData.status || ''}
+                                onChange={handleInputChange}
+                                fullWidth
+                                helperText={errors.status?.[0] || ''}
+                                error={!!errors.status}
+                                required
+                            >
+                                <MenuItem value="Pendente">Pendente</MenuItem>
+                                <MenuItem value="Em Andamento">Em Andamento</MenuItem>
+                                <MenuItem value="Confirmado">Confirmado</MenuItem>
+                                <MenuItem value="Cancelado">Cancelado</MenuItem>
+                            </CustomTextField>
+                        </Grid>
                         <Grid item xs={12} sm={6}>
                             <GenericAsyncAutocompleteInput
                                 label="Projeto"
@@ -441,7 +451,7 @@ const UpdateSchedulePage = () => {
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField
+                            <CustomTextField
                                 label="Observação"
                                 name="observation"
                                 value={formData.observation}

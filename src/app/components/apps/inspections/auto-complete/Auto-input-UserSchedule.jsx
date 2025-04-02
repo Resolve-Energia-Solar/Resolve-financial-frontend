@@ -14,6 +14,7 @@ export default function AutoCompleteUserSchedule({
   helperText,
   disabled,
   query,
+  label="Agentes Disponíveis"
 }) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
@@ -125,6 +126,7 @@ export default function AutoCompleteUserSchedule({
         )}
         renderInput={(params) => (
           <CustomTextField
+            label={label}
             {...params}
             error={error}
             helperText={helperText}

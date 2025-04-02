@@ -162,8 +162,8 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
                 defaultValues[filterConfig.key] = Array.isArray(value)
                   ? value
                   : value === ''
-                  ? []
-                  : value.split(',');
+                    ? []
+                    : value.split(',');
               }
             } else {
               defaultValues[filterConfig.key] = [];
@@ -237,7 +237,15 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
         transformedFilters[filterConfig.key] = filterValues[filterConfig.key];
       }
     });
-    onApply(transformedFilters);
+
+    const filteredParams = Object.entries(transformedFilters).reduce((acc, [key, value]) => {
+      if (value !== '' && !(Array.isArray(value) && value.length === 0)) {
+        acc[key] = value;
+      }
+      return acc;
+    }, {});
+
+    onApply(filteredParams);
     onClose();
   };
 

@@ -7,6 +7,7 @@ import {
   Typography,
   Tooltip,
   useTheme,
+  Skeleton,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -20,8 +21,78 @@ import PaymentCard from "./components/paymentList/card";
 import documentTypeService from "@/services/documentTypeService";
 import Comment from "../comment";
 import History from "../history";
+import saleService from "@/services/saleService";
+import Customer from "../sale/Customer";
+import Phones from "../sale/phones";
+import Addresses from "../sale/Adresses";
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
+
+const GeneralInfo = ({ saleId }) => {
+  const [saleData, setSaleData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchSaleData = async () => {
+    try {
+      const response = await saleService.find(saleId, {
+        fields: 'customer.complete_name,customer.email,customer.first_document,customer.gender,customer.birth_date,customer.person_type,address,phone_numbers,customer.addresses,customer.phone_numbers,customer.id',
+        expand: 'customer,customer.phone_numbers,customer.addresses',
+      });
+      setSaleData(response);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSaleData();
+  }, [saleId]);
+
+  const handleRefresh = () => {
+    setLoading(true);
+    setError(null);
+    fetchSaleData();
+  };
+
+  if (loading) {
+    return <Skeleton variant="rectangular" width="100%" height={118} />;
+  }
+
+  if (error) {
+    return (
+      <Typography variant="body1" color="error">
+        Erro ao carregar os dados: {error.message}
+      </Typography>
+    );
+  }
+
+  return (
+    <Box
+      sx={{
+        bgcolor: 'background.paper',
+        display: 'flex',
+        padding: 0,
+        flexDirection: 'column',
+      }}
+    >
+      <Customer data={saleData.customer} onRefresh={handleRefresh} />
+      <Phones
+        data={saleData.customer.phone_numbers}
+        userId={saleData.customer.id}
+        onRefresh={handleRefresh}
+      />
+      <Addresses
+        data={saleData.customer.addresses}
+        userId={saleData.customer.id}
+        onRefresh={handleRefresh}
+      />
+    </Box>
+  );
+};
+
 
 export default function Details({ id, refresh }) {
   const [documentTypes, setDocumentTypes] = useState([]);
@@ -52,6 +123,12 @@ export default function Details({ id, refresh }) {
   };
 
   const panels = [
+    {
+      key: "general-info",
+      icon: <InfoOutlinedIcon />,
+      title: "Informações Gerais",
+      content: <GeneralInfo saleId={id} />,
+    },
     {
       key: "sale-info",
       icon: <InfoOutlinedIcon />,

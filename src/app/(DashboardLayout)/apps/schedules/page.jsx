@@ -84,7 +84,7 @@ const ScheduleTable = () => {
       .index({
         page,
         limit: rowsPerPage,
-        expand: ['customer', 'service_opinion'],
+        expand: ['customer', 'service_opinion', 'branch', 'address', 'schedule_agent'],
         service__in: selectedServices.join(','),
         fields: [
           'id',
@@ -102,6 +102,8 @@ const ScheduleTable = () => {
           'address.city',
           'address.state',
           'observation',
+          'branch.name',
+          'schedule_agent.complete_name',
         ],
         ordering: orderDirection === 'desc' ? order : `-${order}`,
         ...filters,
@@ -347,6 +349,8 @@ const ScheduleTable = () => {
                       </Box>
                     </TableCell>
                     <TableCell>Contratante</TableCell>
+                    <TableCell>Unidade</TableCell>
+                    <TableCell>Agente</TableCell>
                     <TableCell onClick={() => handleSort('status')}>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <span>Status</span>
@@ -358,6 +362,7 @@ const ScheduleTable = () => {
                           ))}
                       </Box>
                     </TableCell>
+                    <TableCell>Endereço</TableCell>
                     {hasPermission(['field_services.view_service_opinion']) && (
                       <TableCell onClick={() => handleSort('service_opinion')}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -399,8 +404,15 @@ const ScheduleTable = () => {
                         {`${formatDate(schedule.schedule_date)} - ${schedule.schedule_start_time}`}
                       </TableCell>
                       <TableCell>{schedule?.customer?.complete_name}</TableCell>
+                      <TableCell>{schedule?.branch?.name}</TableCell>
+                      <TableCell>{schedule?.schedule_agent?.complete_name}</TableCell>
                       <TableCell>
                         <ScheduleStatusChip status={schedule.status} />
+                      </TableCell>
+                      <TableCell>
+                        {schedule.address.street}, {schedule.address.number},{' '}
+                        {schedule.address.neighborhood}, {schedule.address.city}/
+                        {schedule.address.state}
                       </TableCell>
                       {hasPermission(['field_services.view_service_opinion']) && (
                         <TableCell>

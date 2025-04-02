@@ -44,6 +44,7 @@ import ChipSigned from '@/utils/status/ChipSigned';
 import PulsingBadge from '@/app/components/shared/PulsingBadge';
 import TableSortLabel from '@/app/components/shared/TableSortLabel';
 import DetailsTabs from '../../../sale/DetailsTabs';
+import CounterChip from '../CounterChip';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -121,6 +122,7 @@ const SaleList = () => {
           'is_released_to_engineering',
           'created_at',
           'branch.name',
+          'treadmill_counter'
         ],
         ...filters,
       });
@@ -293,6 +295,7 @@ const SaleList = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Doc.</TableCell>
+                <TableCell>Contador</TableCell>
                 <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
                   <TableSortLabel
                     label="Nome contratante"
@@ -426,6 +429,7 @@ const SaleList = () => {
                         <PulsingBadge color="#FFC008" />
                       )}
                     </TableCell>
+                    <TableCell><CounterChip counter={item.treadmill_counter || 0} /></TableCell>
                     <TableCell>{item.customer.complete_name}</TableCell>
                     <TableCell>{item.contract_number}</TableCell>
                     <TableCell>
@@ -446,7 +450,7 @@ const SaleList = () => {
                     </TableCell>
                     <TableCell>
                       {Array.isArray(item.final_service_opinion) &&
-                      item.final_service_opinion[0].name ? (
+                        item.final_service_opinion[0].name ? (
                         <Chip
                           label={item.final_service_opinion[0].name}
                           color={

@@ -8,7 +8,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import userService from '@/services/userService';
 import { useEffect, useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
-export default function Customer({ data, onRefresh }) {
+export default function Customer({ data, onRefresh = () => {} }) {
   const [formData, setFormData] = useState();
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
