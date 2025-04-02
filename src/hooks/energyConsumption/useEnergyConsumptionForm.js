@@ -1,6 +1,5 @@
-import ProposalService from "@/services/proposalService";
 import { useEffect, useState } from "react";
-import proposalService from '@/services/proposalService';
+import energyConsumptionService from '@/services/energyConsumptionService';
 import { useSelector } from "react-redux"
 
 const useEnergyConsumptionForm = (initialData, id) => {
@@ -78,9 +77,9 @@ const useEnergyConsumptionForm = (initialData, id) => {
 
         try {
             if (id) {
-                await proposalService.update(id, dataToSend);
+                await energyConsumptionService.update(id, dataToSend);
             } else {
-                await proposalService.create(dataToSend);
+                await energyConsumptionService.create(dataToSend);
             }
             setFormErrors({});
             setSuccess(true);
