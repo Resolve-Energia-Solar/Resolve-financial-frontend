@@ -22,7 +22,7 @@ import { AddBoxRounded, Edit } from '@mui/icons-material';
 import EditPhonePage from '../phone/Edit-phone';
 import CreatePhonePage from '../phone/Add-phone';
 
-export default function Phones({ data, onRefresh, userId }) {
+export default function Phones({ data, onRefresh = () => {}, userId }) {
   const [phones, setPhones] = useState([]);
 
   const [loading, setLoading] = useState(true);
