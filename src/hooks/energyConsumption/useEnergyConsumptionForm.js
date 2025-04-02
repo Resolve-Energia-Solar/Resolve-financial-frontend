@@ -1,5 +1,6 @@
 import ProposalService from "@/services/proposalService";
 import { useEffect, useState } from "react";
+import proposalService from '@/services/proposalService';
 import { useSelector } from "react-redux"
 
 const useEnergyConsumptionForm = (initialData, id) => {
@@ -38,13 +39,34 @@ const useEnergyConsumptionForm = (initialData, id) => {
             appliances_kwh_sum: formData.appliances_kwh_sum,
         };
 
-        // try {
-        //     if (id) {
-        //         await proposal
-        //     }
-        // }
+        try {
+            if (id) {
+                await proposalService.update(id, dataToSend);
+            } else {
+                await proposalService.create(dataToSend);
+            }
+            setFormErrors({});
+            setSuccess(true);
+            return true;
+        } catch (err) {
+            setSuccess(false);
+            setFormErrors(err.response?.data || {});
+            console.error(err.response?.data || err);
+            return false;
+        } finally {
+            setLoading(false);
+        }
     }
 
+    return {
+        formData,
+        setFormData,
+        handleSave,
+        handleChange,
+        formErrors,
+        success,
+        loading,
+    };
 };
 
 export default useEnergyConsumptionForm;
