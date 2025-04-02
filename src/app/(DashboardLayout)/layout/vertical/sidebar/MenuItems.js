@@ -28,7 +28,8 @@ import {
   IconRuler,
   IconFileArrowRight,
   IconUserDollar,
-  IconHomeQuestion
+  IconHomeQuestion,
+  IconLicense,
 } from '@tabler/icons-react';
 
 
@@ -72,13 +73,13 @@ const Menuitems = [
       {
         id: uniqueId(),
         title: 'Ordem de Serviço',
-        icon: IconPoint,
+        icon: IconLicense,
         href: '/apps/schedules',
       },
       {
         id: uniqueId(),
         title: 'Agendamentos',
-        icon: IconPoint,
+        icon: IconCalendarStar,
         href: '/apps/commercial/schedules',
       },
     ],
@@ -128,21 +129,7 @@ const Menuitems = [
       },
     ],
   },
-  {
-    id: uniqueId(),
-    title: 'Serviços de Campo',
-    icon: IconMapRoute,
-    href: '/',
-    children: [
-      {
-        id: uniqueId(),
-        title: 'Agendamentos',
-        icon: IconCalendarStar,
-        href: '/apps/inspections/schedule',
-      },
-    ],
-    permissions: ['field_services.view_schedule'],
-  },
+  
   {
     id: uniqueId(),
     title: 'Financiamento',

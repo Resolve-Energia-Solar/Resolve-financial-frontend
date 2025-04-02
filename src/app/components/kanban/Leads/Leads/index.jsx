@@ -83,6 +83,7 @@ function EditLeadTabs({ leadId }) {
             'Propostas',
             'Vendas',
             'Documentos',
+            'Contratos',
             'Agendamentos',
           ].map((label, index) => (
             <Tab
@@ -132,9 +133,13 @@ function EditLeadTabs({ leadId }) {
           <SalesListPage lead={lead} />
         </CustomTabPanel>
 
-        {/* docs a ser retirado futuramente e integrado à page de projetos */}
+        {/* docs */}
         <CustomTabPanel value={tabValue} index={4}>
           <LeadDocumentPage />
+        </CustomTabPanel>
+
+        {/* contratos */}
+        <CustomTabPanel value={tabValue} index={5}>
         </CustomTabPanel>
 
         {/* agendamentos */}
