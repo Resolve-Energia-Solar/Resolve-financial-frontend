@@ -115,9 +115,6 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 		}
 	};
 
-	// const handleInputChange = (e) => {
-	// 	setFormData( [...formData.entries()] );
-	// };
 
 	// medium calc logic
 	const [startDate, setStartDate] = useState(null);
@@ -158,17 +155,6 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 	}
 
 	const months = generateMonths();
-
-	// const handleSaveAverage = () => {
-	// 	setFormData({
-	// 		...formData,
-	// 		medium_consumption: mediumConsumptionResult,
-	// 	})
-	// 	setOpenMediumCalcResultDialog(false);
-	// 	enqueueSnackbar("Consumo médio salvo!", { variant: 'success' });
-
-	// }
-
 
 	// household appliances part
 	const [householdAppliances, setHouseholdAppliances] = useState([
@@ -223,18 +209,6 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 		setAppliancesCalcResult(totalConsumption);
 		setOpenHouseholdConsumptionResultDialog(true);
 	};
-
-
-
-	// const handleSaveAppliancesKwhSum = () => {
-	// 	setFormData({
-	// 		...formData,
-	// 		appliances_kwh_sum: appliancesCalcResult,
-	// 	})
-	// 	setOpenHouseholdConsumptionResultDialog(false);
-	// 	enqueueSnackbar("Energia estimada salva!", { variant: 'success' });
-
-	// }
 
 
 	return (
@@ -976,7 +950,6 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 											<Grid item xs={2}>
 												<Button
 													onClick={() => {
-														// handleSaveAverage();
 														handleChange('medium_consumption', averageConsuption);
 														setOpenMediumCalcResultDialog(false);
 														setOpenMediumCalcDialog(false);
@@ -1260,8 +1233,7 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 											</Grid>
 											<Grid item xs={2}>
 												<Button
-													onClick={(e) => {
-														// handleSaveAppliancesKwhSum();
+													onClick={() => {
 														handleChange('appliances_kwh_sum', appliancesCalcResult);
 														setOpenHouseholdConsumptionResultDialog(false);
 														setOpenEstimatedGeneration(false)
