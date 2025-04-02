@@ -115,9 +115,9 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 		}
 	};
 
-	const handleInputChange = (e) => {
-		setFormData( [...formData.entries()] );
-	};
+	// const handleInputChange = (e) => {
+	// 	setFormData( [...formData.entries()] );
+	// };
 
 	// medium calc logic
 	const [startDate, setStartDate] = useState(null);
@@ -226,15 +226,15 @@ function EnergyConsumptionCalc({ leadId = null, onRefresh = null, onClose = null
 
 
 
-	const handleSaveAppliancesKwhSum = () => {
-		setFormData({
-			...formData,
-			appliances_kwh_sum: appliancesCalcResult,
-		})
-		setOpenHouseholdConsumptionResultDialog(false);
-		enqueueSnackbar("Energia estimada salva!", { variant: 'success' });
+	// const handleSaveAppliancesKwhSum = () => {
+	// 	setFormData({
+	// 		...formData,
+	// 		appliances_kwh_sum: appliancesCalcResult,
+	// 	})
+	// 	setOpenHouseholdConsumptionResultDialog(false);
+	// 	enqueueSnackbar("Energia estimada salva!", { variant: 'success' });
 
-	}
+	// }
 
 
 	return (
