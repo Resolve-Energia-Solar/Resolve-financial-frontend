@@ -10,6 +10,7 @@ const useEnergyConsumptionForm = (initialData, id) => {
         project: null,
         medium_consumption: "",
         appliances_kwh_sum: "",
+        uploaded_file: null,
 
     });
 
@@ -23,6 +24,8 @@ const useEnergyConsumptionForm = (initialData, id) => {
                 project: initialData.project?.id || null,
                 medium_consumption: initialData.medium_consumption || null,
                 appliances_kwh_sum: initialData.appliances_kwh_sum || null,
+                uploaded_file: initialData.uploaded_file || null,
+
             })
         }
     }, [initialData, user?.id]);
@@ -37,6 +40,7 @@ const useEnergyConsumptionForm = (initialData, id) => {
             project: formData.project,
             medium_consumption: formData.medium_consumption,
             appliances_kwh_sum: formData.appliances_kwh_sum,
+            uploaded_file: formData.uploaded_file,
         };
 
         try {
@@ -57,6 +61,18 @@ const useEnergyConsumptionForm = (initialData, id) => {
             setLoading(false);
         }
     }
+
+    // const handleFileChange = (event) => {
+    //     const file = event.target.files[0];
+    //     if (file) {
+    //         setFormData({
+    //             ...formData, 
+    //             uploaded_file: file,
+    //         });
+
+    //         console.log("file: ", file);
+    //     }
+    // };
 
     return {
         formData,
