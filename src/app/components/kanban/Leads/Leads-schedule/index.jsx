@@ -17,7 +17,7 @@ import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard'
 import ScheduleCard from '../components/CardSchedule';
 import BasicDateCalendar from '@/app/components/kanban/Leads/components/BasicDateCalendar';
 import ScheduleCardSkeleton from '../components/ScheduleCardSkeleton';
-import { Add } from '@mui/icons-material';
+import { Add, Height } from '@mui/icons-material';
 import LeadAddSchedulePage from './Add-Schedule';
 
 function LeadSchedulePage({ leadId = null }) {
@@ -119,7 +119,23 @@ function LeadSchedulePage({ leadId = null }) {
         </Box>
       </Grid>
 
-      <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog 
+        open={editModalOpen} 
+        onClose={() => setEditModalOpen(false)} 
+        maxWidth="md" 
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '20px',
+            padding: '24px',
+            gap: '24px',
+            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+            backgroundColor: '#FFFFFF',
+            height: "643px",
+            width: "889px"
+          },
+        }}
+      >
         <DialogContent sx={{ p: 10 }}>
           <LeadAddSchedulePage
             leadId={leadId}
