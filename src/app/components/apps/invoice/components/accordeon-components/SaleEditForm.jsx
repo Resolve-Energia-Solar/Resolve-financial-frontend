@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Box, Grid, FormControlLabel, Button, Autocomplete, TextField } from '@mui/material';
 import { useSnackbar } from 'notistack';
@@ -14,7 +14,6 @@ import useCurrencyFormatter from '@/hooks/useCurrencyFormatter';
 import FormSkeleton from '../../../comercial/sale/components/salesList/FormSkeleton';
 
 const SaleEditForm = ({ id_sale }) => {
-
   const [formData, setFormData] = useState({
     customer: '',
     branch: '',
@@ -41,12 +40,10 @@ const SaleEditForm = ({ id_sale }) => {
     return permissions.some((permission) => userPermissions.includes(permission));
   };
 
-  // Função handleChange para atualizar um campo específico
   const handleChange = useCallback((field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   }, []);
 
-  // Hook para formatação de moeda; atualiza total_value via handleChange
   const { formattedValue, handleValueChange } = useCurrencyFormatter(
     formData.total_value,
     (newValue) => handleChange('total_value', newValue)
@@ -67,6 +64,7 @@ const SaleEditForm = ({ id_sale }) => {
     { value: 'CA', label: 'Cancelado' },
   ];
 
+  // Buscar dados da venda
   useEffect(() => {
     const fetchSaleData = async () => {
       setLoading(true);
@@ -106,12 +104,100 @@ const SaleEditForm = ({ id_sale }) => {
       await saleService.update(id_sale, formData);
       enqueueSnackbar('Dados salvos com sucesso!', { variant: 'success' });
     } catch (error) {
+      setFormErrors(error.response.data);
       console.error('Erro ao salvar dados:', error);
       enqueueSnackbar('Erro ao salvar dados.', { variant: 'error' });
     } finally {
       setSaveLoading(false);
     }
   }, [id_sale, formData, enqueueSnackbar]);
+
+
+  const customerExtraParams = useMemo(() => ({ fields: 'id,complete_name' }), []);
+  const mapCustomerResponse = useCallback((data) =>
+    data.results.map((item) => ({
+      label: item.complete_name,
+      value: item.id,
+    })), []
+  );
+  const handleCustomerChange = useCallback((option) => {
+    handleChange('customer', option ? option.value : '');
+  }, [handleChange]);
+
+  // Franquia
+  const branchExtraParams = useMemo(() => ({ fields: 'id,name' }), []);
+  const mapBranchResponse = useCallback((data) =>
+    data.results.map((item) => ({
+      label: item.name,
+      value: item.id,
+    })), []
+  );
+  const handleBranchChange = useCallback((option) => {
+    handleChange('branch', option ? option.value : '');
+  }, [handleChange]);
+
+  // Vendedor
+  const sellerExtraParams = useMemo(() => ({ fields: 'id,complete_name' }), []);
+  const mapSellerResponse = useCallback((data) =>
+    data.results.map((item) => ({
+      label: item.complete_name,
+      value: item.id,
+    })), []
+  );
+  const handleSellerChange = useCallback((option) => {
+    handleChange('seller', option ? option.value : '');
+  }, [handleChange]);
+
+  // Supervisor de Vendas
+  const supervisorExtraParams = useMemo(() => ({ fields: 'id,complete_name' }), []);
+  const mapSupervisorResponse = useCallback((data) =>
+    data.results.map((item) => ({
+      label: item.complete_name,
+      value: item.id,
+    })), []
+  );
+  const handleSupervisorChange = useCallback((option) => {
+    handleChange('sales_supervisor', option ? option.value : '');
+  }, [handleChange]);
+
+  // Gerente de Vendas
+  const managerExtraParams = useMemo(() => ({ fields: 'id,complete_name' }), []);
+  const mapManagerResponse = useCallback((data) =>
+    data.results.map((item) => ({
+      label: item.complete_name,
+      value: item.id,
+    })), []
+  );
+  const handleManagerChange = useCallback((option) => {
+    handleChange('sales_manager', option ? option.value : '');
+  }, [handleChange]);
+
+  // Campanha de Marketing
+  const campaignExtraParams = useMemo(() => ({ fields: 'id,name' }), []);
+  const mapCampaignResponse = useCallback((data) =>
+    data.results.map((item) => ({
+      label: item.name,
+      value: item.id,
+    })), []
+  );
+  const handleCampaignChange = useCallback((option) => {
+    handleChange('marketing_campaign', option ? option.value : '');
+  }, [handleChange]);
+
+  // Motivo do Cancelamento/Distrato
+  const cancellationExtraParams = useMemo(() => ({}), []);
+  const mapCancellationResponse = useCallback((data) =>
+    data.results.map((item) => ({
+      label: item.reason,
+      value: item.id,
+    })), []
+  );
+  const handleCancellationChange = useCallback((option) => {
+    setFormData((prev) => ({
+      ...prev,
+      cancellation_reasons: option ? option.map((opt) => opt.value) : [],
+    }));
+  }, []);
 
   if (loading) {
     return <FormSkeleton fields={6} />;
@@ -135,17 +221,10 @@ const SaleEditForm = ({ id_sale }) => {
             noOptionsText="Nenhum cliente encontrado"
             endpoint="/api/users"
             queryParam="complete_name__icontains"
-            extraParams={{ fields: 'id,complete_name' }}
+            extraParams={customerExtraParams}
             value={formData.customer}
-            onChange={(option) =>
-              handleChange('customer', option ? option.value : '')
-            }
-            mapResponse={(data) =>
-              data.results.map((item) => ({
-                label: item.complete_name,
-                value: item.id,
-              }))
-            }
+            onChange={handleCustomerChange}
+            mapResponse={mapCustomerResponse}
             {...(formErrors.customer_id && { error: true, helperText: formErrors.customer_id })}
           />
         </Grid>
@@ -158,17 +237,10 @@ const SaleEditForm = ({ id_sale }) => {
             noOptionsText="Nenhuma franquia encontrada"
             endpoint="/api/branches"
             queryParam="name__icontains"
-            extraParams={{ fields: 'id,name' }}
+            extraParams={branchExtraParams}
             value={formData.branch}
-            onChange={(option) =>
-              handleChange('branch', option ? option.value : '')
-            }
-            mapResponse={(data) =>
-              data.results.map((item) => ({
-                label: item.name,
-                value: item.id,
-              }))
-            }
+            onChange={handleBranchChange}
+            mapResponse={mapBranchResponse}
             {...(formErrors.branch_id && { error: true, helperText: formErrors.branch_id })}
           />
         </Grid>
@@ -182,17 +254,10 @@ const SaleEditForm = ({ id_sale }) => {
               noOptionsText="Nenhum vendedor encontrado"
               endpoint="/api/users"
               queryParam="complete_name__icontains"
-              extraParams={{ fields: 'id,complete_name' }}
+              extraParams={sellerExtraParams}
               value={formData.seller}
-              onChange={(option) =>
-                handleChange('seller', option ? option.value : '')
-              }
-              mapResponse={(data) =>
-                data.results.map((item) => ({
-                  label: item.complete_name,
-                  value: item.id,
-                }))
-              }
+              onChange={handleSellerChange}
+              mapResponse={mapSellerResponse}
               {...(formErrors.seller_id && { error: true, helperText: formErrors.seller_id })}
             />
           </Grid>
@@ -206,17 +271,10 @@ const SaleEditForm = ({ id_sale }) => {
             noOptionsText="Nenhum supervisor encontrado"
             endpoint="/api/users"
             queryParam="complete_name__icontains"
-            extraParams={{ fields: 'id,complete_name' }}
+            extraParams={supervisorExtraParams}
             value={formData.sales_supervisor}
-            onChange={(option) =>
-              handleChange('sales_supervisor', option ? option.value : '')
-            }
-            mapResponse={(data) =>
-              data.results.map((item) => ({
-                label: item.complete_name,
-                value: item.id,
-              }))
-            }
+            onChange={handleSupervisorChange}
+            mapResponse={mapSupervisorResponse}
             {...(formErrors.sales_supervisor_id && { error: true, helperText: formErrors.sales_supervisor_id })}
           />
         </Grid>
@@ -229,17 +287,10 @@ const SaleEditForm = ({ id_sale }) => {
             noOptionsText="Nenhum gerente encontrado"
             endpoint="/api/users"
             queryParam="complete_name__icontains"
-            extraParams={{ fields: 'id,complete_name' }}
+            extraParams={managerExtraParams}
             value={formData.sales_manager}
-            onChange={(option) =>
-              handleChange('sales_manager', option ? option.value : '')
-            }
-            mapResponse={(data) =>
-              data.results.map((item) => ({
-                label: item.complete_name,
-                value: item.id,
-              }))
-            }
+            onChange={handleManagerChange}
+            mapResponse={mapManagerResponse}
             {...(formErrors.sales_manager_id && { error: true, helperText: formErrors.sales_manager_id })}
           />
         </Grid>
@@ -252,17 +303,10 @@ const SaleEditForm = ({ id_sale }) => {
             noOptionsText="Nenhuma campanha encontrada"
             endpoint="/api/marketing-campaigns"
             queryParam="name__icontains"
-            extraParams={{ fields: 'id,name' }}
+            extraParams={campaignExtraParams}
             value={formData.marketing_campaign}
-            onChange={(option) =>
-              handleChange('marketing_campaign', option ? option.value : '')
-            }
-            mapResponse={(data) =>
-              data.results.map((item) => ({
-                label: item.name,
-                value: item.id,
-              }))
-            }
+            onChange={handleCampaignChange}
+            mapResponse={mapCampaignResponse}
             {...(formErrors.marketing_campaign_id && { error: true, helperText: formErrors.marketing_campaign_id })}
           />
         </Grid>
@@ -346,21 +390,11 @@ const SaleEditForm = ({ id_sale }) => {
               noOptionsText="Nenhum motivo encontrado"
               endpoint="/api/cancellation_reasons"
               queryParam="name__icontains"
-              extraParams={{}}
+              extraParams={cancellationExtraParams}
               multiple
               value={formData.cancellation_reasons}
-              onChange={(option) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  cancellation_reasons: option ? option.map((opt) => opt.value) : [],
-                }))
-              }
-              mapResponse={(data) =>
-                data.results.map((item) => ({
-                  label: item.reason,
-                  value: item.id,
-                }))
-              }
+              onChange={handleCancellationChange}
+              mapResponse={mapCancellationResponse}
               {...(formErrors.cancellation_reasons && { error: true, helperText: formErrors.cancellation_reasons })}
             />
           </Grid>
