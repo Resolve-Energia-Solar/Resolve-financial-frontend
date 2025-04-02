@@ -28,7 +28,8 @@ import {
   IconRuler,
   IconFileArrowRight,
   IconUserDollar,
-  IconHomeQuestion
+  IconHomeQuestion,
+  IconLicense,
 } from '@tabler/icons-react';
 
 
@@ -42,7 +43,7 @@ const Menuitems = [
     href: '/',
     icon: IconBriefcase2,
     href: '/apps/kanban/',
-    permissions: ['core.view_board', 'resolve_crm.view_lead'],
+    permissions: ['core.view_board', 'resolve_crm.view_lead', 'resolve_crm.view_schedule'],
     children: [
       {
         id: uniqueId(),
@@ -58,6 +59,13 @@ const Menuitems = [
         href: '/apps/leads',
         permissions: ['resolve_crm.view_lead']
       },
+      {
+        id: uniqueId(),
+        title: 'Agendamentos',
+        icon: IconCalendarStar,
+        href: '/apps/commercial/schedules',
+        permissions: ['field_services.view_schedule'],
+      },
     ],
     chip: 'Novo',
     chipColor: 'secondary',
@@ -68,21 +76,16 @@ const Menuitems = [
     title: 'Serviços de Campo',
     icon: IconUserPin,
     href: '/',
+    permissions: ['field_services.view_all_schedule'],
     children: [
       {
         id: uniqueId(),
         title: 'Ordem de Serviço',
-        icon: IconPoint,
+        icon: IconLicense,
         href: '/apps/schedules',
-      },
-      {
-        id: uniqueId(),
-        title: 'Agendamentos',
-        icon: IconPoint,
-        href: '/apps/commercial/schedules',
+        permissions: ['field_services.view_all_schedule'],
       },
     ],
-    permissions: ['field_services.view_schedule'],
   },
   {
     id: uniqueId(),
@@ -128,21 +131,7 @@ const Menuitems = [
       },
     ],
   },
-  {
-    id: uniqueId(),
-    title: 'Serviços de Campo',
-    icon: IconMapRoute,
-    href: '/',
-    children: [
-      {
-        id: uniqueId(),
-        title: 'Agendamentos',
-        icon: IconCalendarStar,
-        href: '/apps/inspections/schedule',
-      },
-    ],
-    permissions: ['field_services.view_schedule'],
-  },
+  
   {
     id: uniqueId(),
     title: 'Financiamento',

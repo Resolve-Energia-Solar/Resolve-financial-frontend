@@ -183,7 +183,7 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
             }
           >
             <FormLabel component="legend">
-              O cliente já possui Projeto?
+              O cliente já possui Venda?
               {!(
                 formData.customer &&
                 formData.service &&

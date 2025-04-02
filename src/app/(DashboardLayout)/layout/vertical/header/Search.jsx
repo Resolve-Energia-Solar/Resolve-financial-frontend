@@ -63,10 +63,10 @@ const Search = () => {
           <Stack direction="row" spacing={2} alignItems="center">
             <TextField
               id="tb-search"
-              placeholder="Search here"
+              placeholder="Buscar..."
               fullWidth
               onChange={(e) => setSerach(e.target.value)}
-              inputProps={{ 'aria-label': 'Search here' }}
+              inputProps={{ 'aria-label': 'Buscar...' }}
             />
             <IconButton size="small" onClick={handleDrawerClose2}>
               <IconX size="18" />
@@ -76,7 +76,7 @@ const Search = () => {
         <Divider />
         <Box p={2} sx={{ maxHeight: '60vh', overflow: 'auto' }}>
           <Typography variant="h5" p={1}>
-            Quick Page Links
+            Links rápidos
           </Typography>
           <Box>
             <List component="nav">

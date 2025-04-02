@@ -247,6 +247,7 @@ const CommercialScheduleDetail = ({ schedule }) => {
                       avatar={<SupervisorAccountIcon color="primary" />}
                       title="Agente"
                     />
+                    <Divider />
                     <CardContent>
                       {schedule.schedule_agent ? (
                         <UserCard
@@ -266,6 +267,7 @@ const CommercialScheduleDetail = ({ schedule }) => {
                       avatar={<PersonIcon color="primary" />}
                       title="Supervisor"
                     />
+                    <Divider />
                     <CardContent>
                       {seller?.employee?.user_manager ? (
                         <UserCard
@@ -285,6 +287,7 @@ const CommercialScheduleDetail = ({ schedule }) => {
                       avatar={<PersonIcon color="primary" />}
                       title="Vendedor"
                     />
+                    <Divider />
                     <CardContent>
                       {seller ? (
                         <UserCard userId={seller.id} showEmail={false} showPhone />

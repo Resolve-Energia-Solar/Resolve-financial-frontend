@@ -24,10 +24,9 @@ import {
   IconPigMoney,
   IconPaperclip,
   IconRuler,
-  IconFileArrowRight
+  IconFileArrowRight,
 } from '@tabler/icons-react';
 import { uniqueId } from 'lodash';
-
 
 const Menuitems = [
   {
@@ -61,7 +60,12 @@ const Menuitems = [
     title: 'Comercial',
     icon: IconTrendingUp,
     href: '/apps/commercial/sale',
-    permissions: ['resolve_crm.view_sale', 'resolve_crm.view_lead', 'core.view_board', 'field_services.view_schedule'],
+    permissions: [
+      'resolve_crm.view_sale',
+      'resolve_crm.view_lead',
+      'core.view_board',
+      'field_services.view_schedule',
+    ],
     children: [
       {
         id: uniqueId(),
@@ -121,17 +125,17 @@ const Menuitems = [
     title: 'Serviço de Campo',
     icon: IconMapRoute,
     href: '/apps/inspections/schedule',
-    permissions: ['field_services.view_schedule'],
+    permissions: ['field_services.view_all_schedule'],
     children: [
       {
         id: uniqueId(),
         title: 'Agendamentos',
         icon: IconCalendarStar,
         href: '/apps/inspections/schedule',
-        permissions: ['field_services.view_schedule'],
+        permissions: ['field_services.view_all_schedule'],
       },
     ],
-    permissions: ['field_services.view_schedule'],
+    permissions: ['field_services.view_all_schedule'],
   },
   {
     id: uniqueId(),
@@ -174,7 +178,14 @@ const Menuitems = [
     id: uniqueId(),
     title: 'Config. Sistema',
     icon: IconSettings,
-    permissions: ['accounts.view_user', 'accounts.view_squad', 'accounts.view_branch', 'accounts.view_department', 'accounts.view_role', 'core.view_documenttype'],
+    permissions: [
+      'accounts.view_user',
+      'accounts.view_squad',
+      'accounts.view_branch',
+      'accounts.view_department',
+      'accounts.view_role',
+      'core.view_documenttype',
+    ],
     children: [
       {
         id: uniqueId(),
