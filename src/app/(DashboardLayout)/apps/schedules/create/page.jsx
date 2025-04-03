@@ -502,7 +502,7 @@ const CreateSchedulePage = () => {
                           data.results.map((a) => ({ label: a.street, value: a.id }))
                         }
                         fullWidth
-                        disabled
+                        disabled={!!(formData.project && formData.project.address.value)}
                         helperText={errors.address?.[0] || ''}
                         error={!!errors.address}
                         required
