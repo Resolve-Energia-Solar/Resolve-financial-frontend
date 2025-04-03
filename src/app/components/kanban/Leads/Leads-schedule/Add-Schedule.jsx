@@ -130,12 +130,14 @@ function LeadAddSchedulePage({
 
   return (
     <Grid container spacing={1}>
-      <Typography variant="h3" sx={{ fontWeight: 800 }}>
-        Agende uma visita
-      </Typography>
-      <Typography variant="body1" sx={{ color: '#ADADAD', mt: 2 }}>
-        Selecione data, horário e selecione o endereço do cliente para criar o agendamento.
-      </Typography>
+      <Grid item>
+        <Typography sx={{ fontSize: "24px", fontWeight: 700, color: "#303030" }}>
+          Agende uma visita
+        </Typography>
+        <Typography sx={{ fontSize: "14px", fontWeight: 400, color: "#98959D" }}>
+          Selecione data, horário e selecione o endereço do cliente para criar o agendamento.
+        </Typography>
+      </Grid>
 
       {serviceId ? null : (
         <Grid item xs={12}>
