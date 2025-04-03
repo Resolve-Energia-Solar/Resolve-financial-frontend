@@ -1,5 +1,5 @@
 'use client';
-import { Grid, Button, Stack, FormControlLabel, CircularProgress } from '@mui/material';
+import { Grid, Button, Stack, FormControlLabel, CircularProgress, Box, Typography } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 
@@ -16,6 +16,7 @@ import AutoCompleteUnits from '../components/auto-complete/AutoCompleteUnits';
 import AutoCompleteUserProject from '../../inspections/auto-complete/Auto-input-UserProject';
 import AutoCompleteProject from '../../inspections/auto-complete/Auto-input-Project';
 import AutoCompleteSituation from '../../comercial/sale/components/auto-complete/Auto-Input-Situation';
+import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 
 export default function AddRequestCompany({
   onClosedModal = null,
@@ -41,11 +42,11 @@ export default function AddRequestCompany({
 
   const today = new Date();
   //const formattedDate =
-    //today.getFullYear() +
-    //'-' +
-    //(today.getMonth() + 1).toString().padStart(2, '0') +
-    //'-' +
-    //today.getDate().toString().padStart(2, '0');
+  //today.getFullYear() +
+  //'-' +
+  //(today.getMonth() + 1).toString().padStart(2, '0') +
+  //'-' +
+  //today.getDate().toString().padStart(2, '0');
 
   //formData.request_date = formattedDate;
 
@@ -94,10 +95,92 @@ export default function AddRequestCompany({
 
         <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="unit">Unidade Consumidora</CustomFormLabel>
-          <AutoCompleteUnits
+          {/* <AutoCompleteUnits
             onChange={(id) => handleChange('unit', id)}
             value={formData.unit}
             {...(formErrors.unit && { error: true, helperText: formErrors.unit })}
+          /> */}
+          <GenericAsyncAutocompleteInput
+            label="Unidade Consumidora"
+            noOptionsText="Nenhuma unidade encontrado"
+            endpoint="/api/units"
+            queryParam="name__contains"
+            value={formData.unit}
+            onChange={(option) => {
+              handleChange('unit', option.value || null);
+            }}
+            extraParams={{
+              expand: [
+                'address',
+                'project.sale.customer',
+                'project.homologator',
+              ],
+              fields: [
+                'id',
+                'address.complete_address',
+                'project.sale.customer.complete_name',
+                'project.homologator.complete_name',
+                'project.sale.customer.id',
+                'project.project_number',
+                'unit_number',
+                'project.id',
+                'project.sale.customer.id',
+                'project.homologator.id',
+                'address.id',
+              ],
+            }}
+            mapResponse={(data) => {
+              console.log('API Response Data:', data);
+              return data.results.map((p) => ({
+              label: `${p.unit_number} - ${p.address?.complete_address || ''}`,
+              value: p.id,
+              project_number: {
+                label: p.project.project_number,
+                value: p.project.id,
+              },
+              customer: {
+                label: p.project.sale.customer.complete_name,
+                value: p.project.sale.customer.id,
+              },
+              address: {
+                label: p.address?.complete_address || '',
+                value: p.address?.id || null,
+              },
+              contract_number: p.unit_number,
+              homologator: {
+                label: p.project.homologator?.complete_name || 'Homologador não disponível',
+                value: p.project.homologator?.id || null,
+              },
+              })
+            );
+            }}
+            renderOption={(props, option) => (
+              <li {...props}>
+                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                  <Typography variant="body2" color="text.secondary">
+                    <strong>Projeto:</strong>
+                    {option.project_number.label}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                  <strong>Endereço:</strong> 
+                    {option.address.label}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    <strong>Conta Contrato:</strong>
+                    {option.contract_number}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    <strong>Cliente:</strong>
+                    {option.customer.label}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    <strong>Homologador:</strong>
+                    {option.homologator.label}
+                  </Typography>
+                </Box>
+              </li>
+            )}
+            {...(formErrors.project && { error: true, helperText: formErrors.project })}
           />
         </Grid>
 

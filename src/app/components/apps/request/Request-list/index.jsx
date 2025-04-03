@@ -37,7 +37,6 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const RequestList = ({ projectId = null, enableFilters = true, enableIndicators = true }) => {
-  const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -86,6 +85,8 @@ const RequestList = ({ projectId = null, enableFilters = true, enableIndicators 
     setRequestIdSelected(null);
   };
 
+  console.log('projectId', projectId);
+
   useEffect(() => {
     const fetchProjects = async () => {
       setLoading(true);
@@ -98,8 +99,7 @@ const RequestList = ({ projectId = null, enableFilters = true, enableIndicators 
           expand: 'type',
           ...stableFilters,
         });
-
-
+        console.log('Data fetched:', data);
         setProjectsList(data.results);
         setTotalRows(data.meta.pagination.total_count);
       } catch (err) {
