@@ -20,6 +20,7 @@ const GenericAsyncAutocompleteInput = ({
   const [options, setOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const stableExtraParams = useMemo(() => extraParams, [JSON.stringify(extraParams)]);
   const stableMapResponse = useMemo(() => mapResponse, [mapResponse]);
@@ -31,11 +32,8 @@ const GenericAsyncAutocompleteInput = ({
   }, [value, options]);
 
   useEffect(() => {
-    if (!inputValue.trim()) {
-      setOptions([]);
-      setLoading(false);
-      return;
-    }
+    if (!open) return; // Só busca se o dropdown estiver aberto
+
     let active = true;
     setLoading(true);
     const handler = setTimeout(async () => {
@@ -66,7 +64,7 @@ const GenericAsyncAutocompleteInput = ({
       active = false;
       clearTimeout(handler);
     };
-  }, [inputValue, endpoint, queryParam, stableExtraParams, stableMapResponse, debounceTime]);
+  }, [inputValue, open, endpoint, queryParam, stableExtraParams, stableMapResponse, debounceTime]);
 
   useEffect(() => {
     const fetchInitialOption = async () => {
@@ -91,6 +89,9 @@ const GenericAsyncAutocompleteInput = ({
   return (
     <Autocomplete
       freeSolo
+      open={open}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
       options={options}
       getOptionLabel={(option) => option.label || ""}
       loading={loading}
