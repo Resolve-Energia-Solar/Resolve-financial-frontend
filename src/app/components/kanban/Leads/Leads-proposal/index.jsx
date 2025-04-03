@@ -94,7 +94,7 @@ const LeadsProposalListPage = ({ leadId = null }) => {
         const response = await ProposalService.index({
             expand: 'products,created_by',
             fields: 'id,products,value,status,created_by,due_date',
-            created_by__in: lead.customer,
+            lead: lead.id,
             page: page + 1,
             limit: rowsPerPage,
         });
