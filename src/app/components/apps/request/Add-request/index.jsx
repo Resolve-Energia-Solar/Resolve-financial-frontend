@@ -95,11 +95,6 @@ export default function AddRequestCompany({
 
         <Grid item xs={12} sm={12} lg={4}>
           <CustomFormLabel htmlFor="unit">Unidade Consumidora</CustomFormLabel>
-          {/* <AutoCompleteUnits
-            onChange={(id) => handleChange('unit', id)}
-            value={formData.unit}
-            {...(formErrors.unit && { error: true, helperText: formErrors.unit })}
-          /> */}
           <GenericAsyncAutocompleteInput
             label="Unidade Consumidora"
             noOptionsText="Nenhuma unidade encontrado"
