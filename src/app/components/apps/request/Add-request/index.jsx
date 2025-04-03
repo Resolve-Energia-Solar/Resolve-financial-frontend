@@ -38,19 +38,7 @@ export default function AddRequestCompany({
   formData.project ? formData.project : (formData.project = projectId);
   formData.status ? formData.status : (formData.status = 'S');
 
-  console.log('formData', formData);
-
   const today = new Date();
-  //const formattedDate =
-  //today.getFullYear() +
-  //'-' +
-  //(today.getMonth() + 1).toString().padStart(2, '0') +
-  //'-' +
-  //today.getDate().toString().padStart(2, '0');
-
-  //formData.request_date = formattedDate;
-
-  //console.log('formData', formData);
 
   useEffect(() => {
     if (success) {
@@ -123,9 +111,11 @@ export default function AddRequestCompany({
                 'project.homologator.id',
                 'address.id',
               ],
+              project: projectId,
+              limit: 15,
+              page: 1,
             }}
             mapResponse={(data) => {
-              console.log('API Response Data:', data);
               return data.results.map((p) => ({
               label: `${p.unit_number} - ${p.address?.complete_address || ''}`,
               value: p.id,
