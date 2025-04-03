@@ -1,0 +1,68 @@
+name: CI/CD Pipeline for resolve-erp-frontend HOMOLOG update v1
+
+on:
+  push:
+    branches:
+      - approval
+
+env:
+  DOCKER_IMAGE: 'resourceresolve.azurecr.io/resolve-erp-frontend-homolog'
+  AKS_CLUSTER_NAME: 'Resolve-AKS-Web'
+  AKS_RESOURCE_GROUP: 'Resolve'
+  NAMESPACE: 'resolve-frontend-erp-homolog'
+  DEPLOYMENT_NAME: 'resolve-erp-frontend-homolog'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-24.04
+    environment: resolve
+
+    steps:
+      # 1. Checkout do Código
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # 2. Log in ao Azure Container Registry
+      - name: Log in to Azure Container Registry
+        run: echo "${{ vars.AZURE_ACR_PASSWORD }}" | docker login resourceresolve.azurecr.io -u "${{ vars.AZURE_ACR_USERNAME }}" --password-stdin
+
+      # 3. Criar o arquivo .env com as variáveis do GitHub Secrets
+      - name: Create .env File
+        run: |
+          echo "GENERATE_SOURCEMAP=${{ vars.GENERATE_SOURCEMAP }}" >> .env
+          echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID=${{ vars.NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_ID}}" >> .env
+          echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID=${{ vars.NEXT_PUBLIC_API_BASE_CLICKSIGN_TEMPLATE_PRE_ID}}" >> .env
+          echo "NEXT_PUBLIC_CLICKSIGN_TOKEN=${{ vars.NEXT_PUBLIC_CLICKSIGN_TOKEN}}" >> .env
+          echo "NEXT_PUBLIC_API_BASE_CLICKSIGN_URL=${{ vars.NEXT_PUBLIC_API_BASE_CLICKSIGN_URL }}" >> .env
+          echo "NEXT_PUBLIC_API_BASE_URL=${{ vars.NEXT_PUBLIC_API_BASE_URL_HOMOLOG }}" >> .env
+          echo "NEXT_PUBLIC_CONTENT_TYPE_LEAD_ID=${{ vars.NEXT_PUBLIC_CONTENT_TYPE_LEAD_ID }}" >> .env
+          echo "NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID=${{ vars.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID }}" >> .env
+          echo "NEXT_PUBLIC_SERVICE_INSPECTION_ID=${{ vars.NEXT_PUBLIC_SERVICE_INSPECTION_ID}}" >> .env
+          echo "NEXT_PUBLIC_SUPABASE_KEY=${{ vars.NEXT_PUBLIC_SUPABASE_KEY}}" >> .env
+          echo "NEXT_PUBLIC_CONTENT_TYPE_SALE_ID=${{ vars.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID }}" >> .env
+          echo "NEXT_PUBLIC_SUPABASE_URL=${{ vars.NEXT_PUBLIC_SUPABASE_URL }}" >> .env
+          echo "NEXT_PUBLIC_FINANCIAL_RECORD_CONTENT_TYPE=${{ vars.NEXT_PUBLIC_FINANCIAL_RECORD_CONTENT_TYPE }}" >> .env
+          echo "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}" >> .env
+          echo "NEXT_PUBLIC_SENTRY_DSN=${{ vars.NEXT_PUBLIC_SENTRY_DSN }}" >> .env
+          echo "NEXT_PUBLIC_CI=${{ vars.NEXT_PUBLIC_CI }}" >> .env
+          echo "NEXT_PUBLIC_RUNTIME=${{ vars.NEXT_PUBLIC_RUNTIME }}" >> .env
+
+      # 4. Build e Push da Imagem Docker
+      - name: Build and Push Docker Image
+        run: |
+          docker build --no-cache --build-arg ENV_FILE=.env -t "${DOCKER_IMAGE}:${{ github.sha }}" .
+          docker push "${DOCKER_IMAGE}:${{ github.sha }}"
+
+      # 5. Log in ao Azure CLI
+      - name: Log in to Azure CLI
+        run: az login --service-principal -u "${{ vars.AZURE_CLIENT_ID }}" -p "${{ vars.AZURE_CLIENT_SECRET }}" --tenant "${{ vars.AZURE_TENANT_ID }}"
+
+      # 6. Configurar Acesso ao Cluster AKS
+      - name: Configure Access to AKS
+        run: az aks get-credentials --resource-group "$AKS_RESOURCE_GROUP" --name "$AKS_CLUSTER_NAME" --overwrite-existing
+
+      # 7. Atualizar a Imagem do Deployment no AKS
+      - name: Update Deployment on AKS
+        run: |
+          kubectl set image deployment/$DEPLOYMENT_NAME resolve-erp-frontend-homolog="${DOCKER_IMAGE}:${{ github.sha }}" -n "$NAMESPACE"
+          kubectl rollout status deployment/$DEPLOYMENT_NAME -n "$NAMESPACE"

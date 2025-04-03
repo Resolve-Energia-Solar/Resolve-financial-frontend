@@ -4,7 +4,7 @@ import serviceCatalogService from '@/services/serviceCatalogService';
 import { useSelector } from 'react-redux';
 import { useSnackbar } from 'notistack';
 
-const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
+// const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
 
 // Função auxiliar para extrair o id, se o valor for um objeto com a propriedade "value"
 const extractId = (fieldValue) => {
@@ -21,7 +21,7 @@ const useScheduleForm = (initialData, id, service_id) => {
   const [formData, setFormData] = useState({
     schedule_creator: user?.user?.id || user?.user || null,
     category: null,
-    service: service_id || SERVICE_INSPECTION_ID,
+    service: null,
     parent_schedules_id: [],
     customer: null,
     leads: [],
@@ -52,7 +52,7 @@ const useScheduleForm = (initialData, id, service_id) => {
     if (initialData) {
       setFormData({
         schedule_creator: initialData.schedule_creator || null,
-        service: initialData.service?.id || service_id || SERVICE_INSPECTION_ID,
+        service: initialData.service?.id || service_id,
         parent_schedules_id: initialData.parent_schedules?.map((s) => s.id) || [],
         customer: initialData?.customer?.id || null,
         leads: initialData.leads?.map((l) => l.id) || [],
