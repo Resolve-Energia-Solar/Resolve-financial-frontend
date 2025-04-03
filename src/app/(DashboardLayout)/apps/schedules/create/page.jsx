@@ -14,6 +14,7 @@ import {
   FormControl,
   FormLabel,
   TextField,
+  Chip,
 } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 import PageContainer from '@/app/components/container/PageContainer';
@@ -133,11 +134,11 @@ const CreateSchedulePage = () => {
   }, [formData.service, formData.schedule_date, formData.schedule_start_time]);
 
   const saleStatusMap = {
-    P: 'Pendente',
-    F: 'Finalizado',
-    EA: 'Em Andamento',
-    C: 'Cancelado',
-    D: 'Distrato',
+    P: ['Pendente', 'warning'],
+    F: ['Finalizado', 'success'],
+    EA: ['Em Andamento', 'info'],
+    C: ['Cancelado', 'error'],
+    D: ['Distrato', 'default'],
   };
 
   const formatCurrency = (value) =>
@@ -416,9 +417,15 @@ const CreateSchedulePage = () => {
                           </Typography>
                           <Typography variant="body2">
                             <strong>Status da Venda:</strong>{' '}
-                            {option.status
-                              ? saleStatusMap[option.status] || 'Status Desconhecido'
-                              : 'Status não Disponível'}
+                            {option.status ? (
+                              <Chip
+                                label={saleStatusMap[option.status][0] || 'Status Desconhecido'}
+                                size="small"
+                                color={saleStatusMap[option.status][1] || 'default'}
+                              />
+                            ) : (
+                              'Status não Disponível'
+                            )}
                           </Typography>
                           <Typography variant="body2">
                             <strong>Produto:</strong>{' '}
