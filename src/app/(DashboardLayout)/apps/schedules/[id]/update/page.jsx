@@ -125,6 +125,9 @@ const UpdateSchedulePage = () => {
             address: formData.address?.value || null,
             products: formData.product ? [formData.product.value] : [],
             schedule_creator: user.id,
+            status: formData.status,
+            service_opinion: formData.service_opinion?.value,
+            final_service_opinion: formData.final_service_opinion?.value,
         };
 
         const fieldLabels = {
@@ -177,7 +180,7 @@ const UpdateSchedulePage = () => {
 
     const formatCurrency = (value) =>
         new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-    console.log('formData', formData);
+
     return (
         <PageContainer
             title="Atualizar Agendamento"
@@ -344,6 +347,56 @@ const UpdateSchedulePage = () => {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <GenericAsyncAutocompleteInput
+                                label="Parecer do Agente"
+                                value={formData.service_opinion}
+                                onChange={(newValue) =>
+                                    setFormqData({ ...formData, service_opinion: newValue })
+                                }
+                                endpoint="/api/service-opinions"
+                                queryParam="name__icontains"
+                                extraParams={{
+                                    fields: ['id', 'name'],
+                                    service: `${formData.service?.id}`
+                                }}
+                                mapResponse={(data) =>
+                                    data.results.map((s) => ({
+                                        label: s.name,
+                                        value: s.id
+                                    }))
+                                }
+                                helperText={errors.service_opinion?.[0] || ''}
+                                error={!!errors.service_opinion}
+                                fullWidth
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <GenericAsyncAutocompleteInput
+                                label="Parecer Final"
+                                value={formData.final_service_opinion}
+                                onChange={(newValue) =>
+                                    setFormData({ ...formData, final_service_opinion: newValue })
+                                }
+                                endpoint="/api/service-opinions"
+                                queryParam="name__icontains"
+                                extraParams={{
+                                    fields: ['id', 'name'],
+                                    service: `${formData.service?.id}`
+                                }}
+                                mapResponse={(data) =>
+                                    data.results.map((s) => ({
+                                        label: s.name,
+                                        value: s.id
+                                    }))
+                                }
+                                helperText={errors.final_service_opinion?.[0] || ''}
+                                error={!!errors.final_service_opinion}
+                                fullWidth
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <GenericAsyncAutocompleteInput
                                 label="Projeto"
                                 value={formData.project}
                                 onChange={(newValue) => {
@@ -395,7 +448,7 @@ const UpdateSchedulePage = () => {
                                         'sale.homologator.complete_name',
                                         'address.complete_address',
                                     ],
-                                    filter: 'status__in=C,P,EA',
+                                    status__in: 'C,P,EA',
                                 }}
                                 mapResponse={(data) =>
                                     data.results.map((p) => ({
