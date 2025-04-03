@@ -17,6 +17,9 @@ import AutoCompleteUser from '@/app/components/apps/invoice/components/auto-comp
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
 import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
 
+import { IconUserScan } from '@tabler/icons-react';
+import theme from '@/utils/theme';
+
 
 function LeadAddSchedulePage({
   leadId = null,
@@ -162,30 +165,7 @@ function LeadAddSchedulePage({
         </Grid>
 
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
-          <Grid item xs={12}>
-            <CustomFormLabel htmlFor="address">Endereço</CustomFormLabel>
-            <GenericAutocomplete
-              label="Endereço"
-              fetchOptions={fetchAddress}
-              multiple
-              AddComponent={CreateAddressPage}
-              getOptionLabel={(option) =>
-                `${option.street}, ${option.number} - ${option.city}, ${option.state}`
-              }
-              onChange={(selected) => {
-                setSelectedAddresses(selected);
-                console.log(selected);
-                const ids = Array.isArray(selected) ? selected.map((item) => item.id) : [];
-                handleChange('addresses_ids', ids);
-              }}
-              value={selectedAddresses}
-              {...(formErrors.addresses && {
-                error: true,
-                helperText: formErrors.addresses,
-              })}
-            />
-          </Grid>
-          <Grid item xs={5}>
+          <Grid item xs={6}>
             <CustomFormLabel
               htmlFor="customer"
               sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
@@ -206,18 +186,42 @@ function LeadAddSchedulePage({
                     fontWeight: '400',
                     fontSize: '12px',
                     opacity: 1,
+                    height: "20px"
                   },
                 },
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Box sx={{ color: '#7E92A2', fontWeight: '400', fontSize: '12px' }}>
-                      R$
-                    </Box>
-                  </InputAdornment>
-                ),
+                startAdornment: (<IconUserScan color={theme.palette.primary.main} />),
               }}
             />
           </Grid>
+          <Grid item xs={6}>
+            <CustomFormLabel
+              htmlFor="address"
+              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+            >
+              Endereço
+            </CustomFormLabel>
+            <GenericAutocomplete
+              fetchOptions={fetchAddress}
+              multiple
+              AddComponent={CreateAddressPage}
+              getOptionLabel={(option) =>
+                `${option.street}, ${option.number} - ${option.city}, ${option.state}`
+              }
+              onChange={(selected) => {
+                setSelectedAddresses(selected);
+                console.log(selected);
+                const ids = Array.isArray(selected) ? selected.map((item) => item.id) : [];
+                handleChange('addresses_ids', ids);
+              }}
+              value={selectedAddresses}
+              {...(formErrors.addresses && {
+                error: true,
+                helperText: formErrors.addresses,
+              })}
+              
+            />
+          </Grid>
+          
         </Grid>
 
         <Grid item xs={12} sm={12} lg={6}>
