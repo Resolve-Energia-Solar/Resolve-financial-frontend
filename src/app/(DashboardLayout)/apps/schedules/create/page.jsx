@@ -64,7 +64,7 @@ const CreateSchedulePage = () => {
       branch: formData.branch?.value,
       address: formData.address?.value,
       schedule_creator: user.id,
-      products: formData.product ? [formData.product.value] : []
+      products: formData.product ? [formData.product.value] : [],
     };
 
     const fieldLabels = {
@@ -167,7 +167,7 @@ const CreateSchedulePage = () => {
                 queryParam="name__icontains"
                 extraParams={{
                   fields: ['id', 'name', 'deadline', 'category'], // ajustado: substitui "deadline.hours"
-                  expand: [] // ajustado: nenhum expand para este endpoint
+                  expand: [], // ajustado: nenhum expand para este endpoint
                 }}
                 mapResponse={(data) =>
                   data.results.map((s) => ({
@@ -196,7 +196,10 @@ const CreateSchedulePage = () => {
               <AutoCompleteUserSchedule
                 onChange={(id) => {
                   if (id) {
-                    setFormData({ ...formData, schedule_agent: { value: id, name: 'nome do agente' } });
+                    setFormData({
+                      ...formData,
+                      schedule_agent: { value: id, name: 'nome do agente' },
+                    });
                   }
                 }}
                 value={formData.schedule_agent}
@@ -334,7 +337,7 @@ const CreateSchedulePage = () => {
                         'sale',
                         'sale.branch',
                         'product',
-                        'sale.homologator'
+                        'sale.homologator',
                       ],
                       fields: [
                         'id',
@@ -390,25 +393,36 @@ const CreateSchedulePage = () => {
                             <strong>Projeto:</strong> {option.project_number}
                           </Typography>
                           <Typography variant="body2">
-                            <strong>Valor total:</strong> {option.total_value ? formatCurrency(option.total_value) : 'Sem valor Total'}
+                            <strong>Valor total:</strong>{' '}
+                            {option.total_value
+                              ? formatCurrency(option.total_value)
+                              : 'Sem valor Total'}
                           </Typography>
                           <Typography variant="body2">
-                            <strong>Contrato:</strong> {option.contract_number || 'Contrato não Disponível'}
+                            <strong>Contrato:</strong>{' '}
+                            {option.contract_number || 'Contrato não Disponível'}
                           </Typography>
                           <Typography variant="body2">
-                            <strong>Homologador:</strong> {option.homologator.label || 'Homologador não Disponível'}
+                            <strong>Homologador:</strong>{' '}
+                            {option.homologator.label || 'Homologador não Disponível'}
                           </Typography>
                           <Typography variant="body2">
-                            <strong>Data de Contrato:</strong> {formatDate(option.signature_date) || 'Data de Contrato não Disponível'}
+                            <strong>Data de Contrato:</strong>{' '}
+                            {formatDate(option.signature_date) || 'Data de Contrato não Disponível'}
                           </Typography>
                           <Typography variant="body2">
-                            <strong>Endereço:</strong> {option.address.label || 'Endereço não Disponível'}
+                            <strong>Endereço:</strong>{' '}
+                            {option.address.label || 'Endereço não Disponível'}
                           </Typography>
                           <Typography variant="body2">
-                            <strong>Status da Venda:</strong> {option.status ? saleStatusMap[option.status] || 'Status Desconhecido' : 'Status não Disponível'}
+                            <strong>Status da Venda:</strong>{' '}
+                            {option.status
+                              ? saleStatusMap[option.status] || 'Status Desconhecido'
+                              : 'Status não Disponível'}
                           </Typography>
                           <Typography variant="body2">
-                            <strong>Produto:</strong> {option.product.label || 'Produto não Disponível'}
+                            <strong>Produto:</strong>{' '}
+                            {option.product.label || 'Produto não Disponível'}
                           </Typography>
                         </Box>
                       </li>

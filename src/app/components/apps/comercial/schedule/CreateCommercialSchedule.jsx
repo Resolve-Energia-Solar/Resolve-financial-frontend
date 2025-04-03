@@ -25,6 +25,7 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
 import { useSelector } from 'react-redux';
 import HasPermission from '@/app/components/permissions/HasPermissions';
+import formatDate from '@/utils/formatDate';
 
 const timeOptions = [
   { value: '08:30:00', label: '08:30' },
@@ -61,6 +62,9 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
     }
   };
 
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+
   useEffect(() => {
     if (success) {
       routerPushOrClose();
@@ -85,13 +89,12 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
   };
 
   const handleProjectChange = (option) => {
+    console.log('option', option);
     handleChange('project', option || null);
     if (option && option.address) {
-      // Se o projeto tiver um endereço, preenche automaticamente
-      handleChange('address', option.address.id);
-      setSelectedAddress({ label: option.address.label, value: option.address.id });
+      handleChange('address', option.address.value);
+      setSelectedAddress({ label: option.address.label, value: option.address.value });
     } else {
-      // Se não tiver, exibe um alerta e permite seleção manual
       setAlertOpen(true);
       setAlertMessage(
         'Este projeto não possui endereço associado. Por favor, selecione um endereço manualmente.',
@@ -100,6 +103,17 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
       handleChange('address', null);
       setSelectedAddress(null);
     }
+  };
+
+  console.log('selectedAddress', selectedAddress);
+  console.log('formData', formData);
+
+  const saleStatusMap = {
+    P: 'Pendente',
+    F: 'Finalizado',
+    EA: 'Em Andamento',
+    C: 'Cancelado',
+    D: 'Distrato',
   };
 
   return (
@@ -133,8 +147,9 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
             queryParam="name__icontains"
             extraParams={{ fields: 'name,id' }}
             value={formData.service}
+            debounceTime={500}
             onChange={(option) => {
-              handleChange('service', option || null);
+              validateChange('service', option || null);
             }}
             mapResponse={(data) =>
               data.results.map((item) => ({ label: item.name, value: item.id }))
@@ -215,22 +230,96 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
                 noOptionsText="Nenhum projeto encontrado"
                 endpoint="/api/projects"
                 queryParam="q"
-                extraParams={{
-                  customer: clientSelected,
-                  fields: 'project_number,sale.customer.complete_name,id,address',
-                  expand: 'sale.customer',
-                }}
                 value={formData.project}
                 onChange={(option) => {
                   handleProjectChange(option);
                 }}
-                mapResponse={(data) =>
-                  data.results.map((item) => ({
-                    label: `${item.project_number} - ${item.sale.customer.complete_name}`,
-                    value: item.id,
-                    address: item.address,
-                  }))
-                }
+                extraParams={{
+                  expand: [
+                    'sale.customer',
+                    'sale',
+                    'sale.branch',
+                    'product',
+                    'sale.homologator',
+                    'address',
+                  ],
+                  fields: [
+                    'id',
+                    'project_number',
+                    'address',
+                    'sale.total_value',
+                    'sale.contract_number',
+                    'sale.customer.complete_name',
+                    'sale.customer.id',
+                    'sale.branch.id',
+                    'sale.branch.name',
+                    'product.id',
+                    'product.name',
+                    'product.description',
+                    'sale.signature_date',
+                    'sale.status',
+                    'sale.homologator.complete_name',
+                    'address.complete_address',
+                    'address.id',
+                  ],
+                  customer: clientSelected,
+                }}
+                mapResponse={(data) => {
+                  console.log('API Response Data:', data);
+                  return data.results.map((p) => ({
+                  label: `${p.project_number} - ${p.sale.customer.complete_name}`,
+                  value: p.id,
+                  project_number: p.project_number,
+                  total_value: p.sale.total_value,
+                  customer: {
+                    label: p.sale.customer.complete_name,
+                    value: p.sale.customer.id,
+                  },
+                  branch: { label: p.sale.branch.name, value: p.sale.branch.id },
+                  address: {
+                    label: p.address?.complete_address || '',
+                    value: p.address?.id || null,
+                  },
+                  product: { label: p.product.name, value: p.product.id },
+                  contract_number: p.sale.contract_number,
+                  homologator: {
+                    label: p.sale.homologator?.complete_name || 'Homologador não disponível',
+                    value: p.sale.homologator?.id || null,
+                  },
+                  signature_date: p.sale.signature_date,
+                  status: p.sale.status,
+                  }));
+                }}
+                renderOption={(props, option) => (
+                  <li {...props}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                      <Typography variant="body2">
+                        <strong>Projeto:</strong> {option.project_number}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Valor total:</strong> {option.total_value ? formatCurrency(option.total_value) : 'Sem valor Total'}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Contrato:</strong> {option.contract_number || 'Contrato não Disponível'}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Homologador:</strong> {option.homologator.label || 'Homologador não Disponível'}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Data de Contrato:</strong> {formatDate(option.signature_date) || 'Data de Contrato não Disponível'}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Endereço:</strong> {option.address.label || 'Endereço não Disponível'}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Status da Venda:</strong> {option.status ? saleStatusMap[option.status] || 'Status Desconhecido' : 'Status não Disponível'}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Produto:</strong> {option.product.label || 'Produto não Disponível'}
+                      </Typography>
+                    </Box>
+                  </li>
+                )}
                 {...(formErrors.project && { error: true, helperText: formErrors.project })}
               />
             </Grid>
@@ -241,7 +330,7 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
                 endpoint="/api/addresses"
                 queryParam="street__icontains"
                 extraParams={{ customer_id: clientSelected, fields: 'street,number,city,state,id' }}
-                disabled={!formData.project || formData.project.address !== null}
+                disabled={!formData.project}
                 value={selectedAddress || formData.address}
                 onChange={(option) => {
                   handleChange('address', option || null);
