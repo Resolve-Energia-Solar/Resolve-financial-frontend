@@ -1,5 +1,5 @@
 'use client';
-import { Grid, Typography, Stack, CircularProgress, Button } from '@mui/material';
+import { Grid, Typography, Stack, CircularProgress, Button, InputAdornment, Box, TextField, } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 import AutoCompleteUser from '@/app/components/apps/invoice/components/auto-complete/Auto-Input-User';
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
 import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
+
 
 function LeadAddSchedulePage({
   leadId = null,
@@ -129,129 +130,168 @@ function LeadAddSchedulePage({
   const [selectedAddresses, setSelectedAddresses] = useState([]);
 
   return (
-    <Grid container spacing={1}>
-      <Grid item gap={2} xs={12} sx={{ display: 'flex', justifyContent: "flex-start", flexDirection: 'column' }}>
-        <Grid item xs={12}>
-          <Typography sx={{ fontSize: "24px", fontWeight: 700, color: "#303030" }}>
-            Agende uma visita
-          </Typography>
+    <Grid container spacing={0}>
+      <Grid item xs={12} sx={{ display: 'flex', justifyContent: "flex-start", flexDirection: 'column' }}>
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
+          <Grid item xs={12}>
+            <Typography sx={{ fontSize: "24px", fontWeight: 700, color: "#303030" }}>
+              Agende uma visita
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography sx={{ fontSize: "14px", fontWeight: 400, color: "#98959D" }}>
+              Selecione data, horário e selecione o endereço do cliente para criar o agendamento.
+            </Typography>
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <Typography sx={{ fontSize: "14px", fontWeight: 400, color: "#98959D" }}>
-            Selecione data, horário e selecione o endereço do cliente para criar o agendamento.
-          </Typography>
-        </Grid>
-      </Grid>
 
-      {serviceId ? null : (
-        <Grid item xs={12}>
-          <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
-          <AutoCompleteServiceCatalog
-            onChange={(id) => handleChange('service_id', id)}
-            value={formData.service_id}
-            {...(formErrors.service_id && {
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
+          {serviceId ? null : (
+            <Grid item xs={12}>
+              <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
+              <AutoCompleteServiceCatalog
+                onChange={(id) => handleChange('service_id', id)}
+                value={formData.service_id}
+                {...(formErrors.service_id && {
+                  error: true,
+                  helperText: formErrors.service_id,
+                })}
+              />
+            </Grid>
+          )}
+        </Grid>
+
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
+          <Grid item xs={12}>
+            <CustomFormLabel htmlFor="address">Endereço</CustomFormLabel>
+            <GenericAutocomplete
+              label="Endereço"
+              fetchOptions={fetchAddress}
+              multiple
+              AddComponent={CreateAddressPage}
+              getOptionLabel={(option) =>
+                `${option.street}, ${option.number} - ${option.city}, ${option.state}`
+              }
+              onChange={(selected) => {
+                setSelectedAddresses(selected);
+                console.log(selected);
+                const ids = Array.isArray(selected) ? selected.map((item) => item.id) : [];
+                handleChange('addresses_ids', ids);
+              }}
+              value={selectedAddresses}
+              {...(formErrors.addresses && {
+                error: true,
+                helperText: formErrors.addresses,
+              })}
+            />
+          </Grid>
+          <Grid item xs={5}>
+            <CustomFormLabel
+              htmlFor="customer"
+              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+            >
+              Cliente
+            </CustomFormLabel>
+            <TextField
+              name="customer"
+              id='customer'
+              type='text'
+              value={formData.customer}
+              onChange={(e) => handleChange('customer', e.target.value)}
+              fullWidth
+              InputProps={{
+                sx: {
+                  input: {
+                    color: '#7E92A2',
+                    fontWeight: '400',
+                    fontSize: '12px',
+                    opacity: 1,
+                  },
+                },
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ color: '#7E92A2', fontWeight: '400', fontSize: '12px' }}>
+                      R$
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+        </Grid>
+
+        <Grid item xs={12} sm={12} lg={6}>
+          <FormDate
+            label="Data"
+            name="start_datetime"
+            value={formData.schedule_date}
+            onChange={(newValue) => validateChange('schedule_date', newValue)}
+            {...(formErrors.schedule_date && {
               error: true,
-              helperText: formErrors.service_id,
+              helperText: formErrors.schedule_date,
             })}
           />
         </Grid>
-      )}
 
-      <Grid item xs={12}>
-        <CustomFormLabel htmlFor="address">Endereço</CustomFormLabel>
-        <GenericAutocomplete
-          label="Endereço"
-          fetchOptions={fetchAddress}
-          multiple
-          AddComponent={CreateAddressPage}
-          getOptionLabel={(option) =>
-            `${option.street}, ${option.number} - ${option.city}, ${option.state}`
-          }
-          onChange={(selected) => {
-            setSelectedAddresses(selected);
-            console.log(selected);
-            const ids = Array.isArray(selected) ? selected.map((item) => item.id) : [];
-            handleChange('addresses_ids', ids);
-          }}
-          value={selectedAddresses}
-          {...(formErrors.addresses && {
-            error: true,
-            helperText: formErrors.addresses,
-          })}
-        />
-      </Grid>
-
-      <Grid item xs={12} sm={12} lg={6}>
-        <FormDate
-          label="Data"
-          name="start_datetime"
-          value={formData.schedule_date}
-          onChange={(newValue) => validateChange('schedule_date', newValue)}
-          {...(formErrors.schedule_date && {
-            error: true,
-            helperText: formErrors.schedule_date,
-          })}
-        />
-      </Grid>
-
-      <Grid item xs={12} sm={12} lg={6}>
-        <FormSelect
-          options={timeOptions}
-          onChange={(e) => validateChange('schedule_start_time', e.target.value)}
-          disabled={!formData.schedule_date}
-          value={formData.schedule_start_time || ''}
-          {...(formErrors.schedule_start_time && {
-            error: true,
-            helperText: formErrors.schedule_start_time,
-          })}
-          label={'Hora'}
-        />
-      </Grid>
-
-      {/* Status do Agendamento */}
-      <HasPermission
-        permissions={['field_services.change_status_schedule_field']}
-        userPermissions={userPermissions}
-      >
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={12} lg={6}>
           <FormSelect
-            label="Status do Agendamento"
-            options={statusOptions}
-            onChange={(e) => handleChange('status', e.target.value)}
-            value={formData.status || ''}
-            {...(formErrors.status && { error: true, helperText: formErrors.status })}
+            options={timeOptions}
+            onChange={(e) => validateChange('schedule_start_time', e.target.value)}
+            disabled={!formData.schedule_date}
+            value={formData.schedule_start_time || ''}
+            {...(formErrors.schedule_start_time && {
+              error: true,
+              helperText: formErrors.schedule_start_time,
+            })}
+            label={'Hora'}
           />
         </Grid>
-      </HasPermission>
-      <Grid item xs={12} sm={12} lg={12}>
-        <CustomFormLabel htmlFor="name">Observação</CustomFormLabel>
-        <CustomTextField
-          name="observation"
-          placeholder="Observação do agendamento"
-          variant="outlined"
-          fullWidth
-          multiline
-          rows={4}
-          value={formData.observation}
-          onChange={(e) => handleChange('observation', e.target.value)}
-          {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
-        />
-      </Grid>
 
-      {/* Botão de Ação*/}
-      <Grid item xs={12} sm={12} lg={12}>
-        <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: '#FFCC00', color: '#000', p: 1 }}
+        {/* Status do Agendamento */}
+        <HasPermission
+          permissions={['field_services.change_status_schedule_field']}
+          userPermissions={userPermissions}
+        >
+          <Grid item xs={12}>
+            <FormSelect
+              label="Status do Agendamento"
+              options={statusOptions}
+              onChange={(e) => handleChange('status', e.target.value)}
+              value={formData.status || ''}
+              {...(formErrors.status && { error: true, helperText: formErrors.status })}
+            />
+          </Grid>
+        </HasPermission>
+        <Grid item xs={12} sm={12} lg={12}>
+          <CustomFormLabel htmlFor="name">Observação</CustomFormLabel>
+          <CustomTextField
+            name="observation"
+            placeholder="Observação do agendamento"
+            variant="outlined"
             fullWidth
-            onClick={handleSaveForm}
-            disabled={formLoading}
-            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-          >
-            Agendar visita
-          </Button>
-        </Stack>
+            multiline
+            rows={4}
+            value={formData.observation}
+            onChange={(e) => handleChange('observation', e.target.value)}
+            {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
+          />
+        </Grid>
+
+        {/* Botão de Ação*/}
+        <Grid item xs={12} sm={12} lg={12}>
+          <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: '#FFCC00', color: '#000', p: 1 }}
+              fullWidth
+              onClick={handleSaveForm}
+              disabled={formLoading}
+              endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+            >
+              Agendar visita
+            </Button>
+          </Stack>
+        </Grid>
       </Grid>
     </Grid>
   );
