@@ -132,11 +132,12 @@ function LeadSchedulePage({ leadId = null }) {
             boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
             backgroundColor: '#FFFFFF',
             height: "643px",
-            width: "889px"
+            width: "889px",
+            p: 3,
           },
         }}
       >
-        <DialogContent sx={{ p: 10 }}>
+        <DialogContent>
           <LeadAddSchedulePage
             leadId={leadId}
             serviceId={SERVICE_INSPECTION_ID}
