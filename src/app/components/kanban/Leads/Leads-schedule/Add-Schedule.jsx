@@ -1,5 +1,5 @@
 'use client';
-import { Grid, Typography, Stack, CircularProgress, Button, InputAdornment, Box, TextField, } from '@mui/material';
+import { Grid, Typography, Stack, CircularProgress, Button, InputAdornment, Box, TextField, Select, MenuItem, } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
@@ -166,32 +166,44 @@ function LeadAddSchedulePage({
 
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
           <Grid item xs={12} sm={12} lg={6}>
+          <Box sx={{ minWidth: 385 }}>
             <CustomFormLabel
-              htmlFor="customer"
+              htmlFor="project"
               sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
             >
-              Cliente
+              Projeto
             </CustomFormLabel>
-            <TextField
-              name="customer"
-              id='customer'
-              type='text'
-              value={formData.customer}
-              onChange={(e) => handleChange('customer', e.target.value)}
-              fullWidth
-              InputProps={{
-                sx: {
-                  input: {
-                    color: '#7E92A2',
-                    fontWeight: '400',
-                    fontSize: '12px',
-                    opacity: 1,
-                    height: "30px"
-                  },
-                },
-                startAdornment: (<IconUserScan color={theme.palette.primary.main} />),
-              }}
-            />
+              <Select
+                // value={selectedProject || ''}
+                onChange={(e) => setSelectedProject(e.target.value)}
+                fullWidth
+                size="small"
+                sx={{ backgroundColor: '#F4F5F7', borderRadius: '8px', height: "53px" }}
+                displayEmpty
+              >
+                {/* {projects.map((project) => ( */}
+                <MenuItem value="" sx={{ color: '#7E8388' }} disabled>
+                  Selecione um projeto
+                </MenuItem>
+                <MenuItem
+                  // key={project.id}
+                  // value={project.id}
+                  value="project-1"
+                  sx={{ color: '#7E8388' }}
+                >
+                  {/* {project.name} */}
+                  Rua Antônio Barreto, 1198
+                </MenuItem>
+                <MenuItem value="project-2" sx={{ color: '#7E8388' }}>
+                  Rua dos Mundurucus, 2500
+                </MenuItem>
+                <MenuItem value="project-3" sx={{ color: '#7E8388' }}>
+                  Tv. Padre Eutíquio, 87
+                </MenuItem>
+
+                {/* ))} */}
+              </Select>
+            </Box>
           </Grid>
           <Grid item xs={12} sm={12} lg={6}>
             <CustomFormLabel
@@ -283,6 +295,12 @@ function LeadAddSchedulePage({
           </Grid>
 
           <Grid item xs={12} sm={12} lg={4}>
+            <CustomFormLabel
+              htmlFor="start_datetime"
+              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+            >
+              Vendedor
+            </CustomFormLabel>
             <FormSelect
               options={timeOptions}
               onChange={(e) => validateChange('schedule_start_time', e.target.value)}
@@ -292,7 +310,6 @@ function LeadAddSchedulePage({
                 error: true,
                 helperText: formErrors.schedule_start_time,
               })}
-              label={'Hora'}
             />
           </Grid>
         </Grid>
@@ -302,9 +319,14 @@ function LeadAddSchedulePage({
           permissions={['field_services.change_status_schedule_field']}
           userPermissions={userPermissions}
         >
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={12} lg={12}>
+            <CustomFormLabel
+              htmlFor="status"
+              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+            >
+              Status
+            </CustomFormLabel>
             <FormSelect
-              label="Status do Agendamento"
               options={statusOptions}
               onChange={(e) => handleChange('status', e.target.value)}
               value={formData.status || ''}
@@ -316,7 +338,12 @@ function LeadAddSchedulePage({
         <Grid item xs={12} sm={12} lg={12}>
           <CustomFormLabel
               htmlFor="observation"
-              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+              sx={{
+                color: '#303030',
+                fontWeight: '700',
+                fontSize: '16px',
+                marginBottom: 0, 
+              }}
             >
               Observação
             </CustomFormLabel>
@@ -331,6 +358,7 @@ function LeadAddSchedulePage({
             onChange={(e) => handleChange('observation', e.target.value)}
             {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
             sx={{
+              mt: 1,
               '& .MuiInputBase-root': {
                 overflow: 'auto',  
                 wordWrap: 'break-word', 
