@@ -358,6 +358,7 @@ const CreateSchedulePage = () => {
                         'sale.homologator.complete_name',
                         'address.complete_address',
                       ],
+                      filter: 'status__in=C,P,EA',
                     }}
                     mapResponse={(data) =>
                       data.results.map((p) => ({
