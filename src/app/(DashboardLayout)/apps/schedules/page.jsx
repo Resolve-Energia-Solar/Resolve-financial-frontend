@@ -38,6 +38,7 @@ import scheduleService from '@/services/scheduleService';
 import serviceCatalogService from '@/services/serviceCatalogService';
 import { formatDate } from '@/utils/dateUtils';
 import DetailsDrawer from '@/app/components/apps/schedule/DetailsDrawer';
+import UserCard from '@/app/components/apps/users/userCard';
 
 const BCrumb = [{ to: '/', title: 'Início' }, { title: 'Agendamentos' }];
 
@@ -84,7 +85,7 @@ const ScheduleTable = () => {
       .index({
         page,
         limit: rowsPerPage,
-        expand: ['customer', 'service_opinion', 'final_service_opinion', 'branch', 'address', 'schedule_agent'],
+        expand: ['customer', 'service_opinion', 'final_service_opinion', 'branch', 'address'],
         service__in: selectedServices.join(','),
         fields: [
           'id',
@@ -99,7 +100,7 @@ const ScheduleTable = () => {
           'address.complete_address',
           'observation',
           'branch.name',
-          'schedule_agent.complete_name',
+          'schedule_agent',
           'observation'
         ],
         ordering: orderDirection === 'desc' ? order : `-${order}`,
@@ -432,7 +433,11 @@ const ScheduleTable = () => {
                       </TableCell>
                       <TableCell>{schedule?.customer?.complete_name || "Sem cliente"}</TableCell>
                       <TableCell>{schedule?.branch?.name || "Sem unidade"}</TableCell>
-                      <TableCell>{schedule?.schedule_agent?.complete_name || "Sem Agente"}</TableCell>
+                      <TableCell>
+                        {schedule.schedule_agent
+                        ? <UserCard userId={schedule.schedule_agent} showPhone showEmail={false}/>
+                        : <span>Sem agente</span>}
+                      </TableCell>
                       <TableCell sx={{ textWrap: 'wrap' }}>
                         {schedule.address.complete_address}
                       </TableCell>
