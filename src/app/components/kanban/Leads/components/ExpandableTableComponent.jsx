@@ -40,6 +40,8 @@ const ExpandableListComponent = ({
     }
   };
 
+  
+
   const saleStatus = {
     C: { label: 'Canelada', color: '#FFEBEE' },
     D: { label: 'Destrato', color: '#FFCDD2' },
@@ -97,6 +99,7 @@ const ExpandableListComponent = ({
       const response = await projectService.index({
         sale: saleId,
         fields: 'id,product,project_number',
+        expand: 'product',
       });
       console.log('Projetos:', response);
       setProjects(response.results || []);
