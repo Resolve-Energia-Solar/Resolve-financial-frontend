@@ -385,7 +385,7 @@ function LeadAddSchedulePage({
             variant="outlined"
             fullWidth
             multiline
-            rows={4}
+            rows={2}
             value={formData.observation}
             onChange={(e) => handleChange('observation', e.target.value)}
             {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
