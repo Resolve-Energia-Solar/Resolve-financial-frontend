@@ -1,5 +1,5 @@
 'use client';
-import { Grid, Typography, Stack, CircularProgress, Button, InputAdornment, Box, TextField, Select, MenuItem, } from '@mui/material';
+import { Grid, Typography, Stack, CircularProgress, Button, InputAdornment, Box, TextField, Select, MenuItem, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
@@ -17,8 +17,7 @@ import AutoCompleteUser from '@/app/components/apps/invoice/components/auto-comp
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
 import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
 
-import { IconUserScan } from '@tabler/icons-react';
-import theme from '@/utils/theme';
+import { IconAlarm } from '@tabler/icons-react';
 
 
 function LeadAddSchedulePage({
@@ -131,6 +130,7 @@ function LeadAddSchedulePage({
   };
 
   const [selectedAddresses, setSelectedAddresses] = useState([]);
+  const theme = useTheme();
 
   return (
     <Grid container spacing={0}>
@@ -302,20 +302,26 @@ function LeadAddSchedulePage({
               InputProps={{
                 sx: {
                   '& .MuiOutlinedInput-root': {
-                    border: '1px solid #3E3C41 !important',  // Apply border to the root element
+                    border: '1px solid #3E3C41 !important',  
                     borderRadius: '9px',
                     '&:hover': {
                       borderColor: '#3E3C41 !important',
                     },
                   },
                   '& .MuiSelect-select': {
-                    color: '#7E92A2',  // Set the color of the selected option
+                    color: '#7E92A2',  
                     fontWeight: '400',
                     fontSize: '12px',
                     opacity: 1,
                   },
+                  
                 },
               }}
+              startAdornment={
+                <InputAdornment position="start">
+                  <IconAlarm color={theme.palette.primary.main} position='absolute' left='10px' top='50%' />
+                </InputAdornment>
+              }
             />
           </Grid>
 
