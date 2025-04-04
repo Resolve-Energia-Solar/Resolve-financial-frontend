@@ -18,6 +18,7 @@ import CreateAddressPage from '@/app/components/apps/address/Add-address';
 import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
 
 import { IconAlarm } from '@tabler/icons-react';
+import { Autocomplete } from 'formik-mui';
 
 
 function LeadAddSchedulePage({
@@ -38,6 +39,9 @@ function LeadAddSchedulePage({
     success,
   } = useScheduleForm();
   formData.leads_ids = [...new Set([...(formData.leads_ids || []), leadId])];
+
+  const user = useSelector((state) => state.user?.user);
+  formData?.seller ? null : handleChange('seller', user?.id);
 
   const MIN_SCHEDULE_DATE = '2022-01-17T00:00:00';
 
@@ -131,6 +135,10 @@ function LeadAddSchedulePage({
 
   const [selectedAddresses, setSelectedAddresses] = useState([]);
   const theme = useTheme();
+  const scheduleAgentsMockArray = [
+    {code: "F", label: "Fulano"},
+    {code: "C", label: "Ciclano"},
+  ]
 
   return (
     <Grid container spacing={0}>
@@ -166,13 +174,13 @@ function LeadAddSchedulePage({
 
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
           <Grid item xs={12} sm={12} lg={6}>
-          <Box sx={{ minWidth: 385 }}>
-            <CustomFormLabel
-              htmlFor="project"
-              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
-            >
-              Projeto
-            </CustomFormLabel>
+            <Box sx={{ minWidth: 385 }}>
+              <CustomFormLabel
+                htmlFor="project"
+                sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+              >
+                Projeto
+              </CustomFormLabel>
               <Select
                 value={formData.project}
                 onChange={(e) => handleChange(e.target.value)}
@@ -232,17 +240,17 @@ function LeadAddSchedulePage({
                     opacity: 1,
                   },
                   '& .MuiOutlinedInput-root': {
-                    border: '1px solid #3E3C41',  
-                    borderRadius: '9px',          
+                    border: '1px solid #3E3C41',
+                    borderRadius: '9px',
                   },
                   '& .MuiInputBase-input': {
-                    padding: '12px',              
+                    padding: '12px',
                   },
                 },
               }}
             />
           </Grid>
-          
+
         </Grid>
 
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
@@ -253,29 +261,30 @@ function LeadAddSchedulePage({
             >
               Agente Vistoria
             </CustomFormLabel>
-            <FormDate
-              name="start_datetime"
-              value={formData.schedule_date}
-              onChange={(newValue) => validateChange('schedule_date', newValue)}
-              {...(formErrors.schedule_date && {
-                error: true,
-                helperText: formErrors.schedule_date,
-              })}
-              sx={{
-                input: {
-                  color: '#7E92A2',
-                  fontWeight: '400',
-                  fontSize: '12px',
-                  opacity: 1,
-                },
-                '& .MuiOutlinedInput-root': {
-                  border: '1px solid #3E3C41', 
-                  borderRadius: '9px',  
-                },
-              }}
-            />
+            {/* {(formData.schedule_agent && formData.schedule_agent.length > 0 ? formData.schedule_agent : scheduleAgentsMockArray).map((agent, index) => (
+                <Autocomplete
+                  key={index}
+                  // options={formData.schedule_agent}
+                  options={scheduleAgentsMockArray}
+                  value={agent}
+                  onChange={(e, newValue) => {
+                    const updatedAgents = [...formData.schedule_agent];
+                    updatedAgents[index] = newValue;
+                    handleChange('schedule_agent', updatedAgents);
+                  }}
+                  getOptionLabel={(option) => option.label || ''}
+                  renderInput={(params) => (<TextField {...params} label="Selecione o agente de vistoria" />)}
+                  // fullWidth
+                  sx={{
+                    '& .MuiInputBase-root': {
+                      width: '400px',
+                      height: '50px',
+                    },
+                  }}
+                />
+            ))} */}
           </Grid>
-          
+
 
           <Grid item xs={12} sm={12} lg={6}>
             <CustomFormLabel
@@ -295,19 +304,19 @@ function LeadAddSchedulePage({
               InputProps={{
                 sx: {
                   '& .MuiOutlinedInput-root': {
-                    border: '1px solid #3E3C41 !important',  
+                    border: '1px solid #3E3C41 !important',
                     borderRadius: '9px',
                     '&:hover': {
                       borderColor: '#3E3C41 !important',
                     },
                   },
                   '& .MuiSelect-select': {
-                    color: '#7E92A2',  
+                    color: '#7E92A2',
                     fontWeight: '400',
                     fontSize: '12px',
                     opacity: 1,
                   },
-                  
+
                 },
               }}
               startAdornment={
@@ -343,13 +352,13 @@ function LeadAddSchedulePage({
                   opacity: 1,
                 },
                 '& .MuiOutlinedInput-root': {
-                  border: '1px solid #3E3C41', 
-                  borderRadius: '9px',  
+                  border: '1px solid #3E3C41',
+                  borderRadius: '9px',
                 },
               }}
             />
           </Grid>
-          
+
 
           <Grid item xs={12} sm={12} lg={4}>
             <CustomFormLabel
@@ -369,19 +378,19 @@ function LeadAddSchedulePage({
               InputProps={{
                 sx: {
                   '& .MuiOutlinedInput-root': {
-                    border: '1px solid #3E3C41 !important',  
+                    border: '1px solid #3E3C41 !important',
                     borderRadius: '9px',
                     '&:hover': {
                       borderColor: '#3E3C41 !important',
                     },
                   },
                   '& .MuiSelect-select': {
-                    color: '#7E92A2',  
+                    color: '#7E92A2',
                     fontWeight: '400',
                     fontSize: '12px',
                     opacity: 1,
                   },
-                  
+
                 },
               }}
               startAdornment={
@@ -396,19 +405,46 @@ function LeadAddSchedulePage({
           <Grid item xs={12} sm={12} lg={4}>
             <CustomFormLabel
               htmlFor="start_datetime"
-              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px', mb: 0, mt: 0 }}
             >
               Vendedor
             </CustomFormLabel>
-            <FormSelect
-              options={timeOptions}
-              onChange={(e) => validateChange('schedule_start_time', e.target.value)}
-              disabled={!formData.schedule_date}
-              value={formData.schedule_start_time || ''}
-              {...(formErrors.schedule_start_time && {
-                error: true,
-                helperText: formErrors.schedule_start_time,
-              })}
+            <AutoCompleteUser
+              // size="small"
+              onChange={(id) => handleChange('seller', id)}
+              value={formData.seller}
+              {...(formErrors.seller && { error: true, helperText: formErrors.seller })}
+              sx={{
+                width: '100%',  
+                '& .MuiAutocomplete-input': {
+                  height: '40px', 
+                  padding: '12px',
+                  fontSize: '12px', 
+                },
+                '& .MuiAutocomplete-endAdornment': {
+                  padding: '5px', 
+                },
+                '& .MuiAutocomplete-listbox': {
+                  maxHeight: '200px',  
+                },
+              }}
+              InputProps={{
+                sx: {
+                  input: {
+                    color: '#7E92A2',
+                    fontWeight: '400',
+                    fontSize: '12px',
+                    opacity: 1,
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    border: '1px solid #3E3C41',
+                    borderRadius: '9px',
+                    '&:hover': {
+                      borderColor: '#3E3C41',
+                    },
+                  },
+                },
+              }}
             />
           </Grid>
         </Grid>
@@ -436,15 +472,15 @@ function LeadAddSchedulePage({
 
         <Grid item xs={12} sm={12} lg={12}>
           <CustomFormLabel
-              htmlFor="observation"
-              sx={{
-                color: '#303030',
-                fontWeight: '700',
-                fontSize: '16px',
-                marginBottom: 0, 
-              }}
-            >
-              Observação
+            htmlFor="observation"
+            sx={{
+              color: '#303030',
+              fontWeight: '700',
+              fontSize: '16px',
+              marginBottom: 0,
+            }}
+          >
+            Observação
           </CustomFormLabel>
           <CustomTextField
             name="observation"
@@ -459,13 +495,13 @@ function LeadAddSchedulePage({
             sx={{
               mt: 1,
               '& .MuiInputBase-root': {
-                overflow: 'auto',  
-                wordWrap: 'break-word', 
+                overflow: 'auto',
+                wordWrap: 'break-word',
                 height: "100%"
               },
               '& .MuiOutlinedInput-root': {
-                border: '1px solid #3E3C41', 
-                borderRadius: '9px',  
+                border: '1px solid #3E3C41',
+                borderRadius: '9px',
               },
               input: {
                 color: '#7E92A2',
@@ -476,7 +512,7 @@ function LeadAddSchedulePage({
               '& .MuiInputBase-input::placeholder': {
                 color: "#B2AFB6",
               }
-            }}  
+            }}
           />
         </Grid>
 
@@ -484,13 +520,13 @@ function LeadAddSchedulePage({
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             <Button
               variant="contained"
-              sx={{ 
-                backgroundColor: theme.palette.primary.main, 
-                color: '#000', 
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                color: '#000',
                 p: 1,
                 height: "56px",
                 '&:hover': {
-                  color: theme.palette.primary.light, 
+                  color: theme.palette.primary.light,
                 }
               }}
               fullWidth
