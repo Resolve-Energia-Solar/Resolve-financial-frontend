@@ -310,38 +310,40 @@ function LeadAddSchedulePage({
             >
               Supervisor
             </CustomFormLabel>
-            <FormSelect
-              options={timeOptions}
-              onChange={(e) => validateChange('schedule_start_time', e.target.value)}
-              value={formData.schedule_start_time || ''}
-              {...(formErrors.schedule_start_time && {
-                error: true,
-                helperText: formErrors.schedule_start_time,
-              })}
-              InputProps={{
-                sx: {
-                  '& .MuiOutlinedInput-root': {
-                    border: '1px solid #3E3C41 !important',
-                    borderRadius: '9px',
-                    '&:hover': {
-                      borderColor: '#3E3C41 !important',
+            {formData.schedule_creator && formData.schedule_creator.length > 0 ? (
+              formData.schedule_creator.map((agent, index) => (
+                <Autocomplete
+                  key={index}
+                  options={formData.schedule_creator} 
+                  value={agent || null} 
+                  onChange={(e, newValue) => {
+                    const updatedAgents = [...formData.schedule_creator];
+                    updatedAgents[index] = newValue;
+                    handleChange('schedule_creator', updatedAgents); 
+                  }}
+                  getOptionLabel={(option) => option.label || 'N/A'}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Selecione o supervisor" />
+                  )}
+                  sx={{
+                    input: {
+                      color: '#7E92A2',
+                      fontWeight: '400',
+                      fontSize: '14px',
+                      opacity: 1,
                     },
-                  },
-                  '& .MuiSelect-select': {
-                    color: '#7E92A2',
-                    fontWeight: '400',
-                    fontSize: '12px',
-                    opacity: 1,
-                  },
-
-                },
-              }}
-              startAdornment={
-                <InputAdornment position="start">
-                  <IconAlarm color={theme.palette.primary.main} position='absolute' left='10px' top='50%' />
-                </InputAdornment>
-              }
-            />
+                    '& .MuiOutlinedInput-root': {
+                      border: '1px solid #3E3C41',
+                      borderRadius: '9px',
+                    },
+                  }}
+                />
+              ))
+            ) : (
+              <Typography sx={{ color: '#7E92A2', fontSize: '14px', mt: 2.5                 }}>
+                Nenhum supervisor disponível.
+              </Typography>
+            )}
           </Grid>
         </Grid>
 
