@@ -86,11 +86,10 @@ function LeadSchedulePage({ leadId = null }) {
                   fontSize: '0.75rem',
                   p: '5px 10px',
                   borderRadius: '4px',
-                  backgroundColor: '#FFCC00',
+                  backgroundColor: theme.palette.primary.main,
                   color: '#000',
                   '&:hover': {
-                    backgroundColor: '#FFB800',
-                    color: '#000',
+                    color: theme.palette.primary.light,
                   },
                 }}
               >
