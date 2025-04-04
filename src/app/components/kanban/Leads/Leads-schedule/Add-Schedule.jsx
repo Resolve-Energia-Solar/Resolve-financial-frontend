@@ -261,11 +261,11 @@ function LeadAddSchedulePage({
             >
               Agente Vistoria
             </CustomFormLabel>
-            {/* {(formData.schedule_agent && formData.schedule_agent.length > 0 ? formData.schedule_agent : scheduleAgentsMockArray).map((agent, index) => (
+            {formData.schedule_agent && formData.schedule_agent.map((agent, index) => (
                 <Autocomplete
                   key={index}
-                  // options={formData.schedule_agent}
-                  options={scheduleAgentsMockArray}
+                  options={formData.schedule_agent}
+                  // options={scheduleAgentsMockArray}
                   value={agent}
                   onChange={(e, newValue) => {
                     const updatedAgents = [...formData.schedule_agent];
@@ -282,7 +282,7 @@ function LeadAddSchedulePage({
                     },
                   }}
                 />
-            ))} */}
+            ))}
           </Grid>
 
 
@@ -404,13 +404,13 @@ function LeadAddSchedulePage({
 
           <Grid item xs={12} sm={12} lg={4}>
             <CustomFormLabel
-              htmlFor="start_datetime"
-              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px', mb: 0, mt: 0 }}
+              htmlFor="seller"
+              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px', mb: 0, mt: 1.5 }}
             >
               Vendedor
             </CustomFormLabel>
             <AutoCompleteUser
-              // size="small"
+              size="small"
               onChange={(id) => handleChange('seller', id)}
               value={formData.seller}
               {...(formErrors.seller && { error: true, helperText: formErrors.seller })}

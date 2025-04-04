@@ -114,7 +114,7 @@ export default function AutoCompleteUser({
   return (
     <div>
       <Autocomplete
-        sx={{ width: '100%' }}
+        size="small"
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
@@ -136,7 +136,6 @@ export default function AutoCompleteUser({
             label={labeltitle}
             error={error}
             helperText={helperText}
-            size="small"
             variant="outlined"
             InputProps={{
               ...params.InputProps,
@@ -160,6 +159,28 @@ export default function AutoCompleteUser({
             }}
           />
         )}
+        sx={{
+          width: '100%',  
+          '& .MuiAutocomplete-input': {
+            height: '40px', 
+            padding: '12px', 
+            fontSize: '12px',
+          },
+          '& .MuiInputBase-root': {
+            height: "50px",
+            border: '1px solid #3E3C41', 
+            borderRadius: '9px',
+            mt: 0 
+          },
+          '& .MuiAutocomplete-endAdornment': {
+            padding: '5px',  
+          },
+          '& .MuiAutocomplete-listbox': {
+            maxHeight: '200px', 
+          },
+        }}
+    
+        
       />
 
       {/* Modal para adicionar usuário */}
