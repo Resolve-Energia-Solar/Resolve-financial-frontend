@@ -238,9 +238,15 @@ function LeadAddSchedulePage({
                     fontSize: '12px',
                     opacity: 1,
                   },
+                  '& .MuiOutlinedInput-root': {
+                    border: '1px solid #3E3C41',  
+                    borderRadius: '9px',          
+                  },
+                  '& .MuiInputBase-input': {
+                    padding: '12px',              
+                  },
                 },
               }}
-              
             />
           </Grid>
           
@@ -262,20 +268,32 @@ function LeadAddSchedulePage({
                 error: true,
                 helperText: formErrors.schedule_date,
               })}
+              sx={{
+                input: {
+                  color: '#7E92A2',
+                  fontWeight: '400',
+                  fontSize: '12px',
+                  opacity: 1,
+                },
+                '& .MuiOutlinedInput-root': {
+                  border: '1px solid #3E3C41', 
+                  borderRadius: '9px',  
+                },
+              }}
             />
           </Grid>
+          
 
           <Grid item xs={12} sm={12} lg={4}>
             <CustomFormLabel
               htmlFor="start_datetime"
               sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
             >
-              Hora
+              Horário
             </CustomFormLabel>
             <FormSelect
               options={timeOptions}
               onChange={(e) => validateChange('schedule_start_time', e.target.value)}
-              // disabled={!formData.schedule_date}
               value={formData.schedule_start_time || ''}
               {...(formErrors.schedule_start_time && {
                 error: true,
@@ -283,8 +301,15 @@ function LeadAddSchedulePage({
               })}
               InputProps={{
                 sx: {
-                  input: {
-                    color: '#7E92A2',
+                  '& .MuiOutlinedInput-root': {
+                    border: '1px solid #3E3C41 !important',  // Apply border to the root element
+                    borderRadius: '9px',
+                    '&:hover': {
+                      borderColor: '#3E3C41 !important',
+                    },
+                  },
+                  '& .MuiSelect-select': {
+                    color: '#7E92A2',  // Set the color of the selected option
                     fontWeight: '400',
                     fontSize: '12px',
                     opacity: 1,
@@ -293,6 +318,7 @@ function LeadAddSchedulePage({
               }}
             />
           </Grid>
+
 
           <Grid item xs={12} sm={12} lg={4}>
             <CustomFormLabel
@@ -346,7 +372,7 @@ function LeadAddSchedulePage({
               }}
             >
               Observação
-            </CustomFormLabel>
+          </CustomFormLabel>
           <CustomTextField
             name="observation"
             placeholder="Observação do agendamento"
@@ -364,7 +390,20 @@ function LeadAddSchedulePage({
                 wordWrap: 'break-word', 
                 height: "100%"
               },
-            }}
+              '& .MuiOutlinedInput-root': {
+                border: '1px solid #3E3C41', 
+                borderRadius: '9px',  
+              },
+              input: {
+                color: '#7E92A2',
+                fontWeight: '400',
+                fontSize: '12px',
+                opacity: 1,
+              },
+              '& .MuiInputBase-input::placeholder': {
+                color: "#B2AFB6",
+              }
+            }}  
           />
         </Grid>
 
