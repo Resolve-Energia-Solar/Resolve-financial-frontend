@@ -69,7 +69,7 @@ function EditLeadTabs({ leadId }) {
 
   return (
     <LeadModalTabProvider leadId={leadId}>
-      <Box sx={{ overflow: 'hidden', height: '100%', p: 0, margin: 0 }}>
+      <Box sx={{  height: '100%', p: 0, margin: 0 }}>
         <Tabs
           value={tabValue}
           onChange={handleChange}
