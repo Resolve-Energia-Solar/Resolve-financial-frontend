@@ -174,37 +174,29 @@ function LeadAddSchedulePage({
               Projeto
             </CustomFormLabel>
               <Select
-                // value={selectedProject || ''}
-                onChange={(e) => setSelectedProject(e.target.value)}
+                value={formData.project}
+                onChange={(e) => handleChange(e.target.value)}
                 fullWidth
-                size="small"
-                sx={{ backgroundColor: '#F4F5F7', borderRadius: '8px', height: "53px" }}
+                size="medium"
+                sx={{ backgroundColor: '#F4F5F7', borderRadius: '8px', }}
                 displayEmpty
               >
-                {/* {projects.map((project) => ( */}
                 <MenuItem value="" sx={{ color: '#7E8388' }} disabled>
                   Selecione um projeto
                 </MenuItem>
-                <MenuItem
-                  // key={project.id}
-                  // value={project.id}
-                  value="project-1"
-                  sx={{ color: '#7E8388' }}
-                >
-                  {/* {project.name} */}
-                  Rua Antônio Barreto, 1198
-                </MenuItem>
-                <MenuItem value="project-2" sx={{ color: '#7E8388' }}>
-                  Rua dos Mundurucus, 2500
-                </MenuItem>
-                <MenuItem value="project-3" sx={{ color: '#7E8388' }}>
-                  Tv. Padre Eutíquio, 87
-                </MenuItem>
-
-                {/* ))} */}
+                {formData.project && formData.project.map((project, index) => (
+                  <MenuItem
+                    key={index}
+                    value={project.id}
+                    sx={{ color: '#7E8388' }}
+                  >
+                    {project.name}
+                  </MenuItem>
+                ))}
               </Select>
             </Box>
           </Grid>
+
           <Grid item xs={12} sm={12} lg={6}>
             <CustomFormLabel
               htmlFor="address"
@@ -215,6 +207,7 @@ function LeadAddSchedulePage({
             <GenericAutocomplete
               fetchOptions={fetchAddress}
               multiple
+              size="small"
               AddComponent={CreateAddressPage}
               getOptionLabel={(option) =>
                 `${option.street}, ${option.number} - ${option.city}, ${option.state}`
@@ -250,6 +243,80 @@ function LeadAddSchedulePage({
             />
           </Grid>
           
+        </Grid>
+
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel
+              htmlFor="start_datetime"
+              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+            >
+              Agente Vistoria
+            </CustomFormLabel>
+            <FormDate
+              name="start_datetime"
+              value={formData.schedule_date}
+              onChange={(newValue) => validateChange('schedule_date', newValue)}
+              {...(formErrors.schedule_date && {
+                error: true,
+                helperText: formErrors.schedule_date,
+              })}
+              sx={{
+                input: {
+                  color: '#7E92A2',
+                  fontWeight: '400',
+                  fontSize: '12px',
+                  opacity: 1,
+                },
+                '& .MuiOutlinedInput-root': {
+                  border: '1px solid #3E3C41', 
+                  borderRadius: '9px',  
+                },
+              }}
+            />
+          </Grid>
+          
+
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel
+              htmlFor="start_datetime"
+              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+            >
+              Supervisor
+            </CustomFormLabel>
+            <FormSelect
+              options={timeOptions}
+              onChange={(e) => validateChange('schedule_start_time', e.target.value)}
+              value={formData.schedule_start_time || ''}
+              {...(formErrors.schedule_start_time && {
+                error: true,
+                helperText: formErrors.schedule_start_time,
+              })}
+              InputProps={{
+                sx: {
+                  '& .MuiOutlinedInput-root': {
+                    border: '1px solid #3E3C41 !important',  
+                    borderRadius: '9px',
+                    '&:hover': {
+                      borderColor: '#3E3C41 !important',
+                    },
+                  },
+                  '& .MuiSelect-select': {
+                    color: '#7E92A2',  
+                    fontWeight: '400',
+                    fontSize: '12px',
+                    opacity: 1,
+                  },
+                  
+                },
+              }}
+              startAdornment={
+                <InputAdornment position="start">
+                  <IconAlarm color={theme.palette.primary.main} position='absolute' left='10px' top='50%' />
+                </InputAdornment>
+              }
+            />
+          </Grid>
         </Grid>
 
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
@@ -385,7 +452,7 @@ function LeadAddSchedulePage({
             variant="outlined"
             fullWidth
             multiline
-            rows={2}
+            rows={1}
             value={formData.observation}
             onChange={(e) => handleChange('observation', e.target.value)}
             {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
