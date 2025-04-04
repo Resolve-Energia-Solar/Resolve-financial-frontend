@@ -99,7 +99,8 @@ const TableHeader = ({
                             minWidth: 'unset',
                             borderRadius: '4px',
                             color: '#000',
-                            '&:hover': { color: '#000' },
+                            backgroundColor: theme.palette.primary.main,
+                            '&:hover': { backgroundColor: theme.palette.primary.light, color: '#000' },
                         }}
                     >
                         {buttonLabel}
