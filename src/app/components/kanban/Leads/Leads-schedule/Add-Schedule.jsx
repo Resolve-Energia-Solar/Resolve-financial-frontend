@@ -186,7 +186,13 @@ function LeadAddSchedulePage({
                 onChange={(e) => handleChange(e.target.value)}
                 fullWidth
                 size="medium"
-                sx={{ backgroundColor: '#F4F5F7', borderRadius: '8px', }}
+                sx={{ 
+                  backgroundColor: '#F4F5F7', 
+                  borderRadius: '8px', 
+                  border: '1px solid #3E3C41',
+                  borderRadius: '9px', 
+                
+                }}
                 displayEmpty
               >
                 <MenuItem value="" sx={{ color: '#7E8388' }} disabled>
