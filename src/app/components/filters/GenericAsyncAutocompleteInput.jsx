@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Autocomplete, TextField, CircularProgress } from "@mui/material";
+import { Autocomplete, TextField, CircularProgress, Typography } from "@mui/material";
 import apiClient from "@/services/apiClient";
 
 const GenericAsyncAutocompleteInput = ({
@@ -14,11 +14,13 @@ const GenericAsyncAutocompleteInput = ({
   error = false,
   helperText = "",
   noOptionsText = "Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.",
+  renderOption,
   ...props
 }) => {
   const [options, setOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const stableExtraParams = useMemo(() => extraParams, [JSON.stringify(extraParams)]);
   const stableMapResponse = useMemo(() => mapResponse, [mapResponse]);
@@ -30,11 +32,8 @@ const GenericAsyncAutocompleteInput = ({
   }, [value, options]);
 
   useEffect(() => {
-    if (!inputValue.trim()) {
-      setOptions([]);
-      setLoading(false);
-      return;
-    }
+    if (!open) return; // Só busca se o dropdown estiver aberto
+
     let active = true;
     setLoading(true);
     const handler = setTimeout(async () => {
@@ -65,13 +64,12 @@ const GenericAsyncAutocompleteInput = ({
       active = false;
       clearTimeout(handler);
     };
-  }, [inputValue, endpoint, queryParam, stableExtraParams, stableMapResponse, debounceTime]);
+  }, [inputValue, open, endpoint, queryParam, stableExtraParams, stableMapResponse, debounceTime]);
 
   useEffect(() => {
     const fetchInitialOption = async () => {
       if (!value || typeof value === "object") return;
       if (options.find((option) => option.value === value)) return;
-      
       try {
         const response = await apiClient.get(`${endpoint}/${value}`, {
           params: { fields: stableExtraParams.fields },
@@ -91,6 +89,9 @@ const GenericAsyncAutocompleteInput = ({
   return (
     <Autocomplete
       freeSolo
+      open={open}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
       options={options}
       getOptionLabel={(option) => option.label || ""}
       loading={loading}
@@ -99,6 +100,11 @@ const GenericAsyncAutocompleteInput = ({
       value={selectedOption}
       loadingText="Carregando..."
       noOptionsText={noOptionsText}
+      renderOption={renderOption || ((props, option) => (
+        <li {...props}>
+          <Typography variant="body1">{option.label}</Typography>
+        </li>
+      ))}
       {...props}
       renderInput={(params) => (
         <TextField

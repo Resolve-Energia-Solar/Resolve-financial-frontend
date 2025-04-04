@@ -34,7 +34,7 @@ import useCanEditUser from '@/hooks/users/userCanEdit';
 
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
 
-const ListInspection = ({ projectId = null, product = [], customerId, saleId=null }) => {
+const ListInspection = ({ projectId = null, product = [], customerId, saleId = null }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedscheduleId, setSelectedscheduleId] = useState(null);
   const [AddModalOpen, setAddModalOpen] = useState(false);
@@ -53,7 +53,10 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId=nul
     setReload(!reload);
   };
 
-  const { canEdit } = useCanEditUser(saleId);
+  let { canEdit } = useCanEditUser(saleId);
+  if (saleId === null) {
+    canEdit = true;
+  }
 
   useEffect(() => {
     setCustomer(customerId);

@@ -36,7 +36,7 @@ export function ProductsCard({ leadId = null, products = [] }) {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const [dialogExistingProductOpen, setDialogExistingProductOpen] = useState(false);
-
+  
   const customProducts = useSelector(selectProductsByLead(leadId));
 
   const addCustomProduct = (product) => {

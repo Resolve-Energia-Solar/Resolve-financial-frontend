@@ -40,7 +40,6 @@ function TabPanel({ children, value, index, ...other }) {
 }
 
 export default function EditProject({ projectData, projectId }) {
-  console.log('projectData', projectData);
   const [value, setValue] = useState(0);
   const { documentTypes } = useDocumentTypesByFilter({ app_label__in: 'engineering' });
 

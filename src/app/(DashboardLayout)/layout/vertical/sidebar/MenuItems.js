@@ -43,7 +43,7 @@ const Menuitems = [
     href: '/',
     icon: IconBriefcase2,
     href: '/apps/kanban/',
-    permissions: ['core.view_board', 'resolve_crm.view_lead', 'resolve_crm.view_schedule'],
+    permissions: ['core.view_board', 'resolve_crm.view_lead'],
     children: [
       {
         id: uniqueId(),
@@ -64,7 +64,7 @@ const Menuitems = [
         title: 'Agendamentos',
         icon: IconCalendarStar,
         href: '/apps/commercial/schedules',
-        permissions: ['field_services.view_schedule'],
+        permissions: ['field_services.view_lead'],
       },
     ],
     chip: 'Novo',

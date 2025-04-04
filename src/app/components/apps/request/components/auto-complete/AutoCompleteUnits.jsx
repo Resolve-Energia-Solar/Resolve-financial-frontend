@@ -17,13 +17,17 @@ export default function AutoCompleteUnits({ onChange, value, error, helperText, 
       if (value) {
         try {
           const unit = await unitService.find(value, {
-            fields: 'id,address,project.sale.customer.complete_name,project.homologator.complete_name',
+            fields:
+              'id,address,project.sale.customer.complete_name,project.homologator.complete_name',
             expand: 'address,project.sale.customer,project.homologator',
           });
           if (unit) {
             setSelectedUnit({
               id: unit.id,
-              name: `${unit.project?.homologator?.complete_name || unit.project?.sale?.customer?.complete_name } - ${unit.address.street}, ${unit.address.number} - ${unit.address.neighborhood}`,
+              name: `${
+                unit.project?.homologator?.complete_name ||
+                unit.project?.sale?.customer?.complete_name
+              } - ${unit.address.street}, ${unit.address.number} - ${unit.address.neighborhood}`,
             });
           }
         } catch (error) {
@@ -61,14 +65,17 @@ export default function AutoCompleteUnits({ onChange, value, error, helperText, 
       try {
         const units = await unitService.index({
           name__contains: name,
-          fields: 'id,address,project.sale.customer.complete_name,project.homologator.complete_name',
+          fields:
+            'id,address,project.sale.customer.complete_name,project.homologator.complete_name',
           expand: 'address,project.sale.customer,project.homologator',
           limit: 15,
           page: 1,
         });
         const formattedUnits = units.results.map((unit) => ({
           id: unit.id,
-          name: `${unit.project?.homologator?.complete_name || unit.project?.sale?.customer?.complete_name } - ${formatAddress(unit)}`,
+          name: `${
+            unit.project?.homologator?.complete_name || unit.project?.sale?.customer?.complete_name
+          } - ${formatAddress(unit)}`,
         }));
         setOptions(formattedUnits);
       } catch (error) {
@@ -76,14 +83,13 @@ export default function AutoCompleteUnits({ onChange, value, error, helperText, 
       }
       setLoading(false);
     }, 300),
-    []
+    [],
   );
-
 
   const fetchInitialUnits = useCallback(async () => {
     setLoading(true);
     try {
-      const units = await unitService.index({ 
+      const units = await unitService.index({
         limit: 5,
         page: 1,
         fields: 'id,address,project.sale.customer.complete_name,project.homologator.complete_name',
@@ -92,7 +98,9 @@ export default function AutoCompleteUnits({ onChange, value, error, helperText, 
       if (units && units.results) {
         const formattedUnits = units.results.map((unit) => ({
           id: unit.id,
-          name: `${unit.project?.homologator?.complete_name || unit.project?.sale?.customer?.complete_name } - ${formatAddress(unit)}`,
+          name: `${
+            unit.project?.homologator?.complete_name || unit.project?.sale?.customer?.complete_name
+          } - ${formatAddress(unit)}`,
         }));
         setOptions(formattedUnits);
       }
@@ -127,7 +135,7 @@ export default function AutoCompleteUnits({ onChange, value, error, helperText, 
         loading={loading}
         value={selectedUnit}
         loadingText="Carregando..."
-        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."  
+        noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
         {...rest}
         onInputChange={(event, newInputValue) => {
           fetchUnitsByName(newInputValue);

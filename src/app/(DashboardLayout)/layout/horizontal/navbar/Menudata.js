@@ -64,7 +64,6 @@ const Menuitems = [
       'resolve_crm.view_sale',
       'resolve_crm.view_lead',
       'core.view_board',
-      'field_services.view_schedule',
     ],
     children: [
       {
@@ -79,7 +78,7 @@ const Menuitems = [
         title: 'Agendamentos',
         icon: IconUserPin,
         href: '/apps/commercial/schedules',
-        permissions: ['field_services.view_schedule'],
+        permissions: ['field_services.view_lead'],
       },
     ],
   },

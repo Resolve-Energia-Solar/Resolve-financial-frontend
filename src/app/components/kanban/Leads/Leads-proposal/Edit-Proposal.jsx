@@ -36,7 +36,6 @@ function EditProposalPage({ proposalData = null, leadId = null, onRefresh = null
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const user = useSelector((state) => state.user);
-  const dispatch = useDispatch();
 
   const [openEnergyConsumption, setOpenEnergyConsumption] = useState(false);
   const [openProposalLayout, setOpenProposalLayout] = useState(false);
@@ -50,9 +49,13 @@ function EditProposalPage({ proposalData = null, leadId = null, onRefresh = null
     success,
   } = useProposalForm(proposalData, proposalData?.id);
 
-  formData.lead ? null : (formData.lead = leadId);
+  const products = proposalData?.products?.map((item) => item);
 
-  console.log('Form Data:', formData);
+  formData.lead ? null : (formData.lead = leadId);
+  (formData.products_ids = proposalData?.products?.map((item) => item?.id));
+
+  console.log('formData proposal:', formData);
+  console.log('products_ids: ', products);
 
 
   const discard_proposal = () => {

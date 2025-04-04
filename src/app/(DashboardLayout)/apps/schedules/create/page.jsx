@@ -14,6 +14,7 @@ import {
   FormControl,
   FormLabel,
   TextField,
+  Chip,
 } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 import PageContainer from '@/app/components/container/PageContainer';
@@ -23,6 +24,7 @@ import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsync
 import scheduleService from '@/services/scheduleService';
 import { useSnackbar } from 'notistack';
 import AutoCompleteUserSchedule from '@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule';
+import { formatDate } from '@/utils/dateUtils';
 
 const CreateSchedulePage = () => {
   const router = useRouter();
@@ -63,7 +65,7 @@ const CreateSchedulePage = () => {
       branch: formData.branch?.value,
       address: formData.address?.value,
       schedule_creator: user.id,
-      products: formData.product ? [formData.product.value] : []
+      products: formData.product ? [formData.product.value] : [],
     };
 
     const fieldLabels = {
@@ -130,6 +132,18 @@ const CreateSchedulePage = () => {
       }));
     }
   }, [formData.service, formData.schedule_date, formData.schedule_start_time]);
+
+  const saleStatusMap = {
+    P: ['Pendente', 'warning'],
+    F: ['Finalizado', 'success'],
+    EA: ['Em Andamento', 'info'],
+    C: ['Cancelado', 'error'],
+    D: ['Distrato', 'default'],
+  };
+
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+
   return (
     <PageContainer
       title="Criar Agendamento"
@@ -153,8 +167,8 @@ const CreateSchedulePage = () => {
                 endpoint="/api/services/"
                 queryParam="name__icontains"
                 extraParams={{
-                  fields: ['id', 'name', 'deadline.hours', 'category'],
-                  expand: ['deadline'],
+                  fields: ['id', 'name', 'deadline', 'category'], // ajustado: substitui "deadline.hours"
+                  expand: [], // ajustado: nenhum expand para este endpoint
                 }}
                 mapResponse={(data) =>
                   data.results.map((s) => ({
@@ -183,7 +197,10 @@ const CreateSchedulePage = () => {
               <AutoCompleteUserSchedule
                 onChange={(id) => {
                   if (id) {
-                    setFormData({ ...formData, schedule_agent: { value: id, name: 'nome do agente' } });
+                    setFormData({
+                      ...formData,
+                      schedule_agent: { value: id, name: 'nome do agente' },
+                    });
                   }
                 }}
                 value={formData.schedule_agent}
@@ -316,11 +333,19 @@ const CreateSchedulePage = () => {
                     endpoint="/api/projects/"
                     queryParam="q"
                     extraParams={{
-                      expand: ['sale.customer', 'sale.branch', 'product'],
+                      expand: [
+                        'sale.customer',
+                        'sale',
+                        'sale.branch',
+                        'product',
+                        'sale.homologator',
+                      ],
                       fields: [
                         'id',
                         'project_number',
                         'address',
+                        'sale.total_value',
+                        'sale.contract_number',
                         'sale.customer.complete_name',
                         'sale.customer.id',
                         'sale.branch.id',
@@ -328,31 +353,88 @@ const CreateSchedulePage = () => {
                         'product.id',
                         'product.name',
                         'product.description',
+                        'sale.signature_date',
+                        'sale.status',
+                        'sale.homologator.complete_name',
+                        'address.complete_address',
                       ],
+                      filter: 'status__in=C,P,EA',
                     }}
                     mapResponse={(data) =>
                       data.results.map((p) => ({
                         label: `${p.project_number} - ${p.sale.customer.complete_name}`,
                         value: p.id,
+                        project_number: p.project_number,
+                        total_value: p.sale.total_value,
                         customer: {
                           label: p.sale.customer.complete_name,
                           value: p.sale.customer.id,
                         },
                         branch: { label: p.sale.branch.name, value: p.sale.branch.id },
                         address: {
-                          label: p.address
-                            ? `${p.address.zip_code || ''} - ${p.address.country || ''} - ${p.address.state || ''
-                            } - ${p.address.city || ''} - ${p.address.neighborhood || ''} - ${p.address.street || ''
-                            } - ${p.address.number || ''} - ${p.address.complement || ''}`
-                            : '',
+                          label: p.address?.complete_address || '',
                           value: p.address?.id || null,
                         },
                         product: { label: p.product.name, value: p.product.id },
+                        contract_number: p.sale.contract_number,
+                        homologator: {
+                          label: p.sale.homologator?.complete_name || 'Homologador não disponível',
+                          value: p.sale.homologator?.id || null,
+                        },
+                        signature_date: p.sale.signature_date,
+                        status: p.sale.status,
                       }))
                     }
                     fullWidth
                     helperText={errors.project?.[0] || ''}
                     error={!!errors.project}
+                    renderOption={(props, option) => (
+                      <li {...props}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                          <Typography variant="body2">
+                            <strong>Projeto:</strong> {option.project_number}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Valor total:</strong>{' '}
+                            {option.total_value
+                              ? formatCurrency(option.total_value)
+                              : 'Sem valor Total'}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Contrato:</strong>{' '}
+                            {option.contract_number || 'Contrato não Disponível'}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Homologador:</strong>{' '}
+                            {option.homologator.label || 'Homologador não Disponível'}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Data de Contrato:</strong>{' '}
+                            {formatDate(option.signature_date) || 'Data de Contrato não Disponível'}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Endereço:</strong>{' '}
+                            {option.address.label || 'Endereço não Disponível'}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Status da Venda:</strong>{' '}
+                            {option.status ? (
+                              <Chip
+                                label={saleStatusMap[option.status][0] || 'Status Desconhecido'}
+                                size="small"
+                                color={saleStatusMap[option.status][1] || 'default'}
+                              />
+                            ) : (
+                              'Status não Disponível'
+                            )}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Produto:</strong>{' '}
+                            {option.product.label || 'Produto não Disponível'}
+                          </Typography>
+                        </Box>
+                      </li>
+                    )}
                   />
                 </Grid>
                 {formData.project && (
@@ -420,7 +502,7 @@ const CreateSchedulePage = () => {
                           data.results.map((a) => ({ label: a.street, value: a.id }))
                         }
                         fullWidth
-                        disabled
+                        disabled={!!(formData.project && formData.project.address.value)}
                         helperText={errors.address?.[0] || ''}
                         error={!!errors.address}
                         required

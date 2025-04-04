@@ -3,10 +3,10 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import { TextField } from '@mui/material';
 
-const CustomTextField = styled((props) => <TextField margin="normal"
-  {...props} />)(({ theme }) => ({
+const CustomTextField = styled((props) => <TextField margin="normal" {...props} />)(
+  ({ theme, multiline }) => ({
     '& .MuiOutlinedInput-root': {
-      height: '56px',
+      ...(multiline ? {} : { height: '56px' }),
     },
     '& .MuiOutlinedInput-input::-webkit-input-placeholder': {
       color: theme.palette.text.secondary,
@@ -19,6 +19,7 @@ const CustomTextField = styled((props) => <TextField margin="normal"
     '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
       borderColor: theme.palette.grey[200],
     },
-  }));
+  })
+);
 
 export default CustomTextField;
