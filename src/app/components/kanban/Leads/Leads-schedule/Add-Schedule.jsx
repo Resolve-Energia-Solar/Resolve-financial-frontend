@@ -266,28 +266,40 @@ function LeadAddSchedulePage({
             >
               Agente Vistoria
             </CustomFormLabel>
-            {formData.schedule_agent && formData.schedule_agent.map((agent, index) => (
+            {formData.schedule_agent && formData.schedule_agent.length > 0 ? (
+              formData.schedule_agent.map((agent, index) => (
                 <Autocomplete
                   key={index}
-                  options={formData.schedule_agent}
-                  // options={scheduleAgentsMockArray}
-                  value={agent}
+                  options={formData.schedule_agent} 
+                  value={agent || null} 
                   onChange={(e, newValue) => {
                     const updatedAgents = [...formData.schedule_agent];
                     updatedAgents[index] = newValue;
-                    handleChange('schedule_agent', updatedAgents);
+                    handleChange('schedule_agent', updatedAgents); 
                   }}
-                  getOptionLabel={(option) => option.label || ''}
-                  renderInput={(params) => (<TextField {...params} label="Selecione o agente de vistoria" />)}
-                  // fullWidth
+                  getOptionLabel={(option) => option.label || 'N/A'}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Selecione o agente de vistoria" />
+                  )}
                   sx={{
-                    '& .MuiInputBase-root': {
-                      width: '400px',
-                      height: '50px',
+                    input: {
+                      color: '#7E92A2',
+                      fontWeight: '400',
+                      fontSize: '14px',
+                      opacity: 1,
+                    },
+                    '& .MuiOutlinedInput-root': {
+                      border: '1px solid #3E3C41',
+                      borderRadius: '9px',
                     },
                   }}
                 />
-            ))}
+              ))
+            ) : (
+              <Typography sx={{ color: '#7E92A2', fontSize: '14px', mt: 2.5                 }}>
+                Nenhum agente de vistoria disponível.
+              </Typography>
+            )}
           </Grid>
 
 
