@@ -417,7 +417,15 @@ function LeadAddSchedulePage({
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             <Button
               variant="contained"
-              sx={{ backgroundColor: '#FFCC00', color: '#000', p: 1 }}
+              sx={{ 
+                backgroundColor: theme.palette.primary.main, 
+                color: '#000', 
+                p: 1,
+                height: "56px",
+                '&:hover': {
+                  color: theme.palette.primary.light, 
+                }
+              }}
               fullWidth
               onClick={handleSaveForm}
               disabled={formLoading}
