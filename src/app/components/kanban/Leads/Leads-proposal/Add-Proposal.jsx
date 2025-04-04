@@ -198,7 +198,7 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                   />
                 </Grid>
 
-                <Grid item xs={8}>
+                {/* <Grid item xs={8}>
                   <CustomFormLabel htmlFor="seller_id" sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px" }}>Vendedor Responsável</CustomFormLabel>
                   <TextField
                     select
@@ -211,9 +211,9 @@ function AddProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
                     <MenuItem value="C">Ciclano</MenuItem>
                     <MenuItem value="B">Beltrano</MenuItem>
                   </TextField>
-                </Grid>
+                </Grid> */}
 
-                <Grid item xs={4}>
+                <Grid item xs={6}>
                   <FormDate
                     name="due_date"
                     label="Data de Vencimento"
