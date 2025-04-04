@@ -18,13 +18,21 @@ function EditLeadModal({ showModal, onClose, leadId }) {
       onClose={onClose}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
+      maxWidth="lg"
+      fullWidth
       PaperProps={{
         component: "form",
+        sx: {
+          borderRadius: '20px',
+          padding: '24px',
+          gap: '24px',
+          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+          backgroundColor: '#FFFFFF',
+          
+        },
       }}
-      fullWidth
-      maxWidth="lg"
     >
-      <DialogTitle>CRM Resolve</DialogTitle>
+      {/* <DialogTitle>CRM Resolve</DialogTitle> */}
       <DialogContent sx={{ height: '80vh' }}>
         <EditLeadTabs
           leadId={leadId}

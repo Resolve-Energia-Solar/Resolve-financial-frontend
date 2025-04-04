@@ -22,6 +22,7 @@ const GenericAutocomplete = ({
   AddComponent,
   onAdd,
   addTitle = 'Adicionar Novo Item', 
+  sx,
   ...props
 }) => {
   const [open, setOpen] = useState(false);
@@ -135,6 +136,7 @@ const GenericAutocomplete = ({
             }}
           />
         )}
+        sx={sx}
         {...props}
       />
 

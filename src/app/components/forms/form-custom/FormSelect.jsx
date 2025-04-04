@@ -17,6 +17,7 @@ const FormSelect = ({
   error,
   helperText,
   label,
+  sx,
   ...props
 }) => {
   return (
@@ -26,6 +27,7 @@ const FormSelect = ({
         displayEmpty
         value={value}
         onChange={onChange}
+        sx={sx}
         {...props}
       >
         {/* Este MenuItem funciona como placeholder */}
