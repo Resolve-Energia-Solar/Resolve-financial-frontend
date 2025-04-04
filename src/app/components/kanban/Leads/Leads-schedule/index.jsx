@@ -73,7 +73,7 @@ function LeadSchedulePage({ leadId = null }) {
         >
           <LeadInfoHeader />
 
-          <Stack spacing={3} sx={{ mt: 3 }}>
+          <Stack spacing={3} sx={{ mt: 3, px: 3 }}>
             <Stack direction="row" justifyContent="space-between" sx={{ mt: 3 }}>
               <Typography variant="h6" sx={{ fontWeight: 800 }}>
                 Vistorias Técnicas: <span style={{ fontWeight: 400 }}>{inspections.length}</span>
