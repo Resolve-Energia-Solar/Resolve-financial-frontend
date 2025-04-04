@@ -9,6 +9,7 @@ import {
   Dialog,
   DialogContent,
   DialogActions,
+  useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import leadService from '@/services/leadService';
@@ -54,6 +55,8 @@ function LeadSchedulePage({ leadId = null }) {
       fetchLead();
     }
   }, [leadId, refresh]);
+
+  const theme = useTheme();
 
   return (
     <Grid container spacing={0}>
