@@ -23,6 +23,7 @@ export default function AutoCompleteUser({
   helperText,
   disabled,
   labeltitle,
+  sx,
 }) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
@@ -159,27 +160,7 @@ export default function AutoCompleteUser({
             }}
           />
         )}
-        sx={{
-          width: '100%',  
-          '& .MuiAutocomplete-input': {
-            height: '40px', 
-            padding: '12px', 
-            fontSize: '12px',
-          },
-          '& .MuiInputBase-root': {
-            height: "50px",
-            border: '1px solid #3E3C41', 
-            borderRadius: '9px',
-            mt: 0 
-          },
-          '& .MuiAutocomplete-endAdornment': {
-            padding: '5px',  
-          },
-          '& .MuiAutocomplete-listbox': {
-            maxHeight: '200px', 
-          },
-        }}
-    
+        sx={sx}
         
       />
 
