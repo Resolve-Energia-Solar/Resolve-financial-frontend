@@ -215,6 +215,7 @@ function LeadAddSchedulePage({
             <GenericAutocomplete
               fetchOptions={fetchAddress}
               multiple
+              label=''
               size="small"
               AddComponent={CreateAddressPage}
               getOptionLabel={(option) =>
@@ -231,21 +232,19 @@ function LeadAddSchedulePage({
                 error: true,
                 helperText: formErrors.addresses,
               })}
-              InputProps={{
-                sx: {
-                  input: {
-                    color: '#7E92A2',
-                    fontWeight: '400',
-                    fontSize: '12px',
-                    opacity: 1,
-                  },
-                  '& .MuiOutlinedInput-root': {
-                    border: '1px solid #3E3C41',
-                    borderRadius: '9px',
-                  },
-                  '& .MuiInputBase-input': {
-                    padding: '12px',
-                  },
+              sx={{
+                input: {
+                color: '#7E92A2',
+                fontWeight: '400',
+                fontSize: '12px',
+                opacity: 1,
+                },
+                '& .MuiOutlinedInput-root': {
+                  border: '1px solid #3E3C41',
+                  borderRadius: '9px',
+                },
+                '& .MuiInputBase-input': {
+                  padding: '12px',
                 },
               }}
             />
@@ -348,7 +347,7 @@ function LeadAddSchedulePage({
                 input: {
                   color: '#7E92A2',
                   fontWeight: '400',
-                  fontSize: '12px',
+                  fontSize: '14px',
                   opacity: 1,
                 },
                 '& .MuiOutlinedInput-root': {
@@ -375,22 +374,19 @@ function LeadAddSchedulePage({
                 error: true,
                 helperText: formErrors.schedule_start_time,
               })}
-              InputProps={{
-                sx: {
-                  '& .MuiOutlinedInput-root': {
-                    border: '1px solid #3E3C41 !important',
-                    borderRadius: '9px',
-                    '&:hover': {
-                      borderColor: '#3E3C41 !important',
-                    },
+              sx={{
+                '& .MuiInputBase-formControl': {
+                  border: '1px solid #3E3C41 !important',
+                  borderRadius: '9px',
+                  '&:hover': {
+                    borderColor: '#3E3C41 !important',
                   },
-                  '& .MuiSelect-select': {
-                    color: '#7E92A2',
-                    fontWeight: '400',
-                    fontSize: '12px',
-                    opacity: 1,
-                  },
-
+                },
+                '& .MuiSelect-select': {
+                  color: '#7E92A2',
+                  fontWeight: '400',
+                  fontSize: '14px',
+                  opacity: 1,
                 },
               }}
               startAdornment={
@@ -421,28 +417,17 @@ function LeadAddSchedulePage({
                   padding: '12px',
                   fontSize: '12px', 
                 },
+                '& .MuiInputBase-root': {
+                  height: "50px",
+                  border: '1px solid #3E3C41', 
+                  borderRadius: '9px',
+                  mt: 0 
+                },
                 '& .MuiAutocomplete-endAdornment': {
                   padding: '5px', 
                 },
                 '& .MuiAutocomplete-listbox': {
                   maxHeight: '200px',  
-                },
-              }}
-              InputProps={{
-                sx: {
-                  input: {
-                    color: '#7E92A2',
-                    fontWeight: '400',
-                    fontSize: '12px',
-                    opacity: 1,
-                  },
-                  '& .MuiOutlinedInput-root': {
-                    border: '1px solid #3E3C41',
-                    borderRadius: '9px',
-                    '&:hover': {
-                      borderColor: '#3E3C41',
-                    },
-                  },
                 },
               }}
             />
