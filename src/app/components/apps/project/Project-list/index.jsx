@@ -38,6 +38,48 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import HourglassFullIcon from '@mui/icons-material/HourglassFull';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import { styled, keyframes } from '@mui/system';
+
+const pulse = keyframes`
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+`;
+
+const OuterCircle = styled(Box)(({ theme, color }) => ({
+  position: 'absolute',
+  width: 64,
+  height: 64,
+  borderRadius: '50%',
+  backgroundColor: color,
+  animation: `${pulse} 1.5s ease-out infinite`,
+}));
+
+const InnerCircle = styled(Box)(({ theme, color }) => ({
+  width: 24,
+  height: 24,
+  borderRadius: '50%',
+  backgroundColor: color,
+  position: 'relative',
+  zIndex: 1,
+}));
+
+const getColor = (value) => {
+  if (value > 1) return '#f44336'; // red
+  if (value > 0.5) return '#ffeb3b'; // green
+  return '#4caf50'; // yellow
+};
+
+const getProgressColor = (value) => {
+  if (value > 1) return '🔴 Crítico'; // red
+  if (value > 0.5) return '🟡 Atenção'; // green
+  return '🟢 Regular'; // yellow
+};
 
 function useAnimatedNumber(targetValue, duration = 800) {
   const [displayValue, setDisplayValue] = useState(0);
@@ -323,6 +365,9 @@ const ProjectList = ({ onClick }) => {
             <TableRow>
               <TableCell>Liberado</TableCell>
               <TableCell>Cliente</TableCell>
+              <TableCell>Etapa Atual</TableCell>
+              <TableCell>Medidor Etapa</TableCell>
+              <TableCell>Medidor Geral</TableCell>
               <TableCell>Homologador</TableCell>
               <TableCell>Status do Projeto</TableCell>
               <TableCell>Lista de Materiais</TableCell>
@@ -363,6 +408,13 @@ const ProjectList = ({ onClick }) => {
                       )}
                     </TableCell>
                     <TableCell>{item.sale?.customer?.complete_name}</TableCell>
+                    <TableCell>Venda</TableCell>
+                    <TableCell>
+                      <Typography sx={{ width: '90px' }}>{getProgressColor(0.5)}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography sx={{ width: '90px' }}>{getProgressColor(1)}</Typography>
+                    </TableCell>
                     <TableCell>{item.homologator?.complete_name || '-'}</TableCell>
                     <TableCell>
                       <ChipProject status={item.designer_status} />
