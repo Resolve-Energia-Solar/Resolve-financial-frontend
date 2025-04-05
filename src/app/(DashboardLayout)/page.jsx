@@ -1,10 +1,6 @@
 'use client';
-import ProcessMap from '../components/shared/ProcessMap';
+import { redirect } from 'next/navigation';
 
 export default function HomePage() {
-  return (
-    <>
-      <ProcessMap processId={1} />
-    </>
-  );
+  redirect('/apps/project');
 }
