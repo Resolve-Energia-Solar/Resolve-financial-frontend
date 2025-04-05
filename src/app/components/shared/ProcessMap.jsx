@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Tooltip, Grid, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
-import ReactFlow, { MiniMap, Controls, Background } from 'reactflow';
+import ReactFlow, { Controls, Background } from 'reactflow';
 import 'reactflow/dist/style.css';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -33,7 +33,6 @@ function getLevel(step, stepsMap, memo = {}) {
 
 // Função que interpola de verde para vermelho com base no progresso (0 a 1)
 function interpolateColor(progress) {
-    // Verde: rgb(76, 175, 80), Vermelho: rgb(244, 67, 54)
     const r = Math.round(76 + (244 - 76) * progress);
     const g = Math.round(175 + (67 - 175) * progress);
     const b = Math.round(80 + (54 - 80) * progress);
@@ -51,7 +50,6 @@ function ProcessMap({ processId }) {
     const userGroups = user?.groups || [];
 
     const handleNodeClick = (stepId) => {
-
         stepId = parseInt(stepId);
         if (isNaN(stepId) || !processData) return;
 
@@ -132,13 +130,11 @@ function ProcessMap({ processId }) {
         const horizontalSpacing = 100;
         const baseX = 0;
 
-        // Cria um mapa das steps para facilitar a busca por dependência
         const stepsMap = {};
         processData.steps.forEach(step => {
             stepsMap[step.step_id] = step;
         });
 
-        // Calcula o nível de cada step e agrupa por nível
         const levelMapping = {};
         const levels = {};
         let maxLevel = 0;
@@ -150,9 +146,7 @@ function ProcessMap({ processId }) {
             if (level > maxLevel) maxLevel = level;
         });
 
-        // Função para renderizar o conteúdo do node (círculo com ícone, progress e name abaixo)
         function renderNodeContent(step) {
-            // Verifica se todas as dependências estão concluídas
             const allDepsFinished = (step.dependencies.length === 0) ||
                 step.dependencies.every(depId => {
                     const dep = stepsMap[depId];
@@ -164,7 +158,6 @@ function ProcessMap({ processId }) {
             let latestDate = 0;
 
             if (step.dependencies.length > 0) {
-                // Usa a data de conclusão mais recente das dependências
                 step.dependencies.forEach(depId => {
                     const dep = stepsMap[depId];
                     if (dep && dep.completion_date) {
@@ -179,7 +172,6 @@ function ProcessMap({ processId }) {
             }
 
             if (step.is_completed && step.completion_date) {
-                // Congela o progresso na data de conclusão
                 const completionTime = new Date(step.completion_date).getTime();
                 progress = (completionTime - latestDate) / prazoMs;
             } else if (allDepsFinished && step.dependencies.length > 0) {
@@ -294,7 +286,6 @@ function ProcessMap({ processId }) {
             );
         }
 
-        // Distribuição e centralização dos nodes por nível
         const levelPositions = {};
         const newNodes = [];
         for (let level = 0; level <= maxLevel; level++) {
@@ -353,7 +344,6 @@ function ProcessMap({ processId }) {
             edges={edges}
             onNodeClick={(event, node) => handleNodeClick(node.id)}
             fitView>
-                <MiniMap />
                 <Controls />
                 <Background />
             </ReactFlow>
