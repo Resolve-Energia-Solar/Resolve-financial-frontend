@@ -47,11 +47,17 @@ function ProcessMap({ processId }) {
     const { enqueueSnackbar } = useSnackbar();
     const [openModal, setOpenModal] = useState(false);
     const [currentStep, setCurrentStep] = useState(null);
-    const userGroups = useSelector((state) => state.user?.user.groups);
+    const user = useSelector((state) => state.user?.user);
+    const userGroups = user?.groups || [];
 
-    const handleNodeClick = (step) => {
-        console.log(step);
-        if (!processData) return;
+    const handleNodeClick = (stepId) => {
+
+        stepId = parseInt(stepId);
+        if (isNaN(stepId) || !processData) return;
+
+        const step = processData.steps.find(s => s.step_id === stepId);
+        if (!step) return;
+
         const stepsMap = {};
         processData.steps.forEach(s => {
             stepsMap[s.step_id] = s;
@@ -72,20 +78,32 @@ function ProcessMap({ processId }) {
 
     const handleConfirmCompletion = () => {
         if (currentStep) {
-            processService.completeStep(currentStep.step_id).then(() => {
-                enqueueSnackbar(`Etapa '${currentStep.name}' concluída com sucesso!`, { variant: 'success' });
-                setOpenModal(false);
-                setProcessData(prev => {
-                    const updatedSteps = prev.steps.map(step =>
-                        step.step_id === currentStep.step_id ? { ...step, is_completed: true, completion_date: new Date() } : step
-                    );
-                    return { ...prev, steps: updatedSteps };
+    
+            if (!user) {
+                enqueueSnackbar("Usuário não encontrado", { variant: 'error' });
+                return;
+            }
+    
+            const requestBody = {
+                user_id: user.id,
+            };
+    
+            processService.completeStep(processId, currentStep.step_id, requestBody)
+                .then(() => {
+                    enqueueSnackbar(`Etapa '${currentStep.name}' concluída com sucesso!`, { variant: 'success' });
+                    setOpenModal(false);
+                    setProcessData(prev => {
+                        const updatedSteps = prev.steps.map(step =>
+                            step.step_id === currentStep.step_id ? { ...step, is_completed: true, completion_date: new Date() } : step
+                        );
+                        return { ...prev, steps: updatedSteps };
+                    });
+                })
+                .catch(error => {
+                    enqueueSnackbar(`Erro ao concluir a etapa: ${error}`, { variant: 'error' });
                 });
-            }).catch(error => {
-                enqueueSnackbar(`Erro ao concluir a etapa: ${error}`, { variant: 'error' });
-            });
         }
-    };
+    };    
 
     const handleCloseModal = () => setOpenModal(false);
 
@@ -330,7 +348,11 @@ function ProcessMap({ processId }) {
 
     return (
         <Box style={{ width: '100%', height: '600px' }}>
-            <ReactFlow nodes={nodes} edges={edges} onNodeClick={handleNodeClick} fitView>
+            <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodeClick={(event, node) => handleNodeClick(node.id)}
+            fitView>
                 <MiniMap />
                 <Controls />
                 <Background />
