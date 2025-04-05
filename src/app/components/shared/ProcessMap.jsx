@@ -10,7 +10,6 @@ import { useSnackbar } from 'notistack';
 import UserBadge from '../apps/users/userBadge';
 import { useSelector } from 'react-redux';
 
-// Função auxiliar para calcular o nível de uma etapa com base nas dependências
 function getLevel(step, stepsMap, memo = {}) {
     if (memo[step.step_id]) return memo[step.step_id];
     if (!step.dependencies || step.dependencies.length === 0) {
