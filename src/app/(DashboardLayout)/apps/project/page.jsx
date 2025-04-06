@@ -7,7 +7,6 @@ import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcr
 import ProjectList from '@/app/components/apps/project/Project-list';
 import EditProject from '@/app/components/apps/project/Edit-project';
 import SideDrawer from '@/app/components/shared/SideDrawer';
-import ProcessMap from '@/app/components/shared/ProcessMap';
 import useProject from '@/hooks/projects/useProject';
 import { ProjectDataContextProvider } from '@/app/context/ProjectContext';
 
@@ -36,7 +35,7 @@ const ProjectListing = ({
               open={openDrawer}
               onClose={toggleDrawerClosed}
               title="Detalhes do Projeto"
-              processMap={<ProcessMap processId={projectData?.process ?? 1} />}
+              projectId={projectId}
             >
               <EditProject projectData={projectData} projectId={rowSelected?.id} />
             </SideDrawer>

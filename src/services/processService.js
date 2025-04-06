@@ -29,6 +29,15 @@ const processService = {
       console.error('Erro ao buscar dados:', error);
       throw error;
     }
+  },
+  getProcessByObjectId: async (appLabel, modelName, objectId) => {
+    try {
+      const response = await apiClient.get(`${DEFAULT_ROUTER}/por-objeto/${appLabel}/${modelName}/${objectId}/`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+      throw error;
+    }
   }
 };
 

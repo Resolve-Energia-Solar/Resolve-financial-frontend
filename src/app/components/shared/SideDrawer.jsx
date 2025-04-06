@@ -1,16 +1,51 @@
 'use client';
-import { Box, Drawer, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import ParentCard from './ParentCard';
-import { useState } from 'react';
 
-export default function SideDrawer({ title, children, open, onClose, anchor = 'right', processMap }) {
+import { useState, useEffect } from 'react';
+import { Box, Drawer, IconButton } from '@mui/material';
+import { useSnackbar } from 'notistack';
+
+import CloseIcon from '@mui/icons-material/Close';
+import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
+import ZoomInMapIcon from '@mui/icons-material/ZoomInMap';
+
+import ParentCard from './ParentCard';
+import ProcessMap from './ProcessMap';
+import processService from '@/services/processService';
+
+export default function SideDrawer({ title, children, open, onClose, anchor = 'right', projectId }) {
+
+  const [processId, setProcessId] = useState(null);
+  const { enqueueSnackbar } = useSnackbar();
+  const [expandView, setExpand] = useState(false);
+
+  useEffect(() => {
+    async function fetchProcessData() {
+      if (!projectId) return;
+      try {
+        const processData = await processService.getProcessByObjectId('resolve_crm', 'project', projectId);
+        if (processData.id) {
+          setProcessId(processData.id);
+        } else {
+          setProcessId(null);
+        }
+      } catch (error) {
+        if (error.response?.data?.detail === "No Process matches the given query.") {
+          enqueueSnackbar('Projeto sem processo definido', { variant: 'warning' });
+        } else {
+          console.error('Erro ao buscar processId:', error);
+          enqueueSnackbar(`Erro ao buscar o identificador do processo: ${error.response?.data?.detail || error}`, { variant: 'error' });
+        }
+        setProcessId(null);
+      }
+    }
+    fetchProcessData();
+  }, [projectId]);
 
   return (
     <Drawer anchor={anchor} open={open} onClose={onClose}>
       <Box
         sx={{
-          width: '100vw',
+          width: processId ? '100vw' : expandView ? '100vw' : '50vw',
           height: '100vh',
           position: 'relative',
           display: 'flex',
@@ -23,30 +58,37 @@ export default function SideDrawer({ title, children, open, onClose, anchor = 'r
             right: 8,
           }}
         >
+          {!processId && (
+            <IconButton onClick={() => setExpand(!expandView)}>
+              {expandView ? <ZoomInMapIcon /> : <ZoomOutMapIcon />}
+            </IconButton>
+          )}
           <IconButton onClick={onClose}>
             <CloseIcon />
           </IconButton>
         </Box>
 
-        <Box
-          sx={{
-            width: '400px',
-            height: '100vh',
-            position: 'fixed',
-            left: 0,
-            top: 0,
-            padding: 2,
-            borderRight: '1px solid #ccc',
-            overflowY: 'auto',
-          }}
-        >
-          {processMap}
-        </Box>
+        {processId && (
+          <Box
+            sx={{
+              width: '400px',
+              height: '100vh',
+              position: 'fixed',
+              left: 0,
+              top: 0,
+              padding: 2,
+              borderRight: '1px solid #ccc',
+              overflowY: 'auto',
+            }}
+          >
+            <ProcessMap processId={processId} />
+          </Box>
+        )}
 
         <Box
           sx={{
-            marginLeft: '400px',
-            width: 'calc(100vw - 400px)',
+            marginLeft: processId ? '400px' : '0',
+            width: processId ? 'calc(100vw - 400px)' : '100vw',
             height: '100vh',
             overflowY: 'auto',
           }}
