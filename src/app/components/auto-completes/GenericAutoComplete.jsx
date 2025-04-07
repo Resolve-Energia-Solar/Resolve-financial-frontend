@@ -162,17 +162,17 @@ const GenericAutocomplete = ({
           PaperProps={{
             sx: {
               borderRadius: '20px',
-              padding: '24px',
+              // padding: '24px',
               gap: '24px',
               boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
               backgroundColor: '#FFFFFF',
               height: "643px",
               width: "889px",
-              p: 3,
+              p: 1,
             },
           }}
         >
-          <DialogTitle>{addTitle}</DialogTitle>
+          {/* <DialogTitle>{addTitle}</DialogTitle> */}
           <DialogContent dividers>
             <AddComponent onClose={handleAddModalClose} onAdd={handleOnAdd} />
           </DialogContent>
