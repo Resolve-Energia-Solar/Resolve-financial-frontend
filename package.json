@@ -80,6 +80,7 @@
     "react-quill": "^0.0.2",
     "react-redux": "9.1.0",
     "react-slick": "^0.29.0",
+    "react-split-pane": "^0.1.92",
     "react-spring": "^9.7.3",
     "react-swipeable-views": "^0.12.15",
     "react-syntax-highlighter": "^5.8.0",
