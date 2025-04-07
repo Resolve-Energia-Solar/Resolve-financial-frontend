@@ -287,15 +287,16 @@ const CreateAddressPage = ({
             ))}
           </Alert>
         )}
-        <Grid container sx={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+        <Grid container sx={{ display: "flex", alignItems: "center", justifyContent: "flex-start", spacing: 3 }}>
           <Grid item xs={12} sm={12}>
             <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Adicionar novo endereço</Typography>
           </Grid>
 
-          <Grid item rowSpacing={2} xs={12} md={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", maxWidth: "100vw", mx: "auto" }}>
-            <Grid item xs={6} md={6} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start"}}>
-                <Grid item xs={11} >
+          <Grid container sx={{ display: "flex", alignItems: "center", justifyContent: "flex-start", maxWidth: "100vw", mx: "auto" }}>
+            {/* Left Column (Form Fields) */}
+            <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
+                <Grid item xs={11}>
                   <Box sx={{ flexGrow: 1 }}>
                     <AddressAutocomplete
                       apiKey={API_KEY}
@@ -305,7 +306,7 @@ const CreateAddressPage = ({
                     />
                   </Box>
                 </Grid>
-                <Grid item xs={1} sx={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
+                <Grid item xs={1} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                   <Tooltip title="Digite seu endereço com NÚMERO e selecione uma opção." placement="top">
                     <IconButton size="small">
                       <HelpOutlineIcon fontSize="small" />
@@ -314,134 +315,119 @@ const CreateAddressPage = ({
                 </Grid>
               </Grid>
 
-              <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start"}}>
-                <Grid item xs={11} >
-                <Box sx={{ flexGrow: 1 }}>
-                  <CustomTextField
-                    fullWidth
-                    label="Complemento"
-                    variant="outlined"
-                    value={formData.complement}
-                    onChange={(e) => handleChange('complement', e.target.value)}
-                    error={!!formErrors.complement}
-                    helperText={formErrors.complement}
-                  />
-                </Box>
+              <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
+                <Grid item xs={11}>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <CustomTextField
+                      fullWidth
+                      label="Complemento"
+                      variant="outlined"
+                      value={formData.complement}
+                      onChange={(e) => handleChange('complement', e.target.value)}
+                      error={!!formErrors.complement}
+                      helperText={formErrors.complement}
+                    />
+                  </Box>
                 </Grid>
-                <Grid item xs={1} >
-                <Tooltip title="Informe informações adicionais, ex: apto, bloco, complemento." placement="top">
-                  <IconButton size="small">
-                    <HelpOutlineIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
+                <Grid item xs={1}>
+                  <Tooltip title="Informe informações adicionais, ex: apto, bloco, complemento." placement="top">
+                    <IconButton size="small">
+                      <HelpOutlineIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
                 </Grid>
               </Grid>
 
-              <Grid item xs={12} columnSpacing={2} sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", maxWidth: "100vw", mx: "auto" }}>
-                <Grid item xs={12}>
-                <Box>
-                  <Button
-                    variant="outlined"
-                    onClick={() => setOpenAccordion(!openAccordion)}
-                    fullWidth
-                  >
-                    {openAccordion ? 'Ocultar informações do endereço' : 'Ver informações do endereço'}
-                  </Button>
-                  <Collapse in={openAccordion}>
-                    <Box sx={{ mt: 2, p: 2, border: '1px solid #ccc', borderRadius: 1 }}>
-                      <Stack spacing={2}>
-                        <CustomTextField
-                          fullWidth
-                          placeholder="CEP"
-                          value={formData.zip_code || ''}
-                          onChange={(e) => handleChange('zip_code', e.target.value)}
-                          disabled={
-                            Object.keys(initialData).length === 0 || !!initialData.zip_code
-                          }
-                        />
-                        <CustomTextField
-                          fullWidth
-                          placeholder="País"
-                          value={formData.country || ''}
-                          onChange={(e) => handleChange('country', e.target.value)}
-                          disabled={
-                            Object.keys(initialData).length === 0 || !!initialData.country
-                          }
-                        />
-                        <CustomTextField
-                          fullWidth
-                          placeholder="Estado"
-                          value={formData.state || ''}
-                          onChange={(e) => handleChange('state', e.target.value)}
-                          disabled={
-                            Object.keys(initialData).length === 0 || !!initialData.state
-                          }
-                        />
-                        <CustomTextField
-                          fullWidth
-                          placeholder="Cidade"
-                          value={formData.city || ''}
-                          onChange={(e) => handleChange('city', e.target.value)}
-                          disabled={
-                            Object.keys(initialData).length === 0 || !!initialData.city
-                          }
-                        />
-                        <CustomTextField
-                          fullWidth
-                          placeholder="Bairro"
-                          value={formData.neighborhood || ''}
-                          onChange={(e) => handleChange('neighborhood', e.target.value)}
-                          disabled={
-                            Object.keys(initialData).length === 0 || !!initialData.neighborhood
-                          }
-                        />
-                        <CustomTextField
-                          fullWidth
-                          placeholder="Rua"
-                          value={formData.street || ''}
-                          onChange={(e) => handleChange('street', e.target.value)}
-                          disabled={
-                            Object.keys(initialData).length === 0 || !!initialData.street
-                          }
-                        />
-                        <CustomTextField
-                          fullWidth
-                          placeholder="Número"
-                          value={formData.number || ''}
-                          onChange={(e) => handleChange('number', e.target.value)}
-                          disabled={
-                            Object.keys(initialData).length === 0
-                          }
-                        />
-                      </Stack>
-                    </Box>
-                  </Collapse>
-                </Box>
-                </Grid>
-              
+              <Box sx={{ width: '100%' }}>
+                <Button
+                  variant="outlined"
+                  onClick={() => setOpenAccordion(!openAccordion)}
+                  fullWidth
+                >
+                  {openAccordion ? 'Ocultar informações do endereço' : 'Ver informações do endereço'}
+                </Button>
+                <Collapse in={openAccordion}>
+                  <Box sx={{ mt: 2, p: 2, border: '1px solid #ccc', borderRadius: 1 }}>
+                    <Stack spacing={2}>
+                      <CustomTextField
+                        fullWidth
+                        placeholder="CEP"
+                        value={formData.zip_code || ''}
+                        onChange={(e) => handleChange('zip_code', e.target.value)}
+                        disabled={Object.keys(initialData).length === 0 || !!initialData.zip_code}
+                      />
+                      <CustomTextField
+                        fullWidth
+                        placeholder="País"
+                        value={formData.country || ''}
+                        onChange={(e) => handleChange('country', e.target.value)}
+                        disabled={Object.keys(initialData).length === 0 || !!initialData.country}
+                      />
+                      <CustomTextField
+                        fullWidth
+                        placeholder="Estado"
+                        value={formData.state || ''}
+                        onChange={(e) => handleChange('state', e.target.value)}
+                        disabled={Object.keys(initialData).length === 0 || !!initialData.state}
+                      />
+                      <CustomTextField
+                        fullWidth
+                        placeholder="Cidade"
+                        value={formData.city || ''}
+                        onChange={(e) => handleChange('city', e.target.value)}
+                        disabled={Object.keys(initialData).length === 0 || !!initialData.city}
+                      />
+                      <CustomTextField
+                        fullWidth
+                        placeholder="Bairro"
+                        value={formData.neighborhood || ''}
+                        onChange={(e) => handleChange('neighborhood', e.target.value)}
+                        disabled={Object.keys(initialData).length === 0 || !!initialData.neighborhood}
+                      />
+                      <CustomTextField
+                        fullWidth
+                        placeholder="Rua"
+                        value={formData.street || ''}
+                        onChange={(e) => handleChange('street', e.target.value)}
+                        disabled={Object.keys(initialData).length === 0 || !!initialData.street}
+                      />
+                      <CustomTextField
+                        fullWidth
+                        placeholder="Número"
+                        value={formData.number || ''}
+                        onChange={(e) => handleChange('number', e.target.value)}
+                        disabled={Object.keys(initialData).length === 0}
+                      />
+                    </Stack>
+                  </Box>
+                </Collapse>
+              </Box>
 
               <Grid item xs={12}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  onClick={() => setConfirmModalOpen(true)}
-                  disabled={formLoading}
-                  endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-                  sx={{
-                    alignSelf: 'flex-end',
-                    '&:hover': {
-                      backgroundColor: theme.palette.primary.light,
-                      color: theme.palette.primary.main,
-                      border: "1px solid",
-                    }
-                  }}
-                >
-                  {formLoading ? 'Salvando...' : 'Criar Endereço'}
-                </Button>
+                <Box sx={{ flexGrow: 1 }}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={() => setConfirmModalOpen(true)}
+                    disabled={formLoading}
+                    endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                    sx={{
+                      alignSelf: 'flex-end',
+                      '&:hover': {
+                        backgroundColor: theme.palette.primary.light,
+                        color: theme.palette.primary.main,
+                        border: "1px solid",
+                      }
+                    }}
+                  >
+                    {formLoading ? 'Salvando...' : 'Criar Endereço'}
+                  </Button>
+                </Box>
               </Grid>
-</Grid>
             </Grid>
+
+
 
 
             <Grid item xs={6} md={6}>
