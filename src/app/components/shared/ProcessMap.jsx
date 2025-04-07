@@ -63,7 +63,7 @@ function ProcessMap({ processId }) {
         const userCanComplete = dependencies.every(depId => {
             const dep = stepsMap[depId];
             return dep && dep.is_completed;
-        }) && userGroups.some(groupId => (step.allowedGroups || []).includes(groupId));
+        }) && userGroups.some(groupId => (step.allowed_groups || []).includes(groupId));
 
         if (userCanComplete) {
             setCurrentStep(step);
