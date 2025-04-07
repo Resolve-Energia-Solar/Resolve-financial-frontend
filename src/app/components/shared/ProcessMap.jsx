@@ -98,7 +98,7 @@ function ProcessMap({ processId }) {
 
             processService.completeStep(processId, currentStep.step_id, requestBody)
                 .then(() => {
-                    enqueueSnackbar(`Etapa '${currentStep.name}' concluída com sucesso!`, { variant: 'success' });
+                    enqueueSnackbar(`Etapa '${currentstep.step.name}' concluída com sucesso!`, { variant: 'success' });
                     setOpenModal(false);
                     setProcessData(prev => {
                         const updatedSteps = prev.steps.map(step =>
@@ -298,7 +298,7 @@ function ProcessMap({ processId }) {
                             </div>
                         </div>
                         <Typography variant="h6" style={{ marginTop: 4, textAlign: 'center' }}>
-                            {step.name}
+                            {step.step.name}
                         </Typography>
                     </div>
                 </Tooltip>
@@ -328,7 +328,7 @@ function ProcessMap({ processId }) {
                 if (xPos < minX) minX = xPos;
                 if (xPos + diameter > maxX) maxX = xPos + diameter;
                 newNodes.push({
-                    id: step.step_id.toString(),
+                    id: step.id,
                     data: { label: renderNodeContent(step) },
                     position: { x: xPos, y: yPos },
                     onClick: () => handleNodeClick(step),
@@ -344,7 +344,7 @@ function ProcessMap({ processId }) {
                 newEdges.push({
                     id: `e${dep}-${step.step_id}`,
                     source: dep.toString(),
-                    target: step.step_id.toString(),
+                    target: step.id,
                     animated: true
                 });
             });
