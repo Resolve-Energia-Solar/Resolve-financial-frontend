@@ -55,36 +55,47 @@ function ProcessMap({ processId }) {
         const step = processData.steps.find(s => s.step_id === stepId);
         if (!step) return;
 
+        if (step.is_completed) {
+            enqueueSnackbar("Esta etapa já foi concluída.", { variant: 'info' });
+            return;
+        }
+
         const stepsMap = {};
         processData.steps.forEach(s => {
             stepsMap[s.step_id] = s;
         });
+
         const dependencies = step.dependencies || [];
-        const userCanComplete = dependencies.every(depId => {
+        const depsCompleted = dependencies.every(depId => {
             const dep = stepsMap[depId];
             return dep && dep.is_completed;
-        }) && userGroups.some(groupId => (step.allowed_groups || []).includes(groupId));
-
-        if (userCanComplete) {
-            setCurrentStep(step);
-            setOpenModal(true);
-        } else {
-            enqueueSnackbar("Você não pode concluir esta etapa ainda", { variant: 'error' });
+        });
+        if (!depsCompleted) {
+            enqueueSnackbar("Esta etapa não pode ser concluída porque uma ou mais dependências ainda não foram finalizadas.", { variant: 'info' });
+            return;
         }
+
+        if (!userGroups.some(groupId => (step.allowed_groups || []).includes(groupId))) {
+            enqueueSnackbar("Você não possui permissão para concluir esta etapa.", { variant: 'info' });
+            return;
+        }
+
+        setCurrentStep(step);
+        setOpenModal(true);
     };
 
     const handleConfirmCompletion = () => {
         if (currentStep) {
-    
+
             if (!user) {
                 enqueueSnackbar("Usuário não encontrado", { variant: 'error' });
                 return;
             }
-    
+
             const requestBody = {
                 user_id: user.id,
             };
-    
+
             processService.completeStep(processId, currentStep.step_id, requestBody)
                 .then(() => {
                     enqueueSnackbar(`Etapa '${currentStep.name}' concluída com sucesso!`, { variant: 'success' });
@@ -100,7 +111,7 @@ function ProcessMap({ processId }) {
                     enqueueSnackbar(`Erro ao concluir a etapa: ${error}`, { variant: 'error' });
                 });
         }
-    };    
+    };
 
     const handleCloseModal = () => setOpenModal(false);
 
@@ -170,15 +181,27 @@ function ProcessMap({ processId }) {
                 prazoMs = step.deadline_days * 24 * 60 * 60 * 1000;
             }
 
+            let borderColor;
             if (step.is_completed && step.completion_date) {
+                // Se a tarefa estiver concluída, congelamos o progresso na data de conclusão
                 const completionTime = new Date(step.completion_date).getTime();
                 progress = (completionTime - latestDate) / prazoMs;
+                // Se concluída dentro do prazo, forçamos o verde
+                if (progress <= 1) {
+                    borderColor = 'green';
+                } else {
+                    borderColor = interpolateColor(progress);
+                }
             } else if (allDepsFinished && step.dependencies.length > 0) {
                 const now = new Date().getTime();
                 progress = (now - latestDate) / prazoMs;
+                borderColor = interpolateColor(progress);
             } else {
                 progress = 0;
+                borderColor = 'gray';
             }
+
+            // Garantir que progress esteja entre 0 e 1
             if (progress < 0) progress = 0;
             if (progress > 1) progress = 1;
 
@@ -191,15 +214,11 @@ function ProcessMap({ processId }) {
                 icon = <LockIcon style={{ color: 'gray', fontSize: 32 }} />;
             }
 
-            const borderColor = (!allDepsFinished && !step.is_completed)
-                ? 'gray'
-                : interpolateColor(progress);
-
             const tooltipTitle = (
                 <Grid container spacing={2} sx={{ padding: 2 }}>
                     <Grid item xs={8}>
                         <Typography variant="body1">
-                           <strong>Descrição:</strong> {step.description || "Sem descrição"}
+                            <strong>Descrição:</strong> {step.description || "Sem descrição"}
                         </Typography>
                         <Typography variant="body1">
                             <strong>Prazo:</strong> {step.deadline_days} dias
@@ -236,7 +255,8 @@ function ProcessMap({ processId }) {
                             }
                         }
                     }}
-                >                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                >
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <div style={{ position: 'relative', width: diameter, height: diameter }}>
                             <svg
                                 style={{ position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)' }}
@@ -337,12 +357,12 @@ function ProcessMap({ processId }) {
     if (!processData) return <div>Carregando...</div>;
 
     return (
-        <Box style={{ width: '100%', height: '600px' }}>
+        <Box style={{ width: '100%', height: '100%' }}>
             <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodeClick={(event, node) => handleNodeClick(node.id)}
-            fitView>
+                nodes={nodes}
+                edges={edges}
+                onNodeClick={(event, node) => handleNodeClick(node.id)}
+                fitView>
                 <Controls />
                 <Background />
             </ReactFlow>
