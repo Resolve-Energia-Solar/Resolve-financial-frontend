@@ -29,7 +29,7 @@ import EventBusyIcon from '@mui/icons-material/EventBusy';
 import TodayIcon from '@mui/icons-material/Today';
 import { Task, Visibility } from '@mui/icons-material';
 import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css';
+// import 'react-quill/dist/quill.snow.css';
 
 import { format } from 'date-fns'
 import { useRef } from 'react';
