@@ -6,13 +6,13 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useSelector } from 'react-redux';
 import { IconPower } from '@tabler/icons-react';
-import CircularProgress from '@mui/material/CircularProgress'; 
-import Dialog from '@mui/material/Dialog'; 
-import DialogActions from '@mui/material/DialogActions'; 
-import DialogContent from '@mui/material/DialogContent'; 
-import DialogContentText from '@mui/material/DialogContentText'; 
-import DialogTitle from '@mui/material/DialogTitle'; 
-import Button from '@mui/material/Button'; 
+import CircularProgress from '@mui/material/CircularProgress';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
 import { useLogout } from '@/utils/logout';
 
 export const Profile = () => {
@@ -32,15 +32,15 @@ export const Profile = () => {
     >
       {!hideMenu ? (
         <>
-          <Avatar 
-            alt={userProfile?.first_name || 'Usuário'} 
-            src={userProfile?.profile_picture || "/images/profile/user-1.jpg"} 
-            sx={{ height: 40, width: 40 }} 
+          <Avatar
+            alt={userProfile?.first_name || 'Usuário'}
+            src={userProfile?.profile_picture || "/images/profile/user-1.jpg"}
+            sx={{ height: 40, width: 40 }}
           />
 
           <Box>
             <Typography variant="h6">
-              {userProfile?.first_name || 'Usuário'} 
+              {userProfile?.first_name || 'Usuário'}
             </Typography>
             <Typography variant="caption">
               {userProfile?.employee_data?.department || 'Desconhecido'}
@@ -52,7 +52,7 @@ export const Profile = () => {
                 color="primary"
                 aria-label="logout"
                 size="small"
-                onClick={requestLogout} 
+                onClick={requestLogout}
                 disabled={loading}
               >
                 {loading ? <CircularProgress size={20} /> : <IconPower size="20" />}
@@ -65,6 +65,17 @@ export const Profile = () => {
             onClose={cancelLogout}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
+            fullWidth
+            PaperProps={{
+              sx: {
+                borderRadius: '20px',
+                padding: '24px',
+                gap: '24px',
+                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                maxWidth: "350px",
+                maxHeight: "350px",
+              },
+            }}
           >
             <DialogTitle id="alert-dialog-title">Confirmar Logout</DialogTitle>
             <DialogContent>
@@ -76,7 +87,7 @@ export const Profile = () => {
               <Button onClick={cancelLogout} color="primary">
                 Cancelar
               </Button>
-              <Button onClick={handleLogout} color="primary" autoFocus>
+              <Button onClick={handleLogout} color="warning" autoFocus>
                 Sair
               </Button>
             </DialogActions>
