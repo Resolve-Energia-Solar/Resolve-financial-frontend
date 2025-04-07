@@ -165,7 +165,17 @@ const Profile = () => {
         onClose={cancelLogout}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '20px',
+            padding: '24px',
+            gap: '24px',
+            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+            maxWidth: "350px",
+            maxHeight: "350px",
+          },
+        }}
       >
         <DialogTitle id="alert-dialog-title">Confirmar Logout</DialogTitle>
         <DialogContent>
