@@ -98,7 +98,7 @@ function ProcessMap({ processId }) {
 
             processService.completeStep(processId, currentStep.step_id, requestBody)
                 .then(() => {
-                    enqueueSnackbar(`Etapa '${currentstep.step.name}' concluída com sucesso!`, { variant: 'success' });
+                    enqueueSnackbar(`Etapa '${currentStep.step.name}' concluída com sucesso!`, { variant: 'success' });
                     setOpenModal(false);
                     setProcessData(prev => {
                         const updatedSteps = prev.steps.map(step =>
@@ -328,7 +328,7 @@ function ProcessMap({ processId }) {
                 if (xPos < minX) minX = xPos;
                 if (xPos + diameter > maxX) maxX = xPos + diameter;
                 newNodes.push({
-                    id: step.id,
+                    id: step.id.toString(),
                     data: { label: renderNodeContent(step) },
                     position: { x: xPos, y: yPos },
                     onClick: () => handleNodeClick(step),
@@ -344,7 +344,7 @@ function ProcessMap({ processId }) {
                 newEdges.push({
                     id: `e${dep}-${step.step_id}`,
                     source: dep.toString(),
-                    target: step.id,
+                    target: step.id.toString(),
                     animated: true
                 });
             });
