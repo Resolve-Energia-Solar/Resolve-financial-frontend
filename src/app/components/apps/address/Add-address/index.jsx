@@ -19,6 +19,7 @@ import {
   FormControlLabel,
   Grid,
   useTheme,
+  Typography,
 } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { useSnackbar } from 'notistack';
@@ -286,26 +287,35 @@ const CreateAddressPage = ({
             ))}
           </Alert>
         )}
-        <Grid container spacing={2} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent:"flex-start" }}>
-          <Grid item xs={12} md={6}>
-            <Stack spacing={3} sx={{ width: '100%' }}>
-              <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%' }}>
-                <Box sx={{ flexGrow: 1 }}>
-                  <AddressAutocomplete
-                    apiKey={API_KEY}
-                    onAddressSelect={handleAddressSelect}
-                    inputValue={addressInput}
-                    onInputChange={setAddressInput}
-                  />
-                </Box>
-                <Tooltip title="Digite seu endereço com NÚMERO e selecione uma opção." placement="top">
-                  <IconButton size="small">
-                    <HelpOutlineIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-              </Stack>
+        <Grid container sx={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+          <Grid item xs={12} sm={12}>
+            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Adicionar novo endereço</Typography>
+          </Grid>
 
-              <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%' }}>
+          <Grid item rowSpacing={2} xs={12} md={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", maxWidth: "100vw", mx: "auto" }}>
+            <Grid item xs={6} md={6} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start"}}>
+                <Grid item xs={11} >
+                  <Box sx={{ flexGrow: 1 }}>
+                    <AddressAutocomplete
+                      apiKey={API_KEY}
+                      onAddressSelect={handleAddressSelect}
+                      inputValue={addressInput}
+                      onInputChange={setAddressInput}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={1} sx={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
+                  <Tooltip title="Digite seu endereço com NÚMERO e selecione uma opção." placement="top">
+                    <IconButton size="small">
+                      <HelpOutlineIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </Grid>
+              </Grid>
+
+              <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start"}}>
+                <Grid item xs={11} >
                 <Box sx={{ flexGrow: 1 }}>
                   <CustomTextField
                     fullWidth
@@ -317,92 +327,99 @@ const CreateAddressPage = ({
                     helperText={formErrors.complement}
                   />
                 </Box>
+                </Grid>
+                <Grid item xs={1} >
                 <Tooltip title="Informe informações adicionais, ex: apto, bloco, complemento." placement="top">
                   <IconButton size="small">
                     <HelpOutlineIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
-              </Stack>
+                </Grid>
+              </Grid>
 
-              <Box>
-                <Button
-                  variant="outlined"
-                  onClick={() => setOpenAccordion(!openAccordion)}
-                  fullWidth
-                >
-                  {openAccordion ? 'Ocultar informações do endereço' : 'Ver informações do endereço'}
-                </Button>
-                <Collapse in={openAccordion}>
-                  <Box sx={{ mt: 2, p: 2, border: '1px solid #ccc', borderRadius: 1 }}>
-                    <Stack spacing={2}>
-                      <CustomTextField
-                        fullWidth
-                        placeholder="CEP"
-                        value={formData.zip_code || ''}
-                        onChange={(e) => handleChange('zip_code', e.target.value)}
-                        disabled={
-                          Object.keys(initialData).length === 0 || !!initialData.zip_code
-                        }
-                      />
-                      <CustomTextField
-                        fullWidth
-                        placeholder="País"
-                        value={formData.country || ''}
-                        onChange={(e) => handleChange('country', e.target.value)}
-                        disabled={
-                          Object.keys(initialData).length === 0 || !!initialData.country
-                        }
-                      />
-                      <CustomTextField
-                        fullWidth
-                        placeholder="Estado"
-                        value={formData.state || ''}
-                        onChange={(e) => handleChange('state', e.target.value)}
-                        disabled={
-                          Object.keys(initialData).length === 0 || !!initialData.state
-                        }
-                      />
-                      <CustomTextField
-                        fullWidth
-                        placeholder="Cidade"
-                        value={formData.city || ''}
-                        onChange={(e) => handleChange('city', e.target.value)}
-                        disabled={
-                          Object.keys(initialData).length === 0 || !!initialData.city
-                        }
-                      />
-                      <CustomTextField
-                        fullWidth
-                        placeholder="Bairro"
-                        value={formData.neighborhood || ''}
-                        onChange={(e) => handleChange('neighborhood', e.target.value)}
-                        disabled={
-                          Object.keys(initialData).length === 0 || !!initialData.neighborhood
-                        }
-                      />
-                      <CustomTextField
-                        fullWidth
-                        placeholder="Rua"
-                        value={formData.street || ''}
-                        onChange={(e) => handleChange('street', e.target.value)}
-                        disabled={
-                          Object.keys(initialData).length === 0 || !!initialData.street
-                        }
-                      />
-                      <CustomTextField
-                        fullWidth
-                        placeholder="Número"
-                        value={formData.number || ''}
-                        onChange={(e) => handleChange('number', e.target.value)}
-                        disabled={
-                          Object.keys(initialData).length === 0
-                        }
-                      />
-                    </Stack>
-                  </Box>
-                </Collapse>
-              </Box>
+              <Grid item xs={12} columnSpacing={2} sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", maxWidth: "100vw", mx: "auto" }}>
+                <Grid item xs={12}>
+                <Box>
+                  <Button
+                    variant="outlined"
+                    onClick={() => setOpenAccordion(!openAccordion)}
+                    fullWidth
+                  >
+                    {openAccordion ? 'Ocultar informações do endereço' : 'Ver informações do endereço'}
+                  </Button>
+                  <Collapse in={openAccordion}>
+                    <Box sx={{ mt: 2, p: 2, border: '1px solid #ccc', borderRadius: 1 }}>
+                      <Stack spacing={2}>
+                        <CustomTextField
+                          fullWidth
+                          placeholder="CEP"
+                          value={formData.zip_code || ''}
+                          onChange={(e) => handleChange('zip_code', e.target.value)}
+                          disabled={
+                            Object.keys(initialData).length === 0 || !!initialData.zip_code
+                          }
+                        />
+                        <CustomTextField
+                          fullWidth
+                          placeholder="País"
+                          value={formData.country || ''}
+                          onChange={(e) => handleChange('country', e.target.value)}
+                          disabled={
+                            Object.keys(initialData).length === 0 || !!initialData.country
+                          }
+                        />
+                        <CustomTextField
+                          fullWidth
+                          placeholder="Estado"
+                          value={formData.state || ''}
+                          onChange={(e) => handleChange('state', e.target.value)}
+                          disabled={
+                            Object.keys(initialData).length === 0 || !!initialData.state
+                          }
+                        />
+                        <CustomTextField
+                          fullWidth
+                          placeholder="Cidade"
+                          value={formData.city || ''}
+                          onChange={(e) => handleChange('city', e.target.value)}
+                          disabled={
+                            Object.keys(initialData).length === 0 || !!initialData.city
+                          }
+                        />
+                        <CustomTextField
+                          fullWidth
+                          placeholder="Bairro"
+                          value={formData.neighborhood || ''}
+                          onChange={(e) => handleChange('neighborhood', e.target.value)}
+                          disabled={
+                            Object.keys(initialData).length === 0 || !!initialData.neighborhood
+                          }
+                        />
+                        <CustomTextField
+                          fullWidth
+                          placeholder="Rua"
+                          value={formData.street || ''}
+                          onChange={(e) => handleChange('street', e.target.value)}
+                          disabled={
+                            Object.keys(initialData).length === 0 || !!initialData.street
+                          }
+                        />
+                        <CustomTextField
+                          fullWidth
+                          placeholder="Número"
+                          value={formData.number || ''}
+                          onChange={(e) => handleChange('number', e.target.value)}
+                          disabled={
+                            Object.keys(initialData).length === 0
+                          }
+                        />
+                      </Stack>
+                    </Box>
+                  </Collapse>
+                </Box>
+                </Grid>
               
+
               <Grid item xs={12}>
                 <Button
                   variant="contained"
@@ -411,7 +428,7 @@ const CreateAddressPage = ({
                   onClick={() => setConfirmModalOpen(true)}
                   disabled={formLoading}
                   endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-                  sx={{ 
+                  sx={{
                     alignSelf: 'flex-end',
                     '&:hover': {
                       backgroundColor: theme.palette.primary.light,
@@ -423,31 +440,32 @@ const CreateAddressPage = ({
                   {formLoading ? 'Salvando...' : 'Criar Endereço'}
                 </Button>
               </Grid>
-            </Stack>
+</Grid>
+            </Grid>
+
+
+            <Grid item xs={6} md={6}>
+              <Stack>
+                <Box sx={{ width: '100%', height: '300px', mt: 2 }}>
+                  {mapLoadError && <div>Erro ao carregar o mapa</div>}
+                  {!isMapLoaded ? (
+                    <CircularProgress />
+                  ) : (
+                    <GoogleMap
+                      center={markerPosition}
+                      zoom={14}
+                      mapContainerStyle={{ width: '100%', height: '100%' }}
+                      onClick={handleMapClick}
+                    >
+                      <Marker position={markerPosition} draggable onDragEnd={handleMapClick} />
+                    </GoogleMap>
+                  )}
+                </Box>
+              </Stack>
+            </Grid>
+
+
           </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Stack>
-              <Box sx={{ width: '100%', height: '300px', mt: 2 }}>
-                {mapLoadError && <div>Erro ao carregar o mapa</div>}
-                {!isMapLoaded ? (
-                  <CircularProgress />
-                ) : (
-                  <GoogleMap
-                    center={markerPosition}
-                    zoom={14}
-                    mapContainerStyle={{ width: '100%', height: '100%' }}
-                    onClick={handleMapClick}
-                  >
-                    <Marker position={markerPosition} draggable onDragEnd={handleMapClick} />
-                  </GoogleMap>
-                )}
-              </Box>
-            </Stack>
-          </Grid>
-
-
-
         </Grid>
       </Paper>
 
