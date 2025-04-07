@@ -46,7 +46,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
       )}
       {subtext}
 
-      <Stack>
+      <Stack spacing={1}>
         <Box>
           <CustomFormLabel htmlFor="email" sx={{ fontWeight: "700", fontSize: "16px" }} >
             E-mail<span style={{ color: '#EA3209' }}>*</span>
