@@ -68,7 +68,7 @@ const Sidebar = () => {
               <Box p={2}>
                 <Logo />
               </Box>
-              <Scrollbar sx={{ overflowY: "auto", overflowX: "hidden", height: 'calc(100% - 190px)' }}>
+              <Scrollbar sx={{ overflowY: "auto", overflowX: "hidden", height: 'calc(97% - 190px)' }}>
                 <SidebarItems />
               </Scrollbar>
               <Profile />
