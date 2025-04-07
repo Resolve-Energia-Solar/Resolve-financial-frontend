@@ -18,6 +18,7 @@ import {
   Checkbox,
   FormControlLabel,
   Grid,
+  useTheme,
 } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { useSnackbar } from 'notistack';
@@ -263,6 +264,8 @@ const CreateAddressPage = ({
     setOpenAccordion(Boolean(formData.zip_code));
   }, [formData.zip_code]);
 
+  const theme = useTheme();
+
   return (
     <Box sx={{ maxWidth: '100vw', mx: 'auto', p: 2 }}>
       <Paper
@@ -283,7 +286,7 @@ const CreateAddressPage = ({
             ))}
           </Alert>
         )}
-        <Grid container spacing={2}>
+        <Grid container spacing={2} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent:"flex-start" }}>
           <Grid item xs={12} md={6}>
             <Stack spacing={3} sx={{ width: '100%' }}>
               <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%' }}>
@@ -399,17 +402,27 @@ const CreateAddressPage = ({
                   </Box>
                 </Collapse>
               </Box>
-
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => setConfirmModalOpen(true)}
-                disabled={formLoading}
-                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-                sx={{ alignSelf: 'flex-end' }}
-              >
-                {formLoading ? 'Salvando...' : 'Criar Endereço'}
-              </Button>
+              
+              <Grid item xs={12}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={() => setConfirmModalOpen(true)}
+                  disabled={formLoading}
+                  endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                  sx={{ 
+                    alignSelf: 'flex-end',
+                    '&:hover': {
+                      backgroundColor: theme.palette.primary.light,
+                      color: theme.palette.primary.main,
+                      border: "1px solid",
+                    }
+                  }}
+                >
+                  {formLoading ? 'Salvando...' : 'Criar Endereço'}
+                </Button>
+              </Grid>
             </Stack>
           </Grid>
 
