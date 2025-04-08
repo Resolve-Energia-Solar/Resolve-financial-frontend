@@ -417,7 +417,7 @@ const CreateAddressPage = ({
                           }}
                         />
                       </Grid>
-                      <Grid item xs={12} sm={6}>
+                      <Grid item xs={12} sm={4}>
                         <CustomTextField
                           fullWidth
                           placeholder="País"
@@ -451,7 +451,7 @@ const CreateAddressPage = ({
                           }}
                         />
                       </Grid>
-                      <Grid item xs={12} sm={2}>
+                      <Grid item xs={12} sm={4}>
                         <CustomTextField
                           fullWidth
                           placeholder="Estado"
@@ -647,6 +647,7 @@ const CreateAddressPage = ({
                         backgroundColor: theme.palette.primary.light,
                         color: theme.palette.primary.main,
                         border: "1px solid",
+                        boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.0)",
                       }
                     }}
                   >
