@@ -158,6 +158,11 @@ export default function AutoCompleteUser({
                 </React.Fragment>
               ),
             }}
+            sx={{
+              mt: 0.5,
+              mb: 0,
+              height: "45px"
+            }}
           />
         )}
         sx={sx}

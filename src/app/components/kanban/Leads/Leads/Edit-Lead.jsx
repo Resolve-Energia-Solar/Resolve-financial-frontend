@@ -93,7 +93,7 @@ function EditLeadPage({ leadId = null }) {
             <Grid item xs={12} sx={{ mb: "24px" }}>
               <Typography sx={{ fontWeight: "400", fontSize: "18px" }}>Cadastro de Lead | <strong>Dados Pessoais</strong></Typography>
             </Grid>
-            <Grid item xs={12} sx={{ mb: "8px"}}>
+            <Grid item xs={12} sx={{ mb: "8px" }}>
               <FormControl>
                 <FormLabel id="demo-radio-buttons-group-label" sx={{ fontWeight: "700", fontSize: "14px", mb: "8px" }}>Tipo de Lead</FormLabel>
                 <RadioGroup
@@ -143,7 +143,7 @@ function EditLeadPage({ leadId = null }) {
                 </RadioGroup>
               </FormControl>
             </Grid>
-            
+
             {leadType === 'PF' ? (
               <Grid container spacing={2} sx={{ mb: 3 }}>
                 <Grid item xs={12} sm={5}>
@@ -197,13 +197,75 @@ function EditLeadPage({ leadId = null }) {
                     value={formData.birth_date}
                     onChange={(e) => handleChange('birth_date', e.target.value)}
                     fullWidth
-                    // InputProps={{
-                    //   startAdornment: (
-                    //     <InputAdornment position="start">
-                    //       <Phone />
-                    //     </InputAdornment>
-                    //   ),
-                    // }}
+                  // InputProps={{
+                  //   startAdornment: (
+                  //     <InputAdornment position="start">
+                  //       <Phone />
+                  //     </InputAdornment>
+                  //   ),
+                  // }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="contact_email" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }} >E-mail</CustomFormLabel>
+                  <TextField
+                    name="contact_email"
+                    value={formData.contact_email}
+                    onChange={(e) => handleChange('contact_email', e.target.value)}
+                    fullWidth
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Email />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={12} lg={6}>
+                  <CustomFormLabel
+                    htmlFor="address"
+                    sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}
+                  >
+                    Endereço
+                  </CustomFormLabel>
+                  <GenericAutocomplete
+                    fetchOptions={fetchAddress}
+                    multiple
+                    label=''
+                    size="small"
+                    AddComponent={CreateAddressPage}
+                    getOptionLabel={(option) =>
+                      `${option.street}, ${option.number} - ${option.city}, ${option.state}`
+                    }
+                    onChange={(selected) => {
+                      setSelectedAddresses(selected);
+                      console.log(selected);
+                      const ids = Array.isArray(selected) ? selected.map((item) => item.id) : [];
+                      handleChange('addresses_ids', ids);
+                    }}
+                    value={selectedAddresses}
+                    {...(formErrors.addresses && {
+                      error: true,
+                      helperText: formErrors.addresses,
+                    })}
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
                   />
                 </Grid>
 
@@ -225,83 +287,17 @@ function EditLeadPage({ leadId = null }) {
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                  <CustomFormLabel htmlFor="origin" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Origem</CustomFormLabel>
+                  <CustomFormLabel htmlFor="origin" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px', mb: 0 }}>Origem</CustomFormLabel>
                   <AutoCompleteOrigin
                     onChange={(id) => handleChange('origin', id)}
                     value={formData.origin}
                     {...(formErrors.origin && { error: true, helperText: formErrors.origin })}
+                    sx={{ mt: 0}}
                   />
                 </Grid>
 
-                
-
-                
-
                 <Grid item xs={12} sm={6}>
-                  <CustomFormLabel htmlFor="contact_email" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }} >E-mail</CustomFormLabel>
-                  <TextField
-                    name="contact_email"
-                    value={formData.contact_email}
-                    onChange={(e) => handleChange('contact_email', e.target.value)}
-                    fullWidth
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Email />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-
-                <Grid item xs={12} sm={12} lg={6}>
-            <CustomFormLabel
-              htmlFor="address"
-              sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}
-            >
-              Endereço
-            </CustomFormLabel>
-            <GenericAutocomplete
-              fetchOptions={fetchAddress}
-              multiple
-              label=''
-              size="small"
-              AddComponent={CreateAddressPage}
-              getOptionLabel={(option) =>
-                `${option.street}, ${option.number} - ${option.city}, ${option.state}`
-              }
-              onChange={(selected) => {
-                setSelectedAddresses(selected);
-                console.log(selected);
-                const ids = Array.isArray(selected) ? selected.map((item) => item.id) : [];
-                handleChange('addresses_ids', ids);
-              }}
-              value={selectedAddresses}
-              {...(formErrors.addresses && {
-                error: true,
-                helperText: formErrors.addresses,
-              })}
-              sx={{
-                input: {
-                color: '#7E92A2',
-                fontWeight: '400',
-                fontSize: '12px',
-                opacity: 1,
-                },
-                '& .MuiOutlinedInput-root': {
-                  border: '1px solid #3E3C41',
-                  borderRadius: '9px',
-                },
-                '& .MuiInputBase-input': {
-                  padding: '12px',
-                },
-              }}
-            />
-          </Grid>
-
-
-                <Grid item xs={12} sm={6}>
-                  <CustomFormLabel htmlFor="name" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Vendedor</CustomFormLabel>
+                  <CustomFormLabel htmlFor="name" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px', mb: 0 }}>Vendedor</CustomFormLabel>
                   <AutoCompleteUser
                     onChange={(id) => handleChange('seller', id)}
                     value={formData.seller}
@@ -408,7 +404,7 @@ function EditLeadPage({ leadId = null }) {
                 </Grid>
               </Grid>
             )}
-            
+
 
             {/* Add a Save Button */}
             <Grid
