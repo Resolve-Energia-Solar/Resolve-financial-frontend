@@ -347,6 +347,11 @@ const CreateAddressPage = ({
                     backgroundColor: openAccordion ? theme.palette.primary.main : 'transparent',
                     color: openAccordion ? 'white' : theme.palette.primary.main,
                     border: openAccordion ? 'transparent' : '1px solid',
+                    transition: 'background-color 0.3s, color 0.3s, border 0.3s',
+                    '&:hover': {
+                      backgroundColor: theme.palette.primary.main,
+                      color: theme.palette.primary.light,
+                    },
                   }}
                 >
                   {openAccordion ? 'Ocultar informações do endereço' : 'Ver informações do endereço'}
