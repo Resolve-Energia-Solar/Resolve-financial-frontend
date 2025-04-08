@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, TextField, Paper, List, ListItem, ListItemText } from '@mui/material';
 import { useJsApiLoader } from '@react-google-maps/api';
+import CustomFormLabel from '../forms/theme-elements/CustomFormLabel';
 
 const libraries = ['places'];
 
@@ -147,13 +148,14 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
 
   return (
     <Box sx={{ position: 'relative' }}>
+      <CustomFormLabel sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px", mt: 1 }}>Endereço</CustomFormLabel>
       <TextField
         fullWidth
-        label="Pesquisar Endereço"
+        // label="Pesquisar Endereço"
         variant="outlined"
         value={value}
         onChange={handleChangeInput}
-        onFocus={() => setIsPostalCodeSearch(value.length === 8)}
+        onFocus={() => setIsPostalCodeSearch(value.length <= 8)}
       />
       {predictions.length > 0 && (
         <Paper

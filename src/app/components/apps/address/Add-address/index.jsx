@@ -27,6 +27,7 @@ import AddressAutocomplete from '@/app/components/auto-completes/AddressSearch';
 import useAddressForm from '@/hooks/address/useAddressForm';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
+import ZipCodeSearch from '@/app/components/auto-completes/ZipCodeSearch';
 
 const fieldLabels = {
   zip_code: "CEP",
@@ -295,6 +296,25 @@ const CreateAddressPage = ({
           <Grid container sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", maxWidth: "100%", width: "100%" }}>
     
             <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column" }}>
+              <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
+                <Grid item xs={11}>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <ZipCodeSearch
+                      apiKey={API_KEY}
+                      onAddressSelect={handleAddressSelect}
+                      inputValue={addressInput}
+                      onInputChange={setAddressInput}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={1} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                  <Tooltip title="Digite seu endereço com NÚMERO e selecione uma opção." placement="top">
+                    <IconButton size="small">
+                      <HelpOutlineIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </Grid>
+              </Grid>
               <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
                 <Grid item xs={11}>
                   <Box sx={{ flexGrow: 1 }}>
