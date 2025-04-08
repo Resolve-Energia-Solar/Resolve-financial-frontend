@@ -132,10 +132,22 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
   return (
     <Box sx={{ position: 'relative' }}>
       <Grid container xs={12}>
-        <Grid item xs={11} >
+        <Grid item xs={12} >
           <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mt: 0 }}>Endereço</CustomFormLabel>
         </Grid>
-        <Grid item xs={1} >
+        
+      </Grid>
+      <Grid container xs={12}>
+        <Grid item xs={11} >
+          <TextField
+            fullWidth
+            // label="Pesquisar Endereço"
+            variant="outlined"
+            value={value}
+            onChange={handleChangeInput}
+          />
+        </Grid>
+        <Grid item xs={1} sx={{ display: "flex", justifyContent: "end", alignItems: "center" }}>
           <Tooltip title="Digite seu endereço com NÚMERO e selecione uma opção." placement="top">
             <IconButton size="small">
               <HelpOutlineIcon fontSize="small" />
@@ -143,13 +155,6 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
           </Tooltip>
         </Grid>
       </Grid>
-      <TextField
-        fullWidth
-        // label="Pesquisar Endereço"
-        variant="outlined"
-        value={value}
-        onChange={handleChangeInput}
-      />
       {predictions.length > 0 && (
         <Paper
           sx={{

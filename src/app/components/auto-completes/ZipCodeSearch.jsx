@@ -138,10 +138,23 @@ const ZipCodeSearch = ({ apiKey, onAddressSelect, inputValue, onInputChange }) =
     return (
         <Box sx={{ position: 'relative' }}>
             <Grid container xs={12}>
-                <Grid item xs={11} >
+                <Grid item xs={12} >
                     <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mt: 0 }}>CEP</CustomFormLabel>
                 </Grid>
-                <Grid item xs={1} >
+
+            </Grid>
+            <Grid container xs={12}>
+                <Grid item xs={11} >
+                    <TextField
+                        fullWidth
+                        // label="Pesquisar CEP"
+                        variant="outlined"
+                        value={value}
+                        onChange={handleChangeInput}
+                        onFocus={() => setPredictions([])}
+                    />
+                </Grid>
+                <Grid item xs={1} sx={{ display: "flex", justifyContent: "end", alignItems: "center" }} >
                     <Tooltip title="Digite o CEP de até 8 dígitos e selecione uma opção." placement="top">
                         <IconButton size="small">
                             <HelpOutlineIcon fontSize="small" />
@@ -149,16 +162,6 @@ const ZipCodeSearch = ({ apiKey, onAddressSelect, inputValue, onInputChange }) =
                     </Tooltip>
                 </Grid>
             </Grid>
-
-            <TextField
-                fullWidth
-                // label="Pesquisar CEP"
-                variant="outlined"
-                value={value}
-                onChange={handleChangeInput}
-                onFocus={() => setPredictions([])}
-            />
-
             {predictions.length > 0 && (
                 <Paper
                     sx={{

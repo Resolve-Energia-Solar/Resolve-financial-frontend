@@ -310,9 +310,10 @@ const CreateAddressPage = ({
                     />
                   </Box>
                 </Grid>
-                
+
               </Grid>
-              <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
+
+              <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", mt: 1, mb: 1 }}>
                 <Grid item xs={12}>
                   <Box sx={{ flexGrow: 1 }}>
                     <AddressAutocomplete
@@ -323,16 +324,22 @@ const CreateAddressPage = ({
                     />
                   </Box>
                 </Grid>
-               
+
               </Grid>
 
               <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
-                <Grid item xs={11}>
+                <Grid item xs={12}>
                   <Box sx={{ flexGrow: 1 }}>
-                    <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mb: 0, mt: 1 }}>Complemento</CustomFormLabel>
+
+                    <Grid container xs={12}>
+                      <Grid item xs={12} >
+                        <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mt: 0 }}>Complemento</CustomFormLabel>
+                      </Grid>
+                    </Grid>
+                    <Grid container xs={12}>
+                      <Grid item xs={11} >
                     <CustomTextField
                       fullWidth
-                      // label="Complemento"
                       variant="outlined"
                       value={formData.complement}
                       onChange={(e) => handleChange('complement', e.target.value)}
@@ -340,18 +347,21 @@ const CreateAddressPage = ({
                       helperText={formErrors.complement}
                       sx={{ mt: 0.5, mb: 1, height: 30 }}
                     />
+                    </Grid>
+                    <Grid item xs={1} sx={{ display: "flex", justifyContent: "end", alignItems: "end" }}>
+                    <Tooltip title="Insira informações adicionais, ex: apto, bloco, complemento." placement="top">
+                        <IconButton size="small">
+                            <HelpOutlineIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                    </Grid>
+                    </Grid>
                   </Box>
                 </Grid>
-                <Grid item xs={1} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                  <Tooltip title="Insira informações adicionais, ex: apto, bloco, complemento." placement="top">
-                    <IconButton size="small">
-                      <HelpOutlineIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                </Grid>
+
               </Grid>
 
-              <Box sx={{ width: '100%', my: 2 }}>
+              <Box sx={{ width: '100%', my: 2, mt: 3 }}>
                 <Button
                   variant="outlined"
                   onClick={() => setOpenAccordion(!openAccordion)}
