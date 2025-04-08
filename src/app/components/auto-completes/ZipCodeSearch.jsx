@@ -11,7 +11,7 @@ const ZipCodeSearch = ({ apiKey, onAddressSelect, inputValue, onInputChange }) =
 
     const [localInputValue, setLocalInputValue] = useState('');
     const value = inputValue !== undefined ? inputValue : localInputValue;
-    const [isPostalCodeSearch, setIsPostalCodeSearch] = useState(false);
+    const [isZipCodeSearch, setIsZipCodeSearch] = useState(false);
 
     const handleChangeInput = (e) => {
         setShouldSearch(true);
@@ -34,47 +34,36 @@ const ZipCodeSearch = ({ apiKey, onAddressSelect, inputValue, onInputChange }) =
     // Estado para as sugestões
     const [predictions, setPredictions] = useState([]);
 
-    // Efeito que faz a busca
+    const zipCodePattern = /^[0-9]{5}-?[0-9]{3}$/;
+
     useEffect(() => {
         if (isLoaded && window.google && value.length > 2 && shouldSearch) {
-            const service = new window.google.maps.places.AutocompleteService();
-
-            if (isPostalCodeSearch) {
-                service.getPlacePredictions(
-                    {
-                        input: value,
-                        componentRestrictions: { country: 'br' },
-                        types: ['(regions)'],
-                    },
-                    (preds, status) => {
-                        console.log('Predictions:', preds, status);
-                        if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-                            setPredictions(preds);
-                        } else {
-                            setPredictions([]);
-                        }
-                    }
-                );
-            } else {
-                service.getPlacePredictions(
-                    {
-                        input: value,
-                        componentRestrictions: { country: 'br' },
-                        types: ['address'],
-                    },
-                    (preds, status) => {
-                        if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-                            setPredictions(preds);
-                        } else {
-                            setPredictions([]);
-                        }
-                    }
-                );
-            }
-        } else {
+          const service = new window.google.maps.places.AutocompleteService();
+      
+          if (zipCodePattern.test(value) && value.length <= 8) {
+            
+            service.getPlacePredictions(
+              {
+                input: value,
+                componentRestrictions: { country: 'br' },
+                types: ['(regions)'], 
+              },
+              (preds, status) => {
+                console.log('Predictions:', preds, status);
+                if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+                  setPredictions(preds);
+                } else {
+                  setPredictions([]);
+                }
+              }
+            );
+          } else {
             setPredictions([]);
+          }
+        } else {
+          setPredictions([]);
         }
-    }, [value, isLoaded, shouldSearch, isPostalCodeSearch]);
+      }, [value, isLoaded, shouldSearch]);
 
     // Quando o usuário clica numa sugestão
     const handleSelectPrediction = (prediction) => {
@@ -155,7 +144,7 @@ const ZipCodeSearch = ({ apiKey, onAddressSelect, inputValue, onInputChange }) =
                 variant="outlined"
                 value={value}
                 onChange={handleChangeInput}
-                onFocus={() => setIsPostalCodeSearch(value.length <= 8)}
+                onFocus={() => setPredictions([])}
             />
             {predictions.length > 0 && (
                 <Paper
