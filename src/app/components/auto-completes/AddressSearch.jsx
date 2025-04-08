@@ -10,6 +10,7 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
 
   const [localInputValue, setLocalInputValue] = useState('');
   const value = inputValue !== undefined ? inputValue : localInputValue;
+  const [isPostalCodeSearch, setIsPostalCodeSearch] = useState(false);
 
   const handleChangeInput = (e) => {
     setShouldSearch(true);
