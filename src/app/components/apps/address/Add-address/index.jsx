@@ -294,7 +294,7 @@ const CreateAddressPage = ({
 
           <Grid container sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", maxWidth: "100%", width: "100%" }}>
     
-            <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column" }}>
               <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
                 <Grid item xs={11}>
                   <Box sx={{ flexGrow: 1 }}>
@@ -338,7 +338,7 @@ const CreateAddressPage = ({
                 </Grid>
               </Grid>
 
-              <Box sx={{ width: '100%' }}>
+              <Box sx={{ width: '100%', my: 2 }}>
                 <Button
                   variant="outlined"
                   onClick={() => setOpenAccordion(!openAccordion)}
@@ -347,7 +347,8 @@ const CreateAddressPage = ({
                     backgroundColor: openAccordion ? theme.palette.primary.main : 'transparent',
                     color: openAccordion ? 'white' : theme.palette.primary.main,
                     border: openAccordion ? 'transparent' : '1px solid',
-                    transition: 'background-color 0.3s, color 0.3s, border 0.3s',
+                    transition: 'background-color 0.3s, color 0.3s, border 0.1s',
+                    // borderTopLeftRadius: openAccordion ? 3 : 1,
                     '&:hover': {
                       backgroundColor: theme.palette.primary.main,
                       color: theme.palette.primary.light,
@@ -357,7 +358,7 @@ const CreateAddressPage = ({
                   {openAccordion ? 'Ocultar informações do endereço' : 'Ver informações do endereço'}
                 </Button>
                 <Collapse in={openAccordion}>
-                  <Box sx={{ mt: -3, p: 1, border: '1px solid', borderColor: theme.palette.primary.main, borderRadius: 2, backgroundColor: theme.palette.primary.main }}>
+                  <Box sx={{ mt: -3, p: 1, border: '1px solid', borderColor: theme.palette.primary.main, borderRadius: 1, backgroundColor: theme.palette.primary.main }}>
                     <Grid container spacing={1} sx={{ mt: 0.2 }}>
                       <Grid item xs={12} sm={4}>
                         <CustomTextField
