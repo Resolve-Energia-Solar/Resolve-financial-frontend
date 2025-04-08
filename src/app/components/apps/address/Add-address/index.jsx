@@ -346,14 +346,14 @@ const CreateAddressPage = ({
                   sx={{
                     backgroundColor: openAccordion ? theme.palette.primary.main : 'transparent',
                     color: openAccordion ? 'white' : theme.palette.primary.main,
-                    border: openAccordion ? '1px solid white' : '1px solid',
+                    border: openAccordion ? 'transparent' : '1px solid',
                   }}
                 >
                   {openAccordion ? 'Ocultar informações do endereço' : 'Ver informações do endereço'}
                 </Button>
                 <Collapse in={openAccordion}>
-                  <Box sx={{ mt: -2, p: 1, border: '1px solid', borderColor: theme.palette.primary.main, borderRadius: 2, backgroundColor: theme.palette.background.main }}>
-                    <Grid container spacing={2}>
+                  <Box sx={{ mt: -3, p: 1, border: '1px solid', borderColor: theme.palette.primary.main, borderRadius: 2, backgroundColor: theme.palette.primary.main }}>
+                    <Grid container spacing={2} sx={{ mt: 0.5 }}>
                       <Grid item xs={12} sm={6}>
                         <CustomTextField
                           fullWidth
