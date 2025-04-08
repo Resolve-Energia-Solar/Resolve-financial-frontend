@@ -28,6 +28,7 @@ import useAddressForm from '@/hooks/address/useAddressForm';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import ZipCodeSearch from '@/app/components/auto-completes/ZipCodeSearch';
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 
 const fieldLabels = {
   zip_code: "CEP",
@@ -308,7 +309,7 @@ const CreateAddressPage = ({
                   </Box>
                 </Grid>
                 <Grid item xs={1} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                  <Tooltip title="Digite seu endereço com NÚMERO e selecione uma opção." placement="top">
+                  <Tooltip title="Digite o CEP de até 8 dígitos e selecione uma opção." placement="top">
                     <IconButton size="small">
                       <HelpOutlineIcon fontSize="small" />
                     </IconButton>
@@ -338,14 +339,16 @@ const CreateAddressPage = ({
               <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
                 <Grid item xs={11}>
                   <Box sx={{ flexGrow: 1 }}>
+                    <CustomFormLabel sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px", mb: 0, mt: 1 }}>Complemento</CustomFormLabel>
                     <CustomTextField
                       fullWidth
-                      label="Complemento"
+                      // label="Complemento"
                       variant="outlined"
                       value={formData.complement}
                       onChange={(e) => handleChange('complement', e.target.value)}
                       error={!!formErrors.complement}
                       helperText={formErrors.complement}
+                      sx={{ mt: 0.5, mb: 0 }}
                     />
                   </Box>
                 </Grid>
