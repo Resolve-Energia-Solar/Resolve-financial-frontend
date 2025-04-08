@@ -14,6 +14,7 @@ export default function SideDrawer({ title, children, open, onClose, anchor = 'r
   const [processId, setProcessId] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
   const [expandView, setExpand] = useState(false);
+  const [sizes, setSizes] = useState([100, '30%', 'auto']);
 
   useEffect(() => {
     async function fetchProcessData() {
@@ -72,13 +73,14 @@ export default function SideDrawer({ title, children, open, onClose, anchor = 'r
             minSize={300}
             maxSize={800}
             defaultSize={400}
-            style={{ height: '100vh' }}
             resizerStyle={{
               background: '#ccc',
               opacity: 0.5,
               cursor: 'col-resize',
               width: '5px'
             }}
+            onChange={setSizes}
+            paneStyle={{ overflowY: 'auto' }}
           >
             <Box sx={{ height: '100vh', overflowY: 'auto', padding: 2 }}>
               <ProcessMap processId={processId} />
