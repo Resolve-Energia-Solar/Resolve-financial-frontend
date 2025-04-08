@@ -296,7 +296,7 @@ const CreateAddressPage = ({
             <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px", mb: 2 }}>Adicionar novo endereço</Typography>
           </Grid>
 
-          <Grid container sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", maxWidth: "100%", width: "100%" }}>
+          <Grid container columnSpacing={2} sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", maxWidth: "100%", width: "100%" }}>
 
             <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column" }}>
               <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
@@ -657,12 +657,9 @@ const CreateAddressPage = ({
               </Grid>
             </Grid>
 
-
-
-
-            <Grid item xs={6} md={6}>
+            <Grid item xs={12} md={6}>
               <Stack>
-                <Box sx={{ width: '100%', height: '500px', ml: 2 }}>
+                <Box sx={{ width: '100%', height: '500px', }}>
                   {mapLoadError && <div>Erro ao carregar o mapa</div>}
                   {!isMapLoaded ? (
                     <CircularProgress />
