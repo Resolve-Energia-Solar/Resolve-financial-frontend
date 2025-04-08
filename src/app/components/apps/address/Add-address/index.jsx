@@ -716,7 +716,7 @@ const CreateAddressPage = ({
         }}
       >
         <DialogTitle sx={{ bgcolor: 'warning.main', color: 'white', }}>
-          Confirmação de Endereço
+          Confirmação de endereço
         </DialogTitle>
         <DialogContent>
           <DialogContentText sx={{ px: 1 }}>
