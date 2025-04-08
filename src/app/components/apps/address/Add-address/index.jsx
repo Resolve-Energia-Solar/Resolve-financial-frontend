@@ -397,18 +397,18 @@ const CreateAddressPage = ({
                             borderRadius: 1,
                             maxHeight: 40,
                             '& .MuiOutlinedInput-root': {
-                              height: '100%',  
+                              height: '100%',
                               borderRadius: 1,
                               backgroundColor: theme.palette.primary.light,
                             },
                             '& .MuiInputBase-input': {
-                              padding: '10px', 
+                              padding: '10px',
                             },
                             '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: theme.palette.primary.main, 
+                              borderColor: theme.palette.primary.main,
                             },
                             '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
-                              borderColor: theme.palette.grey[300], 
+                              borderColor: theme.palette.grey[300],
                             },
                             input: {
                               color: '#7E92A2',
@@ -431,18 +431,18 @@ const CreateAddressPage = ({
                             borderRadius: 1,
                             maxHeight: 40,
                             '& .MuiOutlinedInput-root': {
-                              height: '100%',  
+                              height: '100%',
                               borderRadius: 1,
                               backgroundColor: theme.palette.primary.light,
                             },
                             '& .MuiInputBase-input': {
-                              padding: '10px', 
+                              padding: '10px',
                             },
                             '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: theme.palette.primary.main, 
+                              borderColor: theme.palette.primary.main,
                             },
                             '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
-                              borderColor: theme.palette.grey[300], 
+                              borderColor: theme.palette.grey[300],
                             },
                             input: {
                               color: '#7E92A2',
@@ -465,18 +465,18 @@ const CreateAddressPage = ({
                             borderRadius: 1,
                             maxHeight: 40,
                             '& .MuiOutlinedInput-root': {
-                              height: '100%',  
+                              height: '100%',
                               borderRadius: 1,
                               backgroundColor: theme.palette.primary.light,
                             },
                             '& .MuiInputBase-input': {
-                              padding: '10px', 
+                              padding: '10px',
                             },
                             '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: theme.palette.primary.main, 
+                              borderColor: theme.palette.primary.main,
                             },
                             '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
-                              borderColor: theme.palette.grey[300], 
+                              borderColor: theme.palette.grey[300],
                             },
                             input: {
                               color: '#7E92A2',
@@ -499,18 +499,18 @@ const CreateAddressPage = ({
                             borderRadius: 1,
                             maxHeight: 40,
                             '& .MuiOutlinedInput-root': {
-                              height: '100%',  
+                              height: '100%',
                               borderRadius: 1,
                               backgroundColor: theme.palette.primary.light,
                             },
                             '& .MuiInputBase-input': {
-                              padding: '10px', 
+                              padding: '10px',
                             },
                             '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: theme.palette.primary.main, 
+                              borderColor: theme.palette.primary.main,
                             },
                             '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
-                              borderColor: theme.palette.grey[300], 
+                              borderColor: theme.palette.grey[300],
                             },
                             input: {
                               color: '#7E92A2',
@@ -533,18 +533,18 @@ const CreateAddressPage = ({
                             borderRadius: 1,
                             maxHeight: 40,
                             '& .MuiOutlinedInput-root': {
-                              height: '100%',  
+                              height: '100%',
                               borderRadius: 1,
                               backgroundColor: theme.palette.primary.light,
                             },
                             '& .MuiInputBase-input': {
-                              padding: '10px', 
+                              padding: '10px',
                             },
                             '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: theme.palette.primary.main, 
+                              borderColor: theme.palette.primary.main,
                             },
                             '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
-                              borderColor: theme.palette.grey[300], 
+                              borderColor: theme.palette.grey[300],
                             },
                             input: {
                               color: '#7E92A2',
@@ -567,18 +567,18 @@ const CreateAddressPage = ({
                             borderRadius: 1,
                             maxHeight: 40,
                             '& .MuiOutlinedInput-root': {
-                              height: '100%',  
+                              height: '100%',
                               borderRadius: 1,
                               backgroundColor: theme.palette.primary.light,
                             },
                             '& .MuiInputBase-input': {
-                              padding: '10px', 
+                              padding: '10px',
                             },
                             '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: theme.palette.primary.main, 
+                              borderColor: theme.palette.primary.main,
                             },
                             '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
-                              borderColor: theme.palette.grey[300], 
+                              borderColor: theme.palette.grey[300],
                             },
                             input: {
                               color: '#7E92A2',
@@ -601,12 +601,12 @@ const CreateAddressPage = ({
                             borderRadius: 1,
                             maxHeight: 40,
                             '& .MuiOutlinedInput-root': {
-                              height: '100%',  
+                              height: '100%',
                               borderRadius: 1,
                               backgroundColor: theme.palette.primary.light,
                             },
                             '& .MuiInputBase-input': {
-                              padding: '10px', 
+                              padding: '10px',
                             },
                             '& .MuiInputBase-input::placeholder': {
                               color: '#7E92A2',
@@ -615,10 +615,10 @@ const CreateAddressPage = ({
                               opacity: 1,
                             },
                             '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: theme.palette.primary.main, 
+                              borderColor: theme.palette.primary.main,
                             },
                             '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
-                              borderColor: theme.palette.grey[300], 
+                              borderColor: theme.palette.grey[300],
                             },
                             input: {
                               color: '#7E92A2',
@@ -705,12 +705,22 @@ const CreateAddressPage = ({
             '100%': { transform: 'translateX(0)' },
           },
         }}
+        PaperProps={{
+          sx: {
+            borderRadius: '20px',
+            // padding: '24px',
+            gap: '24px',
+            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+            backgroundColor: '#FFFFFF',
+            p: 1,
+          },
+        }}
       >
-        <DialogTitle sx={{ bgcolor: 'warning.main', color: 'white', mb: 2 }}>
+        <DialogTitle sx={{ bgcolor: 'warning.main', color: 'white', }}>
           Confirmação de Endereço
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText sx={{ px: 1 }}>
             <strong style={{ fontSize: '1.3em' }}>Atenção:</strong> este endereço será utilizado exatamente como informado para definir a rota do motorista. Verifique se a localização no mapa está correta.
           </DialogContentText>
           <FormControlLabel
@@ -722,10 +732,11 @@ const CreateAddressPage = ({
               />
             }
             label="Confirmo que as informações estão corretas e desejo prosseguir."
+            sx={{ px: 1 }}
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setConfirmModalOpen(false)}>Cancelar</Button>
+        <DialogActions sx={{ mb: 1, mr: 1 }}>
+          <Button color="warning" onClick={() => setConfirmModalOpen(false)}>Cancelar</Button>
           <Button onClick={submitAddress} disabled={!confirmChecked}>
             Confirmar
           </Button>
