@@ -367,7 +367,7 @@ const CreateAddressPage = ({
                   onClick={() => setOpenAccordion(!openAccordion)}
                   fullWidth
                   sx={{
-                    backgroundColor: openAccordion ? theme.palette.primary.main : 'transparent',
+                    backgroundColor: openAccordion ? theme.palette.primary.main : theme.palette.primary.light,
                     color: openAccordion ? 'white' : theme.palette.primary.main,
                     border: openAccordion ? 'transparent' : '1px solid',
                     transition: 'background-color 0.3s, color 0.3s, border 0.1s',
