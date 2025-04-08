@@ -129,7 +129,7 @@ function EditLeadPage({ leadId = null }) {
             </Grid>
             
             {leadType === 'PF' ? (
-              <>
+              <Grid container spacing={2} sx={{ mb: 3 }}>
                 <Grid item xs={12} sm={6}>
                   <CustomFormLabel htmlFor="name">Nome Completo</CustomFormLabel>
                   <TextField
@@ -225,9 +225,9 @@ function EditLeadPage({ leadId = null }) {
                     {...(formErrors.seller && { error: true, helperText: formErrors.seller })}
                   />
                 </Grid>
-              </>
+              </Grid>
             ) : (
-              <>
+              <Grid container spacing={2} sx={{ mb: 3 }}>
                 <Grid item xs={12} sm={6}>
                   <CustomFormLabel htmlFor="name">Nome Completo</CustomFormLabel>
                   <TextField
@@ -323,7 +323,7 @@ function EditLeadPage({ leadId = null }) {
                     {...(formErrors.seller && { error: true, helperText: formErrors.seller })}
                   />
                 </Grid>
-              </>
+              </Grid>
             )}
             
 
