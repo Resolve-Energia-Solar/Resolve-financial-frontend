@@ -295,7 +295,7 @@ const CreateAddressPage = ({
           </Grid>
 
           <Grid container sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", maxWidth: "100%", width: "100%" }}>
-    
+
             <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column" }}>
               <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
                 <Grid item xs={11}>
@@ -382,7 +382,7 @@ const CreateAddressPage = ({
                 </Button>
                 <Collapse in={openAccordion}>
                   <Box sx={{ mt: -3, p: 1, border: '1px solid', borderColor: theme.palette.primary.main, borderRadius: 1, backgroundColor: theme.palette.primary.main }}>
-                    <Grid container spacing={1} sx={{ mt: 0.2 }}>
+                    <Grid container rowSpacing={0} columnSpacing={1} sx={{ mt: 0.2 }}>
                       <Grid item xs={12} sm={4}>
                         <CustomTextField
                           fullWidth
@@ -390,6 +390,31 @@ const CreateAddressPage = ({
                           value={formData.zip_code || ''}
                           onChange={(e) => handleChange('zip_code', e.target.value)}
                           disabled={Object.keys(initialData).length === 0 || !!initialData.zip_code}
+                          sx={{
+                            backgroundColor: theme.palette.primary.light,
+                            borderRadius: 1,
+                            maxHeight: 40,
+                            '& .MuiOutlinedInput-root': {
+                              height: '100%',  
+                              borderRadius: 1,
+                              backgroundColor: theme.palette.primary.light,
+                            },
+                            '& .MuiInputBase-input': {
+                              padding: '10px', 
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.primary.main, 
+                            },
+                            '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.grey[300], 
+                            },
+                            input: {
+                              color: '#7E92A2',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              opacity: 1,
+                            },
+                          }}
                         />
                       </Grid>
                       <Grid item xs={12} sm={6}>
@@ -399,6 +424,31 @@ const CreateAddressPage = ({
                           value={formData.country || ''}
                           onChange={(e) => handleChange('country', e.target.value)}
                           disabled={Object.keys(initialData).length === 0 || !!initialData.country}
+                          sx={{
+                            backgroundColor: theme.palette.primary.light,
+                            borderRadius: 1,
+                            maxHeight: 40,
+                            '& .MuiOutlinedInput-root': {
+                              height: '100%',  
+                              borderRadius: 1,
+                              backgroundColor: theme.palette.primary.light,
+                            },
+                            '& .MuiInputBase-input': {
+                              padding: '10px', 
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.primary.main, 
+                            },
+                            '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.grey[300], 
+                            },
+                            input: {
+                              color: '#7E92A2',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              opacity: 1,
+                            },
+                          }}
                         />
                       </Grid>
                       <Grid item xs={12} sm={2}>
@@ -408,6 +458,31 @@ const CreateAddressPage = ({
                           value={formData.state || ''}
                           onChange={(e) => handleChange('state', e.target.value)}
                           disabled={Object.keys(initialData).length === 0 || !!initialData.state}
+                          sx={{
+                            backgroundColor: theme.palette.primary.light,
+                            borderRadius: 1,
+                            maxHeight: 40,
+                            '& .MuiOutlinedInput-root': {
+                              height: '100%',  
+                              borderRadius: 1,
+                              backgroundColor: theme.palette.primary.light,
+                            },
+                            '& .MuiInputBase-input': {
+                              padding: '10px', 
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.primary.main, 
+                            },
+                            '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.grey[300], 
+                            },
+                            input: {
+                              color: '#7E92A2',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              opacity: 1,
+                            },
+                          }}
                         />
                       </Grid>
                       <Grid item xs={12} sm={8}>
@@ -417,6 +492,31 @@ const CreateAddressPage = ({
                           value={formData.city || ''}
                           onChange={(e) => handleChange('city', e.target.value)}
                           disabled={Object.keys(initialData).length === 0 || !!initialData.city}
+                          sx={{
+                            backgroundColor: theme.palette.primary.light,
+                            borderRadius: 1,
+                            maxHeight: 40,
+                            '& .MuiOutlinedInput-root': {
+                              height: '100%',  
+                              borderRadius: 1,
+                              backgroundColor: theme.palette.primary.light,
+                            },
+                            '& .MuiInputBase-input': {
+                              padding: '10px', 
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.primary.main, 
+                            },
+                            '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.grey[300], 
+                            },
+                            input: {
+                              color: '#7E92A2',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              opacity: 1,
+                            },
+                          }}
                         />
                       </Grid>
                       <Grid item xs={12} sm={4}>
@@ -426,6 +526,31 @@ const CreateAddressPage = ({
                           value={formData.neighborhood || ''}
                           onChange={(e) => handleChange('neighborhood', e.target.value)}
                           disabled={Object.keys(initialData).length === 0 || !!initialData.neighborhood}
+                          sx={{
+                            backgroundColor: theme.palette.primary.light,
+                            borderRadius: 1,
+                            maxHeight: 40,
+                            '& .MuiOutlinedInput-root': {
+                              height: '100%',  
+                              borderRadius: 1,
+                              backgroundColor: theme.palette.primary.light,
+                            },
+                            '& .MuiInputBase-input': {
+                              padding: '10px', 
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.primary.main, 
+                            },
+                            '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.grey[300], 
+                            },
+                            input: {
+                              color: '#7E92A2',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              opacity: 1,
+                            },
+                          }}
                         />
                       </Grid>
                       <Grid item xs={12} sm={8}>
@@ -435,6 +560,31 @@ const CreateAddressPage = ({
                           value={formData.street || ''}
                           onChange={(e) => handleChange('street', e.target.value)}
                           disabled={Object.keys(initialData).length === 0 || !!initialData.street}
+                          sx={{
+                            backgroundColor: theme.palette.primary.light,
+                            borderRadius: 1,
+                            maxHeight: 40,
+                            '& .MuiOutlinedInput-root': {
+                              height: '100%',  
+                              borderRadius: 1,
+                              backgroundColor: theme.palette.primary.light,
+                            },
+                            '& .MuiInputBase-input': {
+                              padding: '10px', 
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.primary.main, 
+                            },
+                            '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.grey[300], 
+                            },
+                            input: {
+                              color: '#7E92A2',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              opacity: 1,
+                            },
+                          }}
                         />
                       </Grid>
                       <Grid item xs={12} sm={4}>
@@ -444,6 +594,31 @@ const CreateAddressPage = ({
                           value={formData.number || ''}
                           onChange={(e) => handleChange('number', e.target.value)}
                           disabled={Object.keys(initialData).length === 0}
+                          sx={{
+                            backgroundColor: theme.palette.primary.light,
+                            borderRadius: 1,
+                            maxHeight: 40,
+                            '& .MuiOutlinedInput-root': {
+                              height: '100%',  
+                              borderRadius: 1,
+                              backgroundColor: theme.palette.primary.light,
+                            },
+                            '& .MuiInputBase-input': {
+                              padding: '10px', 
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.primary.main, 
+                            },
+                            '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.grey[300], 
+                            },
+                            input: {
+                              color: '#7E92A2',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              opacity: 1,
+                            },
+                          }}
                         />
                       </Grid>
                     </Grid>
