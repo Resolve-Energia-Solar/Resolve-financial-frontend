@@ -72,6 +72,8 @@ const CreateAddressPage = ({
 
   const [lastError, setLastError] = useState('');
 
+  const [zipCodeInput, setZipCodeInput] = useState('');
+
   const handleAddressSelect = (addressData) => {
     const formatedZipCode = addressData.zip_code.replace('-', '');
     handleChange('zip_code', formatedZipCode);
@@ -303,8 +305,8 @@ const CreateAddressPage = ({
                     <ZipCodeSearch
                       apiKey={API_KEY}
                       onAddressSelect={handleAddressSelect}
-                      inputValue={addressInput}
-                      onInputChange={setAddressInput}
+                      inputValue={zipCodeInput}
+                      onInputChange={setZipCodeInput}
                     />
                   </Box>
                 </Grid>
