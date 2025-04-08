@@ -1,8 +1,9 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, Paper, List, ListItem, ListItemText } from '@mui/material';
+import { Box, TextField, Paper, List, ListItem, ListItemText, Tooltip, IconButton, Grid } from '@mui/material';
 import { useJsApiLoader } from '@react-google-maps/api';
 import CustomFormLabel from '../forms/theme-elements/CustomFormLabel';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 const libraries = ['places'];
 
@@ -37,32 +38,32 @@ const ZipCodeSearch = ({ apiKey, onAddressSelect, inputValue, onInputChange }) =
 
     useEffect(() => {
         if (isLoaded && window.google && value.length > 2 && shouldSearch) {
-          const service = new window.google.maps.places.AutocompleteService();
-      
-          if (zipCodePattern.test(value) && value.length <= 8) {
-            
-            service.getPlacePredictions(
-              {
-                input: value,
-                componentRestrictions: { country: 'br' },
-                types: ['(regions)'], 
-              },
-              (preds, status) => {
-                console.log('Predictions:', preds, status);
-                if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-                  setPredictions(preds);
-                } else {
-                  setPredictions([]);
-                }
-              }
-            );
-          } else {
-            setPredictions([]);
-          }
+            const service = new window.google.maps.places.AutocompleteService();
+
+            if (zipCodePattern.test(value) && value.length <= 8) {
+
+                service.getPlacePredictions(
+                    {
+                        input: value,
+                        componentRestrictions: { country: 'br' },
+                        types: ['(regions)'],
+                    },
+                    (preds, status) => {
+                        console.log('Predictions:', preds, status);
+                        if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+                            setPredictions(preds);
+                        } else {
+                            setPredictions([]);
+                        }
+                    }
+                );
+            } else {
+                setPredictions([]);
+            }
         } else {
-          setPredictions([]);
+            setPredictions([]);
         }
-      }, [value, isLoaded, shouldSearch]);
+    }, [value, isLoaded, shouldSearch]);
 
     // Quando o usuário clica numa sugestão
     const handleSelectPrediction = (prediction) => {
@@ -136,7 +137,19 @@ const ZipCodeSearch = ({ apiKey, onAddressSelect, inputValue, onInputChange }) =
 
     return (
         <Box sx={{ position: 'relative' }}>
-            <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mt: 0 }}>CEP</CustomFormLabel>
+            <Grid container xs={12}>
+                <Grid item xs={11} >
+                    <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mt: 0 }}>CEP</CustomFormLabel>
+                </Grid>
+                <Grid item xs={1} >
+                    <Tooltip title="Digite o CEP de até 8 dígitos e selecione uma opção." placement="top">
+                        <IconButton size="small">
+                            <HelpOutlineIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                </Grid>
+            </Grid>
+
             <TextField
                 fullWidth
                 // label="Pesquisar CEP"
@@ -145,6 +158,7 @@ const ZipCodeSearch = ({ apiKey, onAddressSelect, inputValue, onInputChange }) =
                 onChange={handleChangeInput}
                 onFocus={() => setPredictions([])}
             />
+
             {predictions.length > 0 && (
                 <Paper
                     sx={{
