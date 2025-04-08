@@ -27,7 +27,7 @@ export default function AutoCompleteOrigin({ onChange, value, error, labeltitle,
   return (
     <div>
       <Autocomplete
-        sx={{ width: '100%' }}
+        sx={{ width: '100%'}}
         open={open}
         onOpen={() => setOpen(true)}
         onClose={() => setOpen(false)}
@@ -55,6 +55,11 @@ export default function AutoCompleteOrigin({ onChange, value, error, labeltitle,
                   {params.InputProps.endAdornment}
                 </Fragment>
               ),
+            }}
+            sx={{
+              mt: 0.5,
+              mb: 0,
+              height: "45px"
             }}
           />
         )}
