@@ -73,7 +73,7 @@ function EditLeadPage({ leadId = null }) {
 
           <Grid container spacing={1} sx={{ px: 5 }}>
             <Grid item xs={12}>
-              <Typography sx={{ fontWeight: "400", fontSize: "18px" }}>Cadastro de Lead | Dados Pessoais</Typography>
+              <Typography sx={{ fontWeight: "400", fontSize: "18px" }}>Cadastro de Lead | <strong>Dados Pessoais</strong></Typography>
             </Grid>
             <Grid item xs={12}>
               <FormControl>
