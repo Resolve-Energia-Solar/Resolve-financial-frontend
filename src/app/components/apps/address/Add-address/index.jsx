@@ -358,8 +358,8 @@ const CreateAddressPage = ({
                 </Button>
                 <Collapse in={openAccordion}>
                   <Box sx={{ mt: -3, p: 1, border: '1px solid', borderColor: theme.palette.primary.main, borderRadius: 2, backgroundColor: theme.palette.primary.main }}>
-                    <Grid container spacing={2} sx={{ mt: 0.5 }}>
-                      <Grid item xs={12} sm={6}>
+                    <Grid container spacing={1} sx={{ mt: 0.2 }}>
+                      <Grid item xs={12} sm={4}>
                         <CustomTextField
                           fullWidth
                           placeholder="CEP"
@@ -377,7 +377,7 @@ const CreateAddressPage = ({
                           disabled={Object.keys(initialData).length === 0 || !!initialData.country}
                         />
                       </Grid>
-                      <Grid item xs={12} sm={6}>
+                      <Grid item xs={12} sm={2}>
                         <CustomTextField
                           fullWidth
                           placeholder="Estado"
@@ -386,7 +386,7 @@ const CreateAddressPage = ({
                           disabled={Object.keys(initialData).length === 0 || !!initialData.state}
                         />
                       </Grid>
-                      <Grid item xs={12} sm={6}>
+                      <Grid item xs={12} sm={8}>
                         <CustomTextField
                           fullWidth
                           placeholder="Cidade"
@@ -395,7 +395,7 @@ const CreateAddressPage = ({
                           disabled={Object.keys(initialData).length === 0 || !!initialData.city}
                         />
                       </Grid>
-                      <Grid item xs={12} sm={6}>
+                      <Grid item xs={12} sm={4}>
                         <CustomTextField
                           fullWidth
                           placeholder="Bairro"
@@ -404,7 +404,7 @@ const CreateAddressPage = ({
                           disabled={Object.keys(initialData).length === 0 || !!initialData.neighborhood}
                         />
                       </Grid>
-                      <Grid item xs={12} sm={6}>
+                      <Grid item xs={12} sm={10}>
                         <CustomTextField
                           fullWidth
                           placeholder="Rua"
@@ -413,7 +413,7 @@ const CreateAddressPage = ({
                           disabled={Object.keys(initialData).length === 0 || !!initialData.street}
                         />
                       </Grid>
-                      <Grid item xs={12} sm={6}>
+                      <Grid item xs={12} sm={2}>
                         <CustomTextField
                           fullWidth
                           placeholder="Número"
