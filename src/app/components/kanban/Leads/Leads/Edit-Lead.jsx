@@ -67,17 +67,17 @@ function EditLeadPage({ leadId = null }) {
             flexDirection: 'column',
           }}
         >
-          <Grid container spacing={2} alignItems="center" sx={{ p: 3, m: 0.1 }}>
+          <Grid container spacing={1} alignItems="center" sx={{ p: 3, m: 0.1 }}>
             <LeadInfoHeader />
           </Grid>
 
-          <Grid container spacing={1} sx={{ px: 5 }}>
-            <Grid item xs={12}>
+          <Grid container sx={{ px: 5 }}>
+            <Grid item xs={12} sx={{ mb: "24px" }}>
               <Typography sx={{ fontWeight: "400", fontSize: "18px" }}>Cadastro de Lead | <strong>Dados Pessoais</strong></Typography>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sx={{ mb: "8px"}}>
               <FormControl>
-                <FormLabel id="demo-radio-buttons-group-label">Tipo de Lead</FormLabel>
+                <FormLabel id="demo-radio-buttons-group-label" sx={{ fontWeight: "700", fontSize: "14px", mb: "8px" }}>Tipo de Lead</FormLabel>
                 <RadioGroup
                   aria-labelledby="demo-radio-buttons-group-label"
                   name="type"
@@ -91,9 +91,9 @@ function EditLeadPage({ leadId = null }) {
                     control={
                       <Radio
                         sx={{
-                          color: '#E4B400',
+                          color: theme.palette.primary.Radio,
                           '&.Mui-checked': {
-                            color: '#E4B400',
+                            color: theme.palette.primary.main,
                           },
                         }}
                       />
@@ -105,10 +105,11 @@ function EditLeadPage({ leadId = null }) {
                     control={
                       <Radio
                         sx={{
-                          color: '#E4B400',
+                          color: theme.palette.primary.Radio,
                           '&.Mui-checked': {
-                            color: '#E4B400',
+                            color: theme.palette.primary.main,
                           },
+                          ml: 2,
                         }}
                       />
                     }
