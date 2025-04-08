@@ -11,7 +11,6 @@ const ZipCodeSearch = ({ apiKey, onAddressSelect, inputValue, onInputChange }) =
 
     const [localInputValue, setLocalInputValue] = useState('');
     const value = inputValue !== undefined ? inputValue : localInputValue;
-    const [isZipCodeSearch, setIsZipCodeSearch] = useState(false);
 
     const handleChangeInput = (e) => {
         setShouldSearch(true);
