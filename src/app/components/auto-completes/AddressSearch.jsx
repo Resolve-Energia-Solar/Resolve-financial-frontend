@@ -153,6 +153,7 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
         variant="outlined"
         value={value}
         onChange={handleChangeInput}
+        onFocus={() => setIsPostalCodeSearch(value.length === 8)}
       />
       {predictions.length > 0 && (
         <Paper
