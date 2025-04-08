@@ -37,25 +37,43 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
   useEffect(() => {
     if (isLoaded && window.google && value.length > 2 && shouldSearch) {
       const service = new window.google.maps.places.AutocompleteService();
-      service.getPlacePredictions(
-        {
-          input: value,
-          componentRestrictions: { country: 'br' },
-          types: ['address'],
-        },
-        (preds, status) => {
-          console.log('Predictions:', preds, status);
-          if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-            setPredictions(preds);
-          } else {
-            setPredictions([]);
+
+      if (isPostalCodeSearch) {
+        service.getPlacePredictions(
+          {
+            input: value,
+            componentRestrictions: { country: 'br' },
+            types: ['(regions)'],
+          },
+          (preds, status) => {
+            console.log('Predictions:', preds, status);
+            if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+              setPredictions(preds);
+            } else {
+              setPredictions([]);
+            }
           }
-        }
-      );
+        );
+      } else {
+        service.getPlacePredictions(
+          {
+            input: value,
+            componentRestrictions: { country: 'br' },
+            types: ['address'],
+          },
+          (preds, status) => {
+            if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+              setPredictions(preds);
+            } else {
+              setPredictions([]);
+            }
+          }
+        );
+      }
     } else {
       setPredictions([]);
     }
-  }, [value, isLoaded, shouldSearch]);
+  }, [value, isLoaded, shouldSearch, isPostalCodeSearch]);
 
   // Quando o usuário clica numa sugestão
   const handleSelectPrediction = (prediction) => {
