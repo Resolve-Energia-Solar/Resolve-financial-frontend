@@ -148,7 +148,7 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
 
   return (
     <Box sx={{ position: 'relative' }}>
-      <CustomFormLabel sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px", mt: 1 }}>Endereço</CustomFormLabel>
+      <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mt: 1 }}>Endereço</CustomFormLabel>
       <TextField
         fullWidth
         // label="Pesquisar Endereço"

@@ -148,7 +148,7 @@ const ZipCodeSearch = ({ apiKey, onAddressSelect, inputValue, onInputChange }) =
 
     return (
         <Box sx={{ position: 'relative' }}>
-            <CustomFormLabel sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px", mt: 0 }}>CEP</CustomFormLabel>
+            <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mt: 0 }}>CEP</CustomFormLabel>
             <TextField
                 fullWidth
                 // label="Pesquisar CEP"

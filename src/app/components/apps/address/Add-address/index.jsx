@@ -339,7 +339,7 @@ const CreateAddressPage = ({
               <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
                 <Grid item xs={11}>
                   <Box sx={{ flexGrow: 1 }}>
-                    <CustomFormLabel sx={{ color: "#092C4C", fontWeight: "700", fontSize: "14px", mb: 0, mt: 1 }}>Complemento</CustomFormLabel>
+                    <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mb: 0, mt: 1 }}>Complemento</CustomFormLabel>
                     <CustomTextField
                       fullWidth
                       // label="Complemento"
@@ -348,7 +348,7 @@ const CreateAddressPage = ({
                       onChange={(e) => handleChange('complement', e.target.value)}
                       error={!!formErrors.complement}
                       helperText={formErrors.complement}
-                      sx={{ mt: 0.5, mb: 0 }}
+                      sx={{ mt: 0.5, mb: 1, height: 30 }}
                     />
                   </Box>
                 </Grid>
