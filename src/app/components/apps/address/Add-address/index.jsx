@@ -268,7 +268,7 @@ const CreateAddressPage = ({
   const theme = useTheme();
 
   return (
-    <Box sx={{ maxWidth: '100vw', mx: 'auto', p: 2 }}>
+    <Box sx={{ maxWidth: '100vw', mx: 'auto' }}>
       <Paper
         elevation={0}
         sx={{
