@@ -405,7 +405,7 @@ const CreateAddressPage = ({
                           disabled={Object.keys(initialData).length === 0 || !!initialData.neighborhood}
                         />
                       </Grid>
-                      <Grid item xs={12} sm={10}>
+                      <Grid item xs={12} sm={8}>
                         <CustomTextField
                           fullWidth
                           placeholder="Rua"
@@ -414,7 +414,7 @@ const CreateAddressPage = ({
                           disabled={Object.keys(initialData).length === 0 || !!initialData.street}
                         />
                       </Grid>
-                      <Grid item xs={12} sm={2}>
+                      <Grid item xs={12} sm={4}>
                         <CustomTextField
                           fullWidth
                           placeholder="Número"
