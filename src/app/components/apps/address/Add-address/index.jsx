@@ -608,6 +608,12 @@ const CreateAddressPage = ({
                             '& .MuiInputBase-input': {
                               padding: '10px', 
                             },
+                            '& .MuiInputBase-input::placeholder': {
+                              color: '#7E92A2',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              opacity: 1,
+                            },
                             '& .MuiOutlinedInput-notchedOutline': {
                               borderColor: theme.palette.primary.main, 
                             },
