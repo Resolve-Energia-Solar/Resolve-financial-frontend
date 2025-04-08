@@ -1,8 +1,9 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, Paper, List, ListItem, ListItemText } from '@mui/material';
+import { Box, TextField, Paper, List, ListItem, ListItemText, Grid, Tooltip, IconButton } from '@mui/material';
 import { useJsApiLoader } from '@react-google-maps/api';
 import CustomFormLabel from '../forms/theme-elements/CustomFormLabel';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 const libraries = ['places'];
 
@@ -130,7 +131,18 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
 
   return (
     <Box sx={{ position: 'relative' }}>
-      <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mt: 1 }}>Endereço</CustomFormLabel>
+      <Grid container xs={12}>
+        <Grid item xs={11} >
+          <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mt: 0 }}>Endereço</CustomFormLabel>
+        </Grid>
+        <Grid item xs={1} >
+          <Tooltip title="Digite seu endereço com NÚMERO e selecione uma opção." placement="top">
+            <IconButton size="small">
+              <HelpOutlineIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Grid>
+      </Grid>
       <TextField
         fullWidth
         // label="Pesquisar Endereço"

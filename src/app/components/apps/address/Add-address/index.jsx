@@ -313,7 +313,7 @@ const CreateAddressPage = ({
                 
               </Grid>
               <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
-                <Grid item xs={11}>
+                <Grid item xs={12}>
                   <Box sx={{ flexGrow: 1 }}>
                     <AddressAutocomplete
                       apiKey={API_KEY}
@@ -323,13 +323,7 @@ const CreateAddressPage = ({
                     />
                   </Box>
                 </Grid>
-                <Grid item xs={1} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                  <Tooltip title="Digite seu endereço com NÚMERO e selecione uma opção." placement="top">
-                    <IconButton size="small">
-                      <HelpOutlineIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                </Grid>
+               
               </Grid>
 
               <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
