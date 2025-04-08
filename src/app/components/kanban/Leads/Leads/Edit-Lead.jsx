@@ -29,6 +29,8 @@ import { useSelector } from 'react-redux';
 import AutoCompleteUser from '@/app/components/apps/invoice/components/auto-complete/Auto-Input-User';
 import { LeadModalTabContext } from '../context/LeadModalTabContext';
 import { useContext, useState } from 'react';
+import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
+import CreateAddressPage from '@/app/components/apps/address/Add-address';
 
 function EditLeadPage({ leadId = null }) {
   const theme = useTheme();
@@ -55,6 +57,20 @@ function EditLeadPage({ leadId = null }) {
   };
 
   const [leadType, setLeadType] = useState('');
+  const [selectedAddresses, setSelectedAddresses] = useState([]);
+  const fetchAddress = async (search) => {
+    try {
+      const response = await addressService.index({
+        q: search,
+        limit: 40,
+        fields: 'id,street,number,city,state',
+      });
+      return response.results;
+    } catch (error) {
+      console.error('Erro na busca de endereços:', error);
+      return [];
+    }
+  };
 
   return (
     <Grid container spacing={0}>
@@ -237,6 +253,52 @@ function EditLeadPage({ leadId = null }) {
                     }}
                   />
                 </Grid>
+
+                <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel
+              htmlFor="address"
+              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+            >
+              Endereço
+            </CustomFormLabel>
+            <GenericAutocomplete
+              fetchOptions={fetchAddress}
+              multiple
+              label=''
+              size="small"
+              AddComponent={CreateAddressPage}
+              getOptionLabel={(option) =>
+                `${option.street}, ${option.number} - ${option.city}, ${option.state}`
+              }
+              onChange={(selected) => {
+                setSelectedAddresses(selected);
+                console.log(selected);
+                const ids = Array.isArray(selected) ? selected.map((item) => item.id) : [];
+                handleChange('addresses_ids', ids);
+              }}
+              value={selectedAddresses}
+              {...(formErrors.addresses && {
+                error: true,
+                helperText: formErrors.addresses,
+              })}
+              sx={{
+                input: {
+                color: '#7E92A2',
+                fontWeight: '400',
+                fontSize: '12px',
+                opacity: 1,
+                },
+                '& .MuiOutlinedInput-root': {
+                  border: '1px solid #3E3C41',
+                  borderRadius: '9px',
+                },
+                '& .MuiInputBase-input': {
+                  padding: '12px',
+                },
+              }}
+            />
+          </Grid>
+
 
                 <Grid item xs={12} sm={6}>
                   <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
