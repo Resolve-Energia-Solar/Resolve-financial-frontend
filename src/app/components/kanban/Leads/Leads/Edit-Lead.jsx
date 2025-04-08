@@ -130,7 +130,7 @@ function EditLeadPage({ leadId = null }) {
             
             {leadType === 'PF' ? (
               <Grid container spacing={2} sx={{ mb: 3 }}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={5}>
                   <CustomFormLabel htmlFor="name">Nome Completo</CustomFormLabel>
                   <TextField
                     name="name"
@@ -144,6 +144,50 @@ function EditLeadPage({ leadId = null }) {
                         </InputAdornment>
                       ),
                     }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={2}>
+                  <CustomFormLabel htmlFor="first_document">CPF</CustomFormLabel>
+                  <TextField
+                    name="first_document"
+                    value={formData.first_document}
+                    onChange={(e) => handleChange('first_document', e.target.value)}
+                    fullWidth
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={3}>
+                  <CustomFormLabel htmlFor="phone">Telefone com DDD</CustomFormLabel>
+                  <TextField
+                    name="phone"
+                    value={formData.phone}
+                    onChange={(e) => handleChange('phone', e.target.value)}
+                    fullWidth
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Phone />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={2}>
+                  <CustomFormLabel htmlFor="birth_date">Data de Nascimento</CustomFormLabel>
+                  <TextField
+                    name="birth_date"
+                    value={formData.birth_date}
+                    onChange={(e) => handleChange('birth_date', e.target.value)}
+                    fullWidth
+                    // InputProps={{
+                    //   startAdornment: (
+                    //     <InputAdornment position="start">
+                    //       <Phone />
+                    //     </InputAdornment>
+                    //   ),
+                    // }}
                   />
                 </Grid>
 
@@ -173,32 +217,9 @@ function EditLeadPage({ leadId = null }) {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
-                  <CustomFormLabel htmlFor="first_document">CPF/CNPJ</CustomFormLabel>
-                  <TextField
-                    name="first_document"
-                    value={formData.first_document}
-                    onChange={(e) => handleChange('first_document', e.target.value)}
-                    fullWidth
-                  />
-                </Grid>
+                
 
-                <Grid item xs={12} sm={6}>
-                  <CustomFormLabel htmlFor="phone">Telefone com DDD</CustomFormLabel>
-                  <TextField
-                    name="phone"
-                    value={formData.phone}
-                    onChange={(e) => handleChange('phone', e.target.value)}
-                    fullWidth
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Phone />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
+                
 
                 <Grid item xs={12} sm={6}>
                   <CustomFormLabel htmlFor="contact_email">E-mail</CustomFormLabel>
