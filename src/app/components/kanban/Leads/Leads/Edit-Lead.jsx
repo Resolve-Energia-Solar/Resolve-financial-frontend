@@ -28,7 +28,7 @@ import useLeadForm from '@/hooks/leads/useLeadtForm';
 import { useSelector } from 'react-redux';
 import AutoCompleteUser from '@/app/components/apps/invoice/components/auto-complete/Auto-Input-User';
 import { LeadModalTabContext } from '../context/LeadModalTabContext';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 
 function EditLeadPage({ leadId = null }) {
   const theme = useTheme();
@@ -53,6 +53,8 @@ function EditLeadPage({ leadId = null }) {
       enqueueSnackbar('Lead salvo com sucesso', { variant: 'success' });
     }
   };
+
+  const [leadType, setLeadType] = useState('');
 
   return (
     <Grid container spacing={0}>
@@ -88,6 +90,7 @@ function EditLeadPage({ leadId = null }) {
                 >
                   <FormControlLabel
                     value="PF"
+                    onClick={() => setLeadType('PF')}
                     control={
                       <Radio
                         sx={{
@@ -102,12 +105,18 @@ function EditLeadPage({ leadId = null }) {
                   />
                   <FormControlLabel
                     value="PJ"
+                    onClick={() => setLeadType('PJ')}
                     control={
                       <Radio
                         sx={{
                           color: theme.palette.primary.Radio,
                           '&.Mui-checked': {
                             color: theme.palette.primary.main,
+                          },
+                          '.MuiFormControlLabel-label': {
+                            color: "#303030",
+                            fontWeight: 400,
+                            fontSize: "16px"
                           },
                           ml: 2,
                         }}
@@ -118,102 +127,205 @@ function EditLeadPage({ leadId = null }) {
                 </RadioGroup>
               </FormControl>
             </Grid>
+            
+            {leadType === 'PF' ? (
+              <>
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="name">Nome Completo</CustomFormLabel>
+                  <TextField
+                    name="name"
+                    value={formData.name}
+                    onChange={(e) => handleChange('name', e.target.value)}
+                    fullWidth
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <AccountCircle />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <CustomFormLabel htmlFor="name">Nome Completo</CustomFormLabel>
-              <TextField
-                name="name"
-                value={formData.name}
-                onChange={(e) => handleChange('name', e.target.value)}
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <AccountCircle />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="funnel">Funil</CustomFormLabel>
+                  <TextField
+                    select
+                    name="funnel"
+                    value={formData.funnel}
+                    onChange={(e) => handleChange('funnel', e.target.value)}
+                    fullWidth
+                  >
+                    <MenuItem value="N">Não Interessado</MenuItem>
+                    <MenuItem value="P">Pouco Interessado</MenuItem>
+                    <MenuItem value="I">Interessado</MenuItem>
+                    <MenuItem value="M">Muito Interessado</MenuItem>
+                    <MenuItem value="PC">Pronto para Comprar</MenuItem>
+                  </TextField>
+                </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <CustomFormLabel htmlFor="funnel">Funil</CustomFormLabel>
-              <TextField
-                select
-                name="funnel"
-                value={formData.funnel}
-                onChange={(e) => handleChange('funnel', e.target.value)}
-                fullWidth
-              >
-                <MenuItem value="N">Não Interessado</MenuItem>
-                <MenuItem value="P">Pouco Interessado</MenuItem>
-                <MenuItem value="I">Interessado</MenuItem>
-                <MenuItem value="M">Muito Interessado</MenuItem>
-                <MenuItem value="PC">Pronto para Comprar</MenuItem>
-              </TextField>
-            </Grid>
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="origin">Origem</CustomFormLabel>
+                  <AutoCompleteOrigin
+                    onChange={(id) => handleChange('origin', id)}
+                    value={formData.origin}
+                    {...(formErrors.origin && { error: true, helperText: formErrors.origin })}
+                  />
+                </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <CustomFormLabel htmlFor="origin">Origem</CustomFormLabel>
-              <AutoCompleteOrigin
-                onChange={(id) => handleChange('origin', id)}
-                value={formData.origin}
-                {...(formErrors.origin && { error: true, helperText: formErrors.origin })}
-              />
-            </Grid>
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="first_document">CPF/CNPJ</CustomFormLabel>
+                  <TextField
+                    name="first_document"
+                    value={formData.first_document}
+                    onChange={(e) => handleChange('first_document', e.target.value)}
+                    fullWidth
+                  />
+                </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <CustomFormLabel htmlFor="first_document">CPF/CNPJ</CustomFormLabel>
-              <TextField
-                name="first_document"
-                value={formData.first_document}
-                onChange={(e) => handleChange('first_document', e.target.value)}
-                fullWidth
-              />
-            </Grid>
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="phone">Telefone com DDD</CustomFormLabel>
+                  <TextField
+                    name="phone"
+                    value={formData.phone}
+                    onChange={(e) => handleChange('phone', e.target.value)}
+                    fullWidth
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Phone />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <CustomFormLabel htmlFor="phone">Telefone com DDD</CustomFormLabel>
-              <TextField
-                name="phone"
-                value={formData.phone}
-                onChange={(e) => handleChange('phone', e.target.value)}
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Phone />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="contact_email">E-mail</CustomFormLabel>
+                  <TextField
+                    name="contact_email"
+                    value={formData.contact_email}
+                    onChange={(e) => handleChange('contact_email', e.target.value)}
+                    fullWidth
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Email />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <CustomFormLabel htmlFor="contact_email">E-mail</CustomFormLabel>
-              <TextField
-                name="contact_email"
-                value={formData.contact_email}
-                onChange={(e) => handleChange('contact_email', e.target.value)}
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Email />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
+                  <AutoCompleteUser
+                    onChange={(id) => handleChange('seller', id)}
+                    value={formData.seller}
+                    {...(formErrors.seller && { error: true, helperText: formErrors.seller })}
+                  />
+                </Grid>
+              </>
+            ) : (
+              <>
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="name">Nome Completo</CustomFormLabel>
+                  <TextField
+                    name="name"
+                    value={formData.name}
+                    onChange={(e) => handleChange('name', e.target.value)}
+                    fullWidth
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <AccountCircle />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
-              <AutoCompleteUser
-                onChange={(id) => handleChange('seller', id)}
-                value={formData.seller}
-                {...(formErrors.seller && { error: true, helperText: formErrors.seller })}
-              />
-            </Grid>
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="funnel">Funil</CustomFormLabel>
+                  <TextField
+                    select
+                    name="funnel"
+                    value={formData.funnel}
+                    onChange={(e) => handleChange('funnel', e.target.value)}
+                    fullWidth
+                  >
+                    <MenuItem value="N">Não Interessado</MenuItem>
+                    <MenuItem value="P">Pouco Interessado</MenuItem>
+                    <MenuItem value="I">Interessado</MenuItem>
+                    <MenuItem value="M">Muito Interessado</MenuItem>
+                    <MenuItem value="PC">Pronto para Comprar</MenuItem>
+                  </TextField>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="origin">Origem</CustomFormLabel>
+                  <AutoCompleteOrigin
+                    onChange={(id) => handleChange('origin', id)}
+                    value={formData.origin}
+                    {...(formErrors.origin && { error: true, helperText: formErrors.origin })}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="first_document">CP!!!!!!F/CNPJ</CustomFormLabel>
+                  <TextField
+                    name="first_document"
+                    value={formData.first_document}
+                    onChange={(e) => handleChange('first_document', e.target.value)}
+                    fullWidth
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="phone">Telefone com DDD</CustomFormLabel>
+                  <TextField
+                    name="phone"
+                    value={formData.phone}
+                    onChange={(e) => handleChange('phone', e.target.value)}
+                    fullWidth
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Phone />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="contact_email">E-mail</CustomFormLabel>
+                  <TextField
+                    name="contact_email"
+                    value={formData.contact_email}
+                    onChange={(e) => handleChange('contact_email', e.target.value)}
+                    fullWidth
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Email />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
+                  <AutoCompleteUser
+                    onChange={(id) => handleChange('seller', id)}
+                    value={formData.seller}
+                    {...(formErrors.seller && { error: true, helperText: formErrors.seller })}
+                  />
+                </Grid>
+              </>
+            )}
+            
 
             {/* Add a Save Button */}
             <Grid
