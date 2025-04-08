@@ -11,6 +11,7 @@ import {
   Paper,
   Typography,
   Box,
+  Button,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -21,10 +22,9 @@ import { IconListDetails } from '@tabler/icons-react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useRouter } from 'next/navigation';
 import projectService from '@/services/projectService';
-import DrawerFiltersProject from '../components/DrawerFilters/DrawerFiltersProject';
+import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import StatusChip from '@/utils/status/ProjectStatusChip';
 import DocumentStatusChip from '@/utils/status/DocumentStatusIcon';
-import { ProjectDataContext } from '@/app/context/ProjectContext';
 import TableSkeleton from '../../comercial/sale/components/TableSkeleton';
 import ChipProject from '../components/ChipProject';
 import ProjectCards from '../../inforCards/InforQuantity';
@@ -39,6 +39,7 @@ import HourglassFullIcon from '@mui/icons-material/HourglassFull';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import { styled, keyframes } from '@mui/system';
+import { FilterContext } from '@/context/FilterContext';
 
 const pulse = keyframes`
   0% {
@@ -109,10 +110,147 @@ const ProjectList = ({ onClick }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalRows, setTotalRows] = useState(0);
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const router = useRouter();
-
   const userPermissions = useSelector((state) => state.user.permissions);
-  const { filters, setFilters, refresh } = useContext(ProjectDataContext);
+  const { filters, setFilters } = useContext(FilterContext);
+
+  const projectFilterConfig = [
+    {
+      key: 'customer',
+      label: 'Cliente',
+      type: 'async-autocomplete',
+      endpoint: '/api/users',
+      queryParam: 'complete_name__icontains',
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
+    },
+    {
+      key: 'homologator',
+      label: 'Homologador',
+      type: 'async-autocomplete',
+      endpoint: '/api/users',
+      queryParam: 'complete_name__icontains',
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
+    },
+    {
+      key: 'current_step__in',
+      label: 'Etapa Atual',
+      type: 'async-multiselect',
+      endpoint: '/api/steps-names',
+      queryParam: 'name__icontains',
+      mapResponse: (data) =>
+        data.results.map((step) => ({
+          label: step.name,
+          value: step.id,
+        })),
+    },
+    {
+      key: 'signature_date',
+      label: 'Data de Contrato',
+      type: 'range',
+      inputType: 'date',
+    },
+    {
+      key: 'product_kwp',
+      label: 'Kwp',
+      type: 'number',
+    },
+    {
+      key: 'material_list_is_completed',
+      label: 'Lista de Material',
+      type: 'select',
+      options: [
+        { value: 'true', label: 'Sim' },
+        { value: 'false', label: 'Não' },
+        { value: 'null', label: 'Todos' },
+      ],
+    },
+    {
+      key: 'new_contract_number',
+      label: 'Nova UC',
+      type: 'select',
+      options: [
+        { value: 'true', label: 'Sim' },
+        { value: 'false', label: 'Não' },
+        { value: 'null', label: 'Todos' },
+      ],
+    },
+    {
+      key: 'status',
+      label: 'Status de Homologação',
+      type: 'multiselect',
+      options: [
+        { value: 'P', label: 'Pendente' },
+        { value: 'CO', label: 'Concluído' },
+        { value: 'EA', label: 'Em Andamento' },
+        { value: 'C', label: 'Cancelado' },
+        { value: 'D', label: 'Distrato' },
+      ],
+    },
+    {
+      key: 'access_opnion',
+      label: 'Parecer de Acesso',
+      type: 'select',
+      options: [
+        { value: 'liberado', label: 'Liberado' },
+        { value: 'bloqueado', label: 'Bloqueado' },
+        { value: 'null', label: 'Todos' },
+      ],
+    },
+    {
+      key: 'trt_status',
+      label: 'Status de TRT',
+      type: 'multiselect',
+      options: [
+        { value: 'P', label: 'Pendente' },
+        { value: 'A', label: 'Aprovado' },
+        { value: 'EA', label: 'Em Andamento' },
+        { value: 'R', label: 'Recusado' },
+      ],
+    },
+    {
+      key: 'supply_adquance',
+      label: 'Adequação de Fornecimento',
+      type: 'async-autocomplete',
+      endpoint: '/api/supply-adequances',
+      queryParam: 'name__icontains',
+      mapResponse: (data) =>
+        data.results.map((supply) => ({
+          label: supply.name,
+          value: supply.id,
+        })),
+    },
+    {
+      key: 'designer_status',
+      label: 'Status do Projeto',
+      type: 'multiselect',
+      options: [
+        { value: 'P', label: 'Pendente' },
+        { value: 'CO', label: 'Concluído' },
+        { value: 'EA', label: 'Em Andamento' },
+        { value: 'C', label: 'Cancelado' },
+        { value: 'D', label: 'Distrato' },
+      ],
+    },
+    {
+      key: 'is_released_to_engineering',
+      label: 'Liberado para Engenharia',
+      type: 'select',
+      options: [
+        { value: 'true', label: 'Sim' },
+        { value: 'false', label: 'Não' },
+        { value: 'null', label: 'Todos' }
+      ],
+    },
+  ];
 
   const hasPermission = useCallback(
     (permissions) => {
@@ -158,7 +296,7 @@ const ProjectList = ({ onClick }) => {
 
     fetchIndicators();
     fetchProjects();
-  }, [page, rowsPerPage, filters, refresh]);
+  }, [page, rowsPerPage, filters]);
 
   const handlePageChange = useCallback((event, newPage) => {
     setPage(newPage);
@@ -356,8 +494,20 @@ const ProjectList = ({ onClick }) => {
           mb: 2,
         }}
       >
-        <Box>{/* Botão para criar projeto pode ser adicionado aqui se necessário */}</Box>
-        <DrawerFiltersProject />
+        <Button
+          variant="outlined"
+          sx={{ mt: 1, mb: 2 }}
+          onClick={() => setFilterDrawerOpen(true)}
+        >
+          Abrir Filtros
+        </Button>
+        <GenericFilterDrawer
+          filters={projectFilterConfig}
+          initialValues={filters}
+          open={filterDrawerOpen}
+          onClose={() => setFilterDrawerOpen(false)}
+          onApply={(newFilters) => setFilters(newFilters)}
+        />
       </Box>
       <TableContainer component={Paper}>
         <Table>
