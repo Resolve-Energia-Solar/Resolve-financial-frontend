@@ -67,11 +67,14 @@ function EditLeadPage({ leadId = null }) {
             flexDirection: 'column',
           }}
         >
-          <Grid container spacing={2} alignItems="center" sx={{ p: 3 }}>
+          <Grid container spacing={2} alignItems="center" sx={{ p: 3, m: 0.1 }}>
             <LeadInfoHeader />
           </Grid>
 
-          <Grid container spacing={1} sx={{ padding: '0px 20px 20px 20px' }}>
+          <Grid container spacing={1} sx={{ px: 5 }}>
+            <Grid item xs={12}>
+              <Typography sx={{ fontWeight: "400", fontSize: "18px" }}>Cadastro de Lead | Dados Pessoais</Typography>
+            </Grid>
             <Grid item xs={12}>
               <FormControl>
                 <FormLabel id="demo-radio-buttons-group-label">Tipo de Lead</FormLabel>
