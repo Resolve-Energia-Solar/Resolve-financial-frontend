@@ -289,12 +289,12 @@ const CreateAddressPage = ({
         )}
         <Grid container sx={{ display: "flex", alignItems: "center", justifyContent: "flex-start", spacing: 3 }}>
           <Grid item xs={12} sm={12}>
-            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px" }}>Adicionar novo endereço</Typography>
+            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px", mb: 2 }}>Adicionar novo endereço</Typography>
           </Grid>
 
           <Grid container sx={{ display: "flex", alignItems: "center", justifyContent: "flex-start", maxWidth: "100vw", mx: "auto" }}>
-            {/* Left Column (Form Fields) */}
-            <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+    
+            <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column", gap: 2, justifyContent: "initial" }}>
               <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
                 <Grid item xs={11}>
                   <Box sx={{ flexGrow: 1 }}>
@@ -432,7 +432,7 @@ const CreateAddressPage = ({
 
             <Grid item xs={6} md={6}>
               <Stack>
-                <Box sx={{ width: '100%', height: '300px', mt: 2 }}>
+                <Box sx={{ width: '100%', height: '500px', ml: 2 }}>
                   {mapLoadError && <div>Erro ao carregar o mapa</div>}
                   {!isMapLoaded ? (
                     <CircularProgress />
