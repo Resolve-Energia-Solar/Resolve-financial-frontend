@@ -11,9 +11,9 @@ import UserBadge from '../apps/users/userBadge';
 import { useSelector } from 'react-redux';
 
 function getLevel(step, stepsMap, memo = {}) {
-    if (memo[step.step_id]) return memo[step.step_id];
+    if (memo[step.id]) return memo[step.id];
     if (!step.dependencies || step.dependencies.length === 0) {
-        memo[step.step_id] = 0;
+        memo[step.id] = 0;
         return 0;
     }
     let maxLevel = 0;
@@ -26,7 +26,7 @@ function getLevel(step, stepsMap, memo = {}) {
             }
         }
     });
-    memo[step.step_id] = maxLevel + 1;
+    memo[step.id] = maxLevel + 1;
     return maxLevel + 1;
 }
 
@@ -52,7 +52,7 @@ function ProcessMap({ processId }) {
         stepId = parseInt(stepId);
         if (isNaN(stepId) || !processData) return;
 
-        const step = processData.steps.find(s => s.step_id === stepId);
+        const step = processData.steps.find(s => s.id === stepId);
         if (!step) return;
 
         if (step.is_completed) {
@@ -62,7 +62,7 @@ function ProcessMap({ processId }) {
 
         const stepsMap = {};
         processData.steps.forEach(s => {
-            stepsMap[s.step_id] = s;
+            stepsMap[s.id] = s;
         });
 
         const dependencies = step.dependencies || [];
@@ -96,13 +96,13 @@ function ProcessMap({ processId }) {
                 user_id: user.id,
             };
 
-            processService.completeStep(processId, currentStep.step_id, requestBody)
+            processService.completeStep(processId, currentStep.id, requestBody)
                 .then(() => {
                     enqueueSnackbar(`Etapa '${currentStep.step.name}' concluída com sucesso!`, { variant: 'success' });
                     setOpenModal(false);
                     setProcessData(prev => {
                         const updatedSteps = prev.steps.map(step =>
-                            step.step_id === currentStep.step_id ? { ...step, is_completed: true, completion_date: new Date() } : step
+                            step.id === currentStep.id ? { ...step, is_completed: true, completion_date: new Date() } : step
                         );
                         return { ...prev, steps: updatedSteps };
                     });
@@ -142,7 +142,7 @@ function ProcessMap({ processId }) {
 
         const stepsMap = {};
         processData.steps.forEach(step => {
-            stepsMap[step.step_id] = step;
+            stepsMap[step.id] = step;
         });
 
         const levelMapping = {};
@@ -150,7 +150,7 @@ function ProcessMap({ processId }) {
         let maxLevel = 0;
         processData.steps.forEach(step => {
             const level = getLevel(step, stepsMap);
-            levelMapping[step.step_id] = level;
+            levelMapping[step.id] = level;
             if (!levels[level]) levels[level] = [];
             levels[level].push(step);
             if (level > maxLevel) maxLevel = level;
@@ -306,45 +306,39 @@ function ProcessMap({ processId }) {
         }
 
         const levelPositions = {};
+        const containerWidth = 1200;
+        const verticalGap = 150;
+
         const newNodes = [];
         for (let level = 0; level <= maxLevel; level++) {
-            const stepsNoNivel = levels[level];
-            if (!stepsNoNivel) continue;
+            const stepsInLevel = levels[level];
+            if (!stepsInLevel) continue;
 
-            let prevCenterX = 0;
-            if (level > 0 && levelPositions[level - 1]) {
-                const { minX, maxX } = levelPositions[level - 1];
-                prevCenterX = (minX + maxX) / 2;
-            }
+            const yPos = level * (diameter + verticalGap);
 
-            const count = stepsNoNivel.length;
-            const totalWidth = count * diameter + (count - 1) * horizontalSpacing;
-            let startX = level === 0 ? baseX : prevCenterX - totalWidth / 2;
+            const totalWidth = stepsInLevel.length * diameter + (stepsInLevel.length - 1) * horizontalSpacing;
 
-            let minX = Infinity, maxX = -Infinity;
-            stepsNoNivel.forEach((step, idx) => {
+            const startX = (containerWidth - totalWidth) / 2;
+
+            stepsInLevel.forEach((step, idx) => {
                 const xPos = startX + idx * (diameter + horizontalSpacing);
-                const yPos = level * verticalSpacing;
-                if (xPos < minX) minX = xPos;
-                if (xPos + diameter > maxX) maxX = xPos + diameter;
                 newNodes.push({
-                    id: step.id.toString(),
+                    id: step.id?.toString(),
                     data: { label: renderNodeContent(step) },
                     position: { x: xPos, y: yPos },
                     onClick: () => handleNodeClick(step),
                     style: { width: diameter + 70, height: diameter + 70, border: 'none', background: 'none' }
                 });
             });
-            levelPositions[level] = { minX, maxX };
         }
 
         const newEdges = [];
         processData.steps.forEach(step => {
             step.dependencies.forEach(dep => {
                 newEdges.push({
-                    id: `e${dep}-${step.step_id}`,
+                    id: `e${dep}-${step.id}`,
                     source: dep.toString(),
-                    target: step.id.toString(),
+                    target: step.id?.toString(),
                     animated: true
                 });
             });
@@ -371,7 +365,7 @@ function ProcessMap({ processId }) {
             <Dialog open={openModal} onClose={handleCloseModal}>
                 <DialogTitle>Confirmar Conclusão</DialogTitle>
                 <DialogContent>
-                    <Typography>Você deseja marcar a etapa "{currentStep?.name}" como concluída?</Typography>
+                    <Typography>Você deseja marcar a etapa "{currentStep?.step.name}" como concluída?</Typography>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseModal} color="primary">Cancelar</Button>
