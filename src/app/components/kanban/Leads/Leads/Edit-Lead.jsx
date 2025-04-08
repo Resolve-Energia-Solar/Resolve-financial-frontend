@@ -145,7 +145,7 @@ function EditLeadPage({ leadId = null }) {
             </Grid>
 
             {leadType === 'PF' ? (
-              <Grid container spacing={2} sx={{ mb: 3 }}>
+              <Grid container rowSpacing={0.5} columnSpacing={2} sx={{ mb: 3 }}>
                 <Grid item xs={12} sm={5}>
                   <CustomFormLabel htmlFor="name" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Nome Completo</CustomFormLabel>
                   <TextField
@@ -197,13 +197,6 @@ function EditLeadPage({ leadId = null }) {
                     value={formData.birth_date}
                     onChange={(e) => handleChange('birth_date', e.target.value)}
                     fullWidth
-                  // InputProps={{
-                  //   startAdornment: (
-                  //     <InputAdornment position="start">
-                  //       <Phone />
-                  //     </InputAdornment>
-                  //   ),
-                  // }}
                   />
                 </Grid>
 
@@ -269,7 +262,7 @@ function EditLeadPage({ leadId = null }) {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={4}>
                   <CustomFormLabel htmlFor="funnel" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Funil</CustomFormLabel>
                   <TextField
                     select
@@ -286,7 +279,7 @@ function EditLeadPage({ leadId = null }) {
                   </TextField>
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={4}>
                   <CustomFormLabel htmlFor="origin" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px', mb: 0 }}>Origem</CustomFormLabel>
                   <AutoCompleteOrigin
                     onChange={(id) => handleChange('origin', id)}
@@ -296,7 +289,7 @@ function EditLeadPage({ leadId = null }) {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={4}>
                   <CustomFormLabel htmlFor="name" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px', mb: 0 }}>Vendedor</CustomFormLabel>
                   <AutoCompleteUser
                     onChange={(id) => handleChange('seller', id)}
