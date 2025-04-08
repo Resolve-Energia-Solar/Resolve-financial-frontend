@@ -11,7 +11,6 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
 
   const [localInputValue, setLocalInputValue] = useState('');
   const value = inputValue !== undefined ? inputValue : localInputValue;
-  const [isPostalCodeSearch, setIsPostalCodeSearch] = useState(false);
 
   const handleChangeInput = (e) => {
     setShouldSearch(true);
@@ -39,42 +38,25 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
     if (isLoaded && window.google && value.length > 2 && shouldSearch) {
       const service = new window.google.maps.places.AutocompleteService();
 
-      if (isPostalCodeSearch) {
-        service.getPlacePredictions(
-          {
-            input: value,
-            componentRestrictions: { country: 'br' },
-            types: ['(regions)'],
-          },
-          (preds, status) => {
-            console.log('Predictions:', preds, status);
-            if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-              setPredictions(preds);
-            } else {
-              setPredictions([]);
-            }
+      service.getPlacePredictions(
+        {
+          input: value,
+          componentRestrictions: { country: 'br' },
+          types: ['address'],
+        },
+        (preds, status) => {
+          if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+            setPredictions(preds);
+          } else {
+            setPredictions([]);
           }
-        );
-      } else {
-        service.getPlacePredictions(
-          {
-            input: value,
-            componentRestrictions: { country: 'br' },
-            types: ['address'],
-          },
-          (preds, status) => {
-            if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-              setPredictions(preds);
-            } else {
-              setPredictions([]);
-            }
-          }
-        );
-      }
+        }
+      );
+
     } else {
       setPredictions([]);
     }
-  }, [value, isLoaded, shouldSearch, isPostalCodeSearch]);
+  }, [value, isLoaded, shouldSearch]);
 
   // Quando o usuário clica numa sugestão
   const handleSelectPrediction = (prediction) => {
@@ -155,7 +137,6 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
         variant="outlined"
         value={value}
         onChange={handleChangeInput}
-        onFocus={() => setIsPostalCodeSearch(value.length <= 8)}
       />
       {predictions.length > 0 && (
         <Paper
