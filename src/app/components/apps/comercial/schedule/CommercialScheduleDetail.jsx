@@ -1,5 +1,5 @@
 'use client';
-import { useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Grid,
@@ -12,6 +12,10 @@ import {
   Card,
   CardHeader,
   CardContent,
+  Skeleton,
+  Button,
+  Stack,
+  CircularProgress,
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import BuildIcon from '@mui/icons-material/Build';
@@ -20,15 +24,21 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ScheduleIcon from '@mui/icons-material/Schedule';
-import Comment from '../../comment';
-import { formatDateTime } from '@/utils/inspectionFormatDate';
-import React, { useState, useCallback } from 'react';
-import History from '../../history';
-import ProductService from '@/services/productsService';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
-import { Skeleton } from '@mui/material';
+import Comment from '../../comment';
+import History from '../../history';
 import UserCard from '../../users/userCard';
+import ProductService from '@/services/productsService';
 import userService from '@/services/userService';
+import { useRouter } from 'next/navigation';
+import FormDate from '@/app/components/forms/form-custom/FormDate';
+import FormSelect from '@/app/components/forms/form-custom/FormSelect';
+import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
+import { formatDateTime } from '@/utils/inspectionFormatDate';
+import scheduleService from '@/services/scheduleService';
+import extractId from '@/utils/extractId';
+import { formatDate } from '@/utils/dateUtils';
+import { useSnackbar } from 'notistack';
 
 const formatAddress = (address) => {
   if (!address) return '-';
@@ -51,58 +61,103 @@ const getStatusChip = (status) => {
 };
 
 const CommercialScheduleDetail = ({ schedule }) => {
+  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
   const [tabValue, setTabValue] = useState(0);
-  const [loadingProductName, setloadingProductName] = useState(true);
+  const [loadingProductName, setLoadingProductName] = useState(true);
   const [productName, setProductName] = useState('');
   const [seller, setSeller] = useState(null);
-  const [loadingSeller, setLoadingSeller] = useState(true);
+  
+  // Estados para edição inline na Tab "Informações do Agendamento"
+  const [editMode, setEditMode] = useState(false);
+  const [editedScheduleDate, setEditedScheduleDate] = useState(schedule.schedule_date || '');
+  const [editedScheduleStartTime, setEditedScheduleStartTime] = useState(schedule.schedule_start_time || '');
+  const [editedAddress, setEditedAddress] = useState(schedule.address || null);
+  const [loadingEdit, setLoadingEdit] = useState(false);
 
   const scheduleId = schedule?.id;
 
-  const formatDate = useCallback((dateString) => {
-    const [year, month, day] = dateString.split('-');
-    return `${day}/${month}/${year}`;
-  }, []);
+  useEffect(() => {
+    setEditedScheduleDate(schedule.schedule_date || '');
+    setEditedScheduleStartTime(schedule.schedule_start_time || '');
+    setEditedAddress(extractId(schedule.address));
+  }, [schedule]);
 
-  console.log('schedule', schedule);
+  const handleSaveEdit = async () => {
+    setLoadingEdit(true);
+    const payload = {
+      schedule_date: editedScheduleDate,
+      schedule_start_time: editedScheduleStartTime,
+      // Supondo que editedAddress seja um objeto com propriedade id
+      address: editedAddress && editedAddress.id ? editedAddress.id : editedAddress,
+    };
 
+    try {
+      await scheduleService.update(schedule.id, payload);
+      setEditMode(false);
+      enqueueSnackbar('Agendamento atualizado com sucesso!', { variant: 'success' });
+      // Caso deseje atualizar os dados da página, pode reinvocá-la aqui
+    } catch (error) {
+      console.error('Erro ao salvar edição:', error);
+      enqueueSnackbar('Erro ao atualizar o agendamento', { variant: 'error' });
+    } finally {
+      setLoadingEdit(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditedScheduleDate(schedule.schedule_date || '');
+    setEditedScheduleStartTime(schedule.schedule_start_time || '');
+    setEditedAddress(extractId(schedule.address));
+    setEditMode(false);
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
+  const timeOptions = [
+    { value: '08:30:00', label: '08:30' },
+    { value: '10:00:00', label: '10:00' },
+    { value: '13:00:00', label: '13:00' },
+    { value: '14:30:00', label: '14:30' },
+    { value: '16:00:00', label: '16:00' },
+  ];
+
+  // Busca o nome do kit (produto) se necessário
   useEffect(() => {
     async function fetchProductName() {
-      setloadingProductName(true);
+      setLoadingProductName(true);
       if (schedule?.project?.product) {
         try {
           const productId =
             typeof schedule.project.product === 'object'
               ? schedule.project.product.id
               : schedule.project.product;
-          const productData = await ProductService.getProductById(productId);
+          const productData = await ProductService.find(productId);
           setProductName(productData.name);
         } catch (error) {
           console.error('Erro ao buscar produto:', error);
         } finally {
-          setloadingProductName(false);
+          setLoadingProductName(false);
         }
       }
     }
     fetchProductName();
   }, [schedule?.project?.product]);
 
-
+  // Busca informações do vendedor/supervisor se necessário
   useEffect(() => {
     if (schedule?.project?.sale?.seller) {
-      setLoadingSeller(true);
       const fetchSeller = async () => {
         try {
           const sellerData = await userService.find(schedule.project.sale.seller, {
             fields: 'id,employee.user_manager.id',
             expand: 'employee.user_manager',
           });
-          console.log('Vendedor:', sellerData);
           setSeller(sellerData);
         } catch (err) {
           console.error('Erro ao buscar vendedor:', err);
-        } finally {
-          setLoadingSeller(false);
         }
       };
       fetchSeller();
@@ -117,10 +172,6 @@ const CommercialScheduleDetail = ({ schedule }) => {
     );
   }
 
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Paper elevation={3} sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -129,180 +180,237 @@ const CommercialScheduleDetail = ({ schedule }) => {
           <Tab label="Comentários" />
           <Tab label="Histórico" />
         </Tabs>
-
         <Divider />
-
         <Box sx={{ flex: 1, overflow: 'auto', p: 3 }}>
           {tabValue === 0 && (
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Box display="flex" alignItems="center" mb={0.5}>
-                  <PersonIcon sx={{ mr: 1 }} color="primary" />
-                  <Typography variant="subtitle2" color="textSecondary">
-                    <strong>Cliente</strong>
-                  </Typography>
-                </Box>
-                <Typography variant="body1">{schedule.customer?.complete_name || '-'}</Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Box display="flex" alignItems="center" mb={0.5}>
-                  <Inventory2OutlinedIcon sx={{ mr: 1 }} color="primary" />
-                  <Typography variant="subtitle2" color="textSecondary">
-                    <strong>Kit</strong>
-                  </Typography>
-                </Box>
-                {loadingProductName ? (
-                  <Skeleton variant="text" width={200} height={30} />
+            <>
+              {/* Cabeçalho com botão para editar */}
+              <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                <Typography variant="h6">Detalhes do Agendamento</Typography>
+                {editMode ? (
+                  <Stack direction="row" spacing={1}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleSaveEdit}
+                      disabled={loadingEdit}
+                      endIcon={loadingEdit ? <CircularProgress size={20} color="inherit" /> : null}
+                    >
+                      Salvar
+                    </Button>
+                    <Button variant="outlined" color="error" onClick={handleCancelEdit}>
+                      Cancelar
+                    </Button>
+                  </Stack>
                 ) : (
-                  <Typography variant="body1">
-                    {Array.isArray(schedule.products) && schedule.products.length > 0
-                      ? schedule.products.map((prod) => prod.name).join(', ')
-                      : productName || 'Sem kit associado'}
-                  </Typography>
+                  <Button variant="outlined" onClick={() => setEditMode(true)}>
+                    Editar
+                  </Button>
                 )}
-              </Grid>
-              <Grid item xs={6}>
-                <Box display="flex" alignItems="center" mb={0.5}>
-                  <BuildIcon sx={{ mr: 1 }} color="primary" />
-                  <Typography variant="subtitle2" color="textSecondary">
-                    <strong>Serviço</strong>
+              </Box>
+              <Grid container spacing={3}>
+                {/* Cliente (somente leitura) */}
+                <Grid item xs={12}>
+                  <Box display="flex" alignItems="center" mb={0.5}>
+                    <PersonIcon sx={{ mr: 1 }} color="primary" />
+                    <Typography variant="subtitle2" color="textSecondary">
+                      <strong>Cliente</strong>
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1">
+                    {schedule.customer?.complete_name || '-'}
                   </Typography>
-                </Box>
-                <Typography variant="body1">{schedule.service?.name || '-'}</Typography>
-              </Grid>
-
-              <Grid item xs={6}>
-                <Box display="flex" alignItems="center" mb={0.5}>
-                  <Typography variant="subtitle2" color="textSecondary" sx={{ mr: 1 }}>
-                    <strong>Status do Agendamento</strong>
+                </Grid>
+                {/* Kit (somente leitura) */}
+                <Grid item xs={12}>
+                  <Box display="flex" alignItems="center" mb={0.5}>
+                    <Inventory2OutlinedIcon sx={{ mr: 1 }} color="primary" />
+                    <Typography variant="subtitle2" color="textSecondary">
+                      <strong>Kit</strong>
+                    </Typography>
+                  </Box>
+                  {loadingProductName ? (
+                    <Skeleton variant="text" width={200} height={30} />
+                  ) : (
+                    <Typography variant="body1">
+                      {Array.isArray(schedule.products) && schedule.products.length > 0
+                        ? schedule.products.map((prod) => prod.name).join(', ')
+                        : productName || 'Sem kit associado'}
+                    </Typography>
+                  )}
+                </Grid>
+                {/* Serviço (somente leitura) */}
+                <Grid item xs={6}>
+                  <Box display="flex" alignItems="center" mb={0.5}>
+                    <BuildIcon sx={{ mr: 1 }} color="primary" />
+                    <Typography variant="subtitle2" color="textSecondary">
+                      <strong>Serviço</strong>
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1">
+                    {schedule.service?.name || '-'}
                   </Typography>
-                </Box>
-                <Typography variant="body1">{getStatusChip(schedule.status)}</Typography>
-              </Grid>
-
-              <Grid item xs={6}>
-                <Box display="flex" alignItems="center" mb={0.5}>
-                  <CalendarTodayIcon sx={{ mr: 1 }} color="primary" />
-                  <Typography variant="subtitle2" color="textSecondary">
-                    <strong>Data do Agendamento</strong>
+                </Grid>
+                {/* Status (somente leitura) */}
+                <Grid item xs={6}>
+                  <Box display="flex" alignItems="center" mb={0.5}>
+                    <Typography variant="subtitle2" color="textSecondary" sx={{ mr: 1 }}>
+                      <strong>Status do Agendamento</strong>
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1">
+                    {getStatusChip(schedule.status)}
                   </Typography>
-                </Box>
-                <Typography variant="body1">{formatDate(schedule.schedule_date) || '-'}</Typography>
-              </Grid>
-
-              <Grid item xs={6}>
-                <Box display="flex" alignItems="center" mb={0.5}>
-                  <AccessTimeIcon sx={{ mr: 1 }} color="primary" />
-                  <Typography variant="subtitle2" color="textSecondary">
-                    <strong>Hora de Início</strong>
-                  </Typography>
-                </Box>
-                <Typography variant="body1">{schedule.schedule_start_time || '-'}</Typography>
-              </Grid>
-
-              <Grid item xs={6}>
-                <Box display="flex" alignItems="center" mb={0.5}>
-                  <SupervisorAccountIcon sx={{ mr: 1 }} color="primary" />
-                  <Typography variant="subtitle2" color="textSecondary">
-                    <strong>Agente</strong>
-                  </Typography>
-                </Box>
-                <Chip
-                  label={schedule.schedule_agent?.complete_name || 'Sem Agente'}
-                  color={schedule.schedule_agent ? 'success' : 'error'}
-                  variant="outlined"
-                />
-              </Grid>
-
-              <Grid item xs={6}>
-                <Box display="flex" alignItems="center" mb={0.5}>
-                  <LocationOnIcon sx={{ mr: 1 }} color="primary" />
-                  <Typography variant="subtitle2" color="textSecondary">
-                    <strong>Endereço</strong>
-                  </Typography>
-                </Box>
-                <Typography variant="body1">{formatAddress(schedule.address)}</Typography>
-              </Grid>
-
-              <Grid item xs={6}>
-                <Box display="flex" alignItems="center" mb={0.5}>
-                  <ScheduleIcon sx={{ mr: 1 }} color="primary" />
-                  <Typography variant="subtitle2" color="textSecondary">
-                    <strong>Criado Em</strong>
-                  </Typography>
-                </Box>
-                <Typography variant="body1">
-                  {formatDateTime(schedule.created_at) || '-'}
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant="h6" gutterBottom>
-                  Pessoas
-                </Typography>
-
-                <Box display="flex" flexDirection="column" gap={2}>
-                  {/* Agente */}
-                  <Card variant="outlined">
-                    <CardHeader
-                      avatar={<SupervisorAccountIcon color="primary" />}
-                      title="Agente"
+                </Grid>
+                {/* Data do Agendamento (editável se editMode=true) */}
+                <Grid item xs={6}>
+                  <Box display="flex" alignItems="center" mb={0.5}>
+                    <CalendarTodayIcon sx={{ mr: 1 }} color="primary" />
+                    <Typography variant="subtitle2" color="textSecondary">
+                      <strong>Data do Agendamento</strong>
+                    </Typography>
+                  </Box>
+                  {editMode ? (
+                    <FormDate
+                      label="Data do agendamento"
+                      name="schedule_date"
+                      value={editedScheduleDate}
+                      onChange={(newValue) => setEditedScheduleDate(newValue)}
                     />
-                    <Divider />
-                    <CardContent>
-                      {schedule.schedule_agent ? (
-                        <UserCard
-                          userId={schedule.schedule_agent?.id}
-                          showEmail={false}
-                          showPhone
-                        />
-                      ) : (
-                        <Typography variant="body2">Agente não identificado</Typography>
-                      )}
-                    </CardContent>
-                  </Card>
-
-                  {/* Supervisor */}
-                  <Card variant="outlined">
-                    <CardHeader
-                      avatar={<PersonIcon color="primary" />}
-                      title="Supervisor"
+                  ) : (
+                    <Typography variant="body1">
+                      {formatDate(schedule.schedule_date) || '-'}
+                    </Typography>
+                  )}
+                </Grid>
+                {/* Hora de Início (editável se editMode=true) */}
+                <Grid item xs={6}>
+                  <Box display="flex" alignItems="center" mb={0.5}>
+                    <AccessTimeIcon sx={{ mr: 1 }} color="primary" />
+                    <Typography variant="subtitle2" color="textSecondary">
+                      <strong>Hora de Início</strong>
+                    </Typography>
+                  </Box>
+                  {editMode ? (
+                    <FormSelect
+                      label="Hora do agendamento"
+                      options={timeOptions}
+                      onChange={(e) => setEditedScheduleStartTime(e.target.value)}
+                      disabled={!editedScheduleDate}
+                      value={editedScheduleStartTime || ''}
                     />
-                    <Divider />
-                    <CardContent>
-                      {seller?.employee?.user_manager ? (
-                        <UserCard
-                          userId={seller.employee.user_manager.id}
-                          showEmail={false}
-                          showPhone
-                        />
-                      ) : (
-                        <Typography variant="body2">Supervisor não identificado</Typography>
-                      )}
-                    </CardContent>
-                  </Card>
-
-                  {/* Vendedor */}
-                  <Card variant="outlined">
-                    <CardHeader
-                      avatar={<PersonIcon color="primary" />}
-                      title="Vendedor"
+                  ) : (
+                    <Typography variant="body1">
+                      {schedule.schedule_start_time || '-'}
+                    </Typography>
+                  )}
+                </Grid>
+                {/* Endereço (editável se editMode=true) */}
+                <Grid item xs={6}>
+                  <Box display="flex" alignItems="center" mb={0.5}>
+                    <LocationOnIcon sx={{ mr: 1 }} color="primary" />
+                    <Typography variant="subtitle2" color="textSecondary">
+                      <strong>Endereço</strong>
+                    </Typography>
+                  </Box>
+                  {editMode ? (
+                    <GenericAsyncAutocompleteInput
+                      label="Endereço"
+                      endpoint="/api/addresses"
+                      queryParam="street__icontains"
+                      extraParams={{ customer_id: schedule.customer?.id, fields: 'street,number,city,state,id' }}
+                      value={editedAddress?.id}
+                      onChange={(option) => setEditedAddress(option)}
+                      mapResponse={(data) =>
+                        data.results.map((item) => ({
+                          label: `${item.street}, ${item.number} - ${item.city}, ${item.state}`,
+                          value: item.id,
+                        }))
+                      }
                     />
-                    <Divider />
-                    <CardContent>
-                      {seller ? (
-                        <UserCard userId={seller.id} showEmail={false} showPhone />
-                      ) : (
-                        <Typography variant="body2">Vendedor não identificado</Typography>
-                      )}
-                    </CardContent>
-                  </Card>
-                </Box>
+                  ) : (
+                    <Typography variant="body1">
+                      {formatAddress(schedule.address)}
+                    </Typography>
+                  )}
+                </Grid>
+                {/* Criado Em (somente leitura) */}
+                <Grid item xs={6}>
+                  <Box display="flex" alignItems="center" mb={0.5}>
+                    <ScheduleIcon sx={{ mr: 1 }} color="primary" />
+                    <Typography variant="subtitle2" color="textSecondary">
+                      <strong>Criado Em</strong>
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1">
+                    {formatDateTime(schedule.created_at) || '-'}
+                  </Typography>
+                </Grid>
+                {/* Outras informações (ex.: Pessoas) */}
+                <Grid item xs={12}>
+                  <Typography variant="h6" gutterBottom>
+                    Pessoas
+                  </Typography>
+                  <Box display="flex" flexDirection="column" gap={2}>
+                    <Card variant="outlined">
+                      <CardHeader
+                        avatar={<SupervisorAccountIcon color="primary" />}
+                        title="Agente"
+                      />
+                      <Divider />
+                      <CardContent>
+                        {schedule.schedule_agent ? (
+                          <UserCard
+                            userId={schedule.schedule_agent?.id}
+                            showEmail={false}
+                            showPhone
+                          />
+                        ) : (
+                          <Typography variant="body2">Agente não identificado</Typography>
+                        )}
+                      </CardContent>
+                    </Card>
+                    <Card variant="outlined">
+                      <CardHeader
+                        avatar={<PersonIcon color="primary" />}
+                        title="Supervisor"
+                      />
+                      <Divider />
+                      <CardContent>
+                        {seller?.employee?.user_manager ? (
+                          <UserCard
+                            userId={seller.employee.user_manager.id}
+                            showEmail={false}
+                            showPhone
+                          />
+                        ) : (
+                          <Typography variant="body2">
+                            Supervisor não identificado
+                          </Typography>
+                        )}
+                      </CardContent>
+                    </Card>
+                    <Card variant="outlined">
+                      <CardHeader
+                        avatar={<PersonIcon color="primary" />}
+                        title="Vendedor"
+                      />
+                      <Divider />
+                      <CardContent>
+                        {seller ? (
+                          <UserCard userId={seller.id} showEmail={false} showPhone />
+                        ) : (
+                          <Typography variant="body2">
+                            Vendedor não identificado
+                          </Typography>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </Box>
+                </Grid>
               </Grid>
-
-
-            </Grid>
+            </>
           )}
-
           {tabValue === 1 && (
             <Comment appLabel={'field_services'} model={'schedule'} objectId={scheduleId} />
           )}

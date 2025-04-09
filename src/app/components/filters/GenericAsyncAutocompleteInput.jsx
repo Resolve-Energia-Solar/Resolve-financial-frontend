@@ -72,7 +72,7 @@ const GenericAsyncAutocompleteInput = ({
       if (options.find((option) => option.value === value)) return;
       try {
         const response = await apiClient.get(`${endpoint}/${value}`, {
-          params: { fields: stableExtraParams.fields },
+          params: stableExtraParams,
         });
         const item = response.data;
         const mappedOption = stableMapResponse

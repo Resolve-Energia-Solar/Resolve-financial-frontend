@@ -43,10 +43,9 @@ import StatusChip from '@/utils/status/DocumentStatusIcon';
 import ChipSigned from '@/utils/status/ChipSigned';
 import PulsingBadge from '@/app/components/shared/PulsingBadge';
 import TableSortLabel from '@/app/components/shared/TableSortLabel';
-import DetailsTabs from '../../../sale/DetailsTabs';
 import CounterChip from '../CounterChip';
 
-const SaleList = () => {
+const  SaleList = () => {
   const [salesList, setSalesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
