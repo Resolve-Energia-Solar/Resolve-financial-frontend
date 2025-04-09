@@ -10,6 +10,7 @@ import {
   Radio,
   Button,
   CircularProgress,
+  Divider,
 } from '@mui/material';
 
 import {
@@ -467,6 +468,7 @@ function EditLeadPage({ leadId = null }) {
               </Grid>
             ) : (
               <Grid container rowSpacing={0.5} columnSpacing={2} sx={{ mb: 3 }}>
+
                 <Grid item xs={12} sm={6}>
                   <CustomFormLabel htmlFor="company_name" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Nome da empresa</CustomFormLabel>
                   <TextField
@@ -647,7 +649,190 @@ function EditLeadPage({ leadId = null }) {
                   />
                 </Grid>
 
-                
+                <Grid item xs={12} sx={{ mt: "24px", mb: 0, mt: 5}}>
+                  <Typography sx={{ fontWeight: "400", fontSize: "18px" }}>Cadastro de <strong>sócio administrativo</strong></Typography>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="company_name" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Nome da empresa</CustomFormLabel>
+                  <TextField
+                    name="company_name"
+                    value={formData.company_name}
+                    onChange={(e) => handleChange('company_name', e.target.value)}
+                    fullWidth
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <IconBuildingStore size={"20px"} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={4}>
+                  <CustomFormLabel htmlFor="second_document" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>CNPJ</CustomFormLabel>
+                  <TextField
+                    name="second_document"
+                    value={formData.second_document}
+                    onChange={(e) => handleChange('second_document', e.target.value)}
+                    fullWidth
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <IconId size={"20px"} />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={2}>
+                  <CustomFormLabel htmlFor="phone" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Telefone com DDD</CustomFormLabel>
+                  <TextField
+                    name="phone"
+                    value={formData.phone}
+                    onChange={(e) => handleChange('phone', e.target.value)}
+                    fullWidth
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <IconPhone size={"20px"} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="contact_email" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }} >E-mail</CustomFormLabel>
+                  <TextField
+                    name="contact_email"
+                    value={formData.contact_email}
+                    onChange={(e) => handleChange('contact_email', e.target.value)}
+                    fullWidth
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <IconMail size={"20px"} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={12} lg={6}>
+                  <CustomFormLabel
+                    htmlFor="address"
+                    sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}
+                  >
+                    Endereço
+                  </CustomFormLabel>
+                  <GenericAutocomplete
+                    fetchOptions={fetchAddress}
+                    multiple
+                    label=''
+                    size="small"
+                    AddComponent={CreateAddressPage}
+                    getOptionLabel={(option) =>
+                      `${option.street}, ${option.number} - ${option.city}, ${option.state}`
+                    }
+                    onChange={(selected) => {
+                      setSelectedAddresses(selected);
+                      console.log(selected);
+                      const ids = Array.isArray(selected) ? selected.map((item) => item.id) : [];
+                      handleChange('addresses_ids', ids);
+                    }}
+                    value={selectedAddresses}
+                    {...(formErrors.addresses && {
+                      error: true,
+                      helperText: formErrors.addresses,
+                    })}
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start" sx={{ ml: 1 }}>
+                          <IconMapPin size={"20px"} />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+
               </Grid>
             )}
 
