@@ -160,6 +160,21 @@ function EditLeadPage({ leadId = null }) {
                         </InputAdornment>
                       ),
                     }}
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
                   />
                 </Grid>
 
@@ -170,6 +185,21 @@ function EditLeadPage({ leadId = null }) {
                     value={formData.first_document}
                     onChange={(e) => handleChange('first_document', e.target.value)}
                     fullWidth
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
                   />
                 </Grid>
 
@@ -183,9 +213,24 @@ function EditLeadPage({ leadId = null }) {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Phone />
+                          <Phone sx={{ fontSize:"20px" }}/>
                         </InputAdornment>
                       ),
+                    }}
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
                     }}
                   />
                 </Grid>
@@ -197,6 +242,21 @@ function EditLeadPage({ leadId = null }) {
                     value={formData.birth_date}
                     onChange={(e) => handleChange('birth_date', e.target.value)}
                     fullWidth
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
                   />
                 </Grid>
 
@@ -210,9 +270,24 @@ function EditLeadPage({ leadId = null }) {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Email />
+                          <Email sx={{ fontSize:"20px" }}/>
                         </InputAdornment>
                       ),
+                    }}
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
                     }}
                   />
                 </Grid>
@@ -270,6 +345,18 @@ function EditLeadPage({ leadId = null }) {
                     value={formData.funnel}
                     onChange={(e) => handleChange('funnel', e.target.value)}
                     fullWidth
+                    sx={{
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                      },
+                    }}
                   >
                     <MenuItem value="N">Não Interessado</MenuItem>
                     <MenuItem value="P">Pouco Interessado</MenuItem>
@@ -285,7 +372,22 @@ function EditLeadPage({ leadId = null }) {
                     onChange={(id) => handleChange('origin', id)}
                     value={formData.origin}
                     {...(formErrors.origin && { error: true, helperText: formErrors.origin })}
-                    sx={{ mt: 0}}
+                    sx={{
+                      mt: 0,
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
                   />
                 </Grid>
 
@@ -295,6 +397,21 @@ function EditLeadPage({ leadId = null }) {
                     onChange={(id) => handleChange('seller', id)}
                     value={formData.seller}
                     {...(formErrors.seller && { error: true, helperText: formErrors.seller })}
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
                   />
                 </Grid>
               </Grid>
@@ -398,8 +515,6 @@ function EditLeadPage({ leadId = null }) {
               </Grid>
             )}
 
-
-            {/* Add a Save Button */}
             <Grid
               item
               xs={12}
@@ -411,10 +526,10 @@ function EditLeadPage({ leadId = null }) {
                 gap: 2,
               }}
             >
-              <Box sx={{ display: 'flex', gap: 2 }}>
+              <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
                 <Button
                   variant="contained"
-                  sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 3 }}
+                  sx={{ backgroundColor: theme.palette.primary.Button, color: '#303030', px: 7 }}
                   onClick={handleSaveLead}
                   disabled={formLoading}
                   endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
