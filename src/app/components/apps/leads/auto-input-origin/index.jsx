@@ -5,7 +5,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import useOrigins from '@/hooks/origins/useOrigin';
 
-export default function AutoCompleteOrigin({ onChange, value, error, labeltitle, helperText }) {
+export default function AutoCompleteOrigin({ onChange, value, error, labeltitle, helperText, sx }) {
   const [open, setOpen] = useState(false);
   const [selectedOrigin, setSelectedOrigin] = useState(null);
   const { originsList, loading, originData } = useOrigins(value);
@@ -56,11 +56,7 @@ export default function AutoCompleteOrigin({ onChange, value, error, labeltitle,
                 </Fragment>
               ),
             }}
-            sx={{
-              mt: 0.5,
-              mb: 0,
-              height: "45px"
-            }}
+            sx={sx}
           />
         )}
       />
