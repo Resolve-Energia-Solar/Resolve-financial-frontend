@@ -43,7 +43,7 @@ const BCrumb = [
   },
 ];
 
-export default function FormCustom() {
+export default function CreateFinancialRecord() {
   const router = useRouter();
   const { formData, handleChange, formErrors, setFormErrors, success } = useFinancialRecordForm();
   const [attachments, setAttachments] = useState([]);
@@ -215,11 +215,11 @@ export default function FormCustom() {
             <Select
               variant="outlined"
               fullWidth
-              value={user?.employee?.manager?.complete_name || ''}
+              value={user?.employee?.user_manager?.complete_name || ''}
               disabled
             >
-              <MenuItem value={user?.employee?.manager?.complete_name || ''}>
-                {user?.employee?.manager?.complete_name}
+              <MenuItem value={user?.employee?.user_manager?.complete_name || ''}>
+                {user?.employee?.user_manager?.complete_name}
               </MenuItem>
             </Select>
           </Grid>
