@@ -1,7 +1,9 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, Paper, List, ListItem, ListItemText } from '@mui/material';
+import { Box, TextField, Paper, List, ListItem, ListItemText, Grid, Tooltip, IconButton } from '@mui/material';
 import { useJsApiLoader } from '@react-google-maps/api';
+import CustomFormLabel from '../forms/theme-elements/CustomFormLabel';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 const libraries = ['places'];
 
@@ -36,6 +38,7 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
   useEffect(() => {
     if (isLoaded && window.google && value.length > 2 && shouldSearch) {
       const service = new window.google.maps.places.AutocompleteService();
+
       service.getPlacePredictions(
         {
           input: value,
@@ -43,7 +46,6 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
           types: ['address'],
         },
         (preds, status) => {
-          console.log('Predictions:', preds, status);
           if (status === window.google.maps.places.PlacesServiceStatus.OK) {
             setPredictions(preds);
           } else {
@@ -51,6 +53,7 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
           }
         }
       );
+
     } else {
       setPredictions([]);
     }
@@ -128,13 +131,30 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
 
   return (
     <Box sx={{ position: 'relative' }}>
-      <TextField
-        fullWidth
-        label="Pesquisar Endereço"
-        variant="outlined"
-        value={value}
-        onChange={handleChangeInput}
-      />
+      <Grid container xs={12}>
+        <Grid item xs={12} >
+          <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mt: 0 }}>Endereço</CustomFormLabel>
+        </Grid>
+        
+      </Grid>
+      <Grid container xs={12}>
+        <Grid item xs={11} >
+          <TextField
+            fullWidth
+            // label="Pesquisar Endereço"
+            variant="outlined"
+            value={value}
+            onChange={handleChangeInput}
+          />
+        </Grid>
+        <Grid item xs={1} sx={{ display: "flex", justifyContent: "end", alignItems: "center" }}>
+          <Tooltip title="Digite seu endereço com NÚMERO e selecione uma opção." placement="top">
+            <IconButton size="small">
+              <HelpOutlineIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Grid>
+      </Grid>
       {predictions.length > 0 && (
         <Paper
           sx={{

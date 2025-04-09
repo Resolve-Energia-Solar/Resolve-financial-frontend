@@ -21,7 +21,7 @@ const GenericAutocomplete = ({
   minQueryLength = 1,
   AddComponent,
   onAdd,
-  addTitle = 'Adicionar Novo Item', 
+  addTitle = 'Adicionar Novo Item',
   sx,
   ...props
 }) => {
@@ -96,6 +96,19 @@ const GenericAutocomplete = ({
 
   const valueProp = isMultiple ? (props.value || []) : props.value || null;
 
+  function PaperComponent(props) {
+    const nodeRef = React.useRef(null);
+    return (
+      <Draggable
+        nodeRef={nodeRef}
+        handle="#draggable-dialog-title"
+        cancel={'[class*="MuiDialogContent-root"]'}
+      >
+        <Paper {...props} ref={nodeRef} />
+      </Draggable>
+    );
+  }
+
   return (
     <>
       <Autocomplete
@@ -144,16 +157,22 @@ const GenericAutocomplete = ({
         <Dialog
           open={openAddModal}
           onClose={handleAddModalClose}
-          fullWidth
           maxWidth="md"
-          scroll="paper"
-          sx={{
-            '& .MuiDialog-paper': {
-              maxHeight: '80vh',
+          fullWidth
+          PaperProps={{
+            sx: {
+              borderRadius: '20px',
+              // padding: '24px',
+              gap: '24px',
+              boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+              backgroundColor: '#FFFFFF',
+              height: "643px",
+              width: "889px",
+              p: 1,
             },
           }}
         >
-          <DialogTitle>{addTitle}</DialogTitle>
+          {/* <DialogTitle>{addTitle}</DialogTitle> */}
           <DialogContent dividers>
             <AddComponent onClose={handleAddModalClose} onAdd={handleOnAdd} />
           </DialogContent>
