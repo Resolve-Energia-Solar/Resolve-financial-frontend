@@ -129,24 +129,21 @@ const GenericAutocomplete = ({
             variant="outlined"
             {...(props.error && { error: true, helperText: props.helperText })}
             InputProps={{
-              ...params.InputProps,
+              ...props.InputProps,
+              startAdornment: props.InputProps?.startAdornment || params.InputProps.startAdornment,
               endAdornment: (
                 <>
                   {loading && <CircularProgress color="inherit" size={20} />}
                   {params.InputProps.endAdornment}
                   {AddComponent && !props.disabled && (
-                    <IconButton
-                      onClick={() => setOpenAddModal(true)}
-                      aria-label="Adicionar"
-                      edge="end"
-                      size="small"
-                    >
+                    <IconButton onClick={() => setOpenAddModal(true)} aria-label="Adicionar" edge="end" size="small">
                       <AddIcon fontSize="small" />
                     </IconButton>
                   )}
                 </>
               ),
             }}
+            
           />
         )}
         sx={sx}
