@@ -433,9 +433,9 @@ function EditLeadPage({ leadId = null }) {
                 </Grid>
               </Grid>
             ) : (
-              <Grid container spacing={2} sx={{ mb: 3 }}>
-                <Grid item xs={12} sm={6}>
-                  <CustomFormLabel htmlFor="name">Nome Completo</CustomFormLabel>
+              <Grid container rowSpacing={0.5} columnSpacing={2} sx={{ mb: 3 }}>
+                <Grid item xs={12} sm={4}>
+                  <CustomFormLabel htmlFor="name" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Nome da empresa</CustomFormLabel>
                   <TextField
                     name="name"
                     value={formData.name}
@@ -448,47 +448,51 @@ function EditLeadPage({ leadId = null }) {
                         </InputAdornment>
                       ),
                     }}
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
-                  <CustomFormLabel htmlFor="funnel">Funil</CustomFormLabel>
-                  <TextField
-                    select
-                    name="funnel"
-                    value={formData.funnel}
-                    onChange={(e) => handleChange('funnel', e.target.value)}
-                    fullWidth
-                  >
-                    <MenuItem value="N">Não Interessado</MenuItem>
-                    <MenuItem value="P">Pouco Interessado</MenuItem>
-                    <MenuItem value="I">Interessado</MenuItem>
-                    <MenuItem value="M">Muito Interessado</MenuItem>
-                    <MenuItem value="PC">Pronto para Comprar</MenuItem>
-                  </TextField>
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                  <CustomFormLabel htmlFor="origin">Origem</CustomFormLabel>
-                  <AutoCompleteOrigin
-                    onChange={(id) => handleChange('origin', id)}
-                    value={formData.origin}
-                    {...(formErrors.origin && { error: true, helperText: formErrors.origin })}
-                  />
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                  <CustomFormLabel htmlFor="first_document">CP!!!!!!F/CNPJ</CustomFormLabel>
+                <Grid item xs={12} sm={2}>
+                  <CustomFormLabel htmlFor="first_document" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>CNPJ</CustomFormLabel>
                   <TextField
                     name="first_document"
                     value={formData.first_document}
                     onChange={(e) => handleChange('first_document', e.target.value)}
                     fullWidth
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
-                  <CustomFormLabel htmlFor="phone">Telefone com DDD</CustomFormLabel>
+                <Grid item xs={12} sm={2}>
+                  <CustomFormLabel htmlFor="phone" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Telefone com DDD</CustomFormLabel>
                   <TextField
                     name="phone"
                     value={formData.phone}
@@ -497,15 +501,55 @@ function EditLeadPage({ leadId = null }) {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Phone />
+                          <Phone sx={{ fontSize:"20px" }}/>
                         </InputAdornment>
                       ),
+                    }}
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={4}>
+                  <CustomFormLabel htmlFor="birth_date" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Nome do contato</CustomFormLabel>
+                  <TextField
+                    name="birth_date"
+                    value={formData.birth_date}
+                    onChange={(e) => handleChange('birth_date', e.target.value)}
+                    fullWidth
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
                     }}
                   />
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                  <CustomFormLabel htmlFor="contact_email">E-mail</CustomFormLabel>
+                  <CustomFormLabel htmlFor="contact_email" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }} >E-mail</CustomFormLabel>
                   <TextField
                     name="contact_email"
                     value={formData.contact_email}
@@ -514,21 +558,81 @@ function EditLeadPage({ leadId = null }) {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Email />
+                          <Email sx={{ fontSize:"20px" }}/>
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={12} lg={6}>
+                  <CustomFormLabel
+                    htmlFor="address"
+                    sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}
+                  >
+                    Endereço
+                  </CustomFormLabel>
+                  <GenericAutocomplete
+                    fetchOptions={fetchAddress}
+                    multiple
+                    label=''
+                    size="small"
+                    AddComponent={CreateAddressPage}
+                    getOptionLabel={(option) =>
+                      `${option.street}, ${option.number} - ${option.city}, ${option.state}`
+                    }
+                    onChange={(selected) => {
+                      setSelectedAddresses(selected);
+                      console.log(selected);
+                      const ids = Array.isArray(selected) ? selected.map((item) => item.id) : [];
+                      handleChange('addresses_ids', ids);
+                    }}
+                    value={selectedAddresses}
+                    {...(formErrors.addresses && {
+                      error: true,
+                      helperText: formErrors.addresses,
+                    })}
+                    sx={{
+                      input: {
+                        color: '#7E92A2',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        opacity: 1,
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <IconLocationPin />
                         </InputAdornment>
                       ),
                     }}
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
-                  <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
-                  <AutoCompleteUser
-                    onChange={(id) => handleChange('seller', id)}
-                    value={formData.seller}
-                    {...(formErrors.seller && { error: true, helperText: formErrors.seller })}
-                  />
-                </Grid>
+                
               </Grid>
             )}
 
