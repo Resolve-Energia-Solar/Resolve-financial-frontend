@@ -433,7 +433,7 @@ function EditLeadPage({ leadId = null }) {
                     }}
                     InputProps={{
                       startAdornment: (
-                        <InputAdornment position="start">
+                        <InputAdornment position="start" sx={{ ml: 1 }} >
                           <IconMessageCircleDown size={"20px"} />
                         </InputAdornment>
                       ),
