@@ -32,6 +32,7 @@ import { calculateDueDate } from '@/utils/calcDueDate';
 import financialRecordService from '@/services/financialRecordService';
 import attachmentService from '@/services/attachmentService';
 import getContentType from '@/utils/getContentType';
+import userService from '@/services/userService';
 
 const BCrumb = [
   {
@@ -43,7 +44,7 @@ const BCrumb = [
   },
 ];
 
-export default function FormCustom() {
+export default function FinancialRecordCreate() {
   const router = useRouter();
   const { formData, handleChange, formErrors, setFormErrors, success } = useFinancialRecordForm();
   const [attachments, setAttachments] = useState([]);
@@ -53,6 +54,7 @@ export default function FormCustom() {
   const userPermissions = user?.permissions || user?.user_permissions || [];
   const [minDueDate, setMinDueDate] = useState('');
   const [contentTypeId, setContentTypeId] = useState(null);
+  const [userManagerName, setUserManagerName] = useState('');
 
   useEffect(() => {
     async function fetchContentTypeId() {
@@ -121,11 +123,25 @@ export default function FormCustom() {
           console.error('Erro ao calcular a data de vencimento:', error);
         }
       }
-    }, 500); // debounce de 500ms
+    }, 500);
 
     return () => clearTimeout(debounceTimer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.value, formData.category_code, user?.employee?.department?.id]);
+
+  useEffect(() => {
+    async function fetchUserManagerName() {
+      if (user?.employee?.user_manager) {
+        userService.find(user?.employee?.user_manager, { fields: 'complete_name' }).then((response) => {
+          if (response) {
+            setUserManagerName(response.complete_name);
+          }
+        }
+        );
+      }
+    }
+    fetchUserManagerName();
+  }, [user?.employee?.user_manager]);
 
   const handleSubmit = async () => {
     const missingFields = [];
@@ -215,11 +231,11 @@ export default function FormCustom() {
             <Select
               variant="outlined"
               fullWidth
-              value={user?.employee?.manager?.complete_name || ''}
+              value={userManagerName || ''}
               disabled
             >
-              <MenuItem value={user?.employee?.manager?.complete_name || ''}>
-                {user?.employee?.manager?.complete_name}
+              <MenuItem value={userManagerName || ''}>
+                {userManagerName}
               </MenuItem>
             </Select>
           </Grid>
