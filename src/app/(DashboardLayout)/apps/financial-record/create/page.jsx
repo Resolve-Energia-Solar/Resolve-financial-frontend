@@ -8,6 +8,9 @@ import {
   MenuItem,
   FormHelperText,
   CircularProgress,
+  Box,
+  Typography,
+  Chip
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import { useRouter } from 'next/navigation';
@@ -18,7 +21,6 @@ import AutoCompleteDepartment from '@/app/components/apps/financial-record/depar
 import AutoCompleteCategory from '@/app/components/apps/financial-record/categoryInput';
 import AutoCompleteBeneficiary from '@/app/components/apps/financial-record/beneficiaryInput';
 import AutoCompleteDepartament from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Departament';
-import AutoCompleteProject from '@/app/components/apps/inspections/auto-complete/Auto-input-Project';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
 import CustomFieldMoney from '@/app/components/apps/invoice/components/CustomFieldMoney';
@@ -32,7 +34,8 @@ import { calculateDueDate } from '@/utils/calcDueDate';
 import financialRecordService from '@/services/financialRecordService';
 import attachmentService from '@/services/attachmentService';
 import getContentType from '@/utils/getContentType';
-import userService from '@/services/userService';
+import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
+import { formatDate } from '@/utils/dateUtils';
 
 const BCrumb = [
   {
@@ -54,7 +57,6 @@ export default function CreateFinancialRecord() {
   const userPermissions = user?.permissions || user?.user_permissions || [];
   const [minDueDate, setMinDueDate] = useState('');
   const [contentTypeId, setContentTypeId] = useState(null);
-  const [userManagerName, setUserManagerName] = useState('');
 
   useEffect(() => {
     async function fetchContentTypeId() {
@@ -81,7 +83,7 @@ export default function CreateFinancialRecord() {
   const fieldLabels = {
     client_supplier_code: 'Beneficiário (Nome/CPF/CNPJ)',
     client_supplier_name: 'Nome do Beneficiário',
-    requesting_department_id: 'Departamento Solicitante',
+    requesting_department: 'Departamento Solicitante',
     department_code: 'Departamento Causador',
     department_name: 'Nome do Departamento',
     category_code: 'Categoria',
@@ -129,20 +131,6 @@ export default function CreateFinancialRecord() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.value, formData.category_code, user?.employee?.department?.id]);
 
-  useEffect(() => {
-    async function fetchUserManagerName() {
-      if (user?.employee?.user_manager) {
-        userService.find(user?.employee?.user_manager, { fields: 'complete_name' }).then((response) => {
-          if (response) {
-            setUserManagerName(response.complete_name);
-          }
-        }
-        );
-      }
-    }
-    fetchUserManagerName();
-  }, [user?.employee?.user_manager]);
-
   const handleSubmit = async () => {
     const missingFields = [];
     if (!formData.value) missingFields.push('Valor (R$)');
@@ -152,8 +140,6 @@ export default function CreateFinancialRecord() {
     if (!formData.category_name) missingFields.push('Nome da Categoria');
     if (!formData.client_supplier_code) missingFields.push('Código do Beneficiário');
     if (!formData.client_supplier_name) missingFields.push('Nome do Beneficiário');
-    if (!formData.requester) missingFields.push('Solicitante');
-    if (!formData.responsible) missingFields.push('Responsável');
     if (!formData.department_code) missingFields.push('Departamento Causador');
 
     if (missingFields.length) {
@@ -166,7 +152,7 @@ export default function CreateFinancialRecord() {
 
     setLoading(true);
     try {
-      const recordResponse = await financialRecordService.create(formData);
+      const recordResponse = await financialRecordService.update(formData);
       const recordId = recordResponse.id;
       await Promise.all(
         attachments.map(async (attachment) => {
@@ -206,6 +192,17 @@ export default function CreateFinancialRecord() {
   if (success) {
     router.push('/apps/financial-record');
   }
+
+  const saleStatusMap = {
+    P: ['Pendente', 'warning'],
+    F: ['Finalizado', 'success'],
+    EA: ['Em Andamento', 'info'],
+    C: ['Cancelado', 'error'],
+    D: ['Distrato', 'default'],
+  };
+
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
   return (
     <PageContainer
@@ -253,14 +250,14 @@ export default function CreateFinancialRecord() {
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            <CustomFormLabel htmlFor="requesting_department_id">
+            <CustomFormLabel htmlFor="requesting_department">
               Departamento Solicitante
             </CustomFormLabel>
             <AutoCompleteDepartament
-              onChange={(value) => handleChange('requesting_department_id', value)}
-              value={formData.requesting_department_id || user?.employee?.department?.id}
-              error={formErrors.requesting_department_id}
-              helperText={formErrors.requesting_department_id}
+              onChange={(value) => handleChange('requesting_department', value)}
+              value={formData.requesting_department || user?.employee?.department?.id}
+              error={formErrors.requesting_department}
+              helperText={formErrors.requesting_department}
               required
             />
           </Grid>
@@ -345,11 +342,92 @@ export default function CreateFinancialRecord() {
           </Grid>
           <Grid item xs={12} md={6}>
             <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
-            <AutoCompleteProject
-              onChange={(project) => handleChange('project', project)}
-              value={formData.project}
-              error={formErrors.project}
-              helperText={formErrors.project}
+            <GenericAsyncAutocompleteInput
+              label="Projeto"
+              name="project"
+              value={formData.project || null}
+              onChange={(e) => handleChange('project', e.target.value)}
+              endpoint="/api/projects"
+              queryParam="q"
+              extraParams={{
+                expand: [
+                  'sale',
+                  'sale.customer',
+                  'product',
+                  'sale.homologator'
+                ],
+                fields: [
+                  'id',
+                  'project_number',
+                  'address',
+                  'sale.total_value',
+                  'sale.contract_number',
+                  'sale.customer.complete_name',
+                  'product.name',
+                  'product.description',
+                  'sale.signature_date',
+                  'sale.status',
+                  'sale.homologator.complete_name',
+                  'address.complete_address',
+                ]
+              }}
+              mapResponse={(data) =>
+                data.results.map((p) => ({
+                  label: `${p.project_number} - ${p.sale.customer.complete_name}`,
+                  value: p.id,
+                  project_number: p.project_number,
+                  total_value: p.sale.total_value,
+                  contract_number: p.sale.contract_number,
+                  customer_name: p.sale.customer.complete_name,
+                  product: p.product,
+                  signature_date: p.sale.signature_date,
+                  status: p.sale.status,
+                  homologator: p.sale.homologator,
+                  address: p.address
+                }))
+              }
+              fullWidth
+              helperText={formErrors.project?.[0] || ''}
+              error={!!formErrors.project}
+              renderOption={(props, option) => (
+                <li {...props}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                    <Typography variant="body2">
+                      <strong>Projeto:</strong> {option.project_number}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Valor total:</strong> {option.total_value ? formatCurrency(option.total_value) : 'Sem valor Total'}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Contrato:</strong> {option.contract_number || 'Contrato não Disponível'}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Homologador:</strong> {option.homologator?.complete_name || 'Homologador não Disponível'}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Data de Contrato:</strong> {formatDate(option.signature_date) || 'Data de Contrato não Disponível'}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Endereço:</strong> {option.address?.complete_address || 'Endereço não Disponível'}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Status da Venda:</strong>{' '}
+                      {option.status ? (
+                        <Chip
+                          label={saleStatusMap[option.status][0] || 'Status Desconhecido'}
+                          size="small"
+                          color={saleStatusMap[option.status][1] || 'default'}
+                        />
+                      ) : (
+                        'Status não Disponível'
+                      )}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Produto:</strong> {option.product?.name || option.product?.description || 'Produto não Disponível'}
+                    </Typography>
+                  </Box>
+                </li>
+              )}
             />
           </Grid>
           <Grid item xs={6}>

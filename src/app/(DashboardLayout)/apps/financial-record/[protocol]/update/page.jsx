@@ -3,11 +3,14 @@ import React, { useEffect, useState } from 'react';
 import {
   Grid,
   Button,
+  Box,
   Stack,
   Select,
   MenuItem,
   FormHelperText,
   CircularProgress,
+  Typography,
+  Chip
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import { useRouter, useParams } from 'next/navigation';
@@ -16,8 +19,6 @@ import { useSnackbar } from 'notistack';
 
 import AutoCompleteDepartment from '@/app/components/apps/financial-record/departmentInput';
 import AutoCompleteCategory from '@/app/components/apps/financial-record/categoryInput';
-import AutoCompleteDepartament from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Departament';
-import AutoCompleteProject from '@/app/components/apps/inspections/auto-complete/Auto-input-Project';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
 import CustomFieldMoney from '@/app/components/apps/invoice/components/CustomFieldMoney';
@@ -25,12 +26,14 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import ParentCard from '@/app/components/shared/ParentCard';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AttachmentDrawer from '../../../attachment/AttachmentDrawer';
+import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 
 import useFinancialRecordForm from '@/hooks/financial_record/useFinancialRecordForm';
 import { calculateDueDate } from '@/utils/calcDueDate';
 import financialRecordService from '@/services/financialRecordService';
 import attachmentService from '@/services/attachmentService';
 import getContentType from '@/utils/getContentType';
+import { formatDate } from '@/utils/dateUtils';
 
 export default function UpdateForm() {
   const router = useRouter();
@@ -41,9 +44,10 @@ export default function UpdateForm() {
     { to: '/', title: 'Home' },
     { to: '/apps/financial-record', title: 'Contas a Receber/Pagar' },
     { to: `/apps/financial-record/${protocol}`, title: protocol },
-    { title: `Atualizar Contas a Receber/Pagar nº ${protocol}` },
+    { title: `Editar` },
   ];
 
+  const [recordId, setRecordId] = useState(null);
   const { formData, handleChange, formErrors, setFormErrors, success } = useFinancialRecordForm();
   const [attachments, setAttachments] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -95,7 +99,13 @@ export default function UpdateForm() {
         const records = dataList.results;
         if (records && records.length > 0) {
           const record = records[0];
-          const fetchedData = await financialRecordService.find(record.id);
+          setRecordId(record.id);
+          const fetchedData = await financialRecordService.find(record.id, { expand: 'requester,responsible', fields: '*,requester.id,requester.complete_name,responsible.id,responsible.complete_name,requesting_department,responsible_status,payment_status,status' });
+          if (fetchedData.status !== 'S' || fetchedData.payment_status !== 'P' || fetchedData.responsible_status !== 'P') {
+            enqueueSnackbar('Registro não pode ser editado, pois não está pendente.', { variant: 'error' });
+            router.push('/apps/financial-record/' + protocol);
+            return;
+          }
           populateForm(fetchedData);
         } else {
           enqueueSnackbar('Registro não encontrado.', { variant: 'error' });
@@ -111,33 +121,31 @@ export default function UpdateForm() {
     })();
   }, [protocol, enqueueSnackbar, router]);
 
-  // Atualiza data de vencimento
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       if (formData.value && formData.category_code) {
-        try {
-          const now = new Date();
-          const computedDueDate = calculateDueDate({
-            now,
-            amount: formData.value,
-            category: formData.category_code,
-            department: user?.employee?.department?.id || '',
-            requestTime: now,
-          });
-          const formattedDueDate = computedDueDate.toISOString().split('T')[0];
+        const now = new Date();
+        const computedDueDate = calculateDueDate({
+          now,
+          amount: formData.value,
+          category: formData.category_code,
+          department: user?.employee?.department?.id || '',
+          requestTime: now,
+        });
+        const formattedDueDate = computedDueDate.toISOString().split('T')[0];
+        if (formData.due_date !== formattedDueDate) {
           setMinDueDate(formattedDueDate);
           handleChange('due_date', formattedDueDate);
-        } catch (error) {
-          console.error('Erro ao calcular a data de vencimento:', error);
         }
       }
     }, 500);
     return () => clearTimeout(debounceTimer);
-  }, [formData.value, formData.category_code, user?.employee?.department?.id, handleChange]);
+  }, [formData.value, formData.category_code, user?.employee?.department?.id, formData.due_date]);
+  
 
   const fieldLabels = {
     client_supplier_name: 'Beneficiário (Nome/CPF/CNPJ)',
-    requesting_department_id: 'Departamento Solicitante',
+    requesting_department: 'Departamento Solicitante',
     department_code: 'Departamento Causador',
     department_name: 'Nome do Departamento',
     category_code: 'Categoria',
@@ -157,8 +165,26 @@ export default function UpdateForm() {
 
   const handleSubmit = async () => {
     setLoading(true);
+    const missingFields = [];
+    if (!formData.value) missingFields.push('Valor (R$)');
+    if (!formData.due_date) missingFields.push('Data de Vencimento');
+    if (!formData.service_date) missingFields.push('Data do Serviço');
+    if (!formData.category_code) missingFields.push('Categoria');
+    if (!formData.category_name) missingFields.push('Nome da Categoria');
+    if (!formData.client_supplier_code) missingFields.push('Código do Beneficiário');
+    if (!formData.client_supplier_name) missingFields.push('Nome do Beneficiário');
+    if (!formData.department_code) missingFields.push('Departamento Causador');
+
+    if (missingFields.length) {
+      enqueueSnackbar(
+        `Por favor, preencha os seguintes campos: ${missingFields.join(', ')}`,
+        { variant: 'error' }
+      );
+      return;
+    }
     try {
-      await financialRecordService.update(protocol, formData);
+      const { requester, responsible, ...dataWithoutRequesterAndResponsible } = formData;
+      await financialRecordService.update(recordId, dataWithoutRequesterAndResponsible);
       await Promise.all(
         attachments.map(async (attachment) => {
           const formDataAttachment = new FormData();
@@ -172,7 +198,8 @@ export default function UpdateForm() {
           await attachmentService.create(formDataAttachment);
         }),
       );
-      router.push('/apps/financial-record');
+      router.push('/apps/financial-record/' + protocol);
+      enqueueSnackbar('Registro atualizado com sucesso!', { variant: 'success' });
     } catch (error) {
       console.error('Erro ao atualizar registro ou anexos:', error);
       if (error.response && error.response.data) {
@@ -206,6 +233,17 @@ export default function UpdateForm() {
     router.push('/apps/financial-record');
   }
 
+  const saleStatusMap = {
+    P: ['Pendente', 'warning'],
+    F: ['Finalizado', 'success'],
+    EA: ['Em Andamento', 'info'],
+    C: ['Cancelado', 'error'],
+    D: ['Distrato', 'default'],
+  };
+
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+
   return (
     <PageContainer
       title="Atualização de Contas a Receber/Pagar"
@@ -221,8 +259,8 @@ export default function UpdateForm() {
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <CustomFormLabel>Solicitante</CustomFormLabel>
-            <Select variant="outlined" fullWidth value={user?.complete_name || ''} disabled>
-              <MenuItem value={user?.complete_name || ''}>{user?.complete_name}</MenuItem>
+            <Select variant="outlined" fullWidth value={formData.requester?.complete_name || ''} disabled>
+              <MenuItem value={formData.requester?.complete_name || ''}>{formData.requester?.complete_name}</MenuItem>
             </Select>
           </Grid>
           <Grid item xs={12} md={6}>
@@ -230,11 +268,11 @@ export default function UpdateForm() {
             <Select
               variant="outlined"
               fullWidth
-              value={user?.employee?.manager?.complete_name || ''}
+              value={formData.responsible?.complete_name || ''}
               disabled
             >
-              <MenuItem value={user?.employee?.manager?.complete_name || ''}>
-                {user?.employee?.manager?.complete_name}
+              <MenuItem value={formData.responsible?.complete_name || ''}>
+                {formData.responsible?.complete_name || ''}
               </MenuItem>
             </Select>
           </Grid>
@@ -252,15 +290,31 @@ export default function UpdateForm() {
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            <CustomFormLabel htmlFor="requesting_department_id">
+            <CustomFormLabel htmlFor="requesting_department">
               Departamento Solicitante
             </CustomFormLabel>
-            <AutoCompleteDepartament
-              onChange={(value) => handleChange('requesting_department_id', value)}
-              value={formData.requesting_department_id || user?.employee?.department?.id}
-              error={formErrors.requesting_department_id}
-              helperText={formErrors.requesting_department_id}
-            />
+            <GenericAsyncAutocompleteInput
+              label="Departamento Solicitante"
+              name="requesting_department"
+              value={formData.requesting_department || null}
+              onChange={(e) => handleChange('requesting_department', e.target.value)}
+              endpoint="/api/departments"
+              queryParam="name__icontains"
+              extraParams={{
+                fields: ['id', 'name'],
+                ordering: ['name'],
+                limit: 100
+              }}
+              mapResponse={(data) =>
+                data.results.map((d) => ({
+                  label: d.name,
+                  value: d.id,
+                }))
+              }
+              fullWidth
+              helperText={formErrors.requesting_department?.[0] || ''}
+              error={!!formErrors.requesting_department}
+            />              
           </Grid>
           {/* Campo de Beneficiário exibido somente */}
           <Grid item xs={12}>
@@ -334,11 +388,92 @@ export default function UpdateForm() {
           </Grid>
           <Grid item xs={12} md={6}>
             <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
-            <AutoCompleteProject
-              onChange={(project) => handleChange('project', project)}
-              value={formData.project || ''}
-              error={formErrors.project}
-              helperText={formErrors.project}
+            <GenericAsyncAutocompleteInput
+              label="Projeto"
+              name="project"
+              value={formData.project || null}
+              onChange={(e) => handleChange('project', e.target.value)}
+              endpoint="/api/projects"
+              queryParam="q"
+              extraParams={{
+                expand: [
+                  'sale',
+                  'sale.customer',
+                  'product',
+                  'sale.homologator'
+                ],
+                fields: [
+                  'id',
+                  'project_number',
+                  'address',
+                  'sale.total_value',
+                  'sale.contract_number',
+                  'sale.customer.complete_name',
+                  'product.name',
+                  'product.description',
+                  'sale.signature_date',
+                  'sale.status',
+                  'sale.homologator.complete_name',
+                  'address.complete_address',
+                ]
+              }}
+              mapResponse={(data) =>
+                data.results.map((p) => ({
+                  label: `${p.project_number} - ${p.sale.customer.complete_name}`,
+                  value: p.id,
+                  project_number: p.project_number,
+                  total_value: p.sale.total_value,
+                  contract_number: p.sale.contract_number,
+                  customer_name: p.sale.customer.complete_name,
+                  product: p.product,
+                  signature_date: p.sale.signature_date,
+                  status: p.sale.status,
+                  homologator: p.sale.homologator,
+                  address: p.address
+                }))
+              }
+              fullWidth
+              helperText={formErrors.project?.[0] || ''}
+              error={!!formErrors.project}
+              renderOption={(props, option) => (
+                <li {...props}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                    <Typography variant="body2">
+                      <strong>Projeto:</strong> {option.project_number}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Valor total:</strong> {option.total_value ? formatCurrency(option.total_value) : 'Sem valor Total'}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Contrato:</strong> {option.contract_number || 'Contrato não Disponível'}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Homologador:</strong> {option.homologator?.complete_name || 'Homologador não Disponível'}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Data de Contrato:</strong> {formatDate(option.signature_date) || 'Data de Contrato não Disponível'}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Endereço:</strong> {option.address?.complete_address || 'Endereço não Disponível'}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Status da Venda:</strong>{' '}
+                      {option.status ? (
+                        <Chip
+                          label={saleStatusMap[option.status][0] || 'Status Desconhecido'}
+                          size="small"
+                          color={saleStatusMap[option.status][1] || 'default'}
+                        />
+                      ) : (
+                        'Status não Disponível'
+                      )}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Produto:</strong> {option.product?.name || option.product?.description || 'Produto não Disponível'}
+                    </Typography>
+                  </Box>
+                </li>
+              )}
             />
           </Grid>
           <Grid item xs={6}>
