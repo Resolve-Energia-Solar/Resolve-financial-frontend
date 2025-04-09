@@ -13,11 +13,17 @@ import {
 } from '@mui/material';
 
 import {
-  IconLocationPin,
+  IconMapPin,
+  IconId,
+  IconMail,
+  IconPhone,
+  IconUserCircle,
+  IconBuildingStore,
+  IconCake,
+  IconSun,
+  IconMessageCircleDown
 } from '@tabler/icons-react';
 
-
-import { AccountCircle, Email, Phone } from '@mui/icons-material';
 import BlankCard from '@/app/components/shared/BlankCard';
 import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
@@ -162,7 +168,7 @@ function EditLeadPage({ leadId = null }) {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <AccountCircle />
+                          <IconUserCircle size={"20px"} />
                         </InputAdornment>
                       ),
                     }}
@@ -206,6 +212,13 @@ function EditLeadPage({ leadId = null }) {
                         padding: '12px',
                       },
                     }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <IconId size={"20px"} />
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 </Grid>
 
@@ -219,7 +232,7 @@ function EditLeadPage({ leadId = null }) {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Phone sx={{ fontSize:"20px" }}/>
+                          <IconPhone size={"20px"} />
                         </InputAdornment>
                       ),
                     }}
@@ -263,6 +276,13 @@ function EditLeadPage({ leadId = null }) {
                         padding: '12px',
                       },
                     }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <IconCake size={"20px"} />
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 </Grid>
 
@@ -276,7 +296,7 @@ function EditLeadPage({ leadId = null }) {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Email sx={{ fontSize:"20px" }}/>
+                          <IconMail size={"20px"} />
                         </InputAdornment>
                       ),
                     }}
@@ -342,8 +362,8 @@ function EditLeadPage({ leadId = null }) {
                     }}
                     InputProps={{
                       startAdornment: (
-                        <InputAdornment position="start">
-                          <IconLocationPin />
+                        <InputAdornment position="start" sx={{ ml: 1 }}>
+                          <IconMapPin size={"20px"} />
                         </InputAdornment>
                       ),
                     }}
@@ -370,6 +390,13 @@ function EditLeadPage({ leadId = null }) {
                         fontWeight: '400',
                         fontSize: '12px',
                       },
+                    }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <IconSun size={"20px"} />
+                        </InputAdornment>
+                      ),
                     }}
                   >
                     <MenuItem value="N">Não Interessado</MenuItem>
@@ -404,7 +431,13 @@ function EditLeadPage({ leadId = null }) {
                         padding: '12px',
                       },
                     }}
-
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <IconMessageCircleDown size={"20px"} />
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 </Grid>
 
@@ -434,17 +467,17 @@ function EditLeadPage({ leadId = null }) {
               </Grid>
             ) : (
               <Grid container rowSpacing={0.5} columnSpacing={2} sx={{ mb: 3 }}>
-                <Grid item xs={12} sm={4}>
-                  <CustomFormLabel htmlFor="name" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Nome da empresa</CustomFormLabel>
+                <Grid item xs={12} sm={6}>
+                  <CustomFormLabel htmlFor="company_name" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Nome da empresa</CustomFormLabel>
                   <TextField
-                    name="name"
-                    value={formData.name}
-                    onChange={(e) => handleChange('name', e.target.value)}
+                    name="company_name"
+                    value={formData.company_name}
+                    onChange={(e) => handleChange('company_name', e.target.value)}
                     fullWidth
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <AccountCircle />
+                          <IconBuildingStore size={"20px"} />
                         </InputAdornment>
                       ),
                     }}
@@ -466,12 +499,12 @@ function EditLeadPage({ leadId = null }) {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={2}>
-                  <CustomFormLabel htmlFor="first_document" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>CNPJ</CustomFormLabel>
+                <Grid item xs={12} sm={4}>
+                  <CustomFormLabel htmlFor="second_document" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>CNPJ</CustomFormLabel>
                   <TextField
-                    name="first_document"
-                    value={formData.first_document}
-                    onChange={(e) => handleChange('first_document', e.target.value)}
+                    name="second_document"
+                    value={formData.second_document}
+                    onChange={(e) => handleChange('second_document', e.target.value)}
                     fullWidth
                     sx={{
                       input: {
@@ -487,6 +520,13 @@ function EditLeadPage({ leadId = null }) {
                       '& .MuiInputBase-input': {
                         padding: '12px',
                       },
+                    }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <IconId size={"20px"} />
+                        </InputAdornment>
+                      ),
                     }}
                   />
                 </Grid>
@@ -501,35 +541,10 @@ function EditLeadPage({ leadId = null }) {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Phone sx={{ fontSize:"20px" }}/>
+                          <IconPhone size={"20px"} />
                         </InputAdornment>
                       ),
                     }}
-                    sx={{
-                      input: {
-                        color: '#7E92A2',
-                        fontWeight: '400',
-                        fontSize: '12px',
-                        opacity: 1,
-                      },
-                      '& .MuiOutlinedInput-root': {
-                        border: '1px solid #3E3C41',
-                        borderRadius: '9px',
-                      },
-                      '& .MuiInputBase-input': {
-                        padding: '12px',
-                      },
-                    }}
-                  />
-                </Grid>
-
-                <Grid item xs={12} sm={4}>
-                  <CustomFormLabel htmlFor="birth_date" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Nome do contato</CustomFormLabel>
-                  <TextField
-                    name="birth_date"
-                    value={formData.birth_date}
-                    onChange={(e) => handleChange('birth_date', e.target.value)}
-                    fullWidth
                     sx={{
                       input: {
                         color: '#7E92A2',
@@ -558,7 +573,7 @@ function EditLeadPage({ leadId = null }) {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Email sx={{ fontSize:"20px" }}/>
+                          <IconMail size={"20px"} />
                         </InputAdornment>
                       ),
                     }}
@@ -624,8 +639,8 @@ function EditLeadPage({ leadId = null }) {
                     }}
                     InputProps={{
                       startAdornment: (
-                        <InputAdornment position="start">
-                          <IconLocationPin />
+                        <InputAdornment position="start" sx={{ ml: 1 }}>
+                          <IconMapPin size={"20px"} />
                         </InputAdornment>
                       ),
                     }}
