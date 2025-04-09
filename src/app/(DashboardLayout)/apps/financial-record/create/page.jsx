@@ -44,7 +44,7 @@ const BCrumb = [
   },
 ];
 
-export default function FinancialRecordCreate() {
+export default function CreateFinancialRecord() {
   const router = useRouter();
   const { formData, handleChange, formErrors, setFormErrors, success } = useFinancialRecordForm();
   const [attachments, setAttachments] = useState([]);
@@ -231,11 +231,11 @@ export default function FinancialRecordCreate() {
             <Select
               variant="outlined"
               fullWidth
-              value={userManagerName || ''}
+              value={user?.employee?.user_manager?.complete_name || ''}
               disabled
             >
-              <MenuItem value={userManagerName || ''}>
-                {userManagerName}
+              <MenuItem value={user?.employee?.user_manager?.complete_name || ''}>
+                {user?.employee?.user_manager?.complete_name}
               </MenuItem>
             </Select>
           </Grid>
