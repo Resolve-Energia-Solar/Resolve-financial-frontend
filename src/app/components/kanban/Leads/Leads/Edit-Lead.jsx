@@ -69,7 +69,7 @@ function EditLeadPage({ leadId = null }) {
     }
   };
 
-  const [leadType, setLeadType] = useState('');
+  const [leadType, setLeadType] = useState('PF');
   const [selectedAddresses, setSelectedAddresses] = useState([]);
   const fetchAddress = async (search) => {
     try {
