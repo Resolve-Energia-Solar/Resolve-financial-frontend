@@ -11,6 +11,12 @@ import {
   Button,
   CircularProgress,
 } from '@mui/material';
+
+import {
+  IconLocationPin,
+} from '@tabler/icons-react';
+
+
 import { AccountCircle, Email, Phone } from '@mui/icons-material';
 import BlankCard from '@/app/components/shared/BlankCard';
 import { useSnackbar } from 'notistack';
@@ -334,6 +340,13 @@ function EditLeadPage({ leadId = null }) {
                         padding: '12px',
                       },
                     }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <IconLocationPin />
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 </Grid>
 
@@ -349,6 +362,7 @@ function EditLeadPage({ leadId = null }) {
                       '& .MuiOutlinedInput-notchedOutline': {
                         borderColor: '#3E3C41',
                         borderRadius: '9px',
+                        
                       },
                       '& .MuiInputBase-input': {
                         padding: '12px',
@@ -373,7 +387,9 @@ function EditLeadPage({ leadId = null }) {
                     value={formData.origin}
                     {...(formErrors.origin && { error: true, helperText: formErrors.origin })}
                     sx={{
-                      mt: 0,
+                      mt: 0.5,
+                      mb: 0,
+                      height: "45px",
                       input: {
                         color: '#7E92A2',
                         fontWeight: '400',
@@ -388,6 +404,7 @@ function EditLeadPage({ leadId = null }) {
                         padding: '12px',
                       },
                     }}
+
                   />
                 </Grid>
 
