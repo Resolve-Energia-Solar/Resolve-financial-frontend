@@ -128,12 +128,30 @@ export default function FormCustom() {
   }, [formData.value, formData.category_code, user?.employee?.department?.id]);
 
   const handleSubmit = async () => {
+    const missingFields = [];
+    if (!formData.value) missingFields.push('Valor (R$)');
+    if (!formData.due_date) missingFields.push('Data de Vencimento');
+    if (!formData.service_date) missingFields.push('Data do Serviço');
+    if (!formData.category_code) missingFields.push('Categoria');
+    if (!formData.category_name) missingFields.push('Nome da Categoria');
+    if (!formData.client_supplier_code) missingFields.push('Código do Beneficiário');
+    if (!formData.client_supplier_name) missingFields.push('Nome do Beneficiário');
+    if (!formData.requester) missingFields.push('Solicitante');
+    if (!formData.responsible) missingFields.push('Responsável');
+    if (!formData.department_code) missingFields.push('Departamento Causador');
+
+    if (missingFields.length) {
+      enqueueSnackbar(
+        `Por favor, preencha os seguintes campos: ${missingFields.join(', ')}`,
+        { variant: 'error' }
+      );
+      return;
+    }
+
     setLoading(true);
     try {
-      // Cria o registro e obtém o object_id
       const recordResponse = await financialRecordService.create(formData);
       const recordId = recordResponse.id;
-      // Envia cada anexo pendente
       await Promise.all(
         attachments.map(async (attachment) => {
           const formDataAttachment = new FormData();
@@ -215,7 +233,7 @@ export default function FormCustom() {
               value={formData.department_code}
               error={formErrors.department_code}
               helperText={formErrors.department_code}
-              disabled={false}
+              required
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -227,6 +245,7 @@ export default function FormCustom() {
               value={formData.requesting_department_id || user?.employee?.department?.id}
               error={formErrors.requesting_department_id}
               helperText={formErrors.requesting_department_id}
+              required
             />
           </Grid>
           <Grid item xs={12}>
@@ -242,6 +261,7 @@ export default function FormCustom() {
                 handleChange('client_supplier_code', beneficiary?.codigo_cliente || '');
                 handleChange('client_supplier_name', beneficiary?.nome_fantasia || '');
               }}
+              required
             />
           </Grid>
           <Grid item xs={12}>
@@ -255,6 +275,7 @@ export default function FormCustom() {
               onChange={(e) => handleChange('notes', e.target.value)}
               error={!!formErrors.notes}
               helperText={formErrors.notes}
+              required
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -268,6 +289,7 @@ export default function FormCustom() {
               error={formErrors.category_code}
               helperText={formErrors.category_code}
               disabled={false}
+              required
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -280,6 +302,7 @@ export default function FormCustom() {
               onChange={(value) => handleChange('value', value)}
               error={!!formErrors.value}
               helperText={formErrors.value}
+              required
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -291,6 +314,7 @@ export default function FormCustom() {
               value={formData.payment_method || 'P'}
               onChange={(e) => handleChange('payment_method', e.target.value)}
               error={!!formErrors.payment_method}
+              required
             >
               <MenuItem value="B">Boleto</MenuItem>
               <MenuItem value="T">Transferência Bancária</MenuItem>
@@ -338,6 +362,7 @@ export default function FormCustom() {
               error={!!formErrors.due_date}
               helperText={formErrors.due_date}
               disabled={!(formData.value && formData.category_code)}
+              required
             />
           </Grid>
           <Grid item xs={12}>
