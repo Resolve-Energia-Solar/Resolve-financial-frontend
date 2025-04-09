@@ -1,24 +1,24 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Autocomplete, TextField, CircularProgress, Typography } from "@mui/material";
-import apiClient from "@/services/apiClient";
+import React, { useState, useEffect, useMemo } from 'react';
+import { Autocomplete, TextField, CircularProgress, Typography } from '@mui/material';
+import apiClient from '@/services/apiClient';
 
 const GenericAsyncAutocompleteInput = ({
   label,
   value,
   onChange,
   endpoint,
-  queryParam = "search",
+  queryParam = 'search',
   extraParams = {},
   mapResponse,
   debounceTime = 300,
   error = false,
-  helperText = "",
-  noOptionsText = "Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.",
+  helperText = '',
+  noOptionsText = 'Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa.',
   renderOption,
   ...props
 }) => {
   const [options, setOptions] = useState([]);
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -27,7 +27,7 @@ const GenericAsyncAutocompleteInput = ({
 
   const selectedOption = useMemo(() => {
     if (!value) return null;
-    if (typeof value === "object") return value;
+    if (typeof value === 'object') return value;
     return options.find((option) => option.value === value) || null;
   }, [value, options]);
 
@@ -48,14 +48,12 @@ const GenericAsyncAutocompleteInput = ({
           params: { page, limit },
         });
         const data = response.data;
-        const fetchedOptions = stableMapResponse
-          ? stableMapResponse(data)
-          : data.results || [];
+        const fetchedOptions = stableMapResponse ? stableMapResponse(data) : data.results || [];
         if (active) {
           setOptions(fetchedOptions);
         }
       } catch (err) {
-        console.error("Error fetching options:", err);
+        console.error('Error fetching options:', err);
       } finally {
         if (active) setLoading(false);
       }
@@ -68,19 +66,19 @@ const GenericAsyncAutocompleteInput = ({
 
   useEffect(() => {
     const fetchInitialOption = async () => {
-      if (!value || typeof value === "object") return;
+      if (!value || typeof value === 'object') return;
       if (options.find((option) => option.value === value)) return;
       try {
         const response = await apiClient.get(`${endpoint}/${value}`, {
-          params: { fields: stableExtraParams.fields },
+          params: stableExtraParams,
         });
         const item = response.data;
         const mappedOption = stableMapResponse
           ? stableMapResponse({ results: [item] })[0]
-          : { label: item.complete_name || item.name || "", value: item.id };
+          : { label: item.complete_name || item.name || '', value: item.id };
         setOptions((prevOptions) => [...prevOptions, mappedOption]);
       } catch (err) {
-        console.error("Error fetching initial option:", err);
+        console.error('Error fetching initial option:', err);
       }
     };
     fetchInitialOption();
@@ -93,18 +91,21 @@ const GenericAsyncAutocompleteInput = ({
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
       options={options}
-      getOptionLabel={(option) => option.label || ""}
+      getOptionLabel={(option) => option.label || ''}
       loading={loading}
       onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
       onChange={(event, newValue) => onChange(newValue)}
       value={selectedOption}
       loadingText="Carregando..."
       noOptionsText={noOptionsText}
-      renderOption={renderOption || ((props, option) => (
-        <li {...props}>
-          <Typography variant="body1">{option.label}</Typography>
-        </li>
-      ))}
+      renderOption={
+        renderOption ||
+        ((props, option) => (
+          <li {...props}>
+            <Typography variant="body1">{option.label}</Typography>
+          </li>
+        ))
+      }
       {...props}
       renderInput={(params) => (
         <TextField
