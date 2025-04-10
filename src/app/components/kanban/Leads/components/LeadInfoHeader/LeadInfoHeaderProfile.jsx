@@ -2,11 +2,11 @@ import { Avatar, Grid, IconButton, useTheme, Typography, } from "@mui/material"
 import { useContext, useState } from "react";
 import { LeadModalTabContext } from "../../context/LeadModalTabContext";
 
-export function LeadInfoHeaderProjectDropdown({ leadId, tabValue }) {
+export function LeadInfoHeaderProfile({ leadId, tabValue }) {
 
     const { lead } = useContext(LeadModalTabContext);
     const theme = useTheme();
-    
+
     return (
         <>
             <Grid item sx={{ position: 'relative', display: 'inline-block', mr: 2 }}>
