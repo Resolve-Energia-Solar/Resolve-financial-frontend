@@ -121,7 +121,7 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Serviço de Campo',
+    title: 'Serviços de Campo',
     icon: IconMapRoute,
     href: '/apps/inspections/schedule',
     permissions: ['field_services.view_all_schedule'],

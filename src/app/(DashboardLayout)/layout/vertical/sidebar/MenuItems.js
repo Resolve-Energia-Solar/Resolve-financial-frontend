@@ -74,7 +74,7 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: 'Serviços de Campo',
-    icon: IconUserPin,
+    icon: IconMapRoute,
     href: '/',
     permissions: ['field_services.view_all_schedule'],
     children: [
