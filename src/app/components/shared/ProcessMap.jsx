@@ -1,14 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Tooltip, Grid, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+
+import {
+    Box,
+    Typography,
+    Tooltip,
+    Grid,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button
+} from '@mui/material';
+
 import ReactFlow, { Controls, Background } from 'reactflow';
 import 'reactflow/dist/style.css';
+
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LockIcon from '@mui/icons-material/Lock';
+
 import processService from '@/services/processService';
+import contentType from '@/services/contentTypeService';
 import { useSnackbar } from 'notistack';
-import UserBadge from '../apps/users/userBadge';
 import { useSelector } from 'react-redux';
+
+import GenericAsyncAutocompleteInput from '../filters/GenericAsyncAutocompleteInput';
+import UserBadge from '../apps/users/userBadge';
 
 function getLevel(step, stepsMap, memo = {}) {
     if (memo[step.id]) return memo[step.id];
@@ -45,6 +62,8 @@ function ProcessMap({ processId }) {
     const { enqueueSnackbar } = useSnackbar();
     const [openModal, setOpenModal] = useState(false);
     const [currentStep, setCurrentStep] = useState(null);
+    const [contentTypeData, setContentTypeData] = useState(null);
+    const [objectId, setObjectId] = useState(null);
     const user = useSelector((state) => state.user?.user);
     const userGroups = user?.groups || [];
 
@@ -79,24 +98,26 @@ function ProcessMap({ processId }) {
             enqueueSnackbar("Você não possui permissão para concluir esta etapa.", { variant: 'info' });
             return;
         }
-
+        if (!step.content_type_id) {
+            enqueueSnackbar("Esta etapa não possui um tipo de conteúdo associado.", { variant: 'info' });
+        } else {
+            contentType.find(step.content_type_id, { expand: 'endpoint' })
+                .then(data => {
+                    console.log(data);
+                    setContentTypeData(data);
+                })
+                .catch(error => {
+                    console.error(error);
+                    setContentTypeData(null);
+                });
+        }
         setCurrentStep(step);
         setOpenModal(true);
     };
 
     const handleConfirmCompletion = () => {
         if (currentStep) {
-
-            if (!user) {
-                enqueueSnackbar("Usuário não encontrado", { variant: 'error' });
-                return;
-            }
-
-            const requestBody = {
-                user_id: user.id,
-            };
-
-            processService.completeStep(processId, currentStep.id, requestBody)
+            processService.completeStep(processId, currentStep.id, { object_id: objectId })
                 .then(() => {
                     enqueueSnackbar(`Etapa '${currentStep.step.name}' concluída com sucesso!`, { variant: 'success' });
                     setOpenModal(false);
@@ -366,6 +387,20 @@ function ProcessMap({ processId }) {
                 <DialogTitle>Confirmar Conclusão</DialogTitle>
                 <DialogContent>
                     <Typography>Você deseja marcar a etapa "{currentStep?.step.name}" como concluída?</Typography>
+                    {currentStep?.content_type_id && <GenericAsyncAutocompleteInput
+                        label={contentTypeData?.endpoint?.label || null}
+                        endpoint={contentTypeData?.endpoint?.endpoint || null}
+                        queryParam={contentTypeData?.endpoint?.queryParam || null}
+                        extraParams={contentTypeData?.endpoint?.extraParams || null}
+                        mapResponse={(data) =>
+                            data.results.map((d) => ({
+                                label: d.str,
+                                value: d.id,
+                            }))
+                        }
+                        onChange={(selected) => setObjectId(selected?.value)}
+                        required
+                    />}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseModal} color="primary">Cancelar</Button>
