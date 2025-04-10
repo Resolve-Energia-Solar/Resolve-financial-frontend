@@ -9,7 +9,7 @@ export function LeadInfoHeaderInterestLevel({ leadId, tabValue }) {
     const theme = useTheme();
 
     return (
-        <>
+        <Grid container xs={4} alignItems="center" spacing={2}>
             <Grid
                 item
                 xs={4}
@@ -41,6 +41,6 @@ export function LeadInfoHeaderInterestLevel({ leadId, tabValue }) {
                 </Grid>
 
             </Grid>
-        </>
+        </Grid>
     );
 }

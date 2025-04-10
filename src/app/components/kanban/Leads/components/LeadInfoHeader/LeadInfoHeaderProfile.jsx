@@ -1,6 +1,7 @@
 import { Avatar, Grid, IconButton, useTheme, Typography, } from "@mui/material"
 import { useContext, useState } from "react";
 import { LeadModalTabContext } from "../../context/LeadModalTabContext";
+import EditIcon from '@mui/icons-material/Edit';
 
 export function LeadInfoHeaderProfile({ leadId, tabValue }) {
 
@@ -8,8 +9,8 @@ export function LeadInfoHeaderProfile({ leadId, tabValue }) {
     const theme = useTheme();
 
     return (
-        <>
-            <Grid item sx={{ position: 'relative', display: 'inline-block', mr: 2 }}>
+        <Grid container xs={4} alignItems="center" spacing={2}>
+            <Grid item sx={{ position: 'relative', display: 'inline-block' }}>
                 <Avatar
                     sx={{
                     width: 55,
@@ -39,7 +40,7 @@ export function LeadInfoHeaderProfile({ leadId, tabValue }) {
                 </IconButton>
             </Grid>
 
-            <Grid item xs={4} sx={{ position: 'relative', display: 'inline-block', mr: 1 }}>
+            <Grid item xs={4} sx={{ position: 'relative', display: 'inline-block'}}>
                 <Typography variant="caption" sx={{ color: 'gray' }}>
                     Cliente
                 </Typography>
@@ -47,6 +48,6 @@ export function LeadInfoHeaderProfile({ leadId, tabValue }) {
                     {lead?.name}
                 </Typography>
             </Grid>
-        </>
+        </Grid>
     );
 }

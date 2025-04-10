@@ -14,10 +14,9 @@ export function LeadInfoHeaderRoot({ children, }) {
                 padding: '16px',
                 display: 'flex',
             }}
-            spacing={2}
         >
-            <Grid container xs={12} alignItems="center">
-                {children }
+            <Grid container xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                {children}
             </Grid>
         </Box>
     );
