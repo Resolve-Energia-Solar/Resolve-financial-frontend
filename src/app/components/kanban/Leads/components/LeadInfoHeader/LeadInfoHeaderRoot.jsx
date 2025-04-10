@@ -3,7 +3,7 @@ import {
     Box,
   } from '@mui/material';
 
-export function LeadInfoHeaderRoot({ childern, }) {
+export function LeadInfoHeaderRoot({ children, }) {
 
     return (
         <Box
@@ -17,7 +17,7 @@ export function LeadInfoHeaderRoot({ childern, }) {
             spacing={2}
         >
             <Grid container xs={12} alignItems="center">
-                {childern}
+                {children }
             </Grid>
         </Box>
     );
