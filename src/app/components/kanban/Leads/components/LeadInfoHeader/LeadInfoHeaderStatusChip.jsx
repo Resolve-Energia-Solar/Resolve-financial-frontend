@@ -11,6 +11,7 @@ export function LeadInfoHeaderStatusChip({ leadId, tabValue }) {
         <Grid container xs={2} alignItems="center" spacing={2}>
             <Grid
                 item
+                xs={12}
                 sx={{
                     display: 'flex',
                     flexDirection: 'column ',
@@ -18,7 +19,7 @@ export function LeadInfoHeaderStatusChip({ leadId, tabValue }) {
                 }}
                 >
                 <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
-                    Status
+                    Status Kanban
                 </Typography>
                 <Chip
                     label={lead?.column?.name}

@@ -98,12 +98,13 @@ function EditLeadPage({ leadId = null }) {
             flexDirection: 'column',
           }}
         >
-          <Grid container spacing={1} alignItems="center" sx={{ p: 3, m: 0.1 }}>
+          <Grid container alignItems="center" sx={{ p: 3, m: 0.1 }}>
             {/* <LeadInfoHeader /> */}
             <LeadInfoHeader.Root>
               <LeadInfoHeader.Profile leadId={leadId} />
               <LeadInfoHeader.InterestLevel leadId={leadId} />
               <LeadInfoHeader.StatusChip leadId={leadId} />
+              <LeadInfoHeader.ProjectDropdown leadId={leadId} />
             </LeadInfoHeader.Root>
 
           </Grid>

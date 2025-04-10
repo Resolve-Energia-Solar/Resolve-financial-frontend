@@ -9,10 +9,10 @@ export function LeadInfoHeaderInterestLevel({ leadId, tabValue }) {
     const theme = useTheme();
 
     return (
-        <Grid container xs={4} alignItems="center" spacing={2}>
+        <Grid container xs={8} display="flex" alignItems="center" justifyItems="flex-end" spacing={2}>
             <Grid
                 item
-                xs={4}
+                xs={12}
                 sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}
             >
                 <Grid
@@ -21,7 +21,7 @@ export function LeadInfoHeaderInterestLevel({ leadId, tabValue }) {
                         display: 'flex',
                         flexDirection: 'column ',
                         alignItems: 'flex-start',
-                        mr: 5,
+                       
                     }}
                 >
                     <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>

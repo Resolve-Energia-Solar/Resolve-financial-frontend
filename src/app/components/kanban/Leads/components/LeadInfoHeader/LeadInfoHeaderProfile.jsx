@@ -9,8 +9,8 @@ export function LeadInfoHeaderProfile({ leadId, tabValue }) {
     const theme = useTheme();
 
     return (
-        <Grid container xs={4} alignItems="center" spacing={2}>
-            <Grid item sx={{ position: 'relative', display: 'inline-block' }}>
+        <Grid container size="auto" alignItems="center" spacing={2}>
+            <Grid item size="auto" sx={{ position: 'relative', display: 'inline-block', alignItems: 'center', justifyContent: 'center' }}>
                 <Avatar
                     sx={{
                     width: 55,
@@ -40,7 +40,7 @@ export function LeadInfoHeaderProfile({ leadId, tabValue }) {
                 </IconButton>
             </Grid>
 
-            <Grid item xs={4} sx={{ position: 'relative', display: 'inline-block'}}>
+            <Grid item size="auto" sx={{ position: 'relative', display: 'inline-block'}}>
                 <Typography variant="caption" sx={{ color: 'gray' }}>
                     Cliente
                 </Typography>

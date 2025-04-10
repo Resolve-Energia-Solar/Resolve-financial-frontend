@@ -1,5 +1,5 @@
 import { ElementType, useContext, useState } from 'react';
-import { Box, MenuItem, Select, Typography, default as useTheme } from '@mui/material';
+import { Box, MenuItem, Select, Typography, useTheme } from '@mui/material';
 import { LeadModalTabContext } from '../../context/LeadModalTabContext';
 
 
@@ -7,7 +7,7 @@ export function LeadInfoHeaderProjectDropdown() {
   const { lead } = useContext(LeadModalTabContext);
   const [selectedProject, setSelectedProject] = useState('');
   const theme = useTheme();
-  
+
     return (
         <Box sx={{ minWidth: 385 }}>
             <Typography variant="caption" sx={{ color: 'gray', mb: 0.5 }}>
