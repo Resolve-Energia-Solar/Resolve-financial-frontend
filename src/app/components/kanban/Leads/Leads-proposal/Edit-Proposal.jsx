@@ -36,7 +36,7 @@ import ProductsCard from '../components/ProductsCard';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import useEnergyConsumptionForm from '@/hooks/energyConsumption/useEnergyConsumptionForm';
 
-function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
+function EditProposalPage({ proposalData = null, leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
   const theme = useTheme();
   const [lead, setLead] = useState(null);
@@ -56,7 +56,7 @@ function EditProposalPage({ leadId = null, onRefresh = null, onClose = null }) {
     formErrors,
     loading: formLoading,
     success,
-  } = useProposalForm();
+  } = useProposalForm(proposalData, proposalData?.id);
 
   const customProducts = useSelector(selectProductsByLead(leadId));
 

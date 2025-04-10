@@ -64,7 +64,7 @@ const ExpandableListComponent = ({
       render: (row) => `${row.project_number || ''}`,
     },
     {
-      field: 'params',
+      field: 'params', 
       headerName: 'Kwp',
       flex: 1,
     },
