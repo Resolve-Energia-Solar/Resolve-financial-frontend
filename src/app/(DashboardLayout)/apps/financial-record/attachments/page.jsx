@@ -61,6 +61,9 @@ const attachmentList = () => {
           limit: rowsPerPage,
           page: page + 1,
           content_type: contentTypeId,
+          ordering: '-created_at',
+          expand: 'document_type',
+          fields: 'id,object_id,document_type.name,created_at,file',
           ...filters,
         });
         setAttachmentList(data.results);
