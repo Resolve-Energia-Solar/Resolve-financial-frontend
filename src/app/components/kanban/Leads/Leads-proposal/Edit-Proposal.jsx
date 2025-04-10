@@ -35,6 +35,7 @@ import ProposalLayout from '../components/ProposalLayout';
 import ProductsCard from '../components/ProductsCard';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import useEnergyConsumptionForm from '@/hooks/energyConsumption/useEnergyConsumptionForm';
+import ProductsCardEdit from '../components/ProductsCardEdit';
 
 function EditProposalPage({ proposalData = null, leadId = null, onRefresh = null, onClose = null }) {
   const router = useRouter();
@@ -58,28 +59,39 @@ function EditProposalPage({ proposalData = null, leadId = null, onRefresh = null
     success,
   } = useProposalForm(proposalData, proposalData?.id);
 
-  const customProducts = useSelector(selectProductsByLead(leadId));
+  const [products, setProducts] = useState(proposalData?.products?.map((item) => item) || []);
 
-  formData.products_ids = customProducts.map((product) => product.id);
   formData.lead ? null : (formData.lead = leadId);
-  formData.status ? null : (formData.status = 'P');
-  user?.user ? (formData.created_by = user.user.id) : null;
 
-  const discard_proposal = () => {
-    dispatch(
-      removeProductFromLead({ leadId, productIds: customProducts.map((product) => product.id) }),
-    );
-    // handleChange('due_date', null);
-    // handleChange('value', null);
-    // handleChange('observation', '');
-  };
+  useEffect(() => {
+    if (products?.length) {
+      const ids = products.map((item) => item.id);
+      formData.products_ids = ids;
+      console.log('formData.products_ids', ids);
+    } else {
+      formData.products_ids = [];
+    }
+  }, [products]);
+  
 
   useEffect(() => {
     if (success) {
       enqueueSnackbar('Proposta gerada com sucesso', { variant: 'success' });
-      discard_proposal();
     }
   }, [success]);
+
+  const addProduct = (product) => {
+    setProducts((prevProducts) => [...prevProducts, product]);
+  };
+
+  const removeProduct = (product) => {
+    const updatedProducts = products.filter((item) => item.id !== product.id);
+    setProducts(updatedProducts);
+  
+    const updatedProductsIds = (formData.products_ids || []).filter((id) => id !== product.id);
+  };
+  
+  
 
   useEffect(() => {
     const fetchLead = async () => {
@@ -327,7 +339,7 @@ function EditProposalPage({ proposalData = null, leadId = null, onRefresh = null
               xs={12}
               sx={{ display: 'flex', flexDirection: 'column', marginTop: 2, gap: 2 }}
             >
-              <ProductsCard leadId={leadId} />
+              <ProductsCardEdit leadId={leadId} products={products} onAddProduct={addProduct} onRemoveProduct={removeProduct} />
             </Grid>
           </Grid>
 
@@ -361,7 +373,7 @@ function EditProposalPage({ proposalData = null, leadId = null, onRefresh = null
                 variant="outlined"
                 color="error"
                 sx={{ px: 3 }}
-                onClick={discard_proposal}
+                onClick={() => {console.log('Descartar proposta');}}
                 endIcon={<DeleteOutlinedIcon />}
               >
                 <Typography variant="body1" sx={{ mr: 1 }}>
