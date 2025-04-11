@@ -525,7 +525,7 @@ const CreateAddressPage = ({
                           placeholder="Bairro"
                           value={formData.neighborhood || ''}
                           onChange={(e) => handleChange('neighborhood', e.target.value)}
-                          disabled={Object.keys(initialData).length === 0 || !!initialData.neighborhood}
+                          disabled={Object.keys(initialData).length === 0}
                           sx={{
                             backgroundColor: theme.palette.primary.light,
                             borderRadius: 1,
@@ -559,7 +559,7 @@ const CreateAddressPage = ({
                           placeholder="Rua"
                           value={formData.street || ''}
                           onChange={(e) => handleChange('street', e.target.value)}
-                          disabled={Object.keys(initialData).length === 0 || !!initialData.street}
+                          disabled={Object.keys(initialData).length === 0}
                           sx={{
                             backgroundColor: theme.palette.primary.light,
                             borderRadius: 1,
