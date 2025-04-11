@@ -44,6 +44,7 @@ import { useContext, useState } from 'react';
 import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
 import { LeadInfoHeader } from '../components/LeadInfoHeader';
+import LeadInfoHeaderSkeleton from '../components/LeadInfoHeaderSkeleton';
 
 function EditLeadPage({ leadId = null }) {
   const theme = useTheme();
@@ -100,6 +101,7 @@ function EditLeadPage({ leadId = null }) {
         >
           <Grid container alignItems="center" sx={{ p: 3, m: 0.1 }}>
             {/* <LeadInfoHeader /> */}
+           
             <LeadInfoHeader.Root>
               <LeadInfoHeader.Profile leadId={leadId} />
               <LeadInfoHeader.InterestLevel leadId={leadId} />
