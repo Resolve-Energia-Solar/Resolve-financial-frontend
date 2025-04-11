@@ -25,6 +25,9 @@ import saleService from "@/services/saleService";
 import Customer from "../sale/Customer";
 import Phones from "../sale/phones";
 import Addresses from "../sale/Adresses";
+import SchedulesInspections from "../project/components/SchedulesInspections";
+import EventIcon from "@mui/icons-material/Event";
+import ChecklistSales from "../checklist/Checklist-list/ChecklistSales";
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -94,7 +97,7 @@ const GeneralInfo = ({ saleId }) => {
 };
 
 
-export default function Details({ id, refresh }) {
+export default function Details({ id, refresh, customerId = null }) {
   const [documentTypes, setDocumentTypes] = useState([]);
   const [expandedPanels, setExpandedPanels] = useState(["sale-info"]);
   const theme = useTheme();
@@ -153,6 +156,18 @@ export default function Details({ id, refresh }) {
       icon: <PaymentIcon />,
       title: "Informações do Pagamento",
       content: <PaymentCard sale={id} />,
+    },
+    {
+      key: "schedules",
+      icon: <EventIcon />,
+      title: "Agendamentos",
+      content: <SchedulesInspections userId={customerId} saleId={id} />,
+    },
+    {
+      key: "checklist",
+      icon: <EventIcon />,
+      title: "Check List",
+      content: <ChecklistSales saleId={id} />,
     },
     {
       key: "comments",

@@ -37,6 +37,8 @@ const InvoiceListing = () => {
     setOpenDrawer(!openDrawer);
   };
 
+  console.log('rowSelected', rowSelected);
+
   return (
     <PageContainer title="Lista de Vendas" description="Essa é a Lista de Pagamentos">
       <Breadcrumb items={BCrumb} />
@@ -48,7 +50,7 @@ const InvoiceListing = () => {
             open={openDrawer}
             onClose={toggleOpenDrawerClosed}
           >
-            <Details id={rowSelected?.id} />
+            <Details id={rowSelected?.id} customerId={rowSelected?.customer?.id} />
           </SideDrawer>
           <BasicModal
             open={openModal}

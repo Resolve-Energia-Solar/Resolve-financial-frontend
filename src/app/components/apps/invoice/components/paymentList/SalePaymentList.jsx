@@ -78,7 +78,7 @@ const SalePaymentList = ({ onClick }) => {
           limit: rowsPerPage,
           expand: 'customer,payments.borrower,payments,sale,payments.financier',
           fields:
-            'id,total_value,payments.payment_type,payments.is_paid,customer.complete_name,signature_date,payments.borrower.complete_name,payments.installments,payments.invoice_status,status,payment_status,payments.financier.name,is_pre_sale',
+            'id,total_value,payments.payment_type,payments.is_paid,customer.complete_name,signature_date,payments.borrower.complete_name,payments.installments,payments.invoice_status,status,payment_status,payments.financier.name,is_pre_sale,customer.id',
           ...filters,
         });
         setPaymentsList(response.results);
