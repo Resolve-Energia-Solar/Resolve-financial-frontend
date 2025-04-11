@@ -9,7 +9,7 @@ export function LeadInfoHeaderStatusChip({ leadId, tabValue }) {
 
     return (
         <Grid item sx={{ gridArea: 'status' }}>
-            <Grid container size="auto" display="flex" alignItems="center" justifyItems="flex-end" spacing={2}>
+            <Grid container size="auto" display="flex" alignItems="center" justifyContent="flex-start" spacing={2}>
                 <Grid
                     item
                     xs={12}

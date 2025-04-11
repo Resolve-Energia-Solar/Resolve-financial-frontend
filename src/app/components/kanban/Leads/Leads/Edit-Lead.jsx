@@ -29,7 +29,6 @@ import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AutoCompleteOrigin from '@/app/components/apps/leads/auto-input-origin';
-// import LeadInfoHeader from '../components/HeaderCard';
 
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -106,7 +105,6 @@ function EditLeadPage({ leadId = null }) {
               <LeadInfoHeader.Profile leadId={leadId} />
               <LeadInfoHeader.InterestLevel leadId={leadId} />
               <LeadInfoHeader.StatusChip leadId={leadId} />
-              <LeadInfoHeader.ProjectDropdown leadId={leadId} />
             </LeadInfoHeader.Root>
 
           </Grid>

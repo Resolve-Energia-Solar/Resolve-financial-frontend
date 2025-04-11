@@ -14,12 +14,13 @@ import {
 import { useEffect, useState } from 'react';
 import leadService from '@/services/leadService';
 import { useSnackbar } from 'notistack';
-import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import ScheduleCard from '../components/CardSchedule';
 import BasicDateCalendar from '@/app/components/kanban/Leads/components/BasicDateCalendar';
 import ScheduleCardSkeleton from '../components/ScheduleCardSkeleton';
 import { Add, Height } from '@mui/icons-material';
 import LeadAddSchedulePage from './Add-Schedule';
+import { LeadInfoHeader } from '../components/LeadInfoHeader';
+import LeadInfoHeaderSkeleton from '../components/LeadInfoHeaderSkeleton';
 
 function LeadSchedulePage({ leadId = null }) {
   const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
@@ -71,7 +72,15 @@ function LeadSchedulePage({ leadId = null }) {
             flexDirection: 'column',
           }}
         >
-          <LeadInfoHeader />
+          {!leadId ? <LeadInfoHeaderSkeleton /> : 
+            <Grid container alignItems="center">
+              <LeadInfoHeader.Root>
+                <LeadInfoHeader.Profile leadId={leadId} />
+                <LeadInfoHeader.InterestLevel leadId={leadId} />
+                <LeadInfoHeader.StatusChip leadId={leadId} />
+              </LeadInfoHeader.Root>
+            </Grid>
+          }
 
           <Stack spacing={3} sx={{ mt: 3, px: 3 }}>
             <Stack direction="row" justifyContent="space-between" sx={{ mt: 3 }}>
