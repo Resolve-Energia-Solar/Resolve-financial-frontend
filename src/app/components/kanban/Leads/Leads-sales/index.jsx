@@ -8,11 +8,11 @@ import {
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect, useContext } from 'react';
 import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
-import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import ExpandableListComponent from '../components/ExpandableTableComponent';
 import LeadsViewProposal from '../Leads-proposal/View-Proposal';
 import saleService from '@/services/saleService';
 import { LeadModalTabContext } from '../context/LeadModalTabContext';
+import { LeadInfoHeader } from '../components/LeadInfoHeader';
 
 const SalesListPage = () => {
     const [data, setData] = useState([]);
@@ -21,7 +21,7 @@ const SalesListPage = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalRows, setTotalRows] = useState(0);
-    
+
     const { lead } = useContext(LeadModalTabContext);
 
     const columns = [
@@ -96,12 +96,16 @@ const SalesListPage = () => {
     return (
         <>
             <Grid container spacing={0} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", p: 3 }} >
-               
-            <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12}>
-              <LeadInfoHeader leadId={lead?.id} />
-            </Grid>
-          </Grid>
+                {!lead?.id ? <LeadInfoHeaderSkeletonn /> :
+                    <Grid container alignItems="center">
+                        <LeadInfoHeader.Root>
+                            <LeadInfoHeader.Profile leadId={lead?.id} />
+                            <LeadInfoHeader.InterestLevel leadId={lead?.id} />
+                            <LeadInfoHeader.StatusChip leadId={lead?.id} />
+                        </LeadInfoHeader.Root>
+                    </Grid>
+                }
+
                 <Grid item xs={12} sx={{ overflow: 'scroll' }}>
 
                     <Grid item xs={12} sx={{

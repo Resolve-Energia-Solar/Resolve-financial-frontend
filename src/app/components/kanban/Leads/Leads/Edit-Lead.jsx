@@ -10,7 +10,6 @@ import {
   Radio,
   Button,
   CircularProgress,
-  Divider,
 } from '@mui/material';
 
 import {
@@ -30,7 +29,6 @@ import { useSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AutoCompleteOrigin from '@/app/components/apps/leads/auto-input-origin';
-import LeadInfoHeader from '../components/HeaderCard';
 
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -44,6 +42,8 @@ import { LeadModalTabContext } from '../context/LeadModalTabContext';
 import { useContext, useState } from 'react';
 import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
+import { LeadInfoHeader } from '../components/LeadInfoHeader';
+import LeadInfoHeaderSkeleton from '../components/LeadInfoHeaderSkeleton';
 
 function EditLeadPage({ leadId = null }) {
   const theme = useTheme();
@@ -98,8 +98,15 @@ function EditLeadPage({ leadId = null }) {
             flexDirection: 'column',
           }}
         >
-          <Grid container spacing={1} alignItems="center" sx={{ p: 3, m: 0.1 }}>
-            <LeadInfoHeader />
+          <Grid container alignItems="center" sx={{ p: 3, m: 0.1 }}>
+            {/* <LeadInfoHeader /> */}
+           
+            <LeadInfoHeader.Root>
+              <LeadInfoHeader.Profile leadId={leadId} />
+              <LeadInfoHeader.InterestLevel leadId={leadId} />
+              <LeadInfoHeader.StatusChip leadId={leadId} />
+            </LeadInfoHeader.Root>
+
           </Grid>
 
           <Grid container sx={{ px: 5 }}>

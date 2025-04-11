@@ -13,7 +13,6 @@ import { useEffect, useState } from 'react';
 import leadService from '@/services/leadService';
 import { useSnackbar } from 'notistack';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import LeadInfoHeader from '../components/HeaderCard';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import useUser from '@/hooks/users/useUser';
@@ -21,6 +20,8 @@ import useUserForm from '@/hooks/users/useUserForm';
 import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
 import addressService from '@/services/addressService';
+import { LeadInfoHeader } from '../components/LeadInfoHeader';
+import LeadInfoHeaderSkeleton from '../components/LeadInfoHeaderSkeleton';
 
 function EditCustomerPage({ leadId = null }) {
   const [lead, setLead] = useState(null);
@@ -31,7 +32,7 @@ function EditCustomerPage({ leadId = null }) {
     const fetchLead = async () => {
       try {
         const data = await leadService.find(leadId, {
-            fields: 'id,customer,name,first_document,contact_email',
+          fields: 'id,customer,name,first_document,contact_email',
         });
         setLead(data);
         setCustomerId(data?.customer);
@@ -104,12 +105,16 @@ function EditCustomerPage({ leadId = null }) {
     <Grid container spacing={3}>
       <Grid item xs={12}>
         <BlankCard sx={{ borderRadius: '20px', boxShadow: 3, p: 3 }}>
-          {/* Header */}
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12}>
-              <LeadInfoHeader />
+
+          {!leadId ? <LeadInfoHeaderSkeleton /> : 
+            <Grid container alignItems="center">
+              <LeadInfoHeader.Root>
+                <LeadInfoHeader.Profile leadId={leadId} />
+                <LeadInfoHeader.InterestLevel leadId={leadId} />
+                <LeadInfoHeader.StatusChip leadId={leadId} />
+              </LeadInfoHeader.Root>
             </Grid>
-          </Grid>
+          }
 
           {/* Dados Pessoais */}
           <Grid container spacing={2} sx={{ mt: 2 }}>
