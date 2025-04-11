@@ -23,7 +23,7 @@ const processService = {
   },
   completeStep: async (processId, stepId, requestBody) => {
     try {
-      const response = await apiClient.patch(`${DEFAULT_ROUTER}/${processId}/etapas/${stepId}/finish/`, requestBody);
+      const response = await apiClient.patch(`${DEFAULT_ROUTER}/${processId}/step/${stepId}/finish/`, requestBody);
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar dados:', error);
