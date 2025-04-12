@@ -152,7 +152,7 @@ export default function CreateFinancialRecord() {
 
     setLoading(true);
     try {
-      const recordResponse = await financialRecordService.update(formData);
+      const recordResponse = await financialRecordService.create(formData);
       const recordId = recordResponse.id;
       await Promise.all(
         attachments.map(async (attachment) => {
