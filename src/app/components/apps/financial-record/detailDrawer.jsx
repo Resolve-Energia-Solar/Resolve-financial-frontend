@@ -15,16 +15,18 @@ import {
   FormControl,
   Select,
   MenuItem,
+  Tooltip,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import Comment from '../comment';
 import AttachmentTable from '../attachment/attachmentTable';
 import { useSelector } from 'react-redux';
 import financialRecordService from '@/services/financialRecordService';
-import { IconPdf } from '@tabler/icons-react';
+import { IconEdit, IconPdf } from '@tabler/icons-react';
 import { formatDate } from '@/utils/dateUtils';
 import { useSnackbar } from 'notistack';
 import UserCard from '../users/userCard';
+import { useRouter } from 'next/navigation';
 
 const statusMap = {
   S: <Chip label="Solicitada" color="warning" size="small" />,
@@ -49,7 +51,9 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
   const user = useSelector((state) => state.user?.user);
   const [tabIndex, setTabIndex] = useState(0);
   const [currentRecord, setCurrentRecord] = useState(record);
+  const [tourActive, setTourActive] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
+  const router = useRouter();
 
   useEffect(() => {
     setCurrentRecord(record);
@@ -114,19 +118,73 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
     }
   };
 
+  useEffect(() => {
+    if (localStorage.getItem('tourEditShown')) {
+      setTourActive(false);
+    }
+  }, []);
+
+  const handleEditClick = () => {
+    if (tourActive) {
+      localStorage.setItem('tourEditShown', 'true');
+      setTourActive(false);
+    }
+    router.push(`/apps/financial-record/${record.protocol}/update`);
+  };
+
   if (!currentRecord) return null;
 
   return (
-    <Drawer anchor="right" open={open} onClose={onClose}>
-      <Box sx={{ width: '55vw', p: 4, display: 'flex', flexDirection: 'column', ml: 2 }}>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>
-            Solicitação nº {currentRecord.protocol}
+    <Drawer anchor="right" open={open} onClose={onClose} sx={{ position: 'relative' }}>
+      {tourActive && (
+        <div
+          onClick={() => setTourActive(false)}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            zIndex: 1000,
+          }}
+        />
+      )}
+      <Box
+        sx={{
+          width: '55vw',
+          p: 4,
+          display: 'flex',
+          flexDirection: 'column',
+          ml: 2,
+          position: 'relative'
+        }}
+      >
+        {/* Cabeçalho e demais conteúdos */}
+        <Box display="flex" alignItems="center">
+          <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+            Solicitação nº {record?.protocol}
           </Typography>
-          <Box>
+          <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 1 }}>
+            {/* Botão PDF */}
             <IconButton onClick={handlePDFBtnClick}>
               <IconPdf size={24} />
             </IconButton>
+            {record?.responsible_status === 'P' && record?.payment_status === 'P' && (
+              <Tooltip title="Novo botão de editar!" open={tourActive}>
+                <IconButton
+                  onClick={handleEditClick}
+                  sx={{
+                    border: tourActive ? '2px dashed #1976d2' : 'none',
+                    position: 'relative',
+                    backgroundColor: 'white',
+                    zIndex: 1001,
+                  }}
+                >
+                  <IconEdit size={24} />
+                </IconButton>
+              </Tooltip>
+            )}
             <IconButton onClick={onClose}>
               <CloseIcon />
             </IconButton>
