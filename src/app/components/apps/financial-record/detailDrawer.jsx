@@ -119,10 +119,15 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
   };
 
   useEffect(() => {
+    if (record?.responsible_status === 'P' && record?.payment_status === 'P') {
+      setTourActive(true);
+    } else {
+      setTourActive(false);
+    }
     if (localStorage.getItem('tourEditShown')) {
       setTourActive(false);
     }
-  }, []);
+  }, [record?.responsible_status, record?.payment_status]);
 
   const handleEditClick = () => {
     if (tourActive) {
