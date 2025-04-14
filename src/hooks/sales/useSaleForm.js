@@ -22,6 +22,7 @@ const useSaleForm = (initialData, id) => {
     billing_date: null,
     cancellationReasonsIds: [],
     reference_table: null,
+    sale_products: [],
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -49,6 +50,12 @@ const useSaleForm = (initialData, id) => {
           initialData.cancellation_reasons?.map((cancellation_reason) => cancellation_reason.id) ||
           [],
         reference_table: initialData.reference_table || '',
+        sale_products: initialData.sale_products?.map((product) => ({
+          id: product.id,
+          value: product.value,
+          cost_value: product.cost_value,
+          reference_value: product.reference_value,
+        })) || [],
       });
     }
   }, [initialData]);
@@ -96,6 +103,12 @@ const useSaleForm = (initialData, id) => {
       billing_date: formData.billing_date || null,
       cancellation_reasons_ids: formData.cancellationReasonsIds,
       reference_table: formData.reference_table,
+      sale_products: formData.sale_products.map((product) => ({
+        id: product.id,
+        value: product.value,
+        cost_value: product.cost_value,
+        reference_value: product.reference_value,
+      })),
     };
 
     try {
