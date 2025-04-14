@@ -171,6 +171,8 @@ const CommercialScheduleDetail = ({ schedule }) => {
       </Box>
     );
   }
+  console.log('conditions:', !(schedule.status === 'Pendente' || !schedule.schedule_agent))
+  console.log('schedule', schedule);
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -184,7 +186,6 @@ const CommercialScheduleDetail = ({ schedule }) => {
         <Box sx={{ flex: 1, overflow: 'auto', p: 3 }}>
           {tabValue === 0 && (
             <>
-              {/* Cabeçalho com botão para editar */}
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Typography variant="h6">Detalhes do Agendamento</Typography>
                 {editMode ? (
@@ -203,13 +204,14 @@ const CommercialScheduleDetail = ({ schedule }) => {
                     </Button>
                   </Stack>
                 ) : (
-                  <Button variant="outlined" onClick={() => setEditMode(true)}>
-                    Editar
-                  </Button>
+                  schedule.status === 'Pendente' && !schedule.schedule_agent && (
+                    <Button variant="contained" color="primary" onClick={() => setEditMode(true)}>
+                      Editar
+                    </Button>
+                  )
                 )}
               </Box>
               <Grid container spacing={3}>
-                {/* Cliente (somente leitura) */}
                 <Grid item xs={12}>
                   <Box display="flex" alignItems="center" mb={0.5}>
                     <PersonIcon sx={{ mr: 1 }} color="primary" />
