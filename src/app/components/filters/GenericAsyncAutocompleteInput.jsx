@@ -32,7 +32,7 @@ const GenericAsyncAutocompleteInput = ({
   }, [value, options]);
 
   useEffect(() => {
-    if (!open) return; // Só busca se o dropdown estiver aberto
+    if (!open) return;
 
     let active = true;
     setLoading(true);

@@ -304,6 +304,83 @@ const CreateSchedulePage = () => {
                 required
               />
             </Grid>
+            <Grid item xs={12} sm={6}>
+              <GenericAsyncAutocompleteInput
+                label="Serviço Relacionado"
+                value={formData.parent_schedules}
+                onChange={(newValue) =>
+                  setFormData({ ...formData, parent_schedules: newValue })
+                }
+                endpoint="/api/schedule"
+                queryParam="protocol__icontains"
+                extraParams={{
+                  fields:
+                    'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,status,service,customer.complete_name,address.complete_address,schedule_agent.complete_name,branch.name,service_opinion,final_service_opinion',
+                  expand: 'customer,schedule_agent,service,address,final_service_opinion,service_opinion,branch',
+                  customer: formData.customer?.value || '',
+                  project: formData.project?.value || '',
+                  customer_project_or: true
+                }}
+                mapResponse={(data) =>
+                  data.results.map((s) => ({
+                    label: s.protocol,
+                    value: s.id,
+                    ...s,
+                  }))
+                }
+                renderOption={(props, option) => (
+                  <li {...props}>
+                    <Box
+                      sx={{ p: 1, display: 'flex', flexDirection: 'column' }}
+                    >
+                      <Typography variant="subtitle2">
+                        <strong>Protocolo:</strong> {option.protocol}
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>Início:</strong> {formatDate(option.schedule_date)} {option.schedule_start_time.toLocaleString()} | <strong>Término:</strong> {formatDate(option.schedule_end_date)} {option.schedule_end_time.toLocaleString()}
+                      </Typography>
+                      <Typography variant="body1"><strong>Status:</strong> {option.status}</Typography>
+                      {option.service && (
+                        <Typography variant="body1">
+                          <strong>Serviço:</strong> {option.service.name}
+                        </Typography>
+                      )}
+                      {option.customer && <Typography variant="body1">
+                        <strong>Cliente:</strong> {option.customer?.complete_name}
+                      </Typography>}
+                      {option.schedule_agent && <Typography variant="body1">
+                        <strong>Agente:</strong> {option.schedule_agent.complete_name}
+                      </Typography>
+                      }
+                      {option.address && (
+                        <Typography variant="body1">
+                          <strong>Endereço:</strong> {option.address.complete_address}
+                        </Typography>
+                      )}
+                      {option.branch && option.branch.name && (
+                        <Typography variant="body1">
+                          <strong>Filial:</strong> {option.branch.name}
+                        </Typography>
+                      )}
+                      {option.service_opinion && option.service_opinion.name && (
+                        <Typography variant="body1">
+                          <strong>Opinião de Serviço:</strong> {option.service_opinion.name}
+                        </Typography>
+                      )}
+                      {option.final_service_opinion && option.final_service_opinion.name && (
+                        <Typography variant="body1">
+                          <strong>Opinião Final:</strong> {option.final_service_opinion.name}
+                        </Typography>
+                      )}
+                    </Box>
+                  </li>
+                )}
+                helperText={errors.parent_schedules?.[0] || ''}
+                error={!!errors.parent_schedules}
+                fullWidth
+                required
+              />
+            </Grid>
             <Grid item xs={12}>
               <FormControl component="fieldset">
                 <FormLabel component="legend">Este agendamento possui projeto?</FormLabel>
