@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import formatDate from '@/utils/formatDate';
 import saleService from '@/services/saleService';
 import { useDispatch, useSelector } from 'react-redux';
+import { enqueueSnackbar } from 'notistack';
 
 const useSaleForm = (initialData, id) => {
   const user = useSelector((state) => state.user);
@@ -131,10 +132,35 @@ const useSaleForm = (initialData, id) => {
     }
   };
 
+  const handleSaveSaleProducts = async () => {
+    setLoading(true);
+
+    try {
+      const dataToSend = {
+        sale_products: formData.sale_products.map((product) => ({
+          id: product.id,
+          value: product.value,
+          cost_value: product.cost_value,
+          reference_value: product.reference_value,
+        })),
+      };
+
+      await saleService.update(id, dataToSend);
+
+      enqueueSnackbar('Produtos da venda atualizados com sucesso!', { variant: 'success' });
+    } catch (err) {
+      enqueueSnackbar('Erro ao atualizar produtos da venda.', { variant: 'error' });
+      console.log(err.response?.data || err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return {
     formData,
     handleChange,
     handleSave,
+    handleSaveSaleProducts,
     formErrors,
     success,
     loading,

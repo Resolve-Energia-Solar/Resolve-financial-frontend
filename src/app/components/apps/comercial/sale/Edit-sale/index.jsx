@@ -48,6 +48,7 @@ import Addresses from '../../../sale/Adresses';
 import useCanEditUser from '@/hooks/users/userCanEdit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IconTools } from '@tabler/icons-react';
+import CustomFieldMoney from '../../../invoice/components/CustomFieldMoney';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -110,6 +111,7 @@ const EditSaleTabs = ({
     formData,
     handleChange,
     handleSave,
+    handleSaveSaleProducts,
     formErrors,
     successData,
     loading: formLoading,
@@ -462,23 +464,120 @@ const EditSaleTabs = ({
                         </Box>
                       </AccordionSummary>
                       <AccordionDetails>
-                        <Autocomplete
-                          value={product.value || ''}
-                          onChange={(e) => {
-                            handleChange('value', e.target.value);
-                          }}
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              label="Valor do Produto"
-                              variant="outlined"
+                        <Grid container xs={12} spacing={2} sx={{ mb: 2 }}>
+                          <Grid item xs={4} sm={4} lg={4}>
+                            <CustomFormLabel htmlFor="value" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Valor</CustomFormLabel>
+                            <CustomFieldMoney
+                              name="value"
                               fullWidth
-                            />
-                          )}
-                          freeSolo
-                        >
+                              value={product.value || ''}
+                              onChange={(e) => {
+                                handleChange('value', e.target.value);
+                              }}
+                              {...(formErrors.value && { error: true, helperText: formErrors.value })}
+                              sx={{
+                                input: {
+                                  // color: '#7E92A2',
+                                  fontWeight: '400',
+                                  fontSize: '12px',
+                                  opacity: 1,
+                                },
+                                '& .MuiOutlinedInput-root': {
+                                  border: '1px solid #3E3C41',
+                                  borderRadius: '9px',
+                                },
+                                '& .MuiInputBase-input': {
+                                  padding: '12px',
+                                },
+                              }}
 
-                        </Autocomplete>
+                            />
+                          </Grid>
+
+                          <Grid item xs={4} sm={4} lg={4}>
+                            <CustomFormLabel htmlFor="cost_value" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Valor de custo</CustomFormLabel>
+                            <CustomFieldMoney
+                              name="cost_value"
+                              fullWidth
+                              value={product.cost_value || ''}
+                              onChange={(e) => {
+                                handleChange('cost_value', e.target.value);
+                              }}
+                              {...(formErrors.cost_value && { error: true, helperText: formErrors.cost_value })}
+                              sx={{
+                                input: {
+                                  // color: '#7E92A2',
+                                  fontWeight: '400',
+                                  fontSize: '12px',
+                                  opacity: 1,
+                                },
+                                '& .MuiOutlinedInput-root': {
+                                  border: '1px solid #3E3C41',
+                                  borderRadius: '9px',
+                                },
+                                '& .MuiInputBase-input': {
+                                  padding: '12px',
+                                },
+                              }}
+
+                            />
+                          </Grid>
+
+                          <Grid item xs={4} sm={4} lg={4}>
+                            <CustomFormLabel htmlFor="reference_value" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Valor de referência</CustomFormLabel>
+                            <CustomFieldMoney
+                              name="reference_value"
+                              fullWidth
+                              value={product.reference_value || ''}
+                              onChange={(e) => {
+                                handleChange('reference_value', e.target.value);
+                              }}
+                              {...(formErrors.reference_value && { error: true, helperText: formErrors.reference_value })}
+                              sx={{
+                                input: {
+                                  // color: '#7E92A2',
+                                  fontWeight: '400',
+                                  fontSize: '12px',
+                                  opacity: 1,
+                                },
+                                '& .MuiOutlinedInput-root': {
+                                  border: '1px solid #3E3C41',
+                                  borderRadius: '9px',
+                                },
+                                '& .MuiInputBase-input': {
+                                  padding: '12px',
+                                },
+                              }}
+
+                            />
+                          </Grid>
+                        </Grid>
+                        <Grid container xs={12} spacing={2} sx={{ mb: 2, justifyContent: 'flex-end' }}>
+                          <Grid item xs={12} sx={{ justifyContent: 'flex-end' }}>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={async () => {
+                                await handleSave();
+                                if (formErrors && Object.keys(formErrors).length > 0) {
+                                  const errorMessages = Object.entries(formErrors)
+                                    .map(
+                                      ([field, messages]) =>
+                                        `${formatFieldName(field)}: ${messages.join(', ')}`,
+                                    )
+                                    .join(', ');
+                                  enqueueSnackbar(errorMessages, { variant: 'error' });
+                                } else {
+                                  enqueueSnackbar('Alterações salvas com sucesso!', { variant: 'success' });
+                                }
+                              }}
+                              disabled={formLoading}
+                              endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                            >
+                              {formLoading ? 'Salvando...' : 'Salvar Alterações'}
+                            </Button>
+                          </Grid>
+                        </Grid>
                       </AccordionDetails>
 
                     </Accordion>
