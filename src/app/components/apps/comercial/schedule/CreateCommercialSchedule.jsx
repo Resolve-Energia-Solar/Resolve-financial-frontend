@@ -357,9 +357,9 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
                 endpoint="/api/products"
                 queryParam="name__icontains"
                 extraParams={{ fields: 'name,id' }}
-                value={formData.product}
+                value={formData.products}
                 onChange={(option) => {
-                  handleChange('product', option || null);
+                  handleChange('products', option || null);
                 }}
                 mapResponse={(data) =>
                   data.results.map((item) => ({ label: item.name, value: item.id }))

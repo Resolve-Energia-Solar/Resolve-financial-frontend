@@ -136,8 +136,8 @@ const CommercialSchedulesList = () => {
       setLoading(true);
       const response = await scheduleService.index({
         fields:
-          'customer.complete_name,service.name,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,schedule_agent.id,address,status,created_at,id,groups,project.id,project.product,product.name,product.id,project.sale.seller',
-        expand: 'customer,service,schedule_agent,address,project,product,project.sale',
+          'customer.complete_name,service.name,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,schedule_agent.id,address,status,created_at,id,groups,project.id,project.product,product.name,product.id,project.sale.seller,products.name,products.id',
+        expand: 'customer,service,schedule_agent,address,project,product,project.sale,products',
         page: page + 1,
         limit: rowsPerPage,
         ...filters,
