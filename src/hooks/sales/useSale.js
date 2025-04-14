@@ -39,7 +39,7 @@ const useSale = (id) => {
             "customer.phone_numbers",
             "projects.units",
             "comments",
-            "sale-products",
+            "sale_products",
             // "sale.product"
           ],
           fields: [
@@ -68,6 +68,7 @@ const useSale = (id) => {
             "cancellation_reasons",
             "is_pre_sale",
             "reference_table",
+            "sale_products.id",
             "sale_products.value",
             "sale_products.cost_value",
             "sale_products.reference_value",

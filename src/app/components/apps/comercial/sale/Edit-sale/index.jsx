@@ -11,6 +11,9 @@ import {
   CircularProgress,
   Autocomplete,
   TextField,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
@@ -43,6 +46,8 @@ import Customer from '../../../sale/Customer';
 import Phones from '../../../sale/phones';
 import Addresses from '../../../sale/Adresses';
 import useCanEditUser from '@/hooks/users/userCanEdit';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { IconTools } from '@tabler/icons-react';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -99,6 +104,8 @@ const EditSaleTabs = ({
 
   const { loading, error, saleData, fetchSale } = useSale(id);
 
+  console.log('saleData', saleData);
+
   const {
     formData,
     handleChange,
@@ -146,6 +153,7 @@ const EditSaleTabs = ({
         console.log('Error: ', error);
       }
     };
+
     fetchData();
   }, []);
 
@@ -418,6 +426,64 @@ const EditSaleTabs = ({
                     />
                   </Grid>
                 </HasPermission>
+
+                {(saleData.sale_products || []).map((product) => (
+                  <Grid item xs={12} sm={12} lg={12}>
+                    <Accordion
+                      key={product.id}
+                      sx={{
+                        borderRadius: '12px',
+                        mb: 1,
+                        boxShadow: 3,
+                        // backgroundColor: '#F5F5F5',
+                      }}
+                    >
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Box sx={{ display: 'flex', width: '100%', alignItems: 'center' }}>
+                          <Grid
+                            item
+                            xs={1}
+                            sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}
+                          >
+                            <IconTools size={"20px"} sx={{ verticalAlign: 'middle', color: '#7E8388' }} />
+                          </Grid>
+                          <Grid
+                            item
+                            xs={11}
+                            sx={{ justifyContent: 'flex-start', display: 'flex', flexDirection: 'column' }}
+                          >
+                            <Typography sx={{ fontWeight: 700, fontSize: '14px' }}>Produto</Typography>
+                            <Typography
+                              sx={{ fontWeight: 500, fontSize: '16px', color: 'rgba(48, 48, 48, 0.5)' }}
+                            >
+                              {product.name}
+                            </Typography>
+                          </Grid>
+                        </Box>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Autocomplete
+                          value={product.value || ''}
+                          onChange={(e) => {
+                            handleChange('value', e.target.value);
+                          }}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label="Valor do Produto"
+                              variant="outlined"
+                              fullWidth
+                            />
+                          )}
+                          freeSolo
+                        >
+
+                        </Autocomplete>
+                      </AccordionDetails>
+
+                    </Accordion>
+                  </Grid>
+                ))}
               </Grid>
             </Box>
           </TabPanel>
