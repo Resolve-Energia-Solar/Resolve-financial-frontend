@@ -558,7 +558,7 @@ const EditSaleTabs = ({
                               variant="contained"
                               color="primary"
                               onClick={async () => {
-                                await handleSave();
+                                await handleSaveSaleProducts();
                                 if (formErrors && Object.keys(formErrors).length > 0) {
                                   const errorMessages = Object.entries(formErrors)
                                     .map(
