@@ -727,7 +727,7 @@ function EnergyConsumptionCalc({ leadId = null, mediumConsumption = null, onUpda
 											variant="contained"
 											sx={{
 												backgroundColor: theme.palette.primary.Button,
-												color: '#303030',
+												color: theme.palette.primary.light,
 												px: 3,
 												width: "200px",
 												height: "38px"
@@ -736,7 +736,7 @@ function EnergyConsumptionCalc({ leadId = null, mediumConsumption = null, onUpda
 											disabled={formLoading}
 											endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
 										>
-											<Typography variant="body1" color="#303030">
+											<Typography sx={{ color: theme.palette.primary.light }}>
 												{formLoading ? 'Salvando...' : 'Salvar'}
 											</Typography>
 										</Button>
