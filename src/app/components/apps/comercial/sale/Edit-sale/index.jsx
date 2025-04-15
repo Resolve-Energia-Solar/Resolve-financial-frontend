@@ -110,6 +110,7 @@ const EditSaleTabs = ({
   const {
     formData,
     handleChange,
+    handleSaleProductsChange,
     handleSave,
     handleSaveSaleProducts,
     formErrors,
@@ -429,10 +430,10 @@ const EditSaleTabs = ({
                   </Grid>
                 </HasPermission>
 
-                {(saleData.sale_products || []).map((product) => (
+                {(saleData.sale_products || []).map((saleProduct, index) => (
                   <Grid item xs={12} sm={12} lg={12}>
                     <Accordion
-                      key={product.id}
+                      key={saleProduct.id}
                       sx={{
                         borderRadius: '12px',
                         mb: 1,
@@ -458,7 +459,7 @@ const EditSaleTabs = ({
                             <Typography
                               sx={{ fontWeight: 500, fontSize: '16px', color: 'rgba(48, 48, 48, 0.5)' }}
                             >
-                              {product.name}
+                              {saleProduct.product?.name || 'Produto não encontrado'}
                             </Typography>
                           </Grid>
                         </Box>
@@ -470,10 +471,8 @@ const EditSaleTabs = ({
                             <CustomFieldMoney
                               name="value"
                               fullWidth
-                              value={product.value || ''}
-                              onChange={(e) => {
-                                handleChange('value', e.target.value);
-                              }}
+                              value={saleProduct.value || ''}
+                              onChange={(value) => handleSaleProductsChange(index, 'value', value)}
                               {...(formErrors.value && { error: true, helperText: formErrors.value })}
                               sx={{
                                 input: {
@@ -499,10 +498,8 @@ const EditSaleTabs = ({
                             <CustomFieldMoney
                               name="cost_value"
                               fullWidth
-                              value={product.cost_value || ''}
-                              onChange={(e) => {
-                                handleChange('cost_value', e.target.value);
-                              }}
+                              value={saleProduct.cost_value || ''}
+                              onChange={(value) => handleSaleProductsChange(index, 'cost_value', value)}
                               {...(formErrors.cost_value && { error: true, helperText: formErrors.cost_value })}
                               sx={{
                                 input: {
@@ -528,10 +525,8 @@ const EditSaleTabs = ({
                             <CustomFieldMoney
                               name="reference_value"
                               fullWidth
-                              value={product.reference_value || ''}
-                              onChange={(e) => {
-                                handleChange('reference_value', e.target.value);
-                              }}
+                              value={saleProduct.reference_value || ''}
+                              onChange={(value) => handleSaleProductsChange(index, 'reference_value', value)}
                               {...(formErrors.reference_value && { error: true, helperText: formErrors.reference_value })}
                               sx={{
                                 input: {
@@ -552,8 +547,8 @@ const EditSaleTabs = ({
                             />
                           </Grid>
                         </Grid>
-                        <Grid container xs={12} spacing={2} sx={{ mb: 2, justifyContent: 'flex-end' }}>
-                          <Grid item xs={12} sx={{ justifyContent: 'flex-end' }}>
+                        <Grid container xs={12} spacing={2} sx={{ mb: 2 }}>
+                          <Grid item xs={12} sx={{ display: "flex", justifyContent: 'flex-end', justifyItems: 'flex-end' }}>
                             <Button
                               variant="contained"
                               color="primary"
@@ -563,16 +558,20 @@ const EditSaleTabs = ({
                                   const errorMessages = Object.entries(formErrors)
                                     .map(
                                       ([field, messages]) =>
-                                        `${formatFieldName(field)}: ${messages.join(', ')}`,
+                                        `${formatFieldName(field)}: ${messages.join(', ')}`
                                     )
                                     .join(', ');
                                   enqueueSnackbar(errorMessages, { variant: 'error' });
                                 } else {
-                                  enqueueSnackbar('Alterações salvas com sucesso!', { variant: 'success' });
+                                  enqueueSnackbar('Alterações salvas com sucesso!', {
+                                    variant: 'success',
+                                  });
                                 }
                               }}
                               disabled={formLoading}
-                              endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                              endIcon={
+                                formLoading ? <CircularProgress size={20} color="inherit" /> : null
+                              }
                             >
                               {formLoading ? 'Salvando...' : 'Salvar Alterações'}
                             </Button>

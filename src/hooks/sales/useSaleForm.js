@@ -24,6 +24,7 @@ const useSaleForm = (initialData, id) => {
     cancellationReasonsIds: [],
     reference_table: null,
     sale_products: [],
+    // product: null,
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -57,6 +58,7 @@ const useSaleForm = (initialData, id) => {
           cost_value: product.cost_value,
           reference_value: product.reference_value,
         })) || [],
+        // product: initialData.product || null,
       });
     }
   }, [initialData]);
@@ -64,6 +66,19 @@ const useSaleForm = (initialData, id) => {
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+
+  const handleSaleProductsChange = (index, field, value) => {
+    setFormData(prev => {
+      const updatedProducts = prev.sale_products.map((product, i) => {
+        if (i === index) {
+          return { ...product, [field]: value };
+        }
+        return product;
+      });
+      return { ...prev, sale_products: updatedProducts };
+    });
+  };
+  
 
   const handleSave = async () => {
     setLoading(true);
@@ -110,6 +125,7 @@ const useSaleForm = (initialData, id) => {
         cost_value: product.cost_value,
         reference_value: product.reference_value,
       })),
+      // product: formData.product,
     };
 
     try {
@@ -159,6 +175,7 @@ const useSaleForm = (initialData, id) => {
   return {
     formData,
     handleChange,
+    handleSaleProductsChange,
     handleSave,
     handleSaveSaleProducts,
     formErrors,

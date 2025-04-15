@@ -41,6 +41,7 @@ const useSale = (id) => {
             "comments",
             "sale_products",
             // "sale.product"
+            // "sale_products.product",
           ],
           fields: [
             "customer.id",
@@ -72,6 +73,7 @@ const useSale = (id) => {
             "sale_products.value",
             "sale_products.cost_value",
             "sale_products.reference_value",
+            "sale_products.product.name",
           ],
           format: "json"
         }
