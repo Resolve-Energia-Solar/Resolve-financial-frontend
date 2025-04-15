@@ -604,7 +604,7 @@ const CreateSchedulePage = () => {
                 value={formData.parent_schedules}
                 onChange={(newValue) => setFormData({ ...formData, parent_schedules: newValue })}
                 endpoint="/api/schedule"
-                queryParam="protocol__icontains"
+                queryParam="q"
                 extraParams={{
                   fields:
                     'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,status,service,customer.complete_name,address.complete_address,schedule_agent.complete_name,branch.name,service_opinion,final_service_opinion',
