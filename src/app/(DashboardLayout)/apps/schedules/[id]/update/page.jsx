@@ -207,7 +207,10 @@ const UpdateSchedulePage = () => {
       service_opinion: formData.service_opinion?.value,
       final_service_opinion: formData.final_service_opinion?.value,
       products: formData.products ? [formData.products] : [],
-      parent_schedules: formData.parent_schedules ? [formData.parent_schedules.value] : [],
+      parent_schedules: Array.isArray(formData.parent_schedules)
+      ? formData.parent_schedules.filter((ps) => ps && ps.value).map((ps) => ps.value)
+      : [],
+
     };
 
     const fieldLabels = {

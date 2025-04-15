@@ -32,7 +32,6 @@ import {
   IconLicense,
 } from '@tabler/icons-react';
 
-
 import { permission } from 'process';
 import { id } from 'date-fns/locale';
 
@@ -50,14 +49,14 @@ const Menuitems = [
         title: 'Kanban',
         icon: IconLayoutKanban,
         href: '/apps/kanban/',
-        permissions: ['core.view_board']
+        permissions: ['core.view_board'],
       },
       {
         id: uniqueId(),
         title: 'Leads',
         icon: IconId,
         href: '/apps/leads',
-        permissions: ['resolve_crm.view_lead']
+        permissions: ['resolve_crm.view_lead'],
       },
       {
         id: uniqueId(),
@@ -131,7 +130,7 @@ const Menuitems = [
       },
     ],
   },
-  
+
   {
     id: uniqueId(),
     title: 'Financiamento',

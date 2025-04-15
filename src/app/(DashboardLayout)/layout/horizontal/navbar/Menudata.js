@@ -60,11 +60,7 @@ const Menuitems = [
     title: 'Comercial',
     icon: IconTrendingUp,
     href: '/apps/commercial/sale',
-    permissions: [
-      'resolve_crm.view_sale',
-      'resolve_crm.view_lead',
-      'core.view_board',
-    ],
+    permissions: ['resolve_crm.view_sale', 'resolve_crm.view_lead', 'core.view_board'],
     children: [
       {
         id: uniqueId(),
@@ -123,14 +119,14 @@ const Menuitems = [
     id: uniqueId(),
     title: 'Serviços de Campo',
     icon: IconMapRoute,
-    href: '/apps/inspections/schedule',
+    href: '/apps/schedules',
     permissions: ['field_services.view_all_schedule'],
     children: [
       {
         id: uniqueId(),
         title: 'Agendamentos',
         icon: IconCalendarStar,
-        href: '/apps/inspections/schedule',
+        href: '/apps/schedules',
         permissions: ['field_services.view_all_schedule'],
       },
     ],

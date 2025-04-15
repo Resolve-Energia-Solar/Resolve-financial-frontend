@@ -67,7 +67,9 @@ const CreateSchedulePage = () => {
       address: formData.address?.value,
       schedule_creator: user.id,
       products: formData.product ? [formData.product.value] : [],
-      parent_schedules: formData.parent_schedules ? [formData.parent_schedules.value] : [],
+      parent_schedules: Array.isArray(formData.parent_schedules)
+      ? formData.parent_schedules.filter((ps) => ps && ps.value).map((ps) => ps.value)
+      : [],
     };
 
     const fieldLabels = {
