@@ -162,6 +162,21 @@ const UpdateSchedulePage = () => {
     }
   }, [formData.project, formData.sale]);
 
+  const fieldLabels = {
+    schedule_date: 'Data do Agendamento',
+    schedule_start_time: 'Horário de Início',
+    schedule_end_date: 'Data Final',
+    schedule_end_time: 'Horário Final',
+    service: 'Serviço',
+    customer: 'Cliente',
+    project: 'Projeto',
+    schedule_agent: 'Agente',
+    branch: 'Unidade',
+    address: 'Endereço',
+    observation: 'Observação',
+    schedule_creator: 'Criador do Agendamento',
+  };
+
   useEffect(() => {
     if (
       formData.service &&
@@ -197,6 +212,20 @@ const UpdateSchedulePage = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    // Campos obrigatórios
+    const requiredFields = ['schedule_date', 'schedule_start_time', 'schedule_end_date', 'schedule_end_time', 'service', 'customer', 'branch', 'address'];
+
+    // Verificar se todos os campos obrigatórios estão preenchidos
+    for (const field of requiredFields) {
+      if (!formData[field]) {
+        enqueueSnackbar(`${fieldLabels[field]} é obrigatório.`, { variant: 'error' });
+        setLoading(false);
+        return; // Impede o envio se algum campo obrigatório estiver faltando
+      }
+    }
+
+    // Prepara os dados para envio
     const submitData = {
       ...formData,
       service: formData.service?.id,
@@ -213,21 +242,6 @@ const UpdateSchedulePage = () => {
       parent_schedules: Array.isArray(formData.parent_schedules)
         ? formData.parent_schedules.filter((ps) => ps && ps.value).map((ps) => ps.value)
         : [],
-    };
-
-    const fieldLabels = {
-      schedule_date: 'Data do Agendamento',
-      schedule_start_time: 'Horário de Início',
-      schedule_end_date: 'Data Final',
-      schedule_end_time: 'Horário Final',
-      service: 'Serviço',
-      customer: 'Cliente',
-      project: 'Projeto',
-      schedule_agent: 'Agente',
-      branch: 'Unidade',
-      address: 'Endereço',
-      observation: 'Observação',
-      schedule_creator: 'Criador do Agendamento',
     };
 
     try {
