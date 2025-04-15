@@ -314,6 +314,19 @@ const  SaleList = () => {
                     orderDirection={orderDirection}
                   />
                 </TableCell>
+                
+                <TableCell
+                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  onClick={() => handleSort('status')}
+                >
+                  <TableSortLabel
+                    label="Status da Venda"
+                    orderBy={order}
+                    headCell="status"
+                    onRequestSort={() => handleSort('status')}
+                    orderDirection={orderDirection}
+                  />
+                </TableCell>
 
                 <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
                   <TableSortLabel
@@ -355,18 +368,6 @@ const  SaleList = () => {
                   />
                 </TableCell>
 
-                <TableCell
-                  sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
-                  onClick={() => handleSort('status')}
-                >
-                  <TableSortLabel
-                    label="Status da Venda"
-                    orderBy={order}
-                    headCell="status"
-                    onRequestSort={() => handleSort('status')}
-                    orderDirection={orderDirection}
-                  />
-                </TableCell>
 
                 <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
                   <TableSortLabel
@@ -431,8 +432,13 @@ const  SaleList = () => {
                     <TableCell><CounterChip counter={item.treadmill_counter || 0} /></TableCell>
                     <TableCell>{item.customer.complete_name}</TableCell>
                     <TableCell>{item.contract_number}</TableCell>
+                      <TableCell>
+                        <StatusChip status={item.status} />
+                      </TableCell>
                     <TableCell>
-                      {item.signature_date && new Date(item.signature_date).toLocaleString()}
+                      {item.signature_date
+                        ? new Date(item.signature_date).toLocaleString()
+                        : "Sem contrato assinado"}
                     </TableCell>
                     <TableCell>
                       {Number(item.total_value).toLocaleString('pt-BR', {
@@ -443,9 +449,6 @@ const  SaleList = () => {
                     <TableCell>{<ChipSigned status={item?.signature_status} />}</TableCell>
                     <TableCell>
                       <StatusPreSale status={item.is_pre_sale} />
-                    </TableCell>
-                    <TableCell>
-                      <StatusChip status={item.status} />
                     </TableCell>
                     <TableCell>
                       {Array.isArray(item.final_service_opinion) &&
