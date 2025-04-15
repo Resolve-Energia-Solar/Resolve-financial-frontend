@@ -10,6 +10,7 @@ const GenericAsyncAutocompleteInput = ({
   queryParam = 'search',
   extraParams = {},
   mapResponse,
+  multiselect = false,
   debounceTime = 300,
   error = false,
   helperText = '',
@@ -26,10 +27,21 @@ const GenericAsyncAutocompleteInput = ({
   const stableMapResponse = useMemo(() => mapResponse, [mapResponse]);
 
   const selectedOption = useMemo(() => {
-    if (!value) return null;
-    if (typeof value === 'object') return value;
-    return options.find((option) => option.value === value) || null;
-  }, [value, options]);
+    if (multiselect && Array.isArray(value)) {
+      return value
+        .map((val) =>
+          typeof val === 'object'
+            ? val
+            : options.find((option) => option.value === val)
+        )
+        .filter(Boolean);
+    } else {
+      if (!value) return null;
+      return typeof value === 'object'
+        ? value
+        : options.find((option) => option.value === value) || null;
+    }
+  }, [value, options, multiselect]);
 
   useEffect(() => {
     if (!open) return;
@@ -65,28 +77,54 @@ const GenericAsyncAutocompleteInput = ({
   }, [inputValue, open, endpoint, queryParam, stableExtraParams, stableMapResponse, debounceTime]);
 
   useEffect(() => {
-    const fetchInitialOption = async () => {
-      if (!value || typeof value === 'object') return;
-      if (options.find((option) => option.value === value)) return;
-      try {
-        const response = await apiClient.get(`${endpoint}/${value}`, {
-          params: stableExtraParams,
-        });
-        const item = response.data;
-        const mappedOption = stableMapResponse
-          ? stableMapResponse({ results: [item] })[0]
-          : { label: item.complete_name || item.name || '', value: item.id };
-        setOptions((prevOptions) => [...prevOptions, mappedOption]);
-      } catch (err) {
-        console.error('Error fetching initial option:', err);
+    const fetchInitialOptions = async () => {
+      if (multiselect && Array.isArray(value)) {
+        // Filtra os valores não presentes nas opções atuais
+        const missingValues = value.filter((val) =>
+          !options.find(
+            (option) => option.value === (typeof val === 'object' ? val.value : val)
+          )
+        );
+        // Busca cada opção que esteja faltando
+        for (const val of missingValues) {
+          try {
+            const id = typeof val === 'object' ? val.value : val;
+            const response = await apiClient.get(`${endpoint}/${id}`, {
+              params: stableExtraParams,
+            });
+            const item = response.data;
+            const mappedOption = stableMapResponse
+              ? stableMapResponse({ results: [item] })[0]
+              : { label: item.complete_name || item.name || '', value: item.id };
+            setOptions((prevOptions) => [...prevOptions, mappedOption]);
+          } catch (err) {
+            console.error('Error fetching initial option:', err);
+          }
+        }
+      } else if (!multiselect && value && typeof value !== 'object') {
+        if (!options.find((option) => option.value === value)) {
+          try {
+            const response = await apiClient.get(`${endpoint}/${value}`, {
+              params: stableExtraParams,
+            });
+            const item = response.data;
+            const mappedOption = stableMapResponse
+              ? stableMapResponse({ results: [item] })[0]
+              : { label: item.complete_name || item.name || '', value: item.id };
+            setOptions((prevOptions) => [...prevOptions, mappedOption]);
+          } catch (err) {
+            console.error('Error fetching initial option:', err);
+          }
+        }
       }
     };
-    fetchInitialOption();
-  }, [value, options, endpoint, stableExtraParams, stableMapResponse]);
+    fetchInitialOptions();
+  }, [value, options, multiselect, endpoint, stableExtraParams, stableMapResponse]);
 
   return (
     <Autocomplete
-      freeSolo
+      multiple={multiselect}
+      freeSolo={!multiselect}
       open={open}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}

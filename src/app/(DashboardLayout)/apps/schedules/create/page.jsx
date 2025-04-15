@@ -603,7 +603,7 @@ const CreateSchedulePage = () => {
 
             {(formData.customer || formData.project) && <Grid item xs={12} sm={6}>
               <GenericAsyncAutocompleteInput
-                label="Serviço Relacionado"
+                label="Serviços Relacionados"
                 value={formData.parent_schedules}
                 onChange={(newValue) => setFormData({ ...formData, parent_schedules: newValue })}
                 endpoint="/api/schedule"
@@ -673,6 +673,7 @@ const CreateSchedulePage = () => {
                 helperText={errors.parent_schedules?.[0] || ''}
                 error={!!errors.parent_schedules}
                 fullWidth
+                multiselect
                 required
               />
             </Grid>}

@@ -114,7 +114,7 @@ const UpdateSchedulePage = () => {
             address: data.address,
             observation: data.observation || '',
             product: data.products && data.products.length > 0 ? data.products[0] : [],
-            parent_schedules: data.parent_schedules && data.parent_schedules.length > 0 ? data.parent_schedules[0] : [],
+            parent_schedules: data.parent_schedules || [],
             status: data.status,
             attachments: data.attachments || [],
           });
@@ -755,6 +755,7 @@ const UpdateSchedulePage = () => {
                   helperText={errors.parent_schedules?.[0] || ''}
                   error={!!errors.parent_schedules}
                   fullWidth
+                  multiselect
                   required
                 />
               </Grid>
