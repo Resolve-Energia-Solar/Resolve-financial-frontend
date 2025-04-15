@@ -810,7 +810,7 @@ const UpdateSchedulePage = () => {
                               getFileName(attachment.file)
                             )}
                           </TableCell>
-                          <TableCell>{attachment.document_type.name || '-'}</TableCell>
+                          <TableCell>{attachment.document_type?.name || '-'}</TableCell>
                           <TableCell>{attachment.description || '-'}</TableCell>
                           <TableCell>
                             {attachment.created_at
