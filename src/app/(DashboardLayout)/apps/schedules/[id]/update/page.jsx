@@ -577,6 +577,10 @@ const UpdateSchedulePage = () => {
                           <strong>Projeto:</strong> {option.project_number}
                         </Typography>
                         <Typography variant="body2">
+                          <strong>Cliente:</strong>{' '}
+                          {option.customer.label || 'Cliente não Disponível'}
+                        </Typography>
+                        <Typography variant="body2">
                           <strong>Valor total:</strong>{' '}
                           {option.total_value
                             ? formatCurrency(option.total_value)
