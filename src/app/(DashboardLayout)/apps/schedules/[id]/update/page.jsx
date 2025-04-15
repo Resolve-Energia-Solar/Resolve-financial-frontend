@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import {
   Box,
   Button,
+  Chip,
   MenuItem,
   Tabs,
   Tab,
@@ -212,7 +213,6 @@ const UpdateSchedulePage = () => {
       parent_schedules: Array.isArray(formData.parent_schedules)
         ? formData.parent_schedules.filter((ps) => ps && ps.value).map((ps) => ps.value)
         : [],
-
     };
 
     const fieldLabels = {
@@ -670,9 +670,9 @@ const UpdateSchedulePage = () => {
                   value={formData.address}
                   onChange={(newValue) => setFormData({ ...formData, address: newValue })}
                   endpoint="/api/addresses"
-                  queryParam="street__icontains"
-                  extraParams={{ fields: ['id', 'street'] }}
-                  mapResponse={(data) => data.results.map((a) => ({ label: a.street, value: a.id }))}
+                  queryParam="q"
+                  extraParams={{ fields: ['id', 'complete_address'], customer_id: formData.customer?.value || '' }}
+                  mapResponse={(data) => data.results.map((a) => ({ label: a.complete_address, value: a.id }))}
                   fullWidth
                   helperText={errors.address?.[0] || ''}
                   error={!!errors.address}
@@ -691,16 +691,16 @@ const UpdateSchedulePage = () => {
                       'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,status,service,customer.complete_name,address.complete_address,schedule_agent.complete_name,branch.name,service_opinion,final_service_opinion',
                     expand: 'customer,schedule_agent,service,address,final_service_opinion,service_opinion,branch',
                     customer: formData.customer?.value || '',
-                    project: formData.project?.value || '',
+                    project: formData.project || '',
                     customer_project_or: true
                   }}
-                  mapResponse={(data) =>
-                    data.results.map((s) => ({
-                      label: s.protocol,
+                  mapResponse={(data) => {
+                    return data.results.map((s) => ({
+                      label: `${s.service?.name || ''} nº ${s.protocol} - ${s.customer?.complete_name || ''} - ${s.schedule_date} ${s.schedule_start_time.toLocaleString()}`,
                       value: s.id,
                       ...s,
-                    }))
-                  }
+                    }));
+                  }}
                   renderOption={(props, option) => (
                     <li {...props}>
                       <Box
@@ -712,19 +712,19 @@ const UpdateSchedulePage = () => {
                         <Typography variant="body1">
                           <strong>Início:</strong> {formatDate(option.schedule_date)} {option.schedule_start_time.toLocaleString()} | <strong>Término:</strong> {formatDate(option.schedule_end_date)} {option.schedule_end_time.toLocaleString()}
                         </Typography>
-                        <Typography variant="body1"><strong>Status:</strong> {option.status}</Typography>
+                        {option.customer && <Typography variant="body1">
+                          <strong>Cliente:</strong> {option.customer?.complete_name}
+                        </Typography>}
                         {option.service && (
                           <Typography variant="body1">
                             <strong>Serviço:</strong> {option.service.name}
                           </Typography>
                         )}
-                        {option.customer && <Typography variant="body1">
-                          <strong>Cliente:</strong> {option.customer?.complete_name}
-                        </Typography>}
                         {option.schedule_agent && <Typography variant="body1">
                           <strong>Agente:</strong> {option.schedule_agent.complete_name}
                         </Typography>
                         }
+                        <Typography variant="body1"><strong>Status:</strong> {option.status}</Typography>
                         {option.address && (
                           <Typography variant="body1">
                             <strong>Endereço:</strong> {option.address.complete_address}
@@ -737,12 +737,12 @@ const UpdateSchedulePage = () => {
                         )}
                         {option.service_opinion && option.service_opinion.name && (
                           <Typography variant="body1">
-                            <strong>Opinião de Serviço:</strong> {option.service_opinion.name}
+                            <strong>Parecer de Serviço:</strong> {option.service_opinion.name}
                           </Typography>
                         )}
                         {option.final_service_opinion && option.final_service_opinion.name && (
                           <Typography variant="body1">
-                            <strong>Opinião Final:</strong> {option.final_service_opinion.name}
+                            <strong>Parecer Final:</strong> {option.final_service_opinion.name}
                           </Typography>
                         )}
                       </Box>
