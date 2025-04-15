@@ -95,6 +95,7 @@ const UpdateSchedulePage = () => {
             'products',
             'parent_schedules',
             'status',
+            'attachments',
           ],
           expand: ['service'],
         })
@@ -114,6 +115,7 @@ const UpdateSchedulePage = () => {
             product: data.products && data.products.length > 0 ? data.products[0] : [],
             parent_schedules: data.parent_schedules && data.parent_schedules.length > 0 ? data.parent_schedules[0] : [],
             status: data.status,
+            attachments: data.attachments || [],
           });
         })
         .catch((err) => {
