@@ -15,7 +15,7 @@ const ChipRequest = ({ status }) => {
         case 'D':
         return { label: 'Deferida', color: 'success', icon: <CheckCircleIcon /> };
       default:
-        return { label: status };
+        return { label: 'Sem Solicitação', color: 'default', icon: null};
     }
   };
 

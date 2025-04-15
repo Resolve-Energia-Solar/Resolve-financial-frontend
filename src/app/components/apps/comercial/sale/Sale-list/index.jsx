@@ -45,7 +45,7 @@ import PulsingBadge from '@/app/components/shared/PulsingBadge';
 import TableSortLabel from '@/app/components/shared/TableSortLabel';
 import CounterChip from '../CounterChip';
 
-const  SaleList = () => {
+const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -121,7 +121,7 @@ const  SaleList = () => {
           'is_released_to_engineering',
           'created_at',
           'branch.name',
-          'treadmill_counter'
+          'treadmill_counter',
         ],
         ...filters,
       });
@@ -314,7 +314,7 @@ const  SaleList = () => {
                     orderDirection={orderDirection}
                   />
                 </TableCell>
-                
+
                 <TableCell
                   sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
                   onClick={() => handleSort('status')}
@@ -367,7 +367,6 @@ const  SaleList = () => {
                     orderDirection={orderDirection}
                   />
                 </TableCell>
-
 
                 <TableCell sx={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
                   <TableSortLabel
@@ -429,16 +428,18 @@ const  SaleList = () => {
                         <PulsingBadge color="#FFC008" />
                       )}
                     </TableCell>
-                    <TableCell><CounterChip counter={item.treadmill_counter || 0} /></TableCell>
+                    <TableCell>
+                      <CounterChip counter={item.treadmill_counter || 0} />
+                    </TableCell>
                     <TableCell>{item.customer.complete_name}</TableCell>
                     <TableCell>{item.contract_number}</TableCell>
-                      <TableCell>
-                        <StatusChip status={item.status} />
-                      </TableCell>
+                    <TableCell>
+                      <StatusChip status={item.status} />
+                    </TableCell>
                     <TableCell>
                       {item.signature_date
                         ? new Date(item.signature_date).toLocaleString()
-                        : "Sem contrato assinado"}
+                        : 'Sem contrato assinado'}
                     </TableCell>
                     <TableCell>
                       {Number(item.total_value).toLocaleString('pt-BR', {
@@ -452,7 +453,7 @@ const  SaleList = () => {
                     </TableCell>
                     <TableCell>
                       {Array.isArray(item.final_service_opinion) &&
-                        item.final_service_opinion[0].name ? (
+                      item.final_service_opinion[0].name ? (
                         <Chip
                           label={item.final_service_opinion[0].name}
                           color={
