@@ -287,10 +287,8 @@ const UpdateSchedulePage = () => {
             Atualizar Agendamento
           </Typography>
           <Tabs value={tabValue} onChange={handleTabChange} sx={{ mt: 3 }}>
-            <Tab label="Formulário" tabIndex={1} />
-            {formData.project && (
-              <Tab label="Anexos" value="attachments" />
-            )}
+            <Tab label="Formulário" value="form" />
+            {formData.project && <Tab label="Anexos" value="attachments" />}
           </Tabs>
 
           {tabValue === 'form' && (
