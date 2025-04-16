@@ -29,7 +29,7 @@ import { useSelector } from 'react-redux';
 import FormPageSkeleton from '@/app/components/apps/comercial/sale/components/FormPageSkeleton';
 import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import PaymentCard from '@/app/components/apps/invoice/components/paymentList/card';
 import documentTypeService from '@/services/documentTypeService';
 import Attachments from '@/app/components/shared/Attachments';
@@ -49,6 +49,7 @@ import useCanEditUser from '@/hooks/users/userCanEdit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IconTools } from '@tabler/icons-react';
 import CustomFieldMoney from '../../../invoice/components/CustomFieldMoney';
+import productService from '@/services/productsService';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -168,6 +169,28 @@ const EditSaleTabs = ({
       }
     }
   }, [successData, success]);
+
+  const [productNames, setProductNames] = useState({});
+  
+  useEffect(() => {
+    const fetchProductName = async (productId, index) => {
+      if (productId) {
+        try {
+          const product = await productService.find(productId); 
+          setProductNames((prev) => ({
+            ...prev,
+            [index]: product.name, 
+          }));
+        } catch (error) {
+          console.error('Error fetching product:', error);
+        }
+      }
+    };
+    saleData?.sale_products.forEach((saleProduct, index) => {
+      fetchProductName(saleProduct.product, index);
+    });
+    
+  }, [saleData?.sale_products]);
 
   return (
     <Box {...props}>
@@ -430,7 +453,7 @@ const EditSaleTabs = ({
                   </Grid>
                 </HasPermission>
 
-                {(saleData.sale_products || []).map((saleProduct, index) => (
+                {(saleData?.sale_products || []).map((saleProduct, index) => (
                   <Grid item xs={12} sm={12} lg={12}>
                     <Accordion
                       key={saleProduct.id}
@@ -459,20 +482,20 @@ const EditSaleTabs = ({
                             <Typography
                               sx={{ fontWeight: 500, fontSize: '16px', color: 'rgba(48, 48, 48, 0.5)' }}
                             >
-                              {saleProduct.product?.name || 'Produto não encontrado'}
+                              {productNames[index] || 'Produto não encontrado'}
                             </Typography>
                           </Grid>
                         </Box>
                       </AccordionSummary>
                       <AccordionDetails>
                         <Grid container xs={12} spacing={2} sx={{ mb: 2 }}>
-                          <Grid item xs={4} sm={4} lg={4}>
+                          <Grid item xs={4} sm={12} lg={4}>
                             <CustomFormLabel htmlFor="value" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Valor</CustomFormLabel>
                             <CustomFieldMoney
                               name="value"
                               fullWidth
                               value={saleProduct.value || ''}
-                              onChange={(value) => handleSaleProductsChange(index, 'value', value)}
+                              onChange={(event, newValue) => handleChange('value', newValue)}
                               {...(formErrors.value && { error: true, helperText: formErrors.value })}
                               sx={{
                                 input: {
@@ -493,7 +516,7 @@ const EditSaleTabs = ({
                             />
                           </Grid>
 
-                          <Grid item xs={4} sm={4} lg={4}>
+                          <Grid item xs={4} sm={12} lg={4}>
                             <CustomFormLabel htmlFor="cost_value" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Valor de custo</CustomFormLabel>
                             <CustomFieldMoney
                               name="cost_value"
@@ -520,7 +543,7 @@ const EditSaleTabs = ({
                             />
                           </Grid>
 
-                          <Grid item xs={4} sm={4} lg={4}>
+                          <Grid item xs={4} sm={12} lg={4}>
                             <CustomFormLabel htmlFor="reference_value" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Valor de referência</CustomFormLabel>
                             <CustomFieldMoney
                               name="reference_value"
@@ -548,34 +571,36 @@ const EditSaleTabs = ({
                           </Grid>
                         </Grid>
                         <Grid container xs={12} spacing={2} sx={{ mb: 2 }}>
-                          <Grid item xs={12} sx={{ display: "flex", justifyContent: 'flex-end', justifyItems: 'flex-end' }}>
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              onClick={async () => {
-                                await handleSaveSaleProducts();
-                                if (formErrors && Object.keys(formErrors).length > 0) {
-                                  const errorMessages = Object.entries(formErrors)
-                                    .map(
-                                      ([field, messages]) =>
-                                        `${formatFieldName(field)}: ${messages.join(', ')}`
-                                    )
-                                    .join(', ');
-                                  enqueueSnackbar(errorMessages, { variant: 'error' });
-                                } else {
-                                  enqueueSnackbar('Alterações salvas com sucesso!', {
-                                    variant: 'success',
-                                  });
+                          {canEdit && (
+                            <Grid item xs={12} sx={{ display: "flex", justifyContent: 'flex-end', justifyItems: 'flex-end' }}>
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={async () => {
+                                  await handleSaveSaleProducts();
+                                  if (formErrors && Object.keys(formErrors).length > 0) {
+                                    const errorMessages = Object.entries(formErrors)
+                                      .map(
+                                        ([field, messages]) =>
+                                          `${formatFieldName(field)}: ${messages.join(', ')}`
+                                      )
+                                      .join(', ');
+                                    enqueueSnackbar(errorMessages, { variant: 'error' });
+                                  } else {
+                                    enqueueSnackbar('Alterações salvas com sucesso!', {
+                                      variant: 'success',
+                                    });
+                                  }
+                                }}
+                                disabled={formLoading}
+                                endIcon={
+                                  formLoading ? <CircularProgress size={20} color="inherit" /> : null
                                 }
-                              }}
-                              disabled={formLoading}
-                              endIcon={
-                                formLoading ? <CircularProgress size={20} color="inherit" /> : null
-                              }
-                            >
-                              {formLoading ? 'Salvando...' : 'Salvar Alterações'}
-                            </Button>
-                          </Grid>
+                              >
+                                {formLoading ? 'Salvando...' : 'Salvar Alterações'}
+                              </Button>
+                            </Grid>
+                          )}
                         </Grid>
                       </AccordionDetails>
 

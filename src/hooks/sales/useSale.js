@@ -40,6 +40,7 @@ const useSale = (id) => {
             "projects.units",
             "comments",
             "sale_products",
+            // "product.name",
             // "sale.product"
             // "sale_products.product",
           ],
@@ -73,7 +74,7 @@ const useSale = (id) => {
             "sale_products.value",
             "sale_products.cost_value",
             "sale_products.reference_value",
-            "sale_products.product.name",
+            "sale_products.product",
           ],
           format: "json"
         }

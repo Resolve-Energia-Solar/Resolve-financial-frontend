@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import formatDate from '@/utils/formatDate';
 import saleService from '@/services/saleService';
+import saleProductsService from '@/services/saleProductsService';
 import { useDispatch, useSelector } from 'react-redux';
 import { enqueueSnackbar } from 'notistack';
 
@@ -52,11 +53,11 @@ const useSaleForm = (initialData, id) => {
           initialData.cancellation_reasons?.map((cancellation_reason) => cancellation_reason.id) ||
           [],
         reference_table: initialData.reference_table || '',
-        sale_products: initialData.sale_products?.map((product) => ({
-          id: product.id,
-          value: product.value,
-          cost_value: product.cost_value,
-          reference_value: product.reference_value,
+        sale_products: initialData.sale_products?.map((saleProduct) => ({
+          id: saleProduct.id,
+          value: saleProduct.value,
+          cost_value: saleProduct.cost_value,
+          reference_value: saleProduct.reference_value,
         })) || [],
         // product: initialData.product || null,
       });
@@ -125,7 +126,6 @@ const useSaleForm = (initialData, id) => {
         cost_value: product.cost_value,
         reference_value: product.reference_value,
       })),
-      // product: formData.product,
     };
 
     try {
@@ -151,21 +151,50 @@ const useSaleForm = (initialData, id) => {
   const handleSaveSaleProducts = async () => {
     setLoading(true);
 
+    let errors = { ...formErrors };
+    // if (formData.sale_products.length === 0) {
+    //   errors.sale_products = ['O produto é obrigatório.'];
+    // } else {
+    //   delete errors.sale_products;
+    // }
+    // if (formData.sale_products.some((product) => !product.value)) {
+    //   errors.sale_products = ['O valor é obrigatório.'];
+    // }
+    // if (formData.sale_products.some((product) => !product.cost_value)) {
+    //   errors.sale_products = ['O valor de custo é obrigatório.'];
+    // }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      setLoading(false);
+      return;
+    }
+
+    const dataToSend = {
+      sale_products: formData.sale_products.map((product) => ({
+        id: product.id,
+        value: product.value,
+        cost_value: product.cost_value,
+        reference_value: product.reference_value,
+      })),
+    };
+
     try {
-      const dataToSend = {
-        sale_products: formData.sale_products.map((product) => ({
-          id: product.id,
-          value: product.value,
-          cost_value: product.cost_value,
-          reference_value: product.reference_value,
-        })),
-      };
-
-      await saleService.update(id, dataToSend);
-
-      enqueueSnackbar('Produtos da venda atualizados com sucesso!', { variant: 'success' });
+      let response;
+      if (id) {
+        response = await saleService.update(id, dataToSend);
+        enqueueSnackbar('Detalhes de produtos da venda atualizados com sucesso!', { variant: 'success' });
+      } else {
+        enqueueSnackbar('Detalhes de produtos da venda criados com sucesso!', { variant: 'success' });
+        response = await saleService.create(dataToSend);
+      } 
+      setFormErrors({});
+      setSuccess(true);
+      setSuccessData(response);
     } catch (err) {
-      enqueueSnackbar('Erro ao atualizar produtos da venda.', { variant: 'error' });
+      setSuccess(false);
+      setSuccessData(null);
+      setFormErrors(err.response?.data || {});
       console.log(err.response?.data || err);
     } finally {
       setLoading(false);
