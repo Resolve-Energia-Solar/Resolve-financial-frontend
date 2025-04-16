@@ -36,7 +36,7 @@ import EditSaleTabs from '../Edit-sale';
 import DrawerFilters from '../components/DrawerFilters/DrawerFilters';
 import SideDrawer from '@/app/components/shared/SideDrawer';
 import InforCards from '../../../inforCards/InforCards';
-import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
+import { IconListDetails, IconPaperclip, IconSortAscending, IconX, IconClock, IconCheckbox, IconRoute, IconUserX, IconUserCancel } from '@tabler/icons-react';
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import StatusChip from '@/utils/status/DocumentStatusIcon';
@@ -224,7 +224,7 @@ const  SaleList = () => {
               {
                 backgroundColor: 'primary.light',
                 iconColor: 'primary.main',
-                IconComponent: IconListDetails,
+                IconComponent: IconRoute,
                 title: 'Em andamento',
                 onClick: () => setFilters({ ...filters, status__in: 'EA' }),
                 value: indicators?.pending_total_value || 0,
@@ -233,7 +233,7 @@ const  SaleList = () => {
               {
                 backgroundColor: 'success.light',
                 iconColor: 'success.main',
-                IconComponent: IconListDetails,
+                IconComponent: IconCheckbox,
                 title: 'Finalizado',
                 onClick: () => setFilters({ ...filters, status__in: 'F' }),
                 value: indicators?.finalized_total_value || 0,
@@ -242,7 +242,7 @@ const  SaleList = () => {
               {
                 backgroundColor: 'secondary.light',
                 iconColor: 'secondary.main',
-                IconComponent: IconPaperclip,
+                IconComponent: IconClock,
                 title: 'Pendente',
                 onClick: () => setFilters({ ...filters, status__in: 'P' }),
                 value: indicators?.pending_total_value || 0,
@@ -251,7 +251,7 @@ const  SaleList = () => {
               {
                 backgroundColor: 'warning.light',
                 iconColor: 'warning.main',
-                IconComponent: IconSortAscending,
+                IconComponent: IconX,
                 title: 'Cancelado',
                 onClick: () => setFilters({ status__in: 'C' }),
                 value: indicators?.canceled_total_value || 0,
@@ -260,7 +260,7 @@ const  SaleList = () => {
               {
                 backgroundColor: 'warning.light',
                 iconColor: 'warning.main',
-                IconComponent: IconSortAscending,
+                IconComponent: IconUserX,
                 title: 'Distrato',
                 onClick: () => setFilters({ status__in: 'D' }),
                 value: indicators?.terminated_total_value || 0,
