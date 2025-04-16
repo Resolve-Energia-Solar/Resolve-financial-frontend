@@ -189,7 +189,7 @@ const EditSaleTabs = ({
     saleData?.sale_products.forEach((saleProduct, index) => {
       fetchProductName(saleProduct.product, index);
     });
-    
+
   }, [saleData?.sale_products]);
 
   return (
@@ -482,7 +482,7 @@ const EditSaleTabs = ({
                             <Typography
                               sx={{ fontWeight: 500, fontSize: '16px', color: 'rgba(48, 48, 48, 0.5)' }}
                             >
-                              {productNames[index] || 'Produto não encontrado'}
+                              {productNames[index] || 'Não encontramos o nome do produto'}
                             </Typography>
                           </Grid>
                         </Box>
@@ -495,7 +495,7 @@ const EditSaleTabs = ({
                               name="value"
                               fullWidth
                               value={saleProduct.value || ''}
-                              onChange={(event, newValue) => handleChange('value', newValue)}
+                              onChange={(value) => handleSaleProductsChange(index, 'value', value)}
                               {...(formErrors.value && { error: true, helperText: formErrors.value })}
                               sx={{
                                 input: {

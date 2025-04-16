@@ -59,7 +59,6 @@ const useSaleForm = (initialData, id) => {
           cost_value: saleProduct.cost_value,
           reference_value: saleProduct.reference_value,
         })) || [],
-        // product: initialData.product || null,
       });
     }
   }, [initialData]);
@@ -120,11 +119,11 @@ const useSaleForm = (initialData, id) => {
       billing_date: formData.billing_date || null,
       cancellation_reasons_ids: formData.cancellationReasonsIds,
       reference_table: formData.reference_table,
-      sale_products: formData.sale_products.map((product) => ({
-        id: product.id,
-        value: product.value,
-        cost_value: product.cost_value,
-        reference_value: product.reference_value,
+      sale_products: formData.sale_products.map((sale_product) => ({
+        id: sale_product.id,
+        value: sale_product.value,
+        cost_value: sale_product.cost_value,
+        reference_value: sale_product.reference_value,
       })),
     };
 
@@ -152,17 +151,6 @@ const useSaleForm = (initialData, id) => {
     setLoading(true);
 
     let errors = { ...formErrors };
-    // if (formData.sale_products.length === 0) {
-    //   errors.sale_products = ['O produto é obrigatório.'];
-    // } else {
-    //   delete errors.sale_products;
-    // }
-    // if (formData.sale_products.some((product) => !product.value)) {
-    //   errors.sale_products = ['O valor é obrigatório.'];
-    // }
-    // if (formData.sale_products.some((product) => !product.cost_value)) {
-    //   errors.sale_products = ['O valor de custo é obrigatório.'];
-    // }
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -171,11 +159,11 @@ const useSaleForm = (initialData, id) => {
     }
 
     const dataToSend = {
-      sale_products: formData.sale_products.map((product) => ({
-        id: product.id,
-        value: product.value,
-        cost_value: product.cost_value,
-        reference_value: product.reference_value,
+      sale_products: formData.sale_products.map((sale_product) => ({
+        id: sale_product.id,
+        value: sale_product.value,
+        cost_value: sale_product.cost_value,
+        reference_value: sale_product.reference_value,
       })),
     };
 
