@@ -15,28 +15,45 @@ import {
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import HistoryService from '@/services/historyService';
+import getContentType from '@/utils/getContentType';
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-export default function History({ contentType, objectId }) {
+export default function History({ contentType, objectId, appLabel, model }) {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [resolvedContentType, setResolvedContentType] = useState(contentType || null);
 
-  console.log('contentType: ', contentType);
-  console.log('objectId: ', objectId);
-  console.log('activities: ', activities);
+  useEffect(() => {
+    async function resolveContentType() {
+      if (!contentType && appLabel && model) {
+        try {
+          const id = await getContentType(appLabel, model);
+          setResolvedContentType(id);
+        } catch (err) {
+          console.error('Erro ao buscar content type:', err);
+          setError('Erro ao buscar o tipo de conteúdo.');
+          setLoading(false);
+        }
+      }
+    }
+
+    resolveContentType();
+  }, [contentType, appLabel, model]);
 
   useEffect(() => {
     const fetchHistory = async () => {
+      if (!resolvedContentType) return;
+
       try {
         const token = Cookies.get('access_token');
         if (!token) throw new Error('Token não encontrado.');
 
-        const data = await HistoryService.getHistory(contentType, objectId, token, true);
+        const data = await HistoryService.getHistory(resolvedContentType, objectId, token);
         setActivities(data.history || []);
       } catch (err) {
         setError(err.message || 'Erro ao carregar atividades.');
@@ -46,13 +63,13 @@ export default function History({ contentType, objectId }) {
     };
 
     fetchHistory();
-  }, [contentType, objectId]);
+  }, [resolvedContentType, objectId]);
 
-  const getInitials = (name) => name[0];
+  const getInitials = (name) => name?.[0] || '?';
 
   if (loading) {
     return (
-      <Box sx={{ display:'flex', justifyContent:'center', alignItems:'center', height:'100%', mt: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', mt: 3 }}>
         <CircularProgress />
       </Box>
     );
@@ -67,15 +84,7 @@ export default function History({ contentType, objectId }) {
   }
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        bgcolor: 'background.paper',
-        borderRadius: 2,
-        p: 2,
-        mt: 2,
-      }}
-    >
+    <Box sx={{ width: '100%', bgcolor: 'background.paper', borderRadius: 2, p: 2, mt: 2 }}>
       <Typography variant="h6" gutterBottom>Histórico de Atividades</Typography>
       <List>
         {activities.map((activity, index) => (
@@ -90,7 +99,7 @@ export default function History({ contentType, objectId }) {
             <ListItem alignItems="flex-start">
               <ListItemAvatar>
                 <Avatar sx={{ bgcolor: 'primary.main', color: 'white' }}>
-                  {activity.author ? getInitials((activity.author.complete_name?.toUpperCase() || activity.author.email?.toUpperCase()) || activity.author.username?.toUpperCase()) : '?'}
+                  {activity.author ? getInitials(activity.author.complete_name || activity.author.email || activity.author.username) : '?'}
                 </Avatar>
               </ListItemAvatar>
               <ListItemText
@@ -101,7 +110,7 @@ export default function History({ contentType, objectId }) {
                       Realizado em: {new Date(activity.timestamp).toLocaleString('pt-BR')}
                     </Typography>
                     <Typography variant="body2">
-                      Realizado por: {activity.author ? (activity.author.complete_name || activity.author.email || activity.author.username ) : '?'}
+                      Realizado por: {activity.author ? (activity.author.complete_name || activity.author.email || activity.author.username) : '?'}
                     </Typography>
                   </>
                 }
