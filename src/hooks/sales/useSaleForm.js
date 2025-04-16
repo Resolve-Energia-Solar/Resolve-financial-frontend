@@ -68,15 +68,21 @@ const useSaleForm = (initialData, id) => {
   };
 
   const handleSaleProductsChange = (index, field, value) => {
-    setFormData(prev => {
-      const updatedProducts = prev.sale_products.map((product, i) => {
-        if (i === index) {
-          return { ...product, [field]: value };
-        }
-        return product;
-      });
-      return { ...prev, sale_products: updatedProducts };
-    });
+    const updatedSaleProducts = [...formData.sale_products];
+    const fieldPath = field.replace('sale_products.', '');
+    
+    if (fieldPath.includes('.')) {
+      // Handle nested fields if needed
+      const [parent, child] = fieldPath.split('.');
+      updatedSaleProducts[index][parent][child] = value;
+    } else {
+      updatedSaleProducts[index][fieldPath] = value;
+    }
+  
+    setFormData(prev => ({
+      ...prev,
+      sale_products: updatedSaleProducts
+    }));
   };
   
 
@@ -148,42 +154,31 @@ const useSaleForm = (initialData, id) => {
   };
 
   const handleSaveSaleProducts = async () => {
+    console.log('Current formData:', formData);
     setLoading(true);
-
-    let errors = { ...formErrors };
-
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      setLoading(false);
-      return;
-    }
-
-    const dataToSend = {
-      sale_products: formData.sale_products.map((sale_product) => ({
-        id: sale_product.id,
-        value: sale_product.value,
-        cost_value: sale_product.cost_value,
-        reference_value: sale_product.reference_value,
-      })),
-    };
-
+  
     try {
-      let response;
-      if (id) {
-        response = await saleService.update(id, dataToSend);
-        enqueueSnackbar('Detalhes de produtos da venda atualizados com sucesso!', { variant: 'success' });
-      } else {
-        enqueueSnackbar('Detalhes de produtos da venda criados com sucesso!', { variant: 'success' });
-        response = await saleService.create(dataToSend);
-      } 
+      const dataToSend = {
+        sale_products: formData.sale_products.map(product => ({
+          value: product.value,
+          cost_value: product.cost_value,
+          reference_value: product.reference_value
+        }))
+      };
+  
+      console.log('data being sent:', dataToSend); 
+      
+      const response = await saleProductsService.update(id, dataToSend);
+      console.log('response:', response);
+      
       setFormErrors({});
-      setSuccess(true);
-      setSuccessData(response);
+      enqueueSnackbar('Informações atualizadas com sucesso!', { variant: 'success' });
+      return response;
     } catch (err) {
-      setSuccess(false);
-      setSuccessData(null);
+      console.error('Erro ao salvar alterações:', err);
       setFormErrors(err.response?.data || {});
-      console.log(err.response?.data || err);
+      enqueueSnackbar('Erro ao salvar alterações', { variant: 'error' });
+      throw err;
     } finally {
       setLoading(false);
     }

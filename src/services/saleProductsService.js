@@ -1,6 +1,6 @@
 import apiClient from './apiClient';
 
-const DEFAULT_ROUTER = '/api/sales-products';
+const DEFAULT_ROUTER = '/api/sale-products';
 const saleProductsService = {
   index: async (params) => {
     try {

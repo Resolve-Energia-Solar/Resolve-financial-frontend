@@ -495,7 +495,7 @@ const EditSaleTabs = ({
                               name="value"
                               fullWidth
                               value={saleProduct.value || ''}
-                              onChange={(value) => handleSaleProductsChange(index, 'value', value)}
+                              onChange={(value) => handleSaleProductsChange(index, 'sale_products.value', value)}
                               {...(formErrors.value && { error: true, helperText: formErrors.value })}
                               sx={{
                                 input: {
@@ -522,7 +522,7 @@ const EditSaleTabs = ({
                               name="cost_value"
                               fullWidth
                               value={saleProduct.cost_value || ''}
-                              onChange={(value) => handleSaleProductsChange(index, 'cost_value', value)}
+                              onChange={(value) => handleSaleProductsChange(index, 'sale_products.cost_value', value)}
                               {...(formErrors.cost_value && { error: true, helperText: formErrors.cost_value })}
                               sx={{
                                 input: {
@@ -549,7 +549,7 @@ const EditSaleTabs = ({
                               name="reference_value"
                               fullWidth
                               value={saleProduct.reference_value || ''}
-                              onChange={(value) => handleSaleProductsChange(index, 'reference_value', value)}
+                              onChange={(value) => handleSaleProductsChange(index, 'sale_products.reference_value', value)}
                               {...(formErrors.reference_value && { error: true, helperText: formErrors.reference_value })}
                               sx={{
                                 input: {
