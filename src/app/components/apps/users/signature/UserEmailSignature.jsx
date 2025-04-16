@@ -69,8 +69,8 @@ const EmailSignature = ({ user }) => {
                 <h1 id="username">{displayName}</h1>
                 <h2>{user.employee.role.name}</h2>
                 <h3 id="telephone">
-                  ({mainPhone?.area_code}) {mainPhone?.phone_number.slice(0, 4)}-
-                  {mainPhone?.phone_number.slice(4)}
+                  ({mainPhone?.area_code}) {mainPhone?.phone_number.slice(0, 5)}-
+                  {mainPhone?.phone_number.slice(5)}
                 </h3>
                 <h3 id="instagram">@resolveenergiasolar</h3>
                 <h3 id="email">{user.email}</h3>
