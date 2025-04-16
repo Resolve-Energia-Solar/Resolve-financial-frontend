@@ -423,11 +423,7 @@ const CommercialScheduleDetail = ({ schedule }) => {
             <Comment appLabel={'field_services'} model={'schedule'} objectId={scheduleId} />
           )}
           {tabValue === 2 && (
-            <Box p={2}>
-              <Typography variant="body1">
-                Em breve, você verá o histórico de alterações deste agendamento.
-              </Typography>
-            </Box>
+            <History appLabel={'field_services'} model={'schedule'} objectId={scheduleId}/>
           )}
         </Box>
       </Paper>
