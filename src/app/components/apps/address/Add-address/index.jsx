@@ -716,7 +716,7 @@ const CreateAddressPage = ({
         </DialogTitle>
         <DialogContent>
           <DialogContentText sx={{ px: 1 }}>
-            <strong style={{ fontSize: '1.3em' }}>Atenção:</strong> este endereço será utilizado exatamente como informado para definir a rota do motorista. Verifique se a localização no mapa está correta.
+            <strong style={{ fontSize: '1.3em' }}>Atenção:</strong> este endereço será utilizado exatamente como informado para definir a rota do motorista e para instalação do projeto. Verifique se a localização no mapa está correta.
           </DialogContentText>
           <FormControlLabel
             control={
