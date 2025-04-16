@@ -97,6 +97,8 @@ const UpdateSchedulePage = () => {
             'parent_schedules',
             'status',
             'attachments',
+            'service_opinion',
+            'final_service_opinion',
           ],
           expand: ['service'],
         })
@@ -107,6 +109,8 @@ const UpdateSchedulePage = () => {
             schedule_end_date: data.schedule_end_date ? data.schedule_end_date.split('T')[0] : '',
             schedule_end_time: data.schedule_end_time || '',
             service: data.service,
+            service_opinion: data.service_opinion,
+            final_service_opinion: data.final_service_opinion,
             customer: data.customer,
             project: data.project,
             schedule_agent: data.schedule_agent,
@@ -212,38 +216,44 @@ const UpdateSchedulePage = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
-    // Campos obrigatórios
-    const requiredFields = ['schedule_date', 'schedule_start_time', 'schedule_end_date', 'schedule_end_time', 'service', 'customer', 'branch', 'address'];
-
-    // Verificar se todos os campos obrigatórios estão preenchidos
+  
+    const requiredFields = [
+      'schedule_date', 
+      'schedule_start_time', 
+      'schedule_end_date', 
+      'schedule_end_time', 
+      'service', 
+      'customer', 
+      'branch', 
+      'address'
+    ];
+  
     for (const field of requiredFields) {
       if (!formData[field]) {
         enqueueSnackbar(`${fieldLabels[field]} é obrigatório.`, { variant: 'error' });
         setLoading(false);
-        return; // Impede o envio se algum campo obrigatório estiver faltando
+        return;
       }
     }
-
-    // Prepara os dados para envio
+  
     const submitData = {
       ...formData,
-      service: formData.service?.id,
-      customer: formData.customer?.value || null,
-      project: formData.project?.value,
-      schedule_agent: formData.schedule_agent?.value,
-      branch: formData.branch?.value || null,
-      address: formData.address || null,
+      service: formData.service?.id || formData.service?.value || null,
+      customer: formData.customer?.value || formData.customer || null,
+      project: formData.project?.value || formData.project || null,
+      schedule_agent: formData.schedule_agent?.value || formData.schedule_agent || null,
+      branch: formData.branch?.value || formData.branch || null,
+      address: formData.address?.value || formData.address || null,
       schedule_creator: user.id,
       status: formData.status,
-      service_opinion: formData.service_opinion?.value,
-      final_service_opinion: formData.final_service_opinion?.value,
-      products: formData.products ? [formData.products] : [],
+      service_opinion: formData.service_opinion?.value || formData.service_opinion || null,
+      final_service_opinion: formData.final_service_opinion?.value || formData.final_service_opinion || null,
+      products: formData.product?.value ? [formData.product?.value] : formData.product ? [formData.product] : [],
       parent_schedules: Array.isArray(formData.parent_schedules)
-        ? formData.parent_schedules.filter((ps) => ps && ps.value).map((ps) => ps.value)
-        : [],
+      ? formData.parent_schedules.filter((ps) => ps).map((ps) => ps.value || ps)
+      : [],
     };
-
+  
     try {
       await scheduleService.updateSchedule(id, submitData);
       router.push('/apps/schedules');
@@ -258,7 +268,7 @@ const UpdateSchedulePage = () => {
       setLoading(false);
     }
   };
-
+  
   const breadcrumbItems = [
     { to: '/', title: 'Início' },
     { to: '/apps/schedules', title: 'Agendamentos' },
