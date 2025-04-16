@@ -363,8 +363,7 @@ const EditSaleTabs = ({
                   </Grid>
                 </HasPermission>
 
-                {(formData.status === 'D' || formData.status === 'C') &&
-                  formData.isSale === false && (
+                {(formData.status === 'D' || formData.status === 'C') && (
                     <Grid item xs={12} sm={12} lg={8}>
                       <CustomFormLabel htmlFor="Motivo">
                         Motivo do {formData.status === 'C' ? 'Cancelamento' : 'Distrato'}
