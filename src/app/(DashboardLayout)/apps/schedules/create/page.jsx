@@ -53,10 +53,36 @@ const CreateSchedulePage = () => {
 
   const handleInputChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  const fieldLabels = {
+    schedule_date: 'Data do Agendamento',
+    schedule_start_time: 'Horário de Início',
+    schedule_end_date: 'Data Final',
+    schedule_end_time: 'Horário Final',
+    service: 'Serviço',
+    customer: 'Cliente',
+    project: 'Projeto',
+    schedule_agent: 'Agente',
+    branch: 'Unidade',
+    address: 'Endereço',
+    observation: 'Observação',
+    schedule_creator: 'Criador do Agendamento',
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    const requiredFields = ['schedule_date', 'schedule_start_time', 'schedule_end_date', 'schedule_end_time', 'service', 'customer', 'branch', 'address'];
+
+    for (const field of requiredFields) {
+      if (!formData[field]) {
+        enqueueSnackbar(`${fieldLabels[field]} é obrigatório.`, { variant: 'error' });
+        setLoading(false);
+        return;
+      }
+    }
+
     const submitData = {
       ...formData,
       service: formData.service?.value,
@@ -70,20 +96,6 @@ const CreateSchedulePage = () => {
       parent_schedules: Array.isArray(formData.parent_schedules)
         ? formData.parent_schedules.filter((ps) => ps && ps.value).map((ps) => ps.value)
         : [],
-    };
-    const fieldLabels = {
-      schedule_date: 'Data do Agendamento',
-      schedule_start_time: 'Horário de Início',
-      schedule_end_date: 'Data Final',
-      schedule_end_time: 'Horário Final',
-      service: 'Serviço',
-      customer: 'Cliente',
-      project: 'Projeto',
-      schedule_agent: 'Agente',
-      branch: 'Unidade',
-      address: 'Endereço',
-      observation: 'Observação',
-      schedule_creator: 'Criador do Agendamento',
     };
 
     try {
