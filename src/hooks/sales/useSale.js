@@ -40,8 +40,8 @@ const useSale = (id) => {
             "projects.units",
             "comments",
             "sale_products",
-            // "product.name",
-            // "sale.product"
+            "product.name",
+            "sale.product"
             // "sale_products.product",
           ],
           fields: [
@@ -96,7 +96,18 @@ const useSale = (id) => {
     fetchSale();
   };
 
-  return { loading, fetchSale, error, saleData, handleRowClick, openDrawer, setOpenDrawer, rowSelected, toggleDrawerClosed, reload };
+  return { 
+    loading, 
+    fetchSale, 
+    error, 
+    saleData, 
+    handleRowClick, 
+    openDrawer, 
+    setOpenDrawer, 
+    rowSelected, 
+    toggleDrawerClosed, 
+    reload 
+  };
 };
 
 export default useSale;
