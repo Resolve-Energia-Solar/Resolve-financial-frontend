@@ -53,7 +53,6 @@ export default function InvoiceList({ onClick }) {
     try {
       const response = await paymentService.getIndicators({ ...filters });
       console.log('Indicadores:', response);
-      // Supondo que a resposta seja { data: { installments: { ... }, consistency: { ... } } }
       setIndicators(response.indicators);
     } catch (err) {
       console.error('Erro ao carregar indicadores:', err);
@@ -140,6 +139,23 @@ export default function InvoiceList({ onClick }) {
         { value: 'L', label: 'Liberado' },
         { value: 'C', label: 'Concluído' },
         { value: 'CA', label: 'Cancelado' },
+      ],
+    },
+    {
+      key: 'payments_types__in',
+      label: 'Tipos de Pagamento',
+      type: 'multiselect',
+      options: [
+        { value: 'C', label: 'Crédito' },
+        { value: 'D', label: 'Débito' },
+        { value: 'B', label: 'Boleto' },
+        { value: 'F', label: 'Financiamento' },
+        { value: 'PI', label: 'Parcelamento interno' },
+        { value: 'P', label: 'Pix' },
+        { value: 'T', label: 'Transferência Bancária' },
+        { value: 'DI', label: 'Dinheiro' },
+        { value: 'PA', label: 'Poste auxiliar' },
+        { value: 'RO', label: 'Repasse de Obra' },
       ],
     },
     // {

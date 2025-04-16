@@ -5,7 +5,7 @@ export default function useFinancialRecordForm() {
   const [formData, setFormData] = useState({
     client_supplier_code: '',
     client_supplier_name: '',
-    requesting_department_id: '',
+    requesting_department: '',
     department_code: '',
     department_name: '',
     category_code: '',

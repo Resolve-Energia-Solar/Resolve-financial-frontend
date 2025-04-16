@@ -29,14 +29,14 @@ import ProductService from '@/services/productsService';
 import ListProducts from './ListProducts';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
-export function ProjectCard({ leadId = null, products = [] }) {
+export function ProductsCard({ leadId = null, products = [] }) {
   const dispatch = useDispatch();
   const [dialogProductOpen, setDialogProductOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const [dialogExistingProductOpen, setDialogExistingProductOpen] = useState(false);
-
+  
   const customProducts = useSelector(selectProductsByLead(leadId));
 
   const addCustomProduct = (product) => {
@@ -65,7 +65,6 @@ export function ProjectCard({ leadId = null, products = [] }) {
   return (
     <Grid
       container
-      spacing={0}
       sx={{
         borderRadius: '12px',
         border: '1px solid #E0E0E0',
@@ -77,8 +76,8 @@ export function ProjectCard({ leadId = null, products = [] }) {
         container
         alignItems={'center'}
         spacing={0}
-        justifyContent={'space-between'}
-        sx={{ minHeight: 300 }}
+        sx={{ minHeight: 200 }}
+        // justifyContent={"space-between"}
       >
         <Grid
           item
@@ -86,12 +85,12 @@ export function ProjectCard({ leadId = null, products = [] }) {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
             gap: 1,
             mb: 1,
           }}
         >
-          <Grid item xs={1}>
+          <Grid item  sx={{ display: "flex", justifyContent: "flex-start"}}>
             <img
               src={'/images/svgs/solar-panel-icon-with-circle.png'}
               alt={'solar panel icon'}
@@ -99,19 +98,18 @@ export function ProjectCard({ leadId = null, products = [] }) {
                 width: 36,
                 height: 36,
                 borderRadius: 0,
-                mr: 1,
               }}
             />
           </Grid>
 
-          <Grid item xs={11}>
-            <Typography sx={{ fontWeight: '700', fontSize: '14px' }}>Projeto 01</Typography>
+          <Grid item sx={{ display: "flex", justifyContent: "flex-start"}}>
+            <Typography sx={{ fontWeight: '700', fontSize: "14px" }}>Proposta</Typography>
           </Grid>
         </Grid>
 
         <Grid container xs={12} sx={{ mb: 1, mt: 2 }}>
           <Grid item xs={10}>
-            <Typography sx={{ fontWeight: '700', fontSize: '12px' }}>Kit Sol Feliz</Typography>
+            <Typography sx={{ fontWeight: '700', fontSize: "12px" }}>Produto</Typography>
           </Grid>
           <Grid
             item
@@ -185,11 +183,8 @@ export function ProjectCard({ leadId = null, products = [] }) {
           </Grid>
         </Grid>
 
-        <Grid
-          item
-          xs={12}
-          sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 2 }}
-        >
+
+        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 2, mt: 2 }}>
           <IconButton
             sx={{
               p: 0,
@@ -197,6 +192,7 @@ export function ProjectCard({ leadId = null, products = [] }) {
               fontSize: 14,
               display: 'flex',
               alignItems: 'center',
+              justifyContent: "flex-start",
               gap: 0.5,
               transition: '0.3s',
               '&:hover': {
@@ -217,6 +213,7 @@ export function ProjectCard({ leadId = null, products = [] }) {
               fontSize: 14,
               display: 'flex',
               alignItems: 'center',
+              justifyContent: "flex-start",
               gap: 0.5,
               transition: '0.3s',
               '&:hover': {
@@ -341,4 +338,4 @@ export function ProjectCard({ leadId = null, products = [] }) {
   );
 }
 
-export default ProjectCard;
+export default ProductsCard;

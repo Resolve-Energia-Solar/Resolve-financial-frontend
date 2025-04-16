@@ -150,9 +150,22 @@ const GenericAutocomplete = ({
               maxHeight: '80vh',
             },
           }}
+          PaperProps={{
+            sx: {
+              borderRadius: '20px',
+              padding: '24px',
+              gap: '24px',
+              boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+              backgroundColor: '#FFFFFF',
+              height: "643px",
+              width: "889px",
+              p: 2,
+            },
+          }}
         >
-          <DialogTitle>{addTitle}</DialogTitle>
-          <DialogContent dividers>
+          {/* <DialogTitle>{addTitle}</DialogTitle> */}
+          {/* <DialogContent dividers> */}
+          <DialogContent>
             <AddComponent onClose={handleAddModalClose} onAdd={handleOnAdd} />
           </DialogContent>
         </Dialog>

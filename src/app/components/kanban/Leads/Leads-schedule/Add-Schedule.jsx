@@ -1,5 +1,5 @@
 'use client';
-import { Grid, Typography, Stack, CircularProgress, Button } from '@mui/material';
+import { Grid, Typography, Stack, CircularProgress, Button, InputAdornment, Box, TextField, Select, MenuItem, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
@@ -16,6 +16,10 @@ import { useSelector } from 'react-redux';
 import AutoCompleteUser from '@/app/components/apps/invoice/components/auto-complete/Auto-Input-User';
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
 import GenericAutocomplete from '@/app/components/auto-completes/GenericAutoComplete';
+
+import { IconAlarm } from '@tabler/icons-react';
+import { Autocomplete } from 'formik-mui';
+
 
 function LeadAddSchedulePage({
   leadId = null,
@@ -35,6 +39,9 @@ function LeadAddSchedulePage({
     success,
   } = useScheduleForm();
   formData.leads_ids = [...new Set([...(formData.leads_ids || []), leadId])];
+
+  const user = useSelector((state) => state.user?.user);
+  formData?.seller ? null : handleChange('seller', user?.id);
 
   const MIN_SCHEDULE_DATE = '2022-01-17T00:00:00';
 
@@ -127,125 +134,415 @@ function LeadAddSchedulePage({
   };
 
   const [selectedAddresses, setSelectedAddresses] = useState([]);
+  const theme = useTheme();
+  const scheduleAgentsMockArray = [
+    {code: "F", label: "Fulano"},
+    {code: "C", label: "Ciclano"},
+  ]
 
   return (
-    <Grid container spacing={1}>
-      <Typography variant="h3" sx={{ fontWeight: 800 }}>
-        Agende uma visita
-      </Typography>
-      <Typography variant="body1" sx={{ color: '#ADADAD', mt: 2 }}>
-        Selecione data, horário e selecione o endereço do cliente para criar o agendamento.
-      </Typography>
-
-      {serviceId ? null : (
-        <Grid item xs={12}>
-          <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
-          <AutoCompleteServiceCatalog
-            onChange={(id) => handleChange('service_id', id)}
-            value={formData.service_id}
-            {...(formErrors.service_id && {
-              error: true,
-              helperText: formErrors.service_id,
-            })}
-          />
+    <Grid container spacing={0}>
+      <Grid item xs={12} sx={{ display: 'flex', justifyContent: "flex-start", flexDirection: 'column' }}>
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
+          <Grid item xs={12}>
+            <Typography sx={{ fontSize: "24px", fontWeight: 700, color: "#303030" }}>
+              Agende uma visita
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography sx={{ fontSize: "14px", fontWeight: 400, color: "#98959D" }}>
+              Selecione data, horário e selecione o endereço do cliente para criar o agendamento.
+            </Typography>
+          </Grid>
         </Grid>
-      )}
 
-      <Grid item xs={12}>
-        <CustomFormLabel htmlFor="address">Endereço</CustomFormLabel>
-        <GenericAutocomplete
-          label="Endereço"
-          fetchOptions={fetchAddress}
-          multiple
-          AddComponent={CreateAddressPage}
-          getOptionLabel={(option) =>
-            `${option.street}, ${option.number} - ${option.city}, ${option.state}`
-          }
-          onChange={(selected) => {
-            setSelectedAddresses(selected);
-            console.log(selected);
-            const ids = Array.isArray(selected) ? selected.map((item) => item.id) : [];
-            handleChange('addresses_ids', ids);
-          }}
-          value={selectedAddresses}
-          {...(formErrors.addresses && {
-            error: true,
-            helperText: formErrors.addresses,
-          })}
-        />
-      </Grid>
-
-      <Grid item xs={12} sm={12} lg={6}>
-        <FormDate
-          label="Data"
-          name="start_datetime"
-          value={formData.schedule_date}
-          onChange={(newValue) => validateChange('schedule_date', newValue)}
-          {...(formErrors.schedule_date && {
-            error: true,
-            helperText: formErrors.schedule_date,
-          })}
-        />
-      </Grid>
-
-      <Grid item xs={12} sm={12} lg={6}>
-        <FormSelect
-          options={timeOptions}
-          onChange={(e) => validateChange('schedule_start_time', e.target.value)}
-          disabled={!formData.schedule_date}
-          value={formData.schedule_start_time || ''}
-          {...(formErrors.schedule_start_time && {
-            error: true,
-            helperText: formErrors.schedule_start_time,
-          })}
-          label={'Hora'}
-        />
-      </Grid>
-
-      {/* Status do Agendamento */}
-      <HasPermission
-        permissions={['field_services.change_status_schedule_field']}
-        userPermissions={userPermissions}
-      >
-        <Grid item xs={12}>
-          <FormSelect
-            label="Status do Agendamento"
-            options={statusOptions}
-            onChange={(e) => handleChange('status', e.target.value)}
-            value={formData.status || ''}
-            {...(formErrors.status && { error: true, helperText: formErrors.status })}
-          />
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
+          {serviceId ? null : (
+            <Grid item xs={12}>
+              <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
+              <AutoCompleteServiceCatalog
+                onChange={(id) => handleChange('service_id', id)}
+                value={formData.service_id}
+                {...(formErrors.service_id && {
+                  error: true,
+                  helperText: formErrors.service_id,
+                })}
+              />
+            </Grid>
+          )}
         </Grid>
-      </HasPermission>
-      <Grid item xs={12} sm={12} lg={12}>
-        <CustomFormLabel htmlFor="name">Observação</CustomFormLabel>
-        <CustomTextField
-          name="observation"
-          placeholder="Observação do agendamento"
-          variant="outlined"
-          fullWidth
-          multiline
-          rows={4}
-          value={formData.observation}
-          onChange={(e) => handleChange('observation', e.target.value)}
-          {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
-        />
-      </Grid>
 
-      {/* Botão de Ação*/}
-      <Grid item xs={12} sm={12} lg={12}>
-        <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: '#FFCC00', color: '#000', p: 1 }}
-            fullWidth
-            onClick={handleSaveForm}
-            disabled={formLoading}
-            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
+          <Grid item xs={12} sm={12} lg={6}>
+            <Box sx={{ minWidth: 385 }}>
+              <CustomFormLabel
+                htmlFor="project"
+                sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+              >
+                Projeto
+              </CustomFormLabel>
+              <Select
+                value={formData.project}
+                onChange={(e) => handleChange(e.target.value)}
+                fullWidth
+                size="medium"
+                sx={{ 
+                  backgroundColor: '#F4F5F7', 
+                  borderRadius: '8px', 
+                  border: '1px solid #3E3C41',
+                  borderRadius: '9px', 
+                
+                }}
+                displayEmpty
+              >
+                <MenuItem value="" sx={{ color: '#7E8388' }} disabled>
+                  Selecione um projeto
+                </MenuItem>
+                {formData.project && formData.project.map((project, index) => (
+                  <MenuItem
+                    key={index}
+                    value={project.id}
+                    sx={{ color: '#7E8388' }}
+                  >
+                    {project.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Box>
+          </Grid>
+
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel
+              htmlFor="address"
+              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+            >
+              Endereço
+            </CustomFormLabel>
+            <GenericAutocomplete
+              fetchOptions={fetchAddress}
+              multiple
+              label=''
+              size="small"
+              AddComponent={CreateAddressPage}
+              getOptionLabel={(option) =>
+                `${option.street}, ${option.number} - ${option.city}, ${option.state}`
+              }
+              onChange={(selected) => {
+                setSelectedAddresses(selected);
+                console.log(selected);
+                const ids = Array.isArray(selected) ? selected.map((item) => item.id) : [];
+                handleChange('addresses_ids', ids);
+              }}
+              value={selectedAddresses}
+              {...(formErrors.addresses && {
+                error: true,
+                helperText: formErrors.addresses,
+              })}
+              sx={{
+                input: {
+                color: '#7E92A2',
+                fontWeight: '400',
+                fontSize: '12px',
+                opacity: 1,
+                },
+                '& .MuiOutlinedInput-root': {
+                  border: '1px solid #3E3C41',
+                  borderRadius: '9px',
+                },
+                '& .MuiInputBase-input': {
+                  padding: '12px',
+                },
+              }}
+            />
+          </Grid>
+
+        </Grid>
+
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel
+              htmlFor="start_datetime"
+              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+            >
+              Agente Vistoria
+            </CustomFormLabel>
+            {formData.schedule_agent && formData.schedule_agent.length > 0 ? (
+              formData.schedule_agent.map((agent, index) => (
+                <Autocomplete
+                  key={index}
+                  options={formData.schedule_agent} 
+                  value={agent || null} 
+                  onChange={(e, newValue) => {
+                    const updatedAgents = [...formData.schedule_agent];
+                    updatedAgents[index] = newValue;
+                    handleChange('schedule_agent', updatedAgents); 
+                  }}
+                  getOptionLabel={(option) => option.label || 'N/A'}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Selecione o agente de vistoria" />
+                  )}
+                  sx={{
+                    input: {
+                      color: '#7E92A2',
+                      fontWeight: '400',
+                      fontSize: '14px',
+                      opacity: 1,
+                    },
+                    '& .MuiOutlinedInput-root': {
+                      border: '1px solid #3E3C41',
+                      borderRadius: '9px',
+                    },
+                  }}
+                />
+              ))
+            ) : (
+              <Typography sx={{ color: '#7E92A2', fontSize: '14px', mt: 2.5                 }}>
+                Nenhum agente de vistoria disponível.
+              </Typography>
+            )}
+          </Grid>
+
+
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel
+              htmlFor="start_datetime"
+              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+            >
+              Supervisor
+            </CustomFormLabel>
+            {formData.schedule_creator && formData.schedule_creator.length > 0 ? (
+              formData.schedule_creator.map((agent, index) => (
+                <Autocomplete
+                  key={index}
+                  options={formData.schedule_creator} 
+                  value={agent || null} 
+                  onChange={(e, newValue) => {
+                    const updatedAgents = [...formData.schedule_creator];
+                    updatedAgents[index] = newValue;
+                    handleChange('schedule_creator', updatedAgents); 
+                  }}
+                  getOptionLabel={(option) => option.label || 'N/A'}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Selecione o supervisor" />
+                  )}
+                  sx={{
+                    input: {
+                      color: '#7E92A2',
+                      fontWeight: '400',
+                      fontSize: '14px',
+                      opacity: 1,
+                    },
+                    '& .MuiOutlinedInput-root': {
+                      border: '1px solid #3E3C41',
+                      borderRadius: '9px',
+                    },
+                  }}
+                />
+              ))
+            ) : (
+              <Typography sx={{ color: '#7E92A2', fontSize: '14px', mt: 2.5                 }}>
+                Nenhum supervisor disponível.
+              </Typography>
+            )}
+          </Grid>
+        </Grid>
+
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
+          <Grid item xs={12} sm={12} lg={4}>
+            <CustomFormLabel
+              htmlFor="start_datetime"
+              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+            >
+              Data
+            </CustomFormLabel>
+            <FormDate
+              name="start_datetime"
+              value={formData.schedule_date}
+              onChange={(newValue) => validateChange('schedule_date', newValue)}
+              {...(formErrors.schedule_date && {
+                error: true,
+                helperText: formErrors.schedule_date,
+              })}
+              sx={{
+                input: {
+                  color: '#7E92A2',
+                  fontWeight: '400',
+                  fontSize: '14px',
+                  opacity: 1,
+                },
+                '& .MuiOutlinedInput-root': {
+                  border: '1px solid #3E3C41',
+                  borderRadius: '9px',
+                },
+              }}
+            />
+          </Grid>
+
+
+          <Grid item xs={12} sm={12} lg={4}>
+            <CustomFormLabel
+              htmlFor="start_datetime"
+              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+            >
+              Horário
+            </CustomFormLabel>
+            <FormSelect
+              options={timeOptions}
+              onChange={(e) => validateChange('schedule_start_time', e.target.value)}
+              value={formData.schedule_start_time || ''}
+              {...(formErrors.schedule_start_time && {
+                error: true,
+                helperText: formErrors.schedule_start_time,
+              })}
+              sx={{
+                '& .MuiInputBase-formControl': {
+                  border: '1px solid #3E3C41 !important',
+                  borderRadius: '9px',
+                  '&:hover': {
+                    borderColor: '#3E3C41 !important',
+                  },
+                },
+                '& .MuiSelect-select': {
+                  color: '#7E92A2',
+                  fontWeight: '400',
+                  fontSize: '14px',
+                  opacity: 1,
+                },
+              }}
+              startAdornment={
+                <InputAdornment position="start">
+                  <IconAlarm color={theme.palette.primary.main} position='absolute' left='10px' top='50%' />
+                </InputAdornment>
+              }
+            />
+          </Grid>
+
+
+          <Grid item xs={12} sm={12} lg={4}>
+            <CustomFormLabel
+              htmlFor="seller"
+              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px', mb: 0, mt: 1.5 }}
+            >
+              Vendedor
+            </CustomFormLabel>
+            <AutoCompleteUser
+              size="small"
+              onChange={(id) => handleChange('seller', id)}
+              value={formData.seller}
+              {...(formErrors.seller && { error: true, helperText: formErrors.seller })}
+              sx={{
+                width: '100%',  
+                '& .MuiAutocomplete-input': {
+                  height: '40px', 
+                  padding: '12px',
+                  fontSize: '12px', 
+                },
+                '& .MuiInputBase-root': {
+                  height: "50px",
+                  border: '1px solid #3E3C41', 
+                  borderRadius: '9px',
+                  mt: 0 
+                },
+                '& .MuiAutocomplete-endAdornment': {
+                  padding: '5px', 
+                },
+                '& .MuiAutocomplete-listbox': {
+                  maxHeight: '200px',  
+                },
+              }}
+            />
+          </Grid>
+        </Grid>
+
+        {/* Status do Agendamento */}
+        {/* <HasPermission
+          permissions={['field_services.change_status_schedule_field']}
+          userPermissions={userPermissions}
+        >
+          <Grid item xs={12} sm={12} lg={12}>
+            <CustomFormLabel
+              htmlFor="status"
+              sx={{ color: '#303030', fontWeight: '700', fontSize: '16px' }}
+            >
+              Status
+            </CustomFormLabel>
+            <FormSelect
+              options={statusOptions}
+              onChange={(e) => handleChange('status', e.target.value)}
+              value={formData.status || ''}
+              {...(formErrors.status && { error: true, helperText: formErrors.status })}
+            />
+          </Grid>
+        </HasPermission> */}
+
+        <Grid item xs={12} sm={12} lg={12}>
+          <CustomFormLabel
+            htmlFor="observation"
+            sx={{
+              color: '#303030',
+              fontWeight: '700',
+              fontSize: '16px',
+              marginBottom: 0,
+            }}
           >
-            Agendar visita
-          </Button>
-        </Stack>
+            Observação
+          </CustomFormLabel>
+          <CustomTextField
+            name="observation"
+            placeholder="Observação do agendamento"
+            variant="outlined"
+            fullWidth
+            multiline
+            rows={1}
+            value={formData.observation}
+            onChange={(e) => handleChange('observation', e.target.value)}
+            {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
+            sx={{
+              mt: 1,
+              '& .MuiInputBase-root': {
+                overflow: 'auto',
+                wordWrap: 'break-word',
+                height: "100%"
+              },
+              '& .MuiOutlinedInput-root': {
+                border: '1px solid #3E3C41',
+                borderRadius: '9px',
+              },
+              input: {
+                color: '#7E92A2',
+                fontWeight: '400',
+                fontSize: '12px',
+                opacity: 1,
+              },
+              '& .MuiInputBase-input::placeholder': {
+                color: "#B2AFB6",
+              }
+            }}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={12} lg={12}>
+          <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                color: '#000',
+                p: 1,
+                height: "56px",
+                '&:hover': {
+                  color: theme.palette.primary.light,
+                }
+              }}
+              fullWidth
+              onClick={handleSaveForm}
+              disabled={formLoading}
+              endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+            >
+              Agendar visita
+            </Button>
+          </Stack>
+        </Grid>
       </Grid>
     </Grid>
   );

@@ -77,10 +77,10 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
 
   useEffect(() => {
     const fetchInitialAgent = async () => {
-      if (formData.schedule_agent_id) {
+      if (formData.schedule_agent) {
         try {
-          const response = await userService.getUserByIdQuery(formData.schedule_agent_id, {
-            category: formData.category_id,
+          const response = await userService.getUserByIdQuery(formData.schedule_agent, {
+            category: formData.category,
             scheduleDate: formData.schedule_date,
             scheduleStartTime: formData.schedule_start_time,
             scheduleEndTime: formData.schedule_end_time,
@@ -135,7 +135,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         const response = await serviceOpinionsService.index({
           limit: 5,
           page: 1,
-          service: formData.service_id,
+          service: formData.service,
           is_final_opinion: true,
         });
 
@@ -147,7 +147,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
       }
     };
 
-    if (formData.service_id !== null) {
+    if (formData.service !== null) {
       fetchServiceOpinions();
     }
   }, [formData]);
@@ -256,11 +256,11 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
             <Grid item xs={12} sm={12} lg={6}>
               <CustomFormLabel htmlFor="client">Cliente</CustomFormLabel>
               <AutoCompleteUser
-                onChange={(id) => handleChange('customer_id', id)}
-                value={formData.customer_id}
-                {...(formErrors.customer_id && {
+                onChange={(id) => handleChange('customer', id)}
+                value={formData.customer}
+                {...(formErrors.customer && {
                   error: true,
-                  helperText: formErrors.customer_id,
+                  helperText: formErrors.customer,
                 })}
               />
             </Grid>
@@ -282,7 +282,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         </Grid>
 
         {/* Hora do Agendamento */}
-        {formData?.service_id == SERVICE_INSPECTION_ID ? (
+        {formData?.service == SERVICE_INSPECTION_ID ? (
           <Grid item xs={12} sm={12} lg={6}>
             <FormSelect
               options={timeOptions}
@@ -334,9 +334,9 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         <Grid item xs={12} sm={12} lg={6}>
           <CustomFormLabel htmlFor="name">Endereço</CustomFormLabel>
           <AutoCompleteAddress
-            onChange={(id) => handleChange('address_id', id)}
-            value={formData.address_id}
-            {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
+            onChange={(id) => handleChange('address', id)}
+            value={formData.address}
+            {...(formErrors.address && { error: true, helperText: formErrors.address })}
           />
         </Grid>
 
@@ -372,11 +372,11 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
               </Tooltip>
             </CustomFormLabel>
             <AutoCompleteUserSchedule
-              onChange={(id) => handleChange('schedule_agent_id', id)}
-              value={formData.schedule_agent_id}
-              disabled={!formData.category_id}
+              onChange={(id) => handleChange('schedule_agent', id)}
+              value={formData.schedule_agent}
+              disabled={!formData.category}
               query={{
-                category: formData.category_id,
+                category: formData.category,
                 scheduleDate: formData.schedule_date,
                 scheduleStartTime: formData.schedule_start_time,
                 scheduleEndTime: formData.schedule_end_time,
@@ -384,9 +384,9 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
                 scheduleLongitude: formData.longitude,
               }}
               initialValue={initialAgent} // Passa o inspetor inicial ao autocomplete
-              {...(formErrors.schedule_agent_id && {
+              {...(formErrors.schedule_agent && {
                 error: true,
-                helperText: formErrors.schedule_agent_id,
+                helperText: formErrors.schedule_agent,
               })}
             />
           </Grid>

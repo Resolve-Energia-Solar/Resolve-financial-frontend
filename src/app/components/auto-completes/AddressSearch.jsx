@@ -1,7 +1,9 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, Paper, List, ListItem, ListItemText } from '@mui/material';
+import { Box, TextField, Paper, List, ListItem, ListItemText, Grid, Tooltip, IconButton } from '@mui/material';
 import { useJsApiLoader } from '@react-google-maps/api';
+import CustomFormLabel from '../forms/theme-elements/CustomFormLabel';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 const libraries = ['places'];
 
@@ -32,25 +34,47 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
   // Estado para as sugestões
   const [predictions, setPredictions] = useState([]);
 
+  const zipCodePattern = /^[0-9]{5}-?[0-9]{3}$/;
+
   // Efeito que faz a busca
   useEffect(() => {
     if (isLoaded && window.google && value.length > 2 && shouldSearch) {
       const service = new window.google.maps.places.AutocompleteService();
-      service.getPlacePredictions(
-        {
-          input: value,
-          componentRestrictions: { country: 'br' },
-          types: ['address'],
-        },
-        (preds, status) => {
-          console.log('Predictions:', preds, status);
-          if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-            setPredictions(preds);
-          } else {
-            setPredictions([]);
+
+      if (zipCodePattern.test(value) && value.length <= 8) {
+
+        service.getPlacePredictions(
+          {
+            input: value,
+            componentRestrictions: { country: 'br' },
+            types: ['(regions)'],
+          },
+          (preds, status) => {
+            console.log('Predictions:', preds, status);
+            if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+              setPredictions(preds);
+            } else {
+              setPredictions([]);
+            }
           }
-        }
-      );
+        );
+      } else if (value.length > 8) {
+        service.getPlacePredictions(
+          {
+            input: value,
+            componentRestrictions: { country: 'br' },
+            types: ['address'],
+          },
+          (preds, status) => {
+            if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+              setPredictions(preds);
+            } else {
+              setPredictions([]);
+            }
+          }
+        );
+      }
+
     } else {
       setPredictions([]);
     }
@@ -128,13 +152,31 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
 
   return (
     <Box sx={{ position: 'relative' }}>
-      <TextField
-        fullWidth
-        label="Pesquisar Endereço"
-        variant="outlined"
-        value={value}
-        onChange={handleChangeInput}
-      />
+      <Grid container xs={12}>
+        <Grid item xs={12} >
+          <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mt: 0 }}>Endereço / CEP</CustomFormLabel>
+        </Grid>
+
+      </Grid>
+      <Grid container xs={12}>
+        <Grid item xs={11} >
+          <TextField
+            fullWidth
+            // label="Pesquisar Endereço"
+            variant="outlined"
+            value={value}
+            onChange={handleChangeInput}
+            onFocus={() => setPredictions([])}
+          />
+        </Grid>
+        <Grid item xs={1} sx={{ display: "flex", justifyContent: "end", alignItems: "center" }}>
+          <Tooltip title="Digite seu endereço com NÚMERO ou o CEP de até 8 dígitos selecione uma opção." placement="top">
+            <IconButton size="small">
+              <HelpOutlineIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Grid>
+      </Grid>
       {predictions.length > 0 && (
         <Paper
           sx={{

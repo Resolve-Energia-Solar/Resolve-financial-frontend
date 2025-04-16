@@ -1,20 +1,23 @@
 import { Typography, Grid, Dialog, DialogContent } from '@mui/material';
 
 import { useRouter } from 'next/navigation';
-import React, { useState, useEffect } from 'react';
-import TableHeader from '@/app/components/kanban/Leads/components/TableHeader';
-import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
+import React, { useState, useEffect, useContext } from 'react';
+import TableHeader from '@/app/components/kanban/Leads/components/TableHeader'
 import ExpandableListComponent from '../components/ExpandableTableComponent';
 import LeadsViewProposal from '../Leads-proposal/View-Proposal';
 import saleService from '@/services/saleService';
+import { LeadModalTabContext } from '../context/LeadModalTabContext';
+import { LeadInfoHeader } from '../components/LeadInfoHeader';
 
-const SalesListPage = ({ lead }) => {
-  const [data, setData] = useState([]);
-  const [loadingSales, setLoadingSales] = useState(false);
-  const [refresh, setRefresh] = useState(false);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [totalRows, setTotalRows] = useState(0);
+const SalesListPage = () => {
+    const [data, setData] = useState([]);
+    const [loadingSales, setLoadingSales] = useState(false);
+    const [refresh, setRefresh] = useState(false);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [totalRows, setTotalRows] = useState(0);
+
+    const { lead } = useContext(LeadModalTabContext);
 
   const columns = [
     {
@@ -61,11 +64,12 @@ const SalesListPage = ({ lead }) => {
   };
 
     useEffect(() => {
+        console.log('lead', lead);
         const fetchSales = async () => {
             setLoadingSales(true);
             try {
                 const response = await saleService.index({
-                    customer__in: lead?.customer?.id,
+                    customer: lead?.customer,
                 })
                 setData(response.results || []);
                 setTotalRows(response.sale?.length || 0);
@@ -76,7 +80,7 @@ const SalesListPage = ({ lead }) => {
                 setLoadingSales(false);
             }
         };
-        if (lead?.customer?.id)
+        if (lead?.customer)
             fetchSales();
     }, [lead, refresh, page, rowsPerPage]);
 
@@ -84,12 +88,16 @@ const SalesListPage = ({ lead }) => {
     return (
         <>
             <Grid container spacing={0} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", p: 3 }} >
-               
-            <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12}>
-              <LeadInfoHeader leadId={lead?.id} />
-            </Grid>
-          </Grid>
+                {!lead?.id ? <LeadInfoHeaderSkeletonn /> :
+                    <Grid container alignItems="center">
+                        <LeadInfoHeader.Root>
+                            <LeadInfoHeader.Profile leadId={lead?.id} />
+                            <LeadInfoHeader.InterestLevel leadId={lead?.id} />
+                            <LeadInfoHeader.StatusChip leadId={lead?.id} />
+                        </LeadInfoHeader.Root>
+                    </Grid>
+                }
+
                 <Grid item xs={12} sx={{ overflow: 'scroll' }}>
 
                     <Grid item xs={12} sx={{

@@ -9,16 +9,18 @@ import {
   Dialog,
   DialogContent,
   DialogActions,
+  useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import leadService from '@/services/leadService';
 import { useSnackbar } from 'notistack';
-import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import ScheduleCard from '../components/CardSchedule';
 import BasicDateCalendar from '@/app/components/kanban/Leads/components/BasicDateCalendar';
 import ScheduleCardSkeleton from '../components/ScheduleCardSkeleton';
-import { Add } from '@mui/icons-material';
+import { Add, Height } from '@mui/icons-material';
 import LeadAddSchedulePage from './Add-Schedule';
+import { LeadInfoHeader } from '../components/LeadInfoHeader';
+import LeadInfoHeaderSkeleton from '../components/LeadInfoHeaderSkeleton';
 
 function LeadSchedulePage({ leadId = null }) {
   const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
@@ -55,6 +57,8 @@ function LeadSchedulePage({ leadId = null }) {
     }
   }, [leadId, refresh]);
 
+  const theme = useTheme();
+
   return (
     <Grid container spacing={0}>
       <Grid item xs={12} sx={{ overflow: 'scroll' }}>
@@ -68,9 +72,17 @@ function LeadSchedulePage({ leadId = null }) {
             flexDirection: 'column',
           }}
         >
-          <LeadInfoHeader />
+          {!leadId ? <LeadInfoHeaderSkeleton /> : 
+            <Grid container alignItems="center">
+              <LeadInfoHeader.Root>
+                <LeadInfoHeader.Profile leadId={leadId} />
+                <LeadInfoHeader.InterestLevel leadId={leadId} />
+                <LeadInfoHeader.StatusChip leadId={leadId} />
+              </LeadInfoHeader.Root>
+            </Grid>
+          }
 
-          <Stack spacing={3} sx={{ mt: 3 }}>
+          <Stack spacing={3} sx={{ mt: 3, px: 3 }}>
             <Stack direction="row" justifyContent="space-between" sx={{ mt: 3 }}>
               <Typography variant="h6" sx={{ fontWeight: 800 }}>
                 Vistorias Técnicas: <span style={{ fontWeight: 400 }}>{inspections.length}</span>
@@ -83,11 +95,10 @@ function LeadSchedulePage({ leadId = null }) {
                   fontSize: '0.75rem',
                   p: '5px 10px',
                   borderRadius: '4px',
-                  backgroundColor: '#FFCC00',
+                  backgroundColor: theme.palette.primary.main,
                   color: '#000',
                   '&:hover': {
-                    backgroundColor: '#FFB800',
-                    color: '#000',
+                    color: theme.palette.primary.light,
                   },
                 }}
               >
@@ -119,8 +130,25 @@ function LeadSchedulePage({ leadId = null }) {
         </Box>
       </Grid>
 
-      <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="sm" fullWidth>
-        <DialogContent sx={{ p: 10 }}>
+      <Dialog 
+        open={editModalOpen} 
+        onClose={() => setEditModalOpen(false)} 
+        maxWidth="md" 
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '20px',
+            padding: '24px',
+            gap: '24px',
+            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+            backgroundColor: '#FFFFFF',
+            height: "643px",
+            width: "889px",
+            p: 3,
+          },
+        }}
+      >
+        <DialogContent>
           <LeadAddSchedulePage
             leadId={leadId}
             serviceId={SERVICE_INSPECTION_ID}

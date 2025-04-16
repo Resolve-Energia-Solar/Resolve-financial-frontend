@@ -17,6 +17,9 @@ import {
   DialogActions,
   Checkbox,
   FormControlLabel,
+  Grid,
+  useTheme,
+  Typography,
 } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import { useSnackbar } from 'notistack';
@@ -24,6 +27,8 @@ import AddressAutocomplete from '@/app/components/auto-completes/AddressSearch';
 import useAddressForm from '@/hooks/address/useAddressForm';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
+import ZipCodeSearch from '@/app/components/auto-completes/ZipCodeSearch';
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 
 const fieldLabels = {
   zip_code: "CEP",
@@ -67,6 +72,8 @@ const CreateAddressPage = ({
 
   const [lastError, setLastError] = useState('');
 
+  const [zipCodeInput, setZipCodeInput] = useState('');
+
   const handleAddressSelect = (addressData) => {
     const formatedZipCode = addressData.zip_code.replace('-', '');
     handleChange('zip_code', formatedZipCode);
@@ -76,7 +83,7 @@ const CreateAddressPage = ({
     handleChange('neighborhood', addressData.neighborhood);
     handleChange('street', addressData.street);
     handleChange('number', addressData.number);
-  
+
     if (addressData.latitude && addressData.longitude) {
       handleChange('latitude', addressData.latitude);
       handleChange('longitude', addressData.longitude);
@@ -262,8 +269,10 @@ const CreateAddressPage = ({
     setOpenAccordion(Boolean(formData.zip_code));
   }, [formData.zip_code]);
 
+  const theme = useTheme();
+
   return (
-    <Box sx={{ maxWidth: '100vw', mx: 'auto', p: 2 }}>
+    <Box sx={{ maxWidth: '100vw', mx: 'auto' }}>
       <Paper
         elevation={0}
         sx={{
@@ -282,149 +291,395 @@ const CreateAddressPage = ({
             ))}
           </Alert>
         )}
+        <Grid container sx={{ display: "flex", alignItems: "flex-start", justifyContent: "flex-start", spacing: 3 }}>
+          <Grid item xs={12} sm={12}>
+            <Typography sx={{ color: "#000000", fontWeight: "700", fontSize: "18px", mb: 2 }}>Adicionar novo endereço</Typography>
+          </Grid>
 
-        <Stack spacing={3} sx={{ width: '100%' }}>
-          <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%' }}>
-            <Box sx={{ flexGrow: 1 }}>
-              <AddressAutocomplete
-                apiKey={API_KEY}
-                onAddressSelect={handleAddressSelect}
-                inputValue={addressInput}
-                onInputChange={setAddressInput}
-              />
-            </Box>
-            <Tooltip title="Digite seu endereço com NÚMERO e selecione uma opção." placement="top">
-              <IconButton size="small">
-                <HelpOutlineIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </Stack>
+          <Grid container columnSpacing={2} sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", maxWidth: "100%", width: "100%" }}>
 
-          <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%' }}>
-            <Box sx={{ flexGrow: 1 }}>
-              <CustomTextField
-                fullWidth
-                label="Complemento"
-                variant="outlined"
-                value={formData.complement}
-                onChange={(e) => handleChange('complement', e.target.value)}
-                error={!!formErrors.complement}
-                helperText={formErrors.complement}
-              />
-            </Box>
-            <Tooltip title="Informe informações adicionais, ex: apto, bloco, complemento." placement="top">
-              <IconButton size="small">
-                <HelpOutlineIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </Stack>
-
-          <Box>
-            <Button
-              variant="outlined"
-              onClick={() => setOpenAccordion(!openAccordion)}
-              fullWidth
-            >
-              {openAccordion ? 'Ocultar informações do endereço' : 'Ver informações do endereço'}
-            </Button>
-            <Collapse in={openAccordion}>
-              <Box sx={{ mt: 2, p: 2, border: '1px solid #ccc', borderRadius: 1 }}>
-                <Stack spacing={2}>
-                  <CustomTextField
-                    fullWidth
-                    placeholder="CEP"
-                    value={formData.zip_code || ''}
-                    onChange={(e) => handleChange('zip_code', e.target.value)}
-                    disabled={
-                      Object.keys(initialData).length === 0 || !!initialData.zip_code
-                    }
+            <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column" }}>
+              {/* <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
+                <Grid item xs={12}>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <ZipCodeSearch
+                      apiKey={API_KEY}
+                      onAddressSelect={handleAddressSelect}
+                      inputValue={zipCodeInput}
+                      onInputChange={setZipCodeInput}
                     />
-                  <CustomTextField
-                    fullWidth
-                    placeholder="País"
-                    value={formData.country || ''}
-                    onChange={(e) => handleChange('country', e.target.value)}
-                    disabled={
-                      Object.keys(initialData).length === 0 || !!initialData.country
-                    }
-                  />
-                  <CustomTextField
-                    fullWidth
-                    placeholder="Estado"
-                    value={formData.state || ''}
-                    onChange={(e) => handleChange('state', e.target.value)}
-                    disabled={
-                      Object.keys(initialData).length === 0 || !!initialData.state
-                    }
-                  />
-                  <CustomTextField
-                    fullWidth
-                    placeholder="Cidade"
-                    value={formData.city || ''}
-                    onChange={(e) => handleChange('city', e.target.value)}
-                    disabled={
-                      Object.keys(initialData).length === 0 || !!initialData.city
-                    }
-                  />
-                  <CustomTextField
-                    fullWidth
-                    placeholder="Bairro"
-                    value={formData.neighborhood || ''}
-                    onChange={(e) => handleChange('neighborhood', e.target.value)}
-                    disabled={
-                      Object.keys(initialData).length === 0 || !!initialData.neighborhood
-                    }
-                  />
-                  <CustomTextField
-                    fullWidth
-                    placeholder="Rua"
-                    value={formData.street || ''}
-                    onChange={(e) => handleChange('street', e.target.value)}
-                    disabled={
-                      Object.keys(initialData).length === 0 || !!initialData.street
-                    }
-                  />
-                  <CustomTextField
-                    fullWidth
-                    placeholder="Número"
-                    value={formData.number || ''}
-                    onChange={(e) => handleChange('number', e.target.value)}
-                    disabled={
-                      Object.keys(initialData).length === 0
-                    }
-                  />
-                </Stack>
+                  </Box>
+                </Grid>
+
+              </Grid> */}
+
+              <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", mt: 1, mb: 1 }}>
+                <Grid item xs={12}>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <AddressAutocomplete
+                      apiKey={API_KEY}
+                      onAddressSelect={handleAddressSelect}
+                      inputValue={addressInput}
+                      onInputChange={setAddressInput}
+                    />
+                  </Box>
+                </Grid>
+
+              </Grid>
+
+              <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
+                <Grid item xs={12}>
+                  <Box sx={{ flexGrow: 1 }}>
+
+                    <Grid container xs={12}>
+                      <Grid item xs={12} >
+                        <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mt: 0 }}>Complemento</CustomFormLabel>
+                      </Grid>
+                    </Grid>
+                    <Grid container xs={12}>
+                      <Grid item xs={11} >
+                    <CustomTextField
+                      fullWidth
+                      variant="outlined"
+                      value={formData.complement}
+                      onChange={(e) => handleChange('complement', e.target.value)}
+                      error={!!formErrors.complement}
+                      helperText={formErrors.complement}
+                      sx={{ mt: 0.5, mb: 1, height: 30 }}
+                    />
+                    </Grid>
+                    <Grid item xs={1} sx={{ display: "flex", justifyContent: "end", alignItems: "end" }}>
+                    <Tooltip title="Insira informações adicionais, ex: apto, bloco, complemento." placement="top">
+                        <IconButton size="small">
+                            <HelpOutlineIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                    </Grid>
+                    </Grid>
+                  </Box>
+                </Grid>
+
+              </Grid>
+
+              <Box sx={{ width: '100%', my: 2, mt: 3 }}>
+                <Button
+                  variant="outlined"
+                  onClick={() => setOpenAccordion(!openAccordion)}
+                  fullWidth
+                  sx={{
+                    backgroundColor: openAccordion ? theme.palette.primary.main : theme.palette.primary.light,
+                    color: openAccordion ? 'white' : theme.palette.primary.main,
+                    border: openAccordion ? 'transparent' : '1px solid',
+                    transition: 'background-color 0.3s, color 0.3s, border 0.1s',
+                    // borderTopLeftRadius: openAccordion ? 3 : 1,
+                    '&:hover': {
+                      backgroundColor: theme.palette.primary.main,
+                      color: theme.palette.primary.light,
+                    },
+                  }}
+                >
+                  {openAccordion ? 'Ocultar informações do endereço' : 'Ver informações do endereço'}
+                </Button>
+                <Collapse in={openAccordion}>
+                  <Box sx={{ mt: -3, p: 1, border: '1px solid', borderColor: theme.palette.primary.main, borderRadius: 1, backgroundColor: theme.palette.primary.main }}>
+                    <Grid container rowSpacing={0} columnSpacing={1} sx={{ mt: 0.2 }}>
+                      <Grid item xs={12} sm={4}>
+                        <CustomTextField
+                          fullWidth
+                          placeholder="CEP"
+                          value={formData.zip_code || ''}
+                          onChange={(e) => handleChange('zip_code', e.target.value)}
+                          disabled={Object.keys(initialData).length === 0 || !!initialData.zip_code}
+                          sx={{
+                            backgroundColor: theme.palette.primary.light,
+                            borderRadius: 1,
+                            maxHeight: 40,
+                            '& .MuiOutlinedInput-root': {
+                              height: '100%',
+                              borderRadius: 1,
+                              backgroundColor: theme.palette.primary.light,
+                            },
+                            '& .MuiInputBase-input': {
+                              padding: '10px',
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.primary.main,
+                            },
+                            '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.grey[300],
+                            },
+                            input: {
+                              color: '#7E92A2',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              opacity: 1,
+                            },
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={4}>
+                        <CustomTextField
+                          fullWidth
+                          placeholder="País"
+                          value={formData.country || ''}
+                          onChange={(e) => handleChange('country', e.target.value)}
+                          disabled={Object.keys(initialData).length === 0 || !!initialData.country}
+                          sx={{
+                            backgroundColor: theme.palette.primary.light,
+                            borderRadius: 1,
+                            maxHeight: 40,
+                            '& .MuiOutlinedInput-root': {
+                              height: '100%',
+                              borderRadius: 1,
+                              backgroundColor: theme.palette.primary.light,
+                            },
+                            '& .MuiInputBase-input': {
+                              padding: '10px',
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.primary.main,
+                            },
+                            '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.grey[300],
+                            },
+                            input: {
+                              color: '#7E92A2',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              opacity: 1,
+                            },
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={4}>
+                        <CustomTextField
+                          fullWidth
+                          placeholder="Estado"
+                          value={formData.state || ''}
+                          onChange={(e) => handleChange('state', e.target.value)}
+                          disabled={Object.keys(initialData).length === 0 || !!initialData.state}
+                          sx={{
+                            backgroundColor: theme.palette.primary.light,
+                            borderRadius: 1,
+                            maxHeight: 40,
+                            '& .MuiOutlinedInput-root': {
+                              height: '100%',
+                              borderRadius: 1,
+                              backgroundColor: theme.palette.primary.light,
+                            },
+                            '& .MuiInputBase-input': {
+                              padding: '10px',
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.primary.main,
+                            },
+                            '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.grey[300],
+                            },
+                            input: {
+                              color: '#7E92A2',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              opacity: 1,
+                            },
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={8}>
+                        <CustomTextField
+                          fullWidth
+                          placeholder="Cidade"
+                          value={formData.city || ''}
+                          onChange={(e) => handleChange('city', e.target.value)}
+                          disabled={Object.keys(initialData).length === 0 || !!initialData.city}
+                          sx={{
+                            backgroundColor: theme.palette.primary.light,
+                            borderRadius: 1,
+                            maxHeight: 40,
+                            '& .MuiOutlinedInput-root': {
+                              height: '100%',
+                              borderRadius: 1,
+                              backgroundColor: theme.palette.primary.light,
+                            },
+                            '& .MuiInputBase-input': {
+                              padding: '10px',
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.primary.main,
+                            },
+                            '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.grey[300],
+                            },
+                            input: {
+                              color: '#7E92A2',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              opacity: 1,
+                            },
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={4}>
+                        <CustomTextField
+                          fullWidth
+                          placeholder="Bairro"
+                          value={formData.neighborhood || ''}
+                          onChange={(e) => handleChange('neighborhood', e.target.value)}
+                          disabled={Object.keys(initialData).length === 0}
+                          sx={{
+                            backgroundColor: theme.palette.primary.light,
+                            borderRadius: 1,
+                            maxHeight: 40,
+                            '& .MuiOutlinedInput-root': {
+                              height: '100%',
+                              borderRadius: 1,
+                              backgroundColor: theme.palette.primary.light,
+                            },
+                            '& .MuiInputBase-input': {
+                              padding: '10px',
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.primary.main,
+                            },
+                            '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.grey[300],
+                            },
+                            input: {
+                              color: '#7E92A2',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              opacity: 1,
+                            },
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={8}>
+                        <CustomTextField
+                          fullWidth
+                          placeholder="Rua"
+                          value={formData.street || ''}
+                          onChange={(e) => handleChange('street', e.target.value)}
+                          disabled={Object.keys(initialData).length === 0}
+                          sx={{
+                            backgroundColor: theme.palette.primary.light,
+                            borderRadius: 1,
+                            maxHeight: 40,
+                            '& .MuiOutlinedInput-root': {
+                              height: '100%',
+                              borderRadius: 1,
+                              backgroundColor: theme.palette.primary.light,
+                            },
+                            '& .MuiInputBase-input': {
+                              padding: '10px',
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.primary.main,
+                            },
+                            '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.grey[300],
+                            },
+                            input: {
+                              color: '#7E92A2',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              opacity: 1,
+                            },
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={4}>
+                        <CustomTextField
+                          fullWidth
+                          placeholder="Número"
+                          value={formData.number || ''}
+                          onChange={(e) => handleChange('number', e.target.value)}
+                          disabled={Object.keys(initialData).length === 0}
+                          sx={{
+                            backgroundColor: theme.palette.primary.light,
+                            borderRadius: 1,
+                            maxHeight: 40,
+                            '& .MuiOutlinedInput-root': {
+                              height: '100%',
+                              borderRadius: 1,
+                              backgroundColor: theme.palette.primary.light,
+                            },
+                            '& .MuiInputBase-input': {
+                              padding: '10px',
+                            },
+                            '& .MuiInputBase-input::placeholder': {
+                              color: '#7E92A2',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              opacity: 1,
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.primary.main,
+                            },
+                            '& .Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.grey[300],
+                            },
+                            input: {
+                              color: '#00000',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              opacity: 1,
+                            },
+                          }}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </Collapse>
               </Box>
-            </Collapse>
-          </Box>
 
-          <Box sx={{ width: '100%', height: '300px', mt: 2 }}>
-            {mapLoadError && <div>Erro ao carregar o mapa</div>}
-            {!isMapLoaded ? (
-              <CircularProgress />
-            ) : (
-              <GoogleMap
-                center={markerPosition}
-                zoom={14}
-                mapContainerStyle={{ width: '100%', height: '100%' }}
-                onClick={handleMapClick}
-              >
-                <Marker position={markerPosition} draggable onDragEnd={handleMapClick} />
-              </GoogleMap>
-            )}
-          </Box>
+              <Grid item xs={12}>
+                <Box sx={{ flexGrow: 1 }}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={() => setConfirmModalOpen(true)}
+                    disabled={formLoading}
+                    endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                    sx={{
+                      alignSelf: 'flex-end',
+                      '&:hover': {
+                        backgroundColor: theme.palette.primary.light,
+                        color: theme.palette.primary.main,
+                        border: "1px solid",
+                        boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.0)",
+                      }
+                    }}
+                  >
+                    {formLoading ? 'Salvando...' : 'Criar Endereço'}
+                  </Button>
+                </Box>
+              </Grid>
+            </Grid>
 
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => setConfirmModalOpen(true)}
-            disabled={formLoading}
-            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-            sx={{ alignSelf: 'flex-end' }}
-          >
-            {formLoading ? 'Salvando...' : 'Criar Endereço'}
-          </Button>
-        </Stack>
+            <Grid item xs={12} md={6}>
+              <Stack>
+                <Box sx={{ width: '100%', height: '500px', }}>
+                  {mapLoadError && <div>Erro ao carregar o mapa</div>}
+                  {!isMapLoaded ? (
+                    <CircularProgress />
+                  ) : (
+                    <GoogleMap
+                      center={markerPosition}
+                      zoom={14}
+                      mapContainerStyle={{ width: '100%', height: '100%' }}
+                      onClick={handleMapClick}
+                    >
+                      <Marker position={markerPosition} draggable onDragEnd={handleMapClick} />
+                    </GoogleMap>
+                  )}
+                </Box>
+              </Stack>
+            </Grid>
+
+
+          </Grid>
+        </Grid>
       </Paper>
 
       <Dialog
@@ -446,13 +701,22 @@ const CreateAddressPage = ({
             '100%': { transform: 'translateX(0)' },
           },
         }}
+        PaperProps={{
+          sx: {
+            borderRadius: '20px',
+            // padding: '24px',
+            gap: '24px',
+            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+            backgroundColor: '#FFFFFF',
+          },
+        }}
       >
-        <DialogTitle sx={{ bgcolor: 'warning.main', color: 'white', mb: 2 }}>
-          Confirmação de Endereço
+        <DialogTitle sx={{ bgcolor: 'warning.main', color: 'white', }}>
+          Confirmação de endereço
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            <strong style={{ fontSize: '1.3em' }}>Atenção:</strong> este endereço será utilizado exatamente como informado para definir a rota do motorista. Verifique se a localização no mapa está correta.
+          <DialogContentText sx={{ px: 1 }}>
+            <strong style={{ fontSize: '1.3em' }}>Atenção:</strong> este endereço será utilizado exatamente como informado para definir a rota do motorista e para instalação do projeto. Verifique se a localização no mapa está correta.
           </DialogContentText>
           <FormControlLabel
             control={
@@ -463,15 +727,17 @@ const CreateAddressPage = ({
               />
             }
             label="Confirmo que as informações estão corretas e desejo prosseguir."
+            sx={{ px: 1 }}
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setConfirmModalOpen(false)}>Cancelar</Button>
+        <DialogActions sx={{ mb: 1, mr: 1 }}>
+          <Button color="warning" onClick={() => setConfirmModalOpen(false)}>Cancelar</Button>
           <Button onClick={submitAddress} disabled={!confirmChecked}>
             Confirmar
           </Button>
         </DialogActions>
       </Dialog>
+
     </Box>
   );
 };

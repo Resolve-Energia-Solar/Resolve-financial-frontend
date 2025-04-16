@@ -69,7 +69,7 @@ function EditLeadTabs({ leadId }) {
 
   return (
     <LeadModalTabProvider leadId={leadId}>
-      <Box sx={{ overflow: 'hidden', height: '100%', p: 0, margin: 0 }}>
+      <Box sx={{  height: '100%', p: 0, margin: 0 }}>
         <Tabs
           value={tabValue}
           onChange={handleChange}
@@ -83,6 +83,7 @@ function EditLeadTabs({ leadId }) {
             'Propostas',
             'Vendas',
             'Documentos',
+            'Contratos',
             'Agendamentos',
           ].map((label, index) => (
             <Tab
@@ -129,16 +130,20 @@ function EditLeadTabs({ leadId }) {
 
         {/* vendas */}
         <CustomTabPanel value={tabValue} index={3}>
-          <SalesListPage lead={lead} />
+          <SalesListPage />
         </CustomTabPanel>
 
-        {/* docs a ser retirado futuramente e integrado à page de projetos */}
+        {/* docs */}
         <CustomTabPanel value={tabValue} index={4}>
           <LeadDocumentPage />
         </CustomTabPanel>
 
-        {/* agendamentos */}
+        {/* contratos */}
         <CustomTabPanel value={tabValue} index={5}>
+        </CustomTabPanel>
+
+        {/* agendamentos */}
+        <CustomTabPanel value={tabValue} index={6}>
           <LeadSchedulePage leadId={leadId} />
         </CustomTabPanel>
       </Box>

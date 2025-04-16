@@ -1,8 +1,7 @@
-'use client';
+import React, { useRef, useState, useEffect } from 'react'; // Importando useRef
 import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
 import {
   Box,
-  Button,
   Chip,
   Divider,
   Grid,
@@ -10,22 +9,29 @@ import {
   MenuItem,
   Paper,
   Stack,
-  Tooltip,
   Typography,
 } from '@mui/material';
-import Carousel from 'react-material-ui-carousel';
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import { formatDateTime, formatDate, formatTime } from '@/utils/inspectionFormatDate';
-import { useEffect, useState } from 'react';
 import answerService from '@/services/answerService';
+import { ArrowBack, ArrowForward } from '@mui/icons-material';
 
 const AnswerForm = ({ answerData }) => {
-  console.log('answerData ->', answerData);
-
+  const sliderRef = useRef(null);
   const [form_fields, setFormFields] = useState([]);
   const [formInfo, setFormInfo] = useState(answerData?.results[0]?.form);
   const [answers, setAnswers] = useState(answerData?.results[0]?.answers);
   const [answersFiles, setAnswersFiles] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handleThumbnailClick = (idx) => {
+    setCurrentIndex(idx);
+    if (sliderRef.current) {
+      sliderRef.current.slickGoTo(idx);
+    }
+  };
 
   const answerFromField = (fieldName) => {
     if (!answers) return null;
@@ -72,15 +78,11 @@ const AnswerForm = ({ answerData }) => {
     fetchAnswersFiles();
   }, [answerData]);
 
-  console.log('answersFiles ->', answersFiles);
-
-  // Filtra todas as imagens (jpg, jpeg, png)
   const imageFiles = answersFiles.filter((file) => {
     const ext = file.file.split('?')[0].split('.').pop().toLowerCase();
     return ['jpg', 'jpeg', 'png'].includes(ext);
   });
 
-  // Função para obter o rótulo do campo a partir do field_id
   const getFieldLabel = (fieldId) => {
     const field = form_fields.find(
       (field) => `${field.type}-${field.id}` === fieldId
@@ -89,12 +91,91 @@ const AnswerForm = ({ answerData }) => {
   };
 
   return (
-    <Paper variant="outlined" sx={{ marginTop: 2 }}>
+    <Paper variant="outlined" sx={{ marginTop: 2, overflow: 'visible', position: 'relative' }}>
       <Box p={3} display="flex" flexDirection="column" gap={1}>
         <Typography variant="h4" sx={{ marginBottom: '15px' }}>
           Resposta do Serviço
         </Typography>
         <Divider />
+        {imageFiles.length > 0 && (
+          <Box mt={2} sx={{ position: 'relative' }}>
+            <Typography variant="h5" sx={{ mb: 1 }}>
+              Imagens
+            </Typography>
+            <Slider
+              ref={sliderRef}
+              autoPlay={false}
+              arrows
+              swipeToSlide
+              selectedItem={currentIndex}
+              beforeChange={(oldIndex, newIndex) => setCurrentIndex(newIndex)}
+              prevArrow={
+                <Box className="slick-prev">
+                  <ArrowBack sx={{ fontSize: '2rem', color: 'black' }} />
+                </Box>
+              }
+              nextArrow={
+                <Box className="slick-next">
+                  <ArrowForward sx={{ fontSize: '2rem', color: 'black' }} />
+                </Box>
+              }
+            >
+              {imageFiles.map((file) => {
+                const label = getFieldLabel(file.field_id);
+                return (
+                  <Box key={file.id} textAlign="center">
+                    <Box
+                      component="img"
+                      src={file.file}
+                      alt={file.file}
+                      sx={{
+                        height: '50vh',
+                        width: 'auto',
+                        maxWidth: { xs: 350, md: 250 },
+                        objectFit: 'contain',
+                        margin: 'auto',
+                      }}
+                    />
+                    <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                      {label}
+                    </Typography>
+                  </Box>
+                );
+              })}
+            </Slider>
+
+            <Box sx={{ display: 'flex', overflowX: 'auto', mt: 2, pb: 1 }}>
+              {imageFiles.map((file, idx) => (
+                <Box
+                  key={file.id}
+                  onClick={() => handleThumbnailClick(idx)}
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    mr: 1,
+                    border: idx === currentIndex ? '2px solid blue' : '2px solid transparent',
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={file.file}
+                    alt={file.file}
+                    sx={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                  />
+                </Box>
+              ))}
+            </Box>
+          </Box>
+        )}
+      </Box>
+      <Divider />
+      <Box p={3} display="flex" flexDirection="column" gap={1}>
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
           alignItems="center"
@@ -102,9 +183,7 @@ const AnswerForm = ({ answerData }) => {
           my={1}
         >
           {formInfo && (
-            <Typography variant="h5">
-              # {formInfo.id} - {formInfo.name}
-            </Typography>
+            <Typography variant="h5">{formInfo.name}</Typography>
           )}
           <Box display="flex" flexDirection="column" alignItems="center">
             <Typography variant="body2">Respondido em: </Typography>
@@ -227,71 +306,6 @@ const AnswerForm = ({ answerData }) => {
             }
           })}
         </Grid>
-        {/* Carousel único para todas as imagens com rótulos e altura fixa */}
-        {imageFiles.length > 0 && (
-          <Box mt={2}>
-            <Typography variant="h5" sx={{ mb: 1 }}>
-              Imagens
-            </Typography>
-            <Carousel
-              autoPlay={false}
-              navButtonsAlwaysVisible
-              index={currentIndex}
-              onChange={(index) => setCurrentIndex(index)}
-            >
-              {imageFiles.map((file) => {
-                const label = getFieldLabel(file.field_id);
-                return (
-                  <Box key={file.id} textAlign="center">
-                    <Box
-                      component="img"
-                      src={file.file}
-                      alt={file.file}
-                      sx={{
-                        height: '50vh',
-                        width: 'auto',
-                        maxWidth: { xs: 350, md: 250 },
-                        objectFit: 'contain',
-                        margin: 'auto'
-                      }}
-                    />
-                    <Typography variant="subtitle1" sx={{ mt: 1 }}>
-                      {label}
-                    </Typography>
-                  </Box>
-                );
-              })}
-            </Carousel>
-            {/* Barra de thumbnails com rolagem horizontal */}
-            <Box sx={{ display: 'flex', overflowX: 'auto', mt: 2, pb: 1 }}>
-              {imageFiles.map((file, idx) => (
-                <Box
-                  key={file.id}
-                  onClick={() => setCurrentIndex(idx)}
-                  sx={{
-                    width: 80,
-                    height: 80,
-                    mr: 1,
-                    border: idx === currentIndex ? '2px solid blue' : '2px solid transparent',
-                    cursor: 'pointer',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={file.file}
-                    alt={file.file}
-                    sx={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover'
-                    }}
-                  />
-                </Box>
-              ))}
-            </Box>
-          </Box>
-        )}
       </Box>
     </Paper>
   );

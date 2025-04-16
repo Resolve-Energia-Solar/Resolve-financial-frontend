@@ -23,6 +23,7 @@ export default function AutoCompleteUser({
   helperText,
   disabled,
   labeltitle,
+  sx,
 }) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
@@ -114,7 +115,7 @@ export default function AutoCompleteUser({
   return (
     <div>
       <Autocomplete
-        sx={{ width: '100%' }}
+        size="small"
         open={open}
         onOpen={handleOpen}
         onClose={handleClose}
@@ -136,7 +137,6 @@ export default function AutoCompleteUser({
             label={labeltitle}
             error={error}
             helperText={helperText}
-            size="small"
             variant="outlined"
             InputProps={{
               ...params.InputProps,
@@ -158,8 +158,15 @@ export default function AutoCompleteUser({
                 </React.Fragment>
               ),
             }}
+            sx={{
+              mt: 0.5,
+              mb: 0,
+              height: "45px"
+            }}
           />
         )}
+        sx={sx}
+        
       />
 
       {/* Modal para adicionar usuário */}

@@ -1,15 +1,17 @@
 import { Box, Chip, Grid, Dialog, DialogContent, Drawer } from '@mui/material';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import leadService from '@/services/leadService';
 import TableHeader from '@/app/components/kanban/Leads/components/TableHeader';
 import TableComponent from '@/app/components/kanban/Leads/components/TableComponent';
-import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
 import ProposalService from '@/services/proposalService';
 // import LeadProposalPage from './Edit-Proposal';
 import LeadsViewProposal from './View-Proposal';
 import AddProposalPage from './Add-Proposal';
 import EditProposalPage from './Edit-Proposal';
+import { LeadModalTabContext } from '../context/LeadModalTabContext';
+import { LeadInfoHeader } from '../components/LeadInfoHeader';
+import LeadInfoHeaderSkeleton from '../components/LeadInfoHeaderSkeleton';
 
 const LeadsProposalListPage = ({ leadId = null }) => {
   const [data, setData] = useState([]);
@@ -19,6 +21,8 @@ const LeadsProposalListPage = ({ leadId = null }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
+
+  const { lead } = useContext(LeadModalTabContext);
 
   const proposalStatus = {
     A: { label: 'Aceita', color: '#E9F9E6' },
@@ -89,10 +93,11 @@ const LeadsProposalListPage = ({ leadId = null }) => {
       setLoadingProposals(true);
       try {
         const response = await ProposalService.index({
-            expand: 'products,created_by',
-            fields: 'id,products,value,status,created_by,due_date',
-            page: page + 1,
-            limit: rowsPerPage,
+          expand: 'products,created_by',
+          fields: 'id,products,value,status,created_by,due_date',
+          lead: lead.id,
+          page: page + 1,
+          limit: rowsPerPage,
         });
         setData(response.results || []);
         setTotalRows(response.meta?.pagination.total_count || 0);
@@ -122,9 +127,16 @@ const LeadsProposalListPage = ({ leadId = null }) => {
       >
         <Grid item xs={12} sx={{ overflow: 'scroll' }}>
           <Box sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column' }}>
-            <Grid item spacing={2} alignItems="center" xs={12}>
-              <LeadInfoHeader leadId={leadId} tabValue={2} />
-            </Grid>
+            {!leadId ? <LeadInfoHeaderSkeleton /> : 
+              <Grid container alignItems="center">
+                <LeadInfoHeader.Root>
+                  <LeadInfoHeader.Profile leadId={leadId} />
+                  <LeadInfoHeader.InterestLevel leadId={leadId} />
+                  <LeadInfoHeader.StatusChip leadId={leadId} />
+                  <LeadInfoHeader.ProjectDropdown leadId={leadId} />
+                </LeadInfoHeader.Root>
+              </Grid>
+            }
           </Box>
 
           <Grid container xs={12}>

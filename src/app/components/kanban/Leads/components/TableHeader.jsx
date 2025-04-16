@@ -1,4 +1,4 @@
-import { Box, Typography, Button, Select, MenuItem, FormControl, InputLabel, Grid } from '@mui/material';
+import { Box, Typography, Button, Select, MenuItem, FormControl, InputLabel, Grid, useTheme } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useState } from 'react';
 import FilterSelect from "./FiltersSelection";
@@ -25,6 +25,8 @@ const TableHeader = ({
         }));
         onFilterChange(field, value);
     };
+
+    const theme = useTheme();
 
     return (
         <Grid container xs={12} sx={{ display: 'flex', flexDirection: "row", justifyContent: 'space-between', width: '100%', alignItems: 'center', p: 2 }}>
@@ -97,7 +99,8 @@ const TableHeader = ({
                             minWidth: 'unset',
                             borderRadius: '4px',
                             color: '#000',
-                            '&:hover': { backgroundColor: '#FFB800', color: '#000' },
+                            backgroundColor: theme.palette.primary.main,
+                            '&:hover': { backgroundColor: theme.palette.primary.light, color: '#000' },
                         }}
                     >
                         {buttonLabel}

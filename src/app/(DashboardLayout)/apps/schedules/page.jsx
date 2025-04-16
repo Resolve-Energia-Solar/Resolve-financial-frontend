@@ -38,6 +38,7 @@ import scheduleService from '@/services/scheduleService';
 import serviceCatalogService from '@/services/serviceCatalogService';
 import { formatDate } from '@/utils/dateUtils';
 import DetailsDrawer from '@/app/components/apps/schedule/DetailsDrawer';
+import UserCard from '@/app/components/apps/users/userCard';
 
 const BCrumb = [{ to: '/', title: 'Início' }, { title: 'Agendamentos' }];
 
@@ -84,7 +85,7 @@ const ScheduleTable = () => {
       .index({
         page,
         limit: rowsPerPage,
-        expand: ['customer', 'service_opinion'],
+        expand: ['customer', 'service_opinion', 'final_service_opinion', 'branch', 'address'],
         service__in: selectedServices.join(','),
         fields: [
           'id',
@@ -96,12 +97,11 @@ const ScheduleTable = () => {
           'schedule_date',
           'schedule_start_time',
           'schedule_agent.complete_name',
-          'address.street',
-          'address.number',
-          'address.neighborhood',
-          'address.city',
-          'address.state',
+          'address.complete_address',
           'observation',
+          'branch.name',
+          'schedule_agent',
+          'observation'
         ],
         ordering: orderDirection === 'desc' ? order : `-${order}`,
         ...filters,
@@ -264,6 +264,34 @@ const ScheduleTable = () => {
     },
   ];
 
+  const getFieldServiceStatusChip = (status) => {
+    if (!status) {
+      return <Chip label="Pendente" color="default" />;
+    }
+    const lowerStatus = status.toLowerCase();
+    let color = 'default';
+
+    if (lowerStatus.includes('solicitado') || lowerStatus.includes('solicito') || lowerStatus.includes('confirmado')) {
+      color = 'primary';
+    } else if (lowerStatus.includes('aprovado')) {
+      color = 'success';
+    } else if (lowerStatus.includes('reprovado') || lowerStatus.includes('reprovada')) {
+      color = 'error';
+    } else if (lowerStatus.includes('cancelado') || lowerStatus.includes('cancelada')) {
+      color = 'error';
+    } else if (lowerStatus.includes('concluído')) {
+      color = 'success';
+    } else if (lowerStatus.includes('andamento')) {
+      color = 'info';
+    } else if (lowerStatus.includes('entregue')) {
+      color = 'success';
+    } else if (lowerStatus.includes('agendado')) {
+      color = 'info';
+    }
+
+    return <Chip label={status} color={color} />;
+  }
+
   return (
     <PageContainer title="Lista de Agendamentos" description="Listagem de Agendamentos">
       <Breadcrumb items={BCrumb} />
@@ -332,7 +360,7 @@ const ScheduleTable = () => {
                 '&::-webkit-scrollbar': { display: 'none' },
               }}
             >
-              <Table stickyHeader aria-label="schedule table">
+              <Table stickyHeader aria-label="schedule table" sx={{ textWrap: 'nowrap' }}>
                 <TableHead>
                   <TableRow>
                     <TableCell onClick={() => handleSort('schedule_date,schedule_start_time')}>
@@ -347,6 +375,9 @@ const ScheduleTable = () => {
                       </Box>
                     </TableCell>
                     <TableCell>Contratante</TableCell>
+                    <TableCell>Unidade</TableCell>
+                    <TableCell>Agente</TableCell>
+                    <TableCell>Endereço</TableCell>
                     <TableCell onClick={() => handleSort('status')}>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <span>Status</span>
@@ -371,6 +402,7 @@ const ScheduleTable = () => {
                         </Box>
                       </TableCell>
                     )}
+                    <TableCell>Parecer Final</TableCell>
                     <TableCell onClick={() => handleSort('created_at')}>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <span>Criado em</span>
@@ -382,6 +414,7 @@ const ScheduleTable = () => {
                           ))}
                       </Box>
                     </TableCell>
+                    <TableCell>Observação</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -398,20 +431,29 @@ const ScheduleTable = () => {
                       <TableCell>
                         {`${formatDate(schedule.schedule_date)} - ${schedule.schedule_start_time}`}
                       </TableCell>
-                      <TableCell>{schedule?.customer?.complete_name}</TableCell>
+                      <TableCell>{schedule?.customer?.complete_name || "Sem cliente"}</TableCell>
+                      <TableCell>{schedule?.branch?.name || "Sem unidade"}</TableCell>
+                      <TableCell>
+                        {schedule.schedule_agent
+                        ? <UserCard userId={schedule.schedule_agent} showPhone showEmail={false}/>
+                        : <span>Sem agente</span>}
+                      </TableCell>
+                      <TableCell sx={{ textWrap: 'wrap' }}>
+                        {schedule.address.complete_address}
+                      </TableCell>
                       <TableCell>
                         <ScheduleStatusChip status={schedule.status} />
                       </TableCell>
                       {hasPermission(['field_services.view_service_opinion']) && (
                         <TableCell>
-                          {schedule.service_opinion ? (
-                            schedule.service_opinion.name
-                          ) : (
-                            <Chip label="Sem Parecer" color="error" />
-                          )}
+                          {getFieldServiceStatusChip(schedule.service_opinion?.name)}
                         </TableCell>
                       )}
+                      <TableCell>
+                        {getFieldServiceStatusChip(schedule.final_service_opinion?.name)}
+                      </TableCell>
                       <TableCell>{new Date(schedule.created_at).toLocaleString('pt-BR')}</TableCell>
+                      <TableCell sx={{ textWrap: 'wrap' }}>{schedule.observation}</TableCell>
                     </TableRow>
                   ))}
                   {loading && page > 1 && (

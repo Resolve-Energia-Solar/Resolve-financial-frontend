@@ -44,18 +44,21 @@ const useLoginForm = () => {
       setFormErrors(errors);
       return;
     }
-  
+
     setLoading(true);
     setError(null);
     setSuccess(false);
-  
+
     try {
       const data = await userService.login(formData);
       Cookies.set('access_token', data.access, { expires: 1, sameSite: 'Strict' });
       console.log('data', data);
-  
-      const userData = await userService.getUserById(data.id);
-  
+
+      const userData = await userService.find(data.id, {
+        expand: 'employee,employee.user_manager',
+        fields: '*,employee.*,employee.user_manager.id,employee.user_manager.complete_name',
+      });
+
       dispatch(
         setUser({
           user: userData,
@@ -64,10 +67,10 @@ const useLoginForm = () => {
           access_token: data?.access,
         })
       );
-  
+
       setFormErrors({});
       setSuccess(true);
-  
+
       router.push('/apps/commercial/sale/');
     } catch (error) {
       setError('Falha ao realizar o login. Verifique suas credenciais.');
@@ -75,7 +78,7 @@ const useLoginForm = () => {
       setLoading(false);
     }
   };
-  
+
 
   return {
     formData,

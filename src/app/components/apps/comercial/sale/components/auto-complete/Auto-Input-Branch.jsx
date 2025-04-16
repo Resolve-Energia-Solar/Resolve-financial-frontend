@@ -23,7 +23,7 @@ export default function AutoCompleteBranch({
     const fetchDefaultBranch = async () => {
       if (value) {
         try {
-          const branch = await branchService.find(value);
+          const branch = await branchService.find(value, { fields: 'id,name' });
           if (branch) {
             setSelectedBranch({ id: branch.id, name: branch.name });
           }
@@ -50,7 +50,7 @@ export default function AutoCompleteBranch({
       if (!name) return;
       setLoading(true);
       try {
-        const branches = await branchService.index({ name: name });
+        const branches = await branchService.index({ name__icontains: name, fields: 'id,name' });
         if (branches && branches.results) {
           const formattedBranches = branches.results.map((branch) => ({
             id: branch.id,
@@ -69,7 +69,7 @@ export default function AutoCompleteBranch({
   const fetchInitialBranches = useCallback(async () => {
     setLoading(true);
     try {
-      const branches = await branchService.index({ limit: 5 });
+      const branches = await branchService.index({ limit: 5, fields: 'id,name' });
       const formattedBranches = branches.results.map((branch) => ({
         id: branch.id,
         name: branch.name,

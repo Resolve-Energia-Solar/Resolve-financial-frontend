@@ -31,10 +31,11 @@ import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLab
 import TableSkeleton from '../../../comercial/sale/components/TableSkeleton';
 import projectService from '@/services/projectService';
 import useCanEditUser from '@/hooks/users/userCanEdit';
+import ScheduleStatusChip from '../../../inspections/schedule/StatusChip';
 
 const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
 
-const ListInspection = ({ projectId = null, product = [], customerId, saleId=null }) => {
+const ListInspection = ({ projectId = null, product = [], customerId, saleId = null }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedscheduleId, setSelectedscheduleId] = useState(null);
   const [AddModalOpen, setAddModalOpen] = useState(false);
@@ -53,7 +54,10 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId=nul
     setReload(!reload);
   };
 
-  const { canEdit } = useCanEditUser(saleId);
+  let { canEdit } = useCanEditUser(saleId);
+  if (saleId === null) {
+    canEdit = true;
+  }
 
   useEffect(() => {
     setCustomer(customerId);
@@ -67,7 +71,8 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId=nul
           'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name';
         const response = await scheduleService.index({
           project: projectId,
-          fields: 'id,schedule_date,schedule_start_time,schedule_end_time,status',
+          fields: 'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name',
+          expand: 'final_service_opinion',
         });
 
         // Obter os detalhes do projeto para verificar a vistoria principal
@@ -101,7 +106,7 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId=nul
       try {
         const response = await scheduleService.index({
           customer: customer,
-          fields: 'id,schedule_date,schedule_start_time,schedule_end_time,status',
+          fields: 'id,schedule_date,schedule_start_time,schedule_end_time,status,final_service_opinion.name',
           expand: 'final_service_opinion',
         });
         // Se necessário, você pode filtrar os resultados aqui
@@ -119,6 +124,7 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId=nul
   }, [customer, reload]);
 
   const handleSwitchChange = async (checked, scheduleId) => {
+    console.log('checked', checked);
     const previousschedules = [...schedules];
     const updatedschedules = schedules.map((schedule) =>
       schedule.id === scheduleId
@@ -129,9 +135,9 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId=nul
 
     try {
       if (checked) {
-        await projectService.Update(projectId, { inspection: scheduleId });
+        await projectService.update(projectId, { inspection: scheduleId });
       } else {
-        await projectService.Update(projectId, { inspection: null });
+        await projectService.update(projectId, { inspection: null });
       }
     } catch (error) {
       setschedules(previousschedules);
@@ -153,7 +159,7 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId=nul
 
       const scheduleRemoved = schedules.find((schedule) => schedule.id === scheduleId);
       if (scheduleRemoved && scheduleRemoved.isChecked) {
-        await projectService.Update(projectId, { inspection: null });
+        await projectService.update(projectId, { inspection: null });
       }
 
       reloadPage();
@@ -183,6 +189,8 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId=nul
     setInspectionSelected(scheduleId);
     setConfirmAssociateModalOpen(true);
   };
+
+  console.log('schedules', schedules);
 
   return (
     <Box>
@@ -245,7 +253,7 @@ const ListInspection = ({ projectId = null, product = [], customerId, saleId=nul
                     </TableCell>
                     <TableCell align="center">
                       <Typography variant="body2">
-                        <SupplyChip status={schedule?.status} />
+                        <ScheduleStatusChip status={schedule?.status} />
                       </Typography>
                     </TableCell>
                     <TableCell align="center">

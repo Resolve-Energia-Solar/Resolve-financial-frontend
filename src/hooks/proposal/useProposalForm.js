@@ -13,6 +13,8 @@ const useProposalForm = (initialData, id) => {
     value: null,
     status: 'P',
     observation: '',
+    medium_consumption: "",
+    appliances_kwh_sum: "",
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -23,7 +25,7 @@ const useProposalForm = (initialData, id) => {
     if (initialData) {
       setFormData({
         lead: initialData.lead?.id || null,
-        created_by: initialData.created_by || user?.id || null,
+        created_by: initialData.created_by.id || user?.id || null,
         products_ids:
           initialData.commercial_products?.map((item) => item.product.id) || [],
         due_date: initialData.due_date || null,
@@ -71,6 +73,7 @@ const useProposalForm = (initialData, id) => {
 
   return {
     formData,
+    setFormData,
     handleChange,
     handleSave,
     formErrors,

@@ -165,6 +165,17 @@ const Profile = () => {
         onClose={cancelLogout}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '20px',
+            padding: '24px',
+            gap: '24px',
+            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+            maxWidth: "350px",
+            maxHeight: "350px",
+          },
+        }}
       >
         <DialogTitle id="alert-dialog-title">Confirmar Logout</DialogTitle>
         <DialogContent>
@@ -176,7 +187,7 @@ const Profile = () => {
           <Button onClick={cancelLogout} color="primary">
             Cancelar
           </Button>
-          <Button onClick={handleLogout} color="primary" autoFocus>
+          <Button onClick={handleLogout} color="warning" autoFocus>
             Sair
           </Button>
         </DialogActions>

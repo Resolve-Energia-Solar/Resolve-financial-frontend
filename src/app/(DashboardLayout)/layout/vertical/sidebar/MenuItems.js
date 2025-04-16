@@ -28,9 +28,12 @@ import {
   IconRuler,
   IconFileArrowRight,
   IconUserDollar,
-  IconHomeQuestion
+  IconHomeQuestion,
+  IconLicense,
 } from '@tabler/icons-react';
 
+import { permission } from 'process';
+import { id } from 'date-fns/locale';
 
 const Menuitems = [
   {
@@ -46,14 +49,21 @@ const Menuitems = [
         title: 'Kanban',
         icon: IconLayoutKanban,
         href: '/apps/kanban/',
-        permissions: ['core.view_board']
+        permissions: ['core.view_board'],
       },
       {
         id: uniqueId(),
         title: 'Leads',
         icon: IconId,
         href: '/apps/leads',
-        permissions: ['resolve_crm.view_lead']
+        permissions: ['resolve_crm.view_lead'],
+      },
+      {
+        id: uniqueId(),
+        title: 'Agendamentos',
+        icon: IconCalendarStar,
+        href: '/apps/commercial/schedules',
+        permissions: ['field_services.view_lead'],
       },
     ],
     chip: 'Novo',
@@ -63,23 +73,18 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: 'Serviços de Campo',
-    icon: IconUserPin,
+    icon: IconMapRoute,
     href: '/',
+    permissions: ['field_services.view_all_schedule'],
     children: [
       {
         id: uniqueId(),
         title: 'Ordem de Serviço',
-        icon: IconPoint,
+        icon: IconLicense,
         href: '/apps/schedules',
-      },
-      {
-        id: uniqueId(),
-        title: 'Agendamentos',
-        icon: IconPoint,
-        href: '/apps/commercial/schedules',
+        permissions: ['field_services.view_all_schedule'],
       },
     ],
-    permissions: ['field_services.view_schedule'],
   },
   {
     id: uniqueId(),
@@ -125,21 +130,7 @@ const Menuitems = [
       },
     ],
   },
-  // {
-  //   id: uniqueId(),
-  //   title: 'Serviços de Campo',
-  //   icon: IconMapRoute,
-  //   href: '/',
-  //   children: [
-  //     {
-  //       id: uniqueId(),
-  //       title: 'Agendamentos',
-  //       icon: IconCalendarStar,
-  //       href: '/apps/inspections/schedule',
-  //     },
-  //   ],
-  //   permissions: ['field_services.view_schedule'],
-  // },
+
   {
     id: uniqueId(),
     title: 'Financiamento',

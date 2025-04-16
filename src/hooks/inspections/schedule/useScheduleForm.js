@@ -4,10 +4,15 @@ import serviceCatalogService from '@/services/serviceCatalogService';
 import { useSelector } from 'react-redux';
 import { useSnackbar } from 'notistack';
 
-const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
+// const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
 
 // Função auxiliar para extrair o id, se o valor for um objeto com a propriedade "value"
 const extractId = (fieldValue) => {
+  if (Array.isArray(fieldValue)) {
+    return fieldValue.map(item =>
+      typeof item === 'object' && item !== null && 'value' in item ? item.value : item
+    );
+  }
   return typeof fieldValue === 'object' && fieldValue !== null && 'value' in fieldValue
     ? fieldValue.value
     : fieldValue;
@@ -21,7 +26,7 @@ const useScheduleForm = (initialData, id, service_id) => {
   const [formData, setFormData] = useState({
     schedule_creator: user?.user?.id || user?.user || null,
     category: null,
-    service: service_id || SERVICE_INSPECTION_ID,
+    service: null,
     parent_schedules_id: [],
     customer: null,
     leads: [],
@@ -47,23 +52,23 @@ const useScheduleForm = (initialData, id, service_id) => {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Inicializa o formData com os dados iniciais, extraindo somente os IDs quando possível
+
   useEffect(() => {
     if (initialData) {
       setFormData({
         schedule_creator: initialData.schedule_creator || null,
-        service: initialData.service?.id || service_id || SERVICE_INSPECTION_ID,
+        service: initialData.service?.id || service_id,
         parent_schedules_id: initialData.parent_schedules?.map((s) => s.id) || [],
-        customer: initialData?.customer?.id || null,
-        leads: initialData.leads?.map((l) => l.id) || [],
-        project: initialData.project?.id || null,
+        customer: extractId(initialData.customer),
+        leads: extractId(initialData.leads),
+        project: extractId(initialData.project),
         schedule_agent: initialData.schedule_agent?.id || null,
         products: initialData.products || [],
         schedule_date: initialData.schedule_date || '',
         schedule_start_time: initialData.schedule_start_time || '',
         schedule_end_date: initialData.schedule_end_date || '',
         schedule_end_time: initialData.schedule_end_time || '',
-        address: initialData?.address?.id || null,
+        address: extractId(initialData.address),
         latitude: initialData.latitude || null,
         longitude: initialData.longitude || null,
         status: initialData.status || 'Pendente',
@@ -76,9 +81,8 @@ const useScheduleForm = (initialData, id, service_id) => {
           initialData.final_service_opinion?.id || initialData.service_opinion?.id || null,
       });
     }
-  }, [initialData, service_id]);
+  }, [initialData]);
 
-  // Handler para atualizar o formData (mantém a chamada como você deseja)
   const handleChange = (field, value) => {
     console.log(`handleChange: ${field} =`, value);
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -94,7 +98,6 @@ const useScheduleForm = (initialData, id, service_id) => {
           expand: ['deadline'],
           fields: ['deadline'],
         });
-        console.log('Serviço retornado:', serviceInfo);
 
         const deadline = serviceInfo.deadline.hours;
         if (!deadline) {

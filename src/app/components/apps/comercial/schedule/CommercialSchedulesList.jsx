@@ -17,8 +17,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
-  Drawer,
+  DialogActions
 } from '@mui/material';
 import AddBoxRounded from '@mui/icons-material/AddBoxRounded';
 import FilterAlt from '@mui/icons-material/FilterAlt';
@@ -29,6 +28,8 @@ import { CommercialScheduleDataContext } from '@/app/context/Inspection/Commerci
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import scheduleService from '@/services/scheduleService';
 import CommercialScheduleDetail from './CommercialScheduleDetail';
+import SideDrawer from '@/app/components/shared/SideDrawer';
+import { useRouter } from 'next/navigation';
 
 const scheduleFilterConfig = [
   {
@@ -45,7 +46,6 @@ const scheduleFilterConfig = [
       })),
   },
   {
-    
     key: 'schedule_date__range',
     label: 'Data do Agendamento (Entre)',
     type: 'range',
@@ -129,14 +129,15 @@ const CommercialSchedulesList = () => {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [viewDrawerOpen, setViewDrawerOpen] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
+  const router = useRouter();
 
   const fetchData = async () => {
     try {
       setLoading(true);
       const response = await scheduleService.index({
         fields:
-          'customer.complete_name,service.name,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,schedule_agent.id,address,status,created_at,id,groups,project.id,project.product,product.name,product.id,project.sale.seller',
-        expand: 'customer,service,schedule_agent,address,project,product,project.sale',
+          'customer.complete_name,service.name,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,schedule_agent.id,address,status,created_at,id,groups,project.id,project.product,product.name,product.id,project.sale.seller,products.name,products.id',
+        expand: 'customer,service,schedule_agent,address,project,product,project.sale,products',
         page: page + 1,
         limit: rowsPerPage,
         ...filters,
@@ -293,21 +294,20 @@ const CommercialSchedulesList = () => {
           <Button onClick={handleAddModalClose}>Fechar</Button>
         </DialogActions>
       </Dialog>
-      <Drawer anchor="right" open={viewDrawerOpen} onClose={handleDrawerClose}>
-        <Box sx={{ width: 500, p: 2 }}>
-          <Typography variant="h6">Detalhes do Agendamento</Typography>
-          {selectedSchedule ? (
-            <Typography variant="body2" sx={{ mt: 1 }}>
-                <CommercialScheduleDetail schedule={selectedSchedule} />
-            </Typography>
-          ) : (
-            <Typography>Selecione um Agendamento</Typography>
-          )}
-          <Button onClick={handleDrawerClose} variant="outlined" sx={{ mt: 2 }}>
-            Fechar
-          </Button>
-        </Box>
-      </Drawer>
+      {/* Substituímos o Drawer original pelo SideDrawer */}
+      <SideDrawer
+        title="Detalhes do Agendamento"
+        open={viewDrawerOpen}
+        onClose={handleDrawerClose}
+        anchor="right"
+        projectId={selectedSchedule?.project?.id}
+      >
+        {selectedSchedule ? (
+          <CommercialScheduleDetail schedule={selectedSchedule} />
+        ) : (
+          <Typography variant="body2">Selecione um Agendamento</Typography>
+        )}
+      </SideDrawer>
     </Box>
   );
 };

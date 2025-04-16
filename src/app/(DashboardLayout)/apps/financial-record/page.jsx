@@ -31,7 +31,7 @@ import AutorenewIcon from '@mui/icons-material/Autorenew';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
-import formatDate from '@/utils/formatDate';
+import { formatDate } from '@/utils/dateUtils';
 import financialRecordService from '@/services/financialRecordService';
 
 import { FilterContext } from '@/context/FilterContext';

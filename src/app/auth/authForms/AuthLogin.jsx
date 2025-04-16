@@ -46,9 +46,9 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
       )}
       {subtext}
 
-      <Stack>
+      <Stack spacing={2}>
         <Box>
-          <CustomFormLabel htmlFor="email" sx={{ fontWeight: "700", fontSize: "16px" }} >
+          <CustomFormLabel htmlFor="email" sx={{ fontWeight: "700", fontSize: "16px", mb: 1 }} >
             E-mail<span style={{ color: '#EA3209' }}>*</span>
           </CustomFormLabel>
           <CustomTextField
@@ -68,10 +68,11 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
                 </InputAdornment>
               ),
             }}
+            sx={{mt: 0, mb: 0}}
           />
         </Box>
         <Box>
-          <CustomFormLabel htmlFor="password" sx={{ fontWeight: "700", fontSize: "16px" }} >
+          <CustomFormLabel htmlFor="password" sx={{ fontWeight: "700", fontSize: "16px", mb: 1, mt: 0 }} >
             Senha<span style={{ color: '#EA3209' }}>*</span>
           </CustomFormLabel>
           <CustomTextField
@@ -103,7 +104,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
                 </InputAdornment>
               ),
             }}
-
+            sx={{mt: 0}}
           />
         </Box>
 
@@ -139,6 +140,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             <FormControlLabel
               control={<CustomCheckbox defaultChecked />}
               label="Lembrar deste dispositivo"
+              sx={{mb: 1}}
             />
           </FormGroup>
           

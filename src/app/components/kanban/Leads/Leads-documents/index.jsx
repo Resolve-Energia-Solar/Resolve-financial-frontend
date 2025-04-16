@@ -1,22 +1,24 @@
 'use client';
 
 import { Grid, Box, Typography } from '@mui/material';
-import LeadInfoHeader from '@/app/components/kanban/Leads/components/HeaderCard';
-import LeadInfoHeaderSkeleton from '@/app/components/kanban/Leads/components/LeadInfoHeaderSkeleton'; // Import the skeleton
+import LeadInfoHeaderSkeleton from '@/app/components/kanban/Leads/components/LeadInfoHeaderSkeleton';
 import LeadAttachmentsAccordion from '../components/LeadAttachmentsAccordion';
-import LeadAttachmentsAccordionSkeleton from '../components/LeadAttachmentsAccordionSkeleton'; // Import the skeleton
+import LeadAttachmentsAccordionSkeleton from '../components/LeadAttachmentsAccordionSkeleton';
 import documentTypeService from '@/services/documentTypeService';
 import saleService from '@/services/saleService';
 import { useEffect, useState } from 'react';
 import { useContext } from 'react';
 import { LeadModalTabContext } from '../context/LeadModalTabContext';
+import { LeadInfoHeader } from '../components/LeadInfoHeader';
 
 function LeadDocumentPage() {
   const [documentTypes, setDocumentTypes] = useState([]);
   const [saleIds, setSaleIds] = useState([]);
-  const [loadingSales, setLoadingSales] = useState(true);
+  const [loadingSales, setLoadingSales] = useState(false);
   const [loadingDocumentTypes, setLoadingDocumentTypes] = useState(true);
   const { lead } = useContext(LeadModalTabContext);
+
+  console.log('Lead teste:', lead?.customer);
 
   const customer = lead?.customer || null;
   const leadId = lead?.id || null;
@@ -29,8 +31,8 @@ function LeadDocumentPage() {
       setLoadingSales(true);
       try {
         const response = await saleService.index({
-          customer__in: customer.id,
           fields: 'id,contract_number',
+          customer: customer,
         });
         console.log('Sales response:', response.results);
         setSaleIds(response.results || []);
@@ -40,9 +42,10 @@ function LeadDocumentPage() {
         setLoadingSales(false);
       }
     };
-
-    fetchSales();
-  }, [customer]);
+    if (customer) {
+      fetchSales();
+    }
+  }, [lead]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,7 +81,15 @@ function LeadDocumentPage() {
           }}
         >
           {/* Render LeadInfoHeader or its skeleton */}
-          {isLoading ? <LeadInfoHeaderSkeleton /> : <LeadInfoHeader />}
+          {isLoading ? <LeadInfoHeaderSkeleton /> : 
+            <Grid container alignItems="center">
+              <LeadInfoHeader.Root>
+                <LeadInfoHeader.Profile leadId={leadId} />
+                <LeadInfoHeader.InterestLevel leadId={leadId} />
+                <LeadInfoHeader.StatusChip leadId={leadId} />
+              </LeadInfoHeader.Root>
+            </Grid>
+          }
 
           {/* Render sales or skeleton */}
           {isLoading ? (

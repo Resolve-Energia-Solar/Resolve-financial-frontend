@@ -23,11 +23,12 @@ import HasPermission from '@/app/components/permissions/HasPermissions';
 import { useSelector } from 'react-redux';
 
 const DetailProduct = ({ productId = null }) => {
-  const { loading, error, productData } = useProduct(productId);
+  const { loading, error, productData } = useProduct(productId, {
+    fields: 'id,name,product_value,reference_value,cost_value,roof_type.id,materials,roof_type.name,product_material.material.id,product_material.amount,product_material.material.name',
+    expand: 'roof_type,product_material.material,product_material',
+  });
+
   const userPermissions = useSelector((state) => state.user.permissions);
-
-
-  console.log('productData', productData);
 
   if (loading) {
     return <FormPageSkeleton />;
@@ -111,7 +112,7 @@ const DetailProduct = ({ productId = null }) => {
             </Typography>
           </Grid>
         </HasPermission>
-        <Grid item xs={12} sm={6}>
+        {/* <Grid item xs={12} sm={6}>
           <CustomFormLabel>Filial</CustomFormLabel>
           <Typography
             sx={{
@@ -122,7 +123,7 @@ const DetailProduct = ({ productId = null }) => {
           >
             {productData?.branch?.name}
           </Typography>
-        </Grid>
+        </Grid> */}
         <Grid item xs={12} sm={6}>
           <CustomFormLabel>Tipo de Telhado</CustomFormLabel>
           <Typography
@@ -155,14 +156,14 @@ const DetailProduct = ({ productId = null }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {productData?.materials?.length === 0 ? (
+              {productData?.product_material?.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={3} style={{ textAlign: 'center' }}>
                     Nenhum material associado.
                   </TableCell>
                 </TableRow>
               ) : (
-                productData.materials.map((material, index) => (
+                productData?.product_material?.map((material, index) => (
                   <TableRow key={material.id}>
                     <TableCell style={{ width: '40%' }}>
                       <Typography>{material?.material?.name}</Typography>
