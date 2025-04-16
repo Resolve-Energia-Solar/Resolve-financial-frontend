@@ -619,7 +619,7 @@ const CreateAddressPage = ({
                               borderColor: theme.palette.grey[300],
                             },
                             input: {
-                              color: '#7E92A2',
+                              color: '#00000',
                               fontWeight: '600',
                               fontSize: '14px',
                               opacity: 1,
