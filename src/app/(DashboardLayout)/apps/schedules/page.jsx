@@ -188,19 +188,6 @@ const ScheduleTable = () => {
         })),
     },
     {
-      key: 'service__in',
-      label: 'Serviço',
-      type: 'async-multiselect',
-      endpoint: '/api/services/',
-      queryParam: 'name__icontains',
-      extraParams: { limit: 10, fields: ['id', 'name'] },
-      mapResponse: (data) =>
-        data.results.map((service) => ({
-          label: service.name,
-          value: service.id,
-        })),
-    },
-    {
       key: 'customer',
       label: 'Cliente',
       type: 'async-autocomplete',
