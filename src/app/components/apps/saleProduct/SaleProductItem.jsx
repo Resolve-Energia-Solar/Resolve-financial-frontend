@@ -13,10 +13,13 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IconTools } from '@tabler/icons-react';
+import { useSnackbar } from 'notistack';
 import useSaleProductForm from '@/hooks/salesProducts/useSaleProductForm';
 import CustomFieldMoney from '../invoice/components/CustomFieldMoney';
 
 export default function SaleProductItem({ initialData, productName, onUpdated }) {
+  const { enqueueSnackbar } = useSnackbar();
+
   const {
     formData,
     handleChange,
@@ -25,13 +28,31 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
     loading
   } = useSaleProductForm(initialData, initialData.id);
 
-  console.log('formData2', formData);
-
+  // dispara o refresh no pai somente após salvar com sucesso
   useEffect(() => {
     if (!loading && Object.keys(formErrors).length === 0) {
       onUpdated();
     }
   }, [loading, formErrors, onUpdated]);
+
+  const onClickSave = async () => {
+    await handleSave();
+
+    if (Object.keys(formErrors).length > 0) {
+      // concatena todas as mensagens de erro
+      const errorMessages = Object.entries(formErrors)
+        .map(
+          ([field, messages]) =>
+            `${field.replace(/_/g, ' ')}: ${messages.join(', ')}`
+        )
+        .join(' • ');
+      enqueueSnackbar(errorMessages, { variant: 'error' });
+    } else {
+      enqueueSnackbar('Alterações salvas com sucesso!', {
+        variant: 'success'
+      });
+    }
+  };
 
   return (
     <Accordion sx={{ mb: 1, boxShadow: 3, borderRadius: 2 }}>
@@ -49,16 +70,14 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
 
       <AccordionDetails>
         <Grid container spacing={2}>
-          {['value', 'cost_value', 'reference_value'].map((field, i) => (
+          {['value', 'cost_value', 'reference_value'].map((field) => (
             <Grid item xs={12} md={4} key={field}>
               <Typography fontWeight={700} fontSize={14} gutterBottom>
-                {(() => {
-                  switch (field) {
-                    case 'value': return 'Valor';
-                    case 'cost_value': return 'Valor de custo';
-                    case 'reference_value': return 'Valor de referência';
-                  }
-                })()}
+                {{
+                  value: 'Valor',
+                  cost_value: 'Valor de custo',
+                  reference_value: 'Valor de referência'
+                }[field]}
               </Typography>
               <CustomFieldMoney
                 name={field}
@@ -75,9 +94,11 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
           <Grid item xs={12} sx={{ textAlign: 'right' }}>
             <Button
               variant="contained"
-              onClick={handleSave}
+              onClick={onClickSave}
               disabled={loading}
-              endIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+              endIcon={
+                loading ? <CircularProgress size={20} color="inherit" /> : null
+              }
             >
               {loading ? 'Salvando...' : 'Salvar'}
             </Button>

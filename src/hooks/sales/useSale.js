@@ -42,7 +42,6 @@ const useSale = (id) => {
             "sale_products",
             "product.name",
             "sale.product"
-            // "sale_products.product",
           ],
           fields: [
             "customer.id",

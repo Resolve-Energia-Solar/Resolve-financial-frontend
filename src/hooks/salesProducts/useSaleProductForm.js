@@ -3,7 +3,7 @@ import saleProductsService from '@/services/saleProductsService';
 
 const useSaleProductForm = (initialData, id) => {
   const [formData, setFormData] = useState({
-    amount: '',
+    amount: 1,
     value: '',
     cost_value: '',
     reference_value: '',
@@ -20,7 +20,7 @@ const useSaleProductForm = (initialData, id) => {
   useEffect(() => {
     if (initialData) {
       setFormData({
-        amount: initialData.amount || '',
+        amount: initialData.amount || 1,
         value: initialData.value || '',
         cost_value: initialData.cost_value || '',
         reference_value: initialData.reference_value || '',
@@ -30,6 +30,9 @@ const useSaleProductForm = (initialData, id) => {
       });
     }
   }, [initialData]);
+
+  console.log('formData3', formData);
+  console.log('initialData', initialData);  
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -52,7 +55,7 @@ const useSaleProductForm = (initialData, id) => {
       reference_value: formData.reference_value,
       average_consumption: formData.average_consumption,
       estimated_consumption: formData.estimated_consumption,
-      product: formData.product?.id || null,
+      product: formData.product || null,
     };
 
     try {

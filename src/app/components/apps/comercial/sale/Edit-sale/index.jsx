@@ -50,8 +50,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IconTools } from '@tabler/icons-react';
 import CustomFieldMoney from '../../../invoice/components/CustomFieldMoney';
 import productService from '@/services/productsService';
-import useSaleProductsForm from '@/hooks/saleProducts/saleProductsForm';
-import useSaleProducts from '@/hooks/saleProducts/useSaleProducts';
+import SaleProductItem from '../../../saleProduct/SaleProductItem';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -106,46 +105,23 @@ const EditSaleTabs = ({
 
   const id_sale = id;
 
-  const { 
-    loading: saleLoading, 
-    error: errorLoading, 
-    saleData, 
-    fetchSale 
-  } = useSale(id);
-
-  const { 
-    loading: saleProductsLoading, 
-    error: errorSaleProducts, 
-    saleProductsData, 
-    fetchSaleProducts,
-  } = useSaleProducts(id);
+  const { loading, error, saleData, fetchSale } = useSale(id);
 
   console.log('saleData', saleData);
-  console.log('saleProductsData', saleProductsData);
 
   const {
-    formData: saleFormData,
-    handleChange: handleSaleChange,
-    handleSave: handleSaleSave,
-    formErrors: saleFormErrors,
-    successData: saleSuccessData,
-    loading: saleFormLoading,
-    success: saleSuccess,
+    formData,
+    handleChange,
+    handleSave,
+    formErrors,
+    successData,
+    loading: formLoading,
+    success,
   } = useSaleForm(saleData, id);
-
-  const {
-    formData: saleProductsFormData,
-    handleSaleProductsChange,
-    handleSaveSaleProducts,
-    formErrors: saleProductsFormErrors,
-    success: saleProductsSuccess,
-    loading: saleProductsFormLoading,
-    successData: saleProductsSuccessData,
-  } = useSaleProductsForm(saleProductsData, id);
 
   const [documentTypes, setDocumentTypes] = useState([]);
 
-  const { formattedValue, handleValueChange } = useCurrencyFormatter(saleFormData.totalValue);
+  const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.totalValue);
 
   const statusOptions = [
     { value: 'P', label: 'Pendente' },
@@ -185,35 +161,34 @@ const EditSaleTabs = ({
   }, []);
 
   useEffect(() => {
-    if (saleSuccessData && saleSuccess) {
+    if (successData && success) {
       if (onClosedModal) {
         onClosedModal();
         refresh();
       }
     }
-  }, [saleSuccessData, saleSuccess]);
+  }, [successData, success]);
 
   const [productNames, setProductNames] = useState({});
-  
+
   useEffect(() => {
     const fetchProductName = async (productId, index) => {
       if (productId) {
         try {
-          const product = await productService.find(productId); 
+          const product = await productService.find(productId);
           setProductNames((prev) => ({
             ...prev,
-            [index]: product.name, 
+            [index]: product.name,
           }));
         } catch (error) {
           console.error('Error fetching product:', error);
         }
       }
     };
-    saleProductsData?.sale_products?.forEach((saleProduct, index) => {
+    saleData?.sale_products.forEach((saleProduct, index) => {
       fetchProductName(saleProduct.product, index);
     });
-
-  }, [saleProductsData?.sale_products]);
+  }, [saleData?.sale_products]);
 
   return (
     <Box {...props}>
@@ -235,10 +210,10 @@ const EditSaleTabs = ({
         <Tab label="Comentários" id="tab-8" aria-controls="tabpanel-8" />
       </Tabs>
 
-      {saleLoading ? (
+      {loading ? (
         <FormPageSkeleton />
-      ) : errorSaleProducts ? (
-        <Typography color="error">{errorSaleProducts}</Typography>
+      ) : error ? (
+        <Typography color="error">{error}</Typography>
       ) : (
         <Box
           sx={{
@@ -255,22 +230,22 @@ const EditSaleTabs = ({
                 flexDirection: 'column',
               }}
             >
-              <Customer data={saleData?.customer} onRefresh={onRefresh} />
+              <Customer data={saleData.customer} onRefresh={onRefresh} />
               <Phones
-                data={saleData?.customer.phone_numbers}
+                data={saleData.customer.phone_numbers}
                 onRefresh={fetchSale}
-                userId={saleData?.customer.id}
+                userId={saleData.customer.id}
               />
               <Addresses
-                data={saleData?.customer.addresses}
+                data={saleData.customer.addresses}
                 onRefresh={fetchSale}
-                userId={saleData?.customer.id}
+                userId={saleData.customer.id}
               />
             </Box>
           </TabPanel>
 
           <TabPanel value={value} index={1}>
-            <SchedulesInspections userId={saleData?.customer.id} saleId={id_sale} />
+            <SchedulesInspections userId={saleData.customer.id} saleId={id_sale} />
           </TabPanel>
 
           <TabPanel value={value} index={2}>
@@ -287,21 +262,21 @@ const EditSaleTabs = ({
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="name">Cliente</CustomFormLabel>
                   <AutoCompleteUser
-                    onChange={(id) => handleSaleChange('customerId', id)}
-                    value={saleFormData.customerId}
-                    {...(saleFormErrors.customer_id && {
+                    onChange={(id) => handleChange('customerId', id)}
+                    value={formData.customerId}
+                    {...(formErrors.customer_id && {
                       error: true,
-                      helperText: saleFormErrors.customer_id,
+                      helperText: formErrors.customer_id,
                     })}
                   />
                 </Grid>
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="branch">Franquia</CustomFormLabel>
                   <AutoCompleteBranch
-                    onChange={(id) => handleSaleChange('branchId', id)}
+                    onChange={(id) => handleChange('branchId', id)}
                     disabled={!hasPermission(['accounts.change_branch_field'])}
-                    value={saleFormData.branchId}
-                    {...(saleFormErrors.branch_id && { error: true, helperText: saleFormErrors.branch_id })}
+                    value={formData.branchId}
+                    {...(formErrors.branch_id && { error: true, helperText: formErrors.branch_id })}
                   />
                 </Grid>
                 <HasPermission
@@ -311,12 +286,12 @@ const EditSaleTabs = ({
                   <Grid item xs={12} sm={12} lg={4}>
                     <CustomFormLabel htmlFor="name">Vendedor</CustomFormLabel>
                     <AutoCompleteUser
-                      onChange={(id) => handleSaleChange('sellerId', id)}
-                      value={saleFormData.sellerId}
+                      onChange={(id) => handleChange('sellerId', id)}
+                      value={formData.sellerId}
                       disabled={!hasPermission(['accounts.change_seller_field'])}
-                      {...(saleFormErrors.seller_id && {
+                      {...(formErrors.seller_id && {
                         error: true,
-                        helperText: saleFormErrors.seller_id,
+                        helperText: formErrors.seller_id,
                       })}
                     />
                   </Grid>
@@ -324,36 +299,36 @@ const EditSaleTabs = ({
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="name">Supervisor de Vendas</CustomFormLabel>
                   <AutoCompleteUser
-                    onChange={(id) => handleSaleChange('salesSupervisorId', id)}
-                    value={saleFormData.salesSupervisorId}
+                    onChange={(id) => handleChange('salesSupervisorId', id)}
+                    value={formData.salesSupervisorId}
                     disabled={!hasPermission(['accounts.change_supervisor_field'])}
-                    {...(saleFormErrors.sales_supervisor_id && {
+                    {...(formErrors.sales_supervisor_id && {
                       error: true,
-                      helperText: saleFormErrors.sales_supervisor_id,
+                      helperText: formErrors.sales_supervisor_id,
                     })}
                   />
                 </Grid>
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="name">Gerente de Vendas</CustomFormLabel>
                   <AutoCompleteUser
-                    onChange={(id) => handleSaleChange('salesManagerId', id)}
-                    value={saleFormData.salesManagerId}
+                    onChange={(id) => handleChange('salesManagerId', id)}
+                    value={formData.salesManagerId}
                     disabled={!hasPermission(['accounts.change_usermanager_field'])}
-                    {...(saleFormErrors.sales_manager_id && {
+                    {...(formErrors.sales_manager_id && {
                       error: true,
-                      helperText: saleFormErrors.sales_manager_id,
+                      helperText: formErrors.sales_manager_id,
                     })}
                   />
                 </Grid>
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="branch">Campanha de Marketing</CustomFormLabel>
                   <AutoCompleteCampaign
-                    onChange={(id) => handleSaleChange('marketingCampaignId', id)}
-                    value={saleFormData.marketingCampaignId}
+                    onChange={(id) => handleChange('marketingCampaignId', id)}
+                    value={formData.marketingCampaignId}
                     disabled={!hasPermission(['resolve_crm.change_marketing_campaign_field'])}
-                    {...(saleFormErrors.marketing_campaign_id && {
+                    {...(formErrors.marketing_campaign_id && {
                       error: true,
-                      helperText: saleFormErrors.marketing_campaign_id,
+                      helperText: formErrors.marketing_campaign_id,
                     })}
                   />
                 </Grid>
@@ -367,9 +342,9 @@ const EditSaleTabs = ({
                     value={formattedValue}
                     disabled={!hasPermission(['accounts.change_total_value_field'])}
                     onChange={(e) => handleValueChange(e, handleChange)}
-                    {...(saleFormErrors.total_value && {
+                    {...(formErrors.total_value && {
                       error: true,
-                      helperText: saleFormErrors.total_value,
+                      helperText: formErrors.total_value,
                     })}
                   />
                 </Grid>
@@ -377,12 +352,12 @@ const EditSaleTabs = ({
                   <FormSelect
                     label="Status da Venda"
                     options={statusOptions}
-                    value={saleFormData.status}
+                    value={formData.status}
                     onChange={(e) => {
                       const newStatus = e.target.value;
-                      handleSaleChange('status', newStatus);
+                      handleChange('status', newStatus);
                       if (newStatus !== 'C' && newStatus !== 'D') {
-                        handleSaleChange('cancellationReasonsIds', []);
+                        handleChange('cancellationReasonsIds', []);
                       }
                     }}
                     disabled={!hasPermission(['accounts.change_status_sale_field'])}
@@ -392,8 +367,8 @@ const EditSaleTabs = ({
                   <FormSelect
                     label="Status Financeiro"
                     options={financialOptions}
-                    value={saleFormData.payment_status}
-                    onChange={(e) => handleSaleChange('payment_status', e.target.value)}
+                    value={formData.payment_status}
+                    onChange={(e) => handleChange('payment_status', e.target.value)}
                     disabled={!hasPermission(['financial.change_status_financial'])}
                   />
                 </Grid>
@@ -409,28 +384,29 @@ const EditSaleTabs = ({
                       name="billing_date"
                       variant="outlined"
                       fullWidth
-                      value={saleFormData.billing_date}
-                      onChange={(e) => handleSaleChange('billing_date', e.target.value)}
+                      value={formData.billing_date}
+                      onChange={(e) => handleChange('billing_date', e.target.value)}
                       disabled={!hasPermission(['resolve_crm.can_change_billing_date'])}
-                      {...(saleFormErrors.billing_date && {
+                      {...(formErrors.billing_date && {
                         error: true,
-                        helperText: saleFormErrors.billing_date,
+                        helperText: formErrors.billing_date,
                       })}
                     />
                   </Grid>
                 </HasPermission>
 
-                {(formData.status === 'D' || formData.status === 'C') && (
+                {(formData.status === 'D' || formData.status === 'C') &&
+                  formData.isSale === false && (
                     <Grid item xs={12} sm={12} lg={8}>
                       <CustomFormLabel htmlFor="Motivo">
-                        Motivo do {saleFormData.status === 'C' ? 'Cancelamento' : 'Distrato'}
+                        Motivo do {formData.status === 'C' ? 'Cancelamento' : 'Distrato'}
                       </CustomFormLabel>
                       <AutoCompleteReasonMultiple
-                        onChange={(id) => handleSaleChange('cancellationReasonsIds', id)}
-                        value={saleFormData.cancellationReasonsIds}
-                        {...(saleFormErrors.cancellationReasonsIds && {
+                        onChange={(id) => handleChange('cancellationReasonsIds', id)}
+                        value={formData.cancellationReasonsIds}
+                        {...(formErrors.cancellationReasonsIds && {
                           error: true,
-                          helperText: saleFormErrors.cancellationReasonsIds,
+                          helperText: formErrors.cancellationReasonsIds,
                         })}
                       />
                     </Grid>
@@ -448,8 +424,8 @@ const EditSaleTabs = ({
                       'Retenção 15%',
                       'Retenção 17%',
                     ]}
-                    value={saleFormData.reference_table || ''}
-                    onChange={(event, newValue) => handleSaleChange('reference_table', newValue)}
+                    value={formData.reference_table || ''}
+                    onChange={(event, newValue) => handleChange('reference_table', newValue)}
                     renderInput={(params) => (
                       <TextField {...params} label="Tabela de Referência" variant="outlined" />
                     )}
@@ -466,169 +442,24 @@ const EditSaleTabs = ({
                     <FormControlLabel
                       control={
                         <CustomSwitch
-                          checked={saleFormData.isSale}
-                          onChange={(e) => handleSaleChange('isSale', e.target.checked)}
+                          checked={formData.isSale}
+                          onChange={(e) => handleChange('isSale', e.target.checked)}
                         />
                       }
-                      label={saleFormData.isSale ? 'Pré-Venda' : 'Venda'}
+                      label={formData.isSale ? 'Pré-Venda' : 'Venda'}
                     />
                   </Grid>
                 </HasPermission>
 
-                {(saleProductsData?.sale_products || []).map((saleProduct, index) => (
-                  <Grid item xs={12} sm={12} lg={12}>
-                    <Accordion
-                      key={saleProduct.id}
-                      sx={{
-                        borderRadius: '12px',
-                        mb: 1,
-                        boxShadow: 3,
-                        // backgroundColor: '#F5F5F5',
-                      }}
-                    >
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Box sx={{ display: 'flex', width: '100%', alignItems: 'center' }}>
-                          <Grid
-                            item
-                            xs={1}
-                            sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}
-                          >
-                            <IconTools size={"20px"} sx={{ verticalAlign: 'middle', color: '#7E8388' }} />
-                          </Grid>
-                          <Grid
-                            item
-                            xs={11}
-                            sx={{ justifyContent: 'flex-start', display: 'flex', flexDirection: 'column' }}
-                          >
-                            <Typography sx={{ fontWeight: 700, fontSize: '14px' }}>Produto</Typography>
-                            <Typography
-                              sx={{ fontWeight: 500, fontSize: '16px', color: 'rgba(48, 48, 48, 0.5)' }}
-                            >
-                              {productNames[index] || 'Não encontramos o nome do produto'}
-                            </Typography>
-                          </Grid>
-                        </Box>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Grid container xs={12} spacing={2} sx={{ mb: 2 }}>
-                          <Grid item xs={4} sm={12} lg={4}>
-                            <CustomFormLabel htmlFor="value" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Valor</CustomFormLabel>
-                            <CustomFieldMoney
-                              name="value"
-                              fullWidth
-                              value={saleProduct.value || ''}
-                              onChange={(event, newValue) => handleSaleProductsChange('value', newValue)}
-                              {...(saleProductsFormErrors.value && { error: true, helperText: saleProductsFormErrors.value })}
-                              sx={{
-                                input: {
-                                  // color: '#7E92A2',
-                                  fontWeight: '400',
-                                  fontSize: '12px',
-                                  opacity: 1,
-                                },
-                                '& .MuiOutlinedInput-root': {
-                                  border: '1px solid #3E3C41',
-                                  borderRadius: '9px',
-                                },
-                                '& .MuiInputBase-input': {
-                                  padding: '12px',
-                                },
-                              }}
-
-                            />
-                          </Grid>
-
-                          <Grid item xs={4} sm={12} lg={4}>
-                            <CustomFormLabel htmlFor="cost_value" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Valor de custo</CustomFormLabel>
-                            <CustomFieldMoney
-                              name="cost_value"
-                              fullWidth
-                              value={saleProduct.cost_value || ''}
-                              onChange={(event, newValue) => handleSaleProductsChange('cost_value', newValue)}
-                              {...(saleProductsFormErrors.cost_value && { error: true, helperText: saleProductsFormErrors.cost_value })}
-                              sx={{
-                                input: {
-                                  // color: '#7E92A2',
-                                  fontWeight: '400',
-                                  fontSize: '12px',
-                                  opacity: 1,
-                                },
-                                '& .MuiOutlinedInput-root': {
-                                  border: '1px solid #3E3C41',
-                                  borderRadius: '9px',
-                                },
-                                '& .MuiInputBase-input': {
-                                  padding: '12px',
-                                },
-                              }}
-
-                            />
-                          </Grid>
-
-                          <Grid item xs={4} sm={12} lg={4}>
-                            <CustomFormLabel htmlFor="reference_value" sx={{ color: '#303030', fontWeight: '700', fontSize: '14px' }}>Valor de referência</CustomFormLabel>
-                            <CustomFieldMoney
-                              name="reference_value"
-                              fullWidth
-                              value={saleProduct.reference_value || ''}
-                              onChange={(event, newValue) => handleSaleProductsChange('reference_value', newValue)}
-                              {...(saleProductsFormErrors.reference_value && { error: true, helperText: saleProductsFormErrors.reference_value })}
-                              sx={{
-                                input: {
-                                  // color: '#7E92A2',
-                                  fontWeight: '400',
-                                  fontSize: '12px',
-                                  opacity: 1,
-                                },
-                                '& .MuiOutlinedInput-root': {
-                                  border: '1px solid #3E3C41',
-                                  borderRadius: '9px',
-                                },
-                                '& .MuiInputBase-input': {
-                                  padding: '12px',
-                                },
-                              }}
-
-                            />
-                          </Grid>
-                        </Grid>
-                        <Grid container xs={12} spacing={2} sx={{ mb: 2 }}>
-                          {canEdit && (
-                            <Grid item xs={12} sx={{ display: "flex", justifyContent: 'flex-end', justifyItems: 'flex-end' }}>
-                              <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={async () => {
-                                  await handleSaveSaleProducts();
-                                  if (saleProductsFormErrors && Object.keys(saleProductsFormErrors).length > 0) {
-                                    const errorMessages = Object.entries(saleProductsFormErrors)
-                                      .map(
-                                        ([field, messages]) =>
-                                          `${formatFieldName(field)}: ${messages.join(', ')}`
-                                      )
-                                      .join(', ');
-                                    enqueueSnackbar(errorMessages, { variant: 'error' });
-                                  } else {
-                                    enqueueSnackbar('Alterações salvas com sucesso!', {
-                                      variant: 'success',
-                                    });
-                                  }
-                                }}
-                                disabled={saleProductsFormLoading}
-                                endIcon={
-                                  saleProductsFormLoading ? <CircularProgress size={20} color="inherit" /> : null
-                                }
-                              >
-                                {saleProductsFormLoading ? 'Salvando...' : 'Salvar Alterações'}
-                              </Button>
-                            </Grid>
-                          )}
-                        </Grid>
-                      </AccordionDetails>
-
-                    </Accordion>
-                  </Grid>
+                {(saleData.sale_products || []).map((sp, idx) => (
+                  <SaleProductItem
+                    key={sp.id}
+                    initialData={sp}
+                    productName={productNames[idx]}
+                    onUpdated={fetchSale}
+                  />
                 ))}
+
               </Grid>
             </Box>
           </TabPanel>
@@ -681,9 +512,9 @@ const EditSaleTabs = ({
                       variant="contained"
                       color="primary"
                       onClick={async () => {
-                        await handleSaleSave();
-                        if (saleFormErrors && Object.keys(saleFormErrors).length > 0) {
-                          const errorMessages = Object.entries(saleFormErrors)
+                        await handleSave();
+                        if (formErrors && Object.keys(formErrors).length > 0) {
+                          const errorMessages = Object.entries(formErrors)
                             .map(
                               ([field, messages]) =>
                                 `${formatFieldName(field)}: ${messages.join(', ')}`,
@@ -694,10 +525,10 @@ const EditSaleTabs = ({
                           enqueueSnackbar('Alterações salvas com sucesso!', { variant: 'success' });
                         }
                       }}
-                      disabled={saleFormLoading}
-                      endIcon={saleFormLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                      disabled={formLoading}
+                      endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
                     >
-                      {saleFormLoading ? 'Salvando...' : 'Salvar Alterações'}
+                      {formLoading ? 'Salvando...' : 'Salvar Alterações'}
                     </Button>
                   </Grid>
                 )}
