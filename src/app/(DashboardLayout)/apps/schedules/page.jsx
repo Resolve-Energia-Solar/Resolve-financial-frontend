@@ -66,7 +66,7 @@ const ScheduleTable = () => {
 
   useEffect(() => {
     serviceCatalogService
-      .getServicesCatalog({ fields: 'id,name' })
+      .getServicesCatalog({ fields: 'id,name', limit: 100 })
       .then((data) => {
         const list = data.results || [];
         setServices(list);
@@ -419,8 +419,8 @@ const ScheduleTable = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                    {scheduleList.map((schedule) => (
-                      <TableRow
+                  {scheduleList.map((schedule) => (
+                    <TableRow
                       key={schedule.id}
                       hover
                       style={{ cursor: 'pointer' }}
@@ -428,7 +428,7 @@ const ScheduleTable = () => {
                         setSelectedScheduleId(schedule.id);
                         setDetailsDrawerOpen(true);
                       }}
-                      >
+                    >
                       {selectedServices.length > 1 && <TableCell>{schedule.service.name}</TableCell>}
                       <TableCell>
                         {`${formatDate(schedule.schedule_date)} - ${schedule.schedule_start_time}`}
@@ -437,8 +437,8 @@ const ScheduleTable = () => {
                       <TableCell>{schedule?.branch?.name || "Sem unidade"}</TableCell>
                       <TableCell>
                         {schedule.schedule_agent
-                        ? <UserCard userId={schedule.schedule_agent} showPhone showEmail={false}/>
-                        : <span>Sem agente</span>}
+                          ? <UserCard userId={schedule.schedule_agent} showPhone showEmail={false} />
+                          : <span>Sem agente</span>}
                       </TableCell>
                       <TableCell sx={{ textWrap: 'wrap' }}>
                         {schedule.address.complete_address}
