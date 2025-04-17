@@ -66,12 +66,11 @@ const ScheduleTable = () => {
 
   useEffect(() => {
     serviceCatalogService
-      .getServicesCatalog({ fields: 'id,name' })
+      .getServicesCatalog({ fields: 'id,name', limit: 100 })
       .then((data) => {
         const list = data.results || [];
         setServices(list);
         if (list.length > 0) {
-          // Seleciona todos por padrão
           setSelectedServices(list.map((s) => s.id));
         }
       })
@@ -89,6 +88,7 @@ const ScheduleTable = () => {
         service__in: selectedServices.join(','),
         fields: [
           'id',
+          'service.name',
           'created_at',
           'customer.complete_name',
           'status',
@@ -186,19 +186,6 @@ const ScheduleTable = () => {
         data.results.map((user) => ({
           label: user.complete_name,
           value: user.id,
-        })),
-    },
-    {
-      key: 'service__in',
-      label: 'Serviço',
-      type: 'async-multiselect',
-      endpoint: '/api/services/',
-      queryParam: 'name__icontains',
-      extraParams: { limit: 10, fields: ['id', 'name'] },
-      mapResponse: (data) =>
-        data.results.map((service) => ({
-          label: service.name,
-          value: service.id,
         })),
     },
     {
@@ -364,6 +351,7 @@ const ScheduleTable = () => {
               <Table stickyHeader aria-label="schedule table" sx={{ textWrap: 'nowrap' }}>
                 <TableHead>
                   <TableRow>
+                    {selectedServices.length > 1 && <TableCell>Serviço</TableCell>}
                     <TableCell onClick={() => handleSort('schedule_date,schedule_start_time')}>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <span>Data e Hora</span>
@@ -430,6 +418,7 @@ const ScheduleTable = () => {
                         setDetailsDrawerOpen(true);
                       }}
                     >
+                      {selectedServices.length > 1 && <TableCell>{schedule.service.name}</TableCell>}
                       <TableCell>
                         {`${formatDate(schedule.schedule_date)} - ${schedule.schedule_start_time}`}
                       </TableCell>
@@ -437,8 +426,8 @@ const ScheduleTable = () => {
                       <TableCell>{schedule?.branch?.name || "Sem unidade"}</TableCell>
                       <TableCell>
                         {schedule.schedule_agent
-                        ? <UserCard userId={schedule.schedule_agent} showPhone showEmail={false}/>
-                        : <span>Sem agente</span>}
+                          ? <UserCard userId={schedule.schedule_agent} showPhone showEmail={false} />
+                          : <span>Sem agente</span>}
                       </TableCell>
                       <TableCell>{schedule?.service?.name || "Sem serviço"}</TableCell>
                       <TableCell sx={{ textWrap: 'wrap' }}>
