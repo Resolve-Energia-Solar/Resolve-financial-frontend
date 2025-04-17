@@ -11,9 +11,6 @@ import {
   CircularProgress,
   Autocomplete,
   TextField,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
@@ -47,12 +44,9 @@ import Phones from '../../../sale/phones';
 import Addresses from '../../../sale/Adresses';
 import useCanEditUser from '@/hooks/users/userCanEdit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { IconTools } from '@tabler/icons-react';
-import CustomFieldMoney from '../../../invoice/components/CustomFieldMoney';
 import productService from '@/services/productsService';
 import SaleProductItem from '../../../saleProduct/SaleProductItem';
-
-const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
+import getContentType from '@/utils/getContentType';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -118,6 +112,18 @@ const EditSaleTabs = ({
     loading: formLoading,
     success,
   } = useSaleForm(saleData, id);
+
+  const [saleContentTypeId, setSaleContentTypeId] = useState(null);
+
+  useEffect(() => {
+    getContentType('resolve_crm', 'sale')
+      .then((contentTypeId) => {
+        setSaleContentTypeId(contentTypeId);
+      })
+      .catch((error) => {
+        console.error('Error fetching content type ID:', error);
+      });
+  }, []);
 
   const [documentTypes, setDocumentTypes] = useState([]);
 
@@ -472,7 +478,7 @@ const EditSaleTabs = ({
 
           <TabPanel value={value} index={3}>
             <Attachments
-              contentType={CONTEXT_TYPE_SALE_ID}
+              contentType={saleContentTypeId}
               objectId={id_sale}
               documentTypes={documentTypes}
               canEdit={canEdit}
@@ -494,7 +500,7 @@ const EditSaleTabs = ({
           </TabPanel>
 
           <TabPanel value={value} index={7}>
-            <History contentType={CONTEXT_TYPE_SALE_ID} objectId={id_sale} />
+            <History contentType={saleContentTypeId} objectId={id_sale} />
           </TabPanel>
 
           <TabPanel value={value} index={8}>
