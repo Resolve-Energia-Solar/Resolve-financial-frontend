@@ -24,9 +24,9 @@ import useAttachmentForm from '@/hooks/attachments/useAttachmentsForm';
 import FormSelect from '../forms/form-custom/FormSelect';
 import HasPermission from '../permissions/HasPermissions';
 import { useSelector } from 'react-redux';
-import exp from 'constants';
 
 export default function Attachments({ objectId, contentType, documentTypes, canEdit = true }) {
+  console.log('contentTypeAttachment: ', contentType);
   const theme = useTheme();
   const [selectedAttachment, setSelectedAttachment] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -51,14 +51,13 @@ export default function Attachments({ objectId, contentType, documentTypes, canE
     handleSave,
     formErrors,
     setFormErrors,
-    success,
     loading: formLoading,
     refreshSuccess,
   } = useAttachmentForm(
     selectedAttachment || null,
     selectedAttachment?.id || null,
     objectId,
-    parseInt(contentType),
+    contentType,
   );
 
   formData.status ? formData.status : (formData.status = 'EA');
