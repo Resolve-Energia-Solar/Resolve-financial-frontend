@@ -141,14 +141,16 @@ const UploadDocument = ({ projectId }) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
         setUploadProgress(percentCompleted);
       });
-
+    
       setUploadStatus('success');
       setOpenSnackbar(true);
       console.log('Arquivo enviado com sucesso:', response);
-
+    
       setFile(null);
       setFileName('');
       setUploadProgress(0);
+    
+      fetchMaterials(); // ⬅️ Aqui você força o refresh após o upload
     } catch (error) {
       setUploadStatus('error');
       setErrorMessage(error.response?.data?.error || 'Ocorreu um erro no upload do arquivo.');
