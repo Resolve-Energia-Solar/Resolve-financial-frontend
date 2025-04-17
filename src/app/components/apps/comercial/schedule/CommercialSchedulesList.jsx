@@ -252,6 +252,7 @@ const CommercialSchedulesList = () => {
                   <TableCell sx={{ fontWeight: 'bold' }}>Data</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Hora</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Agente</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Serviço</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Endereço</TableCell>
                 </TableRow>
               </TableHead>
@@ -265,6 +266,7 @@ const CommercialSchedulesList = () => {
                     <TableCell>{schedule.schedule_date ? formatDate(schedule.schedule_date) : '-'}</TableCell>
                     <TableCell>{schedule.schedule_start_time ? formatTime(schedule.schedule_start_time) : '-'}</TableCell>
                     <TableCell>{schedule.schedule_agent ? schedule.schedule_agent.complete_name : <Chip label="Sem Agente" color="warning" />}</TableCell>
+                    <TableCell>{schedule.service ? schedule.service.name : '-'}</TableCell>
                     <TableCell>{formatAddress(schedule.address)}</TableCell>
                   </TableRow>
                 ))}
