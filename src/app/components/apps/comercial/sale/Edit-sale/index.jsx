@@ -11,6 +11,9 @@ import {
   CircularProgress,
   Autocomplete,
   TextField,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
@@ -26,7 +29,7 @@ import { useSelector } from 'react-redux';
 import FormPageSkeleton from '@/app/components/apps/comercial/sale/components/FormPageSkeleton';
 import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import PaymentCard from '@/app/components/apps/invoice/components/paymentList/card';
 import documentTypeService from '@/services/documentTypeService';
 import Attachments from '@/app/components/shared/Attachments';
@@ -43,6 +46,11 @@ import Customer from '../../../sale/Customer';
 import Phones from '../../../sale/phones';
 import Addresses from '../../../sale/Adresses';
 import useCanEditUser from '@/hooks/users/userCanEdit';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { IconTools } from '@tabler/icons-react';
+import CustomFieldMoney from '../../../invoice/components/CustomFieldMoney';
+import productService from '@/services/productsService';
+import SaleProductItem from '../../../saleProduct/SaleProductItem';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -99,6 +107,8 @@ const EditSaleTabs = ({
 
   const { loading, error, saleData, fetchSale } = useSale(id);
 
+  console.log('saleData', saleData);
+
   const {
     formData,
     handleChange,
@@ -152,6 +162,7 @@ const EditSaleTabs = ({
         console.log('Error: ', error);
       }
     };
+
     fetchData();
   }, []);
 
@@ -163,6 +174,27 @@ const EditSaleTabs = ({
       }
     }
   }, [successData, success]);
+
+  const [productNames, setProductNames] = useState({});
+
+  useEffect(() => {
+    const fetchProductName = async (productId, index) => {
+      if (productId) {
+        try {
+          const product = await productService.find(productId);
+          setProductNames((prev) => ({
+            ...prev,
+            [index]: product.name,
+          }));
+        } catch (error) {
+          console.error('Error fetching product:', error);
+        }
+      }
+    };
+    saleData?.sale_products.forEach((saleProduct, index) => {
+      fetchProductName(saleProduct.product, index);
+    });
+  }, [saleData?.sale_products]);
 
   return (
     <Box {...props}>
@@ -369,7 +401,8 @@ const EditSaleTabs = ({
                   </Grid>
                 </HasPermission>
 
-                {(formData.status === 'D' || formData.status === 'C') && (
+                {(formData.status === 'D' || formData.status === 'C') &&
+                  formData.isSale === false && (
                     <Grid item xs={12} sm={12} lg={8}>
                       <CustomFormLabel htmlFor="Motivo">
                         Motivo do {formData.status === 'C' ? 'Cancelamento' : 'Distrato'}
@@ -423,6 +456,16 @@ const EditSaleTabs = ({
                     />
                   </Grid>
                 </HasPermission>
+
+                {(saleData.sale_products || []).map((sp, idx) => (
+                  <SaleProductItem
+                    key={sp.id}
+                    initialData={sp}
+                    productName={productNames[idx]}
+                    onUpdated={fetchSale}
+                  />
+                ))}
+
               </Grid>
             </Box>
           </TabPanel>
