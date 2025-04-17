@@ -160,9 +160,9 @@ export default function CreateFinancialRecord() {
           formDataAttachment.append('file', attachment.file);
           formDataAttachment.append('description', attachment.description);
           formDataAttachment.append('object_id', recordId);
-          formDataAttachment.append('content_type_id', contentTypeId);
-          formDataAttachment.append('document_type_id', '');
-          formDataAttachment.append('document_subtype_id', '');
+          formDataAttachment.append('content_type', contentTypeId);
+          formDataAttachment.append('document_type', '');
+          formDataAttachment.append('document_subtype', '');
           formDataAttachment.append('status', '');
           await attachmentService.create(formDataAttachment);
         }),

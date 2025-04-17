@@ -69,7 +69,7 @@ export default function Attachments({ objectId, contentType, documentTypes, canE
 
   const handleOpenModal = (attachment, documentType) => {
     setOpenModal(true);
-    if (documentType) handleChange('document_type_id', parseInt(documentType));
+    if (documentType) handleChange('document_type', parseInt(documentType));
     if (attachment)
       setSelectedAttachment({
         ...attachment,
@@ -105,14 +105,14 @@ export default function Attachments({ objectId, contentType, documentTypes, canE
     if (selectedAttachment) {
       handleChange('description', selectedAttachment.description || "");
       handleChange('status', selectedAttachment.status || "EA");
-      handleChange('document_type_id', selectedAttachment.document_type?.id || "");
-      handleChange('content_type_id', selectedAttachment.content_type?.id || "");
+      handleChange('document_type', selectedAttachment.document_type?.id || "");
+      handleChange('content_type', selectedAttachment.content_type?.id || "");
       handleChange('object_id', selectedAttachment.object_id || objectId);
     } else {
       handleChange('description', "");
       handleChange('status', "EA");
-      handleChange('document_type_id', "");
-      handleChange('content_type_id', "");
+      handleChange('document_type', "");
+      handleChange('content_type', "");
       handleChange('object_id', objectId);
     }
   }, [selectedAttachment]);
@@ -301,8 +301,8 @@ export default function Attachments({ objectId, contentType, documentTypes, canE
             <FormSelect
               label="Tipo de Documento"
               options={options_document_types}
-              value={formData.document_type_id}
-              onChange={(e) => handleChange('document_type_id', e.target.value)}
+              value={formData.document_type}
+              onChange={(e) => handleChange('document_type', e.target.value)}
             />
 
             <HasPermission

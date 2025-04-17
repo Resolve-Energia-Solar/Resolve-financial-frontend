@@ -61,6 +61,8 @@ const AttachmentTable = ({
         object_id: objectId,
         content_type: contentTypeId,
         limit: 30,
+        expand: 'document_type',
+        fields: 'id,file,description,document_type.name,created_at',
       });
       setFetchedAttachments(response.results || []);
     } catch (error) {
@@ -107,6 +109,9 @@ const AttachmentTable = ({
               <strong>Descrição</strong>
             </TableCell>
             <TableCell>
+              <strong>Tipo</strong>
+            </TableCell>
+            <TableCell>
               <strong>Data de Upload</strong>
             </TableCell>
             <TableCell>
@@ -130,6 +135,7 @@ const AttachmentTable = ({
                   )}
                 </TableCell>
                 <TableCell>{attachment.description || '-'}</TableCell>
+                <TableCell>{attachment.document_type?.name || '-'}</TableCell>
                 <TableCell>
                   {attachment.created_at
                     ? new Date(attachment.created_at).toLocaleString('pt-BR')

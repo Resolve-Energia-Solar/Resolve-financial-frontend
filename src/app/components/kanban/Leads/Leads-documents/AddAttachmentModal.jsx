@@ -56,7 +56,7 @@ function AddAttachmentModal({
         selectedAttachment?.content_type?.id || parseInt(contentType),
     );
 
-    formData.document_type_id = formData.document_type_id ? formData.document_type_id : selectedAttachment?.document_type?.id || '';
+    formData.document_type = formData.document_type ? formData.document_type : selectedAttachment?.document_type?.id || '';
     formData.object_id = formData.object_id ? formData.object_id : selectedAttachment?.object_id || objectId;
     formData.content_type_id = formData.content_type_id ? formData.content_type_id : selectedAttachment?.content_type?.id || parseInt(contentType);
     formData.status ? formData.status : (formData.status = 'EA');
@@ -145,8 +145,8 @@ function AddAttachmentModal({
                 <FormSelect
                     label="Tipo de Documento"
                     options={options_document_types}
-                    value={formData.document_type_id}
-                    onChange={(e) => handleChange('document_type_id', e.target.value)}
+                    value={formData.document_type}
+                    onChange={(e) => handleChange('document_type', e.target.value)}
                 />
 
                 <HasPermission

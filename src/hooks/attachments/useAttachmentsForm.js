@@ -7,7 +7,7 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
     content_type_id: content_type_id,
     file: [],
     status: '',
-    document_type_id: '',
+    document_type: '',
     description: '',
   });
 
@@ -26,7 +26,7 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
       content_type_id: content_type_id,
       file: [],
       status: '',
-      document_type_id: '',
+      document_type: '',
       description: '',
     });
   };
@@ -38,7 +38,7 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
         content_type_id: initialData.content_type_id,
         file: initialData.file,
         status: initialData.status,
-        document_type_id: initialData.document_type_id,
+        document_type: initialData.document_type,
         description: initialData.description,
       });
     }
@@ -61,7 +61,7 @@ const useAttachmentForm = (initialData, id, object_id, content_type_id) => {
     dataToSend.append('object_id', formData.object_id);
     dataToSend.append('content_type', formData.content_type_id);
     dataToSend.append('status', formData.status);
-    dataToSend.append('document_type', formData.document_type_id);
+    dataToSend.append('document_type', formData.document_type);
     dataToSend.append('description', formData.description);
 
     if (isFileArray) {
