@@ -34,7 +34,7 @@ import { CheckCircle, Error } from '@mui/icons-material';
 import { removeProductsByIds } from '@/store/products/customProducts';
 import AddUser from '../../../users/Add-user/addUser';
 
-const steps = ['Dados do Cliente', 'Produtos', 'Financeiro', 'Documentos', 'Agendar Vistoria'];
+const steps = ['Dados do Cliente', 'Produtos', 'Financeiro', 'CheckList', 'Agendar Vistoria'];
 
 export default function OnboardingCreateSale({ onClose = null, onEdit = null }) {
   return (
@@ -189,10 +189,10 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
   productIds ? (formData.productIds = productIds) : null;
   user?.user ? (formData.sellerId = user.user.id) : null;
   user?.user?.employee?.user_manager
-    ? (formData.salesSupervisorId = user?.user?.employee?.user_manager)
+    ? (formData.salesSupervisorId = user?.user?.employee?.user_manager?.id)
     : null;
   user?.user?.employee?.user_manager
-    ? (formData.salesManagerId = user?.user?.employee?.user_manager)
+    ? (formData.salesManagerId = user?.user?.employee?.user_manager?.id)
     : null;
   formData.status = 'P';
   formData.payment_status = 'P';
@@ -204,6 +204,8 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
     }
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
+
+  console.log('formdata:', formData)
 
   const handleDialogClose = () => {
     setIsDialogOpen(false);

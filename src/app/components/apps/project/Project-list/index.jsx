@@ -516,18 +516,18 @@ const ProjectList = ({ onClick }) => {
               <TableCell>Liberado</TableCell>
               <TableCell>Cliente</TableCell>
               <TableCell>Etapa Atual</TableCell>
-              <TableCell>Medidor Etapa</TableCell>
-              <TableCell>Medidor Geral</TableCell>
+              {/* <TableCell>Medidor Etapa</TableCell>
+              <TableCell>Medidor Geral</TableCell> */}
               <TableCell>Homologador</TableCell>
-              <TableCell>Status do Projeto</TableCell>
+              <TableCell>Status da Venda</TableCell>
+              <TableCell>Status Desenho Executivo</TableCell>
+              <TableCell>Status de Homologação</TableCell>
               <TableCell>Lista de Materiais</TableCell>
               <TableCell>ART/TRT</TableCell>
               <TableCell>Solicitação da Conce.</TableCell>
               <TableCell>Parecer de Acesso</TableCell>
               <TableCell>Produto</TableCell>
               <TableCell>Kwp</TableCell>
-              <TableCell>Status de Homologação</TableCell>
-              <TableCell>Status da Venda</TableCell>
             </TableRow>
           </TableHead>
           {loadingProjects ? (
@@ -559,15 +559,21 @@ const ProjectList = ({ onClick }) => {
                     </TableCell>
                     <TableCell>{item.sale?.customer?.complete_name}</TableCell>
                     <TableCell>Venda</TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       <Typography sx={{ width: '90px' }}>{getProgressColor(0.5)}</Typography>
-                    </TableCell>
-                    <TableCell>
+                      </TableCell>
+                      <TableCell>
                       <Typography sx={{ width: '90px' }}>{getProgressColor(1)}</Typography>
-                    </TableCell>
+                      </TableCell> */}
                     <TableCell>{item.homologator?.complete_name || '-'}</TableCell>
+                      <TableCell>
+                        <DocumentStatusChip status={item?.sale?.status} />
+                      </TableCell>
                     <TableCell>
                       <ChipProject status={item.designer_status} />
+                    </TableCell>
+                    <TableCell>
+                      <StatusChip status={item.status} />
                     </TableCell>
                     <TableCell>
                       {item.material_list_is_completed ? (
@@ -591,12 +597,6 @@ const ProjectList = ({ onClick }) => {
                     </TableCell>
                     <TableCell>{item.product?.name}</TableCell>
                     <TableCell>{item.product?.params || '-'}</TableCell>
-                    <TableCell>
-                      <StatusChip status={item.status} />
-                    </TableCell>
-                    <TableCell>
-                      <DocumentStatusChip status={item?.sale?.status} />
-                    </TableCell>
                   </TableRow>
                 );
               })}

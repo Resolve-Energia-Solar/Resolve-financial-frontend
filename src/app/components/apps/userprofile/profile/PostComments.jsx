@@ -30,7 +30,8 @@ const PostComments = ({ comment, post }) => {
           content_type: commentContentType,
           fields: [
             'id',
-            'text,author.id',
+            'text',
+            'author.id',
             'author.profile_picture',
             'author.complete_name',
             'created_at',
@@ -48,11 +49,12 @@ const PostComments = ({ comment, post }) => {
   }, [comment.id, commentContentType]);
 
   const onSubmit = async () => {
+    if (!replyTxt || !user.id) return;
     try {
       const replyData = {
         object_id: comment.id,
-        content_type_id: commentContentType,
-        author_id: user.id,
+        content_type: commentContentType,
+        author: user.id,
         text: replyTxt,
         parent_id: comment.id,
       };
@@ -79,11 +81,11 @@ const PostComments = ({ comment, post }) => {
       >
         <Stack direction="row" gap={2} alignItems="center">
           <Avatar
-            alt={comment.author.complete_name}
-            src={comment.author.profile_picture}
+            alt={comment.author?.complete_name}
+            src={comment.author?.profile_picture}
             sx={{ width: 33, height: 33 }}
           />
-          <Typography variant="h6">{comment.author.complete_name}</Typography>
+          <Typography variant="h6">{comment.author?.complete_name}</Typography>
           <Typography variant="caption" color="textSecondary">
             <IconCircle size={7} fillOpacity="0.1" strokeOpacity="0.1" />{' '}
             {new Date(comment.created_at).toLocaleString()}

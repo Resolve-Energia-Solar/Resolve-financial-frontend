@@ -20,7 +20,6 @@ function ChecklistSales({ saleId }) {
           expand: 'product',
           fields: 'id,product.product_value,product.default,product.name',
          });
-        console.log('Response: ', response);
         setProjectsList(response);
       } catch (error) {
         console.log('Error: ', error);

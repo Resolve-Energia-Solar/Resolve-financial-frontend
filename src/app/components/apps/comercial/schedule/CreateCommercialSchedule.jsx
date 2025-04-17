@@ -22,9 +22,8 @@ import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import useSheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
+import useScheduleForm from '@/hooks/inspections/schedule/useScheduleForm';
 import { useSelector } from 'react-redux';
-import HasPermission from '@/app/components/permissions/HasPermissions';
 import formatDate from '@/utils/formatDate';
 
 const timeOptions = [
@@ -35,7 +34,7 @@ const timeOptions = [
   { value: '16:00:00', label: '16:00' },
 ];
 
-const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
+export default function CreateCommercialSchedule({ onClose, onRefresh }) {
   const router = useRouter();
   const {
     formData,
@@ -44,8 +43,12 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
     loading: formLoading,
     formErrors,
     success,
-  } = useSheduleForm();
-  const userPermissions = useSelector((state) => state.user.permissions);
+  } = useScheduleForm();
+
+  console.log('formData', formData);
+  const user = useSelector((state) => state.user);
+  console.log('user', user);
+
   const [hasSale, setHasSale] = useState(null);
   const [clientSelected, setClientSelected] = useState('');
   const [selectedAddress, setSelectedAddress] = useState(null);
@@ -61,9 +64,6 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
       router.push('/apps/inspections/schedule');
     }
   };
-
-  const formatCurrency = (value) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
   useEffect(() => {
     if (success) {
@@ -83,30 +83,45 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
     const value = event.target.value === 'true';
     setHasSale(value);
     handleChange('project', null);
-    handleChange('product', null);
+    handleChange('products', []);      // limpa products
+    handleChange('branch', null);      // limpa branch
     handleChange('address', null);
     setSelectedAddress(null);
   };
 
   const handleProjectChange = (option) => {
-    console.log('option', option);
+    // 1) Atualiza o projeto
     handleChange('project', option || null);
+
+    // 2) Atualiza products com o produto do projeto
+    if (option?.product) {
+      handleChange('products', [
+        { label: option.product.label, value: option.product.value },
+      ]);
+    } else {
+      handleChange('products', []);
+    }
+
+    // 3) Mocka a unidade (branch) do usuário logado
+    handleChange('branch', user?.user?.employee?.branch);
+
+    // 4) Atualiza endereço como antes
     if (option && option.address) {
       handleChange('address', option.address.value);
-      setSelectedAddress({ label: option.address.label, value: option.address.value });
+      setSelectedAddress({
+        label: option.address.label,
+        value: option.address.value,
+      });
     } else {
       setAlertOpen(true);
       setAlertMessage(
-        'Este projeto não possui endereço associado. Por favor, selecione um endereço manualmente.',
+        'Este projeto não possui endereço associado. Por favor, selecione um endereço manualmente.'
       );
       setAlertType('warning');
       handleChange('address', null);
       setSelectedAddress(null);
     }
   };
-
-  console.log('selectedAddress', selectedAddress);
-  console.log('formData', formData);
 
   const saleStatusMap = {
     P: 'Pendente',
@@ -133,11 +148,18 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
               handleChange('customer', option || null);
             }}
             mapResponse={(data) =>
-              data.results.map((item) => ({ label: item.complete_name, value: item.id }))
+              data.results.map((item) => ({
+                label: item.complete_name,
+                value: item.id,
+              }))
             }
-            {...(formErrors.customer && { error: true, helperText: formErrors.customer })}
+            {...(formErrors.customer && {
+              error: true,
+              helperText: formErrors.customer,
+            })}
           />
         </Grid>
+
         {/* Serviço */}
         <Grid item xs={12}>
           <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
@@ -152,11 +174,18 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
               validateChange('service', option || null);
             }}
             mapResponse={(data) =>
-              data.results.map((item) => ({ label: item.name, value: item.id }))
+              data.results.map((item) => ({
+                label: item.name,
+                value: item.id,
+              }))
             }
-            {...(formErrors.service && { error: true, helperText: formErrors.service })}
+            {...(formErrors.service && {
+              error: true,
+              helperText: formErrors.service,
+            })}
           />
         </Grid>
+
         {/* Data e Hora */}
         <Grid item xs={12} sm={6}>
           <FormDate
@@ -166,7 +195,10 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
             onChange={(newValue) => {
               validateChange('schedule_date', newValue);
             }}
-            {...(formErrors.schedule_date && { error: true, helperText: formErrors.schedule_date })}
+            {...(formErrors.schedule_date && {
+              error: true,
+              helperText: formErrors.schedule_date,
+            })}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -184,7 +216,8 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
             })}
           />
         </Grid>
-        {/* Toggle para indicar se o cliente possui venda */}
+
+        {/* Toggle Venda */}
         <Grid item xs={12}>
           <FormControl
             component="fieldset"
@@ -205,7 +238,11 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
                 formData.schedule_date &&
                 formData.schedule_start_time
               ) && (
-                <Typography variant="caption" color="textSecondary" sx={{ ml: 1 }}>
+                <Typography
+                  variant="caption"
+                  color="textSecondary"
+                  sx={{ ml: 1 }}
+                >
                   Preencha Cliente, Serviço, Data e Hora
                 </Typography>
               )}
@@ -220,9 +257,11 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
             </RadioGroup>
           </FormControl>
         </Grid>
-        {/* Se o cliente possui venda: exibe Projeto e Endereço (Endereço desabilitado até selecionar Projeto) */}
+
+        {/* Cliente já possui venda */}
         {hasSale === true && (
           <>
+            {/* Projeto */}
             <Grid item xs={12}>
               <CustomFormLabel htmlFor="project">Projeto</CustomFormLabel>
               <GenericAsyncAutocompleteInput
@@ -231,9 +270,7 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
                 endpoint="/api/projects"
                 queryParam="q"
                 value={formData.project}
-                onChange={(option) => {
-                  handleProjectChange(option);
-                }}
+                onChange={handleProjectChange}
                 extraParams={{
                   expand: [
                     'sale.customer',
@@ -264,32 +301,31 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
                   ],
                   customer: clientSelected,
                 }}
-                mapResponse={(data) => {
-                  console.log('API Response Data:', data);
-                  return data.results.map((p) => ({
-                  label: `${p.project_number} - ${p.sale.customer.complete_name}`,
-                  value: p.id,
-                  project_number: p.project_number,
-                  total_value: p.sale.total_value,
-                  customer: {
-                    label: p.sale.customer.complete_name,
-                    value: p.sale.customer.id,
-                  },
-                  branch: { label: p.sale.branch.name, value: p.sale.branch.id },
-                  address: {
-                    label: p.address?.complete_address || '',
-                    value: p.address?.id || null,
-                  },
-                  product: { label: p.product.name, value: p.product.id },
-                  contract_number: p.sale.contract_number,
-                  homologator: {
-                    label: p.sale.homologator?.complete_name || 'Homologador não disponível',
-                    value: p.sale.homologator?.id || null,
-                  },
-                  signature_date: p.sale.signature_date,
-                  status: p.sale.status,
-                  }));
-                }}
+                mapResponse={(data) =>
+                  data.results.map((p) => ({
+                    label: `${p.project_number} - ${p.sale.customer.complete_name}`,
+                    value: p.id,
+                    project_number: p.project_number,
+                    total_value: p.sale.total_value,
+                    product: {
+                      label: p.product.name,
+                      value: p.product.id,
+                    },
+                    address: {
+                      label: p.address?.complete_address || '',
+                      value: p.address?.id || null,
+                    },
+                    contract_number: p.sale.contract_number,
+                    homologator: {
+                      label:
+                        p.sale.homologator?.complete_name ||
+                        'Homologador não disponível',
+                      value: p.sale.homologator?.id || null,
+                    },
+                    signature_date: p.sale.signature_date,
+                    status: p.sale.status,
+                  }))
+                }
                 renderOption={(props, option) => (
                   <li {...props}>
                     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -297,39 +333,45 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
                         <strong>Projeto:</strong> {option.project_number}
                       </Typography>
                       <Typography variant="body2">
-                        <strong>Valor total:</strong> {option.total_value ? formatCurrency(option.total_value) : 'Sem valor Total'}
+                        <strong>Valor total:</strong>{' '}
+                        {option.total_value
+                          ? new Intl.NumberFormat('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
+                            }).format(option.total_value)
+                          : 'Sem valor Total'}
                       </Typography>
                       <Typography variant="body2">
-                        <strong>Contrato:</strong> {option.contract_number || 'Contrato não Disponível'}
+                        <strong>Produto:</strong> {option.product.label}
                       </Typography>
                       <Typography variant="body2">
-                        <strong>Homologador:</strong> {option.homologator.label || 'Homologador não Disponível'}
+                        <strong>Endereço:</strong> {option.address.label}
                       </Typography>
                       <Typography variant="body2">
-                        <strong>Data de Contrato:</strong> {formatDate(option.signature_date) || 'Data de Contrato não Disponível'}
-                      </Typography>
-                      <Typography variant="body2">
-                        <strong>Endereço:</strong> {option.address.label || 'Endereço não Disponível'}
-                      </Typography>
-                      <Typography variant="body2">
-                        <strong>Status da Venda:</strong> {option.status ? saleStatusMap[option.status] || 'Status Desconhecido' : 'Status não Disponível'}
-                      </Typography>
-                      <Typography variant="body2">
-                        <strong>Produto:</strong> {option.product.label || 'Produto não Disponível'}
+                        <strong>Status:</strong>{' '}
+                        {saleStatusMap[option.status] || 'Desconhecido'}
                       </Typography>
                     </Box>
                   </li>
                 )}
-                {...(formErrors.project && { error: true, helperText: formErrors.project })}
+                {...(formErrors.project && {
+                  error: true,
+                  helperText: formErrors.project,
+                })}
               />
             </Grid>
+
+            {/* Endereço */}
             <Grid item xs={12}>
               <CustomFormLabel htmlFor="address">Endereço</CustomFormLabel>
               <GenericAsyncAutocompleteInput
                 label="Endereço"
                 endpoint="/api/addresses"
                 queryParam="street__icontains"
-                extraParams={{ customer_id: clientSelected, fields: 'street,number,city,state,id' }}
+                extraParams={{
+                  customer_id: clientSelected,
+                  fields: 'street,number,city,state,id',
+                }}
                 disabled={!formData.project}
                 value={selectedAddress || formData.address}
                 onChange={(option) => {
@@ -342,14 +384,19 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
                     value: item.id,
                   }))
                 }
-                {...(formErrors.address && { error: true, helperText: formErrors.address })}
+                {...(formErrors.address && {
+                  error: true,
+                  helperText: formErrors.address,
+                })}
               />
             </Grid>
           </>
         )}
-        {/* Se o cliente não possui venda: exibe Produto e Endereço abertos */}
+
+        {/* Cliente não possui venda */}
         {hasSale === false && (
           <>
+            {/* Produto */}
             <Grid item xs={12}>
               <CustomFormLabel htmlFor="product">Produto</CustomFormLabel>
               <GenericAsyncAutocompleteInput
@@ -357,23 +404,34 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
                 endpoint="/api/products"
                 queryParam="name__icontains"
                 extraParams={{ fields: 'name,id' }}
-                value={formData.product}
+                value={formData.products}
                 onChange={(option) => {
-                  handleChange('product', option || null);
+                  handleChange('products', option || null);
                 }}
                 mapResponse={(data) =>
-                  data.results.map((item) => ({ label: item.name, value: item.id }))
+                  data.results.map((item) => ({
+                    label: item.name,
+                    value: item.id,
+                  }))
                 }
-                {...(formErrors.product && { error: true, helperText: formErrors.product })}
+                {...(formErrors.products && {
+                  error: true,
+                  helperText: formErrors.products,
+                })}
               />
             </Grid>
+
+            {/* Endereço */}
             <Grid item xs={12}>
               <CustomFormLabel htmlFor="address">Endereço</CustomFormLabel>
               <GenericAsyncAutocompleteInput
                 label="Endereço"
                 endpoint="/api/addresses"
                 queryParam="q"
-                extraParams={{ customer_id: clientSelected, fields: 'street,number,city,state,id' }}
+                extraParams={{
+                  customer_id: clientSelected,
+                  fields: 'street,number,city,state,id',
+                }}
                 value={formData.address}
                 onChange={(option) => {
                   handleChange('address', option || null);
@@ -384,11 +442,15 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
                     value: item.id,
                   }))
                 }
-                {...(formErrors.address && { error: true, helperText: formErrors.address })}
+                {...(formErrors.address && {
+                  error: true,
+                  helperText: formErrors.address,
+                })}
               />
             </Grid>
           </>
         )}
+
         {/* Observação */}
         <Grid item xs={12}>
           <CustomFormLabel htmlFor="observation">Observação</CustomFormLabel>
@@ -403,38 +465,52 @@ const CreateCommercialSchedule = ({ onClose, onRefresh }) => {
             onChange={(e) => {
               handleChange('observation', e.target.value);
             }}
-            {...(formErrors.observation && { error: true, helperText: formErrors.observation })}
+            {...(formErrors.observation && {
+              error: true,
+              helperText: formErrors.observation,
+            })}
           />
         </Grid>
+
         {/* Botão Salvar */}
         <Grid item xs={12}>
-          <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
+          <Stack
+            direction="row"
+            spacing={2}
+            justifyContent="flex-end"
+            mt={2}
+          >
             <Button
               variant="contained"
               color="primary"
-              onClick={() => {
-                handleSave();
-              }}
+              onClick={handleSave}
               disabled={formLoading}
-              endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+              endIcon={
+                formLoading ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : null
+              }
             >
               Salvar
             </Button>
           </Stack>
         </Grid>
       </Grid>
+
       <Snackbar
         open={alertOpen}
         autoHideDuration={6000}
         onClose={handleAlertClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert onClose={handleAlertClose} severity={alertType} sx={{ width: '100%' }}>
+        <Alert
+          onClose={handleAlertClose}
+          severity={alertType}
+          sx={{ width: '100%' }}
+        >
           {alertMessage}
         </Alert>
       </Snackbar>
     </>
   );
-};
-
-export default CreateCommercialSchedule;
+}

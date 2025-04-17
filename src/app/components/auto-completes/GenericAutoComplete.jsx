@@ -21,8 +21,7 @@ const GenericAutocomplete = ({
   minQueryLength = 1,
   AddComponent,
   onAdd,
-  addTitle = 'Adicionar Novo Item',
-  sx,
+  addTitle = 'Adicionar Novo Item', 
   ...props
 }) => {
   const [open, setOpen] = useState(false);
@@ -96,19 +95,6 @@ const GenericAutocomplete = ({
 
   const valueProp = isMultiple ? (props.value || []) : props.value || null;
 
-  function PaperComponent(props) {
-    const nodeRef = React.useRef(null);
-    return (
-      <Draggable
-        nodeRef={nodeRef}
-        handle="#draggable-dialog-title"
-        cancel={'[class*="MuiDialogContent-root"]'}
-      >
-        <Paper {...props} ref={nodeRef} />
-      </Draggable>
-    );
-  }
-
   return (
     <>
       <Autocomplete
@@ -129,24 +115,26 @@ const GenericAutocomplete = ({
             variant="outlined"
             {...(props.error && { error: true, helperText: props.helperText })}
             InputProps={{
-              ...props.InputProps,
-              startAdornment: props.InputProps?.startAdornment || params.InputProps.startAdornment,
+              ...params.InputProps,
               endAdornment: (
                 <>
                   {loading && <CircularProgress color="inherit" size={20} />}
                   {params.InputProps.endAdornment}
                   {AddComponent && !props.disabled && (
-                    <IconButton onClick={() => setOpenAddModal(true)} aria-label="Adicionar" edge="end" size="small">
+                    <IconButton
+                      onClick={() => setOpenAddModal(true)}
+                      aria-label="Adicionar"
+                      edge="end"
+                      size="small"
+                    >
                       <AddIcon fontSize="small" />
                     </IconButton>
                   )}
                 </>
               ),
             }}
-            
           />
         )}
-        sx={sx}
         {...props}
       />
 
@@ -154,23 +142,30 @@ const GenericAutocomplete = ({
         <Dialog
           open={openAddModal}
           onClose={handleAddModalClose}
-          maxWidth="md"
           fullWidth
+          maxWidth="md"
+          scroll="paper"
+          sx={{
+            '& .MuiDialog-paper': {
+              maxHeight: '80vh',
+            },
+          }}
           PaperProps={{
             sx: {
               borderRadius: '20px',
-              // padding: '24px',
+              padding: '24px',
               gap: '24px',
               boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
               backgroundColor: '#FFFFFF',
               height: "643px",
               width: "889px",
-              p: 1,
+              p: 2,
             },
           }}
         >
           {/* <DialogTitle>{addTitle}</DialogTitle> */}
-          <DialogContent dividers>
+          {/* <DialogContent dividers> */}
+          <DialogContent>
             <AddComponent onClose={handleAddModalClose} onAdd={handleOnAdd} />
           </DialogContent>
         </Dialog>

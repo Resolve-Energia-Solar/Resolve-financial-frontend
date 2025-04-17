@@ -88,7 +88,6 @@ const CommercialScheduleDetail = ({ schedule }) => {
     const payload = {
       schedule_date: editedScheduleDate,
       schedule_start_time: editedScheduleStartTime,
-      // Supondo que editedAddress seja um objeto com propriedade id
       address: editedAddress && editedAddress.id ? editedAddress.id : editedAddress,
     };
 
@@ -96,7 +95,6 @@ const CommercialScheduleDetail = ({ schedule }) => {
       await scheduleService.update(schedule.id, payload);
       setEditMode(false);
       enqueueSnackbar('Agendamento atualizado com sucesso!', { variant: 'success' });
-      // Caso deseje atualizar os dados da página, pode reinvocá-la aqui
     } catch (error) {
       console.error('Erro ao salvar edição:', error);
       enqueueSnackbar('Erro ao atualizar o agendamento', { variant: 'error' });
@@ -124,29 +122,39 @@ const CommercialScheduleDetail = ({ schedule }) => {
     { value: '16:00:00', label: '16:00' },
   ];
 
-  // Busca o nome do kit (produto) se necessário
+  console.log('schedule:', schedule);
+
   useEffect(() => {
     async function fetchProductName() {
       setLoadingProductName(true);
-      if (schedule?.project?.product) {
-        try {
+      try {
+        let productData = null;
+        
+        // Priorize o produto do projeto, se existir.
+        if (schedule?.project?.product) {
           const productId =
             typeof schedule.project.product === 'object'
               ? schedule.project.product.id
               : schedule.project.product;
-          const productData = await ProductService.find(productId);
-          setProductName(productData.name);
-        } catch (error) {
-          console.error('Erro ao buscar produto:', error);
-        } finally {
-          setLoadingProductName(false);
+          productData = await ProductService.find(productId);
+        } 
+        else if (Array.isArray(schedule.products) && schedule.products.length > 0) {
+          productData = { name: schedule.products.map((prod) => prod.name).join(', ') };
         }
+        
+        setProductName(productData?.name || 'Sem kit associado');
+      } catch (error) {
+        console.error('Erro ao buscar produto:', error);
+        setProductName('Sem kit associado');
+      } finally {
+        setLoadingProductName(false);
       }
     }
     fetchProductName();
-  }, [schedule?.project?.product]);
+  }, [schedule]);
+  
+  
 
-  // Busca informações do vendedor/supervisor se necessário
   useEffect(() => {
     if (schedule?.project?.sale?.seller) {
       const fetchSeller = async () => {
@@ -171,6 +179,8 @@ const CommercialScheduleDetail = ({ schedule }) => {
       </Box>
     );
   }
+  console.log('conditions:', !(schedule.status === 'Pendente' || !schedule.schedule_agent))
+  console.log('schedule', schedule);
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -184,7 +194,6 @@ const CommercialScheduleDetail = ({ schedule }) => {
         <Box sx={{ flex: 1, overflow: 'auto', p: 3 }}>
           {tabValue === 0 && (
             <>
-              {/* Cabeçalho com botão para editar */}
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Typography variant="h6">Detalhes do Agendamento</Typography>
                 {editMode ? (
@@ -203,13 +212,14 @@ const CommercialScheduleDetail = ({ schedule }) => {
                     </Button>
                   </Stack>
                 ) : (
-                  <Button variant="outlined" onClick={() => setEditMode(true)}>
-                    Editar
-                  </Button>
+                  schedule.status === 'Pendente' && !schedule.schedule_agent && (
+                    <Button variant="contained" color="primary" onClick={() => setEditMode(true)}>
+                      Editar
+                    </Button>
+                  )
                 )}
               </Box>
               <Grid container spacing={3}>
-                {/* Cliente (somente leitura) */}
                 <Grid item xs={12}>
                   <Box display="flex" alignItems="center" mb={0.5}>
                     <PersonIcon sx={{ mr: 1 }} color="primary" />
@@ -221,23 +231,21 @@ const CommercialScheduleDetail = ({ schedule }) => {
                     {schedule.customer?.complete_name || '-'}
                   </Typography>
                 </Grid>
-                {/* Kit (somente leitura) */}
+                {/* Produto */}
                 <Grid item xs={12}>
                   <Box display="flex" alignItems="center" mb={0.5}>
                     <Inventory2OutlinedIcon sx={{ mr: 1 }} color="primary" />
                     <Typography variant="subtitle2" color="textSecondary">
-                      <strong>Kit</strong>
+                      <strong>Produto</strong>
                     </Typography>
                   </Box>
                   {loadingProductName ? (
-                    <Skeleton variant="text" width={200} height={30} />
-                  ) : (
-                    <Typography variant="body1">
-                      {Array.isArray(schedule.products) && schedule.products.length > 0
-                        ? schedule.products.map((prod) => prod.name).join(', ')
-                        : productName || 'Sem kit associado'}
-                    </Typography>
-                  )}
+                      <Skeleton variant="text" width={200} height={30} />
+                    ) : (
+                      <Typography variant="body1">
+                        {productName}
+                      </Typography>
+                    )}
                 </Grid>
                 {/* Serviço (somente leitura) */}
                 <Grid item xs={6}>
@@ -415,11 +423,7 @@ const CommercialScheduleDetail = ({ schedule }) => {
             <Comment appLabel={'field_services'} model={'schedule'} objectId={scheduleId} />
           )}
           {tabValue === 2 && (
-            <Box p={2}>
-              <Typography variant="body1">
-                Em breve, você verá o histórico de alterações deste agendamento.
-              </Typography>
-            </Box>
+            <History appLabel={'field_services'} model={'schedule'} objectId={scheduleId}/>
           )}
         </Box>
       </Paper>

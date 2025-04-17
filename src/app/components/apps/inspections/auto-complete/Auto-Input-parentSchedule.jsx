@@ -68,7 +68,7 @@ export default function AutoCompleteParentSchedule({
           ordering: orderingParam,
           nextPage: 1,
           limit: 15,
-          customer_icontains: name,
+          customer__icontains: name,
           expand: ['service.category'],
           fields: [
             'id',

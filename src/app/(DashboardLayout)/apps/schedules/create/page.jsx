@@ -40,6 +40,7 @@ const CreateSchedulePage = () => {
     branch: null,
     address: null,
     observation: '',
+    parent_schedules: [],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -52,10 +53,36 @@ const CreateSchedulePage = () => {
 
   const handleInputChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  const fieldLabels = {
+    schedule_date: 'Data do Agendamento',
+    schedule_start_time: 'Horário de Início',
+    schedule_end_date: 'Data Final',
+    schedule_end_time: 'Horário Final',
+    service: 'Serviço',
+    customer: 'Cliente',
+    project: 'Projeto',
+    schedule_agent: 'Agente',
+    branch: 'Unidade',
+    address: 'Endereço',
+    observation: 'Observação',
+    schedule_creator: 'Criador do Agendamento',
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    const requiredFields = ['schedule_date', 'schedule_start_time', 'schedule_end_date', 'schedule_end_time', 'service', 'customer', 'branch', 'address'];
+
+    for (const field of requiredFields) {
+      if (!formData[field]) {
+        enqueueSnackbar(`${fieldLabels[field]} é obrigatório.`, { variant: 'error' });
+        setLoading(false);
+        return;
+      }
+    }
+
     const submitData = {
       ...formData,
       service: formData.service?.value,
@@ -66,21 +93,9 @@ const CreateSchedulePage = () => {
       address: formData.address?.value,
       schedule_creator: user.id,
       products: formData.product ? [formData.product.value] : [],
-    };
-
-    const fieldLabels = {
-      schedule_date: 'Data do Agendamento',
-      schedule_start_time: 'Horário de Início',
-      schedule_end_date: 'Data Final',
-      schedule_end_time: 'Horário Final',
-      service: 'Serviço',
-      customer: 'Cliente',
-      project: 'Projeto',
-      schedule_agent: 'Agente',
-      branch: 'Unidade',
-      address: 'Endereço',
-      observation: 'Observação',
-      schedule_creator: 'Criador do Agendamento',
+      parent_schedules: Array.isArray(formData.parent_schedules)
+        ? formData.parent_schedules.filter((ps) => ps && ps.value).map((ps) => ps.value)
+        : [],
     };
 
     try {
@@ -167,8 +182,7 @@ const CreateSchedulePage = () => {
                 endpoint="/api/services/"
                 queryParam="name__icontains"
                 extraParams={{
-                  fields: ['id', 'name', 'deadline', 'category'], // ajustado: substitui "deadline.hours"
-                  expand: [], // ajustado: nenhum expand para este endpoint
+                  fields: ['id', 'name', 'deadline', 'category'],
                 }}
                 mapResponse={(data) =>
                   data.results.map((s) => ({
@@ -304,6 +318,7 @@ const CreateSchedulePage = () => {
                 required
               />
             </Grid>
+
             <Grid item xs={12}>
               <FormControl component="fieldset">
                 <FormLabel component="legend">Este agendamento possui projeto?</FormLabel>
@@ -321,14 +336,25 @@ const CreateSchedulePage = () => {
                     label="Projeto"
                     value={formData.project}
                     onChange={(newValue) => {
-                      setFormData({
-                        ...formData,
-                        project: newValue,
-                        customer: newValue.customer,
-                        branch: newValue.branch,
-                        address: newValue.address,
-                        product: newValue.product,
-                      });
+                      if (newValue) {
+                        setFormData({
+                          ...formData,
+                          project: newValue,
+                          customer: newValue.customer,
+                          branch: newValue.branch,
+                          address: newValue.address,
+                          product: newValue.product,
+                        });
+                      } else {
+                        setFormData({
+                          ...formData,
+                          project: null,
+                          customer: null,
+                          branch: null,
+                          address: null,
+                          product: null,
+                        });
+                      }
                     }}
                     endpoint="/api/projects/"
                     queryParam="q"
@@ -393,6 +419,10 @@ const CreateSchedulePage = () => {
                         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                           <Typography variant="body2">
                             <strong>Projeto:</strong> {option.project_number}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Cliente:</strong>{' '}
+                            {option.customer.label || 'Cliente não Disponível'}
                           </Typography>
                           <Typography variant="body2">
                             <strong>Valor total:</strong>{' '}
@@ -495,11 +525,11 @@ const CreateSchedulePage = () => {
                         label="Endereço"
                         value={formData.address}
                         onChange={(newValue) => setFormData({ ...formData, address: newValue })}
-                        endpoint="/api/addresses/"
-                        queryParam="street__icontains"
-                        extraParams={{ fields: ['id', 'street'] }}
+                        endpoint="/api/addresses"
+                        queryParam="q"
+                        extraParams={{ fields: ['id', 'complete_address'], customer_id: formData.customer?.value || '' }}
                         mapResponse={(data) =>
-                          data.results.map((a) => ({ label: a.street, value: a.id }))
+                          data.results.map((a) => ({ label: a.complete_address, value: a.id }))
                         }
                         fullWidth
                         disabled={!!(formData.project && formData.project.address.value)}
@@ -568,11 +598,11 @@ const CreateSchedulePage = () => {
                     label="Endereço"
                     value={formData.address}
                     onChange={(newValue) => setFormData({ ...formData, address: newValue })}
-                    endpoint="/api/addresses/"
-                    queryParam="street__icontains"
-                    extraParams={{ fields: ['id', 'street'] }}
+                    endpoint="/api/addresses"
+                    queryParam="q"
+                    extraParams={{ fields: ['id', 'complete_address'], customer_id: formData.customer?.value || '' }}
                     mapResponse={(data) =>
-                      data.results.map((a) => ({ label: a.street, value: a.id }))
+                      data.results.map((a) => ({ label: a.complete_address, value: a.id }))
                     }
                     fullWidth
                     helperText={errors.address?.[0] || ''}
@@ -582,6 +612,83 @@ const CreateSchedulePage = () => {
                 </Grid>
               </>
             )}
+
+            {(formData.customer || formData.project) && <Grid item xs={12} sm={6}>
+              <GenericAsyncAutocompleteInput
+                label="Serviços Relacionados"
+                value={formData.parent_schedules}
+                onChange={(newValue) => setFormData({ ...formData, parent_schedules: newValue })}
+                endpoint="/api/schedule"
+                queryParam="q"
+                extraParams={{
+                  fields:
+                    'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,status,service,customer.complete_name,address.complete_address,schedule_agent.complete_name,branch.name,service_opinion,final_service_opinion',
+                  expand: 'customer,schedule_agent,service,address,final_service_opinion,service_opinion,branch',
+                  customer: formData.customer?.value || '',
+                  project: formData.project?.value || '',
+                  customer_project_or: true
+                }}
+                mapResponse={(data) => {
+                  return data.results.map((s) => ({
+                    label: `${s.service?.name || ''} nº ${s.protocol} - ${s.customer?.complete_name || ''} - ${s.schedule_date} ${s.schedule_start_time.toLocaleString()}`,
+                    value: s.id,
+                    ...s,
+                  }));
+                }}
+                renderOption={(props, option) => (
+                  <li {...props}>
+                    <Box
+                      sx={{ p: 1, display: 'flex', flexDirection: 'column' }}
+                    >
+                      <Typography variant="subtitle2">
+                        <strong>Protocolo:</strong> {option.protocol}
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>Início:</strong> {formatDate(option.schedule_date)} {option.schedule_start_time.toLocaleString()} | <strong>Término:</strong> {formatDate(option.schedule_end_date)} {option.schedule_end_time.toLocaleString()}
+                      </Typography>
+                      {option.customer && <Typography variant="body1">
+                        <strong>Cliente:</strong> {option.customer?.complete_name}
+                      </Typography>}
+                      {option.service && (
+                        <Typography variant="body1">
+                          <strong>Serviço:</strong> {option.service.name}
+                        </Typography>
+                      )}
+                      {option.schedule_agent && <Typography variant="body1">
+                        <strong>Agente:</strong> {option.schedule_agent.complete_name}
+                      </Typography>
+                      }
+                      <Typography variant="body1"><strong>Status:</strong> {option.status}</Typography>
+                      {option.address && (
+                        <Typography variant="body1">
+                          <strong>Endereço:</strong> {option.address.complete_address}
+                        </Typography>
+                      )}
+                      {option.branch && option.branch.name && (
+                        <Typography variant="body1">
+                          <strong>Filial:</strong> {option.branch.name}
+                        </Typography>
+                      )}
+                      {option.service_opinion && option.service_opinion.name && (
+                        <Typography variant="body1">
+                          <strong>Parecer de Serviço:</strong> {option.service_opinion.name}
+                        </Typography>
+                      )}
+                      {option.final_service_opinion && option.final_service_opinion.name && (
+                        <Typography variant="body1">
+                          <strong>Parecer Final:</strong> {option.final_service_opinion.name}
+                        </Typography>
+                      )}
+                    </Box>
+                  </li>
+                )}
+                helperText={errors.parent_schedules?.[0] || ''}
+                error={!!errors.parent_schedules}
+                fullWidth
+                multiselect
+                required
+              />
+            </Grid>}
 
             <Grid item xs={12}>
               <TextField

@@ -19,18 +19,17 @@ import answerService from '@/services/answerService';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 
 const AnswerForm = ({ answerData }) => {
-  const sliderRef = useRef(null);  // Remover tipagem para JavaScript
+  const sliderRef = useRef(null);
   const [form_fields, setFormFields] = useState([]);
   const [formInfo, setFormInfo] = useState(answerData?.results[0]?.form);
   const [answers, setAnswers] = useState(answerData?.results[0]?.answers);
   const [answersFiles, setAnswersFiles] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Função para mudar o slide com base no clique na miniatura
   const handleThumbnailClick = (idx) => {
     setCurrentIndex(idx);
     if (sliderRef.current) {
-      sliderRef.current.slickGoTo(idx);  // Muda para o slide correspondente ao clicar na miniatura
+      sliderRef.current.slickGoTo(idx);
     }
   };
 
@@ -79,13 +78,11 @@ const AnswerForm = ({ answerData }) => {
     fetchAnswersFiles();
   }, [answerData]);
 
-  // Filtra todas as imagens (jpg, jpeg, png)
   const imageFiles = answersFiles.filter((file) => {
     const ext = file.file.split('?')[0].split('.').pop().toLowerCase();
     return ['jpg', 'jpeg', 'png'].includes(ext);
   });
 
-  // Função para obter o rótulo do campo a partir do field_id
   const getFieldLabel = (fieldId) => {
     const field = form_fields.find(
       (field) => `${field.type}-${field.id}` === fieldId
@@ -106,12 +103,12 @@ const AnswerForm = ({ answerData }) => {
               Imagens
             </Typography>
             <Slider
-              ref={sliderRef}  // Referência do Slider
+              ref={sliderRef}
               autoPlay={false}
               arrows
               swipeToSlide
-              selectedItem={currentIndex}  // Conectando o índice atual ao Slider
-              beforeChange={(oldIndex, newIndex) => setCurrentIndex(newIndex)}  // Atualiza o estado ao mudar o slide
+              selectedItem={currentIndex}
+              beforeChange={(oldIndex, newIndex) => setCurrentIndex(newIndex)}
               prevArrow={
                 <Box className="slick-prev">
                   <ArrowBack sx={{ fontSize: '2rem', color: 'black' }} />
@@ -147,12 +144,11 @@ const AnswerForm = ({ answerData }) => {
               })}
             </Slider>
 
-            {/* Barra de thumbnails com rolagem horizontal */}
             <Box sx={{ display: 'flex', overflowX: 'auto', mt: 2, pb: 1 }}>
               {imageFiles.map((file, idx) => (
                 <Box
                   key={file.id}
-                  onClick={() => handleThumbnailClick(idx)}  // Atualiza o estado e navega para o slide correspondente
+                  onClick={() => handleThumbnailClick(idx)}
                   sx={{
                     width: 80,
                     height: 80,
@@ -177,6 +173,139 @@ const AnswerForm = ({ answerData }) => {
             </Box>
           </Box>
         )}
+      </Box>
+      <Divider />
+      <Box p={3} display="flex" flexDirection="column" gap={1}>
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          alignItems="center"
+          justifyContent="space-between"
+          my={1}
+        >
+          {formInfo && (
+            <Typography variant="h5">{formInfo.name}</Typography>
+          )}
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <Typography variant="body2">Respondido em: </Typography>
+            <Chip
+              size="small"
+              color="secondary"
+              variant="outlined"
+              label={formatDateTime(answerData?.results[0]?.created_at)}
+            />
+          </Box>
+        </Stack>
+        <Divider />
+        {/* Campos do formulário em duas colunas */}
+        <Grid container spacing={2} mt={1}>
+          {form_fields.map((field) => {
+            switch (field.type) {
+              case 'text':
+              case 'ariaText':
+              case 'email':
+              case 'number':
+                return (
+                  <Grid item xs={12} md={6} p={2} key={field.id}>
+                    <Typography variant="h5">{field.label}:</Typography>
+                    <Typography variant="body1">
+                      {answerFromField(`${field.type}-${field.id}`) || 'Sem resposta'}
+                    </Typography>
+                  </Grid>
+                );
+              case 'select': {
+                const rawValue = answerFromField(`${field.type}-${field.id}`);
+                const normalizedValue = normalizeValue(rawValue, field.multiple);
+                return (
+                  <Grid item xs={12} md={6} p={2} key={field.id}>
+                    <Typography variant="h5">{field.label}:</Typography>
+                    <CustomSelect
+                      id={`${field.type}-${field.id}`}
+                      name={`${field.type}-${field.id}`}
+                      variant="standard"
+                      disabled
+                      value={normalizedValue}
+                      {...(field.multiple && { multiple: true, width: '100%' })}
+                    >
+                      {field.options.map((option) => (
+                        <MenuItem key={option.id} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </CustomSelect>
+                  </Grid>
+                );
+              }
+              case 'date':
+                return (
+                  <Grid item xs={12} md={6} p={2} key={field.id}>
+                    <Typography variant="h5">{field.label}:</Typography>
+                    <Typography variant="body1">
+                      {formatDate(answerFromField(`${field.type}-${field.id}`)) || 'Sem resposta'}
+                    </Typography>
+                  </Grid>
+                );
+              case 'time':
+                return (
+                  <Grid item xs={12} md={6} p={2} key={field.id}>
+                    <Typography variant="h5">{field.label}:</Typography>
+                    <Typography variant="body1">
+                      {formatTime(answerFromField(`${field.type}-${field.id}`)) || 'Sem resposta'}
+                    </Typography>
+                  </Grid>
+                );
+              case 'file': {
+                const fieldKey = `${field.type}-${field.id}`;
+                const filesForField = answersFiles.filter((file) => file.field_id === fieldKey);
+                // Filtra arquivos que não são imagens
+                const nonImageFiles = filesForField.filter((file) => {
+                  const ext = file.file.split('?')[0].split('.').pop().toLowerCase();
+                  return !['jpg', 'jpeg', 'png'].includes(ext);
+                });
+                if (nonImageFiles.length === 0) return null;
+                return (
+                  <Grid item xs={12} md={6} p={2} key={field.id}>
+                    <Typography variant="h5">{field.label}:</Typography>
+                    {nonImageFiles.map((file) => {
+                      const ext = file.file.split('?')[0].split('.').pop().toLowerCase();
+                      switch (ext) {
+                        case 'pdf':
+                          return (
+                            <iframe
+                              key={file.id}
+                              src={file.file}
+                              style={{ width: '100%', height: '500px' }}
+                              title={file.file}
+                            >
+                              Este browser não suporta PDFs.
+                            </iframe>
+                          );
+                        case 'txt':
+                          return (
+                            <Link key={file.id} href={file.file} color="primary" target="_blank">
+                              Abrir arquivo de texto
+                            </Link>
+                          );
+                        case 'mp4':
+                        case 'webm':
+                        case 'ogg':
+                          return (
+                            <video key={file.id} width="100%" height="auto" controls>
+                              <source src={file.file} type={`video/${ext}`} />
+                              Seu navegador não suporta vídeos.
+                            </video>
+                          );
+                        default:
+                          return <p key={file.id}>Formato de arquivo não suportado.</p>;
+                      }
+                    })}
+                  </Grid>
+                );
+              }
+              default:
+                return null;
+            }
+          })}
+        </Grid>
       </Box>
     </Paper>
   );

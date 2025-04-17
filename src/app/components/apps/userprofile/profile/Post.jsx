@@ -26,7 +26,8 @@ const Post = ({ user }) => {
         author: userId,
         ordering: '-created_at',
         fields: [
-          'id,text',
+          'id',
+          'text',
           'author.id',
           'author.profile_picture',
           'author.complete_name',

@@ -26,6 +26,7 @@ import Logo from '@/app/(DashboardLayout)/layout/shared/logo/Logo';
 import Comment from '@/app/components/apps/comment/index';
 import AnswerForm from '../inspections/form-builder/AnswerForm';
 import answerService from '@/services/answerService';
+import History from '../history';
 
 const DetailsDrawer = ({ open, onClose, scheduleId }) => {
   const [loading, setLoading] = useState(true);
@@ -227,6 +228,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId }) => {
           <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)} sx={{ mb: 2 }}>
             <Tab label="Informações" />
             <Tab label="Comentários" />
+            <Tab label="Historico" />
             {answers && answers.results?.length > 0 && <Tab label="Formulário" />}
           </Tabs>
 
@@ -350,7 +352,12 @@ const DetailsDrawer = ({ open, onClose, scheduleId }) => {
               <Comment appLabel="field_services" model="schedule" objectId={schedule.id} />
             </Box>
           )}
-          {answers && answers.results?.length > 0 && tabValue === 2 && (
+          {tabValue === 2 && (
+            <Box sx={{ p: 2 }}>
+              <History appLabel={'field_services'} model={'schedule'} objectId={schedule.id} />
+            </Box>
+          )}
+          {answers && answers.results?.length > 0 && tabValue === 3 && (
             <Box sx={{ p: 2 }}>
               <AnswerForm answerData={answers} />
             </Box>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import ProductService from '@/services/productsService';
 
-const useProduct = (id) => {
+const useProduct = (id, params) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [productData, setProductData] = useState(null);
@@ -11,7 +11,7 @@ const useProduct = (id) => {
 
     const fetchProduct = async () => {
       try {
-        const data = await ProductService.find(id);
+        const data = await ProductService.find(id, params);
         setProductData(data);
       } catch (err) {
         setError('Erro ao carregar o produto');

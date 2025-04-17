@@ -1,9 +1,4 @@
-import {
-    Typography,
-    Grid,
-    Dialog,
-    DialogContent,
-} from '@mui/material';
+import { Typography, Grid, Dialog, DialogContent } from '@mui/material';
 
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect, useContext } from 'react';
@@ -24,52 +19,49 @@ const SalesListPage = () => {
 
     const { lead } = useContext(LeadModalTabContext);
 
-    const columns = [
-        {
-            field: 'customer',
-            headerName: 'Nome do cliente',
-            flex: 1,
-            render: (row) =>
-                `${row.complete_name || ''}`,
-        },
-        {
-            field: 'contract_number',
-            headerName: 'Número de Contrato',
-            flex: 1,
-        },
-        {
-            field: 'total_value',
-            headerName: 'Valor',
-            flex: 1,
-            render: (row) =>
-                new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                }).format(row.total_value),
-        },
-        {
-            field: 'seller',
-            headerName: 'Vendedor',
-            flex: 1,
-            render: (row) =>
-                `${row.complete_name || ''}`,
-        },
-        {
-            field: 'signature_status',
-            headerName: 'Status da assinatura',
-            flex: 1,
-        },
-    ];
+  const columns = [
+    {
+      field: 'customer',
+      headerName: 'Nome do cliente',
+      flex: 1,
+      render: (row) => `${row.complete_name || ''}`,
+    },
+    {
+      field: 'contract_number',
+      headerName: 'Número de Contrato',
+      flex: 1,
+    },
+    {
+      field: 'total_value',
+      headerName: 'Valor',
+      flex: 1,
+      render: (row) =>
+        new Intl.NumberFormat('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+        }).format(row.total_value),
+    },
+    {
+      field: 'seller',
+      headerName: 'Vendedor',
+      flex: 1,
+      render: (row) => `${row.complete_name || ''}`,
+    },
+    {
+      field: 'signature_status',
+      headerName: 'Status da assinatura',
+      flex: 1,
+    },
+  ];
 
-    const [openAddSale, setOpenAddSale] = useState(false);
-    const [openEditSale, setOpenEditSale] = useState(false);
-    const [openDetailSale, setOpenDetailSale] = useState(false);
-    const [selectedSaleId, setSelectedSaleId] = useState(null);
+  const [openAddSale, setOpenAddSale] = useState(false);
+  const [openEditSale, setOpenEditSale] = useState(false);
+  const [openDetailSale, setOpenDetailSale] = useState(false);
+  const [selectedSaleId, setSelectedSaleId] = useState(null);
 
-
-    const handleRefresh = () => {
-        setRefresh(!refresh);
-    };
+  const handleRefresh = () => {
+    setRefresh(!refresh);
+  };
 
     useEffect(() => {
         console.log('lead', lead);
@@ -138,47 +130,55 @@ const SalesListPage = () => {
 
                     </Grid>
 
-                    <Grid container xs={12} >
+          <Grid container xs={12}>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                borderRadius: '20px',
+                display: 'flex',
+                flexDirection: 'column',
+                border: '1px solid',
+                borderColor: '#EAEAEA',
+              }}
+            >
+              <ExpandableListComponent
+                columns={columns}
+                data={data}
+                totalRows={totalRows}
+                loading={loadingSales}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                onPageChange={(newPage) => setPage(newPage)}
+                onRowsPerPageChange={(newRows) => {
+                  setRowsPerPage(newRows);
+                  setPage(0);
+                }}
+                actions={{
+                  edit: (row) => {
+                    setSelectedSaleId(row.id);
+                    setOpenEditSale(true);
+                  },
+                  view: (row) => {
+                    setSelectedSaleId(row.id);
+                    setOpenDetailSale(true);
+                  },
+                }}
+              />
 
-
-                        <Grid item xs={12} sx={{ borderRadius: '20px', display: 'flex', flexDirection: 'column', border: "1px solid", borderColor: "#EAEAEA", }} >
-                            <ExpandableListComponent
-                                columns={columns}
-                                data={data}
-                                totalRows={totalRows}
-                                loading={loadingSales}
-                                page={page}
-                                rowsPerPage={rowsPerPage}
-                                onPageChange={(newPage) => setPage(newPage)}
-                                onRowsPerPageChange={(newRows) => {
-                                    setRowsPerPage(newRows);
-                                    setPage(0);
-                                }}
-                                actions={{
-                                    edit: (row) => {
-                                        setSelectedSaleId(row.id);
-                                        setOpenEditSale(true);
-                                    },
-                                    view: (row) => {
-                                        setSelectedSaleId(row.id);
-                                        setOpenDetailSale(true);
-                                    },
-                                }}
-                            />
-
-                            <Dialog
-                                open={openAddSale}
-                                onClose={() => setOpenAddSale(false)}
-                                maxWidth="lg"
-                                fullWidth
-                            >
-                                <DialogContent>
-                                    {/* <AddSalePage 
+              <Dialog
+                open={openAddSale}
+                onClose={() => setOpenAddSale(false)}
+                maxWidth="lg"
+                fullWidth
+              >
+                <DialogContent>
+                  {/* <AddSalePage 
                                         leadId={leadId} 
                                         onClose={() => setOpenAddSale(false)} 
                                         onRefresh={handleRefresh} /> */}
-                                </DialogContent>
-                            </Dialog>
+                </DialogContent>
+              </Dialog>
 
                             <Dialog
                                 open={openDetailSale}

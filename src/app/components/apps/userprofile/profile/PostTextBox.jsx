@@ -24,9 +24,9 @@ export const PostTextBox = ({ onPostCreated }) => {
       const contentType = await getContentType('accounts', 'user');
       const commentData = {
         text,
-        content_type_id: contentType,
+        content_type: contentType,
         object_id: user.id,
-        author_id: user.id,
+        author: user.id,
       };
       await commentService.create(commentData);
       enqueueSnackbar('Publicado com sucesso!', { variant: 'success' });

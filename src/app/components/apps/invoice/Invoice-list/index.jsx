@@ -141,6 +141,23 @@ export default function InvoiceList({ onClick }) {
         { value: 'CA', label: 'Cancelado' },
       ],
     },
+    {
+      key: 'payments_types__in',
+      label: 'Tipos de Pagamento',
+      type: 'multiselect',
+      options: [
+        { value: 'C', label: 'Crédito' },
+        { value: 'D', label: 'Débito' },
+        { value: 'B', label: 'Boleto' },
+        { value: 'F', label: 'Financiamento' },
+        { value: 'PI', label: 'Parcelamento interno' },
+        { value: 'P', label: 'Pix' },
+        { value: 'T', label: 'Transferência Bancária' },
+        { value: 'DI', label: 'Dinheiro' },
+        { value: 'PA', label: 'Poste auxiliar' },
+        { value: 'RO', label: 'Repasse de Obra' },
+      ],
+    },
     // {
     //   key: 'document_completion_date__range',
     //   label: 'Data de Conclusão do Documento',

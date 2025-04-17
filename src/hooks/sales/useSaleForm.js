@@ -93,7 +93,6 @@ const useSaleForm = (initialData, id) => {
 
     if (
       (formData.status === 'D' || formData.status === 'C') &&
-      formData.isSale == false &&
       !formData.cancellationReasonsIds.length
     ) {
       errors.cancellationReasonsIds = ['O motivo é obrigatório.'];

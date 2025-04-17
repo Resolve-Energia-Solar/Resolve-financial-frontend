@@ -2,11 +2,8 @@
 import { Tabs, Tab, Box, Typography } from '@mui/material';
 import { useEffect, useState, useCallback } from 'react';
 import EditProjectTab from '@/app/components/apps/project/Edit-project/tabs/EditProject';
-import { useParams } from 'next/navigation';
 import CheckListRateio from '@/app/components/apps/checklist/Checklist-list';
 import Attachments from '@/app/components/shared/Attachments';
-import documentTypeService from '@/services/documentTypeService';
-import projectService from '@/services/projectService';
 import History from '@/app/components/apps/history';
 import ListInspection from '../components/SchedulesInspections/list-Inspections';
 import RequestList from '../../request/Request-list';

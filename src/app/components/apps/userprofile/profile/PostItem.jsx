@@ -54,8 +54,8 @@ const PostItem = ({ post }) => {
       const commentContentType = await getContentType('core', 'comment');
       const commentData = {
         object_id: postId,
-        content_type_id: commentContentType,
-        author_id: user.id,
+        content_type: commentContentType,
+        author: user.id,
         text: commentText,
       };
       await commentService.create(commentData);
