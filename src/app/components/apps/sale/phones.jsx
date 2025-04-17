@@ -73,7 +73,7 @@ export default function Phones({ data, onRefresh = () => {}, userId }) {
                   ))}
                 </TableRow>
               ))
-            ) : phones.length > 0 ? (
+            ) : phones?.length > 0 ? (
               phones.map((row) => (
                 <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell component="th" scope="row">

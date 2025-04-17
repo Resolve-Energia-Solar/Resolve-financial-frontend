@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import formatDate from '@/utils/formatDate';
 import saleService from '@/services/saleService';
+import saleProductsService from '@/services/saleProductsService';
 import { useDispatch, useSelector } from 'react-redux';
+import { enqueueSnackbar } from 'notistack';
 
 const useSaleForm = (initialData, id) => {
   const user = useSelector((state) => state.user);
@@ -22,6 +24,8 @@ const useSaleForm = (initialData, id) => {
     billing_date: null,
     cancellationReasonsIds: [],
     reference_table: null,
+    // sale_products: [],
+    // product: null,
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -49,6 +53,12 @@ const useSaleForm = (initialData, id) => {
           initialData.cancellation_reasons?.map((cancellation_reason) => cancellation_reason.id) ||
           [],
         reference_table: initialData.reference_table || '',
+        // sale_products: initialData.sale_products?.map((saleProduct) => ({
+        //   id: saleProduct.id,
+        //   value: saleProduct.value,
+        //   cost_value: saleProduct.cost_value,
+        //   reference_value: saleProduct.reference_value,
+        // })) || [],
       });
     }
   }, [initialData]);
@@ -56,6 +66,25 @@ const useSaleForm = (initialData, id) => {
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+
+  // const handleSaleProductsChange = (index, field, value) => {
+  //   const updatedSaleProducts = [...formData.sale_products];
+  //   const fieldPath = field.replace('sale_products.', '');
+    
+  //   if (fieldPath.includes('.')) {
+  //     // Handle nested fields if needed
+  //     const [parent, child] = fieldPath.split('.');
+  //     updatedSaleProducts[index][parent][child] = value;
+  //   } else {
+  //     updatedSaleProducts[index][fieldPath] = value;
+  //   }
+  
+  //   setFormData(prev => ({
+  //     ...prev,
+  //     sale_products: updatedSaleProducts
+  //   }));
+  // };
+  
 
   const handleSave = async () => {
     setLoading(true);
@@ -95,6 +124,12 @@ const useSaleForm = (initialData, id) => {
       billing_date: formData.billing_date || null,
       cancellation_reasons_ids: formData.cancellationReasonsIds,
       reference_table: formData.reference_table,
+      // sale_products: formData.sale_products.map((sale_product) => ({
+      //   id: sale_product.id,
+      //   value: sale_product.value,
+      //   cost_value: sale_product.cost_value,
+      //   reference_value: sale_product.reference_value,
+      // })),
     };
 
     try {
@@ -117,10 +152,43 @@ const useSaleForm = (initialData, id) => {
     }
   };
 
+  // const handleSaveSaleProducts = async () => {
+  //   console.log('Current formData:', formData);
+  //   setLoading(true);
+  
+  //   try {
+  //     const dataToSend = {
+  //       sale_products: formData.sale_products.map(product => ({
+  //         value: product.value,
+  //         cost_value: product.cost_value,
+  //         reference_value: product.reference_value
+  //       }))
+  //     };
+  
+  //     console.log('data being sent:', dataToSend); 
+      
+  //     const response = await saleProductsService.update(id, dataToSend);
+  //     console.log('response:', response);
+      
+  //     setFormErrors({});
+  //     enqueueSnackbar('Informações atualizadas com sucesso!', { variant: 'success' });
+  //     return response;
+  //   } catch (err) {
+  //     console.error('Erro ao salvar alterações:', err);
+  //     setFormErrors(err.response?.data || {});
+  //     enqueueSnackbar('Erro ao salvar alterações', { variant: 'error' });
+  //     throw err;
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
+
   return {
     formData,
     handleChange,
+    // handleSaleProductsChange,
     handleSave,
+    // handleSaveSaleProducts,
     formErrors,
     success,
     loading,
