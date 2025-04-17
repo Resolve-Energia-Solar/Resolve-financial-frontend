@@ -111,7 +111,13 @@ const EditSaleTabs = ({
 
   const [documentTypes, setDocumentTypes] = useState([]);
 
-  const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.totalValue);
+  const { formattedValue, numericValue, handleValueChange } = useCurrencyFormatter(
+    formData.totalValue,
+    (newValue) => handleChange('totalValue', newValue)
+  );
+
+  console.log('formattedValue', formattedValue);
+  console.log('formData', formData);
 
   const statusOptions = [
     { value: 'P', label: 'Pendente' },
@@ -303,16 +309,16 @@ const EditSaleTabs = ({
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="valor">Valor</CustomFormLabel>
                   <CustomTextField
-                    name="total_value"
+                    name="totalValue"
                     placeholder="R$ 20.000,00"
                     variant="outlined"
                     fullWidth
                     value={formattedValue}
                     disabled={!hasPermission(['accounts.change_total_value_field'])}
-                    onChange={(e) => handleValueChange(e, handleChange)}
-                    {...(formErrors.total_value && {
+                    onChange={handleValueChange}
+                    {...(formErrors.totalValue && {
                       error: true,
-                      helperText: formErrors.total_value,
+                      helperText: formErrors.totalValue,
                     })}
                   />
                 </Grid>
