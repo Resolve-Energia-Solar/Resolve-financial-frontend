@@ -366,7 +366,6 @@ const ScheduleTable = () => {
                     <TableCell>Contratante</TableCell>
                     <TableCell>Unidade</TableCell>
                     <TableCell>Agente</TableCell>
-                    <TableCell>Serviço</TableCell>
                     <TableCell>Endereço</TableCell>
                     <TableCell onClick={() => handleSort('status')}>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -429,7 +428,6 @@ const ScheduleTable = () => {
                           ? <UserCard userId={schedule.schedule_agent} showPhone showEmail={false} />
                           : <span>Sem agente</span>}
                       </TableCell>
-                      <TableCell>{schedule?.service?.name || "Sem serviço"}</TableCell>
                       <TableCell sx={{ textWrap: 'wrap' }}>
                         {schedule.address.complete_address}
                       </TableCell>
