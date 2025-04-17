@@ -71,7 +71,6 @@ const ScheduleTable = () => {
         const list = data.results || [];
         setServices(list);
         if (list.length > 0) {
-          // Seleciona todos por padrão
           setSelectedServices(list.map((s) => s.id));
         }
       })
@@ -85,10 +84,11 @@ const ScheduleTable = () => {
       .index({
         page,
         limit: rowsPerPage,
-        expand: ['customer', 'service_opinion', 'final_service_opinion', 'branch', 'address'],
+        expand: ['customer', 'service_opinion', 'final_service_opinion', 'branch', 'address', 'service'],
         service__in: selectedServices.join(','),
         fields: [
           'id',
+          'service.name',
           'created_at',
           'customer.complete_name',
           'status',
@@ -363,6 +363,7 @@ const ScheduleTable = () => {
               <Table stickyHeader aria-label="schedule table" sx={{ textWrap: 'nowrap' }}>
                 <TableHead>
                   <TableRow>
+                    {selectedServices.length > 1 && <TableCell>Serviço</TableCell>}
                     <TableCell onClick={() => handleSort('schedule_date,schedule_start_time')}>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <span>Data e Hora</span>
@@ -418,8 +419,8 @@ const ScheduleTable = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {scheduleList.map((schedule) => (
-                    <TableRow
+                    {scheduleList.map((schedule) => (
+                      <TableRow
                       key={schedule.id}
                       hover
                       style={{ cursor: 'pointer' }}
@@ -427,7 +428,8 @@ const ScheduleTable = () => {
                         setSelectedScheduleId(schedule.id);
                         setDetailsDrawerOpen(true);
                       }}
-                    >
+                      >
+                      {selectedServices.length > 1 && <TableCell>{schedule.service.name}</TableCell>}
                       <TableCell>
                         {`${formatDate(schedule.schedule_date)} - ${schedule.schedule_start_time}`}
                       </TableCell>
