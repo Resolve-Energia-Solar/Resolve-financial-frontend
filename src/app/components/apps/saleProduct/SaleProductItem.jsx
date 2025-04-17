@@ -9,7 +9,8 @@ import {
   AccordionDetails,
   Typography,
   CircularProgress,
-  Box
+  Box,
+  useTheme
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IconTools } from '@tabler/icons-react';
@@ -19,6 +20,7 @@ import CustomFieldMoney from '../invoice/components/CustomFieldMoney';
 
 export default function SaleProductItem({ initialData, productName, onUpdated }) {
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
 
   const {
     formData,
@@ -55,56 +57,97 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
   };
 
   return (
-    <Accordion sx={{ mb: 1, boxShadow: 3, borderRadius: 2 }}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-          <IconTools size={20} style={{ marginRight: 8, color: '#7E8388' }} />
-          <Box>
-            <Typography fontWeight={700} fontSize={14}>Produto</Typography>
-            <Typography fontWeight={500} fontSize={16} color="text.secondary">
-              {productName || '— sem nome —'}
-            </Typography>
-          </Box>
-        </Box>
-      </AccordionSummary>
-
-      <AccordionDetails>
-        <Grid container spacing={2}>
-          {['value', 'cost_value', 'reference_value'].map((field) => (
-            <Grid item xs={12} md={4} key={field}>
-              <Typography fontWeight={700} fontSize={14} gutterBottom>
-                {{
-                  value: 'Valor',
-                  cost_value: 'Valor de custo',
-                  reference_value: 'Valor de referência'
-                }[field]}
-              </Typography>
-              <CustomFieldMoney
-                name={field}
-                fullWidth
-                value={formData[field] || ''}
-                onChange={(v) => handleChange(field, v)}
-                error={!!formErrors[field]}
-                helperText={formErrors[field]?.join(', ')}
-                sx={{ input: { fontSize: 12, padding: '12px' } }}
-              />
-            </Grid>
-          ))}
-
-          <Grid item xs={12} sx={{ textAlign: 'right' }}>
-            <Button
-              variant="contained"
-              onClick={onClickSave}
-              disabled={loading}
-              endIcon={
-                loading ? <CircularProgress size={20} color="inherit" /> : null
-              }
+    <Grid item xs={12} sm={12} lg={12}>
+      <Accordion
+        sx={{
+          borderRadius: '12px',
+          mb: 1,
+          boxShadow: 3,
+        }}
+      >
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Box sx={{ display: 'flex', width: '100%', alignItems: 'center' }}>
+            <Grid
+              item
+              xs={1}
+              sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
             >
-              {loading ? 'Salvando...' : 'Salvar'}
-            </Button>
-          </Grid>
-        </Grid>
-      </AccordionDetails>
-    </Accordion>
+              <IconTools size={20} style={{ color: '#7E8388' }} />
+            </Grid>
+            <Grid
+              item
+              xs={11}
+              sx={{ justifyContent: 'flex-start', display: 'flex', flexDirection: 'column', ml: 1 }}
+            >
+              <Typography fontWeight={700} fontSize={14}>Produto</Typography>
+              <Typography fontWeight={500} fontSize={16} color={'rgba(48, 48, 48, 0.5)'}>
+                {productName || '• sem nome •'}
+              </Typography>
+            </Grid>
+          </Box>
+        </AccordionSummary>
+
+        <AccordionDetails>
+          <Grid container spacing={2}>
+            {['value', 'cost_value', 'reference_value'].map((field) => (
+              <Grid item xs={12} sm={12} lg={4} key={field}>
+                <Typography fontWeight={700} fontSize={14} gutterBottom>
+                  {{
+                    value: 'Valor',
+                    cost_value: 'Valor de custo',
+                    reference_value: 'Valor de referência'
+                  }[field]}
+                </Typography>
+                <CustomFieldMoney
+                  name={field}
+                  fullWidth
+                  value={formData[field] || ''}
+                  onChange={(v) => handleChange(field, v)}
+                  error={!!formErrors[field]}
+                  helperText={formErrors[field]?.join(', ')}
+                  sx={{
+                    input: {
+                      fontSize: 12,
+                      padding: '12px'
+                    },
+                    '& .MuiOutlinedInput-root': {
+                      border: '1px solid #3E3C41',
+                      borderRadius: '9px',
+                    },
+                    '& .MuiInputBase-input': {
+                      padding: '12px',
+                    },
+                  }}
+                />
+              </Grid>
+            ))}
+            </Grid>
+            <Grid container xs={12} sx={{ mt: 2, mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
+              <Grid item xs={12} sm={12} lg={4} sx={{ textAlign: 'right' }}>
+                <Button
+                  variant="contained"
+                  onClick={onClickSave}
+                  disabled={loading}
+                  endIcon={
+                    loading ? <CircularProgress size={20} color="inherit" /> : null
+                  }
+                  fullWidth
+                  sx={{
+                    px: 8,
+                    '&:hover': {
+                      backgroundColor: theme.palette.primary.light,
+                      color: theme.palette.primary.main,
+                      border: `1px solid ${theme.palette.primary.main}`,
+                    },
+                  }}
+                >
+                  {loading ? 'Salvando...' : 'Salvar'}
+                </Button>
+              </Grid>
+            </Grid>
+          
+        </AccordionDetails>
+      </Accordion>
+    </Grid>
   );
 }
