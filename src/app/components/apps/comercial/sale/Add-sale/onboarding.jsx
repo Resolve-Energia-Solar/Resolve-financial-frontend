@@ -205,8 +205,6 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  console.log('formdata:', formData)
-
   const handleDialogClose = () => {
     setIsDialogOpen(false);
   };

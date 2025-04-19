@@ -50,6 +50,8 @@ const CreateAddressPage = ({
   const { enqueueSnackbar } = useSnackbar();
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
+  console.log('userId', userId);
+
   const {
     formData,
     handleChange,
