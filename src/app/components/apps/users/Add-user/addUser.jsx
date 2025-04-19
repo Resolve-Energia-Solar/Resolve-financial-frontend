@@ -18,8 +18,10 @@ export default function AddUser({
   hideSaveButton = false,
   triggerSave = false,
   onUserSaved,
+  onClose,
 }) {
   const { id } = useParams();
+  
   const [initialData, setInitialData] = useState(null);
   const [loadingInitialData, setLoadingInitialData] = useState(false);
   const [selectedAddresses, setSelectedAddresses] = useState([]);
@@ -31,6 +33,7 @@ export default function AddUser({
   const [userFound, setUserFound] = useState(false);
 
   const resetUserFields = () => {
+    console.log('Resetando campos do usuário');
     handleChange('complete_name', '');
     handleChange('first_name', '');
     handleChange('email', '');
@@ -44,6 +47,7 @@ export default function AddUser({
 
   useEffect(() => {
     if (id) {
+      console.log('ID encontrado, buscando dados iniciais do usuário:', id);
       setLoadingInitialData(true);
       userService
         .getUserById(id, {
@@ -51,6 +55,7 @@ export default function AddUser({
           fields: 'id,username,first_name,email,first_document,complete_name',
         })
         .then((data) => {
+          console.log('Dados iniciais recebidos:', data);
           setInitialData(data);
           setLoadingInitialData(false);
           setFieldsEnabled(true);
@@ -74,10 +79,13 @@ export default function AddUser({
 
   useEffect(() => {
     if (triggerSave) {
+      console.log('triggerSave acionado');
       (async () => {
         const saveResult = await handleSave();
-        if (saveResult && onUserSaved) {
-          onUserSaved(saveResult);
+        console.log('Resultado do save:', saveResult);
+        if (saveResult) {
+          onUserSaved?.(saveResult);
+          onClose?.();
         }
       })();
     }
@@ -85,12 +93,14 @@ export default function AddUser({
   }, [triggerSave]);
 
   const fetchAddress = async (search) => {
+    console.log('Procurando endereços para:', search);
     try {
       const response = await addressService.index({
         q: search,
         limit: 40,
         fields: 'id,street,number,city,state',
       });
+      console.log('Endereços encontrados:', response.results);
       return response.results;
     } catch (error) {
       console.error('Erro na busca de endereços:', error);
@@ -105,10 +115,11 @@ export default function AddUser({
   ];
 
   const handleCpfBlur = async () => {
+    console.log('handleCpfBlur acionado');
     if (id) return;
     const maskedCpf = formData.first_document?.trim();
     const cpfValue = maskedCpf.replace(/\D/g, '');
-
+    console.log('CPF após limpar formatação:', cpfValue);
     if (!cpfValue) return;
 
     try {
@@ -124,8 +135,10 @@ export default function AddUser({
           expand: 'addresses,phone_numbers',
         },
       });
+      console.log('Resultado da busca pelo CPF:', data);
       const user = data.results[0];
       if (user) {
+        console.log('Usuário encontrado:', user);
         const phoneNumbersIds = user.phone_numbers.map((phone) => phone.id);
         handleChange('complete_name', user.complete_name || '');
         handleChange('first_name', user.first_name || '');
@@ -137,21 +150,22 @@ export default function AddUser({
         setSelectedAddresses(user.addresses || []);
         setInitialData(user);
         setUserFound(true);
-        setUserNotFound(false);
       } else {
+        console.log('Nenhum usuário encontrado com CPF:', cpfValue);
         setUserNotFound(true);
-        setUserFound(false);
       }
     } catch (error) {
       console.error('Erro ao buscar usuário pelo CPF:', error);
     } finally {
       setSearchingUser(false);
       setFieldsEnabled(true);
+      console.log('Finalizou handleCpfBlur');
     }
   };
 
   // Reseta os campos ao alterar o CPF
   const handleCpfChange = (e) => {
+    console.log('CPF alterado:', e.target.value);
     handleChange('first_document', e.target.value);
     resetUserFields();
     setUserFound(false);
@@ -159,6 +173,7 @@ export default function AddUser({
   };
 
   if (id && loadingInitialData) {
+    console.log('Carregando dados iniciais...');
     return (
       <Grid container justifyContent="center" alignItems="center" sx={{ height: '100vh' }}>
         <CircularProgress />
@@ -170,7 +185,7 @@ export default function AddUser({
     <Grid container spacing={4} sx={{ p: 4 }}>
       <Grid item xs={12}>
         <Typography variant="h4" component="h1" align="center" gutterBottom>
-          {label ? label : id ? 'Editar Usuário' : 'Adicionar Usuário'}
+          {label ?? (id ? 'Editar Usuário' : 'Adicionar Usuário')}
         </Typography>
       </Grid>
 
@@ -216,7 +231,13 @@ export default function AddUser({
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            await handleSave();
+            console.log('Formulário submetido');
+            const saveResult = await handleSave();
+            console.log('Resultado do submit:', saveResult);
+            if (saveResult) {
+              onUserSaved?.(saveResult);
+              onClose?.();
+            }
           }}
         >
           <Grid container spacing={3}>
@@ -234,7 +255,10 @@ export default function AddUser({
                 placeholder="Nome completo"
                 name="complete_name"
                 value={formData.complete_name}
-                onChange={(e) => handleChange('complete_name', e.target.value)}
+                onChange={(e) => {
+                  console.log('Nome Completo alterado:', e.target.value);
+                  handleChange('complete_name', e.target.value);
+                }}
                 fullWidth
                 margin="normal"
                 error={Boolean(formErrors.complete_name)}
@@ -250,7 +274,10 @@ export default function AddUser({
                 name="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => handleChange('email', e.target.value)}
+                onChange={(e) => {
+                  console.log('Email alterado:', e.target.value);
+                  handleChange('email', e.target.value);
+                }}
                 fullWidth
                 margin="normal"
                 error={Boolean(formErrors.email)}
@@ -264,7 +291,10 @@ export default function AddUser({
                 placeholder="Gênero"
                 options={gender_options}
                 value={formData.gender}
-                onChange={(e) => handleChange('gender', e.target.value)}
+                onChange={(e) => {
+                  console.log('Gênero alterado:', e.target.value);
+                  handleChange('gender', e.target.value);
+                }}
                 {...(formErrors.gender && {
                   error: true,
                   helperText: formErrors.gender,
@@ -276,8 +306,11 @@ export default function AddUser({
             <Grid item xs={12} sm={6} md={6}>
               <AutoCompletePhoneNumber
                 placeholder="Número"
-                onChange={(id) => handleChange('phone_numbers_ids', [id])}
-                value={formData.phone_numbers_ids ? formData.phone_numbers_ids[0] : null}
+                onChange={(id) => {
+                  console.log('Telefone selecionado:', id);
+                  handleChange('phone_numbers_ids', [id]);
+                }}
+                value={formData.phone_numbers_ids?.[0] || null}
                 {...(formErrors.phone_numbers_ids && {
                   error: true,
                   helperText: formErrors.phone_numbers_ids,
@@ -291,7 +324,10 @@ export default function AddUser({
                 placeholder="Data de Nascimento"
                 name="birth_date"
                 value={formData.birth_date}
-                onChange={(newValue) => handleChange('birth_date', newValue)}
+                onChange={(newValue) => {
+                  console.log('Data de nascimento alterada:', newValue);
+                  handleChange('birth_date', newValue);
+                }}
                 {...(formErrors.birth_date && {
                   error: true,
                   helperText: formErrors.birth_date,

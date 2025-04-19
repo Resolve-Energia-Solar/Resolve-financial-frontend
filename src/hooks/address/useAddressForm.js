@@ -59,7 +59,7 @@ const useAddressForm = (initialData, id) => {
       complement: formData.complement,
       latitude: formData.latitude,
       longitude: formData.longitude,
-      user_id: formData.user_id ? formData.user_id : undefined,
+      user: formData.user_id ? formData.user_id : undefined,
     };
 
     try {

@@ -1,4 +1,3 @@
-import { indexOf } from 'lodash';
 import apiClient from './apiClient';
 
 const formatTime = (time) => {
@@ -53,30 +52,6 @@ const userService = {
       return response.data;
     } catch (error) {
       console.error(`Erro ao deletar usuário com id ${id}:`, error);
-      throw error;
-    }
-  },
-
-  find: async (id, params) => {
-    try {
-      const response = await apiClient.get(`/api/users/${id}/`, {
-        params,
-      });
-      return response.data;
-    } catch (error) {
-      console.error(`Erro ao buscar usuário com id ${id}:`, error);
-      throw error;
-    }
-  },
-
-  index: async (params) => {
-    try {
-      const response = await apiClient.get(`/api/users/`, {
-        params,
-      });
-      return response.data;
-    } catch (error) {
-      console.error(`Erro ao buscar usuários`, error);
       throw error;
     }
   },

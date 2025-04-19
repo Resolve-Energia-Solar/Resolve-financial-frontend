@@ -1,9 +1,23 @@
+'use client';
+
 import React, { useState, useEffect, useMemo } from 'react';
-import { Autocomplete, TextField, CircularProgress, Typography, IconButton } from '@mui/material';
+import {
+  Autocomplete,
+  TextField,
+  CircularProgress,
+  Typography,
+  IconButton,
+  InputAdornment,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import apiClient from '@/services/apiClient';
 
-const GenericAsyncAutocompleteInput = ({
+export default function GenericAsyncAutocompleteInput({
   label,
   value,
   onChange,
@@ -20,7 +34,7 @@ const GenericAsyncAutocompleteInput = ({
   renderCreateModal,
   onCreateObject,
   ...props
-}) => {
+}) {
   const [options, setOptions] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
@@ -31,50 +45,29 @@ const GenericAsyncAutocompleteInput = ({
   const stableExtraParams = useMemo(() => extraParams, [JSON.stringify(extraParams)]);
   const stableMapResponse = useMemo(() => mapResponse, [mapResponse]);
 
-  const selectedOption = useMemo(() => {
-    if (multiselect && Array.isArray(value)) {
-      return value
-        .map((val) =>
-          typeof val === 'object'
-            ? val
-            : options.find((option) => option.value === val)
-        )
-        .filter(Boolean);
-    } else {
-      if (!value) return null;
-      return typeof value === 'object'
-        ? value
-        : options.find((option) => option.value === value) || null;
-    }
-  }, [value, options, multiselect]);
-
   useEffect(() => {
     if (!open) return;
-
     let active = true;
     setLoading(true);
+
     const handler = setTimeout(async () => {
       try {
         const params = new URLSearchParams({
           [queryParam]: inputValue,
           ...stableExtraParams,
         });
-        const page = 1;
-        const limit = 10;
-        const response = await apiClient.get(`${endpoint}?${params.toString()}`, {
-          params: { page, limit },
+        const { data } = await apiClient.get(`${endpoint}?${params.toString()}`, {
+          params: { page: 1, limit: 10 },
         });
-        const data = response.data;
-        const fetchedOptions = stableMapResponse ? stableMapResponse(data) : data.results || [];
-        if (active) {
-          setOptions(fetchedOptions);
-        }
+        const fetched = stableMapResponse ? stableMapResponse(data) : data.results || [];
+        if (active) setOptions(fetched);
       } catch (err) {
         console.error('Error fetching options:', err);
       } finally {
         if (active) setLoading(false);
       }
     }, debounceTime);
+
     return () => {
       active = false;
       clearTimeout(handler);
@@ -82,59 +75,65 @@ const GenericAsyncAutocompleteInput = ({
   }, [inputValue, open, endpoint, queryParam, stableExtraParams, stableMapResponse, debounceTime]);
 
   useEffect(() => {
-    const fetchInitialOptions = async () => {
+    const fetchInitial = async () => {
       if (multiselect && Array.isArray(value)) {
-        const missingValues = value.filter((val) =>
-          !options.find(
-            (option) => option.value === (typeof val === 'object' ? val.value : val)
-          )
-        );
-        for (const val of missingValues) {
+        const missing = value.filter(val => !options.find(o => o.value === (val.value ?? val)));
+        for (const val of missing) {
           try {
             const id = typeof val === 'object' ? val.value : val;
-            const response = await apiClient.get(`${endpoint}/${id}`, {
-              params: stableExtraParams,
-            });
-            const item = response.data;
-            const mappedOption = stableMapResponse
-              ? stableMapResponse({ results: [item] })[0]
-              : { label: item.complete_name || item.name || '', value: item.id };
-            setOptions((prevOptions) => [...prevOptions, mappedOption]);
+            const { data } = await apiClient.get(`${endpoint}/${id}`, { params: stableExtraParams });
+            const mapped = stableMapResponse
+              ? stableMapResponse({ results: [data] })[0]
+              : { label: data.complete_name || data.name || '', value: data.id };
+            setOptions(prev => [...prev, mapped]);
           } catch (err) {
             console.error('Error fetching initial option:', err);
           }
         }
       } else if (!multiselect && value && typeof value !== 'object') {
-        if (!options.find((option) => option.value === value)) {
+        if (!options.find(o => o.value === value)) {
           try {
-            const response = await apiClient.get(`${endpoint}/${value}`, {
-              params: stableExtraParams,
-            });
-            const item = response.data;
-            const mappedOption = stableMapResponse
-              ? stableMapResponse({ results: [item] })[0]
-              : { label: item.complete_name || item.name || '', value: item.id };
-            setOptions((prevOptions) => [...prevOptions, mappedOption]);
+            const { data } = await apiClient.get(`${endpoint}/${value}`, { params: stableExtraParams });
+            const mapped = stableMapResponse
+              ? stableMapResponse({ results: [data] })[0]
+              : { label: data.complete_name || data.name || '', value: data.id };
+            setOptions(prev => [...prev, mapped]);
           } catch (err) {
             console.error('Error fetching initial option:', err);
           }
         }
       }
     };
-    fetchInitialOptions();
+    fetchInitial();
   }, [value, options, multiselect, endpoint, stableExtraParams, stableMapResponse]);
 
-  const handleCreateObject = async () => {
+  const selectedOption = useMemo(() => {
+    if (multiselect && Array.isArray(value)) {
+      return value
+        .map(val =>
+          typeof val === 'object' ? val : options.find(opt => opt.value === val)
+        )
+        .filter(Boolean);
+    } else {
+      if (!value) return null;
+      return typeof value === 'object' ? value : options.find(opt => opt.value === value) || null;
+    }
+  }, [value, options, multiselect]);
+
+  const handleCreate = async () => {
     try {
-      const createdObject = await onCreateObject(newObjectData); // Cria o endereço
-      const newOption = { label: createdObject.complete_address, value: createdObject.id }; // Objeto criado
-      setOptions((prevOptions) => [...prevOptions, newOption]); // Atualiza as opções
-      onChange(newOption.value); // Passa o ID do novo endereço para o valor
-      setCreateModalOpen(false); // Fecha o modal
+      const created = await onCreateObject(newObjectData);
+      const newOpt = {
+        label: created.complete_address || created.name || '',
+        value: created.id,
+      };
+      setOptions(prev => [...prev, newOpt]);
+      onChange(multiselect ? [...(selectedOption || []), newOpt] : newOpt.value);
+      setCreateModalOpen(false);
     } catch (err) {
       console.error('Error creating object:', err);
     }
-  };  
+  };
 
   return (
     <>
@@ -145,23 +144,16 @@ const GenericAsyncAutocompleteInput = ({
         onOpen={() => setOpen(true)}
         onClose={() => setOpen(false)}
         options={options}
-        getOptionLabel={(option) => option.label || ''}
+        getOptionLabel={opt => opt.label || ''}
         loading={loading}
-        onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
-        onChange={(event, newValue) => onChange(newValue)}
+        onInputChange={(e, v) => setInputValue(v)}
+        onChange={(e, v) => onChange(v)}
         value={selectedOption}
         loadingText="Carregando..."
         noOptionsText={noOptionsText}
-        renderOption={
-          renderOption ||
-          ((props, option) => (
-            <li {...props}>
-              <Typography variant="body1">{option.label}</Typography>
-            </li>
-          ))
-        }
+        renderOption={renderOption}
         {...props}
-        renderInput={(params) => (
+        renderInput={params => (
           <TextField
             {...params}
             label={label}
@@ -174,16 +166,15 @@ const GenericAsyncAutocompleteInput = ({
               ...params.InputProps,
               endAdornment: (
                 <>
-                  {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                  {params.InputProps.endAdornment}
+                  {loading && <CircularProgress size={20} />}
                   {renderCreateModal && !loading && (
-                    <IconButton
-                      onClick={() => setCreateModalOpen(true)}
-                      edge="end"
-                    >
-                      <AddIcon />
-                    </IconButton>
+                    <InputAdornment position="end">
+                      <IconButton size="small" onClick={() => setCreateModalOpen(true)}>
+                        <AddIcon />
+                      </IconButton>
+                    </InputAdornment>
                   )}
+                  {params.InputProps.endAdornment}
                 </>
               ),
             }}
@@ -192,16 +183,21 @@ const GenericAsyncAutocompleteInput = ({
       />
 
       {renderCreateModal && (
-        renderCreateModal({
-          open: createModalOpen,
-          onClose: () => setCreateModalOpen(false),
-          onCreate: handleCreateObject,
-          newObjectData,
-          setNewObjectData
-        })
+        <Dialog open={createModalOpen} onClose={() => setCreateModalOpen(false)} fullWidth maxWidth="sm">
+          <DialogTitle>Adicionar {label}</DialogTitle>
+          <DialogContent>
+            {renderCreateModal({
+              onClose: () => setCreateModalOpen(false),
+              onCreate: handleCreate,
+              newObjectData,
+              setNewObjectData,
+            })}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setCreateModalOpen(false)}>Cancelar</Button>
+          </DialogActions>
+        </Dialog>
       )}
     </>
   );
-};
-
-export default GenericAsyncAutocompleteInput;
+}
