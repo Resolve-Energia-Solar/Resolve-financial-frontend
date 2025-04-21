@@ -13,6 +13,7 @@ export default function AgentRoutes() {
   const [agents, setAgents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [name, setName] = useState('');
+  const [committedName, setCommittedName] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
@@ -72,15 +73,18 @@ export default function AgentRoutes() {
   }, [rowsPerPage, page]);
 
   useEffect(() => {
-    fetchData(selectedDate, name);
-  }, [selectedDate, name, fetchData, page, rowsPerPage]);
+    fetchData(selectedDate, committedName);
+  }, [selectedDate, committedName, fetchData, page, rowsPerPage]);
 
   const handleNameChange = (event) => {
     setName(event.target.value);
   };
 
   const handleNameCommit = () => {
-    fetchData(selectedDate, name);
+    if (name !== committedName) {
+      setCommittedName(name);
+      setPage(0);
+    }
   };
 
   return (
