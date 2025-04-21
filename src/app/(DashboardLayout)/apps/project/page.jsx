@@ -30,15 +30,7 @@ const ProjectListing = ({
       <BlankCard>
         <CardContent>
           <ProjectList onClick={onRowClick} />
-          <ProjectDetailDrawer projectId={projectId} open={openDrawer} />
-          {/* <SideDrawer
-            open={openDrawer}
-            onClose={toggleDrawerClosed}
-            title="Detalhes do Projeto"
-            projectId={projectId}
-          >
-            <EditProject projectData={projectData} projectId={rowSelected?.id} />
-          </SideDrawer> */}
+          <ProjectDetailDrawer projectId={projectId} open={openDrawer} onClose={toggleDrawerClosed} />
         </CardContent>
       </BlankCard>
     </PageContainer>
