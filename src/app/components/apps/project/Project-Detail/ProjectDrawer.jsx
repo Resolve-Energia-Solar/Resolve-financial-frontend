@@ -6,8 +6,8 @@ import { useSnackbar } from 'notistack';
 import SplitPane from 'react-split-pane';
 import projectService from '@/services/projectService';
 import processService from '@/services/processService';
-import UserCard from '../../users/userCard';
 import ProcessMap from '@/app/components/shared/ProcessMap';
+import InspectionsTable from '../../inspections/table/InspectionsTable';
 
 function TabPanel({ children, value, index }) {
     return (
@@ -25,7 +25,6 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
     const [tab, setTab] = useState(0);
     const [paneLimits, setPaneLimits] = useState({ min: 0, max: 0, default: 0 });
 
-    // Define pane limits based on window width
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const w = window.innerWidth;
@@ -72,7 +71,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
 
     const handleClose = useCallback(() => onClose(), [onClose]);
     const handleTabChange = (e, newVal) => setTab(newVal);
-    const drawerWidth = useMemo(() => (processId ? '100vw' : '50vw'), [processId]);
+    const drawerWidth = useMemo(() => (processId ? '100vw' : '65vw'), [processId]);
 
     const tabs = [
         'Vistoria', 'Contratos', 'Engenharia', 'Anexos',
@@ -89,7 +88,9 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
             >
                 {tabs.map(label => <Tab key={label} label={label} />)}
             </Tabs>
-            <TabPanel value={tab} index={0}><Typography>Conteúdo Vistoria</Typography></TabPanel>
+            <TabPanel value={tab} index={0}>
+                <InspectionsTable projectId={projectId} />
+            </TabPanel>
             <TabPanel value={tab} index={1}><Typography>Conteúdo Contratos</Typography></TabPanel>
             <TabPanel value={tab} index={2}><Typography>Conteúdo Engenharia</Typography></TabPanel>
             <TabPanel value={tab} index={3}><Typography>Conteúdo Anexos</Typography></TabPanel>
