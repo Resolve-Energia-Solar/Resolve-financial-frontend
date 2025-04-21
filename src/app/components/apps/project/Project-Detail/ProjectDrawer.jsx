@@ -8,6 +8,7 @@ import projectService from '@/services/projectService';
 import processService from '@/services/processService';
 import ProcessMap from '@/app/components/shared/ProcessMap';
 import InspectionsTable from '../../inspections/table/InspectionsTable';
+import EditSale from '../../comercial/sale/Edit-sale/tabs/sale';
 
 function TabPanel({ children, value, index }) {
     return (
@@ -43,8 +44,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
         try {
             const [proj, proc] = await Promise.all([
                 projectService.find(projectId, {
-                    fields: 'id,project_number,product.id,sale.id,sale.customer',
-                    expand: 'product,sale',
+                    fields: 'id,sale',
                 }),
                 processService.getProcessByObjectId('resolve_crm', 'project', projectId)
                     .then(({ id }) => id)
@@ -91,7 +91,9 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
             <TabPanel value={tab} index={0}>
                 <InspectionsTable projectId={projectId} />
             </TabPanel>
-            <TabPanel value={tab} index={1}><Typography>Conteúdo Contratos</Typography></TabPanel>
+            <TabPanel value={tab} index={1}>
+                <EditSale sx={{ padding: 4 }} saleId={project?.sale} />
+            </TabPanel>
             <TabPanel value={tab} index={2}><Typography>Conteúdo Engenharia</Typography></TabPanel>
             <TabPanel value={tab} index={3}><Typography>Conteúdo Anexos</Typography></TabPanel>
             <TabPanel value={tab} index={4}><Typography>Conteúdo Logística</Typography></TabPanel>
