@@ -26,10 +26,6 @@ export default function InspectionsTable({ projectId }) {
                             project__in: projectId
                         }
                     );
-                    console.log(response.results);
-                    if (response.results?.length === 0) {
-                        enqueueSnackbar("Sem vistorias para este projeto.", { variant: "info" });
-                    }
                     setInspections(response.results);
                 } catch (error) {
                     enqueueSnackbar(`Erro ao carregar vistorias: ${error.message}`, { variant: "error" });
@@ -58,22 +54,28 @@ export default function InspectionsTable({ projectId }) {
                 <TableCell>Principal</TableCell>
             </TableHead>
             <TableBody>
-                {inspections?.map((inspection) => (
-                    <TableRow key={inspection.id}>
-                        <TableCell>{inspection.address?.complete_address}</TableCell>
-                        <TableCell>{inspection.products.length > 0 ? inspection.products[0].description : inspection.project.product.description}</TableCell>
-                        <TableCell>{inspection.schedule_agent ? <UserCard userId={inspection.schedule_agent} /> : 'Sem agente'}</TableCell>
-                        <TableCell>{formatDate(inspection.schedule_date)}</TableCell>
-                        <TableCell>
-                            <ScheduleOpinionChip status={inspection.final_service_opinion?.name} />
-                        </TableCell>
-                        <TableCell>
-                            <EditIcon sx={{ mr: 1 }} />
-                            <VisibilityIcon />
-                        </TableCell>
-                        <TableCell><Switch checked={inspection.id === inspection.project.inspection} /></TableCell>
+                {inspections?.length === 0 ? (
+                    <TableRow>
+                        <TableCell colSpan={7} align="center">Nenhuma vistoria encontrada.</TableCell>
                     </TableRow>
-                ))}
+                ) : (
+                    inspections?.map((inspection) => (
+                        <TableRow key={inspection.id}>
+                            <TableCell>{inspection.address?.complete_address}</TableCell>
+                            <TableCell>{inspection.products.length > 0 ? inspection.products[0].description : inspection.project.product.description}</TableCell>
+                            <TableCell>{inspection.schedule_agent ? <UserCard userId={inspection.schedule_agent} /> : 'Sem agente'}</TableCell>
+                            <TableCell>{formatDate(inspection.schedule_date)}</TableCell>
+                            <TableCell>
+                                <ScheduleOpinionChip status={inspection.final_service_opinion?.name} />
+                            </TableCell>
+                            <TableCell>
+                                <EditIcon sx={{ mr: 1 }} />
+                                <VisibilityIcon />
+                            </TableCell>
+                            <TableCell><Switch checked={inspection.id === inspection.project.inspection} /></TableCell>
+                        </TableRow>
+                    ))
+                )}
             </TableBody>
         </Table>
     )
