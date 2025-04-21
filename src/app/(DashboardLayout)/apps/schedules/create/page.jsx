@@ -102,13 +102,34 @@ const CreateSchedulePage = () => {
       await scheduleService.create(submitData);
       router.push('/apps/schedules');
     } catch (err) {
-      Object.entries(err.response.data).forEach(([field, messages]) => {
-        messages.forEach((message) => {
-          const label = fieldLabels[field] || field;
-          enqueueSnackbar(`${label}: ${message}`, { variant: 'error' });
-        });
-      });
-      setErrors(err.response.data);
+      if (err.response && err.response.data && typeof err.response.data === 'object') {
+        if ('available_time' in err.response.data) {
+          const { message, available_time } = err.response.data;
+          const timeSlots = available_time.map(slot => (
+            <li key={`${slot.start}-${slot.end}`}>
+              {slot.start} - {slot.end}
+            </li>
+          ));
+          enqueueSnackbar(
+            <div>
+              <Typography variant="body1">{message}</Typography>
+              <Typography variant="body2">Horários disponíveis:</Typography>
+              <ul>{timeSlots}</ul>
+            </div>,
+            { variant: 'warning' }
+          );
+        } else {
+          Object.entries(err.response.data).forEach(([field, messages]) => {
+            if (Array.isArray(messages)) {
+              messages.forEach((message) => {
+                const label = fieldLabels[field] || field;
+                enqueueSnackbar(`${label}: ${message}`, { variant: 'error' });
+              });
+            }
+          });
+        }
+      }
+      setErrors(err.response?.data || {});
       setLoading(false);
     }
   };
@@ -170,6 +191,7 @@ const CreateSchedulePage = () => {
           <Typography variant="h5" gutterBottom marginBottom={4}>
             Criar Agendamento
           </Typography>
+          
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <GenericAsyncAutocompleteInput
