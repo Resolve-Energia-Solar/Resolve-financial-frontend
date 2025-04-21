@@ -20,7 +20,7 @@ export default function CardAgentRoutes({ title, items = [] }) {
   const [hoveredIndex, setHoveredIndex] = React.useState(null);
 
   return (
-    <Card variant="outlined" sx={{ maxWidth: 600, margin: 'auto' }}>
+    <Card variant="outlined" sx={{ maxWidth: 600, margin: 'auto', display: 'flex', flexDirection: 'column', height: '100%' }}>
       <CardHeader title={title} sx={{ pb: 0 }} />
       <CardContent>
         <Typography

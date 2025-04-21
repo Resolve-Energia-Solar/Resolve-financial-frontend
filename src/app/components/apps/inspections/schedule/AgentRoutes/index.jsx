@@ -1,5 +1,5 @@
 'use client';
-import { Grid, TextField, Box } from '@mui/material';
+import { Grid, TextField, Box, TablePagination, CircularProgress } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -13,16 +13,34 @@ export default function AgentRoutes() {
   const [agents, setAgents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [name, setName] = useState('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [totalRows, setTotalRows] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleRowsPerPageChange = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const fetchData = useCallback(async (date, nameFilter) => {
+    setLoading(true);
     try {
       const agentResponse = await userService.index({
         name: nameFilter,
         category: 1,
+        limit: rowsPerPage,
+        page: page + 1,
         fields: 'id,complete_name',
         date: date.toISOString().split('T')[0],
         order_by_schedule_count: 'desc',
       });
+
+      setTotalRows(agentResponse.meta?.pagination?.total_count || 0);
 
       const agentsData = agentResponse.results;
       const dateStr = date.toISOString().split('T')[0];
@@ -48,12 +66,14 @@ export default function AgentRoutes() {
       setAgents(agentsWithDetails);
     } catch (error) {
       console.error('Erro ao buscar dados dos agentes:', error);
+    } finally {
+      setLoading(false);
     }
-  }, []);
+  }, [rowsPerPage, page]);
 
   useEffect(() => {
     fetchData(selectedDate, name);
-  }, [selectedDate, fetchData]);
+  }, [selectedDate, name, fetchData, page, rowsPerPage]);
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -65,7 +85,6 @@ export default function AgentRoutes() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
-      {/* Filtros fora do grid de cards */}
       <Box display="flex" flexWrap="wrap" gap={2} mb={3}>
         <DatePicker
           label="Data"
@@ -89,17 +108,33 @@ export default function AgentRoutes() {
         />
       </Box>
 
-      {/* Grid com os cards */}
-      <Grid container spacing={2}>
-        {agents.map((agent) => (
-          <Grid item xs={12} md={4} lg={3} key={agent.id}>
-            <CardAgentRoutes
-              title={agent.complete_name}
-              items={agent.schedules}
-            />
-          </Grid>
-        ))}
-      </Grid>
+      {loading ? (
+        <Box display="flex" justifyContent="center" alignItems="center" p={5}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Grid container spacing={2}>
+          {agents.map((agent) => (
+            <Grid item xs={12} md={4} lg={3} key={agent.id}>
+              <CardAgentRoutes
+                title={agent.complete_name}
+                items={agent.schedules}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      )}
+
+      <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={totalRows}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handlePageChange}
+          onRowsPerPageChange={handleRowsPerPageChange}
+          labelRowsPerPage="Linhas por página"
+        />
     </LocalizationProvider>
   );
 }
