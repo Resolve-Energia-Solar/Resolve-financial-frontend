@@ -8,6 +8,7 @@ import ProjectList from '@/app/components/apps/project/Project-list';
 import EditProject from '@/app/components/apps/project/Edit-project';
 import SideDrawer from '@/app/components/shared/SideDrawer';
 import useProject from '@/hooks/projects/useProject';
+import ProjectDetailDrawer from '@/app/components/apps/project/Project-Detail/ProjectDrawer';
 
 const ProjectListing = ({
   fields = 'id,product.id,sale.id,sale.customer.id',
@@ -29,14 +30,15 @@ const ProjectListing = ({
       <BlankCard>
         <CardContent>
           <ProjectList onClick={onRowClick} />
-          <SideDrawer
+          <ProjectDetailDrawer projectId={projectId} open={openDrawer} />
+          {/* <SideDrawer
             open={openDrawer}
             onClose={toggleDrawerClosed}
             title="Detalhes do Projeto"
             projectId={projectId}
           >
             <EditProject projectData={projectData} projectId={rowSelected?.id} />
-          </SideDrawer>
+          </SideDrawer> */}
         </CardContent>
       </BlankCard>
     </PageContainer>
