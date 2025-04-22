@@ -8,16 +8,20 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import UserCard from "../../users/userCard";
 import { formatDate } from "@/utils/dateUtils";
 import ScheduleOpinionChip from "../schedule/StatusChip/ScheduleOpinionChip";
+import { Table } from "@/app/components/Table";
 
 export default function InspectionsTable({ projectId }) {
-    const { enqueueSnackbar } = useSnackbar();
-    const [inspections, setInspections] = useState(null);
-    const [loading, setloading] = useState(true);
+    const { enqueueSnackbar } = useSnackbar()
+    const [inspections, setInspections] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [page, setPage] = useState(0)
+    const [rowsPerPage, setRowsPerPage] = useState(5)
+    const [principalId, setPrincipalId] = useState(null)
 
     useEffect(() => {
         if (projectId) {
             const fetchInspections = async () => {
-                setloading(true);
+                setLoading(true);
                 try {
                     const response = await scheduleService.index(
                         {
@@ -30,53 +34,71 @@ export default function InspectionsTable({ projectId }) {
                 } catch (error) {
                     enqueueSnackbar(`Erro ao carregar vistorias: ${error.message}`, { variant: "error" });
                 } finally {
-                    setloading(false);
+                    setLoading(false);
                 }
             }
             fetchInspections();
         }
-        setloading(false);
+        setLoading(false);
     }, [projectId]);
 
     if (loading) {
         return <TableSkeleton columns={8} rows={4} />;
     }
 
+    const columns = [
+        { field: 'address.complete_address', headerName: 'Endereço', render: r => r.address.complete_address },
+        { field: 'products', headerName: 'Produto', render: r => r.products.map(p => p.description).join(', ') },
+        { field: 'scheduled_agent', headerName: 'Agente', render: r => r.scheduled_agent?.name },
+        { field: 'schedule_date', headerName: 'Agendada', render: r => new Date(r.schedule_date).toLocaleDateString() },
+        { field: 'completed_date', headerName: 'Concluída', render: r => r.completed_date ? new Date(r.completed_date).toLocaleDateString() : '-' },
+        { field: 'final_service_opinion', headerName: 'Opinião', render: r => r.final_service_opinion?.name },
+    ]
+
+    // return (
+    //     <Table>
+    //         <TableHead>
+    //             <TableCell>Endereço</TableCell>
+    //             <TableCell>Produto</TableCell>
+    //             <TableCell>Agente</TableCell>
+    //             <TableCell>Data</TableCell>
+    //             <TableCell>Parecer Final</TableCell>
+    //             <TableCell>Ações</TableCell>
+    //             <TableCell>Principal</TableCell>
+    //         </TableHead>
+    //         <TableBody>
+    //             {inspections?.length === 0 ? (
+    //                 <TableRow>
+    //                     <TableCell colSpan={7} align="center">Nenhuma vistoria encontrada.</TableCell>
+    //                 </TableRow>
+    //             ) : (
+    //                 inspections?.map((inspection) => (
+    //                     <TableRow key={inspection.id}>
+    //                         <TableCell>{inspection.address?.complete_address}</TableCell>
+    //                         <TableCell>{inspection.products.length > 0 ? inspection.products[0].description : inspection.project.product.description}</TableCell>
+    //                         <TableCell>{inspection.schedule_agent ? <UserCard userId={inspection.schedule_agent} /> : 'Sem agente'}</TableCell>
+    //                         <TableCell>{formatDate(inspection.schedule_date)}</TableCell>
+    //                         <TableCell>
+    //                             <ScheduleOpinionChip status={inspection.final_service_opinion?.name} />
+    //                         </TableCell>
+    //                         <TableCell>
+    //                             <EditIcon sx={{ mr: 1 }} />
+    //                             <VisibilityIcon />
+    //                         </TableCell>
+    //                         <TableCell><Switch checked={inspection.id === inspection.project.inspection} /></TableCell>
+    //                     </TableRow>
+    //                 ))
+    //             )}
+    //         </TableBody>
+    //     </Table>
+    // )
+
     return (
-        <Table>
-            <TableHead>
-                <TableCell>Endereço</TableCell>
-                <TableCell>Produto</TableCell>
-                <TableCell>Agente</TableCell>
-                <TableCell>Data</TableCell>
-                <TableCell>Parecer Final</TableCell>
-                <TableCell>Ações</TableCell>
-                <TableCell>Principal</TableCell>
-            </TableHead>
-            <TableBody>
-                {inspections?.length === 0 ? (
-                    <TableRow>
-                        <TableCell colSpan={7} align="center">Nenhuma vistoria encontrada.</TableCell>
-                    </TableRow>
-                ) : (
-                    inspections?.map((inspection) => (
-                        <TableRow key={inspection.id}>
-                            <TableCell>{inspection.address?.complete_address}</TableCell>
-                            <TableCell>{inspection.products.length > 0 ? inspection.products[0].description : inspection.project.product.description}</TableCell>
-                            <TableCell>{inspection.schedule_agent ? <UserCard userId={inspection.schedule_agent} /> : 'Sem agente'}</TableCell>
-                            <TableCell>{formatDate(inspection.schedule_date)}</TableCell>
-                            <TableCell>
-                                <ScheduleOpinionChip status={inspection.final_service_opinion?.name} />
-                            </TableCell>
-                            <TableCell>
-                                <EditIcon sx={{ mr: 1 }} />
-                                <VisibilityIcon />
-                            </TableCell>
-                            <TableCell><Switch checked={inspection.id === inspection.project.inspection} /></TableCell>
-                        </TableRow>
-                    ))
-                )}
-            </TableBody>
-        </Table>
-    )
+        <Table.Root
+            data="inspections"
+            loading={loading}
+        >
+
+        </Table.Root>
+    );
 }
