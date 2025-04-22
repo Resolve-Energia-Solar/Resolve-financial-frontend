@@ -3,7 +3,8 @@ import FilterSelect from "../FiltersSelection";
 import SortingFilter from "../SortingComponent";
 import { Add } from "@mui/icons-material";
 
-export function TableHeader({ title,
+export function TableHeader({ 
+    title,
     totalItems,
     objNameNumberReference,
     buttonLabel,
