@@ -138,21 +138,21 @@ export default function InspectionsTable({ projectId }) {
                         {c.headerName}
                     </Table.Cell>
                 ))}
-                <Table.Cell align="center" sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Editar</Table.Cell>
-                <Table.Cell align="center" sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Ver</Table.Cell>
-                <Table.Cell align="center" sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Principal</Table.Cell>
+                <Table.Cell align="center" sx={{ color: '#303030' }}>Editar</Table.Cell>
+                <Table.Cell align="center" sx={{ color: '#303030' }}>Ver</Table.Cell>
+                <Table.Cell align="center" sx={{ color: '#303030' }}>Principal</Table.Cell>
             </Table.Head>
 
             <Table.Body loading={loading}>
                     <Table.Cell 
                         render={row => row.address?.complete_address} 
-                        sx={{ fontWeight: 600, fontSize: '14px', color: '#7E8388' }}
+                        sx={{ color: '#7E8388' }}
                     />
                     <Table.Cell render={row =>
                         row.products?.length > 0
                             ? row.products[0].description
                             : row.project?.product?.description} 
-                        sx={{ fontWeight: 600, fontSize: '14px', color: '#7E8388' }}
+                        sx={{ color: '#7E8388' }}
                     />
                     <Table.Cell render={row =>
                         row.scheduled_agent
