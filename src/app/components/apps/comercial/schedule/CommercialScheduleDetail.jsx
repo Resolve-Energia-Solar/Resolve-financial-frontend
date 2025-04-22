@@ -130,7 +130,6 @@ const CommercialScheduleDetail = ({ schedule }) => {
       try {
         let productData = null;
         
-        // Priorize o produto do projeto, se existir.
         if (schedule?.project?.product) {
           const productId =
             typeof schedule.project.product === 'object'
