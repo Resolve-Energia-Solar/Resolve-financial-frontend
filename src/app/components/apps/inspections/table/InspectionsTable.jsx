@@ -55,6 +55,21 @@ export default function InspectionsTable({ projectId }) {
         { field: 'final_service_opinion', headerName: 'Opinião', render: r => r.final_service_opinion?.name },
     ]
 
+    const handleEdit = (id) => {
+        // Handle edit action
+        console.log(`Edit inspection with id: ${id}`);
+    }
+
+    const handleView = (id) => {
+        // Handle view action
+        console.log(`View inspection with id: ${id}`);
+    }
+
+    const handleSwitchChange = (id) => {
+        // Handle switch change action
+        console.log(`Switch changed for inspection with id: ${id}`);
+    }
+
     // return (
     //     <Table>
     //         <TableHead>
