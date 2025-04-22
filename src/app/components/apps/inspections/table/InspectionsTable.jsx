@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
-import { Table, TableHead, TableBody, TableCell, TableRow, Switch } from "@mui/material";
+// import { Table, TableHead, TableBody, TableCell, TableRow, Switch } from "@mui/material";
 import scheduleService from "@/services/scheduleService";
 import TableSkeleton from "../../comercial/sale/components/TableSkeleton";
 import EditIcon from "@mui/icons-material/Edit";
@@ -48,11 +48,11 @@ export default function InspectionsTable({ projectId }) {
 
     const columns = [
         { field: 'address.complete_address', headerName: 'Endereço', render: r => r.address.complete_address },
-        { field: 'products', headerName: 'Produto', render: r => r.products.map(p => p.description).join(', ') },
+        { field: 'products.description', headerName: 'Produto', render: r => r.products.map(p => p.description).join(', ') },
         { field: 'scheduled_agent', headerName: 'Agente', render: r => r.scheduled_agent?.name },
         { field: 'schedule_date', headerName: 'Agendada', render: r => new Date(r.schedule_date).toLocaleDateString() },
         { field: 'completed_date', headerName: 'Concluída', render: r => r.completed_date ? new Date(r.completed_date).toLocaleDateString() : '-' },
-        { field: 'final_service_opinion', headerName: 'Opinião', render: r => r.final_service_opinion?.name },
+        { field: 'final_service_opinion.name', headerName: 'Opinião', render: r => r.final_service_opinion?.name },
     ]
 
     const handleEdit = (id) => {
@@ -119,14 +119,60 @@ export default function InspectionsTable({ projectId }) {
         >
             <Table.Head>
                 {columns.map((column) => (
-                    <TableCell key={column.field} sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
+                    <Table.Cell key={column.field} sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
                         {column.headerName}
-                    </TableCell>
+                    </Table.Cell>
                 ))}
-                <TableCell align="center" sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Editar</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Ver</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Principal</TableCell>
+                <Table.Cell align="center" sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Editar</Table.Cell>
+                <Table.Cell align="center" sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Ver</Table.Cell>
+                <Table.Cell align="center" sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Principal</Table.Cell>
             </Table.Head>
+
+            <Table.Body>
+                {loading ? (
+                    <TableSkeleton rows={rowsPerPage} columns={columns.length} />
+                ) : (
+                    inspections.length > 0 ? (
+                        inspections.map((inspection) => (
+                            <Table.Row key={inspection.id} sx={{ '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' }, borderBottom: 'none' }}>
+                                {columns.map((column) => (
+                                    <Table.Cell key={column.field} sx={{ fontWeight: column.field === 'name' ? 600 : 400, fontSize: '14px', color: '#7E8388' }}>
+                                        {column.render ? column.render(inspection) : inspection[column.field] || '-'}
+                                    </Table.Cell>
+                                ))}
+
+                                <Table.Cell align="center">
+                                    <EditIcon
+                                        onClick={() => handleEdit(inspection.id)}
+                                        sx={{ cursor: 'pointer', color: '#7E8388' }}
+                                    />
+                                </Table.Cell>
+
+                                <Table.Cell align="center">
+                                    <VisibilityIcon
+                                        onClick={() => handleView(inspection.id)}
+                                        sx={{ cursor: 'pointer', color: '#7E8388' }}
+                                    />
+                                </Table.Cell>
+
+                                <Table.Cell align="center">
+                                    <Switch
+                                        checked={principalId === inspection.id}
+                                        onChange={() => handleSwitchChange(inspection.id)}
+                                    />
+                                </Table.Cell>
+
+                            </Table.Row>
+                        ))
+                    ) : (
+                        <Table.Row>
+                            <Table.Cell colSpan={columns.length} align="center" sx={{ borderBottom: 'none', justifyContent: 'center' }}>
+                                Nenhuma informação encontrada.
+                            </Table.Cell>
+                        </Table.Row>
+                    )
+                )}
+            </Table.Body>
 
         </Table.Root>
     );

@@ -1,7 +1,7 @@
 import { Button, Grid, Typography } from "@mui/material";
-import FilterSelect from "../FiltersSelection";
-import SortingFilter from "../SortingComponent";
 import { Add } from "@mui/icons-material";
+import FilterSelect from "../kanban/Leads/components/FiltersSelection";
+import SortingFilter from "../kanban/Leads/components/SortingComponent";
 
 export function TableHeader({ 
     title,

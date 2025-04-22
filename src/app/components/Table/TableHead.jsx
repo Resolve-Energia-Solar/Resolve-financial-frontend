@@ -1,8 +1,9 @@
-import { TableHead, TableBody as TableRow } from "@mui/material";
+import React from "react";
+import { TableHead as MuiHead, TableRow } from "@mui/material";
 
 export function TableHead({ children }) {
     return (
-        <TableHead>
+        <MuiHead>
             <TableRow>
                 {/* {columns.map((column) => (
                     <TableCell key={column.field} sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
@@ -12,6 +13,6 @@ export function TableHead({ children }) {
 
                 {children}
             </TableRow>
-        </TableHead>
+        </MuiHead>
     );
 }

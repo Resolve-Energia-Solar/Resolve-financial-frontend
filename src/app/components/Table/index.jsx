@@ -11,11 +11,11 @@ import { TableViewAction } from "./TableViewAction";
 export const Table = {
     Root: TableRoot,
     Header: TableHeader,
-    Head: TableHead,
     Body: TableBody,
     Cell: TableCell,
+    Pagination: TablePagination,
+    Head: TableHead,
     EditAction: TableEditAction,
     ViewAction: TableViewAction,
     SwitchAction: TableSwitchAction,
-    Pagination: TablePagination,
-} = { Root: TableRoot };
+};
