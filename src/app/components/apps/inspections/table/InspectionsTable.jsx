@@ -110,9 +110,23 @@ export default function InspectionsTable({ projectId }) {
 
     return (
         <Table.Root
-            data="inspections"
-            loading={loading}
+            data={inspections}
+            totalRows={inspections.length}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            onPageChange={setPage}
+            onRowsPerPageChange={setRowsPerPage}
         >
+            <Table.Head>
+                {columns.map((column) => (
+                    <TableCell key={column.field} sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
+                        {column.headerName}
+                    </TableCell>
+                ))}
+                <TableCell align="center" sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Editar</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Ver</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Principal</TableCell>
+            </Table.Head>
 
         </Table.Root>
     );
