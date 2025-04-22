@@ -9,7 +9,7 @@ export function TableCell({ field, render, align = 'left', sx, children }) {
         : children;
 
     return (
-        <MuiCell>
+        <MuiCell sx={sx}>
             {content}
         </MuiCell>
     );
