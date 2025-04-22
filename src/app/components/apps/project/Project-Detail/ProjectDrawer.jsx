@@ -10,6 +10,8 @@ import ProcessMap from '@/app/components/shared/ProcessMap';
 import InspectionsTable from '../../inspections/table/InspectionsTable';
 import EditSale from '../../comercial/sale/Edit-sale/tabs/sale';
 import PaymentCard from '../../invoice/components/paymentList/card';
+import EditProjectTab from '../Edit-project/tabs/EditProject';
+import UploadDocument from '../UploadDocument';
 
 function TabPanel({ children, value, index }) {
     return (
@@ -98,7 +100,10 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
             <TabPanel value={tab} index={2}>
                 <PaymentCard sale={project?.sale} />
             </TabPanel>
-            <TabPanel value={tab} index={3}><Typography>Conteúdo Engenharia</Typography></TabPanel>
+            <TabPanel value={tab} index={3}>
+                <EditProjectTab projectId={projectId} />
+                <UploadDocument projectId={projectId} />
+            </TabPanel>
             <TabPanel value={tab} index={4}><Typography>Conteúdo Anexos</Typography></TabPanel>
             <TabPanel value={tab} index={5}><Typography>Conteúdo Logística</Typography></TabPanel>
             <TabPanel value={tab} index={6}><Typography>Conteúdo Instalação</Typography></TabPanel>
