@@ -14,8 +14,8 @@ export function TableRoot({ data, columns, totalRows, page, rowsPerPage, onPageC
         <TableCtxt.Provider value={{ 
             data, columns, totalRows, page, rowsPerPage, onPageChange, onRowsPerPageChange 
         }}>
-            <Grid container xs={12}>
-                <TableContainer sx={{ borderRadius: 2 , overflow: 'hidden', backgroundColor: '#F9FAFB' }}>
+            <Grid container xs={12} sx={{ padding: 3, borderRadius: 2 }}>
+                <TableContainer>
                     <MuiTable sx={{ borderCollapse: 'separate', borderSpacing: '0px 8px' }}>
                         {children}
                     </MuiTable>

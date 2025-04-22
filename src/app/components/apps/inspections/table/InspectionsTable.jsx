@@ -144,13 +144,16 @@ export default function InspectionsTable({ projectId }) {
             </Table.Head>
 
             <Table.Body loading={loading}>
-                <Table.Body loading={loading}>
-                    <Table.Cell render={row => row.address?.complete_address} />
+                    <Table.Cell 
+                        render={row => row.address?.complete_address} 
+                        sx={{ fontWeight: 600, fontSize: '14px', color: '#7E8388' }}
+                    />
                     <Table.Cell render={row =>
                         row.products?.length > 0
                             ? row.products[0].description
-                            : row.project?.product?.description
-                    } />
+                            : row.project?.product?.description} 
+                        sx={{ fontWeight: 600, fontSize: '14px', color: '#7E8388' }}
+                    />
                     <Table.Cell render={row =>
                         row.scheduled_agent
                             ? <UserCard userId={row.scheduled_agent} />
@@ -158,6 +161,12 @@ export default function InspectionsTable({ projectId }) {
                     } />
                     <Table.Cell render={row =>
                         formatDate(row.schedule_date)
+                    } />
+                    <Table.Cell render={row =>
+                        formatDate(row.completed_date)
+                    } />
+                    <Table.Cell render={row =>
+                        formatDate(row.opinion_date)
                     } />
                     {/* <Table.Cell render={row =>
                         <ScheduleOpinionChip status={row.final_service_opinion?.name} />
@@ -169,7 +178,7 @@ export default function InspectionsTable({ projectId }) {
                         selectedId={principalId}
                         onSelect={id => setPrincipalId(id)}
                     />
-                </Table.Body>
+           
             </Table.Body>
 
         </Table.Root>
