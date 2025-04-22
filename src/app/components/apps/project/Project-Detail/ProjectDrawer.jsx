@@ -13,6 +13,7 @@ import PaymentCard from '../../invoice/components/paymentList/card';
 import EditProjectTab from '../Edit-project/tabs/EditProject';
 import UploadDocument from '../UploadDocument';
 import AttachmentTable from '../../attachment/attachmentTable';
+import Comment from '@/app/components/apps/comment';
 
 function TabPanel({ children, value, index }) {
     return (
@@ -114,7 +115,12 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
             <TabPanel value={tab} index={5}><Typography>Conteúdo Logística</Typography></TabPanel>
             <TabPanel value={tab} index={6}><Typography>Conteúdo Instalação</Typography></TabPanel>
             <TabPanel value={tab} index={7}><Typography>Conteúdo Homologação</Typography></TabPanel>
-            <TabPanel value={tab} index={8}><Typography>Conteúdo Histórico</Typography></TabPanel>
+            <TabPanel value={tab} index={8}>
+                <Typography variant="h6" sx={{ mb: 3 }}>Comentários do Projeto</Typography>
+                <Comment appLabel="resolve_crm" model="project" objectId={projectId} />
+                <Typography variant="h6" sx={{ my: 3 }}>Comentários da Venda</Typography>
+                <Comment appLabel="resolve_crm" model="sale" objectId={project?.sale} />
+            </TabPanel>
         </Box>
     );
 
