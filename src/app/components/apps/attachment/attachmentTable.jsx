@@ -122,7 +122,7 @@ const AttachmentTable = ({
         <TableBody>
           {isLoading ? (
             <TableSkeleton rows={5} columns={4} />
-          ) : displayAttachments.length > 0 ? (
+          ) : displayAttachments?.length > 0 ? (
             displayAttachments.map((attachment) => (
               <TableRow key={attachment?.id || attachment?.file?.name}>
                 <TableCell>

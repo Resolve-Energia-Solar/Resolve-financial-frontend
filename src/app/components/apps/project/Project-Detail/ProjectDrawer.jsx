@@ -12,6 +12,7 @@ import EditSale from '../../comercial/sale/Edit-sale/tabs/sale';
 import PaymentCard from '../../invoice/components/paymentList/card';
 import EditProjectTab from '../Edit-project/tabs/EditProject';
 import UploadDocument from '../UploadDocument';
+import AttachmentTable from '../../attachment/attachmentTable';
 
 function TabPanel({ children, value, index }) {
     return (
@@ -104,7 +105,12 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
                 <EditProjectTab projectId={projectId} />
                 <UploadDocument projectId={projectId} />
             </TabPanel>
-            <TabPanel value={tab} index={4}><Typography>Conteúdo Anexos</Typography></TabPanel>
+            <TabPanel value={tab} index={4}>
+                <Typography variant="h6" sx={{ mb: 3 }}>Anexos do Projeto</Typography>
+                <AttachmentTable appLabel="resolve_crm" model="project" objectId={projectId} />
+                <Typography variant="h6" sx={{ my: 3 }}>Anexos da Venda</Typography>
+                <AttachmentTable appLabel="resolve_crm" model="sale" objectId={project?.sale} />
+            </TabPanel>
             <TabPanel value={tab} index={5}><Typography>Conteúdo Logística</Typography></TabPanel>
             <TabPanel value={tab} index={6}><Typography>Conteúdo Instalação</Typography></TabPanel>
             <TabPanel value={tab} index={7}><Typography>Conteúdo Homologação</Typography></TabPanel>
