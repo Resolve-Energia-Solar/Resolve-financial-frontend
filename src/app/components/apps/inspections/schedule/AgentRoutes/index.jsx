@@ -1,5 +1,5 @@
 'use client';
-import { Grid, TextField, Box, TablePagination, CircularProgress } from '@mui/material';
+import { Grid, TextField, Box, TablePagination, CircularProgress, Dialog, DialogTitle, DialogContent, DialogContentText, Button, DialogActions } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -8,6 +8,8 @@ import CardAgentRoutes from './Card';
 import userService from '@/services/userService';
 import scheduleService from '@/services/scheduleService';
 import { useEffect, useState, useCallback } from 'react';
+import ScheduleFormEdit from '../Edit-schedule/tabs/ScheduleFormEdit';
+import UpdateSchedulePage from '@/app/(DashboardLayout)/apps/schedules/[id]/update/page';
 
 export default function AgentRoutes() {
   const [agents, setAgents] = useState([]);
@@ -19,6 +21,14 @@ export default function AgentRoutes() {
   const [totalRows, setTotalRows] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  const [modalScheduleOpen, setModalScheduleOpen] = useState(false);
+  const [selectedScheduleId, setSelectedScheduleId] = useState(null);
+
+  const handleOpenModalSchedule = (scheduleId) => {
+    setSelectedScheduleId(scheduleId);
+    setModalScheduleOpen(true);
+  };
+
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
@@ -28,49 +38,53 @@ export default function AgentRoutes() {
     setPage(0);
   };
 
-  const fetchData = useCallback(async (date, nameFilter) => {
-    setLoading(true);
-    try {
-      const agentResponse = await userService.index({
-        name: nameFilter,
-        category: 1,
-        limit: rowsPerPage,
-        page: page + 1,
-        fields: 'id,complete_name',
-        date: date.toISOString().split('T')[0],
-        order_by_schedule_count: 'desc',
-      });
+  const fetchData = useCallback(
+    async (date, nameFilter) => {
+      setLoading(true);
+      try {
+        const agentResponse = await userService.index({
+          name: nameFilter,
+          category: 1,
+          limit: rowsPerPage,
+          page: page + 1,
+          fields: 'id,complete_name',
+          date: date.toISOString().split('T')[0],
+          order_by_schedule_count: 'desc',
+        });
 
-      setTotalRows(agentResponse.meta?.pagination?.total_count || 0);
+        setTotalRows(agentResponse.meta?.pagination?.total_count || 0);
 
-      const agentsData = agentResponse.results;
-      const dateStr = date.toISOString().split('T')[0];
+        const agentsData = agentResponse.results;
+        const dateStr = date.toISOString().split('T')[0];
 
-      const agentsWithDetails = await Promise.all(
-        agentsData.map(async (agent) => {
-          const scheduleResponse = await scheduleService.index({
-            schedule_agent: agent.id,
-            schedule_date__range: `${dateStr},${dateStr}`,
-            expand: 'address',
-            fields: 'id,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time',
-            ordering: 'schedule_start_time',
-            limit: 5,
-          });
+        const agentsWithDetails = await Promise.all(
+          agentsData.map(async (agent) => {
+            const scheduleResponse = await scheduleService.index({
+              schedule_agent: agent.id,
+              schedule_date__range: `${dateStr},${dateStr}`,
+              expand: 'address',
+              fields:
+                'id,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time',
+              ordering: 'schedule_start_time',
+              limit: 5,
+            });
 
-          return {
-            ...agent,
-            schedules: scheduleResponse.results || [],
-          };
-        })
-      );
+            return {
+              ...agent,
+              schedules: scheduleResponse.results || [],
+            };
+          }),
+        );
 
-      setAgents(agentsWithDetails);
-    } catch (error) {
-      console.error('Erro ao buscar dados dos agentes:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [rowsPerPage, page]);
+        setAgents(agentsWithDetails);
+      } catch (error) {
+        console.error('Erro ao buscar dados dos agentes:', error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [rowsPerPage, page],
+  );
 
   useEffect(() => {
     fetchData(selectedDate, committedName);
@@ -85,6 +99,10 @@ export default function AgentRoutes() {
       setCommittedName(name);
       setPage(0);
     }
+  };
+
+  const handleModel = (newValue) => {
+    console.log('abrindo o modal', newValue);
   };
 
   return (
@@ -120,25 +138,35 @@ export default function AgentRoutes() {
         <Grid container spacing={2}>
           {agents.map((agent) => (
             <Grid item xs={12} md={4} lg={3} key={agent.id}>
-              <CardAgentRoutes
-                title={agent.complete_name}
-                items={agent.schedules}
-              />
+              <CardAgentRoutes title={agent.complete_name} items={agent.schedules} onItemClick={handleOpenModalSchedule} />
             </Grid>
           ))}
         </Grid>
       )}
 
       <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={totalRows}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handlePageChange}
-          onRowsPerPageChange={handleRowsPerPageChange}
-          labelRowsPerPage="Linhas por página"
-        />
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={totalRows}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handleRowsPerPageChange}
+        labelRowsPerPage="Linhas por página"
+      />
+
+      <Dialog
+        open={modalScheduleOpen}
+        onClose={() => setModalScheduleOpen(false)}
+        aria-labelledby="draggable-dialog-title"
+        maxWidth="lg"
+      >
+        <DialogContent>
+          <DialogContentText>
+            <UpdateSchedulePage scheduleId={selectedScheduleId} onClosedModal={() => setModalScheduleOpen(false)} />
+          </DialogContentText>
+        </DialogContent>
+      </Dialog>
     </LocalizationProvider>
   );
 }

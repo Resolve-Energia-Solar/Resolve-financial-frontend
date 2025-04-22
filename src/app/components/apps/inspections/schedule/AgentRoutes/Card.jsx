@@ -16,7 +16,7 @@ import RoomIcon from '@mui/icons-material/Room';
 import EditIcon from '@mui/icons-material/Edit';
 import { Add } from '@mui/icons-material';
 
-export default function CardAgentRoutes({ title, items = [] }) {
+export default function CardAgentRoutes({ title, items = [], onItemClick }) {
   const [hoveredIndex, setHoveredIndex] = React.useState(null);
 
   return (
@@ -63,7 +63,7 @@ export default function CardAgentRoutes({ title, items = [] }) {
                 <TimelineSeparator>
                   <TimelineDot
                     color="primary"
-                    onClick={() => alert('Edit item')}
+                    onClick={() => onItemClick(item.id)}
                     sx={{
                       cursor: 'pointer',
                       bgcolor: isHovered ? 'lightgreen' : 'primary.main',
@@ -75,7 +75,7 @@ export default function CardAgentRoutes({ title, items = [] }) {
                 </TimelineSeparator>
                 <TimelineContent
                   sx={{ py: '8px', px: 2, cursor: 'pointer' }}
-                  onClick={() => alert('Timeline content clicked')}
+                  onClick={() => onItemClick(item.id)}
                 >
                   <Typography variant="body2" fontWeight={500}>
                     {item.schedule_date && item.schedule_date.split('T')[0].split('-').reverse().join('/')} <br /> {item.schedule_start_time?.substring(0, 5)} - {item.schedule_end_time?.substring(0, 5)}

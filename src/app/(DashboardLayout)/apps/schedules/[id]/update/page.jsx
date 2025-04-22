@@ -20,6 +20,7 @@ import {
   Typography,
   Grid,
   Link,
+  CircularProgress,
 } from '@mui/material'; import PageContainer from '@/app/components/container/PageContainer';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import BlankCard from '@/app/components/shared/BlankCard';
@@ -32,9 +33,12 @@ import { formatDate } from '@/utils/dateUtils';
 import attachmentService from '@/services/attachmentService';
 import getContentType from '@/utils/getContentType';
 
-const UpdateSchedulePage = () => {
+const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh = null }) => {
   const router = useRouter();
-  const { id } = useParams();
+  const params = useParams();
+  let id = scheduleId;
+  if (!scheduleId) id = params.id;
+
   const [formData, setFormData] = useState({
     schedule_date: '',
     schedule_start_time: '',
@@ -52,6 +56,7 @@ const UpdateSchedulePage = () => {
     attachments: [],
   });
   const [loading, setLoading] = useState(false);
+  const [loadingForm, setLoadingForm] = useState(false);
   const [error, setError] = useState('');
   const [errors, setErrors] = useState({});
   const [isEndModified, setIsEndModified] = useState(false);
@@ -61,6 +66,7 @@ const UpdateSchedulePage = () => {
   const [tabValue, setTabValue] = useState('form');
   const [projectAttachments, setProjectAttachments] = useState([]);
   const [saleAttachments, setSaleAttachments] = useState([]);
+  
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
@@ -77,7 +83,7 @@ const UpdateSchedulePage = () => {
 
   useEffect(() => {
     if (id) {
-      setLoading(true);
+      setLoadingForm(true);
       scheduleService
         .find(id, {
           fields: [
@@ -128,7 +134,7 @@ const UpdateSchedulePage = () => {
           enqueueSnackbar('Erro ao carregar agendamento', { variant: 'error' });
           setError(`Erro ao carregar agendamento: ${err.message}`);
         })
-        .finally(() => setLoading(false));
+        .finally(() => setLoadingForm(false));
     }
   }, [id, enqueueSnackbar]);
 
@@ -248,15 +254,19 @@ const UpdateSchedulePage = () => {
       status: formData.status,
       service_opinion: formData.service_opinion?.value || formData.service_opinion || null,
       final_service_opinion: formData.final_service_opinion?.value || formData.final_service_opinion || null,
-      products: formData.product?.value ? [formData.product?.value] : formData.product ? [formData.product] : [],
+      products: !formData.product || Array.isArray(formData.product)
+        ? []
+        : [formData.product.value ?? formData.product],
       parent_schedules: Array.isArray(formData.parent_schedules)
       ? formData.parent_schedules.filter((ps) => ps).map((ps) => ps.value || ps)
       : [],
     };
-  
+
     try {
       await scheduleService.updateSchedule(id, submitData);
-      router.push('/apps/schedules');
+      if (onClosedModal) onClosedModal();
+      if (onRefresh) onRefresh();
+      if (!scheduleId) router.push('/apps/schedules');
     } catch (err) {
       Object.entries(err.response.data).forEach(([field, messages]) => {
         messages.forEach((message) => {
@@ -275,7 +285,7 @@ const UpdateSchedulePage = () => {
     { title: 'Atualizar Agendamento' },
   ];
 
-  if (loading) {
+  if (loadingForm) {
     return <Typography>Carregando...</Typography>;
   }
 
@@ -903,7 +913,7 @@ const UpdateSchedulePage = () => {
             <Button variant="outlined" onClick={() => router.back()} disabled={loading}>
               Cancelar
             </Button>
-            <Button type="submit" variant="contained" disabled={loading}>
+            <Button type="submit" variant="contained" disabled={loading} endIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}>
               {loading ? 'Salvando...' : 'Salvar'}
             </Button>
           </Box>
