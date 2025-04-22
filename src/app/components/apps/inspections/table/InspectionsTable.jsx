@@ -173,7 +173,7 @@ export default function InspectionsTable({ projectId }) {
                     <Table.ViewAction onClick={row => console.log("ver", row)} />
                     <Table.SwitchAction
                         selectedId={principalId}
-                        onSelect={id => setPrincipalId(id)}
+                        onSelect={(id) => setPrincipalId(prev => prev === id ? null : id)}
                     />
            
             </Table.Body>
