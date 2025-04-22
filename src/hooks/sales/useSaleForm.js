@@ -112,7 +112,7 @@ const useSaleForm = (initialData, id) => {
       sales_supervisor: formData.salesSupervisorId,
       sales_manager: formData.salesManagerId,
       branch: formData.branchId,
-      marketing_campaign_id: formData.marketingCampaignId
+      marketing_campaign: formData.marketingCampaignId
         ? formData.marketingCampaignId
         : undefined,
       payment_status: formData.payment_status,
@@ -122,7 +122,7 @@ const useSaleForm = (initialData, id) => {
       status: formData.status,
       completed_document: formData.completedDocument,
       billing_date: formData.billing_date || null,
-      cancellation_reasons_ids: formData.cancellationReasonsIds,
+      cancellation_reasons: formData.cancellationReasonsIds,
       reference_table: formData.reference_table,
       // sale_products: formData.sale_products.map((sale_product) => ({
       //   id: sale_product.id,
