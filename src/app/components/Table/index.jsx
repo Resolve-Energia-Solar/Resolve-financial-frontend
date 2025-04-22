@@ -18,4 +18,4 @@ export const Table = {
     ViewAction: TableViewAction,
     SwitchAction: TableSwitchAction,
     Pagination: TablePagination,
-}
+} = { Root: TableRoot };
