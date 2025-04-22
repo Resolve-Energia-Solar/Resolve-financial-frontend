@@ -264,6 +264,7 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
 
     try {
       await scheduleService.updateSchedule(id, submitData);
+      enqueueSnackbar('Agendamento atualizado com sucesso', { variant: 'success' });
       if (onClosedModal) onClosedModal();
       if (onRefresh) onRefresh();
       if (!scheduleId) router.push('/apps/schedules');

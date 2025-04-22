@@ -4,6 +4,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ptBR } from 'date-fns/locale';
+import { format } from 'date-fns';
 import CardAgentRoutes from './Card';
 import userService from '@/services/userService';
 import scheduleService from '@/services/scheduleService';
@@ -48,14 +49,14 @@ export default function AgentRoutes() {
           limit: rowsPerPage,
           page: page + 1,
           fields: 'id,complete_name',
-          date: date.toISOString().split('T')[0],
+          date: format(date, 'yyyy-MM-dd'),
           order_by_schedule_count: 'desc',
         });
 
         setTotalRows(agentResponse.meta?.pagination?.total_count || 0);
 
         const agentsData = agentResponse.results;
-        const dateStr = date.toISOString().split('T')[0];
+        const dateStr = format(date, 'yyyy-MM-dd');
 
         const agentsWithDetails = await Promise.all(
           agentsData.map(async (agent) => {
