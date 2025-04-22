@@ -2,16 +2,22 @@ import React, { useContext } from "react";
 import { TableCell, Switch } from "@mui/material";
 import { TableCtxt } from "./TableRoot";
 
-export function TableSwitchAction({ selectedId, onSelect }) {
+export function TableSwitchAction({
+    isSelected,
+    onToggle,
+    align = "center",
+    sx,
+  }) {
     const { row } = useContext(TableCtxt);
-
+    const checked = isSelected(row);
+  
+    const handleChange = (_evt, next) => {
+      onToggle(row, next);
+    };
+  
     return (
-        <TableCell sx={{ textAlign: 'center' }}>
-            <Switch 
-                checked={row.id === selectedId}
-                onChange={() => onSelect(row.id)}
-                color="primary"
-            />
-        </TableCell>
+      <TableCell align={align} sx={{ ...sx }}>
+        <Switch checked={checked} onChange={handleChange} />
+      </TableCell>
     );
-}
+  }

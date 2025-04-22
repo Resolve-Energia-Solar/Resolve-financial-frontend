@@ -133,7 +133,7 @@ export default function InspectionsTable({ projectId }) {
                 {columns.map(c => (
                     <Table.Cell
                         key={c.field}
-                        sx={{ fontWeight: 600, fontSize:'14px', color:'#303030' }}
+                        sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}
                     >
                         {c.headerName}
                     </Table.Cell>
@@ -144,38 +144,56 @@ export default function InspectionsTable({ projectId }) {
             </Table.Head>
 
             <Table.Body loading={loading}>
-                    <Table.Cell 
-                        render={row => row.address?.complete_address} 
-                        sx={{ color: '#7E8388' }}
-                    />
-                    <Table.Cell render={row =>
-                        row.products?.length > 0
-                            ? row.products[0].description
-                            : row.project?.product?.description} 
-                        sx={{ color: '#7E8388' }}
-                    />
-                    <Table.Cell render={row =>
-                        row.scheduled_agent
-                            ? <UserCard userId={row.scheduled_agent} />
-                            : "Sem agente"
-                    } />
-                    <Table.Cell render={row =>
-                        formatDate(row.schedule_date)
-                    } />
-                    <Table.Cell render={row =>
-                        formatDate(row.completed_date)
-                    } />
-                    {/* <Table.Cell render={row =>
+                <Table.Cell
+                    render={row => row.address?.complete_address}
+                    sx={{ color: '#7E8388' }}
+                />
+                <Table.Cell render={row =>
+                    row.products?.length > 0
+                        ? row.products[0].description
+                        : row.project?.product?.description}
+                    sx={{ color: '#7E8388' }}
+                />
+                <Table.Cell render={row =>
+                    row.scheduled_agent
+                        ? <UserCard userId={row.scheduled_agent} />
+                        : "Sem agente"
+                } />
+                <Table.Cell render={row =>
+                    formatDate(row.schedule_date)
+                } />
+                <Table.Cell render={row =>
+                    formatDate(row.completed_date)
+                } />
+                {/* <Table.Cell render={row =>
                         formatDate(row.opinion_date)
                     } /> */}
 
-                    <Table.EditAction onClick={row => console.log("editar", row)} />
-                    <Table.ViewAction onClick={row => console.log("ver", row)} />
-                    <Table.SwitchAction
-                        selectedId={principalId}
-                        onSelect={(id) => setPrincipalId(prev => prev === id ? null : id)}
-                    />
-           
+                <Table.EditAction onClick={row => console.log("editar", row)} />
+                <Table.ViewAction onClick={row => console.log("ver", row)} />
+                <Table.SwitchAction
+                    isSelected={row => row.project?.inspection === row.id}
+                    onToggle={(row, nextChecked) => {
+                        const nextValue = nextChecked ? row.id : null;
+                        console.log(
+                            `[Switch] row ${row.id}: inspection → ${nextValue}`
+                        );
+                        setInspections(prev =>
+                            prev.map(r =>
+                                r.id === row.id
+                                    ? {
+                                        ...r,
+                                        project: {
+                                            ...r.project,
+                                            inspection: nextValue
+                                        },
+                                    }
+                                    : r
+                            )
+                        );
+                    }}
+                />
+
             </Table.Body>
 
         </Table.Root>
