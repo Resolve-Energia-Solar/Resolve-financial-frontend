@@ -67,7 +67,7 @@ export default function InspectionsTable({ projectId }) {
         { field: 'scheduled_agent', headerName: 'Agente', render: r => r.scheduled_agent?.name },
         { field: 'schedule_date', headerName: 'Agendada', render: r => new Date(r.schedule_date).toLocaleDateString() },
         { field: 'completed_date', headerName: 'Concluída', render: r => r.completed_date ? new Date(r.completed_date).toLocaleDateString() : '-' },
-        { field: 'final_service_opinion', headerName: 'Opinião', render: r => r.final_service_opinion?.name },
+        // { field: 'final_service_opinion', headerName: 'Opinião', render: r => r.final_service_opinion?.name },
     ]
 
     const handleEdit = (id) => {
@@ -165,11 +165,8 @@ export default function InspectionsTable({ projectId }) {
                     <Table.Cell render={row =>
                         formatDate(row.completed_date)
                     } />
-                    <Table.Cell render={row =>
-                        formatDate(row.opinion_date)
-                    } />
                     {/* <Table.Cell render={row =>
-                        <ScheduleOpinionChip status={row.final_service_opinion?.name} />
+                        formatDate(row.opinion_date)
                     } /> */}
 
                     <Table.EditAction onClick={row => console.log("editar", row)} />
