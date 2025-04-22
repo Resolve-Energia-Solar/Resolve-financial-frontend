@@ -40,7 +40,7 @@ const TableComponent = ({
 
     return (
         <TableContainer sx={{ borderRadius: '12px' }}>
-            <Table sx={{ borderCollapse: 'separate', borderSpacing: '0px 8px' }}>
+            <Table >
                 <TableHead>
                     <TableRow>
                         {columns.map((column) => (
