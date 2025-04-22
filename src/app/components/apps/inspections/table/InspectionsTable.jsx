@@ -12,12 +12,12 @@ import ScheduleOpinionChip from "../schedule/StatusChip/ScheduleOpinionChip";
 export default function InspectionsTable({ projectId }) {
     const { enqueueSnackbar } = useSnackbar();
     const [inspections, setInspections] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [loading, setloading] = useState(true);
 
     useEffect(() => {
         if (projectId) {
             const fetchInspections = async () => {
-                setIsLoading(true);
+                setloading(true);
                 try {
                     const response = await scheduleService.index(
                         {
@@ -30,15 +30,15 @@ export default function InspectionsTable({ projectId }) {
                 } catch (error) {
                     enqueueSnackbar(`Erro ao carregar vistorias: ${error.message}`, { variant: "error" });
                 } finally {
-                    setIsLoading(false);
+                    setloading(false);
                 }
             }
             fetchInspections();
         }
-        setIsLoading(false);
+        setloading(false);
     }, [projectId]);
 
-    if (isLoading) {
+    if (loading) {
         return <TableSkeleton columns={8} rows={4} />;
     }
 
