@@ -38,6 +38,7 @@ import HasPermission from '@/app/components/permissions/HasPermissions';
 import ParentCard from '@/app/components/shared/ParentCard';
 import a11yProps from '@/utils/a11yProps';
 import TabPanel from '../../commission/TabPainel';
+import getContentType from '@/utils/getContentType';
 
 const EditDrawer = ({ saleId = null, onClosedModal = null, refresh }) => {
   const params = useParams();

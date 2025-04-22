@@ -39,6 +39,7 @@ import serviceCatalogService from '@/services/serviceCatalogService';
 import { formatDate } from '@/utils/dateUtils';
 import DetailsDrawer from '@/app/components/apps/schedule/DetailsDrawer';
 import UserCard from '@/app/components/apps/users/userCard';
+import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
 
 const BCrumb = [{ to: '/', title: 'Início' }, { title: 'Agendamentos' }];
 
@@ -252,34 +253,6 @@ const ScheduleTable = () => {
     },
   ];
 
-  const getFieldServiceStatusChip = (status) => {
-    if (!status) {
-      return <Chip label="Pendente" color="default" />;
-    }
-    const lowerStatus = status.toLowerCase();
-    let color = 'default';
-
-    if (lowerStatus.includes('solicitado') || lowerStatus.includes('solicito') || lowerStatus.includes('confirmado')) {
-      color = 'primary';
-    } else if (lowerStatus.includes('aprovado')) {
-      color = 'success';
-    } else if (lowerStatus.includes('reprovado') || lowerStatus.includes('reprovada')) {
-      color = 'error';
-    } else if (lowerStatus.includes('cancelado') || lowerStatus.includes('cancelada')) {
-      color = 'error';
-    } else if (lowerStatus.includes('concluído')) {
-      color = 'success';
-    } else if (lowerStatus.includes('andamento')) {
-      color = 'info';
-    } else if (lowerStatus.includes('entregue')) {
-      color = 'success';
-    } else if (lowerStatus.includes('agendado')) {
-      color = 'info';
-    }
-
-    return <Chip label={status} color={color} />;
-  }
-
   return (
     <PageContainer title="Lista de Agendamentos" description="Listagem de Agendamentos">
       <Breadcrumb items={BCrumb} />
@@ -436,11 +409,11 @@ const ScheduleTable = () => {
                       </TableCell>
                       {hasPermission(['field_services.view_service_opinion']) && (
                         <TableCell>
-                          {getFieldServiceStatusChip(schedule.service_opinion?.name)}
+                          <ScheduleOpinionChip status={schedule.service_opinion?.name} />
                         </TableCell>
                       )}
                       <TableCell>
-                        {getFieldServiceStatusChip(schedule.final_service_opinion?.name)}
+                        <ScheduleOpinionChip status={schedule.final_service_opinion?.name} />
                       </TableCell>
                       <TableCell>{new Date(schedule.created_at).toLocaleString('pt-BR')}</TableCell>
                       <TableCell sx={{ textWrap: 'wrap' }}>{schedule.observation}</TableCell>
