@@ -41,34 +41,46 @@ export default function InspectionsTable({ projectId }) {
         }
         setLoading(false);
     }, [projectId]);
+    // useEffect(() => {
+    //     if (!projectId) return;
+    //     setLoading(true);
+    //     scheduleService
+    //         .index(
+    //             {
+    //                 fields: "id,address.complete_address,products.description,scheduled_agent,schedule_date,completed_date,final_service_opinion.name,project.inspection,project.product.description",
+    //                 expand: "address,products,scheduled_agent,final_service_opinion,project,project.product",
+    //                 project__in: projectId
+    //             }
+    //         )
+    //         .then(res => setInspections(res.results))
+    //         .catch(err => enqueueSnackbar(err.message, { variant: "error" }))
+    //         .finally(() => setLoading(false));
+    // }, [projectId]);
 
     if (loading) {
         return <TableSkeleton columns={8} rows={4} />;
     }
 
     const columns = [
-        { field: 'address.complete_address', headerName: 'Endereço', render: r => r.address.complete_address },
-        { field: 'products.description', headerName: 'Produto', render: r => r.products.map(p => p.description).join(', ') },
+        { field: 'address', headerName: 'Endereço', render: r => r.address.complete_address },
+        { field: 'products', headerName: 'Produto', render: r => r.products.map(p => p.description).join(', ') },
         { field: 'scheduled_agent', headerName: 'Agente', render: r => r.scheduled_agent?.name },
         { field: 'schedule_date', headerName: 'Agendada', render: r => new Date(r.schedule_date).toLocaleDateString() },
         { field: 'completed_date', headerName: 'Concluída', render: r => r.completed_date ? new Date(r.completed_date).toLocaleDateString() : '-' },
-        { field: 'final_service_opinion.name', headerName: 'Opinião', render: r => r.final_service_opinion?.name },
+        { field: 'final_service_opinion', headerName: 'Opinião', render: r => r.final_service_opinion?.name },
     ]
 
     const handleEdit = (id) => {
-        // Handle edit action
-        console.log(`Edit inspection with id: ${id}`);
+        console.log(`editar inspeção com id: ${id}`);
     }
 
     const handleView = (id) => {
-        // Handle view action
-        console.log(`View inspection with id: ${id}`);
+        console.log(`visualizar inspeção com id: ${id}`);
     }
 
-    const handleSwitchChange = (id) => {
-        // Handle switch change action
-        console.log(`Switch changed for inspection with id: ${id}`);
-    }
+    // const handleSwitchChange = (id) => {
+    //     console.log(`switch principal inspeção com id: ${id}`);
+    // }
 
     // return (
     //     <Table>
@@ -118,9 +130,12 @@ export default function InspectionsTable({ projectId }) {
             onRowsPerPageChange={setRowsPerPage}
         >
             <Table.Head>
-                {columns.map((column) => (
-                    <Table.Cell key={column.field} sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>
-                        {column.headerName}
+                {columns.map(c => (
+                    <Table.Cell
+                        key={c.field}
+                        sx={{ fontWeight: 600, fontSize:'14px', color:'#303030' }}
+                    >
+                        {c.headerName}
                     </Table.Cell>
                 ))}
                 <Table.Cell align="center" sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Editar</Table.Cell>
@@ -128,50 +143,33 @@ export default function InspectionsTable({ projectId }) {
                 <Table.Cell align="center" sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}>Principal</Table.Cell>
             </Table.Head>
 
-            <Table.Body>
-                {loading ? (
-                    <TableSkeleton rows={rowsPerPage} columns={columns.length} />
-                ) : (
-                    inspections.length > 0 ? (
-                        inspections.map((inspection) => (
-                            <Table.Row key={inspection.id} sx={{ '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' }, borderBottom: 'none' }}>
-                                {columns.map((column) => (
-                                    <Table.Cell key={column.field} sx={{ fontWeight: column.field === 'name' ? 600 : 400, fontSize: '14px', color: '#7E8388' }}>
-                                        {column.render ? column.render(inspection) : inspection[column.field] || '-'}
-                                    </Table.Cell>
-                                ))}
+            <Table.Body loading={loading}>
+                <Table.Body loading={loading}>
+                    <Table.Cell render={row => row.address?.complete_address} />
+                    <Table.Cell render={row =>
+                        row.products?.length > 0
+                            ? row.products[0].description
+                            : row.project?.product?.description
+                    } />
+                    <Table.Cell render={row =>
+                        row.scheduled_agent
+                            ? <UserCard userId={row.scheduled_agent} />
+                            : "Sem agente"
+                    } />
+                    <Table.Cell render={row =>
+                        formatDate(row.schedule_date)
+                    } />
+                    {/* <Table.Cell render={row =>
+                        <ScheduleOpinionChip status={row.final_service_opinion?.name} />
+                    } /> */}
 
-                                <Table.Cell align="center">
-                                    <EditIcon
-                                        onClick={() => handleEdit(inspection.id)}
-                                        sx={{ cursor: 'pointer', color: '#7E8388' }}
-                                    />
-                                </Table.Cell>
-
-                                <Table.Cell align="center">
-                                    <VisibilityIcon
-                                        onClick={() => handleView(inspection.id)}
-                                        sx={{ cursor: 'pointer', color: '#7E8388' }}
-                                    />
-                                </Table.Cell>
-
-                                <Table.Cell align="center">
-                                    <Switch
-                                        checked={principalId === inspection.id}
-                                        onChange={() => handleSwitchChange(inspection.id)}
-                                    />
-                                </Table.Cell>
-
-                            </Table.Row>
-                        ))
-                    ) : (
-                        <Table.Row>
-                            <Table.Cell colSpan={columns.length} align="center" sx={{ borderBottom: 'none', justifyContent: 'center' }}>
-                                Nenhuma informação encontrada.
-                            </Table.Cell>
-                        </Table.Row>
-                    )
-                )}
+                    <Table.EditAction onClick={row => console.log("editar", row)} />
+                    <Table.ViewAction onClick={row => console.log("ver", row)} />
+                    <Table.SwitchAction
+                        selectedId={principalId}
+                        onSelect={id => setPrincipalId(id)}
+                    />
+                </Table.Body>
             </Table.Body>
 
         </Table.Root>
