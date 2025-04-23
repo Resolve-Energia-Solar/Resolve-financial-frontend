@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
-// import { Table, TableHead, TableBody, TableCell, TableRow, Switch } from "@mui/material";
 import scheduleService from "@/services/scheduleService";
 import TableSkeleton from "../../comercial/sale/components/TableSkeleton";
 import EditIcon from "@mui/icons-material/Edit";
@@ -9,7 +8,7 @@ import UserCard from "../../users/userCard";
 import { formatDate } from "@/utils/dateUtils";
 import ScheduleOpinionChip from "../schedule/StatusChip/ScheduleOpinionChip";
 import { Table } from "@/app/components/Table";
-import { useTheme } from "@mui/material";
+import { useTheme, alpha } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
 
 export default function InspectionsTable({ projectId }) {
@@ -154,41 +153,41 @@ export default function InspectionsTable({ projectId }) {
                     {columns.map(c => (
                         <Table.Cell
                             key={c.field}
-                            sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}
+                            sx={{ fontWeight: 600, fontSize: '14px'}}
                         >
                             {c.headerName}
                         </Table.Cell>
                     ))}
-                    <Table.Cell align="center" sx={{ color: '#303030' }}>Editar</Table.Cell>
-                    <Table.Cell align="center" sx={{ color: '#303030' }}>Ver</Table.Cell>
-                    <Table.Cell align="center" sx={{ color: '#303030' }}>Principal</Table.Cell>
+                    <Table.Cell align="center">Editar</Table.Cell>
+                    <Table.Cell align="center">Ver</Table.Cell>
+                    <Table.Cell align="center">Principal</Table.Cell>
                 </Table.Head>
 
                 <Table.Body loading={loading}>
                     <Table.Cell
                         render={row => row.address?.complete_address}
-                        sx={{ color: '#7E8388' }}
+                        sx={{ opacity: 0.7,}}
                     />
                     <Table.Cell render={row =>
                         row.products?.length > 0
                             ? row.products[0].description
                             : row.project?.product?.description}
-                        sx={{ color: '#7E8388' }}
+                        sx={{ opacity: 0.7 }}
                     />
                     <Table.Cell render={row =>
                         row.scheduled_agent
                             ? <UserCard userId={row.scheduled_agent} />
-                            : "Sem agente"
-                    } />
+                            : "Sem agente"} 
+                        sx={{ opacity: 0.7 }}
+                    />
                     <Table.Cell render={row =>
-                        formatDate(row.schedule_date)
-                    } />
+                        formatDate(row.schedule_date)} 
+                        sx={{ opacity: 0.7 }}
+                    />
                     <Table.Cell render={row =>
-                        formatDate(row.completed_date)
-                    } />
-                    {/* <Table.Cell render={row =>
-                        formatDate(row.opinion_date)
-                    } /> */}
+                        formatDate(row.completed_date)} 
+                        sx={{ opacity: 0.7 }}
+                    />
 
                     <Table.EditAction onClick={row => console.log("editar", row)} />
                     <Table.ViewAction onClick={row => console.log("ver", row)} />

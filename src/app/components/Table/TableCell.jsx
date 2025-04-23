@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { TableCell as MuiCell } from "@mui/material";
+import { TableCell as MuiCell, useTheme } from "@mui/material";
 import { TableCtxt } from "./TableRoot";
 
 export function TableCell({ field, render, align = 'left', sx, children }) {
@@ -8,13 +8,15 @@ export function TableCell({ field, render, align = 'left', sx, children }) {
         ? (render ? render(row) : (row[field] ?? "-"))
         : children;
 
+    const theme = useTheme();
+
     return (
         <MuiCell
             align={align}
             sx={{
                 fontWeight: 600,
                 fontSize: "14px",
-                color: "#7E8388",
+                color: theme.palette.primary.title,
                 ...sx,
             }}
         >
