@@ -49,19 +49,14 @@ const useSaleForm = (initialData, id) => {
         status: initialData.status || null,
         completedDocument: initialData.completed_document || false,
         billing_date: initialData.billing_date || null,
-        cancellationReasonsIds:
-          initialData.cancellation_reasons?.map((cancellation_reason) => cancellation_reason.id) ||
-          [],
+        cancellationReasonsIds: Array.isArray(initialData.cancellation_reasons)
+          ? initialData.cancellation_reasons
+          : [],
         reference_table: initialData.reference_table || '',
-        // sale_products: initialData.sale_products?.map((saleProduct) => ({
-        //   id: saleProduct.id,
-        //   value: saleProduct.value,
-        //   cost_value: saleProduct.cost_value,
-        //   reference_value: saleProduct.reference_value,
-        // })) || [],
       });
     }
   }, [initialData]);
+  
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
