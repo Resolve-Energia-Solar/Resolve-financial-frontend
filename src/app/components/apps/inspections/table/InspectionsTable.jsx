@@ -10,6 +10,7 @@ import { formatDate } from "@/utils/dateUtils";
 import ScheduleOpinionChip from "../schedule/StatusChip/ScheduleOpinionChip";
 import { Table } from "@/app/components/Table";
 import { useTheme } from "@mui/material";
+import { TableHeader } from "@/app/components/TableHeader";
 
 export default function InspectionsTable({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -124,81 +125,92 @@ export default function InspectionsTable({ projectId }) {
     // )
 
     return (
-        <Table.Root
-            data={inspections}
-            totalRows={inspections.length}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            onPageChange={setPage}
-            onRowsPerPageChange={setRowsPerPage}
-        >
-            <Table.Head>
-                {columns.map(c => (
-                    <Table.Cell
-                        key={c.field}
-                        sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}
-                    >
-                        {c.headerName}
-                    </Table.Cell>
-                ))}
-                <Table.Cell align="center" sx={{ color: '#303030' }}>Editar</Table.Cell>
-                <Table.Cell align="center" sx={{ color: '#303030' }}>Ver</Table.Cell>
-                <Table.Cell align="center" sx={{ color: '#303030' }}>Principal</Table.Cell>
-            </Table.Head>
+        <>
 
-            <Table.Body loading={loading}>
-                <Table.Cell
-                    render={row => row.address?.complete_address}
-                    sx={{ color: '#7E8388' }}
+            <TableHeader.Root>
+                <TableHeader.Title 
+                    title="Total"
+                    totalItems={inspections.length}
+                    objNameNumberReference={'Vistorias'}
                 />
-                <Table.Cell render={row =>
-                    row.products?.length > 0
-                        ? row.products[0].description
-                        : row.project?.product?.description}
-                    sx={{ color: '#7E8388' }}
-                />
-                <Table.Cell render={row =>
-                    row.scheduled_agent
-                        ? <UserCard userId={row.scheduled_agent} />
-                        : "Sem agente"
-                } />
-                <Table.Cell render={row =>
-                    formatDate(row.schedule_date)
-                } />
-                <Table.Cell render={row =>
-                    formatDate(row.completed_date)
-                } />
-                {/* <Table.Cell render={row =>
+            </TableHeader.Root>
+
+            <Table.Root
+                data={inspections}
+                totalRows={inspections.length}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                onPageChange={setPage}
+                onRowsPerPageChange={setRowsPerPage}
+            >
+                <Table.Head>
+                    {columns.map(c => (
+                        <Table.Cell
+                            key={c.field}
+                            sx={{ fontWeight: 600, fontSize: '14px', color: '#303030' }}
+                        >
+                            {c.headerName}
+                        </Table.Cell>
+                    ))}
+                    <Table.Cell align="center" sx={{ color: '#303030' }}>Editar</Table.Cell>
+                    <Table.Cell align="center" sx={{ color: '#303030' }}>Ver</Table.Cell>
+                    <Table.Cell align="center" sx={{ color: '#303030' }}>Principal</Table.Cell>
+                </Table.Head>
+
+                <Table.Body loading={loading}>
+                    <Table.Cell
+                        render={row => row.address?.complete_address}
+                        sx={{ color: '#7E8388' }}
+                    />
+                    <Table.Cell render={row =>
+                        row.products?.length > 0
+                            ? row.products[0].description
+                            : row.project?.product?.description}
+                        sx={{ color: '#7E8388' }}
+                    />
+                    <Table.Cell render={row =>
+                        row.scheduled_agent
+                            ? <UserCard userId={row.scheduled_agent} />
+                            : "Sem agente"
+                    } />
+                    <Table.Cell render={row =>
+                        formatDate(row.schedule_date)
+                    } />
+                    <Table.Cell render={row =>
+                        formatDate(row.completed_date)
+                    } />
+                    {/* <Table.Cell render={row =>
                         formatDate(row.opinion_date)
                     } /> */}
 
-                <Table.EditAction onClick={row => console.log("editar", row)} />
-                <Table.ViewAction onClick={row => console.log("ver", row)} />
-                <Table.SwitchAction
-                    isSelected={row => row.project?.inspection === row.id}
-                    onToggle={(row, nextChecked) => {
-                        const nextValue = nextChecked ? row.id : null;
-                        console.log(
-                            `[Switch] row ${row.id}: inspection → ${nextValue}`
-                        );
-                        setInspections(prev =>
-                            prev.map(r =>
-                                r.id === row.id
-                                    ? {
-                                        ...r,
-                                        project: {
-                                            ...r.project,
-                                            inspection: nextValue
-                                        },
-                                    }
-                                    : r
-                            )
-                        );
-                    }}
-                />
+                    <Table.EditAction onClick={row => console.log("editar", row)} />
+                    <Table.ViewAction onClick={row => console.log("ver", row)} />
+                    <Table.SwitchAction
+                        isSelected={row => row.project?.inspection === row.id}
+                        onToggle={(row, nextChecked) => {
+                            const nextValue = nextChecked ? row.id : null;
+                            console.log(
+                                `[Switch] row ${row.id}: inspection → ${nextValue}`
+                            );
+                            setInspections(prev =>
+                                prev.map(r =>
+                                    r.id === row.id
+                                        ? {
+                                            ...r,
+                                            project: {
+                                                ...r.project,
+                                                inspection: nextValue
+                                            },
+                                        }
+                                        : r
+                                )
+                            );
+                        }}
+                    />
 
-            </Table.Body>
+                </Table.Body>
 
-        </Table.Root>
+            </Table.Root>
+        </>
     );
 }
