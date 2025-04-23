@@ -131,7 +131,14 @@ export default function InspectionsTable({ projectId }) {
                 <TableHeader.Title 
                     title="Total"
                     totalItems={inspections.length}
-                    objNameNumberReference={'Vistorias'}
+                    objNameNumberReference={inspections.length === 1 ? "Vistoria" : "Vistorias"}
+                />
+                <TableHeader.Button
+                    buttonLabel="Adicionar vistoria existente"
+                    onButtonClick={() => console.log("Criar nova vistoria")}
+                    sx={{
+                        width: 300,
+                    }}
                 />
             </TableHeader.Root>
 
