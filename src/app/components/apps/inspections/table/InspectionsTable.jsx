@@ -9,6 +9,7 @@ import UserCard from "../../users/userCard";
 import { formatDate } from "@/utils/dateUtils";
 import ScheduleOpinionChip from "../schedule/StatusChip/ScheduleOpinionChip";
 import { Table } from "@/app/components/Table";
+import { useTheme } from "@mui/material";
 
 export default function InspectionsTable({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -17,6 +18,8 @@ export default function InspectionsTable({ projectId }) {
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
     const [principalId, setPrincipalId] = useState(null)
+
+    const theme = useTheme();
 
     useEffect(() => {
         if (projectId) {
