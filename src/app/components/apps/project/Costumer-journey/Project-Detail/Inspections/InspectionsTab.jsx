@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import scheduleService from "@/services/scheduleService";
-import TableSkeleton from "../../comercial/sale/components/TableSkeleton";
+import TableSkeleton from "../../../../comercial/sale/components/TableSkeleton";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import UserCard from "../../users/userCard";
+import UserCard from "../../../../users/userCard";
 import { formatDate } from "@/utils/dateUtils";
-import ScheduleOpinionChip from "../schedule/StatusChip/ScheduleOpinionChip";
+import ScheduleOpinionChip from "../../../../inspections/schedule/StatusChip/ScheduleOpinionChip";
 import { Table } from "@/app/components/Table";
 import { useTheme, alpha, Dialog, DialogContent } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
+import ScheduleFormCreate from "../../../../inspections/schedule/Add-schedule";
 
-export default function InspectionsTable({ projectId }) {
+export default function InspectionsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
     const [inspections, setInspections] = useState([])
     const [loading, setLoading] = useState(true)
@@ -172,7 +173,7 @@ export default function InspectionsTable({ projectId }) {
                 }}
             >
                 <DialogContent>
-
+                    <ScheduleFormCreate />
                 </DialogContent>
             </Dialog>
         </>

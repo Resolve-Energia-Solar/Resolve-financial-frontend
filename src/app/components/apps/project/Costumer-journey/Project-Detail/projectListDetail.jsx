@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import projectService from '@/services/projectService';
 import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
-import ProductChip from '../../product/components/ProductChip';
-import CheckListRateioDetail from '../../checklist/Checklist-detail/checklistDetail';
-import ChecklistSalesSkeleton from '../../checklist/components/ChecklistSalesSkeleton';
+import ProductChip from '../../../product/components/ProductChip';
+import CheckListRateioDetail from '../../../checklist/Checklist-detail/checklistDetail';
+import ChecklistSalesSkeleton from '../../../checklist/components/ChecklistSalesSkeleton';
 
 function ProjectListDetail({ saleId }) {
   const [projectsList, setProjectsList] = useState([]);

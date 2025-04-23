@@ -8,7 +8,7 @@ import ProjectList from '@/app/components/apps/project/Project-list';
 import EditProject from '@/app/components/apps/project/Edit-project';
 import SideDrawer from '@/app/components/shared/SideDrawer';
 import useProject from '@/hooks/projects/useProject';
-import ProjectDetailDrawer from '@/app/components/apps/project/Project-Detail/ProjectDrawer';
+import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
 
 const ProjectListing = ({
   fields = 'id,product.id,sale.id,sale.customer.id',

@@ -7,12 +7,12 @@ import SplitPane from 'react-split-pane';
 import projectService from '@/services/projectService';
 import processService from '@/services/processService';
 import ProcessMap from '@/app/components/shared/ProcessMap';
-import InspectionsTable from '../../inspections/table/InspectionsTable';
-import EditSale from '../../comercial/sale/Edit-sale/tabs/sale';
-import PaymentCard from '../../invoice/components/paymentList/card';
-import EditProjectTab from '../Edit-project/tabs/EditProject';
-import UploadDocument from '../UploadDocument';
-import AttachmentTable from '../../attachment/attachmentTable';
+import InspectionsTab from './Inspections/InspectionsTab';
+import EditSale from '../../../comercial/sale/Edit-sale/tabs/sale';
+import PaymentCard from '../../../invoice/components/paymentList/card';
+import EditProjectTab from '../../Edit-project/tabs/EditProject';
+import UploadDocument from '../../UploadDocument';
+import AttachmentTable from '../../../attachment/attachmentTable';
 import Comment from '@/app/components/apps/comment';
 
 function TabPanel({ children, value, index }) {
@@ -94,7 +94,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
                 {tabs.map(label => <Tab key={label} label={label} />)}
             </Tabs>
             <TabPanel value={tab} index={0}>
-                <InspectionsTable projectId={projectId} />
+                <InspectionsTab projectId={projectId} />
             </TabPanel>
             <TabPanel value={tab} index={1}>
                 <EditSale sx={{ padding: 4 }} saleId={project?.sale} />
