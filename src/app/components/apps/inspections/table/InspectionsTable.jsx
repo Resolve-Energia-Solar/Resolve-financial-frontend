@@ -74,7 +74,7 @@ export default function InspectionsTable({ projectId }) {
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar vistoria existente"
-                    onButtonClick={() => console.log("Criar nova vistoria")}
+                    onButtonClick={() => setOpenAddInspection(true)}
                     sx={{
                         width: 300,
                     }}
