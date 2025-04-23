@@ -50,6 +50,8 @@ export default function InspectionsTab({ projectId }) {
         setLoading(false);
     }, [projectId]);
 
+    const products = inspections.map(i => i.project.products).flat();
+
     if (loading) {
         return <TableSkeleton columns={8} rows={4} />;
     }
@@ -173,7 +175,12 @@ export default function InspectionsTab({ projectId }) {
                 }}
             >
                 <DialogContent>
-                    <ScheduleFormCreate />
+                    <ScheduleFormCreate 
+                        projectId={projectId}
+                        customerId={principalId}
+                        products={products}
+                        
+                    />
                 </DialogContent>
             </Dialog>
         </>
