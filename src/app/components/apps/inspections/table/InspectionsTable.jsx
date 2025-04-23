@@ -21,6 +21,10 @@ export default function InspectionsTable({ projectId }) {
 
     const theme = useTheme();
 
+    const [openAddInspection, setOpenAddInspection] = useState(false);
+    const [openEditInspection, setOpenEditInspection] = useState(false);
+    const [openViewInspection, setOpenViewInspection] = useState(false);
+
     useEffect(() => {
         if (projectId) {
             const fetchInspections = async () => {
