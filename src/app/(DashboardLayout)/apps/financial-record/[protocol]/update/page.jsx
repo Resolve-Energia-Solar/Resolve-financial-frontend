@@ -187,7 +187,7 @@ export default function UpdateForm() {
     if (!formData.client_supplier_code) missingFields.push('Código do Beneficiário');
     if (!formData.client_supplier_name) missingFields.push('Nome do Beneficiário');
     if (!formData.requesting_department) missingFields.push('Departamento Solicitante');
-    if (!formData.bank_details) missingFields.push('Dados Bancários');
+    if (['T', 'P'].includes(formData.payment_method) && !formData.bank_details) missingFields.push('Dados Bancários');
     if (!formData.department_code) missingFields.push('Departamento Causador');
 
     if (missingFields.length) {
@@ -342,7 +342,7 @@ export default function UpdateForm() {
               disabled
             />
           </Grid>
-          {formData.client_supplier_code && (
+          {formData.client_supplier_code && ['T', 'P'].includes(formData.payment_method) && (
             <Grid item xs={12}>
               <CustomFormLabel htmlFor="bank_details">Dados Bancários</CustomFormLabel>
               <GenericAsyncAutocompleteInput

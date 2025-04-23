@@ -159,7 +159,7 @@ export default function CreateFinancialRecord() {
     if (!formData.category_name) missingFields.push('Nome da Categoria');
     if (!formData.client_supplier_code) missingFields.push('Código do Beneficiário');
     if (!formData.client_supplier_name) missingFields.push('Nome do Beneficiário');
-    if (!formData.bank_details) missingFields.push('Dados Bancários');
+    if (['T', 'P'].includes(formData.payment_method) && !formData.bank_details) missingFields.push('Dados Bancários');
     if (!formData.department_code) missingFields.push('Departamento Causador');
     if (!formData.requesting_department) missingFields.push('Departamento Solicitante');
 
@@ -298,7 +298,7 @@ export default function CreateFinancialRecord() {
               required
             />
           </Grid>
-          {formData.client_supplier_code && (
+          {formData.client_supplier_code && ['T', 'P'].includes(formData.payment_method) && (
             <Grid item xs={12}>
               <GenericAsyncAutocompleteInput
                 label="Dados Bancários"
