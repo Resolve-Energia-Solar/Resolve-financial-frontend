@@ -85,6 +85,7 @@ const financialRecordList = () => {
           limit: rowsPerPage,
           page: page + 1,
           // fields: "protocol,client_supplier_name,value,due_date,status,paid_at",
+          expand: 'bank_details',
           ...filters,
         });
         setFinancialRecordList(data.results);
