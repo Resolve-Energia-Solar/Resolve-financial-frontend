@@ -8,7 +8,7 @@ import UserCard from "../../users/userCard";
 import { formatDate } from "@/utils/dateUtils";
 import ScheduleOpinionChip from "../schedule/StatusChip/ScheduleOpinionChip";
 import { Table } from "@/app/components/Table";
-import { useTheme, alpha } from "@mui/material";
+import { useTheme, alpha, Dialog, DialogContent } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
 
 export default function InspectionsTable({ projectId }) {
@@ -153,10 +153,28 @@ export default function InspectionsTable({ projectId }) {
                             );
                         }}
                     />
-
                 </Table.Body>
-
             </Table.Root>
+
+            <Dialog
+                open={openAddInspection}
+                onClose={() => setOpenAddInspection(false)}
+                maxWidth="md"
+                fullWidth
+                PaperProps={{
+                sx: {
+                    borderRadius: '20px',
+                    padding: '24px',
+                    gap: '24px',
+                    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                    backgroundColor: '#FFFFFF',
+                },
+                }}
+            >
+                <DialogContent>
+
+                </DialogContent>
+            </Dialog>
         </>
     );
 }
