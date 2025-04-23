@@ -1,7 +1,9 @@
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, useTheme } from "@mui/material";
 import { Add } from "@mui/icons-material";
 
 export default function TableHeaderButton({ buttonLabel, onButtonClick, sx }) {
+    const theme = useTheme();
+    
     return (
         <Grid item xs={1} sx={{ display: 'flex', flexDirection: "row", justifyContent: 'flex-end' }}>
             <Button
