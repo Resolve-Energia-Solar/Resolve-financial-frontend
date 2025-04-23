@@ -5,12 +5,11 @@ export default function TableHeaderButton({ buttonLabel, onButtonClick, sx }) {
     const theme = useTheme();
     
     return (
-        <Grid item xs={6} sx={{ display: 'flex', flexDirection: "row", justifyContent: 'flex-end' }}>
+        <Grid item gridArea={"button"} sx={{ display: 'flex', flexDirection: "row", justifyContent: 'flex-end' }}>
             <Button
                 startIcon={<Add />}
                 onClick={onButtonClick}
                 sx={{
-                    // width: 74,
                     height: 36,
                     fontSize: '0.75rem',
                     p: '4px 8px',
