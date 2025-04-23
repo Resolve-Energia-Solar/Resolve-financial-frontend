@@ -74,10 +74,10 @@ export default function InspectionsTab({ projectId }) {
                     objNameNumberReference={inspections.length === 1 ? "Vistoria" : "Vistorias"}
                 />
                 <TableHeader.Button
-                    buttonLabel="Adicionar vistoria existente"
+                    buttonLabel="Adicionar vistoria"
                     onButtonClick={() => setOpenAddInspection(true)}
                     sx={{
-                        width: 300,
+                        width: 200,
                     }}
                 />
             </TableHeader.Root>
