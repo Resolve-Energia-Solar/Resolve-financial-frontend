@@ -1,21 +1,13 @@
 'use client';
 
-import Loading from '@/app/loading';
 import PageContainer from '@/app/components/container/PageContainer';
 import Breadcrumb from '../../layout/shared/breadcrumb/Breadcrumb';
 import { Box, Button, CardContent } from '@mui/material';
 import BlankCard from '@/app/components/shared/BlankCard';
-import ListRequest from '@/app/components/apps/request/ListRequest';
-import LateralForm from '@/app/components/apps/request/LateralForm';
 import RequestEnergyCompany from '@/hooks/requestEnergyCompany/Request';
-import SideDrawer from '@/app/components/shared/SideDrawer';
-import SendingForm from '@/app/components/apps/request/SendingForm';
-import InforCards from '@/app/components/apps/inforCards/InforCards';
-import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
-import { Accordion, Typography, AccordionSummary, AccordionDetails } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import RequestList from '@/app/components/apps/request/Request-list';
 import { RequestDataContextProvider } from '@/app/context/RequestContext';
+import ResquestLIstByProject from '@/app/components/apps/request/ResquestLIstByProject/ResquestLIstByProject';
+
 const BCrumb = [
   {
     to: '/',
@@ -59,7 +51,7 @@ const RequestCE = () => {
           <BlankCard>
             <CardContent>
               <Box sx={{ display: 'flex' }}></Box>
-              <RequestList />
+              <ResquestLIstByProject/>
             </CardContent>
           </BlankCard>
         </PageContainer>

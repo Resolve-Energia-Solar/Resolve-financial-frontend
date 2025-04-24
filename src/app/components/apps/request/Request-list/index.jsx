@@ -29,11 +29,7 @@ import { RequestDataContext } from '@/app/context/RequestContext';
 import Comment from '../../comment';
 import InforCards from '@/app/components/apps/inforCards/InforCards';
 import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
-import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const RequestList = ({ projectId = null, enableFilters = true, enableIndicators = true }) => {
@@ -51,7 +47,6 @@ const RequestList = ({ projectId = null, enableFilters = true, enableIndicators 
 
   const filters = context ? context.filters : {};
   const setFilters = context ? context.setFilters : () => {};
-  
 
   const [requestIdSelected, setRequestIdSelected] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -163,21 +158,28 @@ const RequestList = ({ projectId = null, enableFilters = true, enableIndicators 
     <>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Typography variant="h4">Solicitações</Typography>
-        {enableIndicators == true &&(
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="sale-cards-content"
-            id="sale-cards-header"
-          >
-            <Typography variant="h6">Indicadores</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <InforCards cardsData={cardsData} />
-          </AccordionDetails>
-        </Accordion>
+        {enableIndicators == true && (
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="sale-cards-content"
+              id="sale-cards-header"
+            >
+              <Typography variant="h6">Indicadores</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <InforCards cardsData={cardsData} />
+            </AccordionDetails>
+          </Accordion>
         )}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 2,
+          }}
+        >
           <Button
             variant="outlined"
             startIcon={<AddBoxRounded />}
@@ -257,29 +259,28 @@ const RequestList = ({ projectId = null, enableFilters = true, enableIndicators 
               </TableRow>
             </TableHead>
             <TableBody>
-              {Array.isArray(projectsList) && projectsList.map((item) => (
-                <TableRow
-                  key={item.id}
-                  sx={{ cursor: 'pointer' }}
-                  onClick={() => handleEdit(item.id)}
-                >
-                  <TableCell>{item?.type?.name}</TableCell>
-                  <TableCell>{item?.interim_protocol || '-'}</TableCell>
-                  <TableCell>
-                    <ChipRequest status={item.status} />
-                  </TableCell>
-                  <TableCell>
-                    {item.request_date
-                      ? format(new Date(item.request_date), 'dd/MM/yyyy')
-                      : '-'}
-                  </TableCell>
-                  <TableCell>
-                    {item.conclusion_date
-                      ? format(new Date(item.conclusion_date), 'dd/MM/yyyy')
-                      : '-'}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {Array.isArray(projectsList) &&
+                projectsList.map((item) => (
+                  <TableRow
+                    key={item.id}
+                    sx={{ cursor: 'pointer' }}
+                    onClick={() => handleEdit(item.id)}
+                  >
+                    <TableCell>{item?.type?.name}</TableCell>
+                    <TableCell>{item?.interim_protocol || '-'}</TableCell>
+                    <TableCell>
+                      <ChipRequest status={item.status} />
+                    </TableCell>
+                    <TableCell>
+                      {item.request_date ? format(new Date(item.request_date), 'dd/MM/yyyy') : '-'}
+                    </TableCell>
+                    <TableCell>
+                      {item.conclusion_date
+                        ? format(new Date(item.conclusion_date), 'dd/MM/yyyy')
+                        : '-'}
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
           <TablePagination
