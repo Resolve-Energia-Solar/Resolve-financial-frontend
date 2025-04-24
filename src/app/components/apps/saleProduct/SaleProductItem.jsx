@@ -35,6 +35,8 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
     loading
   } = useSaleProductForm(initialData, initialData.id);
 
+  console.log('productName', productName);
+
   // dispara o refresh no pai somente após salvar com sucesso
   useEffect(() => {
     if (!loading && Object.keys(formErrors).length === 0) {
@@ -86,7 +88,7 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
             >
               <Typography fontWeight={700} fontSize={14}>Produto</Typography>
               <Typography fontWeight={500} fontSize={16} color={'rgba(48, 48, 48, 0.5)'}>
-                {productName || '• sem nome •'}
+                {productName || 'sem nome'}
               </Typography>
             </Grid>
           </Box>
@@ -96,8 +98,8 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
           <Grid container spacing={2}>
             {['value', 'cost_value', 'reference_value'].map((field) => {
               const isCostValue = field === 'cost_value';
-              const disabled = isCostValue && !canChangeCostValue ? formData.cost_value : false;
-              const fieldValue = isCostValue && !canChangeCostValue ? ' ' : formData[field] || '';
+              const disabled = isCostValue && !canChangeCostValue;
+              const fieldValue = disabled ? ' ' : formData[field] || '';
               return (
                 <Grid item xs={12} sm={12} lg={4} key={field}>
                   <Typography fontWeight={700} fontSize={14} gutterBottom>
