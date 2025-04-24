@@ -16,6 +16,7 @@ import AttachmentTable from '../../../attachment/attachmentTable';
 import Comment from '@/app/components/apps/comment';
 import LogisticsTab from './logistics/LogisticsTab';
 import InstallationsTab from './installations/InstallationsTab';
+import HistoryTab from './History/HistoryTab';
 
 function TabPanel({ children, value, index }) {
     return (
@@ -123,10 +124,11 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
             </TabPanel>
             <TabPanel value={tab} index={7}><Typography>Conteúdo Homologação</Typography></TabPanel>
             <TabPanel value={tab} index={8}>
-                <Typography variant="h6" sx={{ mb: 3 }}>Comentários do Projeto</Typography>
+                {/* <Typography variant="h6" sx={{ mb: 3 }}>Comentários do Projeto</Typography>
                 <Comment appLabel="resolve_crm" model="project" objectId={projectId} />
                 <Typography variant="h6" sx={{ my: 3 }}>Comentários da Venda</Typography>
-                <Comment appLabel="resolve_crm" model="sale" objectId={project?.sale} />
+                <Comment appLabel="resolve_crm" model="sale" objectId={project?.sale} /> */}
+                <HistoryTab projectId={projectId} />
             </TabPanel>
         </Box>
     );
