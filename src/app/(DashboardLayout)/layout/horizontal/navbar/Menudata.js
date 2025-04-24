@@ -29,32 +29,32 @@ import {
 import { uniqueId } from 'lodash';
 
 const Menuitems = [
-  {
-    id: uniqueId(),
-    title: 'CRM',
-    href: '/',
-    icon: IconBriefcase2,
-    permissions: ['core.view_board', 'resolve_crm.view_lead'],
-    children: [
-      {
-        id: uniqueId(),
-        title: 'Kanban',
-        icon: IconLayoutKanban,
-        href: '/apps/kanban/',
-        permissions: ['core.view_board'],
-      },
-      {
-        id: uniqueId(),
-        title: 'Leads',
-        icon: IconId,
-        href: '/apps/leads',
-        permissions: ['resolve_crm.view_lead'],
-      },
-    ],
-    chip: 'Novo',
-    chipColor: 'secondary',
-    permissions: ['core.view_board'],
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: 'CRM',
+  //   href: '/',
+  //   icon: IconBriefcase2,
+  //   permissions: ['core.view_board', 'resolve_crm.view_lead'],
+  //   children: [
+  //     {
+  //       id: uniqueId(),
+  //       title: 'Kanban',
+  //       icon: IconLayoutKanban,
+  //       href: '/apps/kanban/',
+  //       permissions: ['core.view_board'],
+  //     },
+  //     {
+  //       id: uniqueId(),
+  //       title: 'Leads',
+  //       icon: IconId,
+  //       href: '/apps/leads',
+  //       permissions: ['resolve_crm.view_lead'],
+  //     },
+  //   ],
+  //   chip: 'Novo',
+  //   chipColor: 'secondary',
+  //   permissions: ['core.view_board'],
+  // },
   {
     id: uniqueId(),
     title: 'Comercial',
