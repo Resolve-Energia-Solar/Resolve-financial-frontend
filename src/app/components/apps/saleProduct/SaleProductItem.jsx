@@ -19,11 +19,13 @@ import useSaleProductForm from '@/hooks/salesProducts/useSaleProductForm';
 import CustomFieldMoney from '../invoice/components/CustomFieldMoney';
 import HasPermission from '../../permissions/HasPermissions';
 import { useSelector } from 'react-redux';
+import { ca } from 'date-fns/locale';
 
 export default function SaleProductItem({ initialData, productName, onUpdated }) {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const userPermissions = useSelector((state) => state.user.permissions);
+  const canChangeCostValue = userPermissions.includes('resolve_crm.can_change_fineshed_sale');
 
   const {
     formData,
@@ -92,70 +94,40 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
 
         <AccordionDetails>
           <Grid container spacing={2}>
-            {['value', 'cost_value', 'reference_value'].map((field) => (
-              <Grid item xs={12} sm={12} lg={4} key={field}>
-                <Typography fontWeight={700} fontSize={14} gutterBottom>
-                  {{
-                    value: 'Valor',
-                    cost_value: 'Valor de custo',
-                    reference_value: 'Valor de referência'
-                  }[field]}
-                </Typography>
-                {field === 'cost_value' ? (
-                  <HasPermission
-                  permissions={['resolve_crm.can_change_fineshed_sale']}
-                  userPermissions={userPermissions}
-                  >
-                    <CustomFieldMoney
-                      name={field}
-                      fullWidth
-                      value={formData[field] || ''}
-                      onChange={(v) => handleChange(field, v)}
-                      error={!!formErrors[field]}
-                      helperText={formErrors[field]?.join(', ')}
-                      sx={{
-                        input: {
-                          fontSize: 12,
-                          padding: '12px'
-                        },
-                        '& .MuiOutlinedInput-root': {
-                          border: '1px solid #3E3C41',
-                          borderRadius: '9px',
-                        },
-                        '& .MuiInputBase-input': {
-                          padding: '12px',
-                        },
-                      }}
-                    />
-                  </HasPermission>
-                ) : (
+            {['value', 'cost_value', 'reference_value'].map((field) => {
+              const isCostValue = field === 'cost_value';
+              const disabled = isCostValue && !canChangeCostValue ? formData.cost_value : false;
+              const fieldValue = isCostValue && !canChangeCostValue ? ' ' : formData[field] || '';
+              return (
+                <Grid item xs={12} sm={12} lg={4} key={field}>
+                  <Typography fontWeight={700} fontSize={14} gutterBottom>
+                    {{
+                      value: 'Valor',
+                      cost_value: 'Valor de custo',
+                      reference_value: 'Valor de referência'
+                    }[field]}
+                  </Typography>
                   <CustomFieldMoney
                     name={field}
                     fullWidth
-                    value={formData[field] || ''}
+                    value={fieldValue}
                     onChange={(v) => handleChange(field, v)}
                     error={!!formErrors[field]}
                     helperText={formErrors[field]?.join(', ')}
-                    disabled={
-                      field === 'cost_value' && formData.cost_value > 0
-                    }
+                    disabled={disabled}
                     sx={{
-                      input: {
-                        fontSize: 12,
-                        padding: '12px'
-                      },
+                      input: { fontSize: 12, padding: '12px' },
                       '& .MuiOutlinedInput-root': {
                         border: '1px solid #3E3C41',
                         borderRadius: '9px',
                       },
-                      '& .MuiInputBase-input': {
-                        padding: '12px',
-                      },
+                      '& .MuiInputBase-input': { padding: '12px' },
                     }}
                   />
-                )}
-              </Grid>
-            ))}
+                </Grid>
+              );
+             
+            })}
           </Grid>
           <HasPermission
             permissions={['resolve_crm.can_change_fineshed_sale']}
