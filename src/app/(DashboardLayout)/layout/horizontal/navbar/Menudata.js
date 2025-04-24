@@ -155,7 +155,7 @@ const Menuitems = [
     children: [
       {
         id: uniqueId(),
-        title: 'Projetos',
+        title: 'Jornada do cliente',
         icon: IconRuler,
         href: '/apps/project',
         permissions: ['resolve_crm.view_project'],
