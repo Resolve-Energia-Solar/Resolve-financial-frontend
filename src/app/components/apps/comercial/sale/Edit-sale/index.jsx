@@ -202,6 +202,8 @@ const EditSaleTabs = ({
     });
   }, [saleData?.sale_products]);
 
+  console.log('productNames', productNames);
+
   return (
     <Box {...props}>
       <Tabs
