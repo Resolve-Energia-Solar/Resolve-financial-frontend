@@ -49,6 +49,8 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import HourglassFullIcon from '@mui/icons-material/HourglassFull';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 const ResquestLIstByProject = () => {
   const router = useRouter();
@@ -541,13 +543,13 @@ const ResquestLIstByProject = () => {
                   sx={{ cursor: 'pointer' }}
                   onClick={() => handleEdit(item)}
                 >
-                  <TableCell>
-                    {item.is_released_to_engineering ? (
-                      <CheckIcon color="success" />
-                    ) : (
-                      <CloseIcon color="error" />
-                    )}
-                  </TableCell>
+                <TableCell>
+                  {item.is_released_to_engineering ? (
+                    <CheckCircleOutlineIcon color="success" />
+                  ) : (
+                    <RemoveCircleOutlineIcon color="error" />
+                  )}
+                </TableCell>
                   <TableCell>{item.project_number || '-'}</TableCell>
                   <TableCell>
                     {item.sale?.customer?.complete_name ||
