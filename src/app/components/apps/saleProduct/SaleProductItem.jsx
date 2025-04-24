@@ -35,9 +35,6 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
     loading
   } = useSaleProductForm(initialData, initialData.id);
 
-  console.log('productName', productName);
-
-  // dispara o refresh no pai somente após salvar com sucesso
   useEffect(() => {
     if (!loading && Object.keys(formErrors).length === 0) {
       onUpdated();
@@ -48,7 +45,6 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
     await handleSave();
 
     if (Object.keys(formErrors).length > 0) {
-      // concatena todas as mensagens de erro
       const errorMessages = Object.entries(formErrors)
         .map(
           ([field, messages]) =>

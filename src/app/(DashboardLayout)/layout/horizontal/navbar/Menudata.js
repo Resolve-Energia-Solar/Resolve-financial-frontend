@@ -74,7 +74,7 @@ const Menuitems = [
         title: 'Agendamentos',
         icon: IconUserPin,
         href: '/apps/commercial/schedules',
-        permissions: ['field_services.view_lead'],
+        permissions: ['resolve_crm.view_lead'],
       },
     ],
   },
