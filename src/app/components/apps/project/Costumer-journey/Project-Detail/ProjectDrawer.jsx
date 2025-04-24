@@ -19,6 +19,7 @@ import InstallationsTab from './installations/InstallationsTab';
 import CommentsTab from './Comments/CommentsTab';
 import HomologationTab from './Homologation/HomologationTab';
 import RequestList from '../../../request/Request-list';
+import History from '../../../history';
 
 function TabPanel({ children, value, index }) {
     return (
