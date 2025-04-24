@@ -148,18 +148,25 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Jornada do cliente',
+    icon: IconRuler,
+    href: '/apps/project',
+    permissions: ['resolve_crm.view_project'],
+  },
+  {
+    id: uniqueId(),
     title: 'Engenharia',
     icon: IconTools,
     permissions: ['resolve_crm.view_project'],
     href: '/apps/project',
     children: [
-      {
-        id: uniqueId(),
-        title: 'Jornada do cliente',
-        icon: IconRuler,
-        href: '/apps/project',
-        permissions: ['resolve_crm.view_project'],
-      },
+      // {
+      //   id: uniqueId(),
+      //   title: 'Jornada do cliente',
+      //   icon: IconRuler,
+      //   href: '/apps/project',
+      //   permissions: ['resolve_crm.view_project'],
+      // },
       {
         id: uniqueId(),
         title: 'Homologação',
