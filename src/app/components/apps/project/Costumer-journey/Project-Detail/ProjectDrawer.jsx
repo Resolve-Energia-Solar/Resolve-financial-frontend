@@ -14,6 +14,8 @@ import EditProjectTab from '../../Edit-project/tabs/EditProject';
 import UploadDocument from '../../UploadDocument';
 import AttachmentTable from '../../../attachment/attachmentTable';
 import Comment from '@/app/components/apps/comment';
+import LogisticsTab from './logistics/LogisticsTab';
+import InstallationsTab from './installations/InstallationsTab';
 
 function TabPanel({ children, value, index }) {
     return (
@@ -112,8 +114,12 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
                 <Typography variant="h6" sx={{ my: 3 }}>Anexos da Venda</Typography>
                 <AttachmentTable appLabel="resolve_crm" model="sale" objectId={project?.sale} />
             </TabPanel>
-            <TabPanel value={tab} index={5}><Typography>Conteúdo Logística</Typography></TabPanel>
-            <TabPanel value={tab} index={6}><Typography>Conteúdo Instalação</Typography></TabPanel>
+            <TabPanel value={tab} index={5}>
+                <LogisticsTab projectId={projectId} />
+            </TabPanel>
+            <TabPanel value={tab} index={6}>
+                <InstallationsTab projectId={projectId} />
+            </TabPanel>
             <TabPanel value={tab} index={7}><Typography>Conteúdo Homologação</Typography></TabPanel>
             <TabPanel value={tab} index={8}>
                 <Typography variant="h6" sx={{ mb: 3 }}>Comentários do Projeto</Typography>
