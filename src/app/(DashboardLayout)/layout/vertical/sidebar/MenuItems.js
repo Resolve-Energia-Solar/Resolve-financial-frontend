@@ -169,7 +169,7 @@ const Menuitems = [
       },
       {
         id: uniqueId(),
-        title: 'Solicitações',
+        title: 'Homologação',
         icon: IconFileArrowRight,
         href: '/apps/request',
         permissions: ['resolve_crm.view_project'],
