@@ -17,10 +17,13 @@ import { IconTools } from '@tabler/icons-react';
 import { useSnackbar } from 'notistack';
 import useSaleProductForm from '@/hooks/salesProducts/useSaleProductForm';
 import CustomFieldMoney from '../invoice/components/CustomFieldMoney';
+import HasPermission from '../../permissions/HasPermissions';
+import { useSelector } from 'react-redux';
 
 export default function SaleProductItem({ initialData, productName, onUpdated }) {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
+  const userPermissions = useSelector((state) => state.user.permissions);
 
   const {
     formData,
@@ -98,30 +101,66 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
                     reference_value: 'Valor de referência'
                   }[field]}
                 </Typography>
-                <CustomFieldMoney
-                  name={field}
-                  fullWidth
-                  value={formData[field] || ''}
-                  onChange={(v) => handleChange(field, v)}
-                  error={!!formErrors[field]}
-                  helperText={formErrors[field]?.join(', ')}
-                  sx={{
-                    input: {
-                      fontSize: 12,
-                      padding: '12px'
-                    },
-                    '& .MuiOutlinedInput-root': {
-                      border: '1px solid #3E3C41',
-                      borderRadius: '9px',
-                    },
-                    '& .MuiInputBase-input': {
-                      padding: '12px',
-                    },
-                  }}
-                />
+                {field === 'cost_value' ? (
+                  <HasPermission
+                  permissions={['resolve_crm.can_change_fineshed_sale']}
+                  userPermissions={userPermissions}
+                  >
+                    <CustomFieldMoney
+                      name={field}
+                      fullWidth
+                      value={formData[field] || ''}
+                      onChange={(v) => handleChange(field, v)}
+                      error={!!formErrors[field]}
+                      helperText={formErrors[field]?.join(', ')}
+                      sx={{
+                        input: {
+                          fontSize: 12,
+                          padding: '12px'
+                        },
+                        '& .MuiOutlinedInput-root': {
+                          border: '1px solid #3E3C41',
+                          borderRadius: '9px',
+                        },
+                        '& .MuiInputBase-input': {
+                          padding: '12px',
+                        },
+                      }}
+                    />
+                  </HasPermission>
+                ) : (
+                  <CustomFieldMoney
+                    name={field}
+                    fullWidth
+                    value={formData[field] || ''}
+                    onChange={(v) => handleChange(field, v)}
+                    error={!!formErrors[field]}
+                    helperText={formErrors[field]?.join(', ')}
+                    disabled={
+                      field === 'cost_value' && formData.cost_value > 0
+                    }
+                    sx={{
+                      input: {
+                        fontSize: 12,
+                        padding: '12px'
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '12px',
+                      },
+                    }}
+                  />
+                )}
               </Grid>
             ))}
-            </Grid>
+          </Grid>
+          <HasPermission
+            permissions={['resolve_crm.can_change_fineshed_sale']}
+            userPermissions={userPermissions}
+          >
             <Grid container xs={12} sx={{ mt: 2, mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
               <Grid item xs={12} sm={12} lg={4} sx={{ textAlign: 'right' }}>
                 <Button
@@ -145,7 +184,8 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
                 </Button>
               </Grid>
             </Grid>
-          
+          </HasPermission>
+
         </AccordionDetails>
       </Accordion>
     </Grid>
