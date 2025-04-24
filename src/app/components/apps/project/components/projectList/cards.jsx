@@ -33,7 +33,7 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import InfoIcon from '@mui/icons-material/Info';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import CategoryIcon from '@mui/icons-material/Category';
-import DetailProject from '../../Project-Detail';
+import DetailProject from '../../Costumer-journey/Project-Detail';
 import EditProject from '../../Edit-project';
 
 const CONTEXT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;

@@ -206,6 +206,18 @@ const ScheduleFormCreate = ({
             />
           </Grid>
         )}
+
+        {products ? null : (
+          <Grid item xs={12} sm={12} lg={6}>
+            <CustomFormLabel htmlFor="products">Produto</CustomFormLabel>
+            <AutoCompleteProject
+              onChange={(id) => handleChange('product', id)}
+              value={formData.project}
+              {...(formErrors.project && { error: true, helperText: formErrors.project })}
+            />
+          </Grid>
+        )}
+
         {/* Data do Agendamento */}
         <Grid item xs={12} sm={12} lg={6}>
           <FormDate
@@ -235,12 +247,13 @@ const ScheduleFormCreate = ({
           <CustomFormLabel htmlFor="name">
             Endereço
             <Tooltip title="Somente endereços vinculados ao usuário serão exibidos." arrow>
-              <HelpIcon sx={{ ml: 1, cursor: 'pointer' }} />
+              <HelpIcon fontSize='2px' sx={{ ml: 1, cursor: 'pointer' }} />
             </Tooltip>
           </CustomFormLabel>
           <GenericAutocomplete
-            addTitle="Adicionar Endereço"
-            label="Endereço"
+            // addTitle="Adicionar Endereço"
+            label=""
+            size="small"
             fetchOptions={fetchAddress}
             AddComponent={CreateAddressPage}
             getOptionLabel={(option) =>
@@ -252,6 +265,21 @@ const ScheduleFormCreate = ({
             }}
             value={selectedAddresses}
             {...(formErrors.address && { error: true, helperText: formErrors.address })}
+            sx={{
+              input: {
+              color: '#7E92A2',
+              fontWeight: '400',
+              fontSize: '12px',
+              opacity: 1,
+              },
+              '& .MuiOutlinedInput-root': {
+                border: '1px solid #3E3C41',
+                borderRadius: '9px',
+              },
+              '& .MuiInputBase-input': {
+                padding: '12px',
+              },
+            }}
           />
         </Grid>
         {/* Status do Agendamento */}

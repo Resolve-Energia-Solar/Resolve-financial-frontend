@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import EditProjectTab from '@/app/components/apps/project/Edit-project/tabs/EditProject';
 import { useParams } from 'next/navigation';
 import documentTypeService from '@/services/documentTypeService';
-import CheckListRateioDetail from '../../checklist/Checklist-detail/checklistDetail';
+import CheckListRateioDetail from '../../../checklist/Checklist-detail/checklistDetail';
 import AttachmentDetails from '@/app/components/shared/AttachmentDetails';
 
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;

@@ -39,7 +39,7 @@ import ProjectListCards from '@/app/components/apps/project/components/projectLi
 import StatusChip from '../../../../../../utils/status/DocumentStatusIcon';
 import CustomerDetailTabs from '../../../users/User-detail/customer/tabs';
 import PaymentCardDetail from '../../../invoice/Invoice-detail/invoiceListDetail';
-import ProjectListDetail from '../../../project/Project-Detail/projectListDetail';
+import ProjectListDetail from '../../../project/Costumer-journey/Project-Detail/projectListDetail';
 import AttachmentDetails from '@/app/components/shared/AttachmentDetails';
 import History from '@/app/components/apps/history';
 

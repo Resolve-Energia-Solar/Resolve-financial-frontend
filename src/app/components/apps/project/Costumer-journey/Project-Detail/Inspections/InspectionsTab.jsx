@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import scheduleService from "@/services/scheduleService";
-import TableSkeleton from "../../comercial/sale/components/TableSkeleton";
+import TableSkeleton from "../../../../comercial/sale/components/TableSkeleton";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import UserCard from "../../users/userCard";
+import UserCard from "../../../../users/userCard";
 import { formatDate } from "@/utils/dateUtils";
-import ScheduleOpinionChip from "../schedule/StatusChip/ScheduleOpinionChip";
+import ScheduleOpinionChip from "../../../../inspections/schedule/StatusChip/ScheduleOpinionChip";
 import { Table } from "@/app/components/Table";
-import { useTheme, alpha } from "@mui/material";
+import { useTheme, alpha, Dialog, DialogContent } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
+import ScheduleFormCreate from "../../../../inspections/schedule/Add-schedule";
 
-export default function InspectionsTable({ projectId }) {
+export default function InspectionsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
     const [inspections, setInspections] = useState([])
     const [loading, setLoading] = useState(true)
@@ -20,6 +21,10 @@ export default function InspectionsTable({ projectId }) {
     const [principalId, setPrincipalId] = useState(null)
 
     const theme = useTheme();
+
+    const [openAddInspection, setOpenAddInspection] = useState(false);
+    const [openEditInspection, setOpenEditInspection] = useState(false);
+    const [openViewInspection, setOpenViewInspection] = useState(false);
 
     useEffect(() => {
         if (projectId) {
@@ -45,6 +50,8 @@ export default function InspectionsTable({ projectId }) {
         setLoading(false);
     }, [projectId]);
 
+    const products = inspections.map(i => i.project.products).flat();
+
     if (loading) {
         return <TableSkeleton columns={8} rows={4} />;
     }
@@ -69,10 +76,10 @@ export default function InspectionsTable({ projectId }) {
                     objNameNumberReference={inspections.length === 1 ? "Vistoria" : "Vistorias"}
                 />
                 <TableHeader.Button
-                    buttonLabel="Adicionar vistoria existente"
-                    onButtonClick={() => console.log("Criar nova vistoria")}
+                    buttonLabel="Adicionar vistoria"
+                    onButtonClick={() => setOpenAddInspection(true)}
                     sx={{
-                        width: 300,
+                        width: 200,
                     }}
                 />
             </TableHeader.Root>
@@ -149,10 +156,33 @@ export default function InspectionsTable({ projectId }) {
                             );
                         }}
                     />
-
                 </Table.Body>
-
             </Table.Root>
+
+            <Dialog
+                open={openAddInspection}
+                onClose={() => setOpenAddInspection(false)}
+                maxWidth="md"
+                fullWidth
+                PaperProps={{
+                sx: {
+                    borderRadius: '20px',
+                    padding: '24px',
+                    gap: '24px',
+                    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                    backgroundColor: '#FFFFFF',
+                },
+                }}
+            >
+                <DialogContent>
+                    <ScheduleFormCreate 
+                        projectId={projectId}
+                        customerId={principalId}
+                        products={products}
+                        
+                    />
+                </DialogContent>
+            </Dialog>
         </>
     );
 }
