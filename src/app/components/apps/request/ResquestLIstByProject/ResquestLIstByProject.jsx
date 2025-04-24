@@ -12,102 +12,85 @@ import {
   Button,
   Box,
   Skeleton,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Chip,
   Grid,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material';
+import InfoCard from '@/app/components/apps/inforCards/InforCards.jsx';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { AddBoxRounded } from '@mui/icons-material';
-import FilterAlt from '@mui/icons-material/FilterAlt';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import ChipRequest from '../components/auto-complete/ChipRequest';
 import AddRequestCompany from '../Add-request';
-import RequestDrawer from '../components/filterDrawer/RequestDrawer';
 import { RequestDataContext } from '@/app/context/RequestContext';
-import InforCards from '@/app/components/apps/inforCards/InforCards';
-import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
 import projectService from '@/services/projectService';
 import RequestTypeService from '@/services/requestTypeService';
-import StatusChip from '@/utils/status/DocumentStatusIcon';
 import SideDrawer from '@/app/components/shared/SideDrawer';
 import EditRequestByProject from '../components/EditRequestByProject';
+import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
+import { IconListDetails, IconSortAscending } from '@tabler/icons-react';
+import { IconPaperclip } from '@tabler/icons-react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import StatusChip from '@/utils/status/ProjectStatusChip';
+import ChipRequestStatus from '../components/auto-complete/ChipRequestStatus';
+import GenericChip from '@/utils/status/Chip';
+import theme from '@/utils/theme';
+import CancelIcon from '@mui/icons-material/Cancel';
+import HourglassFullIcon from '@mui/icons-material/HourglassFull';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 
-const ResquestLIstByProject = ({}) => {
+const ResquestLIstByProject = () => {
+  const router = useRouter();
+  const context = useContext(RequestDataContext);
+  const filters = context?.filters || {};
+  const setFilters = context?.setFilters || (() => {});
+
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalRows, setTotalRows] = useState(0);
-  const router = useRouter();
-
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-  const context = useContext(RequestDataContext);
-  const filters = context ? context.filters : {};
-  const setFilters = context ? context.setFilters : () => {};
-
-  // Estado para o projeto selecionado e para o SideDrawer de edição
-  const [requestSelected, setRequestSelected] = useState(null);
-  const [openSideDrawer, setOpenSideDrawer] = useState(false);
-  const [openAddDialog, setOpenAddDialog] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
-  // NOVO: Estado para tipos de solicitação
-  const [requestTypes, setRequestTypes] = useState([]);
-  const [selectedRequestTypes, setSelectedRequestTypes] = useState([]);
+  // --- controles do filtro drawer ---
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
-  // Buscar tipos de solicitação utilizando o RequestTypeService
+  // --- Tipos de solicitação ---
+  const [requestTypes, setRequestTypes] = useState([]);
+  const [selectedRequestType, setSelectedRequestType] = useState(null);
+
   useEffect(() => {
     RequestTypeService.index({ fields: 'id,name' })
       .then((data) => {
         const types = data.results || [];
         setRequestTypes(types);
-        // Por padrão, seleciona todos
-        setSelectedRequestTypes(types.map((type) => type.id));
+        if (types.length > 0) {
+          setSelectedRequestType(types[0].id);
+        }
       })
-      .catch((err) => console.error('Erro ao buscar tipos de solicitação:', err));
+      .catch((err) =>
+        console.error('Erro ao buscar tipos de solicitação:', err)
+      );
   }, []);
 
   const stableFilters = useMemo(() => filters, [JSON.stringify(filters)]);
 
-  const refreshData = () => {
-    setRefresh(!refresh);
-  };
+  const refreshData = () => setRefresh((prev) => !prev);
 
-  const toggleRequestDrawer = (open) => () => {
-    setIsFilterOpen(open);
-  };
-
-  const handleApplyFilters = (newFilters) => {
-    if (context) {
-      setFilters(newFilters);
-      setPage(0);
-    }
-  };
-
-  // Função para abrir o SideDrawer ao clicar na linha da tabela
-  const handleEdit = (project) => {
-    setRequestSelected(project);
-    setOpenSideDrawer(true);
-  };
-
-  const handleSideDrawerClose = () => {
-    setOpenSideDrawer(false);
-  };
-
+  // Fetch dos projetos
   useEffect(() => {
     const fetchProjects = async () => {
       setLoading(true);
@@ -135,20 +118,25 @@ const ResquestLIstByProject = ({}) => {
             'is_released_to_engineering',
             'requests_energy_company.id',
             'requests_energy_company.type.name',
+            'requests_energy_company.type.id',
             'requests_energy_company.interim_protocol',
             'requests_energy_company.status',
             'requests_energy_company.request_date',
             'requests_energy_company.conclusion_date',
+            'supply_adquance',
+            'access_opnion_status',
+            'load_increase_status',
+            'branch_adjustment_status',
+            'new_contact_number_status',
+            'final_inspection_status',
           ].join(','),
           expand:
             'requests_energy_company,sale.customer,homologator,requests_energy_company.type,product',
-          // Filtro mocado para tipos de solicitação
-          request_type__in: selectedRequestTypes.join(','),
           ...stableFilters,
         });
-        console.log('Data fetched:', data);
         setProjectsList(data.results);
         setTotalRows(data.meta.pagination.total_count);
+        setError(null);
       } catch (err) {
         setError('Erro ao carregar Solicitações');
       } finally {
@@ -157,16 +145,218 @@ const ResquestLIstByProject = ({}) => {
     };
 
     fetchProjects();
-  }, [page, rowsPerPage, refresh, stableFilters, selectedRequestTypes]);
+  }, [page, rowsPerPage, refresh, stableFilters, selectedRequestType]);
 
-  const handlePageChange = (event, newPage) => {
-    setPage(newPage);
-  };
+  // Enriquecer cada projeto com a última solicitação do tipo selecionado
+  const decoratedProjects = useMemo(() => {
+    return projectsList.map((proj) => {
+      const sameType = proj.requests_energy_company.filter(
+        (req) => req.type?.id === selectedRequestType
+      );
+      const latest = sameType.length
+        ? sameType.reduce((a, b) =>
+            new Date(b.request_date) > new Date(a.request_date) ? b : a
+          )
+        : null;
+      return { ...proj, latestRequest: latest };
+    });
+  }, [projectsList, selectedRequestType]);
 
-  const handleRowsPerPageChange = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+  // Paginação
+  const handlePageChange = (_, newPage) => setPage(newPage);
+  const handleRowsPerPageChange = (e) => {
+    setRowsPerPage(+e.target.value);
     setPage(0);
   };
+
+  const projectFilterConfig = [
+    {
+      key: 'customer',
+      label: 'Cliente',
+      type: 'async-autocomplete',
+      endpoint: '/api/users',
+      queryParam: 'complete_name__icontains',
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
+    },
+    {
+      key: 'homologator',
+      label: 'Homologador',
+      type: 'async-autocomplete',
+      endpoint: '/api/users',
+      queryParam: 'complete_name__icontains',
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
+    },
+    {
+      key: 'current_step__in',
+      label: 'Etapa Atual',
+      type: 'async-multiselect',
+      endpoint: '/api/steps-names',
+      queryParam: 'name__icontains',
+      mapResponse: (data) =>
+        data.results.map((step) => ({
+          label: step.name,
+          value: step.id,
+        })),
+    },
+    {
+      key: 'signature_date',
+      label: 'Data de Contrato',
+      type: 'range',
+      inputType: 'date',
+    },
+    {
+      key: 'product_kwp',
+      label: 'Kwp',
+      type: 'number',
+    },
+    {
+      key: 'material_list_is_completed',
+      label: 'Lista de Material',
+      type: 'select',
+      options: [
+        { value: 'true', label: 'Sim' },
+        { value: 'false', label: 'Não' },
+        { value: 'null', label: 'Todos' },
+      ],
+    },
+    {
+      key: 'new_contract_number',
+      label: 'Nova UC',
+      type: 'select',
+      options: [
+        { value: 'true', label: 'Sim' },
+        { value: 'false', label: 'Não' },
+        { value: 'null', label: 'Todos' },
+      ],
+    },
+    {
+      key: 'status',
+      label: 'Status de Homologação',
+      type: 'multiselect',
+      options: [
+        { value: 'P', label: 'Pendente' },
+        { value: 'CO', label: 'Concluído' },
+        { value: 'EA', label: 'Em Andamento' },
+        { value: 'C', label: 'Cancelado' },
+        { value: 'D', label: 'Distrato' },
+      ],
+    },
+    {
+      key: 'access_opnion',
+      label: 'Parecer de Acesso',
+      type: 'select',
+      options: [
+        { value: 'liberado', label: 'Liberado' },
+        { value: 'bloqueado', label: 'Bloqueado' },
+        { value: 'null', label: 'Todos' },
+      ],
+    },
+    {
+      key: 'trt_status',
+      label: 'Status de TRT',
+      type: 'multiselect',
+      options: [
+        { value: 'P', label: 'Pendente' },
+        { value: 'A', label: 'Aprovado' },
+        { value: 'EA', label: 'Em Andamento' },
+        { value: 'R', label: 'Recusado' },
+      ],
+    },
+    {
+      key: 'supply_adquance',
+      label: 'Adequação de Fornecimento',
+      type: 'async-autocomplete',
+      endpoint: '/api/supply-adequances',
+      queryParam: 'name__icontains',
+      mapResponse: (data) =>
+        data.results.map((supply) => ({
+          label: supply.name,
+          value: supply.id,
+        })),
+    },
+    {
+      key: 'designer_status',
+      label: 'Status do Projeto',
+      type: 'multiselect',
+      options: [
+        { value: 'P', label: 'Pendente' },
+        { value: 'CO', label: 'Concluído' },
+        { value: 'EA', label: 'Em Andamento' },
+        { value: 'C', label: 'Cancelado' },
+        { value: 'D', label: 'Distrato' },
+      ],
+    },
+    {
+      key: 'is_released_to_engineering',
+      label: 'Liberado para Engenharia',
+      type: 'select',
+      options: [
+        { value: 'true', label: 'Sim' },
+        { value: 'false', label: 'Não' },
+        { value: 'null', label: 'Todos' }
+      ],
+    },
+  ];
+
+    const trtStatusMap = {
+      Bloqueado: {
+        label: 'Bloqueado',
+        color: theme.palette.error.light,
+        icon: <CancelIcon sx={{ color: '#fff' }} />,
+      },
+      Reprovada: {
+        label: 'Reprovada',
+        color: theme.palette.error.light,
+        icon: <CancelIcon sx={{ color: '#fff' }} />,
+      },
+      'Em Andamento': {
+        label: 'Em Andamento',
+        color: theme.palette.info.light,
+        icon: <HourglassFullIcon sx={{ color: '#fff' }} />,
+      },
+      Concluída: {
+        label: 'Concluída',
+        color: theme.palette.success.light,
+        icon: <CheckCircleIcon sx={{ color: '#fff' }} />,
+      },
+      Pendente: {
+        label: 'Pendente',
+        color: theme.palette.warning.light,
+        icon: <HourglassEmptyIcon sx={{ color: '#fff' }} />,
+      },
+    };
+
+
+  // Estados e handlers para modais/edição
+  const [openSideDrawer, setOpenSideDrawer] = useState(false);
+  const [requestSelected, setRequestSelected] = useState(null);
+  const [openAddDialog, setOpenAddDialog] = useState(false);
+
+  const handleEdit = (proj) => {
+    setRequestSelected(proj);
+    setOpenSideDrawer(true);
+  };
+
+  const handleSideDrawerClose = () => {
+    setOpenSideDrawer(false);
+    refreshData();
+  };
+
+  const handleAddDialogClose = () => {
+    setOpenAddDialog(false);
+    refreshData();
+  };
+
+  // placeholder: defina projectFilterConfig em outro lugar
+  // const projectFilterConfig = [...]
 
   const cardsData = [
     {
@@ -208,32 +398,24 @@ const ResquestLIstByProject = ({}) => {
 
   return (
     <>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2 }}>
         <Typography variant="h4">Solicitações</Typography>
 
-        {/* Formulário para filtrar por Tipo de Solicitação */}
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={10}>
-            <FormControl fullWidth>
-              <InputLabel id="request-type-select-label">Tipo Solicitação</InputLabel>
+            <FormControl fullWidth required>
+              <InputLabel id="request-type-select-label">
+                Tipo Solicitação
+              </InputLabel>
               <Select
                 labelId="request-type-select-label"
                 id="request-type-select"
-                multiple
-                value={selectedRequestTypes}
+                value={selectedRequestType ?? ''}
+                label="Tipo Solicitação"
                 onChange={(e) => {
-                  setSelectedRequestTypes(e.target.value);
+                  setSelectedRequestType(e.target.value);
                   setPage(0);
                 }}
-                renderValue={(selected) => (
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                    {selected.map((value) => {
-                      const type = requestTypes.find((t) => t.id === value);
-                      return <Chip key={value} label={type ? type.name : value} />;
-                    })}
-                  </Box>
-                )}
-                label="Tipo Solicitação"
               >
                 {requestTypes.map((type) => (
                   <MenuItem key={type.id} value={type.id}>
@@ -243,10 +425,29 @@ const ResquestLIstByProject = ({}) => {
               </Select>
             </FormControl>
           </Grid>
-          {/* Se necessário, adicione outros filtros ou botões aqui */}
+
+          <Grid item xs={2} sx={{ textAlign: 'right' }}>
+            <Button
+              variant="outlined"
+              sx={{ mt: 1, mb: 2 }}
+              onClick={() => setFilterDrawerOpen(true)}
+            >
+              Abrir Filtros
+            </Button>
+            <GenericFilterDrawer
+              filters={projectFilterConfig}
+              initialValues={filters}
+              open={filterDrawerOpen}
+              onClose={() => setFilterDrawerOpen(false)}
+              onApply={(newFilters) => {
+                setFilters(newFilters);
+                setPage(0);
+              }}
+            />
+          </Grid>
         </Grid>
 
-        <Accordion>
+        {/* <Accordion>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="sale-cards-content"
@@ -255,9 +456,10 @@ const ResquestLIstByProject = ({}) => {
             <Typography variant="h6">Indicadores</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <InforCards cardsData={cardsData} />
+            <InfoCard cardsData={cardsData} />
           </AccordionDetails>
-        </Accordion>
+        </Accordion> */}
+
         <Box
           sx={{
             display: 'flex',
@@ -273,57 +475,29 @@ const ResquestLIstByProject = ({}) => {
           >
             Nova Solicitação
           </Button>
-          {/* Botão de filtros, se necessário */}
-          {/* <Button
-            variant="outlined"
-            startIcon={<FilterAlt />}
-            onClick={toggleRequestDrawer(true)}
-          >
-            Filtros
-          </Button> */}
         </Box>
       </Box>
-
-      {/* <RequestDrawer
-        externalOpen={isFilterOpen}
-        onClose={toggleRequestDrawer(false)}
-        onApplyFilters={handleApplyFilters}
-      /> */}
 
       {loading ? (
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>
-                  <Skeleton variant="text" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton variant="text" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton variant="text" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton variant="text" />
-                </TableCell>
+                {Array.from({ length: 10 }).map((_, idx) => (
+                  <TableCell key={idx}>
+                    <Skeleton variant="text" />
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {Array.from(new Array(rowsPerPage)).map((_, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Skeleton variant="text" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" />
-                  </TableCell>
+              {Array.from({ length: rowsPerPage }).map((_, ridx) => (
+                <TableRow key={ridx}>
+                  {Array.from({ length: 10 }).map((__, cidx) => (
+                    <TableCell key={cidx}>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))}
             </TableBody>
@@ -346,69 +520,97 @@ const ResquestLIstByProject = ({}) => {
                 <TableCell>Status da Solic.</TableCell>
                 <TableCell>Data da Solicitação</TableCell>
                 <TableCell>Data de Conclusão</TableCell>
+                <TableCell>ART/TRT</TableCell>
+                <TableCell>Adequação Fornec.</TableCell>
+                <TableCell>Parecer Acesso</TableCell>
+                <TableCell>Aumento Carga</TableCell>
+                <TableCell>Ajuste Ramal</TableCell>
+                <TableCell>Nova UC</TableCell>
+                <TableCell>Vistoria Final</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {Array.isArray(projectsList) &&
-                projectsList.map((item) => (
-                  <TableRow
-                    key={item.id}
-                    sx={{ cursor: 'pointer' }}
-                    onClick={() => handleEdit(item)}
-                  >
-                    <TableCell>
-                      {item.is_released_to_engineering ? (
-                        <CheckIcon color="success" />
-                      ) : (
-                        <CloseIcon color="error" />
-                      )}
+            {decoratedProjects.map((item) => {
+                const supplyNames =
+                  Array.isArray(item.supply_adquance) && item.supply_adquance.length
+                    ? item.supply_adquance.map((s) => s.name).join(', ')
+                    : '-';
+                return (
+                <TableRow
+                  key={item.id}
+                  sx={{ cursor: 'pointer' }}
+                  onClick={() => handleEdit(item)}
+                >
+                  <TableCell>
+                    {item.is_released_to_engineering ? (
+                      <CheckIcon color="success" />
+                    ) : (
+                      <CloseIcon color="error" />
+                    )}
+                  </TableCell>
+                  <TableCell>{item.project_number || '-'}</TableCell>
+                  <TableCell>
+                    {item.sale?.customer?.complete_name ||
+                      item.sale?.customer?.email ||
+                      '-'}
+                  </TableCell>
+                  <TableCell>
+                    <StatusChip status={item.sale?.status} />
                     </TableCell>
-                    <TableCell>{item.project_number || '-'}</TableCell>
+                  <TableCell>
+                    {item.homologator?.complete_name ||
+                      item.homologator?.email ||
+                      'Não Associado'}
+                  </TableCell>
+                  <TableCell>
+                    {item.latestRequest?.type?.name ||
+                      'Falta solicitação'}
+                  </TableCell>
+                  <TableCell>
+                    {item.latestRequest?.interim_protocol || '-'}
+                  </TableCell>
+                  <TableCell>
+                    <ChipRequest status={item.latestRequest?.status} />
+                  </TableCell>
+                  <TableCell>
+                    {item.latestRequest?.request_date
+                      ? format(
+                          new Date(item.latestRequest.request_date),
+                          'dd/MM/yyyy'
+                        )
+                      : '-'}
+                  </TableCell>
+                  <TableCell>
+                    {item.latestRequest?.conclusion_date
+                      ? format(
+                          new Date(item.latestRequest.conclusion_date),
+                          'dd/MM/yyyy'
+                        )
+                      : '-'}
+                  </TableCell>
                     <TableCell>
-                      {item.sale?.customer?.complete_name ||
-                        item.sale?.customer?.email}
+                      <GenericChip status={item.trt_pending} statusMap={trtStatusMap} />
                     </TableCell>
-                    <TableCell>
-                      <StatusChip status={item.status} />
-                    </TableCell>
-                    <TableCell>
-                      {item.homologator?.complete_name ||
-                        item.homologator?.email ||
-                        'Não Associado'}
-                    </TableCell>
-                    <TableCell>
-                      {item?.requests_energy_company[0]?.type?.name || '-'}
-                    </TableCell>
-                    <TableCell>
-                      {item?.requests_energy_company[0]?.interim_protocol || '-'}
-                    </TableCell>
-                    <TableCell>
-                      <ChipRequest
-                        status={item.requests_energy_company[0]?.status}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      {item.requests_energy_company[0]?.request_date
-                        ? format(
-                            new Date(
-                              item.requests_energy_company[0]?.request_date
-                            ),
-                            'dd/MM/yyyy'
-                          )
-                        : '-'}
-                    </TableCell>
-                    <TableCell>
-                      {item.requests_energy_company[0]?.conclusion_date
-                        ? format(
-                            new Date(
-                              item.requests_energy_company[0]?.conclusion_date
-                            ),
-                            'dd/MM/yyyy'
-                          )
-                        : '-'}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                  <TableCell>{supplyNames}</TableCell>
+                  <TableCell>
+                      <ChipRequestStatus status={item.access_opnion_status} />
+                  </TableCell>
+                  <TableCell>
+                    <ChipRequestStatus status={item.load_increase_status} />
+                  </TableCell>
+                  <TableCell>
+                    <ChipRequestStatus status={item.branch_adjustment_status} />
+                  </TableCell>
+                  <TableCell>
+                    <ChipRequestStatus status={item.new_contact_number_status} />
+                  </TableCell>
+                  <TableCell>
+                    <ChipRequestStatus status={item.final_inspection_status} />
+                  </TableCell>
+                </TableRow>
+                )
+              }
+            )}
             </TableBody>
           </Table>
           <TablePagination
@@ -424,12 +626,10 @@ const ResquestLIstByProject = ({}) => {
         </TableContainer>
       )}
 
-      {/* SideDrawer para edição */}
       <SideDrawer
         title="Editar Solicitação"
         open={openSideDrawer}
         onClose={handleSideDrawerClose}
-        projectId={requestSelected?.id}
       >
         <EditRequestByProject
           projectId={requestSelected?.id}
@@ -439,17 +639,16 @@ const ResquestLIstByProject = ({}) => {
         />
       </SideDrawer>
 
-      {/* Dialog para criação */}
       <Dialog
         open={openAddDialog}
-        onClose={() => setOpenAddDialog(false)}
+        onClose={handleAddDialogClose}
         fullWidth
         maxWidth="lg"
       >
         <DialogTitle>Criar Solicitação</DialogTitle>
         <DialogContent>
           <AddRequestCompany
-            onClosedModal={() => setOpenAddDialog(false)}
+            onClosedModal={handleAddDialogClose}
             onRefresh={refreshData}
           />
         </DialogContent>
