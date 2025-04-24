@@ -17,10 +17,15 @@ import { IconTools } from '@tabler/icons-react';
 import { useSnackbar } from 'notistack';
 import useSaleProductForm from '@/hooks/salesProducts/useSaleProductForm';
 import CustomFieldMoney from '../invoice/components/CustomFieldMoney';
+import HasPermission from '../../permissions/HasPermissions';
+import { useSelector } from 'react-redux';
+import { ca } from 'date-fns/locale';
 
 export default function SaleProductItem({ initialData, productName, onUpdated }) {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
+  const userPermissions = useSelector((state) => state.user.permissions);
+  const canChangeCostValue = userPermissions.includes('resolve_crm.can_change_fineshed_sale');
 
   const {
     formData,
@@ -29,6 +34,8 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
     formErrors,
     loading
   } = useSaleProductForm(initialData, initialData.id);
+
+  console.log('productName', productName);
 
   // dispara o refresh no pai somente após salvar com sucesso
   useEffect(() => {
@@ -81,7 +88,7 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
             >
               <Typography fontWeight={700} fontSize={14}>Produto</Typography>
               <Typography fontWeight={500} fontSize={16} color={'rgba(48, 48, 48, 0.5)'}>
-                {productName || '• sem nome •'}
+                {productName || 'sem nome'}
               </Typography>
             </Grid>
           </Box>
@@ -89,39 +96,45 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
 
         <AccordionDetails>
           <Grid container spacing={2}>
-            {['value', 'cost_value', 'reference_value'].map((field) => (
-              <Grid item xs={12} sm={12} lg={4} key={field}>
-                <Typography fontWeight={700} fontSize={14} gutterBottom>
-                  {{
-                    value: 'Valor',
-                    cost_value: 'Valor de custo',
-                    reference_value: 'Valor de referência'
-                  }[field]}
-                </Typography>
-                <CustomFieldMoney
-                  name={field}
-                  fullWidth
-                  value={formData[field] || ''}
-                  onChange={(v) => handleChange(field, v)}
-                  error={!!formErrors[field]}
-                  helperText={formErrors[field]?.join(', ')}
-                  sx={{
-                    input: {
-                      fontSize: 12,
-                      padding: '12px'
-                    },
-                    '& .MuiOutlinedInput-root': {
-                      border: '1px solid #3E3C41',
-                      borderRadius: '9px',
-                    },
-                    '& .MuiInputBase-input': {
-                      padding: '12px',
-                    },
-                  }}
-                />
-              </Grid>
-            ))}
-            </Grid>
+            {['value', 'cost_value', 'reference_value'].map((field) => {
+              const isCostValue = field === 'cost_value';
+              const disabled = isCostValue && !canChangeCostValue;
+              const fieldValue = disabled ? ' ' : formData[field] || '';
+              return (
+                <Grid item xs={12} sm={12} lg={4} key={field}>
+                  <Typography fontWeight={700} fontSize={14} gutterBottom>
+                    {{
+                      value: 'Valor',
+                      cost_value: 'Valor de custo',
+                      reference_value: 'Valor de referência'
+                    }[field]}
+                  </Typography>
+                  <CustomFieldMoney
+                    name={field}
+                    fullWidth
+                    value={fieldValue}
+                    onChange={(v) => handleChange(field, v)}
+                    error={!!formErrors[field]}
+                    helperText={formErrors[field]?.join(', ')}
+                    disabled={disabled}
+                    sx={{
+                      input: { fontSize: 12, padding: '12px' },
+                      '& .MuiOutlinedInput-root': {
+                        border: '1px solid #3E3C41',
+                        borderRadius: '9px',
+                      },
+                      '& .MuiInputBase-input': { padding: '12px' },
+                    }}
+                  />
+                </Grid>
+              );
+             
+            })}
+          </Grid>
+          <HasPermission
+            permissions={['resolve_crm.can_change_fineshed_sale']}
+            userPermissions={userPermissions}
+          >
             <Grid container xs={12} sx={{ mt: 2, mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
               <Grid item xs={12} sm={12} lg={4} sx={{ textAlign: 'right' }}>
                 <Button
@@ -145,7 +158,8 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
                 </Button>
               </Grid>
             </Grid>
-          
+          </HasPermission>
+
         </AccordionDetails>
       </Accordion>
     </Grid>
