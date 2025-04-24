@@ -17,6 +17,7 @@ import {
   AccordionDetails,
   Skeleton,
   Tooltip,
+  Grid,
 } from '@mui/material';
 import { IconListDetails } from '@tabler/icons-react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -485,138 +486,146 @@ const ProjectList = ({ onClick }) => {
           )}
         </AccordionDetails>
       </Accordion>
-      <Typography variant="h6" gutterBottom>
-        Lista de Projetos
-      </Typography>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          mt: 2,
-          mb: 2,
-        }}
-      >
-        <Button
-          variant="outlined"
-          sx={{ mt: 1, mb: 2 }}
-          onClick={() => setFilterDrawerOpen(true)}
-        >
-          Abrir Filtros
-        </Button>
-        <GenericFilterDrawer
-          filters={projectFilterConfig}
-          initialValues={filters}
-          open={filterDrawerOpen}
-          onClose={() => setFilterDrawerOpen(false)}
-          onApply={(newFilters) => setFilters(newFilters)}
-        />
-      </Box>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Liberado</TableCell>
-              <TableCell>Cliente</TableCell>
-              <TableCell>Etapa Atual</TableCell>
-              {/* <TableCell>Medidor Etapa</TableCell>
+      <Grid container>
+        <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'row', alignContent: 'center', justifyContent: 'space-between' }}>
+        <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
+          <Typography fontSize={14} fontWeight={600}  gutterBottom>
+            Lista de Projetos
+          </Typography>
+          </Grid>
+          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
+          {/* <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              mt: 2,
+              mb: 2,
+            }}
+          > */}
+            <Button
+              variant="outlined"
+              sx={{ mt: 1, mb: 2 }}
+              onClick={() => setFilterDrawerOpen(true)}
+            >
+              Abrir Filtros
+            </Button>
+            <GenericFilterDrawer
+              filters={projectFilterConfig}
+              initialValues={filters}
+              open={filterDrawerOpen}
+              onClose={() => setFilterDrawerOpen(false)}
+              onApply={(newFilters) => setFilters(newFilters)}
+            />
+          
+          </Grid>
+        </Grid>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Liberado</TableCell>
+                <TableCell>Cliente</TableCell>
+                <TableCell>Etapa Atual</TableCell>
+                {/* <TableCell>Medidor Etapa</TableCell>
               <TableCell>Medidor Geral</TableCell> */}
-              <TableCell>Homologador</TableCell>
-              <TableCell>Status da Venda</TableCell>
-              <TableCell>Status Desenho Executivo</TableCell>
-              <TableCell>Status de Homologação</TableCell>
-              <TableCell>Lista de Materiais</TableCell>
-              <TableCell>ART/TRT</TableCell>
-              <TableCell>Solicitação da Conce.</TableCell>
-              <TableCell>Parecer de Acesso</TableCell>
-              <TableCell>Produto</TableCell>
-              <TableCell>Kwp</TableCell>
-            </TableRow>
-          </TableHead>
-          {loadingProjects ? (
-            <TableSkeleton rows={rowsPerPage} columns={12} />
-          ) : error && page === 1 ? (
-            <Typography color="error">{error}</Typography>
-          ) : (
-            <TableBody>
-              {projectsList.map((item) => {
-                const canEdit =
-                  item.is_released_to_engineering ||
-                  hasPermission(['resolve_crm.can_change_unready_project']);
-                return (
-                  <TableRow
-                    key={item.id}
-                    onClick={() => canEdit && onClick(item)}
-                    sx={{
-                      opacity: canEdit ? 1 : 0.5,
-                      pointerEvents: canEdit ? 'auto' : 'none',
-                      '&:hover': canEdit ? { backgroundColor: 'rgba(236, 242, 255, 0.35)' } : {},
-                    }}
-                  >
-                    <TableCell>
-                      {item.is_released_to_engineering ? (
-                        <CheckIcon color="success" />
-                      ) : (
-                        <CloseIcon color="error" />
-                      )}
-                    </TableCell>
-                    <TableCell>{item.sale?.customer?.complete_name}</TableCell>
-                    <TableCell>Venda</TableCell>
-                    {/* <TableCell>
+                <TableCell>Homologador</TableCell>
+                <TableCell>Status da Venda</TableCell>
+                <TableCell>Status Desenho Executivo</TableCell>
+                <TableCell>Status de Homologação</TableCell>
+                <TableCell>Lista de Materiais</TableCell>
+                <TableCell>ART/TRT</TableCell>
+                <TableCell>Solicitação da Conce.</TableCell>
+                <TableCell>Parecer de Acesso</TableCell>
+                <TableCell>Produto</TableCell>
+                <TableCell>Kwp</TableCell>
+              </TableRow>
+            </TableHead>
+            {loadingProjects ? (
+              <TableSkeleton rows={rowsPerPage} columns={12} />
+            ) : error && page === 1 ? (
+              <Typography color="error">{error}</Typography>
+            ) : (
+              <TableBody>
+                {projectsList.map((item) => {
+                  const canEdit =
+                    item.is_released_to_engineering ||
+                    hasPermission(['resolve_crm.can_change_unready_project']);
+                  return (
+                    <TableRow
+                      key={item.id}
+                      onClick={() => canEdit && onClick(item)}
+                      sx={{
+                        opacity: canEdit ? 1 : 0.5,
+                        pointerEvents: canEdit ? 'auto' : 'none',
+                        '&:hover': canEdit ? { backgroundColor: 'rgba(236, 242, 255, 0.35)' } : {},
+                      }}
+                    >
+                      <TableCell>
+                        {item.is_released_to_engineering ? (
+                          <CheckIcon color="success" />
+                        ) : (
+                          <CloseIcon color="error" />
+                        )}
+                      </TableCell>
+                      <TableCell>{item.sale?.customer?.complete_name}</TableCell>
+                      <TableCell>Venda</TableCell>
+                      {/* <TableCell>
                       <Typography sx={{ width: '90px' }}>{getProgressColor(0.5)}</Typography>
                       </TableCell>
                       <TableCell>
                       <Typography sx={{ width: '90px' }}>{getProgressColor(1)}</Typography>
                       </TableCell> */}
-                    <TableCell>{item.homologator?.complete_name || '-'}</TableCell>
+                      <TableCell>{item.homologator?.complete_name || '-'}</TableCell>
                       <TableCell>
                         <DocumentStatusChip status={item?.sale?.status} />
                       </TableCell>
-                    <TableCell>
-                      <ChipProject status={item.designer_status} />
-                    </TableCell>
-                    <TableCell>
-                      <StatusChip status={item.status} />
-                    </TableCell>
-                    <TableCell>
-                      {item.material_list_is_completed ? (
-                        <CheckIcon color="success" />
-                      ) : (
-                        <CloseIcon color="error" />
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <GenericChip status={item.trt_pending} statusMap={trtStatusMap} />
-                    </TableCell>
-                    <TableCell>
-                      {item.peding_request ? (
-                        <CheckIcon color="success" />
-                      ) : (
-                        <CloseIcon color="error" />
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <GenericChip status={item.access_opnion} statusMap={accessOpinionStatusMap} />
-                    </TableCell>
-                    <TableCell>{item.product?.name}</TableCell>
-                    <TableCell>{item.product?.params || '-'}</TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          )}
-        </Table>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={totalRows}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handlePageChange}
-          onRowsPerPageChange={handleRowsPerPageChange}
-          labelRowsPerPage="Linhas por página"
-        />
-      </TableContainer>
+                      <TableCell>
+                        <ChipProject status={item.designer_status} />
+                      </TableCell>
+                      <TableCell>
+                        <StatusChip status={item.status} />
+                      </TableCell>
+                      <TableCell>
+                        {item.material_list_is_completed ? (
+                          <CheckIcon color="success" />
+                        ) : (
+                          <CloseIcon color="error" />
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <GenericChip status={item.trt_pending} statusMap={trtStatusMap} />
+                      </TableCell>
+                      <TableCell>
+                        {item.peding_request ? (
+                          <CheckIcon color="success" />
+                        ) : (
+                          <CloseIcon color="error" />
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <GenericChip status={item.access_opnion} statusMap={accessOpinionStatusMap} />
+                      </TableCell>
+                      <TableCell>{item.product?.name}</TableCell>
+                      <TableCell>{item.product?.params || '-'}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            )}
+          </Table>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={totalRows}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handlePageChange}
+            onRowsPerPageChange={handleRowsPerPageChange}
+            labelRowsPerPage="Linhas por página"
+          />
+        </TableContainer>
+      </Grid>
     </>
   );
 };
