@@ -17,7 +17,8 @@ import Comment from '@/app/components/apps/comment';
 import LogisticsTab from './logistics/LogisticsTab';
 import InstallationsTab from './installations/InstallationsTab';
 import CommentsTab from './Comments/CommentsTab';
-import History from '../../../history';
+import HomologationTab from './Homologation/HomologationTab';
+import RequestList from '../../../request/Request-list';
 
 function TabPanel({ children, value, index }) {
     return (
@@ -123,7 +124,10 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
             <TabPanel value={tab} index={6}>
                 <InstallationsTab projectId={projectId} />
             </TabPanel>
-            <TabPanel value={tab} index={7}><Typography>Conteúdo Homologação</Typography></TabPanel>
+            <TabPanel value={tab} index={7}>
+                {/* <HomologationTab projectId={projectId} /> */}
+                <RequestList projectId={projectId} enableFilters={false} enableIndicators={false} />
+            </TabPanel>
             <TabPanel value={tab} index={8}>
                 <History objectId={projectId} appLabel="resolve_crm" model="project" />
             </TabPanel>
