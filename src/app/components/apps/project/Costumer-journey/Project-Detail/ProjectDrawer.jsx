@@ -14,6 +14,9 @@ import EditProjectTab from '../../Edit-project/tabs/EditProject';
 import UploadDocument from '../../UploadDocument';
 import AttachmentTable from '../../../attachment/attachmentTable';
 import Comment from '@/app/components/apps/comment';
+import LogisticsTab from './logistics/LogisticsTab';
+import InstallationsTab from './installations/InstallationsTab';
+import CommentsTab from './Comments/CommentsTab';
 
 function TabPanel({ children, value, index }) {
     return (
@@ -49,7 +52,8 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
         try {
             const [proj, proc] = await Promise.all([
                 projectService.find(projectId, {
-                    fields: 'id,sale',
+                    fields: 'id,sale,project_number,customer.complete_name',
+                    expand: 'sale.customer',
                 }),
                 processService.getProcessByObjectId('resolve_crm', 'project', projectId)
                     .then(({ id }) => id)
@@ -80,7 +84,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
 
     const tabs = [
         'Vistoria', 'Contratos', 'Financeiro', 'Engenharia', 'Anexos',
-        'Logística', 'Instalação', 'Homologação', 'Histórico'
+        'Logística', 'Instalação', 'Homologação', 'Histórico', 'Comentários',
     ];
 
     const projectInfoTabs = (
@@ -112,14 +116,22 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
                 <Typography variant="h6" sx={{ my: 3 }}>Anexos da Venda</Typography>
                 <AttachmentTable appLabel="resolve_crm" model="sale" objectId={project?.sale} />
             </TabPanel>
-            <TabPanel value={tab} index={5}><Typography>Conteúdo Logística</Typography></TabPanel>
-            <TabPanel value={tab} index={6}><Typography>Conteúdo Instalação</Typography></TabPanel>
+            <TabPanel value={tab} index={5}>
+                <LogisticsTab projectId={projectId} />
+            </TabPanel>
+            <TabPanel value={tab} index={6}>
+                <InstallationsTab projectId={projectId} />
+            </TabPanel>
             <TabPanel value={tab} index={7}><Typography>Conteúdo Homologação</Typography></TabPanel>
             <TabPanel value={tab} index={8}>
-                <Typography variant="h6" sx={{ mb: 3 }}>Comentários do Projeto</Typography>
+                <Typography>Conteúdo Histórico</Typography>
+            </TabPanel>
+            <TabPanel value={tab} index={9}>
+                {/* <Typography variant="h6" sx={{ mb: 3 }}>Comentários do Projeto</Typography>
                 <Comment appLabel="resolve_crm" model="project" objectId={projectId} />
                 <Typography variant="h6" sx={{ my: 3 }}>Comentários da Venda</Typography>
-                <Comment appLabel="resolve_crm" model="sale" objectId={project?.sale} />
+                <Comment appLabel="resolve_crm" model="sale" objectId={project?.sale} /> */}
+                <CommentsTab projectId={projectId} />
             </TabPanel>
         </Box>
     );
@@ -132,7 +144,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
             PaperProps={{ sx: { width: drawerWidth, zIndex: 1300, display: 'flex', flexDirection: 'column' } }}
         >
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, bgcolor: 'grey.100' }}>
-                <Typography variant="h5">Detalhes do Projeto</Typography>
+                <Typography variant="h5">Detalhes do Projeto nº {project?.project_number} - {project?.sale?.customer?.complete_name}</Typography>
                 <IconButton onClick={handleClose}><CloseIcon /></IconButton>
             </Box>
 

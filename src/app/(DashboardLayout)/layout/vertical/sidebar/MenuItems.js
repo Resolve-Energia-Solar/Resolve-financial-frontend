@@ -36,40 +36,40 @@ import { permission } from 'process';
 import { id } from 'date-fns/locale';
 
 const Menuitems = [
-  {
-    id: uniqueId(),
-    title: 'CRM',
-    href: '/',
-    icon: IconBriefcase2,
-    href: '/apps/kanban/',
-    permissions: ['core.view_board', 'resolve_crm.view_lead'],
-    children: [
-      {
-        id: uniqueId(),
-        title: 'Kanban',
-        icon: IconLayoutKanban,
-        href: '/apps/kanban/',
-        permissions: ['core.view_board'],
-      },
-      {
-        id: uniqueId(),
-        title: 'Leads',
-        icon: IconId,
-        href: '/apps/leads',
-        permissions: ['resolve_crm.view_lead'],
-      },
-      {
-        id: uniqueId(),
-        title: 'Agendamentos',
-        icon: IconCalendarStar,
-        href: '/apps/commercial/schedules',
-        permissions: ['resolve_crm.view_lead'],
-      },
-    ],
-    chip: 'Novo',
-    chipColor: 'secondary',
-    permissions: ['core.view_board'],
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: 'CRM',
+  //   href: '/',
+  //   icon: IconBriefcase2,
+  //   href: '/apps/kanban/',
+  //   permissions: ['core.view_board', 'resolve_crm.view_lead'],
+  //   children: [
+  //     {
+  //       id: uniqueId(),
+  //       title: 'Kanban',
+  //       icon: IconLayoutKanban,
+  //       href: '/apps/kanban/',
+  //       permissions: ['core.view_board'],
+  //     },
+  //     {
+  //       id: uniqueId(),
+  //       title: 'Leads',
+  //       icon: IconId,
+  //       href: '/apps/leads',
+  //       permissions: ['resolve_crm.view_lead'],
+  //     },
+  //     {
+  //       id: uniqueId(),
+  //       title: 'Agendamentos',
+  //       icon: IconCalendarStar,
+  //       href: '/apps/commercial/schedules',
+  //       permissions: ['field_services.view_lead'],
+  //     },
+  //   ],
+  //   chip: 'Novo',
+  //   chipColor: 'secondary',
+  //   permissions: ['core.view_board'],
+  // },
   {
     id: uniqueId(),
     title: 'Serviços de Campo',
@@ -155,21 +155,28 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Jornada do cliente',
+    icon: IconRuler,
+    href: '/apps/project',
+    permissions: ['resolve_crm.view_project'],
+  },
+  {
+    id: uniqueId(),
     title: 'Engenharia',
     icon: IconTools,
     href: '',
     permissions: ['resolve_crm.view_project'],
     children: [
+      // {
+      //   id: uniqueId(),
+      //   title: 'Jornada do cliente',
+      //   icon: IconRuler,
+      //   href: '/apps/project',
+      //   permissions: ['resolve_crm.view_project'],
+      // },
       {
         id: uniqueId(),
-        title: 'Projetos',
-        icon: IconRuler,
-        href: '/apps/project',
-        permissions: ['resolve_crm.view_project'],
-      },
-      {
-        id: uniqueId(),
-        title: 'Solicitações',
+        title: 'Homologação',
         icon: IconFileArrowRight,
         href: '/apps/request',
         permissions: ['resolve_crm.view_project'],
