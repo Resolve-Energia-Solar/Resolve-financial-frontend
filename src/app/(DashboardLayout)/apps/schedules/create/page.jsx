@@ -25,6 +25,8 @@ import scheduleService from '@/services/scheduleService';
 import { useSnackbar } from 'notistack';
 import AutoCompleteUserSchedule from '@/app/components/apps/inspections/auto-complete/Auto-input-UserSchedule';
 import { formatDate } from '@/utils/dateUtils';
+import AddUser from '@/app/components/apps/users/Add-user/addUser';
+import CreateAddressPage from '@/app/components/apps/address/Add-address';
 
 const CreateSchedulePage = () => {
   const router = useRouter();
@@ -73,7 +75,16 @@ const CreateSchedulePage = () => {
     setLoading(true);
     setError('');
 
-    const requiredFields = ['schedule_date', 'schedule_start_time', 'schedule_end_date', 'schedule_end_time', 'service', 'customer', 'branch', 'address'];
+    const requiredFields = [
+      'schedule_date',
+      'schedule_start_time',
+      'schedule_end_date',
+      'schedule_end_time',
+      'service',
+      'customer',
+      'branch',
+      'address',
+    ];
 
     for (const field of requiredFields) {
       if (!formData[field]) {
@@ -105,7 +116,7 @@ const CreateSchedulePage = () => {
       if (err.response && err.response.data && typeof err.response.data === 'object') {
         if ('available_time' in err.response.data) {
           const { message, available_time } = err.response.data;
-          const timeSlots = available_time.map(slot => (
+          const timeSlots = available_time.map((slot) => (
             <li key={`${slot.start}-${slot.end}`}>
               {slot.start} - {slot.end}
             </li>
@@ -116,7 +127,7 @@ const CreateSchedulePage = () => {
               <Typography variant="body2">Horários disponíveis:</Typography>
               <ul>{timeSlots}</ul>
             </div>,
-            { variant: 'warning' }
+            { variant: 'warning' },
           );
         } else {
           Object.entries(err.response.data).forEach(([field, messages]) => {
@@ -180,6 +191,8 @@ const CreateSchedulePage = () => {
   const formatCurrency = (value) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
+  console.log('formData', formData);
+
   return (
     <PageContainer
       title="Criar Agendamento"
@@ -191,7 +204,7 @@ const CreateSchedulePage = () => {
           <Typography variant="h5" gutterBottom marginBottom={4}>
             Criar Agendamento
           </Typography>
-          
+
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <GenericAsyncAutocompleteInput
@@ -506,6 +519,19 @@ const CreateSchedulePage = () => {
                         disabled
                         helperText={errors.customer?.[0] || ''}
                         error={!!errors.customer}
+                        renderCreateModal={({ onClose }) => (
+                          <AddUser
+                            hideSaveButton={false}
+                            onClose={onClose}
+                            onUserSaved={user => {
+                              setFormData({
+                                ...formData,
+                                customer: { label: user.complete_name, value: user.id },
+                              });
+                              onClose();
+                            }}
+                          />
+                        )}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -532,7 +558,7 @@ const CreateSchedulePage = () => {
                         onChange={(newValue) => setFormData({ ...formData, product: newValue })}
                         endpoint="/api/products/"
                         queryParam="name__icontains"
-                        extraParams={{ fields: ['id', 'description', 'name'] }}
+                        extraParams={{ fields: ['id', 'description', 'name'], default__in: 'S' }}
                         mapResponse={(data) =>
                           data.results.map((p) => ({ label: p.description || p.name, value: p.id }))
                         }
@@ -549,7 +575,10 @@ const CreateSchedulePage = () => {
                         onChange={(newValue) => setFormData({ ...formData, address: newValue })}
                         endpoint="/api/addresses"
                         queryParam="q"
-                        extraParams={{ fields: ['id', 'complete_address'], customer_id: formData.customer?.value || '' }}
+                        extraParams={{
+                          fields: ['id', 'complete_address'],
+                          customer_id: formData.customer?.value || '',
+                        }}
                         mapResponse={(data) =>
                           data.results.map((a) => ({ label: a.complete_address, value: a.id }))
                         }
@@ -581,6 +610,19 @@ const CreateSchedulePage = () => {
                     fullWidth
                     helperText={errors.customer?.[0] || ''}
                     error={!!errors.customer}
+                    renderCreateModal={({ onClose }) => (
+                      <AddUser
+                        hideSaveButton={false}
+                        onClose={onClose}
+                        onUserSaved={user => {
+                          setFormData({
+                            ...formData,
+                            customer: { label: user.complete_name, value: user.id },
+                          });
+                          onClose();
+                        }}
+                      />
+                    )}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -622,7 +664,10 @@ const CreateSchedulePage = () => {
                     onChange={(newValue) => setFormData({ ...formData, address: newValue })}
                     endpoint="/api/addresses"
                     queryParam="q"
-                    extraParams={{ fields: ['id', 'complete_address'], customer_id: formData.customer?.value || '' }}
+                    extraParams={{
+                      fields: ['id', 'complete_address'],
+                      customer_id: formData.customer?.value || '',
+                    }}
                     mapResponse={(data) =>
                       data.results.map((a) => ({ label: a.complete_address, value: a.id }))
                     }
@@ -630,87 +675,109 @@ const CreateSchedulePage = () => {
                     helperText={errors.address?.[0] || ''}
                     error={!!errors.address}
                     required
+                    renderCreateModal={({ open, onClose }) =>
+                      <CreateAddressPage
+                        open={open}
+                        onClose={onClose}
+                        userId={formData.customer?.value}
+                        onAdd={created => {
+                          handleChange('address', created);
+                          onClose();
+                        }}
+                      />
+                    }
                   />
                 </Grid>
               </>
             )}
 
-            {(formData.customer || formData.project) && <Grid item xs={12} sm={6}>
-              <GenericAsyncAutocompleteInput
-                label="Serviços Relacionados"
-                value={formData.parent_schedules}
-                onChange={(newValue) => setFormData({ ...formData, parent_schedules: newValue })}
-                endpoint="/api/schedule"
-                queryParam="q"
-                extraParams={{
-                  fields:
-                    'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,status,service,customer.complete_name,address.complete_address,schedule_agent.complete_name,branch.name,service_opinion,final_service_opinion',
-                  expand: 'customer,schedule_agent,service,address,final_service_opinion,service_opinion,branch',
-                  customer: formData.customer?.value || '',
-                  project: formData.project?.value || '',
-                  customer_project_or: true
-                }}
-                mapResponse={(data) => {
-                  return data.results.map((s) => ({
-                    label: `${s.service?.name || ''} nº ${s.protocol} - ${s.customer?.complete_name || ''} - ${s.schedule_date} ${s.schedule_start_time.toLocaleString()}`,
-                    value: s.id,
-                    ...s,
-                  }));
-                }}
-                renderOption={(props, option) => (
-                  <li {...props}>
-                    <Box
-                      sx={{ p: 1, display: 'flex', flexDirection: 'column' }}
-                    >
-                      <Typography variant="subtitle2">
-                        <strong>Protocolo:</strong> {option.protocol}
-                      </Typography>
-                      <Typography variant="body1">
-                        <strong>Início:</strong> {formatDate(option.schedule_date)} {option.schedule_start_time.toLocaleString()} | <strong>Término:</strong> {formatDate(option.schedule_end_date)} {option.schedule_end_time.toLocaleString()}
-                      </Typography>
-                      {option.customer && <Typography variant="body1">
-                        <strong>Cliente:</strong> {option.customer?.complete_name}
-                      </Typography>}
-                      {option.service && (
-                        <Typography variant="body1">
-                          <strong>Serviço:</strong> {option.service.name}
+            {(formData.customer || formData.project) && (
+              <Grid item xs={12} sm={6}>
+                <GenericAsyncAutocompleteInput
+                  label="Serviços Relacionados"
+                  value={formData.parent_schedules}
+                  onChange={(newValue) => setFormData({ ...formData, parent_schedules: newValue })}
+                  endpoint="/api/schedule"
+                  queryParam="q"
+                  extraParams={{
+                    fields:
+                      'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,status,service,customer.complete_name,address.complete_address,schedule_agent.complete_name,branch.name,service_opinion,final_service_opinion',
+                    expand:
+                      'customer,schedule_agent,service,address,final_service_opinion,service_opinion,branch',
+                    customer: formData.customer?.value || '',
+                    project: formData.project?.value || '',
+                    customer_project_or: true,
+                  }}
+                  mapResponse={(data) => {
+                    return data.results.map((s) => ({
+                      label: `${s.service?.name || ''} nº ${s.protocol} - ${
+                        s.customer?.complete_name || ''
+                      } - ${s.schedule_date} ${s.schedule_start_time.toLocaleString()}`,
+                      value: s.id,
+                      ...s,
+                    }));
+                  }}
+                  renderOption={(props, option) => (
+                    <li {...props}>
+                      <Box sx={{ p: 1, display: 'flex', flexDirection: 'column' }}>
+                        <Typography variant="subtitle2">
+                          <strong>Protocolo:</strong> {option.protocol}
                         </Typography>
-                      )}
-                      {option.schedule_agent && <Typography variant="body1">
-                        <strong>Agente:</strong> {option.schedule_agent.complete_name}
-                      </Typography>
-                      }
-                      <Typography variant="body1"><strong>Status:</strong> {option.status}</Typography>
-                      {option.address && (
                         <Typography variant="body1">
-                          <strong>Endereço:</strong> {option.address.complete_address}
+                          <strong>Início:</strong> {formatDate(option.schedule_date)}{' '}
+                          {option.schedule_start_time.toLocaleString()} | <strong>Término:</strong>{' '}
+                          {formatDate(option.schedule_end_date)}{' '}
+                          {option.schedule_end_time.toLocaleString()}
                         </Typography>
-                      )}
-                      {option.branch && option.branch.name && (
+                        {option.customer && (
+                          <Typography variant="body1">
+                            <strong>Cliente:</strong> {option.customer?.complete_name}
+                          </Typography>
+                        )}
+                        {option.service && (
+                          <Typography variant="body1">
+                            <strong>Serviço:</strong> {option.service.name}
+                          </Typography>
+                        )}
+                        {option.schedule_agent && (
+                          <Typography variant="body1">
+                            <strong>Agente:</strong> {option.schedule_agent.complete_name}
+                          </Typography>
+                        )}
                         <Typography variant="body1">
-                          <strong>Filial:</strong> {option.branch.name}
+                          <strong>Status:</strong> {option.status}
                         </Typography>
-                      )}
-                      {option.service_opinion && option.service_opinion.name && (
-                        <Typography variant="body1">
-                          <strong>Parecer de Serviço:</strong> {option.service_opinion.name}
-                        </Typography>
-                      )}
-                      {option.final_service_opinion && option.final_service_opinion.name && (
-                        <Typography variant="body1">
-                          <strong>Parecer Final:</strong> {option.final_service_opinion.name}
-                        </Typography>
-                      )}
-                    </Box>
-                  </li>
-                )}
-                helperText={errors.parent_schedules?.[0] || ''}
-                error={!!errors.parent_schedules}
-                fullWidth
-                multiselect
-                required
-              />
-            </Grid>}
+                        {option.address && (
+                          <Typography variant="body1">
+                            <strong>Endereço:</strong> {option.address.complete_address}
+                          </Typography>
+                        )}
+                        {option.branch && option.branch.name && (
+                          <Typography variant="body1">
+                            <strong>Filial:</strong> {option.branch.name}
+                          </Typography>
+                        )}
+                        {option.service_opinion && option.service_opinion.name && (
+                          <Typography variant="body1">
+                            <strong>Parecer de Serviço:</strong> {option.service_opinion.name}
+                          </Typography>
+                        )}
+                        {option.final_service_opinion && option.final_service_opinion.name && (
+                          <Typography variant="body1">
+                            <strong>Parecer Final:</strong> {option.final_service_opinion.name}
+                          </Typography>
+                        )}
+                      </Box>
+                    </li>
+                  )}
+                  helperText={errors.parent_schedules?.[0] || ''}
+                  error={!!errors.parent_schedules}
+                  fullWidth
+                  multiselect
+                  required
+                />
+              </Grid>
+            )}
 
             <Grid item xs={12}>
               <TextField
