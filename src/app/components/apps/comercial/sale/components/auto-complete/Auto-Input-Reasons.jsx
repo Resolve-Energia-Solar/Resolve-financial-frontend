@@ -20,20 +20,16 @@ export default function AutoCompleteReasonMultiple({
   const [selectedReasons, setSelectedReasons] = useState([]);
   const [refresh, setRefresh] = useState(false);
 
-  // Mantém localmente a prop "value" (array de IDs)
   const [valuesDefault, setValuesDefault] = useState(value);
 
-  // Atualiza o state local sempre que "value" mudar externamente
   useEffect(() => {
     setValuesDefault(value);
   }, [value]);
 
-  // Busca as razões padrão pelo ID para popular o "selectedReasons"
   useEffect(() => {
     const fetchDefaultReasons = async () => {
       if (valuesDefault.length > 0) {
         try {
-          // Utiliza findOne para buscar um único registro
           const reasons = await Promise.all(valuesDefault.map((id) => serviceReason.find(id)));
           const formattedReasons = reasons.map((reason) => ({
             id: reason.id,
@@ -49,18 +45,15 @@ export default function AutoCompleteReasonMultiple({
     fetchDefaultReasons();
   }, [valuesDefault, refresh]);
 
-  // Função para forçar atualização, se necessário
   const refreshReasons = () => {
     setRefresh(!refresh);
   };
 
-  // Atualiza a seleção e retorna somente os IDs para o componente pai
   const handleChange = (event, newValue) => {
     setSelectedReasons(newValue);
     onChange(newValue.map((reason) => reason.id));
   };
 
-  // Busca razões pelo nome com debounce
   const fetchReasonsByName = useCallback(
     debounce(async (name) => {
       if (!name) {
@@ -69,7 +62,7 @@ export default function AutoCompleteReasonMultiple({
       }
       setLoading(true);
       try {
-        const reasons = await serviceReason.index({ name__icontains: name, limit: 5, page: 1 });
+        const reasons = await serviceReason.index({ name__icontains: name, limit: 30, page: 1 });
         if (reasons && reasons.results) {
           const formattedReasons = reasons.results.map((reason) => ({
             id: reason.id,
@@ -85,11 +78,10 @@ export default function AutoCompleteReasonMultiple({
     [],
   );
 
-  // Busca inicial ao abrir o dropdown (limitado a 5 itens)
   const fetchInitialReasons = useCallback(async () => {
     setLoading(true);
     try {
-      const reasons = await serviceReason.index({ limit: 5, page: 1 });
+      const reasons = await serviceReason.index({ limit: 30, page: 1 });
       if (reasons && reasons.results) {
         const formattedReasons = reasons.results.map((reason) => ({
           id: reason.id,

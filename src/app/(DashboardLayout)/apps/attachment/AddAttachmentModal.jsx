@@ -14,7 +14,12 @@ const AddAttachmentModal = ({
   onAddAttachment,
   showFields = { description: true },
 }) => {
-  const [newAttachment, setNewAttachment] = useState({ file: null, description: '' });
+  const [newAttachment, setNewAttachment] = useState({
+    file: null,
+    description: '',
+    document_type: '',
+    document_subtype: ''
+  });
   const [dragOver, setDragOver] = useState(false);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
@@ -51,7 +56,7 @@ const AddAttachmentModal = ({
   };
 
   const handleSaveAttachment = async () => {
-    if (!newAttachment.file || !newAttachment.document_type_id) {
+    if (!newAttachment.file || !newAttachment.document_type) {
       enqueueSnackbar('O tipo de documento e o arquivo são obrigatórios.', { variant: 'warning' });
       return;
     }
@@ -62,16 +67,16 @@ const AddAttachmentModal = ({
         formData.append('file', newAttachment.file);
         formData.append('description', newAttachment.description);
         formData.append('object_id', objectId);
-        formData.append('content_type_id', contentType);
-        formData.append('document_type_id', '');
-        formData.append('document_subtype_id', '');
+        formData.append('content_type', contentType);
+        formData.append('document_type', newAttachment.document_type);
+        formData.append('document_subtype', newAttachment.document_subtype);
         formData.append('status', '');
         try {
           const response = await attachmentService.create(formData);
           onAddAttachment(response);
         } catch (error) {
           console.error('Erro ao salvar anexo:', error);
-          enqueueSnackbar('Erro ao salvar anexo: ' + error.message, { variant: 'error' });
+          enqueueSnackbar('Erro ao salvar anexo: ', error.message, { variant: 'error' });
         }
       } else {
         onAddAttachment(newAttachment);
@@ -137,10 +142,10 @@ const AddAttachmentModal = ({
         )}
         <DocumentTypeSelect
           appLabel={appLabel}
-          formData={newAttachment}
+          documentType={newAttachment.document_type}
+          documentSubtype={newAttachment.document_subtype}
           handleChange={handleAttachmentChange}
         />
-        {/* Exibe o campo de descrição apenas se estiver ativado */}
         {showFields.description && (
           <TextField
             fullWidth

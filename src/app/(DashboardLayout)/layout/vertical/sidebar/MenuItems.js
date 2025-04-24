@@ -63,7 +63,7 @@ const Menuitems = [
         title: 'Agendamentos',
         icon: IconCalendarStar,
         href: '/apps/commercial/schedules',
-        permissions: ['field_services.view_lead'],
+        permissions: ['resolve_crm.view_lead'],
       },
     ],
     chip: 'Novo',

@@ -304,6 +304,23 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
               </Grid>
             </Grid>
             <Divider sx={{ my: 3 }} />
+            {currentRecord.bank_details && (
+              <Grid item xs={12} md={6}>
+                <Typography>
+                  <strong>Dados Bancários:</strong>{' '}
+                  {currentRecord.bank_details.account_type === 'X'
+                    ? `PIX (${{
+                      CPF: 'CPF',
+                      CNPJ: 'CNPJ',
+                      EMAIL: 'E-mail',
+                      PHONE: 'Celular/Telefone',
+                      RANDOM: 'Chave Aleatória'
+                    }[currentRecord.bank_details.pix_key_type]}): ${currentRecord.bank_details.pix_key}`
+                    : `${currentRecord.bank_details.financial_instituition} Ag: ${currentRecord.bank_details.agency_number} Conta: ${currentRecord.bank_details.account_number}`}
+                </Typography>
+              </Grid>
+            )}
+            <Divider sx={{ my: 3 }} />
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <Typography>

@@ -34,7 +34,7 @@ function SchedulesInspections({ saleId, userId }) {
       setCustomerId(userId);
     }
   }, [projectsList]);
-
+  
   if (loading) {
     return <ChecklistSalesSkeleton />;
   }

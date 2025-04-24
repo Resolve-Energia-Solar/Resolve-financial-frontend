@@ -22,6 +22,8 @@ export default function AttachmentDetails({ objectId, contentType }) {
           object_id: objectId,
           content_type: contentType,
           limit: 30,
+          expand: 'document_type',
+          fields: 'id,name,description,file,document_type',
         });
         setAttachments(response.results);
       } catch (error) {

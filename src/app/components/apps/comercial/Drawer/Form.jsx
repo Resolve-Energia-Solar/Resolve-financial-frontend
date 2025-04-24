@@ -38,8 +38,7 @@ import HasPermission from '@/app/components/permissions/HasPermissions';
 import ParentCard from '@/app/components/shared/ParentCard';
 import a11yProps from '@/utils/a11yProps';
 import TabPanel from '../../commission/TabPainel';
-
-const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
+import getContentType from '@/utils/getContentType';
 
 const EditDrawer = ({ saleId = null, onClosedModal = null, refresh }) => {
   const params = useParams();
@@ -49,6 +48,18 @@ const EditDrawer = ({ saleId = null, onClosedModal = null, refresh }) => {
   const userPermissions = useSelector((state) => state.user.permissions);
 
   const [openPreview, setOpenPreview] = useState(false);
+
+  const [saleContentTypeId, setSaleContentTypeId] = useState(null);
+
+  useEffect(() => {
+    getContentType('resolve_crm', 'sale')
+      .then((contentTypeId) => {
+        setSaleContentTypeId(contentTypeId);
+      })
+      .catch((error) => {
+        console.error('Error fetching content type ID:', error);
+      });
+  }, []);
 
   const hasPermission = (permissions) => {
     if (!permissions) return true;
@@ -256,7 +267,7 @@ const EditDrawer = ({ saleId = null, onClosedModal = null, refresh }) => {
               </TabPanel>
               <TabPanel value={value} index={2}>
                 <Attachments
-                  contentType={CONTEXT_TYPE_SALE_ID}
+                  contentType={saleContentTypeId}
                   objectId={id_sale}
                   documentTypes={documentTypes}
                 />

@@ -432,6 +432,10 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
         </Grid>
 
         {/* Parecer de Serviço */}
+        <HasPermission
+          permissions={['field_services.change_final_service_opinion']}
+          userPermissions={userPermissions}
+        >
         <Grid item xs={12} sm={6} lg={6}>
           <CustomFormLabel htmlFor="service_opinion_id">Parecer de serviço</CustomFormLabel>
           <Chip
@@ -443,6 +447,7 @@ const ScheduleFormEdit = ({ scheduleId = null, onClosedModal = null, onRefresh =
             color="primary"
           />
         </Grid>
+        </HasPermission>
 
         {/* Botão de Ação */}
         <Grid item xs={12} sm={12} lg={12}>

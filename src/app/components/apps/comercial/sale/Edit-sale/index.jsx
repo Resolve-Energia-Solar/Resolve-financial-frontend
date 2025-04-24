@@ -26,7 +26,7 @@ import { useSelector } from 'react-redux';
 import FormPageSkeleton from '@/app/components/apps/comercial/sale/components/FormPageSkeleton';
 import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import PaymentCard from '@/app/components/apps/invoice/components/paymentList/card';
 import documentTypeService from '@/services/documentTypeService';
 import Attachments from '@/app/components/shared/Attachments';
@@ -43,8 +43,10 @@ import Customer from '../../../sale/Customer';
 import Phones from '../../../sale/phones';
 import Addresses from '../../../sale/Adresses';
 import useCanEditUser from '@/hooks/users/userCanEdit';
-
-const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import productService from '@/services/productsService';
+import SaleProductItem from '../../../saleProduct/SaleProductItem';
+import getContentType from '@/utils/getContentType';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -99,6 +101,8 @@ const EditSaleTabs = ({
 
   const { loading, error, saleData, fetchSale } = useSale(id);
 
+  console.log('saleData', saleData);
+
   const {
     formData,
     handleChange,
@@ -109,9 +113,27 @@ const EditSaleTabs = ({
     success,
   } = useSaleForm(saleData, id);
 
+  const [saleContentTypeId, setSaleContentTypeId] = useState(null);
+
+  useEffect(() => {
+    getContentType('resolve_crm', 'sale')
+      .then((contentTypeId) => {
+        setSaleContentTypeId(contentTypeId);
+      })
+      .catch((error) => {
+        console.error('Error fetching content type ID:', error);
+      });
+  }, []);
+
   const [documentTypes, setDocumentTypes] = useState([]);
 
-  const { formattedValue, handleValueChange } = useCurrencyFormatter(formData.totalValue);
+  const { formattedValue, numericValue, handleValueChange } = useCurrencyFormatter(
+    formData.totalValue,
+    (newValue) => handleChange('totalValue', newValue)
+  );
+
+  console.log('formattedValue', formattedValue);
+  console.log('formData', formData);
 
   const statusOptions = [
     { value: 'P', label: 'Pendente' },
@@ -146,6 +168,7 @@ const EditSaleTabs = ({
         console.log('Error: ', error);
       }
     };
+
     fetchData();
   }, []);
 
@@ -157,6 +180,29 @@ const EditSaleTabs = ({
       }
     }
   }, [successData, success]);
+
+  const [productNames, setProductNames] = useState({});
+
+  useEffect(() => {
+    const fetchProductName = async (productId, index) => {
+      if (productId) {
+        try {
+          const product = await productService.find(productId);
+          setProductNames((prev) => ({
+            ...prev,
+            [index]: product.name,
+          }));
+        } catch (error) {
+          console.error('Error fetching product:', error);
+        }
+      }
+    };
+    saleData?.sale_products.forEach((saleProduct, index) => {
+      fetchProductName(saleProduct.product, index);
+    });
+  }, [saleData?.sale_products]);
+
+  console.log('productNames', productNames);
 
   return (
     <Box {...props}>
@@ -303,16 +349,16 @@ const EditSaleTabs = ({
                 <Grid item xs={12} sm={12} lg={4}>
                   <CustomFormLabel htmlFor="valor">Valor</CustomFormLabel>
                   <CustomTextField
-                    name="total_value"
+                    name="totalValue"
                     placeholder="R$ 20.000,00"
                     variant="outlined"
                     fullWidth
                     value={formattedValue}
                     disabled={!hasPermission(['accounts.change_total_value_field'])}
-                    onChange={(e) => handleValueChange(e, handleChange)}
-                    {...(formErrors.total_value && {
+                    onChange={handleValueChange}
+                    {...(formErrors.totalValue && {
                       error: true,
-                      helperText: formErrors.total_value,
+                      helperText: formErrors.totalValue,
                     })}
                   />
                 </Grid>
@@ -363,8 +409,7 @@ const EditSaleTabs = ({
                   </Grid>
                 </HasPermission>
 
-                {(formData.status === 'D' || formData.status === 'C') &&
-                  formData.isSale === false && (
+                {(formData.status === 'D' || formData.status === 'C') && (
                     <Grid item xs={12} sm={12} lg={8}>
                       <CustomFormLabel htmlFor="Motivo">
                         Motivo do {formData.status === 'C' ? 'Cancelamento' : 'Distrato'}
@@ -418,13 +463,23 @@ const EditSaleTabs = ({
                     />
                   </Grid>
                 </HasPermission>
+
+                {(saleData.sale_products || []).map((saleProduct, index) => (
+                  <SaleProductItem
+                    key={saleProduct.id}
+                    initialData={saleProduct}
+                    productName={productNames[index]}
+                    onUpdated={fetchSale}
+                  />
+                ))}
+
               </Grid>
             </Box>
           </TabPanel>
 
           <TabPanel value={value} index={3}>
             <Attachments
-              contentType={CONTEXT_TYPE_SALE_ID}
+              contentType={saleContentTypeId}
               objectId={id_sale}
               documentTypes={documentTypes}
               canEdit={canEdit}
@@ -446,7 +501,7 @@ const EditSaleTabs = ({
           </TabPanel>
 
           <TabPanel value={value} index={7}>
-            <History contentType={CONTEXT_TYPE_SALE_ID} objectId={id_sale} />
+            <History contentType={saleContentTypeId} objectId={id_sale} />
           </TabPanel>
 
           <TabPanel value={value} index={8}>

@@ -34,25 +34,46 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
   // Estado para as sugestões
   const [predictions, setPredictions] = useState([]);
 
+  const zipCodePattern = /^[0-9]{5}-?[0-9]{3}$/;
+
   // Efeito que faz a busca
   useEffect(() => {
     if (isLoaded && window.google && value.length > 2 && shouldSearch) {
       const service = new window.google.maps.places.AutocompleteService();
 
-      service.getPlacePredictions(
-        {
-          input: value,
-          componentRestrictions: { country: 'br' },
-          types: ['address'],
-        },
-        (preds, status) => {
-          if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-            setPredictions(preds);
-          } else {
-            setPredictions([]);
+      if (zipCodePattern.test(value) && value.length <= 8) {
+
+        service.getPlacePredictions(
+          {
+            input: value,
+            componentRestrictions: { country: 'br' },
+            types: ['(regions)'],
+          },
+          (preds, status) => {
+            console.log('Predictions:', preds, status);
+            if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+              setPredictions(preds);
+            } else {
+              setPredictions([]);
+            }
           }
-        }
-      );
+        );
+      } else if (value.length > 8) {
+        service.getPlacePredictions(
+          {
+            input: value,
+            componentRestrictions: { country: 'br' },
+            types: ['address'],
+          },
+          (preds, status) => {
+            if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+              setPredictions(preds);
+            } else {
+              setPredictions([]);
+            }
+          }
+        );
+      }
 
     } else {
       setPredictions([]);
@@ -133,9 +154,9 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
     <Box sx={{ position: 'relative' }}>
       <Grid container xs={12}>
         <Grid item xs={12} >
-          <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mt: 0 }}>Endereço</CustomFormLabel>
+          <CustomFormLabel sx={{ color: "#303030", fontWeight: "700", fontSize: "14px", mt: 0 }}>Endereço / CEP</CustomFormLabel>
         </Grid>
-        
+
       </Grid>
       <Grid container xs={12}>
         <Grid item xs={11} >
@@ -145,10 +166,11 @@ const AddressAutocomplete = ({ apiKey, onAddressSelect, inputValue, onInputChang
             variant="outlined"
             value={value}
             onChange={handleChangeInput}
+            onFocus={() => setPredictions([])}
           />
         </Grid>
         <Grid item xs={1} sx={{ display: "flex", justifyContent: "end", alignItems: "center" }}>
-          <Tooltip title="Digite seu endereço com NÚMERO e selecione uma opção." placement="top">
+          <Tooltip title="Digite seu endereço com NÚMERO ou o CEP de até 8 dígitos selecione uma opção." placement="top">
             <IconButton size="small">
               <HelpOutlineIcon fontSize="small" />
             </IconButton>

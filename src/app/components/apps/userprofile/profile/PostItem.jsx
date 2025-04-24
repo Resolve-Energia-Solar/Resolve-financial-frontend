@@ -54,8 +54,8 @@ const PostItem = ({ post }) => {
       const commentContentType = await getContentType('core', 'comment');
       const commentData = {
         object_id: postId,
-        content_type_id: commentContentType,
-        author_id: user.id,
+        content_type: commentContentType,
+        author: user.id,
         text: commentText,
       };
       await commentService.create(commentData);
@@ -109,8 +109,8 @@ const PostItem = ({ post }) => {
       <Box p={2}>
         <Stack direction="row" gap={2} alignItems="center">
           <Avatar
-            alt={post?.author.complete_name}
-            src={post?.author.profile_picture}
+            alt={user.complete_name}
+            src={user.profile_picture}
             sx={{ width: '33px', height: '33px' }}
           />
           <TextField

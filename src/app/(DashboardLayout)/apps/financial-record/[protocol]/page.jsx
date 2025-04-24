@@ -76,7 +76,7 @@ export default function FinancialRecordDetailsPage() {
         const records = dataList.results;
         if (records && records.length > 0) {
           const recordId = records[0].id;
-          const fetchedData = await financialRecordService.find(recordId);
+          const fetchedData = await financialRecordService.find(recordId, { expand: 'bank_details' });
           setRecord(fetchedData);
         } else {
           enqueueSnackbar('Registro não encontrado.', { variant: 'error' });
@@ -229,6 +229,23 @@ export default function FinancialRecordDetailsPage() {
               </Typography>
               <Typography variant="body1">{record.invoice_number || '-'}</Typography>
             </Grid>
+            {record.bank_details && (
+              <Grid item xs={12} md={6}>
+                <Typography variant="subtitle2" color="textSecondary">
+                  Dados Bancários
+                </Typography>
+                <Typography variant='body1'>{record.bank_details.account_type === 'X'
+                  ? `PIX (${{
+                    CPF: 'CPF',
+                    CNPJ: 'CNPJ',
+                    EMAIL: 'E-mail',
+                    PHONE: 'Celular/Telefone',
+                    RANDOM: 'Chave Aleatória'
+                  }[record.bank_details.pix_key_type]}): ${record.bank_details.pix_key}`
+                  : `${record.bank_details.financial_instituition} Ag: ${record.bank_details.agency_number} Conta: ${record.bank_details.account_number}`}
+                </Typography>
+              </Grid>
+            )}
             <Grid item xs={12}>
               <Typography variant="subtitle2" color="textSecondary">
                 Descrição

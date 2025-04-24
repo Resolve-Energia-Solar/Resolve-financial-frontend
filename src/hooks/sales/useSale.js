@@ -38,7 +38,10 @@ const useSale = (id) => {
             "customer.addresses",
             "customer.phone_numbers",
             "projects.units",
-            "comments"
+            "comments",
+            "sale_products",
+            "product.name",
+            "sale.product"
           ],
           fields: [
             "customer.id",
@@ -66,6 +69,11 @@ const useSale = (id) => {
             "cancellation_reasons",
             "is_pre_sale",
             "reference_table",
+            "sale_products.id",
+            "sale_products.value",
+            "sale_products.cost_value",
+            "sale_products.reference_value",
+            "sale_products.product",
           ],
           format: "json"
         }
@@ -87,7 +95,18 @@ const useSale = (id) => {
     fetchSale();
   };
 
-  return { loading, fetchSale, error, saleData, handleRowClick, openDrawer, setOpenDrawer, rowSelected, toggleDrawerClosed, reload };
+  return { 
+    loading, 
+    fetchSale, 
+    error, 
+    saleData, 
+    handleRowClick, 
+    openDrawer, 
+    setOpenDrawer, 
+    rowSelected, 
+    toggleDrawerClosed, 
+    reload 
+  };
 };
 
 export default useSale;

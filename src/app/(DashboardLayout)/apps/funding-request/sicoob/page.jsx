@@ -134,9 +134,9 @@ export default function Sicoob() {
           formDataAttachment.append('file', attachment.file);
           formDataAttachment.append('description', attachment.description);
           formDataAttachment.append('object_id', recordId);
-          formDataAttachment.append('content_type_id', 121);
-          formDataAttachment.append('document_type_id', '');
-          formDataAttachment.append('document_subtype_id', '');
+          formDataAttachment.append('content_type', 121);
+          formDataAttachment.append('document_type', '');
+          formDataAttachment.append('document_subtype', '');
           formDataAttachment.append('status', '');
           await attachmentService.create(formDataAttachment);
         }),

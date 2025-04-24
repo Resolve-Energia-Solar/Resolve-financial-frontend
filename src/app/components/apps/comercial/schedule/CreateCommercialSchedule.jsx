@@ -87,9 +87,12 @@ export default function CreateCommercialSchedule({ onClose, onRefresh }) {
   };
 
   const handleProjectChange = option => {
-    handleChange('project', option || null);
+    console.log('option', option);
+    handleChange('project', option.value || null);
+    handleChange('products', option?.product?.value);
+    handleChange('branch', option?.branch?.value);
     if (option && option.address) {
-      handleChange('address', option.address.value);
+      handleChange('address', option?.address?.value);
       setSelectedAddress(option.address);
     } else if (option) {
       setAlertOpen(true);
@@ -101,15 +104,6 @@ export default function CreateCommercialSchedule({ onClose, onRefresh }) {
       setSelectedAddress(null);
     }
   };
-
-  const formatAddress = address => {
-    if (!address) return '';
-    const { street, number, city, state } = address;
-    return `${street || ''}, ${number || ''} - ${city || ''}, ${state || ''}`;
-  };
-
-  console.log('formData', formData);
-  console.log('selectedManualAddress', selectedManualAddress);
 
   return (
     <>
@@ -125,7 +119,7 @@ export default function CreateCommercialSchedule({ onClose, onRefresh }) {
             value={formData.customer}
             onChange={opt => {
               setClientSelected(opt ? opt.value : '');
-              handleChange('customer', opt || null);
+              handleChange('customer', opt.value || null);
             }}
             mapResponse={data =>
               data.results.map(u => ({ label: u.complete_name, value: u.id }))
@@ -223,8 +217,8 @@ export default function CreateCommercialSchedule({ onClose, onRefresh }) {
                 endpoint="/api/projects"
                 queryParam="q"
                 extraParams={{
-                  expand: ['sale.customer', 'address'],
-                  fields: ['id', 'project_number', 'address'],
+                  expand: ['sale.branch', 'address', 'product'],
+                  fields: ['id', 'project_number', 'address', 'product', 'sale.branch.name', 'sale.branch.id'],
                   customer: clientSelected,
                 }}
                 value={formData.project}
@@ -236,6 +230,14 @@ export default function CreateCommercialSchedule({ onClose, onRefresh }) {
                     address: {
                       label: p.address?.complete_address || '',
                       value: p.address?.id || null,
+                    },
+                    product: {
+                      label: p.product?.name || '',
+                      value: p.product?.id || null,
+                    },
+                    branch: {
+                      label: p.sale?.branch?.name || '',
+                      value: p.sale?.branch?.id || null,
                     },
                   }))
                 }

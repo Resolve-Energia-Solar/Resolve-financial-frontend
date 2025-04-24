@@ -34,7 +34,7 @@ import { CheckCircle, Error } from '@mui/icons-material';
 import { removeProductsByIds } from '@/store/products/customProducts';
 import AddUser from '../../../users/Add-user/addUser';
 
-const steps = ['Dados do Cliente', 'Produtos', 'Financeiro', 'Documentos', 'Agendar Vistoria'];
+const steps = ['Dados do Cliente', 'Produtos', 'Financeiro', 'CheckList', 'Agendar Vistoria'];
 
 export default function OnboardingCreateSale({ onClose = null, onEdit = null }) {
   return (

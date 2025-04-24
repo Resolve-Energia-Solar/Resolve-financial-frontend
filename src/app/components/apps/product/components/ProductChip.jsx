@@ -12,7 +12,6 @@ const ProductChip = ({ status }) => {
         return { label: 'Customizado', color: 'secondary', icon: <BuildIcon /> };
       case "n":
         return { label: 'Customizado', color: 'secondary', icon: <BuildIcon /> };
-      
       default:
         return { label: status };
     }

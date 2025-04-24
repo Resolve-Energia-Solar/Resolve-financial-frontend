@@ -301,7 +301,7 @@ const CreateAddressPage = ({
           <Grid container columnSpacing={2} sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", maxWidth: "100%", width: "100%" }}>
 
             <Grid item xs={12} md={6} sx={{ display: "flex", flexDirection: "column" }}>
-              <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
+              {/* <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
                 <Grid item xs={12}>
                   <Box sx={{ flexGrow: 1 }}>
                     <ZipCodeSearch
@@ -313,7 +313,7 @@ const CreateAddressPage = ({
                   </Box>
                 </Grid>
 
-              </Grid>
+              </Grid> */}
 
               <Grid item xs={12} sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", mt: 1, mb: 1 }}>
                 <Grid item xs={12}>
@@ -621,7 +621,7 @@ const CreateAddressPage = ({
                               borderColor: theme.palette.grey[300],
                             },
                             input: {
-                              color: '#7E92A2',
+                              color: '#00000',
                               fontWeight: '600',
                               fontSize: '14px',
                               opacity: 1,
@@ -718,7 +718,7 @@ const CreateAddressPage = ({
         </DialogTitle>
         <DialogContent>
           <DialogContentText sx={{ px: 1 }}>
-            <strong style={{ fontSize: '1.3em' }}>Atenção:</strong> este endereço será utilizado exatamente como informado para definir a rota do motorista. Verifique se a localização no mapa está correta.
+            <strong style={{ fontSize: '1.3em' }}>Atenção:</strong> este endereço será utilizado exatamente como informado para definir a rota do motorista e para instalação do projeto. Verifique se a localização no mapa está correta.
           </DialogContentText>
           <FormControlLabel
             control={

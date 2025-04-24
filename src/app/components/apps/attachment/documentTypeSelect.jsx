@@ -3,7 +3,7 @@ import { Autocomplete } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import documentTypeService from '@/services/documentTypeService';
 
-const DocumentTypeSelect = ({ appLabel, formData, handleChange }) => {
+const DocumentTypeSelect = ({ appLabel, documentType, documentSubtype, handleChange }) => {
   const [documentTypes, setDocumentTypes] = useState([]);
   const [selectedDocType, setSelectedDocType] = useState(null);
 
@@ -16,7 +16,6 @@ const DocumentTypeSelect = ({ appLabel, formData, handleChange }) => {
           app_label__in: appLabel,
         });
         const results = response.data?.results || response.results || [];
-        // Incluímos subtypes na estrutura
         const options = results.map((docType) => ({
           id: docType.id,
           name: docType.name,
@@ -35,12 +34,12 @@ const DocumentTypeSelect = ({ appLabel, formData, handleChange }) => {
       <Autocomplete
         options={documentTypes}
         getOptionLabel={(option) => option.name || ''}
-        value={documentTypes.find((dt) => dt.id === formData.document_type_id) || null}
+        value={documentTypes.find((dt) => dt.id === documentType) || null}
         noOptionsText="Nenhum tipo de documento encontrado, mude a busca ou digite algo."
         loadingText="Carregando..."
         onChange={(event, newValue) => {
           setSelectedDocType(newValue);
-          handleChange('document_type_id', newValue ? newValue.id : '');
+          handleChange('document_type', newValue ? newValue.id : '');
         }}
         renderInput={(params) => (
           <TextField {...params} label="Tipo de Documento" variant="outlined" fullWidth />
@@ -51,11 +50,9 @@ const DocumentTypeSelect = ({ appLabel, formData, handleChange }) => {
           sx={{ mt: 2 }}
           options={selectedDocType.subtypes}
           getOptionLabel={(option) => option.name || ''}
-          value={
-            selectedDocType.subtypes.find((sub) => sub.id === formData.document_subtype_id) || null
-          }
+          value={selectedDocType.subtypes.find((sub) => sub.id === documentSubtype) || null}
           onChange={(event, newValue) =>
-            handleChange('document_subtype_id', newValue ? newValue.id : '')
+            handleChange('document_subtype', newValue ? newValue.id : '')
           }
           renderInput={(params) => (
             <TextField {...params} label="Subtipo de Documento" variant="outlined" fullWidth />

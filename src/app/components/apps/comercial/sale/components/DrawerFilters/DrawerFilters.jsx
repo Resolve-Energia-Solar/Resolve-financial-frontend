@@ -34,7 +34,7 @@ export default function DrawerFilters() {
     borrower: filters.borrower || "",
     payment_status: filters.payment_status || [],
     tag_name__exact: filters.tag_name__exact || "",
-    documents_under_analysis: filters.documents_under_analysis || false
+    documents_under_analysis: filters.documents_under_analysis || ""
   });
 
   const createFilterParams = (filters) => {
@@ -307,7 +307,6 @@ export default function DrawerFilters() {
                   <MenuItem value="">Todos</MenuItem>
                 </Select>
               </Grid>
-
 
               {/* Demais filtros */}
               <Grid item xs={12}>

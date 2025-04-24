@@ -294,7 +294,10 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
             disabled={!hasPermission(['financial.change_invoice_status'])}
             value={formData.invoice_status}
             onChange={(e) => handleChange('invoice_status', e.target.value)}
-            {...(formErrors.invoice_status && { error: true, helperText: formErrors.invoice_status })}
+            {...(formErrors.invoice_status && {
+              error: true,
+              helperText: formErrors.invoice_status,
+            })}
           />
         </Grid>
       </Grid>

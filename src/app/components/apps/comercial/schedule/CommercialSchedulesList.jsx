@@ -136,8 +136,8 @@ const CommercialSchedulesList = () => {
       setLoading(true);
       const response = await scheduleService.index({
         fields:
-          'customer.complete_name,service.name,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,schedule_agent.id,address,status,created_at,id,groups,project.id,project.product,product.name,product.id,project.sale.seller,products.name,products.id',
-        expand: 'customer,service,schedule_agent,address,project,product,project.sale,products',
+          'customer.complete_name,service.name,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,schedule_agent.id,address,status,created_at,id,groups,project.id,project.product,product.name,product.id,project.sale.seller,products.name,products.id,project.sale.products',
+        expand: 'customer,service,schedule_agent,address,project,product,project.sale',
         page: page + 1,
         limit: rowsPerPage,
         ...filters,
@@ -252,6 +252,7 @@ const CommercialSchedulesList = () => {
                   <TableCell sx={{ fontWeight: 'bold' }}>Data</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Hora</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Agente</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Serviço</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Endereço</TableCell>
                 </TableRow>
               </TableHead>
@@ -265,6 +266,7 @@ const CommercialSchedulesList = () => {
                     <TableCell>{schedule.schedule_date ? formatDate(schedule.schedule_date) : '-'}</TableCell>
                     <TableCell>{schedule.schedule_start_time ? formatTime(schedule.schedule_start_time) : '-'}</TableCell>
                     <TableCell>{schedule.schedule_agent ? schedule.schedule_agent.complete_name : <Chip label="Sem Agente" color="warning" />}</TableCell>
+                    <TableCell>{schedule.service ? schedule.service.name : '-'}</TableCell>
                     <TableCell>{formatAddress(schedule.address)}</TableCell>
                   </TableRow>
                 ))}

@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import {
+  Autocomplete,
   Grid,
   Button,
   Stack,
@@ -10,7 +11,11 @@ import {
   CircularProgress,
   Box,
   Typography,
-  Chip
+  Chip,
+  TextField,
+  FormControl,
+  InputLabel,
+  DialogActions,
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import { useRouter } from 'next/navigation';
@@ -36,6 +41,7 @@ import attachmentService from '@/services/attachmentService';
 import getContentType from '@/utils/getContentType';
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 import { formatDate } from '@/utils/dateUtils';
+import bankDetailService from '@/services/bankDetailService';
 
 const BCrumb = [
   {
@@ -57,6 +63,7 @@ export default function CreateFinancialRecord() {
   const userPermissions = user?.permissions || user?.user_permissions || [];
   const [minDueDate, setMinDueDate] = useState('');
   const [contentTypeId, setContentTypeId] = useState(null);
+  const [bankInstitutions, setBankInstitutions] = useState([]);
 
   useEffect(() => {
     async function fetchContentTypeId() {
@@ -83,6 +90,7 @@ export default function CreateFinancialRecord() {
   const fieldLabels = {
     client_supplier_code: 'Beneficiário (Nome/CPF/CNPJ)',
     client_supplier_name: 'Nome do Beneficiário',
+    bank_details: 'Dados Bancários',
     requesting_department: 'Departamento Solicitante',
     department_code: 'Departamento Causador',
     department_name: 'Nome do Departamento',
@@ -127,9 +135,20 @@ export default function CreateFinancialRecord() {
       }
     }, 500);
 
+
     return () => clearTimeout(debounceTimer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.value, formData.category_code, user?.employee?.department?.id]);
+
+  useEffect(() => {
+    fetch('https://brasilapi.com.br/api/banks/v1')
+      .then(res => res.json())
+      .then(data => {
+        const list = data.filter(b => b.code !== null);
+        setBankInstitutions(list);
+      })
+      .catch(console.error);
+  }, []);
 
   const handleSubmit = async () => {
     const missingFields = [];
@@ -140,7 +159,9 @@ export default function CreateFinancialRecord() {
     if (!formData.category_name) missingFields.push('Nome da Categoria');
     if (!formData.client_supplier_code) missingFields.push('Código do Beneficiário');
     if (!formData.client_supplier_name) missingFields.push('Nome do Beneficiário');
+    if (['T', 'P'].includes(formData.payment_method) && !formData.bank_details) missingFields.push('Dados Bancários');
     if (!formData.department_code) missingFields.push('Departamento Causador');
+    if (!formData.requesting_department) missingFields.push('Departamento Solicitante');
 
     if (missingFields.length) {
       enqueueSnackbar(
@@ -160,9 +181,9 @@ export default function CreateFinancialRecord() {
           formDataAttachment.append('file', attachment.file);
           formDataAttachment.append('description', attachment.description);
           formDataAttachment.append('object_id', recordId);
-          formDataAttachment.append('content_type_id', contentTypeId);
-          formDataAttachment.append('document_type_id', '');
-          formDataAttachment.append('document_subtype_id', '');
+          formDataAttachment.append('content_type', contentTypeId);
+          formDataAttachment.append('document_type', '');
+          formDataAttachment.append('document_subtype', '');
           formDataAttachment.append('status', '');
           await attachmentService.create(formDataAttachment);
         }),
@@ -277,6 +298,153 @@ export default function CreateFinancialRecord() {
               required
             />
           </Grid>
+          {formData.client_supplier_code && ['T', 'P'].includes(formData.payment_method) && (
+            <Grid item xs={12}>
+              <GenericAsyncAutocompleteInput
+                label="Dados Bancários"
+                value={formData.bank_details}
+                onChange={opt => handleChange('bank_details', opt?.value || '')}
+                endpoint="/api/bank-details"
+                queryParam=""
+                extraParams={{ client_supplier_code__in: formData.client_supplier_code }}
+                mapResponse={data =>
+                  (data.results || []).map(b => ({
+                    label:
+                      b.account_type === 'X'
+                        ? `PIX (${{
+                          CPF: 'CPF',
+                          CNPJ: 'CNPJ',
+                          EMAIL: 'E-mail',
+                          PHONE: 'Celular/Telefone',
+                          RANDOM: 'Aleatória'
+                        }[b.pix_key_type]}): ${b.pix_key}`
+                        : `${b.financial_instituition} Ag: ${b.agency_number} Conta: ${b.account_number}`,
+                    value: b.id,
+                  }))
+                }
+                freeSolo={false}
+                filterOptions={opts => opts}
+                error={!!formErrors.bank_details}
+                helperText={formErrors.bank_details}
+                renderCreateModal={({ newObjectData, setNewObjectData, onCreate, onClose, errors }) => (
+                  <>
+                    <FormControl fullWidth margin="dense">
+                      <Autocomplete
+                        options={bankInstitutions.map(b => ({
+                          label: `${b.code} - ${b.name}`,
+                          value: `${b.code} - ${b.name}`
+                        }))}
+                        value={
+                          newObjectData.financial_instituition
+                            ? { label: newObjectData.financial_instituition, value: newObjectData.financial_instituition }
+                            : null
+                        }
+                        onChange={(_, opt) =>
+                          setNewObjectData({ ...newObjectData, financial_instituition: opt?.value || '' })
+                        }
+                        renderInput={params => (
+                          <TextField
+                            {...params}
+                            label={`Instituição Financeira (${newObjectData.account_type !== 'X' ? 'Obrigatória' : 'Opcional'})`}
+                            fullWidth
+                            margin="dense"
+                            error={!!errors.financial_instituition}
+                            helperText={errors.financial_instituition?.[0]}
+                          />
+                        )}
+                      />
+                    </FormControl>
+                    <FormControl fullWidth margin="dense">
+                      <InputLabel id="account-type-label">Tipo de Conta</InputLabel>
+                      <Select
+                        labelId="account-type-label"
+                        label="Tipo de Conta"
+                        value={newObjectData.account_type || 'C'}
+                        onChange={e => {
+                          const account_type = e.target.value;
+                          setNewObjectData({
+                            ...newObjectData,
+                            account_type,
+                            agency_number: '',
+                            account_number: '',
+                            pix_key_type: '',
+                            pix_key: ''
+                          });
+                        }}
+                      >
+                        <MenuItem value="C">Corrente</MenuItem>
+                        <MenuItem value="P">Poupança</MenuItem>
+                        <MenuItem value="X">PIX</MenuItem>
+                      </Select>
+                    </FormControl>
+
+                    {newObjectData.account_type !== 'X' && (
+                      <>
+                        <TextField
+                          label="Número da Agência"
+                          fullWidth
+                          margin="dense"
+                          value={newObjectData.agency_number || ''}
+                          onChange={e => setNewObjectData({ ...newObjectData, agency_number: e.target.value })}
+                          error={!!errors.agency_number}
+                          helperText={errors.agency_number?.[0]}
+                        />
+                        <TextField
+                          label="Número da Conta"
+                          fullWidth
+                          margin="dense"
+                          value={newObjectData.account_number || ''}
+                          onChange={e => setNewObjectData({ ...newObjectData, account_number: e.target.value })}
+                          error={!!errors.account_number}
+                          helperText={errors.account_number?.[0]}
+                        />
+                      </>
+                    )}
+
+                    {newObjectData.account_type === 'X' && (
+                      <>
+                        <FormControl fullWidth margin="dense">
+                          <InputLabel id="pix-key-type-label">Tipo de Chave PIX</InputLabel>
+                          <Select
+                            labelId="pix-key-type-label"
+                            label="Tipo de Chave PIX"
+                            value={newObjectData.pix_key_type || ''}
+                            onChange={e => setNewObjectData({ ...newObjectData, pix_key_type: e.target.value })}
+                            error={!!errors.pix_key_type}
+                            helperText={errors.pix_key_type?.[0]}
+                          >
+                            <MenuItem value="CPF">CPF</MenuItem>
+                            <MenuItem value="CNPJ">CNPJ</MenuItem>
+                            <MenuItem value="EMAIL">E-mail</MenuItem>
+                            <MenuItem value="PHONE">Celular/Telefone</MenuItem>
+                            <MenuItem value="RANDOM">Chave Aleatória</MenuItem>
+                          </Select>
+                        </FormControl>
+                        <TextField
+                          label="Chave PIX"
+                          fullWidth
+                          margin="dense"
+                          value={newObjectData.pix_key || ''}
+                          onChange={e => setNewObjectData({ ...newObjectData, pix_key: e.target.value })}
+                          error={!!errors.pix_key}
+                          helperText={errors.pix_key?.[0]}
+                        />
+                      </>
+                    )}
+
+                    <DialogActions>
+                      <Button onClick={onCreate} variant="contained">Salvar</Button>
+                    </DialogActions>
+                  </>
+                )}
+                onCreateObject={newBank =>
+                  bankDetailService
+                    .create({ client_supplier_code: formData.client_supplier_code, ...newBank })
+                    .then(res => res)
+                }
+              />
+            </Grid>
+          )}
           <Grid item xs={12}>
             <CustomFormLabel htmlFor="notes">Descrição</CustomFormLabel>
             <CustomTextField

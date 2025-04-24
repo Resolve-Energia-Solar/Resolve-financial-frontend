@@ -207,7 +207,7 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
         </Grid>
         <Grid item xs={12} sm={12} lg={4}>
           <FormSelect
-            label="Status do Projeto"
+            label="Status Desenho Executivo"
             options={status_options}
             value={formData.designer_status}
             onChange={(e) => handleChange('designer_status', e.target.value)}
