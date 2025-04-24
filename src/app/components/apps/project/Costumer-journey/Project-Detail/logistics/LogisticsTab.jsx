@@ -18,7 +18,6 @@ export default function LogisticsTab({ projectId }) {
     const [loading, setLoading] = useState(true)
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
-    const [principalId, setPrincipalId] = useState(null)
 
     const theme = useTheme();
 
@@ -104,7 +103,6 @@ export default function LogisticsTab({ projectId }) {
                     ))}
                     <Table.Cell align="center">Editar</Table.Cell>
                     <Table.Cell align="center">Ver</Table.Cell>
-                    <Table.Cell align="center">Principal</Table.Cell>
                 </Table.Head>
 
                 <Table.Body loading={loading}>
@@ -138,28 +136,6 @@ export default function LogisticsTab({ projectId }) {
 
                     <Table.EditAction onClick={row => console.log("editar", row)} />
                     <Table.ViewAction onClick={row => console.log("ver", row)} />
-                    <Table.SwitchAction
-                        isSelected={row => row.project?.inspection === row.id}
-                        onToggle={(row, nextChecked) => {
-                            const nextValue = nextChecked ? row.id : null;
-                            console.log(
-                                `[Switch] row ${row.id}: inspection → ${nextValue}`
-                            );
-                            setInspections(prev =>
-                                prev.map(r =>
-                                    r.id === row.id
-                                        ? {
-                                            ...r,
-                                            project: {
-                                                ...r.project,
-                                                inspection: nextValue
-                                            },
-                                        }
-                                        : r
-                                )
-                            );
-                        }}
-                    />
                 </Table.Body>
             </Table.Root>
 
@@ -179,12 +155,7 @@ export default function LogisticsTab({ projectId }) {
                 }}
             >
                 <DialogContent>
-                    <ScheduleFormCreate
-                        projectId={projectId}
-                        customerId={principalId}
-                        products={products}
-
-                    />
+                    <ScheduleFormCreate projectId={projectId} />
                 </DialogContent>
             </Dialog>
         </>
