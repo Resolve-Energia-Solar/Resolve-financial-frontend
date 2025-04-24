@@ -359,6 +359,9 @@ const ProjectList = ({ onClick }) => {
 
   return (
     <>
+      <Typography fontSize={20} fontWeight={700} sx={{ mt: 0, }} gutterBottom>
+        Jornada do cliente
+      </Typography>
       <Accordion defaultExpanded sx={{ marginBottom: 4 }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
