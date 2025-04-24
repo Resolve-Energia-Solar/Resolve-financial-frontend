@@ -124,11 +124,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
             </TabPanel>
             <TabPanel value={tab} index={7}><Typography>Conteúdo Homologação</Typography></TabPanel>
             <TabPanel value={tab} index={8}>
-                {/* <Typography variant="h6" sx={{ mb: 3 }}>Comentários do Projeto</Typography>
-                <Comment appLabel="resolve_crm" model="project" objectId={projectId} />
-                <Typography variant="h6" sx={{ my: 3 }}>Comentários da Venda</Typography>
-                <Comment appLabel="resolve_crm" model="sale" objectId={project?.sale} /> */}
-                <CommentsTab projectId={projectId} />
+                <Typography>Conteúdo Histórico</Typography>
             </TabPanel>
             <TabPanel value={tab} index={9}>
                 {/* <Typography variant="h6" sx={{ mb: 3 }}>Comentários do Projeto</Typography>
