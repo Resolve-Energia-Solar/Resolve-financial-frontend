@@ -462,11 +462,11 @@ const EditSaleTabs = ({
                   </Grid>
                 </HasPermission>
 
-                {(saleData.sale_products || []).map((sp, idx) => (
+                {(saleData.sale_products || []).map((saleProduct, index) => (
                   <SaleProductItem
-                    key={sp.id}
-                    initialData={sp}
-                    productName={productNames[idx]}
+                    key={saleProduct.id}
+                    initialData={saleProduct}
+                    productName={productNames[index]}
                     onUpdated={fetchSale}
                   />
                 ))}
