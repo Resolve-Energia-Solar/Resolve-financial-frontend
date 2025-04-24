@@ -16,7 +16,7 @@ import AttachmentTable from '../../../attachment/attachmentTable';
 import Comment from '@/app/components/apps/comment';
 import LogisticsTab from './logistics/LogisticsTab';
 import InstallationsTab from './installations/InstallationsTab';
-import HistoryTab from './History/HistoryTab';
+import CommentsTab from './Comments/CommentsTab';
 
 function TabPanel({ children, value, index }) {
     return (
@@ -84,7 +84,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
 
     const tabs = [
         'Vistoria', 'Contratos', 'Financeiro', 'Engenharia', 'Anexos',
-        'Logística', 'Instalação', 'Homologação', 'Histórico'
+        'Logística', 'Instalação', 'Homologação', 'Histórico', 'Comentários',
     ];
 
     const projectInfoTabs = (
@@ -128,7 +128,14 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
                 <Comment appLabel="resolve_crm" model="project" objectId={projectId} />
                 <Typography variant="h6" sx={{ my: 3 }}>Comentários da Venda</Typography>
                 <Comment appLabel="resolve_crm" model="sale" objectId={project?.sale} /> */}
-                <HistoryTab projectId={projectId} />
+                <CommentsTab projectId={projectId} />
+            </TabPanel>
+            <TabPanel value={tab} index={9}>
+                {/* <Typography variant="h6" sx={{ mb: 3 }}>Comentários do Projeto</Typography>
+                <Comment appLabel="resolve_crm" model="project" objectId={projectId} />
+                <Typography variant="h6" sx={{ my: 3 }}>Comentários da Venda</Typography>
+                <Comment appLabel="resolve_crm" model="sale" objectId={project?.sale} /> */}
+                <CommentsTab projectId={projectId} />
             </TabPanel>
         </Box>
     );

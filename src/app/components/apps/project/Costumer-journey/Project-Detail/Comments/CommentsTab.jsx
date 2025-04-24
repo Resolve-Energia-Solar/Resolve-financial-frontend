@@ -2,7 +2,7 @@ import Comment from "@/app/components/apps/comment";
 import { Grid, Typography } from "@mui/material";
 import { useState } from "react";
 
-export default function HistoryTab({ projectId }) {
+export default function CommentsTab({ projectId }) {
 
     const [project, setProject] = useState(null);
 
