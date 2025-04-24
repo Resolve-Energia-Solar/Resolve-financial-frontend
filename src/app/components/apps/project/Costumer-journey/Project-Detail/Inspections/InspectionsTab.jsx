@@ -33,9 +33,10 @@ export default function InspectionsTab({ projectId }) {
                 try {
                     const response = await scheduleService.index(
                         {
-                            fields: "id,address.complete_address,products.description,scheduled_agent,schedule_date,completed_date,final_service_opinion.name,project.inspection,project.product.description",
-                            expand: "address,products,scheduled_agent,final_service_opinion,project,project.product",
-                            project__in: projectId
+                            fields: "id,address.complete_address,products.description,scheduled_agent,schedule_date,completed_date,final_service_opinion.name,project.inspection,project.product.description,service.name",
+                            expand: "address,products,scheduled_agent,final_service_opinion,project,project.product,service",
+                            project__in: projectId,
+                            category__icontains: 'Vistoria'
                         }
                     );
                     setInspections(response.results);
@@ -57,6 +58,7 @@ export default function InspectionsTab({ projectId }) {
     }
 
     const columns = [
+        { field: 'service', headerName: 'Serviço', render: r => r.service.name },
         { field: 'address', headerName: 'Endereço', render: r => r.address.complete_address },
         { field: 'products', headerName: 'Produto', render: r => r.products.map(p => p.description).join(', ') },
         { field: 'scheduled_agent', headerName: 'Agente', render: r => r.scheduled_agent?.name },
@@ -107,6 +109,10 @@ export default function InspectionsTab({ projectId }) {
                 </Table.Head>
 
                 <Table.Body loading={loading}>
+                    <Table.Cell
+                        render={row => row.service?.name}
+                        sx={{ opacity: 0.7, }}
+                    />
                     <Table.Cell
                         render={row => row.address?.complete_address}
                         sx={{ opacity: 0.7,}}
