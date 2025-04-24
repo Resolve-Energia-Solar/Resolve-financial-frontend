@@ -51,7 +51,8 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
         try {
             const [proj, proc] = await Promise.all([
                 projectService.find(projectId, {
-                    fields: 'id,sale',
+                    fields: 'id,sale,project_number,customer.complete_name',
+                    expand: 'sale.customer',
                 }),
                 processService.getProcessByObjectId('resolve_crm', 'project', projectId)
                     .then(({ id }) => id)
@@ -138,7 +139,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
             PaperProps={{ sx: { width: drawerWidth, zIndex: 1300, display: 'flex', flexDirection: 'column' } }}
         >
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, bgcolor: 'grey.100' }}>
-                <Typography variant="h5">Detalhes do Projeto</Typography>
+                <Typography variant="h5">Detalhes do Projeto nº {project?.project_number} - {project?.sale?.customer?.complete_name}</Typography>
                 <IconButton onClick={handleClose}><CloseIcon /></IconButton>
             </Box>
 
