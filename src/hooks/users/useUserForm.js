@@ -4,10 +4,6 @@ import userService from '@/services/userService';
 
 const useUserForm = (initialData, id) => {
   const [formData, setFormData] = useState({
-    branch_id: null,
-    department_id: null,
-    role_id: null,
-    user_manager_id: null,
     addresses_ids: [],
     user_types_ids: [2],
     groups_ids: [],
@@ -16,7 +12,7 @@ const useUserForm = (initialData, id) => {
     username: '',
     first_name: '',
     is_staff: false,
-    is_active: false,
+    is_active: true,
     date_joined: null,
     complete_name: '',
     birth_date: null,
@@ -24,7 +20,6 @@ const useUserForm = (initialData, id) => {
     first_document: '',
     email: '',
     contract_type: '',
-    hire_date: null,
     resignation_date: null,
     person_type: '',
     second_document: '',
@@ -39,10 +34,6 @@ const useUserForm = (initialData, id) => {
   useEffect(() => {
     if (initialData) {
       setFormData({
-        branch_id: initialData.branch?.id || null,
-        department_id: initialData.department?.id || null,
-        role_id: initialData.role?.id || null,
-        user_manager_id: initialData.user_manager?.id || null,
         addresses: initialData.addresses?.map((item) => item.id) || [],
         user_types: initialData.user_types?.map((item) => item.id) || [2],
         user_types_ids: initialData.user_types?.map((item) => item.id) || [2],
@@ -60,7 +51,6 @@ const useUserForm = (initialData, id) => {
         first_document: initialData.first_document || '',
         email: initialData.email || '',
         contract_type: initialData.contract_type || '',
-        hire_date: initialData.hire_date || null,
         resignation_date: initialData.resignation_date || null,
         person_type: initialData.person_type || '',
         second_document: initialData.second_document || '',
@@ -104,7 +94,6 @@ const useUserForm = (initialData, id) => {
         'first_document',
         'email',
         'contract_type',
-        'hire_date',
         'resignation_date',
         'person_type',
         'second_document',
@@ -114,7 +103,7 @@ const useUserForm = (initialData, id) => {
       keysToCheck.forEach((key) => {
         let newValue;
         if (
-          ['last_login', 'date_joined', 'birth_date', 'hire_date', 'resignation_date'].includes(key)
+          ['last_login', 'date_joined', 'birth_date', 'resignation_date'].includes(key)
         ) {
           newValue = formData[key] ? formatDate(formData[key]) : null;
         } else {
@@ -137,10 +126,6 @@ const useUserForm = (initialData, id) => {
       });
     } else {
       patchData = {
-        branch_id: formData.branch_id,
-        department_id: formData.department_id,
-        role_id: formData.role_id,
-        user_manager_id: formData.user_manager_id,
         addresses: formData.addresses_ids,
         user_types: formData.user_types_ids,
         groups_ids: formData.groups_ids,
@@ -159,7 +144,6 @@ const useUserForm = (initialData, id) => {
         first_document: formData.first_document,
         email: formData.email,
         contract_type: formData.contract_type,
-        hire_date: formData.hire_date ? formatDate(formData.hire_date) : null,
         resignation_date: formData.resignation_date ? formatDate(formData.resignation_date) : null,
         person_type: formData.person_type,
         second_document: formData.second_document,

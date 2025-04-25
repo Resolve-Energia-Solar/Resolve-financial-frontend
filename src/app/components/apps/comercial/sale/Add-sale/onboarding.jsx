@@ -56,6 +56,9 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
 
   // Nova flag para disparar o save do usuário
   const [userSubmitTrigger, setUserSubmitTrigger] = useState(false);
+  const [userSaveError, setUserSaveError] = useState(false);
+  const [userSaving, setUserSaving] = useState(false); 
+
 
   const formatFieldName = (fieldName) => {
     const fieldLabels = {
@@ -120,20 +123,31 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
     }
   }, [activeStep, customerId, productIds]);
 
-  // Efeito que avança a etapa 0 para a 1 quando o usuário for salvo (customerId definido)
   useEffect(() => {
-    if (activeStep === 0 && customerId) {
-      setActiveStep(1);
-      setUserSubmitTrigger(false);
+    if (activeStep === 0) {
+      if (customerId) {
+        console.log('Avançando para a etapa 1');
+        setActiveStep(1);
+        setUserSubmitTrigger(false);
+        setUserSaveError(false);
+        setUserSaving(false);
+      } else if (userSubmitTrigger) {
+        console.log('Erro ao salvar usuário');
+        setUserSaveError(true);
+        setUserSubmitTrigger(false);
+        setUserSaving(false);
+      }
     }
-  }, [customerId, activeStep]);
+  }, [customerId, userSubmitTrigger, activeStep]);
+  
 
   const handleNext = async () => {
     if (activeStep === 0 && !customerId) {
+      setUserSaving(true);
       setUserSubmitTrigger(true);
       return;
     }
-
+    
     if (activeStep === 1) {
       setIsDialogOpen(true);
       return;
@@ -226,6 +240,12 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
     switch (step) {
       case 0:
         return (
+          <>
+          {userSaveError && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              Não foi possível salvar o cliente. Por favor, verifique os campos obrigatórios e tente novamente.
+            </Alert>
+          )}
           <AddUser
             label="Dados do Cliente"
             hideSaveButton={true}
@@ -237,6 +257,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
               }
             }}
           />
+        </>
         );
       case 1:
         return <ListProductsDefault />;
@@ -270,6 +291,7 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
         );
       } else {
         return (
+          
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"
@@ -280,8 +302,8 @@ function OnboardingCreateSaleContent({ onClose = null, onEdit = null }) {
               Voltar
             </Button>
             <Box sx={{ flex: '1 1 auto' }} />
-            <Button onClick={handleNext} disabled={isDisabledNext || loading || saleLoading}>
-              {loading || saleLoading ? <CircularProgress size={20} /> : 'Próximo'}
+            <Button onClick={handleNext} disabled={isDisabledNext || loading || saleLoading || userSaving}>
+              {(loading || saleLoading || userSaving) ? <CircularProgress size={20} /> : 'Próximo'}
             </Button>
           </Box>
         );
