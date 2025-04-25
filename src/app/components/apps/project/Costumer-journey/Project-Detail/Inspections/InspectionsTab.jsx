@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSnackbar } from "notistack";
 import scheduleService from "@/services/scheduleService";
 import TableSkeleton from "../../../../comercial/sale/components/TableSkeleton";
 import UserCard from "../../../../users/userCard";
+import ScheduleFromProjectForm from "../../../modal/AddSchedule";
 import { formatDate } from "@/utils/dateUtils";
 import { Table } from "@/app/components/Table";
 import { useTheme, Dialog, DialogContent } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
-import ScheduleFormCreate from "../../../../inspections/schedule/Add-schedule";
+import categoryService from "@/services/categoryService";
 
 export default function InspectionsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -16,6 +17,7 @@ export default function InspectionsTab({ projectId }) {
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
     const [principalId, setPrincipalId] = useState(null)
+    const [categoryId, setCategoryId] = useState(null);
 
     const theme = useTheme();
 
@@ -23,30 +25,42 @@ export default function InspectionsTab({ projectId }) {
     const [openEditInspection, setOpenEditInspection] = useState(false);
     const [openViewInspection, setOpenViewInspection] = useState(false);
 
-    useEffect(() => {
-        if (projectId) {
-            const fetchInspections = async () => {
-                setLoading(true);
-                try {
-                    const response = await scheduleService.index(
-                        {
-                            fields: "id,address.complete_address,products.description,scheduled_agent,schedule_date,completed_date,final_service_opinion.name,project.inspection,project.product.description,service.name",
-                            expand: "address,products,scheduled_agent,final_service_opinion,project,project.product,service",
-                            project__in: projectId,
-                            category__icontains: 'Vistoria'
-                        }
-                    );
-                    setInspections(response.results);
-                } catch (error) {
-                    enqueueSnackbar(`Erro ao carregar vistorias: ${error.message}`, { variant: "error" });
-                } finally {
-                    setLoading(false);
-                }
-            }
-            fetchInspections();
+    const fetchInspections = useCallback(async () => {
+        if (!projectId) return;
+        setLoading(true);
+        try {
+            const response = await scheduleService.index({
+                fields: "id,address.complete_address,products.description,scheduled_agent,schedule_date,completed_date,service.name,service.category,project.inspection",
+                expand: "address,products,scheduled_agent,service,project",
+                project__in: projectId,
+                category__icontains: 'Vistoria'
+            });
+            setInspections(response.results);
+        } catch (error) {
+            enqueueSnackbar(`Erro ao carregar vistorias: ${error.message}`, { variant: "error" });
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
-    }, [projectId]);
+    }, [projectId, enqueueSnackbar]);
+
+    useEffect(() => {
+        fetchInspections();
+    }, [fetchInspections]);
+
+    useEffect(() => {
+        const fetchCategory = async () => {
+            const response = await categoryService.index({ name__in: 'Vistoria' });
+            if (response.results.length > 0) {
+                setCategoryId(response.results[0].id);
+            }
+        }
+        fetchCategory();
+    }, []);
+
+    const handleAddSuccess = async () => {
+        setOpenAddInspection(false);
+        await fetchInspections();
+    };
 
     const products = inspections.map(i => i.project.products).flat();
 
@@ -69,7 +83,7 @@ export default function InspectionsTab({ projectId }) {
         <>
 
             <TableHeader.Root>
-                <TableHeader.Title 
+                <TableHeader.Title
                     title="Total"
                     totalItems={inspections.length}
                     objNameNumberReference={inspections.length === 1 ? "Vistoria" : "Vistorias"}
@@ -95,7 +109,7 @@ export default function InspectionsTab({ projectId }) {
                     {columns.map(c => (
                         <Table.Cell
                             key={c.field}
-                            sx={{ fontWeight: 600, fontSize: '14px'}}
+                            sx={{ fontWeight: 600, fontSize: '14px' }}
                         >
                             {c.headerName}
                         </Table.Cell>
@@ -112,7 +126,7 @@ export default function InspectionsTab({ projectId }) {
                     />
                     <Table.Cell
                         render={row => row.address?.complete_address}
-                        sx={{ opacity: 0.7,}}
+                        sx={{ opacity: 0.7, }}
                     />
                     <Table.Cell render={row =>
                         row.products?.length > 0
@@ -123,15 +137,15 @@ export default function InspectionsTab({ projectId }) {
                     <Table.Cell render={row =>
                         row.scheduled_agent
                             ? <UserCard userId={row.scheduled_agent} />
-                            : "Sem agente"} 
+                            : "Sem agente"}
                         sx={{ opacity: 0.7 }}
                     />
                     <Table.Cell render={row =>
-                        formatDate(row.schedule_date)} 
+                        formatDate(row.schedule_date)}
                         sx={{ opacity: 0.7 }}
                     />
                     <Table.Cell render={row =>
-                        formatDate(row.completed_date)} 
+                        formatDate(row.completed_date)}
                         sx={{ opacity: 0.7 }}
                     />
 
@@ -167,22 +181,14 @@ export default function InspectionsTab({ projectId }) {
                 onClose={() => setOpenAddInspection(false)}
                 maxWidth="md"
                 fullWidth
-                PaperProps={{
-                sx: {
-                    borderRadius: '20px',
-                    padding: '24px',
-                    gap: '24px',
-                    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-                    backgroundColor: '#FFFFFF',
-                },
-                }}
+                PaperProps={{ sx: { borderRadius: '20px', padding: '24px', gap: '24px', boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#FFF' } }}
             >
                 <DialogContent>
-                    <ScheduleFormCreate 
+                    <ScheduleFromProjectForm
                         projectId={projectId}
-                        customerId={principalId}
+                        categoryId={categoryId}
                         products={products}
-                        
+                        onSave={handleAddSuccess}
                     />
                 </DialogContent>
             </Dialog>
