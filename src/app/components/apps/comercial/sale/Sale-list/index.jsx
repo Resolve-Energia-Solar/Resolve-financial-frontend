@@ -133,6 +133,7 @@ const SaleList = () => {
       setSalesList(data?.results);
       setTotalRows(data?.meta?.pagination?.total_count);
     } catch (err) {
+      console.error('Erro ao carregar Vendas:', err);
       setError('Erro ao carregar Vendas');
       showAlert('Erro ao carregar Vendas', 'error');
     } finally {

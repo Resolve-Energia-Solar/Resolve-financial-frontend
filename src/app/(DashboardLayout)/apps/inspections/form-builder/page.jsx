@@ -144,7 +144,7 @@ const FormBuilderList = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {formList
+                  {formList.results
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((form) => (
                       <TableRow key={form.id}>
