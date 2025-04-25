@@ -1,6 +1,5 @@
 import qs from 'qs';
 import apiClient from './apiClient';
-import { find } from 'lodash';
 
 const DEFAULT_ROUTER = '/api/projects';
 
