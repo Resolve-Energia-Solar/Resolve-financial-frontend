@@ -111,7 +111,7 @@ export default function AddRequestCompany({
                 'project.homologator.id',
                 'address.id',
               ],
-              project: projectId,
+              project: projectId || '',
               limit: 15,
               page: 1,
             }}

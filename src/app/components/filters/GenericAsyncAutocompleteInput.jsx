@@ -41,6 +41,7 @@ export default function GenericAsyncAutocompleteInput({
   const [open, setOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [newObjectData, setNewObjectData] = useState({ label: '', value: '' });
+  const [createErrors, setCreateErrors] = useState({});
 
   const stableExtraParams = useMemo(() => extraParams, [JSON.stringify(extraParams)]);
   const stableMapResponse = useMemo(() => mapResponse, [mapResponse]);
@@ -122,18 +123,32 @@ export default function GenericAsyncAutocompleteInput({
 
   const handleCreate = async () => {
     try {
-      const created = await onCreateObject(newObjectData);
-      const newOpt = {
-        label: created.complete_address || created.name || '',
-        value: created.id,
-      };
+      const result = await onCreateObject(newObjectData);
+      const created = result?.data ?? result;
+
+      let newOpt;
+      if (stableMapResponse) {
+        newOpt = stableMapResponse({ results: [created] })[0];
+      } else {
+        newOpt = {
+          label: created.label ?? created.name ?? '',
+          value: created.id ?? created.value,
+        };
+      }
+
       setOptions(prev => [...prev, newOpt]);
       onChange(multiselect ? [...(selectedOption || []), newOpt] : newOpt.value);
+      setCreateErrors({});
       setCreateModalOpen(false);
     } catch (err) {
-      console.error('Error creating object:', err);
-    }
-  };
+      if (err.response?.data && typeof err.response.data === 'object') {
+        setCreateErrors(err.response.data);
+      } else {
+        console.error('Error creating object:', err);
+      }
+    };
+  }
+
 
   return (
     <>
@@ -187,10 +202,11 @@ export default function GenericAsyncAutocompleteInput({
           <DialogTitle>Adicionar {label}</DialogTitle>
           <DialogContent>
             {renderCreateModal({
-              onClose: () => setCreateModalOpen(false),
-              onCreate: handleCreate,
               newObjectData,
               setNewObjectData,
+              onCreate: handleCreate,
+              onClose: () => setCreateModalOpen(false),
+              errors: createErrors
             })}
           </DialogContent>
           <DialogActions>

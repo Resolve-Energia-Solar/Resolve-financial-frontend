@@ -20,7 +20,9 @@ import {
   Typography,
   Grid,
   Link,
-} from '@mui/material'; import PageContainer from '@/app/components/container/PageContainer';
+  CircularProgress,
+} from '@mui/material';
+import PageContainer from '@/app/components/container/PageContainer';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import BlankCard from '@/app/components/shared/BlankCard';
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
@@ -32,9 +34,12 @@ import { formatDate } from '@/utils/dateUtils';
 import attachmentService from '@/services/attachmentService';
 import getContentType from '@/utils/getContentType';
 
-const UpdateSchedulePage = () => {
+const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh = null }) => {
   const router = useRouter();
-  const { id } = useParams();
+  const params = useParams();
+  let id = scheduleId;
+  if (!scheduleId) id = params.id;
+
   const [formData, setFormData] = useState({
     schedule_date: '',
     schedule_start_time: '',
@@ -52,6 +57,7 @@ const UpdateSchedulePage = () => {
     attachments: [],
   });
   const [loading, setLoading] = useState(false);
+  const [loadingForm, setLoadingForm] = useState(false);
   const [error, setError] = useState('');
   const [errors, setErrors] = useState({});
   const [isEndModified, setIsEndModified] = useState(false);
@@ -61,6 +67,7 @@ const UpdateSchedulePage = () => {
   const [tabValue, setTabValue] = useState('form');
   const [projectAttachments, setProjectAttachments] = useState([]);
   const [saleAttachments, setSaleAttachments] = useState([]);
+
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
@@ -77,7 +84,7 @@ const UpdateSchedulePage = () => {
 
   useEffect(() => {
     if (id) {
-      setLoading(true);
+      setLoadingForm(true);
       scheduleService
         .find(id, {
           fields: [
@@ -128,7 +135,7 @@ const UpdateSchedulePage = () => {
           enqueueSnackbar('Erro ao carregar agendamento', { variant: 'error' });
           setError(`Erro ao carregar agendamento: ${err.message}`);
         })
-        .finally(() => setLoading(false));
+        .finally(() => setLoadingForm(false));
     }
   }, [id, enqueueSnackbar]);
 
@@ -143,22 +150,20 @@ const UpdateSchedulePage = () => {
           content_type_id: projectContentType,
           object_id: formData.project,
           expand: 'document_type',
-          fields: 'id,document_type.name,description,created_at,file'
+          fields: 'id,document_type.name,description,created_at,file',
         }),
         attachmentService.index({
           content_type_id: saleContentType,
           object_id: saleId,
           expand: 'document_type',
-          fields: 'id,document_type.name,description,created_at,file'
-        })
+          fields: 'id,document_type.name,description,created_at,file',
+        }),
       ])
         .then(([projectData, saleData]) => {
           const projectDataAttachments = Array.isArray(projectData)
             ? projectData
-            : (projectData.results || []);
-          const saleDataAttachments = Array.isArray(saleData)
-            ? saleData
-            : (saleData.results || []);
+            : projectData.results || [];
+          const saleDataAttachments = Array.isArray(saleData) ? saleData : saleData.results || [];
           setProjectAttachments(projectDataAttachments);
           setSaleAttachments(saleDataAttachments);
         })
@@ -216,18 +221,18 @@ const UpdateSchedulePage = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-  
+
     const requiredFields = [
-      'schedule_date', 
-      'schedule_start_time', 
-      'schedule_end_date', 
-      'schedule_end_time', 
-      'service', 
-      'customer', 
-      'branch', 
-      'address'
+      'schedule_date',
+      'schedule_start_time',
+      'schedule_end_date',
+      'schedule_end_time',
+      'service',
+      'customer',
+      'branch',
+      'address',
     ];
-  
+
     for (const field of requiredFields) {
       if (!formData[field]) {
         enqueueSnackbar(`${fieldLabels[field]} é obrigatório.`, { variant: 'error' });
@@ -235,7 +240,7 @@ const UpdateSchedulePage = () => {
         return;
       }
     }
-  
+
     const submitData = {
       ...formData,
       service: formData.service?.id || formData.service?.value || null,
@@ -247,35 +252,63 @@ const UpdateSchedulePage = () => {
       schedule_creator: user.id,
       status: formData.status,
       service_opinion: formData.service_opinion?.value || formData.service_opinion || null,
-      final_service_opinion: formData.final_service_opinion?.value || formData.final_service_opinion || null,
-      products: formData.product?.value ? [formData.product?.value] : formData.product ? [formData.product] : [],
+      final_service_opinion:
+        formData.final_service_opinion?.value || formData.final_service_opinion || null,
+      products:
+        !formData.product || Array.isArray(formData.product)
+          ? []
+          : [formData.product.value ?? formData.product],
       parent_schedules: Array.isArray(formData.parent_schedules)
-      ? formData.parent_schedules.filter((ps) => ps).map((ps) => ps.value || ps)
-      : [],
+        ? formData.parent_schedules.filter((ps) => ps).map((ps) => ps.value || ps)
+        : [],
     };
-  
+
     try {
       await scheduleService.updateSchedule(id, submitData);
-      router.push('/apps/schedules');
+      enqueueSnackbar('Agendamento atualizado com sucesso', { variant: 'success' });
+      if (onClosedModal) onClosedModal();
+      if (onRefresh) onRefresh();
+      if (!scheduleId) router.push('/apps/schedules');
     } catch (err) {
-      Object.entries(err.response.data).forEach(([field, messages]) => {
-        messages.forEach((message) => {
-          const label = fieldLabels[field] || field;
-          enqueueSnackbar(`${label}: ${message}`, { variant: 'error' });
-        });
-      });
+      if (err.response && err.response.data && typeof err.response.data === 'object') {
+        if ('available_time' in err.response.data) {
+          const { message, available_time } = err.response.data;
+          const timeSlots = available_time.map((slot) => (
+            <li key={`${slot.start}-${slot.end}`}>
+              {slot.start} - {slot.end}
+            </li>
+          ));
+          enqueueSnackbar(
+            <div>
+              <Typography variant="body1">{message}</Typography>
+              <Typography variant="body2">Horários disponíveis:</Typography>
+              <ul>{timeSlots}</ul>
+            </div>,
+            { variant: 'warning' },
+          );
+        } else {
+          Object.entries(err.response.data).forEach(([field, messages]) => {
+            if (Array.isArray(messages)) {
+              messages.forEach((message) => {
+                const label = fieldLabels[field] || field;
+                enqueueSnackbar(`${label}: ${message}`, { variant: 'error' });
+              });
+            }
+          });
+        }
+      }
       setErrors(err.response.data);
       setLoading(false);
     }
   };
-  
+
   const breadcrumbItems = [
     { to: '/', title: 'Início' },
     { to: '/apps/schedules', title: 'Agendamentos' },
     { title: 'Atualizar Agendamento' },
   ];
 
-  if (loading) {
+  if (loadingForm) {
     return <Typography>Carregando...</Typography>;
   }
 
@@ -639,7 +672,8 @@ const UpdateSchedulePage = () => {
                           )}
                         </Typography>
                         <Typography variant="body2">
-                          <strong>Produto:</strong> {option.product.label || 'Produto não Disponível'}
+                          <strong>Produto:</strong>{' '}
+                          {option.product.label || 'Produto não Disponível'}
                         </Typography>
                       </Box>
                     </li>
@@ -699,91 +733,108 @@ const UpdateSchedulePage = () => {
                   onChange={(newValue) => setFormData({ ...formData, address: newValue })}
                   endpoint="/api/addresses"
                   queryParam="q"
-                  extraParams={{ fields: ['id', 'complete_address'], customer_id: formData.customer?.value || '' }}
-                  mapResponse={(data) => data.results.map((a) => ({ label: a.complete_address, value: a.id }))}
+                  extraParams={{
+                    fields: ['id', 'complete_address'],
+                    customer_id: formData.customer?.value || '',
+                  }}
+                  mapResponse={(data) =>
+                    data.results.map((a) => ({ label: a.complete_address, value: a.id }))
+                  }
                   fullWidth
                   helperText={errors.address?.[0] || ''}
                   error={!!errors.address}
                   required
                 />
               </Grid>
-              {(formData.customer || formData.project) && <Grid item xs={12} sm={6}>
-                <GenericAsyncAutocompleteInput
-                  label="Serviço Relacionado"
-                  value={formData.parent_schedules}
-                  onChange={(newValue) => setFormData({ ...formData, parent_schedules: newValue })}
-                  endpoint="/api/schedule"
-                  queryParam="q"
-                  extraParams={{
-                    fields:
-                      'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,status,service,customer.complete_name,address.complete_address,schedule_agent.complete_name,branch.name,service_opinion,final_service_opinion',
-                    expand: 'customer,schedule_agent,service,address,final_service_opinion,service_opinion,branch',
-                    customer: formData.customer?.value || '',
-                    project: formData.project || '',
-                    customer_project_or: true
-                  }}
-                  mapResponse={(data) => {
-                    return data.results.map((s) => ({
-                      label: `${s.service?.name || ''} nº ${s.protocol} - ${s.customer?.complete_name || ''} - ${s.schedule_date} ${s.schedule_start_time.toLocaleString()}`,
-                      value: s.id,
-                      ...s,
-                    }));
-                  }}
-                  renderOption={(props, option) => (
-                    <li {...props}>
-                      <Box
-                        sx={{ p: 1, display: 'flex', flexDirection: 'column' }}
-                      >
-                        <Typography variant="subtitle2">
-                          <strong>Protocolo:</strong> {option.protocol}
-                        </Typography>
-                        <Typography variant="body1">
-                          <strong>Início:</strong> {formatDate(option.schedule_date)} {option.schedule_start_time.toLocaleString()} | <strong>Término:</strong> {formatDate(option.schedule_end_date)} {option.schedule_end_time.toLocaleString()}
-                        </Typography>
-                        {option.customer && <Typography variant="body1">
-                          <strong>Cliente:</strong> {option.customer?.complete_name}
-                        </Typography>}
-                        {option.service && (
-                          <Typography variant="body1">
-                            <strong>Serviço:</strong> {option.service.name}
+              {(formData.customer || formData.project) && (
+                <Grid item xs={12} sm={6}>
+                  <GenericAsyncAutocompleteInput
+                    label="Serviço Relacionado"
+                    value={formData.parent_schedules}
+                    onChange={(newValue) =>
+                      setFormData({ ...formData, parent_schedules: newValue })
+                    }
+                    endpoint="/api/schedule"
+                    queryParam="q"
+                    extraParams={{
+                      fields:
+                        'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,status,service,customer.complete_name,address.complete_address,schedule_agent.complete_name,branch.name,service_opinion,final_service_opinion',
+                      expand:
+                        'customer,schedule_agent,service,address,final_service_opinion,service_opinion,branch',
+                      customer: formData.customer?.value || '',
+                      project: formData.project || '',
+                      customer_project_or: true,
+                    }}
+                    mapResponse={(data) => {
+                      return data.results.map((s) => ({
+                        label: `${s.service?.name || ''} nº ${s.protocol} - ${
+                          s.customer?.complete_name || ''
+                        } - ${s.schedule_date} ${s.schedule_start_time.toLocaleString()}`,
+                        value: s.id,
+                        ...s,
+                      }));
+                    }}
+                    renderOption={(props, option) => (
+                      <li {...props}>
+                        <Box sx={{ p: 1, display: 'flex', flexDirection: 'column' }}>
+                          <Typography variant="subtitle2">
+                            <strong>Protocolo:</strong> {option.protocol}
                           </Typography>
-                        )}
-                        {option.schedule_agent && <Typography variant="body1">
-                          <strong>Agente:</strong> {option.schedule_agent.complete_name}
-                        </Typography>
-                        }
-                        <Typography variant="body1"><strong>Status:</strong> {option.status}</Typography>
-                        {option.address && (
                           <Typography variant="body1">
-                            <strong>Endereço:</strong> {option.address.complete_address}
+                            <strong>Início:</strong> {formatDate(option.schedule_date)}{' '}
+                            {option.schedule_start_time.toLocaleString()} |{' '}
+                            <strong>Término:</strong> {formatDate(option.schedule_end_date)}{' '}
+                            {option.schedule_end_time.toLocaleString()}
                           </Typography>
-                        )}
-                        {option.branch && option.branch.name && (
+                          {option.customer && (
+                            <Typography variant="body1">
+                              <strong>Cliente:</strong> {option.customer?.complete_name}
+                            </Typography>
+                          )}
+                          {option.service && (
+                            <Typography variant="body1">
+                              <strong>Serviço:</strong> {option.service.name}
+                            </Typography>
+                          )}
+                          {option.schedule_agent && (
+                            <Typography variant="body1">
+                              <strong>Agente:</strong> {option.schedule_agent.complete_name}
+                            </Typography>
+                          )}
                           <Typography variant="body1">
-                            <strong>Filial:</strong> {option.branch.name}
+                            <strong>Status:</strong> {option.status}
                           </Typography>
-                        )}
-                        {option.service_opinion && option.service_opinion.name && (
-                          <Typography variant="body1">
-                            <strong>Parecer de Serviço:</strong> {option.service_opinion.name}
-                          </Typography>
-                        )}
-                        {option.final_service_opinion && option.final_service_opinion.name && (
-                          <Typography variant="body1">
-                            <strong>Parecer Final:</strong> {option.final_service_opinion.name}
-                          </Typography>
-                        )}
-                      </Box>
-                    </li>
-                  )}
-                  helperText={errors.parent_schedules?.[0] || ''}
-                  error={!!errors.parent_schedules}
-                  fullWidth
-                  multiselect
-                  required
-                />
-              </Grid>
-              }
+                          {option.address && (
+                            <Typography variant="body1">
+                              <strong>Endereço:</strong> {option.address.complete_address}
+                            </Typography>
+                          )}
+                          {option.branch && option.branch.name && (
+                            <Typography variant="body1">
+                              <strong>Filial:</strong> {option.branch.name}
+                            </Typography>
+                          )}
+                          {option.service_opinion && option.service_opinion.name && (
+                            <Typography variant="body1">
+                              <strong>Parecer de Serviço:</strong> {option.service_opinion.name}
+                            </Typography>
+                          )}
+                          {option.final_service_opinion && option.final_service_opinion.name && (
+                            <Typography variant="body1">
+                              <strong>Parecer Final:</strong> {option.final_service_opinion.name}
+                            </Typography>
+                          )}
+                        </Box>
+                      </li>
+                    )}
+                    helperText={errors.parent_schedules?.[0] || ''}
+                    error={!!errors.parent_schedules}
+                    fullWidth
+                    multiselect
+                    required
+                  />
+                </Grid>
+              )}
               <Grid item xs={12}>
                 <CustomTextField
                   label="Observação"
@@ -804,7 +855,9 @@ const UpdateSchedulePage = () => {
           )}
           {formData.project && tabValue === 'attachments' && (
             <Box sx={{ mt: 2 }}>
-              <Typography variant="h6" sx={{ mb: 1 }}>Anexos do Projeto</Typography>
+              <Typography variant="h6" sx={{ mb: 1 }}>
+                Anexos do Projeto
+              </Typography>
               {projectAttachments.length ? (
                 <TableContainer component={Paper} sx={{ mb: 3 }}>
                   <Table aria-label="Tabela de Anexos do Projeto">
@@ -828,7 +881,11 @@ const UpdateSchedulePage = () => {
                           </TableCell>
                           <TableCell>
                             {typeof attachment.file === 'string' ? (
-                              <Link href={attachment.file} target="_blank" rel="noopener noreferrer">
+                              <Link
+                                href={attachment.file}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
                                 {getFileName(attachment.file)}
                               </Link>
                             ) : (
@@ -851,7 +908,9 @@ const UpdateSchedulePage = () => {
                 <Typography variant="body2">Nenhum anexo do projeto disponível.</Typography>
               )}
 
-              <Typography variant="h6" sx={{ mb: 1 }}>Anexos da Venda</Typography>
+              <Typography variant="h6" sx={{ mb: 1 }}>
+                Anexos da Venda
+              </Typography>
               {saleAttachments.length ? (
                 <TableContainer component={Paper}>
                   <Table aria-label="Tabela de Anexos da Venda">
@@ -875,7 +934,11 @@ const UpdateSchedulePage = () => {
                           </TableCell>
                           <TableCell>
                             {typeof attachment.file === 'string' ? (
-                              <Link href={attachment.file} target="_blank" rel="noopener noreferrer">
+                              <Link
+                                href={attachment.file}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
                                 {getFileName(attachment.file)}
                               </Link>
                             ) : (
@@ -903,13 +966,18 @@ const UpdateSchedulePage = () => {
             <Button variant="outlined" onClick={() => router.back()} disabled={loading}>
               Cancelar
             </Button>
-            <Button type="submit" variant="contained" disabled={loading}>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={loading}
+              endIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+            >
               {loading ? 'Salvando...' : 'Salvar'}
             </Button>
           </Box>
         </Box>
       </BlankCard>
-    </PageContainer >
+    </PageContainer>
   );
 };
 

@@ -68,7 +68,6 @@ const CommercialScheduleDetail = ({ schedule }) => {
   const [productName, setProductName] = useState('');
   const [seller, setSeller] = useState(null);
   
-  // Estados para edição inline na Tab "Informações do Agendamento"
   const [editMode, setEditMode] = useState(false);
   const [editedScheduleDate, setEditedScheduleDate] = useState(schedule.schedule_date || '');
   const [editedScheduleStartTime, setEditedScheduleStartTime] = useState(schedule.schedule_start_time || '');
@@ -130,7 +129,6 @@ const CommercialScheduleDetail = ({ schedule }) => {
       try {
         let productData = null;
         
-        // Priorize o produto do projeto, se existir.
         if (schedule?.project?.product) {
           const productId =
             typeof schedule.project.product === 'object'

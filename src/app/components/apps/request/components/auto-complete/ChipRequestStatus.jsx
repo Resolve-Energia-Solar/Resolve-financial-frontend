@@ -5,17 +5,21 @@ import {
   Error as ErrorIcon,
 } from '@mui/icons-material';
 
-const ChipRequest = ({ status }) => {
+const ChipRequestStatus = ({ status }) => {
   const getChipProps = (status) => {
     switch (status) {
-      case 'S':
+      case 'Solicitada':
         return { label: 'Solicitada', color: 'warning', icon: <HourglassEmptyIcon /> };
-      case 'I':
+      case 'Indeferida':
         return { label: 'Indeferida', color: 'error', icon: <ErrorIcon /> };
-        case 'D':
+      case 'Bloqueado':
+        return { label: 'Bloqueado', color: 'error', icon: <ErrorIcon /> };
+      case 'Deferida':
         return { label: 'Deferida', color: 'success', icon: <CheckCircleIcon /> };
+      case 'Não se aplica':
+        return { label: 'Não se aplica', color: 'default', icon: null};
       default:
-        return { label: 'Sem Solicitação', color: 'default', icon: null};
+        return { label: 'Não se aplica', color: 'default', icon: null};
     }
   };
 
@@ -24,4 +28,4 @@ const ChipRequest = ({ status }) => {
   return <Chip label={label} color={color} icon={icon} />;
 };
 
-export default ChipRequest;
+export default ChipRequestStatus;

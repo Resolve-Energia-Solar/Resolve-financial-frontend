@@ -23,7 +23,7 @@ const useScheduleForm = (initialData, id, service_id) => {
 
   const [formData, setFormData] = useState({
     schedule_creator: user?.user?.id || user?.user || null,
-    branch: { label: 'Unidade Mock', value: 1 },  // campo branch mockado
+    branch: null,
     category: null,
     service: null,
     parent_schedules_id: [],
@@ -61,7 +61,7 @@ const useScheduleForm = (initialData, id, service_id) => {
               label: initialData.branch.label,
               value: initialData.branch.value,
             }
-          : { label: 'Unidade Mock', value: 1 },
+          : null,
         service: initialData.service?.id || service_id,
         parent_schedules_id:
           initialData.parent_schedules?.map((s) => s.id) || [],
@@ -95,7 +95,6 @@ const useScheduleForm = (initialData, id, service_id) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Calcula schedule_end_date & schedule_end_time
   useEffect(() => {
     const calculateEndDateTime = async () => {
       if (

@@ -202,6 +202,8 @@ const EditSaleTabs = ({
     });
   }, [saleData?.sale_products]);
 
+  console.log('productNames', productNames);
+
   return (
     <Box {...props}>
       <Tabs
@@ -407,8 +409,7 @@ const EditSaleTabs = ({
                   </Grid>
                 </HasPermission>
 
-                {(formData.status === 'D' || formData.status === 'C') &&
-                  formData.isSale === false && (
+                {(formData.status === 'D' || formData.status === 'C') && (
                     <Grid item xs={12} sm={12} lg={8}>
                       <CustomFormLabel htmlFor="Motivo">
                         Motivo do {formData.status === 'C' ? 'Cancelamento' : 'Distrato'}
@@ -463,11 +464,11 @@ const EditSaleTabs = ({
                   </Grid>
                 </HasPermission>
 
-                {(saleData.sale_products || []).map((sp, idx) => (
+                {(saleData.sale_products || []).map((saleProduct, index) => (
                   <SaleProductItem
-                    key={sp.id}
-                    initialData={sp}
-                    productName={productNames[idx]}
+                    key={saleProduct.id}
+                    initialData={saleProduct}
+                    productName={productNames[index]}
                     onUpdated={fetchSale}
                   />
                 ))}

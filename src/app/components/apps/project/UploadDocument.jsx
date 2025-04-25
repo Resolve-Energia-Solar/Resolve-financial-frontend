@@ -184,7 +184,7 @@ const UploadDocument = ({ projectId }) => {
     const originalAmount = materials.find((item) => item.id === id)?.amount;
 
     try {
-      await projectMaterialsService.Update(id, { amount: editedAmount });
+      await projectMaterialsService.update(id, { amount: editedAmount });
 
       const updatedMaterials = materials.map((item) =>
         item.id === id ? { ...item, amount: editedAmount } : item,
