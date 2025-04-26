@@ -143,7 +143,8 @@ function AddSchedulePage({ form = null, serviceId, onRefresh = null, onClose = n
         </Grid>
 
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
-            <Grid item xs={12}>
+          {serviceId ? null : (
+          <Grid item xs={12}>
               <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
               <AutoCompleteServiceCatalog
                 fullWidth
@@ -155,6 +156,7 @@ function AddSchedulePage({ form = null, serviceId, onRefresh = null, onClose = n
                 })}
               />
             </Grid>
+          )}
         </Grid>
 
         <Grid item xs={12} sm={12} lg={12}>
