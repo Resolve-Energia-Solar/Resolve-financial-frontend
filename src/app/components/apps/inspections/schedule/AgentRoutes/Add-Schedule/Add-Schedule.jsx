@@ -27,21 +27,25 @@ function AddSchedulePage({ form = null, serviceId, onRefresh = null, onClose = n
   const theme = useTheme();
   const [isProject, setIsProject] = useState(false);
 
+  console.log('form: ', form)
+
   const { enqueueSnackbar } = useSnackbar();
 
   const { formData, setFormData, setFormErrors,formErrors, handleChange, handleSave, setLoading: setFormLoading,loading: formLoading } = useScheduleForm()
 
   serviceId ? (formData.service = serviceId) : null;
+  form.schedule_agent ? (formData.schedule_agent = form.schedule_agent) : null;
+  form.schedule_date ? (formData.schedule_date = form.schedule_date) : null;
   console.log('formData: ', formData)
   console.log('formErrors: ', formErrors)
 
 
   const timeOptions = [
-    { value: '08:30:00', label: '08:30' },
-    { value: '10:00:00', label: '10:00' },
-    { value: '13:00:00', label: '13:00' },
-    { value: '14:30:00', label: '14:30' },
-    { value: '16:00:00', label: '16:00' },
+    { value: '08:30:00', label: '08:30', value_end: '09:30:00' },
+    { value: '10:00:00', label: '10:00', value_end: '11:00:00' },
+    { value: '13:00:00', label: '13:00', value_end: '14:00:00' },
+    { value: '14:30:00', label: '14:30', value_end: '15:30:00' },
+    { value: '16:00:00', label: '16:00', value_end: '17:00:00' },
   ];
 
   const statusOptions = [
@@ -118,6 +122,8 @@ function AddSchedulePage({ form = null, serviceId, onRefresh = null, onClose = n
       }
 
       await handleSave();
+      if (onRefresh) onRefresh()
+      if(onClose) onClose()
     } catch (error) {
       console.error('Error saving form:', error);
       enqueueSnackbar('Erro ao salvar o agendamento', { variant: 'error' });
@@ -499,6 +505,7 @@ function AddSchedulePage({ form = null, serviceId, onRefresh = null, onClose = n
         </Grid>
 
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
+          {!form.schedule_date && (
           <Grid item xs={12}>
             <CustomFormLabel
               htmlFor="start_datetime"
@@ -528,6 +535,7 @@ function AddSchedulePage({ form = null, serviceId, onRefresh = null, onClose = n
               }}
             />
           </Grid>
+          )}
         </Grid>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
           <Grid item xs={12}>
@@ -539,7 +547,10 @@ function AddSchedulePage({ form = null, serviceId, onRefresh = null, onClose = n
             </CustomFormLabel>
             <FormSelect
               options={timeOptions}
-              onChange={(e) => handleChange('schedule_start_time', e.target.value)}
+              onChange={(e) => {
+                handleChange('schedule_start_time', e.target.value)
+                handleChange('schedule_end_time', e.target.value_end)
+              }}
               value={formData.schedule_start_time || ''}
               {...(formErrors.schedule_start_time && {
                 error: true,

@@ -22,17 +22,22 @@ export default function AgentRoutes() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const [modalEditScheduleOpen, setModalEditScheduleOpen] = useState(false);
   const [modelCreateScheduleOpen, setModelCreateScheduleOpen] = useState(false);
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
   const [formData, setFormData] = useState({});
 
+  const handleRefresh = () => {
+    setRefresh(!refresh);
+  }
 
   const handleOpenModalCreateSchedule = (agentId) => {
     setModelCreateScheduleOpen(true);
     setFormData({
       schedule_agent: agentId,
+      schedule_date: format(selectedDate, 'yyyy-MM-dd'),
     })
   }
 
@@ -95,7 +100,7 @@ export default function AgentRoutes() {
         setLoading(false);
       }
     },
-    [rowsPerPage, page],
+    [rowsPerPage, page, refresh]
   );
 
   useEffect(() => {
@@ -194,7 +199,7 @@ export default function AgentRoutes() {
       >
         <DialogContent>
           <DialogContentText>
-            <AddSchedulePage form={formData} serviceId={1} />
+            <AddSchedulePage form={formData} serviceId={1} onClose={() => setModelCreateScheduleOpen(false)} onRefresh={() => handleRefresh()} />
           </DialogContentText>
         </DialogContent>
       </Dialog>
