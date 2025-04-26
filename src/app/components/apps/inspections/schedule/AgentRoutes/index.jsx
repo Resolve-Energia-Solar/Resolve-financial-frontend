@@ -5,7 +5,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ptBR } from 'date-fns/locale';
 import { format } from 'date-fns';
-import CardAgentRoutes from './Card';
+import CardAgentRoutes from './components/Card';
 import userService from '@/services/userService';
 import scheduleService from '@/services/scheduleService';
 import { useEffect, useState, useCallback } from 'react';
