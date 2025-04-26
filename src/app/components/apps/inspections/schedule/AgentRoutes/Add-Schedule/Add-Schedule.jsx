@@ -78,6 +78,24 @@ function AddSchedulePage({ form = null, serviceId, onRefresh = null, onClose = n
   };
 
   useEffect(() => {
+      if ('available_time' in formErrors) {
+        const { message, available_time } = formErrors;
+        const timeSlots = available_time.map((slot) => (
+          <li key={`${slot.start}-${slot.end}`}>
+            {slot.start} - {slot.end}
+          </li>
+        ));
+        enqueueSnackbar(
+          <div>
+            <Typography variant="body1">{message}</Typography>
+            <Typography variant="body2">Horários disponíveis:</Typography>
+            <ul>{timeSlots}</ul>
+          </div>,
+          { variant: 'warning' },
+        );
+      }
+
+    // Caso tenha erros no formulário e seja um projeto
     if (formErrors && Object.keys(formErrors).length > 0 && isProject) {
       Object.keys(formErrors).forEach((key) => {
         if (formErrors[key] && formErrors[key].length > 0) {
@@ -87,6 +105,7 @@ function AddSchedulePage({ form = null, serviceId, onRefresh = null, onClose = n
       });
     }
   }, [formErrors]);
+
 
 
   const formatCurrency = (value) =>
@@ -121,9 +140,11 @@ function AddSchedulePage({ form = null, serviceId, onRefresh = null, onClose = n
         return;
       }
 
-      await handleSave();
-      if (onRefresh) onRefresh()
-      if(onClose) onClose()
+      const response = await handleSave();
+      if (response) {
+        if (onRefresh) onRefresh()
+        if(onClose) onClose()
+      }
     } catch (error) {
       console.error('Error saving form:', error);
       enqueueSnackbar('Erro ao salvar o agendamento', { variant: 'error' });
