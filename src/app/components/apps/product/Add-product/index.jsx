@@ -93,12 +93,12 @@ const CreateProduct = ({
 
       <Grid container spacing={3} mb={4}>
         <Grid item xs={12} sm={12} lg={6}>
-          <CustomFormLabel htmlFor="name">Nome</CustomFormLabel>
+          <CustomFormLabel htmlFor="name">Nome do Kit</CustomFormLabel>
           <CustomTextField
             name="name"
             value={formData.name}
             onChange={(e) => handleChange('name', e.target.value)}
-            placeholder="Nome do Produto"
+            placeholder="Nome do Kit do Cliente"
             variant="outlined"
             fullWidth
             {...(formErrors.name && { error: true, helperText: formErrors.name })}
