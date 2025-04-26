@@ -12,17 +12,18 @@ import { timelineItemClasses } from '@mui/lab/TimelineItem';
 
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import RoomIcon from '@mui/icons-material/Room';
 import EditIcon from '@mui/icons-material/Edit';
 import { Add } from '@mui/icons-material';
+import ModalChooseOption from '@/app/components/apps/inspections/schedule/AgentRoutes/components/ModalChooseOption';
 
-export default function CardAgentRoutes({ title, items = [], onItemClick }) {
+export default function CardAgentRoutes({ id, title, items = [], onItemClick, onCreateSchedule }) {
   const [hoveredIndex, setHoveredIndex] = React.useState(null);
+  const [openModal, setOpenModal] = React.useState(false);
 
   return (
     <Card variant="outlined" sx={{ maxWidth: 600, margin: 'auto', display: 'flex', flexDirection: 'column', height: '100%' }}>
       <CardHeader title={title} sx={{ pb: 0 }} />
-      <CardContent>
+      <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
         <Typography
           variant="body2"
           fontWeight={500}
@@ -101,12 +102,23 @@ export default function CardAgentRoutes({ title, items = [], onItemClick }) {
             );
           })}
         </Timeline>
-        {/* <Box display="flex" justifyContent="center" mt={2}>
-          <Button onClick={() => alert('Agendar Vistoria')} startIcon={<Add />}>
+        <Box display="flex" justifyContent="center" mt={2}>
+          <Button onClick={() => setOpenModal(true)} startIcon={<Add />}>
             Agendar Vistoria
           </Button>
-        </Box> */}
+        </Box>
       </CardContent>
+      <ModalChooseOption
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onChoose={(option) => {
+          setOpenModal(false);
+          if (option === 'create') {
+            onCreateSchedule(id)
+          } else if (option === 'edit') {
+            // Handle edit option
+          }
+        }} />
     </Card>
   );
 }

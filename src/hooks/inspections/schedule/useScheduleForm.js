@@ -5,6 +5,11 @@ import { useSelector } from 'react-redux';
 import { useSnackbar } from 'notistack';
 
 const extractId = (fieldValue) => {
+  console.log('fieldValue: ', fieldValue)
+  if (Number.isInteger(fieldValue)) {
+    return fieldValue;
+  }
+
   if (Array.isArray(fieldValue)) {
     return fieldValue.map((item) =>
       typeof item === 'object' && item !== null && 'value' in item
@@ -62,7 +67,7 @@ const useScheduleForm = (initialData, id, service_id) => {
               value: initialData.branch.value,
             }
           : null,
-        service: initialData.service?.id || service_id,
+        service: initialData.service?.id || initialData.service || service_id,
         parent_schedules_id:
           initialData.parent_schedules?.map((s) => s.id) || [],
         customer: extractId(initialData.customer),
@@ -202,9 +207,12 @@ const useScheduleForm = (initialData, id, service_id) => {
 
   return {
     formData,
+    setFormData,
     handleChange,
     handleSave,
+    setLoading,
     loading,
+    setFormErrors,
     formErrors,
     success,
   };

@@ -5,12 +5,13 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ptBR } from 'date-fns/locale';
 import { format } from 'date-fns';
-import CardAgentRoutes from './Card';
+import CardAgentRoutes from './components/Card';
 import userService from '@/services/userService';
 import scheduleService from '@/services/scheduleService';
 import { useEffect, useState, useCallback } from 'react';
 import ScheduleFormEdit from '../Edit-schedule/tabs/ScheduleFormEdit';
 import UpdateSchedulePage from '@/app/(DashboardLayout)/apps/schedules/[id]/update/page';
+import AddSchedulePage from '@/app/components/apps/inspections/schedule/AgentRoutes/Add-Schedule/Add-Schedule';
 
 export default function AgentRoutes() {
   const [agents, setAgents] = useState([]);
@@ -21,13 +22,28 @@ export default function AgentRoutes() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
-  const [modalScheduleOpen, setModalScheduleOpen] = useState(false);
+  const [modalEditScheduleOpen, setModalEditScheduleOpen] = useState(false);
+  const [modelCreateScheduleOpen, setModelCreateScheduleOpen] = useState(false);
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
+  const [formData, setFormData] = useState({});
+
+  const handleRefresh = () => {
+    setRefresh(!refresh);
+  }
+
+  const handleOpenModalCreateSchedule = (agentId) => {
+    setModelCreateScheduleOpen(true);
+    setFormData({
+      schedule_agent: agentId,
+      schedule_date: format(selectedDate, 'yyyy-MM-dd'),
+    })
+  }
 
   const handleOpenModalSchedule = (scheduleId) => {
     setSelectedScheduleId(scheduleId);
-    setModalScheduleOpen(true);
+    setModalEditScheduleOpen(true);
   };
 
   const handlePageChange = (event, newPage) => {
@@ -84,7 +100,7 @@ export default function AgentRoutes() {
         setLoading(false);
       }
     },
-    [rowsPerPage, page],
+    [rowsPerPage, page, refresh]
   );
 
   useEffect(() => {
@@ -139,7 +155,13 @@ export default function AgentRoutes() {
         <Grid container spacing={2}>
           {agents.map((agent) => (
             <Grid item xs={12} md={4} lg={3} key={agent.id}>
-              <CardAgentRoutes title={agent.complete_name} items={agent.schedules} onItemClick={handleOpenModalSchedule} />
+              <CardAgentRoutes
+                id={agent.id}
+                title={agent.complete_name}
+                items={agent.schedules}
+                onItemClick={handleOpenModalSchedule}
+                onCreateSchedule={handleOpenModalCreateSchedule}
+              />
             </Grid>
           ))}
         </Grid>
@@ -157,14 +179,27 @@ export default function AgentRoutes() {
       />
 
       <Dialog
-        open={modalScheduleOpen}
-        onClose={() => setModalScheduleOpen(false)}
+        open={modalEditScheduleOpen}
+        onClose={() => setModalEditScheduleOpen(false)}
         aria-labelledby="draggable-dialog-title"
         maxWidth="lg"
       >
         <DialogContent>
           <DialogContentText>
-            <UpdateSchedulePage scheduleId={selectedScheduleId} onClosedModal={() => setModalScheduleOpen(false)} />
+            <UpdateSchedulePage scheduleId={selectedScheduleId} onClosedModal={() => setModalEditScheduleOpen(false)} />
+          </DialogContentText>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={modelCreateScheduleOpen}
+        onClose={() => setModelCreateScheduleOpen(false)}
+        aria-labelledby="draggable-dialog-title"
+        maxWidth="lg"
+      >
+        <DialogContent>
+          <DialogContentText>
+            <AddSchedulePage form={formData} serviceId={1} onClose={() => setModelCreateScheduleOpen(false)} onRefresh={() => handleRefresh()} />
           </DialogContentText>
         </DialogContent>
       </Dialog>
