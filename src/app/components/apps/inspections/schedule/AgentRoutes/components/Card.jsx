@@ -16,7 +16,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { Add } from '@mui/icons-material';
 import ModalChooseOption from '@/app/components/apps/inspections/schedule/AgentRoutes/components/ModalChooseOption';
 
-export default function CardAgentRoutes({ title, items = [], onItemClick }) {
+export default function CardAgentRoutes({ id, title, items = [], onItemClick, onCreateSchedule }) {
   const [hoveredIndex, setHoveredIndex] = React.useState(null);
   const [openModal, setOpenModal] = React.useState(false);
 
@@ -113,7 +113,11 @@ export default function CardAgentRoutes({ title, items = [], onItemClick }) {
         onClose={() => setOpenModal(false)}
         onChoose={(option) => {
           setOpenModal(false);
-          alert(`Você escolheu: ${option}`);
+          if (option === 'create') {
+            onCreateSchedule(id)
+          } else if (option === 'edit') {
+            // Handle edit option
+          }
         }} />
     </Card>
   );

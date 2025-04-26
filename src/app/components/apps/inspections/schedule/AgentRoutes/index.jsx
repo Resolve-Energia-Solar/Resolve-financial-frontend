@@ -11,6 +11,7 @@ import scheduleService from '@/services/scheduleService';
 import { useEffect, useState, useCallback } from 'react';
 import ScheduleFormEdit from '../Edit-schedule/tabs/ScheduleFormEdit';
 import UpdateSchedulePage from '@/app/(DashboardLayout)/apps/schedules/[id]/update/page';
+import AddSchedulePage from '@/app/components/apps/inspections/schedule/AgentRoutes/Add-Schedule/Add-Schedule';
 
 export default function AgentRoutes() {
   const [agents, setAgents] = useState([]);
@@ -22,12 +23,22 @@ export default function AgentRoutes() {
   const [totalRows, setTotalRows] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const [modalScheduleOpen, setModalScheduleOpen] = useState(false);
+  const [modalEditScheduleOpen, setModalEditScheduleOpen] = useState(false);
+  const [modelCreateScheduleOpen, setModelCreateScheduleOpen] = useState(false);
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
+  const [formData, setFormData] = useState({});
+
+
+  const handleOpenModalCreateSchedule = (agentId) => {
+    setModelCreateScheduleOpen(true);
+    setFormData({
+      schedule_agent: agentId,
+    })
+  }
 
   const handleOpenModalSchedule = (scheduleId) => {
     setSelectedScheduleId(scheduleId);
-    setModalScheduleOpen(true);
+    setModalEditScheduleOpen(true);
   };
 
   const handlePageChange = (event, newPage) => {
@@ -139,7 +150,13 @@ export default function AgentRoutes() {
         <Grid container spacing={2}>
           {agents.map((agent) => (
             <Grid item xs={12} md={4} lg={3} key={agent.id}>
-              <CardAgentRoutes title={agent.complete_name} items={agent.schedules} onItemClick={handleOpenModalSchedule} />
+              <CardAgentRoutes
+                id={agent.id}
+                title={agent.complete_name}
+                items={agent.schedules}
+                onItemClick={handleOpenModalSchedule}
+                onCreateSchedule={handleOpenModalCreateSchedule}
+              />
             </Grid>
           ))}
         </Grid>
@@ -157,14 +174,27 @@ export default function AgentRoutes() {
       />
 
       <Dialog
-        open={modalScheduleOpen}
-        onClose={() => setModalScheduleOpen(false)}
+        open={modalEditScheduleOpen}
+        onClose={() => setModalEditScheduleOpen(false)}
         aria-labelledby="draggable-dialog-title"
         maxWidth="lg"
       >
         <DialogContent>
           <DialogContentText>
-            <UpdateSchedulePage scheduleId={selectedScheduleId} onClosedModal={() => setModalScheduleOpen(false)} />
+            <UpdateSchedulePage scheduleId={selectedScheduleId} onClosedModal={() => setModalEditScheduleOpen(false)} />
+          </DialogContentText>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={modelCreateScheduleOpen}
+        onClose={() => setModelCreateScheduleOpen(false)}
+        aria-labelledby="draggable-dialog-title"
+        maxWidth="lg"
+      >
+        <DialogContent>
+          <DialogContentText>
+            <AddSchedulePage form={formData} serviceId={1} />
           </DialogContentText>
         </DialogContent>
       </Dialog>

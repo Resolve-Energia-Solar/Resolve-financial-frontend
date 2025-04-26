@@ -38,7 +38,7 @@ export default function ModalChooseOption({ open, onClose, onChoose }) {
                   Listar Agendamentos
                 </Typography>
                 <Typography variant="body2" color="text.secondary" align="center">
-                  Visualize todos os agendamentos existentes
+                  Associar um agendamento existente que não possui agente
                 </Typography>
               </Stack>
             </Paper>
@@ -68,10 +68,10 @@ export default function ModalChooseOption({ open, onClose, onChoose }) {
               <Stack spacing={2} alignItems="center">
                 <AddCircleOutlineIcon sx={{ fontSize: 60, color: "#2e7d32" }} />
                 <Typography variant="h6" fontWeight="bold">
-                  Criar Novo
+                  Adicionar
                 </Typography>
                 <Typography variant="body2" color="text.secondary" align="center">
-                  Agende um novo agendamento
+                  Adicione um novo agendamento
                 </Typography>
               </Stack>
             </Paper>
