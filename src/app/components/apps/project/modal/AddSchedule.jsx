@@ -161,7 +161,6 @@ const ScheduleForm = ({ projectId, categoryId, onSave = () => { }, loading, erro
                         disabled
                     />
                 </Grid>
-                {/* Serviço antes das datas */}
                 <Grid item xs={6}>
                     <GenericAsyncAutocompleteInput
                         label="Serviço"

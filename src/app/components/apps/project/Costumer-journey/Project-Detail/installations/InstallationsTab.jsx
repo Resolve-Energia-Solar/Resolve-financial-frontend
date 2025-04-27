@@ -1,31 +1,33 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSnackbar } from "notistack";
 import scheduleService from "@/services/scheduleService";
 import TableSkeleton from "../../../../comercial/sale/components/TableSkeleton";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import UserCard from "../../../../users/userCard";
+import ScheduleFromProjectForm from "../../../modal/AddSchedule";
 import { formatDate } from "@/utils/dateUtils";
-import ScheduleOpinionChip from "../../../../inspections/schedule/StatusChip/ScheduleOpinionChip";
+import ScheduleOpinionChip from "@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip";
 import { Table } from "@/app/components/Table";
 import { useTheme, alpha, Dialog, DialogContent } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
-import ScheduleFormCreate from "../../../../inspections/schedule/Add-schedule";
+import categoryService from "@/services/categoryService";
 
 export default function InstallationsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
-    const [inspections, setInspections] = useState([])
+    const [installations, setInstallations] = useState([])
     const [loading, setLoading] = useState(true)
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
+    const [categoryId, setCategoryId] = useState(null);
 
     const theme = useTheme();
 
-    const [openAddInspection, setOpenAddInspection] = useState(false);
+    const [openAddInstallation, setOpenAddInstallation] = useState(false);
     const [openEditInspection, setOpenEditInspection] = useState(false);
     const [openViewInspection, setOpenViewInspection] = useState(false);
 
-    useEffect(() => {
+    const fetchItems = useCallback(async () => {
         if (projectId) {
             const fetchInspections = async () => {
                 setLoading(true);
@@ -38,7 +40,7 @@ export default function InstallationsTab({ projectId }) {
                             category__icontains: 'Instalação'
                         }
                     );
-                    setInspections(response.results);
+                    setInstallations(response.results);
                 } catch (error) {
                     enqueueSnackbar(`Erro ao carregar instalações: ${error.message}`, { variant: "error" });
                 } finally {
@@ -48,9 +50,28 @@ export default function InstallationsTab({ projectId }) {
             fetchInspections();
         }
         setLoading(false);
+    }, [projectId, enqueueSnackbar]);
+
+    useEffect(() => {
+        fetchItems();
     }, [projectId]);
 
-    const products = inspections.map(i => i.project.products).flat();
+    useEffect(() => {
+        const fetchCategory = async () => {
+            const response = await categoryService.index({ name__in: 'Instalação' });
+            if (response.results.length > 0) {
+                setCategoryId(response.results[0].id);
+            }
+        }
+        fetchCategory();
+    }, []);
+
+    const handleAddSuccess = async () => {
+        setOpenAddInstallation(false);
+        await fetchItems();
+    };
+
+    const products = installations.map(i => i.project.products).flat();
 
     if (loading) {
         return <TableSkeleton columns={8} rows={4} />;
@@ -74,12 +95,12 @@ export default function InstallationsTab({ projectId }) {
             <TableHeader.Root>
                 <TableHeader.Title
                     title="Total"
-                    totalItems={inspections.length}
-                    objNameNumberReference={inspections.length === 1 ? "Instalação" : "Instalações"}
+                    totalItems={installations.length}
+                    objNameNumberReference={installations.length === 1 ? "Instalação" : "Instalações"}
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar instalação"
-                    onButtonClick={() => setOpenAddInspection(true)}
+                    onButtonClick={() => setOpenAddInstallation(true)}
                     sx={{
                         width: 200,
                     }}
@@ -87,8 +108,8 @@ export default function InstallationsTab({ projectId }) {
             </TableHeader.Root>
 
             <Table.Root
-                data={inspections}
-                totalRows={inspections.length}
+                data={installations}
+                totalRows={installations.length}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={setPage}
@@ -148,25 +169,16 @@ export default function InstallationsTab({ projectId }) {
                 </Table.Body>
             </Table.Root>
 
-            <Dialog
-                open={openAddInspection}
-                onClose={() => setOpenAddInspection(false)}
-                maxWidth="md"
-                fullWidth
-                PaperProps={{
-                    sx: {
-                        borderRadius: '20px',
-                        padding: '24px',
-                        gap: '24px',
-                        boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-                        backgroundColor: '#FFFFFF',
-                    },
-                }}
-            >
+            <Dialog open={openAddInstallation} onClose={() => setOpenAddInstallation(false)} >
                 <DialogContent>
-                    <ScheduleFormCreate projectId={projectId} />
+                    <ScheduleFromProjectForm
+                        projectId={projectId}
+                        categoryId={categoryId}
+                        onSave={handleAddSuccess}
+                    />
                 </DialogContent>
             </Dialog>
+
         </>
     );
 }
