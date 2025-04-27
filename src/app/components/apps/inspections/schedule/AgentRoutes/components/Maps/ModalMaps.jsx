@@ -1,60 +1,136 @@
-import * as React from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
-import { GoogleMap, Polyline, Marker, useJsApiLoader } from '@react-google-maps/api';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Box,
+  CircularProgress,
+} from '@mui/material';
+import { LoadScript, GoogleMap, Marker, DirectionsRenderer } from '@react-google-maps/api';
 
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+const containerStyle = {
+  width: '100%',
+  height: '500px'
+};
 
-export default function ModalMaps({
-                                    open,
-                                    onClose,
-                                    title,
-                                    points = [], // array de { lat, lng }
-                                    onConfirm,
-                                    confirmText = 'Confirmar',
-                                    cancelText = 'Cancelar',
-                                  }) {
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-  });
+const ModalMaps = ({ open, onClose, points, apiKey }) => {
+  const [map, setMap] = useState(null);
+  const [directions, setDirections] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [center, setCenter] = useState({ lat: -23.5505, lng: -46.6333 }); // São Paulo como padrão
 
-  if (!isLoaded || !points.length) {
-    return null; // Carregando ou sem pontos
-  }
+  // Calcula o centro baseado nos pontos
+  useEffect(() => {
+    if (points.length > 0) {
+      const avgLat = points.reduce((sum, point) => sum + point.lat, 0) / points.length;
+      const avgLng = points.reduce((sum, point) => sum + point.lng, 0) / points.length;
+      setCenter({ lat: avgLat, lng: avgLng });
+    }
+  }, [points]);
 
-  const center = { lat: points[0].lat, lng: points[0].lng };
+  // Calcula a rota entre os pontos
+  const calculateRoute = useCallback(() => {
+    if (points.length < 2 || !window.google) return;
+
+    const directionsService = new window.google.maps.DirectionsService();
+
+    const waypoints = points.slice(1, -1).map(point => ({
+      location: new window.google.maps.LatLng(point.lat, point.lng),
+      stopover: true,
+    }));
+
+    directionsService.route(
+      {
+        origin: new window.google.maps.LatLng(points[0].lat, points[0].lng),
+        destination: new window.google.maps.LatLng(points[points.length - 1].lat, points[points.length - 1].lng),
+        waypoints: waypoints,
+        travelMode: window.google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === window.google.maps.DirectionsStatus.OK) {
+          setDirections(result);
+        } else {
+          console.error(`Error fetching directions: ${status}`);
+        }
+        setLoading(false);
+      }
+    );
+  }, [points]);
+
+  useEffect(() => {
+    if (open && points.length > 1) {
+      setLoading(true);
+      calculateRoute();
+    } else if (open && points.length === 1) {
+      setLoading(false);
+      setDirections(null);
+    }
+  }, [open, points, calculateRoute]);
+
+  const onLoad = useCallback((map) => {
+    setMap(map);
+  }, []);
+
+  const onUnmount = useCallback(() => {
+    setMap(null);
+  }, []);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>{title}</DialogTitle>
-      <DialogContent style={{ height: 500 }}>
-        <GoogleMap
-          mapContainerStyle={{ width: '100%', height: '100%' }}
-          center={center}
-          zoom={8}
-        >
-          <Polyline
-            path={points}
-            options={{
-              strokeColor: '#007bff',
-              strokeOpacity: 0.8,
-              strokeWeight: 4,
-            }}
-          />
-          {points.map((point, index) => (
-            <Marker
-              key={index}
-              position={{ lat: point.lat, lng: point.lng }}
-              label={(index + 1).toString()}
-            />
-          ))}
-        </GoogleMap>
+      <DialogTitle>Mapa com Jornada</DialogTitle>
+      <DialogContent dividers>
+        <Box sx={{ position: 'relative' }}>
+          {loading && (
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                zIndex: 1,
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          )}
+
+          <LoadScript googleMapsApiKey={apiKey} loadingElement={<div>Carregando mapa...</div>}>
+            <GoogleMap
+              mapContainerStyle={containerStyle}
+              center={center}
+              zoom={12}
+              onLoad={onLoad}
+              onUnmount={onUnmount}
+            >
+              {/* Mostra os marcadores */}
+              {points.map((point, index) => (
+                <Marker
+                  key={`marker-${index}`}
+                  position={{ lat: point.lat, lng: point.lng }}
+                  label={point.title || `Ponto ${index + 1}`}
+                />
+              ))}
+
+              {/* Mostra a rota calculada */}
+              {directions && <DirectionsRenderer directions={directions} />}
+            </GoogleMap>
+          </LoadScript>
+        </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>{cancelText}</Button>
-        <Button onClick={onConfirm} variant="contained">
-          {confirmText}
+        <Button onClick={onClose} color="primary">
+          Fechar
         </Button>
       </DialogActions>
     </Dialog>
   );
-}
+};
+
+export default ModalMaps;

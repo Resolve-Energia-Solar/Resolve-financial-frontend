@@ -9,7 +9,7 @@ import CardAgentRoutes from './components/Card';
 import userService from '@/services/userService';
 import scheduleService from '@/services/scheduleService';
 import { useEffect, useState, useCallback } from 'react';
-import ScheduleFormEdit from '../Edit-schedule/tabs/ScheduleFormEdit';
+import ModalMaps from '@/app/components/apps/inspections/schedule/AgentRoutes/components/Maps/ModalMaps';
 import UpdateSchedulePage from '@/app/(DashboardLayout)/apps/schedules/[id]/update/page';
 import AddSchedulePage from '@/app/components/apps/inspections/schedule/AgentRoutes/Add-Schedule/Add-Schedule';
 import ListSchedule from '@/app/components/apps/inspections/schedule/AgentRoutes/List-Schedule/List-Schedule';
@@ -25,12 +25,23 @@ export default function AgentRoutes() {
   const [loading, setLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
+  const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_AGENT_ROUTES_KEY || '';
+
+
   const [modalEditScheduleOpen, setModalEditScheduleOpen] = useState(false);
   const [modelCreateScheduleOpen, setModelCreateScheduleOpen] = useState(false);
   const [modalListScheduleOpen, setModalListScheduleOpen] = useState(false);
+  const [modalMapsOpen, setModalMapsOpen] = useState(false);
 
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
   const [formData, setFormData] = useState({});
+
+  const points = [
+    { lat: -23.5505, lng: -46.6333 },
+    { lat: -22.9068, lng: -43.1729 },
+    { lat: -19.9167, lng: -43.9345 },
+  ];
+
 
   const handleRefresh = () => {
     setRefresh(!refresh);
@@ -170,6 +181,7 @@ export default function AgentRoutes() {
             <Grid item xs={12} md={4} lg={3} key={agent.id}>
               <CardAgentRoutes
                 id={agent.id}
+                date={selectedDate}
                 title={agent.complete_name}
                 items={agent.schedules}
                 onItemClick={handleOpenModalSchedule}
@@ -238,6 +250,14 @@ export default function AgentRoutes() {
           </DialogContentText>
         </DialogContent>
       </Dialog>
+
+        <ModalMaps
+          open={modalMapsOpen}
+          onClose={() => setModalMapsOpen(false)}
+          title="Rota Agente"
+          points={points}
+          apiKey={GOOGLE_MAPS_API_KEY}
+        />
     </LocalizationProvider>
   );
 }
