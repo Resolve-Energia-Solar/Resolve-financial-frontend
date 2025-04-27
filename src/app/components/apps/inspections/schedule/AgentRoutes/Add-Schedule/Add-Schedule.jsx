@@ -27,8 +27,6 @@ function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
   const theme = useTheme();
   const [isProject, setIsProject] = useState(false);
 
-  console.log('form: ', form)
-
   const { enqueueSnackbar } = useSnackbar();
 
   const { formData, setFormData, setFormErrors,formErrors, handleChange, handleSave, setLoading: setFormLoading,loading: formLoading } = useScheduleForm()
