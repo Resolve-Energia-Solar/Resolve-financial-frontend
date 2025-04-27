@@ -11,14 +11,17 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import Chip from '@mui/material/Chip';
 import { useEffect, useState } from 'react';
 import ScheduleService from '@/services/scheduleService';
+import ListScheduleSkeleton from '@/app/components/apps/inspections/schedule/AgentRoutes/components/ListScheduleSkeleton';
 
 export default function ListSchedule({ form, onClose, onRefresh }) {
   const [rows, setRows] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(8);
+  const [loading, setLoading] = useState(true); // 👈 adiciona loading
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true); // 👈 começa carregando
       try {
         const response = await ScheduleService.index({
           fields: 'customer,service,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time,schedule_agent',
@@ -31,6 +34,8 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
         setRows(response.results || []);
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false); // 👈 para de carregar
       }
     };
 
@@ -40,6 +45,10 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
   const handleAssociateAgent = (row) => {
     console.log('Associar agente para:', row);
   };
+
+  if (loading) {
+    return <ListScheduleSkeleton />; // 👈 mostra o skeleton enquanto carrega
+  }
 
   return (
     <TableContainer component={Paper}>
