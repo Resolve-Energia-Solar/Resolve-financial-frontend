@@ -16,9 +16,21 @@ import EditIcon from '@mui/icons-material/Edit';
 import { Add } from '@mui/icons-material';
 import ModalChooseOption from '@/app/components/apps/inspections/schedule/AgentRoutes/components/ModalChooseOption';
 
-export default function CardAgentRoutes({ id, title, items = [], onItemClick, onCreateSchedule, onListSchedule }) {
+export default function CardAgentRoutes({ id, date, title, items = [], onItemClick, onCreateSchedule, onListSchedule }) {
   const [hoveredIndex, setHoveredIndex] = React.useState(null);
   const [openModal, setOpenModal] = React.useState(false);
+
+  // Função para comparar a data com a data de hoje, ignorando a hora
+  const isDateTodayOrLater = (date) => {
+    const today = new Date();
+    const givenDate = new Date(date);
+
+    // Remover as horas da data para comparação apenas pela data
+    today.setHours(0, 0, 0, 0);
+    givenDate.setHours(0, 0, 0, 0);
+
+    return givenDate >= today;
+  };
 
   return (
     <Card variant="outlined" sx={{ maxWidth: 600, margin: 'auto', display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -32,14 +44,7 @@ export default function CardAgentRoutes({ id, title, items = [], onItemClick, on
           <CheckCircleIcon fontSize="small" color="success" sx={{ mr: 1 }} />
           Horário disponível: 08:00 - 18:00
         </Typography>
-        {/* <Typography
-          variant="body2"
-          fontWeight={500}
-          sx={{ display: 'flex', alignItems: 'center', mb: 2 }}
-        >
-          <RoomIcon fontSize="small" color="error" sx={{ mr: 1 }} />
-          Bloqueado: 15:00 - 18:00
-        </Typography> */}
+
         <Timeline
           sx={{
             [`& .${timelineItemClasses.root}:before`]: {
@@ -88,37 +93,43 @@ export default function CardAgentRoutes({ id, title, items = [], onItemClick, on
                   >
                     {item.address.street}, {item.address.number}
                   </Typography>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
-                    >
-                      {item.address.neighborhood && `${item.address.neighborhood}, `}
-                      {item.address.city && `${item.address.city} - `}
-                      {item.address.zip_code && item.address.zip_code.replace(/^(\d{5})(\d{3})$/, '$1-$2')}
-                    </Typography>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                  >
+                    {item.address.neighborhood && `${item.address.neighborhood}, `}
+                    {item.address.city && `${item.address.city} - `}
+                    {item.address.zip_code && item.address.zip_code.replace(/^(\d{5})(\d{3})$/, '$1-$2')}
+                  </Typography>
                 </TimelineContent>
               </TimelineItem>
             );
           })}
         </Timeline>
-        <Box display="flex" justifyContent="center" mt={2}>
-          <Button onClick={() => setOpenModal(true)} startIcon={<Add />}>
-            Agendar Vistoria
-          </Button>
-        </Box>
+
+        {/* Exibe o botão de agendar vistoria se a data for hoje ou maior */}
+        {isDateTodayOrLater(date) && (
+          <Box display="flex" justifyContent="center" mt={2}>
+            <Button onClick={() => setOpenModal(true)} startIcon={<Add />}>
+              Agendar Vistoria
+            </Button>
+          </Box>
+        )}
       </CardContent>
+
       <ModalChooseOption
         open={openModal}
         onClose={() => setOpenModal(false)}
         onChoose={(option) => {
           setOpenModal(false);
           if (option === 'create') {
-            onCreateSchedule(id)
+            onCreateSchedule(id);
           } else if (option === 'list') {
-            onListSchedule(id)
+            onListSchedule(id);
           }
-        }} />
+        }}
+      />
     </Card>
   );
 }
