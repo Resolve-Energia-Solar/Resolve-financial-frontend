@@ -22,7 +22,7 @@ import { IconAlarm } from '@tabler/icons-react';
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 
 
-function AddSchedulePage({ form = null, serviceId, onRefresh = null, onClose = null}) {
+function AddSchedulePage({ form = null, onRefresh = null, onClose = null}) {
   const userPermissions = useSelector((state) => state.user.permissions);
   const theme = useTheme();
   const [isProject, setIsProject] = useState(false);
@@ -33,7 +33,7 @@ function AddSchedulePage({ form = null, serviceId, onRefresh = null, onClose = n
 
   const { formData, setFormData, setFormErrors,formErrors, handleChange, handleSave, setLoading: setFormLoading,loading: formLoading } = useScheduleForm()
 
-  serviceId ? (formData.service = serviceId) : null;
+  form.service ? (formData.service = form.service) : null;
   form.schedule_agent ? (formData.schedule_agent = form.schedule_agent) : null;
   form.schedule_date ? (formData.schedule_date = form.schedule_date) : null;
   console.log('formData: ', formData)
@@ -170,12 +170,12 @@ function AddSchedulePage({ form = null, serviceId, onRefresh = null, onClose = n
         </Grid>
 
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
-          {serviceId ? null : (
+          {form.service ? null : (
           <Grid item xs={12}>
               <CustomFormLabel htmlFor="service">Serviço</CustomFormLabel>
               <AutoCompleteServiceCatalog
                 fullWidth
-                value={serviceId}
+                value={form.service}
                 onChange={(id) => handleChange('service', id)}
                 {...(formErrors.service && {
                   error: true,
