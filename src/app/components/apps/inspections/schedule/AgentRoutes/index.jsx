@@ -24,10 +24,9 @@ export default function AgentRoutes() {
   const [totalRows, setTotalRows] = useState(0);
   const [loading, setLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [points, setPoints] = useState([]);
 
   const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_AGENT_ROUTES_KEY || '';
-
-
   const [modalEditScheduleOpen, setModalEditScheduleOpen] = useState(false);
   const [modelCreateScheduleOpen, setModelCreateScheduleOpen] = useState(false);
   const [modalListScheduleOpen, setModalListScheduleOpen] = useState(false);
@@ -36,15 +35,14 @@ export default function AgentRoutes() {
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
   const [formData, setFormData] = useState({});
 
-  const points = [
-    { lat: -23.5505, lng: -46.6333 },
-    { lat: -22.9068, lng: -43.1729 },
-    { lat: -19.9167, lng: -43.9345 },
-  ];
-
-
   const handleRefresh = () => {
     setRefresh(!refresh);
+  }
+
+  const handleOpenMap = (locations) => {
+    console.log('locations teste: ', locations);
+    setPoints(locations);
+    setModalMapsOpen(true);
   }
 
   const handleOpenModalListSchedule = (agentId) => {
@@ -142,10 +140,6 @@ export default function AgentRoutes() {
     }
   };
 
-  const handleModel = (newValue) => {
-    console.log('abrindo o modal', newValue);
-  };
-
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
       <Box display="flex" flexWrap="wrap" gap={2} mb={3}>
@@ -187,6 +181,7 @@ export default function AgentRoutes() {
                 onItemClick={handleOpenModalSchedule}
                 onCreateSchedule={handleOpenModalCreateSchedule}
                 onListSchedule={handleOpenModalListSchedule}
+                onOpenMap={handleOpenMap}
               />
             </Grid>
           ))}

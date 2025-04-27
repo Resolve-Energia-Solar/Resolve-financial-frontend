@@ -7,34 +7,67 @@ import {
   TimelineContent,
   TimelineDot,
 } from '@mui/lab';
-import { Card, CardContent, CardHeader, Typography, Button, Box } from '@mui/material';
+import { Card, CardContent, CardHeader, Typography, Button, Box, IconButton, Menu, MenuItem } from '@mui/material';
 import { timelineItemClasses } from '@mui/lab/TimelineItem';
 
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EditIcon from '@mui/icons-material/Edit';
-import { Add } from '@mui/icons-material';
+import { Add, MoreVert } from '@mui/icons-material';
 import ModalChooseOption from '@/app/components/apps/inspections/schedule/AgentRoutes/components/ModalChooseOption';
 
-export default function CardAgentRoutes({ id, date, title, items = [], onItemClick, onCreateSchedule, onListSchedule }) {
+export default function CardAgentRoutes({ id, date, title, items = [], onItemClick, onCreateSchedule, onListSchedule, onOpenMap }) {
   const [hoveredIndex, setHoveredIndex] = React.useState(null);
   const [openModal, setOpenModal] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const openMenu = Boolean(anchorEl);
 
-  // Função para comparar a data com a data de hoje, ignorando a hora
   const isDateTodayOrLater = (date) => {
     const today = new Date();
     const givenDate = new Date(date);
 
-    // Remover as horas da data para comparação apenas pela data
     today.setHours(0, 0, 0, 0);
     givenDate.setHours(0, 0, 0, 0);
 
     return givenDate >= today;
   };
 
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleOpenMap = () => {
+    const locations = items
+      .filter(item => item?.address?.latitude && item?.address?.longitude)
+      .map(item => ({
+        lat: parseFloat(item?.address?.latitude),
+        lng: parseFloat(item?.address?.longitude),
+      }));
+
+    if (locations.length > 0) {
+      onOpenMap(locations);
+    }
+    handleMenuClose();
+  };
+
+  // Verifica se há pelo menos um item com latitude e longitude
+  const hasLocations = items.some(item => item?.address?.latitude && item?.address?.longitude);
+
   return (
     <Card variant="outlined" sx={{ maxWidth: 600, margin: 'auto', display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <CardHeader title={title} sx={{ pb: 0 }} />
+      <CardHeader
+        title={<Typography variant="h6" sx={{ fontSize: '0.995rem' }}>{title}</Typography>}
+        sx={{ pb: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+        action={
+          <IconButton onClick={handleMenuClick} size="small">
+            <MoreVert />
+          </IconButton>
+        }
+      />
       <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
         <Typography
           variant="body2"
@@ -108,7 +141,6 @@ export default function CardAgentRoutes({ id, date, title, items = [], onItemCli
           })}
         </Timeline>
 
-        {/* Exibe o botão de agendar vistoria se a data for hoje ou maior */}
         {isDateTodayOrLater(date) && (
           <Box display="flex" justifyContent="center" mt={2}>
             <Button onClick={() => setOpenModal(true)} startIcon={<Add />}>
@@ -130,6 +162,21 @@ export default function CardAgentRoutes({ id, date, title, items = [], onItemCli
           }
         }}
       />
+
+      <Menu
+        anchorEl={anchorEl}
+        open={openMenu}
+        onClose={handleMenuClose}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <MenuItem
+          onClick={handleOpenMap}
+          disabled={!hasLocations}
+        >
+          Abrir o mapa
+        </MenuItem>
+      </Menu>
     </Card>
   );
 }

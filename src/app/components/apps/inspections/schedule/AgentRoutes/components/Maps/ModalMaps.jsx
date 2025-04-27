@@ -19,23 +19,25 @@ const ModalMaps = ({ open, onClose, points, apiKey }) => {
   const [map, setMap] = useState(null);
   const [directions, setDirections] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [center, setCenter] = useState({ lat: -23.5505, lng: -46.6333 }); // São Paulo como padrão
+  const [center, setCenter] = useState({ lat: -23.5505, lng: -46.6333 });
 
-  // Calcula o centro baseado nos pontos
+  // Efeito para calcular o centro
   useEffect(() => {
-    if (points.length > 0) {
+    if (points && points.length > 0) {
       const avgLat = points.reduce((sum, point) => sum + point.lat, 0) / points.length;
       const avgLng = points.reduce((sum, point) => sum + point.lng, 0) / points.length;
       setCenter({ lat: avgLat, lng: avgLng });
     }
   }, [points]);
 
-  // Calcula a rota entre os pontos
+  // Função para calcular rota
   const calculateRoute = useCallback(() => {
-    if (points.length < 2 || !window.google) return;
+    if (!points || points.length < 2 || !window.google) {
+      setLoading(false);
+      return;
+    }
 
     const directionsService = new window.google.maps.DirectionsService();
-
     const waypoints = points.slice(1, -1).map(point => ({
       location: new window.google.maps.LatLng(point.lat, point.lng),
       stopover: true,
@@ -59,15 +61,18 @@ const ModalMaps = ({ open, onClose, points, apiKey }) => {
     );
   }, [points]);
 
+  // Efeito principal que dispara o cálculo da rota
   useEffect(() => {
-    if (open && points.length > 1) {
+    if (open) {
       setLoading(true);
-      calculateRoute();
-    } else if (open && points.length === 1) {
-      setLoading(false);
-      setDirections(null);
+      // Timeout para garantir que o Google Maps está carregado
+      const timer = setTimeout(() => {
+        calculateRoute();
+      }, 300);
+
+      return () => clearTimeout(timer);
     }
-  }, [open, points, calculateRoute]);
+  }, [open, calculateRoute]);
 
   const onLoad = useCallback((map) => {
     setMap(map);
@@ -109,8 +114,7 @@ const ModalMaps = ({ open, onClose, points, apiKey }) => {
               onLoad={onLoad}
               onUnmount={onUnmount}
             >
-              {/* Mostra os marcadores */}
-              {points.map((point, index) => (
+              {points && points.map((point, index) => (
                 <Marker
                   key={`marker-${index}`}
                   position={{ lat: point.lat, lng: point.lng }}
@@ -118,7 +122,6 @@ const ModalMaps = ({ open, onClose, points, apiKey }) => {
                 />
               ))}
 
-              {/* Mostra a rota calculada */}
               {directions && <DirectionsRenderer directions={directions} />}
             </GoogleMap>
           </LoadScript>
