@@ -11,8 +11,10 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import Chip from '@mui/material/Chip';
 import { useEffect, useState } from 'react';
 import TablePagination from '@mui/material/TablePagination';
+import Grid from '@mui/material/Grid';
 import ScheduleService from '@/services/scheduleService';
 import ListScheduleSkeleton from '@/app/components/apps/inspections/schedule/AgentRoutes/components/ListScheduleSkeleton';
+import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 
 export default function ListSchedule({ form, onClose, onRefresh }) {
   const [rows, setRows] = useState([]);
@@ -21,6 +23,11 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
   const [totalRows, setTotalRows] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  const [filters, setFilters] = useState({
+    customer: null,
+    schedule_creator: null,
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -28,6 +35,8 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
         const response = await ScheduleService.index({
           fields: 'customer,service,address,schedule_date,schedule_end_date,schedule_start_time,schedule_end_time,schedule_agent',
           expand: 'customer,address,service,schedule_agent',
+          customer: filters.customer?.value,
+          schedule_creator: filters.schedule_creator?.value,
           page: page + 1,
           limit: rowsPerPage,
         });
@@ -42,7 +51,7 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
     };
 
     fetchData();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, filters]);
 
   const handleAssociateAgent = (row) => {
     console.log('Associar agente para:', row);
@@ -63,6 +72,38 @@ export default function ListSchedule({ form, onClose, onRefresh }) {
 
   return (
     <Paper>
+      <Grid container spacing={1} sx={{p:1}}>
+        <Grid item xs={12} md={3}>
+          <GenericAsyncAutocompleteInput
+            label="Cliente"
+            value={filters.customer}
+            onChange={(newValue) => setFilters({ ...filters, customer: newValue })}
+            endpoint="/api/users/"
+            size="small"
+            queryParam="complete_name__icontains"
+            extraParams={{ fields: ['id', 'complete_name'] }}
+            mapResponse={(data) =>
+              data.results.map((u) => ({ label: u.complete_name, value: u.id }))
+            }
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <GenericAsyncAutocompleteInput
+            label="Criado por"
+            value={filters.schedule_creator}
+            onChange={(newValue) => setFilters({ ...filters, schedule_creator: newValue })}
+            endpoint="/api/users/"
+            size="small"
+            queryParam="complete_name__icontains"
+            extraParams={{ fields: ['id', 'complete_name'] }}
+            mapResponse={(data) =>
+              data.results.map((u) => ({ label: u.complete_name, value: u.id }))
+            }
+            fullWidth
+          />
+        </Grid>
+      </Grid>
       <TableContainer>
         <Table sx={{ minWidth: 650 }} aria-label="Schedule table">
           <TableHead>
