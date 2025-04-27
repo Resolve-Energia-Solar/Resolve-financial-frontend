@@ -12,6 +12,7 @@ import { useEffect, useState, useCallback } from 'react';
 import ScheduleFormEdit from '../Edit-schedule/tabs/ScheduleFormEdit';
 import UpdateSchedulePage from '@/app/(DashboardLayout)/apps/schedules/[id]/update/page';
 import AddSchedulePage from '@/app/components/apps/inspections/schedule/AgentRoutes/Add-Schedule/Add-Schedule';
+import ListSchedule from '@/app/components/apps/inspections/schedule/AgentRoutes/List-Schedule/List-Schedule';
 
 export default function AgentRoutes() {
   const [agents, setAgents] = useState([]);
@@ -26,6 +27,8 @@ export default function AgentRoutes() {
 
   const [modalEditScheduleOpen, setModalEditScheduleOpen] = useState(false);
   const [modelCreateScheduleOpen, setModelCreateScheduleOpen] = useState(false);
+  const [modalListScheduleOpen, setModalListScheduleOpen] = useState(false);
+
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
   const [formData, setFormData] = useState({});
 
@@ -33,11 +36,21 @@ export default function AgentRoutes() {
     setRefresh(!refresh);
   }
 
+  const handleOpenModalListSchedule = (agentId) => {
+    setModalListScheduleOpen(true);
+    setFormData({
+      schedule_agent: agentId,
+      schedule_date: format(selectedDate, 'yyyy-MM-dd'),
+      service: 1,
+    })
+  }
+
   const handleOpenModalCreateSchedule = (agentId) => {
     setModelCreateScheduleOpen(true);
     setFormData({
       schedule_agent: agentId,
       schedule_date: format(selectedDate, 'yyyy-MM-dd'),
+      service: 1,
     })
   }
 
@@ -161,6 +174,7 @@ export default function AgentRoutes() {
                 items={agent.schedules}
                 onItemClick={handleOpenModalSchedule}
                 onCreateSchedule={handleOpenModalCreateSchedule}
+                onListSchedule={handleOpenModalListSchedule}
               />
             </Grid>
           ))}
@@ -199,7 +213,28 @@ export default function AgentRoutes() {
       >
         <DialogContent>
           <DialogContentText>
-            <AddSchedulePage form={formData} serviceId={1} onClose={() => setModelCreateScheduleOpen(false)} onRefresh={() => handleRefresh()} />
+            <AddSchedulePage
+              form={formData}
+              onClose={() => setModelCreateScheduleOpen(false)}
+              onRefresh={() => handleRefresh()}
+            />
+          </DialogContentText>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={modalListScheduleOpen}
+        onClose={() => setModalListScheduleOpen(false)}
+        maxWidth="lg"
+      >
+        <DialogContent>
+          <DialogTitle>Lista de Agendamentos</DialogTitle>
+          <DialogContentText>
+            <ListSchedule
+              form={formData}
+              onClose={() => setModalListScheduleOpen(false)}
+              onRefresh={() => handleRefresh()}
+              />
           </DialogContentText>
         </DialogContent>
       </Dialog>
