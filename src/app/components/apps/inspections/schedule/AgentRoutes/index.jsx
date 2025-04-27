@@ -9,7 +9,7 @@ import CardAgentRoutes from './components/Card';
 import userService from '@/services/userService';
 import scheduleService from '@/services/scheduleService';
 import { useEffect, useState, useCallback } from 'react';
-import ScheduleFormEdit from '../Edit-schedule/tabs/ScheduleFormEdit';
+import ModalMaps from '@/app/components/apps/inspections/schedule/AgentRoutes/components/Maps/ModalMaps';
 import UpdateSchedulePage from '@/app/(DashboardLayout)/apps/schedules/[id]/update/page';
 import AddSchedulePage from '@/app/components/apps/inspections/schedule/AgentRoutes/Add-Schedule/Add-Schedule';
 import ListSchedule from '@/app/components/apps/inspections/schedule/AgentRoutes/List-Schedule/List-Schedule';
@@ -24,16 +24,25 @@ export default function AgentRoutes() {
   const [totalRows, setTotalRows] = useState(0);
   const [loading, setLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [points, setPoints] = useState([]);
 
+  const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_AGENT_ROUTES_KEY || '';
   const [modalEditScheduleOpen, setModalEditScheduleOpen] = useState(false);
   const [modelCreateScheduleOpen, setModelCreateScheduleOpen] = useState(false);
   const [modalListScheduleOpen, setModalListScheduleOpen] = useState(false);
+  const [modalMapsOpen, setModalMapsOpen] = useState(false);
 
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
   const [formData, setFormData] = useState({});
 
   const handleRefresh = () => {
     setRefresh(!refresh);
+  }
+
+  const handleOpenMap = (locations) => {
+    console.log('locations teste: ', locations);
+    setPoints(locations);
+    setModalMapsOpen(true);
   }
 
   const handleOpenModalListSchedule = (agentId) => {
@@ -131,10 +140,6 @@ export default function AgentRoutes() {
     }
   };
 
-  const handleModel = (newValue) => {
-    console.log('abrindo o modal', newValue);
-  };
-
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
       <Box display="flex" flexWrap="wrap" gap={2} mb={3}>
@@ -170,11 +175,13 @@ export default function AgentRoutes() {
             <Grid item xs={12} md={4} lg={3} key={agent.id}>
               <CardAgentRoutes
                 id={agent.id}
+                date={selectedDate}
                 title={agent.complete_name}
                 items={agent.schedules}
                 onItemClick={handleOpenModalSchedule}
                 onCreateSchedule={handleOpenModalCreateSchedule}
                 onListSchedule={handleOpenModalListSchedule}
+                onOpenMap={handleOpenMap}
               />
             </Grid>
           ))}
@@ -238,6 +245,14 @@ export default function AgentRoutes() {
           </DialogContentText>
         </DialogContent>
       </Dialog>
+
+        <ModalMaps
+          open={modalMapsOpen}
+          onClose={() => setModalMapsOpen(false)}
+          title="Rota Agente"
+          points={points}
+          apiKey={GOOGLE_MAPS_API_KEY}
+        />
     </LocalizationProvider>
   );
 }
