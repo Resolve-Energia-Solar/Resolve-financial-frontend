@@ -4,7 +4,7 @@ import scheduleService from "@/services/scheduleService";
 import TableSkeleton from "../../../../comercial/sale/components/TableSkeleton";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import ScheduleFromProjectForm from "../../../modal/AddSchedule";
+import ScheduleFromProjectForm from "../../../modal/ScheduleFromProjectForm";
 import UserCard from "../../../../users/userCard";
 import { formatDate } from "@/utils/dateUtils";
 import ScheduleOpinionChip from "../../../../inspections/schedule/StatusChip/ScheduleOpinionChip";
@@ -15,17 +15,17 @@ import categoryService from "@/services/categoryService";
 
 export default function LogisticsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
-    const [deliveries, setInspections] = useState([])
+    const [deliveries, setDeliveries] = useState([])
     const [loading, setLoading] = useState(true)
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
     const [categoryId, setCategoryId] = useState(null);
+    const [selectedDelivery, setSelectedDelivery] = useState(null);
 
     const theme = useTheme();
 
-    const [openAddDelivery, setOpenAddDelivery] = useState(false);
-    const [openEditInspection, setOpenEditInspection] = useState(false);
-    const [openViewInspection, setOpenViewInspection] = useState(false);
+    const [openDeliveryFormModal, setOpenDeliveryFormModal] = useState(false);
+    // const [openViewInspection, setOpenViewInspection] = useState(false);
 
     const fetchDeliveries = useCallback(async () => {
         if (projectId) {
@@ -40,7 +40,7 @@ export default function LogisticsTab({ projectId }) {
                             category__icontains: 'Entrega'
                         }
                     );
-                    setInspections(response.results);
+                    setDeliveries(response.results);
                 } catch (error) {
                     enqueueSnackbar(`Erro ao carregar entregas: ${error.message}`, { variant: "error" });
                 } finally {
@@ -67,8 +67,9 @@ export default function LogisticsTab({ projectId }) {
         fetchCategory();
     }, []);
 
-    const handleAddSuccess = async () => {
-        setOpenAddDelivery(false);
+    const handleFormSuccess = async () => {
+        setOpenDeliveryFormModal(false);
+        setSelectedDelivery(null);
         await fetchDeliveries();
     };
 
@@ -99,7 +100,7 @@ export default function LogisticsTab({ projectId }) {
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar entrega"
-                    onButtonClick={() => setOpenAddDelivery(true)}
+                    onButtonClick={() => setOpenDeliveryFormModal(true)}
                     sx={{
                         width: 200,
                     }}
@@ -156,17 +157,24 @@ export default function LogisticsTab({ projectId }) {
                         sx={{ opacity: 0.7 }}
                     />
 
-                    <Table.EditAction onClick={row => console.log("editar", row)} />
+                    <Table.EditAction onClick={row => { setSelectedDelivery(row.id); setOpenDeliveryFormModal(true); }} />
                     <Table.ViewAction onClick={row => console.log("ver", row)} />
                 </Table.Body>
             </Table.Root>
 
-            <Dialog open={openAddDelivery} onClose={() => setOpenAddDelivery(false)} >
+            <Dialog
+                open={openDeliveryFormModal}
+                onClose={() => {
+                    setOpenDeliveryFormModal(false);
+                    setSelectedDelivery(null);
+                }}
+            >
                 <DialogContent>
                     <ScheduleFromProjectForm
                         projectId={projectId}
+                        scheduleId={selectedDelivery || null}
                         categoryId={categoryId}
-                        onSave={handleAddSuccess}
+                        onSave={handleFormSuccess}
                     />
                 </DialogContent>
             </Dialog>

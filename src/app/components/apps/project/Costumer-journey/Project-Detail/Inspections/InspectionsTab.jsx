@@ -3,7 +3,7 @@ import { useSnackbar } from "notistack";
 import scheduleService from "@/services/scheduleService";
 import TableSkeleton from "../../../../comercial/sale/components/TableSkeleton";
 import UserCard from "../../../../users/userCard";
-import ScheduleFromProjectForm from "../../../modal/AddSchedule";
+import ScheduleFromProjectForm from "../../../modal/ScheduleFromProjectForm";
 import { formatDate } from "@/utils/dateUtils";
 import { Table } from "@/app/components/Table";
 import { useTheme, Dialog, DialogContent } from "@mui/material";
@@ -18,11 +18,11 @@ export default function InspectionsTab({ projectId }) {
     const [rowsPerPage, setRowsPerPage] = useState(5)
     const [principalId, setPrincipalId] = useState(null)
     const [categoryId, setCategoryId] = useState(null);
+    const [selectedInspection, setSelectedInspection] = useState(null);
 
     const theme = useTheme();
 
-    const [openAddInspection, setOpenAddInspection] = useState(false);
-    const [openEditInspection, setOpenEditInspection] = useState(false);
+    const [openInspectionFormModal, setOpenInspectionFormModal] = useState(false);
     const [openViewInspection, setOpenViewInspection] = useState(false);
 
     const fetchInspections = useCallback(async () => {
@@ -58,7 +58,8 @@ export default function InspectionsTab({ projectId }) {
     }, []);
 
     const handleAddSuccess = async () => {
-        setOpenAddInspection(false);
+        setOpenInspectionFormModal(false);
+        setSelectedInspection(null);
         await fetchInspections();
     };
 
@@ -90,7 +91,7 @@ export default function InspectionsTab({ projectId }) {
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar vistoria"
-                    onButtonClick={() => setOpenAddInspection(true)}
+                    onButtonClick={() => setOpenInspectionFormModal(true)}
                     sx={{
                         width: 200,
                     }}
@@ -149,7 +150,7 @@ export default function InspectionsTab({ projectId }) {
                         sx={{ opacity: 0.7 }}
                     />
 
-                    <Table.EditAction onClick={row => console.log("editar", row)} />
+                    <Table.EditAction onClick={row => { setSelectedInspection(row.id); setOpenInspectionFormModal(true); }} />
                     <Table.ViewAction onClick={row => console.log("ver", row)} />
                     <Table.SwitchAction
                         isSelected={row => row.project?.inspection === row.id}
@@ -177,8 +178,8 @@ export default function InspectionsTab({ projectId }) {
             </Table.Root>
 
             <Dialog
-                open={openAddInspection}
-                onClose={() => setOpenAddInspection(false)}
+                open={openInspectionFormModal}
+                onClose={() => { setOpenInspectionFormModal(false); setSelectedInspection(null); }}
                 maxWidth="md"
                 fullWidth
                 PaperProps={{ sx: { borderRadius: '20px', padding: '24px', gap: '24px', boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#FFF' } }}
@@ -186,6 +187,7 @@ export default function InspectionsTab({ projectId }) {
                 <DialogContent>
                     <ScheduleFromProjectForm
                         projectId={projectId}
+                        scheduleId={selectedInspection || null}
                         categoryId={categoryId}
                         products={products}
                         onSave={handleAddSuccess}

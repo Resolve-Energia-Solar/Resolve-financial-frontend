@@ -5,7 +5,7 @@ import TableSkeleton from "../../../../comercial/sale/components/TableSkeleton";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import UserCard from "../../../../users/userCard";
-import ScheduleFromProjectForm from "../../../modal/AddSchedule";
+import ScheduleFromProjectForm from "../../../modal/ScheduleFromProjectForm";
 import { formatDate } from "@/utils/dateUtils";
 import ScheduleOpinionChip from "@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip";
 import { Table } from "@/app/components/Table";
@@ -20,11 +20,11 @@ export default function InstallationsTab({ projectId }) {
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
     const [categoryId, setCategoryId] = useState(null);
+    const [selectedInstallation, setSelectedInstallation] = useState(null);
 
     const theme = useTheme();
 
-    const [openAddInstallation, setOpenAddInstallation] = useState(false);
-    const [openEditInspection, setOpenEditInspection] = useState(false);
+    const [openInstallationFormModal, setOpenInstallationFormModal] = useState(false);
     const [openViewInspection, setOpenViewInspection] = useState(false);
 
     const fetchItems = useCallback(async () => {
@@ -67,7 +67,8 @@ export default function InstallationsTab({ projectId }) {
     }, []);
 
     const handleAddSuccess = async () => {
-        setOpenAddInstallation(false);
+        setOpenInstallationFormModal(false);
+        setSelectedInstallation(null);
         await fetchItems();
     };
 
@@ -100,7 +101,7 @@ export default function InstallationsTab({ projectId }) {
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar instalação"
-                    onButtonClick={() => setOpenAddInstallation(true)}
+                    onButtonClick={() => setOpenInstallationFormModal(true)}
                     sx={{
                         width: 200,
                     }}
@@ -164,21 +165,21 @@ export default function InstallationsTab({ projectId }) {
                         sx={{ opacity: 0.7 }}
                     />
 
-                    <Table.EditAction onClick={row => console.log("editar", row)} />
+                    <Table.EditAction onClick={row => { setSelectedInstallation(row.id); setOpenInstallationFormModal(true); }} />
                     <Table.ViewAction onClick={row => console.log("ver", row)} />
                 </Table.Body>
             </Table.Root>
 
-            <Dialog open={openAddInstallation} onClose={() => setOpenAddInstallation(false)} >
+            <Dialog open={openInstallationFormModal} onClose={() => { setOpenInstallationFormModal(false); setSelectedInstallation(null); }} >
                 <DialogContent>
                     <ScheduleFromProjectForm
                         projectId={projectId}
+                        scheduleId={selectedInstallation || null}
                         categoryId={categoryId}
                         onSave={handleAddSuccess}
                     />
                 </DialogContent>
             </Dialog>
-
         </>
     );
 }
