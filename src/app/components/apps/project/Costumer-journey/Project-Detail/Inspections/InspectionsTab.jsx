@@ -192,6 +192,23 @@ export default function InspectionsTab({ projectId }) {
                     />
                 </DialogContent>
             </Dialog>
+
+            <Dialog
+                open={openViewInspection}
+                onClose={() => setOpenViewInspection(false)}
+                maxWidth="md"
+                fullWidth
+                PaperProps={{ sx: { borderRadius: '20px', padding: '24px', gap: '24px', boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#FFF' } }}
+            >
+                <DialogContent>
+                    <ScheduleFromProjectForm
+                        projectId={projectId}
+                        categoryId={categoryId}
+                        products={products}
+                        onSave={handleAddSuccess}
+                    />
+                </DialogContent>
+            </Dialog>
         </>
     );
 }
