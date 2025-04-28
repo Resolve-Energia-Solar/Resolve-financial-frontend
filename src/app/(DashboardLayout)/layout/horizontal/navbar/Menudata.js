@@ -76,6 +76,13 @@ const Menuitems = [
         href: '/apps/commercial/schedules',
         permissions: ['resolve_crm.view_lead'],
       },
+      {
+        id: uniqueId(),
+        title: 'Rotas de Agentes',
+        icon: IconMapRoute,
+        href: '/apps/schedules/agents-routes',
+        permissions: ['field_services.view_all_schedule'],
+      },
     ],
   },
   {
@@ -127,6 +134,13 @@ const Menuitems = [
         title: 'Agendamentos',
         icon: IconCalendarStar,
         href: '/apps/schedules',
+        permissions: ['field_services.view_all_schedule'],
+      },
+      {
+        id: uniqueId(),
+        title: 'Rotas de Agentes',
+        icon: IconMapRoute,
+        href: '/apps/schedules/agents-routes',
         permissions: ['field_services.view_all_schedule'],
       },
     ],
