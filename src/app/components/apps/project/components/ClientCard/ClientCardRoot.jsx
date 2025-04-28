@@ -9,7 +9,8 @@ export default function ClientCardRoot({ children }) {
             xs={12}
             sx={{
                 width: '100%',
-                borderBottom: '1px solid #E0E0E0',
+                border: '1px solid rgba(224, 224, 224, 0.8)',
+                borderRadius: '20px',
                 p: '16px',
                 display: 'grid',
                 gridTemplateColumns: 'minmax(100px, auto) 1fr 1fr 1fr',
