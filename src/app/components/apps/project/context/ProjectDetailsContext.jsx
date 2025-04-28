@@ -14,9 +14,9 @@ export function projectModalTabProvider({ projectId, children }) {
         const fetchproject = async () => {
             try {
                 const data = await projectService.find(projectId, {
-                    expand: "sale.costumer.complete_name,address",
+                    expand: "sale.costumer.complete_name,address,schedule",
                     //   expand: "sale.costumer.complete_name,address,products,scheduled_agent,service,project",
-                    fields: "id,address.street,address.number,address.neighborhood",
+                    fields: "id,address.street,address.number,address.neighborhood,schedule.final_service_opinion.name",
                 })
                 setProject(data);
             } catch (err) {
