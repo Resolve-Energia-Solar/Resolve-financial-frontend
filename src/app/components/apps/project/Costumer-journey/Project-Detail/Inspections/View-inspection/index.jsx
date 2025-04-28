@@ -166,7 +166,7 @@ const ViewInspection = ({ projectId, categoryId, onSave = () => { }, loading, er
 
                         <ClientCard.Address
                             title="Endereço"
-                            subtitle={row.address?.complete_address}   
+                            subtitle={(row.address?.complete_address || row.address?.name).split(0, 1) || 'Não informado'}   
                             loading={loading}
                         />
                     </ClientCard.Root>
