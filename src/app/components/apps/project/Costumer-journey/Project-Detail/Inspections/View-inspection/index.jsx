@@ -15,7 +15,7 @@ import { useSelector } from 'react-redux';
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
 import { ClientCard } from '../../../../components/ClientCard';
 
-const ViewInspection = ({ projectId, categoryId, onSave = () => { }, loading, errors = {} }) => {
+const ViewInspection = ({ projectId, categoryId, onSave = () => { }, loading, errors = {}, row }) => {
     const { enqueueSnackbar } = useSnackbar();
     const [project, setProject] = useState(null);
     const userId = useSelector(state => state.user?.user?.id);
@@ -166,7 +166,7 @@ const ViewInspection = ({ projectId, categoryId, onSave = () => { }, loading, er
 
                         <ClientCard.Address
                             title="Endereço"
-                            subtitle={project?.sale?.customer?.complete_name}
+                            subtitle={row.address?.complete_address}   
                             loading={loading}
                         />
                     </ClientCard.Root>

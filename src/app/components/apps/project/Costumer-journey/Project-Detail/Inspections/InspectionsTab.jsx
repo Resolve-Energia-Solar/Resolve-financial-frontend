@@ -25,6 +25,8 @@ export default function InspectionsTab({ projectId }) {
     const [openAddInspection, setOpenAddInspection] = useState(false);
     const [openEditInspection, setOpenEditInspection] = useState(false);
     const [openViewInspection, setOpenViewInspection] = useState(false);
+    
+    const [selectedRow, setSelectedRow] = useState(0);
 
     const fetchInspections = useCallback(async () => {
         if (!projectId) return;
@@ -78,6 +80,12 @@ export default function InspectionsTab({ projectId }) {
         { field: 'completed_date', headerName: 'Concluída', render: r => r.completed_date ? new Date(r.completed_date).toLocaleDateString() : '-' },
         // { field: 'final_service_opinion', headerName: 'Opinião', render: r => r.final_service_opinion?.name },
     ]
+
+
+    // const handleEditSuccess = async () => {
+    //     setOpenEditInspection(false);
+    //     await fetchInspections();
+    // };
 
 
     return (
@@ -151,7 +159,12 @@ export default function InspectionsTab({ projectId }) {
                     />
 
                     <Table.EditAction onClick={row => console.log("editar", row)} />
-                    <Table.ViewAction onClick={() => setOpenViewInspection(true)} />
+                    <Table.ViewAction onClick={(row) => {
+                        setOpenViewInspection(true); 
+                        setSelectedRow(row);
+                        console.log("ver", row);
+                        }} 
+                    />
                     <Table.SwitchAction
                         isSelected={row => row.project?.inspection === row.id}
                         onToggle={(row, nextChecked) => {
@@ -207,6 +220,8 @@ export default function InspectionsTab({ projectId }) {
                         categoryId={categoryId}
                         products={products}
                         onSave={handleAddSuccess}
+                        // inspectionId={selectedRow?.id}
+                        row={selectedRow ? selectedRow : {}}
                     />
                 </DialogContent>
             </Dialog>
