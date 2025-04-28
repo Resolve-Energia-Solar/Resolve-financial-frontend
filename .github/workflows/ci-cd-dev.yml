@@ -43,7 +43,7 @@ jobs:
           echo "NEXT_PUBLIC_SUPABASE_URL=${{ vars.NEXT_PUBLIC_SUPABASE_URL }}" >> .env
           echo "NEXT_PUBLIC_FINANCIAL_RECORD_CONTENT_TYPE=${{ vars.NEXT_PUBLIC_FINANCIAL_RECORD_CONTENT_TYPE }}" >> .env
           echo "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}" >> .env
-
+          echo "NEXT_PUBLIC_GOOGLE_MAPS_API_AGENT_ROUTES_KEY"=${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_AGENT_ROUTES_KEY}} >> .env
       # 4. Build e Push da Imagem Docker
       - name: Build and Push Docker Image
         run: |
