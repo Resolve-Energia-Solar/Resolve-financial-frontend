@@ -15,7 +15,8 @@ export default function ClientCardRoot({ children }) {
                 boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
                 p: '16px',
                 display: 'grid',
-                gridTemplateColumns: 'minmax(100px, auto) 1fr 1fr 1fr',
+                // gridTemplateColumns: 'minmax(100px, auto) 1fr 1fr 1fr',
+                gridTemplateColumns: 'auto 1fr 1fr',
                 gridTemplateAreas: `"client address chip"`,
                 alignItems: 'center',
                 gap: '1rem'
