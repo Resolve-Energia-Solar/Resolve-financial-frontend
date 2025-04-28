@@ -38,6 +38,15 @@ const processService = {
       console.error('Erro ao buscar dados:', error);
       throw error;
     }
+  },
+  processCountByStep: async () => {
+    try {
+      const response = await apiClient.get(`api/process-count-by-step/`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+      throw error;
+    }
   }
 };
 

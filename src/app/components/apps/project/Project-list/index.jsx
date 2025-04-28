@@ -41,6 +41,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import { styled, keyframes } from '@mui/system';
 import { FilterContext } from '@/context/FilterContext';
+import HorizontalProcessCards from '../Costumer-journey/HorizontalProcessCards';
 
 const pulse = keyframes`
   0% {
@@ -486,15 +487,27 @@ const ProjectList = ({ onClick }) => {
           )}
         </AccordionDetails>
       </Accordion>
+      <Accordion defaultExpanded>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="process-count-by-step"
+          id="process-count-by-step-header"
+        >
+          <Typography variant="h6">Projetos por Etapa</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <HorizontalProcessCards />
+        </AccordionDetails>
+      </Accordion>
       <Grid container>
         <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'row', alignContent: 'center', justifyContent: 'space-between' }}>
-        <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
-          <Typography fontSize={14} fontWeight={600}  gutterBottom>
-            Lista de Projetos
-          </Typography>
+          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+            <Typography fontSize={14} fontWeight={600} gutterBottom>
+              Lista de Projetos
+            </Typography>
           </Grid>
-          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
-          {/* <Box
+          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+            {/* <Box
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -517,7 +530,7 @@ const ProjectList = ({ onClick }) => {
               onClose={() => setFilterDrawerOpen(false)}
               onApply={(newFilters) => setFilters(newFilters)}
             />
-          
+
           </Grid>
         </Grid>
         <TableContainer component={Paper}>
