@@ -150,7 +150,7 @@ export default function InspectionsTab({ projectId }) {
                     />
 
                     <Table.EditAction onClick={row => console.log("editar", row)} />
-                    <Table.ViewAction onClick={row => console.log("ver", row)} />
+                    <Table.ViewAction onClick={() => setOpenViewInspection(true)} />
                     <Table.SwitchAction
                         isSelected={row => row.project?.inspection === row.id}
                         onToggle={(row, nextChecked) => {
