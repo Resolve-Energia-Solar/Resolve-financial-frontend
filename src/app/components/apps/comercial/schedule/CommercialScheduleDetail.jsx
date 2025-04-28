@@ -39,6 +39,8 @@ import scheduleService from '@/services/scheduleService';
 import extractId from '@/utils/extractId';
 import { formatDate } from '@/utils/dateUtils';
 import { useSnackbar } from 'notistack';
+import answerService from '@/services/answerService';
+import AnswerForm from '../../inspections/form-builder/AnswerForm';
 
 const formatAddress = (address) => {
   if (!address) return '-';
@@ -67,6 +69,7 @@ const CommercialScheduleDetail = ({ schedule }) => {
   const [loadingProductName, setLoadingProductName] = useState(true);
   const [productName, setProductName] = useState('');
   const [seller, setSeller] = useState(null);
+  const [answers, setAnswers] = useState(null);
   
   const [editMode, setEditMode] = useState(false);
   const [editedScheduleDate, setEditedScheduleDate] = useState(schedule.schedule_date || '');
@@ -101,6 +104,23 @@ const CommercialScheduleDetail = ({ schedule }) => {
       setLoadingEdit(false);
     }
   };
+
+  useEffect(() => {
+    const fetchAnswers = async () => {
+      if (scheduleId) {
+        try {
+          const data = await answerService.index({ schedule: scheduleId, expand: 'form' });
+          console.log('data:', data);
+          setAnswers(data);
+        } catch (err) {
+          console.error('Erro ao buscar respostas:', err);
+          setError('Erro ao carregar as respostas');
+          enqueueSnackbar('Erro ao carregar as respostas', { variant: 'error' });
+        }
+      }
+    };
+    fetchAnswers();
+  }, [scheduleId, enqueueSnackbar]);
 
   const handleCancelEdit = () => {
     setEditedScheduleDate(schedule.schedule_date || '');
@@ -185,6 +205,10 @@ const CommercialScheduleDetail = ({ schedule }) => {
       <Paper elevation={3} sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Tabs value={tabValue} onChange={handleTabChange}>
           <Tab label="Informações do Agendamento" />
+          <Tab
+            label="Respostas"
+            disabled={answers?.results?.length === 0}
+          />
           <Tab label="Comentários" />
           <Tab label="Histórico" />
         </Tabs>
@@ -418,10 +442,15 @@ const CommercialScheduleDetail = ({ schedule }) => {
             </>
           )}
           {tabValue === 1 && (
-            <Comment appLabel={'field_services'} model={'schedule'} objectId={scheduleId} />
+            <Box sx={{ p: 2 }}>
+              <AnswerForm answerData={answers} />
+            </Box>
           )}
           {tabValue === 2 && (
-            <History appLabel={'field_services'} model={'schedule'} objectId={scheduleId}/>
+            <Comment appLabel={'field_services'} model={'schedule'} objectId={scheduleId} />
+          )}
+          {tabValue === 3 && (
+            <History appLabel={'field_services'} model={'schedule'} objectId={scheduleId} />
           )}
         </Box>
       </Paper>
