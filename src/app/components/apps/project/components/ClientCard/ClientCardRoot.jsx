@@ -13,7 +13,7 @@ export default function ClientCardRoot({ children }) {
                 p: '16px',
                 display: 'grid',
                 gridTemplateColumns: 'minmax(100px, auto) 1fr 1fr 1fr',
-                gridTemplateAreas: `"profile interest status project"`,
+                gridTemplateAreas: `"client address chip"`,
                 alignItems: 'center',
                 gap: '1rem'
             }}

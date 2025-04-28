@@ -1,10 +1,12 @@
+import ClientCardAddressText from "./ClientCardAddressText";
 import ClientCardChips from "./ClientCardChips";
 import ClientCardRoot from "./ClientCardRoot";
-import ClientCardText from "./ClientCardText";
+import ClientCardClientText from "./ClientCardText";
 
 export const ClientCard = {
     Root: ClientCardRoot,
-    Text: ClientCardText,
+    Client: ClientCardClientText,
+    Address: ClientCardAddressText,
     Chips: ClientCardChips,
 
 }

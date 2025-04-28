@@ -9,6 +9,7 @@ import { Table } from "@/app/components/Table";
 import { useTheme, Dialog, DialogContent } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
 import categoryService from "@/services/categoryService";
+import ViewInspection from "./View-inspection";
 
 export default function InspectionsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -201,7 +202,7 @@ export default function InspectionsTab({ projectId }) {
                 PaperProps={{ sx: { borderRadius: '20px', padding: '24px', gap: '24px', boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#FFF' } }}
             >
                 <DialogContent>
-                    <ScheduleFromProjectForm
+                    <ViewInspection
                         projectId={projectId}
                         categoryId={categoryId}
                         products={products}
