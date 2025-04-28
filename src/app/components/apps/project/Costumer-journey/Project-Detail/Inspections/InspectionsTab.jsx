@@ -3,7 +3,7 @@ import { useSnackbar } from "notistack";
 import scheduleService from "@/services/scheduleService";
 import TableSkeleton from "../../../../comercial/sale/components/TableSkeleton";
 import UserCard from "../../../../users/userCard";
-import ScheduleFromProjectForm from "../../../modal/AddSchedule";
+import ScheduleFromProjectForm from "../../../modal/ScheduleFromProjectForm";
 import { formatDate } from "@/utils/dateUtils";
 import { Table } from "@/app/components/Table";
 import { useTheme, Dialog, DialogContent } from "@mui/material";

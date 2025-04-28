@@ -13,7 +13,7 @@ import { useSnackbar } from 'notistack';
 import scheduleService from '@/services/scheduleService';
 import { useSelector } from 'react-redux';
 
-const ScheduleForm = ({ projectId, categoryId, onSave = () => { }, loading, errors = {} }) => {
+const ScheduleFromProjectForm = ({ projectId, categoryId, onSave = () => { }, loading, errors = {} }) => {
     const { enqueueSnackbar } = useSnackbar();
     const [project, setProject] = useState(null);
     const userId = useSelector(state => state.user?.user?.id);
@@ -267,4 +267,4 @@ const ScheduleForm = ({ projectId, categoryId, onSave = () => { }, loading, erro
     );
 };
 
-export default ScheduleForm;
+export default ScheduleFromProjectForm;

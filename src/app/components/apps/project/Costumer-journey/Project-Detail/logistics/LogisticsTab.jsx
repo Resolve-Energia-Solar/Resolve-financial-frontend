@@ -4,7 +4,7 @@ import scheduleService from "@/services/scheduleService";
 import TableSkeleton from "../../../../comercial/sale/components/TableSkeleton";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import ScheduleFromProjectForm from "../../../modal/AddSchedule";
+import ScheduleFromProjectForm from "../../../modal/ScheduleFromProjectForm";
 import UserCard from "../../../../users/userCard";
 import { formatDate } from "@/utils/dateUtils";
 import ScheduleOpinionChip from "../../../../inspections/schedule/StatusChip/ScheduleOpinionChip";

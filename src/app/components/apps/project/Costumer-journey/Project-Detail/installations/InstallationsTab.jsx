@@ -5,7 +5,7 @@ import TableSkeleton from "../../../../comercial/sale/components/TableSkeleton";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import UserCard from "../../../../users/userCard";
-import ScheduleFromProjectForm from "../../../modal/AddSchedule";
+import ScheduleFromProjectForm from "../../../modal/ScheduleFromProjectForm";
 import { formatDate } from "@/utils/dateUtils";
 import ScheduleOpinionChip from "@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip";
 import { Table } from "@/app/components/Table";
