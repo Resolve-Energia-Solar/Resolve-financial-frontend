@@ -1,7 +1,7 @@
 import ClientCardAddressText from "./ClientCardAddressText";
 import ClientCardChips from "./ClientCardChips";
 import ClientCardRoot from "./ClientCardRoot";
-import ClientCardClientText from "./ClientCardText";
+import ClientCardClientText from "./ClientCardClientText";
 
 export const ClientCard = {
     Root: ClientCardRoot,

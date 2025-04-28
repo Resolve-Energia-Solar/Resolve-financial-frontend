@@ -8,10 +8,10 @@ export default function ClientCardAddressText({ title, subtitle, loading }) {
         <Grid item sx={{ gridArea: 'address' }}>
             <Grid container size="auto" alignItems="center" spacing={2}>
                 <Grid item size="auto" sx={{ position: 'relative', display: 'inline-block'}}>
-                    <Typography variant="caption" sx={{ color: 'gray' }}>
+                    <Typography fontSize={14} sx={{ fontWeight: '400', color: theme.palette.text.disabled }}>
                         {title}
                     </Typography>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    <Typography fontSize={16} sx={{ fontWeight: '600', color: theme.palette.text.primary }}>
                         {subtitle}
                     </Typography>
                 </Grid>
