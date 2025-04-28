@@ -118,8 +118,8 @@ export default function CreateCommercialSchedule({ onClose, onRefresh }) {
             extraParams={{ fields: 'complete_name,id' }}
             value={formData.customer}
             onChange={opt => {
-              setClientSelected(opt ? opt.value : '');
-              handleChange('customer', opt.value || null);
+              setClientSelected(opt ? opt?.value : '');
+              handleChange('customer', opt?.value || null);
             }}
             mapResponse={data =>
               data.results.map(u => ({ label: u.complete_name, value: u.id }))

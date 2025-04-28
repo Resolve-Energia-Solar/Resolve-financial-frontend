@@ -5,7 +5,6 @@ import {
   Autocomplete,
   TextField,
   CircularProgress,
-  Typography,
   IconButton,
   InputAdornment,
   Dialog,
@@ -21,6 +20,8 @@ export default function GenericAsyncAutocompleteInput({
   label,
   value,
   onChange,
+  inputValue: controlledInputValue,
+  onInputChange: controlledOnInputChange,
   endpoint,
   queryParam = 'search',
   extraParams = {},
@@ -35,13 +36,19 @@ export default function GenericAsyncAutocompleteInput({
   onCreateObject,
   ...props
 }) {
+
+  const [uncontrolledInputValue, setUncontrolledInputValue] = useState('');
   const [options, setOptions] = useState([]);
-  const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [newObjectData, setNewObjectData] = useState({ label: '', value: '' });
   const [createErrors, setCreateErrors] = useState({});
+
+  const inputValue = controlledInputValue !== undefined ? controlledInputValue : uncontrolledInputValue;
+  const handleInputChange = controlledOnInputChange !== undefined
+    ? controlledOnInputChange
+    : (event, newValue) => setUncontrolledInputValue(newValue);
 
   const stableExtraParams = useMemo(() => extraParams, [JSON.stringify(extraParams)]);
   const stableMapResponse = useMemo(() => mapResponse, [mapResponse]);
@@ -147,8 +154,7 @@ export default function GenericAsyncAutocompleteInput({
         console.error('Error creating object:', err);
       }
     };
-  }
-
+  };
 
   return (
     <>
@@ -161,7 +167,8 @@ export default function GenericAsyncAutocompleteInput({
         options={options}
         getOptionLabel={opt => opt.label || ''}
         loading={loading}
-        onInputChange={(e, v) => setInputValue(v)}
+        inputValue={inputValue}
+        onInputChange={handleInputChange}
         onChange={(e, v) => onChange(v)}
         value={selectedOption}
         loadingText="Carregando..."
