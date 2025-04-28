@@ -149,18 +149,16 @@ const ResquestLIstByProject = () => {
     fetchProjects();
   }, [page, rowsPerPage, refresh, stableFilters, selectedRequestType]);
 
-  // Enriquecer cada projeto com a última solicitação do tipo selecionado
   const decoratedProjects = useMemo(() => {
-    return projectsList.map((proj) => {
-      const sameType = proj.requests_energy_company.filter(
-        (req) => req.type?.id === selectedRequestType
-      );
-      const latest = sameType.length
-        ? sameType.reduce((a, b) =>
-            new Date(b.request_date) > new Date(a.request_date) ? b : a
-          )
+    return projectsList.map(proj => {
+      const ofType = (proj.requests_energy_company || [])
+        .filter(r => r.type?.id === selectedRequestType);
+  
+      const latestRequest = ofType.length
+        ? ofType.sort((a, b) => new Date(b.request_date) - new Date(a.request_date))[0]
         : null;
-      return { ...proj, latestRequest: latest };
+  
+      return { ...proj, latestRequest };
     });
   }, [projectsList, selectedRequestType]);
 
@@ -237,6 +235,66 @@ const ResquestLIstByProject = () => {
         { value: 'true', label: 'Sim' },
         { value: 'false', label: 'Não' },
         { value: 'null', label: 'Todos' },
+      ],
+    },
+    {
+      key: 'access_opnion_status',
+      label: 'Parecer de Acesso',
+      type: 'multiselect',
+      options: [
+        { value: 'Bloqueado', label: 'Bloqueado' },
+        { value: 'Pendete', label: 'Pendente' },
+        { value: 'Solicitado', label: 'Solicitado' },
+        { value: 'Deferido', label: 'Deferido' },
+        { value: 'Indeferido', label: 'Indeferido' },
+      ],
+    },
+    {
+      key: 'load_increase_status',
+      label: 'Aumento de Carga',
+      type: 'multiselect',
+      options: [
+        { value: 'Bloqueado', label: 'Bloqueado' },
+        { value: 'Pendete', label: 'Pendente' },
+        { value: 'Solicitado', label: 'Solicitado' },
+        { value: 'Deferido', label: 'Deferido' },
+        { value: 'Indeferido', label: 'Indeferido' },
+      ],
+    },
+    {
+      key: 'branch_adjustment_status',
+      label: 'Ajuste de Ramal',
+      type: 'multiselect',
+      options: [
+        { value: 'Bloqueado', label: 'Bloqueado' },
+        { value: 'Pendete', label: 'Pendente' },
+        { value: 'Solicitado', label: 'Solicitado' },
+        { value: 'Deferido', label: 'Deferido' },
+        { value: 'Indeferido', label: 'Indeferido' },
+      ],
+    },
+    {
+      key: 'final_inspection_status',
+      label: 'Vistoria Final',
+      type: 'multiselect',
+      options: [
+        { value: 'Bloqueado', label: 'Bloqueado' },
+        { value: 'Pendete', label: 'Pendente' },
+        { value: 'Solicitado', label: 'Solicitado' },
+        { value: 'Deferido', label: 'Deferido' },
+        { value: 'Indeferido', label: 'Indeferido' },
+      ],
+    },
+    {
+      key: 'new_contact_number_status',
+      label: 'Nova UC Status',
+      type: 'multiselect',
+      options: [
+        { value: 'Bloqueado', label: 'Bloqueado' },
+        { value: 'Pendete', label: 'Pendente' },
+        { value: 'Solicitado', label: 'Solicitado' },
+        { value: 'Deferido', label: 'Deferido' },
+        { value: 'Indeferido', label: 'Indeferido' },
       ],
     },
     {
