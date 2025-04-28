@@ -18,8 +18,8 @@ export default function ClientCardRoot({ children }) {
                 // gridTemplateColumns: 'minmax(100px, auto) 1fr 1fr 1fr',
                 gridTemplateColumns: 'auto 1fr 1fr',
                 gridTemplateAreas: `"client address chip"`,
-                alignItems: 'center',
-                gap: '1rem'
+                alignItems: 'start',
+                gap: '1'
             }}
         >
             {children}
