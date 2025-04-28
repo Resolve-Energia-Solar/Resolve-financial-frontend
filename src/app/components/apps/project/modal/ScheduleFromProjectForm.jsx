@@ -1,7 +1,23 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { Grid, Stack, Button, CircularProgress } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import {
+  Grid,
+  Stack,
+  Button,
+  CircularProgress,
+  Tabs,
+  Tab,
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Checkbox,
+  Paper,
+  Link,
+  Typography,
+} from '@mui/material';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
@@ -9,14 +25,19 @@ import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsync
 import CreateAddressPage from '../../address/Add-address';
 import projectService from '@/services/projectService';
 import serviceCatalogService from '@/services/serviceCatalogService';
-import { useSnackbar } from 'notistack';
 import scheduleService from '@/services/scheduleService';
+import attachmentService from '@/services/attachmentService';
+import getContentType from '@/utils/getContentType';
+import { useSnackbar } from 'notistack';
 import { useSelector } from 'react-redux';
 
-const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = () => {}, loading, errors = {} }) => {
+const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = () => { }, loading, errors = {} }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [project, setProject] = useState(null);
   const [schedule, setSchedule] = useState(null);
+  const [tabValue, setTabValue] = useState('form');
+  const [projectAttachments, setProjectAttachments] = useState([]);
+  const [saleAttachments, setSaleAttachments] = useState([]);
   const userId = useSelector(state => state.user?.user?.id);
   const [formData, setFormData] = useState({
     schedule_date: null,
@@ -31,19 +52,26 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
     branch: null,
   });
   const [formErrors, setFormErrors] = useState({});
-
-  // estados para deadline mínimo e flag de alteração
   const [deadlineDuration, setDeadlineDuration] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [minEndDate, setMinEndDate] = useState(null);
   const [minEndTime, setMinEndTime] = useState(null);
   const [startChanged, setStartChanged] = useState(false);
+
+  const getFileName = (file) => {
+    if (typeof file === 'string') {
+      return file.split('?')[0].split('/').pop();
+    } else if (file instanceof File) {
+      return file.name;
+    }
+    return '';
+  };
 
   useEffect(() => {
     // fetch project defaults
     const fetchProject = async () => {
       if (!projectId) return;
       const data = await projectService.find(projectId, {
-        fields: 'id,project_number,sale.customer.complete_name,sale.customer.id,address.id,product,sale.branch',
+        fields: 'id,project_number,sale.customer.complete_name,sale.id,sale.customer.id,address.id,product,sale.branch',
         expand: 'sale,sale.customer',
       });
       setProject(data);
@@ -141,8 +169,45 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
 
   const handleChange = (field, value) => {
     if (field === 'schedule_date' || field === 'schedule_start_time') setStartChanged(true);
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
+  const handleTabChange = (_, newValue) => setTabValue(newValue);
+  const handleToggleAttachment = (id) => {
+    const curr = formData.attachments || [];
+    setFormData({ ...formData, attachments: curr.includes(id) ? curr.filter((x) => x !== id) : [...curr, id] });
+  };
+
+  useEffect(() => {
+    if (projectId) {
+      const projectContentType = getContentType('resolve_crm', 'project');
+      const saleContentType = getContentType('resolve_crm', 'sale');
+      const saleId = project?.sale?.id;
+
+      Promise.all([
+        attachmentService.index({
+          content_type_id: projectContentType,
+          object_id: projectId,
+          expand: 'document_type',
+          fields: 'id,document_type.name,description,created_at,file',
+        }),
+        attachmentService.index({
+          content_type_id: saleContentType,
+          object_id: saleId,
+          expand: 'document_type',
+          fields: 'id,document_type.name,description,created_at,file',
+        }),
+      ])
+        .then(([projectData, saleData]) => {
+          const projectDataAttachments = Array.isArray(projectData)
+            ? projectData
+            : projectData.results || [];
+          const saleDataAttachments = Array.isArray(saleData) ? saleData : saleData.results || [];
+          setProjectAttachments(projectDataAttachments);
+          setSaleAttachments(saleDataAttachments);
+        })
+        .catch((err) => console.error('Erro ao carregar anexos:', err));
+    }
+  }, [formData.project, formData.sale]);
 
   const handleSubmit = async () => {
     const { schedule_date, schedule_start_time, schedule_end_date, schedule_end_time, observation, service, address, customer, products, branch } = formData;
@@ -179,130 +244,253 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
   };
 
   return (
-    <form noValidate>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12}>
-          <CustomTextField
-            fullWidth
-            label="Projeto"
-            value={`${project?.project_number} - ${project?.sale?.customer?.complete_name}`}
-            disabled
-          />
-        </Grid>
-        {scheduleId && (
-          <Grid item xs={12}>
-            <CustomTextField
-              fullWidth
-              label="Agendamento"
-              value={`${schedule?.protocol} - ${schedule?.service?.name}`}
-              disabled
-            />
-          </Grid>
-        )}
-        <Grid item xs={6}>
-          <GenericAsyncAutocompleteInput
-            label="Serviço"
-            value={formData.service}
-            onChange={val => handleChange('service', val)}
-            endpoint="api/services"
-            extraParams={{ fields: ['id', 'name'], ordering: ['name'], limit: 50, category__in: categoryId }}
-            mapResponse={data => data?.results.map(it => ({ label: it.name, value: it.id }))}
-            error={!!errors.service}
-            helperText={errors.service?.[0]}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <GenericAsyncAutocompleteInput
-            label="Endereço"
-            value={formData.address}
-            onChange={val => handleChange('address', val)}
-            endpoint="api/addresses"
-            queryParam="q"
-            extraParams={{ fields: ['id', 'complete_address'], customer_id: formData.customer }}
-            mapResponse={data => data?.results.map(it => ({ label: it.complete_address || it.name, value: it.id }))}
-            renderCreateModal={({ onClose, onCreate, newObjectData, setNewObjectData }) => (
-              <CreateAddressPage onClose={onClose} onCreate={onCreate} newObjectData={newObjectData} setNewObjectData={setNewObjectData} />
+    <Box>
+      <Tabs value={tabValue} onChange={handleTabChange} sx={{ mb: 2 }}>
+        <Tab label="Formulário" value="form" />
+        {project && <Tab label="Anexos" value="attachments" />}
+      </Tabs>
+
+      {tabValue === 'form' ? (
+        <form noValidate>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12}>
+              <CustomTextField
+                fullWidth
+                label="Projeto"
+                value={`${project?.project_number} - ${project?.sale?.customer?.complete_name}`}
+                disabled
+              />
+            </Grid>
+            {scheduleId && (
+              <Grid item xs={12}>
+                <CustomTextField
+                  fullWidth
+                  label="Agendamento"
+                  value={`${schedule?.protocol} - ${schedule?.service?.name}`}
+                  disabled
+                />
+              </Grid>
             )}
-            error={!!errors.address}
-            helperText={errors.address?.[0]}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <FormDate
-            label="Data Início"
-            name="schedule_date"
-            value={formData.schedule_date}
-            onChange={val => handleChange('schedule_date', val)}
-            error={!!errors.schedule_date}
-            helperText={errors.schedule_date?.[0]}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <FormTimePicker
-            fullWidth
-            label="Hora Início"
-            name="schedule_start_time"
-            value={formData.schedule_start_time}
-            onChange={val => handleChange('schedule_start_time', val)}
-            error={!!errors.schedule_start_time}
-            helperText={errors.schedule_start_time?.[0]}
-          />
-        </Grid>
-        {formData.schedule_date && formData.schedule_start_time && (
-          <> 
+            <Grid item xs={6}>
+              <GenericAsyncAutocompleteInput
+                label="Serviço"
+                value={formData.service}
+                onChange={val => handleChange('service', val)}
+                endpoint="api/services"
+                extraParams={{ fields: ['id', 'name'], ordering: ['name'], limit: 50, category__in: categoryId }}
+                mapResponse={data => data?.results.map(it => ({ label: it.name, value: it.id }))}
+                error={!!errors.service}
+                helperText={errors.service?.[0]}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <GenericAsyncAutocompleteInput
+                label="Endereço"
+                value={formData.address}
+                onChange={val => handleChange('address', val)}
+                endpoint="api/addresses"
+                queryParam="q"
+                extraParams={{ fields: ['id', 'complete_address'], customer_id: formData.customer }}
+                mapResponse={data => data?.results.map(it => ({ label: it.complete_address || it.name, value: it.id }))}
+                renderCreateModal={({ onClose, onCreate, newObjectData, setNewObjectData }) => (
+                  <CreateAddressPage onClose={onClose} onCreate={onCreate} newObjectData={newObjectData} setNewObjectData={setNewObjectData} />
+                )}
+                error={!!errors.address}
+                helperText={errors.address?.[0]}
+              />
+            </Grid>
             <Grid item xs={6}>
               <FormDate
-                label="Data Fim"
-                name="schedule_end_date"
-                value={formData.schedule_end_date}
-                onChange={val => handleChange('schedule_end_date', val)}
-                error={!!errors.schedule_end_date}
-                helperText={errors.schedule_end_date?.[0]}
-                minDate={minEndDate}
+                label="Data Início"
+                name="schedule_date"
+                value={formData.schedule_date}
+                onChange={val => handleChange('schedule_date', val)}
+                error={!!errors.schedule_date}
+                helperText={errors.schedule_date?.[0]}
               />
             </Grid>
             <Grid item xs={6}>
               <FormTimePicker
                 fullWidth
-                label="Hora Fim"
-                name="schedule_end_time"
-                value={formData.schedule_end_time}
-                onChange={val => handleChange('schedule_end_time', val)}
-                error={!!errors.schedule_end_time}
-                helperText={errors.schedule_end_time?.[0]}
-                minTime={minEndTime}
+                label="Hora Início"
+                name="schedule_start_time"
+                value={formData.schedule_start_time}
+                onChange={val => handleChange('schedule_start_time', val)}
+                error={!!errors.schedule_start_time}
+                helperText={errors.schedule_start_time?.[0]}
               />
             </Grid>
-          </>
-        )}
-        <Grid item xs={12}>
-          <CustomTextField
-            multiline
-            rows={4}
-            fullWidth
-            label="Observação"
-            name="observation"
-            value={formData.observation || ''}
-            onChange={e => handleChange('observation', e.target.value)}
-            error={!!errors.observation}
-            helperText={errors.observation?.[0]}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Stack direction="row" justifyContent="flex-end">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSubmit}
-              disabled={loading}
-              endIcon={loading && <CircularProgress size={20} />}
-            >
-              Salvar
-            </Button>
-          </Stack>
-        </Grid>
-      </Grid>
-    </form>
+            {formData.schedule_date && formData.schedule_start_time && (
+              <>
+                <Grid item xs={6}>
+                  <FormDate
+                    label="Data Fim"
+                    name="schedule_end_date"
+                    value={formData.schedule_end_date}
+                    onChange={val => handleChange('schedule_end_date', val)}
+                    error={!!errors.schedule_end_date}
+                    helperText={errors.schedule_end_date?.[0]}
+                    minDate={minEndDate}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <FormTimePicker
+                    fullWidth
+                    label="Hora Fim"
+                    name="schedule_end_time"
+                    value={formData.schedule_end_time}
+                    onChange={val => handleChange('schedule_end_time', val)}
+                    error={!!errors.schedule_end_time}
+                    helperText={errors.schedule_end_time?.[0]}
+                    minTime={minEndTime}
+                  />
+                </Grid>
+              </>
+            )}
+            <Grid item xs={12}>
+              <CustomTextField
+                multiline
+                rows={4}
+                fullWidth
+                label="Observação"
+                name="observation"
+                value={formData.observation || ''}
+                onChange={e => handleChange('observation', e.target.value)}
+                error={!!errors.observation}
+                helperText={errors.observation?.[0]}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Stack direction="row" justifyContent="flex-end">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  endIcon={loading && <CircularProgress size={20} />}
+                >
+                  Salvar
+                </Button>
+              </Stack>
+            </Grid>
+          </Grid>
+        </form>
+      ) : (
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="h6" sx={{ mb: 1 }}>
+            Anexos do Projeto
+          </Typography>
+          {projectAttachments.length ? (
+            <TableContainer component={Paper} sx={{ mb: 3 }}>
+              <Table aria-label="Tabela de Anexos do Projeto">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Selecionar</TableCell>
+                    <TableCell>Nome do Arquivo</TableCell>
+                    <TableCell>Tipo</TableCell>
+                    <TableCell>Descrição</TableCell>
+                    <TableCell>Data de Upload</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {projectAttachments.map((attachment) => (
+                    <TableRow key={attachment.id}>
+                      <TableCell>
+                        <Checkbox
+                          checked={(formData.attachments || []).includes(attachment.id)}
+                          onChange={() => handleToggleAttachment(attachment.id)}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {typeof attachment.file === 'string' ? (
+                          <Link
+                            href={attachment.file}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {getFileName(attachment.file)}
+                          </Link>
+                        ) : (
+                          getFileName(attachment.file)
+                        )}
+                      </TableCell>
+                      <TableCell>{attachment.document_type?.name || '-'}</TableCell>
+                      <TableCell>{attachment.description || '-'}</TableCell>
+                      <TableCell>
+                        {attachment.created_at
+                          ? new Date(attachment.created_at).toLocaleString('pt-BR')
+                          : '-'}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography variant="body2">Nenhum anexo do projeto disponível.</Typography>
+          )}
+
+          <Typography variant="h6" sx={{ mb: 1 }}>
+            Anexos da Venda
+          </Typography>
+          {saleAttachments.length ? (
+            <TableContainer component={Paper}>
+              <Table aria-label="Tabela de Anexos da Venda">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Selecionar</TableCell>
+                    <TableCell>Nome do Arquivo</TableCell>
+                    <TableCell>Tipo</TableCell>
+                    <TableCell>Descrição</TableCell>
+                    <TableCell>Data de Upload</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {saleAttachments.map((attachment) => (
+                    <TableRow key={attachment.id}>
+                      <TableCell>
+                        <Checkbox
+                          checked={(formData.attachments || []).includes(attachment.id)}
+                          onChange={() => handleToggleAttachment(attachment.id)}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {typeof attachment.file === 'string' ? (
+                          <Link
+                            href={attachment.file}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {getFileName(attachment.file)}
+                          </Link>
+                        ) : (
+                          getFileName(attachment.file)
+                        )}
+                      </TableCell>
+                      <TableCell>{attachment.document_type?.name || '-'}</TableCell>
+                      <TableCell>{attachment.description || '-'}</TableCell>
+                      <TableCell>
+                        {attachment.created_at
+                          ? new Date(attachment.created_at).toLocaleString('pt-BR')
+                          : '-'}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography variant="body2">Nenhum anexo da venda disponível.</Typography>
+          )}
+        </Box>
+      )}
+
+      <Stack direction="row" justifyContent="flex-end" sx={{ mt: 2 }}>
+        <Button variant="contained" color="primary" onClick={handleSubmit} disabled={loading} endIcon={loading && <CircularProgress size={20} />}>
+          Salvar
+        </Button>
+      </Stack>
+    </Box>
   );
 };
 
