@@ -1,19 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react'; // Importando useRef
 import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
-import {
-  Box,
-  Chip,
-  Divider,
-  Grid,
-  Link,
-  MenuItem,
-  Paper,
-  Stack,
-  Typography,
-} from '@mui/material';
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import { Box, Chip, Divider, Grid, Link, MenuItem, Paper, Stack, Typography } from '@mui/material';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 import { formatDateTime, formatDate, formatTime } from '@/utils/inspectionFormatDate';
 import answerService from '@/services/answerService';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
@@ -80,13 +70,11 @@ const AnswerForm = ({ answerData }) => {
 
   const imageFiles = answersFiles.filter((file) => {
     const ext = file.file.split('?')[0].split('.').pop().toLowerCase();
-    return ['jpg', 'jpeg', 'png'].includes(ext);
+    return ['jpg', 'jpeg', 'png', 'webp'].includes(ext);
   });
 
   const getFieldLabel = (fieldId) => {
-    const field = form_fields.find(
-      (field) => `${field.type}-${field.id}` === fieldId
-    );
+    const field = form_fields.find((field) => `${field.type}-${field.id}` === fieldId);
     return field ? field.label : '';
   };
 
@@ -182,9 +170,7 @@ const AnswerForm = ({ answerData }) => {
           justifyContent="space-between"
           my={1}
         >
-          {formInfo && (
-            <Typography variant="h5">{formInfo.name}</Typography>
-          )}
+          {formInfo && <Typography variant="h5">{formInfo.name}</Typography>}
           <Box display="flex" flexDirection="column" alignItems="center">
             <Typography variant="body2">Respondido em: </Typography>
             <Chip
