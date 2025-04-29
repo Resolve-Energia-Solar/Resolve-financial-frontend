@@ -26,18 +26,40 @@ export default function InspectionsTab({ projectId }) {
     const [openEditInspection, setOpenEditInspection] = useState(false);
     const [openViewInspection, setOpenViewInspection] = useState(false);
     
-    const [selectedRow, setSelectedRow] = useState(0);
+    const [selectedInspection, setSelectedInspection] = useState(0);
 
     const fetchInspections = useCallback(async () => {
         if (!projectId) return;
         setLoading(true);
         try {
+            // const response = await scheduleService.index({
+            //     fields: "id,address.complete_address,products.description,scheduled_agent,schedule_date,completed_date,service.name,service.category,project.inspection,schedule.final_service_opinion.name",
+            //     expand: "address,products,scheduled_agent,service,project,schedule",
+            //     project__in: projectId,
+            //     category__icontains: 'Vistoria'
+            // });
             const response = await scheduleService.index({
-                fields: "id,address.complete_address,products.description,scheduled_agent,schedule_date,completed_date,service.name,service.category,project.inspection,schedule.final_service_opinion.name",
-                expand: "address,products,scheduled_agent,service,project,schedule",
+                fields: [
+                  'id',
+                  'schedule_date',
+                  'schedule_start_time',
+                  'completed_date',
+                  'address.street',
+                  'address.number',
+                  'address.complete_address',
+                  'products.description',
+                  'scheduled_agent.name',
+                  'service.name',
+                  'service.category',
+                  'final_service_opinion.name',
+                  'project.products',
+                  'protocol',
+                  'observation'
+                ].join(','),
+                expand: 'address,products,scheduled_agent,service,final_service_opinion',
                 project__in: projectId,
                 category__icontains: 'Vistoria'
-            });
+              });
             setInspections(response.results);
         } catch (error) {
             enqueueSnackbar(`Erro ao carregar vistorias: ${error.message}`, { variant: "error" });
@@ -161,9 +183,9 @@ export default function InspectionsTab({ projectId }) {
                     <Table.EditAction onClick={row => console.log("editar", row)} />
                     <Table.ViewAction onClick={(row) => {
                         setOpenViewInspection(true); 
-                        setSelectedRow(row);
+                        setSelectedInspection(row);
                         console.log("ver", row);
-                        console.log("selectedInspectionId", selectedRow)
+                        console.log("selectedInspectionId", selectedInspection)
                         }} 
                     />
                     <Table.SwitchAction
@@ -220,9 +242,9 @@ export default function InspectionsTab({ projectId }) {
                         projectId={projectId}
                         categoryId={categoryId}
                         products={products}
-                        onSave={handleAddSuccess}
-                        selectedInspectionId={selectedRow}
-                        // row={selectedRow ? selectedRow : {}}
+                        // onSave={handleAddSuccess}
+                        selectedInspection={selectedInspection}
+                        // row={selectedInspection ? selectedInspection : {}}
                     />
                 </DialogContent>
             </Dialog>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Grid, Stack, Button, CircularProgress, Typography } from '@mui/material';
+import { Grid, Stack, Button, CircularProgress, Typography, useTheme } from '@mui/material';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
@@ -15,8 +15,15 @@ import { useSelector } from 'react-redux';
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
 import { ClientCard } from '../../../../components/ClientCard';
 import ClientCardChips from '../../../../components/ClientCard/ClientCardChips';
+import { DetailsVisualization } from '../../../../components/DetailsVisualization';
+import { IconCalendarEvent, IconClock, IconLicense } from '@tabler/icons-react';
+import { DetailsVisualizationInfoItem } from '../../../../components/DetailsVisualization/DetailsVisualizationInfoItem';
+import answerService from '@/services/answerService';
 
-const ViewInspection = ({ projectId, categoryId, onSave = () => { }, loading, errors = {}, selectedInspectionId }) => {
+const ViewInspection = ({ projectId, categoryId, loading, errors = {}, selectedInspection }) => {
+    const theme = useTheme();
+    const [answers, setAnswers] = useState(null);
+    const [answersFiles, setAnswersFiles] = useState([]);
     const { enqueueSnackbar } = useSnackbar();
     const [project, setProject] = useState(null);
     const userId = useSelector(state => state.user?.user?.id);
@@ -35,6 +42,22 @@ const ViewInspection = ({ projectId, categoryId, onSave = () => { }, loading, er
     const [calculatedEnd, setCalculatedEnd] = useState({ date: null, time: null });
     const [formErrors, setFormErrors] = useState({});
     console.log('formErrors', formErrors);
+
+    useEffect(() => {
+        const fetchAnswers = async () => {
+            if (scheduleId && open) {
+                try {
+                    const data = await answerService.index({ schedule: scheduleId, expand: 'form' });
+                    setAnswers(data);
+                } catch (err) {
+                    console.error('Erro ao buscar respostas:', err);
+                    setError('Erro ao carregar as respostas');
+                    enqueueSnackbar('Erro ao carregar as respostas', { variant: 'error' });
+                }
+            }
+        };
+        fetchAnswers();
+    }, [open, scheduleId, enqueueSnackbar]);
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -158,18 +181,6 @@ const ViewInspection = ({ projectId, categoryId, onSave = () => { }, loading, er
         <form noValidate>
             <Grid container spacing={0}>
                 <Grid item xs={12} sx={{ display: 'flex', justifyContent: "flex-start", flexDirection: 'column' }}>
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
-                        <Grid item xs={12}>
-                            <Typography sx={{ fontSize: "24px", fontWeight: 700, color: "#303030" }}>
-                                Visitoria agendada
-                            </Typography>
-                        </Grid>
-                        {/* <Grid item xs={12}>
-                            <Typography sx={{ fontSize: "14px", fontWeight: 400, color: "#98959D" }}>
-                                Selecione data, horário e selecione o endereço do cliente para criar o agendamento.
-                            </Typography>
-                        </Grid> */}
-                    </Grid>
 
                     <ClientCard.Root>
                         <ClientCard.Client
@@ -181,8 +192,8 @@ const ViewInspection = ({ projectId, categoryId, onSave = () => { }, loading, er
                         <ClientCard.Address
                             title="Endereço"
                             subtitle={
-                                project?.address
-                                    ? `${project.address.street}, ${project.address.number}`
+                                selectedInspection?.address
+                                    ? `${selectedInspection.address.street}, ${selectedInspection.address.number}`
                                     : 'Não informado'
                             }
                             loading={loading}
@@ -190,118 +201,79 @@ const ViewInspection = ({ projectId, categoryId, onSave = () => { }, loading, er
 
                         <ClientCardChips
                             chipsTitle="Parecer final"
-                            status={selectedInspectionId?.final_service_opinion?.name}
+                            status={selectedInspection?.final_service_opinion?.name}
                             loading={loading}
                         />
 
                     </ClientCard.Root>
-                </Grid>
-                <Grid item xs={12}>
-                    <CustomTextField
-                        fullWidth label="Projeto"
-                        value={`${project?.project_number} - ${project?.sale?.customer?.complete_name}`}
-                        disabled
-                    />
-                </Grid>
-                {/* Serviço antes das datas */}
-                <Grid item xs={6}>
-                    <GenericAsyncAutocompleteInput
-                        label="Serviço"
-                        value={formData.service}
-                        onChange={val => handleChange('service', val)}
-                        endpoint="api/services"
-                        extraParams={{ fields: ['id', 'name'], ordering: ['name'], limit: 50, category__in: categoryId }}
-                        mapResponse={data => data.results.map(it => ({ label: it.name, value: it.id }))}
-                        error={!!formErrors.service}
-                        helperText={formErrors.service?.[0]}
-                    />
-                </Grid>
-                <Grid item xs={6}>
-                    <GenericAsyncAutocompleteInput
-                        label="Endereço"
-                        value={formData.address}
-                        onChange={val => handleChange('address', val)}
-                        endpoint="api/addresses"
-                        queryParam='q'
-                        extraParams={{
-                            fields: ['id', 'complete_address'],
-                            customer_id: formData.customer || project?.sale?.customer?.id || null,
-                        }}
-                        mapResponse={data => data.results.map(it => ({ label: it.complete_address || it.name, value: it.id }))}
-                        renderCreateModal={({ onClose, onCreate, newObjectData, setNewObjectData }) => (
-                            <CreateAddressPage
-                                onClose={onClose} onCreate={onCreate}
-                                newObjectData={newObjectData} setNewObjectData={setNewObjectData}
+
+                    <Grid container sx={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center", mb: 4 }}>
+                        <DetailsVisualization.Root>
+                            <DetailsVisualization.Title title={"Vistoria agendada"}>
+                                <Grid item rowSpacing={2} xs={6} sx={{ display: 'flex', flexDirection: 'row' }}>
+                                    <Grid item xs={6}>
+                                        <DetailsVisualizationInfoItem
+                                            Icon={IconCalendarEvent}
+                                            label="Data agendada"
+                                            value={selectedInspection?.schedule_date}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <DetailsVisualizationInfoItem
+                                            Icon={IconClock}
+                                            label="Hora agendada"
+                                            value={selectedInspection?.schedule_start_time}
+                                        />
+                                    </Grid>
+                                </Grid>
+                            </DetailsVisualization.Title>
+                            <DetailsVisualization.DataText
+                                title={"Protocolo"}
+                                ataText={selectedInspection?.protocol}
                             />
-                        )}
-                        error={!!formErrors.address}
-                        helperText={formErrors.address?.[0]}
-                    />
-                </Grid>
-                <Grid item xs={6}>
-                    <FormDate
-                        label="Data Início"
-                        name="schedule_date"
-                        value={formData.schedule_date}
-                        onChange={val => handleChange('schedule_date', val)}
-                        error={!!formErrors.schedule_date}
-                        helperText={formErrors.schedule_date?.[0]}
-                    />
-                </Grid>
-                <Grid item xs={6}>
-                    <FormTimePicker
-                        fullWidth label="Hora Início"
-                        name="schedule_start_time"
-                        value={formData.schedule_start_time}
-                        onChange={val => handleChange('schedule_start_time', val)}
-                        error={!!formErrors.schedule_start_time}
-                        helperText={formErrors.schedule_start_time?.[0]}
-                    />
-                </Grid>
-                {formData.schedule_date && formData.schedule_start_time && (
-                    <>
-                        <Grid item xs={6}>
-                            <FormDate
-                                label="Data Fim"
-                                name="schedule_end_date"
-                                value={formData.schedule_end_date}
-                                onChange={val => handleChange('schedule_end_date', val)}
-                                error={!!formErrors.schedule_end_date}
-                                helperText={formErrors.schedule_end_date?.[0]}
+                            <DetailsVisualization.DataText
+                                title={"Produtos"}
+                                dataText={
+                                    selectedInspection?.products?.length
+                                        ? selectedInspection.products.map(p => p.description).join(', ')
+                                        : '-'
+                                }
                             />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <FormTimePicker
-                                fullWidth label="Hora Fim"
-                                name="schedule_end_time"
-                                value={formData.schedule_end_time}
-                                onChange={val => handleChange('schedule_end_time', val)}
-                                error={!!formErrors.schedule_end_time}
-                                helperText={formErrors.schedule_end_time?.[0]}
+                            <DetailsVisualization.DataText
+                                title={"Vendedor"}
+                                dataText={`${project?.products}`}
                             />
-                        </Grid>
-                    </>
-                )}
-                <Grid item xs={12}>
-                    <CustomTextField
-                        multiline rows={4}
-                        fullWidth label="Observação"
-                        name="observation"
-                        value={formData.observation || ''}
-                        onChange={e => handleChange('observation', e.target.value)}
-                        error={!!formErrors.observation}
-                        helperText={formErrors.observation?.[0]}
-                    />
+                            <DetailsVisualization.DataText
+                                title={"Agente associado"}
+                                dataText={selectedInspection?.scheduled_agent?.name}
+                            />
+                            <DetailsVisualization.DataText
+                                title={"Supervisor Vistoria"}
+                                dataText={selectedInspection?.scheduled_agent}
+                            />
+                            <DetailsVisualization.DataText
+                                title={"Observação"}
+                                dataText={selectedInspection?.observation}
+                            />
+
+                            {answers && answers.results?.length > 0 && (<DetailsVisualization.Gallery
+                                title={"Fotos adicionadas"}
+                                answerData={answers}
+                            />)}
+
+                        </DetailsVisualization.Root>
+                    </Grid>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sx={{ display: "flex", alignItems: "flex-start", justifyContent: 'flex-start' }}>
                     <Stack direction="row" justifyContent="flex-end">
                         <Button
-                            variant="contained" color="primary"
+                            variant="contained" color="secondary"
                             onClick={handleSubmit}
                             disabled={loading}
-                            endIcon={loading && <CircularProgress size={20} />}
+                            endIcon={loading ? <CircularProgress size={15} /> : <IconLicense size={15} />}
+                        // startIcon={<IconLicense size={15} />}
                         >
-                            Salvar
+                            Visualizar formulário
                         </Button>
                     </Stack>
                 </Grid>
