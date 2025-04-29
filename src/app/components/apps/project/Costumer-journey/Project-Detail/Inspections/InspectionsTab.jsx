@@ -33,8 +33,8 @@ export default function InspectionsTab({ projectId }) {
         setLoading(true);
         try {
             const response = await scheduleService.index({
-                fields: "id,address.complete_address,products.description,scheduled_agent,schedule_date,completed_date,service.name,service.category,project.inspection",
-                expand: "address,products,scheduled_agent,service,project",
+                fields: "id,address.complete_address,products.description,scheduled_agent,schedule_date,completed_date,service.name,service.category,project.inspection,schedule.final_service_opinion.name",
+                expand: "address,products,scheduled_agent,service,project,schedule",
                 project__in: projectId,
                 category__icontains: 'Vistoria'
             });
@@ -163,6 +163,7 @@ export default function InspectionsTab({ projectId }) {
                         setOpenViewInspection(true); 
                         setSelectedRow(row);
                         console.log("ver", row);
+                        console.log("selectedInspectionId", selectedRow)
                         }} 
                     />
                     <Table.SwitchAction
@@ -220,8 +221,8 @@ export default function InspectionsTab({ projectId }) {
                         categoryId={categoryId}
                         products={products}
                         onSave={handleAddSuccess}
-                        // inspectionId={selectedRow?.id}
-                        row={selectedRow ? selectedRow : {}}
+                        selectedInspectionId={selectedRow}
+                        // row={selectedRow ? selectedRow : {}}
                     />
                 </DialogContent>
             </Dialog>

@@ -29,7 +29,7 @@ export default function FinalServiceOpinionChip({ status }) {
         'solicitado análise do engenheiro civil',
         'solicitado análise do engenheiro eletricista',
         'solicitado análise do engenheiro civil'
-      ];
+    ];
 
     if (successStatus.some(status => lowerStatus.includes(status))) {
         color = 'success';
@@ -37,7 +37,17 @@ export default function FinalServiceOpinionChip({ status }) {
         color = 'error';
     } else if (infoStatus.some(status => lowerStatus.includes(status))) {
         color = 'info';
-    } 
+    }
 
-    return <Chip label={status} color={color} />;
+    return (
+        <Chip
+            label={status}
+            variant="outlined"
+            color={color}
+            sx={{
+                borderColor: `${lead?.column?.color}`,
+                px: 1,
+            }}
+        />
+    );
 }

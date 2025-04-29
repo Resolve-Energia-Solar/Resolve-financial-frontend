@@ -14,8 +14,9 @@ import scheduleService from '@/services/scheduleService';
 import { useSelector } from 'react-redux';
 import CreateAddressPage from '@/app/components/apps/address/Add-address';
 import { ClientCard } from '../../../../components/ClientCard';
+import ClientCardChips from '../../../../components/ClientCard/ClientCardChips';
 
-const ViewInspection = ({ projectId, categoryId, onSave = () => { }, loading, errors = {}, row }) => {
+const ViewInspection = ({ projectId, categoryId, onSave = () => { }, loading, errors = {}, selectedInspectionId }) => {
     const { enqueueSnackbar } = useSnackbar();
     const [project, setProject] = useState(null);
     const userId = useSelector(state => state.user?.user?.id);
@@ -39,8 +40,8 @@ const ViewInspection = ({ projectId, categoryId, onSave = () => { }, loading, er
         const fetchProject = async () => {
             if (projectId) {
                 const response = await projectService.find(projectId, {
-                    fields: 'id,project_number,sale.customer.complete_name,sale.customer.id,address.id,product,sale.branch',
-                    expand: 'sale,sale.customer'
+                    fields: 'id,project_number,sale.customer.complete_name,sale.customer.id,address.id,product,sale.branch,schedule?.final_service_opinion?.name',
+                    expand: 'sale,sale.customer,schedule,final_service_opinion'
                 });
                 const data = await response;
                 console.log('data', data);
@@ -168,11 +169,18 @@ const ViewInspection = ({ projectId, categoryId, onSave = () => { }, loading, er
                             title="Endereço"
                             subtitle={
                                 project?.address
-                                  ? `${project.address.street}, ${project.address.number}`
-                                  : 'Não informado'
-                              }
+                                    ? `${project.address.street}, ${project.address.number}`
+                                    : 'Não informado'
+                            }
                             loading={loading}
                         />
+
+                        <ClientCardChips
+                            chipsTitle="Parecer final"
+                            status={selectedInspectionId?.final_service_opinion?.name}
+                            loading={loading}
+                        />
+
                     </ClientCard.Root>
                 </Grid>
                 <Grid item xs={12}>

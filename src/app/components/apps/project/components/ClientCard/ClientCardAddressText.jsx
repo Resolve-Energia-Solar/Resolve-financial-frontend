@@ -7,7 +7,7 @@ export default function ClientCardAddressText({ title, subtitle, loading }) {
     return (
         <Grid item sx={{ gridArea: 'address' }}>
             <Grid container size="auto" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%', justifyContent: 'flex-start' }} spacing={2}>
-            <Grid item size="auto" sx={{ position: 'relative', display: 'inline-block', width: '100%' }}>
+                <Grid item size="auto" sx={{ position: 'relative', display: 'inline-block', width: '100%' }}>
                     <Typography variant="caption" sx={{ color: 'gray' }}>
                         {title}
                     </Typography>
