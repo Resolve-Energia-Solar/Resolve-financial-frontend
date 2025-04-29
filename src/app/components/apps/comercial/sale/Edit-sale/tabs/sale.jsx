@@ -28,6 +28,9 @@ import useSaleForm from '@/hooks/sales/useSaleForm';
 import { useEffect, useState } from 'react';
 import documentTypeService from '@/services/documentTypeService';
 import HasPermission from '@/app/components/permissions/HasPermissions';
+import SaleProductItem from '@/app/components/apps/saleProduct/SaleProductItem';
+import AutoCompleteReasonMultiple from '../../components/auto-complete/Auto-Input-Reasons';
+import ProductService from '@/services/productsService';
 
 const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
@@ -55,7 +58,31 @@ const EditSale = ({
     }
   }, [onSubmit]);
 
-  const { loading, error, saleData } = useSale(id);
+  const { loading, error, saleData } = useSale(saleId);
+
+  const [productNames, setProductNames] = useState({});
+
+  useEffect(() => {
+    const fetchProductName = async (productId, index) => {
+      if (productId) {
+        try {
+          const product = await ProductService.find(productId);
+          setProductNames((prev) => ({
+            ...prev,
+            [index]: product.name,
+          }));
+        } catch (error) {
+          console.error('Error fetching product:', error);
+        }
+      }
+    };
+    saleData?.sale_products.forEach((saleProduct, index) => {
+      fetchProductName(saleProduct.product, index);
+    });
+  }, [saleData?.sale_products]);
+
+  console.log('productNames', productNames);
+
 
   const {
     formData,
@@ -179,6 +206,22 @@ const EditSale = ({
             disabled={!hasPermission(['accounts.change_status_sale_field'])}
           />
         </Grid>
+
+        {(formData.status === 'D' || formData.status === 'C') && (
+          <Grid item xs={12} sm={12} lg={8}>
+            <CustomFormLabel htmlFor="Motivo">
+              Motivo do {formData.status === 'C' ? 'Cancelamento' : 'Distrato'}
+            </CustomFormLabel>
+            <AutoCompleteReasonMultiple
+              onChange={(id) => handleChange('cancellationReasonsIds', id)}
+              value={formData.cancellationReasonsIds}
+              {...(formErrors.cancellationReasonsIds && {
+                error: true,
+                helperText: formErrors.cancellationReasonsIds,
+              })}
+            />
+          </Grid>
+        )}
         <HasPermission
           permissions={['accounts.change_pre_sale_field']}
           userPermissions={userPermissions}
@@ -196,6 +239,14 @@ const EditSale = ({
             />
           </Grid>
         </HasPermission>
+
+        {(saleData && saleData?.sale_products || []).map((saleProduct, index) => (
+          <SaleProductItem
+            key={saleProduct.id}
+            initialData={saleProduct}
+            productName={productNames[index]}
+          />
+        ))}
 
         {!onSubmit && (
           <Button

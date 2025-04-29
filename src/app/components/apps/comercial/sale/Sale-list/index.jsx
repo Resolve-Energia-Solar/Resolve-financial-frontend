@@ -36,7 +36,17 @@ import EditSaleTabs from '../Edit-sale';
 import DrawerFilters from '../components/DrawerFilters/DrawerFilters';
 import SideDrawer from '@/app/components/shared/SideDrawer';
 import InforCards from '../../../inforCards/InforCards';
-import { IconListDetails, IconPaperclip, IconSortAscending, IconX, IconClock, IconCheckbox, IconRoute, IconUserX, IconUserCancel } from '@tabler/icons-react';
+import {
+  IconListDetails,
+  IconPaperclip,
+  IconSortAscending,
+  IconX,
+  IconClock,
+  IconCheckbox,
+  IconRoute,
+  IconUserX,
+  IconUserCancel,
+} from '@tabler/icons-react';
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import StatusChip from '@/utils/status/DocumentStatusIcon';

@@ -21,7 +21,7 @@ import HasPermission from '../../permissions/HasPermissions';
 import { useSelector } from 'react-redux';
 import { ca } from 'date-fns/locale';
 
-export default function SaleProductItem({ initialData, productName, onUpdated }) {
+export default function SaleProductItem({ initialData, productName, onUpdated = null }) {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const userPermissions = useSelector((state) => state.user.permissions);
@@ -36,7 +36,7 @@ export default function SaleProductItem({ initialData, productName, onUpdated })
   } = useSaleProductForm(initialData, initialData.id);
 
   useEffect(() => {
-    if (!loading && Object.keys(formErrors).length === 0) {
+    if (!loading && Object.keys(formErrors).length === 0 && typeof onUpdated === 'function') {
       onUpdated();
     }
   }, [loading, formErrors, onUpdated]);

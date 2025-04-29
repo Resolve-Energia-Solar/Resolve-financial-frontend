@@ -20,6 +20,7 @@ import CommentsTab from './Comments/CommentsTab';
 import HomologationTab from './Homologation/HomologationTab';
 import RequestList from '../../../request/Request-list';
 import History from '../../../history';
+import CheckListRateio from '../../../checklist/Checklist-list';
 
 function TabPanel({ children, value, index }) {
     return (
@@ -29,7 +30,7 @@ function TabPanel({ children, value, index }) {
     );
 }
 
-export default function ProjectDetailDrawer({ projectId, open, onClose }) {
+export default function ProjectDetailDrawer({ projectId, open, onClose, refresh }) {
     const { enqueueSnackbar } = useSnackbar();
     const [project, setProject] = useState(null);
     const [processId, setProcessId] = useState(null);
@@ -104,7 +105,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
                 <InspectionsTab projectId={projectId} />
             </TabPanel>
             <TabPanel value={tab} index={1}>
-                <EditSale sx={{ padding: 4 }} saleId={project?.sale} />
+                <EditSale sx={{ padding: 4 }} saleId={project?.sale?.id} />
             </TabPanel>
             <TabPanel value={tab} index={2}>
                 <PaymentCard sale={project?.sale} />
@@ -112,6 +113,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose }) {
             <TabPanel value={tab} index={3}>
                 <EditProjectTab projectId={projectId} />
                 <UploadDocument projectId={projectId} />
+                <CheckListRateio projectId={projectId} />
             </TabPanel>
             <TabPanel value={tab} index={4}>
                 <Typography variant="h6" sx={{ mb: 3 }}>Anexos do Projeto</Typography>

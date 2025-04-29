@@ -145,10 +145,6 @@ const ProjectList = ({ onClick }) => {
     { value: 'TO', label: 'TO' },
   ]
 
-  const citys = [
-
-  ]
-
   const projectFilterConfig = [
     {
       key: 'current_step__in',
@@ -413,12 +409,11 @@ const ProjectList = ({ onClick }) => {
         setLoadingProjects(false);
       }
     };
-
+    
     const fetchIndicators = async () => {
       setLoadingIndicators(true);
       try {
         const data = await projectService.getIndicators({ ...filters });
-        console.log(data.indicators);
         setIndicators(data.indicators);
       } catch (err) {
         setError('Erro ao carregar Indicadores');
@@ -426,6 +421,7 @@ const ProjectList = ({ onClick }) => {
         setLoadingIndicators(false);
       }
     };
+    
 
     fetchIndicators();
     fetchProjects();
