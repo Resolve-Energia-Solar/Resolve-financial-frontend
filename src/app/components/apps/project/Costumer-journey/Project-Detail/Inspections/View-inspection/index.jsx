@@ -156,8 +156,21 @@ const ViewInspection = ({ projectId, categoryId, onSave = () => { }, loading, er
 
     return (
         <form noValidate>
-            <Grid container spacing={2} alignItems="center">
-                <Grid item xs={12}>
+            <Grid container spacing={0}>
+                <Grid item xs={12} sx={{ display: 'flex', justifyContent: "flex-start", flexDirection: 'column' }}>
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3, alignItems: "center", justifyContent: "center" }}>
+                        <Grid item xs={12}>
+                            <Typography sx={{ fontSize: "24px", fontWeight: 700, color: "#303030" }}>
+                                Visitoria agendada
+                            </Typography>
+                        </Grid>
+                        {/* <Grid item xs={12}>
+                            <Typography sx={{ fontSize: "14px", fontWeight: 400, color: "#98959D" }}>
+                                Selecione data, horário e selecione o endereço do cliente para criar o agendamento.
+                            </Typography>
+                        </Grid> */}
+                    </Grid>
+
                     <ClientCard.Root>
                         <ClientCard.Client
                             title="Cliente"
