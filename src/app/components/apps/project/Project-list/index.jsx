@@ -498,6 +498,18 @@ const ProjectList = ({ onClick }) => {
       <Typography fontSize={20} fontWeight={700} sx={{ mt: 0, }} gutterBottom>
         Jornada do cliente
       </Typography>
+      <Accordion defaultExpanded>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="process-count-by-step"
+          id="process-count-by-step-header"
+        >
+          <Typography variant="h6">Projetos por Etapa</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <HorizontalProcessCards />
+        </AccordionDetails>
+      </Accordion>
       <Accordion defaultExpanded sx={{ marginBottom: 4 }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -619,18 +631,6 @@ const ProjectList = ({ onClick }) => {
               />
             </>
           )}
-        </AccordionDetails>
-      </Accordion>
-      <Accordion defaultExpanded>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="process-count-by-step"
-          id="process-count-by-step-header"
-        >
-          <Typography variant="h6">Projetos por Etapa</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <HorizontalProcessCards />
         </AccordionDetails>
       </Accordion>
       <Grid container>
