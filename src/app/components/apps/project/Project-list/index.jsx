@@ -84,6 +84,7 @@ const getProgressColor = (value) => {
   return '🟢 Regular'; // yellow
 };
 
+
 function useAnimatedNumber(targetValue, duration = 800) {
   const [displayValue, setDisplayValue] = useState(0);
 
@@ -117,6 +118,40 @@ const ProjectList = ({ onClick }) => {
   const userPermissions = useSelector((state) => state.user.permissions);
   const { filters, setFilters } = useContext(FilterContext);
 
+  const states = [
+    { value: 'AC', label: 'AC' },
+    { value: 'AL', label: 'AL' },
+    { value: 'AP', label: 'AP' },
+    { value: 'AM', label: 'AM' },
+    { value: 'BA', label: 'BA' },
+    { value: 'CE', label: 'CE' },
+    { value: 'DF', label: 'DF' },
+    { value: 'ES', label: 'ES' },
+    { value: 'GO', label: 'GO' },
+    { value: 'MA', label: 'MA' },
+    { value: 'MT', label: 'MT' },
+    { value: 'MS', label: 'MS' },
+    { value: 'MG', label: 'MG' },
+    { value: 'PA', label: 'PA' },
+    { value: 'PB', label: 'PB' },
+    { value: 'PR', label: 'PR' },
+    { value: 'PE', label: 'PE' },
+    { value: 'PI', label: 'PI' },
+    { value: 'RJ', label: 'RJ' },
+    { value: 'RN', label: 'RN' },
+    { value: 'RS', label: 'RS' },
+    { value: 'RO', label: 'RO' },
+    { value: 'RR', label: 'RR' },
+    { value: 'SC', label: 'SC' },
+    { value: 'SP', label: 'SP' },
+    { value: 'SE', label: 'SE' },
+    { value: 'TO', label: 'TO' },
+  ]
+   
+  const citys =[
+
+  ]
+
   const projectFilterConfig = [
     {
       key: 'current_step__in',
@@ -142,7 +177,18 @@ const ProjectList = ({ onClick }) => {
           value: user.id,
         })),
     },
-    //TOMADOR
+    {
+      key: 'borrower',
+      label: 'Tomador',
+      type: 'async-autocomplete',
+      endpoint: '/api/users',
+      queryParam: 'complete_name__icontains',
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
+    },
     {
       key: 'homologator',
       label: 'Homologador',
@@ -155,32 +201,99 @@ const ProjectList = ({ onClick }) => {
           value: user.id,
         })),
     },
-    //VENDEDOR
-    //STATUS VENDA
-    //BRANCH DA VENDA
-    // {
-    //   key: 'homologator',
-    //   label: 'Homologador',
-    //   type: 'async-autocomplete',
-    //   endpoint: '/api/users',
-    //   queryParam: 'complete_name__icontains',
-    //   mapResponse: (data) =>
-    //     data.results.map((user) => ({
-    //       label: user.complete_name,
-    //       value: user.id,
-    //     })),
-    // },
-    //ESTADO
-    //CIDADE
+    {
+      key: 'seller',
+      label: 'Vendedor',
+      type: 'async-autocomplete',
+      endpoint: '/api/users',
+      queryParam: 'complete_name__icontains',
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
+    },
+    {
+      key: 'sele_status',
+      label: 'Status da Venda',
+      type: 'multiselect',
+      options: [
+        { value: 'P', label: 'Pendente' },
+        { value: 'CO', label: 'Concluído' },
+        { value: 'EA', label: 'Em Andamento' },
+        { value: 'C', label: 'Cancelado' },
+        { value: 'D', label: 'Distrato' },
+      ],
+    },
+    {
+      key: 'sale_branches',
+      label: 'Unidade',
+      type: 'async-autocomplete',
+      endpoint: '/api/branches',
+      queryParam: 'name__icontains',
+      mapResponse: (data) =>
+        data.results.map((branch) => ({
+          label: branch.name,
+          value: branch.id,
+        })),
+    },
+    {
+      key: 'state',
+      label: 'Estado',
+      type: 'select',
+      options: states,
+    },
+    {
+      key: 'city',
+      label: 'Cidade',
+      type: 'text',
+    },
     {
       key: 'signature_date',
       label: 'Data de Contrato',
       type: 'range',
       inputType: 'date',
     },
-    //TIPO DE PAGAMENTO
-    //FINANCIADORA
-    //STATUS NOTA FISCAL
+    {
+      key: 'payment_types',
+      label: 'Tipo de Pagamentos',
+      type: 'multiselect',
+      options: [
+        { value: 'C', label: 'Crédito' },
+        { value: 'D', label: 'Débito' },
+        { value: 'B', label: 'Boleto' },
+        { value: 'F', label: 'Financiamento' },
+        { value: 'PI', label: 'Parcelamento interno' },
+        { value: 'P', label: 'Pix' },
+        { value: 'T', label: 'Transferência Bancária' },
+        { value: 'DI', label: 'Dinheiro' },
+        { value: 'PA', label: 'Poste auxiliar' },
+        { value: 'RO', label: 'Repasse de Obra' },
+      ],
+    },
+    {
+      key: 'financiers',
+      label: 'Financiadora',
+      type: 'async-autocomplete',
+      endpoint: '/api/financiers',
+      queryParam: 'name__icontains',
+      mapResponse: (data) =>
+        data.results.map((financier) => ({
+          label: financier.name,
+          value: financier.id,
+        })),
+    },
+    {
+      key: 'invoice_status',
+      label: 'Tipo da Nota Fiscal',
+      type: 'multiselect',
+      options: [
+        { value: 'E', label: 'Emitida' },
+        { value: 'L', label: 'Liberada' },
+        { value: 'P', label: 'Pendente' },
+        { value: 'C', label: 'Cancelada' },
+      ],
+    },
     {
       key: 'is_released_to_engineering',
       label: 'Liberado para Engenharia',
