@@ -119,30 +119,6 @@ const ProjectList = ({ onClick }) => {
 
   const projectFilterConfig = [
     {
-      key: 'customer',
-      label: 'Cliente',
-      type: 'async-autocomplete',
-      endpoint: '/api/users',
-      queryParam: 'complete_name__icontains',
-      mapResponse: (data) =>
-        data.results.map((user) => ({
-          label: user.complete_name,
-          value: user.id,
-        })),
-    },
-    {
-      key: 'homologator',
-      label: 'Homologador',
-      type: 'async-autocomplete',
-      endpoint: '/api/users',
-      queryParam: 'complete_name__icontains',
-      mapResponse: (data) =>
-        data.results.map((user) => ({
-          label: user.complete_name,
-          value: user.id,
-        })),
-    },
-    {
       key: 'current_step__in',
       label: 'Etapa Atual',
       type: 'async-multiselect',
@@ -155,34 +131,64 @@ const ProjectList = ({ onClick }) => {
         })),
     },
     {
+      key: 'customer',
+      label: 'Cliente',
+      type: 'async-autocomplete',
+      endpoint: '/api/users',
+      queryParam: 'complete_name__icontains',
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
+    },
+    //TOMADOR
+    {
+      key: 'homologator',
+      label: 'Homologador',
+      type: 'async-autocomplete',
+      endpoint: '/api/users',
+      queryParam: 'complete_name__icontains',
+      mapResponse: (data) =>
+        data.results.map((user) => ({
+          label: user.complete_name,
+          value: user.id,
+        })),
+    },
+    //VENDEDOR
+    //STATUS VENDA
+    //BRANCH DA VENDA
+    // {
+    //   key: 'homologator',
+    //   label: 'Homologador',
+    //   type: 'async-autocomplete',
+    //   endpoint: '/api/users',
+    //   queryParam: 'complete_name__icontains',
+    //   mapResponse: (data) =>
+    //     data.results.map((user) => ({
+    //       label: user.complete_name,
+    //       value: user.id,
+    //     })),
+    // },
+    //ESTADO
+    //CIDADE
+    {
       key: 'signature_date',
       label: 'Data de Contrato',
       type: 'range',
       inputType: 'date',
     },
+    //TIPO DE PAGAMENTO
+    //FINANCIADORA
+    //STATUS NOTA FISCAL
     {
-      key: 'product_kwp',
-      label: 'Kwp',
-      type: 'number',
-    },
-    {
-      key: 'material_list_is_completed',
-      label: 'Lista de Material',
+      key: 'is_released_to_engineering',
+      label: 'Liberado para Engenharia',
       type: 'select',
       options: [
         { value: 'true', label: 'Sim' },
         { value: 'false', label: 'Não' },
-        { value: 'null', label: 'Todos' },
-      ],
-    },
-    {
-      key: 'new_contract_number',
-      label: 'Nova UC',
-      type: 'select',
-      options: [
-        { value: 'true', label: 'Sim' },
-        { value: 'false', label: 'Não' },
-        { value: 'null', label: 'Todos' },
+        { value: 'null', label: 'Todos' }
       ],
     },
     {
@@ -198,14 +204,9 @@ const ProjectList = ({ onClick }) => {
       ],
     },
     {
-      key: 'access_opnion',
-      label: 'Parecer de Acesso',
-      type: 'select',
-      options: [
-        { value: 'liberado', label: 'Liberado' },
-        { value: 'bloqueado', label: 'Bloqueado' },
-        { value: 'null', label: 'Todos' },
-      ],
+      key: 'product_kwp',
+      label: 'Kwp',
+      type: 'number',
     },
     {
       key: 'trt_status',
@@ -216,6 +217,16 @@ const ProjectList = ({ onClick }) => {
         { value: 'A', label: 'Aprovado' },
         { value: 'EA', label: 'Em Andamento' },
         { value: 'R', label: 'Recusado' },
+      ],
+    },
+    {
+      key: 'material_list_is_completed',
+      label: 'Lista de Material',
+      type: 'select',
+      options: [
+        { value: 'true', label: 'Sim' },
+        { value: 'false', label: 'Não' },
+        { value: 'null', label: 'Todos' },
       ],
     },
     {
@@ -231,6 +242,26 @@ const ProjectList = ({ onClick }) => {
         })),
     },
     {
+      key: 'new_contract_number',
+      label: 'Nova UC',
+      type: 'select',
+      options: [
+        { value: 'true', label: 'Sim' },
+        { value: 'false', label: 'Não' },
+        { value: 'null', label: 'Todos' },
+      ],
+    },
+    {
+      key: 'access_opnion',
+      label: 'Parecer de Acesso',
+      type: 'select',
+      options: [
+        { value: 'liberado', label: 'Liberado' },
+        { value: 'bloqueado', label: 'Bloqueado' },
+        { value: 'null', label: 'Todos' },
+      ],
+    },
+    {
       key: 'designer_status',
       label: 'Status do Projeto',
       type: 'multiselect',
@@ -240,16 +271,6 @@ const ProjectList = ({ onClick }) => {
         { value: 'EA', label: 'Em Andamento' },
         { value: 'C', label: 'Cancelado' },
         { value: 'D', label: 'Distrato' },
-      ],
-    },
-    {
-      key: 'is_released_to_engineering',
-      label: 'Liberado para Engenharia',
-      type: 'select',
-      options: [
-        { value: 'true', label: 'Sim' },
-        { value: 'false', label: 'Não' },
-        { value: 'null', label: 'Todos' }
       ],
     },
   ];
