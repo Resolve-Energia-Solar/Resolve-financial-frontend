@@ -6,6 +6,9 @@ import {
 } from '@mui/icons-material';
 
 const ScheduleStatusChip = ({ status }) => {
+  if (!status) {
+    return <Chip label="Pendente" color="default" />;
+  }
   const getChipProps = (status) => {
     switch (status) {
       case 'Confirmado':
