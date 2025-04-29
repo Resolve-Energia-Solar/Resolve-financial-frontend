@@ -22,26 +22,22 @@ export default function FinalServiceOpinionChip({ status }) {
     ];
 
     const infoStatus = [
-        
-    ];
+        'solicito civil + solicito sombreamento',
+        'solicitado análise de sombreamento',
+        'pendente',
+        'solicitado engenheiro eletricista',
+        'solicitado análise do engenheiro civil',
+        'solicitado análise do engenheiro eletricista',
+        'solicitado análise do engenheiro civil'
+      ];
 
     if (successStatus.some(status => lowerStatus.includes(status))) {
         color = 'success';
     } else if (errorStatus.some(status => lowerStatus.includes(status))) {
         color = 'error';
-    } else if (lowerStatus.includes('reprovado') || lowerStatus.includes('reprovada')) {
-        color = 'error';
-    } else if (lowerStatus.includes('cancelado') || lowerStatus.includes('cancelada')) {
-        color = 'error';
-    } else if (lowerStatus.includes('concluído')) {
-        color = 'success';
-    } else if (lowerStatus.includes('andamento')) {
+    } else if (infoStatus.some(status => lowerStatus.includes(status))) {
         color = 'info';
-    } else if (lowerStatus.includes('entregue')) {
-        color = 'success';
-    } else if (lowerStatus.includes('agendado')) {
-        color = 'info';
-    }
+    } 
 
     return <Chip label={status} color={color} />;
 }
