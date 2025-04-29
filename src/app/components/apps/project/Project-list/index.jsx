@@ -2,12 +2,7 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import {
   TablePagination,
-  Table,
-  TableBody,
-  TableCell,
   TableContainer,
-  TableHead,
-  TableRow,
   Paper,
   Typography,
   Box,
@@ -42,6 +37,8 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import { styled, keyframes } from '@mui/system';
 import { FilterContext } from '@/context/FilterContext';
 import HorizontalProcessCards from '../Costumer-journey/HorizontalProcessCards';
+import { Table } from "@/app/components/Table";
+import { TableHeader } from "@/app/components/TableHeader";
 
 const pulse = keyframes`
   0% {
@@ -147,8 +144,8 @@ const ProjectList = ({ onClick }) => {
     { value: 'SE', label: 'SE' },
     { value: 'TO', label: 'TO' },
   ]
-   
-  const citys =[
+
+  const citys = [
 
   ]
 
@@ -493,6 +490,23 @@ const ProjectList = ({ onClick }) => {
   const designerComplete = useAnimatedNumber(indicators?.designer_complete_count || 0);
   const designerCanceled = useAnimatedNumber(indicators?.designer_canceled_count || 0);
 
+  const columns = [
+    { field: 'sale.customer.complete_name', headerName: 'Cliente', render: r => r.sale.customer.complete_name },
+    { field: 'product.name', headerName: 'Produto', render: r => r.product.name },
+    { field: 'signature_date', headerName: 'Data de Contrato', render: r => r.signature_date ? new Date(r.signature_date).toLocaleDateString() : r.id },
+    { field: 'dias', headerName: 'Dias', render: r => r.id },           // placeholder
+    { field: 'product.params', headerName: 'Unidades', render: r => r.product.params },
+    { field: 'valor', headerName: 'Valor', render: r => r.id },          // placeholder
+    { field: 'process.current_step', headerName: 'Etapa Atual', render: r => r.process.current_step }, // placeholder
+    { field: 'sale.status', headerName: 'Status Venda', render: r => <StatusChip status={r.sale.status} /> },
+    { field: 'inspection_status', headerName: 'Status Vistoria', render: r => r.id }, // placeholder
+    { field: 'status_financeiro', headerName: 'Status Financeiro', render: r => r.id },  // placeholder
+    { field: 'documentation_status', headerName: 'Status Documentação', render: r => r.id }, // placeholder
+    { field: 'delivery_status', headerName: 'Status de Entrega', render: r => r.id }, // placeholder
+    { field: 'installation_status', headerName: 'Status de Instalação', render: r => r.id }, // placeholder
+    { field: 'status', headerName: 'Status de Homologação', render: r => r.id }, // placeholder
+  ];
+
   return (
     <>
       <Typography fontSize={20} fontWeight={700} sx={{ mt: 0, }} gutterBottom>
@@ -667,100 +681,65 @@ const ProjectList = ({ onClick }) => {
 
           </Grid>
         </Grid>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Liberado</TableCell>
-                <TableCell>Cliente</TableCell>
-                <TableCell>Etapa Atual</TableCell>
-                {/* <TableCell>Medidor Etapa</TableCell>
-              <TableCell>Medidor Geral</TableCell> */}
-                <TableCell>Homologador</TableCell>
-                <TableCell>Status da Venda</TableCell>
-                <TableCell>Status Desenho Executivo</TableCell>
-                <TableCell>Status de Homologação</TableCell>
-                <TableCell>Lista de Materiais</TableCell>
-                <TableCell>ART/TRT</TableCell>
-                <TableCell>Solicitação da Conce.</TableCell>
-                <TableCell>Parecer de Acesso</TableCell>
-                <TableCell>Produto</TableCell>
-                <TableCell>Kwp</TableCell>
-              </TableRow>
-            </TableHead>
-            {loadingProjects ? (
-              <TableSkeleton rows={rowsPerPage} columns={12} />
-            ) : error && page === 1 ? (
-              <Typography color="error">{error}</Typography>
-            ) : (
-              <TableBody>
-                {projectsList.map((item) => {
-                  const canEdit =
-                    item.is_released_to_engineering ||
-                    hasPermission(['resolve_crm.can_change_unready_project']);
-                  return (
-                    <TableRow
-                      key={item.id}
-                      onClick={() => canEdit && onClick(item)}
-                      sx={{
-                        opacity: canEdit ? 1 : 0.5,
-                        pointerEvents: canEdit ? 'auto' : 'none',
-                        '&:hover': canEdit ? { backgroundColor: 'rgba(236, 242, 255, 0.35)' } : {},
-                      }}
-                    >
-                      <TableCell>
-                        {item.is_released_to_engineering ? (
-                          <CheckIcon color="success" />
-                        ) : (
-                          <CloseIcon color="error" />
-                        )}
-                      </TableCell>
-                      <TableCell>{item.sale?.customer?.complete_name}</TableCell>
-                      <TableCell>Venda</TableCell>
-                      {/* <TableCell>
-                      <Typography sx={{ width: '90px' }}>{getProgressColor(0.5)}</Typography>
-                      </TableCell>
-                      <TableCell>
-                      <Typography sx={{ width: '90px' }}>{getProgressColor(1)}</Typography>
-                      </TableCell> */}
-                      <TableCell>{item.homologator?.complete_name || '-'}</TableCell>
-                      <TableCell>
-                        <DocumentStatusChip status={item?.sale?.status} />
-                      </TableCell>
-                      <TableCell>
-                        <ChipProject status={item.designer_status} />
-                      </TableCell>
-                      <TableCell>
-                        <StatusChip status={item.status} />
-                      </TableCell>
-                      <TableCell>
-                        {item.material_list_is_completed ? (
-                          <CheckIcon color="success" />
-                        ) : (
-                          <CloseIcon color="error" />
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <GenericChip status={item.trt_pending} statusMap={trtStatusMap} />
-                      </TableCell>
-                      <TableCell>
-                        {item.peding_request ? (
-                          <CheckIcon color="success" />
-                        ) : (
-                          <CloseIcon color="error" />
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <GenericChip status={item.access_opnion} statusMap={accessOpinionStatusMap} />
-                      </TableCell>
-                      <TableCell>{item.product?.name}</TableCell>
-                      <TableCell>{item.product?.params || '-'}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            )}
-          </Table>
+        <TableContainer
+          component={Paper}
+          sx={{
+            '& th': {
+              whiteSpace: 'nowrap',
+            }
+          }}
+        >
+          <TableHeader.Root>
+            <TableHeader.Title
+              title="Total"
+              totalItems={projectsList.length}
+              objNameNumberReference={
+                projectsList.length === 1 ? 'Projeto' : 'Projetos'
+              }
+            />
+          </TableHeader.Root>
+
+          <Table.Root
+            data={projectsList}
+            totalRows={totalRows}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            onPageChange={handlePageChange}
+            onRowsPerPageChange={handleRowsPerPageChange}
+          >
+            {/* Cabeçalho */}
+            <Table.Head>
+              {columns.map((col) => (
+                <Table.Cell key={col.field} sx={{ fontWeight: 600, fontSize: '14px' }}>
+                  {col.headerName}
+                </Table.Cell>
+              ))}
+              <Table.Cell align="center">Editar</Table.Cell>
+              <Table.Cell align="center">Ver</Table.Cell>
+            </Table.Head>
+
+            {/* Corpo */}
+            <Table.Body loading={loadingProjects}>
+              <Table.Cell render={row => /* cliente */ row.sale.customer.complete_name} sx={{ opacity: 0.7 }} />
+              <Table.Cell render={row => /* produto */ row.product.name} sx={{ opacity: 0.7 }} />
+              <Table.Cell render={row => /* data de contrato */ row.signature_date ? new Date(row.signature_date).toLocaleDateString() : row.id} sx={{ opacity: 0.7 }} />
+              <Table.Cell render={row => /* dias */ row.id} sx={{ opacity: 0.7 }} />
+              <Table.Cell render={row => /* unidades */ row.product.params} sx={{ opacity: 0.7 }} />
+              <Table.Cell render={row => /* valor */ row.id} sx={{ opacity: 0.7 }} />
+              <Table.Cell render={row => /* etapa atual */ row.status} sx={{ opacity: 0.7 }} />
+              <Table.Cell render={row => /* status da venda */ <StatusChip status={row.sale.status} />} sx={{ opacity: 0.7 }} />
+              <Table.Cell render={row => /* vistoria */ row.id} sx={{ opacity: 0.7 }} />
+              <Table.Cell render={row => /* financeiro */ row.id} sx={{ opacity: 0.7 }} />
+              <Table.Cell render={row => /* documentação */ row.id} sx={{ opacity: 0.7 }} />
+              <Table.Cell render={row => /* entrega */ row.id} sx={{ opacity: 0.7 }} />
+              <Table.Cell render={row => /* instalação */ row.id} sx={{ opacity: 0.7 }} />
+              <Table.Cell render={row => /* homologação */ row.id} sx={{ opacity: 0.7 }} />
+
+              <Table.EditAction onClick={row => /* Editar */ onClick(row.id)} />
+              <Table.ViewAction onClick={row => onClick(row)} />
+              </Table.Body>
+          </Table.Root>
+
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
