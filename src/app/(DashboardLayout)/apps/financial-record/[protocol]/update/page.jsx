@@ -686,7 +686,7 @@ export default function UpdateForm() {
           <Grid item xs={12}>
             <Stack direction="row" spacing={2} justifyContent="space-between" mt={2}>
               <AttachmentDrawer
-                objectId={protocol}
+                objectId={recordId}
                 attachments={attachments}
                 onAddAttachment={handleAddAttachment}
                 appLabel="financial"
