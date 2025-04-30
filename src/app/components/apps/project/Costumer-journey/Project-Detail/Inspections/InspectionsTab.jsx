@@ -67,7 +67,7 @@ export default function InspectionsTab({ projectId }) {
                     'protocol',
                     'observation'
                 ].join(','),
-                expand: 'address,products,scheduled_agent,service,final_service_opinion',
+                expand: 'address,products,scheduled_agent,service,final_service_opinion,observation,protocol,project',
                 project__in: projectId,
                 category__icontains: 'Vistoria'
             });
