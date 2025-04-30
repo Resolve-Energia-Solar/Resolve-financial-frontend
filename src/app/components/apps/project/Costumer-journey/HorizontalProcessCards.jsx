@@ -59,16 +59,28 @@ const HorizontalProcessCards = () => {
         <Card 
           key={index} 
           sx={{ 
-            width: '20%', 
-            height: 100, 
+            width: '250px', 
+            height: '75px', 
             flexShrink: 0,
-            borderRadius: 3
+            borderRadius: 2,
+            py: 2, 
+            px: 2, 
+            
           }} 
-          elevation={3}
+          elevation={2}
         >
-          <CardContent sx={{ padding: 1, textAlign: 'center' }}>
-            <Typography variant="subtitle1">{item.step}</Typography>
-            <Typography variant="h6">{item.total_processes}</Typography>
+          <CardContent 
+            sx={{ 
+              py: 0, 
+              px: 0, 
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              textAlign: 'start',
+              // spacing: 10,
+            }}>
+            <Typography sx={{ fontWeight: 400, fontSize: '16px', mb: 0.2 }}>{item.step}</Typography>
+            <Typography sx={{ fontWeight: 700, fontSize: '14px' }}>{item.total_processes}</Typography>
           </CardContent>
         </Card>
       ))}
