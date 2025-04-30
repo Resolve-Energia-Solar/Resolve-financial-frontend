@@ -116,12 +116,6 @@ export default function InspectionsTab({ projectId }) {
     ]
 
 
-    // const handleEditSuccess = async () => {
-    //     setOpenEditInspection(false);
-    //     await fetchInspections();
-    // };
-
-
     return (
         <>
 
@@ -200,7 +194,7 @@ export default function InspectionsTab({ projectId }) {
                         sx={{ opacity: 0.7 }}
                     />
 
-                    <Table.EditAction onClick={r => console.log("editar", r)} />
+                    <Table.EditAction onClick={r => { setSelectedInspection(r.id); setOpenInspectionFormModal(true) }} />
                     <Table.ViewAction onClick={(r) => {
                         setOpenViewInspection(true);
                         setSelectedInspection(r);
