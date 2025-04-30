@@ -28,9 +28,6 @@ const AnswerForm = ({ answerData }) => {
     return answers[fieldName];
   };
 
-  console.log('answerData', answerData);
-  console.log('answers', answers);
-
   const normalizeValue = (value, isMultiple) => {
     if (isMultiple) {
       if (Array.isArray(value)) {
@@ -85,6 +82,7 @@ const AnswerForm = ({ answerData }) => {
     'cr2',
     'nef',
     'arw',
+    'heic'
   ];
   const validVideoExtensions = ['mp4', 'avi', 'mov', 'webm', 'mpeg', 'mpg', 'ogg'];
 
