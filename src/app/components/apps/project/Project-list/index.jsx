@@ -17,25 +17,12 @@ import {
 } from '@mui/material';
 import { IconListDetails } from '@tabler/icons-react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useRouter } from 'next/navigation';
 import projectService from '@/services/projectService';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import StatusChip from '@/utils/status/ProjectStatusChip';
-import DocumentStatusChip from '@/utils/status/DocumentStatusIcon';
-import TableSkeleton from '../../comercial/sale/components/TableSkeleton';
-import ChipProject from '../components/ChipProject';
 import ProjectCards from '../../inforCards/InforQuantity';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import CloseIcon from '@mui/icons-material/Close';
-import CheckIcon from '@mui/icons-material/Check';
-import { useSelector } from 'react-redux';
-import GenericChip from '@/utils/status/Chip';
-import theme from '@/utils/theme';
-import CancelIcon from '@mui/icons-material/Cancel';
-import HourglassFullIcon from '@mui/icons-material/HourglassFull';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import { styled, keyframes } from '@mui/system';
+import { keyframes } from '@mui/system';
 import { FilterContext } from '@/context/FilterContext';
 import HorizontalProcessCards from '../Costumer-journey/HorizontalProcessCards';
 import { Table } from "@/app/components/Table";
@@ -55,36 +42,6 @@ const pulse = keyframes`
     opacity: 0;
   }
 `;
-
-const OuterCircle = styled(Box)(({ theme, color }) => ({
-  position: 'absolute',
-  width: 64,
-  height: 64,
-  borderRadius: '50%',
-  backgroundColor: color,
-  animation: `${pulse} 1.5s ease-out infinite`,
-}));
-
-const InnerCircle = styled(Box)(({ theme, color }) => ({
-  width: 24,
-  height: 24,
-  borderRadius: '50%',
-  backgroundColor: color,
-  position: 'relative',
-  zIndex: 1,
-}));
-
-const getColor = (value) => {
-  if (value > 1) return '#f44336'; // red
-  if (value > 0.5) return '#ffeb3b'; // green
-  return '#4caf50'; // yellow
-};
-
-const getProgressColor = (value) => {
-  if (value > 1) return '🔴 Crítico'; // red
-  if (value > 0.5) return '🟡 Atenção'; // green
-  return '🟢 Regular'; // yellow
-};
 
 const getStatusChip = (status) => {
   let label = '';
@@ -160,8 +117,6 @@ const ProjectList = ({ onClick }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalRows, setTotalRows] = useState(0);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
-  const router = useRouter();
-  const userPermissions = useSelector((state) => state.user.permissions);
   const { filters, setFilters } = useContext(FilterContext);
 
   const states = [
@@ -192,10 +147,6 @@ const ProjectList = ({ onClick }) => {
     { value: 'SP', label: 'SP' },
     { value: 'SE', label: 'SE' },
     { value: 'TO', label: 'TO' },
-  ]
-
-  const citys = [
-
   ]
 
   const projectFilterConfig = [
@@ -434,14 +385,6 @@ const ProjectList = ({ onClick }) => {
     },
   ];
 
-  const hasPermission = useCallback(
-    (permissions) => {
-      if (!permissions) return true;
-      return permissions.some((permission) => userPermissions?.includes(permission));
-    },
-    [userPermissions],
-  );
-
   useEffect(() => {
     const fetchProjects = async () => {
       setLoadingProjects(true);
@@ -528,57 +471,16 @@ const ProjectList = ({ onClick }) => {
     setPage(0);
   }, []);
 
-  const [openDrawer, setOpenDrawer] = useState(false);
-  const [selectedRow, setSelectedRow] = useState(null);
+  // const [openDrawer, setOpenDrawer] = useState(false);
+  // const [selectedRow, setSelectedRow] = useState(null);
 
-  const handleRowClick = (row) => {
-    console.log("Clicked row:", row);
-    if (row.id) {
-      setSelectedRow(row.id);
-      setOpenDrawer(true);
-    }
-  };
-
-  const trtStatusMap = {
-    Bloqueado: {
-      label: 'Bloqueado',
-      color: theme.palette.error.light,
-      icon: <CancelIcon sx={{ color: '#fff' }} />,
-    },
-    Reprovada: {
-      label: 'Reprovada',
-      color: theme.palette.error.light,
-      icon: <CancelIcon sx={{ color: '#fff' }} />,
-    },
-    'Em Andamento': {
-      label: 'Em Andamento',
-      color: theme.palette.info.light,
-      icon: <HourglassFullIcon sx={{ color: '#fff' }} />,
-    },
-    Concluída: {
-      label: 'Concluída',
-      color: theme.palette.success.light,
-      icon: <CheckCircleIcon sx={{ color: '#fff' }} />,
-    },
-    Pendente: {
-      label: 'Pendente',
-      color: theme.palette.warning.light,
-      icon: <HourglassEmptyIcon sx={{ color: '#fff' }} />,
-    },
-  };
-
-  const accessOpinionStatusMap = {
-    Liberado: {
-      label: 'Liberado',
-      color: theme.palette.success.light,
-      icon: <CheckCircleIcon sx={{ color: '#fff' }} />,
-    },
-    Bloqueado: {
-      label: 'Bloqueado',
-      color: theme.palette.warning.light,
-      icon: <HourglassEmptyIcon sx={{ color: '#fff' }} />,
-    },
-  };
+  // const handleRowClick = (row) => {
+  //   console.log("Clicked row:", row);
+  //   if (row.id) {
+  //     setSelectedRow(row.id);
+  //     setOpenDrawer(true);
+  //   }
+  // };
 
   const blockedToEngineering = useAnimatedNumber(indicators?.blocked_to_engineering || 0);
   const pendingMaterialList = useAnimatedNumber(indicators?.pending_material_list || 0);
@@ -754,15 +656,6 @@ const ProjectList = ({ onClick }) => {
             </Typography>
           </Grid>
           <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-            {/* <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              mt: 2,
-              mb: 2,
-            }}
-          > */}
             <Button
               variant="outlined"
               sx={{ mt: 1, mb: 2 }}
@@ -783,7 +676,7 @@ const ProjectList = ({ onClick }) => {
         <TableContainer
           component={Paper}
           sx={{
-            '& th': {
+            '& th, & td': {
               whiteSpace: 'nowrap',
             }
           }}
@@ -805,81 +698,122 @@ const ProjectList = ({ onClick }) => {
             rowsPerPage={rowsPerPage}
             onPageChange={handlePageChange}
             onRowsPerPageChange={handleRowsPerPageChange}
+            onRowClick={onClick}
           >
             {/* Cabeçalho */}
             <Table.Head>
               {columns.map((col) => (
-                <Table.Cell key={col.field} sx={{ fontWeight: 600, fontSize: '14px' }}>
+                <Table.Cell
+                  key={col.field}
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: '14px'
+                  }}
+                >
                   {col.headerName}
                 </Table.Cell>
               ))}
             </Table.Head>
 
             {/* Corpo */}
-            <Table.Body
-              loading={loadingProjects}
-              onRowClick={handleRowClick}
-              sx={{
-                cursor: "pointer",
-                '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' },
-              }}
-            >
-              {(row, onRowClick) => (<Table.Row
-                key={row.id}
-                hover
-                onClick={() => onRowClick(row)}
-                sx={{
-                  cursor: "pointer",
-                  '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' }
+            <Table.Body loading={loadingProjects}>
+              <Table.Cell
+                render={row => row.sale.customer.complete_name}
+                sx={{ opacity: 0.7 }}
+              />
+              <Table.Cell
+                render={row => row.product.name}
+                sx={{ opacity: 0.7 }}
+              />
+              <Table.Cell
+                render={row =>
+                  row.sale.signature_date
+                    ? new Date(row.sale.signature_date).toLocaleDateString()
+                    : 'Sem data'
+                }
+                sx={{ opacity: 0.7 }}
+              />
+              <Table.Cell
+                render={row => {
+                  if (!row.sale.signature_date) return '-';
+                  const diffMs = Date.now() - new Date(row.sale.signature_date).getTime();
+                  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                  return `${diffDays}`;
                 }}
-              >
-                <Table.Cell render={r => r.sale.customer.complete_name} sx={{ opacity: 0.7 }} />
-                <Table.Cell render={r => r.product.name} sx={{ opacity: 0.7 }} />
-                <Table.Cell
-                  render={r =>
-                    r.sale.signature_date
-                      ? new Date(row.sale.signature_date).toLocaleDateString()
-                      : 'Sem data'
-                  }
-                  sx={{ opacity: 0.7 }}
-                />
-                <Table.Cell
-                  render={r => {
-                    if (!r.sale.signature_date) return '-';
-                    const diffMs = Date.now() - new Date(r.sale.signature_date).getTime();
-                    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-                    return `${diffDays} dias`;
-                  }}
-                  sx={{ opacity: 0.7 }}
-                />
-                <Table.Cell render={r => r.sale.branch.name} sx={{ opacity: 0.7 }} />
-                <Table.Cell
-                  render={r =>
-                    new Intl.NumberFormat('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    }).format(r.sale.total_value)
-                  }
-                  sx={{ opacity: 0.7 }}
-                />
-                <Table.Cell
-                  render={r =>
-                    r.processes && r.processes.length > 0
-                      ? r.processes
-                        .flatMap(process => process.current_step?.map(step => step.name))
-                        .join(',\n')
-                      : 'Sem processo'
-                  }
-                  sx={{ opacity: 0.7 }}
-                />
-                <Table.Cell render={r => getStatusChip(r.sale.status)} sx={{ opacity: 0.7 }} />
-                <Table.Cell render={r => <ScheduleOpinionChip status={r.fieldServiceStatus?.Vistoria} />} sx={{ opacity: 0.7 }} />
-                <Table.Cell render={r => <StatusFinancialChip status={r.sale.payment_status} />} sx={{ opacity: 0.7 }} />
-                <Table.Cell render={r => r.is_documentation_completed === true ? 'Finalizado' : 'Pendente'} sx={{ opacity: 0.7 }} />
-                <Table.Cell render={r => <ScheduleOpinionChip status={r.fieldServiceStatus?.Entrega} />} sx={{ opacity: 0.7 }} />
-                <Table.Cell render={r => <ScheduleOpinionChip status={r.fieldServiceStatus?.Instalação} />} sx={{ opacity: 0.7 }} />
-                <Table.Cell render={r => <ChipRequest status={r.homologationStatus} />} />
-              </Table.Row>)}
+                sx={{ opacity: 0.7 }}
+              />
+              <Table.Cell
+                render={row => row.sale.branch.name}
+                sx={{ opacity: 0.7 }}
+              />
+              <Table.Cell
+                render={row =>
+                  new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                  }).format(row.sale.total_value)
+                }
+                sx={{ opacity: 0.7 }}
+              />
+              <Table.Cell
+                render={row => {
+                  const steps = row.processes
+                    ?.flatMap(p => p.current_step?.map(s => s.name))
+                    || [];
+
+                  return (
+                    <Box
+                      component="span"
+                      sx={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: 0.5,
+                      }}
+                    >
+                      {steps.length
+                        ? steps.map((name, i) => (
+                          <Chip
+                            key={i}
+                            label={name}
+                            color="primary"
+                            size="small"
+                          />
+                        ))
+                        : <Chip label="Sem Etapa" size="small" />
+                      }
+                    </Box>
+                  );
+                }}
+                sx={{ opacity: 0.7 }}
+              />
+              <Table.Cell
+                render={row => getStatusChip(row.sale.status)}
+                sx={{ opacity: 0.7 }}
+              />
+              <Table.Cell
+                render={row => <ScheduleOpinionChip status={row.fieldServiceStatus?.Vistoria} />}
+                sx={{ opacity: 0.7 }}
+              />
+              <Table.Cell
+                render={row => <StatusFinancialChip status={row.sale.payment_status} />}
+                sx={{ opacity: 0.7 }}
+              />
+              <Table.Cell
+                render={row => (row.is_documentation_completed ? 'Finalizado' : 'Pendente')}
+                sx={{ opacity: 0.7 }}
+              />
+              <Table.Cell
+                render={row => <ScheduleOpinionChip status={row.fieldServiceStatus?.Entrega} />}
+                sx={{ opacity: 0.7 }}
+              />
+              <Table.Cell
+                render={row => <ScheduleOpinionChip status={row.fieldServiceStatus?.Instalação} />}
+                sx={{ opacity: 0.7 }}
+              />
+              <Table.Cell
+                render={row => <ChipRequest status={row.homologationStatus} />}
+                sx={{ opacity: 0.7 }}
+              />
             </Table.Body>
           </Table.Root>
 
