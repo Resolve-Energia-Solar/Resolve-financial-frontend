@@ -14,6 +14,9 @@ import {
   CardContent,
   Tabs,
   Tab,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { formatDate } from '@/utils/dateUtils';
@@ -27,8 +30,9 @@ import Comment from '@/app/components/apps/comment/index';
 import AnswerForm from '../inspections/form-builder/AnswerForm';
 import answerService from '@/services/answerService';
 import History from '../history';
+import { Close } from '@mui/icons-material';
 
-const DetailsDrawer = ({ open, onClose, scheduleId }) => {
+const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
   const [loading, setLoading] = useState(true);
   const [schedule, setScheduleDetails] = useState(null);
   const [answers, setAnswers] = useState(null);
@@ -186,185 +190,203 @@ const DetailsDrawer = ({ open, onClose, scheduleId }) => {
     );
   }
 
+  const content = <Box
+    sx={{
+      minWidth: { xs: '100vw', sm: '50vw', md: '40vw' },
+      height: '90vh',
+      display: 'flex',
+      flexDirection: 'column',
+      p: 3,
+    }}
+  >
+    {/* Cabeçalho */}
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box>
+        <Typography variant="h4">nº {schedule.protocol}</Typography>
+        <Chip
+          size="small"
+          color="secondary"
+          variant="outlined"
+          label={new Date(schedule.created_at).toLocaleString('pt-BR')}
+          sx={{ mt: 1 }}
+        />
+      </Box>
+      <Box sx={{ textAlign: 'right' }}>
+        <Logo />
+        <ScheduleStatusChip status={schedule.status} />
+      </Box>
+    </Box>
+
+    <Divider sx={{ mb: 2 }} />
+    {/* Novas Tabs */}
+    <Box sx={{ mt: 3 }}>
+      <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)} sx={{ mb: 2 }}>
+        <Tab label="Informações" />
+        <Tab label="Comentários" />
+        <Tab label="Histórico" />
+        {answers && answers.results?.length > 0 && <Tab label="Formulário" />}
+      </Tabs>
+
+      {tabValue === 0 && (
+        <Box>
+          <Grid container spacing={2}>
+            {/* Coluna Esquerda */}
+            <Grid item xs={12} sm={6}>
+              <Card variant="outlined">
+                <CardHeader title="Detalhes do Agendamento" />
+                <CardContent>
+                  <Typography variant="body1" gutterBottom>
+                    <strong>Serviço:</strong> {schedule.service?.name}
+                  </Typography>
+                  <Typography variant="body1" gutterBottom>
+                    <strong>Kit:</strong>{' '}
+                    {Array.isArray(schedule.products) && schedule.products.length > 0
+                      ? schedule.products.map((prod) => prod.name).join(', ')
+                      : productName || 'Sem kit associado'}
+                  </Typography>
+                  <Typography variant="body1" gutterBottom>
+                    <strong>Observação do Comercial:</strong> {schedule.observation || ' - '}
+                  </Typography>
+                  <Typography variant="body1" gutterBottom>
+                    <strong>Unidade:</strong> {schedule.branch?.name || 'Sem unidade associada'}
+                  </Typography>
+                  <Typography variant="body1" gutterBottom>
+                    <strong>Agendado por:</strong>{' '}
+                    {schedule.schedule_creator?.complete_name || 'Não identificado'}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Criado em:</strong> {formatDate(schedule.created_at)}
+                  </Typography>
+                </CardContent>
+              </Card>
+
+              <Card variant="outlined" sx={{ my: 2 }}>
+                <CardHeader title="Pessoas" />
+                <CardContent>
+                  {/* Agente */}
+                  {schedule.schedule_agent ? (
+                    <UserCard
+                      title="Agente"
+                      userId={schedule.schedule_agent?.id}
+                      showEmail={false}
+                      showPhone
+                    />
+                  ) : (
+                    <Typography variant="body1">
+                      <strong>Agente:</strong> Não identificado
+                    </Typography>
+                  )}
+
+                  <Divider sx={{ my: 2 }} />
+
+                  {/* Supervisor */}
+                  {seller?.employee?.user_manager ? (
+                    <UserCard
+                      title="Supervisor"
+                      userId={seller.employee.user_manager.id}
+                      showEmail={false}
+                      showPhone
+                    />
+                  ) : (
+                    <Typography variant="body1">
+                      <strong>Supervisor:</strong> Não identificado
+                    </Typography>
+                  )}
+
+                  <Divider sx={{ my: 2 }} />
+
+                  {/* Vendedor */}
+                  {seller ? (
+                    <UserCard title="Vendedor" userId={seller.id} showEmail={false} showPhone />
+                  ) : (
+                    <Typography variant="body1">
+                      <strong>Vendedor:</strong> Não identificado
+                    </Typography>
+                  )}
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Coluna Direita */}
+            <Grid item xs={12} sm={6}>
+              <Card variant="outlined">
+                <CardHeader title="Dados do Cliente" />
+                <CardContent>
+                  <UserCard userId={schedule.customer?.id} showPhone showEmail={false} />
+                  <Typography variant="body1" sx={{ mt: 2 }}>
+                    <strong>Endereço:</strong> {schedule.address?.complete_address}
+                  </Typography>
+                  <Box sx={{ mt: 2 }}>
+                    <iframe
+                      width="100%"
+                      height="300"
+                      style={{ border: 0 }}
+                      loading="lazy"
+                      allowFullScreen
+                      referrerPolicy="no-referrer-when-downgrade"
+                      src={`https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${schedule.address?.street}+${schedule.address?.number}+${schedule.address?.city}+${schedule.address?.neighborhood}`}
+                    />
+                  </Box>
+                </CardContent>
+              </Card>
+              {!dialogMode && <Stack direction="row" spacing={2} justifyContent="flex-end" mt={3}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  href={`/apps/schedules/${schedule.id}/update`}
+                >
+                  Editar Agendamento
+                </Button>
+              </Stack>}
+            </Grid>
+          </Grid>
+        </Box>
+      )}
+      {tabValue === 1 && (
+        <Box sx={{ p: 2 }}>
+          <Comment appLabel="field_services" model="schedule" objectId={schedule.id} />
+        </Box>
+      )}
+      {tabValue === 2 && (
+        <Box sx={{ p: 2 }}>
+          <History appLabel={'field_services'} model={'schedule'} objectId={schedule.id} />
+        </Box>
+      )}
+      {answers && answers.results?.length > 0 && tabValue === 3 && (
+        <Box sx={{ p: 2 }}>
+          <AnswerForm answerData={answers} />
+        </Box>
+      )}
+    </Box>
+  </Box>;
+
   return (
-    <Drawer
-      anchor="right"
-      open={open}
-      onClose={onClose}
-      PaperProps={{
-        sx: { width: { xs: '100vw', sm: '70vw' } },
-      }}
-    >
-      <Box
-        sx={{
-          minWidth: { xs: '100vw', sm: '50vw', md: '40vw' },
-          height: '90vh',
-          display: 'flex',
-          flexDirection: 'column',
-          p: 3,
+    dialogMode ? (
+      <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
+        <DialogTitle>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h4">{schedule.service.name}</Typography>
+            <Button variant={null} onClick={onClose}>
+              <Close />
+            </Button>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+        {content}
+        </DialogContent>
+      </Dialog>
+    ) : (
+      <Drawer
+        anchor="right"
+        open={open}
+        onClose={onClose}
+        PaperProps={{
+          sx: { width: { xs: '100vw', sm: '70vw' } },
         }}
       >
-        {/* Cabeçalho */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Box>
-            <Typography variant="h4">nº {schedule.protocol}</Typography>
-            <Chip
-              size="small"
-              color="secondary"
-              variant="outlined"
-              label={new Date(schedule.created_at).toLocaleString('pt-BR')}
-              sx={{ mt: 1 }}
-            />
-          </Box>
-          <Box sx={{ textAlign: 'right' }}>
-            <Logo />
-            <ScheduleStatusChip status={schedule.status} />
-          </Box>
-        </Box>
-
-        <Divider sx={{ mb: 2 }} />
-        {/* Novas Tabs */}
-        <Box sx={{ mt: 3 }}>
-          <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)} sx={{ mb: 2 }}>
-            <Tab label="Informações" />
-            <Tab label="Comentários" />
-            <Tab label="Historico" />
-            {answers && answers.results?.length > 0 && <Tab label="Formulário" />}
-          </Tabs>
-
-          {tabValue === 0 && (
-            <Box>
-              <Grid container spacing={2}>
-                {/* Coluna Esquerda */}
-                <Grid item xs={12} sm={6}>
-                  <Card variant="outlined">
-                    <CardHeader title="Detalhes do Agendamento" />
-                    <CardContent>
-                      <Typography variant="body1" gutterBottom>
-                        <strong>Serviço:</strong> {schedule.service?.name}
-                      </Typography>
-                      <Typography variant="body1" gutterBottom>
-                        <strong>Kit:</strong>{' '}
-                        {Array.isArray(schedule.products) && schedule.products.length > 0
-                          ? schedule.products.map((prod) => prod.name).join(', ')
-                          : productName || 'Sem kit associado'}
-                      </Typography>
-                      <Typography variant="body1" gutterBottom>
-                        <strong>Observação do Comercial:</strong> {schedule.observation || ' - '}
-                      </Typography>
-                      <Typography variant="body1" gutterBottom>
-                        <strong>Unidade:</strong> {schedule.branch?.name || 'Sem unidade associada'}
-                      </Typography>
-                      <Typography variant="body1" gutterBottom>
-                        <strong>Agendado por:</strong>{' '}
-                        {schedule.schedule_creator?.complete_name || 'Não identificado'}
-                      </Typography>
-                      <Typography variant="body1">
-                        <strong>Criado em:</strong> {formatDate(schedule.created_at)}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-
-                  <Card variant="outlined" sx={{ my: 2 }}>
-                    <CardHeader title="Pessoas" />
-                    <CardContent>
-                      {/* Agente */}
-                      {schedule.schedule_agent ? (
-                        <UserCard
-                          title="Agente"
-                          userId={schedule.schedule_agent?.id}
-                          showEmail={false}
-                          showPhone
-                        />
-                      ) : (
-                        <Typography variant="body1">
-                          <strong>Agente:</strong> Não identificado
-                        </Typography>
-                      )}
-
-                      <Divider sx={{ my: 2 }} />
-
-                      {/* Supervisor */}
-                      {seller?.employee?.user_manager ? (
-                        <UserCard
-                          title="Supervisor"
-                          userId={seller.employee.user_manager.id}
-                          showEmail={false}
-                          showPhone
-                        />
-                      ) : (
-                        <Typography variant="body1">
-                          <strong>Supervisor:</strong> Não identificado
-                        </Typography>
-                      )}
-
-                      <Divider sx={{ my: 2 }} />
-
-                      {/* Vendedor */}
-                      {seller ? (
-                        <UserCard title="Vendedor" userId={seller.id} showEmail={false} showPhone />
-                      ) : (
-                        <Typography variant="body1">
-                          <strong>Vendedor:</strong> Não identificado
-                        </Typography>
-                      )}
-                    </CardContent>
-                  </Card>
-                </Grid>
-
-                {/* Coluna Direita */}
-                <Grid item xs={12} sm={6}>
-                  <Card variant="outlined">
-                    <CardHeader title="Dados do Cliente" />
-                    <CardContent>
-                      <UserCard userId={schedule.customer?.id} showPhone showEmail={false} />
-                      <Typography variant="body1" sx={{ mt: 2 }}>
-                        <strong>Endereço:</strong> {schedule.address?.complete_address}
-                      </Typography>
-                      <Box sx={{ mt: 2 }}>
-                        <iframe
-                          width="100%"
-                          height="300"
-                          style={{ border: 0 }}
-                          loading="lazy"
-                          allowFullScreen
-                          referrerPolicy="no-referrer-when-downgrade"
-                          src={`https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${schedule.address?.street}+${schedule.address?.number}+${schedule.address?.city}+${schedule.address?.neighborhood}`}
-                        />
-                      </Box>
-                    </CardContent>
-                  </Card>
-                  <Stack direction="row" spacing={2} justifyContent="flex-end" mt={3}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      href={`/apps/schedules/${schedule.id}/update`}
-                    >
-                      Editar Agendamento
-                    </Button>
-                  </Stack>
-                </Grid>
-              </Grid>
-            </Box>
-          )}
-          {tabValue === 1 && (
-            <Box sx={{ p: 2 }}>
-              <Comment appLabel="field_services" model="schedule" objectId={schedule.id} />
-            </Box>
-          )}
-          {tabValue === 2 && (
-            <Box sx={{ p: 2 }}>
-              <History appLabel={'field_services'} model={'schedule'} objectId={schedule.id} />
-            </Box>
-          )}
-          {answers && answers.results?.length > 0 && tabValue === 3 && (
-            <Box sx={{ p: 2 }}>
-              <AnswerForm answerData={answers} />
-            </Box>
-          )}
-        </Box>
-      </Box>
-    </Drawer>
+        {content}
+      </Drawer>
+    )
   );
 };
 
