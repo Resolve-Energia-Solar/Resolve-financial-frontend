@@ -45,9 +45,9 @@ const ViewInspection = ({ projectId, categoryId, loading, errors = {}, selectedI
 
     useEffect(() => {
         const fetchAnswers = async () => {
-            if (scheduleId && open) {
+            if (selectedInspection && open) {
                 try {
-                    const data = await answerService.index({ schedule: scheduleId, expand: 'form' });
+                    const data = await answerService.index({ schedule: selectedInspection, expand: 'form' });
                     setAnswers(data);
                 } catch (err) {
                     console.error('Erro ao buscar respostas:', err);

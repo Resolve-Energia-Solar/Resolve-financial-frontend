@@ -7,7 +7,7 @@ export default function DetailsVisualizationGallery({ title, answerData }) {
       <Typography fontWeight={600} fontSize={16} mb={2}>
         {title}
       </Typography>
-      <DetailsVisualizationGallerySlider images={images} />
+      {/* <DetailsVisualizationGallerySlider images={images} /> */}
     </Grid>
   );
 }
