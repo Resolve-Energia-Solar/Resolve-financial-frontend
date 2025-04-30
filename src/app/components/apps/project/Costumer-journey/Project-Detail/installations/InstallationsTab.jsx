@@ -12,6 +12,7 @@ import { Table } from "@/app/components/Table";
 import { useTheme, alpha, Dialog, DialogContent } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
 import categoryService from "@/services/categoryService";
+import DetailsDrawer from "@/app/components/apps/schedule/DetailsDrawer";
 
 export default function InstallationsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -25,7 +26,7 @@ export default function InstallationsTab({ projectId }) {
     const theme = useTheme();
 
     const [openInstallationFormModal, setOpenInstallationFormModal] = useState(false);
-    const [openViewInspection, setOpenViewInspection] = useState(false);
+    const [openViewInstallation, setOpenViewInstallation] = useState(false);
 
     const fetchItems = useCallback(async () => {
         if (projectId) {
@@ -166,7 +167,7 @@ export default function InstallationsTab({ projectId }) {
                     />
 
                     <Table.EditAction onClick={row => { setSelectedInstallation(row.id); setOpenInstallationFormModal(true); }} />
-                    <Table.ViewAction onClick={row => console.log("ver", row)} />
+                    <Table.ViewAction onClick={row => { setSelectedInstallation(row.id); setOpenViewInstallation(true) }} />
                 </Table.Body>
             </Table.Root>
 
@@ -180,6 +181,8 @@ export default function InstallationsTab({ projectId }) {
                     />
                 </DialogContent>
             </Dialog>
+
+            <DetailsDrawer dialogMode={true} scheduleId={selectedInstallation} open={openViewInstallation} onClose={() => setOpenViewInstallation(false)} />
         </>
     );
 }

@@ -12,6 +12,7 @@ import { Table } from "@/app/components/Table";
 import { useTheme, alpha, Dialog, DialogContent } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
 import categoryService from "@/services/categoryService";
+import DetailsDrawer from "@/app/components/apps/schedule/DetailsDrawer";
 
 export default function LogisticsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -25,7 +26,7 @@ export default function LogisticsTab({ projectId }) {
     const theme = useTheme();
 
     const [openDeliveryFormModal, setOpenDeliveryFormModal] = useState(false);
-    // const [openViewInspection, setOpenViewInspection] = useState(false);
+    const [openViewDelivery, setOpenViewDelivery] = useState(false);
 
     const fetchDeliveries = useCallback(async () => {
         if (projectId) {
@@ -158,7 +159,7 @@ export default function LogisticsTab({ projectId }) {
                     />
 
                     <Table.EditAction onClick={row => { setSelectedDelivery(row.id); setOpenDeliveryFormModal(true); }} />
-                    <Table.ViewAction onClick={row => console.log("ver", row)} />
+                    <Table.ViewAction onClick={row => { setSelectedDelivery(row.id); setOpenViewDelivery(true) }} />
                 </Table.Body>
             </Table.Root>
 
@@ -178,6 +179,8 @@ export default function LogisticsTab({ projectId }) {
                     />
                 </DialogContent>
             </Dialog>
+
+            <DetailsDrawer dialogMode={true} scheduleId={selectedDelivery} open={openViewDelivery} onClose={() => setOpenViewDelivery(false)} />
         </>
     );
 }
