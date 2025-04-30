@@ -10,6 +10,7 @@ import { useTheme, Dialog, DialogContent } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
 import categoryService from "@/services/categoryService";
 import ViewInspection from "./View-inspection";
+import ProjectDetailDrawer from "../ProjectDrawer";
 
 export default function InspectionsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -22,6 +23,18 @@ export default function InspectionsTab({ projectId }) {
     const [selectedInspection, setSelectedInspection] = useState(null);
 
     const theme = useTheme();
+    const [openDrawer, setOpenDrawer] = useState(false);
+    const [selectedProjectId, setSelectedProjectId] = useState(null);
+
+    const handleRowClick = (row) => {
+        console.log("Clicked row:", row);
+        if (row.project?.id) {
+            setSelectedProjectId(row.project.id);
+            setOpenDrawer(true);
+        }
+    };
+
+
 
     const [openInspectionFormModal, setOpenInspectionFormModal] = useState(false);
     const [openViewInspection, setOpenViewInspection] = useState(false);
@@ -38,26 +51,26 @@ export default function InspectionsTab({ projectId }) {
             // });
             const response = await scheduleService.index({
                 fields: [
-                  'id',
-                  'schedule_date',
-                  'schedule_start_time',
-                  'completed_date',
-                  'address.street',
-                  'address.number',
-                  'address.complete_address',
-                  'products.description',
-                  'scheduled_agent.name',
-                  'service.name',
-                  'service.category',
-                  'final_service_opinion.name',
-                  'project.products',
-                  'protocol',
-                  'observation'
+                    'id',
+                    'schedule_date',
+                    'schedule_start_time',
+                    'completed_date',
+                    'address.street',
+                    'address.number',
+                    'address.complete_address',
+                    'products.description',
+                    'scheduled_agent.name',
+                    'service.name',
+                    'service.category',
+                    'final_service_opinion.name',
+                    'project.products',
+                    'protocol',
+                    'observation'
                 ].join(','),
                 expand: 'address,products,scheduled_agent,service,final_service_opinion',
                 project__in: projectId,
                 category__icontains: 'Vistoria'
-              });
+            });
             setInspections(response.results);
         } catch (error) {
             enqueueSnackbar(`Erro ao carregar vistorias: ${error.message}`, { variant: "error" });
@@ -149,68 +162,93 @@ export default function InspectionsTab({ projectId }) {
                     <Table.Cell align="center">Principal</Table.Cell>
                 </Table.Head>
 
-                <Table.Body loading={loading}>
-                    <Table.Cell
-                        render={row => row.service?.name}
-                        sx={{ opacity: 0.7, }}
-                    />
-                    <Table.Cell
-                        render={row => row.address?.complete_address}
-                        sx={{ opacity: 0.7, }}
-                    />
-                    <Table.Cell render={row =>
-                        row.products?.length > 0
-                            ? row.products[0].description
-                            : row.project?.product?.description}
-                        sx={{ opacity: 0.7 }}
-                    />
-                    <Table.Cell render={row =>
-                        row.scheduled_agent
-                            ? <UserCard userId={row.scheduled_agent} />
-                            : "Sem agente"}
-                        sx={{ opacity: 0.7 }}
-                    />
-                    <Table.Cell render={row =>
-                        formatDate(row.schedule_date)}
-                        sx={{ opacity: 0.7 }}
-                    />
-                    <Table.Cell render={row =>
-                        formatDate(row.completed_date)}
-                        sx={{ opacity: 0.7 }}
-                    />
+                <Table.Body
+                    loading={loading}
+                    onRowClick={handleRowClick}
+                    sx={{
+                        cursor: "pointer",
+                        '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' },
+                    }}
+                >
+                    {(row, onRowClick) => (
+                        <Table.Row
+                            key={row.id}
+                            hover
+                            onClick={() => onRowClick(row)}
+                            sx={{
+                                cursor: "pointer",
+                                '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' }
+                            }}
+                        >
+                            <Table.Cell
+                                render={r => r.service?.name}
+                                sx={{ opacity: 0.7, }}
+                            />
+                            <Table.Cell
+                                render={r => r.address?.complete_address}
+                                sx={{ opacity: 0.7, }}
+                            />
+                            <Table.Cell render={r =>
+                                r.products?.length > 0
+                                    ? r.products[0].description
+                                    : r.project?.product?.description}
+                                sx={{ opacity: 0.7 }}
+                            />
+                            <Table.Cell render={r =>
+                                r.scheduled_agent
+                                    ? <UserCard userId={r.scheduled_agent} />
+                                    : "Sem agente"}
+                                sx={{ opacity: 0.7 }}
+                            />
+                            <Table.Cell render={r =>
+                                formatDate(r.schedule_date)}
+                                sx={{ opacity: 0.7 }}
+                            />
+                            <Table.Cell render={r =>
+                                formatDate(r.completed_date)}
+                                sx={{ opacity: 0.7 }}
+                            />
 
-                    <Table.EditAction onClick={row => console.log("editar", row)} />
-                    <Table.ViewAction onClick={(row) => {
-                        setOpenViewInspection(true); 
-                        setSelectedInspection(row);
-                        console.log("ver", row);
-                        console.log("selectedInspectionId", selectedInspection)
-                        }} 
-                    />
-                    <Table.SwitchAction
-                        isSelected={row => row.project?.inspection === row.id}
-                        onToggle={(row, nextChecked) => {
-                            const nextValue = nextChecked ? row.id : null;
-                            console.log(
-                                `[Switch] row ${row.id}: inspection → ${nextValue}`
-                            );
-                            setInspections(prev =>
-                                prev.map(r =>
-                                    r.id === row.id
-                                        ? {
-                                            ...r,
-                                            project: {
-                                                ...r.project,
-                                                inspection: nextValue
-                                            },
-                                        }
-                                        : r
-                                )
-                            );
-                        }}
-                    />
+                            <Table.EditAction onClick={r => console.log("editar", r)} />
+                            <Table.ViewAction onClick={(r) => {
+                                setOpenViewInspection(true);
+                                setSelectedInspection(r);
+                                console.log("ver", r);
+                                console.log("selectedInspectionId", selectedInspection)
+                            }}
+                            />
+                            <Table.SwitchAction
+                                isSelected={r => r.project?.inspection === r.id}
+                                onToggle={(r, nextChecked) => {
+                                    const nextValue = nextChecked ? r.id : null;
+                                    console.log(
+                                        `[Switch] row ${row.id}: inspection → ${nextValue}`
+                                    );
+                                    setInspections(prev =>
+                                        prev.map(r =>
+                                            r.id === row.id
+                                                ? {
+                                                    ...r,
+                                                    project: {
+                                                        ...r.project,
+                                                        inspection: nextValue
+                                                    },
+                                                }
+                                                : r
+                                        )
+                                    );
+                                }}
+                            />
+                        </Table.Row>
+                    )}
                 </Table.Body>
             </Table.Root>
+
+            <ProjectDetailDrawer
+                open={openDrawer}
+                onClose={() => setOpenDrawer(false)}
+                projectId={selectedProjectId}
+            />
 
             <Dialog
                 open={openInspectionFormModal}
@@ -244,7 +282,7 @@ export default function InspectionsTab({ projectId }) {
                         products={products}
                         // onSave={handleAddSuccess}
                         selectedInspection={selectedInspection}
-                        // row={selectedInspection ? selectedInspection : {}}
+                    // row={selectedInspection ? selectedInspection : {}}
                     />
                 </DialogContent>
             </Dialog>

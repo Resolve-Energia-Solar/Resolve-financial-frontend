@@ -1,3 +1,4 @@
+import { TableRow } from "@mui/material";
 import { TableBody } from "./TableBody";
 import { TableCell } from "./TableCell";
 import { TableEditAction } from "./TableEditAction";
@@ -18,4 +19,5 @@ export const Table = {
     EditAction: TableEditAction,
     ViewAction: TableViewAction,
     SwitchAction: TableSwitchAction,
+    Row: TableRow,
 };

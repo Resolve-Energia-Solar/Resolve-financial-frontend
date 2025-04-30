@@ -43,6 +43,7 @@ import { TableHeader } from "@/app/components/TableHeader";
 import ScheduleOpinionChip from '../../inspections/schedule/StatusChip';
 import StatusFinancialChip from '@/utils/status/FinancialChip';
 import ChipRequest from '../../request/components/auto-complete/ChipRequest';
+import ProjectDetailDrawer from '../Costumer-journey/Project-Detail/ProjectDrawer';
 
 const pulse = keyframes`
   0% {
@@ -527,6 +528,17 @@ const ProjectList = ({ onClick }) => {
     setPage(0);
   }, []);
 
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const handleRowClick = (row) => {
+    console.log("Clicked row:", row);
+    if (row.id) {
+      setSelectedRow(row.id);
+      setOpenDrawer(true);
+    }
+  };
+
   const trtStatusMap = {
     Bloqueado: {
       label: 'Bloqueado',
@@ -804,55 +816,78 @@ const ProjectList = ({ onClick }) => {
             </Table.Head>
 
             {/* Corpo */}
-            <Table.Body loading={loadingProjects}>
-              <Table.Cell render={row => row.sale.customer.complete_name} sx={{ opacity: 0.7 }} />
-              <Table.Cell render={row => row.product.name} sx={{ opacity: 0.7 }} />
-              <Table.Cell
-                render={row =>
-                  row.sale.signature_date
-                    ? new Date(row.sale.signature_date).toLocaleDateString()
-                    : 'Sem data'
-                }
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell
-                render={row => {
-                  if (!row.sale.signature_date) return '-';
-                  const diffMs = Date.now() - new Date(row.sale.signature_date).getTime();
-                  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-                  return `${diffDays} dias`;
+            <Table.Body
+              loading={loadingProjects}
+              onRowClick={handleRowClick}
+              sx={{
+                cursor: "pointer",
+                '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' },
+              }}
+            >
+              {(row, onRowClick) => (<Table.Row
+                key={row.id}
+                hover
+                onClick={() => onRowClick(row)}
+                sx={{
+                  cursor: "pointer",
+                  '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' }
                 }}
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell render={row => row.sale.branch.name} sx={{ opacity: 0.7 }} />
-              <Table.Cell
-                render={row =>
-                  new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  }).format(row.sale.total_value)
-                }
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell
-                render={row =>
-                  row.processes && row.processes.length > 0
-                    ? row.processes
-                      .flatMap(process => process.current_step?.map(step => step.name))
-                      .join(',\n')
-                    : 'Sem processo'
-                }
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell render={row => getStatusChip(row.sale.status)} sx={{ opacity: 0.7 }} />
-              <Table.Cell render={row => <ScheduleOpinionChip status={row.fieldServiceStatus?.Vistoria} />} sx={{ opacity: 0.7 }} />
-              <Table.Cell render={row => <StatusFinancialChip status={row.sale.payment_status} />} sx={{ opacity: 0.7 }} />
-              <Table.Cell render={row => row.is_documentation_completed === true ? 'Finalizado' : 'Pendente'} sx={{ opacity: 0.7 }} />
-              <Table.Cell render={row => <ScheduleOpinionChip status={row.fieldServiceStatus?.Entrega} />} sx={{ opacity: 0.7 }} />
-              <Table.Cell render={row => <ScheduleOpinionChip status={row.fieldServiceStatus?.Instalação} />} sx={{ opacity: 0.7 }} />
-              <Table.Cell render={row => <ChipRequest status={row.homologationStatus} />} />
+              >
+                <Table.Cell render={r => r.sale.customer.complete_name} sx={{ opacity: 0.7 }} />
+                <Table.Cell render={r => r.product.name} sx={{ opacity: 0.7 }} />
+                <Table.Cell
+                  render={r =>
+                    r.sale.signature_date
+                      ? new Date(row.sale.signature_date).toLocaleDateString()
+                      : 'Sem data'
+                  }
+                  sx={{ opacity: 0.7 }}
+                />
+                <Table.Cell
+                  render={r => {
+                    if (!r.sale.signature_date) return '-';
+                    const diffMs = Date.now() - new Date(r.sale.signature_date).getTime();
+                    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                    return `${diffDays} dias`;
+                  }}
+                  sx={{ opacity: 0.7 }}
+                />
+                <Table.Cell render={r => r.sale.branch.name} sx={{ opacity: 0.7 }} />
+                <Table.Cell
+                  render={r =>
+                    new Intl.NumberFormat('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    }).format(r.sale.total_value)
+                  }
+                  sx={{ opacity: 0.7 }}
+                />
+                <Table.Cell
+                  render={r =>
+                    r.processes && r.processes.length > 0
+                      ? r.processes
+                        .flatMap(process => process.current_step?.map(step => step.name))
+                        .join(',\n')
+                      : 'Sem processo'
+                  }
+                  sx={{ opacity: 0.7 }}
+                />
+                <Table.Cell render={r => getStatusChip(r.sale.status)} sx={{ opacity: 0.7 }} />
+                <Table.Cell render={r => <ScheduleOpinionChip status={r.fieldServiceStatus?.Vistoria} />} sx={{ opacity: 0.7 }} />
+                <Table.Cell render={r => <StatusFinancialChip status={r.sale.payment_status} />} sx={{ opacity: 0.7 }} />
+                <Table.Cell render={r => r.is_documentation_completed === true ? 'Finalizado' : 'Pendente'} sx={{ opacity: 0.7 }} />
+                <Table.Cell render={r => <ScheduleOpinionChip status={r.fieldServiceStatus?.Entrega} />} sx={{ opacity: 0.7 }} />
+                <Table.Cell render={r => <ScheduleOpinionChip status={r.fieldServiceStatus?.Instalação} />} sx={{ opacity: 0.7 }} />
+                <Table.Cell render={r => <ChipRequest status={r.homologationStatus} />} />
+              </Table.Row>)}
             </Table.Body>
           </Table.Root>
+
+          <ProjectDetailDrawer
+            open={openDrawer}
+            onClose={() => setOpenDrawer(false)}
+            projectId={selectedRow}
+          />
 
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
