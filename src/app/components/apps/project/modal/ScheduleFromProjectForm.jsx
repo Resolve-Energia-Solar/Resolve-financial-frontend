@@ -211,8 +211,19 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
 
   const handleSubmit = async () => {
     const { schedule_date, schedule_start_time, schedule_end_date, schedule_end_time, observation, service, address, customer, products, branch } = formData;
-    if (!schedule_date || !schedule_start_time || !schedule_end_date || !schedule_end_time || !service || !address) {
-      enqueueSnackbar('Preencha todos os campos obrigatórios.', { variant: 'warning' });
+    const missingFields = [];
+    if (!schedule_date)        missingFields.push('Data Início');
+    if (!schedule_start_time)  missingFields.push('Hora Início');
+    if (!schedule_end_date)    missingFields.push('Data Fim');
+    if (!schedule_end_time)    missingFields.push('Hora Fim');
+    if (!service)              missingFields.push('Serviço');
+    if (!address)              missingFields.push('Endereço');
+
+    if (missingFields.length > 0) {
+      enqueueSnackbar(
+        `Preencha os campos obrigatórios: ${missingFields.join(', ')}`,
+        { variant: 'warning' }
+      );
       return;
     }
     try {
@@ -359,19 +370,6 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 error={!!errors.observation}
                 helperText={errors.observation?.[0]}
               />
-            </Grid>
-            <Grid item xs={12}>
-              <Stack direction="row" justifyContent="flex-end">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSubmit}
-                  disabled={loading}
-                  endIcon={loading && <CircularProgress size={20} />}
-                >
-                  Salvar
-                </Button>
-              </Stack>
             </Grid>
           </Grid>
         </form>
