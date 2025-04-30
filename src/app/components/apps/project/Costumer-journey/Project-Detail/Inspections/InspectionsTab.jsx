@@ -12,6 +12,7 @@ import categoryService from "@/services/categoryService";
 import ViewInspection from "./View-inspection";
 import ProjectDetailDrawer from "../ProjectDrawer";
 import DetailsDrawer from "@/app/components/apps/schedule/DetailsDrawer";
+import ScheduleOpinionChip from "@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip";
 
 export default function InspectionsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -34,8 +35,6 @@ export default function InspectionsTab({ projectId }) {
         }
     };
 
-
-
     const [openInspectionFormModal, setOpenInspectionFormModal] = useState(false);
     const [openViewInspection, setOpenViewInspection] = useState(false);
 
@@ -43,18 +42,11 @@ export default function InspectionsTab({ projectId }) {
         if (!projectId) return;
         setLoading(true);
         try {
-            // const response = await scheduleService.index({
-            //     fields: "id,address.complete_address,products.description,scheduled_agent,schedule_date,completed_date,service.name,service.category,project.inspection,schedule.final_service_opinion.name",
-            //     expand: "address,products,scheduled_agent,service,project,schedule",
-            //     project__in: projectId,
-            //     category__icontains: 'Vistoria'
-            // });
             const response = await scheduleService.index({
                 fields: [
                     'id',
                     'schedule_date',
                     'schedule_start_time',
-                    'completed_date',
                     'address.street',
                     'address.number',
                     'address.complete_address',
@@ -111,8 +103,7 @@ export default function InspectionsTab({ projectId }) {
         { field: 'products', headerName: 'Produto', render: r => r.products.map(p => p.description).join(', ') },
         { field: 'scheduled_agent', headerName: 'Agente', render: r => r.scheduled_agent?.name },
         { field: 'schedule_date', headerName: 'Agendada', render: r => new Date(r.schedule_date).toLocaleDateString() },
-        { field: 'completed_date', headerName: 'Concluída', render: r => r.completed_date ? new Date(r.completed_date).toLocaleDateString() : '-' },
-        // { field: 'final_service_opinion', headerName: 'Opinião', render: r => r.final_service_opinion?.name },
+        { field: 'final_service_opinion', headerName: 'Parecer Final', render: r => r.final_service_opinion ? new Date(r.final_service_opinion).toLocaleDateString() : '-' },
     ]
 
 
@@ -189,8 +180,7 @@ export default function InspectionsTab({ projectId }) {
                         formatDate(r.schedule_date)}
                         sx={{ opacity: 0.7 }}
                     />
-                    <Table.Cell render={r =>
-                        formatDate(r.completed_date)}
+                    <Table.Cell render={r => { return <ScheduleOpinionChip status={r.final_service_opinion?.name} /> }}
                         sx={{ opacity: 0.7 }}
                     />
 
