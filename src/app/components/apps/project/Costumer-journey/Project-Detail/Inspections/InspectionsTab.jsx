@@ -25,8 +25,6 @@ export default function InspectionsTab({ projectId }) {
 
     const [openInspectionFormModal, setOpenInspectionFormModal] = useState(false);
     const [openViewInspection, setOpenViewInspection] = useState(false);
-    
-    const [selectedInspection, setSelectedInspection] = useState(0);
 
     const fetchInspections = useCallback(async () => {
         if (!projectId) return;
