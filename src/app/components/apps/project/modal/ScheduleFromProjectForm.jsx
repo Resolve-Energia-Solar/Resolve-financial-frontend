@@ -31,6 +31,7 @@ import attachmentService from '@/services/attachmentService';
 import getContentType from '@/utils/getContentType';
 import { useSnackbar } from 'notistack';
 import { useSelector } from 'react-redux';
+import FinalServiceOpinionChip from '../../inspections/schedule/StatusChip/FinalServiceOpinionChip';
 
 const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = () => { }, loading, errors = {}, displayAgent = true, useSupplier = false }) => {
   const { enqueueSnackbar } = useSnackbar();
@@ -395,11 +396,11 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
               <>
                 <Grid item xs={6}>
                   <GenericAsyncAutocompleteInput
-                    label="Opinião Serviço"
+                    label="Parecer do Serviço"
                     value={formData.service_opinion}
                     onChange={val => handleChange('service_opinion', val)}
                     endpoint="api/service-opinions"
-                    extraParams={{ limit: 50, fields: ['id', 'name'], service__in: formData.service?.value || formData.service }}
+                    extraParams={{ limit: 50, fields: ['id', 'name'], is_final_opinion: FinalServiceOpinionChip, service__in: formData.service?.value || formData.service }}
                     mapResponse={d => d.results.map(it => ({ label: it.name, value: it.id }))}
                     error={!!errors.service_opinion}
                     helperText={errors.service_opinion?.[0]}
@@ -407,7 +408,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 </Grid>
                 <Grid item xs={6}>
                   <GenericAsyncAutocompleteInput
-                    label="Opinião Final Serviço"
+                    label="Parecer Final do Serviço"
                     value={formData.final_service_opinion}
                     onChange={val => handleChange('final_service_opinion', val)}
                     endpoint="api/service-opinions"
