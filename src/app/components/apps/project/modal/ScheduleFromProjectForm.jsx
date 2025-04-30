@@ -77,10 +77,10 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
       setProject(data);
       setFormData(prev => ({
         ...prev,
-        address: data?.address?.id || null,
-        customer: data?.sale?.customer?.id || null,
-        products: [data?.product] || [],
-        branch: data?.sale?.branch || null,
+        address: data?.address?.id ?? prev.address,
+        customer: data?.sale?.customer?.id ?? prev.customer,
+        products: data?.product ? [data.product] : prev.products,
+        branch: data?.sale?.branch ?? prev.branch,
       }));
     };
     fetchProject();
@@ -253,6 +253,8 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
       enqueueSnackbar(err.response?.data?.message || 'Erro ao salvar agendamento.', { variant: 'error' });
     }
   };
+
+  console.log('FormData:', formData);
 
   return (
     <Box>
