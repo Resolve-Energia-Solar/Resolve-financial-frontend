@@ -17,6 +17,7 @@ import {
   Paper,
   Link,
   Typography,
+  MenuItem,
 } from '@mui/material';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 import FormTimePicker from '@/app/components/forms/form-custom/FormTimePicker';
@@ -51,6 +52,9 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
     products: [],
     branch: null,
     schedule_agent: null,
+    service_opinion: null,
+    final_service_opinion: null,
+    status: null,
   });
   const [formErrors, setFormErrors] = useState({});
   const [deadlineDuration, setDeadlineDuration] = useState({ hours: 0, minutes: 0, seconds: 0 });
@@ -93,7 +97,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
       if (!scheduleId) return;
       try {
         const data = await scheduleService.find(scheduleId, {
-          fields: 'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,observation,address.id,service.id,service.name,schedule_agent',
+          fields: 'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,observation,address.id,service.id,service.name,schedule_agent,service_opinion,final_service_opinion,status',
           expand: 'address,service',
         });
         setSchedule(data);
@@ -110,6 +114,10 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
           observation: data?.observation,
           address: data?.address?.id || prev.address,
           service: data?.service?.id || prev.service,
+          schedule_agent: data?.schedule_agent?.id || prev.schedule_agent,
+          service_opinion: data.service_opinion ? { label: data.service_opinion.name, value: data.service_opinion.id } : prev.service_opinion,
+          final_service_opinion: data.final_service_opinion ? { label: data.final_service_opinion.name, value: data.final_service_opinion.id } : prev.final_service_opinion,
+          status: data.status || prev.status,
         }));
       } catch (err) {
         console.error('Erro ao carregar agendamento:', err);
@@ -240,6 +248,9 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
         service: service.value || service.id || service,
         address: address.value || address.id || address,
         schedule_agent: formData.schedule_agent.value || formData.schedule_agent.id,
+        service_opinion: formData.service_opinion?.value,
+        final_service_opinion: formData.final_service_opinion?.value,
+        status: formData.status,
         customer,
         products,
         branch,
@@ -375,6 +386,49 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 helperText={errors.schedule_agent?.[0]}
               />
             </Grid>}
+            {scheduleId && (
+              <>
+                <Grid item xs={6}>
+                  <GenericAsyncAutocompleteInput
+                    label="Opinião Serviço"
+                    value={formData.service_opinion}
+                    onChange={val => handleChange('service_opinion', val)}
+                    endpoint="api/service-opinions"
+                    extraParams={{ limit: 50, fields: ['id', 'name'], service__in: formData.service?.value || formData.service }}
+                    mapResponse={d => d.results.map(it => ({ label: it.name, value: it.id }))}
+                    error={!!errors.service_opinion}
+                    helperText={errors.service_opinion?.[0]}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <GenericAsyncAutocompleteInput
+                    label="Opinião Final Serviço"
+                    value={formData.final_service_opinion}
+                    onChange={val => handleChange('final_service_opinion', val)}
+                    endpoint="api/service-opinions"
+                    extraParams={{ limit: 50, fields: ['id', 'name'], service__in: formData.service?.value || formData.service }}
+                    mapResponse={d => d.results.map(it => ({ label: it.name, value: it.id }))}
+                    error={!!errors.final_service_opinion}
+                    helperText={errors.final_service_opinion?.[0]}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <CustomTextField
+                    select
+                    fullWidth
+                    label="Status"
+                    value={formData.status || ''}
+                    onChange={e => handleChange('status', e.target.value)}
+                    error={!!errors.status}
+                    helperText={errors.status?.[0]}
+                  >
+                    {['Pendente', 'Em Andamento', 'Confirmado', 'Cancelado'].map(opt => (
+                      <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                    ))}
+                  </CustomTextField>
+                </Grid>
+              </>
+            )}
             <Grid item xs={12}>
               <CustomTextField
                 multiline
