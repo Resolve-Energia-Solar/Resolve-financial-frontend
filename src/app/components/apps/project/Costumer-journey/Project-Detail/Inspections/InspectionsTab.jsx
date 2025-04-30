@@ -11,6 +11,7 @@ import { TableHeader } from "@/app/components/TableHeader";
 import categoryService from "@/services/categoryService";
 import ViewInspection from "./View-inspection";
 import ProjectDetailDrawer from "../ProjectDrawer";
+import DetailsDrawer from "@/app/components/apps/schedule/DetailsDrawer";
 
 export default function InspectionsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -27,7 +28,6 @@ export default function InspectionsTab({ projectId }) {
     const [selectedProjectId, setSelectedProjectId] = useState(null);
 
     const handleRowClick = (row) => {
-        console.log("Clicked row:", row);
         if (row.project?.id) {
             setSelectedProjectId(row.project.id);
             setOpenDrawer(true);
@@ -197,18 +197,13 @@ export default function InspectionsTab({ projectId }) {
                     <Table.EditAction onClick={r => { setSelectedInspection(r.id); setOpenInspectionFormModal(true) }} />
                     <Table.ViewAction onClick={(r) => {
                         setOpenViewInspection(true);
-                        setSelectedInspection(r);
-                        console.log("ver", r);
-                        console.log("selectedInspectionId", selectedInspection)
+                        setSelectedInspection(r.id);
                     }}
                     />
                     <Table.SwitchAction
                         isSelected={r => r.project?.inspection === r.id}
                         onToggle={(r, nextChecked) => {
                             const nextValue = nextChecked ? r.id : null;
-                            console.log(
-                                `[Switch] row ${row.id}: inspection → ${nextValue}`
-                            );
                             setInspections(prev =>
                                 prev.map(r =>
                                     r.id === row.id
@@ -252,24 +247,7 @@ export default function InspectionsTab({ projectId }) {
                 </DialogContent>
             </Dialog>
 
-            <Dialog
-                open={openViewInspection}
-                onClose={() => setOpenViewInspection(false)}
-                maxWidth="md"
-                fullWidth
-                PaperProps={{ sx: { borderRadius: '20px', padding: '24px', gap: '24px', boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#FFF' } }}
-            >
-                <DialogContent>
-                    <ViewInspection
-                        projectId={projectId}
-                        categoryId={categoryId}
-                        products={products}
-                        // onSave={handleAddSuccess}
-                        selectedInspection={selectedInspection}
-                    // row={selectedInspection ? selectedInspection : {}}
-                    />
-                </DialogContent>
-            </Dialog>
+            <DetailsDrawer scheduleId={selectedInspection} open={openViewInspection} onClose={() => setOpenViewInspection(false)} />
         </>
     );
 }
