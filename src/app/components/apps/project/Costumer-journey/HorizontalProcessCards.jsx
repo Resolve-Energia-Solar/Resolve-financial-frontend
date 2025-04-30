@@ -59,9 +59,10 @@ const HorizontalProcessCards = () => {
         <Card 
           key={index} 
           sx={{ 
-            width: 350, 
+            width: '20%', 
             height: 100, 
-            flexShrink: 0 
+            flexShrink: 0,
+            borderRadius: 3
           }} 
           elevation={3}
         >
