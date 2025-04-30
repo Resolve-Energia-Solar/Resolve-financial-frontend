@@ -527,6 +527,10 @@ const ProjectList = ({ onClick }) => {
     setPage(0);
   }, []);
 
+  const handleRowClick = useCallback((row) => {
+    onClick(row);
+  }, [onClick]);
+
   const trtStatusMap = {
     Bloqueado: {
       label: 'Bloqueado',
@@ -793,6 +797,7 @@ const ProjectList = ({ onClick }) => {
             rowsPerPage={rowsPerPage}
             onPageChange={handlePageChange}
             onRowsPerPageChange={handleRowsPerPageChange}
+            onRowClick={onClick}
           >
             {/* Cabeçalho */}
             <Table.Head>

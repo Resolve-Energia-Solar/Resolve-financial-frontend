@@ -4,11 +4,13 @@ import { IconEye } from "@tabler/icons-react";
 import { useContext } from "react";
 import { TableCtxt } from "./TableRoot";
 
-export function TableBody({ loading, children}) {
+export function TableBody({ loading, children }) {
 
     const { data, page, rowsPerPage } = useContext(TableCtxt);
     const slice = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-   
+
+    const onRowClick = useContext(TableCtxt).onRowClick;
+
     // const filteredData = data.filter((row) => {
     //     const activeFilters = filters || {};
 
@@ -29,6 +31,7 @@ export function TableBody({ loading, children}) {
                     <TableRow
                         // key={row.id}
                         sx={{ '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' }, borderBottom: 'none' }}
+                        onClick={() => onRowClick && onRowClick(row)}
                     >
                         {/* {children(row)}
                         <TableCell sx={{ textAlign: 'center' }}>
@@ -39,7 +42,7 @@ export function TableBody({ loading, children}) {
                 </TableCtxt.Provider>
             ))}
         </MuiBody>
-    
+
         // <Grid item xs={12}>
         //     <TableContainer sx={{ borderRadius: '12px' }}>
         //         <Table sx={{ borderCollapse: 'separate', borderSpacing: '0px 8px' }}>
