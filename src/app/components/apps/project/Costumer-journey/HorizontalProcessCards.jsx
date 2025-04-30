@@ -65,9 +65,12 @@ const HorizontalProcessCards = () => {
             borderRadius: 2,
             py: 2, 
             px: 2, 
+            border: '1px solid rgba(126, 131, 136, 0.17)', 
+            boxShadow: 4, 
+            boxShadow: '0px 8px 12px rgba(0, 0, 0, 0.1)'
             
           }} 
-          elevation={2}
+          elevation={3}
         >
           <CardContent 
             sx={{ 
@@ -79,8 +82,8 @@ const HorizontalProcessCards = () => {
               textAlign: 'start',
               // spacing: 10,
             }}>
-            <Typography sx={{ fontWeight: 400, fontSize: '16px', mb: 0.2 }}>{item.step}</Typography>
-            <Typography sx={{ fontWeight: 700, fontSize: '14px' }}>{item.total_processes}</Typography>
+            <Typography sx={{ fontWeight: 500, fontSize: '14px', mb: 0.2, opacity: '0.5' }}>{item.step}</Typography>
+            <Typography sx={{ fontWeight: 700, fontSize: '18px' }}>{item.total_processes}</Typography>
           </CardContent>
         </Card>
       ))}
