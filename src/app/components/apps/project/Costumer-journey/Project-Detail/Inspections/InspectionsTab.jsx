@@ -247,7 +247,7 @@ export default function InspectionsTab({ projectId }) {
                 </DialogContent>
             </Dialog>
 
-            <DetailsDrawer scheduleId={selectedInspection} open={openViewInspection} onClose={() => setOpenViewInspection(false)} />
+            <DetailsDrawer dialogMode={true} scheduleId={selectedInspection} open={openViewInspection} onClose={() => setOpenViewInspection(false)} />
         </>
     );
 }
