@@ -53,7 +53,7 @@ const HorizontalProcessCards = () => {
       gap={2}
       overflow="auto"
       padding={2}
-      sx={{ backgroundColor: '#f5f5f5' }}
+      sx={{ backgroundColor: theme.palette.primary.Box }}
     >
       {stepCount.map((item, index) => (
         <Card 
