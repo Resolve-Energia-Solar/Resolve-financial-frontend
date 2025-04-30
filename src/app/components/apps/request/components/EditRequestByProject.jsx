@@ -30,6 +30,9 @@ import History from '@/app/components/apps/history';
 import ListInspection from '../../project/components/SchedulesInspections/list-Inspections';
 import Comment from '../../comment';
 import useDocumentTypesByFilter from '@/hooks/document-types/useDocumenTypeByFilter';
+import InspectionsTab from '../../project/Costumer-journey/Project-Detail/Inspections/InspectionsTab';
+import InstallationsTab from '../../project/Costumer-journey/Project-Detail/installations/InstallationsTab';
+import CommentsTab from '../../project/Costumer-journey/Project-Detail/Comments/CommentsTab';
 
 const CONTENT_TYPE_PROJECT_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_PROJECT_ID;
 const CONTENT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
@@ -41,17 +44,15 @@ export default function EditRequestByProject({ projectData, projectId }) {
 
   const togglePanel = (key) => {
     setExpandedPanels((prev) =>
-      prev.includes(key)
-        ? prev.filter((item) => item !== key)
-        : [...prev, key]
+      prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key],
     );
   };
 
   const panels = [
     {
-      key: 'solicitacoes',
+      key: 'homologacao',
       icon: <RequestPageIcon />,
-      title: 'Solicitações',
+      title: 'Homologação',
       content: (
         <Box mt={2}>
           <RequestList projectId={projectId} enableFilters={false} enableIndicators={false} />
@@ -59,20 +60,16 @@ export default function EditRequestByProject({ projectData, projectId }) {
       ),
     },
     {
-      key: 'checklist-rateio',
+      key: 'engenharia',
       icon: <CheckCircleOutlineIcon />,
-      title: 'Checklist Rateio',
+      title: 'Engenharia',
       content: (
         <Box mt={2}>
+          <EditProjectTab projectId={projectId} />
+          <UploadDocument projectId={projectId} />
           <CheckListRateio projectId={projectId} />
         </Box>
       ),
-    },
-    {
-      key: 'informacoes-adicionais',
-      icon: <InfoOutlinedIcon />,
-      title: 'Informações Adicionais',
-      content: <EditProjectTab projectId={projectId} />,
     },
     {
       key: 'vistoria',
@@ -80,14 +77,30 @@ export default function EditRequestByProject({ projectData, projectId }) {
       title: 'Vistoria',
       content: (
         <Box mt={2}>
-          <ListInspection
-            projectId={projectId}
-            product={projectData?.product?.id}
-            customerId={projectData?.sale?.customer?.id}
-          />
+          <InspectionsTab projectId={projectId} />
         </Box>
       ),
     },
+    {
+      key: 'instalacao',
+      icon: <VisibilityOutlinedIcon />,
+      title: 'Instalação',
+      content: (
+        <Box mt={2}>
+          <InstallationsTab projectId={projectId} />
+        </Box>
+      ),
+    },
+    // {
+    //   key: 'Financeiro',
+    //   icon: <InfoOutlinedIcon />,
+    //   title: 'Financeiro',
+    //   content: (
+    //     <Box mt={2}>
+    //       <PaymentCard sale={project?.sale} />
+    //     </Box>
+    //   ),
+    // },
     {
       key: 'anexos',
       icon: <AttachFileIcon />,
@@ -113,16 +126,16 @@ export default function EditRequestByProject({ projectData, projectId }) {
         </>
       ),
     },
-    {
-      key: 'lista-de-materiais',
-      icon: <ListAltIcon />,
-      title: 'Lista de materiais',
-      content: (
-        <Box mt={2}>
-          <UploadDocument projectId={projectId} project={projectData} />
-        </Box>
-      ),
-    },
+    // {
+    //   key: 'lista-de-materiais',
+    //   icon: <ListAltIcon />,
+    //   title: 'Lista de materiais',
+    //   content: (
+    //     <Box mt={2}>
+    //       <UploadDocument projectId={projectId} project={projectData} />
+    //     </Box>
+    //   ),
+    // },
     {
       key: 'historico',
       icon: <HistoryIcon />,
@@ -139,12 +152,7 @@ export default function EditRequestByProject({ projectData, projectId }) {
       title: 'Comentários da Venda',
       content: (
         <Box mt={2}>
-          <Comment
-            appLabel="resolve_crm"
-            model="sale"
-            objectId={projectData?.sale?.id}
-            label="Comentários da Venda"
-          />
+          <CommentsTab projectId={projectId} />
         </Box>
       ),
     },
