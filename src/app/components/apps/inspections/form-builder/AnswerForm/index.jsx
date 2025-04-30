@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import CustomSelect from '@/app/components/forms/theme-elements/CustomSelect';
-import { Box, Chip, Divider, Grid, Link, MenuItem, Paper, Stack, Typography } from '@mui/material';
+import { Box, Chip, Divider, Grid, Link, MenuItem, Paper, Select, Stack, Typography } from '@mui/material';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -27,6 +27,9 @@ const AnswerForm = ({ answerData }) => {
     if (!answers) return null;
     return answers[fieldName];
   };
+
+  console.log('answerData', answerData);
+  console.log('answers', answers);
 
   const normalizeValue = (value, isMultiple) => {
     if (isMultiple) {
@@ -67,7 +70,22 @@ const AnswerForm = ({ answerData }) => {
     fetchAnswersFiles();
   }, [answerData]);
 
-  const validImageExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'bmp', 'tiff', 'tif', 'svg', 'heic', 'raw', 'cr2', 'nef', 'arw'];
+  const validImageExtensions = [
+    'jpg',
+    'jpeg',
+    'png',
+    'webp',
+    'gif',
+    'bmp',
+    'tiff',
+    'tif',
+    'svg',
+    'heic',
+    'raw',
+    'cr2',
+    'nef',
+    'arw',
+  ];
   const validVideoExtensions = ['mp4', 'avi', 'mov', 'webm', 'mpeg', 'mpg', 'ogg'];
 
   const visualFiles = answersFiles.filter((file) => {
@@ -226,28 +244,24 @@ const AnswerForm = ({ answerData }) => {
                   </Grid>
                 );
               case 'select': {
-                const rawValue = answerFromField(`${field.type}-${field.id}`);
+                const fieldKey = `${field.type}-${field.id}`;
+                const rawValue = answerFromField(fieldKey);
                 const normalizedValue = normalizeValue(rawValue, field.multiple);
+              
                 return (
                   <Grid item xs={12} md={6} p={2} key={field.id}>
                     <Typography variant="h5">{field.label}:</Typography>
-                    <CustomSelect
-                      id={`${field.type}-${field.id}`}
-                      name={`${field.type}-${field.id}`}
-                      variant="standard"
-                      disabled
-                      value={normalizedValue}
-                      {...(field.multiple && { multiple: true, width: '100%' })}
-                    >
-                      {field.options.map((option) => (
-                        <MenuItem key={option.id} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      ))}
-                    </CustomSelect>
+                    <Typography variant="body1">
+                      {field.multiple
+                        ? (normalizedValue || []).map((val) =>
+                            field.options.find((opt) => opt.value === val)?.label || val
+                          ).join(', ')
+                        : field.options.find((opt) => opt.value === normalizedValue)?.label || normalizedValue || 'Sem resposta'}
+                    </Typography>
                   </Grid>
                 );
               }
+                
               case 'date':
                 return (
                   <Grid item xs={12} md={6} p={2} key={field.id}>
@@ -289,7 +303,13 @@ const AnswerForm = ({ answerData }) => {
                         );
                       } else if (['txt'].includes(ext)) {
                         return (
-                          <Link key={file.id} href={file.file} color="primary" target="_blank" rel="noopener noreferrer">
+                          <Link
+                            key={file.id}
+                            href={file.file}
+                            color="primary"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             Abrir arquivo de texto
                           </Link>
                         );
@@ -302,7 +322,13 @@ const AnswerForm = ({ answerData }) => {
                         );
                       } else {
                         return (
-                          <Link key={file.id} href={file.file} color="primary" target="_blank" rel="noopener noreferrer">
+                          <Link
+                            key={file.id}
+                            href={file.file}
+                            color="primary"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             Baixar arquivo
                           </Link>
                         );
