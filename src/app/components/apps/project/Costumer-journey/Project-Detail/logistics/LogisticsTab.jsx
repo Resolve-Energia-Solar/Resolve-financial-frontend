@@ -175,12 +175,13 @@ export default function LogisticsTab({ projectId }) {
                         projectId={projectId}
                         scheduleId={selectedDelivery || null}
                         categoryId={categoryId}
+                        useSupplier={true}
                         onSave={handleFormSuccess}
                     />
                 </DialogContent>
             </Dialog>
 
-            <DetailsDrawer dialogMode={true} scheduleId={selectedDelivery} open={openViewDelivery} onClose={() => setOpenViewDelivery(false)} />
+            <DetailsDrawer dialogMode={true}  scheduleId={selectedDelivery} open={openViewDelivery} onClose={() => setOpenViewDelivery(false)} />
         </>
     );
 }

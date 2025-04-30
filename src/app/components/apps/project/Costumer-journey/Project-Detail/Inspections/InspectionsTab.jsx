@@ -242,6 +242,7 @@ export default function InspectionsTab({ projectId }) {
                         scheduleId={selectedInspection || null}
                         categoryId={categoryId}
                         products={products}
+                        displayAgent={false}
                         onSave={handleAddSuccess}
                     />
                 </DialogContent>

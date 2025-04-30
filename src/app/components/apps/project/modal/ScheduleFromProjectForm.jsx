@@ -31,7 +31,7 @@ import getContentType from '@/utils/getContentType';
 import { useSnackbar } from 'notistack';
 import { useSelector } from 'react-redux';
 
-const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = () => { }, loading, errors = {} }) => {
+const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = () => { }, loading, errors = {}, displayAgent = true, useSupplier = false }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [project, setProject] = useState(null);
   const [schedule, setSchedule] = useState(null);
@@ -50,6 +50,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
     customer: null,
     products: [],
     branch: null,
+    schedule_agent: null,
   });
   const [formErrors, setFormErrors] = useState({});
   const [deadlineDuration, setDeadlineDuration] = useState({ hours: 0, minutes: 0, seconds: 0 });
@@ -92,7 +93,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
       if (!scheduleId) return;
       try {
         const data = await scheduleService.find(scheduleId, {
-          fields: 'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,observation,address.id,service.id,service.name',
+          fields: 'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,observation,address.id,service.id,service.name,schedule_agent',
           expand: 'address,service',
         });
         setSchedule(data);
@@ -212,12 +213,12 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
   const handleSubmit = async () => {
     const { schedule_date, schedule_start_time, schedule_end_date, schedule_end_time, observation, service, address, customer, products, branch } = formData;
     const missingFields = [];
-    if (!schedule_date)        missingFields.push('Data Início');
-    if (!schedule_start_time)  missingFields.push('Hora Início');
-    if (!schedule_end_date)    missingFields.push('Data Fim');
-    if (!schedule_end_time)    missingFields.push('Hora Fim');
-    if (!service)              missingFields.push('Serviço');
-    if (!address)              missingFields.push('Endereço');
+    if (!schedule_date) missingFields.push('Data Início');
+    if (!schedule_start_time) missingFields.push('Hora Início');
+    if (!schedule_end_date) missingFields.push('Data Fim');
+    if (!schedule_end_time) missingFields.push('Hora Fim');
+    if (!service) missingFields.push('Serviço');
+    if (!address) missingFields.push('Endereço');
 
     if (missingFields.length > 0) {
       enqueueSnackbar(
@@ -238,6 +239,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
         observation,
         service: service.value || service.id || service,
         address: address.value || address.id || address,
+        schedule_agent: formData.schedule_agent.value || formData.schedule_agent.id,
         customer,
         products,
         branch,
@@ -360,6 +362,19 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                 </Grid>
               </>
             )}
+            {displayAgent && <Grid item xs={6}>
+              <GenericAsyncAutocompleteInput
+                label={useSupplier ? "Fornecedor" : "Agente"}
+                value={formData.schedule_agent}
+                onChange={val => handleChange('schedule_agent', val)}
+                endpoint="api/users"
+                queryParam="complete_name__icontains"
+                extraParams={{ fields: ['id', 'complete_name'], limit: 10, user_types: useSupplier ? 1 : 5 }}
+                mapResponse={d => d.results.map(u => ({ label: u.complete_name, value: u.id }))}
+                error={!!errors.schedule_agent}
+                helperText={errors.schedule_agent?.[0]}
+              />
+            </Grid>}
             <Grid item xs={12}>
               <CustomTextField
                 multiline

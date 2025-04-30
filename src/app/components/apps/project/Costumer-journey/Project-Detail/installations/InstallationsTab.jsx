@@ -177,6 +177,7 @@ export default function InstallationsTab({ projectId }) {
                         projectId={projectId}
                         scheduleId={selectedInstallation || null}
                         categoryId={categoryId}
+                        displayAgent={false}
                         onSave={handleAddSuccess}
                     />
                 </DialogContent>
