@@ -9,6 +9,7 @@ import { Table } from "@/app/components/Table";
 import { useTheme, Dialog, DialogContent } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
 import categoryService from "@/services/categoryService";
+import ViewInspection from "./View-inspection";
 
 export default function InspectionsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -29,12 +30,34 @@ export default function InspectionsTab({ projectId }) {
         if (!projectId) return;
         setLoading(true);
         try {
+            // const response = await scheduleService.index({
+            //     fields: "id,address.complete_address,products.description,scheduled_agent,schedule_date,completed_date,service.name,service.category,project.inspection,schedule.final_service_opinion.name",
+            //     expand: "address,products,scheduled_agent,service,project,schedule",
+            //     project__in: projectId,
+            //     category__icontains: 'Vistoria'
+            // });
             const response = await scheduleService.index({
-                fields: "id,address.complete_address,products.description,scheduled_agent,schedule_date,completed_date,service.name,service.category,project.inspection",
-                expand: "address,products,scheduled_agent,service,project",
+                fields: [
+                  'id',
+                  'schedule_date',
+                  'schedule_start_time',
+                  'completed_date',
+                  'address.street',
+                  'address.number',
+                  'address.complete_address',
+                  'products.description',
+                  'scheduled_agent.name',
+                  'service.name',
+                  'service.category',
+                  'final_service_opinion.name',
+                  'project.products',
+                  'protocol',
+                  'observation'
+                ].join(','),
+                expand: 'address,products,scheduled_agent,service,final_service_opinion',
                 project__in: projectId,
                 category__icontains: 'Vistoria'
-            });
+              });
             setInspections(response.results);
         } catch (error) {
             enqueueSnackbar(`Erro ao carregar vistorias: ${error.message}`, { variant: "error" });
@@ -78,6 +101,12 @@ export default function InspectionsTab({ projectId }) {
         { field: 'completed_date', headerName: 'Concluída', render: r => r.completed_date ? new Date(r.completed_date).toLocaleDateString() : '-' },
         // { field: 'final_service_opinion', headerName: 'Opinião', render: r => r.final_service_opinion?.name },
     ]
+
+
+    // const handleEditSuccess = async () => {
+    //     setOpenEditInspection(false);
+    //     await fetchInspections();
+    // };
 
 
     return (
@@ -150,8 +179,14 @@ export default function InspectionsTab({ projectId }) {
                         sx={{ opacity: 0.7 }}
                     />
 
-                    <Table.EditAction onClick={row => { setSelectedInspection(row.id); setOpenInspectionFormModal(true); }} />
-                    <Table.ViewAction onClick={row => console.log("ver", row)} />
+                    <Table.EditAction onClick={row => console.log("editar", row)} />
+                    <Table.ViewAction onClick={(row) => {
+                        setOpenViewInspection(true); 
+                        setSelectedInspection(row);
+                        console.log("ver", row);
+                        console.log("selectedInspectionId", selectedInspection)
+                        }} 
+                    />
                     <Table.SwitchAction
                         isSelected={row => row.project?.inspection === row.id}
                         onToggle={(row, nextChecked) => {
@@ -191,6 +226,25 @@ export default function InspectionsTab({ projectId }) {
                         categoryId={categoryId}
                         products={products}
                         onSave={handleAddSuccess}
+                    />
+                </DialogContent>
+            </Dialog>
+
+            <Dialog
+                open={openViewInspection}
+                onClose={() => setOpenViewInspection(false)}
+                maxWidth="md"
+                fullWidth
+                PaperProps={{ sx: { borderRadius: '20px', padding: '24px', gap: '24px', boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#FFF' } }}
+            >
+                <DialogContent>
+                    <ViewInspection
+                        projectId={projectId}
+                        categoryId={categoryId}
+                        products={products}
+                        // onSave={handleAddSuccess}
+                        selectedInspection={selectedInspection}
+                        // row={selectedInspection ? selectedInspection : {}}
                     />
                 </DialogContent>
             </Dialog>
