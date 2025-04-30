@@ -114,9 +114,9 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
           observation: data?.observation,
           address: data?.address?.id || prev.address,
           service: data?.service?.id || prev.service,
-          schedule_agent: data?.schedule_agent?.id || prev.schedule_agent,
-          service_opinion: data.service_opinion ? { label: data.service_opinion.name, value: data.service_opinion.id } : prev.service_opinion,
-          final_service_opinion: data.final_service_opinion ? { label: data.final_service_opinion.name, value: data.final_service_opinion.id } : prev.final_service_opinion,
+          schedule_agent: data?.schedule_agent || prev.schedule_agent,
+          service_opinion: data.service_opinion || prev.service_opinion,
+          final_service_opinion: data.final_service_opinion || prev.final_service_opinion,
           status: data.status || prev.status,
         }));
       } catch (err) {
@@ -247,9 +247,9 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
         observation,
         service: service.value || service.id || service,
         address: address.value || address.id || address,
-        schedule_agent: formData.schedule_agent.value || formData.schedule_agent.id,
-        service_opinion: formData.service_opinion?.value,
-        final_service_opinion: formData.final_service_opinion?.value,
+        schedule_agent: formData.schedule_agent?.value || formData.schedule_agent?.id || formData.schedule_agent || null,
+        service_opinion: formData.service_opinion?.value || formData.service_opinion?.id || formData.service_opinion || null,
+        final_service_opinion: formData.final_service_opinion?.value || formData.final_service_opinion?.id || formData.final_service_opinion || null,
         status: formData.status,
         customer,
         products,
@@ -406,7 +406,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
                     value={formData.final_service_opinion}
                     onChange={val => handleChange('final_service_opinion', val)}
                     endpoint="api/service-opinions"
-                    extraParams={{ limit: 50, fields: ['id', 'name'], service__in: formData.service?.value || formData.service }}
+                    extraParams={{ limit: 50, fields: ['id', 'name'], is_final_opinion: true, service__in: formData.service?.value || formData.service }}
                     mapResponse={d => d.results.map(it => ({ label: it.name, value: it.id }))}
                     error={!!errors.final_service_opinion}
                     helperText={errors.final_service_opinion?.[0]}
