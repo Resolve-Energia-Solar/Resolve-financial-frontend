@@ -817,11 +817,11 @@ const ProjectList = ({ onClick }) => {
             </Table.Body>
           </Table.Root>
 
-          <ProjectDetailDrawer
+          {/* <ProjectDetailDrawer
             open={openDrawer}
             onClose={() => setOpenDrawer(false)}
             projectId={selectedRow}
-          />
+          /> */}
 
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}

@@ -170,77 +170,67 @@ export default function InspectionsTab({ projectId }) {
                         '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' },
                     }}
                 >
-                    {(row, onRowClick) => (
-                        <Table.Row
-                            key={row.id}
-                            hover
-                            onClick={() => onRowClick(row)}
-                            sx={{
-                                cursor: "pointer",
-                                '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' }
-                            }}
-                        >
-                            <Table.Cell
-                                render={r => r.service?.name}
-                                sx={{ opacity: 0.7, }}
-                            />
-                            <Table.Cell
-                                render={r => r.address?.complete_address}
-                                sx={{ opacity: 0.7, }}
-                            />
-                            <Table.Cell render={r =>
-                                r.products?.length > 0
-                                    ? r.products[0].description
-                                    : r.project?.product?.description}
-                                sx={{ opacity: 0.7 }}
-                            />
-                            <Table.Cell render={r =>
-                                r.scheduled_agent
-                                    ? <UserCard userId={r.scheduled_agent} />
-                                    : "Sem agente"}
-                                sx={{ opacity: 0.7 }}
-                            />
-                            <Table.Cell render={r =>
-                                formatDate(r.schedule_date)}
-                                sx={{ opacity: 0.7 }}
-                            />
-                            <Table.Cell render={r =>
-                                formatDate(r.completed_date)}
-                                sx={{ opacity: 0.7 }}
-                            />
 
-                            <Table.EditAction onClick={r => console.log("editar", r)} />
-                            <Table.ViewAction onClick={(r) => {
-                                setOpenViewInspection(true);
-                                setSelectedInspection(r);
-                                console.log("ver", r);
-                                console.log("selectedInspectionId", selectedInspection)
-                            }}
-                            />
-                            <Table.SwitchAction
-                                isSelected={r => r.project?.inspection === r.id}
-                                onToggle={(r, nextChecked) => {
-                                    const nextValue = nextChecked ? r.id : null;
-                                    console.log(
-                                        `[Switch] row ${row.id}: inspection → ${nextValue}`
-                                    );
-                                    setInspections(prev =>
-                                        prev.map(r =>
-                                            r.id === row.id
-                                                ? {
-                                                    ...r,
-                                                    project: {
-                                                        ...r.project,
-                                                        inspection: nextValue
-                                                    },
-                                                }
-                                                : r
-                                        )
-                                    );
-                                }}
-                            />
-                        </Table.Row>
-                    )}
+                    <Table.Cell
+                        render={r => r.service?.name}
+                        sx={{ opacity: 0.7, }}
+                    />
+                    <Table.Cell
+                        render={r => r.address?.complete_address}
+                        sx={{ opacity: 0.7, }}
+                    />
+                    <Table.Cell render={r =>
+                        r.products?.length > 0
+                            ? r.products[0].description
+                            : r.project?.product?.description}
+                        sx={{ opacity: 0.7 }}
+                    />
+                    <Table.Cell render={r =>
+                        r.scheduled_agent
+                            ? <UserCard userId={r.scheduled_agent} />
+                            : "Sem agente"}
+                        sx={{ opacity: 0.7 }}
+                    />
+                    <Table.Cell render={r =>
+                        formatDate(r.schedule_date)}
+                        sx={{ opacity: 0.7 }}
+                    />
+                    <Table.Cell render={r =>
+                        formatDate(r.completed_date)}
+                        sx={{ opacity: 0.7 }}
+                    />
+
+                    <Table.EditAction onClick={r => console.log("editar", r)} />
+                    <Table.ViewAction onClick={(r) => {
+                        setOpenViewInspection(true);
+                        setSelectedInspection(r);
+                        console.log("ver", r);
+                        console.log("selectedInspectionId", selectedInspection)
+                    }}
+                    />
+                    <Table.SwitchAction
+                        isSelected={r => r.project?.inspection === r.id}
+                        onToggle={(r, nextChecked) => {
+                            const nextValue = nextChecked ? r.id : null;
+                            console.log(
+                                `[Switch] row ${row.id}: inspection → ${nextValue}`
+                            );
+                            setInspections(prev =>
+                                prev.map(r =>
+                                    r.id === row.id
+                                        ? {
+                                            ...r,
+                                            project: {
+                                                ...r.project,
+                                                inspection: nextValue
+                                            },
+                                        }
+                                        : r
+                                )
+                            );
+                        }}
+                    />
+
                 </Table.Body>
             </Table.Root>
 
