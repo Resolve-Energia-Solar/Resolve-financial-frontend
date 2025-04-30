@@ -97,7 +97,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
       if (!scheduleId) return;
       try {
         const data = await scheduleService.find(scheduleId, {
-          fields: 'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,observation,address.id,service.id,service.name,schedule_agent,service_opinion,final_service_opinion,status',
+          fields: 'id,protocol,schedule_date,schedule_start_time,schedule_end_date,schedule_end_time,observation,address.id,service.id,service.name,schedule_agent,service_opinion,final_service_opinion,status,attachments',
           expand: 'address,service',
         });
         setSchedule(data);
@@ -118,6 +118,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
           service_opinion: data.service_opinion || prev.service_opinion,
           final_service_opinion: data.final_service_opinion || prev.final_service_opinion,
           status: data.status || prev.status,
+          attachments: data.attachments || [],
         }));
       } catch (err) {
         console.error('Erro ao carregar agendamento:', err);
@@ -181,9 +182,12 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
   const handleTabChange = (_, newValue) => setTabValue(newValue);
-  const handleToggleAttachment = (id) => {
-    const curr = formData.attachments || [];
-    setFormData({ ...formData, attachments: curr.includes(id) ? curr.filter((x) => x !== id) : [...curr, id] });
+
+  const handleToggleAttachment = id => {
+    setFormData(prev => {
+      const curr = prev.attachments || [];
+      return { ...prev, attachments: curr.includes(id) ? curr.filter(x => x !== id) : [...curr, id] };
+    });
   };
 
   useEffect(() => {
@@ -254,6 +258,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
         customer,
         products,
         branch,
+        attachments: formData.attachments,
       };
       const resp = scheduleId
         ? await scheduleService.update(scheduleId, payload)
