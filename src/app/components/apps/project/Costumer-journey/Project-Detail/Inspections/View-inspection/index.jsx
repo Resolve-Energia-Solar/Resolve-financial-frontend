@@ -57,7 +57,9 @@ const ViewInspection = ({ projectId, categoryId, loading, errors = {}, selectedI
             }
         };
         fetchAnswers();
-    }, [open, scheduleId, enqueueSnackbar]);
+    }, [open, 
+        // scheduleId, 
+        enqueueSnackbar]);
 
     useEffect(() => {
         const fetchProject = async () => {
