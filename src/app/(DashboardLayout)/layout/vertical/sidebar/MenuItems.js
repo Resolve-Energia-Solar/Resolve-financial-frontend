@@ -102,7 +102,7 @@ const Menuitems = [
     children: [
       {
         id: uniqueId(),
-        title: 'Pagamentos',
+        title: 'Faturamento',
         icon: IconCash,
         href: '/apps/invoice',
         permissions: ['financial.view_payment'],
