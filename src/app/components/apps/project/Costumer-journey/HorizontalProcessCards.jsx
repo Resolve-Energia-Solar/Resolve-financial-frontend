@@ -97,7 +97,7 @@ const HorizontalProcessCards = () => {
             key={index}
             sx={{
               minWidth: '170px',
-              height: '75px',
+              height: '85px',
               width: 'auto',
               flexShrink: 0,
               borderRadius: 2,
@@ -120,7 +120,7 @@ const HorizontalProcessCards = () => {
                 textAlign: 'start',
               }}
             >
-              <Typography sx={{ fontWeight: 600, fontSize: '14px', mb: 0.2, mt: 0, opacity: '0.5' }}>{item.step}</Typography>
+              <Typography sx={{ fontWeight: 600, fontSize: '14px', mb: 0.5, mt: 0, opacity: '0.5' }}>{item.step}</Typography>
               <Typography sx={{ fontWeight: 700, fontSize: '20px', mb: 2 }}>{item.total_processes}</Typography>
             </CardContent>
           </Card>
