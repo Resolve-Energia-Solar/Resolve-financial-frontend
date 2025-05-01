@@ -55,7 +55,7 @@ const ScheduleFromProjectForm = ({ projectId, categoryId, scheduleId, onSave = (
     schedule_agent: null,
     service_opinion: null,
     final_service_opinion: null,
-    status: null,
+    status: 'Pendente',
   });
   const [formErrors, setFormErrors] = useState({});
   const [deadlineDuration, setDeadlineDuration] = useState({ hours: 0, minutes: 0, seconds: 0 });
