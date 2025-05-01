@@ -44,8 +44,31 @@ const HorizontalProcessCards = () => {
         sx={{ backgroundColor: '#f5f5f5' }}
       >
         {Array.from({ length: 6 }).map((_, index) => (
-          <Card key={index} sx={{ width: 150, height: 100, flexShrink: 0 }} elevation={3}>
-            <CardContent sx={{ padding: 1, textAlign: 'center' }}>
+          <Card key={index} 
+            sx={{
+              minWidth: '170px',
+              height: '75px',
+              width: 'auto',
+              flexShrink: 0,
+              borderRadius: 2,
+              py: 2,
+              px: 2,
+              border: '1px solid rgba(137, 143, 148, 0.17)',
+              boxShadow: 4,
+              boxShadow: '8px 8px 12px rgba(0, 0, 0, 0.14)'
+            }} 
+            elevation={3}
+          >
+            <CardContent 
+              sx={{
+                py: 0,
+                px: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                textAlign: 'start',
+              }}
+            >
               <Skeleton variant="text" width="80%" />
               <Skeleton variant="text" width="40%" />
             </CardContent>
@@ -61,7 +84,7 @@ const HorizontalProcessCards = () => {
         <ChevronLeft />
       </IconButton>
       <Box
-        ref={scrollRef} 
+        ref={scrollRef}
         display="flex"
         flexDirection="row"
         gap={1}
@@ -80,9 +103,9 @@ const HorizontalProcessCards = () => {
               borderRadius: 2,
               py: 2,
               px: 2,
-              border: '1px solid rgba(126, 131, 136, 0.17)',
+              border: '1px solid rgba(137, 143, 148, 0.17)',
               boxShadow: 4,
-              boxShadow: '8px 8px 12px rgba(0, 0, 0, 0.1)'
+              boxShadow: '8px 8px 12px rgba(0, 0, 0, 0.14)'
 
             }}
             elevation={3}
@@ -95,8 +118,8 @@ const HorizontalProcessCards = () => {
                 flexDirection: 'column',
                 justifyContent: 'flex-start',
                 textAlign: 'start',
-                // spacing: 10,
-              }}>
+              }}
+            >
               <Typography sx={{ fontWeight: 600, fontSize: '14px', mb: 0.2, mt: 0, opacity: '0.5' }}>{item.step}</Typography>
               <Typography sx={{ fontWeight: 700, fontSize: '20px', mb: 2 }}>{item.total_processes}</Typography>
             </CardContent>
