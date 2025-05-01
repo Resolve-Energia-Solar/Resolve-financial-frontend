@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { Box, Card, CardContent, Typography, Skeleton, useTheme, IconButton } from '@mui/material';
 import processService from '@/services/processService';
+import { alpha } from '@mui/material/styles';
 
 const HorizontalProcessCards = () => {
   const [stepCount, setStepCount] = useState([]);
@@ -41,7 +42,7 @@ const HorizontalProcessCards = () => {
         gap={2}
         overflow="auto"
         padding={2}
-        sx={{ backgroundColor: '#f5f5f5' }}
+        sx={{ backgroundColor: theme.palette.primary.Box }}
       >
         {Array.from({ length: 6 }).map((_, index) => (
           <Card key={index} 
@@ -103,10 +104,11 @@ const HorizontalProcessCards = () => {
               borderRadius: 2,
               py: 2,
               px: 2,
-              border: '1px solid rgba(137, 143, 148, 0.17)',
+              border: '1px solid rgba(137, 143, 148, 0.07)',
+              backgroundColor: alpha(theme.palette.secondary.light, 0.2),
               boxShadow: 4,
-              boxShadow: '8px 8px 12px rgba(0, 0, 0, 0.14)'
-
+              boxShadow: '8px 8px 12px rgba(0, 0, 0, 0.14)',
+              
             }}
             elevation={3}
           >
