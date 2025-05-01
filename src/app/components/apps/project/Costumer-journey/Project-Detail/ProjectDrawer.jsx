@@ -17,10 +17,10 @@ import Comment from '@/app/components/apps/comment';
 import LogisticsTab from './logistics/LogisticsTab';
 import InstallationsTab from './installations/InstallationsTab';
 import CommentsTab from './Comments/CommentsTab';
-import HomologationTab from './Homologation/HomologationTab';
 import RequestList from '../../../request/Request-list';
 import History from '../../../history';
 import CheckListRateio from '../../../checklist/Checklist-list';
+import ConstructionsTab from './Construction/ConstructionsTab';
 
 function TabPanel({ children, value, index }) {
   return (
@@ -37,6 +37,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState(0);
   const [paneLimits, setPaneLimits] = useState({ min: 0, max: 0, default: 0 });
+  const [hasConstructionTab, setHasConstructionTab] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -56,32 +57,27 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
     try {
       const [proj, proc] = await Promise.all([
         projectService.find(projectId, {
-          fields: 'id,sale,project_number,customer.complete_name',
-          expand: 'sale.customer',
+          fields: 'id,project_number,sale,customer.complete_name,field_services.service.name,field_services.final_service_opinion.name',
+          expand: 'sale.customer,field_services.service,field_services.final_service_opinion',
         }),
-        processService
-          .getProcessByObjectId('resolve_crm', 'project', projectId)
+        processService.getProcessByObjectId('resolve_crm', 'project', projectId)
           .then(({ id }) => id)
-          .catch((err) => {
-            if (err.response?.data?.detail === 'No Process matches the given query.') {
-              enqueueSnackbar('Projeto sem processo definido', { variant: 'warning' });
-            } else {
-              enqueueSnackbar(`Erro no processo: ${err.response?.data?.detail || err}`, {
-                variant: 'error',
-              });
-              console.error(err);
-            }
-            return null;
-          }),
+          .catch(() => null),
       ]);
       setProject(proj);
       setProcessId(proc);
+      // Check for 'Vistoria' service with 'Obra' or 'Sombreamento' in final opinion
+      const hasObra = proj.field_services?.some(fs =>
+        fs.service?.name?.includes('Vistoria') &&
+        (fs.final_service_opinion?.name?.includes('Obra') || fs.final_service_opinion?.name?.includes('Sombreamento'))
+      );
+      setHasConstructionTab(hasObra);
     } catch (error) {
-      enqueueSnackbar(`Erro ao buscar dados: ${error.message}`, { variant: 'error' });
+      console.error(error);
     } finally {
       setLoading(false);
     }
-  }, [projectId, enqueueSnackbar]);
+  }, [projectId]);
 
   useEffect(() => {
     fetchData();
@@ -91,71 +87,27 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
   const handleTabChange = (e, newVal) => setTab(newVal);
   const drawerWidth = useMemo(() => (processId ? '100vw' : '65vw'), [processId]);
 
-  const tabs = [
-    'Vistoria',
-    'Contratos',
-    'Financeiro',
-    'Engenharia',
-    'Anexos',
-    'Logística',
-    'Instalação',
-    'Homologação',
-    'Histórico',
-    'Comentários',
-  ];
+  const tabsConfig = useMemo(() => [
+    { label: 'Vistoria', content: <InspectionsTab projectId={projectId} /> },
+    hasConstructionTab && { label: 'Obras', content: <ConstructionsTab projectId={projectId} /> },
+    { label: 'Contratos', content: <EditSale saleId={project?.sale?.id} /> },
+    { label: 'Financeiro', content: <PaymentCard sale={project?.sale} /> },
+    { label: 'Engenharia', content: <><EditProjectTab projectId={projectId} /><UploadDocument projectId={projectId} /><CheckListRateio projectId={projectId} /></> },
+    { label: 'Anexos', content: <><Typography variant="h6">Anexos do Projeto</Typography><AttachmentTable appLabel="resolve_crm" model="project" objectId={projectId} /><Typography variant="h6">Anexos da Venda</Typography><AttachmentTable appLabel="resolve_crm" model="sale" objectId={project?.sale} /></> },
+    { label: 'Logística', content: <LogisticsTab projectId={projectId} /> },
+    { label: 'Instalação', content: <InstallationsTab projectId={projectId} /> },
+    { label: 'Homologação', content: <RequestList projectId={projectId} enableFilters={false} enableIndicators={false} /> },
+    { label: 'Histórico', content: <History objectId={projectId} appLabel="resolve_crm" model="project" /> },
+    { label: 'Comentários', content: <CommentsTab projectId={projectId} /> },
+  ].filter(Boolean), [project, hasConstructionTab]);
 
   const projectInfoTabs = (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-      <Tabs value={tab} onChange={handleTabChange} variant="scrollable" scrollButtons="auto">
-        {tabs.map((label) => (
-          <Tab key={label} label={label} />
-        ))}
-      </Tabs>
-      <TabPanel value={tab} index={0}>
-        <InspectionsTab projectId={projectId} />
-      </TabPanel>
-      <TabPanel value={tab} index={1}>
-        <EditSale sx={{ padding: 4 }} saleId={project?.sale?.id} />
-      </TabPanel>
-      <TabPanel value={tab} index={2}>
-        <PaymentCard sale={project?.sale} />
-      </TabPanel>
-      <TabPanel value={tab} index={3}>
-        <EditProjectTab projectId={projectId} />
-        <UploadDocument projectId={projectId} />
-        <CheckListRateio projectId={projectId} />
-      </TabPanel>
-      <TabPanel value={tab} index={4}>
-        <Typography variant="h6" sx={{ mb: 3 }}>
-          Anexos do Projeto
-        </Typography>
-        <AttachmentTable appLabel="resolve_crm" model="project" objectId={projectId} />
-        <Typography variant="h6" sx={{ my: 3 }}>
-          Anexos da Venda
-        </Typography>
-        <AttachmentTable appLabel="resolve_crm" model="sale" objectId={project?.sale} />
-      </TabPanel>
-      <TabPanel value={tab} index={5}>
-        <LogisticsTab projectId={projectId} />
-      </TabPanel>
-      <TabPanel value={tab} index={6}>
-        <InstallationsTab projectId={projectId} />
-      </TabPanel>
-      <TabPanel value={tab} index={7}>
-        {/* <HomologationTab projectId={projectId} /> */}
-        <RequestList projectId={projectId} enableFilters={false} enableIndicators={false} />
-      </TabPanel>
-      <TabPanel value={tab} index={8}>
-        <History objectId={projectId} appLabel="resolve_crm" model="project" />
-      </TabPanel>
-      <TabPanel value={tab} index={9}>
-        {/* <Typography variant="h6" sx={{ mb: 3 }}>Comentários do Projeto</Typography>
-                <Comment appLabel="resolve_crm" model="project" objectId={projectId} />
-                <Typography variant="h6" sx={{ my: 3 }}>Comentários da Venda</Typography>
-                <Comment appLabel="resolve_crm" model="sale" objectId={project?.sale} /> */}
-        <CommentsTab projectId={projectId} />
-      </TabPanel>
-    </Box>
+    <Tabs value={tab} onChange={handleTabChange} variant="scrollable" scrollButtons="auto">
+      {tabsConfig.map((t, i) => <Tab key={i} label={t.label} />)}
+    </Tabs>
+    {tabsConfig.map((t, i) => <TabPanel key={i} value={tab} index={i}>{t.content}</TabPanel>)}
+  </Box>
   );
 
   return (
