@@ -21,6 +21,7 @@ import RequestList from '../../../request/Request-list';
 import History from '../../../history';
 import CheckListRateio from '../../../checklist/Checklist-list';
 import ConstructionsTab from './Construction/ConstructionsTab';
+import LossesTab from './Losses/LossesTab';
 
 function TabPanel({ children, value, index }) {
   return (
@@ -97,6 +98,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
     { label: 'Logística', content: <LogisticsTab projectId={projectId} /> },
     { label: 'Instalação', content: <InstallationsTab projectId={projectId} /> },
     { label: 'Homologação', content: <RequestList projectId={projectId} enableFilters={false} enableIndicators={false} /> },
+    { label: 'Perdas', content: <LossesTab projectId={projectId} /> },
     { label: 'Histórico', content: <History objectId={projectId} appLabel="resolve_crm" model="project" /> },
     { label: 'Comentários', content: <CommentsTab projectId={projectId} /> },
   ].filter(Boolean), [project, hasConstructionTab]);
