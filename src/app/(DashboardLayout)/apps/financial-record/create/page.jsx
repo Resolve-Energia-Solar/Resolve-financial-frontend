@@ -514,7 +514,7 @@ export default function CreateFinancialRecord() {
               label="Projeto"
               name="project"
               value={formData.project || null}
-              onChange={(e) => handleChange('project', e.target.value)}
+              onChange={(option) => handleChange('project', option?.value || null)}
               endpoint="/api/projects"
               queryParam="q"
               extraParams={{
