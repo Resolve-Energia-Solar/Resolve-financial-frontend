@@ -6,7 +6,6 @@ import { formatDate } from "@/utils/dateUtils";
 import { Table } from "@/app/components/Table";
 import { TableHeader } from "@/app/components/TableHeader";
 import financialRecordService from "@/services/financialRecordService";
-import { Button } from "@mui/material";
 
 export default function LossesTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar();
@@ -98,7 +97,7 @@ export default function LossesTab({ projectId }) {
                     <Table.Cell render={row => parseFloat(row.value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} sx={{ opacity: 0.7 }} />
                     <Table.Cell render={row => getStatusLabel(row.status)} sx={{ opacity: 0.7 }} />
                     <Table.Cell render={row => row.lost_reason?.name || '-'} sx={{ opacity: 0.7 }} />
-                    <Table.ViewAction onClick={row => router.push(`/apps/financial-record/${row.id}`)} />
+                    <Table.ViewAction onClick={row => router.push(`/apps/financial-record/${row.protocol}`)} />
                 </Table.Body>
             </Table.Root>
         </>
