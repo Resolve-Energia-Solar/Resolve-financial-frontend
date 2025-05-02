@@ -327,56 +327,48 @@ const DeliveryLIstByProject = () => {
     },
   ];
 
+  const cardsBuyData = [
+    {
+      backgroundColor: 'primary.light',
+      iconColor: 'primary.main',
+      IconComponent: IconListDetails,
+      title: 'Pendente',
+      count: '-',
+    },
+    {
+      backgroundColor: 'success.light',
+      iconColor: 'success.main',
+      IconComponent: IconListDetails,
+      title: 'Distrato',
+      count: '-',
+    },
+    {
+      backgroundColor: 'secondary.light',
+      iconColor: 'secondary.main',
+      IconComponent: IconPaperclip,
+      title: 'Cancelado',
+      count: '-',
+    },
+    {
+      backgroundColor: 'warning.light',
+      iconColor: 'warning.main',
+      IconComponent: IconSortAscending,
+      title: 'Aguardando Pagamento',
+      count: '-',
+    },
+    {
+      backgroundColor: 'warning.light',
+      iconColor: 'warning.main',
+      IconComponent: IconSortAscending,
+      title: 'Compra Realizada',
+      count: '-',
+    },
+  ];
+
   return (
     <>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2 }}>
         <Typography variant="h4">Logística</Typography>
-
-        {/* <Grid container spacing={2} alignItems="center">
-          <Grid item xs={10}>
-            <FormControl fullWidth required>
-              <InputLabel id="request-type-select-label">
-                Tipo Solicitação
-              </InputLabel>
-              <Select
-                labelId="request-type-select-label"
-                id="request-type-select"
-                value={selectedRequestType ?? ''}
-                label="Tipo Solicitação"
-                onChange={(e) => {
-                  setSelectedRequestType(e.target.value);
-                  setPage(0);
-                }}
-              >
-                {requestTypes.map((type) => (
-                  <MenuItem key={type.id} value={type.id}>
-                    {type.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={2} sx={{ textAlign: 'right' }}>
-            <Button
-              variant="outlined"
-              sx={{ mt: 1, mb: 2 }}
-              onClick={() => setFilterDrawerOpen(true)}
-            >
-              Abrir Filtros
-            </Button>
-            <GenericFilterDrawer
-              filters={projectFilterConfig}
-              initialValues={filters}
-              open={filterDrawerOpen}
-              onClose={() => setFilterDrawerOpen(false)}
-              onApply={(newFilters) => {
-                setFilters(newFilters);
-                setPage(0);
-              }}
-            />
-          </Grid>
-        </Grid> */}
 
         <Accordion>
           <AccordionSummary
@@ -384,13 +376,24 @@ const DeliveryLIstByProject = () => {
             aria-controls="sale-cards-content"
             id="sale-cards-header"
           >
-            <Typography variant="h6">Indicadores</Typography>
+            <Typography variant="h6">Indicadores de Entrega</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <InfoCard cardsData={cardsData} />
           </AccordionDetails>
-        </Accordion>
 
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="sale-cards-content"
+            id="sale-cards-header"
+          >
+            <Typography variant="h6">Indicadores de Compras</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <InfoCard cardsData={cardsBuyData} />
+          </AccordionDetails>
+        </Accordion>
+        
         <Box
           sx={{
             display: 'flex',
