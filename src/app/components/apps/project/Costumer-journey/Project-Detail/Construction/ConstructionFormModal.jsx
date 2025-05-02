@@ -15,11 +15,9 @@ import {
     Radio,
     Stack,
     CircularProgress,
-    Box,
-    Typography
+    FormLabel
 } from '@mui/material';
 import civilConstructionService from '@/services/constructionService';
-import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 import FormDate from '@/app/components/forms/form-custom/FormDate';
 const statusOptions = [
     { value: 'P', label: 'Pendente' },
@@ -115,6 +113,7 @@ export default function ConstructionFormModal({
                     />
 
                     <FormControl component="fieldset">
+                        <FormLabel sx={{ fontWeight: 'bold' }}>Responsabilidade da Obra</FormLabel>
                         <RadioGroup
                             row
                             value={form.work_responsibility}
