@@ -170,6 +170,7 @@ export default function UpdateForm() {
     service_date: 'Data do Serviço',
     due_date: 'Data de Vencimento',
     invoice_number: 'Número da Nota Fiscal',
+    lost_reason: 'Razão da Perda',
   };
 
   const handleAddAttachment = (attachment) => {
@@ -178,6 +179,7 @@ export default function UpdateForm() {
 
   const handleSubmit = async () => {
     setLoading(true);
+    const isLosses = formData.category_name?.toLowerCase().includes('perdas');
     const missingFields = [];
     if (!formData.value) missingFields.push('Valor (R$)');
     if (!formData.due_date) missingFields.push('Data de Vencimento');
@@ -189,6 +191,11 @@ export default function UpdateForm() {
     if (!formData.requesting_department) missingFields.push('Departamento Solicitante');
     if (['T', 'P'].includes(formData.payment_method) && !formData.bank_details) missingFields.push('Dados Bancários');
     if (!formData.department_code) missingFields.push('Departamento Causador');
+
+    if (isLosses && !formData.lost_reason) {
+      enqueueSnackbar('Razão da perda é obrigatória', { variant: 'error' });
+      return;
+    }
 
     if (missingFields.length) {
       enqueueSnackbar(
@@ -515,6 +522,30 @@ export default function UpdateForm() {
               disabled={false}
             />
           </Grid>
+          {formData.category_name
+            ?.toLowerCase()
+            .includes('perdas') &&
+            <Grid item xs={12} md={6}>
+              <GenericAsyncAutocompleteInput
+                label="Razão da Perda"
+                name="lost_reason"
+                value={formData.lost_reason}
+                onChange={(option) => handleChange('lost_reason', option?.value || null)}
+                endpoint="/api/lost-reasons"
+                queryParam="name__icontains"
+                extraParams={{ fields: ['id', 'name'] }}
+                mapResponse={(data) =>
+                  data.results.map((p) => ({
+                    label: p.name,
+                    value: p.id
+                  }))
+                }
+                fullWidth
+                helperText={formErrors.lost_reason?.[0] || ''}
+                error={!!formErrors.lost_reason}
+              />
+            </Grid>
+          }
           <Grid item xs={12} md={6}>
             <CustomFormLabel htmlFor="value">Valor (R$)</CustomFormLabel>
             <CustomFieldMoney
