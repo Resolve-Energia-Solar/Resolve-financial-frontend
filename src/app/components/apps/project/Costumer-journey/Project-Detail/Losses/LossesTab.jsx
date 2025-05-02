@@ -31,8 +31,8 @@ export default function LossesTab({ projectId }) {
         setLoading(true);
         try {
             const response = await financialRecordService.index({
-                fields: "id,protocol,due_date,client_supplier_name,value,status,loss_reason.name",
-                expand: "loss_reason",
+                fields: "id,protocol,due_date,client_supplier_name,value,status,lost_reason.name",
+                expand: "lost_reason",
                 category_name__icontains: 'Perdas',
                 project__in: projectId
             });
@@ -56,14 +56,7 @@ export default function LossesTab({ projectId }) {
         { field: 'due_date', headerName: 'Data de Vencimento', render: r => formatDate(r.due_date) },
         { field: 'value', headerName: 'Valor', render: r => parseFloat(r.value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) },
         { field: 'status', headerName: 'Status', render: r => getStatusLabel(r.status) },
-        {
-            field: 'loss_reason', headerName: 'Motivo da Perda', render: r => (
-                r.loss_reason?.name ?
-                    <Button variant="text" size="small" onClick={() => { setCurrentReason(r.loss_reason.name); setOpenReasonModal(true); }}>
-                        {r.loss_reason.name.length > 20 ? r.loss_reason.name.slice(0, 20) + '...' : r.loss_reason.name}
-                    </Button>
-                    : '-')
-        }
+        { field: 'lost_reason', headerName: 'Motivo da Perda', render: r => (r.lost_reason?.name) }
     ];
 
     return (
@@ -104,7 +97,7 @@ export default function LossesTab({ projectId }) {
                     <Table.Cell render={row => formatDate(row.due_date)} sx={{ opacity: 0.7 }} />
                     <Table.Cell render={row => parseFloat(row.value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} sx={{ opacity: 0.7 }} />
                     <Table.Cell render={row => getStatusLabel(row.status)} sx={{ opacity: 0.7 }} />
-                    <Table.Cell render={row => row.loss_reason?.name} sx={{ opacity: 0.7 }} />
+                    <Table.Cell render={row => row.lost_reason?.name || '-'} sx={{ opacity: 0.7 }} />
                     <Table.ViewAction onClick={row => router.push(`/apps/financial-record/${row.id}`)} />
                 </Table.Body>
             </Table.Root>

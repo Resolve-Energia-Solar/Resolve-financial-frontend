@@ -151,6 +151,7 @@ export default function CreateFinancialRecord() {
   }, []);
 
   const handleSubmit = async () => {
+    const isLosses = formData.category_name?.toLowerCase().includes('perdas');
     const missingFields = [];
     if (!formData.value) missingFields.push('Valor (R$)');
     if (!formData.due_date) missingFields.push('Data de Vencimento');
@@ -168,6 +169,11 @@ export default function CreateFinancialRecord() {
         `Por favor, preencha os seguintes campos: ${missingFields.join(', ')}`,
         { variant: 'error' }
       );
+      return;
+    }
+
+    if (isLosses && !formData.lost_reason) {
+      enqueueSnackbar('Razão da perda é obrigatória', { variant: 'error' });
       return;
     }
 
@@ -473,6 +479,30 @@ export default function CreateFinancialRecord() {
               required
             />
           </Grid>
+          {formData.category_name
+            ?.toLowerCase()
+            .includes('perdas') &&
+            <Grid item xs={12} md={6}>
+              <GenericAsyncAutocompleteInput
+                label="Razão da Perda"
+                name="lost_reason"
+                value={formData.lost_reason}
+                onChange={(option) => handleChange('lost_reason', option?.value || null)}
+                endpoint="/api/lost-reasons"
+                queryParam="name__icontains"
+                extraParams={{ fields: ['id', 'name'] }}
+                mapResponse={(data) =>
+                  data.results.map((p) => ({
+                    label: p.name,
+                    value: p.id
+                  }))
+                }
+                fullWidth
+                helperText={formErrors.lost_reason?.[0] || ''}
+                error={!!formErrors.lost_reason}
+              />
+            </Grid>
+          }
           <Grid item xs={12} md={6}>
             <CustomFormLabel htmlFor="value">Valor (R$)</CustomFormLabel>
             <CustomFieldMoney
