@@ -1,6 +1,5 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { useRouter, useParams } from 'next/navigation';
 import {
   Box,
@@ -55,6 +54,7 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
     products: null,
     parent_schedules: null,
     attachments: [],
+    schedule_creator: null,
   });
   const [loading, setLoading] = useState(false);
   const [loadingForm, setLoadingForm] = useState(false);
@@ -63,7 +63,6 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
   const [isEndModified, setIsEndModified] = useState(false);
   const [minEnd, setMinEnd] = useState({ date: '', time: '' });
   const { enqueueSnackbar } = useSnackbar();
-  const user = useSelector((state) => state.user?.user);
   const [tabValue, setTabValue] = useState('form');
   const [projectAttachments, setProjectAttachments] = useState([]);
   const [saleAttachments, setSaleAttachments] = useState([]);
@@ -106,6 +105,7 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
             'attachments',
             'service_opinion',
             'final_service_opinion',
+            'schedule_creator'
           ],
           expand: ['service'],
         })
@@ -128,6 +128,7 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
             parent_schedules: data.parent_schedules || [],
             status: data.status,
             attachments: data.attachments || [],
+            schedule_creator: data.schedule_creator,
           });
         })
         .catch((err) => {
@@ -183,7 +184,6 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
     branch: 'Unidade',
     address: 'Endereço',
     observation: 'Observação',
-    schedule_creator: 'Criador do Agendamento',
   };
 
   useEffect(() => {
@@ -249,7 +249,6 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
       schedule_agent: formData.schedule_agent?.value || formData.schedule_agent || null,
       branch: formData.branch?.value || formData.branch || null,
       address: formData.address?.value || formData.address || null,
-      schedule_creator: user.id,
       status: formData.status,
       service_opinion: formData.service_opinion?.value || formData.service_opinion || null,
       final_service_opinion:
