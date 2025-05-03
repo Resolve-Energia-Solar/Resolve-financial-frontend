@@ -59,7 +59,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
       const [proj, proc] = await Promise.all([
         projectService.find(projectId, {
           fields: 'id,project_number,sale,customer.complete_name,field_services.service.name,field_services.final_service_opinion.name',
-          expand: 'sale.customer,field_services.service,field_services.final_service_opinion',
+          expand: 'sale.customer,field_services.service,field_services.final_service_opinion,sale',
         }),
         processService.getProcessByObjectId('resolve_crm', 'project', projectId)
           .then(({ id }) => id)
@@ -84,6 +84,8 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
     fetchData();
   }, [fetchData]);
 
+  console.log('Project:', project);
+
   const handleClose = useCallback(() => onClose(), [onClose]);
   const handleTabChange = (e, newVal) => setTab(newVal);
   const drawerWidth = useMemo(() => (processId ? '100vw' : '65vw'), [processId]);
@@ -92,9 +94,9 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
     { label: 'Vistoria', content: <InspectionsTab projectId={projectId} /> },
     hasConstructionTab && { label: 'Obras', content: <ConstructionsTab projectId={projectId} /> },
     { label: 'Contratos', content: <EditSale saleId={project?.sale?.id} /> },
-    { label: 'Financeiro', content: <PaymentCard sale={project?.sale} /> },
+    { label: 'Financeiro', content: <PaymentCard sale={project?.sale?.id} /> },
     { label: 'Engenharia', content: <><EditProjectTab projectId={projectId} /><UploadDocument projectId={projectId} /><CheckListRateio projectId={projectId} /></> },
-    { label: 'Anexos', content: <><Typography variant="h6">Anexos do Projeto</Typography><AttachmentTable appLabel="resolve_crm" model="project" objectId={projectId} /><Typography variant="h6">Anexos da Venda</Typography><AttachmentTable appLabel="resolve_crm" model="sale" objectId={project?.sale} /></> },
+    { label: 'Anexos', content: <><Typography variant="h6">Anexos do Projeto</Typography><AttachmentTable appLabel="resolve_crm" model="project" objectId={projectId} /><Typography variant="h6">Anexos da Venda</Typography><AttachmentTable appLabel="resolve_crm" model="sale" objectId={project?.sale?.id} /></> },
     { label: 'Logística', content: <LogisticsTab projectId={projectId} /> },
     { label: 'Instalação', content: <InstallationsTab projectId={projectId} /> },
     { label: 'Homologação', content: <RequestList projectId={projectId} enableFilters={false} enableIndicators={false} /> },
