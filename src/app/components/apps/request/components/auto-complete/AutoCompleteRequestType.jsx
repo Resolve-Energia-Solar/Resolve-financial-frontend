@@ -49,7 +49,9 @@ export default function AutoCompleteRequestType({ onChange, value, error, helper
       }
       setLoading(true);
       try {
-        const requestTypes = await RequestTypeService.index({ name: name });
+        const requestTypes = await RequestTypeService.index({ name: name, limit: 20, page: 1 }
+          
+        );
         if (requestTypes && requestTypes.results) {
           const formattedRequestTypes = requestTypes.results.map((requestType) => ({
             id: requestType.id,
@@ -68,7 +70,7 @@ export default function AutoCompleteRequestType({ onChange, value, error, helper
   const fetchInitialRequestTypes = useCallback(async () => {
     setLoading(true);
     try {
-      const requestTypes = await RequestTypeService.index({ limit: 5, page: 1 });
+      const requestTypes = await RequestTypeService.index({ limit: 20, page: 1 });
       if (requestTypes && requestTypes.results) {
         const formattedRequestTypes = requestTypes.results.map((requestType) => ({
           id: requestType.id,
