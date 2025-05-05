@@ -12,10 +12,16 @@ export function TablePagination() {
             count={totalRows}
             rowsPerPage={rowsPerPage}
             page={page}
-            onPageChange={(_, newPage) => onPageChange(newPage)}
-            onRowsPerPageChange={(e) => onRowsPerPageChange(parseInt(e.target.value, 10))}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
             labelRowsPerPage="Linhas por página"
+            labelDisplayedRows={({ from, to, count }) =>
+                `${from}-${to} de ${count !== -1 ? count : `mais de ${to}`}`
+            }
             sx={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'flex-end',
                 '& .Mui-selected': {
                     backgroundColor: '#FFCC00 !important',
                     color: '#7E8388',

@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import {
   Chip,
-  TablePagination,
   TableContainer,
   Paper,
   Typography,
@@ -30,7 +29,6 @@ import { TableHeader } from "@/app/components/TableHeader";
 import ScheduleOpinionChip from '../../inspections/schedule/StatusChip';
 import StatusFinancialChip from '@/utils/status/FinancialChip';
 import ChipRequest from '../../request/components/auto-complete/ChipRequest';
-import ProjectDetailDrawer from '../Costumer-journey/Project-Detail/ProjectDrawer';
 
 const pulse = keyframes`
   0% {
@@ -467,20 +465,9 @@ const ProjectList = ({ onClick }) => {
   }, []);
 
   const handleRowsPerPageChange = useCallback((event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    setRowsPerPage(parseInt(event.target?.value, 10));
     setPage(0);
   }, []);
-
-  // const [openDrawer, setOpenDrawer] = useState(false);
-  // const [selectedRow, setSelectedRow] = useState(null);
-
-  // const handleRowClick = (row) => {
-  //   console.log("Clicked row:", row);
-  //   if (row.id) {
-  //     setSelectedRow(row.id);
-  //     setOpenDrawer(true);
-  //   }
-  // };
 
   const blockedToEngineering = useAnimatedNumber(indicators?.blocked_to_engineering || 0);
   const pendingMaterialList = useAnimatedNumber(indicators?.pending_material_list || 0);
@@ -673,167 +660,144 @@ const ProjectList = ({ onClick }) => {
 
           </Grid>
         </Grid>
-        <TableContainer
-          component={Paper}
-          sx={{
-            '& th, & td': {
-              whiteSpace: 'nowrap',
+
+        <TableHeader.Root>
+          <TableHeader.Title
+            title="Total"
+            totalItems={totalRows}
+            objNameNumberReference={
+              projectsList.length === 1 ? 'Projeto' : 'Projetos'
             }
-          }}
-        >
-          <TableHeader.Root>
-            <TableHeader.Title
-              title="Total"
-              totalItems={projectsList.length}
-              objNameNumberReference={
-                projectsList.length === 1 ? 'Projeto' : 'Projetos'
-              }
-            />
-          </TableHeader.Root>
-
-          <Table.Root
-            data={projectsList}
-            totalRows={totalRows}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            onPageChange={handlePageChange}
-            onRowsPerPageChange={handleRowsPerPageChange}
-            onRowClick={onClick}
-          >
-            {/* Cabeçalho */}
-            <Table.Head>
-              {columns.map((col) => (
-                <Table.Cell
-                  key={col.field}
-                  sx={{
-                    fontWeight: 600,
-                    fontSize: '14px'
-                  }}
-                >
-                  {col.headerName}
-                </Table.Cell>
-              ))}
-            </Table.Head>
-
-            {/* Corpo */}
-            <Table.Body loading={loadingProjects}>
-              <Table.Cell
-                render={row => row.sale.customer.complete_name}
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell
-                render={row => row.product?.name}
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell
-                render={row =>
-                  row.sale.signature_date
-                    ? new Date(row.sale.signature_date).toLocaleDateString()
-                    : 'Sem data'
-                }
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell
-                render={row => {
-                  if (!row.sale.signature_date) return '-';
-                  const diffMs = Date.now() - new Date(row.sale.signature_date).getTime();
-                  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-                  return `${diffDays}`;
-                }}
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell
-                render={row => row.sale.branch.name}
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell
-                render={row =>
-                  new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  }).format(row.sale.total_value)
-                }
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell
-                render={row => {
-                  const steps = row.processes
-                    ?.flatMap(p => p.current_step?.map(s => s.name))
-                    || [];
-
-                  return (
-                    <Box
-                      component="span"
-                      sx={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: 0.5,
-                      }}
-                    >
-                      {steps.length
-                        ? steps.map((name, i) => (
-                          <Chip
-                            key={i}
-                            label={name}
-                            color="primary"
-                            size="small"
-                          />
-                        ))
-                        : <Chip label="Sem Etapa" size="small" />
-                      }
-                    </Box>
-                  );
-                }}
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell
-                render={row => getStatusChip(row.sale.status)}
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell
-                render={row => <ScheduleOpinionChip status={row.fieldServiceStatus?.Vistoria} />}
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell
-                render={row => <StatusFinancialChip status={row.sale.payment_status} />}
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell
-                render={row => (row.is_documentation_completed ? 'Finalizado' : 'Pendente')}
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell
-                render={row => <ScheduleOpinionChip status={row.fieldServiceStatus?.Entrega} />}
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell
-                render={row => <ScheduleOpinionChip status={row.fieldServiceStatus?.Instalação} />}
-                sx={{ opacity: 0.7 }}
-              />
-              <Table.Cell
-                render={row => <ChipRequest status={row.homologationStatus} />}
-                sx={{ opacity: 0.7 }}
-              />
-            </Table.Body>
-          </Table.Root>
-
-          {/* <ProjectDetailDrawer
-            open={openDrawer}
-            onClose={() => setOpenDrawer(false)}
-            projectId={selectedRow}
-          /> */}
-
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={totalRows}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handlePageChange}
-            onRowsPerPageChange={handleRowsPerPageChange}
-            labelRowsPerPage="Linhas por página"
           />
-        </TableContainer>
+        </TableHeader.Root>
+
+        <Table.Root
+          data={projectsList}
+          totalRows={totalRows}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={handlePageChange}
+          onRowsPerPageChange={handleRowsPerPageChange}
+          onRowClick={onClick}
+          noWrap={true}
+        >
+          {/* Cabeçalho */}
+          <Table.Head>
+            {columns.map((col) => (
+              <Table.Cell
+                key={col.field}
+                sx={{
+                  fontWeight: 600,
+                  fontSize: '14px'
+                }}
+              >
+                {col.headerName}
+              </Table.Cell>
+            ))}
+          </Table.Head>
+
+          {/* Corpo */}
+          <Table.Body loading={loadingProjects}>
+            <Table.Cell
+              render={row => row.sale.customer.complete_name}
+              sx={{ opacity: 0.7 }}
+            />
+            <Table.Cell
+              render={row => row.product?.name}
+              sx={{ opacity: 0.7 }}
+            />
+            <Table.Cell
+              render={row =>
+                row.sale.signature_date
+                  ? new Date(row.sale.signature_date).toLocaleDateString()
+                  : 'Sem data'
+              }
+              sx={{ opacity: 0.7 }}
+            />
+            <Table.Cell
+              render={row => {
+                if (!row.sale.signature_date) return '-';
+                const diffMs = Date.now() - new Date(row.sale.signature_date).getTime();
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                return `${diffDays}`;
+              }}
+              sx={{ opacity: 0.7 }}
+            />
+            <Table.Cell
+              render={row => row.sale.branch.name}
+              sx={{ opacity: 0.7 }}
+            />
+            <Table.Cell
+              render={row =>
+                new Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                }).format(row.sale.total_value)
+              }
+              sx={{ opacity: 0.7 }}
+            />
+            <Table.Cell
+              render={row => {
+                const steps = row.processes
+                  ?.flatMap(p => p.current_step?.map(s => s.name))
+                  || [];
+
+                return (
+                  <Box
+                    component="span"
+                    sx={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: 0.5,
+                    }}
+                  >
+                    {steps.length
+                      ? steps.map((name, i) => (
+                        <Chip
+                          key={i}
+                          label={name}
+                          color="primary"
+                          size="small"
+                        />
+                      ))
+                      : <Chip label="Sem Etapa" size="small" />
+                    }
+                  </Box>
+                );
+              }}
+              sx={{ opacity: 0.7 }}
+            />
+            <Table.Cell
+              render={row => getStatusChip(row.sale.status)}
+              sx={{ opacity: 0.7 }}
+            />
+            <Table.Cell
+              render={row => <ScheduleOpinionChip status={row.fieldServiceStatus?.Vistoria} />}
+              sx={{ opacity: 0.7 }}
+            />
+            <Table.Cell
+              render={row => <StatusFinancialChip status={row.sale.payment_status} />}
+              sx={{ opacity: 0.7 }}
+            />
+            <Table.Cell
+              render={row => (row.is_documentation_completed ? 'Finalizado' : 'Pendente')}
+              sx={{ opacity: 0.7 }}
+            />
+            <Table.Cell
+              render={row => <ScheduleOpinionChip status={row.fieldServiceStatus?.Entrega} />}
+              sx={{ opacity: 0.7 }}
+            />
+            <Table.Cell
+              render={row => <ScheduleOpinionChip status={row.fieldServiceStatus?.Instalação} />}
+              sx={{ opacity: 0.7 }}
+            />
+            <Table.Cell
+              render={row => <ChipRequest status={row.homologationStatus} />}
+              sx={{ opacity: 0.7 }}
+            />
+          </Table.Body>
+          <Table.Pagination />
+        </Table.Root>
       </Grid>
     </>
   );

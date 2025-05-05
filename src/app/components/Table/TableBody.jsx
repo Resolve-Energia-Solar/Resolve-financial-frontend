@@ -10,11 +10,7 @@ import TableSkeleton from "@/app/components/apps/comercial/sale/components/Table
 
 export function TableBody({ loading, children }) {
   const theme = useTheme();
-  const { data, page, rowsPerPage, onRowClick } = useContext(TableCtxt);
-  const slice = data.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
+  const { data, onRowClick } = useContext(TableCtxt);
 
   if (loading) {
     return <TableSkeleton columns={8} rows={4} />;
@@ -22,14 +18,14 @@ export function TableBody({ loading, children }) {
 
   return (
     <MuiBody>
-      {slice.length === 0 ? (
+      {data.length === 0 ? (
         <TableRow>
           <TableCell colSpan={8} align="center">
             Nenhum registro
           </TableCell>
         </TableRow>
       ) : (
-        slice.map((row) => (
+        data.map((row) => (
           <TableCtxt.Provider
             key={row.id}
             value={{ ...useContext(TableCtxt), row }}
