@@ -722,7 +722,7 @@ const ProjectList = ({ onClick }) => {
                 sx={{ opacity: 0.7 }}
               />
               <Table.Cell
-                render={row => row.product.name}
+                render={row => row.product?.name}
                 sx={{ opacity: 0.7 }}
               />
               <Table.Cell

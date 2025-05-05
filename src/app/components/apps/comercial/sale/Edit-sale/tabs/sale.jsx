@@ -248,7 +248,7 @@ const EditSale = ({
           />
         ))}
 
-        {!onSubmit && (
+        {hasPermission(['resolve_crm.can_change_fineshed_sale']) && !onSubmit && (
           <Button
             variant="contained"
             color="primary"
