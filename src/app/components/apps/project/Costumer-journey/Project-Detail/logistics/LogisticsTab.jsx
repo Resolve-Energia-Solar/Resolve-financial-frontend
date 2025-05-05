@@ -137,9 +137,8 @@ export default function LogisticsTab({ projectId }) {
             {/* Entregas */}
             <TableHeader.Root>
                 <TableHeader.Title
-                    title="Total"
+                    title="Total de Entregas"
                     totalItems={deliveries.length}
-                    objNameNumberReference={deliveries.length === 1 ? "Entrega" : "Entregas"}
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar entrega"
@@ -228,9 +227,8 @@ export default function LogisticsTab({ projectId }) {
             {/* Compras */}
             <TableHeader.Root>
                 <TableHeader.Title
-                    title="Total"
+                    title="Total de Compras"
                     totalItems={products.length}
-                    objNameNumberReference={products.length === 1 ? "Compra" : "Compras"}
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar compra"
