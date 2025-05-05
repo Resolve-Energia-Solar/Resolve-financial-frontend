@@ -7,11 +7,12 @@ import UserCard from "../../../../users/userCard";
 import { formatDate } from "@/utils/dateUtils";
 import ScheduleOpinionChip from "../../../../inspections/schedule/StatusChip/ScheduleOpinionChip";
 import { Table } from "@/app/components/Table";
-import { Dialog, DialogContent } from "@mui/material";
+import { Chip, Dialog, DialogContent } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
 import categoryService from "@/services/categoryService";
 import DetailsDrawer from "@/app/components/apps/schedule/DetailsDrawer";
 import purchaseService from "@/services/purchaseService";
+import PurchaseForm from "./PurchaseForm";
 
 export default function LogisticsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -25,6 +26,9 @@ export default function LogisticsTab({ projectId }) {
 
     const [openDeliveryFormModal, setOpenDeliveryFormModal] = useState(false);
     const [openViewDelivery, setOpenViewDelivery] = useState(false);
+    const [openPurchaseFormModal, setOpenPurchaseFormModal] = useState(false);
+    // const [openViewPurchase, setOpenViewPurchase] = useState(false);
+    const [selectedPurchase, setSelectedPurchase] = useState(null);
 
     const fetchDeliveries = useCallback(async () => {
         if (projectId) {
@@ -80,7 +84,7 @@ export default function LogisticsTab({ projectId }) {
         { field: 'schedule_date', headerName: 'Agendada', render: r => new Date(r.schedule_date).toLocaleDateString() },
         { field: 'products', headerName: 'Produto', render: r => r.products.map(p => p.description).join(', ') },
         { field: 'scheduled_agent', headerName: 'Fornecedor', render: r => r.scheduled_agent?.name },
-        { field: 'final_service_opinion', headerName: 'Status Logístico', render: r => r.final_service_opinion?.name },
+        { field: 'final_service_opinion', headerName: 'Status', render: r => r.final_service_opinion?.name },
     ]
 
     const fetchPurchases = useCallback(async () => {
@@ -89,8 +93,8 @@ export default function LogisticsTab({ projectId }) {
             try {
                 const response = await purchaseService.index(
                     {
-                        fields: "id,purchase_date,status,delivery_number,project,supplier.complete_name,project.product.description,delivery_type.name",
-                        expand: "supplier,project.product,delivery_type",
+                        fields: "id,purchase_date,status,delivery_number,project,supplier.complete_name,project.product.description,delivery_type",
+                        expand: "supplier,project.product",
                         project__in: projectId,
                     }
                 );
@@ -110,8 +114,8 @@ export default function LogisticsTab({ projectId }) {
     }, [projectId, fetchPurchases]);
 
     const handlePurchaseFormSuccess = async () => {
-        // setOpenPurchaseFormModal(false);
-        // setSelectedPurchase(null);
+        setOpenPurchaseFormModal(false);
+        setSelectedPurchase(null);
         await fetchPurchases();
     };
 
@@ -122,10 +126,10 @@ export default function LogisticsTab({ projectId }) {
     const purchasesColumns = [
         { field: 'purchase_date', headerName: 'Data da Compra', render: r => new Date(r.purchase_date).toLocaleDateString() },
         { field: 'status', headerName: 'Status', render: r => r.status },
-        { field: 'delivery_number', headerName: 'Número de Entrega', render: r => r.delivery_number },
+        { field: 'delivery_number', headerName: 'Nº de Entrega', render: r => r.delivery_number },
         { field: 'supplier', headerName: 'Fornecedor', render: r => r.supplier.complete_name },
         { field: 'product', headerName: 'Produto', render: r => r.project?.product?.description },
-        { field: 'delivery_type', headerName: 'Tipo de Entrega', render: r => r.delivery_type.name },
+        { field: 'delivery_type', headerName: 'Tipo de Entrega', render: r => r.delivery_type },
     ]
 
     return (
@@ -170,11 +174,11 @@ export default function LogisticsTab({ projectId }) {
                 <Table.Body loading={loading}>
                     <Table.Cell
                         render={row => row.service?.name}
-                        sx={{ opacity: 0.7, }}
+                        sx={{ opacity: 0.7 }}
                     />
                     <Table.Cell
                         render={row => row.address?.complete_address}
-                        sx={{ opacity: 0.7, }}
+                        sx={{ opacity: 0.7 }}
                     />
                     <Table.Cell render={row =>
                         formatDate(row.schedule_date)}
@@ -230,10 +234,11 @@ export default function LogisticsTab({ projectId }) {
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar compra"
-                    onButtonClick={() => { /* setOpenPurchaseFormModal(true) */ }}
-                    sx={{
-                        width: 200,
+                    onButtonClick={() => {
+                        setOpenPurchaseFormModal(true);
+                        setSelectedPurchase(null);
                     }}
+                    sx={{ width: 200 }}
                 />
             </TableHeader.Root>
 
@@ -255,17 +260,27 @@ export default function LogisticsTab({ projectId }) {
                         </Table.Cell>
                     ))}
                     <Table.Cell align="center">Editar</Table.Cell>
-                    <Table.Cell align="center">Ver</Table.Cell>
+                    {/* <Table.Cell align="center">Ver</Table.Cell> */}
                 </Table.Head>
 
                 <Table.Body loading={loading}>
                     <Table.Cell
-                        render={row => row.purchase_date}
-                        sx={{ opacity: 0.7, }}
+                        render={row => formatDate(row.purchase_date)}
+                        sx={{ opacity: 0.7 }}
                     />
                     <Table.Cell
-                        render={row => row.status}
-                        sx={{ opacity: 0.7, }}
+                        render={row => {
+                            const statusMap = {
+                                'R': { label: 'Compra realizada', color: 'success' },
+                                'C': { label: 'Cancelada', color: 'error' },
+                                'D': { label: 'Distrato', color: 'error' },
+                                'A': { label: 'Aguardando pagamento', color: 'info' },
+                                'P': { label: 'Pendente', color: 'warning' }
+                            };
+                            const statusInfo = statusMap[row.status] || { label: row.status, color: 'default' };
+                            return <Chip label={statusInfo.label} color={statusInfo.color} />;
+                        }}
+                        sx={{ opacity: 0.7 }}
                     />
                     <Table.Cell render={row =>
                         row.delivery_number || '-'}
@@ -279,15 +294,36 @@ export default function LogisticsTab({ projectId }) {
                         row.project?.product?.description}
                         sx={{ opacity: 0.7 }}
                     />
-                    <Table.Cell render={row =>
-                        row.delivery_type?.name}
+                    <Table.Cell render={row => {
+                            const deliveryTypeMap = {
+                                'D': 'Entrega Direta',
+                                'C': 'Entrega CD'
+                            };
+                            return deliveryTypeMap[row.delivery_type] || row.delivery_type || '-';
+                        }}
                         sx={{ opacity: 0.7 }}
                     />
 
-                    <Table.EditAction onClick={row => { /* setSelectedPurchase(row.id); setOpenPurchaseFormModal(true); */ }} />
-                    <Table.ViewAction onClick={row => { /* setSelectedPurchase(row.id); setOpenViewPurchase(true) */ }} />
+                    <Table.EditAction onClick={row => { setSelectedPurchase(row.id); setOpenPurchaseFormModal(true);}} />
+                    {/* <Table.ViewAction onClick={row => { setSelectedPurchase(row.id); setOpenViewPurchase(true) }} /> */}
                 </Table.Body>
             </Table.Root>
+
+            <Dialog
+                open={openPurchaseFormModal}
+                onClose={() => {
+                    setOpenPurchaseFormModal(false);
+                    setSelectedPurchase(null);
+                }}
+            >
+                <DialogContent>
+                    <PurchaseForm
+                        purchaseId={selectedPurchase}
+                        projectId={projectId}
+                        onSave={handlePurchaseFormSuccess}
+                    />
+                </DialogContent>
+            </Dialog>
         </>
     );
 }
