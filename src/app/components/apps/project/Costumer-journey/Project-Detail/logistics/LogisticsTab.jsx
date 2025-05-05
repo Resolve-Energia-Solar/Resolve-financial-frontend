@@ -17,7 +17,9 @@ import PurchaseForm from "./PurchaseForm";
 export default function LogisticsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
     const [deliveries, setDeliveries] = useState([])
+    const [deliveriesCount, setDeliveriesCount] = useState([])
     const [purchases, setPurchases] = useState([]);
+    const [purchasesCount, setPurchasesCount] = useState([]);
     const [loading, setLoading] = useState(true)
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
@@ -44,6 +46,7 @@ export default function LogisticsTab({ projectId }) {
                         }
                     );
                     setDeliveries(response.results);
+                    setDeliveriesCount(response.meta.pagination.total_count);
                 } catch (error) {
                     enqueueSnackbar(`Erro ao carregar entregas: ${error.message}`, { variant: "error" });
                 } finally {
@@ -99,6 +102,7 @@ export default function LogisticsTab({ projectId }) {
                     }
                 );
                 setPurchases(response.results);
+                setPurchasesCount(response.meta.pagination.total_count);
             } catch (error) {
                 enqueueSnackbar(`Erro ao carregar compras: ${error.message}`, { variant: "error" });
             } finally {
@@ -138,7 +142,7 @@ export default function LogisticsTab({ projectId }) {
             <TableHeader.Root>
                 <TableHeader.Title
                     title="Total de Entregas"
-                    totalItems={deliveries.length}
+                    totalItems={deliveriesCount}
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar entrega"
@@ -228,7 +232,7 @@ export default function LogisticsTab({ projectId }) {
             <TableHeader.Root>
                 <TableHeader.Title
                     title="Total de Compras"
-                    totalItems={products.length}
+                    totalItems={purchasesCount}
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar compra"
