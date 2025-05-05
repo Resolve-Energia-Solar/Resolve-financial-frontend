@@ -132,9 +132,6 @@ const EditSaleTabs = ({
     (newValue) => handleChange('totalValue', newValue)
   );
 
-  console.log('formattedValue', formattedValue);
-  console.log('formData', formData);
-
   const statusOptions = [
     { value: 'P', label: 'Pendente' },
     { value: 'F', label: 'Finalizado' },
@@ -202,8 +199,6 @@ const EditSaleTabs = ({
     });
   }, [saleData?.sale_products]);
 
-  console.log('productNames', productNames);
-
   return (
     <Box {...props}>
       <Tabs
@@ -246,20 +241,20 @@ const EditSaleTabs = ({
             >
               <Customer data={saleData.customer} onRefresh={onRefresh} />
               <Phones
-                data={saleData.customer.phone_numbers}
+                data={saleData?.customer?.phone_numbers}
                 onRefresh={fetchSale}
-                userId={saleData.customer.id}
+                userId={saleData.customer?.id}
               />
               <Addresses
-                data={saleData.customer.addresses}
+                data={saleData.customer?.addresses}
                 onRefresh={fetchSale}
-                userId={saleData.customer.id}
+                userId={saleData.customer?.id}
               />
             </Box>
           </TabPanel>
 
           <TabPanel value={value} index={1}>
-            <SchedulesInspections userId={saleData.customer.id} saleId={id_sale} />
+            <SchedulesInspections userId={saleData.customer?.id} saleId={id_sale} />
           </TabPanel>
 
           <TabPanel value={value} index={2}>
