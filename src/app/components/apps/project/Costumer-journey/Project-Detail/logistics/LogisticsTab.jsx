@@ -58,7 +58,6 @@ export default function LogisticsTab({ projectId }) {
         setLoading(false);
     }, [projectId, enqueueSnackbar]);
 
-
     useEffect(() => {
         fetchDeliveries();
     }, [projectId, fetchDeliveries]);
@@ -78,8 +77,6 @@ export default function LogisticsTab({ projectId }) {
         setSelectedDelivery(null);
         await fetchDeliveries();
     };
-
-    const products = deliveries.map(i => i.project.products).flat();
 
     const deliveriesColumns = [
         { field: 'service', headerName: 'Serviço', render: r => r.service.name },
@@ -276,8 +273,9 @@ export default function LogisticsTab({ projectId }) {
                                 'R': { label: 'Compra realizada', color: 'success' },
                                 'C': { label: 'Cancelada', color: 'error' },
                                 'D': { label: 'Distrato', color: 'error' },
-                                'A': { label: 'Aguardando pagamento', color: 'info' },
-                                'P': { label: 'Pendente', color: 'warning' }
+                                'A': { label: 'Aguardando pagamento', color: 'primary' },
+                                'P': { label: 'Pendente', color: 'warning' },
+                                'F': { label: 'Aguardando Previsão de Entrega', color: 'primary' },
                             };
                             const statusInfo = statusMap[row.status] || { label: row.status, color: 'default' };
                             return <Chip label={statusInfo.label} color={statusInfo.color} />;
