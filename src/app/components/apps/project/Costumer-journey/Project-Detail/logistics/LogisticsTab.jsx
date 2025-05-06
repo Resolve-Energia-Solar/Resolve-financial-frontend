@@ -13,6 +13,7 @@ import categoryService from "@/services/categoryService";
 import DetailsDrawer from "@/app/components/apps/schedule/DetailsDrawer";
 import purchaseService from "@/services/purchaseService";
 import PurchaseForm from "./PurchaseForm";
+import PurchaseDetailsModal from "@/app/components/apps/logistics/purchase/DetailsModal";
 
 export default function LogisticsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -29,7 +30,7 @@ export default function LogisticsTab({ projectId }) {
     const [openDeliveryFormModal, setOpenDeliveryFormModal] = useState(false);
     const [openViewDelivery, setOpenViewDelivery] = useState(false);
     const [openPurchaseFormModal, setOpenPurchaseFormModal] = useState(false);
-    // const [openViewPurchase, setOpenViewPurchase] = useState(false);
+    const [openViewPurchase, setOpenViewPurchase] = useState(false);
     const [selectedPurchase, setSelectedPurchase] = useState(null);
 
     const fetchDeliveries = useCallback(async () => {
@@ -259,53 +260,36 @@ export default function LogisticsTab({ projectId }) {
                         </Table.Cell>
                     ))}
                     <Table.Cell align="center">Editar</Table.Cell>
-                    {/* <Table.Cell align="center">Ver</Table.Cell> */}
+                    <Table.Cell align="center">Ver</Table.Cell>
                 </Table.Head>
 
                 <Table.Body loading={loading}>
-                    <Table.Cell
-                        render={row => formatDate(row.purchase_date)}
-                        sx={{ opacity: 0.7 }}
-                    />
-                    <Table.Cell
-                        render={row => {
-                            const statusMap = {
-                                'R': { label: 'Compra realizada', color: 'success' },
-                                'C': { label: 'Cancelada', color: 'error' },
-                                'D': { label: 'Distrato', color: 'error' },
-                                'A': { label: 'Aguardando pagamento', color: 'primary' },
-                                'P': { label: 'Pendente', color: 'warning' },
-                                'F': { label: 'Aguardando Previsão de Entrega', color: 'primary' },
-                            };
-                            const statusInfo = statusMap[row.status] || { label: row.status, color: 'default' };
-                            return <Chip label={statusInfo.label} color={statusInfo.color} />;
-                        }}
-                        sx={{ opacity: 0.7 }}
-                    />
-                    <Table.Cell render={row =>
-                        row.delivery_number || '-'}
-                        sx={{ opacity: 0.7 }}
-                    />
-                    <Table.Cell render={row =>
-                        row.supplier?.complete_name}
-                        sx={{ opacity: 0.7 }}
-                    />
-                    <Table.Cell render={row =>
-                        row.project?.product?.description}
-                        sx={{ opacity: 0.7 }}
-                    />
+                    <Table.Cell render={row => formatDate(row.purchase_date)} sx={{ opacity: 0.7 }} />
                     <Table.Cell render={row => {
-                            const deliveryTypeMap = {
-                                'D': 'Entrega Direta',
-                                'C': 'Entrega CD'
-                            };
-                            return deliveryTypeMap[row.delivery_type] || row.delivery_type || '-';
-                        }}
-                        sx={{ opacity: 0.7 }}
-                    />
+                        const statusMap = {
+                            'R': { label: 'Compra realizada', color: 'success' },
+                            'C': { label: 'Cancelada', color: 'error' },
+                            'D': { label: 'Distrato', color: 'error' },
+                            'A': { label: 'Aguardando pagamento', color: 'primary' },
+                            'P': { label: 'Pendente', color: 'warning' },
+                            'F': { label: 'Aguardando Previsão de Entrega', color: 'primary' },
+                        };
+                        const statusInfo = statusMap[row.status] || { label: row.status, color: 'default' };
+                        return <Chip label={statusInfo.label} color={statusInfo.color} />;
+                    }} sx={{ opacity: 0.7 }} />
+                    <Table.Cell render={row => row.delivery_number || '-'} sx={{ opacity: 0.7 }} />
+                    <Table.Cell render={row => row.supplier?.complete_name} sx={{ opacity: 0.7 }} />
+                    <Table.Cell render={row => row.project?.product?.description} sx={{ opacity: 0.7 }} />
+                    <Table.Cell render={row => {
+                        const deliveryTypeMap = {
+                            'D': 'Entrega Direta',
+                            'C': 'Entrega CD'
+                        };
+                        return deliveryTypeMap[row.delivery_type] || row.delivery_type || '-';
+                    }} sx={{ opacity: 0.7 }} />
 
-                    <Table.EditAction onClick={row => { setSelectedPurchase(row.id); setOpenPurchaseFormModal(true);}} />
-                    {/* <Table.ViewAction onClick={row => { setSelectedPurchase(row.id); setOpenViewPurchase(true) }} /> */}
+                    <Table.EditAction onClick={row => { setSelectedPurchase(row.id); setOpenPurchaseFormModal(true); }} />
+                    <Table.ViewAction onClick={row => { setSelectedPurchase(row.id); setOpenViewPurchase(true); }} />
                 </Table.Body>
             </Table.Root>
 
@@ -324,6 +308,8 @@ export default function LogisticsTab({ projectId }) {
                     />
                 </DialogContent>
             </Dialog>
+
+            <PurchaseDetailsModal open={openViewPurchase} onClose={() => {setOpenViewPurchase(false); setSelectedPurchase(null)}} purchaseId={selectedPurchase} />
         </>
     );
 }
