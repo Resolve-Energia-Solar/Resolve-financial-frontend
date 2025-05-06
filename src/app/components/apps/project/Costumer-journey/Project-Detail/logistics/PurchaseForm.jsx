@@ -84,9 +84,14 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
 
     return (
         <Box component="form">
+            <Grid container spacing={4} sx={{ marginBottom: '2rem' }}>
+                <Grid item xs={12}>
+                    <h2>Dados da Compra</h2>
+                </Grid>
+            </Grid>
             <Grid container spacing={4}>
                 {/* Projeto */}
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center', marginBottom: '-6.5px' }}>
                     {!projectId ? (
                         <GenericAsyncAutocompleteInput
                             label="Projeto"
@@ -100,17 +105,36 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                                 }))
                             }
                             error={!!errors?.project}
-                            helperText={errors?.project[0]}
+                            helperText={errors?.project?.[0]}
+                            sx={{
+                                width: '100%',
+                                fontSize: '1rem',
+                                marginBottom: '1.5rem',
+                                '& .MuiInputBase-root': {
+                                    height: '56px',
+                                },
+                            }}
                         />
                     ) : (
                         <TextField
                             fullWidth
                             label="Projeto"
                             value={`${project?.project_number} - ${project?.sale?.customer?.complete_name}`}
+                            error={!!errors?.project}
+                            helperText={errors?.project?.[0]}
                             disabled
+                            sx={{
+                                width: '100%',
+                                fontSize: '1rem',
+                                marginBottom: '1.5rem',
+                                '& .MuiInputBase-root': {
+                                    height: '56px',
+                                },
+                            }}
                         />
                     )}
                 </Grid>
+
                 {/* Fornecedor */}
                 <Grid item xs={12} sm={6}>
                     <GenericAsyncAutocompleteInput
@@ -124,8 +148,17 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         }
                         error={!!errors?.supplier}
                         helperText={errors?.supplier?.[0]}
+                        sx={{
+                            width: '100%',
+                            fontSize: '1rem',
+                            marginBottom: '1.5rem',
+                            '& .MuiInputBase-root': {
+                                height: '56px',
+                            },
+                        }}
                     />
                 </Grid>
+
                 {/* Data de Compra */}
                 <Grid item xs={12} sm={6}>
                     <TextField
@@ -138,8 +171,17 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         InputLabelProps={{ shrink: true }}
                         error={!!errors?.purchase_date}
                         helperText={errors?.purchase_date?.[0]}
+                        sx={{
+                            width: '100%',
+                            fontSize: '1rem',
+                            marginBottom: '1.5rem',
+                            '& .MuiInputBase-root': {
+                                height: '56px',
+                            },
+                        }}
                     />
                 </Grid>
+
                 {/* Data de Previsão de Entrega */}
                 <Grid item xs={12} sm={6}>
                     <TextField
@@ -152,8 +194,17 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         InputLabelProps={{ shrink: true }}
                         error={!!errors?.delivery_forecast}
                         helperText={errors?.delivery_forecast?.[0]}
+                        sx={{
+                            width: '100%',
+                            fontSize: '1rem',
+                            marginBottom: '1.5rem',
+                            '& .MuiInputBase-root': {
+                                height: '56px',
+                            },
+                        }}
                     />
                 </Grid>
+
                 {/* Número de Entrega */}
                 <Grid item xs={12} sm={6}>
                     <TextField
@@ -164,8 +215,17 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         onChange={handleChange}
                         error={!!errors?.delivery_number}
                         helperText={errors?.delivery_number?.[0]}
+                        sx={{
+                            width: '100%',
+                            fontSize: '1rem',
+                            marginBottom: '1.5rem',
+                            '& .MuiInputBase-root': {
+                                height: '56px',
+                            },
+                        }}
                     />
                 </Grid>
+
                 {/* Valor da Compra */}
                 <Grid item xs={12} sm={6}>
                     <TextField
@@ -182,8 +242,17 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         }}
                         error={!!errors?.purchase_value}
                         helperText={errors?.purchase_value?.[0]}
+                        sx={{
+                            width: '100%',
+                            fontSize: '1rem',
+                            marginBottom: '1.5rem',
+                            '& .MuiInputBase-root': {
+                                height: '56px',
+                            },
+                        }}
                     />
                 </Grid>
+
                 {/* Tipo de Entrega */}
                 <Grid item xs={12} sm={6}>
                     <TextField
@@ -195,6 +264,14 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         onChange={handleChange}
                         error={!!errors?.delivery_type}
                         helperText={errors?.delivery_type?.[0]}
+                        sx={{
+                            width: '100%',
+                            fontSize: '1rem',
+                            marginBottom: '1.5rem',
+                            '& .MuiInputBase-root': {
+                                height: '56px',
+                            },
+                        }}
                     >
                         {deliveryTypeOptions.map((opt) => (
                             <MenuItem key={opt.value} value={opt.value}>
@@ -203,6 +280,7 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         ))}
                     </TextField>
                 </Grid>
+
                 {/* Status */}
                 <Grid item xs={12} sm={6}>
                     <TextField
@@ -214,6 +292,14 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         onChange={handleChange}
                         error={!!errors?.status}
                         helperText={errors?.status?.[0]}
+                        sx={{
+                            width: '100%',
+                            fontSize: '1rem',
+                            marginBottom: '1.5rem',
+                            '& .MuiInputBase-root': {
+                                height: '56px',
+                            },
+                        }}
                     >
                         {statusOptions.map((opt) => (
                             <MenuItem key={opt.value} value={opt.value}>
@@ -222,13 +308,15 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         ))}
                     </TextField>
                 </Grid>
+
                 {/* Botão Salvar */}
                 <Grid item xs={12}>
-                    <Button variant="contained" onClick={handleSubmit} fullWidth>
+                    <Button variant="contained" onClick={handleSubmit} fullWidth sx={{ padding: '10px' }}>
                         Salvar
                     </Button>
                 </Grid>
             </Grid>
         </Box>
+
     );
 }
