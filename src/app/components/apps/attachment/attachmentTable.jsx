@@ -26,6 +26,7 @@ const AttachmentTable = ({
   appLabel,
   model,
   onDelete,
+  hideTitle = false,
 }) => {
   const [fetchedAttachments, setFetchedAttachments] = useState([]);
   const [openAttachmentModal, setOpenAttachmentModal] = useState(false);
@@ -84,7 +85,7 @@ const AttachmentTable = ({
   };
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} elevation={3} sx={{ boxShadow: 3, border: '1px solid #e0e0e0' }}>
       <div
         style={{
           display: 'flex',
@@ -94,12 +95,12 @@ const AttachmentTable = ({
           padding: '14px'
         }}
       >
-        <Typography variant="h6">Anexos</Typography>
+        {!!hideTitle && <Typography variant="h6">Anexos</Typography>}
         <Button variant="contained" onClick={() => setOpenAttachmentModal(true)}>
           Adicionar Anexo
         </Button>
       </div>
-      <Table>
+      <Table aria-label="attachments">
         <TableHead>
           <TableRow>
             <TableCell>
@@ -124,7 +125,7 @@ const AttachmentTable = ({
             <TableSkeleton rows={5} columns={4} />
           ) : displayAttachments?.length > 0 ? (
             displayAttachments.map((attachment) => (
-              <TableRow key={attachment?.id || attachment?.file?.name}>
+              <TableRow hover key={attachment?.id || attachment?.file?.name}>
                 <TableCell>
                   {typeof attachment.file === 'string' ? (
                     <Link href={attachment.file} target="_blank" rel="noopener noreferrer">
@@ -152,7 +153,7 @@ const AttachmentTable = ({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={4} align="center">
+              <TableCell colSpan={5} align="center">
                 Nenhum anexo disponível.
               </TableCell>
             </TableRow>

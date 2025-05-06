@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Box, IconButton, Drawer, Skeleton, Tabs, Tab, Typography } from '@mui/material';
+import { Box, IconButton, Drawer, Skeleton, Tabs, Tab, Typography, Card, CardContent } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useSnackbar } from 'notistack';
 import SplitPane from 'react-split-pane';
@@ -67,7 +67,6 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
       ]);
       setProject(proj);
       setProcessId(proc);
-      // Check for 'Vistoria' service with 'Obra' or 'Sombreamento' in final opinion
       const hasObra = proj.field_services?.some(fs =>
         fs.service?.name?.includes('Vistoria') &&
         (fs.final_service_opinion?.name?.includes('Obra') || fs.final_service_opinion?.name?.includes('Sombreamento'))
@@ -95,35 +94,54 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
     hasConstructionTab && { label: 'Obras', content: <ConstructionsTab projectId={projectId} /> },
     { label: 'Contratos', content: <EditSale saleId={project?.sale?.id} /> },
     { label: 'Financeiro', content: <PaymentCard sale={project?.sale?.id} /> },
-    { label: 'Engenharia', content: 
-      <>
-        <EditProjectTab projectId={projectId} />
+    {
+      label: 'Engenharia', content:
+        <>
+          <EditProjectTab projectId={projectId} />
 
-        <Box my={3} borderTop="1px solid #ccc" />
+          <Box my={3} borderTop="1px solid #ccc" />
 
-        <UploadDocument projectId={projectId} />
+          <UploadDocument projectId={projectId} />
 
-        <Box my={3} borderTop="1px solid #ccc" />
+          <Box my={3} borderTop="1px solid #ccc" />
 
-        <CheckListRateio projectId={projectId} label="Checklist" />
-      </>
-     },
-    { label: 'Anexos', content: <><Typography variant="h6">Anexos do Projeto</Typography><AttachmentTable appLabel="resolve_crm" model="project" objectId={projectId} /><Typography variant="h6">Anexos da Venda</Typography><AttachmentTable appLabel="resolve_crm" model="sale" objectId={project?.sale?.id} /></> },
+          <CheckListRateio projectId={projectId} label="Checklist" />
+        </>
+    },
+    {
+      label: 'Anexos',
+      content: (
+        <>
+          <Card sx={{ my: 3, boxShadow: 7 }}>
+            <CardContent>
+              <Typography variant="h6" sx={{ mb: 1 }}>Anexos do Projeto</Typography>
+              <AttachmentTable hideTitle={true} appLabel="resolve_crm" model="project" objectId={projectId} />
+            </CardContent>
+          </Card>
+          <Card sx={{ boxShadow: 3 }}>
+            <CardContent>
+              <Typography variant="h6" sx={{ mb: 1 }}>Anexos do Venda</Typography>
+              <AttachmentTable hideTitle={true} appLabel="resolve_crm" model="sale" objectId={project?.sale?.id} />
+            </CardContent>
+          </Card>
+        </>
+      ),
+    },
     { label: 'Logística', content: <LogisticsTab projectId={projectId} /> },
     { label: 'Instalação', content: <InstallationsTab projectId={projectId} /> },
     { label: 'Homologação', content: <RequestList projectId={projectId} enableFilters={false} enableIndicators={false} /> },
     { label: 'Perdas', content: <LossesTab projectId={projectId} /> },
     { label: 'Histórico', content: <History objectId={projectId} appLabel="resolve_crm" model="project" /> },
     { label: 'Comentários', content: <CommentsTab projectId={projectId} /> },
-  ].filter(Boolean), [project, hasConstructionTab]);
+  ].filter(Boolean), [project, projectId, hasConstructionTab]);
 
   const projectInfoTabs = (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-    <Tabs value={tab} onChange={handleTabChange} variant="scrollable" scrollButtons="auto">
-      {tabsConfig.map((t, i) => <Tab key={i} label={t.label} />)}
-    </Tabs>
-    {tabsConfig.map((t, i) => <TabPanel key={i} value={tab} index={i}>{t.content}</TabPanel>)}
-  </Box>
+      <Tabs value={tab} onChange={handleTabChange} variant="scrollable" scrollButtons="auto">
+        {tabsConfig.map((t, i) => <Tab key={i} label={t.label} />)}
+      </Tabs>
+      {tabsConfig.map((t, i) => <TabPanel key={i} value={tab} index={i}>{t.content}</TabPanel>)}
+    </Box>
   );
 
   return (
