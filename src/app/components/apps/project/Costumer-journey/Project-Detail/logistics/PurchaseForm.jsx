@@ -29,6 +29,7 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
         delivery_forecast: null,
         purchase_value: null,
     });
+    const [errors, setErrors] = useState({});
     const [project, setProject] = useState(null);
 
     useEffect(() => {
@@ -67,12 +68,18 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
     };
 
     const handleSubmit = async () => {
-        if (purchaseId) {
-            await purchaseService.update(purchaseId, formData);
-        } else {
-            await purchaseService.create(formData);
+        try {
+            if (purchaseId) {
+                await purchaseService.update(purchaseId, formData);
+            } else {
+                await purchaseService.create(formData);
+            }
+            onSave();
+        } catch (err) {
+            if (err.response?.data) {
+                setErrors(err.response.data);
+            }
         }
-        onSave();
     };
 
     return (
@@ -92,6 +99,8 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                                     label: p.name || p.product?.description || `Projeto ${p.id}`,
                                 }))
                             }
+                            error={!!errors?.project}
+                            helperText={errors?.project[0]}
                         />
                     ) : (
                         <TextField
@@ -113,6 +122,8 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         mapResponse={(data) =>
                             data.results.map((u) => ({ value: u.id, label: u.complete_name || u.name }))
                         }
+                        error={!!errors?.supplier}
+                        helperText={errors?.supplier?.[0]}
                     />
                 </Grid>
                 {/* Data de Compra */}
@@ -125,6 +136,8 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         value={formData.purchase_date || ""}
                         onChange={handleChange}
                         InputLabelProps={{ shrink: true }}
+                        error={!!errors?.purchase_date}
+                        helperText={errors?.purchase_date?.[0]}
                     />
                 </Grid>
                 {/* Data de Previsão de Entrega */}
@@ -137,6 +150,8 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         value={formData.delivery_forecast || ""}
                         onChange={handleChange}
                         InputLabelProps={{ shrink: true }}
+                        error={!!errors?.delivery_forecast}
+                        helperText={errors?.delivery_forecast?.[0]}
                     />
                 </Grid>
                 {/* Número de Entrega */}
@@ -147,6 +162,8 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         name="delivery_number"
                         value={formData.delivery_number || ""}
                         onChange={handleChange}
+                        error={!!errors?.delivery_number}
+                        helperText={errors?.delivery_number?.[0]}
                     />
                 </Grid>
                 {/* Valor da Compra */}
@@ -163,6 +180,8 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                             startAdornment: <span>R$</span>,
                             inputProps: { step: 0.01, min: 0 },
                         }}
+                        error={!!errors?.purchase_value}
+                        helperText={errors?.purchase_value?.[0]}
                     />
                 </Grid>
                 {/* Tipo de Entrega */}
@@ -174,6 +193,8 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         name="delivery_type"
                         value={formData.delivery_type}
                         onChange={handleChange}
+                        error={!!errors?.delivery_type}
+                        helperText={errors?.delivery_type?.[0]}
                     >
                         {deliveryTypeOptions.map((opt) => (
                             <MenuItem key={opt.value} value={opt.value}>
@@ -191,6 +212,8 @@ export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
                         name="status"
                         value={formData.status}
                         onChange={handleChange}
+                        error={!!errors?.status}
+                        helperText={errors?.status?.[0]}
                     >
                         {statusOptions.map((opt) => (
                             <MenuItem key={opt.value} value={opt.value}>
