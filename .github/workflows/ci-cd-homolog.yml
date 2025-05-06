@@ -46,6 +46,7 @@ jobs:
           echo "NEXT_PUBLIC_SENTRY_DSN=${{ vars.NEXT_PUBLIC_SENTRY_DSN }}" >> .env
           echo "NEXT_PUBLIC_CI=${{ vars.NEXT_PUBLIC_CI }}" >> .env
           echo "NEXT_PUBLIC_RUNTIME=${{ vars.NEXT_PUBLIC_RUNTIME }}" >> .env
+          echo "NEXT_PUBLIC_GOOGLE_MAPS_API_AGENT_ROUTES_KEY=${{ vars.NEXT_PUBLIC_GOOGLE_MAPS_API_AGENT_ROUTES_KEY }}" >> .env
 
       # 4. Build e Push da Imagem Docker
       - name: Build and Push Docker Image
