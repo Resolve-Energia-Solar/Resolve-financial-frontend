@@ -65,7 +65,7 @@ export default function AutoCompleteSituation({
       }
       setLoading(true);
       try {
-        const situations = await situationEnergyService.index({ name__icontains: name });
+        const situations = await situationEnergyService.index({ name__icontains: name, is_deleted: false });
         if (situations && situations.results) {
           const formattedSituations = situations.results.map((situation) => ({
             id: situation.id,
@@ -84,7 +84,7 @@ export default function AutoCompleteSituation({
   const fetchInitialSituations = useCallback(async () => {
     setLoading(true);
     try {
-      const situations = await situationEnergyService.index({ limit: 5 });
+      const situations = await situationEnergyService.index({ limit: 5, is_deleted: false });
       const formattedSituations = situations.results.map((situation) => ({
         id: situation.id,
         name: situation.name,

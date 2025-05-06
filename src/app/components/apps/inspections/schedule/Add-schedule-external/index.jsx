@@ -27,10 +27,17 @@ const ScheduleFormCreateExternal = () => {
   const userPermissions = useSelector((state) => state.user.permissions);
   const hasPermission = (permissions) => {
     if (!permissions) return true;
-    return permissions.some(permission => userPermissions?.includes(permission));
+    return permissions.some((permission) => userPermissions?.includes(permission));
   };
 
-  const { formData, handleChange, handleSave, loading: formLoading, formErrors, success } = useSheduleForm();
+  const {
+    formData,
+    handleChange,
+    handleSave,
+    loading: formLoading,
+    formErrors,
+    success,
+  } = useSheduleForm();
   const SERVICE_INSPECTION_ID = process.env.NEXT_PUBLIC_SERVICE_INSPECTION_ID;
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
@@ -64,11 +71,15 @@ const ScheduleFormCreateExternal = () => {
     console.log('Usuário selecionado:', userId);
     handleChange('customer_id', userId);
 
-    const user = await userService.getUserById(userId, 'addresses', 'id,complete_name,addresses,name');
+    const user = await userService.getUserById(
+      userId,
+      'addresses',
+      'id,complete_name,addresses,name',
+    );
     console.log('Dados do usuário:', user);
 
     if (user.addresses && user.addresses.length > 0) {
-      const formattedAddresses = user.addresses.map(addr => ({
+      const formattedAddresses = user.addresses.map((addr) => ({
         ...addr,
         name: `${addr.street}, ${addr.number}, ${addr.city}, ${addr.state}`,
       }));
@@ -279,9 +290,9 @@ const ScheduleFormCreateExternal = () => {
                     .getHours()
                     .toString()
                     .padStart(2, '0')}:${newValue
-                      .getMinutes()
-                      .toString()
-                      .padStart(2, '0')}:${newValue.getSeconds().toString().padStart(2, '0')}`;
+                    .getMinutes()
+                    .toString()
+                    .padStart(2, '0')}:${newValue.getSeconds().toString().padStart(2, '0')}`;
                   validateChange('schedule_start_time', formattedTime);
                 }
               }}
@@ -299,7 +310,7 @@ const ScheduleFormCreateExternal = () => {
             <AutoCompleteAddress
               onChange={(id) => handleChange('address_id', id)}
               value={formData.address_id}
-              options={userAddresses.map(addr => ({ id: addr.id, name: addr.name }))}
+              options={userAddresses.map((addr) => ({ id: addr.id, name: addr.name }))}
               {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
             />
           </Grid>
