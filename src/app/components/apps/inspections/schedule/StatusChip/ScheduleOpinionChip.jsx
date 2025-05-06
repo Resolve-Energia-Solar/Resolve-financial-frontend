@@ -4,7 +4,7 @@ export default function ScheduleOpinionChip({ status }) {
     if (!status) {
         return <Chip label="Pendente" color="default" />;
     }
-    const lowerStatus = status.toLowerCase();
+    const lowerStatus = String(status).toLowerCase();
     let color = 'default';
 
     if (lowerStatus.includes('solicitado') || lowerStatus.includes('solicito') || lowerStatus.includes('confirmado')) {

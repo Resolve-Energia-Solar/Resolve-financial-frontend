@@ -131,6 +131,7 @@ const ResquestLIstByProject = () => {
             'branch_adjustment_status',
             'new_contact_number_status',
             'final_inspection_status',
+            'supply_adquance_names'
           ].join(','),
           expand:
             'requests_energy_company,sale.customer,homologator,requests_energy_company.type,product',
@@ -459,7 +460,7 @@ const ResquestLIstByProject = () => {
   return (
     <>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2 }}>
-        <Typography variant="h4">Solicitações</Typography>
+        <Typography variant="h4">Homologação</Typography>
 
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={10}>
@@ -591,10 +592,6 @@ const ResquestLIstByProject = () => {
             </TableHead>
             <TableBody>
             {decoratedProjects.map((item) => {
-                const supplyNames =
-                  Array.isArray(item.supply_adquance) && item.supply_adquance.length
-                    ? item.supply_adquance.map((s) => s.name).join(', ')
-                    : '-';
                 return (
                 <TableRow
                   key={item.id}
@@ -651,7 +648,7 @@ const ResquestLIstByProject = () => {
                     <TableCell>
                       <GenericChip status={item.trt_pending} statusMap={trtStatusMap} />
                     </TableCell>
-                  <TableCell>{supplyNames}</TableCell>
+                  <TableCell>{item.supply_adquance_names}</TableCell>
                   <TableCell>
                       <ChipRequestStatus status={item.access_opnion_status} />
                   </TableCell>

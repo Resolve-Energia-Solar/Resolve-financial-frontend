@@ -159,10 +159,10 @@ export default function InstallationsTab({ projectId }) {
                             : "Sem agente"}
                         sx={{ opacity: 0.7 }}
                     />
-                    <Table.Cell render={row => <ScheduleOpinionChip status={row.service_opinion} />}
+                    <Table.Cell render={row => row.service_opinion?.name}
                         sx={{ opacity: 0.7 }}
                     />
-                    <Table.Cell render={row => <ScheduleOpinionChip status={row.final_service_opinion} />}
+                    <Table.Cell render={row => <ScheduleOpinionChip status={row.final_service_opinion?.name} />}
                         sx={{ opacity: 0.7 }}
                     />
 
