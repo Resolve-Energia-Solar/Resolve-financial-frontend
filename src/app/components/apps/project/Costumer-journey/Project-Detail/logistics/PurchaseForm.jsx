@@ -21,13 +21,13 @@ const deliveryTypeOptions = [
 export default function PurchaseForm({ projectId, purchaseId = null, onSave }) {
     const [formData, setFormData] = useState({
         project: projectId || null,
-        supplier: "",
-        delivery_type: "",
+        supplier: null,
+        delivery_type: "C",
         status: "P",
-        delivery_number: "",
-        purchase_date: "",
-        delivery_forecast: "",
-        purchase_value: "",
+        delivery_number: null,
+        purchase_date: new Date().toISOString().split("T")[0],
+        delivery_forecast: null,
+        purchase_value: null,
     });
     const [project, setProject] = useState(null);
 
