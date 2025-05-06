@@ -14,7 +14,7 @@ import {
   Tooltip,
   Grid,
 } from '@mui/material';
-import { IconListDetails } from '@tabler/icons-react';
+import { IconListDetails, IconX } from '@tabler/icons-react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import projectService from '@/services/projectService';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
@@ -29,6 +29,7 @@ import { TableHeader } from "@/app/components/TableHeader";
 import ScheduleOpinionChip from '../../inspections/schedule/StatusChip';
 import StatusFinancialChip from '@/utils/status/FinancialChip';
 import ChipRequest from '../../request/components/auto-complete/ChipRequest';
+import { IconCheck } from '@tabler/icons-react';
 
 const pulse = keyframes`
   0% {
@@ -481,17 +482,26 @@ const ProjectList = ({ onClick }) => {
   const columns = [
     { field: 'sale.customer.complete_name', headerName: 'Cliente', render: r => r.sale.customer.complete_name },
     { field: 'product.name', headerName: 'Produto', render: r => r.product.name },
-    { field: 'signature_date', headerName: 'Data de Contrato', render: r => r.signature_date ? new Date(r.signature_date).toLocaleDateString() : r.id },
-    { field: 'dias', headerName: 'Dias', render: r => r.id },
-    { field: 'sale.branch.name', headerName: 'Unidade', render: r => r.product.params },
-    { field: 'valor', headerName: 'Valor', render: r => r.id },
+    { field: 'signature_date', headerName: 'Data de Contrato', render: r => new Date(r.signature_date).toLocaleDateString() },
+    { field: 'dias', headerName: 'Dias', render: r => {
+        if (!r.sale.signature_date) return '-';
+        const diffMs = Date.now() - new Date(r.sale.signature_date).getTime();
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        return `${diffDays}`;
+      }
+    },
+    { field: 'sale.branch.name', headerName: 'Unidade', render: r => r.sale.branch.name },
+    { field: 'sale.total_value', headerName: 'Valor', render: r => new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }).format(r.sale.total_value) },
     { field: 'process.current_step', headerName: 'Etapa Atual', render: r => r.process.current_step },
     { field: 'sale.status', headerName: 'Status Venda', render: r => <StatusChip status={r.sale.status} /> },
-    { field: 'inspection_status', headerName: 'Status Vistoria', render: r => r.id },
-    { field: 'status_financeiro', headerName: 'Status Financeiro', render: r => r.id },
-    { field: 'documentation_status', headerName: 'Status Documentação', render: r => r.id },
-    { field: 'delivery_status', headerName: 'Status de Entrega', render: r => r.id },
-    { field: 'installation_status', headerName: 'Status de Instalação', render: r => r.id },
+    { field: 'inspection_status', headerName: 'Status Vistoria', render: r => r.fieldServiceStatus?.Vistoria },
+    { field: 'status_financeiro', headerName: 'Status Financeiro', render: r => r.sale.payment_status },
+    { field: 'is_released_to_engineering', headerName: 'Liberado p/ Engenharia', render: r => r.is_released_to_engineering },
+    { field: 'delivery_status', headerName: 'Status de Entrega', render: r => r.fieldServiceStatus?.Entrega },
+    { field: 'installation_status', headerName: 'Status de Instalação', render: r => r.fieldServiceStatus?.Instalação },
     { field: 'homologationStatus', headerName: 'Status Homologação', render: r => r.homologationStatus || '-' },
   ];
 
@@ -780,7 +790,13 @@ const ProjectList = ({ onClick }) => {
               sx={{ opacity: 0.7 }}
             />
             <Table.Cell
-              render={row => (row.is_documentation_completed ? 'Finalizado' : 'Pendente')}
+              render={row => (
+                <Chip
+                  label={row.is_released_to_engineering ? 'Liberado' : 'Bloqueado'}
+                  color={row.is_released_to_engineering ? 'success' : 'error'}
+                  icon={row.is_released_to_engineering ? <IconCheck size={16} /> : <IconX size={16} />}
+                />
+              )}
               sx={{ opacity: 0.7 }}
             />
             <Table.Cell
