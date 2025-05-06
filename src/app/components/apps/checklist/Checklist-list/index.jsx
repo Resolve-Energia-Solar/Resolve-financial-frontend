@@ -25,7 +25,7 @@ import CreateChecklistPage from '../Add-checklist';
 import unitService from '@/services/unitService';
 import SupplyChip from '../components/SupplyChip';
 
-const CheckListRateio = ({ projectId = null, canEdit = true }) => {
+const CheckListRateio = ({ projectId = null, canEdit = true, label }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedUnitId, setSelectedUnitId] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(null);
@@ -86,6 +86,11 @@ const CheckListRateio = ({ projectId = null, canEdit = true }) => {
 
   return (
     <Box>
+      {label && (
+      <Typography variant="h6" gutterBottom>
+        {label}
+      </Typography>
+    )}
       <Paper variant="outlined">
         <TableContainer sx={{ whiteSpace: { xs: 'nowrap', md: 'unset' } }}>
           <Table>

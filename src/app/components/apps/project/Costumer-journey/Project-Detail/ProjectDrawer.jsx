@@ -95,7 +95,19 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
     hasConstructionTab && { label: 'Obras', content: <ConstructionsTab projectId={projectId} /> },
     { label: 'Contratos', content: <EditSale saleId={project?.sale?.id} /> },
     { label: 'Financeiro', content: <PaymentCard sale={project?.sale?.id} /> },
-    { label: 'Engenharia', content: <><EditProjectTab projectId={projectId} /><UploadDocument projectId={projectId} /><CheckListRateio projectId={projectId} /></> },
+    { label: 'Engenharia', content: 
+      <>
+        <EditProjectTab projectId={projectId} />
+
+        <Box my={3} borderTop="1px solid #ccc" />
+
+        <UploadDocument projectId={projectId} />
+
+        <Box my={3} borderTop="1px solid #ccc" />
+
+        <CheckListRateio projectId={projectId} label="Checklist" />
+      </>
+     },
     { label: 'Anexos', content: <><Typography variant="h6">Anexos do Projeto</Typography><AttachmentTable appLabel="resolve_crm" model="project" objectId={projectId} /><Typography variant="h6">Anexos da Venda</Typography><AttachmentTable appLabel="resolve_crm" model="sale" objectId={project?.sale?.id} /></> },
     { label: 'Logística', content: <LogisticsTab projectId={projectId} /> },
     { label: 'Instalação', content: <InstallationsTab projectId={projectId} /> },
