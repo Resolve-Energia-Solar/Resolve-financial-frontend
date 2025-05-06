@@ -6,13 +6,13 @@ import UserCard from "../../../../users/userCard";
 import ScheduleFromProjectForm from "../../../modal/ScheduleFromProjectForm";
 import { formatDate } from "@/utils/dateUtils";
 import { Table } from "@/app/components/Table";
-import { useTheme, Dialog, DialogContent } from "@mui/material";
+import { Dialog, DialogContent } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
 import categoryService from "@/services/categoryService";
-import ViewInspection from "./View-inspection";
 import ProjectDetailDrawer from "../ProjectDrawer";
 import DetailsDrawer from "@/app/components/apps/schedule/DetailsDrawer";
 import ScheduleOpinionChip from "@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip";
+import projectService from "@/services/projectService";
 
 export default function InspectionsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -20,11 +20,10 @@ export default function InspectionsTab({ projectId }) {
     const [loading, setLoading] = useState(true)
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
-    const [principalId, setPrincipalId] = useState(null)
+    const [mainId, setMainId] = useState(null)
     const [categoryId, setCategoryId] = useState(null);
     const [selectedInspection, setSelectedInspection] = useState(null);
 
-    const theme = useTheme();
     const [openDrawer, setOpenDrawer] = useState(false);
     const [selectedProjectId, setSelectedProjectId] = useState(null);
 
@@ -37,6 +36,28 @@ export default function InspectionsTab({ projectId }) {
 
     const [openInspectionFormModal, setOpenInspectionFormModal] = useState(false);
     const [openViewInspection, setOpenViewInspection] = useState(false);
+
+    const fetchMainInspection = useCallback(async () => {
+        if (!projectId) return;
+        setLoading(true);
+        try {
+            const response = await projectService.find(projectId, {
+                fields: ['id', 'inspection']
+            });
+            if (response.inspection) {
+                setMainId(response.inspection.id);
+            }
+        } catch (error) {
+            enqueueSnackbar(`Erro ao carregar a vistoria principal: ${error.message}`, { variant: "error" });
+        } finally {
+            setLoading(false);
+        }
+    }, [projectId, enqueueSnackbar]);
+
+    useEffect(() => {
+        fetchMainInspection();
+    }, [fetchMainInspection]);
+
 
     const fetchInspections = useCallback(async () => {
         if (!projectId) return;
@@ -57,7 +78,7 @@ export default function InspectionsTab({ projectId }) {
                     'final_service_opinion.name',
                     'project.products',
                     'protocol',
-                    'observation'
+                    'observation',
                 ].join(','),
                 expand: 'address,products,scheduled_agent,service,final_service_opinion,observation,protocol,project',
                 project__in: projectId,
@@ -89,6 +110,21 @@ export default function InspectionsTab({ projectId }) {
         setOpenInspectionFormModal(false);
         setSelectedInspection(null);
         await fetchInspections();
+    };
+
+    const handleSwitchMainInspection = async (id) => {
+        setLoading(true);
+        try {
+            const response = await projectService.update(projectId, { inspection: id });
+            if (response) {
+                setMainId(id);
+                enqueueSnackbar("Vistoria principal atualizada com sucesso", { variant: "success" });
+            }
+        } catch (error) {
+            enqueueSnackbar(`Erro ao atualizar vistoria principal: ${error.message}`, { variant: "error" });
+        } finally {
+            setLoading(false);
+        }
     };
 
     const products = inspections.map(i => i.project.products).flat();
@@ -191,25 +227,9 @@ export default function InspectionsTab({ projectId }) {
                     }}
                     />
                     <Table.SwitchAction
-                        isSelected={r => r.project?.inspection === r.id}
-                        onToggle={(r, nextChecked) => {
-                            const nextValue = nextChecked ? r.id : null;
-                            setInspections(prev =>
-                                prev.map(r =>
-                                    r.id === row.id
-                                        ? {
-                                            ...r,
-                                            project: {
-                                                ...r.project,
-                                                inspection: nextValue
-                                            },
-                                        }
-                                        : r
-                                )
-                            );
-                        }}
+                        isSelected={r => mainId === r.id}
+                        onToggle={(r) => { handleSwitchMainInspection(r.id) }}
                     />
-
                 </Table.Body>
             </Table.Root>
 
