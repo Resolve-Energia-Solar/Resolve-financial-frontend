@@ -34,7 +34,7 @@ class ErrorBoundary extends React.Component {
             style={{ width: '65vw', marginBottom: '20px' }}
           />
           <Typography variant="h4" gutterBottom>
-            Estamos em manutenção. Tente novamente mais tarde.
+            ENTRE EM CONTATO COM A EQUIPE DE TI IMEDIATAMENTE!
           </Typography>
         </Box>
       );
