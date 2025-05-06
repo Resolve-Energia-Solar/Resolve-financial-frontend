@@ -105,6 +105,8 @@ export default function CreateCommercialSchedule({ onClose, onRefresh }) {
     }
   };
 
+  console.log('formData', formData);
+
   return (
     <>
       <Grid container spacing={3}>
@@ -270,15 +272,15 @@ export default function CreateCommercialSchedule({ onClose, onRefresh }) {
                 }
                 error={!!formErrors.address}
                 helperText={formErrors.address}
-                renderCreateModal={({ open, onClose, onCreate, newObjectData, setNewObjectData }) =>
+                renderCreateModal={({ open, onClose }) =>
                   <CreateAddressPage
                     open={open}
                     onClose={onClose}
                     userId={clientSelected}
                     onAdd={created => {
                       console.log('created', created);
-                      setSelectedAddress(created);
-                      handleChange('address', created);
+                      setSelectedAddress(created.id);
+                      handleChange('address', created.id);
                       onClose();
                     }}
                   />

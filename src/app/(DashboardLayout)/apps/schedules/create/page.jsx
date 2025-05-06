@@ -681,7 +681,10 @@ const CreateSchedulePage = () => {
                         onClose={onClose}
                         userId={formData.customer?.value}
                         onAdd={created => {
-                          handleChange('address', created);
+                          setFormData({
+                            ...formData,
+                            address: { label: created.complete_address, value: created.id },
+                          });
                           onClose();
                         }}
                       />
