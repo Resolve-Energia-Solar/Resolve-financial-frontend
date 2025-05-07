@@ -13,6 +13,7 @@ import ProjectDetailDrawer from "../ProjectDrawer";
 import DetailsDrawer from "@/app/components/apps/schedule/DetailsDrawer";
 import ScheduleOpinionChip from "@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip";
 import projectService from "@/services/projectService";
+import { Add } from "@mui/icons-material";
 
 export default function InspectionsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -154,6 +155,7 @@ export default function InspectionsTab({ projectId }) {
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar vistoria"
+                    icon={<Add />}
                     onButtonClick={() => setOpenInspectionFormModal(true)}
                     sx={{
                         width: 200,

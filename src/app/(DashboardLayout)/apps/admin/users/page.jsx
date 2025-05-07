@@ -12,6 +12,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import PersonIcon from '@mui/icons-material/Person';
 import BusinessIcon from '@mui/icons-material/Business';
 import UserForm from '@/app/components/apps/users/UserForm';
+import { Add } from '@mui/icons-material';
 
 const UserList = () => {
   const [loading, setLoading] = useState(true);
@@ -167,6 +168,7 @@ const UserList = () => {
         />
         <TableHeader.Button
           buttonLabel="Adicionar funcionário"
+          icon={<Add />}
           onButtonClick={() => { console.log('Adicionar funcionário'); }}
           sx={{
             width: 200,

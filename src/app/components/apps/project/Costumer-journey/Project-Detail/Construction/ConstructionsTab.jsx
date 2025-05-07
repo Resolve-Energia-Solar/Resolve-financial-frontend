@@ -20,7 +20,7 @@ import ScheduleFromProjectForm from '../../../modal/ScheduleFromProjectForm'
 import ConstructionFormModal from './ConstructionFormModal'
 import { IconEdit } from '@tabler/icons-react'
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput'
-import { set } from 'lodash'
+import { Add } from '@mui/icons-material'
 
 export default function ConstructionsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -267,6 +267,7 @@ export default function ConstructionsTab({ projectId }) {
                                             />
                                             <TableHeader.Button
                                                 buttonLabel="Adicionar Solicitação"
+                                                icon={<Add />}
                                                 onButtonClick={() => {
                                                     setOpenFinancialRecordSelectModal(true)
                                                     setSelectedConstructionId(c.id)
@@ -342,6 +343,7 @@ export default function ConstructionsTab({ projectId }) {
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar serviço de obra"
+                    icon={<Add />}
                     onButtonClick={() => setOpenConstructionServiceFormModal(true)}
                     sx={{
                         width: 250,

@@ -14,6 +14,7 @@ import DetailsDrawer from "@/app/components/apps/schedule/DetailsDrawer";
 import purchaseService from "@/services/purchaseService";
 import PurchaseForm from "./PurchaseForm";
 import PurchaseDetailsModal from "@/app/components/apps/logistics/purchase/DetailsModal";
+import { Add } from "@mui/icons-material";
 
 export default function LogisticsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -144,6 +145,7 @@ export default function LogisticsTab({ projectId }) {
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar entrega"
+                    icon={<Add />}
                     onButtonClick={() => setOpenDeliveryFormModal(true)}
                     sx={{
                         width: 200,
@@ -234,6 +236,7 @@ export default function LogisticsTab({ projectId }) {
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar compra"
+                    icon={<Add />}
                     onButtonClick={() => {
                         setOpenPurchaseFormModal(true);
                         setSelectedPurchase(null);
@@ -309,7 +312,7 @@ export default function LogisticsTab({ projectId }) {
                 </DialogContent>
             </Dialog>
 
-            <PurchaseDetailsModal open={openViewPurchase} onClose={() => {setOpenViewPurchase(false); setSelectedPurchase(null)}} purchaseId={selectedPurchase} />
+            <PurchaseDetailsModal open={openViewPurchase} onClose={() => { setOpenViewPurchase(false); setSelectedPurchase(null) }} purchaseId={selectedPurchase} />
         </>
     );
 }

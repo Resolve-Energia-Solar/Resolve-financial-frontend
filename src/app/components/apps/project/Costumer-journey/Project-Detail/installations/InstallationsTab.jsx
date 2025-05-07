@@ -13,6 +13,7 @@ import { useTheme, alpha, Dialog, DialogContent } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
 import categoryService from "@/services/categoryService";
 import DetailsDrawer from "@/app/components/apps/schedule/DetailsDrawer";
+import { Add } from "@mui/icons-material";
 
 export default function InstallationsTab({ projectId }) {
     const { enqueueSnackbar } = useSnackbar()
@@ -102,6 +103,7 @@ export default function InstallationsTab({ projectId }) {
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar instalação"
+                    icon={<Add />}
                     onButtonClick={() => setOpenInstallationFormModal(true)}
                     sx={{
                         width: 200,
