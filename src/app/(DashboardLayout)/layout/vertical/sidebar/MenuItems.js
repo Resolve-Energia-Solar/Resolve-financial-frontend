@@ -158,14 +158,14 @@ const Menuitems = [
     title: 'Jornada do cliente',
     icon: IconRuler,
     href: '/apps/project',
-    permissions: ['resolve_crm.view_project'],
+    permissions: ['resolve_crm.can_view_journey'],
   },
   {
     id: uniqueId(),
     title: 'Engenharia',
     icon: IconTools,
     href: '',
-    permissions: ['resolve_crm.view_project'],
+    permissions: ['resolve_crm.can_view_journey'],
     children: [
       // {
       //   id: uniqueId(),
@@ -179,7 +179,7 @@ const Menuitems = [
         title: 'Homologação',
         icon: IconFileArrowRight,
         href: '/apps/request',
-        permissions: ['resolve_crm.view_project'],
+        permissions: ['resolve_crm.can_view_journey'],
       },
     ],
   },
