@@ -54,6 +54,9 @@ const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
             'schedule_date',
             'schedule_start_time',
             'schedule_end_time',
+            'going_to_location_at',
+            'execution_started_at',
+            'execution_finished_at',
             'status',
             'service.name',
             'project.id',
@@ -263,12 +266,74 @@ const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
                       <Typography variant="body1" gutterBottom>
                         <strong>Data do agendamento:</strong> {formatDate(schedule?.schedule_date)}
                       </Typography>
-                      <Typography variant="body1" gutterBottom>
-                        <strong>Início:</strong> {schedule?.schedule_start_time}
-                      </Typography>
-                      <Typography variant="body1">
-                        <strong>Fim:</strong> {schedule?.schedule_end_time}
-                      </Typography>
+
+                      {schedule.going_to_location_at && (
+                        <Box sx={{ mt: 2, border: '1px solid #ccc', p: 2, borderRadius: 1 }}>
+                          <Typography variant="subtitle" gutterBottom>Dados de Duração</Typography>
+                          <Divider sx={{ mb: 2 }} />
+                          <Typography variant="body1" gutterBottom>
+                            <strong>Início do deslocamento:</strong>{' '}
+                            {new Date(schedule.going_to_location_at).toLocaleTimeString('pt-BR', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit'
+                            })}
+                          </Typography>
+                          <Typography variant="body1" gutterBottom>
+                            <strong>Iniciado em:</strong>{' '}
+                            {new Date(schedule.execution_started_at).toLocaleTimeString('pt-BR', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit'
+                            })}
+                          </Typography>
+                          <Typography variant="body1" gutterBottom>
+                            <strong>Finalizado em:</strong>{' '}
+                            {new Date(schedule.execution_finished_at).toLocaleTimeString('pt-BR', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit'
+                            })}
+                          </Typography>
+
+                          {/* Duração sem descolamento */}
+                          <Typography variant="body1" gutterBottom>
+                            <strong>Duração sem descolamento:</strong>{' '}
+                            {(() => {
+                              const started = new Date(schedule.execution_started_at);
+                              const finished = new Date(schedule.execution_finished_at);
+                              const duration = finished - started;
+                              const hours = Math.floor(duration / 3600000);
+                              const minutes = Math.floor((duration % 3600000) / 60000);
+                              const seconds = Math.floor((duration % 60000) / 1000);
+                              return `${hours}h ${minutes}m ${seconds}s`;
+                            })()}
+                          </Typography>
+
+                          {/* Duração total */}
+                          <Typography variant="body1" gutterBottom>
+                            <strong>Duração total:</strong>{' '}
+                            {(() => {
+                              const goingTo = new Date(schedule.going_to_location_at);
+                              const finished = new Date(schedule.execution_finished_at);
+                              const duration = finished - goingTo;
+                              const hours = Math.floor(duration / 3600000);
+                              const minutes = Math.floor((duration % 3600000) / 60000);
+                              const seconds = Math.floor((duration % 60000) / 1000);
+                              return `${hours}h ${minutes}m ${seconds}s`;
+                            })()}
+                          </Typography>
+                        </Box>
+                      )}
                     </CardContent>
                   </Card>
 
