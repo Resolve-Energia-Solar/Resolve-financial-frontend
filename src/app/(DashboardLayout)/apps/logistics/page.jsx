@@ -9,6 +9,7 @@ import { TableHeader } from "@/app/components/TableHeader";
 import StatusChip from '@/utils/status/DocumentStatusIcon';
 import { FilterAlt } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
+import { Chip } from '@mui/material';
 
 const LogisticsDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -23,7 +24,7 @@ const LogisticsDashboard = () => {
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await projectService.index({ user_types: 3, fields: 'id,project_number,sale.customer.complete_name,product.description,address.complete_address,sale.status', expand: 'sale.customer,product,address', page: page + 1, limit: rowsPerPage });
+      const response = await projectService.index({ user_types: 3, fields: 'id,project_number,sale.customer.complete_name,product.description,address.complete_address,sale.status,purchase_status,delivery_status', expand: 'sale.customer,product,address', page: page + 1, limit: rowsPerPage, metrics: 'purchase_status,delivery_status' });
       setProjects(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {
@@ -73,12 +74,12 @@ const LogisticsDashboard = () => {
     {
       field: 'purchase_status',
       headerName: 'Status da Compra',
-      render: r => { /* Logic for purchase status */ }
+      render: r => <Chip label={r.purchase_status} />
     },
     {
       field: 'delivery_status',
       headerName: 'Status da Entrega',
-      render: r => { /* Logic for delivery status */ }
+      render: r => <Chip label={r.delivery_status} />
     },
   ];
 
