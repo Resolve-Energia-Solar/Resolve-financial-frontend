@@ -9,7 +9,7 @@ import { TableHeader } from "@/app/components/TableHeader";
 import StatusChip from '@/utils/status/DocumentStatusIcon';
 import { FilterAlt } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
-import { Chip } from '@mui/material';
+import { Chip, Box, Typography } from '@mui/material';
 import BlockIcon from '@mui/icons-material/Block';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -20,9 +20,18 @@ import CreditCardIcon from '@mui/icons-material/CreditCard';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import EventIcon from '@mui/icons-material/Event';
 
+const INDICATORS_STATUS_COLORS = {
+  error: { bg: '#F8D7DA', text: '#721C24' },
+  warning: { bg: '#FFF3CD', text: '#856404' },
+  success: { bg: '#D4EDDA', text: '#155724' },
+  info: { bg: '#D1ECF1', text: '#0C5460' },
+  grey: { bg: '#E2E3E5', text: '#41464B' }
+};
+
 const LogisticsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
+  const [indicators, setIndicators] = useState({ purchase_status: {}, delivery_status: {}, total_count: 0 });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
@@ -43,9 +52,19 @@ const LogisticsDashboard = () => {
     }
   }, [page, rowsPerPage, enqueueSnackbar]);
 
+  const fetchIndicators = useCallback(async () => {
+    try {
+      const response = await projectService.logisticsIndicators();
+      setIndicators(response.indicators);
+    } catch (error) {
+      enqueueSnackbar('Erro ao carregar indicadores', { variant: 'error' });
+    }
+  }, [enqueueSnackbar]);
+
   useEffect(() => {
     fetchProjects();
-  }, [fetchProjects]);
+    fetchIndicators();
+  }, [fetchProjects, fetchIndicators]);
 
   const BCrumb = [
     { to: '/', title: 'Home' },
@@ -141,6 +160,61 @@ const LogisticsDashboard = () => {
   return (
     <PageContainer title={'Projetos'}>
       <Breadcrumb items={BCrumb} />
+
+      {/* Indicadores */}
+      <Box sx={{ width: '100%', mb: 2 }}>
+        <Typography variant="h6">Indicadores de Compra</Typography>
+        <Box sx={{ width: '100%', display: 'flex', gap: 2, flexWrap: 'wrap', mt: 1 }}>
+          {Object.entries(indicators.purchase_status).map(([status, count]) => {
+            const { label, color, icon } = getPurchaseChipProps(status);
+            const colors = INDICATORS_STATUS_COLORS[color] || INDICATORS_STATUS_COLORS.grey;
+            return (
+              <Box key={status} sx={{
+                flex: '1 1 150px',
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: colors.bg,
+                color: colors.text,
+                borderRadius: 1
+              }}>
+                {icon}
+                <Typography variant="subtitle2" sx={{ mt: 1 }}>{label}</Typography>
+                <Typography variant="h6">{count}</Typography>
+              </Box>
+            );
+          })}
+        </Box>
+
+        <Typography variant="h6" sx={{ mt: 2 }}>Indicadores de Entrega</Typography>
+        <Box sx={{ width: '100%', display: 'flex', gap: 2, flexWrap: 'wrap', mt: 1 }}>
+          {Object.entries(indicators.delivery_status).map(([status, count]) => {
+            const { label, color, icon } = getDeliveryChipProps(status);
+            const colors = INDICATORS_STATUS_COLORS[color] || INDICATORS_STATUS_COLORS.grey;
+            return (
+              <Box key={status} sx={{
+                flex: '1 1 150px',
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: colors.bg,
+                color: colors.text,
+                borderRadius: 1
+              }}>
+                {icon}
+                <Typography variant="subtitle2" sx={{ mt: 1 }}>{label}</Typography>
+                <Typography variant="h6">{count}</Typography>
+              </Box>
+            );
+          })}
+        </Box>
+      </Box>
+
+      {/* Tabela de Projetos */}
       <TableHeader.Root>
         <TableHeader.Title
           title="Total"
