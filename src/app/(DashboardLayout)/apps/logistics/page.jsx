@@ -19,6 +19,8 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import EventIcon from '@mui/icons-material/Event';
+import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
+import filterConfig from './filterConfig';
 
 const INDICATORS_STATUS_COLORS = {
   error: { bg: '#F8D7DA', text: '#721C24' },
@@ -33,6 +35,8 @@ const LogisticsDashboard = () => {
   const [projects, setProjects] = useState([]);
   const [indicators, setIndicators] = useState({ purchase_status: {}, delivery_status: {}, total_count: 0 });
   const [loadingIndicators, setLoadingIndicators] = useState(true);
+  const [filters, setFilters] = useState({});
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
@@ -43,7 +47,7 @@ const LogisticsDashboard = () => {
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await projectService.index({ user_types: 3, fields: 'id,project_number,sale.customer.complete_name,product.description,address.complete_address,sale.status,purchase_status,delivery_status', expand: 'sale.customer,product,address', page: page + 1, limit: rowsPerPage, metrics: 'purchase_status,delivery_status' });
+      const response = await projectService.index({ user_types: 3, fields: 'id,project_number,sale.customer.complete_name,product.description,address.complete_address,sale.status,purchase_status,delivery_status', expand: 'sale.customer,product,address', metrics: 'purchase_status,delivery_status', page: page + 1, limit: rowsPerPage, ...filters });
       setProjects(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {
@@ -51,7 +55,7 @@ const LogisticsDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, rowsPerPage, enqueueSnackbar]);
+  }, [page, rowsPerPage, filters, enqueueSnackbar]);
 
   const fetchIndicators = useCallback(async () => {
     setLoadingIndicators(true);
@@ -144,7 +148,7 @@ const LogisticsDashboard = () => {
       field: 'delivery_status',
       headerName: 'Status da Entrega',
       render: r => <Chip {...getDeliveryChipProps(r.delivery_status)} />
-    },
+    }
   ];
 
   const handleRowClick = (row) => {
@@ -165,7 +169,7 @@ const LogisticsDashboard = () => {
     <PageContainer title={'Projetos'}>
       <Breadcrumb items={BCrumb} />
 
-      {/* /* Indicadores */}
+      {/* Indicadores */}
       <Box sx={{ width: '100%', mb: 2 }}>
         <Typography variant="h6">Indicadores de Compra</Typography>
         {loadingIndicators ? (
@@ -280,6 +284,14 @@ const LogisticsDashboard = () => {
         )}
       </Box>
 
+      <GenericFilterDrawer
+        filters={filterConfig}
+        initialValues={filters}
+        open={filterDrawerOpen}
+        onClose={() => setFilterDrawerOpen(false)}
+        onApply={(newFilters) => setFilters(newFilters)}
+      />
+
       {/* Tabela de Projetos */}
       <TableHeader.Root>
         <TableHeader.Title
@@ -290,7 +302,7 @@ const LogisticsDashboard = () => {
         <TableHeader.Button
           buttonLabel="Filtros"
           icon={<FilterAlt />}
-          onButtonClick={() => { console.log('Filtros'); }}
+          onButtonClick={() => { setFilterDrawerOpen(true); }}
           sx={{ width: 200, marginLeft: 2 }}
         />
       </TableHeader.Root>
