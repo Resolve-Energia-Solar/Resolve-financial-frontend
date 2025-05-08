@@ -9,7 +9,7 @@ import { TableHeader } from "@/app/components/TableHeader";
 import StatusChip from '@/utils/status/DocumentStatusIcon';
 import { FilterAlt } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
-import { Chip, Box, Typography } from '@mui/material';
+import { Chip, Box, Typography, Skeleton } from '@mui/material';
 import BlockIcon from '@mui/icons-material/Block';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -32,6 +32,7 @@ const LogisticsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [indicators, setIndicators] = useState({ purchase_status: {}, delivery_status: {}, total_count: 0 });
+  const [loadingIndicators, setLoadingIndicators] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
@@ -53,11 +54,14 @@ const LogisticsDashboard = () => {
   }, [page, rowsPerPage, enqueueSnackbar]);
 
   const fetchIndicators = useCallback(async () => {
+    setLoadingIndicators(true);
     try {
-      const response = await projectService.logisticsIndicators();
-      setIndicators(response.indicators);
-    } catch (error) {
+      const { indicators } = await projectService.logisticsIndicators();
+      setIndicators(indicators);
+    } catch {
       enqueueSnackbar('Erro ao carregar indicadores', { variant: 'error' });
+    } finally {
+      setLoadingIndicators(false);
     }
   }, [enqueueSnackbar]);
 
@@ -161,57 +165,119 @@ const LogisticsDashboard = () => {
     <PageContainer title={'Projetos'}>
       <Breadcrumb items={BCrumb} />
 
-      {/* Indicadores */}
+      {/* /* Indicadores */}
       <Box sx={{ width: '100%', mb: 2 }}>
         <Typography variant="h6">Indicadores de Compra</Typography>
-        <Box sx={{ width: '100%', display: 'flex', gap: 2, flexWrap: 'wrap', mt: 1 }}>
-          {Object.entries(indicators.purchase_status).map(([status, count]) => {
-            const { label, color, icon } = getPurchaseChipProps(status);
-            const colors = INDICATORS_STATUS_COLORS[color] || INDICATORS_STATUS_COLORS.grey;
-            return (
-              <Box key={status} sx={{
-                flex: '1 1 150px',
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: colors.bg,
-                color: colors.text,
-                borderRadius: 1
-              }}>
-                {icon}
-                <Typography variant="subtitle2" sx={{ mt: 1 }}>{label}</Typography>
-                <Typography variant="h6">{count}</Typography>
-              </Box>
-            );
-          })}
-        </Box>
+        {loadingIndicators ? (
+          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, mb: 4, background: '#f5f5f5', p: 2 }}>
+            {Array.from({ length: 7 }).map((_, index) => (
+              <Skeleton
+                key={index}
+                variant="rectangular"
+                width="100%"
+                height={120}
+                sx={{
+                  flex: '1 1 150px',
+                  p: 2,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#E2E3E5',
+                  borderRadius: 1,
+                  maxWidth: '170px',
+                  aspectRatio: '4 / 3',
+                  textAlign: 'center',
+                  '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' }
+                }}
+              />
+            ))}
+          </Box>
+        ) : (
+          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, mb: 4, background: '#f5f5f5', p: 2 }}>
+            {Object.entries(indicators.purchase_status).map(([status, count]) => {
+              const { label, color, icon } = getPurchaseChipProps(status);
+              const colors = INDICATORS_STATUS_COLORS[color] || INDICATORS_STATUS_COLORS.grey;
+              return (
+                <Box key={status} sx={{
+                  flex: '1 1 150px',
+                  p: 2,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: colors.bg,
+                  color: colors.text,
+                  borderRadius: 1,
+                  maxWidth: '170px',
+                  aspectRatio: '4 / 3',
+                  textAlign: 'center',
+                  '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' }
+                }}>
+                  {icon}
+                  <Typography variant="subtitle2" sx={{ mt: 1 }}>{label}</Typography>
+                  <Typography variant="h6">{count}</Typography>
+                </Box>
+              );
+            })}
+          </Box>
+        )}
 
         <Typography variant="h6" sx={{ mt: 2 }}>Indicadores de Entrega</Typography>
-        <Box sx={{ width: '100%', display: 'flex', gap: 2, flexWrap: 'wrap', mt: 1 }}>
-          {Object.entries(indicators.delivery_status).map(([status, count]) => {
-            const { label, color, icon } = getDeliveryChipProps(status);
-            const colors = INDICATORS_STATUS_COLORS[color] || INDICATORS_STATUS_COLORS.grey;
-            return (
-              <Box key={status} sx={{
-                flex: '1 1 150px',
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: colors.bg,
-                color: colors.text,
-                borderRadius: 1
-              }}>
-                {icon}
-                <Typography variant="subtitle2" sx={{ mt: 1 }}>{label}</Typography>
-                <Typography variant="h6">{count}</Typography>
-              </Box>
-            );
-          })}
-        </Box>
+        {loadingIndicators ? (
+          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, mb: 4, background: '#f5f5f5', p: 2 }}>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <Skeleton
+                key={index}
+                variant="rectangular"
+                width="100%"
+                height={120}
+                sx={{
+                  flex: '1 1 150px',
+                  p: 2,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#E2E3E5',
+                  borderRadius: 1,
+                  maxWidth: '170px',
+                  aspectRatio: '4 / 3',
+                  textAlign: 'center',
+                  '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' }
+                }}
+              />
+            ))}
+          </Box>
+        ) : (
+          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, background: '#f5f5f5', p: 2 }}>
+            {Object.entries(indicators.delivery_status).map(([status, count]) => {
+              const { label, color, icon } = getDeliveryChipProps(status);
+              const colors = INDICATORS_STATUS_COLORS[color] || INDICATORS_STATUS_COLORS.grey;
+              return (
+                <Box key={status} sx={{
+                  flex: '1 1 150px',
+                  p: 2,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: colors.bg,
+                  color: colors.text,
+                  borderRadius: 1,
+                  maxWidth: '170px',
+                  aspectRatio: '4 / 3',
+                  textAlign: 'center',
+                  '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' }
+                }}>
+                  {icon}
+                  <Typography variant="subtitle2" sx={{ mt: 1 }}>{label}</Typography>
+                  <Typography variant="h6">{count}</Typography>
+                </Box>
+              );
+            })}
+          </Box>
+        )}
       </Box>
 
       {/* Tabela de Projetos */}
