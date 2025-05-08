@@ -10,6 +10,15 @@ import StatusChip from '@/utils/status/DocumentStatusIcon';
 import { FilterAlt } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
 import { Chip } from '@mui/material';
+import BlockIcon from '@mui/icons-material/Block';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import EventIcon from '@mui/icons-material/Event';
 
 const LogisticsDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -38,16 +47,48 @@ const LogisticsDashboard = () => {
     fetchProjects();
   }, [fetchProjects]);
 
-
   const BCrumb = [
-    {
-      to: '/',
-      title: 'Home',
-    },
-    {
-      title: 'Logística',
-    },
+    { to: '/', title: 'Home' },
+    { title: 'Logística' },
   ];
+
+  const getPurchaseChipProps = (status) => {
+    switch (status) {
+      case 'Bloqueado':
+        return { label: status, color: 'error', icon: <BlockIcon /> };
+      case 'Pendente':
+        return { label: status, color: 'warning', icon: <HourglassEmptyIcon /> };
+      case 'Compra Realizada':
+        return { label: status, color: 'success', icon: <CheckCircleIcon /> };
+      case 'Cancelado':
+        return { label: status, color: 'error', icon: <CancelIcon /> };
+      case 'Distrato':
+        return { label: status, color: 'default', icon: <RemoveCircleOutlineIcon /> };
+      case 'Aguardando Previsão de Entrega':
+        return { label: status, color: 'info', icon: <AccessTimeIcon /> };
+      case 'Aguardando Pagamento':
+        return { label: status, color: 'warning', icon: <CreditCardIcon /> };
+      default:
+        return { label: status, color: 'default' };
+    }
+  };
+
+  const getDeliveryChipProps = (status) => {
+    switch (status) {
+      case 'Bloqueado':
+        return { label: status, color: 'error', icon: <BlockIcon /> };
+      case 'Liberado':
+        return { label: status, color: 'info', icon: <LocalShippingIcon /> };
+      case 'Agendado':
+        return { label: status, color: 'info', icon: <EventIcon /> };
+      case 'Entregue':
+        return { label: status, color: 'success', icon: <CheckCircleIcon /> };
+      case 'Cancelado':
+        return { label: status, color: 'error', icon: <CancelIcon /> };
+      default:
+        return { label: status, color: 'default' };
+    }
+  };
 
   const columns = [
     {
@@ -74,19 +115,19 @@ const LogisticsDashboard = () => {
     {
       field: 'purchase_status',
       headerName: 'Status da Compra',
-      render: r => <Chip label={r.purchase_status} />
+      render: r => <Chip {...getPurchaseChipProps(r.purchase_status)} />
     },
     {
       field: 'delivery_status',
       headerName: 'Status da Entrega',
-      render: r => <Chip label={r.delivery_status} />
+      render: r => <Chip {...getDeliveryChipProps(r.delivery_status)} />
     },
   ];
 
   const handleRowClick = (row) => {
     setSelectedRow(row.id);
     setOpenDrawer(true);
-  }
+  };
 
   const handlePageChange = useCallback((event, newPage) => {
     setPage(newPage);
@@ -110,10 +151,7 @@ const LogisticsDashboard = () => {
           buttonLabel="Filtros"
           icon={<FilterAlt />}
           onButtonClick={() => { console.log('Filtros'); }}
-          sx={{
-            width: 200,
-            marginLeft: 2,
-          }}
+          sx={{ width: 200, marginLeft: 2 }}
         />
       </TableHeader.Root>
 
@@ -125,15 +163,12 @@ const LogisticsDashboard = () => {
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}
         onRowClick={handleRowClick}
-        onClose={() => {setOpenDrawer(false); setSelectedRow(null);}}
+        onClose={() => { setOpenDrawer(false); setSelectedRow(null); }}
         noWrap={true}
       >
         <Table.Head>
           {columns.map(c => (
-            <Table.Cell
-              key={c.field}
-              sx={{ fontWeight: 600, fontSize: '14px' }}
-            >
+            <Table.Cell key={c.field} sx={{ fontWeight: 600, fontSize: '14px' }}>
               {c.headerName}
             </Table.Cell>
           ))}
@@ -142,17 +177,10 @@ const LogisticsDashboard = () => {
         <Table.Body
           loading={loading}
           onRowClick={handleRowClick}
-          sx={{
-            cursor: "pointer",
-            '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' },
-          }}
+          sx={{ cursor: "pointer", '&:hover': { backgroundColor: 'rgba(236, 242, 255, 0.35)' } }}
         >
           {columns.map(col => (
-            <Table.Cell
-              key={col.field}
-              render={col.render}
-              sx={col.sx}
-            />
+            <Table.Cell key={col.field} render={col.render} sx={col.sx} />
           ))}
         </Table.Body>
         <Table.Pagination />
