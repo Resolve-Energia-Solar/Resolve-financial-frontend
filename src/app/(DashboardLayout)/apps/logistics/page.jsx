@@ -172,7 +172,7 @@ const LogisticsDashboard = () => {
   }, []);
 
   return (
-    <PageContainer title={'Projetos'}>
+    <PageContainer title={'Logística'} description={'Dashboard de Logística'}>
       <Breadcrumb items={BCrumb} />
 
       {/* Indicadores */}
