@@ -11,9 +11,6 @@ import { FilterAlt } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
 import { Chip, Box, Typography, Skeleton } from '@mui/material';
 import BlockIcon from '@mui/icons-material/Block';
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
@@ -21,7 +18,14 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import EventIcon from '@mui/icons-material/Event';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
+import HourglassFullIcon from '@mui/icons-material/HourglassFull';
 import dayjs from 'dayjs';
+import {
+  CheckCircle as CheckCircleIcon,
+  HourglassEmpty as HourglassEmptyIcon,
+  Cancel as CancelIcon,
+  RemoveCircle as RemoveCircleIcon,
+} from '@mui/icons-material';
 
 const INDICATORS_STATUS_COLORS = {
   error: { bg: '#F8D7DA', text: '#721C24' },
@@ -55,7 +59,7 @@ const LogisticsDashboard = () => {
       const response = await projectService.index({
         user_types: 3,
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,product.description,address.complete_address,sale.status,purchase_status,delivery_status',
+          'id,project_number,status,sale.customer.complete_name,sale.signature_date,product.description,address.complete_address,sale.status,purchase_status,delivery_status',
         expand: 'sale.customer,product,address,sale.signature_date',
         metrics: 'purchase_status,delivery_status',
         page: page + 1,
