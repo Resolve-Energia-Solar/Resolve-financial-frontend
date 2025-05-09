@@ -17,6 +17,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  Paper
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { formatDate } from '@/utils/dateUtils';
@@ -31,10 +32,11 @@ import AnswerForm from '../inspections/form-builder/AnswerForm';
 import answerService from '@/services/answerService';
 import History from '../history';
 import { Close } from '@mui/icons-material';
+import ScheduleTimeline from './ScheduleTimeline';
 
 const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
   const [loading, setLoading] = useState(true);
-  const [schedule, setScheduleDetails] = useState(null);
+  const [schedule, setSchedule] = useState(null);
   const [answers, setAnswers] = useState(null);
   const [error, setError] = useState(null);
   const [seller, setSeller] = useState(null);
@@ -55,6 +57,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
             'schedule_start_time',
             'schedule_end_time',
             'going_to_location_at',
+            'arrived_at',
             'execution_started_at',
             'execution_finished_at',
             'status',
@@ -89,7 +92,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
           ],
         })
         .then(async (response) => {
-          setScheduleDetails(response);
+          setSchedule(response);
         })
         .catch((error) => {
           setError('Erro ao carregar os detalhes do agendamento');
@@ -268,71 +271,7 @@ const DetailsDrawer = ({ open, onClose, scheduleId, dialogMode = false }) => {
                       </Typography>
 
                       {schedule.going_to_location_at && (
-                        <Box sx={{ mt: 2, border: '1px solid #ccc', p: 2, borderRadius: 1 }}>
-                          <Typography variant="subtitle" gutterBottom>Dados de Duração</Typography>
-                          <Divider sx={{ mb: 2 }} />
-                          <Typography variant="body1" gutterBottom>
-                            <strong>Início do deslocamento:</strong>{' '}
-                            {new Date(schedule.going_to_location_at).toLocaleTimeString('pt-BR', {
-                              day: '2-digit',
-                              month: '2-digit',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              second: '2-digit'
-                            })}
-                          </Typography>
-                          <Typography variant="body1" gutterBottom>
-                            <strong>Iniciado em:</strong>{' '}
-                            {new Date(schedule.execution_started_at).toLocaleTimeString('pt-BR', {
-                              day: '2-digit',
-                              month: '2-digit',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              second: '2-digit'
-                            })}
-                          </Typography>
-                          <Typography variant="body1" gutterBottom>
-                            <strong>Finalizado em:</strong>{' '}
-                            {new Date(schedule.execution_finished_at).toLocaleTimeString('pt-BR', {
-                              day: '2-digit',
-                              month: '2-digit',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              second: '2-digit'
-                            })}
-                          </Typography>
-
-                          {/* Duração sem descolamento */}
-                          <Typography variant="body1" gutterBottom>
-                            <strong>Duração sem descolamento:</strong>{' '}
-                            {(() => {
-                              const started = new Date(schedule.execution_started_at);
-                              const finished = new Date(schedule.execution_finished_at);
-                              const duration = finished - started;
-                              const hours = Math.floor(duration / 3600000);
-                              const minutes = Math.floor((duration % 3600000) / 60000);
-                              const seconds = Math.floor((duration % 60000) / 1000);
-                              return `${hours}h ${minutes}m ${seconds}s`;
-                            })()}
-                          </Typography>
-
-                          {/* Duração total */}
-                          <Typography variant="body1" gutterBottom>
-                            <strong>Duração total:</strong>{' '}
-                            {(() => {
-                              const goingTo = new Date(schedule.going_to_location_at);
-                              const finished = new Date(schedule.execution_finished_at);
-                              const duration = finished - goingTo;
-                              const hours = Math.floor(duration / 3600000);
-                              const minutes = Math.floor((duration % 3600000) / 60000);
-                              const seconds = Math.floor((duration % 60000) / 1000);
-                              return `${hours}h ${minutes}m ${seconds}s`;
-                            })()}
-                          </Typography>
-                        </Box>
+                        <ScheduleTimeline scheduleData={schedule} />
                       )}
                     </CardContent>
                   </Card>
