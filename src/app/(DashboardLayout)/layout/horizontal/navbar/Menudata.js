@@ -1,6 +1,8 @@
-import { IconTruckDelivery } from '@tabler/icons-react';
 import {
-  IconPoint,
+  IconUserBolt,
+  IconTruckDelivery,
+  IconSolarPanel2,
+  IconUserSearch,
   IconSettings,
   IconShoppingCart,
   IconUser,
@@ -14,48 +16,17 @@ import {
   IconFileDescription,
   IconCurrencyDollar,
   IconTrendingUp,
-  IconLayoutKanban,
-  IconBriefcase2,
   IconMapRoute,
-  IconId,
   IconCalendarStar,
   IconCash,
-  IconWallet,
   IconReportMoney,
   IconPigMoney,
   IconPaperclip,
-  IconRuler,
   IconFileArrowRight,
 } from '@tabler/icons-react';
 import { uniqueId } from 'lodash';
 
 const Menuitems = [
-  // {
-  //   id: uniqueId(),
-  //   title: 'CRM',
-  //   href: '/',
-  //   icon: IconBriefcase2,
-  //   permissions: ['core.view_board', 'resolve_crm.view_lead'],
-  //   children: [
-  //     {
-  //       id: uniqueId(),
-  //       title: 'Kanban',
-  //       icon: IconLayoutKanban,
-  //       href: '/apps/kanban/',
-  //       permissions: ['core.view_board'],
-  //     },
-  //     {
-  //       id: uniqueId(),
-  //       title: 'Leads',
-  //       icon: IconId,
-  //       href: '/apps/leads',
-  //       permissions: ['resolve_crm.view_lead'],
-  //     },
-  //   ],
-  //   chip: 'Novo',
-  //   chipColor: 'secondary',
-  //   permissions: ['core.view_board'],
-  // },
   {
     id: uniqueId(),
     title: 'Comercial',
@@ -100,13 +71,6 @@ const Menuitems = [
         href: '/apps/invoice',
         permissions: ['financial.view_payment'],
       },
-      // {
-      //   id: uniqueId(),
-      //   title: 'Parcelas',
-      //   icon: IconWallet,
-      //   href: '/apps/invoice/installments',
-      //   permissions: ['financial.view_payment'],
-      // },
       {
         id: uniqueId(),
         title: 'Solic. de Pagamento',
@@ -126,7 +90,7 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: 'Serviços de Campo',
-    icon: IconMapRoute,
+    icon: IconUserPin,
     href: '/apps/schedules',
     permissions: ['field_services.view_all_schedule'],
     children: [
@@ -164,7 +128,7 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: 'Jornada do cliente',
-    icon: IconRuler,
+    icon: IconMapRoute,
     href: '/apps/project',
     permissions: ['resolve_crm.view_project'],
   },
@@ -173,15 +137,7 @@ const Menuitems = [
     title: 'Engenharia',
     icon: IconTools,
     permissions: ['resolve_crm.view_project'],
-    href: '/apps/project',
     children: [
-      // {
-      //   id: uniqueId(),
-      //   title: 'Jornada do cliente',
-      //   icon: IconRuler,
-      //   href: '/apps/project',
-      //   permissions: ['resolve_crm.view_project'],
-      // },
       {
         id: uniqueId(),
         title: 'Homologação',
@@ -193,10 +149,34 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Logística',
-    icon: IconTruckDelivery,
-    href: '/apps/logistics',
-    permissions: ['field_services.view_schedule'],
+    title: 'Gestão Operacional',
+    icon: IconUserBolt,
+    permissions: [
+      'field_services.view_schedule',
+    ],
+    children: [
+      {
+        id: uniqueId(),
+        title: 'Vistoria',
+        icon: IconUserSearch,
+        href: '/apps/inspections',
+        permissions: ['field_services.view_schedule'],
+      },
+      {
+        id: uniqueId(),
+        title: 'Logística',
+        icon: IconTruckDelivery,
+        href: '/apps/logistics',
+        permissions: ['field_services.view_schedule'],
+      },
+      {
+        id: uniqueId(),
+        title: 'Instalação',
+        icon: IconSolarPanel2,
+        href: '/apps/installation',
+        permissions: ['field_services.view_schedule'],
+      },
+    ],
   },
   {
     id: uniqueId(),
