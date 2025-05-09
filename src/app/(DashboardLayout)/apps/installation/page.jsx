@@ -21,6 +21,7 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import EventIcon from '@mui/icons-material/Event';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
+import dayjs from 'dayjs';
 
 const INDICATORS_STATUS_COLORS = {
   error: { bg: '#F8D7DA', text: '#721C24' },
@@ -54,8 +55,8 @@ const LogisticsDashboard = () => {
       const response = await projectService.index({
         user_types: 3,
         fields:
-          'id,project_number,sale.customer.complete_name,product.description,address.complete_address,sale.status,purchase_status,delivery_status',
-        expand: 'sale.customer,product,address,sale',
+          'id,project_number,sale.customer.complete_name,sale.signature_date,product.description,address.complete_address,sale.status,purchase_status,delivery_status',
+        expand: 'sale.customer,product,address,sale.signature_date',
         metrics: 'purchase_status,delivery_status',
         page: page + 1,
         limit: rowsPerPage,
@@ -85,11 +86,11 @@ const LogisticsDashboard = () => {
           'Quantidade de Clientes Liberados ': 1,
         },
         delivery_status: {
-          'Bloqueado': 1,
-          'Liberado': 7,
-          'Cancelado': 0
+          Bloqueado: 1,
+          Liberado: 7,
+          Cancelado: 0,
         },
-        total_count: 34
+        total_count: 34,
       });
     } catch (error) {
       enqueueSnackbar('Erro ao carregar indicadores', { variant: 'error' });
@@ -97,7 +98,6 @@ const LogisticsDashboard = () => {
       setLoadingIndicators(false);
     }
   }, [enqueueSnackbar]);
-  
 
   // E remova do useEffect:
   useEffect(() => {
@@ -152,10 +152,32 @@ const LogisticsDashboard = () => {
 
   const columns = [
     {
-      field: 'project_number',
-      headerName: 'Projeto',
-      render: (r) => `${r.project_number} - ${r.sale?.customer?.complete_name}` || 'SEM NÚMERO',
+      field: 'sale?.customer.complete_name',
+      headerName: 'Cliente',
+      render: (r) => `${r?.sale?.customer?.complete_name}` || 'SEM NÚMERO',
       sx: { opacity: 0.7 },
+    },
+    {
+      field: 'sale?.signature_date',
+      headerName: 'Tempo de contrato',
+      render: (r) => {
+        const signatureDate = r?.sale?.signature_date;
+
+        if (!signatureDate) {
+          return <Chip label="Sem data" color="default" size="small" />;
+        }
+
+        const days = dayjs().diff(dayjs(signatureDate), 'day');
+        const label = `${days} dia${days !== 1 ? 's' : ''}`;
+
+        let color = 'default';
+        if (days < 5) color = 'success';
+        else if (days < 10) color = 'warning';
+        else color = 'error';
+
+        return <Chip label={label} color={color} size="small" variant="outlined" />;
+      },
+      sx: { opacity: 0.9 },
     },
     {
       field: 'product.description',
@@ -288,7 +310,6 @@ const LogisticsDashboard = () => {
             })}
           </Box>
         )}
-
       </Box>
 
       <GenericFilterDrawer

@@ -1,3 +1,4 @@
+import { IconTruckDelivery } from '@tabler/icons-react';
 import {
   IconPoint,
   IconSettings,
@@ -192,6 +193,13 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Logística',
+    icon: IconTruckDelivery,
+    href: '/apps/logistics',
+    permissions: ['field_services.view_schedule'],
+  },
+  {
+    id: uniqueId(),
     title: 'Config. Sistema',
     icon: IconSettings,
     permissions: [
@@ -246,6 +254,7 @@ const Menuitems = [
         permissions: ['core.view_documenttype'],
       },
     ],
+
   },
 ];
 export default Menuitems;
