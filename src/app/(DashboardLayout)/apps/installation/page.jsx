@@ -150,6 +150,26 @@ const LogisticsDashboard = () => {
     }
   };
 
+  const getProjectChipProps = (status) => {
+    switch (status) {
+      case 'P':
+        return { label: 'Pendente', color: 'warning', icon: <HourglassEmptyIcon sx={{ color: '#fff' }} /> };
+      case 'CO':
+        return { label: 'Concluído', color: 'success', icon: <CheckCircleIcon sx={{ color: '#fff' }} /> };
+      case 'EA':
+        return { label: 'Em Andamento', color: 'info', icon: <HourglassFullIcon sx={{ color: '#fff' }} /> };
+      case 'C':
+        return { label: 'Cancelado', color: 'error', icon: <CancelIcon sx={{ color: '#fff' }} /> };
+      case 'D':
+        return { label: 'Distrato', color: 'secondary', icon: <RemoveCircleIcon sx={{ color: '#fff' }} /> };
+      case 'F':
+        return { label: 'Finalizado', color: 'success', icon: <CheckCircleIcon sx={{ color: '#fff' }} /> };
+      default:
+        return { label: 'Desconhecido', color: 'default', icon: <CancelIcon sx={{ color: '#fff' }} /> };
+    }
+  };
+  
+
   const columns = [
     {
       field: 'sale?.customer.complete_name',
@@ -195,9 +215,9 @@ const LogisticsDashboard = () => {
       render: (r) => <StatusChip status={r.sale?.status} />,
     },
     {
-      field: 'purchase_status',
-      headerName: 'Status da Compra',
-      render: (r) => <Chip {...getPurchaseChipProps(r.purchase_status)} />,
+      field: 'r.status',
+      headerName: 'Status do projeto',
+      render: (r) => <Chip {...getProjectChipProps(r.status)} />,
     },
     {
       field: 'delivery_status',
