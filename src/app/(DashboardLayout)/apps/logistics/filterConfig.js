@@ -14,7 +14,7 @@ export default [
   {
     key: 'purchase_status',
     label: 'Status de Compra',
-    type: 'select',
+    type: 'multiselect',
     options: [
       { value: 'Bloqueado', label: 'Bloqueado' },
       { value: 'Pendente', label: 'Pendente' },
@@ -28,7 +28,7 @@ export default [
   {
     key: 'delivery_status',
     label: 'Status de Entrega',
-    type: 'select',
+    type: 'multiselect',
     options: [
       { value: 'Bloqueado', label: 'Bloqueado' },
       { value: 'Liberado', label: 'Liberado' },
@@ -36,6 +36,12 @@ export default [
       { value: 'Entregue', label: 'Entregue' },
       { value: 'Cancelado', label: 'Cancelado' },
     ],
+  },
+  {
+    key: 'expected_delivery_date__range',
+    label: 'Data de Previsão',
+    type: 'range',
+    inputType: 'date',
   },
   {
     key: 'borrower',
