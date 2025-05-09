@@ -30,6 +30,7 @@ import {
   IconUserDollar,
   IconHomeQuestion,
   IconLicense,
+  IconTruckDelivery,
 } from '@tabler/icons-react';
 
 import { permission } from 'process';
@@ -231,6 +232,13 @@ const Menuitems = [
     icon: IconFileDescription,
     href: '/apps/document-types',
     permissions: ['core.view_documenttype'],
+  },
+  {
+    id: uniqueId(),
+    title: 'Logística',
+    icon: IconTruckDelivery,
+    href: '/apps/logistics',
+    permissions: ['field_services.view_schedule'],
   },
 ];
 
