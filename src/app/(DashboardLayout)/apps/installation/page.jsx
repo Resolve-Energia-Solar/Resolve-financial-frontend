@@ -223,11 +223,6 @@ const LogisticsDashboard = () => {
       headerName: 'Status do projeto',
       render: (r) => <Chip {...getProjectChipProps(r.status)} />,
     },
-    {
-      field: 'delivery_status',
-      headerName: 'Status da Entrega',
-      render: (r) => <Chip {...getDeliveryChipProps(r.delivery_status)} />,
-    },
   ];
 
   const handleRowClick = (row) => {
@@ -245,7 +240,7 @@ const LogisticsDashboard = () => {
   }, []);
 
   return (
-    <PageContainer title={'Projetos'}>
+    <PageContainer title={'Instalação'} description={'Dashboard de Instalação'}>
       <Breadcrumb items={BCrumb} />
 
       {/* Indicadores */}
