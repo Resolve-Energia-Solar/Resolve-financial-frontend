@@ -100,8 +100,8 @@ const PaymentCard = ({ sale = null }) => {
       try {
         const response = await paymentService.index({ 
           sale: sale,
-          expand: 'financier,installments',
-          fields: 'id,financier.name,value,due_date,payment_type,installments.id,is_paid',
+          expand: 'financier,installments,borrower',
+          fields: 'id,financier.name,value,due_date,payment_type,installments.id,is_paid,borrower',
           limit: 100,
           page: 1,
          });
@@ -256,6 +256,11 @@ const PaymentCard = ({ sale = null }) => {
                 <TableRow>
                   <TableCell style={{}}>
                     <Typography variant="body1" fontWeight="400">
+                      Tomador
+                    </Typography>
+                  </TableCell>
+                  <TableCell style={{}}>
+                    <Typography variant="body1" fontWeight="400">
                       Tipo do Pagamento
                     </Typography>
                   </TableCell>
@@ -295,6 +300,11 @@ const PaymentCard = ({ sale = null }) => {
                 {paymentsList.map((item) => {
                   return (
                     <TableRow hover key={item.id}>
+                      <TableCell>
+                        <Stack spacing={2} direction="row" alignItems="center">
+                          {item?.borrower?.complete_name || 'Não cadastrado'} - {item?.borrower?.first_document}
+                        </Stack>
+                      </TableCell>
                       <TableCell>
                         <Stack spacing={2} direction="row" alignItems="center">
                           <PaymentChip paymentType={item?.payment_type} />

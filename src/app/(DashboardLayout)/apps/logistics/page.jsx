@@ -7,7 +7,7 @@ import projectService from '@/services/projectService';
 import { Table } from "@/app/components/Table";
 import { TableHeader } from "@/app/components/TableHeader";
 import StatusChip from '@/utils/status/DocumentStatusIcon';
-import { FilterAlt } from '@mui/icons-material';
+import { FilterAlt, LockOpen } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
 import { Chip, Box, Typography, Skeleton } from '@mui/material';
 import BlockIcon from '@mui/icons-material/Block';
@@ -84,6 +84,8 @@ const LogisticsDashboard = () => {
     switch (status) {
       case 'Bloqueado':
         return { label: status, color: 'error', icon: <BlockIcon /> };
+      case 'Liberado':
+        return { label: status, color: 'info', icon: <LockOpen /> };
       case 'Pendente':
         return { label: status, color: 'warning', icon: <HourglassEmptyIcon /> };
       case 'Compra Realizada':
@@ -106,7 +108,7 @@ const LogisticsDashboard = () => {
       case 'Bloqueado':
         return { label: status, color: 'error', icon: <BlockIcon /> };
       case 'Liberado':
-        return { label: status, color: 'info', icon: <LocalShippingIcon /> };
+        return { label: status, color: 'info', icon: <LockOpen /> };
       case 'Agendado':
         return { label: status, color: 'info', icon: <EventIcon /> };
       case 'Entregue':

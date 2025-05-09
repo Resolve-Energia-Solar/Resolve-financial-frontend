@@ -155,8 +155,6 @@ const CommercialSchedulesList = () => {
     fetchData();
   }, [page, rowsPerPage, filters]);
 
-  console.log('schedules', schedules);
-
   const handleChangePage = (event, newPage) => setPage(newPage);
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
