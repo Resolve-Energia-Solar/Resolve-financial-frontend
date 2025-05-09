@@ -21,6 +21,7 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import EventIcon from '@mui/icons-material/Event';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
+import { formatDate } from '@/utils/dateUtils';
 
 const INDICATORS_STATUS_COLORS = {
   error: { bg: '#F8D7DA', text: '#721C24' },
@@ -47,7 +48,7 @@ const LogisticsDashboard = () => {
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await projectService.index({ user_types: 3, fields: 'id,project_number,sale.customer.complete_name,product.description,address.complete_address,sale.status,purchase_status,delivery_status', expand: 'sale.customer,product,address', metrics: 'purchase_status,delivery_status', page: page + 1, limit: rowsPerPage, ...filters });
+      const response = await projectService.index({ user_types: 3, fields: 'id,project_number,sale.customer.complete_name,product.description,address.complete_address,sale.status,purchase_status,delivery_status', expand: 'sale.customer,product,address,expected_delivery_date', metrics: 'purchase_status,delivery_status,expected_delivery_date', page: page + 1, limit: rowsPerPage, ...filters });
       setProjects(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {
@@ -148,6 +149,11 @@ const LogisticsDashboard = () => {
       field: 'delivery_status',
       headerName: 'Status da Entrega',
       render: r => <Chip {...getDeliveryChipProps(r.delivery_status)} />
+    },
+    {
+      field: 'expected_delivery_date',
+      headerName: 'Previsão de Entrega',
+      render: r => formatDate(r.expected_delivery_date) || '-',
     }
   ];
 
