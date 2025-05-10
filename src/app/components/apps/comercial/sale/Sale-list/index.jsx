@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Table,
   TableBody,
@@ -27,25 +27,20 @@ import { useRouter } from 'next/navigation';
 import saleService from '@/services/saleService';
 import useSendContract from '@/hooks/clicksign/useClickSign';
 import TableSkeleton from '../components/TableSkeleton';
-import { SaleDataContext } from '@/app/context/SaleContext';
 import StatusPreSale from '../components/StatusPreSale';
 import OnboardingCreateSale from '../Add-sale/onboarding';
 import { useSelector } from 'react-redux';
 import useSale from '@/hooks/sales/useSale';
 import EditSaleTabs from '../Edit-sale';
-import DrawerFilters from '../components/DrawerFilters/DrawerFilters';
 import SideDrawer from '@/app/components/shared/SideDrawer';
 import InforCards from '../../../inforCards/InforCards';
 import {
-  IconListDetails,
-  IconPaperclip,
-  IconSortAscending,
   IconX,
   IconClock,
   IconCheckbox,
   IconRoute,
   IconUserX,
-  IconUserCancel,
+  IconFilter,
 } from '@tabler/icons-react';
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -54,6 +49,9 @@ import ChipSigned from '@/utils/status/ChipSigned';
 import PulsingBadge from '@/app/components/shared/PulsingBadge';
 import TableSortLabel from '@/app/components/shared/TableSortLabel';
 import CounterChip from '../CounterChip';
+import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
+import filterConfig from './filterConfig';
+import { FilterContext } from '@/context/FilterContext';
 
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
@@ -65,7 +63,8 @@ const SaleList = () => {
 
   const { handleRowClick, openDrawer, rowSelected, toggleDrawerClosed } = useSale();
 
-  const { filters, setFilters, refresh } = useContext(SaleDataContext);
+  const { filters, setFilters, refresh } = useContext(FilterContext);
+  const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
 
   const user = useSelector((state) => state?.user?.user);
 
@@ -295,7 +294,27 @@ const SaleList = () => {
           Adicionar Venda
         </Button>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <DrawerFilters />
+          <Button
+            variant="outlined"
+            startIcon={<IconFilter />}
+            sx={{ marginTop: 1, marginBottom: 2 }}
+            onClick={() => {
+              setOpenFilterDrawer(true);
+            }}
+          >
+            Filtros
+          </Button>
+          <GenericFilterDrawer
+            open={openFilterDrawer}
+            filters={filterConfig}
+            initialValues={filters}
+            onApply={(newFilters) => {
+              setFilters(newFilters);
+              setOpenFilterDrawer(false);
+            }}
+            onClose={() => setOpenFilterDrawer(false)}
+            setFilters={setFilters}
+          />
         </Box>
       </Box>
 
@@ -464,7 +483,7 @@ const SaleList = () => {
                     </TableCell>
                     <TableCell>
                       {Array.isArray(item.final_service_opinion) &&
-                      item.final_service_opinion[0].name ? (
+                        item.final_service_opinion[0].name ? (
                         <Chip
                           label={item.final_service_opinion[0].name}
                           color={
