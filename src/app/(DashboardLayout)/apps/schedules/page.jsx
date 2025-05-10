@@ -117,7 +117,7 @@ const ScheduleTable = () => {
         setError('Erro ao buscar agendamentos');
       })
       .finally(() => setLoading(false));
-  }, [selectedServices, page, rowsPerPage, order, orderDirection, filters]);
+  }, [selectedServices, page, rowsPerPage, order, orderDirection, filters, refresh]);
 
   const handleSort = useCallback(
     (field) => {
