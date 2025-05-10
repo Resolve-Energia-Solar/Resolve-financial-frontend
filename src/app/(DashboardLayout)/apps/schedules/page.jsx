@@ -44,7 +44,11 @@ import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/Stat
 const BCrumb = [{ to: '/', title: 'Início' }, { title: 'Agendamentos' }];
 
 const ScheduleTable = () => {
-  const { filters, setFilters, refresh } = useContext(FilterContext);
+  const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
+  const activeCount = Object.keys(filters || {}).filter(key => {
+    const v = filters[key];
+    return v !== null && v !== undefined && !(Array.isArray(v) && v.length === 0);
+  }).length;
   const [loading, setLoading] = useState(true);
   const [scheduleList, setScheduleList] = useState([]);
   const [services, setServices] = useState([]);
@@ -301,7 +305,16 @@ const ScheduleTable = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid container xs={2} justifyContent={'flex-end'}>
+            <Grid container xs={2} justifyContent="flex-end" alignItems="center">
+              {activeCount > 0 && (
+                <Chip
+                  label={`${activeCount} filtro${activeCount > 1 ? 's' : ''} ativo${activeCount > 1 ? 's' : ''}`}
+                  onDelete={clearFilters}
+                  variant="outlined"
+                  size="small"
+                  sx={{ mr: 1 }}
+                />
+              )}
               <Button variant="outlined" onClick={() => setFilterDrawerOpen(true)}>
                 Abrir Filtros
               </Button>

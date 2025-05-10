@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import {
   Drawer,
   Box,
@@ -16,6 +16,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import GenericAsyncAutocompleteInput from './GenericAsyncAutocompleteInput';
 import CustomFormLabel from '../forms/theme-elements/CustomFormLabel';
+import { FilterContext } from '@/context/FilterContext';
 
 // Componente para intervalos (range)
 const RangeInput = ({ label, value, onChange, inputType = 'text' }) => {
@@ -95,6 +96,7 @@ const CheckboxInput = ({ label, value, onChange }) => {
 };
 
 const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose }) => {
+  const { clearFilters } = useContext(FilterContext);
   const [filterValues, setFilterValues] = useState({});
 
   // Função para retornar os valores padrão (reset)
@@ -194,10 +196,8 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
     setFilterValues((prev) => ({ ...prev, [key]: value }));
   };
 
-  const resetFilters = () => {
-    const defaults = getDefaultValues();
-    setFilterValues(defaults);
-    onApply(defaults);
+  const resetFiltersHandler = () => {
+    clearFilters();
     onClose();
   };
 
@@ -437,7 +437,7 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
         >
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              <Button variant="outlined" color="secondary" fullWidth onClick={resetFilters}>
+              <Button variant="outlined" color="secondary" fullWidth onClick={resetFiltersHandler}>
                 Limpar Filtros
               </Button>
             </Grid>

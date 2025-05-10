@@ -32,7 +32,6 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import { formatDate } from '@/utils/dateUtils';
 import attachmentService from '@/services/attachmentService';
 import getContentType from '@/utils/getContentType';
-import CustomFieldMoney from '@/app/components/apps/invoice/components/CustomFieldMoney';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import { NumericFormat } from 'react-number-format';
 import TextField from '@mui/material/TextField';
@@ -752,7 +751,7 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <CustomFormLabel sx={{m:0}}>Valor (R$)</CustomFormLabel>
+                <CustomFormLabel sx={{ m: 0 }}>Valor (R$)</CustomFormLabel>
                 <NumericFormat
                   value={parseInt(formData.value) || ''}
                   onValueChange={(values) =>
@@ -793,9 +792,8 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
                     }}
                     mapResponse={(data) => {
                       return data.results.map((s) => ({
-                        label: `${s.service?.name || ''} nº ${s.protocol} - ${
-                          s.customer?.complete_name || ''
-                        } - ${s.schedule_date} ${s.schedule_start_time.toLocaleString()}`,
+                        label: `${s.service?.name || ''} nº ${s.protocol} - ${s.customer?.complete_name || ''
+                          } - ${s.schedule_date} ${s.schedule_start_time.toLocaleString()}`,
                         value: s.id,
                         ...s,
                       }));
