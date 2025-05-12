@@ -18,13 +18,11 @@ export function TableRoot({ children, noWrap, ...ctx }) {
         }}
       >
         <TableContainer sx={{
-          overflowX: 'scroll',
-          overflowY: 'hidden',
+          overflow: 'auto',
           width: '100%',
-          overflowX: 'scroll',
-          overflowY: 'hidden',
           '&::-webkit-scrollbar': {
             height: 6,
+            width: 6,
           },
           '&::-webkit-scrollbar-thumb': {
             backgroundColor: 'rgba(0,0,0,0.3)',
@@ -49,3 +47,4 @@ export function TableRoot({ children, noWrap, ...ctx }) {
     </TableCtxt.Provider>
   );
 }
+
