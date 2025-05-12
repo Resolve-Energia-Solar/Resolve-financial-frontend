@@ -32,7 +32,7 @@ import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-const RequestList = ({ projectId = null, enableFilters = true, enableIndicators = true }) => {
+const RequestList = ({ projectId = null, enableFilters = true, enableIndicators = true, viewOnly = false }) => {
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,7 +46,7 @@ const RequestList = ({ projectId = null, enableFilters = true, enableIndicators 
   const context = useContext(RequestDataContext);
 
   const filters = context ? context.filters : {};
-  const setFilters = context ? context.setFilters : () => {};
+  const setFilters = context ? context.setFilters : () => { };
 
   const [requestIdSelected, setRequestIdSelected] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -180,13 +180,13 @@ const RequestList = ({ projectId = null, enableFilters = true, enableIndicators 
             marginBottom: 2,
           }}
         >
-          <Button
+          {!viewOnly && <Button
             variant="outlined"
             startIcon={<AddBoxRounded />}
             onClick={() => setOpenAddDialog(true)}
           >
             Nova Solicitação
-          </Button>
+          </Button>}
           {enableFilters && context && (
             <Button
               variant="outlined"
@@ -295,42 +295,45 @@ const RequestList = ({ projectId = null, enableFilters = true, enableIndicators 
           />
         </TableContainer>
       )}
-      <Dialog open={openEditDialog} onClose={handleCloseEditDialog} fullWidth maxWidth="lg">
-        <DialogTitle>Editar Solicitação</DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
-            {/* Área de Edição - Ocupa 70% da largura */}
-            <Box sx={{ flex: 7 }}>
-              <EditRequestCompany
-                requestId={requestIdSelected}
-                onClosedModal={handleCloseEditDialog}
-                onRefresh={refreshData}
-              />
-            </Box>
 
-            {/* Área de Comentários - Ocupa 30% da largura */}
-            <Box sx={{ flex: 3, borderLeft: '1px solid #ddd', paddingLeft: 2 }}>
-              <Comment
-                appLabel={'resolve_crm'}
-                model={'project'}
-                objectId={requestIdSelected}
-                label="Comentários do Projeto"
-              />
-            </Box>
-          </Box>
-        </DialogContent>
-      </Dialog>
+      {!viewOnly && <>
+        <Dialog open={openEditDialog} onClose={handleCloseEditDialog} fullWidth maxWidth="lg">
+          <DialogTitle>Editar Solicitação</DialogTitle>
+          <DialogContent>
+            <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
+              {/* Área de Edição - Ocupa 70% da largura */}
+              <Box sx={{ flex: 7 }}>
+                <EditRequestCompany
+                  requestId={requestIdSelected}
+                  onClosedModal={handleCloseEditDialog}
+                  onRefresh={refreshData}
+                />
+              </Box>
 
-      <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)} fullWidth maxWidth="lg">
-        <DialogTitle>Criar Solicitação</DialogTitle>
-        <DialogContent>
-          <AddRequestCompany
-            projectId={projectId}
-            onClosedModal={() => setOpenAddDialog(false)}
-            onRefresh={refreshData}
-          />
-        </DialogContent>
-      </Dialog>
+              {/* Área de Comentários - Ocupa 30% da largura */}
+              <Box sx={{ flex: 3, borderLeft: '1px solid #ddd', paddingLeft: 2 }}>
+                <Comment
+                  appLabel={'resolve_crm'}
+                  model={'project'}
+                  objectId={requestIdSelected}
+                  label="Comentários do Projeto"
+                />
+              </Box>
+            </Box>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)} fullWidth maxWidth="lg">
+          <DialogTitle>Criar Solicitação</DialogTitle>
+          <DialogContent>
+            <AddRequestCompany
+              projectId={projectId}
+              onClosedModal={() => setOpenAddDialog(false)}
+              onRefresh={refreshData}
+            />
+          </DialogContent>
+        </Dialog>
+      </>}
     </>
   );
 };
