@@ -17,7 +17,6 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import EventIcon from '@mui/icons-material/Event';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
@@ -61,19 +60,24 @@ const LogisticsDashboard = () => {
   const fetchIndicators = useCallback(async () => {
     setLoadingIndicators(true);
     try {
-      const { indicators } = await projectService.logisticsIndicators();
+      const { indicators } = await projectService.logisticsIndicators({ ...filters });
       setIndicators(indicators);
     } catch {
       enqueueSnackbar('Erro ao carregar indicadores', { variant: 'error' });
     } finally {
       setLoadingIndicators(false);
     }
-  }, [enqueueSnackbar]);
+  }, [enqueueSnackbar, filters]);
 
   useEffect(() => {
     fetchProjects();
     fetchIndicators();
   }, [fetchProjects, fetchIndicators]);
+
+  const handleKpiClick = (key, value) => {
+    setFilters({ [key]: value });
+    setPage(0);
+  };
 
   const BCrumb = [
     { to: '/', title: 'Home' },
@@ -210,6 +214,8 @@ const LogisticsDashboard = () => {
             {Object.entries(indicators.purchase_status).map(([status, count]) => {
               const { label, color, icon } = getPurchaseChipProps(status);
               const colors = INDICATORS_STATUS_COLORS[color] || INDICATORS_STATUS_COLORS.grey;
+              const isActive = filters.purchase_status === status;
+
               return (
                 <Box key={status} sx={{
                   flex: '1 1 150px',
@@ -219,13 +225,16 @@ const LogisticsDashboard = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   backgroundColor: colors.bg,
+                  border: isActive ? '2px dashed green' : 'none',
                   color: colors.text,
                   borderRadius: 1,
                   maxWidth: '170px',
                   aspectRatio: '4 / 3',
                   textAlign: 'center',
                   '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' }
-                }}>
+                }}
+                  onClick={() => handleKpiClick('purchase_status', status)}
+                >
                   {icon}
                   <Typography variant="subtitle2" sx={{ mt: 1 }}>{label}</Typography>
                   <Typography variant="h6">{count}</Typography>
@@ -266,6 +275,8 @@ const LogisticsDashboard = () => {
             {Object.entries(indicators.delivery_status).map(([status, count]) => {
               const { label, color, icon } = getDeliveryChipProps(status);
               const colors = INDICATORS_STATUS_COLORS[color] || INDICATORS_STATUS_COLORS.grey;
+              const isActive = filters.delivery_status === status;
+
               return (
                 <Box key={status} sx={{
                   flex: '1 1 150px',
@@ -275,13 +286,16 @@ const LogisticsDashboard = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   backgroundColor: colors.bg,
+                  border: isActive ? '2px dashed green' : 'none',
                   color: colors.text,
                   borderRadius: 1,
                   maxWidth: '170px',
                   aspectRatio: '4 / 3',
                   textAlign: 'center',
                   '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' }
-                }}>
+                }}
+                  onClick={() => handleKpiClick('delivery_status', status)}
+                >
                   {icon}
                   <Typography variant="subtitle2" sx={{ mt: 1 }}>{label}</Typography>
                   <Typography variant="h6">{count}</Typography>
