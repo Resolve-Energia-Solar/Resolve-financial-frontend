@@ -252,7 +252,7 @@ const ProjectList = ({ onClick }) => {
         { value: 'T', label: 'Transferência Bancária' },
         { value: 'DI', label: 'Dinheiro' },
         { value: 'PA', label: 'Poste auxiliar' },
-        { value: 'RO', label: 'Repasse de Obra' },
+        { value: '', label: 'Repasse de Obra' },
       ],
     },
     {

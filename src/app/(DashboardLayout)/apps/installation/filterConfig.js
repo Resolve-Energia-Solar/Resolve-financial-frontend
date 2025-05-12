@@ -118,6 +118,7 @@ export default [
       { value: 'DI', label: 'Dinheiro' },
       { value: 'PA', label: 'Poste auxiliar' },
       { value: 'RO', label: 'Repasse de Obra' },
+      { value: 'ND', label: 'Nota de Débito' },
     ],
   },
   {

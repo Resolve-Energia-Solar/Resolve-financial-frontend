@@ -18,7 +18,6 @@ function AddAttachmentModal({
     onCloseModal,
     onRefresh,
 }) {
-    console.log('selectedAttachment: ', selectedAttachment)
     const theme = useTheme();
     const [selectedFile, setSelectedFile] = useState(null);
     const { enqueueSnackbar } = useSnackbar();
@@ -58,7 +57,7 @@ function AddAttachmentModal({
 
     formData.document_type = formData.document_type ? formData.document_type : selectedAttachment?.document_type?.id || '';
     formData.object_id = formData.object_id ? formData.object_id : selectedAttachment?.object_id || objectId;
-    formData.content_type_id = formData.content_type_id ? formData.content_type_id : selectedAttachment?.content_type?.id || parseInt(contentType);
+    formData.content_type = formData.content_type ? formData.content_type : selectedAttachment?.content_type?.id || parseInt(contentType);
     formData.status ? formData.status : (formData.status = 'EA');
 
 
