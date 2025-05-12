@@ -114,13 +114,13 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
           <Card sx={{ my: 3, boxShadow: 7 }}>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 1 }}>Anexos do Projeto</Typography>
-              <AttachmentTable hideTitle={true} appLabelDocument={"engineering"} appLabel="resolve_crm" model="project" objectId={projectId} hideStatus={false}/>
+              <AttachmentTable hideTitle={true} appLabelDocument="engineering" appLabel="resolve_crm" model="project" objectId={projectId} hideStatus={false} viewOnly={canEdit}/>
             </CardContent>
           </Card>
           <Card sx={{ boxShadow: 3 }}>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 1 }}>Anexos do Venda</Typography>
-              <AttachmentTable hideTitle={true} appLabelDocument="contracts" appLabel="resolve_crm" model="sale" objectId={project?.sale?.id} hideStatus={false}/>
+              <AttachmentTable hideTitle={true} appLabelDocument="contracts" appLabel="resolve_crm" model="sale" objectId={project?.sale?.id} hideStatus={false} viewOnly={canEdit}/>
             </CardContent>
           </Card>
         </>
