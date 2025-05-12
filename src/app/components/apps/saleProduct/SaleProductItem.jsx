@@ -94,6 +94,9 @@ export default function SaleProductItem({ initialData, productName, onUpdated = 
           <Grid container spacing={2}>
             {['value', 'cost_value', 'reference_value'].map((field) => {
               const isCostValue = field === 'cost_value';
+              if (isCostValue && !canChangeCostValue) {
+                return null;
+              }
               const disabled = isCostValue && !canChangeCostValue;
               const fieldValue = disabled ? ' ' : formData[field] || '';
               return (
@@ -124,7 +127,6 @@ export default function SaleProductItem({ initialData, productName, onUpdated = 
                   />
                 </Grid>
               );
-             
             })}
           </Grid>
           <HasPermission

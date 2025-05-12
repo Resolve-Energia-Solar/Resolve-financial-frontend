@@ -365,12 +365,11 @@ export default function CreateFinancialRecord() {
                       <Select
                         labelId="account-type-label"
                         label="Tipo de Conta"
-                        value={newObjectData.account_type || 'C'}
+                        value={newObjectData.account_type}
                         onChange={e => {
-                          const account_type = e.target.value;
                           setNewObjectData({
                             ...newObjectData,
-                            account_type,
+                            account_type: e.target.value,
                             agency_number: '',
                             account_number: '',
                             pix_key_type: '',
@@ -384,7 +383,7 @@ export default function CreateFinancialRecord() {
                       </Select>
                     </FormControl>
 
-                    {newObjectData.account_type !== 'X' && (
+                    {(newObjectData.account_type === 'C' || newObjectData.account_type === 'P') && (
                       <>
                         <TextField
                           label="Número da Agência"

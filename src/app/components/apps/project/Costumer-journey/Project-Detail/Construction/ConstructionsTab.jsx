@@ -20,9 +20,9 @@ import ScheduleFromProjectForm from '../../../modal/ScheduleFromProjectForm'
 import ConstructionFormModal from './ConstructionFormModal'
 import { IconEdit } from '@tabler/icons-react'
 import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput'
-import { set } from 'lodash'
+import { Add } from '@mui/icons-material'
 
-export default function ConstructionsTab({ projectId }) {
+export default function ConstructionsTab({ projectId, viewOnly = false }) {
     const { enqueueSnackbar } = useSnackbar()
     const [constructions, setConstructions] = useState([])
     const [constructionsService, setConstructionsService] = useState([])
@@ -76,14 +76,13 @@ export default function ConstructionsTab({ projectId }) {
                     'address.street',
                     'address.number',
                     'address.complete_address',
-                    'scheduled_agent.name',
                     'service.name',
                     'service.category',
                     'final_service_opinion.name',
                     'protocol',
+                    'schedule_agent',
                     'observation'
                 ].join(','),
-                expand: 'address,scheduled_agent,service,final_service_opinion,observation,protocol,project',
                 project__in: projectId,
                 category__icontains: 'Obras'
             });
@@ -155,7 +154,7 @@ export default function ConstructionsTab({ projectId }) {
     const columns = [
         { field: 'service', headerName: 'Serviço', render: r => r.service.name },
         { field: 'address', headerName: 'Endereço', render: r => r.address.complete_address },
-        { field: 'scheduled_agent', headerName: 'Agente', render: r => r.scheduled_agent?.name },
+        { field: 'schedule_agent', headerName: 'Agente', render: r => { r.schedule_agent ? <UserCard userId={r.schedule_agent} /> : "Sem agente" } },
         { field: 'schedule_date', headerName: 'Agendada', render: r => new Date(r.schedule_date).toLocaleDateString() },
         { field: 'final_service_opinion', headerName: 'Concluída', render: r => r.final_service_opinion ? new Date(r.final_service_opinion).toLocaleDateString() : '-' },
     ]
@@ -267,6 +266,7 @@ export default function ConstructionsTab({ projectId }) {
                                             />
                                             <TableHeader.Button
                                                 buttonLabel="Adicionar Solicitação"
+                                                icon={<Add />}
                                                 onButtonClick={() => {
                                                     setOpenFinancialRecordSelectModal(true)
                                                     setSelectedConstructionId(c.id)
@@ -323,7 +323,7 @@ export default function ConstructionsTab({ projectId }) {
                         </Card>
                     )
                 })}
-                <Box
+                {!viewOnly && <Box
                     sx={{
                         display: 'flex',
                         justifyContent: constructions.length === 0 ? 'center' : 'flex-end',
@@ -331,7 +331,7 @@ export default function ConstructionsTab({ projectId }) {
                     }}
                 >
                     <Button onClick={() => setOpenConstructionFormModal(true)}>Adicionar Obra</Button>
-                </Box>
+                </Box>}
             </Box>
 
             <TableHeader.Root>
@@ -340,13 +340,14 @@ export default function ConstructionsTab({ projectId }) {
                     totalItems={constructionsService.length}
                     objNameNumberReference={constructions.length === 1 ? "Obra" : "Obras"}
                 />
-                <TableHeader.Button
+                {!viewOnly && <TableHeader.Button
                     buttonLabel="Adicionar serviço de obra"
+                    icon={<Add />}
                     onButtonClick={() => setOpenConstructionServiceFormModal(true)}
                     sx={{
                         width: 250,
                     }}
-                />
+                />}
             </TableHeader.Root>
 
             <Table.Root
@@ -366,7 +367,7 @@ export default function ConstructionsTab({ projectId }) {
                             {c.headerName}
                         </Table.Cell>
                     ))}
-                    <Table.Cell align="center">Editar</Table.Cell>
+                    {!viewOnly && <Table.Cell align="center">Editar</Table.Cell>}
                     <Table.Cell align="center">Ver</Table.Cell>
                 </Table.Head>
 
@@ -388,8 +389,8 @@ export default function ConstructionsTab({ projectId }) {
                         sx={{ opacity: 0.7, }}
                     />
                     <Table.Cell render={r =>
-                        r.scheduled_agent
-                            ? <UserCard userId={r.scheduled_agent} />
+                        r.schedule_agent
+                            ? <UserCard userId={r.schedule_agent} />
                             : "Sem agente"}
                         sx={{ opacity: 0.7 }}
                     />
@@ -401,7 +402,7 @@ export default function ConstructionsTab({ projectId }) {
                         sx={{ opacity: 0.7 }}
                     />
 
-                    <Table.EditAction onClick={r => { setSelectedConstructionServiceId(r.id); setOpenConstructionServiceFormModal(true) }} />
+                    {!viewOnly && <Table.EditAction onClick={r => { setSelectedConstructionServiceId(r.id); setOpenConstructionServiceFormModal(true) }} />}
                     <Table.ViewAction onClick={(r) => {
                         setOpenViewConstruction(true);
                         setSelectedConstructionServiceId(r.id);
@@ -410,94 +411,96 @@ export default function ConstructionsTab({ projectId }) {
                 </Table.Body>
             </Table.Root>
 
-            <ConstructionFormModal
-                open={openConstructionFormModal}
-                onClose={() => setOpenConstructionFormModal(false)}
-                projectId={projectId}
-                constructionId={selectedConstructionId || null}
-                onSave={handleConstructionFormSuccess}
-            />
+            {!viewOnly && <>
+                <ConstructionFormModal
+                    open={openConstructionFormModal}
+                    onClose={() => setOpenConstructionFormModal(false)}
+                    projectId={projectId}
+                    constructionId={selectedConstructionId || null}
+                    onSave={handleConstructionFormSuccess}
+                />
 
-            <Dialog
-                open={openFinancialRecordSelectModal}
-                onClose={() => setOpenFinancialRecordSelectModal(false)}
-                maxWidth="md"
-                fullWidth
-                PaperProps={{
-                    sx: {
-                        borderRadius: '20px',
-                        padding: '24px',
-                        gap: '24px',
-                        boxShadow: '0px 4px 20px rgba(0,0,0,0.1)',
-                        backgroundColor: '#FFF',
-                    },
-                }}
-            >
-                <DialogContent>
-                    <GenericAsyncAutocompleteInput
-                        label="Solicitação de Pagamento"
-                        value={financialRecords || []} // Pass the array of selected objects
-                        getOptionLabel={(option) => option.protocol || ''} // Specify how to get the label string
-                        isOptionEqualToValue={(option, value) => option.id === value.id} // Specify how to compare objects
-                        endpoint="api/financial-records"
-                        queryParam="protocol__icontains"
-                        onChange={(value) => {
-                            setFinancialRecords(value); // Update state with selected objects
-                        }}
-                        extraParams={{ fields: "id,protocol,value,due_date,client_supplier_name" }}
-                        multiselect
-                        renderOption={(props, option) => {
-                            const val = parseFloat(option.value);
-                            return (
-                                <Box component="li" {...props} key={option.id}>
-                                    {/* Display protocol as the main identifier in the dropdown */}
-                                    <Typography variant="body1" component="span">{option.protocol}</Typography>
-                                    {/* Display formatted value next to it */}
-                                    <Typography variant="body2" color="textSecondary" component="span" sx={{ ml: 1 }}>
-                                        {isNaN(val)
-                                            ? '-'
-                                            : val.toLocaleString('pt-BR', {
-                                                style: 'currency',
-                                                currency: 'BRL',
-                                            })
-                                        }
-                                    </Typography>
-                                </Box>
-                            );
-                        }}
-                    />
-                </DialogContent>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => {
-                            handleFinancialRecordsChange(selectedConstructionId, financialRecords);
-                            setOpenFinancialRecordSelectModal(false);
-                        }}
-                    >
-                        Confirmar
-                    </Button>
-                </Box>
-            </Dialog>
+                <Dialog
+                    open={openFinancialRecordSelectModal}
+                    onClose={() => setOpenFinancialRecordSelectModal(false)}
+                    maxWidth="md"
+                    fullWidth
+                    PaperProps={{
+                        sx: {
+                            borderRadius: '20px',
+                            padding: '24px',
+                            gap: '24px',
+                            boxShadow: '0px 4px 20px rgba(0,0,0,0.1)',
+                            backgroundColor: '#FFF',
+                        },
+                    }}
+                >
+                    <DialogContent>
+                        <GenericAsyncAutocompleteInput
+                            label="Solicitação de Pagamento"
+                            value={financialRecords || []} // Pass the array of selected objects
+                            getOptionLabel={(option) => option.protocol || ''} // Specify how to get the label string
+                            isOptionEqualToValue={(option, value) => option.id === value.id} // Specify how to compare objects
+                            endpoint="api/financial-records"
+                            queryParam="protocol__icontains"
+                            onChange={(value) => {
+                                setFinancialRecords(value); // Update state with selected objects
+                            }}
+                            extraParams={{ fields: "id,protocol,value,due_date,client_supplier_name" }}
+                            multiselect
+                            renderOption={(props, option) => {
+                                const val = parseFloat(option.value);
+                                return (
+                                    <Box component="li" {...props} key={option.id}>
+                                        {/* Display protocol as the main identifier in the dropdown */}
+                                        <Typography variant="body1" component="span">{option.protocol}</Typography>
+                                        {/* Display formatted value next to it */}
+                                        <Typography variant="body2" color="textSecondary" component="span" sx={{ ml: 1 }}>
+                                            {isNaN(val)
+                                                ? '-'
+                                                : val.toLocaleString('pt-BR', {
+                                                    style: 'currency',
+                                                    currency: 'BRL',
+                                                })
+                                            }
+                                        </Typography>
+                                    </Box>
+                                );
+                            }}
+                        />
+                    </DialogContent>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => {
+                                handleFinancialRecordsChange(selectedConstructionId, financialRecords);
+                                setOpenFinancialRecordSelectModal(false);
+                            }}
+                        >
+                            Confirmar
+                        </Button>
+                    </Box>
+                </Dialog>
 
-            <Dialog
-                open={openConstructionServiceFormModal}
-                onClose={() => { setOpenConstructionServiceFormModal(false); setSelectedConstructionServiceId(null); }}
-                maxWidth="md"
-                fullWidth
-                PaperProps={{ sx: { borderRadius: '20px', padding: '24px', gap: '24px', boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#FFF' } }}
-            >
-                <DialogContent>
-                    <ScheduleFromProjectForm
-                        projectId={projectId}
-                        scheduleId={selectedConstructionServiceId || null}
-                        categoryId={categoryId}
-                        displayAgent={false}
-                        onSave={handleAddSuccess}
-                    />
-                </DialogContent>
-            </Dialog>
+                <Dialog
+                    open={openConstructionServiceFormModal}
+                    onClose={() => { setOpenConstructionServiceFormModal(false); setSelectedConstructionServiceId(null); }}
+                    maxWidth="md"
+                    fullWidth
+                    PaperProps={{ sx: { borderRadius: '20px', padding: '24px', gap: '24px', boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#FFF' } }}
+                >
+                    <DialogContent>
+                        <ScheduleFromProjectForm
+                            projectId={projectId}
+                            scheduleId={selectedConstructionServiceId || null}
+                            categoryId={categoryId}
+                            displayAgent={false}
+                            onSave={handleAddSuccess}
+                        />
+                    </DialogContent>
+                </Dialog>
+            </>}
 
             <DetailsDrawer dialogMode={true} scheduleId={selectedConstruction} open={openViewConstruction} onClose={() => setOpenViewConstruction(false)} />
         </>

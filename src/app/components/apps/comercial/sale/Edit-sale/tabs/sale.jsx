@@ -26,19 +26,17 @@ import { useSelector } from 'react-redux';
 import useSale from '@/hooks/sales/useSale';
 import useSaleForm from '@/hooks/sales/useSaleForm';
 import { useEffect, useState } from 'react';
-import documentTypeService from '@/services/documentTypeService';
 import HasPermission from '@/app/components/permissions/HasPermissions';
 import SaleProductItem from '@/app/components/apps/saleProduct/SaleProductItem';
 import AutoCompleteReasonMultiple from '../../components/auto-complete/Auto-Input-Reasons';
 import ProductService from '@/services/productsService';
-
-const CONTEXT_TYPE_SALE_ID = process.env.NEXT_PUBLIC_CONTENT_TYPE_SALE_ID;
 
 const EditSale = ({
   saleId = null,
   onClosedModal = null,
   refresh = null,
   onSubmit = null,
+  viewOnly = false,
   ...props
 }) => {
   const params = useParams();
@@ -226,17 +224,31 @@ const EditSale = ({
           permissions={['accounts.change_pre_sale_field']}
           userPermissions={userPermissions}
         >
-          <Grid item xs={12} sm={12} lg={12}>
-            <CustomFormLabel>Venda</CustomFormLabel>
-            <FormControlLabel
-              control={
-                <CustomSwitch
-                  checked={formData.isSale}
-                  onChange={(e) => handleChange('isSale', e.target.checked)}
-                />
-              }
-              label={formData.isSale ? 'Pré-Venda' : 'Venda'}
-            />
+          <Grid item xs={12} sm={12} lg={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box sx={{ margin: 0 }}>
+              <CustomFormLabel>Venda</CustomFormLabel>
+              <FormControlLabel
+                sx={{ margin: 0 }}
+                control={
+                  <CustomSwitch sx={{ margin: 0 }}
+                    checked={formData.isSale}
+                    onChange={(e) => handleChange('isSale', e.target.checked)}
+                  />
+                }
+                label={formData.isSale ? 'Pré-Venda' : 'Venda'}
+              />
+            </Box>
+            {hasPermission(['resolve_crm.can_change_fineshed_sale']) && !onSubmit && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSave}
+                disabled={formLoading}
+                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+              >
+                {formLoading ? 'Salvando...' : 'Salvar Alterações'}
+              </Button>
+            )}
           </Grid>
         </HasPermission>
 
@@ -248,17 +260,6 @@ const EditSale = ({
           />
         ))}
 
-        {hasPermission(['resolve_crm.can_change_fineshed_sale']) && !onSubmit && (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSave}
-            disabled={formLoading}
-            endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-          >
-            {formLoading ? 'Salvando...' : 'Salvar Alterações'}
-          </Button>
-        )}
       </Grid>
     </Box>
   );

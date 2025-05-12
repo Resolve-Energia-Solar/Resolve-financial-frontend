@@ -24,8 +24,8 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { keyframes } from '@mui/system';
 import { FilterContext } from '@/context/FilterContext';
 import HorizontalProcessCards from '../Costumer-journey/HorizontalProcessCards';
-import { Table } from "@/app/components/Table";
-import { TableHeader } from "@/app/components/TableHeader";
+import { Table } from '@/app/components/Table';
+import { TableHeader } from '@/app/components/TableHeader';
 import ScheduleOpinionChip from '../../inspections/schedule/StatusChip';
 import StatusFinancialChip from '@/utils/status/FinancialChip';
 import ChipRequest from '../../request/components/auto-complete/ChipRequest';
@@ -146,21 +146,9 @@ const ProjectList = ({ onClick }) => {
     { value: 'SP', label: 'SP' },
     { value: 'SE', label: 'SE' },
     { value: 'TO', label: 'TO' },
-  ]
+  ];
 
   const projectFilterConfig = [
-    {
-      key: 'current_step__in',
-      label: 'Etapa Atual',
-      type: 'async-multiselect',
-      endpoint: '/api/steps-names',
-      queryParam: 'name__icontains',
-      mapResponse: (data) =>
-        data.results.map((step) => ({
-          label: step.name,
-          value: step.id,
-        })),
-    },
     {
       key: 'customer',
       label: 'Cliente',
@@ -264,7 +252,7 @@ const ProjectList = ({ onClick }) => {
         { value: 'T', label: 'Transferência Bancária' },
         { value: 'DI', label: 'Dinheiro' },
         { value: 'PA', label: 'Poste auxiliar' },
-        { value: 'RO', label: 'Repasse de Obra' },
+        { value: '', label: 'Repasse de Obra' },
       ],
     },
     {
@@ -297,7 +285,7 @@ const ProjectList = ({ onClick }) => {
       options: [
         { value: 'true', label: 'Sim' },
         { value: 'false', label: 'Não' },
-        { value: 'null', label: 'Todos' }
+        { value: 'null', label: 'Todos' },
       ],
     },
     {
@@ -391,9 +379,11 @@ const ProjectList = ({ onClick }) => {
         const data = await projectService.index({
           page: page + 1,
           limit: rowsPerPage,
-          expand: 'sale.customer,designer,homologator,product,sale,sale.branch,processes.current_step,field_services.service.category,field_services.final_service_opinion,requests_energy_company,requests_energy_company.type',
+          expand:
+            'sale.customer,designer,homologator,product,sale,sale.branch,field_services.service.category,field_services.final_service_opinion,requests_energy_company,requests_energy_company.type',
           fields:
-            'id,sale.id,sale.customer.complete_name,sale.signature_date,sale.total_value,sale.payment_status,sale.branch.name,is_documentation_completed,homologator.complete_name,designer_status,material_list_is_completed,trt_pending,peding_request,access_opnion,product.name,product.params,status,sale.status,is_released_to_engineering,processes.current_step.name,field_services.service.category.name,field_services.final_service_opinion.name,field_services.status,field_services.schedule_date,requests_energy_company.status,requests_energy_company.type.name',
+            'id,sale.id,sale.customer.complete_name,sale.signature_date,sale.total_value,sale.payment_status,sale.branch.name,is_documentation_completed,homologator.complete_name,designer_status,material_list_is_completed,trt_pending,peding_request,access_opnion,product.name,product.params,status,sale.status,is_released_to_engineering,field_services.service.category.name,field_services.final_service_opinion.name,field_services.status,field_services.schedule_date,requests_energy_company.status,requests_energy_company.type.name',
+          metrics: 'is_released_to_engineering',
           ...filters,
         });
 
@@ -401,7 +391,7 @@ const ProjectList = ({ onClick }) => {
           const categories = ['Vistoria', 'Instalação', 'Entrega'];
           const latestServices = {};
 
-          project.field_services.forEach(fs => {
+          project.field_services.forEach((fs) => {
             const categoryName = fs.service?.category?.name;
             if (!categories.includes(categoryName)) return;
 
@@ -415,20 +405,21 @@ const ProjectList = ({ onClick }) => {
           });
 
           const result = {};
-          categories.forEach(category => {
+          categories.forEach((category) => {
             result[category] = latestServices[category]
-              ? (latestServices[category].final_service_opinion
+              ? latestServices[category].final_service_opinion
                 ? latestServices[category].final_service_opinion.name
-                : latestServices[category].status)
+                : latestServices[category].status
               : null;
           });
           return result;
         };
 
-        const projectsWithStatus = data.results.map(project => {
-          const homolog = project.requests_energy_company?.find(r =>
-            r.type?.name?.toLowerCase() === 'vistoria final'
-          )?.status || null;
+        const projectsWithStatus = data.results.map((project) => {
+          const homolog =
+            project.requests_energy_company?.find(
+              (r) => r.type?.name?.toLowerCase() === 'vistoria final',
+            )?.status || null;
           return {
             ...project,
             fieldServiceStatus: getFieldServiceStatus(project),
@@ -480,48 +471,79 @@ const ProjectList = ({ onClick }) => {
   const designerCanceled = useAnimatedNumber(indicators?.designer_canceled_count || 0);
 
   const columns = [
-    { field: 'sale.customer.complete_name', headerName: 'Cliente', render: r => r.sale.customer.complete_name },
-    { field: 'product.name', headerName: 'Produto', render: r => r.product.name },
-    { field: 'signature_date', headerName: 'Data de Contrato', render: r => new Date(r.signature_date).toLocaleDateString() },
-    { field: 'dias', headerName: 'Dias', render: r => {
+    {
+      field: 'sale.customer.complete_name',
+      headerName: 'Cliente',
+      render: (r) => r.sale.customer.complete_name,
+    },
+    { field: 'product.name', headerName: 'Produto', render: (r) => r.product.name },
+    {
+      field: 'signature_date',
+      headerName: 'Data de Contrato',
+      render: (r) => new Date(r.signature_date).toLocaleDateString(),
+    },
+    {
+      field: 'dias',
+      headerName: 'Dias',
+      render: (r) => {
         if (!r.sale.signature_date) return '-';
         const diffMs = Date.now() - new Date(r.sale.signature_date).getTime();
         const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
         return `${diffDays}`;
-      }
+      },
     },
-    { field: 'sale.branch.name', headerName: 'Unidade', render: r => r.sale.branch.name },
-    { field: 'sale.total_value', headerName: 'Valor', render: r => new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-      }).format(r.sale.total_value) },
-    { field: 'process.current_step', headerName: 'Etapa Atual', render: r => r.process.current_step },
-    { field: 'sale.status', headerName: 'Status Venda', render: r => <StatusChip status={r.sale.status} /> },
-    { field: 'inspection_status', headerName: 'Status Vistoria', render: r => r.fieldServiceStatus?.Vistoria },
-    { field: 'status_financeiro', headerName: 'Status Financeiro', render: r => r.sale.payment_status },
-    { field: 'is_released_to_engineering', headerName: 'Liberado p/ Engenharia', render: r => r.is_released_to_engineering },
-    { field: 'delivery_status', headerName: 'Status de Entrega', render: r => r.fieldServiceStatus?.Entrega },
-    { field: 'installation_status', headerName: 'Status de Instalação', render: r => r.fieldServiceStatus?.Instalação },
-    { field: 'homologationStatus', headerName: 'Status Homologação', render: r => r.homologationStatus || '-' },
+    { field: 'sale.branch.name', headerName: 'Unidade', render: (r) => r.sale.branch.name },
+    {
+      field: 'sale.total_value',
+      headerName: 'Valor',
+      render: (r) =>
+        new Intl.NumberFormat('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+        }).format(r.sale.total_value),
+    },
+    {
+      field: 'sale.status',
+      headerName: 'Status Venda',
+      render: (r) => <StatusChip status={r.sale.status} />,
+    },
+    {
+      field: 'inspection_status',
+      headerName: 'Status Vistoria',
+      render: (r) => r.fieldServiceStatus?.Vistoria,
+    },
+    {
+      field: 'status_financeiro',
+      headerName: 'Status Financeiro',
+      render: (r) => r.sale.payment_status,
+    },
+    {
+      field: 'is_released_to_engineering',
+      headerName: 'Liberado p/ Engenharia',
+      render: (r) => r.is_released_to_engineering,
+    },
+    {
+      field: 'delivery_status',
+      headerName: 'Status de Entrega',
+      render: (r) => r.fieldServiceStatus?.Entrega,
+    },
+    {
+      field: 'installation_status',
+      headerName: 'Status de Instalação',
+      render: (r) => r.fieldServiceStatus?.Instalação,
+    },
+    {
+      field: 'homologationStatus',
+      headerName: 'Status Homologação',
+      render: (r) => r.homologationStatus || '-',
+    },
   ];
 
   return (
     <>
-      <Typography fontSize={20} fontWeight={700} sx={{ mt: 0, }} gutterBottom>
+      <Typography fontSize={20} fontWeight={700} sx={{ mt: 0 }} gutterBottom>
         Jornada do cliente
       </Typography>
-      <Accordion defaultExpanded>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="process-count-by-step"
-          id="process-count-by-step-header"
-        >
-          <Typography variant="h6">Projetos por Etapa</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <HorizontalProcessCards />
-        </AccordionDetails>
-      </Accordion>
       <Accordion defaultExpanded sx={{ marginBottom: 4 }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -646,13 +668,30 @@ const ProjectList = ({ onClick }) => {
         </AccordionDetails>
       </Accordion>
       <Grid container>
-        <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'row', alignContent: 'center', justifyContent: 'space-between' }}>
-          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignContent: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Grid
+            item
+            xs={6}
+            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}
+          >
             <Typography fontSize={14} fontWeight={600} gutterBottom>
               Lista de Projetos
             </Typography>
           </Grid>
-          <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <Grid
+            item
+            xs={6}
+            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
+          >
             <Button
               variant="outlined"
               sx={{ mt: 1, mb: 2 }}
@@ -667,7 +706,6 @@ const ProjectList = ({ onClick }) => {
               onClose={() => setFilterDrawerOpen(false)}
               onApply={(newFilters) => setFilters(newFilters)}
             />
-
           </Grid>
         </Grid>
 
@@ -675,9 +713,7 @@ const ProjectList = ({ onClick }) => {
           <TableHeader.Title
             title="Total"
             totalItems={totalRows}
-            objNameNumberReference={
-              projectsList.length === 1 ? 'Projeto' : 'Projetos'
-            }
+            objNameNumberReference={projectsList.length === 1 ? 'Projeto' : 'Projetos'}
           />
         </TableHeader.Root>
 
@@ -698,7 +734,7 @@ const ProjectList = ({ onClick }) => {
                 key={col.field}
                 sx={{
                   fontWeight: 600,
-                  fontSize: '14px'
+                  fontSize: '14px',
                 }}
               >
                 {col.headerName}
@@ -708,16 +744,10 @@ const ProjectList = ({ onClick }) => {
 
           {/* Corpo */}
           <Table.Body loading={loadingProjects}>
+            <Table.Cell render={(row) => row.sale.customer.complete_name} sx={{ opacity: 0.7 }} />
+            <Table.Cell render={(row) => row.product?.name} sx={{ opacity: 0.7 }} />
             <Table.Cell
-              render={row => row.sale.customer.complete_name}
-              sx={{ opacity: 0.7 }}
-            />
-            <Table.Cell
-              render={row => row.product?.name}
-              sx={{ opacity: 0.7 }}
-            />
-            <Table.Cell
-              render={row =>
+              render={(row) =>
                 row.sale.signature_date
                   ? new Date(row.sale.signature_date).toLocaleDateString()
                   : 'Sem data'
@@ -725,7 +755,7 @@ const ProjectList = ({ onClick }) => {
               sx={{ opacity: 0.7 }}
             />
             <Table.Cell
-              render={row => {
+              render={(row) => {
                 if (!row.sale.signature_date) return '-';
                 const diffMs = Date.now() - new Date(row.sale.signature_date).getTime();
                 const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
@@ -733,12 +763,9 @@ const ProjectList = ({ onClick }) => {
               }}
               sx={{ opacity: 0.7 }}
             />
+            <Table.Cell render={(row) => row.sale.branch.name} sx={{ opacity: 0.7 }} />
             <Table.Cell
-              render={row => row.sale.branch.name}
-              sx={{ opacity: 0.7 }}
-            />
-            <Table.Cell
-              render={row =>
+              render={(row) =>
                 new Intl.NumberFormat('pt-BR', {
                   style: 'currency',
                   currency: 'BRL',
@@ -746,69 +773,37 @@ const ProjectList = ({ onClick }) => {
               }
               sx={{ opacity: 0.7 }}
             />
+            <Table.Cell render={(row) => getStatusChip(row.sale.status)} sx={{ opacity: 0.7 }} />
             <Table.Cell
-              render={row => {
-                const steps = row.processes
-                  ?.flatMap(p => p.current_step?.map(s => s.name))
-                  || [];
-
-                return (
-                  <Box
-                    component="span"
-                    sx={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      gap: 0.5,
-                    }}
-                  >
-                    {steps.length
-                      ? steps.map((name, i) => (
-                        <Chip
-                          key={i}
-                          label={name}
-                          color="primary"
-                          size="small"
-                        />
-                      ))
-                      : <Chip label="Sem Etapa" size="small" />
-                    }
-                  </Box>
-                );
-              }}
+              render={(row) => <ScheduleOpinionChip status={row.fieldServiceStatus?.Vistoria} />}
               sx={{ opacity: 0.7 }}
             />
             <Table.Cell
-              render={row => getStatusChip(row.sale.status)}
+              render={(row) => <StatusFinancialChip status={row.sale.payment_status} />}
               sx={{ opacity: 0.7 }}
             />
             <Table.Cell
-              render={row => <ScheduleOpinionChip status={row.fieldServiceStatus?.Vistoria} />}
-              sx={{ opacity: 0.7 }}
-            />
-            <Table.Cell
-              render={row => <StatusFinancialChip status={row.sale.payment_status} />}
-              sx={{ opacity: 0.7 }}
-            />
-            <Table.Cell
-              render={row => (
+              render={(row) => (
                 <Chip
                   label={row.is_released_to_engineering ? 'Liberado' : 'Bloqueado'}
                   color={row.is_released_to_engineering ? 'success' : 'error'}
-                  icon={row.is_released_to_engineering ? <IconCheck size={16} /> : <IconX size={16} />}
+                  icon={
+                    row.is_released_to_engineering ? <IconCheck size={16} /> : <IconX size={16} />
+                  }
                 />
               )}
               sx={{ opacity: 0.7 }}
             />
             <Table.Cell
-              render={row => <ScheduleOpinionChip status={row.fieldServiceStatus?.Entrega} />}
+              render={(row) => <ScheduleOpinionChip status={row.fieldServiceStatus?.Entrega} />}
               sx={{ opacity: 0.7 }}
             />
             <Table.Cell
-              render={row => <ScheduleOpinionChip status={row.fieldServiceStatus?.Instalação} />}
+              render={(row) => <ScheduleOpinionChip status={row.fieldServiceStatus?.Instalação} />}
               sx={{ opacity: 0.7 }}
             />
             <Table.Cell
-              render={row => <ChipRequest status={row.homologationStatus} />}
+              render={(row) => <ChipRequest status={row.homologationStatus} />}
               sx={{ opacity: 0.7 }}
             />
           </Table.Body>

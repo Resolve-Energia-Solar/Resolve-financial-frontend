@@ -32,6 +32,9 @@ import CustomTextField from '@/app/components/forms/theme-elements/CustomTextFie
 import { formatDate } from '@/utils/dateUtils';
 import attachmentService from '@/services/attachmentService';
 import getContentType from '@/utils/getContentType';
+import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
+import { NumericFormat } from 'react-number-format';
+import TextField from '@mui/material/TextField';
 
 const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh = null }) => {
   const router = useRouter();
@@ -98,6 +101,7 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
             'schedule_agent',
             'branch',
             'address',
+            'value',
             'observation',
             'products',
             'parent_schedules',
@@ -105,7 +109,7 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
             'attachments',
             'service_opinion',
             'final_service_opinion',
-            'schedule_creator'
+            'schedule_creator',
           ],
           expand: ['service'],
         })
@@ -121,6 +125,7 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
             customer: data.customer,
             project: data.project,
             schedule_agent: data.schedule_agent,
+            value: data.value,
             branch: data.branch,
             address: data.address,
             observation: data.observation || '',
@@ -745,6 +750,27 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
                   required
                 />
               </Grid>
+              <Grid item xs={12} sm={6}>
+                <CustomFormLabel sx={{ m: 0 }}>Valor (R$)</CustomFormLabel>
+                <NumericFormat
+                  value={parseInt(formData.value) || ''}
+                  onValueChange={(values) =>
+                    setFormData({
+                      ...formData,
+                      valueFormatted: values.formattedValue,
+                      value: values.value,
+                    })
+                  }
+                  customInput={TextField}
+                  thousandSeparator="."
+                  decimalSeparator=","
+                  valueIsNumericString
+                  prefix="R$ "
+                  size="medium"
+                  variant="outlined"
+                  fullWidth
+                />
+              </Grid>
               {(formData.customer || formData.project) && (
                 <Grid item xs={12} sm={6}>
                   <GenericAsyncAutocompleteInput
@@ -766,9 +792,8 @@ const UpdateSchedulePage = ({ scheduleId = null, onClosedModal = null, onRefresh
                     }}
                     mapResponse={(data) => {
                       return data.results.map((s) => ({
-                        label: `${s.service?.name || ''} nº ${s.protocol} - ${
-                          s.customer?.complete_name || ''
-                        } - ${s.schedule_date} ${s.schedule_start_time.toLocaleString()}`,
+                        label: `${s.service?.name || ''} nº ${s.protocol} - ${s.customer?.complete_name || ''
+                          } - ${s.schedule_date} ${s.schedule_start_time.toLocaleString()}`,
                         value: s.id,
                         ...s,
                       }));

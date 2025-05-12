@@ -182,6 +182,7 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
     { value: 'DI', label: 'Dinheiro' },
     { value: 'PA', label: 'Poste Auxiliar' },
     { value: 'RO', label: 'Repasse de Obra' },
+    { value: 'ND', label: 'Nota de Débito' },
   ];
 
   const invoiceStatus = [

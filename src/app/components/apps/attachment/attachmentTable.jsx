@@ -18,20 +18,29 @@ import attachmentService from '@/services/attachmentService';
 import getContentType from '@/utils/getContentType';
 import { useSelector } from 'react-redux';
 import TableSkeleton from '../comercial/sale/components/TableSkeleton';
+import EditAttachmentModal from '@/app/(DashboardLayout)/apps/attachment/EditAttachmentModal';
+import EditIcon from '@mui/icons-material/Edit';
+
 
 const AttachmentTable = ({
   objectId,
   attachments: attachmentsProp,
   onAddAttachment,
   appLabel,
+  appLabelDocument,
   model,
   onDelete,
+  hideStatus = true,
   hideTitle = false,
+  viewOnly = true,
 }) => {
   const [fetchedAttachments, setFetchedAttachments] = useState([]);
   const [openAttachmentModal, setOpenAttachmentModal] = useState(false);
   const [contentTypeId, setContentTypeId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedAttachmentId, setSelectedAttachmentId] = useState(null);
+
 
   // Recupera os dados do usuário e suas permissões do Redux
   const user = useSelector((state) => state.user?.user);
@@ -49,11 +58,20 @@ const AttachmentTable = ({
     fetchContentTypeId();
   }, [appLabel, model]);
 
+  console.log('contentTypeId', contentTypeId);
+
   useEffect(() => {
     if (objectId) {
       fetchAttachments();
     }
   }, [objectId, contentTypeId]);
+
+  const handleEditAttachment = (id) => {
+    console.log('id', id);
+    setSelectedAttachmentId(id);
+    setEditModalOpen(true);
+  };
+  
 
   const fetchAttachments = async () => {
     setIsLoading(true);
@@ -63,7 +81,7 @@ const AttachmentTable = ({
         content_type: contentTypeId,
         limit: 30,
         expand: 'document_type',
-        fields: 'id,file,description,document_type.name,created_at',
+        fields: 'id,file,description,document_type.name,created_at,status',
       });
       setFetchedAttachments(response.results || []);
     } catch (error) {
@@ -84,6 +102,8 @@ const AttachmentTable = ({
     return '';
   };
 
+  console.log('fetchedAttachments', fetchedAttachments);
+
   return (
     <TableContainer component={Paper} elevation={3} sx={{ boxShadow: 3, border: '1px solid #e0e0e0' }}>
       <div
@@ -96,9 +116,11 @@ const AttachmentTable = ({
         }}
       >
         {!!hideTitle && <Typography variant="h6">Anexos</Typography>}
-        <Button variant="contained" onClick={() => setOpenAttachmentModal(true)}>
-          Adicionar Anexo
-        </Button>
+        {!viewOnly && (
+          <Button variant="contained" onClick={() => setOpenAttachmentModal(true)}>
+            Adicionar Anexo
+          </Button>
+        )}
       </div>
       <Table aria-label="attachments">
         <TableHead>
@@ -112,12 +134,19 @@ const AttachmentTable = ({
             <TableCell>
               <strong>Tipo</strong>
             </TableCell>
+            {!hideStatus && (
+              <TableCell>
+                <strong>Status</strong>
+              </TableCell>
+            )}
             <TableCell>
               <strong>Data de Upload</strong>
             </TableCell>
-            <TableCell>
-              <strong>Ações</strong>
-            </TableCell>
+            {!viewOnly && (
+              <TableCell>
+                <strong>Ações</strong>
+              </TableCell>
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -137,18 +166,47 @@ const AttachmentTable = ({
                 </TableCell>
                 <TableCell>{attachment.description || '-'}</TableCell>
                 <TableCell>{attachment.document_type?.name || '-'}</TableCell>
+                {!hideStatus && (
+                  <TableCell>
+                    {attachment.status ? (
+                      <span style={{ color: 'green' }}>
+                        {attachment.status === 'EA'
+                          ? 'Em análise'
+                          : attachment.status === 'P'
+                          ? 'Parcial'
+                          : attachment.status === 'A'
+                          ? 'Aprovado'
+                          : attachment.status === 'R'
+                          ? 'Reprovado'
+                          : attachment.status}
+                      </span>
+                    ) : (
+                      <span style={{ color: 'red' }}>Sem Status</span>
+                    )}
+                  </TableCell>
+                )}
                 <TableCell>
                   {attachment.created_at
                     ? new Date(attachment.created_at).toLocaleString('pt-BR')
                     : '-'}
                 </TableCell>
+                {!viewOnly && (
                 <TableCell>
-                  {canDelete && (
-                    <IconButton color="error" onClick={() => onDelete && onDelete(attachment.id)}>
-                      <DeleteIcon />
-                    </IconButton>
-                  )}
+                    <>
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleEditAttachment(attachment.id)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      {canDelete && (
+                        <IconButton color="error" onClick={() => onDelete && onDelete(attachment.id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      )}
+                    </>
                 </TableCell>
+                )}
               </TableRow>
             ))
           ) : (
@@ -161,11 +219,12 @@ const AttachmentTable = ({
         </TableBody>
       </Table>
       <AddAttachmentModal
-        appLabel={appLabel}
+        appLabel={appLabelDocument ?? appLabel}
         open={openAttachmentModal}
         onClose={() => setOpenAttachmentModal(false)}
         objectId={objectId}
         contentType={contentTypeId}
+        hideStatus={hideStatus}
         onAddAttachment={(attachment) => {
           if (!objectId) {
             onAddAttachment && onAddAttachment(attachment);
@@ -174,6 +233,16 @@ const AttachmentTable = ({
           }
         }}
         showFields={{ description: true }}
+      />
+      <EditAttachmentModal
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        attachmentId={selectedAttachmentId}
+        appLabel={appLabelDocument ?? appLabel}
+        hideStatus={hideStatus}
+        onUpdateAttachment={() => {
+          fetchAttachments(); // atualiza a lista após edição
+        }}
       />
     </TableContainer>
   );

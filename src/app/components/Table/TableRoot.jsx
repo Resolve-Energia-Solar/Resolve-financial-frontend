@@ -17,10 +17,27 @@ export function TableRoot({ children, noWrap, ...ctx }) {
           px: 3,
         }}
       >
-        <TableContainer sx={{ overflowX: 'auto', width: '100%' }}>
-          <MuiTable sx={{ borderCollapse: 'separate', borderSpacing: '0px 8px',
+        <TableContainer sx={{
+          overflowX: 'scroll',
+          overflowY: 'hidden',
+          width: '100%',
+          overflowX: 'scroll',
+          overflowY: 'hidden',
+          '&::-webkit-scrollbar': {
+            height: 6,
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: 'rgba(0,0,0,0.3)',
+            borderRadius: 3,
+          },
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'rgba(0,0,0,0.3) transparent'
+        }}
+        >
+          <MuiTable sx={{
+            borderCollapse: 'separate', borderSpacing: '0px 8px',
             ...(noWrap && { '& th, & td': { whiteSpace: 'nowrap' } })
-           }}>
+          }}>
             {children.filter(child => child.type !== Table.Pagination)}
           </MuiTable>
         </TableContainer>

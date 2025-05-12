@@ -60,6 +60,7 @@ export default function FilterDrawer({ externalOpen, onClose, onApplyFilters }) 
     { value: 'DI', label: 'Dinheiro' },
     { value: 'PA', label: 'Poste auxiliar' },
     { value: 'RO', label: 'Repasse de Obra' },
+    { value: 'ND', label: 'Nota de Débito' },
   ];
 
   const saleStatusOptions = [

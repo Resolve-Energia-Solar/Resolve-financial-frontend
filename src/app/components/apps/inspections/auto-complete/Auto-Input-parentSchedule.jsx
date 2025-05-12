@@ -82,14 +82,13 @@ export default function AutoCompleteParentSchedule({
             'protocol',
           ],
         });
-        console.log('akjshdfasefasdghf kk', response);
 
         const formattedSchedules = response.results.map((schedule) => ({
           id: schedule.id,
           name: schedule.customer.complete_name,
           status: schedule.status,
           serviceName: schedule.service.category.name,
-          agentName: schedule.schedule_agent ? schedule.schedule_agent.name : 'Não atribuído',
+          agentName: schedule.schedule_agent ? schedule.schedule_agent.complete_name : 'Não atribuído',
           customerId: schedule.customer.id,
           projectId: schedule.project?.id,
           protocol: schedule.protocol,

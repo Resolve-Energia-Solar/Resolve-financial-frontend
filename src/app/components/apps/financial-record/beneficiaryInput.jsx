@@ -142,7 +142,9 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
         setOptions(formattedBeneficiaries);
       } catch (error) {
         console.error('Erro ao buscar beneficiários:', error);
-        enqueueSnackbar('Erro ao buscar beneficiários.', { variant: 'error' });
+        if (error.response && error.response.data.error !== "No filter parameter received") {
+          enqueueSnackbar('Erro ao buscar beneficiários.', { variant: 'error' });
+        }
       }
       setLoading(false);
     }, 1000),
@@ -196,7 +198,7 @@ export default function AutoCompleteBeneficiary({ onChange, value, error, helper
         options={options}
         loadingText="Carregando..."
         noOptionsText="Nenhum resultado encontrado, tente digitar algo ou mudar a pesquisa."
-          loading={loading}
+        loading={loading}
         disabled={disabled}
         value={selectedBeneficiary || value}
         onInputChange={handleInputChange}

@@ -14,8 +14,9 @@ import DetailsDrawer from "@/app/components/apps/schedule/DetailsDrawer";
 import purchaseService from "@/services/purchaseService";
 import PurchaseForm from "./PurchaseForm";
 import PurchaseDetailsModal from "@/app/components/apps/logistics/purchase/DetailsModal";
+import { Add } from "@mui/icons-material";
 
-export default function LogisticsTab({ projectId }) {
+export default function LogisticsTab({ projectId, viewOnly = false }) {
     const { enqueueSnackbar } = useSnackbar()
     const [deliveries, setDeliveries] = useState([])
     const [deliveriesCount, setDeliveriesCount] = useState([])
@@ -40,8 +41,8 @@ export default function LogisticsTab({ projectId }) {
                 try {
                     const response = await scheduleService.index(
                         {
-                            fields: "id,address.complete_address,products.description,scheduled_agent,schedule_date,completed_date,final_service_opinion.name,project.inspection,project.product.description,service.name",
-                            expand: "address,products,scheduled_agent,final_service_opinion,project,project.product,service",
+                            fields: "id,address.complete_address,products.description,schedule_agent,schedule_date,completed_date,final_service_opinion.name,project.inspection,project.product.description,service.name",
+                            expand: "address,products,final_service_opinion,project,project.product,service",
                             project__in: projectId,
                             category__icontains: 'Entrega'
                         }
@@ -84,7 +85,7 @@ export default function LogisticsTab({ projectId }) {
         { field: 'address', headerName: 'Endereço', render: r => r.address.complete_address },
         { field: 'schedule_date', headerName: 'Agendada', render: r => new Date(r.schedule_date).toLocaleDateString() },
         { field: 'products', headerName: 'Produto', render: r => r.products.map(p => p.description).join(', ') },
-        { field: 'scheduled_agent', headerName: 'Fornecedor', render: r => r.scheduled_agent?.name },
+        { field: 'schedule_agent', headerName: 'Fornecedor', render: r => { r.schedule_agent ? <UserCard userId={r.schedule_agent} /> : "Sem agente" } },
         { field: 'final_service_opinion', headerName: 'Status', render: r => r.final_service_opinion?.name },
     ]
 
@@ -142,13 +143,16 @@ export default function LogisticsTab({ projectId }) {
                     title="Total de Entregas"
                     totalItems={deliveriesCount}
                 />
-                <TableHeader.Button
-                    buttonLabel="Adicionar entrega"
-                    onButtonClick={() => setOpenDeliveryFormModal(true)}
-                    sx={{
-                        width: 200,
-                    }}
-                />
+                {!viewOnly && (
+                    <TableHeader.Button
+                        buttonLabel="Adicionar entrega"
+                        icon={<Add />}
+                        onButtonClick={() => setOpenDeliveryFormModal(true)}
+                        sx={{
+                            width: 200,
+                        }}
+                    />
+                )}
             </TableHeader.Root>
 
             <Table.Root
@@ -168,7 +172,9 @@ export default function LogisticsTab({ projectId }) {
                             {c.headerName}
                         </Table.Cell>
                     ))}
-                    <Table.Cell align="center">Editar</Table.Cell>
+                    {!viewOnly && (
+                        <Table.Cell align="center">Editar</Table.Cell>
+                    )}
                     <Table.Cell align="center">Ver</Table.Cell>
                 </Table.Head>
 
@@ -192,8 +198,8 @@ export default function LogisticsTab({ projectId }) {
                         sx={{ opacity: 0.7 }}
                     />
                     <Table.Cell render={row =>
-                        row.scheduled_agent
-                            ? <UserCard userId={row.scheduled_agent} />
+                        row.schedule_agent
+                            ? <UserCard userId={row.schedule_agent} />
                             : "Sem agente"}
                         sx={{ opacity: 0.7 }}
                     />
@@ -201,7 +207,9 @@ export default function LogisticsTab({ projectId }) {
                         sx={{ opacity: 0.7 }}
                     />
 
-                    <Table.EditAction onClick={row => { setSelectedDelivery(row.id); setOpenDeliveryFormModal(true); }} />
+                    {!viewOnly && (
+                        <Table.EditAction onClick={row => { setSelectedDelivery(row.id); setOpenDeliveryFormModal(true); }} />
+                    )}
                     <Table.ViewAction onClick={row => { setSelectedDelivery(row.id); setOpenViewDelivery(true) }} />
                 </Table.Body>
             </Table.Root>
@@ -234,6 +242,7 @@ export default function LogisticsTab({ projectId }) {
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar compra"
+                    icon={<Add />}
                     onButtonClick={() => {
                         setOpenPurchaseFormModal(true);
                         setSelectedPurchase(null);
@@ -259,7 +268,9 @@ export default function LogisticsTab({ projectId }) {
                             {c.headerName}
                         </Table.Cell>
                     ))}
-                    <Table.Cell align="center">Editar</Table.Cell>
+                    {!viewOnly && (
+                        <Table.Cell align="center">Editar</Table.Cell>
+                    )}
                     <Table.Cell align="center">Ver</Table.Cell>
                 </Table.Head>
 
@@ -288,28 +299,32 @@ export default function LogisticsTab({ projectId }) {
                         return deliveryTypeMap[row.delivery_type] || row.delivery_type || '-';
                     }} sx={{ opacity: 0.7 }} />
 
-                    <Table.EditAction onClick={row => { setSelectedPurchase(row.id); setOpenPurchaseFormModal(true); }} />
+                    {!viewOnly && (
+                        <Table.EditAction onClick={row => { setSelectedPurchase(row.id); setOpenPurchaseFormModal(true); }} />
+                    )}
                     <Table.ViewAction onClick={row => { setSelectedPurchase(row.id); setOpenViewPurchase(true); }} />
                 </Table.Body>
             </Table.Root>
 
-            <Dialog
-                open={openPurchaseFormModal}
-                onClose={() => {
-                    setOpenPurchaseFormModal(false);
-                    setSelectedPurchase(null);
-                }}
-            >
-                <DialogContent>
-                    <PurchaseForm
-                        purchaseId={selectedPurchase}
-                        projectId={projectId}
-                        onSave={handlePurchaseFormSuccess}
-                    />
-                </DialogContent>
-            </Dialog>
+            {!viewOnly && (
+                <Dialog
+                    open={openPurchaseFormModal}
+                    onClose={() => {
+                        setOpenPurchaseFormModal(false);
+                        setSelectedPurchase(null);
+                    }}
+                >
+                    <DialogContent>
+                        <PurchaseForm
+                            purchaseId={selectedPurchase}
+                            projectId={projectId}
+                            onSave={handlePurchaseFormSuccess}
+                        />
+                    </DialogContent>
+                </Dialog>
+            )}
 
-            <PurchaseDetailsModal open={openViewPurchase} onClose={() => {setOpenViewPurchase(false); setSelectedPurchase(null)}} purchaseId={selectedPurchase} />
+            <PurchaseDetailsModal open={openViewPurchase} onClose={() => { setOpenViewPurchase(false); setSelectedPurchase(null) }} purchaseId={selectedPurchase} />
         </>
     );
 }

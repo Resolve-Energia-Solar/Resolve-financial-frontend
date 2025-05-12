@@ -30,6 +30,7 @@ import scheduleService from '@/services/scheduleService';
 import CommercialScheduleDetail from './CommercialScheduleDetail';
 import SideDrawer from '@/app/components/shared/SideDrawer';
 import { useRouter } from 'next/navigation';
+import ScheduleOpinionChip from '../../inspections/schedule/StatusChip/ScheduleOpinionChip';
 
 const scheduleFilterConfig = [
   {
@@ -137,7 +138,7 @@ const CommercialSchedulesList = () => {
       const response = await scheduleService.index({
         fields:
           'customer.complete_name,service.name,service_opinion.name,final_service_opinion.name,schedule_date,schedule_start_time,schedule_agent.complete_name,schedule_agent.id,address,status,created_at,id,groups,project.id,project.product,product.name,product.id,project.sale.seller,products.name,products.id,project.sale.products',
-        expand: 'customer,service,schedule_agent,address,project,product,project.sale',
+        expand: 'customer,service,schedule_agent,address,project,product,project.sale,final_service_opinion',
         page: page + 1,
         limit: rowsPerPage,
         ...filters,
@@ -262,7 +263,7 @@ const CommercialSchedulesList = () => {
                     <TableCell>{schedule.created_at ? formatDateTime(schedule.created_at) : '-'}</TableCell>
                     <TableCell>{schedule.customer && schedule.customer.complete_name ? schedule.customer.complete_name : '-'}</TableCell>
                     <TableCell><ScheduleStatusChip status={schedule.status} /></TableCell>
-                    <TableCell>{renderOpinionBadge(schedule.final_service_opinion, 'Com Parecer', 'Em Análise')}</TableCell>
+                    <TableCell><ScheduleOpinionChip status={schedule.final_service_opinion?.name} /></TableCell>
                     <TableCell>{schedule.schedule_date ? formatDate(schedule.schedule_date) : '-'}</TableCell>
                     <TableCell>{schedule.schedule_start_time ? formatTime(schedule.schedule_start_time) : '-'}</TableCell>
                     <TableCell>{schedule.schedule_agent ? schedule.schedule_agent.complete_name : <Chip label="Sem Agente" color="warning" />}</TableCell>

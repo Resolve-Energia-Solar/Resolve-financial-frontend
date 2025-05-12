@@ -30,6 +30,8 @@ const PaymentChip = ({ paymentType }) => {
         return { label: 'Poste Auxiliar', color: 'info', icon: <PaymentsIcon /> };
       case 'RO':
         return { label: 'Repasse de Obra', color: 'info', icon: <PaymentsIcon /> };
+      case 'ND':
+        return { label: 'Nota de Débito', color: 'info', icon: <PaymentsIcon /> };
       default:
         return { label: paymentType };
     }
