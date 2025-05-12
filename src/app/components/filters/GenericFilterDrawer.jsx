@@ -197,6 +197,9 @@ const GenericFilterDrawer = ({ filters, initialValues, onApply, open, onClose })
   };
 
   const resetFiltersHandler = () => {
+    const defaultValues = getDefaultValues();
+    setFilterValues(defaultValues);
+    onApply({});
     clearFilters();
     onClose();
   };
