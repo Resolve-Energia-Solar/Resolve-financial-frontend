@@ -1,19 +1,15 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Box, IconButton, Drawer, Skeleton, Tabs, Tab, Typography, Card, CardContent } from '@mui/material';
+import { Box, IconButton, Drawer, Tabs, Tab, Typography, Card, CardContent } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useSnackbar } from 'notistack';
-import SplitPane from 'react-split-pane';
 import projectService from '@/services/projectService';
-import processService from '@/services/processService';
-import ProcessMap from '@/app/components/shared/ProcessMap';
 import InspectionsTab from './Inspections/InspectionsTab';
 import EditSale from '../../../comercial/sale/Edit-sale/tabs/sale';
 import PaymentCard from '../../../invoice/components/paymentList/card';
 import EditProjectTab from '../../Edit-project/tabs/EditProject';
 import UploadDocument from '../../UploadDocument';
 import AttachmentTable from '../../../attachment/attachmentTable';
-import Comment from '@/app/components/apps/comment';
 import LogisticsTab from './logistics/LogisticsTab';
 import InstallationsTab from './installations/InstallationsTab';
 import CommentsTab from './Comments/CommentsTab';
@@ -60,10 +56,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
         projectService.find(projectId, {
           fields: 'id,project_number,sale,customer.complete_name,field_services.service.name,field_services.final_service_opinion.name',
           expand: 'sale.customer,field_services.service,field_services.final_service_opinion,sale',
-        }),
-        processService.getProcessByObjectId('resolve_crm', 'project', projectId)
-          .then(({ id }) => id)
-          .catch(() => null),
+        })
       ]);
       setProject(proj);
       setProcessId(proc);
@@ -135,15 +128,6 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
     { label: 'Comentários', content: <CommentsTab projectId={projectId} /> },
   ].filter(Boolean), [project, projectId, hasConstructionTab]);
 
-  const projectInfoTabs = (
-    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-      <Tabs value={tab} onChange={handleTabChange} variant="scrollable" scrollButtons="auto">
-        {tabsConfig.map((t, i) => <Tab key={i} label={t.label} />)}
-      </Tabs>
-      {tabsConfig.map((t, i) => <TabPanel key={i} value={tab} index={i}>{t.content}</TabPanel>)}
-    </Box>
-  );
-
   return (
     <Drawer
       anchor="right"
@@ -163,36 +147,18 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
         }}
       >
         <Typography variant="h5">
-          Detalhes do Projeto nº {project?.project_number} -{' '}
-          {project?.sale?.customer?.complete_name}
+          Detalhes do Projeto nº {project?.project_number} - {' '} {project?.sale?.customer?.complete_name}
         </Typography>
         <IconButton onClick={handleClose}>
           <CloseIcon />
         </IconButton>
       </Box>
-
-      {processId ? (
-        <SplitPane
-          split="vertical"
-          minSize={paneLimits.min}
-          maxSize={paneLimits.max}
-          defaultSize={paneLimits.default}
-          style={{ position: 'relative', height: '100vh' }}
-          resizerStyle={{ background: '#ccc', width: 5, cursor: 'col-resize' }}
-          paneStyle={{ overflowY: 'auto' }}
-        >
-          <Box sx={{ p: 2, height: '100%', overflowY: 'auto' }}>
-            {loading ? (
-              <Skeleton variant="rectangular" width={100} height="100%" />
-            ) : (
-              <ProcessMap processId={processId} />
-            )}
-          </Box>
-          {projectInfoTabs}
-        </SplitPane>
-      ) : (
-        projectInfoTabs
-      )}
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <Tabs value={tab} onChange={handleTabChange} variant="scrollable" scrollButtons="auto">
+          {tabsConfig.map((t, i) => <Tab key={i} label={t.label} />)}
+        </Tabs>
+        {tabsConfig.map((t, i) => <TabPanel key={i} value={tab} index={i}>{t.content}</TabPanel>)}
+      </Box>
     </Drawer>
   );
 }

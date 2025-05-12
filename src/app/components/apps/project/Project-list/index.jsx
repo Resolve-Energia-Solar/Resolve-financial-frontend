@@ -150,18 +150,6 @@ const ProjectList = ({ onClick }) => {
 
   const projectFilterConfig = [
     {
-      key: 'current_step__in',
-      label: 'Etapa Atual',
-      type: 'async-multiselect',
-      endpoint: '/api/steps-names',
-      queryParam: 'name__icontains',
-      mapResponse: (data) =>
-        data.results.map((step) => ({
-          label: step.name,
-          value: step.id,
-        })),
-    },
-    {
       key: 'customer',
       label: 'Cliente',
       type: 'async-autocomplete',
@@ -392,9 +380,9 @@ const ProjectList = ({ onClick }) => {
           page: page + 1,
           limit: rowsPerPage,
           expand:
-            'sale.customer,designer,homologator,product,sale,sale.branch,processes.current_step,field_services.service.category,field_services.final_service_opinion,requests_energy_company,requests_energy_company.type',
+            'sale.customer,designer,homologator,product,sale,sale.branch,field_services.service.category,field_services.final_service_opinion,requests_energy_company,requests_energy_company.type',
           fields:
-            'id,sale.id,sale.customer.complete_name,sale.signature_date,sale.total_value,sale.payment_status,sale.branch.name,is_documentation_completed,homologator.complete_name,designer_status,material_list_is_completed,trt_pending,peding_request,access_opnion,product.name,product.params,status,sale.status,is_released_to_engineering,processes.current_step.name,field_services.service.category.name,field_services.final_service_opinion.name,field_services.status,field_services.schedule_date,requests_energy_company.status,requests_energy_company.type.name',
+            'id,sale.id,sale.customer.complete_name,sale.signature_date,sale.total_value,sale.payment_status,sale.branch.name,is_documentation_completed,homologator.complete_name,designer_status,material_list_is_completed,trt_pending,peding_request,access_opnion,product.name,product.params,status,sale.status,is_released_to_engineering,field_services.service.category.name,field_services.final_service_opinion.name,field_services.status,field_services.schedule_date,requests_energy_company.status,requests_energy_company.type.name',
           metrics: 'is_released_to_engineering',
           ...filters,
         });
@@ -515,11 +503,6 @@ const ProjectList = ({ onClick }) => {
         }).format(r.sale.total_value),
     },
     {
-      field: 'process.current_step',
-      headerName: 'Etapa Atual',
-      render: (r) => r.process.current_step,
-    },
-    {
       field: 'sale.status',
       headerName: 'Status Venda',
       render: (r) => <StatusChip status={r.sale.status} />,
@@ -561,18 +544,6 @@ const ProjectList = ({ onClick }) => {
       <Typography fontSize={20} fontWeight={700} sx={{ mt: 0 }} gutterBottom>
         Jornada do cliente
       </Typography>
-      <Accordion defaultExpanded>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="process-count-by-step"
-          id="process-count-by-step-header"
-        >
-          <Typography variant="h6">Projetos por Etapa</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <HorizontalProcessCards />
-        </AccordionDetails>
-      </Accordion>
       <Accordion defaultExpanded sx={{ marginBottom: 4 }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -800,32 +771,6 @@ const ProjectList = ({ onClick }) => {
                   currency: 'BRL',
                 }).format(row.sale.total_value)
               }
-              sx={{ opacity: 0.7 }}
-            />
-            <Table.Cell
-              render={(row) => {
-                const steps =
-                  row.processes?.flatMap((p) => p.current_step?.map((s) => s.name)) || [];
-
-                return (
-                  <Box
-                    component="span"
-                    sx={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      gap: 0.5,
-                    }}
-                  >
-                    {steps.length ? (
-                      steps.map((name, i) => (
-                        <Chip key={i} label={name} color="primary" size="small" />
-                      ))
-                    ) : (
-                      <Chip label="Sem Etapa" size="small" />
-                    )}
-                  </Box>
-                );
-              }}
               sx={{ opacity: 0.7 }}
             />
             <Table.Cell render={(row) => getStatusChip(row.sale.status)} sx={{ opacity: 0.7 }} />
