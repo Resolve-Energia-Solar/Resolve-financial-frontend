@@ -76,14 +76,13 @@ export default function ConstructionsTab({ projectId, viewOnly = false }) {
                     'address.street',
                     'address.number',
                     'address.complete_address',
-                    'scheduled_agent.name',
                     'service.name',
                     'service.category',
                     'final_service_opinion.name',
                     'protocol',
+                    'schedule_agent',
                     'observation'
                 ].join(','),
-                expand: 'address,scheduled_agent,service,final_service_opinion,observation,protocol,project',
                 project__in: projectId,
                 category__icontains: 'Obras'
             });
@@ -155,7 +154,7 @@ export default function ConstructionsTab({ projectId, viewOnly = false }) {
     const columns = [
         { field: 'service', headerName: 'Serviço', render: r => r.service.name },
         { field: 'address', headerName: 'Endereço', render: r => r.address.complete_address },
-        { field: 'scheduled_agent', headerName: 'Agente', render: r => r.scheduled_agent?.name },
+        { field: 'schedule_agent', headerName: 'Agente', render: r => { r.schedule_agent ? <UserCard userId={r.schedule_agent} /> : "Sem agente" } },
         { field: 'schedule_date', headerName: 'Agendada', render: r => new Date(r.schedule_date).toLocaleDateString() },
         { field: 'final_service_opinion', headerName: 'Concluída', render: r => r.final_service_opinion ? new Date(r.final_service_opinion).toLocaleDateString() : '-' },
     ]
@@ -390,8 +389,8 @@ export default function ConstructionsTab({ projectId, viewOnly = false }) {
                         sx={{ opacity: 0.7, }}
                     />
                     <Table.Cell render={r =>
-                        r.scheduled_agent
-                            ? <UserCard userId={r.scheduled_agent} />
+                        r.schedule_agent
+                            ? <UserCard userId={r.schedule_agent} />
                             : "Sem agente"}
                         sx={{ opacity: 0.7 }}
                     />

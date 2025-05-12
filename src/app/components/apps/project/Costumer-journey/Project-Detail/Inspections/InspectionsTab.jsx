@@ -75,7 +75,7 @@ export default function InspectionsTab({ projectId, viewOnly = false }) {
                     'address.number',
                     'address.complete_address',
                     'products.description',
-                    'scheduled_agent.name',
+                    'schedule_agent',
                     'service.name',
                     'service.category',
                     'final_service_opinion.name',
@@ -84,7 +84,7 @@ export default function InspectionsTab({ projectId, viewOnly = false }) {
                     'observation',
                     'created_at',
                 ].join(','),
-                expand: 'address,products,scheduled_agent,service,final_service_opinion,observation,protocol,project',
+                expand: 'address,products,service,final_service_opinion,observation,protocol,project',
                 project__in: projectId,
                 category__icontains: 'Vistoria'
             });
@@ -142,7 +142,7 @@ export default function InspectionsTab({ projectId, viewOnly = false }) {
         { field: 'address', headerName: 'Endereço', render: r => r.address.complete_address },
         { field: 'products', headerName: 'Produto', render: r => r.products.map(p => p.description).join(', ') },
         { field: 'schedule_date', headerName: 'Data e Hora', render: r => `${formatDate(r.schedule_date)}, ${formatTime(r.schedule_start_time)}` },
-        { field: 'scheduled_agent', headerName: 'Agente', render: r => r.scheduled_agent?.name },
+        { field: 'schedule_agent', headerName: 'Agente', render: r => { r.schedule_agent ? <UserCard userId={r.schedule_agent} /> : "Sem agente" } },
         { field: 'final_service_opinion', headerName: 'Parecer Final', render: r => r.final_service_opinion ? formatDate(r.final_service_opinion) : '-' },
         { field: 'created_at', headerName: 'Criada em', render: r => r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : '-' },
     ]
@@ -245,8 +245,8 @@ export default function InspectionsTab({ projectId, viewOnly = false }) {
                         sx={{ opacity: 0.7 }}
                     />
                     <Table.Cell render={r =>
-                        r.scheduled_agent
-                            ? <UserCard userId={r.scheduled_agent} />
+                        r.schedule_agent
+                            ? <UserCard userId={r.schedule_agent} />
                             : "Sem agente"}
                         sx={{ opacity: 0.7 }}
                     />

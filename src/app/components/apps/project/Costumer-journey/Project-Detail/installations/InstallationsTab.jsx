@@ -31,8 +31,8 @@ export default function InstallationsTab({ projectId, viewOnly = false }) {
                 try {
                     const response = await scheduleService.index(
                         {
-                            fields: "id,address.complete_address,products.description,scheduled_agent,schedule_date,schedule_end_date,completed_date,final_service_opinion.name,project.inspection,project.product.description,service.name",
-                            expand: "address,products,scheduled_agent,final_service_opinion,project,project.product,service",
+                            fields: "id,address.complete_address,products.description,schedule_agent,schedule_date,schedule_end_date,completed_date,final_service_opinion.name,project.inspection,project.product.description,service.name",
+                            expand: "address,products,final_service_opinion,project,project.product,service",
                             project__in: projectId,
                             category__icontains: 'Instalação'
                         }
@@ -81,7 +81,7 @@ export default function InstallationsTab({ projectId, viewOnly = false }) {
         { field: 'schedule_date', headerName: 'Data Inicial', render: r => new Date(r.schedule_date).toLocaleDateString() },
         { field: 'schedule_end_date', headerName: 'Data Final', render: r => new Date(r.schedule_end_date).toLocaleDateString() },
         { field: 'products', headerName: 'Produto', render: r => r.products.map(p => p.description).join(', ') },
-        { field: 'scheduled_agent', headerName: 'Equipe', render: r => r.scheduled_agent?.name },
+        { field: 'schedule_agent', headerName: 'Agente', render: r => { r.schedule_agent ? <UserCard userId={r.schedule_agent} /> : "Sem agente" } },
         { field: 'service_opinion', headerName: 'Parecer do Serviço', render: r => r.service_opinion?.name },
         { field: 'final_service_opinion', headerName: 'Parecer Final', render: r => r.final_service_opinion?.name },
     ]
@@ -151,8 +151,8 @@ export default function InstallationsTab({ projectId, viewOnly = false }) {
                         sx={{ opacity: 0.7 }}
                     />
                     <Table.Cell render={row =>
-                        row.scheduled_agent
-                            ? <UserCard userId={row.scheduled_agent} />
+                        row.schedule_agent
+                            ? <UserCard userId={row.schedule_agent} />
                             : "Sem agente"}
                         sx={{ opacity: 0.7 }}
                     />

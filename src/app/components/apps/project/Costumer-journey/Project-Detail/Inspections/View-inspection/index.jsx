@@ -247,11 +247,11 @@ const ViewInspection = ({ projectId, categoryId, loading, errors = {}, selectedI
                             />
                             <DetailsVisualization.DataText
                                 title={"Agente associado"}
-                                dataText={selectedInspection?.scheduled_agent?.name}
+                                dataText={selectedInspection?.schedule_agent?.complete_name}
                             />
                             <DetailsVisualization.DataText
                                 title={"Supervisor Vistoria"}
-                                dataText={selectedInspection?.scheduled_agent}
+                                dataText={selectedInspection?.schedule_agent}
                             />
                             <DetailsVisualization.DataText
                                 title={"Observação"}
