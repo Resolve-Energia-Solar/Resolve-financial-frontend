@@ -156,6 +156,7 @@ export default function InvoiceList({ onClick }) {
         { value: 'DI', label: 'Dinheiro' },
         { value: 'PA', label: 'Poste auxiliar' },
         { value: 'RO', label: 'Repasse de Obra' },
+        { value: 'ND', label: 'Nota de Débito' },
       ],
     },
     // {

@@ -1,38 +1,59 @@
-import React, { useState, useRef } from 'react';
-import { Modal, Box, Typography, TextField, Button, Paper, CircularProgress } from '@mui/material';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Modal,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Paper,
+  CircularProgress
+} from '@mui/material';
 import { UploadFile } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import DocumentTypeSelect from '@/app/components/apps/attachment/documentTypeSelect';
 import attachmentService from '@/services/attachmentService';
-import { useTheme } from "@emotion/react";
+import { useTheme } from '@emotion/react';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 
-const AddAttachmentModal = ({
-  appLabel,
+const EditAttachmentModal = ({
   open,
   onClose,
-  objectId,
-  contentType,
-  onAddAttachment,
+  attachmentId,
+  appLabel,
   hideStatus = true,
   showFields = { description: true },
+  onUpdateAttachment,
 }) => {
-  const [newAttachment, setNewAttachment] = useState({
-    file: null,
-    description: '',
-    document_type: '',
-    document_subtype: ''
-  });
-  const theme = useTheme();
+  const [attachment, setAttachment] = useState(null);
+  const [file, setFile] = useState(null);
   const [dragOver, setDragOver] = useState(false);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
+
+  useEffect(() => {
+    const fetchAttachment = async () => {
+      if (!attachmentId) return;
+      try {
+        const response = await attachmentService.find(attachmentId);
+        setAttachment(response);
+      } catch (error) {
+        console.error('Erro ao buscar anexo:', error);
+        enqueueSnackbar('Erro ao buscar dados do anexo.', { variant: 'error' });
+      }
+    };
+    fetchAttachment();
+  }, [attachmentId]);
+
+  const handleAttachmentChange = (key, value) => {
+    setAttachment((prev) => ({ ...prev, [key]: value }));
+  };
 
   const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setNewAttachment((prev) => ({ ...prev, file }));
+    const newFile = e.target.files?.[0];
+    if (newFile) {
+      setFile(newFile);
     }
   };
 
@@ -49,50 +70,41 @@ const AddAttachmentModal = ({
   const handleDrop = (e) => {
     e.preventDefault();
     setDragOver(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      setNewAttachment((prev) => ({ ...prev, file }));
+    const droppedFile = e.dataTransfer.files?.[0];
+    if (droppedFile) {
+      setFile(droppedFile);
     }
   };
 
-  const handleDescriptionChange = (e) => {
-    setNewAttachment((prev) => ({ ...prev, description: e.target.value }));
-  };
-
-  const handleSaveAttachment = async () => {
-    if (!newAttachment.file || !newAttachment.document_type) {
-      enqueueSnackbar('O tipo de documento e o arquivo são obrigatórios.', { variant: 'warning' });
+  const handleSave = async () => {
+    if (!attachment?.document_type) {
+      enqueueSnackbar('O tipo de documento é obrigatório.', { variant: 'warning' });
       return;
     }
-    if (newAttachment.file) {
-      setLoading(true);
-      if (objectId) {
-        const formData = new FormData();
-        formData.append('file', newAttachment.file);
-        formData.append('description', newAttachment.description);
-        formData.append('object_id', objectId);
-        formData.append('content_type', contentType);
-        formData.append('document_type', newAttachment.document_type);
-        formData.append('document_subtype', newAttachment.document_subtype);
-        formData.append('status', 'EA');
-        try {
-          const response = await attachmentService.create(formData);
-          onAddAttachment(response);
-        } catch (error) {
-          console.error('Erro ao salvar anexo:', error);
-          enqueueSnackbar('Erro ao salvar anexo: ', error.message, { variant: 'error' });
-        }
-      } else {
-        onAddAttachment(newAttachment);
-      }
-      setLoading(false);
-      onClose();
-      setNewAttachment({ file: null, description: '' });
-    }
-  };
 
-  const handleAttachmentChange = (key, value) => {
-    setNewAttachment((prev) => ({ ...prev, [key]: value }));
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('description', attachment.description || '');
+      formData.append('document_type', attachment.document_type);
+      formData.append('document_subtype', attachment.document_subtype || '');
+      if (!hideStatus) {
+        formData.append('status', attachment.status || 'EA');
+      }
+      if (file) {
+        formData.append('file', file);
+      }
+
+      const response = await attachmentService.update(attachmentId, formData);
+      enqueueSnackbar('Anexo atualizado com sucesso.', { variant: 'success' });
+      onUpdateAttachment?.(response);
+      onClose();
+    } catch (error) {
+      console.error('Erro ao atualizar anexo:', error);
+      enqueueSnackbar('Erro ao atualizar anexo.', { variant: 'error' });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const statusDoc = [
@@ -101,6 +113,8 @@ const AddAttachmentModal = ({
     { value: 'A', label: 'Aprovado', color: theme.palette.success.main },
     { value: 'R', label: 'Reprovado', color: theme.palette.error.main },
   ];
+
+  if (!attachment) return null;
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -116,9 +130,8 @@ const AddAttachmentModal = ({
           borderRadius: 1,
         }}
       >
-        <Typography variant="h6" mb={2}>
-          Novo Anexo
-        </Typography>
+        <Typography variant="h6" mb={2}>Editar Anexo</Typography>
+
         <Paper
           variant="outlined"
           sx={{
@@ -136,7 +149,7 @@ const AddAttachmentModal = ({
         >
           <UploadFile sx={{ fontSize: 40, color: 'grey.600' }} />
           <Typography variant="body2">
-            Arraste e solte ou clique para selecionar um arquivo
+            Arraste e solte ou clique para substituir o arquivo
           </Typography>
           <input
             ref={fileInputRef}
@@ -146,21 +159,23 @@ const AddAttachmentModal = ({
             accept="image/*,application/pdf"
           />
         </Paper>
-        {newAttachment.file && (
+
+        {file && (
           <Typography variant="body2" sx={{ mb: 2 }}>
-            Arquivo selecionado: {newAttachment.file.name}
+            Novo arquivo selecionado: {file.name}
           </Typography>
         )}
+
         <DocumentTypeSelect
           appLabel={appLabel}
-          documentType={newAttachment.document_type}
-          documentSubtype={newAttachment.document_subtype}
+          documentType={attachment.document_type}
+          documentSubtype={attachment.document_subtype}
           handleChange={handleAttachmentChange}
         />
 
         {!hideStatus && (
           <FormSelect
-            value={newAttachment.status}
+            value={attachment.status || ''}
             onChange={(e) => handleAttachmentChange('status', e.target.value)}
             options={statusDoc}
             sx={{ mt: 2 }}
@@ -171,14 +186,14 @@ const AddAttachmentModal = ({
           <TextField
             fullWidth
             label="Descrição"
-            value={newAttachment.description}
-            onChange={handleDescriptionChange}
+            value={attachment.description || ''}
+            onChange={(e) => handleAttachmentChange('description', e.target.value)}
             margin="normal"
           />
         )}
 
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-          <Button variant="contained" onClick={handleSaveAttachment} disabled={loading}>
+          <Button variant="contained" onClick={handleSave} disabled={loading}>
             {loading ? <CircularProgress size={24} /> : 'Salvar'}
           </Button>
         </Box>
@@ -187,4 +202,4 @@ const AddAttachmentModal = ({
   );
 };
 
-export default AddAttachmentModal;
+export default EditAttachmentModal;

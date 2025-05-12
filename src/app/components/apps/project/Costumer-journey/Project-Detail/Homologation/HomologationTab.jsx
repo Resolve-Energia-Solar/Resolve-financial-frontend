@@ -11,6 +11,7 @@ import { Table } from "@/app/components/Table";
 import { useTheme, alpha, Dialog, DialogContent } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
 import ScheduleFormCreate from "../../../../inspections/schedule/Add-schedule";
+import { Add } from "@mui/icons-material";
 
 export default function HomologationTab({ projectId }) {
 
@@ -48,6 +49,7 @@ export default function HomologationTab({ projectId }) {
                 />
                 <TableHeader.Button
                     buttonLabel="Adicionar vistoria"
+                    icon={<Add />}
                     onButtonClick={() => setOpenAddInspection(true)}
                     sx={{
                         width: 200,

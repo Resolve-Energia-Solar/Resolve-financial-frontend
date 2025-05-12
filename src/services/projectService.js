@@ -126,6 +126,10 @@ const projectService = {
       throw error;
     }
   },
+  logisticsIndicators: async (params) => {
+    const response = await apiClient.get(`${DEFAULT_ROUTER}/logistics-indicators/`, { params });
+    return response.data;
+  },
   deleteProject: async (id) => {
     const response = await apiClient.delete(`/api/projects/${id}/`);
     return response.data;

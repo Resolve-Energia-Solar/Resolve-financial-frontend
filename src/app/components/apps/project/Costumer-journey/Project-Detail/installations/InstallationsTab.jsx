@@ -2,8 +2,6 @@ import { useEffect, useState, useCallback } from "react";
 import { useSnackbar } from "notistack";
 import scheduleService from "@/services/scheduleService";
 import TableSkeleton from "../../../../comercial/sale/components/TableSkeleton";
-import EditIcon from "@mui/icons-material/Edit";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import UserCard from "../../../../users/userCard";
 import ScheduleFromProjectForm from "../../../modal/ScheduleFromProjectForm";
 import { formatDate } from "@/utils/dateUtils";
@@ -13,8 +11,9 @@ import { useTheme, alpha, Dialog, DialogContent } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
 import categoryService from "@/services/categoryService";
 import DetailsDrawer from "@/app/components/apps/schedule/DetailsDrawer";
+import { Add } from "@mui/icons-material";
 
-export default function InstallationsTab({ projectId }) {
+export default function InstallationsTab({ projectId, viewOnly = false }) {
     const { enqueueSnackbar } = useSnackbar()
     const [installations, setInstallations] = useState([])
     const [loading, setLoading] = useState(true)
@@ -22,9 +21,6 @@ export default function InstallationsTab({ projectId }) {
     const [rowsPerPage, setRowsPerPage] = useState(5)
     const [categoryId, setCategoryId] = useState(null);
     const [selectedInstallation, setSelectedInstallation] = useState(null);
-
-    const theme = useTheme();
-
     const [openInstallationFormModal, setOpenInstallationFormModal] = useState(false);
     const [openViewInstallation, setOpenViewInstallation] = useState(false);
 
@@ -100,13 +96,14 @@ export default function InstallationsTab({ projectId }) {
                     totalItems={installations.length}
                     objNameNumberReference={installations.length === 1 ? "Instalação" : "Instalações"}
                 />
-                <TableHeader.Button
+                {!viewOnly && <TableHeader.Button
                     buttonLabel="Adicionar instalação"
+                    icon={<Add />}
                     onButtonClick={() => setOpenInstallationFormModal(true)}
                     sx={{
                         width: 200,
                     }}
-                />
+                />}
             </TableHeader.Root>
 
             <Table.Root
@@ -126,7 +123,7 @@ export default function InstallationsTab({ projectId }) {
                             {c.headerName}
                         </Table.Cell>
                     ))}
-                    <Table.Cell align="center">Editar</Table.Cell>
+                    {!viewOnly && <Table.Cell align="center">Editar</Table.Cell>}
                     <Table.Cell align="center">Ver</Table.Cell>
                 </Table.Head>
 
@@ -166,22 +163,24 @@ export default function InstallationsTab({ projectId }) {
                         sx={{ opacity: 0.7 }}
                     />
 
-                    <Table.EditAction onClick={row => { setSelectedInstallation(row.id); setOpenInstallationFormModal(true); }} />
+                    {!viewOnly && <Table.EditAction onClick={row => { setSelectedInstallation(row.id); setOpenInstallationFormModal(true); }} />}
                     <Table.ViewAction onClick={row => { setSelectedInstallation(row.id); setOpenViewInstallation(true) }} />
                 </Table.Body>
             </Table.Root>
 
-            <Dialog open={openInstallationFormModal} onClose={() => { setOpenInstallationFormModal(false); setSelectedInstallation(null); }} >
-                <DialogContent>
-                    <ScheduleFromProjectForm
-                        projectId={projectId}
-                        scheduleId={selectedInstallation || null}
-                        categoryId={categoryId}
-                        displayAgent={false}
-                        onSave={handleAddSuccess}
-                    />
-                </DialogContent>
-            </Dialog>
+            {!viewOnly &&
+                <Dialog open={openInstallationFormModal} onClose={() => { setOpenInstallationFormModal(false); setSelectedInstallation(null); }} >
+                    <DialogContent>
+                        <ScheduleFromProjectForm
+                            projectId={projectId}
+                            scheduleId={selectedInstallation || null}
+                            categoryId={categoryId}
+                            displayAgent={false}
+                            onSave={handleAddSuccess}
+                        />
+                    </DialogContent>
+                </Dialog>
+            }
 
             <DetailsDrawer dialogMode={true} scheduleId={selectedInstallation} open={openViewInstallation} onClose={() => setOpenViewInstallation(false)} />
         </>

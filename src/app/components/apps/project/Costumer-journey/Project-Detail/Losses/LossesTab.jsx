@@ -6,8 +6,9 @@ import { formatDate } from "@/utils/dateUtils";
 import { Table } from "@/app/components/Table";
 import { TableHeader } from "@/app/components/TableHeader";
 import financialRecordService from "@/services/financialRecordService";
+import { Add } from "@mui/icons-material";
 
-export default function LossesTab({ projectId }) {
+export default function LossesTab({ projectId, viewOnly = false }) {
     const { enqueueSnackbar } = useSnackbar();
     const [losses, setLosses] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -66,11 +67,12 @@ export default function LossesTab({ projectId }) {
                     totalItems={losses.length}
                     objNameNumberReference={losses.length === 1 ? "Perda" : "Perdas"}
                 />
-                <TableHeader.Button
+                {!viewOnly && <TableHeader.Button
                     buttonLabel="Adicionar Perda"
+                    icon={<Add />}
                     onButtonClick={() => router.push(`/apps/financial-record/create?project=${projectId}`)}
                     sx={{ width: 200 }}
-                />
+                />}
             </TableHeader.Root>
 
             <Table.Root

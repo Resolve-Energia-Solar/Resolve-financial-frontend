@@ -1,19 +1,15 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Box, IconButton, Drawer, Skeleton, Tabs, Tab, Typography, Card, CardContent } from '@mui/material';
+import { Box, IconButton, Drawer, Tabs, Tab, Typography, Card, CardContent, Divider } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useSnackbar } from 'notistack';
-import SplitPane from 'react-split-pane';
 import projectService from '@/services/projectService';
-import processService from '@/services/processService';
-import ProcessMap from '@/app/components/shared/ProcessMap';
 import InspectionsTab from './Inspections/InspectionsTab';
 import EditSale from '../../../comercial/sale/Edit-sale/tabs/sale';
 import PaymentCard from '../../../invoice/components/paymentList/card';
 import EditProjectTab from '../../Edit-project/tabs/EditProject';
 import UploadDocument from '../../UploadDocument';
 import AttachmentTable from '../../../attachment/attachmentTable';
-import Comment from '@/app/components/apps/comment';
 import LogisticsTab from './logistics/LogisticsTab';
 import InstallationsTab from './installations/InstallationsTab';
 import CommentsTab from './Comments/CommentsTab';
@@ -22,6 +18,7 @@ import History from '../../../history';
 import CheckListRateio from '../../../checklist/Checklist-list';
 import ConstructionsTab from './Construction/ConstructionsTab';
 import LossesTab from './Losses/LossesTab';
+import { useSelector } from 'react-redux';
 
 function TabPanel({ children, value, index }) {
   return (
@@ -39,6 +36,9 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
   const [tab, setTab] = useState(0);
   const [paneLimits, setPaneLimits] = useState({ min: 0, max: 0, default: 0 });
   const [hasConstructionTab, setHasConstructionTab] = useState(false);
+  const user = useSelector((state) => state.user?.user);
+  const userPermissions = user?.user_permissions;
+  const canEdit = userPermissions?.includes('resolve_crm.can_manage_journey')
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -60,10 +60,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
         projectService.find(projectId, {
           fields: 'id,project_number,sale,customer.complete_name,field_services.service.name,field_services.final_service_opinion.name',
           expand: 'sale.customer,field_services.service,field_services.final_service_opinion,sale',
-        }),
-        processService.getProcessByObjectId('resolve_crm', 'project', projectId)
-          .then(({ id }) => id)
-          .catch(() => null),
+        })
       ]);
       setProject(proj);
       setProcessId(proc);
@@ -90,23 +87,25 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
   const drawerWidth = useMemo(() => (processId ? '100vw' : '65vw'), [processId]);
 
   const tabsConfig = useMemo(() => [
-    { label: 'Vistoria', content: <InspectionsTab projectId={projectId} /> },
-    hasConstructionTab && { label: 'Obras', content: <ConstructionsTab projectId={projectId} /> },
+    { label: 'Vistoria', content: <InspectionsTab projectId={projectId} viewOnly={!canEdit} /> },
+    hasConstructionTab && { label: 'Obras', content: <ConstructionsTab projectId={projectId} viewOnly={!canEdit} /> },
     { label: 'Contratos', content: <EditSale saleId={project?.sale?.id} /> },
     { label: 'Financeiro', content: <PaymentCard sale={project?.sale?.id} /> },
     {
       label: 'Engenharia', content:
-        <>
-          <EditProjectTab projectId={projectId} />
+        <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 2 }}>
+          <EditProjectTab projectId={projectId} detail={!canEdit} />
 
-          <Box my={3} borderTop="1px solid #ccc" />
+          <Divider sx={{ my: 2 }} />
 
-          <UploadDocument projectId={projectId} />
+          {canEdit && (
+            <UploadDocument projectId={projectId} />
+          )}
 
-          <Box my={3} borderTop="1px solid #ccc" />
+          <Divider sx={{ my: 2 }} />
 
-          <CheckListRateio projectId={projectId} label="Checklist" />
-        </>
+          <CheckListRateio projectId={projectId} label="Checklist de Rateio" canEdit={!canEdit} />
+        </Box>
     },
     {
       label: 'Anexos',
@@ -115,34 +114,25 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
           <Card sx={{ my: 3, boxShadow: 7 }}>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 1 }}>Anexos do Projeto</Typography>
-              <AttachmentTable hideTitle={true} appLabel="resolve_crm" model="project" objectId={projectId} />
+              <AttachmentTable hideTitle={true} appLabelDocument="engineering" appLabel="resolve_crm" model="project" objectId={projectId} hideStatus={false} viewOnly={canEdit}/>
             </CardContent>
           </Card>
           <Card sx={{ boxShadow: 3 }}>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 1 }}>Anexos do Venda</Typography>
-              <AttachmentTable hideTitle={true} appLabel="resolve_crm" model="sale" objectId={project?.sale?.id} />
+              <AttachmentTable hideTitle={true} appLabelDocument="contracts" appLabel="resolve_crm" model="sale" objectId={project?.sale?.id} hideStatus={false} viewOnly={canEdit}/>
             </CardContent>
           </Card>
         </>
       ),
     },
-    { label: 'Logística', content: <LogisticsTab projectId={projectId} /> },
-    { label: 'Instalação', content: <InstallationsTab projectId={projectId} /> },
-    { label: 'Homologação', content: <RequestList projectId={projectId} enableFilters={false} enableIndicators={false} /> },
-    { label: 'Perdas', content: <LossesTab projectId={projectId} /> },
+    { label: 'Logística', content: <LogisticsTab projectId={projectId} viewOnly={!canEdit} /> },
+    { label: 'Instalação', content: <InstallationsTab projectId={projectId} viewOnly={!canEdit} /> },
+    { label: 'Homologação', content: <RequestList projectId={projectId} enableFilters={false} enableIndicators={false} viewOnly={!canEdit} /> },
+    { label: 'Perdas', content: <LossesTab projectId={projectId} viewOnly={!canEdit} /> },
     { label: 'Histórico', content: <History objectId={projectId} appLabel="resolve_crm" model="project" /> },
-    { label: 'Comentários', content: <CommentsTab projectId={projectId} /> },
+    { label: 'Comentários', content: <CommentsTab projectId={projectId} userPermissions={userPermissions} /> },
   ].filter(Boolean), [project, projectId, hasConstructionTab]);
-
-  const projectInfoTabs = (
-    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-      <Tabs value={tab} onChange={handleTabChange} variant="scrollable" scrollButtons="auto">
-        {tabsConfig.map((t, i) => <Tab key={i} label={t.label} />)}
-      </Tabs>
-      {tabsConfig.map((t, i) => <TabPanel key={i} value={tab} index={i}>{t.content}</TabPanel>)}
-    </Box>
-  );
 
   return (
     <Drawer
@@ -163,36 +153,18 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
         }}
       >
         <Typography variant="h5">
-          Detalhes do Projeto nº {project?.project_number} -{' '}
-          {project?.sale?.customer?.complete_name}
+          Detalhes do Projeto nº {project?.project_number} - {' '} {project?.sale?.customer?.complete_name}
         </Typography>
         <IconButton onClick={handleClose}>
           <CloseIcon />
         </IconButton>
       </Box>
-
-      {processId ? (
-        <SplitPane
-          split="vertical"
-          minSize={paneLimits.min}
-          maxSize={paneLimits.max}
-          defaultSize={paneLimits.default}
-          style={{ position: 'relative', height: '100vh' }}
-          resizerStyle={{ background: '#ccc', width: 5, cursor: 'col-resize' }}
-          paneStyle={{ overflowY: 'auto' }}
-        >
-          <Box sx={{ p: 2, height: '100%', overflowY: 'auto' }}>
-            {loading ? (
-              <Skeleton variant="rectangular" width={100} height="100%" />
-            ) : (
-              <ProcessMap processId={processId} />
-            )}
-          </Box>
-          {projectInfoTabs}
-        </SplitPane>
-      ) : (
-        projectInfoTabs
-      )}
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <Tabs value={tab} onChange={handleTabChange} variant="scrollable" scrollButtons="auto">
+          {tabsConfig.map((t, i) => <Tab key={i} label={t.label} />)}
+        </Tabs>
+        {tabsConfig.map((t, i) => <TabPanel key={i} value={tab} index={i}>{t.content}</TabPanel>)}
+      </Box>
     </Drawer>
   );
 }

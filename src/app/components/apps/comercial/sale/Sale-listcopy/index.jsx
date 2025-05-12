@@ -32,8 +32,6 @@ import StatusPreSale from '../components/StatusPreSale';
 import OnboardingCreateSale from '../Add-sale/onboarding';
 import { useSelector } from 'react-redux';
 import useSale from '@/hooks/sales/useSale';
-import EditSaleTabs from '../Edit-sale';
-import DrawerFilters from '../components/DrawerFilters/DrawerFilters';
 import SideDrawer from '@/app/components/shared/SideDrawer';
 import InforCards from '../../../inforCards/InforCards';
 import { IconListDetails, IconPaperclip, IconSortAscending } from '@tabler/icons-react';
@@ -61,7 +59,7 @@ const SaleListCopy = () => {
 
   const userRole = {
     user: user?.id,
-    role: user?.is_superusers ? 'Superuser' : user?.employee?.role?.name,
+    role: user?.is_superuser ? 'Superuser' : user?.employee?.role?.name,
     branch: user?.employee?.branch?.id,
   };
 

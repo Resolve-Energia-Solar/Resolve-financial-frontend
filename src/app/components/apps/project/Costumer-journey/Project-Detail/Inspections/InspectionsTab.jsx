@@ -6,15 +6,18 @@ import UserCard from "../../../../users/userCard";
 import ScheduleFromProjectForm from "../../../modal/ScheduleFromProjectForm";
 import { formatDate } from "@/utils/dateUtils";
 import { Table } from "@/app/components/Table";
-import { Dialog, DialogContent } from "@mui/material";
+import { Dialog, DialogContent, Tooltip, Typography } from "@mui/material";
 import { TableHeader } from "@/app/components/TableHeader";
 import categoryService from "@/services/categoryService";
 import ProjectDetailDrawer from "../ProjectDrawer";
 import DetailsDrawer from "@/app/components/apps/schedule/DetailsDrawer";
 import ScheduleOpinionChip from "@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip";
 import projectService from "@/services/projectService";
+import { Add } from "@mui/icons-material";
+import { formatTime } from "@/utils/inspectionFormatDate";
 
-export default function InspectionsTab({ projectId }) {
+export default function InspectionsTab({ projectId, viewOnly = false }) {
+    if (!projectId) return null;
     const { enqueueSnackbar } = useSnackbar()
     const [inspections, setInspections] = useState([])
     const [loading, setLoading] = useState(true)
@@ -79,6 +82,7 @@ export default function InspectionsTab({ projectId }) {
                     'project.products',
                     'protocol',
                     'observation',
+                    'created_at',
                 ].join(','),
                 expand: 'address,products,scheduled_agent,service,final_service_opinion,observation,protocol,project',
                 project__in: projectId,
@@ -137,28 +141,37 @@ export default function InspectionsTab({ projectId }) {
         { field: 'service', headerName: 'Serviço', render: r => r.service.name },
         { field: 'address', headerName: 'Endereço', render: r => r.address.complete_address },
         { field: 'products', headerName: 'Produto', render: r => r.products.map(p => p.description).join(', ') },
+        { field: 'schedule_date', headerName: 'Data e Hora', render: r => `${formatDate(r.schedule_date)}, ${formatTime(r.schedule_start_time)}` },
         { field: 'scheduled_agent', headerName: 'Agente', render: r => r.scheduled_agent?.name },
-        { field: 'schedule_date', headerName: 'Agendada', render: r => new Date(r.schedule_date).toLocaleDateString() },
-        { field: 'final_service_opinion', headerName: 'Parecer Final', render: r => r.final_service_opinion ? new Date(r.final_service_opinion).toLocaleDateString() : '-' },
+        { field: 'final_service_opinion', headerName: 'Parecer Final', render: r => r.final_service_opinion ? formatDate(r.final_service_opinion) : '-' },
+        { field: 'created_at', headerName: 'Criada em', render: r => r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : '-' },
     ]
 
+    const truncateText = (text, maxLength = 25) => {
+        if (text && text.length > maxLength) {
+            return text.substring(0, maxLength) + "...";
+        }
+        return text;
+    };
 
     return (
         <>
-
             <TableHeader.Root>
                 <TableHeader.Title
                     title="Total"
                     totalItems={inspections.length}
                     objNameNumberReference={inspections.length === 1 ? "Vistoria" : "Vistorias"}
                 />
-                <TableHeader.Button
-                    buttonLabel="Adicionar vistoria"
-                    onButtonClick={() => setOpenInspectionFormModal(true)}
-                    sx={{
-                        width: 200,
-                    }}
-                />
+                {!viewOnly && (
+                    <TableHeader.Button
+                        buttonLabel="Adicionar vistoria"
+                        icon={<Add />}
+                        onButtonClick={() => setOpenInspectionFormModal(true)}
+                        sx={{
+                            width: 200,
+                        }}
+                    />
+                )}
             </TableHeader.Root>
 
             <Table.Root
@@ -168,6 +181,7 @@ export default function InspectionsTab({ projectId }) {
                 rowsPerPage={rowsPerPage}
                 onPageChange={setPage}
                 onRowsPerPageChange={setRowsPerPage}
+                noWrap
             >
                 <Table.Head>
                     {columns.map(c => (
@@ -178,9 +192,13 @@ export default function InspectionsTab({ projectId }) {
                             {c.headerName}
                         </Table.Cell>
                     ))}
-                    <Table.Cell align="center">Editar</Table.Cell>
                     <Table.Cell align="center">Ver</Table.Cell>
-                    <Table.Cell align="center">Principal</Table.Cell>
+                    {!viewOnly && (
+                        <>
+                            <Table.Cell align="center">Editar</Table.Cell>
+                            <Table.Cell align="center">Principal</Table.Cell>
+                        </>
+                    )}
                 </Table.Head>
 
                 <Table.Body
@@ -193,17 +211,37 @@ export default function InspectionsTab({ projectId }) {
                 >
 
                     <Table.Cell
-                        render={r => r.service?.name}
+                        render={r => truncateText(r.service?.name)}
                         sx={{ opacity: 0.7, }}
                     />
                     <Table.Cell
-                        render={r => r.address?.complete_address}
+                        render={r => {
+                            return (
+                                <Tooltip title={r.address?.complete_address || ''} arrow>
+                                    <Typography variant="body">
+                                        {truncateText(r.address?.complete_address)}
+                                    </Typography>
+                                </Tooltip>
+                            );
+                        }}
                         sx={{ opacity: 0.7, }}
                     />
-                    <Table.Cell render={r =>
-                        r.products?.length > 0
-                            ? r.products[0].description
-                            : r.project?.product?.description}
+                    <Table.Cell
+                        render={r => {
+                            const description = r.products?.length > 0
+                                ? r.products.map(p => p.description).join(', ')
+                                : r.project?.product?.description;
+                            return (
+                                <Tooltip title={description || ''} arrow>
+                                    <Typography variant="body">
+                                        {truncateText(description)}
+                                    </Typography>
+                                </Tooltip>
+                            );
+                        }}
+                        sx={{ opacity: 0.7 }}
+                    />
+                    <Table.Cell render={r => `${formatDate(r.schedule_date)}, ${formatTime(r.schedule_start_time)}`}
                         sx={{ opacity: 0.7 }}
                     />
                     <Table.Cell render={r =>
@@ -212,24 +250,26 @@ export default function InspectionsTab({ projectId }) {
                             : "Sem agente"}
                         sx={{ opacity: 0.7 }}
                     />
-                    <Table.Cell render={r =>
-                        formatDate(r.schedule_date)}
-                        sx={{ opacity: 0.7 }}
-                    />
                     <Table.Cell render={r => { return <ScheduleOpinionChip status={r.final_service_opinion?.name} /> }}
                         sx={{ opacity: 0.7 }}
                     />
-
-                    <Table.EditAction onClick={r => { setSelectedInspection(r.id); setOpenInspectionFormModal(true) }} />
+                    <Table.Cell render={r => r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : '-'}
+                        sx={{ opacity: 0.7 }}
+                    />
                     <Table.ViewAction onClick={(r) => {
                         setOpenViewInspection(true);
                         setSelectedInspection(r.id);
                     }}
                     />
-                    <Table.SwitchAction
-                        isSelected={r => mainId === r.id}
-                        onToggle={(r) => { handleSwitchMainInspection(r.id) }}
-                    />
+                    {!viewOnly && (
+                        <>
+                            <Table.EditAction onClick={r => { setSelectedInspection(r.id); setOpenInspectionFormModal(true) }} />
+                            <Table.SwitchAction
+                                isSelected={r => mainId === r.id}
+                                onToggle={(r) => { handleSwitchMainInspection(r.id) }}
+                            />
+                        </>
+                    )}
                 </Table.Body>
             </Table.Root>
 
@@ -239,24 +279,26 @@ export default function InspectionsTab({ projectId }) {
                 projectId={selectedProjectId}
             />
 
-            <Dialog
-                open={openInspectionFormModal}
-                onClose={() => { setOpenInspectionFormModal(false); setSelectedInspection(null); }}
-                maxWidth="md"
-                fullWidth
-                PaperProps={{ sx: { borderRadius: '20px', padding: '24px', gap: '24px', boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#FFF' } }}
-            >
-                <DialogContent>
-                    <ScheduleFromProjectForm
-                        projectId={projectId}
-                        scheduleId={selectedInspection || null}
-                        categoryId={categoryId}
-                        products={products}
-                        displayAgent={false}
-                        onSave={handleAddSuccess}
-                    />
-                </DialogContent>
-            </Dialog>
+            {!viewOnly && (
+                <Dialog
+                    open={openInspectionFormModal}
+                    onClose={() => { setOpenInspectionFormModal(false); setSelectedInspection(null); }}
+                    maxWidth="md"
+                    fullWidth
+                    PaperProps={{ sx: { borderRadius: '20px', padding: '24px', gap: '24px', boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#FFF' } }}
+                >
+                    <DialogContent>
+                        <ScheduleFromProjectForm
+                            projectId={projectId}
+                            scheduleId={selectedInspection || null}
+                            categoryId={categoryId}
+                            products={products}
+                            displayAgent={false}
+                            onSave={handleAddSuccess}
+                        />
+                    </DialogContent>
+                </Dialog>
+            )}
 
             <DetailsDrawer dialogMode={true} scheduleId={selectedInspection} open={openViewInspection} onClose={() => setOpenViewInspection(false)} />
         </>
