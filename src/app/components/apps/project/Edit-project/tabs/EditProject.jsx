@@ -20,9 +20,9 @@ import {
   MenuItem,
   Select,
   Tooltip,
+  Divider,
 } from '@mui/material';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
-import { useParams } from 'next/navigation';
 
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import AutoCompleteUser from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-User';
@@ -44,6 +44,8 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
 
   const [materials, setMaterials] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [showAllMaterials, setShowAllMaterials] = useState(false);
+  const displayedMaterials = showAllMaterials ? materials : materials.slice(0, 7);
 
   const userPermissions = useSelector((state) => state.user.permissions);
   const { loading, error, projectData } = useProject(id, {
@@ -96,11 +98,132 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
   if (loading) return <FormPageSkeleton />;
   if (error) return <div>{error}</div>;
 
-  console.log('formErrors', formErrors);
-
   return (
     <>
       <Box mt={3}>
+
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={12} lg={4}>
+            <CustomFormLabel htmlFor="name">Venda</CustomFormLabel>
+            <AutoCompleteSale
+              onChange={(id) => handleChange('sale', id)}
+              value={formData.sale}
+              disabled={detail}
+              {...(formErrors.sale && { error: true, helperText: formErrors.sale })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} lg={4}>
+            <CustomFormLabel htmlFor="name">Projetista</CustomFormLabel>
+            <AutoCompleteUser
+              onChange={(id) => handleChange('designer', id)}
+              value={formData.designer}
+              disabled={detail}
+              {...(formErrors.designer && { error: true, helperText: formErrors.designer })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} lg={4}>
+            <CustomFormLabel htmlFor="name">Homologador</CustomFormLabel>
+            <AutoCompleteUser
+              onChange={(id) => handleChange('homologator', id)}
+              value={formData.homologator}
+              disabled={detail}
+              {...(formErrors.homologator && {
+                error: true,
+                helperText: formErrors.homologator,
+              })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} lg={4}>
+            <FormSelect
+              label="Status de Homologação"
+              options={status_options}
+              value={formData.status}
+              onChange={(e) => handleChange('status', e.target.value)}
+              disabled={detail}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} lg={4}>
+            <FormSelect
+              label="Status Desenho Executivo"
+              options={status_options}
+              value={formData.designer_status}
+              onChange={(e) => handleChange('designer_status', e.target.value)}
+              disabled={detail}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} lg={4}>
+            <FormDate
+              label="Data de Início"
+              name="start_date"
+              value={formData.start_date}
+              onChange={(newValue) => handleChange('start_date', newValue)}
+              disabled={detail}
+              {...(formErrors.start_date && { error: true, helperText: formErrors.start_date })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} lg={4}>
+            <FormDate
+              label="Data de Término"
+              name="end_date"
+              value={formData.end_date}
+              onChange={(newValue) => handleChange('end_date', newValue)}
+              disabled={detail}
+              {...(formErrors.end_date && { error: true, helperText: formErrors.end_date })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} lg={4}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CustomFormLabel
+                htmlFor="lista-material"
+                sx={{
+                  margin: 0,
+                  padding: 0,
+                  lineHeight: 4,
+                }}
+              >
+                Lista de Material
+              </CustomFormLabel>
+              <Tooltip title="Status necessário para o cliente prosseguir na esteira">
+                <HelpOutlineIcon />
+              </Tooltip>
+            </Box>
+            <FormControl fullWidth>
+              <Select
+                id="lista-material"
+                value={formData.material_list_is_completed ? 'true' : 'false'}
+                disabled={detail}
+                onChange={(e) => {
+                  const novoStatus = e.target.value === 'true';
+                  handleChange('material_list_is_completed', novoStatus);
+                }}
+              >
+                <MenuItem value="false">Pendente</MenuItem>
+                <MenuItem value="true">Finalizada</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={12} lg={12}>
+            <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
+              {!detail && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={async () => {
+                    await handleSave();
+                    setSnackbarOpen(true);
+                  }}
+                  disabled={formLoading}
+                  endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                >
+                  {formLoading ? 'Salvando...' : 'Salvar Alterações'}
+                </Button>
+              )}
+            </Stack>
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ my: 3 }} />
+
         {projectData?.product && (
           <Card elevation={10}>
             <CardContent>
@@ -122,7 +245,7 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
                 </Stack>
               </Stack>
 
-              <TableContainer sx={{ whiteSpace: { xs: 'nowrap', md: 'unset' }, maxHeight: 300 }}>
+              <TableContainer sx={{ whiteSpace: { xs: 'nowrap', md: 'unset' }, height: '100%' }}>
                 <Table stickyHeader>
                   <TableHead>
                     <TableRow>
@@ -146,7 +269,7 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      materials.map((material) => (
+                      displayedMaterials.map((material) => (
                         <TableRow key={material.id}>
                           <TableCell align="center">
                             <Typography variant="body2">{material?.material?.name}</Typography>
@@ -159,130 +282,20 @@ export default function EditProjectTab({ projectId = null, detail = false }) {
                     )}
                   </TableBody>
                 </Table>
+                {materials.length > 7 && (
+                  <Button
+                    variant="text"
+                    onClick={() => setShowAllMaterials(!showAllMaterials)}
+                    sx={{ mt: 2, mb: 1 }}
+                  >
+                    {showAllMaterials ? 'Ver menos' : 'Ver todos'}
+                  </Button>
+                )}
               </TableContainer>
             </CardContent>
           </Card>
         )}
       </Box>
-
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="name">Venda</CustomFormLabel>
-          <AutoCompleteSale
-            onChange={(id) => handleChange('sale', id)}
-            value={formData.sale}
-            disabled={detail}
-            {...(formErrors.sale && { error: true, helperText: formErrors.sale })}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="name">Projetista</CustomFormLabel>
-          <AutoCompleteUser
-            onChange={(id) => handleChange('designer', id)}
-            value={formData.designer}
-            disabled={detail}
-            {...(formErrors.designer && { error: true, helperText: formErrors.designer })}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <CustomFormLabel htmlFor="name">Homologador</CustomFormLabel>
-          <AutoCompleteUser
-            onChange={(id) => handleChange('homologator', id)}
-            value={formData.homologator}
-            disabled={detail}
-            {...(formErrors.homologator && {
-              error: true,
-              helperText: formErrors.homologator,
-            })}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <FormSelect
-            label="Status de Homologação"
-            options={status_options}
-            value={formData.status}
-            onChange={(e) => handleChange('status', e.target.value)}
-            disabled={detail}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <FormSelect
-            label="Status Desenho Executivo"
-            options={status_options}
-            value={formData.designer_status}
-            onChange={(e) => handleChange('designer_status', e.target.value)}
-            disabled={detail}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <FormDate
-            label="Data de Início"
-            name="start_date"
-            value={formData.start_date}
-            onChange={(newValue) => handleChange('start_date', newValue)}
-            disabled={detail}
-            {...(formErrors.start_date && { error: true, helperText: formErrors.start_date })}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <FormDate
-            label="Data de Término"
-            name="end_date"
-            value={formData.end_date}
-            onChange={(newValue) => handleChange('end_date', newValue)}
-            disabled={detail}
-            {...(formErrors.end_date && { error: true, helperText: formErrors.end_date })}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} lg={4}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <CustomFormLabel
-              htmlFor="lista-material"
-              sx={{
-                margin: 0,
-                padding: 0,
-                lineHeight: 4,
-              }}
-            >
-              Lista de Material
-            </CustomFormLabel>
-            <Tooltip title="Status necessário para o cliente prosseguir na esteira">
-              <HelpOutlineIcon />
-            </Tooltip>
-          </Box>
-          <FormControl fullWidth>
-            <Select
-              id="lista-material"
-              value={formData.material_list_is_completed ? 'true' : 'false'}
-              onChange={(e) => {
-                const novoStatus = e.target.value === 'true';
-                handleChange('material_list_is_completed', novoStatus);
-              }}
-            >
-              <MenuItem value="false">Pendente</MenuItem>
-              <MenuItem value="true">Finalizada</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={12} lg={12}>
-          <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
-            {!detail && (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={async () => {
-                  await handleSave();
-                  setSnackbarOpen(true);
-                }}
-                disabled={formLoading}
-                endIcon={formLoading ? <CircularProgress size={20} color="inherit" /> : null}
-              >
-                {formLoading ? 'Salvando...' : 'Salvar Alterações'}
-              </Button>
-            )}
-          </Stack>
-        </Grid>
-      </Grid>
 
       <Snackbar
         open={snackbarOpen}

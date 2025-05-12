@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Box, IconButton, Drawer, Tabs, Tab, Typography, Card, CardContent } from '@mui/material';
+import { Box, IconButton, Drawer, Tabs, Tab, Typography, Card, CardContent, Divider } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useSnackbar } from 'notistack';
 import projectService from '@/services/projectService';
@@ -18,6 +18,7 @@ import History from '../../../history';
 import CheckListRateio from '../../../checklist/Checklist-list';
 import ConstructionsTab from './Construction/ConstructionsTab';
 import LossesTab from './Losses/LossesTab';
+import { useSelector } from 'react-redux';
 
 function TabPanel({ children, value, index }) {
   return (
@@ -35,6 +36,9 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
   const [tab, setTab] = useState(0);
   const [paneLimits, setPaneLimits] = useState({ min: 0, max: 0, default: 0 });
   const [hasConstructionTab, setHasConstructionTab] = useState(false);
+  const user = useSelector((state) => state.user?.user);
+  const userPermissions = user?.user_permissions;
+  const canEdit = userPermissions?.includes('resolve_crm.can_manage_journey')
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -83,23 +87,25 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
   const drawerWidth = useMemo(() => (processId ? '100vw' : '65vw'), [processId]);
 
   const tabsConfig = useMemo(() => [
-    { label: 'Vistoria', content: <InspectionsTab projectId={projectId} /> },
-    hasConstructionTab && { label: 'Obras', content: <ConstructionsTab projectId={projectId} /> },
+    { label: 'Vistoria', content: <InspectionsTab projectId={projectId} viewOnly={!canEdit} /> },
+    hasConstructionTab && { label: 'Obras', content: <ConstructionsTab projectId={projectId} viewOnly={!canEdit} /> },
     { label: 'Contratos', content: <EditSale saleId={project?.sale?.id} /> },
     { label: 'Financeiro', content: <PaymentCard sale={project?.sale?.id} /> },
     {
       label: 'Engenharia', content:
-        <>
-          <EditProjectTab projectId={projectId} />
+        <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 2 }}>
+          <EditProjectTab projectId={projectId} detail={!canEdit} />
 
-          <Box my={3} borderTop="1px solid #ccc" />
+          <Divider sx={{ my: 2 }} />
 
-          <UploadDocument projectId={projectId} />
+          {canEdit && (
+            <UploadDocument projectId={projectId} />
+          )}
 
-          <Box my={3} borderTop="1px solid #ccc" />
+          <Divider sx={{ my: 2 }} />
 
-          <CheckListRateio projectId={projectId} label="Checklist" />
-        </>
+          <CheckListRateio projectId={projectId} label="Checklist de Rateio" canEdit={!canEdit} />
+        </Box>
     },
     {
       label: 'Anexos',
@@ -120,12 +126,12 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
         </>
       ),
     },
-    { label: 'Logística', content: <LogisticsTab projectId={projectId} /> },
-    { label: 'Instalação', content: <InstallationsTab projectId={projectId} /> },
-    { label: 'Homologação', content: <RequestList projectId={projectId} enableFilters={false} enableIndicators={false} /> },
-    { label: 'Perdas', content: <LossesTab projectId={projectId} /> },
+    { label: 'Logística', content: <LogisticsTab projectId={projectId} viewOnly={!canEdit} /> },
+    { label: 'Instalação', content: <InstallationsTab projectId={projectId} viewOnly={!canEdit} /> },
+    { label: 'Homologação', content: <RequestList projectId={projectId} enableFilters={false} enableIndicators={false} viewOnly={!canEdit} /> },
+    { label: 'Perdas', content: <LossesTab projectId={projectId} viewOnly={!canEdit} /> },
     { label: 'Histórico', content: <History objectId={projectId} appLabel="resolve_crm" model="project" /> },
-    { label: 'Comentários', content: <CommentsTab projectId={projectId} /> },
+    { label: 'Comentários', content: <CommentsTab projectId={projectId} userPermissions={userPermissions} /> },
   ].filter(Boolean), [project, projectId, hasConstructionTab]);
 
   return (

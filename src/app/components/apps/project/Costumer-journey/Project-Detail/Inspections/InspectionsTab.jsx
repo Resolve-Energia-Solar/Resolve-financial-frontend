@@ -15,7 +15,8 @@ import ScheduleOpinionChip from "@/app/components/apps/inspections/schedule/Stat
 import projectService from "@/services/projectService";
 import { Add } from "@mui/icons-material";
 
-export default function InspectionsTab({ projectId }) {
+export default function InspectionsTab({ projectId, viewOnly = false }) {
+    if (!projectId) return null;
     const { enqueueSnackbar } = useSnackbar()
     const [inspections, setInspections] = useState([])
     const [loading, setLoading] = useState(true)
@@ -146,21 +147,22 @@ export default function InspectionsTab({ projectId }) {
 
     return (
         <>
-
             <TableHeader.Root>
                 <TableHeader.Title
                     title="Total"
                     totalItems={inspections.length}
                     objNameNumberReference={inspections.length === 1 ? "Vistoria" : "Vistorias"}
                 />
-                <TableHeader.Button
-                    buttonLabel="Adicionar vistoria"
-                    icon={<Add />}
-                    onButtonClick={() => setOpenInspectionFormModal(true)}
-                    sx={{
-                        width: 200,
-                    }}
-                />
+                {!viewOnly && (
+                    <TableHeader.Button
+                        buttonLabel="Adicionar vistoria"
+                        icon={<Add />}
+                        onButtonClick={() => setOpenInspectionFormModal(true)}
+                        sx={{
+                            width: 200,
+                        }}
+                    />
+                )}
             </TableHeader.Root>
 
             <Table.Root
@@ -180,9 +182,13 @@ export default function InspectionsTab({ projectId }) {
                             {c.headerName}
                         </Table.Cell>
                     ))}
-                    <Table.Cell align="center">Editar</Table.Cell>
                     <Table.Cell align="center">Ver</Table.Cell>
-                    <Table.Cell align="center">Principal</Table.Cell>
+                    {!viewOnly && (
+                        <>
+                            <Table.Cell align="center">Editar</Table.Cell>
+                            <Table.Cell align="center">Principal</Table.Cell>
+                        </>
+                    )}
                 </Table.Head>
 
                 <Table.Body
@@ -222,16 +228,20 @@ export default function InspectionsTab({ projectId }) {
                         sx={{ opacity: 0.7 }}
                     />
 
-                    <Table.EditAction onClick={r => { setSelectedInspection(r.id); setOpenInspectionFormModal(true) }} />
                     <Table.ViewAction onClick={(r) => {
                         setOpenViewInspection(true);
                         setSelectedInspection(r.id);
                     }}
                     />
-                    <Table.SwitchAction
-                        isSelected={r => mainId === r.id}
-                        onToggle={(r) => { handleSwitchMainInspection(r.id) }}
-                    />
+                    {!viewOnly && (
+                        <>
+                            <Table.EditAction onClick={r => { setSelectedInspection(r.id); setOpenInspectionFormModal(true) }} />
+                            <Table.SwitchAction
+                                isSelected={r => mainId === r.id}
+                                onToggle={(r) => { handleSwitchMainInspection(r.id) }}
+                            />
+                        </>
+                    )}
                 </Table.Body>
             </Table.Root>
 
@@ -241,24 +251,26 @@ export default function InspectionsTab({ projectId }) {
                 projectId={selectedProjectId}
             />
 
-            <Dialog
-                open={openInspectionFormModal}
-                onClose={() => { setOpenInspectionFormModal(false); setSelectedInspection(null); }}
-                maxWidth="md"
-                fullWidth
-                PaperProps={{ sx: { borderRadius: '20px', padding: '24px', gap: '24px', boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#FFF' } }}
-            >
-                <DialogContent>
-                    <ScheduleFromProjectForm
-                        projectId={projectId}
-                        scheduleId={selectedInspection || null}
-                        categoryId={categoryId}
-                        products={products}
-                        displayAgent={false}
-                        onSave={handleAddSuccess}
-                    />
-                </DialogContent>
-            </Dialog>
+            {!viewOnly && (
+                <Dialog
+                    open={openInspectionFormModal}
+                    onClose={() => { setOpenInspectionFormModal(false); setSelectedInspection(null); }}
+                    maxWidth="md"
+                    fullWidth
+                    PaperProps={{ sx: { borderRadius: '20px', padding: '24px', gap: '24px', boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', backgroundColor: '#FFF' } }}
+                >
+                    <DialogContent>
+                        <ScheduleFromProjectForm
+                            projectId={projectId}
+                            scheduleId={selectedInspection || null}
+                            categoryId={categoryId}
+                            products={products}
+                            displayAgent={false}
+                            onSave={handleAddSuccess}
+                        />
+                    </DialogContent>
+                </Dialog>
+            )}
 
             <DetailsDrawer dialogMode={true} scheduleId={selectedInspection} open={openViewInspection} onClose={() => setOpenViewInspection(false)} />
         </>

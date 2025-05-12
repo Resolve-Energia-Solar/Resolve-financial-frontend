@@ -16,7 +16,7 @@ import PurchaseForm from "./PurchaseForm";
 import PurchaseDetailsModal from "@/app/components/apps/logistics/purchase/DetailsModal";
 import { Add } from "@mui/icons-material";
 
-export default function LogisticsTab({ projectId }) {
+export default function LogisticsTab({ projectId, viewOnly = false }) {
     const { enqueueSnackbar } = useSnackbar()
     const [deliveries, setDeliveries] = useState([])
     const [deliveriesCount, setDeliveriesCount] = useState([])
@@ -143,14 +143,16 @@ export default function LogisticsTab({ projectId }) {
                     title="Total de Entregas"
                     totalItems={deliveriesCount}
                 />
-                <TableHeader.Button
-                    buttonLabel="Adicionar entrega"
-                    icon={<Add />}
-                    onButtonClick={() => setOpenDeliveryFormModal(true)}
-                    sx={{
-                        width: 200,
-                    }}
-                />
+                {!viewOnly && (
+                    <TableHeader.Button
+                        buttonLabel="Adicionar entrega"
+                        icon={<Add />}
+                        onButtonClick={() => setOpenDeliveryFormModal(true)}
+                        sx={{
+                            width: 200,
+                        }}
+                    />
+                )}
             </TableHeader.Root>
 
             <Table.Root
@@ -170,7 +172,9 @@ export default function LogisticsTab({ projectId }) {
                             {c.headerName}
                         </Table.Cell>
                     ))}
-                    <Table.Cell align="center">Editar</Table.Cell>
+                    {!viewOnly && (
+                        <Table.Cell align="center">Editar</Table.Cell>
+                    )}
                     <Table.Cell align="center">Ver</Table.Cell>
                 </Table.Head>
 
@@ -203,7 +207,9 @@ export default function LogisticsTab({ projectId }) {
                         sx={{ opacity: 0.7 }}
                     />
 
-                    <Table.EditAction onClick={row => { setSelectedDelivery(row.id); setOpenDeliveryFormModal(true); }} />
+                    {!viewOnly && (
+                        <Table.EditAction onClick={row => { setSelectedDelivery(row.id); setOpenDeliveryFormModal(true); }} />
+                    )}
                     <Table.ViewAction onClick={row => { setSelectedDelivery(row.id); setOpenViewDelivery(true) }} />
                 </Table.Body>
             </Table.Root>
@@ -262,7 +268,9 @@ export default function LogisticsTab({ projectId }) {
                             {c.headerName}
                         </Table.Cell>
                     ))}
-                    <Table.Cell align="center">Editar</Table.Cell>
+                    {!viewOnly && (
+                        <Table.Cell align="center">Editar</Table.Cell>
+                    )}
                     <Table.Cell align="center">Ver</Table.Cell>
                 </Table.Head>
 
@@ -291,26 +299,30 @@ export default function LogisticsTab({ projectId }) {
                         return deliveryTypeMap[row.delivery_type] || row.delivery_type || '-';
                     }} sx={{ opacity: 0.7 }} />
 
-                    <Table.EditAction onClick={row => { setSelectedPurchase(row.id); setOpenPurchaseFormModal(true); }} />
+                    {!viewOnly && (
+                        <Table.EditAction onClick={row => { setSelectedPurchase(row.id); setOpenPurchaseFormModal(true); }} />
+                    )}
                     <Table.ViewAction onClick={row => { setSelectedPurchase(row.id); setOpenViewPurchase(true); }} />
                 </Table.Body>
             </Table.Root>
 
-            <Dialog
-                open={openPurchaseFormModal}
-                onClose={() => {
-                    setOpenPurchaseFormModal(false);
-                    setSelectedPurchase(null);
-                }}
-            >
-                <DialogContent>
-                    <PurchaseForm
-                        purchaseId={selectedPurchase}
-                        projectId={projectId}
-                        onSave={handlePurchaseFormSuccess}
-                    />
-                </DialogContent>
-            </Dialog>
+            {!viewOnly && (
+                <Dialog
+                    open={openPurchaseFormModal}
+                    onClose={() => {
+                        setOpenPurchaseFormModal(false);
+                        setSelectedPurchase(null);
+                    }}
+                >
+                    <DialogContent>
+                        <PurchaseForm
+                            purchaseId={selectedPurchase}
+                            projectId={projectId}
+                            onSave={handlePurchaseFormSuccess}
+                        />
+                    </DialogContent>
+                </Dialog>
+            )}
 
             <PurchaseDetailsModal open={openViewPurchase} onClose={() => { setOpenViewPurchase(false); setSelectedPurchase(null) }} purchaseId={selectedPurchase} />
         </>
