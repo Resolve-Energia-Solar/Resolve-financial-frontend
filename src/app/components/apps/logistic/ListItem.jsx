@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -74,23 +74,21 @@ const ListItem = async () => {
     return ticket.Status === 'Open'
       ? theme.palette.success.light
       : ticket.Status === 'Closed'
-        ? theme.palette.error.light
-        : ticket.Status === 'Pending'
-          ? theme.palette.warning.light
-          : ticket.Status === 'Moderate'
-            ? theme.palette.primary.light
-            : 'primary';
+      ? theme.palette.error.light
+      : ticket.Status === 'Pending'
+      ? theme.palette.warning.light
+      : ticket.Status === 'Moderate'
+      ? theme.palette.primary.light
+      : 'primary';
   };
 
-  let data = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/material-types`,
-    {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer `
-      }
-    }
-  )
-  let posts = await data.json()
+  let data = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/material-types`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer `,
+    },
+  });
+  let posts = await data.json();
 
   return (
     <Box mt={4}>
@@ -137,10 +135,7 @@ const ListItem = async () => {
                 </TableCell>
 
                 <TableCell>
-                  <Switch
-                    size="small"
-                    label={ticket.Status}
-                  />
+                  <Switch size="small" label={ticket.Status} />
                 </TableCell>
                 <TableCell>
                   <Typography variant="subtitle1">

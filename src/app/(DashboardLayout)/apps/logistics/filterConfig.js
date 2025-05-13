@@ -1,3 +1,33 @@
+const states = [
+  { value: 'AC', label: 'AC' },
+  { value: 'AL', label: 'AL' },
+  { value: 'AP', label: 'AP' },
+  { value: 'AM', label: 'AM' },
+  { value: 'BA', label: 'BA' },
+  { value: 'CE', label: 'CE' },
+  { value: 'DF', label: 'DF' },
+  { value: 'ES', label: 'ES' },
+  { value: 'GO', label: 'GO' },
+  { value: 'MA', label: 'MA' },
+  { value: 'MT', label: 'MT' },
+  { value: 'MS', label: 'MS' },
+  { value: 'MG', label: 'MG' },
+  { value: 'PA', label: 'PA' },
+  { value: 'PB', label: 'PB' },
+  { value: 'PR', label: 'PR' },
+  { value: 'PE', label: 'PE' },
+  { value: 'PI', label: 'PI' },
+  { value: 'RJ', label: 'RJ' },
+  { value: 'RN', label: 'RN' },
+  { value: 'RS', label: 'RS' },
+  { value: 'RO', label: 'RO' },
+  { value: 'RR', label: 'RR' },
+  { value: 'SC', label: 'SC' },
+  { value: 'SP', label: 'SP' },
+  { value: 'SE', label: 'SE' },
+  { value: 'TO', label: 'TO' },
+];
+
 export default [
   {
     key: 'customer',
@@ -38,22 +68,35 @@ export default [
     ],
   },
   {
+    key: 'delivery_type__in',
+    label: 'Tipo de Entrega',
+    type: 'multiselect',
+    options: [
+      { value: 'C', label: 'Entrega CD' },
+      { value: 'D', label: 'Entrega Direta' },
+    ],
+  },
+  {
     key: 'expected_delivery_date__range',
     label: 'Data de Previsão',
     type: 'range',
     inputType: 'date',
   },
   {
-    key: 'borrower',
+    key: 'borrower__in',
     label: 'Tomador',
-    type: 'async-autocomplete',
-    endpoint: '/api/users',
+    type: 'async-multiselect',
+    endpoint: '/api/users/',
     queryParam: 'complete_name__icontains',
+    extraParams: {
+        limit: 10,
+        fields: ['id', 'complete_name'],
+    },
     mapResponse: (data) =>
-      data.results.map((user) => ({
-        label: user.complete_name,
-        value: user.id,
-      })),
+        data.results.map((borrower) => ({
+            label: borrower.complete_name,
+            value: borrower.id,
+        })),
   },
   {
     key: 'homologator',
@@ -94,7 +137,7 @@ export default [
   {
     key: 'sale_branches',
     label: 'Unidade',
-    type: 'async-autocomplete',
+    type: 'async-multiselect',
     endpoint: '/api/branches',
     queryParam: 'name__icontains',
     mapResponse: (data) =>
@@ -102,6 +145,17 @@ export default [
         label: branch.name,
         value: branch.id,
       })),
+  },
+  {
+    key: 'state__in',
+    label: 'Estado',
+    type: 'select',
+    options: states,
+  },
+  {
+    key: 'city',
+    label: 'Cidade',
+    type: 'text',
   },
   {
     key: 'signature_date',

@@ -222,9 +222,9 @@ const ProjectList = ({ onClick }) => {
         })),
     },
     {
-      key: 'state',
+      key: 'state__in',
       label: 'Estado',
-      type: 'select',
+      type: 'multiselect',
       options: states,
     },
     {
