@@ -15,11 +15,14 @@ import UserForm from '@/app/components/apps/users/UserForm';
 import { Add } from '@mui/icons-material';
 
 const UserList = () => {
+  // Essa página é uma listagem de USUÁRIOS, porém, ela lista apenas os funcionários (user_type = 3) e extende o funcionário (employee) 
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [openUserForm, setOpenUserForm] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   const fetchUsers = useCallback(async () => {
@@ -38,7 +41,6 @@ const UserList = () => {
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
-
 
   const BCrumb = [
     {
@@ -143,6 +145,7 @@ const UserList = () => {
   const handleEditClick = (row) => {
     console.log(row);
   }
+
   const handleViewClick = (row) => {
     console.log(row);
   }
@@ -169,7 +172,7 @@ const UserList = () => {
         <TableHeader.Button
           buttonLabel="Adicionar funcionário"
           icon={<Add />}
-          onButtonClick={() => { console.log('Adicionar funcionário'); }}
+          onButtonClick={() => { setOpenUserForm(true) }}
           sx={{
             width: 200,
           }}
@@ -220,8 +223,9 @@ const UserList = () => {
       </Table.Root>
 
       <Dialog
-        open={open}
-        // onClose={handleClose}
+        open={openUserForm}
+        onClose={() => { setOpenUserForm(false); setSelectedUser(null) }}
+        userId={selectedUser}
         maxWidth="lg"
         fullWidth
       >
