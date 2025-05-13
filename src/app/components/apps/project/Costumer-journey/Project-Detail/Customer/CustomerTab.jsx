@@ -1,5 +1,5 @@
-import saleService from '@/services/saleService';
-import { useState, useEffect } from 'react';
+import projectService from '@/services/projectService';
+import { useState, useEffect, useCallback } from 'react';
 import {
     Box,
     Typography,
@@ -12,141 +12,345 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Button
+    Button,
+    Chip
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import UserPhoneNumbersTable from '@/app/components/apps/users/phone_numbers/UserPhoneNumbersTable';
 import UserAddressesTable from '@/app/components/apps/users/addresses/UserAddressesTable';
 import { IconGenderMale, IconGenderFemale, IconUser, IconBuilding } from '@tabler/icons-react';
+import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
 import userService from '@/services/userService';
 
-export default function CustomerTab({ saleId, viewOnly = false }) {
+export default function CustomerTab({ projectId, viewOnly = false }) {
     const { enqueueSnackbar } = useSnackbar();
     const [loading, setLoading] = useState(true);
-    const [customer, setCustomer] = useState(null);
     const [error, setError] = useState(null);
+    const [data, setData] = useState({ customer: null, homologator: null });
     const [form, setForm] = useState({
-        complete_name: '',
-        email: '',
-        first_document: '',
-        gender: '',
-        person_type: ''
+        customer: { complete_name: '', email: '', first_document: '', gender: '', person_type: '' },
+        homologator: { complete_name: '', email: '', first_document: '', gender: '', person_type: '' }
     });
     const [isEditing, setIsEditing] = useState(false);
+    const [newHomologatorId, setNewHomologatorId] = useState(null);
+
+    const fetchData = useCallback(async () => {
+        if (!projectId) {
+            setLoading(false);
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await projectService.find(projectId, {
+                fields: 'sale.customer.id,sale.customer.complete_name,sale.customer.email,sale.customer.first_document,sale.customer.gender,sale.customer.person_type,homologator.id,homologator.complete_name,homologator.email,homologator.first_document,homologator.gender,homologator.person_type',
+                expand: 'sale.customer,homologator'
+            });
+            const customer = res.sale?.customer || null;
+            const homologator = res.homologator || null;
+            setData({ customer, homologator });
+            setForm({
+                customer: customer ? {
+                    id: customer.id,
+                    complete_name: customer.complete_name || '',
+                    email: customer.email || '',
+                    first_document: customer.first_document || '',
+                    gender: customer.gender || '',
+                    person_type: customer.person_type || ''
+                } : form.customer,
+                homologator: homologator ? {
+                    id: homologator.id,
+                    complete_name: homologator.complete_name || '',
+                    email: homologator.email || '',
+                    first_document: homologator.first_document || '',
+                    gender: homologator.gender || '',
+                    person_type: homologator.person_type || ''
+                } : form.homologator
+            });
+        } catch (err) {
+            console.error(err);
+            setError('Falha ao carregar dados.');
+            enqueueSnackbar('Falha ao carregar dados.', { variant: 'error' });
+        } finally {
+            setLoading(false);
+        }
+    }, [projectId, enqueueSnackbar]);
 
     useEffect(() => {
-        if (saleId) {
-            const fetchCustomer = async () => {
-                setLoading(true);
-                setError(null);
-                try {
-                    const data = await saleService.find(saleId, {
-                        fields: 'customer.complete_name,customer.email,customer.first_document,customer.gender,customer.person_type,customer.id',
-                        expand: 'customer,customer.phone_numbers',
-                    });
-                    if (data && data.customer) {
-                        setCustomer(data.customer);
-                        setForm({
-                            complete_name: data.customer.complete_name || '',
-                            email: data.customer.email || '',
-                            first_document: data.customer.first_document || '',
-                            gender: data.customer.gender || '',
-                            person_type: data.customer.person_type || ''
-                        });
-                    } else {
-                        setCustomer(null);
-                    }
-                } catch (err) {
-                    console.error(err);
-                    setError('Falha ao carregar dados do cliente.');
-                    enqueueSnackbar('Falha ao carregar dados do cliente.', { variant: 'error' });
-                    setCustomer(null);
-                } finally {
-                    setLoading(false);
-                }
-            };
-            fetchCustomer();
-        } else {
-            setLoading(false);
-            setCustomer(null);
-        }
-    }, [saleId]);
+        fetchData();
+    }, [fetchData]);
 
     const formatDocument = (rawValue, type) => {
         const raw = rawValue.replace(/\D/g, '');
         if (type === 'PF') {
-            const truncated = raw.slice(0, 11);
-            return truncated.replace(/^(\d{0,3})(\d{0,3})(\d{0,3})(\d{0,2})$/, (_, p1, p2, p3, p4) => {
-                let out = p1;
-                if (p2) out += '.' + p2;
-                if (p3) out += '.' + p3;
-                if (p4) out += '-' + p4;
+            const t = raw.slice(0, 11);
+            return t.replace(/^(\d{0,3})(\d{0,3})(\d{0,3})(\d{0,2})$/, (_, a, b, c, d) => {
+                let out = a;
+                if (b) out += '.' + b;
+                if (c) out += '.' + c;
+                if (d) out += '-' + d;
                 return out;
             });
-        } else if (type === 'PJ') {
-            const truncated = raw.slice(0, 14);
-            return truncated.replace(/^(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,4})(\d{0,2})$/, (_, p1, p2, p3, p4, p5) => {
-                let out = p1;
-                if (p2) out += '.' + p2;
-                if (p3) out += '.' + p3;
-                if (p4) out += '/' + p4;
-                if (p5) out += '-' + p5;
+        }
+        if (type === 'PJ') {
+            const t = raw.slice(0, 14);
+            return t.replace(/^(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,4})(\d{0,2})$/, (_, a, b, c, d, e) => {
+                let out = a;
+                if (b) out += '.' + b;
+                if (c) out += '.' + c;
+                if (d) out += '/' + d;
+                if (e) out += '-' + e;
                 return out;
             });
         }
         return rawValue;
     };
 
-    const handleEdit = () => {
-        if (customer) {
-            const formatted = formatDocument(customer.first_document || '', customer.person_type);
-            setForm({
-                complete_name: customer.complete_name || '',
-                email: customer.email || '',
-                first_document: formatted,
-                gender: customer.gender || '',
-                person_type: customer.person_type || ''
-            });
-        }
-        setIsEditing(true);
+    const handleInputChange = (role, field, value) => {
+        setForm(f => ({
+            ...f,
+            [role]: { ...f[role], [field]: value }
+        }));
     };
 
+    const handleDocumentChange = (role, value) => {
+        const rawLen = value.replace(/\D/g, '').length;
+        if (form[role].person_type === 'PF' && rawLen > 11) enqueueSnackbar('CPF deve ter até 11 dígitos', { variant: 'warning' });
+        if (form[role].person_type === 'PJ' && rawLen > 14) enqueueSnackbar('CNPJ deve ter até 14 dígitos', { variant: 'warning' });
+        handleInputChange(role, 'first_document', formatDocument(value, form[role].person_type));
+    };
+
+    const handleEdit = () => {
+        setForm({
+            customer: data.customer ? {
+                id: data.customer.id,
+                complete_name: data.customer.complete_name || '',
+                email: data.customer.email || '',
+                first_document: formatDocument(data.customer.first_document, data.customer.person_type) || '',
+                gender: data.customer.gender || '',
+                person_type: data.customer.person_type || ''
+            } : form.customer,
+            homologator: data.homologator ? {
+                id: data.homologator.id,
+                complete_name: data.homologator.complete_name || '',
+                email: data.homologator.email || '',
+                first_document: formatDocument(data.homologator.first_document, data.homologator.person_type) || '',
+                gender: data.homologator.gender || '',
+                person_type: data.homologator.person_type || ''
+            } : form.homologator
+        });
+        setIsEditing(true);
+    };
     const handleCancel = () => {
-        if (customer) {
-            setForm({
-                complete_name: customer.complete_name || '',
-                email: customer.email || '',
-                first_document: customer.first_document || '',
-                gender: customer.gender || '',
-                person_type: customer.person_type || ''
-            });
-        }
+        setForm({
+            customer: data.customer ? {
+                id: data.customer.id,
+                complete_name: data.customer.complete_name || '',
+                email: data.customer.email || '',
+                first_document: data.customer.first_document || '',
+                gender: data.customer.gender || '',
+                person_type: data.customer.person_type || ''
+            } : form.customer,
+            homologator: data.homologator ? {
+                id: data.homologator.id,
+                complete_name: data.homologator.complete_name || '',
+                email: data.homologator.email || '',
+                first_document: data.homologator.first_document || '',
+                gender: data.homologator.gender || '',
+                person_type: data.homologator.person_type || ''
+            } : form.homologator
+        });
         setIsEditing(false);
     };
 
     const handleSave = async () => {
-        const sanitizedDocument = form.first_document.replace(/\D/g, '');
-        const payload = { ...form, first_document: sanitizedDocument };
         try {
-            await userService.update(customer.id, { payload });
-            setCustomer({ ...customer, ...payload });
-            enqueueSnackbar('Cliente salvo com sucesso.', { variant: 'success' });
+            const custPayload = { ...form.customer, first_document: form.customer.first_document.replace(/\D/g, '') };
+            await userService.update(form.customer.id, custPayload);
+            if (form.homologator.id) {
+                const homPayload = { ...form.homologator, first_document: form.homologator.first_document.replace(/\D/g, '') };
+                await userService.update(form.homologator.id, homPayload);
+            }
+            enqueueSnackbar('Dados salvos com sucesso.', { variant: 'success' });
+            setTimeout(() => {
+                fetchData();
+            }, 1000);
             setIsEditing(false);
         } catch (err) {
             console.error(err);
-            enqueueSnackbar('Falha ao salvar cliente.', { variant: 'error' });
+            enqueueSnackbar('Falha ao salvar dados.', { variant: 'error' });
         }
     };
 
-    const handleDocumentChange = (value) => {
-        if (form.person_type === 'PF' && value.replace(/\D/g, '').length > 11) {
-            enqueueSnackbar('CPF deve ter até 11 dígitos', { variant: 'warning' });
+    const handleSelectHomologator = (user) => {
+        setNewHomologatorId(user.value);
+    };
+
+    const handleAddHomologator = async () => {
+        try {
+            await projectService.update(projectId, { homologator: newHomologatorId });
+            setTimeout(() => {
+                fetchData();
+            }, 1000);
+            enqueueSnackbar('Homologador adicionado com sucesso.', { variant: 'success' });
+        } catch (err) {
+            console.error(err);
+            enqueueSnackbar('Falha ao salvar dados.', { variant: 'error' });
         }
-        if (form.person_type === 'PJ' && value.replace(/\D/g, '').length > 14) {
-            enqueueSnackbar('CNPJ deve ter até 14 dígitos', { variant: 'warning' });
-        }
-        const formatted = formatDocument(value, form.person_type);
-        setForm({ ...form, first_document: formatted });
+    };
+
+
+    const renderSection = (role, title) => {
+        const entity = data[role];
+        const formEntity = form[role];
+        const editable = !viewOnly && isEditing;
+        return (
+            <Paper key={role} elevation={3} sx={{ p: 3, mt: 2 }}>
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                    <Chip label={title} />
+                    {!viewOnly && entity && (
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                            {!isEditing
+                                ? <Button variant="contained" onClick={handleEdit}>Modo de Edição</Button>
+                                : <>
+                                    <Button variant="outlined" onClick={handleCancel}>Cancelar</Button>
+                                    <Button variant="contained" onClick={handleSave}>Salvar</Button>
+                                </>
+                            }
+                        </Box>
+                    )}
+                </Box>
+                {entity || editable ? (
+                    <>
+                        {editable ? (
+                            <TextField
+                                fullWidth
+                                label="Nome Completo"
+                                value={formEntity.complete_name}
+                                onChange={e => handleInputChange(role, 'complete_name', e.target.value)}
+                                sx={{ mb: 3 }}
+                            />
+                        ) : (
+                            <Typography variant="h5" mb={3}>{entity.complete_name || 'SEM NOME'}</Typography>
+                        )}
+
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                                {editable ? (
+                                    <TextField
+                                        fullWidth
+                                        label="E-mail"
+                                        value={formEntity.email}
+                                        onChange={e => handleInputChange(role, 'email', e.target.value)}
+                                    />
+                                ) : (
+                                    <>
+                                        <Typography variant="subtitle1"><strong>E-mail:</strong></Typography>
+                                        <Typography variant="body1">{entity.email || 'N/A'}</Typography>
+                                    </>
+                                )}
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                {editable ? (
+                                    <FormControl fullWidth>
+                                        <InputLabel id={`${role}-gender-label`}>Gênero</InputLabel>
+                                        <Select
+                                            labelId={`${role}-gender-label`}
+                                            label="Gênero"
+                                            value={formEntity.gender}
+                                            onChange={e => handleInputChange(role, 'gender', e.target.value)}
+                                        >
+                                            <MenuItem value="M">Masculino</MenuItem>
+                                            <MenuItem value="F">Feminino</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                ) : (
+                                    <>
+                                        <Typography variant="subtitle1"><strong>Gênero:</strong></Typography>
+                                        <Typography variant="body1">
+                                            {entity.gender === 'M'
+                                                ? <><IconGenderMale size={16} style={{ marginRight: 4 }} />Masculino</>
+                                                : <><IconGenderFemale size={16} style={{ marginRight: 4 }} />Feminino</>}
+                                        </Typography>
+                                    </>
+                                )}
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                {editable ? (
+                                    <FormControl fullWidth>
+                                        <InputLabel id={`${role}-person-type-label`}>Tipo de Pessoa</InputLabel>
+                                        <Select
+                                            labelId={`${role}-person-type-label`}
+                                            label="Tipo de Pessoa"
+                                            value={formEntity.person_type}
+                                            onChange={e => handleInputChange(role, 'person_type', e.target.value)}
+                                        >
+                                            <MenuItem value="PF">Pessoa Física</MenuItem>
+                                            <MenuItem value="PJ">Pessoa Jurídica</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                ) : (
+                                    <>
+                                        <Typography variant="subtitle1"><strong>Tipo de Pessoa:</strong></Typography>
+                                        <Typography variant="body1">
+                                            {entity.person_type === 'PF'
+                                                ? <><IconUser size={16} style={{ marginRight: 4 }} />Pessoa Física</>
+                                                : <><IconBuilding size={16} style={{ marginRight: 4 }} />Pessoa Jurídica</>}
+                                        </Typography>
+                                    </>
+                                )}
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                {editable ? (
+                                    <TextField
+                                        fullWidth
+                                        label={formEntity.person_type === 'PJ' ? 'CNPJ' : 'CPF'}
+                                        value={formEntity.first_document}
+                                        onChange={e => handleDocumentChange(role, e.target.value)}
+                                    />
+                                ) : (
+                                    <>
+                                        <Typography variant="subtitle1"><strong>{entity.first_document.length > 11 ? 'CNPJ:' : 'CPF:'}</strong></Typography>
+                                        <Typography variant="body1">
+                                            {entity.first_document
+                                                ? (entity.first_document.length > 11
+                                                    ? entity.first_document.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5")
+                                                    : entity.first_document.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4"))
+                                                : 'N/A'}
+                                        </Typography>
+                                    </>
+                                )}
+                            </Grid>
+                        </Grid>
+
+                        <Box mt={2}>
+                            <UserPhoneNumbersTable userId={entity.id} editMode={editable} />
+                        </Box>
+                        <Box mt={2}>
+                            <UserAddressesTable userId={entity.id} editMode={editable} />
+                        </Box>
+                    </>
+                ) : (
+                    <Box>
+                        <GenericAsyncAutocompleteInput
+                            label="Homologador"
+                            value={formEntity.homologator}
+                            onChange={user => handleSelectHomologator(user)}
+                            endpoint="/api/users/"
+                            queryParam="complete_name__icontains"
+                            extraParams={{ fields: ['id', 'complete_name'] }}
+                            mapResponse={(data) =>
+                                data.results.map((u) => ({ label: u.complete_name, value: u.id }))
+                            }
+                        />
+                        <Button variant="contained" onClick={handleAddHomologator} sx={{ mt: 2 }}>
+                            Adicionar Homologador
+                        </Button>
+                    </Box>
+                )}
+            </Paper>
+        );
     };
 
     if (loading) return (
@@ -157,146 +361,10 @@ export default function CustomerTab({ saleId, viewOnly = false }) {
 
     if (error) return <Alert severity="error">{error}</Alert>;
 
-    const isEditable = !viewOnly && isEditing;
-
     return (
-        <Paper elevation={3} sx={{ p: 3 }}>
-            {customer ? (
-                <>
-                    {isEditable ? (
-                        <TextField
-                            fullWidth
-                            label="Nome Completo"
-                            value={form.complete_name}
-                            onChange={e => setForm({ ...form, complete_name: e.target.value })}
-                            sx={{ mb: 3 }}
-                        />
-                    ) : (
-                        <Typography variant="h3" marginBottom={3}>
-                            {customer.complete_name || 'SEM NOME'}
-                        </Typography>
-                    )}
-
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
-                            {isEditable ? (
-                                <TextField
-                                    fullWidth
-                                    label="E-mail"
-                                    value={form.email}
-                                    onChange={e => setForm({ ...form, email: e.target.value })}
-                                />
-                            ) : (
-                                <>
-                                    <Typography variant="subtitle1"><strong>E-mail:</strong></Typography>
-                                    <Typography variant="body1">{customer.email || 'N/A'}</Typography>
-                                </>
-                            )}
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            {isEditable ? (
-                                <FormControl fullWidth>
-                                    <InputLabel id="gender-label">Gênero</InputLabel>
-                                    <Select
-                                        labelId="gender-label"
-                                        label="Gênero"
-                                        value={form.gender}
-                                        onChange={e => setForm({ ...form, gender: e.target.value })}
-                                    >
-                                        <MenuItem value="M">Masculino</MenuItem>
-                                        <MenuItem value="F">Feminino</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            ) : (
-                                <>
-                                    <Typography variant="subtitle1"><strong>Gênero:</strong></Typography>
-                                    <Typography variant="body1">
-                                        {customer.gender === 'M' ? (
-                                            <><IconGenderMale size={16} style={{ marginRight: 4 }} />Masculino</>
-                                        ) : (
-                                            <><IconGenderFemale size={16} style={{ marginRight: 4 }} />Feminino</>
-                                        )}
-                                    </Typography>
-                                </>
-                            )}
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            {isEditable ? (
-                                <FormControl fullWidth>
-                                    <InputLabel id="person-type-label">Tipo de Pessoa</InputLabel>
-                                    <Select
-                                        labelId="person-type-label"
-                                        label="Tipo de Pessoa"
-                                        value={form.person_type}
-                                        onChange={e => setForm({ ...form, person_type: e.target.value })}
-                                    >
-                                        <MenuItem value="PF">Pessoa Física</MenuItem>
-                                        <MenuItem value="PJ">Pessoa Jurídica</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            ) : (
-                                <>
-                                    <Typography variant="subtitle1"><strong>Tipo de Pessoa:</strong></Typography>
-                                    <Typography variant="body1">
-                                        {customer.person_type === 'PF' ? (
-                                            <><IconUser size={16} style={{ marginRight: 4 }} />Pessoa Física</>
-                                        ) : (
-                                            <><IconBuilding size={16} style={{ marginRight: 4 }} />Pessoa Jurídica</>
-                                        )}
-                                    </Typography>
-                                </>
-                            )}
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            {isEditable ? (
-                                <TextField
-                                    fullWidth
-                                    label={form.person_type === 'PJ' ? 'CNPJ' : 'CPF'}
-                                    value={form.first_document}
-                                    onChange={e => handleDocumentChange(e.target.value)}
-                                />
-                            ) : (
-                                <>
-                                    <Typography variant="subtitle1">
-                                        <strong>{customer.first_document.length > 11 ? 'CNPJ:' : 'CPF:'}</strong>
-                                    </Typography>
-                                    <Typography variant="body1">
-                                        {customer.first_document ? (
-                                            customer.first_document.length > 11
-                                                ? customer.first_document.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5")
-                                                : customer.first_document.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4")
-                                        ) : 'N/A'}
-                                    </Typography>
-                                </>
-                            )}
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            {!viewOnly && (
-                                <Box sx={{ mb: 2, display: 'flex', gap: 1 }}>
-                                    {!isEditing ? (
-                                        <Button variant="contained" onClick={handleEdit}>Editar</Button>
-                                    ) : (
-                                        <>
-                                            <Button variant="outlined" onClick={handleCancel}>Cancelar</Button>
-                                            <Button variant="contained" onClick={handleSave}>Salvar</Button>
-                                        </>
-                                    )}
-                                </Box>
-                            )}
-                        </Grid>
-                    </Grid>
-
-                    <Box mt={2}>
-                        <UserPhoneNumbersTable userId={customer.id} editMode={isEditable} />
-                    </Box>
-
-                    <Box mt={2}>
-                        <UserAddressesTable userId={customer.id} editMode={isEditable} />
-                    </Box>
-                </>
-            ) : (
-                <Typography variant="body1">Nenhum cliente encontrado.</Typography>
-            )}
-        </Paper>
+        <Box>
+            {renderSection('customer', 'Cliente')}
+            {renderSection('homologator', 'Homologador')}
+        </Box>
     );
 }
