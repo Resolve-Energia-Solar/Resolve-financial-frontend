@@ -141,25 +141,35 @@ const CommercialScheduleDetail = ({ schedule }) => {
     { value: '16:00:00', label: '16:00' },
   ];
 
-  console.log('schedule:', schedule);
 
   useEffect(() => {
     async function fetchProductName() {
       setLoadingProductName(true);
       try {
         let productData = null;
-        
-        if (schedule?.project?.product) {
+  
+        if (Array.isArray(schedule.products) && schedule.products.length > 0) {
+          console.log('schedule.products (IDs):', schedule.products);
+  
+          const productPromises = schedule.products.map((productId) =>
+            ProductService.find(productId)
+          );
+          const productResults = await Promise.all(productPromises);
+  
+          const productNames = productResults.map((product) => product.name).join(', ');
+          productData = { name: productNames };
+        }
+  
+        else if (schedule?.project?.product) {
           const productId =
             typeof schedule.project.product === 'object'
               ? schedule.project.product.id
               : schedule.project.product;
-          productData = await ProductService.find(productId);
-        } 
-        else if (Array.isArray(schedule.products) && schedule.products.length > 0) {
-          productData = { name: schedule.products.map((prod) => prod.name).join(', ') };
+          const product = await ProductService.find(productId);
+          productData = { name: product.name };
         }
-        
+  
+        console.log('productData:', productData);
         setProductName(productData?.name || 'Sem kit associado');
       } catch (error) {
         console.error('Erro ao buscar produto:', error);
@@ -168,9 +178,9 @@ const CommercialScheduleDetail = ({ schedule }) => {
         setLoadingProductName(false);
       }
     }
+  
     fetchProductName();
   }, [schedule]);
-  
   
 
   useEffect(() => {
