@@ -110,7 +110,6 @@ const CommercialScheduleDetail = ({ schedule }) => {
       if (scheduleId) {
         try {
           const data = await answerService.index({ schedule: scheduleId, expand: 'form' });
-          console.log('data:', data);
           setAnswers(data);
         } catch (err) {
           console.error('Erro ao buscar respostas:', err);
@@ -149,7 +148,6 @@ const CommercialScheduleDetail = ({ schedule }) => {
         let productData = null;
   
         if (Array.isArray(schedule.products) && schedule.products.length > 0) {
-          console.log('schedule.products (IDs):', schedule.products);
   
           const productPromises = schedule.products.map((productId) =>
             ProductService.find(productId)
@@ -168,8 +166,6 @@ const CommercialScheduleDetail = ({ schedule }) => {
           const product = await ProductService.find(productId);
           productData = { name: product.name };
         }
-  
-        console.log('productData:', productData);
         setProductName(productData?.name || 'Sem kit associado');
       } catch (error) {
         console.error('Erro ao buscar produto:', error);
@@ -207,8 +203,7 @@ const CommercialScheduleDetail = ({ schedule }) => {
       </Box>
     );
   }
-  console.log('conditions:', !(schedule.status === 'Pendente' || !schedule.schedule_agent))
-  console.log('schedule', schedule);
+
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
