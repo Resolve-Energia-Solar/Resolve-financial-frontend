@@ -81,17 +81,15 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
     fetchData();
   }, [fetchData]);
 
-  console.log('Project:', project);
-
   const handleClose = useCallback(() => onClose(), [onClose]);
   const handleTabChange = (e, newVal) => setTab(newVal);
   const drawerWidth = useMemo(() => (processId ? '100vw' : '65vw'), [processId]);
 
   const tabsConfig = useMemo(() => [
+    { label: 'Cliente', content: <CustomerTab saleId={project?.sale?.id} viewOnly={!canEdit} /> },
+    { label: 'Contratos', content: <EditSale saleId={project?.sale?.id} /> },
     { label: 'Vistoria', content: <InspectionsTab projectId={projectId} viewOnly={!canEdit} /> },
     hasConstructionTab && { label: 'Obras', content: <ConstructionsTab projectId={projectId} viewOnly={!canEdit} /> },
-    { label: 'Contratos', content: <EditSale saleId={project?.sale?.id} /> },
-    { label: 'Cliente', content: <CustomerTab saleId={project?.sale?.id} /> },
     { label: 'Financeiro', content: <PaymentCard sale={project?.sale?.id} /> },
     {
       label: 'Engenharia', content:
