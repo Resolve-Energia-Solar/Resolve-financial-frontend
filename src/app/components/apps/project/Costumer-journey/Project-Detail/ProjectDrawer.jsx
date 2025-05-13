@@ -19,6 +19,7 @@ import CheckListRateio from '../../../checklist/Checklist-list';
 import ConstructionsTab from './Construction/ConstructionsTab';
 import LossesTab from './Losses/LossesTab';
 import { useSelector } from 'react-redux';
+import CustomerTab from './Customer/CustomerTab';
 
 function TabPanel({ children, value, index }) {
   return (
@@ -90,6 +91,7 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
     { label: 'Vistoria', content: <InspectionsTab projectId={projectId} viewOnly={!canEdit} /> },
     hasConstructionTab && { label: 'Obras', content: <ConstructionsTab projectId={projectId} viewOnly={!canEdit} /> },
     { label: 'Contratos', content: <EditSale saleId={project?.sale?.id} /> },
+    { label: 'Cliente', content: <CustomerTab saleId={project?.sale?.id} /> },
     { label: 'Financeiro', content: <PaymentCard sale={project?.sale?.id} /> },
     {
       label: 'Engenharia', content:

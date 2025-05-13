@@ -7,6 +7,8 @@ import userService from "@/services/userService";
 import { Table } from "@/app/components/Table";
 import { TableHeader } from "@/app/components/TableHeader";
 import { Add } from "@mui/icons-material";
+import UserPhoneNumbersTable from "./phone_numbers/UserPhoneNumbersTable";
+import UserAddressesTable from "./addresses/UserAddressesTable";
 
 function TabPanel({ children, value, index }) {
     return (
@@ -314,143 +316,12 @@ export default function UserForm({ userId = null, onSave }) {
 
             {/* Endereços */}
             <TabPanel value={tabIndex} index={3}>
-
-                <TableHeader.Root>
-                    <TableHeader.Title
-                        title="Total"
-                        totalItems={formData.addresses.length}
-                        objNameNumberReference={formData.addresses.length === 1 ? "Endereço" : "Endereços"}
-                    />
-                    <TableHeader.Button
-                        buttonLabel="Adicionar endereço"
-                        icon={<Add />}
-                        onButtonClick={() => { console.log("Add address clicked"); /* setOpenAddressForm(true) - This state needs to be defined */ }}
-                        sx={{
-                            width: 200,
-                        }}
-                    />
-                </TableHeader.Root>
-                {(() => {
-                    const columns = [
-                        { field: 'street', headerName: 'Rua' },
-                        { field: 'number', headerName: 'Número' },
-                        { field: 'complement', headerName: 'Complemento' },
-                        { field: 'neighborhood', headerName: 'Bairro' },
-                        { field: 'city', headerName: 'Cidade' },
-                        { field: 'state', headerName: 'Estado' },
-                        { field: 'zip_code', headerName: 'CEP' },
-                        { field: 'country', headerName: 'País' },
-                    ];
-                    return (
-                        <Table.Root
-                            data={formData.addresses}
-                            totalRows={formData.addresses.length}
-                            noWrap={true}
-                        >
-                            <Table.Head>
-                                {columns.map(c => (
-                                    <Table.Cell
-                                        key={c.field}
-                                        sx={{ fontWeight: 600, fontSize: '14px' }}
-                                    >
-                                        {c.headerName}
-                                    </Table.Cell>
-                                ))}
-                            </Table.Head>
-
-                            <Table.Body>
-                                {formData.addresses.map((row, rowIndex) => (
-                                    <Table.Row
-                                        key={row.id || row.street || rowIndex}
-                                    >
-                                        {columns.map((c) => (
-                                            <Table.Cell key={c.field}>
-                                                {row[c.field]}
-                                            </Table.Cell>
-                                        ))}
-                                    </Table.Row>
-                                ))}
-                            </Table.Body>
-                        </Table.Root>
-                    );
-                })()}
+                <UserAddressesTable userId={userId} onChange={(addresses) => setFormData(f => ({ ...f, addresses }))} />
             </TabPanel>
 
             {/* Números de Telefone */}
             <TabPanel value={tabIndex} index={4}>
-                <TableHeader.Root>
-                    <TableHeader.Title
-                        title="Total"
-                        totalItems={formData.phone_numbers.length}
-                        objNameNumberReference={formData.phone_numbers.length === 1 ? "Telefone" : "Telefones"}
-                    />
-                    <TableHeader.Button
-                        buttonLabel="Adicionar telefone"
-                        icon={<Add />}
-                        onButtonClick={() => { console.log("Add phone number clicked"); /* setOpenPhoneNumberForm(true) - This state needs to be defined */ }}
-                        sx={{
-                            width: 200,
-                        }}
-                    />
-                </TableHeader.Root>
-                {(() => {
-                    const columns = [
-                        { field: 'country_code', headerName: 'Cód. País' },
-                        { field: 'area_code', headerName: 'DDD' },
-                        { field: 'phone_number', headerName: 'Número' },
-                        { field: 'is_main', headerName: 'Principal' },
-                    ];
-                    return (
-                        <Table.Root
-                            data={formData.phone_numbers}
-                            totalRows={formData.phone_numbers.length}
-                            noWrap={true}
-                        >
-                            <Table.Head>
-                                {columns.map(c => (
-                                    <Table.Cell
-                                        key={c.field}
-                                        sx={{ fontWeight: 600, fontSize: '14px' }}
-                                    >
-                                        {c.headerName}
-                                    </Table.Cell>
-                                ))}
-                            </Table.Head>
-
-                            <Table.Body>
-                                {formData.phone_numbers.map((row, rowIndex) => (
-                                    <Table.Row
-                                        key={row.id || row.phone_number || rowIndex}
-                                    >
-                                        {columns.map((c) => (
-                                            <Table.Cell key={c.field}>
-                                                {c.field === 'is_main' ? (
-                                                    <Table.SwitchAction
-                                                        checked={row.is_main}
-                                                        onChange={(e) => {
-                                                            const updatedPhoneNumbers = formData.phone_numbers.map((phone, index) => {
-                                                                if (index === rowIndex) {
-                                                                    return { ...phone, is_main: e.target.checked };
-                                                                }
-                                                                if (e.target.checked) {
-                                                                    return { ...phone, is_main: false };
-                                                                }
-                                                                return phone;
-                                                            });
-                                                            setFormData(f => ({ ...f, phone_numbers: updatedPhoneNumbers }));
-                                                        }}
-                                                    />
-                                                ) : (
-                                                    row[c.field]
-                                                )}
-                                            </Table.Cell>
-                                        ))}
-                                    </Table.Row>
-                                ))}
-                            </Table.Body>
-                        </Table.Root>
-                    );
-                })()}
+                <UserPhoneNumbersTable userId={userId} onChange={(phones) => setFormData(f => ({ ...f, phone_numbers: phones }))} />
             </TabPanel>
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3, p: 2 }}>
