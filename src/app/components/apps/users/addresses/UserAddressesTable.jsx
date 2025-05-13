@@ -13,21 +13,28 @@ export default function UserAddressesTable({
     const [totalRows, setTotalRows] = useState(propAddresses.length)
 
     useEffect(() => {
-        if (userId) {
-            // busca endereços do usuário existente
-            userService
-                .find(userId, { expand: 'addresses', fields: 'addresses' })
-                .then((res) => {
-                    const list = res.addresses || []
-                    setAddresses(list)
-                    setTotalRows(list.length)
-                })
-        } else {
-            // novo usuário: usa os dados vindos do form
-            setAddresses(propAddresses)
-            setTotalRows(propAddresses.length)
+        if (!userId) {
+            setAddresses(propAddresses);
+            setTotalRows(propAddresses.length);
+            return;
         }
-    }, [userId, propAddresses])
+        let mounted = true;
+        (async () => {
+            try {
+                const res = await userService.find(userId, {
+                    expand: 'addresses',
+                    fields: 'addresses'
+                });
+                if (!mounted) return;
+                const list = res.addresses || [];
+                setAddresses(list);
+                setTotalRows(list.length);
+            } catch (e) {
+                console.error(e);
+            }
+        })();
+        return () => { mounted = false };
+    }, [userId]);
 
     const handleAdd = () => {
         const novo = {

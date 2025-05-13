@@ -13,27 +13,27 @@ export default function UserPhoneNumbersTable({
     const [phoneNumbersCount, setPhoneNumbersCount] = useState(0);
 
     useEffect(() => {
-        if (userId) {
-            const fetchPhoneNumbers = async () => {
-                try {
-                    const response = await phoneNumberService.index({
-                        user: userId,
-                        fields: 'id,country_code,area_code,phone_number,is_main'
-                    });
-                    setPhones(response.results);
-                    setPhoneNumbersCount(response.meta.pagination.total_count);
-                } catch (error) {
-                    console.error("Error fetching phone numbers:", error);
-                }
-            };
-
-            fetchPhoneNumbers();
-        } else {
+        if (!userId) {
             setPhones(propPhones);
             setPhoneNumbersCount(propPhones.length);
+            return;
         }
-    }, [userId, propPhones]);
-
+        let mounted = true;
+        (async () => {
+            try {
+                const resp = await phoneNumberService.index({
+                    user: userId,
+                    fields: 'id,country_code,area_code,phone_number,is_main'
+                });
+                if (!mounted) return;
+                setPhones(resp.results);
+                setPhoneNumbersCount(resp.meta.pagination.total_count);
+            } catch (e) {
+                console.error(e);
+            }
+        })();
+        return () => { mounted = false };
+    }, [userId]);
 
     const handleSwitchToggle = (row, newState) => {
         const updated = phones.map(pn =>
