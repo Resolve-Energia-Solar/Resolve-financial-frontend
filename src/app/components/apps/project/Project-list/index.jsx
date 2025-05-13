@@ -198,7 +198,7 @@ const ProjectList = ({ onClick }) => {
         })),
     },
     {
-      key: 'sele_status',
+      key: 'sale_status',
       label: 'Status da Venda',
       type: 'multiselect',
       options: [
@@ -370,12 +370,25 @@ const ProjectList = ({ onClick }) => {
         { value: 'D', label: 'Distrato' },
       ],
     },
+    {
+      key: 'attachments_status',
+      label: 'Status do Anexo',
+      type: 'multiselect',
+      options: [
+        { value: 'EA', label: 'Em Análise' },
+        { value: 'A', label: 'Aprovado' },
+        { value: 'R', label: 'Recusado' },
+        { value: 'P', label: 'Parcial' },
+      ],
+    },
   ];
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchProjectsAndIndicators = async () => {
       setLoadingProjects(true);
+      setLoadingIndicators(true);
       try {
+        // Fetch dos projetos
         const data = await projectService.index({
           page: page + 1,
           limit: rowsPerPage,
@@ -386,15 +399,15 @@ const ProjectList = ({ onClick }) => {
           metrics: 'is_released_to_engineering',
           ...filters,
         });
-
+  
         const getFieldServiceStatus = (project) => {
           const categories = ['Vistoria', 'Instalação', 'Entrega'];
           const latestServices = {};
-
+  
           project.field_services.forEach((fs) => {
             const categoryName = fs.service?.category?.name;
             if (!categories.includes(categoryName)) return;
-
+  
             const serviceDate = new Date(fs.schedule_date);
             if (
               !latestServices[categoryName] ||
@@ -403,7 +416,7 @@ const ProjectList = ({ onClick }) => {
               latestServices[categoryName] = fs;
             }
           });
-
+  
           const result = {};
           categories.forEach((category) => {
             result[category] = latestServices[category]
@@ -414,7 +427,7 @@ const ProjectList = ({ onClick }) => {
           });
           return result;
         };
-
+  
         const projectsWithStatus = data.results.map((project) => {
           const homolog =
             project.requests_energy_company?.find(
@@ -426,31 +439,25 @@ const ProjectList = ({ onClick }) => {
             homologationStatus: homolog,
           };
         });
-
+  
         setProjectsList(projectsWithStatus);
         setTotalRows(data.meta.pagination.total_count);
+  
+        // Fetch dos indicadores
+        const indicatorsData = await projectService.getIndicators({ ...filters });
+        setIndicators(indicatorsData.indicators);
+  
       } catch (err) {
-        setError('Erro ao carregar Projetos');
+        setError('Erro ao carregar Projetos e Indicadores');
       } finally {
         setLoadingProjects(false);
-      }
-    };
-
-    const fetchIndicators = async () => {
-      setLoadingIndicators(true);
-      try {
-        const data = await projectService.getIndicators({ ...filters });
-        setIndicators(data.indicators);
-      } catch (err) {
-        setError('Erro ao carregar Indicadores');
-      } finally {
         setLoadingIndicators(false);
       }
     };
-
-    fetchIndicators();
-    fetchProjects();
+  
+    fetchProjectsAndIndicators();
   }, [page, rowsPerPage, filters]);
+  
 
   const handlePageChange = useCallback((event, newPage) => {
     setPage(newPage);

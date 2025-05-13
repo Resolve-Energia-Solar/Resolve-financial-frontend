@@ -32,7 +32,7 @@ const AttachmentTable = ({
   onDelete,
   hideStatus = true,
   hideTitle = false,
-  viewOnly = true,
+  viewOnly = false,
 }) => {
   const [fetchedAttachments, setFetchedAttachments] = useState([]);
   const [openAttachmentModal, setOpenAttachmentModal] = useState(false);
