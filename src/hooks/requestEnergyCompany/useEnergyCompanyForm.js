@@ -18,6 +18,7 @@ const useEnergyCompanyForm = (initialData, id) => {
     interim_protocol: '',
     final_protocol: '',
     request: null,
+    debit_value: null,
   });
 
   console.log('initialData', initialData);
@@ -41,6 +42,7 @@ const useEnergyCompanyForm = (initialData, id) => {
         interim_protocol: initialData.interim_protocol || '',
         final_protocol: initialData.final_protocol || '',
         request: initialData.request || null,
+        debit_value: initialData.debit_value || null,
       });
     }
   }, [initialData]);
@@ -63,9 +65,8 @@ const useEnergyCompanyForm = (initialData, id) => {
       interim_protocol: formData.interim_protocol,
       final_protocol: formData.final_protocol,
       request: formData.request,
+      debit_value: formData.debit_value,
     };
-
-    console.log('dataToSend', dataToSend);
 
     setLoading(true);
 

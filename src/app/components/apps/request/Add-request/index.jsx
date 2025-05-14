@@ -1,5 +1,5 @@
 'use client';
-import { Grid, Button, Stack, FormControlLabel, CircularProgress, Box, Typography } from '@mui/material';
+import { Grid, Button, Stack, FormControlLabel, CircularProgress, Box, Typography, InputAdornment } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 
@@ -370,6 +370,32 @@ export default function AddRequestCompany({
             onChange={(id) => handleChange('situation', id)}
             value={formData.situation}
             {...(formErrors.situation && { error: true, helperText: formErrors.situation })}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={12} lg={4}>
+          <CustomFormLabel htmlFor="requested_by">Valor de Débito</CustomFormLabel>
+          <CustomTextField
+            name="debit_value"
+            variant="outlined"
+            fullWidth
+            value={formData.debit_value}
+            onChange={(e) => handleChange('debit_value', e.target.value)}
+            {...(formErrors.debit_value && {
+              error: true,
+              helperText: formErrors.debit_value,
+            })}
+            InputProps={{
+              startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+            }}
+            inputProps={{
+              pattern: '[0-9]*',
+              inputMode: 'numeric',
+              type: 'text',
+              onInput: (e) => {
+                e.target.value = e.target.value.replace(/\D/g, '');
+              },
+            }}
           />
         </Grid>
 

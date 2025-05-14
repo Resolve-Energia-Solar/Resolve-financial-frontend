@@ -1,5 +1,5 @@
 'use client';
-import { Grid, Button, Stack, FormControlLabel, CircularProgress } from '@mui/material';
+import { Grid, Button, Stack, FormControlLabel, CircularProgress, InputAdornment } from '@mui/material';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import FormSelect from '@/app/components/forms/form-custom/FormSelect';
 
@@ -27,11 +27,10 @@ export default function EditRequestCompany({
   const userAuth = useSelector((state) => state.user.user);
 
   const { loading, error, companyData } = useEnergyCompany(id, {
-    fields: 'id,company.id,type.id,unit.id,status,interim_protocol,final_protocol,request_date,conclusion_date,situation.id,project',
+    fields: 'id,company.id,type.id,unit.id,status,interim_protocol,final_protocol,request_date,conclusion_date,situation.id,project,requested_by,debit_value,project',
     expand: 'company,type,unit,situation',
   });
 
-  console.log('companyData', companyData);
 
   const {
     formData,
@@ -42,14 +41,14 @@ export default function EditRequestCompany({
     loading: loadingForm,
   } = useEnergyCompanyForm(companyData, id);
 
-  console.log('companyData', companyData);
 
   useEffect(() => {
-    if (formData && !formData.requested_by && userAuth?.id) {
-      handleChange('requested_by', userAuth.id);
+    if (formData && !formData.requested_by) {
+      handleChange('requested_by', companyData?.requested_by);
       handleChange('project', companyData?.project);
     }
   }, [formData, userAuth]);
+
 
   useEffect(() => {
     if (success) {
@@ -176,6 +175,32 @@ export default function EditRequestCompany({
               error: true,
               helperText: formErrors.conclusion_date,
             })}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={12} lg={4}>
+          <CustomFormLabel htmlFor="requested_by">Valor de Débito</CustomFormLabel>
+          <CustomTextField
+            name="debit_value"
+            variant="outlined"
+            fullWidth
+            value={formData.debit_value}
+            onChange={(e) => handleChange('debit_value', e.target.value)}
+            {...(formErrors.debit_value && {
+              error: true,
+              helperText: formErrors.debit_value,
+            })}
+            InputProps={{
+              startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+            }}
+            inputProps={{
+              pattern: '[0-9]*',
+              inputMode: 'numeric',
+              type: 'text',
+              onInput: (e) => {
+                e.target.value = e.target.value.replace(/\D/g, '');
+              },
+            }}
           />
         </Grid>
        
