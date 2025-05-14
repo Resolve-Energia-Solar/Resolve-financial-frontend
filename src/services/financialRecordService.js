@@ -39,7 +39,6 @@ const financialRecordService = {
       throw error;
     }
   },
-
   delete: async (id) => {
     try {
       const response = await apiClient.delete(`${DEFAULT_ROUTER}/${id}/`);
@@ -49,7 +48,15 @@ const financialRecordService = {
       throw error;
     }
   },
-
+  sendToOmie: async (ids) => {
+    try {
+      const response = await apiClient.post(`/api/financial/omie/send-financial-records/`, { financial_records_ids: ids });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao enviar solicitação(ões) para o Omie:`, error);
+      throw error;
+    }
+  },
   getFinancialRecordList: async (filters = {}) => {
     const response = await apiClient.get('/api/financial-records/', { params: filters });
     return response.data;

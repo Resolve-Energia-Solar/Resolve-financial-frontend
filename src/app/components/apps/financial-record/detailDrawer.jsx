@@ -5,13 +5,11 @@ import {
   Drawer,
   Box,
   Typography,
-  Avatar,
   Divider,
   Tabs,
   Tab,
   Grid,
   IconButton,
-  Link,
   FormControl,
   Select,
   MenuItem,
@@ -22,11 +20,12 @@ import Comment from '../comment';
 import AttachmentTable from '../attachment/attachmentTable';
 import { useSelector } from 'react-redux';
 import financialRecordService from '@/services/financialRecordService';
-import { IconEdit, IconPdf } from '@tabler/icons-react';
+import { IconEdit, IconPdf, IconSend } from '@tabler/icons-react';
 import { formatDate } from '@/utils/dateUtils';
 import { useSnackbar } from 'notistack';
 import UserCard from '../users/userCard';
 import { useRouter } from 'next/navigation';
+import { IconCircleArrowUpRight } from '@tabler/icons-react';
 
 const statusMap = {
   S: <Chip label="Solicitada" color="warning" size="small" />,
@@ -137,6 +136,16 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
     router.push(`/apps/financial-record/${record.protocol}/update`);
   };
 
+  const handleSendToOmieClick = async () => {
+    try {
+      await financialRecordService.sendToOmie([record?.id]);
+      enqueueSnackbar('Solicitação enviada para o Omie com sucesso!', { variant: 'success' });
+    } catch (error) {
+      console.error(error);
+      enqueueSnackbar(`Erro ao enviar solicitação para o Omie: ${error.message}`, { variant: 'error' });
+    }
+  }
+
   if (!currentRecord) return null;
 
   return (
@@ -172,9 +181,20 @@ const FinancialRecordDetailDrawer = ({ open, onClose, record }) => {
           </Typography>
           <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 1 }}>
             {/* Botão PDF */}
-            <IconButton onClick={handlePDFBtnClick}>
-              <IconPdf size={24} />
-            </IconButton>
+            <Tooltip title="Gerar PDF">
+              <IconButton onClick={handlePDFBtnClick}>
+                <IconPdf size={24} />
+              </IconButton>
+            </Tooltip>
+            {(user.employee?.department?.name === 'Tecnologia' || user.employee?.department?.name === 'Financeiro')
+              && (record?.responsible_status === 'A' && record?.payment_status === 'P' && record?.integration_code === null)
+              && (
+                <Tooltip title="Enviar ao Omie">
+                  <IconButton onClick={handleSendToOmieClick} color='warning'>
+                    <IconCircleArrowUpRight size={24} />
+                  </IconButton>
+                </Tooltip>
+              )}
             {record?.responsible_status === 'P' && record?.payment_status === 'P' && (
               <Tooltip title="Novo botão de editar!" open={tourActive}>
                 <IconButton
