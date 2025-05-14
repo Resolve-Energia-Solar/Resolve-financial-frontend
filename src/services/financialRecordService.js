@@ -48,6 +48,15 @@ const financialRecordService = {
       throw error;
     }
   },
+  getIndicators: async (params) => {
+    try {
+      const response = await apiClient.get('/api/financial-records/financial-record-indicators/', { params });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar indicadores:', error);
+      throw error;
+    }
+  },
   sendToOmie: async (ids) => {
     try {
       const response = await apiClient.post(`/api/financial/omie/send-financial-records/`, { financial_records_ids: ids });
