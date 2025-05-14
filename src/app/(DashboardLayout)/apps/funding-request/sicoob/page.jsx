@@ -22,6 +22,7 @@ import {
   TableRow,
   Tabs,
   Typography,
+  TablePagination,
 } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
@@ -33,13 +34,8 @@ import { TabPanel } from '@/app/components/shared/TabPanel';
 import Comment from '@/app/components/apps/comment';
 
 const BCrumb = [
-  {
-    to: '/',
-    title: 'Home',
-  },
-  {
-    title: 'Solicitações de Financiamento',
-  },
+  { to: '/', title: 'Home' },
+  { title: 'Solicitações de Financiamento' },
 ];
 
 export default function Sicoob() {
@@ -48,9 +44,9 @@ export default function Sicoob() {
   const [rows, setRows] = useState([]);
   const [row, setRow] = useState();
   const [openSideDrawer, setOpenSideDrawer] = useState(false);
+  const [openSideDrawerCreate, setOpenSideDrawerCreate] = useState(false);
   const [formData, setFormData] = useState({});
   const [formDataManaging, setFormDataManaging] = useState({});
-  const [openSideDrawerCreate, setOpenSideDrawerCreate] = useState();
   const [rFormData, setRFormData] = useState({});
   const [attachments, setAttachments] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -59,8 +55,12 @@ export default function Sicoob() {
   const [disabledManaging, setDisabledManaging] = useState(true);
   const [customer, setCustomer] = useState();
   const [managingPartner, setManagingPartner] = useState();
-
   const [value, setValue] = useState(0);
+
+  // paginação
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [count, setCount] = useState(0);
 
   const payloadClear = {
     complete_name: '',
@@ -70,106 +70,27 @@ export default function Sicoob() {
     gender: '',
     birth_date: '',
   };
-  const handleAddAttachment = (attachment) => {
-    setAttachments((prev) => [...prev, attachment]);
+
+  // formata só com separador de milhares (exibição)
+  const formatNumber = (value) => {
+    const onlyDigits = value.replace(/\D/g, '');
+    return onlyDigits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   };
 
-  const handleChangeTab = (event, newValue) => {
-    setValue(newValue);
+  // converte string formatada para Number (envio)
+  const parseNumber = (value) => {
+    if (!value) return null;
+    const normalized = value.replace(/\./g, '').replace(',', '.');
+    const num = parseFloat(normalized);
+    return isNaN(num) ? null : num;
   };
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    try {
-      if (formData.person_type == 'PJ') {
-        // Cria o registro e obtém o object_id
-        const userResponse = await userService.upInsert(customer.id, {
-          complete_name: formData.complete_name,
-          email: formData.email,
-          first_document: formData.first_document,
-          person_type: formData.person_type,
-          user_types: [2],
-        });
-
-        setCustomer(userResponse);
-
-        const userResponseManaging = await userService.upInsert(managingPartner.id, {
-          complete_name: formDataManaging.complete_name,
-          email: formDataManaging.email,
-          first_document: formDataManaging.first_document,
-          person_type: formDataManaging.person_type,
-          birth_date: formDataManaging.birth_date,
-          gender: formDataManaging.gender,
-          user_types: [2],
-        });
-
-        setManagingPartner(userResponseManaging);
-      } else {
-        const userResponse = await userService.upInsert(customer.id, {
-          complete_name: formData.complete_name,
-          email: formData.email,
-          first_document: formData.first_document,
-          person_type: formData.person_type,
-          gender: formData.gender,
-          birth_date: formData.birth_date,
-          user_types: [2],
-        });
-        setCustomer(userResponse);
-      }
-
-      const recordResponse = await requestSicoob.create({
-        occupation: formData.person_type == 'PJ' ? 'Empresa' : rFormData.occupation,
-        monthly_income: rFormData.monthly_income,
-        customer: customer?.id,
-        managing_partner: managingPartner?.id,
-        requested_by: user?.id,
-        project_value: rFormData.project_value,
-      });
-      const recordId = recordResponse.id;
-
-      // Envia cada anexo pendente
-      await Promise.all(
-        attachments.map(async (attachment) => {
-          const formDataAttachment = new FormData();
-          formDataAttachment.append('file', attachment.file);
-          formDataAttachment.append('description', attachment.description);
-          formDataAttachment.append('object_id', recordId);
-          formDataAttachment.append('content_type', 121);
-          formDataAttachment.append('document_type', '');
-          formDataAttachment.append('document_subtype', '');
-          formDataAttachment.append('status', '');
-          await attachmentService.create(formDataAttachment);
-        }),
-      );
-      setOpenSideDrawerCreate(false);
-      fetchRequestSicoob();
-    } catch (error) {
-      console.error('Erro ao salvar registro ou anexos:', error);
-      if (error.response && error.response.data) {
-        const errors = error.response.data;
-        setFormErrors(errors);
-        Object.keys(errors).forEach((field) => {
-          const label = fieldLabels[field] || field;
-          enqueueSnackbar(`Erro no campo ${label}: ${errors[field].join(', ')}`, {
-            variant: 'error',
-          });
-        });
-      } else {
-        enqueueSnackbar('Erro ao salvar registro ou anexos: ' + error.message, {
-          variant: 'error',
-        });
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchRequestSicoob();
-  }, []);
-
+  // busca lista com page e limit
   const fetchRequestSicoob = async () => {
     try {
-      const response = await requestSicoob.index({
+      const res = await requestSicoob.index({
+        page: page + 1,
+        limit,
         expand: ['customer', 'managing_partner', 'requested_by.phone_numbers'],
         fields: [
           '*',
@@ -191,102 +112,227 @@ export default function Sicoob() {
         ],
         format: 'json',
       });
-
-      setRows(response.results);
-    } catch (error) {
-      console.log(error);
+      setRows(res.results);
+      setCount(res.meta.pagination.total_count);
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  const verifyUser = async (first_document) => {
-    try {
-      const response = await userService.index({
-        first_document__icontains: first_document,
-        fields: ['id', 'first_document', 'email', 'complete_name', 'gender', 'birth_date'],
-      });
+  useEffect(() => {
+    fetchRequestSicoob();
+  }, [page, limit]);
 
-      return response.results;
-    } catch (error) {
-      enqueueSnackbar(`Erro ao buscar contate o suporte: ${error}`, { variant: 'error' });
-      console.log(error);
-    }
+  const handleAddAttachment = (attachment) => {
+    setAttachments((prev) => [...prev, attachment]);
   };
 
-  const itemSelected = (row) => {
-    setRow(row);
-    setOpenSideDrawer(true);
+  const handleChangeTab = (_, newValue) => {
+    setValue(newValue);
   };
 
-  const onCloseDrawer = () => {
-    setOpenSideDrawerCreate(false);
-    setFormData(null);
-    setFormDataManaging(null);
+  const handleChangePage = (_, newPage) => {
+    setPage(newPage);
   };
 
-  const handleChange = async (event) => {
-    const { name, value } = event.target;
+  const handleChangeRowsPerPage = (e) => {
+    setLimit(parseInt(e.target.value, 10));
+    setPage(0);
+  };
 
-    console.log(name, value);
-
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+    // busca usuário ao completar CPF/CNPJ
     if (
       name === 'first_document' &&
-      ((value.length == 11 && formData.person_type == 'PF') ||
-        (value.length == 14 && formData.person_type == 'PJ'))
+      ((value.length === 11 && formData.person_type === 'PF') ||
+        (value.length === 14 && formData.person_type === 'PJ'))
     ) {
-      const user = await verifyUser(value);
-
-      if (user.length == 0) {
-        enqueueSnackbar('Nenhum registro encontrado com este CPF ou CNPJ. Complete o Cadastro', {
-          variant: 'warning',
-        });
+      const found = await userService
+        .index({
+          first_document__icontains: value,
+          fields: [
+            'id',
+            'first_document',
+            'complete_name',
+            'email',
+            'gender',
+            'birth_date',
+          ],
+        })
+        .then((res) => res.results);
+      if (found.length === 0) {
+        enqueueSnackbar(
+          'Nenhum registro encontrado. Complete o cadastro.',
+          { variant: 'warning' }
+        );
         setDisabled(false);
       } else {
-        setFormData((prevData) => ({ ...prevData, ...user[0] }));
-        setCustomer(user[0]);
+        setFormData((p) => ({ ...p, ...found[0] }));
+        setCustomer(found[0]);
       }
     }
-
     if (name === 'person_type') {
       setFormData(payloadClear);
+      setDisabled(false);
     }
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  const handleChangeManaging = async (event) => {
-    const { name, value } = event.target;
-    if (name === 'first_document' && value.length == 11) {
-      const user = await verifyUser(value);
-      if (user.length == 0) {
-        enqueueSnackbar('Nenhum registro encontrado com este CPF ou CNPJ. Complete o Cadastro', {
-          variant: 'warning',
-        });
+  const handleChangeManaging = async (e) => {
+    const { name, value } = e.target;
+    if (name === 'first_document' && value.length === 11) {
+      const found = await userService
+        .index({
+          first_document__icontains: value,
+          fields: [
+            'id',
+            'first_document',
+            'complete_name',
+            'email',
+            'gender',
+            'birth_date',
+          ],
+        })
+        .then((res) => res.results);
+      if (found.length === 0) {
+        enqueueSnackbar(
+          'Nenhum registro encontrado. Complete o cadastro.',
+          { variant: 'warning' }
+        );
         setDisabledManaging(false);
       } else {
-        setFormDataManaging((prevData) => ({ ...prevData, ...user[0] }));
-        setManagingPartner(user[0]);
+        setFormDataManaging((p) => ({ ...p, ...found[0] }));
+        setManagingPartner(found[0]);
       }
     }
     if (name === 'person_type') {
       setFormDataManaging(payloadClear);
+      setDisabledManaging(false);
     }
-    setFormDataManaging((prevData) => ({ ...prevData, [name]: value }));
+    setFormDataManaging((p) => ({ ...p, [name]: value }));
   };
 
-  const handleChangeRFormData = (event) => {
-    setRFormData((prevData) => ({ ...prevData, [event.target.name]: event.target.value }));
+  const handleChangeRFormData = (e) => {
+    const { name, value } = e.target;
+    if (name === 'monthly_income' || name === 'project_value') {
+      setRFormData((p) => ({ ...p, [name]: formatNumber(value) }));
+    } else {
+      setRFormData((p) => ({ ...p, [name]: value }));
+    }
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      // 1. cria/atualiza customer
+      const custBody = {
+        complete_name: formData.complete_name,
+        email: formData.email,
+        first_document: formData.first_document,
+        person_type: formData.person_type,
+        ...(formData.person_type === 'PF' && {
+          gender: formData.gender,
+          birth_date: formData.birth_date,
+        }),
+        user_types: [2],
+      };
+      const newCustomer = await userService.upInsert(
+        formData.id ?? null,
+        custBody
+      );
+      setCustomer(newCustomer);
+
+      // 2. cria/atualiza managing partner (PJ)
+      let newManaging = null;
+      if (formData.person_type === 'PJ') {
+        const mpBody = {
+          complete_name: formDataManaging.complete_name,
+          email: formDataManaging.email,
+          first_document: formDataManaging.first_document,
+          person_type: formDataManaging.person_type,
+          gender: formDataManaging.gender,
+          birth_date: formDataManaging.birth_date,
+          user_types: [2],
+        };
+        newManaging = await userService.upInsert(
+          formDataManaging.id ?? null,
+          mpBody
+        );
+        setManagingPartner(newManaging);
+      }
+
+      // 3. monta payload e converte valores numéricos
+      const payload = {
+        occupation:
+          formData.person_type === 'PJ'
+            ? 'Empresa'
+            : rFormData.occupation,
+        monthly_income: parseNumber(rFormData.monthly_income),
+        project_value: parseNumber(rFormData.project_value),
+        customer: newCustomer.id,
+        managing_partner: newManaging?.id ?? null,
+        requested_by: user.id,
+      };
+      if (payload.project_value == null) {
+        enqueueSnackbar('Valor do projeto inválido.', {
+          variant: 'error',
+        });
+        setLoading(false);
+        return;
+      }
+
+      // 4. cria a solicitação
+      const { id: recordId } = await requestSicoob.create(payload);
+
+      // 5. envia anexos
+      await Promise.all(
+        attachments.map(({ file, description }) => {
+          const fd = new FormData();
+          fd.append('file', file);
+          fd.append('description', description);
+          fd.append('object_id', recordId);
+          fd.append('content_type', 121);
+          fd.append('document_type', '');
+          fd.append('document_subtype', '');
+          fd.append('status', '');
+          return attachmentService.create(fd);
+        })
+      );
+
+      setOpenSideDrawerCreate(false);
+      fetchRequestSicoob();
+    } catch (err) {
+      console.error(err);
+      if (err.response?.data) {
+        setFormErrors(err.response.data);
+        Object.entries(err.response.data).forEach(([field, msgs]) => {
+          enqueueSnackbar(
+            `Erro no campo ${field}: ${msgs.join(', ')}`,
+            { variant: 'error' }
+          );
+        });
+      } else {
+        enqueueSnackbar(`Erro ao salvar: ${err.message}`, {
+          variant: 'error',
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChangeStatus = async (status, id) => {
     try {
-      const response = await requestSicoob.update(id, {
-        status,
-      });
-
+      await requestSicoob.update(id, { status });
       fetchRequestSicoob();
-      enqueueSnackbar(`Salvo com sucesso`, { variant: 'success' });
-    } catch (error) {
-      console.log(error);
-      enqueueSnackbar(`Erro ao salvar contate o suporte: ${error}`, { variant: 'error' });
+      enqueueSnackbar('Salvo com sucesso', {
+        variant: 'success',
+      });
+    } catch (err) {
+      enqueueSnackbar(`Erro ao salvar: ${err}`, {
+        variant: 'error',
+      });
     }
   };
 
@@ -304,22 +350,41 @@ export default function Sicoob() {
         return <Chip label="Pendente" color="warning" />;
     }
   };
+
+  const itemSelected = (r) => {
+    setRow(r);
+    setOpenSideDrawer(true);
+  };
+
+  const onCloseDrawer = () => {
+    setOpenSideDrawerCreate(false);
+    setFormData({});
+    setFormDataManaging({});
+    setRFormData({});
+    setAttachments([]);
+    setDisabled(true);
+    setDisabledManaging(true);
+  };
+
   return (
     <Box>
       <Breadcrumb items={BCrumb} />
+
       <Box
         sx={{
-          padding: '22px',
-          borderRadius: '8px',
+          p: 2,
           display: 'flex',
-          justifyContent: 'end',
+          justifyContent: 'flex-end',
         }}
       >
-        <Button onClick={() => setOpenSideDrawerCreate(true)}>Nova Solicitação</Button>
+        <Button onClick={() => setOpenSideDrawerCreate(true)}>
+          Nova Solicitação
+        </Button>
       </Box>
+
       <BlankCard>
         <TableContainer>
-          <Table aria-label="simple table">
+          <Table>
             <TableHead>
               <TableRow>
                 <TableCell>
@@ -329,68 +394,125 @@ export default function Sicoob() {
                   <Typography variant="h6">Natureza</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6">Sócio Administrador</Typography>
+                  <Typography variant="h6">Sócio Adm.</Typography>
                 </TableCell>
                 <TableCell>
                   <Typography variant="h6">Status</Typography>
                 </TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
-              {rows.map((row) => (
-                <TableRow key={row.id} onClick={() => itemSelected(row)}>
-                  <TableCell>{row.customer.complete_name}</TableCell>
-                  <TableCell>{row.customer.person_type}</TableCell>
-                  <TableCell>{row.customer.complete_name}</TableCell>
-                  <TableCell>{getStatus(row.status)}</TableCell>
+              {rows.map((r) => (
+                <TableRow
+                  key={r.id}
+                  hover
+                  onClick={() => itemSelected(r)}
+                >
+                  <TableCell>
+                    {r.customer.complete_name}
+                  </TableCell>
+                  <TableCell>
+                    {r.customer.person_type}
+                  </TableCell>
+                  <TableCell>
+                    {r.managing_partner?.complete_name}
+                  </TableCell>
+                  <TableCell>{getStatus(r.status)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
+
+        <TablePagination
+          component="div"
+          count={count}
+          page={page}
+          onPageChange={handleChangePage}
+          rowsPerPage={limit}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPageOptions={[5, 10, 25]}
+        />
       </BlankCard>
-      <SideDrawer open={openSideDrawer} onClose={() => setOpenSideDrawer(false)} title="Detalhes">
+
+      {/* Detalhes / Comentários */}
+      <SideDrawer
+        open={openSideDrawer}
+        onClose={() => setOpenSideDrawer(false)}
+        title="Detalhes"
+      >
         {row && (
           <>
-            <Tabs value={value} onChange={handleChangeTab}>
+            <Tabs
+              value={value}
+              onChange={handleChangeTab}
+            >
               <Tab label="Solicitação" value={0} />
               <Tab label="Comentários" value={1} />
             </Tabs>
+
             <TabPanel value={value} index={0}>
-              <DetailsFundingRequest data={row} handleChangeStatus={handleChangeStatus} />
+              <DetailsFundingRequest
+                data={row}
+                handleChangeStatus={handleChangeStatus}
+              />
             </TabPanel>
+
             <TabPanel value={value} index={1}>
-              <Comment appLabel={'contracts'} model={'sicoobrequest'} objectId={row.id} />
+              <Comment
+                appLabel="contracts"
+                model="sicoobrequest"
+                objectId={row.id}
+              />
             </TabPanel>
           </>
         )}
       </SideDrawer>
-      <SideDrawer open={openSideDrawerCreate} onClose={onCloseDrawer} title="Detalhes">
-        <>
-          <CreateFundingRequest
-            formData={formData}
-            formDataManaging={formDataManaging}
-            handleChange={handleChange}
-            handleChangeManaging={handleChangeManaging}
-            rFormData={rFormData}
-            handleChangeRFormData={handleChangeRFormData}
-            disabled={disabled}
-            disabledManaging={disabledManaging}
+
+      {/* Criar nova solicitação */}
+      <SideDrawer
+        open={openSideDrawerCreate}
+        onClose={onCloseDrawer}
+        title="Nova Solicitação"
+      >
+        <CreateFundingRequest
+          formData={formData}
+          formDataManaging={formDataManaging}
+          rFormData={rFormData}
+          handleChange={handleChange}
+          handleChangeManaging={handleChangeManaging}
+          handleChangeRFormData={handleChangeRFormData}
+          disabled={disabled}
+          disabledManaging={disabledManaging}
+        >
+          <Stack
+            direction="row"
+            spacing={2}
+            justifyContent="space-between"
+            mt={2}
           >
-            <Stack direction="row" spacing={2} justifyContent="space-between" mt={2}>
-              <AttachmentDrawer
-                objectId={null}
-                attachments={attachments}
-                onAddAttachment={handleAddAttachment}
-                appLabel={'contracts'}
-                model={'sicoobrequest'}
-              />
-              <Button variant="contained" color="primary" onClick={handleSubmit} disabled={loading}>
-                {loading ? <CircularProgress size={24} /> : 'Criar'}
-              </Button>
-            </Stack>
-          </CreateFundingRequest>
-        </>
+            <AttachmentDrawer
+              objectId={null}
+              attachments={attachments}
+              onAddAttachment={handleAddAttachment}
+              appLabel="contracts"
+              model="sicoobrequest"
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? (
+                <CircularProgress size={24} />
+              ) : (
+                'Criar'
+              )}
+            </Button>
+          </Stack>
+        </CreateFundingRequest>
       </SideDrawer>
     </Box>
   );

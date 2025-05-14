@@ -56,16 +56,6 @@ const userService = {
     }
   },
 
-  update: async (id, body) => {
-    try {
-      const response = await apiClient.patch(`/api/users/${id}/`, body);
-      return response.data;
-    } catch (error) {
-      console.error(`Erro ao buscar usuário com id ${id}:`, error);
-      throw error;
-    }
-  },
-
   upInsert: async (id, body) => {
     console.log('afahjsdfjagsd', id);
 
