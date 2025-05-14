@@ -55,8 +55,8 @@ const useLoginForm = () => {
       console.log('data', data);
 
       const userData = await userService.find(data.id, {
-        expand: 'employee,employee.user_manager',
-        fields: '*,employee.*,employee.user_manager.id,employee.user_manager.complete_name',
+        expand: 'employee,employee.user_manager,employee.department,employee.role',
+        fields: '*,employee.*,employee.user_manager.id,employee.user_manager.complete_name,employee.department.id,employee.department.name,employee.role.id,employee.role.name'
       });
 
       dispatch(
