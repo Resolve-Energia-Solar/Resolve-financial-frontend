@@ -51,6 +51,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import StatusWithProgressBar from '../components/StatusWithProgressBar';
 
 const ResquestLIstByProject = () => {
   const router = useRouter();
@@ -127,10 +128,15 @@ const ResquestLIstByProject = () => {
             'requests_energy_company.conclusion_date',
             'supply_adquance',
             'access_opnion_status',
+            'access_opnion_days_int',
             'load_increase_status',
+            'load_increase_days_int',
             'branch_adjustment_status',
+            'branch_adjustment_days_int',
             'new_contact_number_status',
+            'new_contact_number_days_int',
             'final_inspection_status',
+            'final_inspection_days_int',
             'supply_adquance_names'
           ].join(','),
           expand:
@@ -651,19 +657,34 @@ const ResquestLIstByProject = () => {
                     </TableCell>
                   <TableCell>{item.supply_adquance_names}</TableCell>
                   <TableCell>
-                      <ChipRequestStatus status={item.access_opnion_status} />
+                    <StatusWithProgressBar
+                      status={item.access_opnion_status}
+                      days={item.access_opnion_days_int}
+                    />
                   </TableCell>
                   <TableCell>
-                    <ChipRequestStatus status={item.load_increase_status} />
+                    <StatusWithProgressBar
+                      status={item.load_increase_status}
+                      days={item.load_increase_days_int}
+                    />
                   </TableCell>
                   <TableCell>
-                    <ChipRequestStatus status={item.branch_adjustment_status} />
+                    <StatusWithProgressBar
+                      status={item.branch_adjustment_status}
+                      days={item.branch_adjustment_days_int}
+                    />
                   </TableCell>
                   <TableCell>
-                    <ChipRequestStatus status={item.new_contact_number_status} />
+                    <StatusWithProgressBar
+                      status={item.new_contact_number_status}
+                      days={item.new_contact_number_days_int}
+                    />
                   </TableCell>
                   <TableCell>
-                    <ChipRequestStatus status={item.final_inspection_status} />
+                    <StatusWithProgressBar
+                      status={item.final_inspection_status}
+                      days={item.final_inspection_days_int}
+                    />
                   </TableCell>
                 </TableRow>
                 )
