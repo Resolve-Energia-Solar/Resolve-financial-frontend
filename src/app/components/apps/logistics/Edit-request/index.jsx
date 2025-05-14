@@ -42,8 +42,6 @@ export default function EditRequestCompany({
     loading: loadingForm,
   } = useEnergyCompanyForm(companyData, id);
 
-  console.log('companyData', companyData);
-
   useEffect(() => {
     if (formData && !formData.requested_by && userAuth?.id) {
       handleChange('requested_by', userAuth.id);
@@ -64,6 +62,7 @@ export default function EditRequestCompany({
     { value: 'S', label: 'Solicitada' },
     { value: 'I', label: 'Indeferida' },
     { value: 'D', label: 'Deferida' },
+    { value: 'ID', label: 'Indeferida com Débito' },
   ];
 
   if (loading || !formData) {

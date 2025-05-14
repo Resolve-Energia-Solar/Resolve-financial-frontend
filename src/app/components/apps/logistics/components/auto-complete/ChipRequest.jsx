@@ -12,7 +12,9 @@ const ChipRequest = ({ status }) => {
         return { label: 'Solicitada', color: 'warning', icon: <HourglassEmptyIcon /> };
       case 'I':
         return { label: 'Indeferida', color: 'error', icon: <ErrorIcon /> };
-        case 'D':
+      case 'ID':
+        return { label: 'Indeferida com Débito', color: 'error', icon: <ErrorIcon /> };
+      case 'D':
         return { label: 'Deferida', color: 'success', icon: <CheckCircleIcon /> };
       default:
         return { label: 'Sem Solicitação', color: 'default', icon: null};
