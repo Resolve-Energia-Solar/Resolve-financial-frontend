@@ -65,11 +65,14 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
       ]);
       setProject(proj);
       setProcessId(proc);
-      const hasObra = proj.field_services?.some(fs =>
-        fs.service?.name?.includes('Vistoria') &&
-        (fs.final_service_opinion?.name?.includes('Obra') || fs.final_service_opinion?.name?.includes('Sombreamento'))
-      );
-      setHasConstructionTab(hasObra);
+      const constructionKeywords = ['obra', 'sombreamento'];
+      const hasConstruction = proj.field_services?.some(fs => {
+        if (!fs.service?.name?.toLowerCase().includes('vistoria')) return false;
+        
+        const opinionName = fs.final_service_opinion?.name?.toLowerCase() || '';
+        return constructionKeywords.some(keyword => opinionName.includes(keyword));
+      });
+      setHasConstructionTab(hasConstruction);
     } catch (error) {
       console.error(error);
     } finally {
@@ -114,13 +117,13 @@ export default function ProjectDetailDrawer({ projectId, open, onClose, refresh 
           <Card sx={{ my: 3, boxShadow: 7 }}>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 1 }}>Anexos do Projeto</Typography>
-              <AttachmentTable hideTitle={true} appLabelDocument="engineering" appLabel="resolve_crm" model="project" objectId={projectId} hideStatus={false} viewOnly={!canEdit}/>
+              <AttachmentTable hideTitle={true} appLabelDocument="engineering" appLabel="resolve_crm" model="project" objectId={projectId} hideStatus={false} viewOnly={!canEdit} />
             </CardContent>
           </Card>
           <Card sx={{ boxShadow: 3 }}>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 1 }}>Anexos do Venda</Typography>
-              <AttachmentTable hideTitle={true} appLabelDocument="contracts" appLabel="resolve_crm" model="sale" objectId={project?.sale?.id} hideStatus={false} viewOnly={!canEdit}/>
+              <AttachmentTable hideTitle={true} appLabelDocument="contracts" appLabel="resolve_crm" model="sale" objectId={project?.sale?.id} hideStatus={false} viewOnly={!canEdit} />
             </CardContent>
           </Card>
         </>
