@@ -3,14 +3,18 @@ import { Table } from "@/app/components/Table";
 import { TableHeader } from "@/app/components/TableHeader";
 import { Add } from "@mui/icons-material";
 import userService from '@/services/userService';
+import CreateAddressPage from "../../address/Add-address";
+import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 
 export default function UserAddressesTable({
     userId = null,
     addresses: propAddresses = [],
     onChange,
+    viewOnly = false,
 }) {
     const [addresses, setAddresses] = useState(propAddresses)
     const [totalRows, setTotalRows] = useState(propAddresses.length)
+    const [openAdd, setOpenAdd] = useState(false);
 
     useEffect(() => {
         if (!userId) {
@@ -90,12 +94,12 @@ export default function UserAddressesTable({
                     totalItems={totalRows}
                     objNameNumberReference={totalRows === 1 ? "Endereço" : "Endereços"}
                 />
-                {/* <TableHeader.Button
+                {!viewOnly && <TableHeader.Button
                     buttonLabel="Adicionar endereço"
                     icon={<Add />}
-                    onButtonClick={userId ? () => { } : handleAdd}
+                    onButtonClick={() => setOpenAdd(true)}
                     sx={{ width: 200 }}
-                /> */}
+                />}
             </TableHeader.Root>
 
             <Table.Root
@@ -124,6 +128,27 @@ export default function UserAddressesTable({
                     ))}
                 </Table.Body>
             </Table.Root>
+
+            <Dialog
+                open={openAdd}
+                onClose={() => setOpenAdd(false)}
+                fullWidth
+                maxWidth="sm"
+            >
+                <DialogTitle>Adicionar Endereço</DialogTitle>
+                <DialogContent>
+                    <CreateAddressPage
+                        userId={userId}
+                        onClose={() => setOpenAdd(false)}
+                        onAdd={(newAddr) => {
+                            const updated = [...addresses, newAddr];
+                            setAddresses(updated);
+                            setTotalRows(updated.length);
+                            onChange(updated);
+                        }}
+                    />
+                </DialogContent>
+            </Dialog >
         </>
     );
 }
