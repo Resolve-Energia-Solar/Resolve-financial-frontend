@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import PageContainer from '@/app/components/container/PageContainer';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import { useSnackbar } from 'notistack';
@@ -21,21 +21,16 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import EventIcon from '@mui/icons-material/Event';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
-
-const INDICATORS_STATUS_COLORS = {
-  error: { bg: '#F8D7DA', text: '#721C24' },
-  warning: { bg: '#FFF3CD', text: '#856404' },
-  success: { bg: '#D4EDDA', text: '#155724' },
-  info: { bg: '#D1ECF1', text: '#0C5460' },
-  grey: { bg: '#E2E3E5', text: '#41464B' }
-};
+import { formatDate } from '@/utils/dateUtils';
+import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
+import { FilterContext } from '@/context/FilterContext';
 
 const InspectionsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [indicators, setIndicators] = useState({ purchase_status: {}, delivery_status: {}, total_count: 0 });
   const [loadingIndicators, setLoadingIndicators] = useState(true);
-  const [filters, setFilters] = useState({});
+  const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -44,10 +39,37 @@ const InspectionsDashboard = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
 
+  const stats = [
+    {
+      key: 'total_finished',
+      label: 'Vistorias Finalizadas',
+      value: indicators.total_finished,
+      icon: <CheckCircleIcon />,
+      color: '#d4edda',
+      filter: { inspection_is_finished: true }
+    },
+    {
+      key: 'total_pending',
+      label: 'Vistorias Pendentes',
+      value: indicators.total_pending,
+      icon: <HourglassEmptyIcon />,
+      color: '#fff3cd',
+      filter: { inspection_is_pending: true }
+    },
+    {
+      key: 'total_not_scheduled',
+      label: 'Sem Vistoria Vinculada',
+      value: indicators.total_not_scheduled,
+      icon: <RemoveCircleOutlineIcon />,
+      color: '#f8d7da',
+      filter: { inspection_isnull: true }
+    }
+  ];
+
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await projectService.index({ user_types: 3, fields: 'id,project_number,sale.customer.complete_name,product.description,address.complete_address,sale.status', expand: 'sale.customer,product,address', metrics: '', page: page + 1, limit: rowsPerPage, ...filters });
+      const response = await projectService.index({ user_types: 3, fields: 'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name', expand: 'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion', metrics: '', page: page + 1, limit: rowsPerPage, ...filters });
       setProjects(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {
@@ -57,7 +79,6 @@ const InspectionsDashboard = () => {
     }
   }, [page, rowsPerPage, filters, enqueueSnackbar]);
 
-  /*
   const fetchIndicators = useCallback(async () => {
     setLoadingIndicators(true);
     try {
@@ -69,19 +90,18 @@ const InspectionsDashboard = () => {
       setLoadingIndicators(false);
     }
   }, [enqueueSnackbar]);
-  */
 
   useEffect(() => {
     fetchProjects();
-    // fetchIndicators();
-  }, [fetchProjects, /* fetchIndicators */]);
+    fetchIndicators();
+  }, [fetchProjects, fetchIndicators, refresh]);
 
   const BCrumb = [
     { to: '/', title: 'Home' },
     { title: 'Vistoria' },
   ];
 
-  const getDeliveryChipProps = (status) => {
+  const getInspectionChipProps = (status) => {
     switch (status) {
       case 'Bloqueado':
         return { label: status, color: 'error', icon: <BlockIcon /> };
@@ -100,23 +120,56 @@ const InspectionsDashboard = () => {
 
   const columns = [
     {
-      field: 'project_number',
+      field: 'project',
       headerName: 'Projeto',
       render: r => `${r.project_number} - ${r.sale?.customer?.complete_name}` || 'SEM NÚMERO',
       sx: { opacity: 0.7 }
     },
     {
-      field: 'product.description',
-      headerName: 'Produto',
-      render: r => r.product?.description || '-'
+      field: 'sale.signature_date',
+      headerName: 'Data de Assinatura',
+      render: r => formatDate(r.sale?.signature_date),
     },
     {
-      field: 'address',
-      headerName: 'Endereço',
-      render: r => r.address?.complete_address || '-'
+      field: 'sale.status',
+      headerName: 'Status',
+      render: r => <StatusChip status={r.sale?.status} />,
     },
-
+    {
+      field: 'sale.treadmill_counter',
+      headerName: 'Contador',
+      render: r => <Chip label={r.sale?.treadmill_counter || '-'} variant='outlined' />,
+    },
+    {
+      field: 'sale.branch',
+      headerName: 'Unidade',
+      render: r => r.sale?.branch?.name || '-',
+    },
+    {
+      field: 'inspection.date',
+      headerName: 'Data de Vistoria',
+      render: r => formatDate(r.inspection?.schedule_date),
+    },
+    {
+      field: 'inspection.final_service_opinion.name',
+      headerName: 'Status de Vistoria',
+      render: r => <ScheduleOpinionChip status={r.inspection?.final_service_opinion?.name} />,
+    }
   ];
+
+  const handleKPIClick = (kpiType) => {
+    const kpiFilter = stats.find((stat) => stat.key === kpiType)?.filter;
+
+    if (kpiFilter && Object.keys(kpiFilter).length > 0) {
+      clearFilters();
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        ...kpiFilter,
+      }));
+    } else {
+      clearFilters();
+    }
+  };
 
   const handleRowClick = (row) => {
     setSelectedRow(row.id);
@@ -137,12 +190,11 @@ const InspectionsDashboard = () => {
       <Breadcrumb items={BCrumb} />
 
       {/* Indicadores */}
-      {/*
       <Box sx={{ width: '100%', mb: 2 }}>
-        <Typography variant="h6" sx={{ mt: 2 }}>Indicadores</Typography>
+        <Typography variant="h6">Indicadores</Typography>
         {loadingIndicators ? (
           <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, mb: 4, background: '#f5f5f5', p: 2 }}>
-            {Array.from({ length: 5 }).map((_, index) => (
+            {Array.from({ length: stats.length }).map((_, index) => (
               <Skeleton
                 key={index}
                 variant="rectangular"
@@ -155,47 +207,65 @@ const InspectionsDashboard = () => {
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: '#E2E3E5',
+                  backgroundColor: 'grey.300',
                   borderRadius: 1,
-                  maxWidth: '170px',
-                  aspectRatio: '4 / 3',
+                  maxWidth: '200px',
+                  aspectRatio: '4 / 2.5',
                   textAlign: 'center',
-                  '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' }
+                  '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
                 }}
               />
             ))}
           </Box>
         ) : (
-          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', gap: 2, flexWrap: 'wrap', mt: 1, background: '#f5f5f5', p: 2 }}>
-            {Object.entries(indicators.delivery_status).map(([status, count]) => {
-              const { label, color, icon } = getDeliveryChipProps(status);
-              const colors = INDICATORS_STATUS_COLORS[color] || INDICATORS_STATUS_COLORS.grey;
+          <Box
+            sx={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'space-evenly',
+              gap: 2,
+              flexWrap: 'wrap',
+              mt: 1,
+              mb: 4,
+              background: '#f5f5f5',
+              p: 2,
+            }}
+          >
+            {stats.map(({ key, label, value, icon, color, filter, format }) => {
+              const isActive = filters && Object.keys(filters).some((filterKey) => filterKey in filter);
               return (
-                <Box key={status} sx={{
-                  flex: '1 1 150px',
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: colors.bg,
-                  color: colors.text,
-                  borderRadius: 1,
-                  maxWidth: '170px',
-                  aspectRatio: '4 / 3',
-                  textAlign: 'center',
-                  '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' }
-                }}>
+                <Box
+                  key={key}
+                  sx={{
+                    flex: '1 1 150px',
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: color,
+                    borderRadius: 1,
+                    maxWidth: '200px',
+                    aspectRatio: '4 / 2.5',
+                    textAlign: 'center',
+                    '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
+                    border: isActive ? '2px solid green' : 'none',
+                  }}
+                  onClick={() => handleKPIClick(key)}
+                >
                   {icon}
-                  <Typography variant="subtitle2" sx={{ mt: 1 }}>{label}</Typography>
-                  <Typography variant="h6">{count}</Typography>
+                  <Typography variant="subtitle2" sx={{ mt: 1 }}>
+                    {label}
+                  </Typography>
+                  <Typography variant="h6">
+                    {format ? format(value) : value}
+                  </Typography>
                 </Box>
-              );
+              )
             })}
           </Box>
         )}
       </Box>
-      */}
 
       {/* Filtros */}
       <GenericFilterDrawer
@@ -212,6 +282,7 @@ const InspectionsDashboard = () => {
           title="Total"
           totalItems={totalRows}
           objNameNumberReference={totalRows === 1 ? "Projeto" : "Projetos"}
+          loading={loading}
         />
         <TableHeader.Button
           buttonLabel="Filtros"
