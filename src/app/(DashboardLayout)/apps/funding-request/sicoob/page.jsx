@@ -41,6 +41,8 @@ const BCrumb = [
 export default function Sicoob() {
   const user = useSelector((state) => state.user?.user);
 
+  console.log('user', user);
+
   const [rows, setRows] = useState([]);
   const [row, setRow] = useState();
   const [openSideDrawer, setOpenSideDrawer] = useState(false);
@@ -91,7 +93,7 @@ export default function Sicoob() {
       const res = await requestSicoob.index({
         page: page + 1,
         limit,
-        expand: ['customer', 'managing_partner', 'requested_by.phone_numbers'],
+        expand: ['customer', 'managing_partner', 'requested_by.phone_numbers', 'requested_by.employee.branch'],
         fields: [
           '*',
           'customer.complete_name',
@@ -108,7 +110,9 @@ export default function Sicoob() {
           'managing_partner.birth_date',
           'requested_by.complete_name',
           'requested_by.phone_numbers.area_code',
-          'requested_by.phone_numbers.number',
+          'requested_by.phone_numbers.phone_number',
+          'requested_by.employee.branch.name',
+          'requested_by.employee.branch.id',
         ],
         format: 'json',
       });
@@ -273,6 +277,7 @@ export default function Sicoob() {
         customer: newCustomer.id,
         managing_partner: newManaging?.id ?? null,
         requested_by: user.id,
+        branch: user?.employee?.branch || null,
       };
       if (payload.project_value == null) {
         enqueueSnackbar('Valor do projeto inválido.', {
@@ -366,6 +371,8 @@ export default function Sicoob() {
     setDisabledManaging(true);
   };
 
+  console.log('rows', rows);
+
   return (
     <Box>
       <Breadcrumb items={BCrumb} />
@@ -394,7 +401,16 @@ export default function Sicoob() {
                   <Typography variant="h6">Natureza</Typography>
                 </TableCell>
                 <TableCell>
+                  <Typography variant="h6">Valor do Projeto</Typography>
+                </TableCell>
+                <TableCell>
                   <Typography variant="h6">Sócio Adm.</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6">Solicitante</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6">Unidade</Typography>
                 </TableCell>
                 <TableCell>
                   <Typography variant="h6">Status</Typography>
@@ -404,20 +420,16 @@ export default function Sicoob() {
 
             <TableBody>
               {rows.map((r) => (
-                <TableRow
-                  key={r.id}
-                  hover
-                  onClick={() => itemSelected(r)}
-                >
+                <TableRow key={r.id} hover onClick={() => itemSelected(r)}>
+                  <TableCell>{r.customer.complete_name}</TableCell>
+                  <TableCell>{r.customer.person_type}</TableCell>
                   <TableCell>
-                    {r.customer.complete_name}
+                    {r.project_value &&
+                      `R$ ${formatNumber(r.project_value.toString())}`}
                   </TableCell>
-                  <TableCell>
-                    {r.customer.person_type}
-                  </TableCell>
-                  <TableCell>
-                    {r.managing_partner?.complete_name}
-                  </TableCell>
+                  <TableCell>{r.managing_partner?.complete_name || 'Não Possui'}</TableCell>
+                  <TableCell>{r.requested_by?.complete_name}</TableCell>
+                  <TableCell>{r.requested_by?.employee?.branch?.name}</TableCell>
                   <TableCell>{getStatus(r.status)}</TableCell>
                 </TableRow>
               ))}
@@ -444,10 +456,7 @@ export default function Sicoob() {
       >
         {row && (
           <>
-            <Tabs
-              value={value}
-              onChange={handleChangeTab}
-            >
+            <Tabs value={value} onChange={handleChangeTab}>
               <Tab label="Solicitação" value={0} />
               <Tab label="Comentários" value={1} />
             </Tabs>
@@ -505,11 +514,7 @@ export default function Sicoob() {
               onClick={handleSubmit}
               disabled={loading}
             >
-              {loading ? (
-                <CircularProgress size={24} />
-              ) : (
-                'Criar'
-              )}
+              {loading ? <CircularProgress size={24} /> : 'Criar'}
             </Button>
           </Stack>
         </CreateFundingRequest>
