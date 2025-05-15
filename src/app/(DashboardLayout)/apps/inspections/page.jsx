@@ -69,7 +69,7 @@ const InspectionsDashboard = () => {
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await projectService.index({ user_types: 3, fields: 'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name', expand: 'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion', metrics: '', page: page + 1, limit: rowsPerPage, ...filters });
+      const response = await projectService.index({ fields: 'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name', expand: 'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion', metrics: '', page: page + 1, limit: rowsPerPage, remove_termination_cancelled_and_pre_sale: true, ...filters });
       setProjects(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {
@@ -82,7 +82,7 @@ const InspectionsDashboard = () => {
   const fetchIndicators = useCallback(async () => {
     setLoadingIndicators(true);
     try {
-      const { indicators } = await projectService.inspectionsIndicators();
+      const { indicators } = await projectService.inspectionsIndicators({ remove_termination_cancelled_and_pre_sale: true, ...filters });
       setIndicators(indicators);
     } catch {
       enqueueSnackbar('Erro ao carregar indicadores', { variant: 'error' });
@@ -100,23 +100,6 @@ const InspectionsDashboard = () => {
     { to: '/', title: 'Home' },
     { title: 'Vistoria' },
   ];
-
-  const getInspectionChipProps = (status) => {
-    switch (status) {
-      case 'Bloqueado':
-        return { label: status, color: 'error', icon: <BlockIcon /> };
-      case 'Liberado':
-        return { label: status, color: 'info', icon: <LocalShippingIcon /> };
-      case 'Agendado':
-        return { label: status, color: 'info', icon: <EventIcon /> };
-      case 'Entregue':
-        return { label: status, color: 'success', icon: <CheckCircleIcon /> };
-      case 'Cancelado':
-        return { label: status, color: 'error', icon: <CancelIcon /> };
-      default:
-        return { label: status, color: 'default' };
-    }
-  };
 
   const columns = [
     {
