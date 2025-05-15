@@ -1,18 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Table } from "@/app/components/Table";
 import { TableHeader } from "@/app/components/TableHeader";
 import { Add } from "@mui/icons-material";
 import phoneNumberService from "@/services/phoneNumberService";
+import { Dialog, DialogContent, DialogTitle } from "@mui/material";
+import CreatePhonePage from "../../phone/Add-phone";
 
 export default function UserPhoneNumbersTable({
     userId = null,
     phoneNumbers: propPhones = [],
     onChange,
+    viewOnly = false,
 }) {
     const [phones, setPhones] = useState(propPhones);
     const [phoneNumbersCount, setPhoneNumbersCount] = useState(0);
+    const [openAdd, setOpenAdd] = useState(false);
 
-    useEffect(() => {
+    const fetchPhoneNumbers = useCallback(async () => {
         if (!userId) {
             setPhones(propPhones);
             setPhoneNumbersCount(propPhones.length);
@@ -33,7 +37,11 @@ export default function UserPhoneNumbersTable({
             }
         })();
         return () => { mounted = false };
-    }, [userId]);
+    }, [userId, propPhones]);
+
+    useEffect(() => {
+        fetchPhoneNumbers();
+    }, [fetchPhoneNumbers]);
 
     const handleSwitchToggle = (row, newState) => {
         const updated = phones.map(pn =>
@@ -41,6 +49,10 @@ export default function UserPhoneNumbersTable({
         );
         setPhones(updated);
         onChange(updated);
+        if (userId) {
+            phoneNumberService.update(row.id, { is_main: newState });
+            fetchPhoneNumbers();
+        }
     };
 
     const handleAdd = () => {
@@ -49,6 +61,16 @@ export default function UserPhoneNumbersTable({
         setPhones(updated);
         onChange(updated);
         setPhoneNumbersCount(updated.length);
+    };
+
+    const handleCloseModal = () => {
+        setOpenAdd(false);
+        setPhones(phones.filter(p => p.id !== undefined));
+        setPhoneNumbersCount(phones.length);
+        onChange(phones);
+        if (userId) {
+            fetchPhoneNumbers();
+        }
     };
 
     const columns = [
@@ -72,12 +94,12 @@ export default function UserPhoneNumbersTable({
                     totalItems={phoneNumbersCount}
                     objNameNumberReference={phoneNumbersCount === 1 ? "Telefone" : "Telefones"}
                 />
-                {/* <TableHeader.Button
+                {!viewOnly && <TableHeader.Button
                     buttonLabel="Adicionar telefone"
                     icon={<Add />}
-                    onButtonClick={userId ? () => { } : handleAdd}
+                    onButtonClick={() => setOpenAdd(true)}
                     sx={{ width: 200 }}
-                /> */}
+                />}
             </TableHeader.Root>
 
             <Table.Root
@@ -106,6 +128,21 @@ export default function UserPhoneNumbersTable({
                     ))}
                 </Table.Body>
             </Table.Root>
+
+            <Dialog
+                open={openAdd}
+                onClose={() => setOpenAdd(false)}
+                fullWidth
+                maxWidth="sm"
+            >
+                <DialogTitle>Adicionar Telefone</DialogTitle>
+                <DialogContent>
+                    <CreatePhonePage
+                        userId={userId}
+                        onClosedModal={handleCloseModal}
+                    />
+                </DialogContent>
+            </Dialog>
         </>
     );
 }

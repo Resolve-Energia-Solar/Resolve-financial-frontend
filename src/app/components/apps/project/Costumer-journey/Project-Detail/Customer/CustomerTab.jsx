@@ -200,6 +200,19 @@ export default function CustomerTab({ projectId, viewOnly = false }) {
         }
     };
 
+    const handlePhoneNumbersChange = (phoneNumbers) => {
+        setForm(f => ({
+            ...f,
+            customer: { ...f.customer, phone_numbers: phoneNumbers }
+        }));
+    };
+
+    const handleAddressesChange = (addresses) => {
+        setForm(f => ({
+            ...f,
+            customer: { ...f.customer, addresses }
+        }));
+    };
 
     const renderSection = (role, title) => {
         const entity = data[role];
@@ -325,10 +338,10 @@ export default function CustomerTab({ projectId, viewOnly = false }) {
                         </Grid>
 
                         <Box mt={2}>
-                            <UserPhoneNumbersTable userId={entity.id} editMode={editable} />
+                            <UserPhoneNumbersTable userId={entity.id} onChange={handlePhoneNumbersChange} viewOnly={viewOnly} />
                         </Box>
                         <Box mt={2}>
-                            <UserAddressesTable userId={entity.id} editMode={editable} />
+                            <UserAddressesTable userId={entity.id} onChange={handleAddressesChange} viewOnly={viewOnly} />
                         </Box>
                     </>
                 ) : (
