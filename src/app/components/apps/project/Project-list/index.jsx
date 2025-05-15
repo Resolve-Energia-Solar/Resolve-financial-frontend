@@ -397,6 +397,7 @@ const ProjectList = ({ onClick }) => {
           fields:
             'id,sale.id,sale.customer.complete_name,sale.signature_date,sale.total_value,sale.payment_status,sale.branch.name,is_documentation_completed,homologator.complete_name,designer_status,material_list_is_completed,trt_pending,peding_request,access_opnion,product.name,product.params,status,sale.status,is_released_to_engineering,field_services.service.category.name,field_services.final_service_opinion.name,field_services.status,field_services.schedule_date,requests_energy_company.status,requests_energy_company.type.name',
           metrics: 'is_released_to_engineering',
+          is_pre_sale: false,
           ...filters,
         });
   
@@ -444,7 +445,7 @@ const ProjectList = ({ onClick }) => {
         setTotalRows(data.meta.pagination.total_count);
   
         // Fetch dos indicadores
-        const indicatorsData = await projectService.getIndicators({ ...filters });
+        const indicatorsData = await projectService.getIndicators({ ...filters, is_pre_sale: false });
         setIndicators(indicatorsData.indicators);
   
       } catch (err) {
