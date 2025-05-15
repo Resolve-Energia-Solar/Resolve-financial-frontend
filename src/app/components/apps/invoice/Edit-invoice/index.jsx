@@ -55,7 +55,7 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
   const { loading, error, paymentData, refreshPayment } = usePayment(id, {
     expand: 'borrower,financier,installments',
     fields:
-      'id,borrower.id,barrower.complete_name,financier.id,financier.name,payment_type,value,due_date,invoice_status,installments,created_at,sale,installments.installment_value,installments.installment_number,installments.due_date,installments.is_paid,installments.id',
+      'id,borrower.id,barrower.complete_name,financier.id,financier.name,payment_type,value,due_date,invoice_status,installments,created_at,sale,installments.installment_value,installments.installment_number,installments.due_date,installments.is_paid,installments.id,executor_work',
   });
 
   const {
@@ -192,6 +192,12 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
     { value: 'C', label: 'Cancelada' },
   ];
 
+  const executorWorker = [
+    { value: 'C', label: 'Cliente' },
+    { value: 'F', label: 'Franquia' },
+    { value: 'CO', label: 'Centro de Operações' },
+  ];
+
   useEffect(() => {
     if (formData.payment_type !== 'F') {
       handleChange('financier_id', null);
@@ -260,6 +266,19 @@ const EditInvoicePage = ({ payment_id = null, onClosedModal = null, onRefresh = 
             {...(formErrors.borrower_id && { error: true, helperText: formErrors.borrower_id })}
           />
         </Grid>
+
+        {formData.payment_type === 'RO' && (
+          <Grid item xs={12} sm={6}>
+            <FormSelect
+              label="Executor da Obra"
+              options={executorWorker}
+              value={formData.executor_work}
+              onChange={(e) => handleChange('executor_work', e.target.value)}
+              {...(formErrors.executor_work && { error: true, helperText: formErrors.executor_work })}
+            />
+          </Grid>
+        )}
+
         {formData.payment_type === 'F' && (
           <Grid item xs={12} sm={6}>
             <CustomFormLabel htmlFor="name">Financiadora</CustomFormLabel>

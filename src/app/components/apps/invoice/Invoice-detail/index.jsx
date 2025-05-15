@@ -31,9 +31,9 @@ const DetailInvoicePage = ({ payment_id = null }) => {
   if (!payment_id) id = params.id;
 
   const { loading, error, paymentData } = usePayment(id, {
-    expand: 'sale.customer,borrower,installments,sale',
+    expand: 'sale.customer,borrower,installments,sale,financier',
     fields:
-      'id,value,payment_type,is_paid,sale.customer.complete_name,sale.signature_date,sale.reference_value,sale.total_value,borrower.complete_name,installments,invoice_status,sale.status,sale.payment_status,due_date',
+      'id,value,payment_type,is_paid,sale.customer.complete_name,sale.signature_date,sale.reference_value,sale.total_value,borrower.complete_name,installments,invoice_status,sale.status,sale.payment_status,due_date,executor_work,financier.name',
   });
   const { formattedValue } = useCurrencyFormatter(paymentData?.value);
 
@@ -53,6 +53,12 @@ const DetailInvoicePage = ({ payment_id = null }) => {
     L: 'Liberada',
     P: 'Pendente',
     C: 'Cancelada',
+  };
+
+  const executorWorkStatus = {
+    C: 'Cliente',
+    F: 'Franquia',
+    CO: 'Centro de Operações',
   };
 
   const orderDate = paymentData?.created_at;
@@ -124,18 +130,34 @@ const DetailInvoicePage = ({ payment_id = null }) => {
             {paymentData?.borrower?.complete_name}
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <CustomFormLabel>Financiadora</CustomFormLabel>
-          <Typography
-            sx={{
-              fontStyle: 'italic',
-              fontWeight: 'light',
-              borderBottom: `1px dashed ${theme.palette.divider}`,
-            }}
-          >
-            {paymentData?.financier?.name}
-          </Typography>
-        </Grid>
+        {paymentData?.financier && (
+          <Grid item xs={12} sm={6}>
+            <CustomFormLabel>Financiadora</CustomFormLabel>
+            <Typography
+              sx={{
+                fontStyle: 'italic',
+                fontWeight: 'light',
+                borderBottom: `1px dashed ${theme.palette.divider}`,
+              }}
+            >
+              {paymentData?.financier?.name}
+            </Typography>
+          </Grid>
+          )}
+        {paymentData?.executor_work && (
+          <Grid item xs={12} sm={6}>
+            <CustomFormLabel>Executor de Obra</CustomFormLabel>
+            <Typography
+              sx={{
+                fontStyle: 'italic',
+                fontWeight: 'light',
+                borderBottom: `1px dashed ${theme.palette.divider}`,
+              }}
+            >
+              {executorWorkStatus[paymentData?.executor_work] || 'Desconhecido'}
+            </Typography>
+          </Grid>
+        )}  
         <Grid item xs={12} sm={6}>
           <CustomFormLabel>Valor</CustomFormLabel>
           <Typography
@@ -162,7 +184,15 @@ const DetailInvoicePage = ({ payment_id = null }) => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <Typography variant="subtitle1">Nota Fiscal</Typography>
-          <Typography>{invoiceStatus[paymentData?.invoice_status] || 'Desconhecido'}</Typography>
+          <Typography
+            sx={{
+              fontStyle: 'italic',
+              fontWeight: 'light',
+              borderBottom: `1px dashed ${theme.palette.divider}`,
+            }}
+          >
+            {invoiceStatus[paymentData?.invoice_status] || 'Desconhecido'}
+          </Typography>
         </Grid>
       </Grid>
 

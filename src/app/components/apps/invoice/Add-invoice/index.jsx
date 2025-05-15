@@ -89,6 +89,12 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
     { value: 'C', label: 'Cancelada' },
   ];
 
+  const executorWorker = [
+    { value: 'C', label: 'Cliente' },
+    { value: 'F', label: 'Franquia' },
+    { value: 'CO', label: 'Centro de Operações' },
+  ];
+
   sale ? (formData.sale_id = sale) : null;
 
   formData.invoice_status ? null : (formData.invoice_status = 'P');
@@ -164,6 +170,18 @@ const CreateInvoice = ({ sale = null, onClosedModal = null, onRefresh = null }) 
             />
           </Grid>
         )}
+        {formData.payment_type === 'RO' && (
+          <Grid item xs={12} sm={6}>
+            <FormSelect
+              label="Executor da Obra"
+              options={executorWorker}
+              value={formData.executor_work}
+              onChange={(e) => handleChange('executor_work', e.target.value)}
+              {...(formErrors.executor_work && { error: true, helperText: formErrors.executor_work })}
+            />
+          </Grid>
+        )}
+
         <Grid item xs={12} sm={6}>
           <CustomFormLabel htmlFor="name">Tomador</CustomFormLabel>
           <AutoCompleteUser

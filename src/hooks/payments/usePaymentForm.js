@@ -15,6 +15,7 @@ const usePaymentForm = (initialData, id) => {
     installments: [],
     create_installments: true,
     invoice_status: '',
+    executor_work: null,
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -34,12 +35,23 @@ const usePaymentForm = (initialData, id) => {
         due_date: initialData.due_date || null,
         installments: initialData.installments || [],
         invoice_status: initialData.invoice_status || '',
+        executor_work: initialData.executor_work || null,
       });
     }
   }, [initialData]);
 
   const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData(prev => {
+      const updated = { ...prev, [field]: value };
+      if (field === 'payment_type') {
+        // se não for RO, limpa executor_work e remove erro
+        if (value !== 'RO') {
+          updated.executor_work = null;
+          setFormErrors(errs => ({ ...errs, executor_work: undefined }));
+        }
+      }
+      return updated;
+    });
   };
 
   const handleInstallmentChange = (index, field, value) => {
@@ -87,8 +99,14 @@ const usePaymentForm = (initialData, id) => {
   // A função handleSave envia os dados do pagamento sem as parcelas para o paymentService
   // e depois trata cada parcela usando o paymentInstallmentService (create ou update)
   const handleSave = async () => {
+    if (formData.payment_type === 'RO' && !formData.executor_work) {
+      setFormErrors(prev => ({
+        ...prev,
+        executor_work: 'Executor da obra é obrigatório.',
+      }));
+      return;
+    }
     setLoading(true);
-    // Dados do pagamento, sem incluir parcelas
     const paymentDataToSend = {
       sale: formData.sale_id,
       borrower: formData.borrower_id,
@@ -98,6 +116,7 @@ const usePaymentForm = (initialData, id) => {
       installments_number: formData.installments_number,
       due_date: formData.due_date ? formatDate(formData.due_date) : null,
       invoice_status: formData.invoice_status,
+      executor_work: formData.executor_work,
     };
 
     try {
