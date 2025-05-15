@@ -51,6 +51,7 @@ const useScheduleForm = (initialData, id, service_id) => {
     execution_finished_at: null,
     service_opinion: null,
     final_service_opinion_id: null,
+    value: null,
   });
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
@@ -92,6 +93,7 @@ const useScheduleForm = (initialData, id, service_id) => {
           initialData.final_service_opinion?.id ||
           initialData.service_opinion?.id ||
           null,
+        value: initialData.value || null,
       });
     }
   }, [initialData, service_id]);
@@ -179,6 +181,8 @@ const useScheduleForm = (initialData, id, service_id) => {
       going_to_location_at: formData.going_to_location_at,
       execution_started_at: formData.execution_started_at,
       execution_finished_at: formData.execution_finished_at,
+      service_opinion: formData.service_opinion,
+      value: formData.value,
     };
 
     try {

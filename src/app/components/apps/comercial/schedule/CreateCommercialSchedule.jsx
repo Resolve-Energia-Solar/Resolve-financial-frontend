@@ -105,7 +105,9 @@ export default function CreateCommercialSchedule({ onClose, onRefresh }) {
     }
   };
 
-  console.log('formData', formData);
+  useEffect(() => {
+    handleChange('value', 100);
+  }, []);
 
   return (
     <>
