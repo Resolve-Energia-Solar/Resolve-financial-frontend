@@ -7,7 +7,7 @@ import projectService from '@/services/projectService';
 import { Table } from '@/app/components/Table';
 import { TableHeader } from '@/app/components/TableHeader';
 import StatusChip from '@/utils/status/DocumentStatusIcon';
-import { AssignmentTurnedIn, FilterAlt, HourglassTop } from '@mui/icons-material';
+import { AssignmentTurnedIn, BuildCircle, FilterAlt, HourglassTop, PendingActions } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
 import { Chip, Box, Typography, Skeleton } from '@mui/material';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
@@ -55,26 +55,26 @@ const InspectionsDashboard = () => {
       key: 'avg_time_installation_hours',
       label: 'Tempo médio de instalação',
       value: indicators?.avg_time_installation_hours,
-      icon: <AssignmentTurnedIn style={{ color: '#155724' }} />,
-      color: '#d4edda', // verde claro
-      filter: { inspection_is_finished: true },
-      format: formatHours,
-    },
-        {
-      key: 'released_clients_count',
-      label: 'Liberados para instalação',
-      value: indicators?.released_clients_count,
-      icon: <AssignmentTurnedIn style={{ color: '#155724' }} />,
-      color: '#d4edda', // verde claro
+      icon: <BuildCircle style={{ color: '#155724' }} />,
+      color: '#d4edda',
       filter: { inspection_is_finished: true },
       format: formatHours,
     },
     {
-      key: 'test',
-      label: 'Tempo médio em contratos',
+      key: 'released_clients_count',
+      label: 'Liberados para instalação',
       value: indicators?.released_clients_count,
+      icon: <AssignmentTurnedIn style={{ color: '#155724' }} />,
+      color: '#d4edda',
+      filter: { inspection_is_finished: true },
+      format: formatHours,
+    },
+    {
+      key: 'avg_contract_time',
+      label: 'Tempo médio em contratos',
+      value: indicators?.avg_contract_time || '-',
       icon: <HourglassTop style={{ color: '#856404' }} />,
-      color: '#fff3cd', // amarelo claro
+      color: '#fff3cd',
       filter: { inspection_is_pending: true },
     },
     {
@@ -82,18 +82,20 @@ const InspectionsDashboard = () => {
       label: 'Número de instalações finalizadas',
       value: indicators?.number_of_installations,
       icon: <CheckCircleIcon style={{ color: '#155724' }} />,
-      color: '#d4edda', // verde claro
+      color: '#d4edda',
       filter: { inspection_isnull: true },
     },
     {
-      key: 'number_of_installations',
+      key: 'sla_validation',
       label: 'SLA de Validação',
-      value: <Typography variant="p" fontSize={12} color="#856404">
-        Em desenvolvimento...
-      </Typography>,
-      icon: <CheckCircleIcon style={{ color: '#155724' }} />,
-      color: '#d4edda', // verde claro
-      filter: { inspection_isnull: true },
+      value: (
+        <Typography variant="body2" fontSize={12} color="#856404">
+          Em desenvolvimento...
+        </Typography>
+      ),
+      icon: <PendingActions style={{ color: '#856404' }} />,
+      color: '#fff3cd',
+      filter: {},
     },
   ];
 
@@ -147,6 +149,11 @@ const InspectionsDashboard = () => {
       sx: { opacity: 0.7 },
     },
     {
+      field: 'sale.branch',
+      headerName: 'Unidade',
+      render: (r) => r.sale?.branch?.name || '-',
+    },
+    {
       field: 'sale.signature_date',
       headerName: 'Data de Assinatura',
       render: (r) => formatDate(r.sale?.signature_date),
@@ -160,11 +167,6 @@ const InspectionsDashboard = () => {
       field: 'sale.treadmill_counter',
       headerName: 'Contador',
       render: (r) => <Chip label={r.sale?.treadmill_counter || '-'} variant="outlined" />,
-    },
-    {
-      field: 'sale.branch',
-      headerName: 'Unidade',
-      render: (r) => r.sale?.branch?.name || '-',
     },
     {
       field: 'inspection.date',
