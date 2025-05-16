@@ -84,12 +84,12 @@ const InspectionsDashboard = () => {
     } finally {
       setLoadingIndicators(false);
     }
-  }, [enqueueSnackbar]);
+  }, [enqueueSnackbar, filters]);
 
   useEffect(() => {
     fetchProjects();
     fetchIndicators();
-  }, [fetchProjects, fetchIndicators, refresh]);
+  }, [fetchProjects, fetchIndicators, refresh, filters]);
 
   const BCrumb = [
     { to: '/', title: 'Home' },
