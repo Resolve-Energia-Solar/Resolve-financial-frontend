@@ -8,12 +8,9 @@ import {
   IconButton,
   Dialog,
   DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
+  DialogContent
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import UserForm from '@/app/(DashboardLayout)/apps/users/create/page';
 import CreateCustomer from '@/app/components/apps/users/Add-user/customer';
 
 export default function AutoCompleteUser({
