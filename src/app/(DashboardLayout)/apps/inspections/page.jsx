@@ -10,20 +10,15 @@ import StatusChip from '@/utils/status/DocumentStatusIcon';
 import { FilterAlt } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
 import { Chip, Box, Typography, Skeleton } from '@mui/material';
-import BlockIcon from '@mui/icons-material/Block';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import CreditCardIcon from '@mui/icons-material/CreditCard';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import EventIcon from '@mui/icons-material/Event';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
 import { formatDate } from '@/utils/dateUtils';
 import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
 import { FilterContext } from '@/context/FilterContext';
+import UserCard from '@/app/components/apps/users/userCard';
 
 const InspectionsDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -69,7 +64,7 @@ const InspectionsDashboard = () => {
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await projectService.index({ fields: 'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name', expand: 'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion', metrics: '', page: page + 1, limit: rowsPerPage, remove_termination_cancelled_and_pre_sale: true, ...filters });
+      const response = await projectService.index({ fields: 'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user', expand: 'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion,inspection.final_service_opinion_date,inspection', metrics: '', page: page + 1, limit: rowsPerPage, remove_termination_cancelled_and_pre_sale: true, ...filters });
       setProjects(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {
@@ -89,12 +84,12 @@ const InspectionsDashboard = () => {
     } finally {
       setLoadingIndicators(false);
     }
-  }, [enqueueSnackbar]);
+  }, [enqueueSnackbar, filters]);
 
   useEffect(() => {
     fetchProjects();
     fetchIndicators();
-  }, [fetchProjects, fetchIndicators, refresh]);
+  }, [fetchProjects, fetchIndicators, refresh, filters]);
 
   const BCrumb = [
     { to: '/', title: 'Home' },
@@ -137,7 +132,17 @@ const InspectionsDashboard = () => {
       field: 'inspection.final_service_opinion.name',
       headerName: 'Status de Vistoria',
       render: r => <ScheduleOpinionChip status={r.inspection?.final_service_opinion?.name} />,
-    }
+    },
+    {
+      field: 'inspection.final_service_opinion_date',
+      headerName: 'Data de Finalização',
+      render: r => r.inspection?.final_service_opinion_date ? new Date(r.inspection.final_service_opinion_date).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-',
+    },
+    {
+      field: 'inspection.final_service_opinion_user',
+      headerName: 'Responsável',
+      render: r => { return r.inspection?.final_service_opinion_user ? <UserCard userId={r.inspection?.final_service_opinion_user} /> : '-'; },
+    },
   ];
 
   const handleKPIClick = (kpiType) => {

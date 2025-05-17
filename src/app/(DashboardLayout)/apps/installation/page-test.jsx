@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useCallback, useContext } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PageContainer from '@/app/components/container/PageContainer';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import { useSnackbar } from 'notistack';
@@ -7,20 +7,35 @@ import projectService from '@/services/projectService';
 import { Table } from '@/app/components/Table';
 import { TableHeader } from '@/app/components/TableHeader';
 import StatusChip from '@/utils/status/DocumentStatusIcon';
-import { AssignmentTurnedIn, BuildCircle, FilterAlt, HourglassTop, PendingActions } from '@mui/icons-material';
+import { FilterAlt } from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
 import { Chip, Box, Typography, Skeleton } from '@mui/material';
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import BlockIcon from '@mui/icons-material/Block';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import EventIcon from '@mui/icons-material/Event';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
-import { formatDate } from '@/utils/dateUtils';
-import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
-import { FilterContext } from '@/context/FilterContext';
-import UserCard from '@/app/components/apps/users/userCard';
+import HourglassFullIcon from '@mui/icons-material/HourglassFull';
+import dayjs from 'dayjs';
+import {
+  CheckCircle as CheckCircleIcon,
+  HourglassEmpty as HourglassEmptyIcon,
+  Cancel as CancelIcon,
+  RemoveCircle as RemoveCircleIcon,
+} from '@mui/icons-material';
 
-const InspectionsDashboard = () => {
+const INDICATORS_STATUS_COLORS = {
+  error: { bg: '#F8D7DA', text: '#721C24' },
+  warning: { bg: '#FFF3CD', text: '#856404' },
+  success: { bg: '#D4EDDA', text: '#155724' },
+  info: { bg: '#D1ECF1', text: '#0C5460' },
+  grey: { bg: '#E2E3E5', text: '#41464B' },
+};
+
+const LogisticsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [indicators, setIndicators] = useState({
@@ -29,7 +44,7 @@ const InspectionsDashboard = () => {
     total_count: 0,
   });
   const [loadingIndicators, setLoadingIndicators] = useState(true);
-  const { filters, setFilters, clearFilters, refresh } = useContext(FilterContext);
+  const [filters, setFilters] = useState({});
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -38,79 +53,17 @@ const InspectionsDashboard = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
 
-  const formatHours = (hours) => {
-    if (typeof hours !== 'number' || isNaN(hours)) return '-';
-    if (hours >= 24) {
-      const days = (hours / 24).toFixed(1);
-      return `${days} dias`;
-    }
-    if (hours >= 1) {
-      return `${hours} horas`;
-    }
-    return `-`;
-  };
-
-  const stats = [
-    {
-      key: 'avg_time_installation_hours',
-      label: 'Tempo médio de instalação',
-      value: indicators?.avg_time_installation_hours,
-      icon: <BuildCircle style={{ color: '#155724' }} />,
-      color: '#d4edda',
-      filter: { inspection_is_finished: true },
-      format: formatHours,
-    },
-    {
-      key: 'released_clients_count',
-      label: 'Liberados para instalação',
-      value: indicators?.released_clients_count,
-      icon: <AssignmentTurnedIn style={{ color: '#155724' }} />,
-      color: '#d4edda',
-      filter: { inspection_is_finished: true },
-      format: formatHours,
-    },
-    {
-      key: 'avg_contract_time',
-      label: 'Tempo médio em contratos',
-      value: indicators?.avg_contract_time || '-',
-      icon: <HourglassTop style={{ color: '#856404' }} />,
-      color: '#fff3cd',
-      filter: { inspection_is_pending: true },
-    },
-    {
-      key: 'number_of_installations',
-      label: 'Número de instalações finalizadas',
-      value: indicators?.number_of_installations,
-      icon: <CheckCircleIcon style={{ color: '#155724' }} />,
-      color: '#d4edda',
-      filter: { inspection_isnull: true },
-    },
-    {
-      key: 'sla_validation',
-      label: 'SLA de Validação',
-      value: (
-        <Typography variant="body2" fontSize={12} color="#856404">
-          Em desenvolvimento...
-        </Typography>
-      ),
-      icon: <PendingActions style={{ color: '#856404' }} />,
-      color: '#fff3cd',
-      filter: {},
-    },
-  ];
-
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
       const response = await projectService.index({
+        user_types: 3,
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user',
-        expand:
-          'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion,inspection.final_service_opinion_date,inspection',
-        metrics: '',
+          'id,project_number,status,sale.customer.complete_name,sale.signature_date,product.description,address.complete_address,sale.status,purchase_status,delivery_status',
+        expand: 'sale.customer,product,address,sale.signature_date',
+        metrics: 'purchase_status,delivery_status',
         page: page + 1,
         limit: rowsPerPage,
-        remove_termination_cancelled_and_pre_sale: true,
         ...filters,
       });
       setProjects(response.results);
@@ -122,102 +75,155 @@ const InspectionsDashboard = () => {
     }
   }, [page, rowsPerPage, filters, enqueueSnackbar]);
 
+  // Remova este trecho:
   const fetchIndicators = useCallback(async () => {
     setLoadingIndicators(true);
     try {
-      const { indicators } = await projectService.installationIndicators({ ...filters });
-      setIndicators(indicators);
-    } catch {
+      // simulação de dados estáticos
+      setIndicators({
+        purchase_status: {
+          'Tempo médio de Instalação': 2,
+          'Tempo médio da Esteira de Instalação': 5,
+          'Compra Tempo médio de Contrato': 10,
+          'SLA de Validação ': 1,
+          'Responsável pela Validação': 1,
+          'Quantidade de Clientes Liberados ': 1,
+        },
+        delivery_status: {
+          Bloqueado: 1,
+          Liberado: 7,
+          Cancelado: 0,
+        },
+        total_count: 34,
+      });
+    } catch (error) {
       enqueueSnackbar('Erro ao carregar indicadores', { variant: 'error' });
     } finally {
       setLoadingIndicators(false);
     }
   }, [enqueueSnackbar]);
 
+  // E remova do useEffect:
+  useEffect(() => {
+    fetchProjects();
+    fetchIndicators(); // <== Remova isso
+  }, [fetchProjects, fetchIndicators]);
+
   useEffect(() => {
     fetchProjects();
     fetchIndicators();
-  }, [fetchProjects, fetchIndicators, refresh]);
+  }, [fetchProjects, fetchIndicators]);
 
-  const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Vistoria' }];
+  const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Logística' }];
+
+  const getPurchaseChipProps = (status) => {
+    switch (status) {
+      case 'Bloqueado':
+        return { label: status, color: 'error', icon: <BlockIcon /> };
+      case 'Pendente':
+        return { label: status, color: 'warning', icon: <HourglassEmptyIcon /> };
+      case 'Compra Realizada':
+        return { label: status, color: 'success', icon: <CheckCircleIcon /> };
+      case 'Cancelado':
+        return { label: status, color: 'error', icon: <CancelIcon /> };
+      case 'Distrato':
+        return { label: status, color: 'default', icon: <RemoveCircleOutlineIcon /> };
+      case 'Aguardando Previsão de Entrega':
+        return { label: status, color: 'info', icon: <AccessTimeIcon /> };
+      case 'Aguardando Pagamento':
+        return { label: status, color: 'warning', icon: <CreditCardIcon /> };
+      default:
+        return { label: status, color: 'default' };
+    }
+  };
+
+  const getDeliveryChipProps = (status) => {
+    switch (status) {
+      case 'Bloqueado':
+        return { label: status, color: 'error', icon: <BlockIcon /> };
+      case 'Liberado':
+        return { label: status, color: 'info', icon: <LocalShippingIcon /> };
+      case 'Agendado':
+        return { label: status, color: 'info', icon: <EventIcon /> };
+      case 'Entregue':
+        return { label: status, color: 'success', icon: <CheckCircleIcon /> };
+      case 'Cancelado':
+        return { label: status, color: 'error', icon: <CancelIcon /> };
+      default:
+        return { label: status, color: 'default' };
+    }
+  };
+
+  const getProjectChipProps = (status) => {
+    switch (status) {
+      case 'P':
+        return { label: 'Pendente', color: 'warning', icon: <HourglassEmptyIcon sx={{ color: '#fff' }} /> };
+      case 'CO':
+        return { label: 'Concluído', color: 'success', icon: <CheckCircleIcon sx={{ color: '#fff' }} /> };
+      case 'EA':
+        return { label: 'Em Andamento', color: 'info', icon: <HourglassFullIcon sx={{ color: '#fff' }} /> };
+      case 'C':
+        return { label: 'Cancelado', color: 'error', icon: <CancelIcon sx={{ color: '#fff' }} /> };
+      case 'D':
+        return { label: 'Distrato', color: 'secondary', icon: <RemoveCircleIcon sx={{ color: '#fff' }} /> };
+      case 'F':
+        return { label: 'Finalizado', color: 'success', icon: <CheckCircleIcon sx={{ color: '#fff' }} /> };
+      default:
+        return { label: 'Desconhecido', color: 'default', icon: <CancelIcon sx={{ color: '#fff' }} /> };
+    }
+  };
+  
 
   const columns = [
     {
-      field: 'project',
-      headerName: 'Projeto',
-      render: (r) => `${r.project_number} - ${r.sale?.customer?.complete_name}` || 'SEM NÚMERO',
+      field: 'sale?.customer.complete_name',
+      headerName: 'Cliente',
+      render: (r) => `${r?.sale?.customer?.complete_name}` || 'SEM NÚMERO',
       sx: { opacity: 0.7 },
     },
     {
-      field: 'sale.branch',
-      headerName: 'Unidade',
-      render: (r) => r.sale?.branch?.name || '-',
+      field: 'sale?.signature_date',
+      headerName: 'Tempo de contrato',
+      render: (r) => {
+        const signatureDate = r?.sale?.signature_date;
+
+        if (!signatureDate) {
+          return <Chip label="Sem data" color="default" size="small" />;
+        }
+
+        const days = dayjs().diff(dayjs(signatureDate), 'day');
+        const label = `${days} dia${days !== 1 ? 's' : ''}`;
+
+        let color = 'default';
+        if (days < 5) color = 'success';
+        else if (days < 10) color = 'warning';
+        else color = 'error';
+
+        return <Chip label={label} color={color} size="small" variant="outlined" />;
+      },
+      sx: { opacity: 0.9 },
     },
     {
-      field: 'sale.signature_date',
-      headerName: 'Data de Assinatura',
-      render: (r) => formatDate(r.sale?.signature_date),
+      field: 'product.description',
+      headerName: 'Produto',
+      render: (r) => r.product?.description || '-',
+    },
+    {
+      field: 'address',
+      headerName: 'Endereço',
+      render: (r) => r.address?.complete_address || '-',
     },
     {
       field: 'sale.status',
-      headerName: 'Status',
+      headerName: 'Status da Venda',
       render: (r) => <StatusChip status={r.sale?.status} />,
     },
     {
-      field: 'sale.treadmill_counter',
-      headerName: 'Contador',
-      render: (r) => <Chip label={r.sale?.treadmill_counter || '-'} variant="outlined" />,
-    },
-    {
-      field: 'inspection.date',
-      headerName: 'Data de Vistoria',
-      render: (r) => formatDate(r.inspection?.schedule_date),
-    },
-    {
-      field: 'inspection.final_service_opinion.name',
-      headerName: 'Status de Vistoria',
-      render: (r) => <ScheduleOpinionChip status={r.inspection?.final_service_opinion?.name} />,
-    },
-    {
-      field: 'inspection.final_service_opinion_date',
-      headerName: 'Data de Finalização',
-      render: (r) =>
-        r.inspection?.final_service_opinion_date
-          ? new Date(r.inspection.final_service_opinion_date).toLocaleString('pt-BR', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-          : '-',
-    },
-    {
-      field: 'inspection.final_service_opinion_user',
-      headerName: 'Responsável',
-      render: (r) => {
-        return r.inspection?.final_service_opinion_user ? (
-          <UserCard userId={r.inspection?.final_service_opinion_user} />
-        ) : (
-          '-'
-        );
-      },
+      field: 'r.status',
+      headerName: 'Status do projeto',
+      render: (r) => <Chip {...getProjectChipProps(r.status)} />,
     },
   ];
-
-  const handleKPIClick = (kpiType) => {
-    const kpiFilter = stats.find((stat) => stat.key === kpiType)?.filter;
-
-    if (kpiFilter && Object.keys(kpiFilter).length > 0) {
-      clearFilters();
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        ...kpiFilter,
-      }));
-    } else {
-      clearFilters();
-    }
-  };
 
   const handleRowClick = (row) => {
     setSelectedRow(row.id);
@@ -234,7 +240,7 @@ const InspectionsDashboard = () => {
   }, []);
 
   return (
-    <PageContainer title={'Vistorias'} description={'Dashboard de Vistorias'}>
+    <PageContainer title={'Instalação'} description={'Dashboard de Instalação'}>
       <Breadcrumb items={BCrumb} />
 
       {/* Indicadores */}
@@ -254,7 +260,7 @@ const InspectionsDashboard = () => {
               p: 2,
             }}
           >
-            {Array.from({ length: stats.length }).map((_, index) => (
+            {Array.from({ length: 7 }).map((_, index) => (
               <Skeleton
                 key={index}
                 variant="rectangular"
@@ -267,10 +273,10 @@ const InspectionsDashboard = () => {
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: 'grey.300',
+                  backgroundColor: '#E2E3E5',
                   borderRadius: 1,
-                  maxWidth: '200px',
-                  aspectRatio: '4 / 2.5',
+                  maxWidth: '170px',
+                  aspectRatio: '4 / 3',
                   textAlign: 'center',
                   '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
                 }}
@@ -291,12 +297,12 @@ const InspectionsDashboard = () => {
               p: 2,
             }}
           >
-            {stats.map(({ key, label, value, icon, color, filter, format }) => {
-              const isActive =
-                filters && Object.keys(filters).some((filterKey) => filterKey in filter);
+            {Object.entries(indicators.purchase_status).map(([status, count]) => {
+              const { label, color, icon } = getPurchaseChipProps(status);
+              const colors = INDICATORS_STATUS_COLORS[color] || INDICATORS_STATUS_COLORS.grey;
               return (
                 <Box
-                  key={key}
+                  key={status}
                   sx={{
                     flex: '1 1 150px',
                     p: 2,
@@ -304,21 +310,20 @@ const InspectionsDashboard = () => {
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: color,
+                    backgroundColor: colors.bg,
+                    color: colors.text,
                     borderRadius: 1,
-                    maxWidth: '200px',
-                    aspectRatio: '4 / 2.5',
+                    maxWidth: '170px',
+                    aspectRatio: '4 / 3',
                     textAlign: 'center',
                     '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
-                    border: isActive ? '2px solid green' : 'none',
                   }}
-                  onClick={() => handleKPIClick(key)}
                 >
                   {icon}
                   <Typography variant="subtitle2" sx={{ mt: 1 }}>
                     {label}
                   </Typography>
-                  <Typography variant="h6">{format ? format(value) : value}</Typography>
+                  <Typography variant="h6">{count}</Typography>
                 </Box>
               );
             })}
@@ -326,7 +331,6 @@ const InspectionsDashboard = () => {
         )}
       </Box>
 
-      {/* Filtros */}
       <GenericFilterDrawer
         filters={filterConfig}
         initialValues={filters}
@@ -341,7 +345,6 @@ const InspectionsDashboard = () => {
           title="Total"
           totalItems={totalRows}
           objNameNumberReference={totalRows === 1 ? 'Projeto' : 'Projetos'}
-          loading={loading}
         />
         <TableHeader.Button
           buttonLabel="Filtros"
@@ -395,4 +398,4 @@ const InspectionsDashboard = () => {
   );
 };
 
-export default InspectionsDashboard;
+export default LogisticsDashboard;
