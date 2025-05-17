@@ -152,6 +152,15 @@ const useScheduleForm = (initialData, id, service_id) => {
 
   const handleSave = async () => {
     setLoading(true);
+
+    if (formData.products === null) {
+      setFormErrors({
+        ...formErrors,
+        products: 'Campo obrigatório',
+      });
+      setLoading(false);
+      return false;
+    }
     const normalizedProducts = Array.isArray(formData.products)
       ? formData.products
       : [formData.products];

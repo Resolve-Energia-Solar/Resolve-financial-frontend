@@ -121,8 +121,6 @@ const PaymentCard = ({ sale = null }) => {
           fields: ['sale_products', 'total_value', 'total_paid', 'is_pre_sale'],
         });
 
-        console.log('data sales', data);
-
         setSaleData(data);
 
         const calculatedValue = data.sale_products
