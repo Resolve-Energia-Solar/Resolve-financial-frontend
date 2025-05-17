@@ -19,6 +19,7 @@ import { formatDate } from '@/utils/dateUtils';
 import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
 import { FilterContext } from '@/context/FilterContext';
 import UserCard from '@/app/components/apps/users/userCard';
+import { KPICard } from '@/app/components/charts/KPICard';
 
 const InspectionsDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -139,7 +140,7 @@ const InspectionsDashboard = () => {
     fetchIndicators();
   }, [fetchProjects, fetchIndicators, refresh]);
 
-  const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Vistoria' }];
+  const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Instalação' }];
 
   const columns = [
     {
@@ -170,12 +171,12 @@ const InspectionsDashboard = () => {
     },
     {
       field: 'inspection.date',
-      headerName: 'Data de Vistoria',
+      headerName: 'Data de Instalação',
       render: (r) => formatDate(r.inspection?.schedule_date),
     },
     {
       field: 'inspection.final_service_opinion.name',
-      headerName: 'Status de Vistoria',
+      headerName: 'Status de Instalação',
       render: (r) => <ScheduleOpinionChip status={r.inspection?.final_service_opinion?.name} />,
     },
     {
@@ -234,96 +235,42 @@ const InspectionsDashboard = () => {
   }, []);
 
   return (
-    <PageContainer title={'Vistorias'} description={'Dashboard de Vistorias'}>
+    <PageContainer title={'Instalações'} description={'Dashboard de Instalações'}>
       <Breadcrumb items={BCrumb} />
 
       {/* Indicadores */}
       <Box sx={{ width: '100%', mb: 2 }}>
         <Typography variant="h6">Indicadores</Typography>
-        {loadingIndicators ? (
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'space-evenly',
-              gap: 2,
-              flexWrap: 'wrap',
-              mt: 1,
-              mb: 4,
-              background: '#f5f5f5',
-              p: 2,
-            }}
-          >
-            {Array.from({ length: stats.length }).map((_, index) => (
-              <Skeleton
-                key={index}
-                variant="rectangular"
-                width="100%"
-                height={120}
-                sx={{
-                  flex: '1 1 150px',
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: 'grey.300',
-                  borderRadius: 1,
-                  maxWidth: '200px',
-                  aspectRatio: '4 / 2.5',
-                  textAlign: 'center',
-                  '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
-                }}
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-evenly',
+            gap: 2,
+            flexWrap: 'wrap',
+            mt: 1,
+            mb: 4,
+            background: '#f5f5f5',
+            p: 2,
+          }}
+        >
+          {stats.map(({ key, label, value, icon, color, filter, format }) => {
+            const isActive = filters && Object.keys(filters).some((fk) => fk in filter);
+            return (
+              <KPICard
+                key={key}
+                label={label}
+                value={value}
+                icon={icon}
+                color={color}
+                active={isActive}
+                loading={loadingIndicators}
+                format={format}
+                onClick={() => handleKPIClick(key)}
               />
-            ))}
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'space-evenly',
-              gap: 2,
-              flexWrap: 'wrap',
-              mt: 1,
-              mb: 4,
-              background: '#f5f5f5',
-              p: 2,
-            }}
-          >
-            {stats.map(({ key, label, value, icon, color, filter, format }) => {
-              const isActive =
-                filters && Object.keys(filters).some((filterKey) => filterKey in filter);
-              return (
-                <Box
-                  key={key}
-                  sx={{
-                    flex: '1 1 150px',
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: color,
-                    borderRadius: 1,
-                    maxWidth: '200px',
-                    aspectRatio: '4 / 2.5',
-                    textAlign: 'center',
-                    '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.2s' },
-                    border: isActive ? '2px solid green' : 'none',
-                  }}
-                  onClick={() => handleKPIClick(key)}
-                >
-                  {icon}
-                  <Typography variant="subtitle2" sx={{ mt: 1 }}>
-                    {label}
-                  </Typography>
-                  <Typography variant="h6">{format ? format(value) : value}</Typography>
-                </Box>
-              );
-            })}
-          </Box>
-        )}
+            );
+          })}
+        </Box>
       </Box>
 
       {/* Filtros */}
