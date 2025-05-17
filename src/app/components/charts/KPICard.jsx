@@ -4,7 +4,7 @@ import { Box, Typography, Skeleton } from '@mui/material';
 export function KPICard({ label, value, icon, color = '#fff', active = false, loading = false, format, onClick }) {
     const bg = loading ? 'transparent' : color;
     const border = active ? '2px solid green' : 'none';
-    console.log('KPI Card', { label, value, icon, color, active, loading, format, onClick });
+
     return (<>
         {loading ? (
             <Skeleton
