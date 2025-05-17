@@ -65,7 +65,7 @@ const InspectionsDashboard = () => {
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await projectService.index({ fields: 'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user', expand: 'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion,inspection.final_service_opinion_date,inspection', metrics: '', page: page + 1, limit: rowsPerPage, remove_termination_cancelled_and_pre_sale: true, ...filters });
+      const response = await projectService.index({ fields: 'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user', expand: 'sale,sale.customer,sale.branch,inspection', metrics: '', page: page + 1, limit: rowsPerPage, remove_termination_cancelled_and_pre_sale: true, ...filters });
       setProjects(response.results);
       setTotalRows(response.meta.pagination.total_count);
     } catch (error) {

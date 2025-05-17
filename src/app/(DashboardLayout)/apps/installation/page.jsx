@@ -9,7 +9,7 @@ import { TableHeader } from '@/app/components/TableHeader';
 import StatusChip from '@/utils/status/DocumentStatusIcon';
 import {
   AssignmentTurnedIn, BuildCircle, FilterAlt, HourglassTop, PendingActions, LockOpen, Lock,
-  X,
+  Cancel,
   ConstructionRounded,
   CheckCircle
 } from '@mui/icons-material';
@@ -18,9 +18,7 @@ import { Chip, Box, Typography } from '@mui/material';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
 import { formatDate } from '@/utils/dateUtils';
-import ScheduleOpinionChip from '@/app/components/apps/inspections/schedule/StatusChip/ScheduleOpinionChip';
 import { FilterContext } from '@/context/FilterContext';
-import UserCard from '@/app/components/apps/users/userCard';
 import { KPICard } from '@/app/components/charts/KPICard';
 
 const InspectionsDashboard = () => {
@@ -122,7 +120,7 @@ const InspectionsDashboard = () => {
     {
       key: 'cancelled',
       label: 'Cancelado',
-      icon: <X />,
+      icon: <Cancel />,
       value: indicators?.installations_status_count?.Cancelado || 0,
       color: '#FFCDD2',
       filter: { installation_status: 'Cancelado' }
@@ -158,10 +156,10 @@ const InspectionsDashboard = () => {
     try {
       const response = await projectService.index({
         fields:
-          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,inspection.schedule_date,inspection.final_service_opinion.name,inspection.final_service_opinion_date,inspection.final_service_opinion_user',
+          'id,project_number,sale.customer.complete_name,sale.signature_date,sale.status,sale.treadmill_counter,sale.branch.name,installation_status',
         expand:
-          'sale,sale.customer,sale.branch,inspection,inspection.final_service_opinion,inspection.final_service_opinion_date,inspection',
-        metrics: '',
+          'sale,sale.customer,sale.branch,inspection',
+        metrics: 'installation_status',
         page: page + 1,
         limit: rowsPerPage,
         remove_termination_cancelled_and_pre_sale: true,
@@ -186,14 +184,23 @@ const InspectionsDashboard = () => {
     } finally {
       setLoadingIndicators(false);
     }
-  }, [enqueueSnackbar]);
+  }, [enqueueSnackbar, filters]);
 
   useEffect(() => {
     fetchProjects();
     fetchIndicators();
-  }, [fetchProjects, fetchIndicators, refresh]);
+  }, [fetchProjects, fetchIndicators, filters, refresh]);
 
   const BCrumb = [{ to: '/', title: 'Home' }, { title: 'Instalação' }];
+
+  const installationStatusChips = {
+    Agendado: <Chip label="Agendado" color="primary" icon={<AssignmentTurnedIn />} />,
+    Bloqueado: <Chip label="Bloqueado" color="error" icon={<Lock />} />,
+    Cancelado: <Chip label="Cancelado" color="error" icon={<Cancel />} />,
+    'Em obra': <Chip label="Em obra" color="warning" icon={<ConstructionRounded />} />,
+    Instalado: <Chip label="Instalado" color="success" icon={<CheckCircle />} />,
+    Liberado: <Chip label="Liberado" color="success" icon={<LockOpen />} />,
+  }
 
   const columns = [
     {
@@ -223,39 +230,9 @@ const InspectionsDashboard = () => {
       render: (r) => <Chip label={r.sale?.treadmill_counter || '-'} variant="outlined" />,
     },
     {
-      field: 'inspection.date',
-      headerName: 'Data de Instalação',
-      render: (r) => formatDate(r.inspection?.schedule_date),
-    },
-    {
-      field: 'inspection.final_service_opinion.name',
+      field: 'installation_status',
       headerName: 'Status de Instalação',
-      render: (r) => <ScheduleOpinionChip status={r.inspection?.final_service_opinion?.name} />,
-    },
-    {
-      field: 'inspection.final_service_opinion_date',
-      headerName: 'Data de Finalização',
-      render: (r) =>
-        r.inspection?.final_service_opinion_date
-          ? new Date(r.inspection.final_service_opinion_date).toLocaleString('pt-BR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-          })
-          : '-',
-    },
-    {
-      field: 'inspection.final_service_opinion_user',
-      headerName: 'Responsável',
-      render: (r) => {
-        return r.inspection?.final_service_opinion_user ? (
-          <UserCard userId={r.inspection?.final_service_opinion_user} />
-        ) : (
-          '-'
-        );
-      },
+      render: (r) => installationStatusChips[r.installation_status] || <Chip label="SEM STATUS" variant="outlined" />,
     },
   ];
 
