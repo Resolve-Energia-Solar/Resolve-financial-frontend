@@ -1,15 +1,15 @@
 'use client';
-import { Grid, Button, Stack, FormControlLabel } from '@mui/material';
+import { Grid, Button, Stack } from '@mui/material';
 import Breadcrumb from '@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb';
 import PageContainer from '@/app/components/container/PageContainer';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
-import AutoCompleteAddress from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Address';
 import useBranchForm from '@/hooks/branch/useBranchForm';
 import { useRouter } from 'next/navigation';
 import ParentCard from '@/app/components/shared/ParentCard';
 import Alert from '@mui/material/Alert';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
-import AutoCompleteUsers from '@/app/components/apps/comercial/sale/components/auto-complete/Auto-Input-Users';
+import GenericAsyncAutocompleteInput from '@/app/components/filters/GenericAsyncAutocompleteInput';
+import CreateAddressPage from '@/app/components/apps/address/Add-address';
 
 const BCrumb = [
   {
@@ -24,7 +24,7 @@ const BCrumb = [
 export default function BranchForm() {
   const router = useRouter();
 
-  const { handleChange, handleSave, formErrors, success } = useBranchForm();
+  const { formData, handleChange, handleSave, formErrors, success } = useBranchForm();
 
   if (success) {
     router.push('/apps/branch');
@@ -53,19 +53,37 @@ export default function BranchForm() {
 
           <Grid item xs={12} sm={12} lg={6}>
             <CustomFormLabel htmlFor="address">Endereço</CustomFormLabel>
-            <AutoCompleteAddress
-              fullWidth
-              onChange={(id) => handleChange('address_id', id)}
-              {...(formErrors.address_id && { error: true, helperText: formErrors.address_id })}
+            <GenericAsyncAutocompleteInput
+              label="Endereço"
+              name="address"
+              value={formData.address}
+              onChange={(id) => handleChange('address', id)}
+              endpoint="api/addresses"
+              queryParam="q"
+              extraParams={{ fields: ['id', 'complete_address'] }}
+              mapResponse={data => data?.results.map(it => ({ label: it.complete_address || it.name, value: it.id }))}
+              renderCreateModal={({ onClose, onCreate, newObjectData, setNewObjectData }) => (
+                <CreateAddressPage onClose={onClose} onCreate={onCreate} newObjectData={newObjectData} setNewObjectData={setNewObjectData} />
+              )}
+              error={!!formErrors.address}
+              helperText={formErrors.address?.[0]}
             />
           </Grid>
 
           <Grid item xs={12} sm={12} lg={12}>
             <CustomFormLabel htmlFor="owners">Proprietários</CustomFormLabel>
-            <AutoCompleteUsers
-              fullWidth
-              onChange={(ids) => handleChange('owners_ids', ids)}
-              {...(formErrors.owners_ids && { error: true, helperText: formErrors.owners_ids })}
+            <GenericAsyncAutocompleteInput
+              label="Proprietários"
+              name="owners"
+              value={formData.owners || []}
+              onChange={(ids) => handleChange('owners', ids)}
+              endpoint="api/users"
+              queryParam="complete_name__icontains"
+              extraParams={{ fields: ['id', 'complete_name'], limit: 10 }}
+              mapResponse={d => d.results.map(u => ({ label: u.complete_name, value: u.id }))}
+              error={!!formErrors.owners}
+              helperText={formErrors.owners?.[0]}
+              multiselect
             />
           </Grid>
 
