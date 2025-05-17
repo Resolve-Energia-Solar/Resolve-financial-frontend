@@ -208,6 +208,11 @@ const SalePaymentList = ({ onClick }) => {
                   Valor
                 </Typography>
               </TableCell>
+              <TableCell>
+                <Typography variant="h6" fontSize="14px">
+                  Tipo de Entrega
+                </Typography>
+              </TableCell>
             </TableRow>
           </TableHead>
 
