@@ -7,10 +7,14 @@ import projectService from '@/services/projectService';
 import { Table } from '@/app/components/Table';
 import { TableHeader } from '@/app/components/TableHeader';
 import StatusChip from '@/utils/status/DocumentStatusIcon';
-import { AssignmentTurnedIn, BuildCircle, FilterAlt, HourglassTop, PendingActions } from '@mui/icons-material';
+import {
+  AssignmentTurnedIn, BuildCircle, FilterAlt, HourglassTop, PendingActions, LockOpen, Lock,
+  X,
+  ConstructionRounded,
+  CheckCircle
+} from '@mui/icons-material';
 import ProjectDetailDrawer from '@/app/components/apps/project/Costumer-journey/Project-Detail/ProjectDrawer';
 import { Chip, Box, Typography } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import GenericFilterDrawer from '@/app/components/filters/GenericFilterDrawer';
 import filterConfig from './filterConfig';
 import { formatDate } from '@/utils/dateUtils';
@@ -80,7 +84,7 @@ const InspectionsDashboard = () => {
       key: 'number_of_installations',
       label: 'Número de instalações finalizadas',
       value: indicators?.number_of_installations,
-      icon: <CheckCircleIcon style={{ color: '#155724' }} />,
+      icon: <CheckCircle style={{ color: '#155724' }} />,
       color: '#d4edda',
       filter: { inspection_isnull: true },
     },
@@ -96,6 +100,57 @@ const InspectionsDashboard = () => {
       color: '#fff3cd',
       filter: {},
     },
+  ];
+
+  const statusStats = [
+    {
+      key: 'scheduled',
+      label: 'Agendado',
+      icon: <AssignmentTurnedIn />,
+      value: indicators?.installations_status_count?.Agendado || 0,
+      color: '#E3F2FD',
+      filter: { installation_status: 'Agendado' }
+    },
+    {
+      key: 'blocked',
+      label: 'Bloqueado',
+      icon: <Lock />,
+      value: indicators?.installations_status_count?.Bloqueado || 0,
+      color: '#FFEBEE',
+      filter: { installation_status: 'Bloqueado' }
+    },
+    {
+      key: 'cancelled',
+      label: 'Cancelado',
+      icon: <X />,
+      value: indicators?.installations_status_count?.Cancelado || 0,
+      color: '#FFCDD2',
+      filter: { installation_status: 'Cancelado' }
+    },
+    {
+      key: 'in_construction',
+      label: 'Em obra',
+      icon: <ConstructionRounded />,
+      value: indicators?.installations_status_count?.['Em obra'] || 0,
+      color: '#FFF9C4',
+      filter: { installation_status: 'Em obra' }
+    },
+    {
+      key: 'installed',
+      label: 'Instalado',
+      icon: <CheckCircle />,
+      value: indicators?.installations_status_count?.Instalado || 0,
+      color: '#C8E6C9',
+      filter: { installation_status: 'Instalado' }
+    },
+    {
+      key: 'released',
+      label: 'Liberado',
+      icon: <LockOpen />,
+      value: indicators?.installations_status_count?.Liberado || 0,
+      color: '#E8F5E9',
+      filter: { installation_status: 'Liberado' }
+    }
   ];
 
   const fetchProjects = useCallback(async () => {
@@ -183,12 +238,12 @@ const InspectionsDashboard = () => {
       render: (r) =>
         r.inspection?.final_service_opinion_date
           ? new Date(r.inspection.final_service_opinion_date).toLocaleString('pt-BR', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          })
           : '-',
     },
     {
@@ -253,6 +308,39 @@ const InspectionsDashboard = () => {
           }}
         >
           {stats.map(({ key, label, value, icon, color, filter, format }) => {
+            const isActive = filters && Object.keys(filters).some((fk) => fk in filter);
+            return (
+              <KPICard
+                key={key}
+                label={label}
+                value={value}
+                icon={icon}
+                color={color}
+                active={isActive}
+                loading={loadingIndicators}
+                format={format}
+                onClick={() => handleKPIClick(key)}
+              />
+            );
+          })}
+        </Box>
+      </Box>
+      <Box sx={{ width: '100%', mb: 2 }}>
+        <Typography variant="h6">Status de Instalação</Typography>
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-evenly',
+            gap: 2,
+            flexWrap: 'wrap',
+            mt: 1,
+            mb: 4,
+            background: '#f5f5f5',
+            p: 2,
+          }}
+        >
+          {statusStats.map(({ key, label, value, icon, color, filter, format }) => {
             const isActive = filters && Object.keys(filters).some((fk) => fk in filter);
             return (
               <KPICard
