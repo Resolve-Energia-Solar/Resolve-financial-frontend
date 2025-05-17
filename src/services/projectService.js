@@ -134,6 +134,10 @@ const projectService = {
     const response = await apiClient.get(`${DEFAULT_ROUTER}/inspections-indicators/`, { params });
     return response.data;
   },
+  installationIndicators: async (params) => {
+    const response = await apiClient.get(`${DEFAULT_ROUTER}/installations-indicators/`, { params });
+    return response.data;
+  },
   deleteProject: async (id) => {
     const response = await apiClient.delete(`/api/projects/${id}/`);
     return response.data;

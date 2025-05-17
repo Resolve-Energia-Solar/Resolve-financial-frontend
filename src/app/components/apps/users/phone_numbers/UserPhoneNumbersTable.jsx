@@ -37,7 +37,7 @@ export default function UserPhoneNumbersTable({
             }
         })();
         return () => { mounted = false };
-    }, [userId, propPhones]);
+    }, [userId]);
 
     useEffect(() => {
         fetchPhoneNumbers();
