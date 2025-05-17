@@ -185,6 +185,15 @@ export default function InvoiceList({ onClick }) {
       ],
     },
     {
+      key: 'delivery_type__in',
+      label: 'Tipo de Entrega',
+      type: 'multiselect',
+      options: [
+        { value: 'C', label: 'Entrega CD' },
+        { value: 'D', label: 'Entrega Direta' },
+      ],
+    },
+    {
       key: 'branch',
       label: 'Filial',
       type: 'async-autocomplete',

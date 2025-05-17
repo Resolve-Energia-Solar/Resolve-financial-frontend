@@ -84,9 +84,7 @@ const ResquestLIstByProject = () => {
           setSelectedRequestType(types[0].id);
         }
       })
-      .catch((err) =>
-        console.error('Erro ao buscar tipos de solicitação:', err)
-      );
+      .catch((err) => console.error('Erro ao buscar tipos de solicitação:', err));
   }, []);
 
   const stableFilters = useMemo(() => filters, [JSON.stringify(filters)]);
@@ -137,11 +135,12 @@ const ResquestLIstByProject = () => {
             'new_contact_number_days_int',
             'final_inspection_status',
             'final_inspection_days_int',
-            'supply_adquance_names'
+            'supply_adquance_names',
           ].join(','),
           expand:
             'requests_energy_company,sale.customer,homologator,requests_energy_company.type,product',
-          metrics: 'is_released_to_engineering,supply_adquance_names,access_opnion_status,load_increase_status,branch_adjustment_status,new_contact_number_status,final_inspection_status,trt_pending,pending_material_list,trt_status',
+          metrics:
+            'is_released_to_engineering,supply_adquance_names,access_opnion_status,load_increase_status,branch_adjustment_status,new_contact_number_status,final_inspection_status,trt_pending,pending_material_list,trt_status',
           ...stableFilters,
         });
         setProjectsList(data.results);
@@ -158,14 +157,15 @@ const ResquestLIstByProject = () => {
   }, [page, rowsPerPage, refresh, stableFilters, selectedRequestType]);
 
   const decoratedProjects = useMemo(() => {
-    return projectsList.map(proj => {
-      const ofType = (proj.requests_energy_company || [])
-        .filter(r => r.type?.id === selectedRequestType);
-  
+    return projectsList.map((proj) => {
+      const ofType = (proj.requests_energy_company || []).filter(
+        (r) => r.type?.id === selectedRequestType,
+      );
+
       const latestRequest = ofType.length
         ? ofType.sort((a, b) => new Date(b.request_date) - new Date(a.request_date))[0]
         : null;
-  
+
       return { ...proj, latestRequest };
     });
   }, [projectsList, selectedRequestType]);
@@ -369,39 +369,38 @@ const ResquestLIstByProject = () => {
       options: [
         { value: 'true', label: 'Sim' },
         { value: 'false', label: 'Não' },
-        { value: 'null', label: 'Todos' }
+        { value: 'null', label: 'Todos' },
       ],
     },
   ];
 
-    const trtStatusMap = {
-      Bloqueado: {
-        label: 'Bloqueado',
-        color: theme.palette.error.light,
-        icon: <CancelIcon sx={{ color: '#fff' }} />,
-      },
-      Reprovada: {
-        label: 'Reprovada',
-        color: theme.palette.error.light,
-        icon: <CancelIcon sx={{ color: '#fff' }} />,
-      },
-      'Em Andamento': {
-        label: 'Em Andamento',
-        color: theme.palette.info.light,
-        icon: <HourglassFullIcon sx={{ color: '#fff' }} />,
-      },
-      Concluída: {
-        label: 'Concluída',
-        color: theme.palette.success.light,
-        icon: <CheckCircleIcon sx={{ color: '#fff' }} />,
-      },
-      Pendente: {
-        label: 'Pendente',
-        color: theme.palette.warning.light,
-        icon: <HourglassEmptyIcon sx={{ color: '#fff' }} />,
-      },
-    };
-
+  const trtStatusMap = {
+    Bloqueado: {
+      label: 'Bloqueado',
+      color: theme.palette.error.light,
+      icon: <CancelIcon sx={{ color: '#fff' }} />,
+    },
+    Reprovada: {
+      label: 'Reprovada',
+      color: theme.palette.error.light,
+      icon: <CancelIcon sx={{ color: '#fff' }} />,
+    },
+    'Em Andamento': {
+      label: 'Em Andamento',
+      color: theme.palette.info.light,
+      icon: <HourglassFullIcon sx={{ color: '#fff' }} />,
+    },
+    Concluída: {
+      label: 'Concluída',
+      color: theme.palette.success.light,
+      icon: <CheckCircleIcon sx={{ color: '#fff' }} />,
+    },
+    Pendente: {
+      label: 'Pendente',
+      color: theme.palette.warning.light,
+      icon: <HourglassEmptyIcon sx={{ color: '#fff' }} />,
+    },
+  };
 
   // Estados e handlers para modais/edição
   const [openSideDrawer, setOpenSideDrawer] = useState(false);
@@ -472,9 +471,7 @@ const ResquestLIstByProject = () => {
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={10}>
             <FormControl fullWidth required>
-              <InputLabel id="request-type-select-label">
-                Tipo Solicitação
-              </InputLabel>
+              <InputLabel id="request-type-select-label">Tipo Solicitação</InputLabel>
               <Select
                 labelId="request-type-select-label"
                 id="request-type-select"
@@ -598,98 +595,84 @@ const ResquestLIstByProject = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-            {decoratedProjects.map((item) => {
+              {decoratedProjects.map((item) => {
                 return (
-                <TableRow
-                  key={item.id}
-                  sx={{ cursor: 'pointer' }}
-                  onClick={() => handleEdit(item)}
-                >
-                <TableCell>
-                  {item.is_released_to_engineering ? (
-                    <CheckCircleOutlineIcon color="success" />
-                  ) : (
-                    <RemoveCircleOutlineIcon color="error" />
-                  )}
-                </TableCell>
-                  <TableCell>{item.project_number || '-'}</TableCell>
-                  <TableCell>
-                    {item.sale?.customer?.complete_name ||
-                      item.sale?.customer?.email ||
-                      '-'}
-                  </TableCell>
-                  <TableCell>
-                    <StatusChip status={item.sale?.status} />
+                  <TableRow
+                    key={item.id}
+                    sx={{ cursor: 'pointer' }}
+                    onClick={() => handleEdit(item)}
+                  >
+                    <TableCell>
+                      {item.is_released_to_engineering ? (
+                        <CheckCircleOutlineIcon color="success" />
+                      ) : (
+                        <RemoveCircleOutlineIcon color="error" />
+                      )}
                     </TableCell>
-                  <TableCell>
-                    {item.homologator?.complete_name ||
-                      item.homologator?.email ||
-                      'Não Associado'}
-                  </TableCell>
-                  <TableCell>
-                    {item.latestRequest?.type?.name ||
-                      'Falta solicitação'}
-                  </TableCell>
-                  <TableCell>
-                    {item.latestRequest?.interim_protocol || '-'}
-                  </TableCell>
-                  <TableCell>
-                    <ChipRequest status={item.latestRequest?.status} />
-                  </TableCell>
-                  <TableCell>
-                    {item.latestRequest?.request_date
-                      ? format(
-                          new Date(item.latestRequest.request_date),
-                          'dd/MM/yyyy'
-                        )
-                      : '-'}
-                  </TableCell>
-                  <TableCell>
-                    {item.latestRequest?.conclusion_date
-                      ? format(
-                          new Date(item.latestRequest.conclusion_date),
-                          'dd/MM/yyyy'
-                        )
-                      : '-'}
-                  </TableCell>
+                    <TableCell>{item.project_number || '-'}</TableCell>
+                    <TableCell>
+                      {item.sale?.customer?.complete_name || item.sale?.customer?.email || '-'}
+                    </TableCell>
+                    <TableCell>
+                      <StatusChip status={item.sale?.status} />
+                    </TableCell>
+                    <TableCell>
+                      {item.homologator?.complete_name ||
+                        item.homologator?.email ||
+                        'Não Associado'}
+                    </TableCell>
+                    <TableCell>{item.latestRequest?.type?.name || 'Falta solicitação'}</TableCell>
+                    <TableCell>{item.latestRequest?.interim_protocol || '-'}</TableCell>
+                    <TableCell>
+                      <ChipRequest status={item.latestRequest?.status} />
+                    </TableCell>
+                    <TableCell>
+                      {item.latestRequest?.request_date
+                        ? format(new Date(item.latestRequest.request_date), 'dd/MM/yyyy')
+                        : '-'}
+                    </TableCell>
+                    <TableCell>
+                      {item.latestRequest?.conclusion_date
+                        ? format(new Date(item.latestRequest.conclusion_date), 'dd/MM/yyyy')
+                        : '-'}
+                    </TableCell>
                     <TableCell>
                       <GenericChip status={item.trt_pending} statusMap={trtStatusMap} />
                     </TableCell>
-                  <TableCell>{item.supply_adquance_names}</TableCell>
-                  <TableCell>
-                    <StatusWithProgressBar
-                      status={item.access_opnion_status}
-                      days={item.access_opnion_days_int}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <StatusWithProgressBar
-                      status={item.load_increase_status}
-                      days={item.load_increase_days_int}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <StatusWithProgressBar
-                      status={item.branch_adjustment_status}
-                      days={item.branch_adjustment_days_int}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <StatusWithProgressBar
-                      status={item.new_contact_number_status}
-                      days={item.new_contact_number_days_int}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <StatusWithProgressBar
-                      status={item.final_inspection_status}
-                      days={item.final_inspection_days_int}
-                    />
-                  </TableCell>
-                </TableRow>
-                )
-              }
-            )}
+                    <TableCell>{item.supply_adquance_names}</TableCell>
+                    <TableCell>
+                      <StatusWithProgressBar
+                        status={item.access_opnion_status}
+                        days={item.access_opnion_days_int}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <StatusWithProgressBar
+                        status={item.load_increase_status}
+                        days={item.load_increase_days_int}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <StatusWithProgressBar
+                        status={item.branch_adjustment_status}
+                        days={item.branch_adjustment_days_int}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <StatusWithProgressBar
+                        status={item.new_contact_number_status}
+                        days={item.new_contact_number_days_int}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <StatusWithProgressBar
+                        status={item.final_inspection_status}
+                        days={item.final_inspection_days_int}
+                      />
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
           <TablePagination
@@ -705,11 +688,7 @@ const ResquestLIstByProject = () => {
         </TableContainer>
       )}
 
-      <SideDrawer
-        title="Editar Solicitação"
-        open={openSideDrawer}
-        onClose={handleSideDrawerClose}
-      >
+      <SideDrawer title="Editar Solicitação" open={openSideDrawer} onClose={handleSideDrawerClose}>
         <EditRequestByProject
           projectId={requestSelected?.id}
           projectData={requestSelected}
@@ -718,18 +697,10 @@ const ResquestLIstByProject = () => {
         />
       </SideDrawer>
 
-      <Dialog
-        open={openAddDialog}
-        onClose={handleAddDialogClose}
-        fullWidth
-        maxWidth="lg"
-      >
+      <Dialog open={openAddDialog} onClose={handleAddDialogClose} fullWidth maxWidth="lg">
         <DialogTitle>Criar Solicitação</DialogTitle>
         <DialogContent>
-          <AddRequestCompany
-            onClosedModal={handleAddDialogClose}
-            onRefresh={refreshData}
-          />
+          <AddRequestCompany onClosedModal={handleAddDialogClose} onRefresh={refreshData} />
         </DialogContent>
       </Dialog>
     </>
