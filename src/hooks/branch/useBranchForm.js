@@ -3,8 +3,8 @@ import branchService from '@/services/branchService';
 
 const useBranchForm = (initialData, id) => {
   const [formData, setFormData] = useState({
-    owners_ids: [],
-    address_id: null,
+    owners: [],
+    address: null,
     name: '',
   });
 
@@ -14,8 +14,8 @@ const useBranchForm = (initialData, id) => {
   useEffect(() => {
     if (initialData) {
       setFormData({
-        owners_ids: initialData.owners.map((item) => item.id) || [],
-        address_id: initialData.address.id || null,
+        owners: initialData.owners.map((item) => item.id) || [],
+        address: initialData.address.id || null,
         name: initialData.name || '',
       });
     }
@@ -28,13 +28,15 @@ const useBranchForm = (initialData, id) => {
   const handleSave = async () => {
     const dataToSend = new FormData();
 
-    formData.owners_ids.forEach((ownerId) => {
-      dataToSend.append('owners_ids', ownerId);
+    formData.owners.forEach((owner) => {
+      const id = typeof owner === 'object' ? owner.value || owner.id : owner;
+      dataToSend.append('owners', id);
     });
+    
+    const addressId = typeof formData.address === 'object' ? formData.address.value || formData.address.id : formData.address;
+    dataToSend.append('address', addressId);
 
-    dataToSend.append('address_id', formData.address_id);
     dataToSend.append('name', formData.name);
-    console.log('dataToSend', dataToSend);
     try {
       if (id) {
         await branchService.update(id, dataToSend);

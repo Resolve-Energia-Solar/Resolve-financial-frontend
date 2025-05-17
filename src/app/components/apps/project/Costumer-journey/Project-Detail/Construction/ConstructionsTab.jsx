@@ -195,7 +195,10 @@ export default function ConstructionsTab({ projectId, viewOnly = false }) {
                                             Responsabilidade
                                         </Typography>
                                         <Typography variant="body1">
-                                            {c.work_responsibility === 'C' ? 'Cliente' : 'Franquia'}
+                                            {c.work_responsibility === 'C' ? 'Cliente' :
+                                                c.work_responsibility === 'F' ? 'Franquia' :
+                                                    c.work_responsibility === 'O' ? 'Centro de Operações' :
+                                                        c.work_responsibility}
                                         </Typography>
                                     </Grid>
 

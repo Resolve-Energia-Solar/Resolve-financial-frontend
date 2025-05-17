@@ -27,7 +27,8 @@ const statusOptions = [
 ];
 const responsibilityOptions = [
     { value: 'C', label: 'Cliente' },
-    { value: 'F', label: 'Franquia' }
+    { value: 'F', label: 'Franquia' },
+    { value: 'O', label: 'Centro de Operações' },
 ];
 
 export default function ConstructionFormModal({

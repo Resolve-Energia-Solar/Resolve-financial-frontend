@@ -207,7 +207,7 @@ return (
     />
 
     {renderCreateModal && (
-      <Dialog open={createModalOpen} onClose={() => setCreateModalOpen(false)} fullWidth maxWidth="sm">
+      <Dialog open={createModalOpen} onClose={() => setCreateModalOpen(false)} fullWidth maxWidth="md">
         <DialogTitle>Adicionar {label}</DialogTitle>
         <DialogContent>
           {renderCreateModal({
